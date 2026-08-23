@@ -3,10 +3,12 @@ id: audit-log
 title: "Audit & Change Log"
 type: doc
 status: accepted
-owner: "@maintainers"
+owner: "@timianmalloo"
+phase: ""
 tags: [audit, history, change-log, project-memory]
-links: []
-review-by: 2027-08-23
+links:
+  - { to: ai-forward-pack-adoption, rel: relates-to }
+review-by: 2026-11-21
 review-suggested: []
 summary: >-
   The durable, committed history of what was prompted, done, and decided in this

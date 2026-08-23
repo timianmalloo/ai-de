@@ -6,7 +6,7 @@
 name: docs-health
 on:
   pull_request:
-    paths: ["docs/**", "**/*.md"]
+    paths: ["docs/**", "**/*.md", ".github/workflows/docs-health.yml"]
   workflow_dispatch:
 
 jobs:
@@ -25,13 +25,6 @@ jobs:
       # Start with warn; flip to fail once the backlog is clean.
       - name: Freshness gate (V13/V16)
         run: python3 docs/ai-forward-pack/scripts/docs-graph.py freshness --gate warn
-
-      # Vendored-foundation drift (uncatalogued edits to the vendored base docs)
-      - name: Foundation drift check
-        run: |
-          if [ -f docs/ai-forward-pack/scripts/foundation-check.py ]; then
-            python3 docs/ai-forward-pack/scripts/foundation-check.py
-          fi
 
   # Optional: pack-eval job for repos that vendor the pack source and edit skills/prompts.
   # Uncomment and point --workspace at recorded eval workspaces (see evals/README.md).

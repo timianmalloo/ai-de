@@ -1,3 +1,20 @@
+---
+id: project-readme
+title: "AI-DE Repository Guide"
+type: doc
+status: in-review
+owner: "@timianmalloo"
+phase: ""
+tags: [readme, onboarding, build]
+links:
+  - { to: project-documents, rel: relates-to }
+  - { to: architecture, rel: documents }
+review-by: 2026-11-21
+review-suggested: []
+summary: >-
+  Build, run, repository-layout, and licensing guide for the .NET 10 Windows WPF starter.
+---
+
 # AI-DE
 
 AI-DE is a Windows desktop starter built with C# and WPF on .NET 10. The repository includes a small MVVM seam, unit tests, CI, and the AI-Forward Pack for agent-assisted engineering workflows.
@@ -5,7 +22,11 @@ AI-DE is a Windows desktop starter built with C# and WPF on .NET 10. The reposit
 ## Prerequisites
 
 - Windows 10 or later
-- .NET 10 SDK
+- .NET SDK 10.0.303, or a later .NET 10 feature band permitted by
+  [`global.json`](global.json)
+
+The Windows 10 floor is the intended support statement. It is not yet encoded
+as a minimum platform version in the project file.
 
 ## Build locally
 
