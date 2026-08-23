@@ -1,20 +1,3 @@
----
-id: third-party-notices
-title: "Third-Party Notices"
-type: doc
-status: accepted
-owner: "@timianmalloo"
-phase: ""
-tags: [license, provenance, third-party]
-links:
-  - { to: project-documents, rel: relates-to }
-  - { to: audit-log, rel: relates-to }
-review-by: 2026-11-21
-review-suggested: []
-summary: >-
-  Records the source revision, bundle release, license, and installed surfaces for the Apache-2.0 AI-Forward Pack material included in this MIT-licensed repository.
----
-
 # Third-Party Notices
 
 ## AI-Forward Pack

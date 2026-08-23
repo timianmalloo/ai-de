@@ -6,8 +6,7 @@ status: accepted
 owner: "@timianmalloo"
 phase: ""
 tags: [audit, history, change-log, project-memory]
-links:
-  - { to: ai-forward-pack-adoption, rel: relates-to }
+links: []
 review-by: 2026-11-21
 review-suggested: []
 summary: >-
