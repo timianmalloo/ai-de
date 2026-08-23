@@ -480,3 +480,8 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# AI-Forward Pack
+*.jsonl.lock
+spikes/
+
