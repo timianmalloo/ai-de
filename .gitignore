@@ -483,5 +483,6 @@ $RECYCLE.BIN/
 
 # AI-Forward Pack
 *.jsonl.lock
+docs/audit/.run-starts.json
+docs/audit/.run-starts.json.tmp
 spikes/
-

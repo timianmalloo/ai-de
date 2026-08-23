@@ -25,3 +25,10 @@ dotnet run --project .\src\AiDe.App\AiDe.App.csproj
 - `.claude/` - Claude Code knowledge, skills, and agents
 
 See `docs/ai-forward-pack/OVERVIEW.md` after installation for the available AI-Forward workflows.
+
+## License
+
+AI-DE application code is licensed under the [MIT License](LICENSE).
+
+The installed AI-Forward Pack material remains under the Apache License 2.0.
+See [Third-Party Notices](THIRD-PARTY-NOTICES.md).
