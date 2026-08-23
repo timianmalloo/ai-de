@@ -1,0 +1,68 @@
+<Window x:Class="AiDe.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:AiDe.App.ViewModels"
+        mc:Ignorable="d"
+        Title="{Binding WindowTitle}"
+        Width="960"
+        Height="600"
+        MinWidth="720"
+        MinHeight="480"
+        WindowStartupLocation="CenterScreen"
+        Background="#0F172A">
+    <Window.DataContext>
+        <viewModels:MainWindowViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="48">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock FontSize="18"
+                   FontWeight="SemiBold"
+                   Foreground="#38BDF8"
+                   Text="AI-DE" />
+
+        <TextBlock Grid.Row="1"
+                   Margin="0,12,0,32"
+                   FontSize="38"
+                   FontWeight="Bold"
+                   Foreground="#F8FAFC"
+                   Text="{Binding Heading}" />
+
+        <Border Grid.Row="2"
+                Padding="28"
+                Background="#1E293B"
+                CornerRadius="16">
+            <StackPanel>
+                <TextBlock FontSize="18"
+                           FontWeight="SemiBold"
+                           Foreground="#E2E8F0"
+                           Text="Local WPF workspace" />
+                <TextBlock Margin="0,8,0,20"
+                           Foreground="#94A3B8"
+                           Text="The solution is ready for feature development with a testable MVVM seam." />
+                <ItemsControl ItemsSource="{Binding GettingStartedSteps}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="0,6"
+                                       Foreground="#CBD5E1"
+                                       Text="{Binding StringFormat=• {0}}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+
+        <TextBlock Grid.Row="3"
+                   Margin="0,24,0,0"
+                   Foreground="#64748B"
+                   Text="{Binding StatusMessage}" />
+    </Grid>
+</Window>
