@@ -20,12 +20,12 @@ dotnet run --project .\src\AiDe.App\AiDe.App.csproj
 
 - `src/AiDe.App/` - WPF application
 - `tests/AiDe.App.Tests/` - xUnit tests
-- `docs/architecture.md` - how the app is put together
 - `docs/` - project and AI-Forward documentation
+- `docs/architecture.md` - how the app is put together
 - `.github/` - GitHub Copilot configuration and CI workflows
 - `.claude/` - Claude Code knowledge, skills, and agents
 
-See `docs/ai-forward-pack/OVERVIEW.md` after installation for the available AI-Forward workflows.
+See `docs/ai-forward-pack/OVERVIEW.md` for the available AI-Forward workflows.
 
 ## License
 
