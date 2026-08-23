@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-23T22:42:03Z",
+  "generated": "2026-08-23T22:51:39Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -264,6 +264,109 @@ window.DOCS_INDEX = {
       "links": [],
       "diagrams": [],
       "sourceSha256": "71819e58949cf27b8efd509901f9d19ca6e787cb2fbec6d274a59b8b8fd5e003"
+    },
+    {
+      "id": "lens-code-doc-join",
+      "path": "docs/lenses/code-doc-join.md",
+      "title": "Lens - code/doc join",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@maintainers",
+      "phase": "",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "Derived join between the documentation graph (intent) and the Graphify code graph (reality): documentation referencing code that does not exist, and the most connected code symbols no artifact governs. A prompt, never a gate.",
+      "tags": [
+        "lens",
+        "graphify",
+        "code-graph",
+        "traceability"
+      ],
+      "links": [
+        {
+          "to": "lens-graph-structure",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c153dca141e06d0710ac8055ea23f9d01193fa4016cd673e613ae9c0f100e27e"
+    },
+    {
+      "id": "lens-graph-health",
+      "path": "docs/lenses/graph-health.md",
+      "title": "Lens - graph health",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@maintainers",
+      "phase": "",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "A read-time Dataview lens over the knowledge graph's health - stale artifacts, missing owners, missing freshness SLAs, and review-suggested flags. Derived, never authoritative.",
+      "tags": [
+        "lens",
+        "obsidian",
+        "dataview",
+        "graph-health"
+      ],
+      "links": [
+        {
+          "to": "lens-graph-structure",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fa610a3c05e3c4e58a6c6a0eb456ab484d2c85081d59c4a48b665035c8100a99"
+    },
+    {
+      "id": "lens-graph-insight",
+      "path": "docs/lenses/graph-insight.md",
+      "title": "Lens - graph insight (computed)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@maintainers",
+      "phase": "",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "Computed structural analysis of the knowledge graph - hubs, bridges, components, orphans and structural gaps. Regenerate with obsidian-setup.py --analyze --write. Derived, never authoritative.",
+      "tags": [
+        "lens",
+        "graph-analysis",
+        "computed"
+      ],
+      "links": [
+        {
+          "to": "lens-graph-structure",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "14837edcddf2975dbc09f6151f3daaaa3e01a5ddef15b00d7be8a8281dcdd746"
+    },
+    {
+      "id": "lens-graph-structure",
+      "path": "docs/lenses/graph-structure.md",
+      "title": "Lens - graph structure",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@maintainers",
+      "phase": "",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "A read-time lens over the shape of the knowledge graph - artifacts by type and status, and the traceability chains (spec to design to proof). Derived, never authoritative.",
+      "tags": [
+        "lens",
+        "obsidian",
+        "dataview",
+        "structure"
+      ],
+      "links": [
+        {
+          "to": "lens-graph-health",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
     },
     {
       "id": "seed-agent-coordination-spec",
@@ -2306,5 +2409,5 @@ window.DOCS_INDEX = {
       "artifactId": "audit-log"
     }
   ],
-  "graphSha256": "9434c672ec52b4c8ec893ca29b9b1cb09f3a237d175de3803d04be547a5a5c18"
+  "graphSha256": "d3648867f2e65a13a7524e524aaebfee551519f2f8dd3fe22aab541add633c49"
 };

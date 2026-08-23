@@ -1,0 +1,120 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": true,
+  "showAttachments": false,
+  "hideUnresolved": true,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "[\"type\":\"knowledge\"]",
+      "color": {
+        "a": 1,
+        "rgb": 8246268
+      }
+    },
+    {
+      "query": "[\"type\":\"design\"]",
+      "color": {
+        "a": 1,
+        "rgb": 8843180
+      }
+    },
+    {
+      "query": "[\"type\":\"architecture\"]",
+      "color": {
+        "a": 1,
+        "rgb": 16628340
+      }
+    },
+    {
+      "query": "[\"type\":\"adr\"]",
+      "color": {
+        "a": 1,
+        "rgb": 16557477
+      }
+    },
+    {
+      "query": "[\"type\":\"spec\"]",
+      "color": {
+        "a": 1,
+        "rgb": 12891645
+      }
+    },
+    {
+      "query": "[\"type\":\"decision-note\"]",
+      "color": {
+        "a": 1,
+        "rgb": 16361684
+      }
+    },
+    {
+      "query": "[\"type\":\"proof-pack\"]",
+      "color": {
+        "a": 1,
+        "rgb": 16638023
+      }
+    },
+    {
+      "query": "[\"type\":\"threat-model\"]",
+      "color": {
+        "a": 1,
+        "rgb": 16281969
+      }
+    },
+    {
+      "query": "[\"type\":\"privacy-review\"]",
+      "color": {
+        "a": 1,
+        "rgb": 10859772
+      }
+    },
+    {
+      "query": "[\"type\":\"glossary\"]",
+      "color": {
+        "a": 1,
+        "rgb": 6220500
+      }
+    },
+    {
+      "query": "[\"type\":\"design-language\"]",
+      "color": {
+        "a": 1,
+        "rgb": 14202110
+      }
+    },
+    {
+      "query": "[\"type\":\"doc\"]",
+      "color": {
+        "a": 1,
+        "rgb": 9741240
+      }
+    },
+    {
+      "query": "[\"status\":\"superseded\"]",
+      "color": {
+        "a": 1,
+        "rgb": 6583435
+      }
+    },
+    {
+      "query": "[\"status\":\"draft\"]",
+      "color": {
+        "a": 1,
+        "rgb": 16486972
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": true,
+  "textFadeMultiplier": 0,
+  "nodeSizeMultiplier": 1.2,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": false,
+  "centerStrength": 0.5,
+  "repelStrength": 12,
+  "linkStrength": 0.8,
+  "linkDistance": 220,
+  "scale": 1
+}
