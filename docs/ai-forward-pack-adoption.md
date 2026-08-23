@@ -2,7 +2,7 @@
 id: ai-forward-pack-adoption
 title: "AI-Forward Pack Adoption Plan"
 type: doc
-status: draft
+status: accepted
 owner: "@timianmalloo"
 phase: ""
 tags: [adoption, roadmap]
@@ -58,8 +58,7 @@ than speculative bootstrap layers.
 
 ## Adoption gate
 
-Pending independent Documentation Steward, Test Architect, and Simplifier
-review.
+`GATE adopt · 2026-08-23 · Documentation Steward, Test Architect, Simplifier · exit criteria met: 7 connected artifacts, 0 graph defects/orphans/drift, Explorer ready, build and graph-health green, Proof Pack attached · verdict: PASS-WITH-CONDITIONS · vetoes: Test Architect -> closing audit must verify 2 audit + 1 change entries; Simplifier -> PASS; Documentation Steward audit-identity finding resolved`
 
 ## Status
 

@@ -2,7 +2,7 @@
 id: architecture
 title: "AI-DE Current Architecture"
 type: architecture
-status: in-review
+status: accepted
 owner: "@timianmalloo"
 phase: ""
 tags: [architecture, wpf]
@@ -18,7 +18,7 @@ summary: >-
 # AI-DE Current Architecture
 
 - **Recovery date:** 2026-08-23
-- **Status:** In review
+- **Status:** Accepted
 - **Evidence base:** source, project files, active workflows, tests, and commits through `ef30e96`
 - **Confidence:** claims are labeled **Verified**, **Inferred**, or **Flagged**
 
@@ -191,4 +191,4 @@ reconstruct fictional history.
 
 ## Gate record
 
-Pending the independent adoption gate.
+`GATE adopt-architecture · 2026-08-23 · Enterprise Architect, C# Developer, Patterns Expert, Documentation Steward, Test Architect, Simplifier · exit criteria met: source-backed C4 context/container, actual runtime boundary, explicit unknowns, connected graph, local and GitHub proof · verdict: PASS-WITH-CONDITIONS · vetoes: Test Architect -> closing audit must verify 2 audit + 1 change entries; Simplifier -> PASS; Documentation Steward identity finding resolved by regenerating the audit surface as AI-DE`

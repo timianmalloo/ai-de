@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-23T20:07:30Z",
+  "generated": "2026-08-23T20:23:58Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -200,7 +200,7 @@ window.DOCS_INDEX = {
       "path": "docs/architecture.md",
       "title": "AI-DE Current Architecture",
       "type": "architecture",
-      "status": "in-review",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-19",
@@ -237,14 +237,14 @@ window.DOCS_INDEX = {
           "mermaid": "sequenceDiagram\n  participant Runtime as .NET/WPF runtime\n  participant App as App.xaml\n  participant Window as MainWindow\n  participant ViewModel as MainWindowViewModel\n\n  Runtime->>App: Start application\n  App->>Window: Resolve StartupUri\n  Window->>Window: InitializeComponent()\n  Window->>ViewModel: Construct from XAML resources\n  ViewModel-->>Window: Provide immutable display values\n  Window-->>Runtime: Render bound title, heading, steps, and status"
         }
       ],
-      "sourceSha256": "5786d2e05ec13a6d61c834f5a4177d16a579f2913c682982bdd0721804c279d7"
+      "sourceSha256": "056bf6df254983e828ffd558d68387cedbbd77f2d0ea0713f3f33e31eacce071"
     },
     {
       "id": "decision-adoption-boundary",
       "path": "docs/notes/adoption-boundary.md",
       "title": "Adoption records current evidence without inventing product history",
       "type": "decision-note",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-19",
@@ -256,14 +256,14 @@ window.DOCS_INDEX = {
       ],
       "links": [],
       "diagrams": [],
-      "sourceSha256": "80cfa5145f57415eac971c557b54a83915ad8c36ec74bc0cf38000e53e6e2f70"
+      "sourceSha256": "65dd5b1b6ba38713ae58a8d87466391e2bc4237c0e2a9c5d7cb2418aeb910437"
     },
     {
       "id": "ai-forward-pack-adoption",
       "path": "docs/ai-forward-pack-adoption.md",
       "title": "AI-Forward Pack Adoption Plan",
       "type": "doc",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
@@ -284,7 +284,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2a57bd8378c2004fb122629239660549a66be81e6480812c7ec3ddcdc8ce056c"
+      "sourceSha256": "12ec242d689a8ccf75062de203eea144d05056e28c1b5fe9b8031fa44ccfd25c"
     },
     {
       "id": "audit-log",
@@ -317,7 +317,7 @@ window.DOCS_INDEX = {
       "path": "docs/knowledge/glossary.md",
       "title": "AI-DE Glossary",
       "type": "glossary",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
@@ -329,14 +329,14 @@ window.DOCS_INDEX = {
       ],
       "links": [],
       "diagrams": [],
-      "sourceSha256": "a12bf3ea643c5663bdf66418e61daa8f5c5bd28e9464054a3ba4307ed69f3555"
+      "sourceSha256": "f08290123e74bd2e39a96995e916718065a4cafb530ad7833f8c3eb7bb57ab94"
     },
     {
       "id": "project-documents",
       "path": "docs/project-documents.md",
       "title": "Project Documents",
       "type": "index",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
@@ -353,14 +353,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5d29df48bde88802d48d08fcd26684d4ff7220488aba5d41b40fd1b7b357f222"
+      "sourceSha256": "5e2e8306d6f24a9d1ea252d00c62ff68b3d044c90ca474f845a540c193bfa6ae"
     },
     {
       "id": "proof-adoption",
       "path": "docs/proof/adoption-proof.md",
       "title": "AI-DE Adoption Proof Pack",
       "type": "proof-pack",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
@@ -372,18 +372,18 @@ window.DOCS_INDEX = {
       ],
       "links": [],
       "diagrams": [],
-      "sourceSha256": "c09fe00673e94310a9cbe35d57acf4f42eefba2dca1cca79ed9c44540abcdbe0"
+      "sourceSha256": "12b028c8e8d0bfaa75808c1256a07ff3e47056b386e81652540a57b536072137"
     }
   ],
   "surfaces": [
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de — Audit & Change Log",
+      "title": "AI-DE — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
     }
   ],
-  "graphSha256": "bbc97ac131dc0f4c80071db52aff7c55b0d18311c991161709fdf697aa656706"
+  "graphSha256": "49579ecfcb92e52ce53e8761b7097352ddabdd18974baa96830201a970b73426"
 };

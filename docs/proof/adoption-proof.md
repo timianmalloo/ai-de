@@ -2,7 +2,7 @@
 id: proof-adoption
 title: "AI-DE Adoption Proof Pack"
 type: proof-pack
-status: draft
+status: accepted
 owner: "@timianmalloo"
 phase: ""
 tags: [adoption, proof]
@@ -25,8 +25,9 @@ summary: >-
 | Every adopted `docs/**` artifact is schema-valid and connected, and the index matches frontmatter. | `docs-graph.py derive --project AI-DE`; `docs-graph.py validate` reported 7 artifacts, 0 problems, 0 orphans, 0 drift, 0 defects. | `docs/ai-forward-pack/scripts/docs-graph.py`, bundle revision 45 | Any invalid frontmatter, dangling/unregistered edge, orphan, duplicate ID, or index drift fails validation. | Yes - initial inventory reported 1 orphaned artifact and missing `docs-index.js`; the pre-derive adopted graph still failed on missing index. | **Verified** | Root README/notices are a documented MOC-only exception and are not freshness-gated by the derived graph. |
 | The Docs Explorer renders the adopted graph. | Local HTTP response `200`; headless Chrome DOM contained `data-state="ready"`, project title `AI-DE Docs Explorer`, and `7 artifacts`. | Chrome headless against `docs/index.html` and generated `docs/docs-index.js` | Non-200 response, failed load state, wrong project name, or artifact count other than 7 fails. | Yes - before derivation the Explorer had no index and could not load the graph. | **Verified** | Browser smoke covers loading/catalog output, not every interaction or Mermaid rendering path. |
 | The current solution remains buildable after adoption workflow changes. | Restore exit 0; Release build exit 0 with 0 warnings/0 errors; tests exit 0 with 1 passed, 0 failed, 0 skipped. | .NET SDK selected by `global.json`; `AiDe.sln` | Any non-zero command, warning-as-error, or failed/skipped expected test fails. | N/A - existing behavior was characterized before and after documentation changes. | **Verified** | One unit test does not cover WPF composition, bindings, rendering, or accessibility. |
-| The active documentation workflow runs when its own YAML or Markdown/docs surfaces change. | PR path set includes `docs/**`, `**/*.md`, and `.github/workflows/docs-health.yml`; local graph validation passes. | `.github/workflows/docs-health.yml` | A relevant PR with no docs-health run, or a failed graph command, falsifies the claim. | Yes - the initial workflow path set excluded its own YAML. | **Inferred** pending GitHub-hosted run | Fresh-runner execution remains to be observed on the adoption commit. |
-| Adoption history is durable and parseable. | `audit-log.py verify` reported all existing rows readable. The closing `/adopt` audit and architecture-baseline change entry are required before completion. | `docs/audit/*.jsonl`; audit tool revision 45 | Missing closing entries or any unreadable JSONL row fails. | No - the closing entries are pending by design until the final action. | **Flagged** | Cleared only after commit/push and final audit append. |
+| The active documentation workflow runs when its own YAML or Markdown/docs surfaces change. | PR #1 ran `graph-health` successfully in 6s against commit `5612e54`; the path set includes `docs/**`, `**/*.md`, and `.github/workflows/docs-health.yml`. | [graph-health job](https://github.com/timianmalloo/ai-de/actions/runs/32663455809/job/97253031971); `.github/workflows/docs-health.yml` | A relevant PR with no docs-health run, or a failed graph command, falsifies the claim. | Yes - the initial workflow path set excluded its own YAML. | **Verified** | None for the tested PR path; future workflow changes remain subject to the same check. |
+| The adoption commit builds and tests on a fresh GitHub-hosted Windows runner. | PR #1 `build` succeeded in 51s against commit `5612e54`. | [build job](https://github.com/timianmalloo/ai-de/actions/runs/32663455815/job/97253032067) | Any restore/build/test failure or warnings-as-errors failure makes the job red. | N/A - existing starter behavior was characterized locally and in CI. | **Verified** | The current suite still contains only one unit test. |
+| Adoption history is durable and parseable. | `audit-log.py verify` reported 1 readable audit entry and 1 readable change entry. `cl-0001` records git before `ef30e96`, after `5612e54`, branch, push state, artifacts, prompt, summary, and rationale. | `docs/audit/audit-log.jsonl`; `docs/audit/change-log.jsonl`; audit tool revision 45 | Missing architecture change entry, missing closing `/adopt` audit, or any unreadable JSONL row fails. | No - the closing audit is intentionally the final content action. | **Verified with one pending close condition** | Append and verify the `/adopt` audit after final gate records are written. |
 
 ## Adversarial record
 
@@ -41,10 +42,10 @@ The first adoption gate returned BLOCK:
 
 The corrections reduced the graph to essential edges, one runtime layer, one
 phase table, a documented root-document exception, a derived seven-artifact
-index, a health snapshot, and this Proof Pack. The final independent gate and
-GitHub-hosted checks remain.
+index, a health snapshot, and this Proof Pack. The GitHub-hosted checks are
+green. The independent gate is held; only its exact closing-audit condition
+remains.
 
 ## Gate record
 
-Pending final Documentation Steward, Test Architect, and Simplifier verdicts
-after persistent GitHub checks.
+`GATE adopt-proof · 2026-08-23 · Documentation Steward, Test Architect, Simplifier · verdict: PASS-WITH-CONDITIONS · evidence: PR #1 build + graph-health passed, docs graph 7/0 defects, Explorer ready, cl-0001 verified · vetoes: Test Architect -> append final /adopt audit and verify exactly 2 audit + 1 change entries with 0 unreadable lines; Simplifier -> PASS; Documentation Steward audit-identity finding resolved`

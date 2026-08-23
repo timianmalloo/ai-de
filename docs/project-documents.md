@@ -2,7 +2,7 @@
 id: project-documents
 title: "Project Documents"
 type: index
-status: draft
+status: accepted
 owner: "@timianmalloo"
 phase: ""
 tags: [documentation, navigation]

@@ -2,7 +2,7 @@
 id: decision-adoption-boundary
 title: "Adoption records current evidence without inventing product history"
 type: decision-note
-status: draft
+status: accepted
 owner: "@timianmalloo"
 phase: ""
 tags: [adoption, decision-note]

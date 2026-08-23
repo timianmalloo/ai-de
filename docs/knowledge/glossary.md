@@ -2,7 +2,7 @@
 id: glossary
 title: "AI-DE Glossary"
 type: glossary
-status: draft
+status: accepted
 owner: "@timianmalloo"
 phase: ""
 tags: [glossary, wpf]
