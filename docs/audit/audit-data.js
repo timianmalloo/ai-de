@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "AI-DE",
-  "generated": "2026-08-23T20:23:58Z",
+  "project": "ai-de",
+  "generated": "2026-08-23T22:41:33Z",
   "audit": [
     {
       "id": "al-0001",
@@ -50,6 +50,41 @@ window.AUDIT_DATA = {
       "started_at": "2026-08-23T19:31:43Z",
       "duration_seconds": 3135.0,
       "change": "cl-0001"
+    },
+    {
+      "id": "al-0003",
+      "shortname": "collectknowledge-ai-de-domains",
+      "datetime": "2026-08-23T22:41:17Z",
+      "session": "collectknowledge-20260823",
+      "prompt": "/collectknowledge — i am going to be building a development environment for myself and for how i work with coding agents. use the following files as \"source matter\" to seed a search for supporting material: ai-native-ide-architecture-sketch.md, agent-coordination/AGENT-COORDINATION-SPEC.md, agent-coordination/agent-coordination-explorer.jsx. I am already working on the agent coordination piece in a different work tree but that has to surface here. accumulate knowledge for all the domains and technologies identified in these docs. accumulate knowledge on UML and Generative Design as well as on the 4GL design surfaces and the state of the art in terms of ERM, Domain Modeling, Domain Driven Design, visualizing interactions between micro-services, visualizing cloud architectures and Azure architecture",
+      "summary": "Built a 10-topic sourced knowledge base (71 knowledge artifacts + hub) under docs/knowledge/. Four findings change the seed architecture: Kuzu archived Oct 2025 with no equivalent replacement; MCP 2026-07-28 is stateless and deprecates Sampling/Roots; the coordination spec's TTL+heartbeat leases lack fencing tokens (advisory not exclusive); and the models-are-the-product thesis survives only in its code-derived-views form. Graph: 76 artifacts, 0 defects, 0 orphans.",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/knowledge/index.md",
+        "docs/knowledge/code-knowledge-graphs/index.md",
+        "docs/knowledge/multi-agent-coordination/index.md",
+        "docs/notes/collectknowledge-session-2026-08-23.md"
+      ],
+      "tags": [
+        "knowledge-base",
+        "ai-native-ide",
+        "multi-agent",
+        "modelling"
+      ],
+      "outcome": "success",
+      "goal": "Produce a sourced, confidence-labelled domain knowledge base covering every domain in the seed docs plus UML/generative design/4GL/ERM/DDD/microservice and cloud visualization",
+      "done_when": "10 topic bases exist per the pack template with citations and confidence labels, indexed in the docs graph with 0 defects, audit and change logged",
+      "started_at": "2026-08-23T21:37:53Z",
+      "duration_seconds": 3804.0,
+      "git": {
+        "sha": "9065ea4f1e6a62139e340c271e14b99a9c4944e4",
+        "short": "9065ea4f1",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -79,6 +114,31 @@ window.AUDIT_DATA = {
         "commits": [
           "5612e54 docs: bootstrap repository knowledge graph"
         ]
+      }
+    },
+    {
+      "id": "cl-0002",
+      "datetime": "2026-08-23T22:41:33Z",
+      "session": "collectknowledge-20260823",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Domain knowledge base established for AI-DE; Kuzu, MCP and lease-fencing findings invalidate three seed-architecture assumptions",
+      "prompt": "/collectknowledge on the AI-native IDE architecture sketch, the agent coordination spec, and the named modelling/visualization domains",
+      "summary": "Ten sourced domain knowledge bases established as the evidence base for AI-DE. Load-bearing findings: (1) Kuzu archived 2025-10-10, and no embedded+maintained+permissive+.NET Cypher store exists to replace it, so the IGraphStore seam is now essential; (2) MCP spec 2026-07-28 is stateless and deprecates Sampling/Roots/Logging, while the C# SDK is Microsoft+Anthropic maintained and stable; (3) Claude Code hooks have no Copilot equivalent, so a file event bus is the universal floor; (4) TTL+heartbeat leases are advisory without fencing tokens (Kleppmann, unrefuted); (5) DI, ASP.NET routes and EF mapping are structurally invisible to static analysis; (6) bounded contexts are not extractable; (7) inventory is not architecture - curation is the product.",
+      "rationale": "The seed architecture sketch selected Kuzu as the graph store and assumed an MCP surface that has since changed shape; the coordination spec relies on leases whose correctness properties the distributed-systems literature explicitly denies. Establishing this evidence before design means those three decisions are remade deliberately rather than discovered during implementation. The disconfirming research also reframes the project thesis into the form (code-derived views, code authoritative) that escapes four of the five historical failure modes of model-driven engineering.",
+      "artifacts": [
+        "docs/knowledge/index.md",
+        "docs/knowledge/code-knowledge-graphs/index.md",
+        "docs/knowledge/mcp-and-agent-integration/index.md",
+        "docs/knowledge/multi-agent-coordination/index.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "9065ea4f1e6a62139e340c271e14b99a9c4944e4",
+        "after": "9065ea4f1e6a62139e340c271e14b99a9c4944e4",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
       }
     }
   ]
