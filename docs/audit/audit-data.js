@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de",
-  "generated": "2026-08-23T22:41:33Z",
+  "project": "ai-de-ai-ide-spec",
+  "generated": "2026-08-24T13:23:21Z",
   "audit": [
     {
       "id": "al-0001",
@@ -85,6 +85,43 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0004",
+      "shortname": "specify-ai-native-ide",
+      "datetime": "2026-08-24T13:23:21Z",
+      "session": "6c940bbc-816b-41ed-a92a-0e954ac70a37",
+      "prompt": "create a specification (md and html) for my AI-IDE\n- use this proposal as the seed idea: \"C:\\Users\\malla\\Downloads\\ai-native-ide-architecture-sketch.md\"\n- key scenarios: visually understand implemented logical/as-built architecture; core data/domain models including class hierarchy and aggregate roots; data/process flow; cross-service/library/infrastructure dependencies; cross-agent coordination; repository knowledge as graph/hierarchy; rich-text staged prompts; audit logs; and work/task backlog across sessions and worktrees.\n- typical workflow: one or more Claude Code or GitHub Copilot sessions in terminal tabs, isolated worktrees, coordinated artifacts/graph updates, visual tabs for feedback, and rich-text prompt tabs.\n- reuse existing repositories and libraries where justified; take inspiration from VS Code and Eclipse while keeping code transient rather than the product.",
+      "summary": "Produced the AI-native IDE Markdown specification, dependency-free HTML reader, privacy review, decision note, execution plan, and derived Docs Explorer entries; independent review gates cleared the specification with pre-implementation proof conditions.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": "GitHub Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/ai-native-ide.md",
+        "docs/specs/ai-native-ide.html",
+        "docs/security/ai-native-ide-privacy-review.md",
+        "docs/plans/ai-native-ide-specification.md",
+        "docs/notes/ai-native-ide-specification-framing.md"
+      ],
+      "tags": [
+        "ai-native-ide",
+        "specification",
+        "privacy-review",
+        "agent-coordination"
+      ],
+      "outcome": "success",
+      "goal": "Produce a grounded Markdown and browsable HTML specification for the AI-IDE.",
+      "done_when": "The specification, privacy review, HTML reader, Docs Explorer index, validation evidence, and audit entry exist.",
+      "started_at": "2026-08-24T13:22:16Z",
+      "duration_seconds": 65.0,
+      "change": "cl-0003",
+      "git": {
+        "sha": "0427582ccd915c52c68f170703a64760b3a152bb",
+        "short": "0427582cc",
+        "branch": "docs/ai-ide-specification",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -138,6 +175,34 @@ window.AUDIT_DATA = {
         "after": "9065ea4f1e6a62139e340c271e14b99a9c4944e4",
         "branch": "main",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0003",
+      "datetime": "2026-08-24T13:23:21Z",
+      "session": "6c940bbc-816b-41ed-a92a-0e954ac70a37",
+      "kind": "spec",
+      "skill": "specify",
+      "title": "Specify AI-native IDE product boundary and user experience",
+      "prompt": "create a specification (md and html) for my AI-IDE\n- use this proposal as the seed idea: \"C:\\Users\\malla\\Downloads\\ai-native-ide-architecture-sketch.md\"\n- key scenarios: visually understand implemented logical/as-built architecture; core data/domain models including class hierarchy and aggregate roots; data/process flow; cross-service/library/infrastructure dependencies; cross-agent coordination; repository knowledge as graph/hierarchy; rich-text staged prompts; audit logs; and work/task backlog across sessions and worktrees.\n- typical workflow: one or more Claude Code or GitHub Copilot sessions in terminal tabs, isolated worktrees, coordinated artifacts/graph updates, visual tabs for feedback, and rich-text prompt tabs.\n- reuse existing repositories and libraries where justified; take inspiration from VS Code and Eclipse while keeping code transient rather than the product.",
+      "summary": "Defined a code-derived, provenance-labelled visual workspace with session coordination, prompt staging, audit inspection, privacy controls, and implementation spikes.",
+      "rationale": "The seed needs a testable product contract that preserves its user goals while deferring invalidated or unproven implementation choices to spikes.",
+      "artifacts": [
+        "docs/specs/ai-native-ide.md",
+        "docs/specs/ai-native-ide.html",
+        "docs/security/ai-native-ide-privacy-review.md"
+      ],
+      "tags": [
+        "ai-native-ide",
+        "specification",
+        "agent-coordination"
+      ],
+      "git": {
+        "before": "0427582ccd915c52c68f170703a64760b3a152bb",
+        "after": "0427582ccd915c52c68f170703a64760b3a152bb",
+        "branch": "docs/ai-ide-specification",
+        "pushed": null,
         "commits": []
       }
     }

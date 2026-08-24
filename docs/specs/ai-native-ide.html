@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI-native IDE — Product specification</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0f172a;
+      --panel: #172033;
+      --text: #e8edf7;
+      --muted: #b6c2d8;
+      --accent: #6ee7b7;
+      --border: #334155;
+      --warn: #fbbf24;
+      --code: #101827;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8fafc;
+        --panel: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --accent: #047857;
+        --border: #cbd5e1;
+        --warn: #92400e;
+        --code: #f1f5f9;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+      margin: 0;
+    }
+    a { color: var(--accent); }
+    header, main, footer { max-width: 1100px; margin: auto; padding: 1.5rem; }
+    header { border-bottom: 1px solid var(--border); }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.05; }
+    h2 { margin-top: 3rem; border-bottom: 1px solid var(--border); padding-bottom: .5rem; }
+    h3 { margin-top: 2rem; }
+    .lede { color: var(--muted); font-size: 1.15rem; max-width: 75ch; }
+    .status, .notice {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: .5rem;
+      margin: 1.5rem 0;
+      padding: 1rem;
+    }
+    .notice { border-left: .35rem solid var(--warn); }
+    nav ul { display: flex; flex-wrap: wrap; gap: .5rem 1rem; list-style: none; padding: 0; }
+    nav a { text-decoration: none; }
+    section { scroll-margin-top: 1rem; }
+    table { border-collapse: collapse; display: block; max-width: 100%; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: .6rem; text-align: left; vertical-align: top; }
+    th { background: color-mix(in srgb, var(--panel) 85%, var(--accent)); }
+    code { background: var(--code); border-radius: .2rem; padding: .1rem .3rem; }
+    .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+    .card { background: var(--panel); border: 1px solid var(--border); border-radius: .5rem; padding: 1rem; }
+    .tag { color: var(--accent); font-weight: 700; }
+    footer { color: var(--muted); border-top: 1px solid var(--border); margin-top: 3rem; }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="tag">PRODUCT SPECIFICATION · T2 · 2026-08-24</p>
+    <h1>AI-native IDE</h1>
+    <p class="lede">
+      A local-first workspace for directing coding agents across worktrees while inspecting
+      code-derived architecture, domain/data models, process flow, knowledge, audit history,
+      prompts, and coordinated work as linked visual evidence.
+    </p>
+    <p>
+      <a href="ai-native-ide.md">Canonical Markdown specification</a> ·
+      <a href="../security/ai-native-ide-privacy-review.md">Privacy review</a> ·
+      <a href="../knowledge/index.md">Grounding knowledge hub</a>
+    </p>
+    <nav aria-label="Specification sections">
+      <ul>
+        <li><a href="#functional">Functional</a></li>
+        <li><a href="#model">Domain model</a></li>
+        <li><a href="#ux">UX</a></li>
+        <li><a href="#ui">UI</a></li>
+        <li><a href="#governance">Governance</a></li>
+        <li><a href="#risks">Risks and handoff</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <aside class="notice">
+      <strong>Derived reading view.</strong> The linked Markdown document is the source of truth.
+      This HTML view makes the agreed problem, requirements, and gates readable without a Markdown
+      renderer; it does not define implementation architecture.
+    </aside>
+
+    <section id="functional">
+      <h2>Part A — Functional specification</h2>
+      <h3>Problem and core scenario</h3>
+      <p>
+        Multiple coding agents, terminals, worktrees, code artifacts, infrastructure files, and
+        audit records are currently disconnected. The product must let the operator inspect their
+        relationships without creating a hand-maintained architecture model.
+      </p>
+      <p>
+        In the core scenario, a technical lead selects a domain aggregate, traces it through
+        data/service/infrastructure relationships, identifies an affected worktree/session, inspects
+        the audit evidence, prepares feedback, and explicitly dispatches that reviewed prompt to the
+        intended ready session.
+      </p>
+      <div class="grid">
+        <article class="card">
+          <h3>In scope</h3>
+          <ul>
+            <li>Derived architecture, domain/class, ERM, flow, dependency, and knowledge views.</li>
+            <li>Worktree/session coordination, work-item board, audit explorer, and staged prompts.</li>
+            <li>Multiple terminal/visual/prompt tabs within a workspace.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Explicit non-goals</h3>
+          <ul>
+            <li>Replacing a source editor or hand-editing derived diagrams.</li>
+            <li>Perfect extraction of dynamic relationships.</li>
+            <li>Cloud synchronization, multi-user graph writes, or autonomous code changes.</li>
+            <li>Selecting storage, renderer, terminal, or extractor technology before spikes.</li>
+          </ul>
+        </article>
+      </div>
+
+      <h3>Required user outcomes</h3>
+      <table>
+        <thead><tr><th>Story</th><th>Observable outcome</th></tr></thead>
+        <tbody>
+          <tr><td>Implemented architecture</td><td>Filter, expand, and inspect code/infra relationships with provenance, confidence, and stale/failed refresh state.</td></tr>
+          <tr><td>Domain and data</td><td>Distinguish hierarchy, aggregate/entity/value-object classifications, ERM evidence, and missing/inferred joins.</td></tr>
+          <tr><td>Flow and impact</td><td>Show static and runtime flow differently; return bounded impact results with published limits and continuation.</td></tr>
+          <tr><td>Knowledge</td><td>Search and navigate source artifacts, knowledge, and audit decisions as distinct, source-backed information spaces.</td></tr>
+          <tr><td>Coordination</td><td>Show work intent separately from current evidence-derived state, session, agent, worktree, dependency, and freshness.</td></tr>
+          <tr><td>Prompt staging</td><td>Keep a revisioned rich-text draft until the user confirms an immutable revision and target session/generation.</td></tr>
+          <tr><td>Audit history</td><td>Read eligible audit entries with integrity/redaction/duration state; never turn missing information into a clean empty result.</td></tr>
+          <tr><td>Workspace tabs</td><td>Preserve tab identity/context and provide non-destructive recovery instead of silently retargeting a terminal or view.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="model">
+      <h2>Conceptual domain model</h2>
+      <p>
+        The model separates <strong>Workspace Registry</strong>, <strong>Evidence and
+        Projection</strong>, <strong>Agent Operations</strong>, <strong>Work Coordination</strong>,
+        and <strong>Audit Reading</strong> so source-derived truth, user intent, and audit evidence
+        cannot silently become the same thing.
+      </p>
+      <table>
+        <thead><tr><th>Aggregate / fact</th><th>Invariant</th></tr></thead>
+        <tbody>
+          <tr><td>Workspace Registry</td><td>Canonical repository/worktree membership is unique in the workspace and rejects path-escaped membership.</td></tr>
+          <tr><td>Relationship Claim + Evidence Assertion</td><td>Every displayed relationship has attributable assertion evidence; no evidence renders as <code>not recorded</code>, not a claim.</td></tr>
+          <tr><td>Agent Session</td><td>An active session has at most one active worktree reference at a time and has a generation-bound readiness state.</td></tr>
+          <tr><td>Prompt Draft + Delivery Receipt</td><td>One immutable prompt revision, workspace, target session generation, and dispatch key identify one delivery outcome.</td></tr>
+          <tr><td>Work Item + Work-State Assessment</td><td>Human work intent is distinct from an evidence-derived assessment; stale, unknown, and conflicted override success-shaped status.</td></tr>
+          <tr><td>Audit Entry / Derived View</td><td>Audit records are append-only source evidence; a view is rebuildable projection and never implementation truth.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="ux">
+      <h2>Part B — UX specification</h2>
+      <p>
+        The primary operator is an expert working under cognitive load. The experience is
+        <strong>dense, not cramped; calm, not passive; powerful, not opaque</strong>. Reading
+        evidence is parallel; composing and dispatching a prompt is serial and deliberate.
+      </p>
+      <div class="grid">
+        <article class="card"><h3>Workspace</h3><p>Repositories, worktrees, sessions, and health.</p></article>
+        <article class="card"><h3>Explore</h3><p>Architecture, Domain, Data, Flows, Dependencies, Knowledge.</p></article>
+        <article class="card"><h3>Coordinate</h3><p>Work board, claims, slices, conflicts.</p></article>
+        <article class="card"><h3>Compose</h3><p>Prompt drafts, context references, target session.</p></article>
+        <article class="card"><h3>Audit</h3><p>Timeline, prompts, responses, artifacts, decisions.</p></article>
+      </div>
+      <p>
+        Every flow has an explicit recovery path: source refresh can retry, inspect provenance, or
+        return to Explore; dispatch can revalidate, retarget, or preserve a draft and exit;
+        coordination can show no-match/conflict/write-failure states; audit and tabs preserve
+        identity when a source/session is unavailable.
+      </p>
+    </section>
+
+    <section id="ui">
+      <h2>Part C — UI specification</h2>
+      <p>
+        The shell uses the <strong>B1 Keyboard-Velocity GUI</strong> archetype because the dominant
+        job is rapid expert navigation across many sessions and evidence views. It embeds
+        spatial/graph and telemetry views where their jobs require them; it is not a generic
+        equal-weight dashboard.
+      </p>
+      <div class="status">
+        <strong>Archetype signature:</strong>
+        <code>Type:OLTP · Arch:SPA · Layout:MasterDetail · Density:Compact ·
+        Nav:CommandPalette+Sidebar · Input:KeyboardFirst+PrecisionPointer ·
+        A11y:WCAG_2.2_AA</code>
+      </div>
+      <ul>
+        <li><strong>Medium:</strong> Windows desktop workspace; Fluent 2 and Windows keyboard/focus conventions.</li>
+        <li><strong>Design system:</strong> <code>DESIGN.md</code> is a required design-gate artifact with token modes and measured AA contrast.</li>
+        <li><strong>States:</strong> every terminal, graph, work-board, prompt, audit, filter, command, and dialog surface has loading, empty, partial/stale, unavailable, error/retry, success, and long-content behavior where applicable.</li>
+        <li><strong>Accessibility:</strong> keyboard-first navigation, focus restoration, semantic graph/list equivalence, accessible names/roles/value changes, no color-only states, and NVDA/automated evidence before implementation approval.</li>
+        <li><strong>Performance:</strong> p95 selected-view render under 2 seconds; p95 node selection under 100ms; p95 filter update under 250ms on an approved benchmark corpus.</li>
+        <li><strong>AI honesty:</strong> prompt transfer distinguishes acknowledgement, observed agent activity, unknown downstream result, inferred content, and verified repository fact.</li>
+      </ul>
+    </section>
+
+    <section id="governance">
+      <h2>Security, privacy, and verification gates</h2>
+      <table>
+        <thead><tr><th>Gate</th><th>Required control</th></tr></thead>
+        <tbody>
+          <tr><td>Trust boundaries</td><td>Canonical path containment, safe terminal/renderer behavior, generation-bound prompt binding, default-deny MCP capabilities, bounded parsing, audit integrity, and dependency provenance.</td></tr>
+          <tr><td>Privacy</td><td>Workspace owner and repository-policy precedence; egress deny by default; source/audit classification before indexing; purpose-minimum retention/deletion; opaque allowlisted telemetry.</td></tr>
+          <tr><td>Indirect model egress</td><td>Session declares LocalOnly, ExternalProcessing, or UnknownProcessing. Unknown fails closed for rich prompt/context transfer; external processing requires provider/residency/retention/policy preview.</td></tr>
+          <tr><td>Verification</td><td>Versioned fixtures and deterministic oracles for every user story; red-first security/privacy/accessibility tests and benchmark results before implementation approval.</td></tr>
+        </tbody>
+      </table>
+      <p>
+        The linked privacy review adds the LINDDUN-lite data inventory, rights/deletion path,
+        unsafe-audit fail-closed rule, and future external-processing approval requirements.
+      </p>
+    </section>
+
+    <section id="risks">
+      <h2>Flagged risks and handoff</h2>
+      <ul>
+        <li>Graph storage, extractor fidelity, terminal hosting, prompt-editor fit, audit-reader contract, and scale are spike decisions.</li>
+        <li>Existing audit history may contain unsafe source content outside the IDE’s deletion reach.</li>
+        <li>Independent usability evidence beyond the product-owner workflow remains outstanding.</li>
+        <li>Implementation must attach red-first tests, mutation/benchmark evidence, a Proof Pack, component LINDDUN review, design tokens, contrast audit, review harness, and accessibility traces.</li>
+      </ul>
+      <p>
+        <strong>Handoff:</strong> proceed to <code>/define-architecture</code> only after the named
+        spikes are planned; no implementation choice is made by this specification.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    Source artifact: <a href="ai-native-ide.md">docs/specs/ai-native-ide.md</a>. This reader is
+    intentionally dependency-free and works over <code>file://</code>.
+  </footer>
+</body>
+</html>

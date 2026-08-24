@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-23T22:51:39Z",
+  "generated": "2026-08-24T13:22:51Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -220,6 +220,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "be6e45fbc8c0996b6187a5629cb19b515383d34e0e93ca3895c06b5e555176bc"
     },
     {
+      "id": "note-ai-native-ide-specification-framing",
+      "path": "docs/notes/ai-native-ide-specification-framing.md",
+      "title": "Decision note — AI-native IDE specification framing",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-20",
+      "reviewSuggested": [],
+      "summary": "Keeps the AI-native IDE specification technology-neutral while adopting code-derived views as its source-of-truth boundary and B1 Keyboard-Velocity as the workspace-shell interaction archetype.",
+      "tags": [
+        "ai-native-ide",
+        "derived-views",
+        "ui-archetype",
+        "specification"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "knowledge-hub",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fed122b81a2ada7b43fa99ebdbc73dd95c0d7036d4efd5a238dc4671f3957445"
+    },
+    {
       "id": "note-collectknowledge-session-2026-08-23",
       "path": "docs/notes/collectknowledge-session-2026-08-23.md",
       "title": "Decision note — /collectknowledge run, 2026-08-23",
@@ -367,6 +397,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
+    },
+    {
+      "id": "plan-ai-native-ide-specification",
+      "path": "docs/plans/ai-native-ide-specification.md",
+      "title": "Execution plan — AI-native IDE specification",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-20",
+      "reviewSuggested": [],
+      "summary": "A bounded execution graph for producing the AI-native IDE specification. It keeps grounding, ecosystem research, adversarial review, graph derivation, and audit evidence as explicit gates.",
+      "tags": [
+        "plan",
+        "specification",
+        "ai-native-ide"
+      ],
+      "links": [
+        {
+          "to": "knowledge-hub",
+          "rel": "depends-on"
+        },
+        {
+          "to": "seed-ai-native-ide-sketch",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Graph",
+          "mermaid": "flowchart LR\n  G[Ground seed and knowledge] --> S[Write three-layer specification]\n  R[Research reusable candidates] --> S\n  S --> A[Adversarial specification review]\n  A -->|findings resolved| H[Render HTML and derive Docs Explorer]\n  H --> V[Validate graph, HTML, and audit record]"
+        }
+      ],
+      "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
     },
     {
       "id": "seed-agent-coordination-spec",
@@ -2397,6 +2462,102 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "17b157095cd8b11b9e03d19a0a94d42b70b50edbe5f7916698574b3cd1a362db"
+    },
+    {
+      "id": "privacy-review-ai-native-ide",
+      "path": "docs/security/ai-native-ide-privacy-review.md",
+      "title": "AI-native IDE — Privacy and data-governance review",
+      "type": "privacy-review",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-20",
+      "reviewSuggested": [],
+      "summary": "Defines the privacy posture for local AI-IDE workspace data: data inventory, purpose, retention, deletion, indirect model egress, and LINDDUN-lite dispositions. It is a pre-implementation gate for the AI-native IDE specification.",
+      "tags": [
+        "privacy",
+        "linddun",
+        "work-data",
+        "prompts",
+        "audit"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "documents"
+        },
+        {
+          "to": "knowledge-hub",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "92828e3f6bf2c4928d15db951dd166456c6c9521d770918f28dc8b6fae621399"
+    },
+    {
+      "id": "spec-ai-native-ide",
+      "path": "docs/specs/ai-native-ide.md",
+      "title": "AI-native IDE — Product specification",
+      "type": "spec",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-20",
+      "reviewSuggested": [],
+      "summary": "Specifies a local-first AI-native IDE for working across isolated coding-agent sessions while understanding the code-derived architecture, domain, data, process, dependencies, knowledge, audit history, and coordinated work as linked visual views.",
+      "tags": [
+        "ai-native-ide",
+        "architecture-visualization",
+        "code-knowledge-graph",
+        "agent-coordination",
+        "prompts"
+      ],
+      "links": [
+        {
+          "to": "knowledge-hub",
+          "rel": "refines"
+        },
+        {
+          "to": "seed-ai-native-ide-sketch",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "privacy-review-ai-native-ide",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Inspect an architectural relationship and provide feedback",
+          "mermaid": "flowchart TD\n  A[Open workspace] --> B{Workspace evidence healthy?}\n  B -->|yes| C[Choose Explore view and select node]\n  B -->|partial or stale| BS[Show source-specific stale status] --> C\n  C --> D[Inspect provenance, confidence and dependencies]\n  D --> E{Evidence sufficient?}\n  E -->|yes| F[Open related worktree/session and audit context]\n  E -->|no| G[Label unknown or request bounded refresh]\n  G --> H{Refresh succeeds?}\n  H -->|yes| D\n  H -->|no| I[Keep last known view and show recovery choices]\n  I --> K{Retry, inspect source, or cancel?}\n  K -->|retry| G\n  K -->|inspect source| L[Open source/provenance inspector] --> D\n  K -->|cancel| M([Return to Explore with context preserved])\n  F --> J[Create or open prompt draft]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Stage, review, and dispatch a prompt",
+          "mermaid": "flowchart TD\n  A[Create prompt draft] --> B[Compose rich-text prompt and attach bounded context references]\n  B --> C[Review target session]\n  C --> D{Target ready and in workspace?}\n  D -->|yes| E[Show exact revision and confirm transfer]\n  D -->|busy, disconnected, wrong workspace| F[Keep draft and show reason]\n  F --> C\n  E --> G[Dispatch]\n  G --> H{Delivery acknowledged?}\n  H -->|yes| I[Record audit receipt and open session]\n  H -->|no| J[Keep draft and record failed outcome]\n  J --> K{Retry, retarget, or cancel?}\n  K -->|retry| C\n  K -->|retarget| C\n  K -->|cancel| X([Preserve draft and exit])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Coordinate work across worktrees",
+          "mermaid": "flowchart TD\n  A[Open work board] --> B[Filter by repository, worktree, session, or agent]\n  B --> BN{Items match?}\n  BN -->|no| BX[Show no-match state and clear or change filter] --> B\n  BN -->|yes| C[Inspect work item evidence and dependencies]\n  C --> D{State current and authoritative?}\n  D -->|yes| E[Use state to plan feedback or next work slice]\n  D -->|advisory, stale, unknown| F[Show label and inspect source/audit evidence]\n  F --> G{Record new advisory claim?}\n  G -->|no| H[Return to board]\n  G -->|yes| GI{Write succeeds?}\n  GI -->|yes| H\n  GI -->|no| GF[Keep prior state and show write failure/retry] --> G\n  E --> H[Return to board]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Open a workspace, explore evidence, or recover",
+          "mermaid": "flowchart TD\n  A[Open workspace] --> B{Membership and local service available?}\n  B -->|yes| C{Evidence available?}\n  B -->|no| BR[Show contained path/session failure and recovery choices]\n  BR -->|retry after user repair| A\n  BR -->|cancel| X([Preserve context and exit])\n  C -->|yes| D[Search or browse Explore]\n  C -->|empty or unsupported| CE[Explain empty/unsupported source and link to source configuration]\n  CE --> D\n  D --> E[Select node, diagram, source, or knowledge item]\n  E --> F{Bounded data available?}\n  F -->|yes| G[Inspect source/provenance and navigate related item]\n  F -->|over limit or refresh failed| H[Show limits or stale snapshot with retry/cancel]\n  H -->|retry succeeds| G\n  H -->|cancel| D"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Search audit history and recover a tab/session",
+          "mermaid": "flowchart TD\n  A[Open Audit or a saved tab] --> B{Underlying source/session available?}\n  B -->|audit available| C[Filter timeline and select entry]\n  B -->|session/view ended or unavailable| R[Show preserved identity, last state, and recovery options]\n  R -->|reconnect or reopen succeeds| A\n  R -->|cancel| X([Keep layout; do not retarget])\n  C --> D{Entry integrity and redaction approved?}\n  D -->|yes| E[Show permitted detail and source links]\n  D -->|no, redacted, malformed, or inaccessible| F[Show state and safe recovery/filter action]\n  F --> C"
+        }
+      ],
+      "sourceSha256": "370bc0e12966b03c90091d5a3504b30a45b79ebee6efdf437a205af990886016"
     }
   ],
   "surfaces": [
@@ -2407,7 +2568,15 @@ window.DOCS_INDEX = {
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
+    },
+    {
+      "id": "surface-specs-ai-native-ide",
+      "path": "docs/specs/ai-native-ide.html",
+      "title": "AI-native IDE — Product specification",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "d3648867f2e65a13a7524e524aaebfee551519f2f8dd3fe22aab541add633c49"
+  "graphSha256": "41f0c6170cac1d23405c742cc31ed05377676bcb304c40aabdb8396d2ccfd7a4"
 };
