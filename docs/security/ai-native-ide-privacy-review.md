@@ -32,7 +32,8 @@ summary: >-
   or automatic cross-session context.
 - **Regulatory role:** controller/processor and workforce-notice obligations are **Flagged** for
   accountable human/legal confirmation before distribution outside the workspace owner’s personal
-  use.
+  use. Until that determination exists, external rich-context transfer is not a supported product
+  capability.
 
 ## Data inventory, minimization, retention, and rights
 
@@ -51,6 +52,28 @@ affected local projection/cache/export and its result. A request that reaches re
 an external agent provider, or a third-party backup is not silently claimed complete; it creates a
 human-owned remediation/escalation record.
 
+### Classification and retention defaults
+
+Every persisted field is classified `Public`, `Internal`, `Sensitive`, or `Restricted`; unknown is
+`Restricted` and denied from indexing, export, and context attachment. Source paths, symbols,
+ticket-like values, actor names, audit metadata, trace attributes, coordination author fields, and
+export columns have per-category allowlists. Raw source and terminal bodies are never allowed
+fields.
+
+| Category | Default / maximum retention | Purge |
+|---|---|---|
+| Rebuildable evidence assertions | 180 / 365 days | Daily expiry; current graph rebuilds from repository artifacts. |
+| Prompt drafts and command receipts | 90 / 365 days | Daily expiry plus owner deletion. |
+| Coordination facts | 90 / 365 days | Daily expiry plus owner deletion. |
+| Named trace observations | 30 / 90 days | Daily expiry plus owner deletion. |
+| Audit-reader metadata cache | 30 / 90 days | Daily expiry; no full-text cache. |
+| DPAPI local snapshots | 7 daily copies / 30 days | Rotation purges expired snapshot and WAL copies. |
+| Telemetry | Local-only, 30 / 90 days | Daily expiry; no remote exporter in v1. |
+
+Workspace deletion immediately prevents new writes, starts an idempotent purge across facts,
+projections, exports, WAL, snapshots, and telemetry, and returns an incomplete result for
+repository-owned or external copies.
+
 ## Agent-session and egress classification
 
 Each target session declares exactly one data-processing class before prompt transfer:
@@ -58,15 +81,19 @@ Each target session declares exactly one data-processing class before prompt tra
 | Class | Meaning | Transfer rule |
 |---|---|---|
 | `LocalOnly` | Prompt is processed on the device and does not invoke an external provider. | Permitted after normal workspace/session/revision confirmation. |
-| `ExternalProcessing` | The session may send prompt content to an external provider. | UI displays configured provider, model, residency, retention/training posture, and repository-policy approval. Transfer is blocked unless all are known and the user confirms the preview. |
+| `ExternalProcessing` | The session may send prompt content to an external provider. | Future capability only. Version 1 blocks rich transfer; a later UI must display configured provider, model, residency, retention/training posture, and repository-policy approval before transfer. |
 | `UnknownProcessing` | The product cannot establish the session’s downstream processing posture. | Rich prompt/context transfer is blocked. The user may open the terminal and work there without the IDE silently injecting context. |
 
 The initial product remains **direct-egress deny by default**. It does not call model providers or
-attach derived data to a model. External-processing configuration is an explicit governed
-exception, not a property inferred from an executable name. The processing class must come from a
-trusted configuration/attestation source, be revalidated immediately before every transfer, and
-be invalidated on session generation, executable, or relevant configuration change. An
-unverifiable or stale attestation is downgraded to `UnknownProcessing` and fails closed.
+attach derived data to a model. Version 1 supports `LocalOnly` rich prompt transfer only. A user
+may independently operate an externally processing terminal, but AI-DE does not inject rich
+workspace context into it. External-processing configuration is a future governed capability, not
+a property inferred from an executable name. It requires a human-approved provider record covering
+purpose/basis, permitted data classes, processor/subprocessor role, residency/transfer mechanism,
+training posture, retention, deletion/rights path, and repository-policy authorization. Its
+processing attestation must be trusted, revalidated immediately before transfer, and invalidated on
+session generation, executable, or relevant configuration change. An unverifiable or stale
+attestation is downgraded to `UnknownProcessing` and fails closed.
 
 ## Audit-source safety
 
@@ -103,8 +130,9 @@ Before implementation approval:
    terminal capture, export, and telemetry; observe each control fail before the fix.
 3. Demonstrate workspace export/deletion and derived-data/cache purge against a controlled
    workspace; record any repository-history or third-party limitation as incomplete.
-4. For every `ExternalProcessing` session, verify the provider/model/residency/training-retention
-   record and repository-policy approval; unknown fields fail closed.
+4. Before enabling the future `ExternalProcessing` capability, verify the
+   provider/model/residency/training-retention record and repository-policy approval; unknown
+   fields fail closed.
 
 ## Residual risks
 

@@ -12,6 +12,7 @@ links:
 review-by: 2026-11-21
 review-suggested:
   - { by: knowledge-hub, on: 2026-08-23, reason: "New domain knowledge base established; four findings change prior architecture assumptions (Kuzu archived, MCP stateless, lease fencing gap, thesis framing)" }
+  - { by: architecture, on: 2026-08-25, reason: "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture" }
 summary: >-
   The originating design sketch for an AI-native IDE ("Atlas"): a thin WPF shell hosting
   agent terminals and WebView2 panes over a local daemon whose Kuzu graph, built by

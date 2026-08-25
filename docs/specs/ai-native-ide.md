@@ -12,7 +12,8 @@ links:
   - { to: architecture, rel: relates-to }
   - { to: privacy-review-ai-native-ide, rel: depends-on }
 review-by: 2027-02-20
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-08-25, reason: "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture" }
 summary: >-
   Specifies a local-first AI-native IDE for working across isolated coding-agent sessions while
   understanding the code-derived architecture, domain, data, process, dependencies, knowledge,
@@ -170,7 +171,7 @@ derived from coordination evidence. A **coordination claim** is advisory, never 
 | Value object | Evidence Origin / Verification Status | Non-overlapping classifications of acquisition and validation. |
 | Aggregate | **Agent Session** (root: Agent Session) | Owns the session lifecycle and its current worktree-membership reference. **Invariant:** at one moment, an active session references zero or one active worktree; readiness is an attributed session-generation state, not a name match. |
 | Aggregate | **Prompt Draft** (root: Prompt Draft) | Owns immutable revisions and dispatch attempts. **Invariant:** a delivery attempt binds exactly one immutable revision, workspace, target session identity/generation, and user dispatch key. A Prompt Revision’s grain is one saved revision of one draft at one user-recorded moment; correction creates a later revision and preserves the former revision’s identity. |
-| Entity | Delivery Receipt | **Grain:** one delivery outcome for one dispatch key. Its outcome is `Acknowledged`, `Rejected`, `TimedOut`, `Failed`, or `NotRecorded`; duplicate use of the same key cannot create a second delivery. |
+| Entity | Delivery Receipt | **Grain:** one daemon command outcome for one dispatch key. Its outcome is `PtyWriteAccepted`, `Rejected`, `TimedOut`, `Failed`, `DeliveryUnknown`, or `NotRecorded`; duplicate use of the same key cannot create a second command receipt. `PtyWriteAccepted` is terminal-byte acceptance, not agent acceptance. Terminal-stream delivery is one at-most-once attempt, so an unknown outcome requires explicit human-confirmed resend. |
 | Aggregate | **Work Item** (root: Work Item) | Owns the declared slice, dependencies, and assigned identity references. **Invariant:** user intent is distinct from a derived Work-State Assessment; no stored “done” field may override evidence. |
 | Entity | Work-State Assessment | **Grain:** one assessment of one work item from a named evidence set at one time. It is `Planned`, `Active`, `Blocked`, `Done`, `Conflicted`, `Stale`, or `Unknown`; `Conflicted`, `Stale`, and `Unknown` override a success-shaped status. |
 | Entity | Coordination Claim | **Grain:** one append-only advisory assertion by one session/user about one work-item or resource scope at one recorded time. It identifies author, workspace, evidence basis, validity/expiry, and optional superseded claim; it cannot itself exclude other work. |
@@ -289,10 +290,12 @@ prepare feedback and send the reviewed content to the intended ready CLI session
 - **Given** I confirm a transfer to a ready session, **when** dispatch completes, **then** the
   product records the prompt revision, target session, timestamp, and delivery outcome in the
   audit trail without exposing credentials or unrelated prompt content.
-- **Given** a session changes generation, becomes unavailable, acknowledges late, or receives a
+- **Given** a session changes generation, becomes unavailable, a supported adapter reports
+  `AgentAccepted` late, or receives a
   repeated delivery request, **when** dispatch is attempted or retried, **then** the product shall
   revalidate the immutable draft-revision/workspace/session-generation binding and return the
-  documented idempotent delivery outcome without silently retargeting or duplicating the prompt.
+  documented idempotent command outcome without silently retargeting. A `DeliveryUnknown` outcome
+  shall never trigger an automatic terminal resend; a human must confirm a new dispatch command.
 
 ### US-7 — Inspect audit history
 
@@ -347,7 +350,7 @@ failures and outliers. No benchmark result is represented as verified before tha
 
 | Attribute | Requirement |
 |---|---|
-| Performance efficiency | The first supported vertical slice shall refresh an affected derived view with p95 under 2 seconds after a single-file supported C# change on the agreed reference repository. Larger-graph navigation budgets are **Flagged** until the graph-store spike measures a representative corpus. |
+| Performance efficiency | Phase 1 shall refresh an affected fixture-derived view with p95 under 500ms on its approved corpus. Phase 2 shall refresh an affected supported C# view with p95 under 2 seconds on the agreed reference repository. Larger-graph navigation budgets are **Flagged** until the graph-store spike measures a representative corpus. |
 | Reliability | A failed extraction, trace import, terminal connection, or audit read shall preserve the last successfully identified view state and visibly identify it as stale or failed. |
 | Security | Workspace-local credentials, terminal tokens, and agent environment secrets shall not be rendered, indexed, written into prompts, or recorded in views/audit surfaces. Prompt dispatch is user-confirmed. |
 | Usability | A keyboard-capable primary user shall reach any core visual surface, the work board, audit history, and prompt draft from the workspace navigation without relying on a pointer-only interaction. |
@@ -414,8 +417,8 @@ mitigation has a negative test observed red before the implementation is accepte
 The initial product is **egress-deny by default**: it does not invoke a model provider or send
 workspace-derived context outside the local device. Launching or transferring a user-authored
 prompt to a locally selected agent session is explicit user action only after the session is
-classified as `LocalOnly` or approved `ExternalProcessing`. `UnknownProcessing` blocks rich
-prompt/context transfer. The linked [privacy review](../security/ai-native-ide-privacy-review.md)
+classified as `LocalOnly`. `ExternalProcessing` and `UnknownProcessing` block rich
+prompt/context transfer in version 1. The linked [privacy review](../security/ai-native-ide-privacy-review.md)
 defines workspace-owner authority, repository-policy precedence, retention/deletion/export
 rights, LINDDUN dispositions, and source-audit fail-closed behavior. Existing repository audit
 logs may themselves contain unsafe historical content; the IDE shall not treat their existence as
@@ -691,8 +694,8 @@ flowchart TD
   provenance, navigation actions, and result-limit state.
 - A user sees a prompt draft’s exact target session identity/generation, workspace, final
   revision, and dispatch consequence before confirmation; the product distinguishes
-  `Acknowledged`, observed agent activity, unknown downstream outcome, inferred content, and
-  verified repository fact.
+  `PtyWriteAccepted`, authenticated `AgentAccepted` (only where a supported adapter exists),
+  unknown downstream outcome, inferred content, and verified repository fact.
 - The interface renders `not recorded`, `Inferred`, `Observed`, `stale`, and `redacted` as
   semantically distinct visible states without relying on color alone.
 

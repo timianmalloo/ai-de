@@ -11,7 +11,8 @@ links:
   - { to: seed-ai-native-ide-sketch, rel: relates-to }
   - { to: architecture, rel: relates-to }
 review-by: 2026-11-21
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-08-25, reason: "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture" }
 summary: >-
   Evidence base for a Windows shell hosting agent terminals beside web-rendered visual panes:
   WPF on .NET 10 versus WinUI 3, the ConPTY foundation, the unsupported terminal control, the

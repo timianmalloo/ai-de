@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-ai-ide-spec",
-  "generated": "2026-08-24T13:23:21Z",
+  "project": "ai-de-ai-ide-architecture",
+  "generated": "2026-08-25T22:53:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -122,6 +122,44 @@ window.AUDIT_DATA = {
         "branch": "docs/ai-ide-specification",
         "pushed": null
       }
+    },
+    {
+      "id": "al-0005",
+      "shortname": "define-architecture-ai-native-ide",
+      "datetime": "2026-08-25T22:53:28Z",
+      "session": "6c940bbc-816b-41ed-a92a-0e954ac70a37",
+      "prompt": "go ahead and merge the PR\nthe /define-architecture on the ai-ide-specification",
+      "summary": "Merged the specification to main and produced the AI-DE architecture, seven ADRs, conceptual data model, threat/privacy/release plans, spike evidence, vertical phasing, and independent council verdicts.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": "GitHub Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/design/conceptual-model.md",
+        "docs/security/ai-native-ide-threat-model.md",
+        "docs/security/ai-native-ide-privacy-review.md",
+        "docs/release/ai-native-ide-release-plan.md",
+        "docs/plans/ai-native-ide-architecture.md"
+      ],
+      "tags": [
+        "ai-native-ide",
+        "architecture",
+        "spikes",
+        "council"
+      ],
+      "outcome": "success",
+      "goal": "Merge the reviewed specification, then define the complete AI-IDE architecture and ADRs in an isolated worktree.",
+      "done_when": "Main contains the specification commit and the architecture artifacts are independently reviewed, indexed, validated, and audited.",
+      "started_at": "2026-08-25T22:20:21Z",
+      "duration_seconds": 1987.0,
+      "change": "cl-0004",
+      "git": {
+        "sha": "bc50c41853fb2314a783709c58eb0f065f48c402",
+        "short": "bc50c4185",
+        "branch": "architecture/ai-native-ide",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -202,6 +240,45 @@ window.AUDIT_DATA = {
         "before": "0427582ccd915c52c68f170703a64760b3a152bb",
         "after": "0427582ccd915c52c68f170703a64760b3a152bb",
         "branch": "docs/ai-ide-specification",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0004",
+      "datetime": "2026-08-25T22:53:28Z",
+      "session": "6c940bbc-816b-41ed-a92a-0e954ac70a37",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Adopt local workspace daemon and fact-store architecture for AI-DE",
+      "prompt": "go ahead and merge the PR\nthe /define-architecture on the ai-ide-specification",
+      "summary": "Defined a WPF shell over a per-workspace daemon, SQLite dimensions and append-only evidence facts, bounded MCP tools, ConPTY-owned sessions, threat/privacy/release plans, ADRs, and vertical phases.",
+      "rationale": "The merged specification requires provenance-labelled derived views, bounded agent coordination, local-first data protection, and a durable representation that does not depend on the archived Kuzu store.",
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/design/conceptual-model.md",
+        "docs/security/ai-native-ide-threat-model.md",
+        "docs/security/ai-native-ide-privacy-review.md",
+        "docs/release/ai-native-ide-release-plan.md",
+        "docs/adr/0001-derived-evidence-views.md",
+        "docs/adr/0002-workspace-fact-store.md",
+        "docs/adr/0003-workspace-daemon-boundary.md",
+        "docs/adr/0004-mcp-tool-boundary.md",
+        "docs/adr/0005-terminal-runtime-boundary.md",
+        "docs/adr/0006-terminal-delivery-semantics.md",
+        "docs/adr/0007-agent-session-adapter.md"
+      ],
+      "tags": [
+        "ai-native-ide",
+        "architecture",
+        "mcp",
+        "sqlite",
+        "conpty"
+      ],
+      "git": {
+        "before": "bc50c41853fb2314a783709c58eb0f065f48c402",
+        "after": "bc50c41853fb2314a783709c58eb0f065f48c402",
+        "branch": "architecture/ai-native-ide",
         "pushed": null,
         "commits": []
       }

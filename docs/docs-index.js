@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-24T13:22:51Z",
+  "generated": "2026-08-25T22:53:17Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -196,28 +196,399 @@ window.DOCS_INDEX = {
   },
   "artifacts": [
     {
-      "id": "architecture",
-      "path": "docs/architecture.md",
-      "title": "AI-DE Architecture",
-      "type": "architecture",
-      "status": "accepted",
+      "id": "adr-0001-derived-evidence-views",
+      "path": "docs/adr/0001-derived-evidence-views.md",
+      "title": "ADR-0001 — Use derived evidence views, not editable models",
+      "type": "adr",
+      "status": "proposed",
       "owner": "@timianmalloo",
-      "phase": "",
-      "reviewBy": "2027-02-19",
-      "reviewSuggested": [],
-      "summary": "How AI-DE is put together today: one .NET 10 WPF executable with a small MVVM seam, one xUnit test project, and two GitHub Actions workflows.",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
+      "summary": "AI-DE stores attributable evidence and generates architecture/model/flow views from it. Users may save view preferences but cannot edit a rendered view into source truth.",
       "tags": [
         "architecture",
+        "provenance",
+        "diagrams",
+        "source-of-truth"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "knowledge-hub",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "40db6a8612aa054505e8f7d7045ab919cd6650b4a0f1bfd22eef6491c35a0dfb"
+    },
+    {
+      "id": "adr-0002-workspace-fact-store",
+      "path": "docs/adr/0002-workspace-fact-store.md",
+      "title": "ADR-0002 — Use SQLite dimensions and append-only facts per workspace",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
+      "summary": "Each workspace uses an embedded SQLite operational store with stable dimensions, append-only evidence/coordination/audit facts, and rebuildable current-state caches rather than an archived graph database dependency.",
+      "tags": [
+        "architecture",
+        "sqlite",
+        "facts",
+        "dimensions",
+        "provenance"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-code-knowledge-graphs",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9f25c30c01cc1e28cb70b874eed442c5087419fbd88bb0b5147ed4c2e67de3ba"
+    },
+    {
+      "id": "adr-0003-workspace-daemon-boundary",
+      "path": "docs/adr/0003-workspace-daemon-boundary.md",
+      "title": "ADR-0003 — Run one local daemon per workspace",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
+      "summary": "A workspace-scoped local daemon owns durable facts, scheduling, query/projection, policy, and tool authorization so the WPF shell and agent sessions do not share an unbounded global state.",
+      "tags": [
+        "architecture",
+        "daemon",
+        "workspace",
+        "isolation"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f4fb7a7cf32f2c216949cd01464c645fc8eb1dcfd4658a1e92b3a2da0005699b"
+    },
+    {
+      "id": "adr-0004-mcp-tool-boundary",
+      "path": "docs/adr/0004-mcp-tool-boundary.md",
+      "title": "ADR-0004 — Expose bounded, typed MCP tools with deterministic authorization",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
+      "summary": "The workspace daemon exposes bounded read and narrowly-authorized annotation tools over MCP; every request is self-contained, context-bound, audited, and protected from untrusted tool output and default HTTP-origin weaknesses.",
+      "tags": [
+        "architecture",
+        "mcp",
+        "tools",
+        "security",
+        "agents"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-mcp-agent-integration",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e425e10981499fc5c6151be867a0888ba920fb436e23cc0f78ff3e5f25174ec0"
+    },
+    {
+      "id": "adr-0005-terminal-runtime-boundary",
+      "path": "docs/adr/0005-terminal-runtime-boundary.md",
+      "title": "ADR-0005 — Own ConPTY lifecycle behind a renderer-independent runtime",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
+      "summary": "Terminal process and ConPTY lifecycle belong to a stable runtime contract; WPF terminal controls and web renderers are replaceable views that may not own agent session state.",
+      "tags": [
+        "architecture",
+        "terminal",
+        "conpty",
+        "sessions",
         "wpf"
       ],
       "links": [
         {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-ai-native-ide-shell",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ff962af02f8bfdf31218fea81e132c01c06c1c5d612ac5dfd85dc83156952f6d"
+    },
+    {
+      "id": "adr-0006-terminal-delivery-semantics",
+      "path": "docs/adr/0006-terminal-delivery-semantics.md",
+      "title": "ADR-0006 — Treat terminal prompt delivery as an at-most-once attempt",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
+      "summary": "Prompt transfer makes one at-most-once terminal-stream attempt because a terminal write and daemon receipt cannot share a transaction. Unknown delivery blocks automatic resend and requires explicit user confirmation.",
+      "tags": [
+        "architecture",
+        "terminal",
+        "prompts",
+        "idempotency",
+        "delivery"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f84ce75b12703071e6c0b7e9827c433e79081c5822416a8abfdaaf9f8a3aa23d"
+    },
+    {
+      "id": "adr-0007-agent-session-adapter",
+      "path": "docs/adr/0007-agent-session-adapter.md",
+      "title": "ADR-0007 — Separate terminal readiness from agent acceptance",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
+      "summary": "V1 reports only PTY/terminal readiness and paste acceptance. It does not claim an external coding agent accepted a prompt until a supported agent-side adapter provides an authenticated, versioned acknowledgement.",
+      "tags": [
+        "architecture",
+        "agents",
+        "terminal",
+        "prompts",
+        "contracts"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "42884af3ece2ffa2df39d5b1ba15b9e9fe06f6409af8bd015984253e88d763b6"
+    },
+    {
+      "id": "architecture",
+      "path": "docs/architecture.md",
+      "title": "AI-DE Architecture",
+      "type": "architecture",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [],
+      "summary": "Defines AI-DE as a WPF workspace shell over a per-workspace local daemon that builds provenance-labelled facts from repository artifacts, serves derived visual projections and bounded MCP tools, and keeps agent/model capability outside deterministic source truth.",
+      "tags": [
+        "architecture",
+        "ai-native-ide",
+        "wpf",
+        "workspace-daemon",
+        "code-knowledge-graph",
+        "mcp"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "knowledge-hub",
+          "rel": "depends-on"
+        },
+        {
           "to": "audit-log",
+          "rel": "relates-to"
+        },
+        {
+          "to": "privacy-review-ai-native-ide",
+          "rel": "depends-on"
+        },
+        {
+          "to": "conceptual-model-ai-native-ide",
+          "rel": "depends-on"
+        },
+        {
+          "to": "threat-model-ai-native-ide",
+          "rel": "depends-on"
+        },
+        {
+          "to": "release-plan-ai-native-ide",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0001-derived-evidence-views",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0003-workspace-daemon-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0004-mcp-tool-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0006-terminal-delivery-semantics",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0007-agent-session-adapter",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "System shape",
+          "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Workspace Shell]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Daemon[Workspace Daemon]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Shell --> Session\n  Shell --> View\n  Shell <--> Daemon\n  Session <--> Agents\n  Session --> Daemon\n  View <--> Daemon\n  Repos --> Ingest\n  Ingest --> Extractors\n  Extractors --> Daemon\n  Daemon --> Registry\n  Daemon --> Store\n  Daemon --> Projection\n  Daemon --> Audit\n  Daemon --> Coordination\n  Mcp <--> Daemon\n  Agents <--> Mcp"
+        }
+      ],
+      "sourceSha256": "f6ccf4d624fb30824300dfc3a640d50dae7bc399a27d6b46bc8a7668138305d5"
+    },
+    {
+      "id": "note-ai-native-ide-architecture-review-depth",
+      "path": "docs/notes/ai-native-ide-architecture-review-depth.md",
+      "title": "Decision note — AI-native IDE architecture review depth",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
+      "summary": "The architecture review exceeded its two-pass plan cap because independent hard-veto findings exposed missing storage, delivery, trust, privacy, and release contracts. The cap was treated as a defect signal; the contracts were completed rather than the gate being reduced.",
+      "tags": [
+        "architecture",
+        "review",
+        "execution-graph",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-ai-native-ide-architecture",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "be6e45fbc8c0996b6187a5629cb19b515383d34e0e93ca3895c06b5e555176bc"
+      "sourceSha256": "db0a5c6dd8132f0ee57a016ff459be8a1365c4f61c9288c4c82bebbe951c2b99"
     },
     {
       "id": "note-ai-native-ide-specification-framing",
@@ -273,6 +644,53 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "7512d0c42ae281d521239e2d341d6a2c1af30a4551b7963e559a931dcfa76675"
+    },
+    {
+      "id": "conceptual-model-ai-native-ide",
+      "path": "docs/design/conceptual-model.md",
+      "title": "AI-DE conceptual domain model",
+      "type": "design",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
+      "summary": "Defines the bounded contexts, aggregate invariants, fact grains, history rules, and identity-only relationships used by the AI-DE workspace fact store.",
+      "tags": [
+        "ddd",
+        "domain-model",
+        "facts",
+        "workspace",
+        "agent-coordination"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "class",
+          "title": "Aggregates and invariants",
+          "mermaid": "classDiagram\n  class WorkspaceRegistry {\n    +WorkspaceId\n    +WorkspaceEpoch\n    +RepositoryMembership\n    +WorktreeMembership\n    invariant one canonical membership per opened identity\n  }\n  class ScopeSnapshot {\n    +ScopeId\n    +DesiredGeneration\n    +CommittedGeneration\n    invariant commit only current desired generation\n  }\n  class RelationshipClaim {\n    +ClaimId\n    invariant one or more attributable assertions\n  }\n  class PromptDraft {\n    +DraftId\n    invariant immutable revision and command binding\n  }\n  class AgentSession {\n    +SessionId\n    +Generation\n    invariant one active worktree reference\n  }\n  class WorkItem {\n    +WorkItemId\n    invariant intent differs from assessment\n  }\n  WorkspaceRegistry --> ScopeSnapshot : contains by identity\n  ScopeSnapshot --> RelationshipClaim : selects assertions\n  PromptDraft --> AgentSession : targets by identity\n  WorkItem --> AgentSession : associates by identity"
+        }
+      ],
+      "sourceSha256": "a474c3841ebab72b04f4d925cf3cad080ba7e819fe2a74b8ffb772f5813fdc5f"
     },
     {
       "id": "audit-log",
@@ -399,6 +817,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
     },
     {
+      "id": "plan-ai-native-ide-architecture",
+      "path": "docs/plans/ai-native-ide-architecture.md",
+      "title": "Execution plan — AI-native IDE architecture",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [],
+      "summary": "A bounded execution graph for resolving the AI-native IDE’s storage and MCP contracts, then producing an architecture, ADRs, adversarial review, and discoverable evidence.",
+      "tags": [
+        "plan",
+        "architecture",
+        "ai-native-ide",
+        "spikes"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "knowledge-hub",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Execution plan — AI-native IDE architecture",
+          "mermaid": "flowchart LR\n  M[Merged specification] --> G[Ground constraints]\n  G --> S1[SQLite fact-store spike]\n  G --> S2[MCP SDK spike]\n  S1 --> D[Set data and boundary decisions]\n  S2 --> D\n  D --> A[Write architecture and ADRs]\n  A --> R[Architect council]\n  R -->|findings resolved| V[Derive, validate, audit]"
+        }
+      ],
+      "sourceSha256": "e20f4a1aa4993fb75372a0f04d3de63303381ec76241f0775d3e92ddfe9e0375"
+    },
+    {
       "id": "plan-ai-native-ide-specification",
       "path": "docs/plans/ai-native-ide-specification.md",
       "title": "Execution plan — AI-native IDE specification",
@@ -432,6 +886,47 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
+    },
+    {
+      "id": "release-plan-ai-native-ide",
+      "path": "docs/release/ai-native-ide-release-plan.md",
+      "title": "AI-DE release, compatibility, and rollback plan",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
+      "summary": "Defines progressive desktop release rings, default-off migration-dependent features, version compatibility, Windows/DPAPI parity, rollback handling, and Phase-1 supply-chain/CI gates for AI-DE.",
+      "tags": [
+        "release",
+        "rollback",
+        "migration",
+        "compatibility",
+        "supply-chain"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "conceptual-model-ai-native-ide",
+          "rel": "depends-on"
+        },
+        {
+          "to": "threat-model-ai-native-ide",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c6d8f6ca4e8896ef7c8169785f3c2e9f45a7012ec9bb580df466e7cf1d204da2"
     },
     {
       "id": "seed-agent-coordination-spec",
@@ -483,6 +978,11 @@ window.DOCS_INDEX = {
           "by": "knowledge-hub",
           "on": "2026-08-23",
           "reason": "New domain knowledge base established; four findings change prior architecture assumptions (Kuzu archived, MCP stateless, lease fencing gap, thesis framing)"
+        },
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
         }
       ],
       "summary": "The originating design sketch for an AI-native IDE (\"Atlas\"): a thin WPF shell hosting agent terminals and WebView2 panes over a local daemon whose Kuzu graph, built by artifact-only extractors, is served to agents via MCP and rendered as derived diagrams.",
@@ -503,7 +1003,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e2b96b600588a8bd4df6608b151691bb631fffdf9b5251695f2c6033cd7fd1aa"
+      "sourceSha256": "c04d25afbeb930496cf97e78fe6b92e05aab38e5e5d8523933e8709ee16e19d7"
     },
     {
       "id": "kb-ai-native-ide-shell",
@@ -514,7 +1014,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
       "summary": "Evidence base for a Windows shell hosting agent terminals beside web-rendered visual panes: WPF on .NET 10 versus WinUI 3, the ConPTY foundation, the unsupported terminal control, the WebView2 process model, and OSC 133 as the agent signalling channel.",
       "tags": [
         "wpf",
@@ -540,7 +1046,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d0ba41e999adc6e1b9bef87b4223e250a811f76846d6e1192ce7adf445f35dbd"
+      "sourceSha256": "41e5f38d21389905b10b413b210d587496aba0d15d63bf6dffec044d12bca343"
     },
     {
       "id": "kb-azure-cloud-architecture",
@@ -2437,7 +2943,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
       "summary": "The synthesis over ten sourced domain knowledge bases for AI-DE — an AI-native IDE built on a code knowledge graph — including the four findings that change the seed architecture and the ranked list of spikes that would settle the rest.",
       "tags": [
         "knowledge-base",
@@ -2461,7 +2973,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "17b157095cd8b11b9e03d19a0a94d42b70b50edbe5f7916698574b3cd1a362db"
+      "sourceSha256": "8d3ab8b90f918be929ac080fcc9e3166ac9618a623a7efd56a1b437013bca0be"
     },
     {
       "id": "privacy-review-ai-native-ide",
@@ -2492,7 +3004,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "92828e3f6bf2c4928d15db951dd166456c6c9521d770918f28dc8b6fae621399"
+      "sourceSha256": "18ac5520bf0c1e49fe364bef4a64dba98753a69771a2dc7e6b8fd0158a09a475"
     },
     {
       "id": "spec-ai-native-ide",
@@ -2503,7 +3015,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-20",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
       "summary": "Specifies a local-first AI-native IDE for working across isolated coding-agent sessions while understanding the code-derived architecture, domain, data, process, dependencies, knowledge, audit history, and coordinated work as linked visual views.",
       "tags": [
         "ai-native-ide",
@@ -2557,14 +3075,55 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[Open Audit or a saved tab] --> B{Underlying source/session available?}\n  B -->|audit available| C[Filter timeline and select entry]\n  B -->|session/view ended or unavailable| R[Show preserved identity, last state, and recovery options]\n  R -->|reconnect or reopen succeeds| A\n  R -->|cancel| X([Keep layout; do not retarget])\n  C --> D{Entry integrity and redaction approved?}\n  D -->|yes| E[Show permitted detail and source links]\n  D -->|no, redacted, malformed, or inaccessible| F[Show state and safe recovery/filter action]\n  F --> C"
         }
       ],
-      "sourceSha256": "370bc0e12966b03c90091d5a3504b30a45b79ebee6efdf437a205af990886016"
+      "sourceSha256": "7573c152efd959457ca20e368dff1459044702e0efb06934b82e910255504522"
+    },
+    {
+      "id": "threat-model-ai-native-ide",
+      "path": "docs/security/ai-native-ide-threat-model.md",
+      "title": "AI-DE threat model",
+      "type": "threat-model",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-21",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        }
+      ],
+      "summary": "Disposes STRIDE threats across workspace IPC, filesystem identity, terminal and rendering content, prompt delivery, MCP, audit evidence, and dependency acquisition with required negative controls.",
+      "tags": [
+        "stride",
+        "security",
+        "mcp",
+        "terminal",
+        "workspace"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "privacy-review-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6841360f4462c8164d4128a2a2513241bdac7a9cf2dbc1cbcf97c18856cbf866"
     }
   ],
   "surfaces": [
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de — Audit & Change Log",
+      "title": "ai-de-ai-ide-spec — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -2578,5 +3137,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "41f0c6170cac1d23405c742cc31ed05377676bcb304c40aabdb8396d2ccfd7a4"
+  "graphSha256": "ffced45bc6cb922ef5069829c8fe011fca782033ccd76160bd50bb81cfbd554d"
 };

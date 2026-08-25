@@ -11,7 +11,8 @@ links:
   - { to: seed-ai-native-ide-sketch, rel: documents }
   - { to: seed-agent-coordination-spec, rel: documents }
 review-by: 2026-11-21
-review-suggested: []
+review-suggested:
+  - { by: architecture, on: 2026-08-25, reason: "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture" }
 summary: >-
   The synthesis over ten sourced domain knowledge bases for AI-DE — an AI-native IDE built on a
   code knowledge graph — including the four findings that change the seed architecture and the
