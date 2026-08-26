@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-layout-persistence-and-compaction",
-  "generated": "2026-08-26T19:14:55Z",
+  "project": "ai-de-feat-test-run-integrity-gate",
+  "generated": "2026-08-26T19:26:10Z",
   "audit": [
     {
       "id": "al-0001",
@@ -503,6 +503,24 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.Core/Store/StoreCompactor.cs",
         "src/AiDe.App/Workbench/LayoutPersistence.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0026",
+      "shortname": "implement-test-run-integrity-gate",
+      "datetime": "2026-08-26T19:26:10Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "do the next action DC-012's control",
+      "summary": "Built tools/verify-test-run.py: requires results to exist, outcome Completed, and executed count >= committed baseline. Wired into CI replacing bare dotnet test. Observed RED by reproducing the original crash - bare dotnet test said 'Passed! 27', gate said SHORTFALL 27/54 exit 1. DC-012 uncontrolled -> controlled",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-test-run.py",
+        ".github/workflows/build.yml"
       ],
       "tags": [],
       "outcome": "success"

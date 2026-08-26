@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T19:14:54Z",
+  "generated": "2026-08-26T19:26:10Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1209,7 +1209,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2d8130323a0f660b8de62ff9febd596d933f56397927d70317c2176539b59acd"
+      "sourceSha256": "3abddec26586a394aa72a7b43f9d6148b662141a4b1c2ae804462acec830a958"
     },
     {
       "id": "lens-code-doc-join",
@@ -3890,7 +3890,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-spike-dpi-and-ganged-resize — Audit & Change Log",
+      "title": "ai-de-feat-layout-persistence-and-compaction — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3912,5 +3912,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "06b407968d5d3cb6fd78838b52292d092caf06ca250932d07d5c3ece41f3b836"
+  "graphSha256": "6f62209a8cf54f41417f4674fe0c6899b9ef5f3cb9c368a6837e5b4299d900f6"
 };

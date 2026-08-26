@@ -485,6 +485,9 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 
+# Test-run integrity gate output (the baseline in tools/ IS committed; results are not)
+artifacts/test-results/
+
 # AI-Forward Pack
 *.jsonl.lock
 docs/audit/.run-starts.json

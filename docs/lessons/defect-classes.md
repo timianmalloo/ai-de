@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 2 · uncontrolled 1
+**Status counts:** controlled 10 · partially-controlled 2 · uncontrolled 0
 **Recurrence since last review:** 1 — DC-008, whose first control was scoped to one test project when the cause was not project-specific (CI4: a second occurrence means the control was wrong, not that someone was careless).
 
 ---
@@ -167,7 +167,17 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 - **Instances:** 2026-08-26 — `dotnet test` printed `Passed! - Failed: 0, Passed: 27` while the host
   had crashed and 21 tests never executed. Caught only because 48 had been observed earlier in the
   session; with no prior number it would have shipped.
-- **Control:** `NONE YET.` The fix is an expected-minimum test count in CI, or parsing
-  `Total tests: Unknown` / `Test Run Aborted` from the runner output and failing on it. Until then the
-  standing habit is the control: **compare the test count to the previous run, every run.**
-- **Status:** `uncontrolled`
+- **Control:** `tools/verify-test-run.py`, run in CI in place of a bare `dotnet test`
+  (`.github/workflows/build.yml`). Per project it requires: a result file exists at all (a host that
+  dies early writes none), the run reports itself `Completed`, no failures/errors/aborts/timeouts,
+  and **the executed count meets a committed baseline** (`tools/expected-test-counts.json`). The
+  count check is the one that catches this class, because an aborted run's counters are *internally
+  consistent* — they simply describe fewer tests than exist.
+  **Observed failing 2026-08-26** by reproducing the original crash (re-enabling test
+  parallelisation): bare `dotnet test` printed *"aborted"* and then
+  *"Passed! - Failed: 0, Passed: 27"*; the gate reported `**SHORTFALL** 27/54` and exited 1.
+- **Note on the same shape recurring during the fix:** verifying the gate's exit code through a
+  shell pipe (`python … | tail; echo $?`) reported 0 because `$?` carries `tail`'s status, not the
+  script's. Re-measured without the pipe: 1. A control is only as trustworthy as the measurement
+  that says it works — which is this class's own lesson, arriving one level up.
+- **Status:** `controlled`

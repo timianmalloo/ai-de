@@ -26,5 +26,23 @@ jobs:
       - name: Build
         run: dotnet build .\AiDe.sln --configuration Release --no-restore
 
-      - name: Test
-        run: dotnet test .\AiDe.sln --configuration Release --no-build
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # Not a bare `dotnet test`. That command prints "Passed!" for a run whose host CRASHED
+      # partway through — nothing failed, execution just stopped — so a green step can hide any
+      # number of tests that never ran (defect class DC-012). The gate asserts on that negative:
+      # every project must produce results, report itself Completed, and execute at least as many
+      # tests as the committed baseline.
+      - name: Test (with run-integrity gate)
+        run: python tools/verify-test-run.py
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: artifacts/test-results/*.trx
+          if-no-files-found: warn
