@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-workbench-shell",
-  "generated": "2026-08-26T16:31:59Z",
+  "project": "ai-de-feat-command-palette",
+  "generated": "2026-08-26T16:48:38Z",
   "audit": [
     {
       "id": "al-0001",
@@ -432,6 +432,24 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs",
         "src/AiDe.App/MainWindow.xaml"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0022",
+      "shortname": "implement-command-palette-nvda-script",
+      "datetime": "2026-08-26T16:48:38Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "do #1 prep the script and i will be the human",
+      "summary": "Built the command palette (the SC 2.5.7 mechanism the spec names but nothing implemented - commands were catalogued and tested but not invokable by a human), then wrote the 19-step NVDA verification protocol",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/nvda-workbench-session.md",
+        "src/AiDe.App/Workbench/CommandPalette.cs"
       ],
       "tags": [],
       "outcome": "success"

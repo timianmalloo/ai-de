@@ -22,6 +22,9 @@ public partial class MainWindow : Window
         // Keyboard commands bind to the window so they work wherever focus is inside it —
         // a layout command that only fires when a pane happens to be focused is not keyboard
         // operable in any useful sense.
+        // The palette overlays the whole window, above the docking host.
+        RootLayer.Children.Add(Shell.Palette.Root);
+
         Shell.Bind(this);
     }
 

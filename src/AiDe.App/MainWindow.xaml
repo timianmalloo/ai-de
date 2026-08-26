@@ -13,6 +13,8 @@
         Background="{StaticResource SurfaceBrush}"
         FontFamily="Segoe UI Variable Text, Segoe UI"
         FontSize="13">
+    <!--  RootLayer lets the command palette overlay the workbench without displacing it.  -->
+    <Grid x:Name="RootLayer">
     <!--  Layout:MultiPanelWorkstation — the docking host owns the whole body. Nothing here is a
           fixed region: every pane is resizable, dockable, floatable and collapsible (US-9).  -->
     <Grid>
@@ -114,5 +116,6 @@
                        Foreground="{StaticResource TextMutedBrush}"
                        Text="{Binding StatusMessage}" />
         </Grid>
+    </Grid>
     </Grid>
 </Window>

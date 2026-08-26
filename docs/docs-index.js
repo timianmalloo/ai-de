@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T16:31:59Z",
+  "generated": "2026-08-26T16:48:37Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1536,6 +1536,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c6d8f6ca4e8896ef7c8169785f3c2e9f45a7012ec9bb580df466e7cf1d204da2"
+    },
+    {
+      "id": "review-nvda-workbench-session",
+      "path": "docs/reviews/nvda-workbench-session.md",
+      "title": "NVDA verification session — the workbench accessibility claims",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1b",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The human-run protocol that verifies whether a screen reader actually SPEAKS the workbench's announcements and pane names. Automated tests prove they are emitted and present in the UIA tree; only this session proves they are heard.",
+      "tags": [
+        "accessibility",
+        "nvda",
+        "wcag",
+        "verification",
+        "workbench"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-workbench",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "149b637db3f537f3df8c5d7ca886e907a68537812768995251056af4c251b9e1"
     },
     {
       "id": "review-ui-workbench",
@@ -3789,7 +3824,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-feat-workbench-drop-targets — Audit & Change Log",
+      "title": "ai-de-feat-workbench-shell — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3811,5 +3846,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "be389e3a9afc2998692b3b571cf9edf7bbe9d98c47f63f716eb46a1f83318d50"
+  "graphSha256": "cb8b251319bd92a5576ce3096afa50b509898bec0b7afb7218c80e814f4de421"
 };

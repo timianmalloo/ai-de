@@ -38,6 +38,8 @@ public sealed class WorkbenchShell
         Adapter = new WorkbenchAdapter(Manager, Service, factory.Create);
         Controller = new WorkbenchController(Service, Announcer);
 
+        Palette = new CommandPalette(Controller, Announcer);
+
         Adapter.Render();
         TrackFocusedPane();
     }
@@ -55,8 +57,31 @@ public sealed class WorkbenchShell
     /// <summary>The polite live region announcements are written to; also the visible status text.</summary>
     public TextBlock LiveRegion { get; }
 
-    /// <summary>Binds keyboard commands to a host element — normally the window.</summary>
-    public void Bind(UIElement host) => Controller.Bind(host);
+    /// <summary>The keyboard route to every layout command (SC 2.5.7).</summary>
+    public CommandPalette Palette { get; }
+
+    /// <summary>Binds keyboard commands and the palette to a host element — normally the window.</summary>
+    public void Bind(UIElement host)
+    {
+        Controller.Bind(host);
+
+        // The palette must intercept BEFORE the workbench sees the key, or Up/Down would move the
+        // pane selection underneath it while the user is choosing a command.
+        host.PreviewKeyDown += (_, e) =>
+        {
+            if (Palette.HandleKey(e.Key))
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.P && Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift))
+            {
+                Palette.Open();
+                e.Handled = true;
+            }
+        };
+    }
 
     /// <summary>
     /// Keeps the controller's notion of "the focused pane" in step with real focus.
