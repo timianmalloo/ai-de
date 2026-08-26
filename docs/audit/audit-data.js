@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de",
-  "generated": "2026-08-26T13:42:06Z",
+  "project": "ai-de-feat-phase-1b-workbench",
+  "generated": "2026-08-26T13:48:07Z",
   "audit": [
     {
       "id": "al-0001",
@@ -327,6 +327,24 @@ window.AUDIT_DATA = {
       "tool": null,
       "actor": null,
       "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0016",
+      "shortname": "implement-phase-1b-workbench-model",
+      "datetime": "2026-08-26T13:48:07Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "push and merge then tackle phase 1b",
+      "summary": "Phase-1b core: owned headless layout model (tree/stack/surface) with the tiling invariant enforced structurally, one-mutation-path command set making keyboard/pointer equivalence testable, versioned persistence envelope with degradation and partial-restore. 29 workbench tests; invariant and announcement-completeness controls observed RED first",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench",
+        "docs/design/phase-1b-workbench.md"
+      ],
       "tags": [],
       "outcome": "success"
     }

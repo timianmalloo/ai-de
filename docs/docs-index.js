@@ -2,8 +2,8 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T13:39:30Z",
-  "generator": "docs-graph.py flag",
+  "generated": "2026-08-26T13:48:07Z",
+  "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -1116,6 +1116,50 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "86cc87c1bf8f24df9729ad0af66bd0a0351ffb39fdccb777319e7683eed5cdd5"
+    },
+    {
+      "id": "design-phase-1b-workbench",
+      "path": "docs/design/phase-1b-workbench.md",
+      "title": "Phase 1b workbench shell — detailed design",
+      "type": "design",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "1b",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The implementable blueprint for the dockable workbench: an owned, headless layout model (tree → stack → surface) that both the pointer and the keyboard mutate through one command set, an AvalonDock adapter that renders it, and a versioned envelope that persists it.",
+      "tags": [
+        "design",
+        "phase-1b",
+        "workbench",
+        "docking",
+        "layout",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0013-layout-persistence-envelope",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-workbench",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9f28513c1b110a567f24093315b89edf43771c77e403cf7730312435d70180fe"
     },
     {
       "id": "audit-log",
@@ -3745,7 +3789,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-bench-p1-perf — Audit & Change Log",
+      "title": "ai-de — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3767,5 +3811,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "6be6da0e990b19f3d53153ba608df3e7bece9d51376d533bdb9b66305aaaf5bb"
+  "graphSha256": "ff5b14a0dfc3c7de038dc7050ac87cf9f2156017f600517b5a34047cc4106a6a"
 };
