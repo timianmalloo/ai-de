@@ -163,6 +163,18 @@ adapter and must re-run on layout change.
 **Added control:** a regression test asserting no automation name in the workbench begins with
 `AvalonDock.` — this defect would otherwise return silently on any library upgrade.
 
+### Round-trip spike result (2026-08-26) — done, and it found a real defect
+
+Run and recorded in [`docs/reviews/spike-layout-upgrade-roundtrip.md`](../reviews/spike-layout-upgrade-roundtrip.md).
+Note the question was **re-framed**: ADR-0013 persists our own model rather than AvalonDock's
+serializer, so "does `JsonLayoutSerializer` round-trip" is obsolete; the equivalent question for the
+architecture we have is "does a saved layout survive a schema change".
+
+It does not, or did not: the envelope had a version field but **no migration hook**, so the first
+release to rename a surface would have degraded **every** saved layout to the default — not lost one
+pane, reset the whole arrangement. Fixed with a DTO-level migration chain that fails closed on a gap;
+pinned by five tests, the headline one observed red.
+
 **Required spikes before Phase-2 implementation accepts this ADR:**
 
 | Unknown | Probe | Cost |

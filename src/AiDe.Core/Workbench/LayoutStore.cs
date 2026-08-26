@@ -47,7 +47,10 @@ public sealed record RestoreResult(
 /// arrangement and says so, preserving the original file** — never to a broken window and never to a
 /// silently dropped surface.
 /// </remarks>
-public sealed class LayoutStore(string filePath, string appVersion = "0.3.0")
+public sealed class LayoutStore(
+    string filePath,
+    string appVersion = "0.3.0",
+    IReadOnlyList<LayoutMigration>? migrations = null)
 {
     public const int CurrentSchemaVersion = 1;
 
@@ -58,6 +61,8 @@ public sealed class LayoutStore(string filePath, string appVersion = "0.3.0")
     };
 
     public string BackupPath => filePath + ".bak";
+
+    private IReadOnlyList<LayoutMigration> Migrations => migrations ?? LayoutMigrations.Default;
 
     public void Save(Layout layout)
     {
@@ -81,8 +86,10 @@ public sealed class LayoutStore(string filePath, string appVersion = "0.3.0")
     /// <param name="displayIsConnected">Whether a floating pane's display is still present.</param>
     public RestoreResult Load(
         IReadOnlySet<string> availableSurfaces,
-        Func<StackNode, bool>? displayIsConnected = null)
+        Func<StackNode, bool>? displayIsConnected = null,
+        int? assumedCurrentVersion = null)
     {
+        var currentVersion = assumedCurrentVersion ?? CurrentSchemaVersion;
         if (!File.Exists(filePath))
         {
             return new RestoreResult(Layout.Default(), true, null, [], [],
@@ -108,7 +115,7 @@ public sealed class LayoutStore(string filePath, string appVersion = "0.3.0")
                 "Your previous layout file was kept.");
         }
 
-        if (envelope.SchemaVersion > CurrentSchemaVersion)
+        if (envelope.SchemaVersion > currentVersion)
         {
             // Written by a newer build. Degrading is the honest move: guessing at a format we do not
             // know would produce a plausible-looking but wrong arrangement.
@@ -117,12 +124,32 @@ public sealed class LayoutStore(string filePath, string appVersion = "0.3.0")
                 "and was reset to the default. Your previous layout file was kept.");
         }
 
+        // Walk the migration chain from the file's version up to the current one. A gap in the
+        // chain is a hard stop, not a silent "read it anyway": the shape on disk is one this build
+        // cannot interpret, and guessing at it would produce a plausible but wrong arrangement.
+        var payload = envelope.Payload;
+        var migrated = false;
+        for (var version = envelope.SchemaVersion; version < currentVersion; version++)
+        {
+            var step = Migrations.FirstOrDefault(m => m.FromVersion == version);
+            if (step is null)
+            {
+                return Degrade(LayoutErrorCodes.VersionUnsupported,
+                    $"This workbench layout was written at schema {envelope.SchemaVersion} and " +
+                    $"could not be upgraded to schema {currentVersion}. It was reset to the default " +
+                    "and your previous layout file was kept.");
+            }
+
+            payload = step.Apply(payload);
+            migrated = true;
+        }
+
         Layout restored;
         try
         {
             restored = new Layout(
-                FromDto(envelope.Payload.Root),
-                [.. envelope.Payload.Floating.Select(f => (StackNode)FromDto(f))],
+                FromDto(payload.Root),
+                [.. payload.Floating.Select(f => (StackNode)FromDto(f))],
                 ImmutableDictionary<string, StackState>.Empty);
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidCastException or NullReferenceException)
@@ -169,9 +196,16 @@ public sealed class LayoutStore(string filePath, string appVersion = "0.3.0")
                 "Your previous layout file was kept.");
         }
 
+        // Rewrite once, on read, so an upgraded layout is not re-migrated on every launch.
+        if (migrated)
+        {
+            Save(restored);
+        }
+
         if (missing.Count == 0 && rehomed.Count == 0)
         {
-            return new RestoreResult(restored, false, null, [], [], "Workbench layout restored.");
+            return new RestoreResult(restored, false, null, [], [],
+                migrated ? "Workbench layout upgraded and restored." : "Workbench layout restored.");
         }
 
         var parts = new List<string>();

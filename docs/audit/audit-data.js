@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-command-palette",
-  "generated": "2026-08-26T16:48:38Z",
+  "project": "ai-de-spike-layout-upgrade-roundtrip",
+  "generated": "2026-08-26T17:02:29Z",
   "audit": [
     {
       "id": "al-0001",
@@ -450,6 +450,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "docs/reviews/nvda-workbench-session.md",
         "src/AiDe.App/Workbench/CommandPalette.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0023",
+      "shortname": "spike-layout-upgrade-roundtrip",
+      "datetime": "2026-08-26T17:02:29Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "yes do the round trip spike",
+      "summary": "Round-trip spike found ADR-0013's versioned envelope had a version field but no migration hook: the first surface rename would have reset EVERY saved layout to default. Implemented a DTO-level migration chain that fails closed on a gap; 5 tests, headline observed red",
+      "kind": "script",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/spike-layout-upgrade-roundtrip.md"
       ],
       "tags": [],
       "outcome": "success"

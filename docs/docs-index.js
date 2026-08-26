@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T16:48:37Z",
+  "generated": "2026-08-26T17:02:45Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -716,7 +716,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a878cd42eac2827b161ea02d3b264b846017b1ced1d6a86e5d0cceeb628e539f"
+      "sourceSha256": "36ed7d7aa91bccabb533a9ea0e69c6c0f73382f1bb5a5b00e85ae80666adc60d"
     },
     {
       "id": "adr-0013-layout-persistence-envelope",
@@ -1684,6 +1684,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c04d25afbeb930496cf97e78fe6b92e05aab38e5e5d8523933e8709ee16e19d7"
+    },
+    {
+      "id": "spike-layout-upgrade-roundtrip",
+      "path": "docs/reviews/spike-layout-upgrade-roundtrip.md",
+      "title": "Spike — layout round-trip across an app upgrade",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1b",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The ADR-0012 round-trip spike, run. It found that the versioned envelope had a version field but no migration hook, so the first release to rename a surface would have degraded every saved layout to the default. The hook is now implemented and pinned by tests.",
+      "tags": [
+        "spike",
+        "layout",
+        "migration",
+        "persistence",
+        "adr-0012"
+      ],
+      "links": [
+        {
+          "to": "adr-0013-layout-persistence-envelope",
+          "rel": "documents"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-phase-1b-workbench",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "87360ac96ef97fa830bbcee369a8ec3a8f5545eae3d45d82dbb9433a460e93ef"
     },
     {
       "id": "kb-ai-native-ide-shell",
@@ -3824,7 +3859,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-feat-workbench-shell — Audit & Change Log",
+      "title": "ai-de-spike-layout-upgrade-roundtrip — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3846,5 +3881,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "cb8b251319bd92a5576ce3096afa50b509898bec0b7afb7218c80e814f4de421"
+  "graphSha256": "39d314b7fefc4913d67a1525ca4e03adcd684c5cc0402ebcc4d6ef31015d8acb"
 };
