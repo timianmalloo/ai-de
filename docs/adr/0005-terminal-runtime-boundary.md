@@ -13,6 +13,7 @@ links:
 review-by: 2027-02-21
 review-suggested:
   - { by: architecture, on: 2026-08-25, reason: "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture" }
+  - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
 summary: >-
   Terminal process and ConPTY lifecycle belong to a stable runtime contract; WPF terminal
   controls and web renderers are replaceable views that may not own agent session state.

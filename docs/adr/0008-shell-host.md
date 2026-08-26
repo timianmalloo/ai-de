@@ -17,6 +17,7 @@ summary: >-
   renderer/airspace spike as the explicit reversal trigger.
 review-suggested:
   - { by: architecture, on: 2026-08-25, reason: "Architecture v2 supersedes the 2026-08-25 draft: write-ahead dispatch, in-process-first daemon, MCP egress binding, committed spikes" }
+  - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
 ---
 
 # ADR-0008: WPF frame with embedded WebView2 as the shell host

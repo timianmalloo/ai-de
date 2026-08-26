@@ -10,7 +10,8 @@ links:
   - { to: spec-ai-native-ide, rel: documents }
   - { to: knowledge-hub, rel: relates-to }
 review-by: 2027-02-20
-review-suggested: []
+review-suggested:
+  - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
 summary: >-
   Defines the privacy posture for local AI-IDE workspace data: data inventory, purpose,
   retention, deletion, indirect model egress, and LINDDUN-lite dispositions. It is a

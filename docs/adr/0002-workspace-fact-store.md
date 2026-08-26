@@ -13,6 +13,7 @@ links:
 review-by: 2027-02-21
 review-suggested:
   - { by: architecture, on: 2026-08-25, reason: "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture" }
+  - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
 summary: >-
   Each workspace uses an embedded SQLite operational store with stable dimensions, append-only
   evidence/coordination/audit facts, and rebuildable current-state caches rather than an archived

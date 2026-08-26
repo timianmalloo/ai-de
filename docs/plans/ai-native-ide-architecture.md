@@ -10,7 +10,8 @@ links:
   - { to: spec-ai-native-ide, rel: relates-to }
   - { to: knowledge-hub, rel: depends-on }
 review-by: 2027-02-21
-review-suggested: []
+review-suggested:
+  - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
 summary: >-
   A bounded execution graph for resolving the AI-native IDE’s storage and MCP contracts, then
   producing an architecture, ADRs, adversarial review, and discoverable evidence.

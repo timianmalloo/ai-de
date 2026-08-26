@@ -12,6 +12,7 @@ links:
 review-by: 2027-02-21
 review-suggested:
   - { by: architecture, on: 2026-08-25, reason: "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture" }
+  - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
 summary: >-
   V1 reports only PTY/terminal readiness and paste acceptance. It does not claim an external
   coding agent accepted a prompt until a supported agent-side adapter provides an authenticated,

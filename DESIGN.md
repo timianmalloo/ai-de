@@ -1,7 +1,7 @@
 ---
 name: AI-DE Workspace
 description: Design language for the AI-DE desktop workspace — a dense, calm, evidence-first shell for directing coding agents.
-archetype: "KeyboardVelocity { Type:OLTP; Arch:Desktop; Layout:MasterDetail; Density:Compact; Nav:CommandPalette+Sidebar; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer; Color:DarkAdaptive; Type:Utilitarian; Depth:Flat; Sync:LocalFirst; Persistence:Session; Feedback:Optimistic; Motion:Micro; Pacing:Freeform; Transition:HardCut; A11y:WCAG_2.2_AA; }"
+archetype: "Workbench { Type:OLTP; Arch:Desktop; Layout:MultiPanelWorkstation; Density:Compact; Nav:CommandPalette+Sidebar; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer; Color:DarkAdaptive; Type:Utilitarian; Depth:Flat; Sync:LocalFirst; Persistence:LocalDevice; Feedback:Optimistic; Motion:Micro; Pacing:Freeform; Transition:HardCut; A11y:WCAG_2.2_AA; }"
 colors:
   surface: "#12151A"
   surface-raised: "#1A1F26"
@@ -17,6 +17,14 @@ colors:
   stale: "#D8A650"
   danger: "#E07A6F"
   focus: "#8FC0EA"
+  splitter: "#2A313B"
+  splitter-hover: "#5B9DD9"
+  splitter-keyboard: "#8FC0EA"
+  drop-target: "#5B9DD9"
+  drop-target-fill: "rgba(91,157,217,0.18)"
+  drop-forbidden: "#E07A6F"
+  float-chrome: "#232A33"
+  locked: "#D8A650"
 typography:
   ui: "Segoe UI Variable Text, Segoe UI, system-ui, sans-serif"
   mono: "Cascadia Mono, Consolas, ui-monospace, monospace"
@@ -73,9 +81,11 @@ error codes — anything the operator may need to compare character-by-character
 
 ## Layout
 
-Master-detail at `{spacing.scale}` rhythm: 8px inside a row, 12px between groups, 16px pane padding.
-Compact density means 28px list rows — enough for a 24×24 target plus separation, no more. Depth is
-flat: `{elevation.raised}` for the pane, `{elevation.dialog}` for the dispatch confirmation, nothing else.
+A user-arranged **multi-panel workstation** at `{spacing.scale}` rhythm: 8px inside a row, 12px between
+groups, 16px pane padding. Compact density means 28px list rows and a 28px tab strip — enough for a
+24×24 target plus separation, no more. Depth is flat: docked panes carry a 1px border and **no**
+shadow, `{elevation.dialog}` is reserved for floating panes and modal confirmations. The window is
+always a complete, non-overlapping tiling; only floating panes overlap, and only deliberately.
 
 ## Motion
 
@@ -104,3 +114,66 @@ a component missing its empty or error state is an incomplete component, not a s
 Node selection → provenance render p95 <100ms; list filter update p95 <250ms; initial selected-view
 render p95 <2s on the approved corpus (spec Part C). A degraded result renders a bounded, labelled
 state — never a silent omission.
+
+---
+
+## The workbench (US-9)
+
+The chrome is structural, quiet and obedient. Every pixel of it competes with evidence, so it loses:
+1px borders, no gradients, no shadows on docked panes, and **no animation on any layout operation** —
+a pane that slides into place is a pane you have to wait for.
+
+### Layout tokens
+
+| Token | Value | Role |
+|---|---|---|
+| `{colors.splitter}` | `{colors.border}` | The 1px line between panes. At rest it is a border, not a handle. |
+| `{colors.splitter-hover}` | `{colors.accent}` | Pointer within the 6px grab zone. The **hit area is 6px; the painted line stays 1px** — a fat line is visual noise, a thin hit target is a usability defect. |
+| `{colors.splitter-keyboard}` | `{colors.focus}` | **The edge selected for keyboard resize.** 2px, full length, plus an end-cap marker so the *direction* of travel is legible. This is the one place the workbench draws attention to itself, because a keyboard user cannot see what a pointer user infers from the cursor. |
+| `{colors.drop-target}` / `{colors.drop-target-fill}` | accent / 18% accent | The destination a move **will** use, shown before release. |
+| `{colors.drop-forbidden}` | `{colors.danger}` | An illegal destination — below minimum size, or the layout is locked. |
+| `{colors.locked}` | `{colors.stale}` | Layout-locked indicator in the status strip. Amber, because it is a mode the user must be able to notice they are in. |
+
+### Dock stack states
+
+| State | Treatment |
+|---|---|
+| docked (default) | 1px `{colors.border}`, `{colors.surface-raised}` ground, tab strip 28px |
+| focused | 1px `{colors.accent}` on the stack border + accessible name announced. **The focused pane is always visibly indicated** — Premiere's blue-line idea, which is the one thing that exemplar does better than the rest. |
+| floating | `{colors.float-chrome}` title bar, `{elevation.dialog}`. The **only** panes permitted to overlap. |
+| collapsed | Reduced to a labelled edge strip. **The surface names remain readable** — collapsing hides a pane, it never erases the knowledge that the pane exists (Eclipse trim stacks, Photoshop icon docks). |
+| maximized | Fills the tree; siblings are *temporarily* minimized and remembered as such. Restoring undoes what maximizing did, **never what the user did**. |
+| at-minimum | Splitter renders `{colors.drop-forbidden}` for `{motion.fast}` and stops. It does not collapse the pane. |
+| locked | Splitters lose their hover affordance; drag is inert; the status strip shows the amber lock. |
+
+### Single-surface stacks keep their tab strip
+
+A stack of one still shows its tab. Hiding it would save 28px and cost the user the surface's name,
+its close control, and the drag handle that moves it — and would make the chrome change shape as
+surfaces come and go. VS Code and Eclipse both keep it; so do we.
+
+### Motion inventory
+
+| Moment | Duration | Why |
+|---|---|---|
+| Tab selection | `{motion.fast}` | Confirms the switch without delaying it. |
+| Drop-target indicator appear/move | **0ms** | It must track the pointer exactly. Any easing makes it lag the intent it is reporting. |
+| Splitter drag | **0ms** | Direct manipulation: the pane edge *is* the pointer. |
+| Keyboard resize step | **0ms**, announced | Each arrow press is a discrete committed change. |
+| Pane float / dock / collapse / maximize | **0ms** | Layout is structure, not narrative. Animating it costs time on every single operation. |
+| Layout switch | **0ms** + announcement | A mode change should be instant and *stated*, not performed. |
+
+**Reduced motion changes nothing here** — there is nothing to reduce. That is the correct outcome
+for a workbench, and it is why the motion inventory is short by design rather than by omission.
+
+### Copy (real, in-voice)
+
+- `Move Explore — use arrow keys to choose a destination, Enter to place, Escape to cancel`
+- `Resize: left edge of Terminal. Arrow keys adjust. Enter to commit.`
+- `Explore moved to the right region.` *(announcement, focus unchanged)*
+- `Minimum size reached.`
+- `Layout is locked. Unlock to rearrange panes.`
+- `Layout "Review" applied — pane geometry and open surfaces.`
+- `Restored 5 of 6 panes. "Trace Viewer" is no longer available and was not restored.`
+- `Display 2 is not connected. "Terminal 2" was moved onto this display.`
+- `Workbench layout could not be read and was reset to the default. Your previous layout file was kept.`

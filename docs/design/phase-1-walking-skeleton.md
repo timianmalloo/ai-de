@@ -17,7 +17,8 @@ links:
   - { to: threat-model-ai-native-ide, rel: depends-on }
   - { to: privacy-review-ai-native-ide, rel: depends-on }
 review-by: 2027-02-26
-review-suggested: []
+review-suggested:
+  - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
 summary: >-
   The implementable blueprint for AI-DE's Phase-1 walking skeleton: the SQLite fact schema and its
   enforced immutability control, the in-process authority core with command receipts and the

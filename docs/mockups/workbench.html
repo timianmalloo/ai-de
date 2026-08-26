@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<title>AI-DE Workbench — mockup</title>
+<style>
+/* ── Tokens: mirrored from DESIGN.md. No raw values in component rules below. ─────────── */
+:root{
+  --surface:#12151A; --surface-raised:#1A1F26; --surface-sunken:#0D1014;
+  --border:#2A313B; --text:#E4E9EF; --text-muted:#98A3B2;
+  --accent:#5B9DD9; --accent-contrast:#0D1014; --focus:#8FC0EA;
+  --verified:#5FB98F; --inferred:#D8A650; --stale:#D8A650; --danger:#E07A6F;
+  --splitter:var(--border); --splitter-hover:var(--accent); --splitter-keyboard:var(--focus);
+  --drop-target:var(--accent); --drop-target-fill:rgba(91,157,217,0.18);
+  --drop-forbidden:var(--danger); --float-chrome:#232A33; --locked:var(--stale);
+  --elev-dialog:0 8px 24px rgba(0,0,0,0.5);
+  --font-ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --font-mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  --s1:4px; --s2:6px; --s3:8px; --s4:12px; --s5:16px; --s6:24px;
+  --r-sm:3px; --tab-h:28px;
+}
+:root[data-theme="light"]{
+  --surface:#F4F6F8; --surface-raised:#FFFFFF; --surface-sunken:#E7EBEF;
+  --border:#C7CFD8; --text:#1A1F26; --text-muted:#5A6472;
+  --accent:#2C6FA8; --focus:#1B4F7E;
+  --verified:#1F7A52; --inferred:#8A5D07; --stale:#8A5D07; --danger:#A6382C;
+  --float-chrome:#FFFFFF;
+}
+:root[data-theme="hc"]{
+  --surface:#000000; --surface-raised:#000000; --surface-sunken:#000000;
+  --border:#FFFFFF; --text:#FFFFFF; --text-muted:#FFFFFF;
+  --accent:#00FFFF; --focus:#00FFFF; --verified:#00FF00; --inferred:#FFFF00;
+  --stale:#FFFF00; --danger:#FF6666; --float-chrome:#000000;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--text);font-family:var(--font-ui);font-size:13px}
+
+/* ── Review harness (never ships) ─────────────────────────────────────────────────────── */
+.harness{position:sticky;top:0;z-index:50;display:flex;flex-wrap:wrap;gap:var(--s4);
+  align-items:center;padding:var(--s3) var(--s5);background:var(--surface-sunken);
+  border-bottom:1px solid var(--border);font-size:13px}
+.harness strong{font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  font-size:12px;color:var(--text-muted)}
+.harness label{display:flex;align-items:center;gap:var(--s2)}
+.harness select,.harness button{background:var(--surface-raised);color:var(--text);
+  border:1px solid var(--border);border-radius:var(--r-sm);padding:var(--s1) var(--s2);
+  font:inherit;min-height:24px}
+.harness button{cursor:pointer}
+.harness :is(select,button):focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+.checks{margin-left:auto;font-family:var(--font-mono);font-size:12px;color:var(--text-muted)}
+.checks b{color:var(--verified)}
+
+/* ── Workbench chrome ─────────────────────────────────────────────────────────────────── */
+.window{margin:var(--s5);border:1px solid var(--border);background:var(--surface);
+  height:560px;display:grid;grid-template-rows:auto 1fr auto;position:relative;overflow:hidden}
+.titlebar{display:flex;align-items:center;gap:var(--s4);padding:var(--s2) var(--s4);
+  border-bottom:1px solid var(--border);background:var(--surface-sunken)}
+.titlebar .name{font-weight:600}
+.layoutpicker{margin-left:auto;display:flex;align-items:center;gap:var(--s2)}
+.layoutpicker select{background:var(--surface-raised);color:var(--text);
+  border:1px solid var(--border);border-radius:var(--r-sm);padding:2px var(--s2);font:inherit}
+.titlebar,.status,.banner,.floatbar,.tab{font-size:13px}
+
+.body{display:grid;grid-template-columns:44px 1fr;min-height:0}
+.rail{border-right:1px solid var(--border);background:var(--surface-sunken);
+  display:flex;flex-direction:column;align-items:center;gap:var(--s1);padding-top:var(--s3)}
+.rail button{width:32px;height:32px;background:none;border:1px solid transparent;
+  border-radius:var(--r-sm);color:var(--text-muted);cursor:pointer;font-size:13px}
+.rail button[aria-current="true"]{color:var(--accent);border-color:var(--border);
+  background:var(--surface-raised)}
+.rail button:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+
+/* the layout tree */
+.tree{display:grid;min-height:0;position:relative}
+.tree.cols{grid-template-columns:var(--left,1fr) 1px var(--right,320px)}
+.tree.rows{grid-template-rows:1fr 1px var(--bottom,150px)}
+
+.split{background:var(--splitter);position:relative}
+.split::after{content:"";position:absolute;inset:-3px}   /* 6px hit area, 1px paint */
+.split[data-orient="v"]{cursor:col-resize}
+.split[data-orient="h"]{cursor:row-resize}
+.split:hover{background:var(--splitter-hover)}
+.split[data-kb="true"]{background:var(--splitter-keyboard);box-shadow:0 0 0 1px var(--splitter-keyboard)}
+.split[data-kb="true"]::before{content:"";position:absolute;background:var(--splitter-keyboard)}
+.split[data-orient="v"][data-kb="true"]::before{width:7px;height:7px;left:-3px;top:calc(50% - 3px)}
+.split[data-orient="h"][data-kb="true"]::before{height:7px;width:7px;top:-3px;left:calc(50% - 3px)}
+.split[data-min="true"]{background:var(--drop-forbidden)}
+
+/* dock stack */
+.stack{display:flex;flex-direction:column;min-width:0;min-height:0;
+  background:var(--surface-raised);border:1px solid var(--border)}
+.stack[data-focused="true"]{border-color:var(--accent)}
+.tabs{display:flex;align-items:stretch;height:var(--tab-h);flex:0 0 auto;
+  padding-left:var(--s2);border-bottom:1px solid var(--border);
+  background:var(--surface-sunken);overflow:hidden}
+.tab{display:flex;align-items:center;gap:var(--s2);padding:0 var(--s3);
+  border-right:1px solid var(--border);color:var(--text-muted);cursor:pointer;
+  background:none;font:inherit;white-space:nowrap;max-width:190px}
+.tab span.lbl{overflow:hidden;text-overflow:ellipsis}
+.tab[aria-selected="true"]{color:var(--text);background:var(--surface-raised);
+  box-shadow:inset 0 2px 0 var(--accent)}
+.tab:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+.tab .x{color:var(--text-muted);font-size:12px}
+.paneBody{flex:1 1 auto;padding:var(--s4);overflow:auto;min-height:0}
+.muted{color:var(--text-muted)}
+.mono{font-family:var(--font-mono)}
+h4{margin:0 0 var(--s3);font-size:12px;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--text-muted);font-weight:600}
+.row{display:flex;gap:var(--s3);align-items:baseline;padding:var(--s1) 0}
+.chip{display:inline-flex;align-items:center;gap:var(--s1);font-size:12px}
+.chip .g{font-family:var(--font-mono)}
+.v{color:var(--verified)} .i{color:var(--inferred)} .u{color:var(--text-muted)}
+
+/* status strip */
+.status{display:flex;align-items:center;gap:var(--s4);padding:var(--s3) var(--s4);
+  border-top:1px solid var(--border);background:var(--surface-sunken);
+  color:var(--text-muted)}
+.lock{color:var(--locked);display:none}
+.window[data-locked="true"] .lock{display:inline}
+
+/* drop target overlay */
+.drop{position:absolute;border:2px solid var(--drop-target);
+  background:var(--drop-target-fill);pointer-events:none;display:none;z-index:5}
+.drop .cap{position:absolute;top:var(--s1);left:var(--s2);font-size:12px;
+  color:var(--text);background:var(--surface-sunken);padding:0 var(--s2);
+  border:1px solid var(--drop-target)}
+.window[data-state="dropping"] .drop{display:block}
+
+/* floating pane */
+.floating{position:absolute;width:290px;height:190px;right:56px;bottom:64px;z-index:8;
+  background:var(--surface-raised);box-shadow:var(--elev-dialog);
+  display:none;flex-direction:column}
+.window[data-state="floating"] .floating{display:flex}
+.floatbar{display:flex;align-items:center;gap:var(--s2);padding:var(--s3);
+  background:var(--float-chrome);border-bottom:1px solid var(--border)}
+.floatbar .dot{margin-left:auto;color:var(--text-muted);font-size:12px}
+
+/* collapsed strip */
+.collapsed{display:none;flex-direction:column;align-items:center;gap:var(--s3);
+  width:34px;border:1px solid var(--border);background:var(--surface-sunken);
+  padding:var(--s4) var(--s2)}
+.collapsed span{writing-mode:vertical-rl;font-size:12px;color:var(--text-muted);cursor:pointer}
+.window[data-state="collapsed"] .tree.cols{grid-template-columns:1fr 1px 30px}
+.window[data-state="collapsed"] #right{display:none}
+.window[data-state="collapsed"] .collapsed{display:flex}
+
+/* maximized */
+.window[data-state="maximized"] .tree.cols{grid-template-columns:1fr 0 0}
+.window[data-state="maximized"] #right,
+.window[data-state="maximized"] .tree.cols>.split{display:none}
+.window[data-state="maximized"] .tree.rows{grid-template-rows:1fr 0 0}
+.window[data-state="maximized"] #bottom,
+.window[data-state="maximized"] .tree.rows>.split{display:none}
+
+/* banner: partial restore / error */
+.banner{display:none;gap:var(--s3);align-items:flex-start;padding:var(--s4);
+  border-bottom:1px solid var(--border)}
+.banner .act{margin-left:auto;display:flex;gap:var(--s2)}
+.banner button{background:var(--surface-raised);border:1px solid var(--border);
+  color:var(--text);border-radius:var(--r-sm);padding:2px var(--s3);font:inherit;cursor:pointer}
+.banner button:focus-visible{outline:2px solid var(--focus);outline-offset:1px}
+.window[data-state="partial"] .banner.partial{display:flex}
+.window[data-state="unreadable"] .banner.unreadable{display:flex}
+.banner.partial{background:color-mix(in srgb,var(--stale) 12%,transparent);
+  border-left:3px solid var(--stale)}
+.banner.unreadable{background:color-mix(in srgb,var(--danger) 12%,transparent);
+  border-left:3px solid var(--danger)}
+
+/* keyboard move affordance */
+.kbmove{display:none;position:absolute;left:50%;top:38%;transform:translateX(-50%);z-index:9;
+  background:var(--surface-sunken);border:1px solid var(--accent);padding:var(--s3) var(--s4);
+  max-width:420px}
+.window[data-state="kbmove"] .kbmove{display:block}
+.kbmove kbd{font-family:var(--font-mono);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:0 var(--s1);background:var(--surface-raised)}
+
+/* skeleton / empty / error pane content */
+.sk{height:9px;background:var(--surface-sunken);border-radius:var(--r-sm);margin:var(--s2) 0}
+.sk:nth-child(2){width:80%} .sk:nth-child(3){width:64%} .sk:nth-child(4){width:72%}
+
+.live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.announce{padding:var(--s2) var(--s4);border-top:1px solid var(--border);
+  background:var(--surface-sunken);font-size:12px;color:var(--text-muted);
+  font-family:var(--font-mono)}
+.announce b{color:var(--accent)}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:root[data-motion="reduce"] *{transition:none!important;animation:none!important}
+.note{margin:var(--s5);max-width:78ch;color:var(--text-muted);font-size:13px;line-height:1.7}
+.note code{font-family:var(--font-mono);color:var(--text)}
+</style>
+</head>
+<body>
+
+<!-- ── Review harness ─────────────────────────────────────────────────────────────────── -->
+<div class="harness" role="region" aria-label="Review harness">
+  <strong>Harness</strong>
+  <label>State
+    <select id="state">
+      <option value="default">default (docked)</option>
+      <option value="dropping">drag → drop target shown</option>
+      <option value="kbmove">keyboard move</option>
+      <option value="kbresize">keyboard resize (edge selected)</option>
+      <option value="atmin">at minimum size</option>
+      <option value="floating">floating pane</option>
+      <option value="collapsed">collapsed stack</option>
+      <option value="maximized">maximized pane</option>
+      <option value="loading">loading</option>
+      <option value="empty">empty</option>
+      <option value="error">error</option>
+      <option value="partial">partial restore</option>
+      <option value="unreadable">unreadable layout</option>
+      <option value="overflow">overflow (long names)</option>
+    </select>
+  </label>
+  <label>Layout
+    <select id="named">
+      <option>Investigate</option><option>Review</option><option>Coordinate</option>
+    </select>
+  </label>
+  <label>Theme
+    <select id="theme"><option value="dark">dark</option><option value="light">light</option>
+      <option value="hc">high contrast</option></select>
+  </label>
+  <label>Viewport
+    <select id="vp"><option value="1180">1180 desktop</option><option value="900">900 narrow</option>
+      <option value="1600">1600 wide</option></select>
+  </label>
+  <label>Motion
+    <select id="motion"><option value="normal">normal</option><option value="reduce">reduced</option></select>
+  </label>
+  <label><input type="checkbox" id="lock"> Lock layout</label>
+  <span class="checks" id="checks">contrast: …</span>
+</div>
+
+<!-- ── The workbench ──────────────────────────────────────────────────────────────────── -->
+<div class="window" id="win" data-state="default" data-locked="false" style="max-width:1180px">
+
+  <div class="titlebar">
+    <span class="name">AI-DE</span>
+    <span class="muted mono" id="wsname">ws-1 · rev a0bd699</span>
+    <div class="layoutpicker">
+      <span class="muted">Layout</span>
+      <select id="layoutSel" aria-label="Named layout">
+        <option>Investigate</option><option>Review</option><option>Coordinate</option>
+      </select>
+      <button class="tab" style="border:1px solid var(--border);border-radius:var(--r-sm)"
+              onclick="announce('Workbench layout reset to the default.')">Reset</button>
+    </div>
+  </div>
+
+  <div class="banner partial" role="status">
+    <span>⚠</span>
+    <div><b>Restored 5 of 6 panes.</b> “Trace Viewer” is no longer available and was not restored.
+      Display 2 is not connected — “Terminal 2” was moved onto this display.</div>
+    <div class="act"><button>Dismiss</button><button>Show details</button></div>
+  </div>
+  <div class="banner unreadable" role="status">
+    <span>✕</span>
+    <div><b>Workbench layout could not be read and was reset to the default.</b>
+      Your previous layout file was kept at <code class="mono">layout.json.bak</code>.</div>
+    <div class="act"><button>Open folder</button><button>Dismiss</button></div>
+  </div>
+
+  <div class="body">
+    <nav class="rail" aria-label="Primary">
+      <button aria-current="true" title="Explore" aria-label="Explore">◫</button>
+      <button title="Coordinate" aria-label="Coordinate">◑</button>
+      <button title="Compose" aria-label="Compose">✎</button>
+      <button title="Audit" aria-label="Audit">◷</button>
+    </nav>
+
+    <div class="tree cols" id="treeCols">
+      <!-- LEFT: vertical split containing primary stack over terminal stack -->
+      <div class="tree rows" id="treeRows">
+        <section class="stack" id="primary" data-focused="true"
+                 role="group" aria-label="Explore pane, 2 surfaces">
+          <div class="tabs" role="tablist" aria-label="Explore pane surfaces">
+            <button class="tab" role="tab" aria-selected="true"><span class="lbl" id="t1">Explore</span><span class="x">×</span></button>
+            <button class="tab" role="tab" aria-selected="false"><span class="lbl" id="t2">Domain</span><span class="x">×</span></button>
+          </div>
+          <div class="paneBody" id="primaryBody">
+            <h4>Order · aggregate</h4>
+            <div class="row"><span class="chip v"><span class="g">✓</span> Verified</span>
+              <span class="muted">depends_on → OrderRepository</span></div>
+            <div class="row"><span class="chip i"><span class="g">~</span> Inferred</span>
+              <span class="muted">persisted_in → orders_table</span></div>
+            <div class="row"><span class="chip u"><span class="g">?</span> Unverified</span>
+              <span class="muted">calls → PricingService</span></div>
+            <div class="row muted mono" style="margin-top:var(--s4)">src/Order.cs:14 · rev a0bd699</div>
+          </div>
+        </section>
+
+        <div class="split" id="splitH" data-orient="h" role="separator"
+             aria-orientation="horizontal" aria-label="Resize Terminal" tabindex="0"></div>
+
+        <section class="stack" id="bottom" role="group" aria-label="Terminal pane, 1 surface">
+          <div class="tabs" role="tablist" aria-label="Terminal pane surfaces">
+            <button class="tab" role="tab" aria-selected="true"><span class="lbl" id="t3">Terminal — pwsh</span><span class="x">×</span></button>
+          </div>
+          <div class="paneBody mono muted" >
+            PS C:\projects\ai-de&gt; _
+          </div>
+        </section>
+      </div>
+
+      <div class="split" id="splitV" data-orient="v" role="separator"
+           aria-orientation="vertical" aria-label="Resize Provenance" tabindex="0"></div>
+
+      <section class="stack" id="right" role="group" aria-label="Provenance pane, 1 surface">
+        <div class="tabs" role="tablist" aria-label="Provenance pane surfaces">
+          <button class="tab" role="tab" aria-selected="true"><span class="lbl" id="t4">Provenance</span><span class="x">×</span></button>
+        </div>
+        <div class="paneBody" id="rightBody">
+          <h4>What it is</h4><div class="row">Order (source)</div>
+          <h4 style="margin-top:var(--s4)">Confidence and provenance</h4>
+          <div class="row muted mono" >✓ Verified · Static · fixture-extractor 1.0.0</div>
+          <h4 style="margin-top:var(--s4)">Source</h4>
+          <div class="row muted mono" >src/Order.cs:14</div>
+        </div>
+      </section>
+
+      <!-- collapsed representation of the right stack -->
+      <div class="collapsed" id="collapsedStrip" role="group" aria-label="Collapsed pane">
+        <span tabindex="0">Provenance</span>
+      </div>
+
+      <div class="drop" id="drop" aria-hidden="true"><span class="cap" id="dropcap">Split — dock right</span></div>
+    </div>
+  </div>
+
+  <div class="floating" role="dialog" aria-label="Terminal 2, floating pane">
+    <div class="floatbar"><span>Terminal 2</span><span class="dot">floating · display 1</span></div>
+    <div class="paneBody mono muted" >PS C:\projects\ai-de&gt; dotnet test _</div>
+  </div>
+
+  <div class="kbmove" role="dialog" aria-label="Move surface">
+    <div><b>Move “Explore”</b></div>
+    <div class="muted" style="margin-top:var(--s2)">
+      <kbd>← ↑ → ↓</kbd> choose a destination · <kbd>Tab</kbd> cycle candidates ·
+      <kbd>Enter</kbd> place · <kbd>Esc</kbd> cancel
+    </div>
+    <div class="mono" style="margin-top:var(--s3);color:var(--accent)">Destination: split — right of Provenance</div>
+  </div>
+
+  <div class="status">
+    <span id="statusText">All scopes current · rev a0bd699</span>
+    <span class="lock">🔒 Layout locked</span>
+    <span style="margin-left:auto" class="mono" id="layoutName">Layout: Investigate</span>
+  </div>
+  <div class="announce" aria-hidden="true">AT announcement (live region) → <b id="liveEcho">—</b></div>
+  <div class="live" role="status" aria-live="polite" id="live"></div>
+</div>
+
+<p class="note">
+  <b>Mockup, not an implementation.</b> The harness above is review chrome and never ships.
+  Every colour here resolves to a token in <code>DESIGN.md</code>; the splitter paints 1px but
+  carries a 6px hit area; layout operations use <b>no animation at all</b>, so the reduced-motion
+  path is identical by construction rather than by a special case. The bottom strip echoes what a
+  screen reader would receive — in the product it is an off-screen live region only.
+</p>
+
+<script>
+const win = document.getElementById('win');
+const live = document.getElementById('live');
+const echo = document.getElementById('liveEcho');
+function announce(msg){ live.textContent = msg; echo.textContent = msg; }
+
+// ── Harness wiring ────────────────────────────────────────────────────────────────────
+const S = document.getElementById('state');
+S.addEventListener('change', () => applyState(S.value));
+document.getElementById('theme').addEventListener('change', e =>
+  document.documentElement.dataset.theme = e.target.value);
+document.getElementById('motion').addEventListener('change', e =>
+  document.documentElement.dataset.motion = e.target.value);
+document.getElementById('vp').addEventListener('change', e =>
+  win.style.maxWidth = e.target.value + 'px');
+document.getElementById('lock').addEventListener('change', e => {
+  win.dataset.locked = e.target.checked;
+  announce(e.target.checked ? 'Layout is locked. Unlock to rearrange panes.' : 'Layout unlocked.');
+});
+document.getElementById('layoutSel').addEventListener('change', e => {
+  document.getElementById('layoutName').textContent = 'Layout: ' + e.target.value;
+  announce('Layout "'+e.target.value+'" applied — pane geometry and open surfaces.');
+});
+
+const LONG = 'Order Aggregate Dependency Impact — very long surface name that must ellipsize';
+function applyState(v){
+  // reset
+  win.dataset.state = 'default';
+  document.getElementById('splitV').dataset.kb = 'false';
+  document.getElementById('splitH').dataset.kb = 'false';
+  document.getElementById('splitV').dataset.min = 'false';
+  document.getElementById('t1').textContent = 'Explore';
+  document.getElementById('primaryBody').style.display = '';
+  const pb = document.getElementById('primaryBody');
+
+  if(['dropping','floating','collapsed','maximized','partial','unreadable','kbmove'].includes(v)){
+    win.dataset.state = v;
+  }
+  if(v==='kbresize'){
+    document.getElementById('splitV').dataset.kb = 'true';
+    document.getElementById('splitV').focus();
+    announce('Resize: left edge of Provenance. Arrow keys adjust. Enter to commit.');
+    return;
+  }
+  if(v==='atmin'){
+    document.getElementById('splitV').dataset.min = 'true';
+    announce('Minimum size reached.'); return;
+  }
+  if(v==='overflow'){ document.getElementById('t1').textContent = LONG; return; }
+  if(v==='loading'){
+    pb.innerHTML = '<h4>Loading evidence…</h4><div class="sk"></div><div class="sk"></div>'+
+      '<div class="sk"></div><div class="sk"></div>'; return;
+  }
+  if(v==='empty'){
+    pb.innerHTML = '<h4>Nothing here yet</h4><p class="muted">No evidence yet — this workspace '+
+      'has no committed snapshot.</p><button class="tab" style="border:1px solid var(--border);'+
+      'border-radius:var(--r-sm);padding:var(--s2) var(--s3)">Extract fixture</button>'; return;
+  }
+  if(v==='error'){
+    pb.innerHTML = '<h4 style="color:var(--danger)">Extraction failed</h4><p class="muted">'+
+      'Graph is stale — fixture extraction failed. Viewing last successful snapshot '+
+      '(<span class="mono">rev a0bd699</span>).</p><button class="tab" style="border:1px solid '+
+      'var(--border);border-radius:var(--r-sm);padding:var(--s2) var(--s3)">Retry</button>'; return;
+  }
+  if(v==='dropping'){
+    const t = document.getElementById('treeCols').getBoundingClientRect();
+    const r = document.getElementById('right').getBoundingClientRect();
+    const d = document.getElementById('drop');
+    d.style.left = (r.left - t.left + r.width/2) + 'px';
+    d.style.top  = '0px';
+    d.style.width  = (r.width/2) + 'px';
+    d.style.height = t.height + 'px';
+    document.getElementById('dropcap').textContent = 'Split — dock right of Provenance';
+    announce('Destination: split, right of Provenance. Enter to place, Escape to cancel.');
+  }
+  if(v==='floating') announce('Terminal 2 is floating on display 1.');
+  if(v==='collapsed') announce('Provenance pane collapsed. Its surfaces remain available by name.');
+  if(v==='maximized') announce('Explore maximized. Restoring will return the previous arrangement.');
+  if(v==='partial') announce('Restored 5 of 6 panes. Trace Viewer was not restored.');
+  if(v==='unreadable') announce('Workbench layout could not be read and was reset to the default.');
+}
+
+// ── Keyboard resize on a real separator (the Eclipse pattern) ─────────────────────────
+function wireSplit(id, cssVar, host, min, max, step){
+  const el = document.getElementById(id);
+  let val = parseInt(getComputedStyle(document.getElementById(host)).getPropertyValue(cssVar))||320;
+  el.setAttribute('aria-valuenow', val);
+  el.addEventListener('keydown', e => {
+    if(win.dataset.locked === 'true'){
+      announce('Layout is locked. Unlock to rearrange panes.'); e.preventDefault(); return; }
+    const dec = ['ArrowLeft','ArrowUp'].includes(e.key), inc = ['ArrowRight','ArrowDown'].includes(e.key);
+    if(!dec && !inc) return;
+    e.preventDefault();
+    el.dataset.kb = 'true';
+    const next = val + (inc ? step : -step);
+    if(next < min || next > max){ el.dataset.min='true'; announce('Minimum size reached.');
+      setTimeout(()=>el.dataset.min='false', 400); return; }
+    val = next;
+    document.getElementById(host).style.setProperty(cssVar, val + 'px');
+    el.setAttribute('aria-valuenow', val);
+    announce('Provenance width ' + val + ' pixels.');
+  });
+  el.addEventListener('focus', () => { el.dataset.kb='true';
+    announce('Resize: ' + el.getAttribute('aria-label').replace('Resize ','') +
+      '. Arrow keys adjust. Enter to commit.'); });
+  el.addEventListener('blur', () => el.dataset.kb='false');
+}
+wireSplit('splitV','--right','treeCols',180,560,20);
+wireSplit('splitH','--bottom','treeRows',90,360,20);
+
+// Tabs: roving selection
+document.querySelectorAll('[role="tablist"]').forEach(list => {
+  list.addEventListener('click', e => {
+    const tab = e.target.closest('[role="tab"]'); if(!tab) return;
+    list.querySelectorAll('[role="tab"]').forEach(t => t.setAttribute('aria-selected','false'));
+    tab.setAttribute('aria-selected','true');
+    announce(tab.textContent.replace('×','').trim() + ' selected.');
+  });
+});
+
+// ── In-artifact mechanical checks (DX11) ──────────────────────────────────────────────
+function lum(hex){
+  const c = hex.replace('#','');
+  const v = [0,2,4].map(i => parseInt(c.substr(i,2),16)/255)
+    .map(x => x <= .03928 ? x/12.92 : Math.pow((x+.055)/1.055, 2.4));
+  return .2126*v[0] + .7152*v[1] + .0722*v[2];
+}
+function ratio(a,b){ const [x,y]=[lum(a),lum(b)].sort((p,q)=>q-p); return (x+.05)/(y+.05); }
+function runChecks(){
+  const cs = getComputedStyle(document.documentElement);
+  const g = n => cs.getPropertyValue(n).trim();
+  const pairs = [['text','surface'],['text-muted','surface'],['accent','surface'],['focus','surface']];
+  const out = pairs.map(([f,b]) => {
+    const r = ratio(g('--'+f), g('--'+b));
+    return `${f}:${r.toFixed(1)}${r>=4.5?'✓':'✗'}`;
+  });
+  // target sizes ≥24px
+  const small = [...document.querySelectorAll('button,.tab,[tabindex="0"]')]
+    .filter(el => { const r = el.getBoundingClientRect();
+      return r.height>0 && (r.height < 24 || r.width < 24); }).length;
+  document.getElementById('checks').innerHTML =
+    out.join(' · ') + ` · targets&lt;24px: <b>${small}</b>`;
+}
+document.getElementById('theme').addEventListener('change', () => setTimeout(runChecks,0));
+runChecks();
+</script>
+</body>
+</html>

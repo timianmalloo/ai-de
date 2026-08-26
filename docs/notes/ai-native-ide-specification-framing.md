@@ -10,7 +10,8 @@ links:
   - { to: spec-ai-native-ide, rel: relates-to }
   - { to: knowledge-hub, rel: depends-on }
 review-by: 2027-02-20
-review-suggested: []
+review-suggested:
+  - { by: spec-ai-native-ide, on: 2026-08-26, reason: "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice" }
 summary: >-
   Keeps the AI-native IDE specification technology-neutral while adopting code-derived views as
   its source-of-truth boundary and B1 Keyboard-Velocity as the workspace-shell interaction

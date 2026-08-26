@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-bench-p1-perf",
-  "generated": "2026-08-26T02:14:28Z",
+  "project": "ai-de-feat-dockable-workspace",
+  "generated": "2026-08-26T13:39:30Z",
   "audit": [
     {
       "id": "al-0001",
@@ -260,6 +260,57 @@ window.AUDIT_DATA = {
       "artifacts": [
         "docs/design/phase-1-perf-results.md",
         "bench/AiDe.Bench"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0012",
+      "shortname": "specify-us9-workbench",
+      "datetime": "2026-08-26T13:39:30Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "tooling should allow resize/docking like eclipse, vs code, photoshop, premiere - specify, ui-design, redo architecture, list slice changes",
+      "summary": "Dockable workbench: US-9 spec + exemplar matrix, workbench mockup with harness, ADR-0012/0013, Phase 1b",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/ai-native-ide.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0013",
+      "shortname": "ui-design-workbench",
+      "datetime": "2026-08-26T13:39:30Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "tooling should allow resize/docking like eclipse, vs code, photoshop, premiere - specify, ui-design, redo architecture, list slice changes",
+      "summary": "Dockable workbench: US-9 spec + exemplar matrix, workbench mockup with harness, ADR-0012/0013, Phase 1b",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/workbench.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0014",
+      "shortname": "define-architecture-workbench",
+      "datetime": "2026-08-26T13:39:30Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "tooling should allow resize/docking like eclipse, vs code, photoshop, premiere - specify, ui-design, redo architecture, list slice changes",
+      "summary": "Dockable workbench: US-9 spec + exemplar matrix, workbench mockup with harness, ADR-0012/0013, Phase 1b",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md"
       ],
       "tags": [],
       "outcome": "success"

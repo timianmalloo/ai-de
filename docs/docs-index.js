@@ -2,8 +2,8 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T02:14:28Z",
-  "generator": "docs-graph.py derive",
+  "generated": "2026-08-26T13:39:30Z",
+  "generator": "docs-graph.py flag",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -209,6 +209,11 @@ window.DOCS_INDEX = {
           "by": "architecture",
           "on": "2026-08-25",
           "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        },
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
         }
       ],
       "summary": "AI-DE stores attributable evidence and generates architecture/model/flow views from it. Users may save view preferences but cannot edit a rendered view into source truth.",
@@ -233,7 +238,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "40db6a8612aa054505e8f7d7045ab919cd6650b4a0f1bfd22eef6491c35a0dfb"
+      "sourceSha256": "924787a5b96645a9d2d18bfb405d001cc1db5fee670bb71266a4bd10e90876ef"
     },
     {
       "id": "adr-0002-workspace-fact-store",
@@ -249,6 +254,11 @@ window.DOCS_INDEX = {
           "by": "architecture",
           "on": "2026-08-25",
           "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        },
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
         }
       ],
       "summary": "Each workspace uses an embedded SQLite operational store with stable dimensions, append-only evidence/coordination/audit facts, and rebuildable current-state caches rather than an archived graph database dependency.",
@@ -274,7 +284,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9f25c30c01cc1e28cb70b874eed442c5087419fbd88bb0b5147ed4c2e67de3ba"
+      "sourceSha256": "8752d891ca1d8a19d1d3689f3b6d24bf0b130790c2ab7d67ab09fa0437d0f3a1"
     },
     {
       "id": "adr-0003-workspace-daemon-boundary",
@@ -290,6 +300,11 @@ window.DOCS_INDEX = {
           "by": "architecture",
           "on": "2026-08-25",
           "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        },
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
         }
       ],
       "summary": "A workspace-scoped local daemon owns durable facts, scheduling, query/projection, policy, and tool authorization so the WPF shell and agent sessions do not share an unbounded global state.",
@@ -310,7 +325,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f4fb7a7cf32f2c216949cd01464c645fc8eb1dcfd4658a1e92b3a2da0005699b"
+      "sourceSha256": "7231417001b667d333fa0c573be127f33903bcf62f05d05af5b6d988ef67bd24"
     },
     {
       "id": "adr-0004-mcp-tool-boundary",
@@ -326,6 +341,11 @@ window.DOCS_INDEX = {
           "by": "architecture",
           "on": "2026-08-25",
           "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        },
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
         }
       ],
       "summary": "The workspace daemon exposes bounded read and narrowly-authorized annotation tools over MCP; every request is self-contained, context-bound, audited, and protected from untrusted tool output and default HTTP-origin weaknesses.",
@@ -351,7 +371,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e425e10981499fc5c6151be867a0888ba920fb436e23cc0f78ff3e5f25174ec0"
+      "sourceSha256": "59a13a28be923c66dad038c763e929889badbbec173f22c70f5129eb469e54d0"
     },
     {
       "id": "adr-0005-terminal-runtime-boundary",
@@ -367,6 +387,11 @@ window.DOCS_INDEX = {
           "by": "architecture",
           "on": "2026-08-25",
           "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        },
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
         }
       ],
       "summary": "Terminal process and ConPTY lifecycle belong to a stable runtime contract; WPF terminal controls and web renderers are replaceable views that may not own agent session state.",
@@ -392,7 +417,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ff962af02f8bfdf31218fea81e132c01c06c1c5d612ac5dfd85dc83156952f6d"
+      "sourceSha256": "76af9fe367fbbd27dc76344409e8978111bd866a1ddad4b5b9e5dbb1882fb2b4"
     },
     {
       "id": "adr-0006-terminal-delivery-semantics",
@@ -408,6 +433,11 @@ window.DOCS_INDEX = {
           "by": "architecture",
           "on": "2026-08-25",
           "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        },
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
         }
       ],
       "summary": "Prompt transfer makes one at-most-once terminal-stream attempt because a terminal write and daemon receipt cannot share a transaction. Unknown delivery blocks automatic resend and requires explicit user confirmation.",
@@ -429,7 +459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f84ce75b12703071e6c0b7e9827c433e79081c5822416a8abfdaaf9f8a3aa23d"
+      "sourceSha256": "9a9beadef0f913dc5e912c7d0f8f2958cb85670ece53623cf093776379fccffc"
     },
     {
       "id": "adr-0007-agent-session-adapter",
@@ -445,6 +475,11 @@ window.DOCS_INDEX = {
           "by": "architecture",
           "on": "2026-08-25",
           "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        },
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
         }
       ],
       "summary": "V1 reports only PTY/terminal readiness and paste acceptance. It does not claim an external coding agent accepted a prompt until a supported agent-side adapter provides an authenticated, versioned acknowledgement.",
@@ -466,7 +501,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "42884af3ece2ffa2df39d5b1ba15b9e9fe06f6409af8bd015984253e88d763b6"
+      "sourceSha256": "af334a7134895301053f1600a2e0a3d851018f78065c9fc630f7cd1312e7d34c"
     },
     {
       "id": "adr-0008-shell-host",
@@ -482,6 +517,11 @@ window.DOCS_INDEX = {
           "by": "architecture",
           "on": "2026-08-25",
           "reason": "Architecture v2 supersedes the 2026-08-25 draft: write-ahead dispatch, in-process-first daemon, MCP egress binding, committed spikes"
+        },
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
         }
       ],
       "summary": "Records the desktop shell-host decision the earlier draft left implicit: a WPF window frame with an embedded WebView2 for visual surfaces and a renderer-independent terminal runtime, with the Phase-2 renderer/airspace spike as the explicit reversal trigger.",
@@ -507,7 +547,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "abbdb536b4c17be89a62b489f271e563239fe09aad7ab6a8990f94d197186b0f"
+      "sourceSha256": "fab9d9d70cedfe89495478526d755f5cec7431d794fc291909bb20ee77e17ab0"
     },
     {
       "id": "adr-0009-in-process-first-daemon",
@@ -637,6 +677,83 @@ window.DOCS_INDEX = {
       "sourceSha256": "db6f0ecb82fb50c89a49eb7a819e05a7265cda764a0fbaf0f63a3176f04e7d2a"
     },
     {
+      "id": "adr-0012-docking-shell-library",
+      "path": "docs/adr/0012-docking-shell-library.md",
+      "title": "ADR-0012 — Adopt AvalonDock for the workbench shell, with an owned accessibility layer",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        }
+      ],
+      "summary": "The dockable workbench is built on AvalonDock 5.0.0 (MS-PL, net10.0-windows), whose layout serialization is best-in-class — but which ships zero UI Automation peers and a mouse-only splitter. Adoption is conditional on an owned accessibility layer (command-driven layout operations including resize) and a versioned layout envelope, both specified here.",
+      "tags": [
+        "architecture",
+        "ui",
+        "docking",
+        "accessibility",
+        "wpf",
+        "licence"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0008-shell-host",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b0cb8037a2836e8fd89de692465cd210e90c8cef1de776a73c6fdc91d86022ba"
+    },
+    {
+      "id": "adr-0013-layout-persistence-envelope",
+      "path": "docs/adr/0013-layout-persistence-envelope.md",
+      "title": "ADR-0013 — Persist the workbench layout in an owned versioned envelope, outside the fact store",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Workbench layouts are user preference, not evidence. They are stored per workspace beside the fact store — never inside it — wrapped in an owned {schemaVersion, appVersion, payload} envelope, and a layout that cannot be read degrades to the default arrangement while the original file is kept.",
+      "tags": [
+        "architecture",
+        "ui",
+        "layout",
+        "persistence",
+        "migration"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "87b930eaa1ea69027456641a2fe4203d621fcf50dddf2b7afb2608f49f0230e1"
+    },
+    {
       "id": "architecture",
       "path": "docs/architecture.md",
       "title": "AI-DE Architecture",
@@ -645,7 +762,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        }
+      ],
       "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes.",
       "tags": [
         "architecture",
@@ -727,6 +850,14 @@ window.DOCS_INDEX = {
         {
           "to": "adr-0011-session-processing-class-egress",
           "rel": "depends-on"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0013-layout-persistence-envelope",
+          "rel": "depends-on"
         }
       ],
       "diagrams": [
@@ -736,7 +867,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
         }
       ],
-      "sourceSha256": "1d8e1636c6de5444ae4460ac3f137cf3f1f482709e896629ff5ff2c1d907a508"
+      "sourceSha256": "2454c5777e7132d54b20e21bad3b4909fbd6a68c758ead8d6f9f6e2c016f599d"
     },
     {
       "id": "note-20260826-council-review-ai-ide-arch",
@@ -815,7 +946,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-20",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        }
+      ],
       "summary": "Keeps the AI-native IDE specification technology-neutral while adopting code-derived views as its source-of-truth boundary and B1 Keyboard-Velocity as the workspace-shell interaction archetype.",
       "tags": [
         "ai-native-ide",
@@ -834,7 +971,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fed122b81a2ada7b43fa99ebdbc73dd95c0d7036d4efd5a238dc4671f3957445"
+      "sourceSha256": "7ea5df0924025831925b7064e9769adbb912fc28e69dc6a09ed91540e8cfdd8a"
     },
     {
       "id": "note-collectknowledge-session-2026-08-23",
@@ -875,6 +1012,11 @@ window.DOCS_INDEX = {
           "by": "architecture",
           "on": "2026-08-25",
           "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        },
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
         }
       ],
       "summary": "Defines the bounded contexts, aggregate invariants, fact grains, history rules, and identity-only relationships used by the AI-DE workspace fact store.",
@@ -906,7 +1048,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class WorkspaceRegistry {\n    +WorkspaceId\n    +WorkspaceEpoch\n    +RepositoryMembership\n    +WorktreeMembership\n    invariant one canonical membership per opened identity\n  }\n  class ScopeSnapshot {\n    +ScopeId\n    +DesiredGeneration\n    +CommittedGeneration\n    invariant commit only current desired generation\n  }\n  class RelationshipClaim {\n    +ClaimId\n    invariant one or more attributable assertions\n  }\n  class PromptDraft {\n    +DraftId\n    invariant immutable revision and command binding\n  }\n  class AgentSession {\n    +SessionId\n    +Generation\n    invariant one active worktree reference\n  }\n  class WorkItem {\n    +WorkItemId\n    invariant intent differs from assessment\n  }\n  WorkspaceRegistry --> ScopeSnapshot : contains by identity\n  ScopeSnapshot --> RelationshipClaim : selects assertions\n  PromptDraft --> AgentSession : targets by identity\n  WorkItem --> AgentSession : associates by identity"
         }
       ],
-      "sourceSha256": "03a9b7e08506abe2165e2b34b41510b723df5e29263c7ccc15a3510550cd16c9"
+      "sourceSha256": "97d517658252e65e6cf51a7392d73986c9eb96aa4d78d91569aaeeead093e21e"
     },
     {
       "id": "design-phase-1-walking-skeleton",
@@ -917,7 +1059,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        }
+      ],
       "summary": "The implementable blueprint for AI-DE's Phase-1 walking skeleton: the SQLite fact schema and its enforced immutability control, the in-process authority core with command receipts and the write-ahead two-phase dispatch, the bounded describe/impact/knowledge projections, the stdio MCP gateway with processing-class egress binding, the health sidecar and freshness prober, and the accessible evidence/provenance pane.",
       "tags": [
         "design",
@@ -967,7 +1115,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f519f95c8851ca1f2edea61e1e954947b120bb2f536062f8eada66b11582e387"
+      "sourceSha256": "86cc87c1bf8f24df9729ad0af66bd0a0351ffb39fdccb777319e7683eed5cdd5"
     },
     {
       "id": "audit-log",
@@ -1123,6 +1271,47 @@ window.DOCS_INDEX = {
       "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
     },
     {
+      "id": "mockup-workbench",
+      "path": "docs/mockups/workbench.md",
+      "title": "AI-DE workbench — reviewable mockup",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        }
+      ],
+      "summary": "Self-contained, dependency-free mockup of the dockable workbench (US-9) with a review harness covering state, named layout, theme, viewport, reduced motion and the layout lock. Renders the hard states — drop target, keyboard move, keyboard resize, at-minimum, floating, collapsed, maximized, loading, empty, error, partial restore, unreadable layout and overflow.",
+      "tags": [
+        "mockup",
+        "ui",
+        "workbench",
+        "docking",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bf5ead48ffaf206188af85737793da995de0409692d2133165110d2891a55a73"
+    },
+    {
       "id": "perf-results-phase-1",
       "path": "docs/design/phase-1-perf-results.md",
       "title": "P1-PERF — Phase-1 performance gate results",
@@ -1165,7 +1354,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-21",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        }
+      ],
       "summary": "A bounded execution graph for resolving the AI-native IDE’s storage and MCP contracts, then producing an architecture, ADRs, adversarial review, and discoverable evidence.",
       "tags": [
         "plan",
@@ -1190,7 +1385,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  M[Merged specification] --> G[Ground constraints]\n  G --> S1[SQLite fact-store spike]\n  G --> S2[MCP SDK spike]\n  S1 --> D[Set data and boundary decisions]\n  S2 --> D\n  D --> A[Write architecture and ADRs]\n  A --> R[Architect council]\n  R -->|findings resolved| V[Derive, validate, audit]"
         }
       ],
-      "sourceSha256": "e20f4a1aa4993fb75372a0f04d3de63303381ec76241f0775d3e92ddfe9e0375"
+      "sourceSha256": "b0e0dddad72fd5e6cb5fb9952449987946d6a6aacc4c2ea8787350069ccaed92"
     },
     {
       "id": "plan-ai-native-ide-specification",
@@ -1297,6 +1492,42 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c6d8f6ca4e8896ef7c8169785f3c2e9f45a7012ec9bb580df466e7cf1d204da2"
+    },
+    {
+      "id": "review-ui-workbench",
+      "path": "docs/reviews/ui-workbench.md",
+      "title": "UI review — AI-DE dockable workbench",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        }
+      ],
+      "summary": "Rubric critique of the workbench mockup, structure before surface, with the deterministic craft gate folded in. Records one justified detector suppression and the accessibility regression the gate caught mid-review.",
+      "tags": [
+        "ui-review",
+        "workbench",
+        "accessibility",
+        "craft-gate"
+      ],
+      "links": [
+        {
+          "to": "mockup-workbench",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e406470cb08fa582327a7446d316518989bc005e8edefdf38168fc902cf0ff75"
     },
     {
       "id": "seed-agent-coordination-spec",
@@ -3354,7 +3585,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-20",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
+        }
+      ],
       "summary": "Defines the privacy posture for local AI-IDE workspace data: data inventory, purpose, retention, deletion, indirect model egress, and LINDDUN-lite dispositions. It is a pre-implementation gate for the AI-native IDE specification.",
       "tags": [
         "privacy",
@@ -3374,7 +3611,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "14a6c2968ef01cd2f070b579c32465e650a7d8b2fc995e8e555db3bf6401a47a"
+      "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
       "id": "spec-ai-native-ide",
@@ -3441,11 +3678,21 @@ window.DOCS_INDEX = {
         },
         {
           "kind": "flowchart",
+          "title": "Arrange the workbench (drag path and keyboard path converge)",
+          "mermaid": "flowchart TD\n  A[Start a layout change] --> B{Pointer or keyboard?}\n  B -->|drag| C[Pick up a surface or a splitter]\n  B -->|keyboard| K[Command palette or pane menu:<br/>Move · Split · Float · Collapse · Resize]\n  C --> D{Layout locked?}\n  K --> D\n  D -->|yes| DL[Refuse and explain: layout is locked] --> Z([Layout unchanged])\n  D -->|no| E{Valid destination?}\n  E -->|drag| F[Show the destination BEFORE release:<br/>split edge · join stack · dock region · float]\n  E -->|keyboard| G[Show the selected edge or target,<br/>arrow keys adjust in declared increments]\n  F --> H{Commit or cancel?}\n  G --> H\n  H -->|Escape / cancel| Z\n  H -->|commit| I{Would it break the tiling<br/>or a minimum size?}\n  I -->|yes| J[Stop at the minimum; refuse the illegal drop] --> F\n  I -->|no| L[Apply: redistribute space, collapse empty stacks]\n  L --> M[Announce the change to AT without moving focus]\n  M --> N[Place focus on a defined, unobscured element]\n  N --> O([Layout persisted for this workspace])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Restore a layout that cannot be fully honoured",
+          "mermaid": "flowchart TD\n  A[Open workspace] --> B{Stored layout readable?}\n  B -->|no / incompatible version| C[Start from the default arrangement,<br/>say so, PRESERVE the unreadable file] --> Z([Usable window])\n  B -->|yes| D{Every surface still exists?}\n  D -->|no| E[Place the rest validly;<br/>report exactly which surfaces were dropped]\n  D -->|yes| F{Every floating pane's display connected?}\n  E --> F\n  F -->|no| G[Re-home off-screen panes onto a connected display;<br/>report what moved]\n  F -->|yes| H[Restore as saved]\n  G --> H\n  H --> Z"
+        },
+        {
+          "kind": "flowchart",
           "title": "Search audit history and recover a tab/session",
           "mermaid": "flowchart TD\n  A[Open Audit or a saved tab] --> B{Underlying source/session available?}\n  B -->|audit available| C[Filter timeline and select entry]\n  B -->|session/view ended or unavailable| R[Show preserved identity, last state, and recovery options]\n  R -->|reconnect or reopen succeeds| A\n  R -->|cancel| X([Keep layout; do not retarget])\n  C --> D{Entry integrity and redaction approved?}\n  D -->|yes| E[Show permitted detail and source links]\n  D -->|no, redacted, malformed, or inaccessible| F[Show state and safe recovery/filter action]\n  F --> C"
         }
       ],
-      "sourceSha256": "7573c152efd959457ca20e368dff1459044702e0efb06934b82e910255504522"
+      "sourceSha256": "abf6b2978f6bc8f95299286c25d0a1619740f355df24a3e739d501d996943377"
     },
     {
       "id": "threat-model-ai-native-ide",
@@ -3461,6 +3708,11 @@ window.DOCS_INDEX = {
           "by": "architecture",
           "on": "2026-08-25",
           "reason": "Defined the AI-DE workspace daemon, fact-store, MCP, terminal, and vertical delivery architecture"
+        },
+        {
+          "by": "spec-ai-native-ide",
+          "on": "2026-08-26",
+          "reason": "US-9 dockable workbench added; archetype corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice"
         }
       ],
       "summary": "Disposes STRIDE threats across workspace IPC, filesystem identity, terminal and rendering content, prompt delivery, MCP, audit evidence, and dependency acquisition with required negative controls.",
@@ -3486,17 +3738,25 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "023c4ff3a300e5dcd51c737833040ea35fbf83da6d4a2053a97b6d821955f4ce"
+      "sourceSha256": "b8bd5ee4e4b5516c7b3bf7bb0994e6016d7bea411c248a0302d8f077639b5cb0"
     }
   ],
   "surfaces": [
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-feat-phase-1-walking-skeleton — Audit & Change Log",
+      "title": "ai-de-bench-p1-perf — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
+    },
+    {
+      "id": "surface-mockups-workbench",
+      "path": "docs/mockups/workbench.html",
+      "title": "AI-DE Workbench — mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-workbench"
     },
     {
       "id": "surface-specs-ai-native-ide",
@@ -3507,5 +3767,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "a35b14f9edaa101f4a1ad9ed2b2f35ef1ed35b5eed996055b9831c62116e81c8"
+  "graphSha256": "6be6da0e990b19f3d53153ba608df3e7bece9d51376d533bdb9b66305aaaf5bb"
 };

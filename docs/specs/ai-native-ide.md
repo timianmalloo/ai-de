@@ -61,6 +61,46 @@ summary: >-
 | Interactive graph panes | [React Flow / xyflow](https://github.com/xyflow/xyflow), [AntV G6](https://github.com/antvis/G6) | MIT candidates with different interaction-versus-scale trade-offs; no renderer is selected by this specification. | Verified |
 | Generated diagrams | [Mermaid](https://github.com/mermaid-js/mermaid), [D2](https://github.com/terrastruct/d2), [Structurizr DSL](https://github.com/structurizr/dsl) | Existing project knowledge already treats diagram DSL as a projection concern. | Verified |
 | Canvas and graph-navigation inspiration | [Obsidian](https://obsidian.md/), [Graphify](https://graphify.com/), [VS Code](https://code.visualstudio.com/), [Eclipse Theia](https://theia-ide.org/) | User-requested interaction references. Obsidian is a knowledge-navigation reference, not a required dependency; Graphify remains an on-device code-graph reference. | Verified (user request / project knowledge) |
+| **Dockable multi-pane workbench** | [VS Code custom layout](https://code.visualstudio.com/docs/configure/custom-layout) · [Eclipse Workbench layout](https://help.eclipse.org/latest/topic/org.eclipse.platform.doc.user/reference/ref-23.htm) · [Photoshop panels](https://helpx.adobe.com/photoshop/desktop/get-started/learn-the-basics/dock-undock-panels.html) · [Premiere Pro panels](https://helpx.adobe.com/premiere/desktop/get-started/tour-the-workspace/dock-group-undock-panels.html) | User-requested exemplars. Capability matrix in **§Workbench exemplar evidence**; all four share drag-to-dock with drop feedback, tabbed stacking, floating windows, splitter resize, pane maximize, cross-region move, named layouts, and a reset command. | Verified (official docs) |
+
+### Workbench exemplar evidence
+
+The four exemplars agree on a **table-stakes floor** and disagree in ways that are themselves
+instructive. Every claim below is from official documentation (sources in the comparables row).
+
+| Capability | VS Code | Eclipse | Photoshop | Premiere |
+|---|---|---|---|---|
+| Drag-to-dock with live drop-target feedback | ✔ | ✔ five named drop cursors | ✔ blue drop zones | ✔ docking vs grouping zones |
+| Tabbed stacking; reorder within the stack | ✔ | ✔ "tabbed notebook" | ✔ panel groups | ✔ drag tabs horizontally |
+| Floating / detached window | ✔ | ✔ always-on-top | ✔ | ✔ Ctrl-drag |
+| Splitter resize | ✔ | ✔ sashes | ✔ any panel edge | ✔ + 4-way at 3-group intersection |
+| **Ganged resize — panes never overlap** | ✔ main window | ✔ sash tiling | ◑ docks tile, floats overlap | ✔ **explicit, 4 separate statements** |
+| Maximize / zoom one pane | ✔ | ✔ `Ctrl+M` | ✔ double-click tab | ✔ `` ` `` |
+| Collapse / minimize to icon or trim | ◑ | ✔ **Trim Stacks** | ✔ **icon docks** | ✘ |
+| Move a surface between regions | ✔ incl. keyboard | ✔ | ✔ | ✔ |
+| Named / saveable layouts | ◑ Profiles | ✔ **Perspectives** | ✔ Workspaces | ✔ 16 task workspaces |
+| Reset to default | ✔ `resetViewLocations` | ✔ | ✔ | ✔ Reset to Saved Layout |
+| Prevent docking mid-drag / cancel drag | ✘ | ✘ | ✔ Ctrl / **Esc** | ✔ Ctrl |
+| Lock the layout | ◑ scoped | ✘ | ✔ **Lock Workspace** | ✘ |
+| **Keyboard-operable resize** | ◑ no default keys; **broken in floating windows** | ✔ **`Alt+-` → Size → arrows** | ✘ | ✘ |
+
+**What this establishes for AI-DE.**
+1. **Ganged resize is a contract, not a nicety.** Premiere states it four separate ways — dock a
+   panel and every sharing group resizes; close one and neighbours reclaim the space. The user never
+   hunts for a pane hidden behind another. AI-DE adopts this as an invariant (US-9).
+2. **Eclipse's `Alt+-` → *Size* → arrow-keys is the only proven keyboard resize in the field**, and
+   Eclipse is the only exemplar with a complete keyboard layout story. AI-DE adopts the pattern.
+3. **Eclipse's maximize/restore preserves user intent:** un-maximizing restores only the stacks that
+   *maximize itself* minimized; stacks the user minimized deliberately stay minimized.
+4. **A named layout is a mode, not furniture.** All four let a saved layout carry more than geometry
+   (Photoshop captures shortcuts and menus; Premiere captures monitor configuration). Photoshop's
+   *Capture* checkboxes — the user chooses which axes the layout owns — are the best design.
+5. **The category's accessibility is poor, and that is the opportunity.** Photoshop's own conformance
+   report rates SC 2.1.1 Keyboard **"Does Not Support"**; Premiere documents "limited support" for
+   screen readers; VS Code's keyboard resize has no default binding and is disabled outright in
+   floating windows. **No exemplar documents announcing a layout change to assistive technology.**
+   AI-DE is under a WCAG 2.2 AA obligation and therefore cannot copy the category here — US-9's
+   accessibility criteria are deliberately stronger than every exemplar.
 
 [^knowledge-hub]: [`docs/knowledge/index.md`](../knowledge/index.md), “The four findings that
 change the plan” and “Cross-cutting design implications,” compiled 2026-08-23.
@@ -118,8 +158,11 @@ clearly labeled human-authored coordination record.
   - repository knowledge as an inspectable graph and hierarchy;
   - cross-agent coordination, session/worktree state, and work slices/tasks;
   - audit prompts and responses.
-- Multiple terminal and visualization tabs in one workspace experience, plus rich-text prompt
-  drafts that are staged until an explicit transfer to a ready session.
+- A **dockable multi-pane workbench**: the user arranges terminals, visual views, prompt drafts and
+  inspectors into resizable, dockable, floatable panes; saves and switches named layouts; and
+  operates every one of those actions from the keyboard. Tabs are *part of* this model, not an
+  alternative to it — several surfaces share one dock slot and are navigated by tabs.
+- Rich-text prompt drafts that are staged until an explicit transfer to a ready session.
 - Derived graph updates as repository/worktree artifacts and coordination evidence change.
 - Reuse evaluation of existing open-source capabilities before building equivalent features.
 
@@ -177,6 +220,12 @@ derived from coordination evidence. A **coordination claim** is advisory, never 
 | Entity | Coordination Claim | **Grain:** one append-only advisory assertion by one session/user about one work-item or resource scope at one recorded time. It identifies author, workspace, evidence basis, validity/expiry, and optional superseded claim; it cannot itself exclude other work. |
 | Entity | Audit Entry | **Grain:** one source audit record, read in source order with integrity/redaction state. It is append-only except for access-controlled redaction overlays or retention deletion. |
 | Entity | Derived View | A saved query/filter/layout preference. It is never an implementation fact and is rebuildable from its inputs. |
+| Aggregate | **Workbench Layout** (root: Layout) | The arrangement of the workspace window. **Invariant:** the layout is always a *complete, non-overlapping tiling* of the window — every region is owned by exactly one dock stack, and a resize or a removal redistributes space rather than leaving a gap or an overlap. Floating windows are outside the tiling and are the only surfaces permitted to overlap. **A layout never contains repository truth**; it is user preference and is rebuildable from its default. |
+| Entity | Layout Node | One node of the layout tree: either a **split** (an orientation plus two or more children with proportional sizes) or a **dock stack** (a leaf). A split with fewer than two children collapses into its parent — an empty region cannot persist. |
+| Entity | Dock Stack | One leaf region holding one or more surfaces navigated by tabs. It carries its own state: docked · floating · collapsed · maximized · hidden. **Invariant:** a stack with zero surfaces does not exist — removing the last surface destroys the stack and collapses its parent split. |
+| Entity | Surface | One thing the user works in — a terminal session, an Explore view, a prompt draft, an inspector, the work board, the audit timeline. It belongs to exactly one dock stack at a time, is reorderable within that stack, and is movable to another. **A surface's identity, workspace binding and its own loading/error/empty state are independent of where it is docked.** |
+| Entity | Named Layout | A user-saved arrangement, identified by a name the user chose. It declares **which axes it captures** (pane geometry always; optionally the open surface set and the active workspace filter) so switching layouts is a deliberate mode change rather than an unpredictable reset. Built-in named layouts may be restored to their original definition. |
+| Value object | Drop Target | A candidate destination computed during a move: a stack edge (split), a stack's tab area (join), a region edge (dock), or none (float). It is presented to the user **before** the move commits. |
 
 All evidence assertions, prompt revisions, delivery receipts, work-state assessments, and audit
 entries are append-only facts. There are no additive business measures in this specification.
@@ -318,12 +367,96 @@ that I can recover context and base feedback on what actually happened.**
 tabs in one workspace so that I can inspect evidence and send contextual feedback without losing
 the working session.**
 
-- **Given** I open multiple terminal, view, and prompt tabs, **when** I rearrange or switch
-  among them, **then** each tab preserves its declared workspace context and its own
-  loading/error/empty state.
+- **Given** I open multiple surfaces in one or more dock stacks, **when** I switch among their tabs,
+  reorder them within a stack, or move one to another stack, **then** each surface preserves its
+  declared workspace context and its own loading/error/empty state — a surface's identity and state
+  are independent of where it is docked.
 - **Given** a terminal session ends or a view’s source becomes unavailable, **when** I return to
   its tab, **then** the tab reports the terminal/view state and offers a non-destructive recovery
   path; it does not silently attach to a different session.
+
+### US-9 — Arrange the workbench
+
+**As a multi-agent technical lead, I want to resize, dock, float, hide and stack the workbench's
+panes and save the arrangements I use, so that I can put the evidence I need for the task in front
+of me at once — and I want every one of those actions available from the keyboard.**
+
+*The layout is user preference, never repository truth: nothing in this story may alter an
+evidence assertion, and any layout may be discarded and rebuilt from its default without data loss.*
+
+**Arranging**
+
+- **Given** two panes share a boundary, **when** I drag that boundary, **then** both panes resize
+  together and the workbench remains a complete, non-overlapping tiling — no gap appears and no pane
+  is hidden behind another. Panes respect a declared minimum size; a drag that would violate it stops
+  at the minimum rather than collapsing the pane.
+- **Given** I drag a surface over the workbench, **when** a valid destination is under the pointer,
+  **then** the product shows me *which* destination will be used **before I release** — split (which
+  edge), join an existing stack, dock to a region, or float — and pressing **Escape cancels the move
+  with the layout unchanged**.
+- **Given** I drop a surface onto a stack's tab area, **when** the move completes, **then** it joins
+  that stack as a tab; **given** I drop it onto a stack's edge, **then** the region splits and a new
+  stack is created.
+- **Given** I remove the last surface from a stack, **when** the move completes, **then** the empty
+  stack is destroyed and its space is redistributed to its siblings — an empty region never persists.
+- **Given** a pane is floating, **when** I move it, **then** it may overlap other panes and may be
+  positioned on any connected display; **docked panes may never overlap.**
+
+**Hiding, collapsing, maximizing**
+
+- **Given** I maximize a pane, **when** I restore it, **then** the previous arrangement returns —
+  and panes I had **deliberately** collapsed or hidden before maximizing **stay** collapsed or
+  hidden. Restoring undoes what maximizing did, not what I did.
+- **Given** I collapse a stack, **when** it is collapsed, **then** the surfaces it contains remain
+  discoverable and re-openable by name; collapsing hides a pane without erasing the knowledge that
+  it exists.
+- **Given** I hide a whole region, **when** I reveal it again, **then** its previous contents and
+  proportions return.
+
+**Named layouts**
+
+- **Given** I save the current arrangement under a name, **when** I later select that name, **then**
+  the saved arrangement is applied, and the product states **which axes the layout captured** (pane
+  geometry, and optionally the open surface set and workspace filter) so the change is predictable.
+- **Given** I have modified a named layout, **when** I choose to reset it, **then** it returns to the
+  arrangement last saved under that name; **given** it is a built-in layout, **then** reset returns
+  it to its original shipped definition.
+- **Given** any arrangement at all, **when** I invoke *Reset workbench layout*, **then** the default
+  arrangement is restored — this command is always reachable and never requires editing a file.
+
+**Persistence and recovery**
+
+- **Given** I arrange the workbench and close the application, **when** I reopen the same workspace,
+  **then** my arrangement returns, including floating panes and the display each was on.
+- **Given** a saved layout references a surface that no longer exists, or a display that is no longer
+  connected, **when** the layout is restored, **then** the product reports what it could not restore
+  and places the remaining surfaces in a valid arrangement — it never silently drops a surface and
+  never restores a pane off-screen.
+- **Given** a stored layout is unreadable or was written by an incompatible version, **when** the
+  workspace opens, **then** the product starts from the default arrangement, says so, and preserves
+  the unreadable file rather than overwriting it.
+
+**Keyboard and assistive technology (WCAG 2.2 AA — deliberately stronger than every exemplar)**
+
+- **Given** any layout operation that can be performed by dragging — dock, move, split, join,
+  reorder, resize, float — **when** I use only the keyboard, **then** an equivalent command exists
+  and is reachable from the command palette. *(SC 2.5.7 Dragging Movements. Photoshop and Premiere
+  fail this; AI-DE must not.)*
+- **Given** I am resizing a pane by keyboard, **when** I select the edge to move, **then** that edge
+  is **visibly indicated** and the arrow keys move it in declared increments. *(Adopted from Eclipse's
+  `Alt+-` → Size → arrows, the only proven keyboard resize among the exemplars.)*
+- **Given** a layout operation completes — dock, move, float, collapse, maximize, hide, layout switch,
+  reset — **when** it completes, **then** the change is **announced to assistive technology without
+  moving focus**. *(SC 4.1.3 Status Messages. No exemplar documents this; it is a requirement here.)*
+- **Given** focus is in a surface, **when** that surface is moved, floated, collapsed or hidden,
+  **then** focus lands on a defined, visible element and is **never left on an obscured or destroyed
+  element**. *(SC 2.4.3, and SC 2.4.11 Focus Not Obscured — floating always-on-top panes are the
+  specific hazard.)*
+- **Given** keyboard focus is anywhere in the workbench, **when** I cycle panes, **then** focus moves
+  predictably between stacks and the focused pane is visibly indicated.
+- **Given** I lock the layout, **when** I then drag within the workbench, **then** the arrangement
+  does not change. *(Adopted from Photoshop's Lock Workspace — an accessibility control for imprecise
+  or unintended pointer input, not merely a stylus convenience.)*
 
 ## Verification contract and boundary traceability
 
@@ -341,6 +474,8 @@ Pack; a pre-implementation requirement cannot truthfully claim red-observed exec
 | US-6 prompt dispatch | Session-state and acknowledgement protocol fixture. | Immutable binding and one delivery receipt per dispatch key. | Busy, wrong workspace, generation change, timeout, reject, duplicate retry. |
 | US-7 audit | PII-scrubbed versioned audit fixtures. | Reader state, redaction, duration-unavailable, and access behavior. | Missing, malformed, summary-only, redacted, untrusted, unavailable. |
 | US-8 workspace tabs | Stable tab/session identity fixture. | No cross-workspace/session attachment and defined recovery transition. | Ended, replaced, disconnected, stale view, restored layout. |
+| US-9 workbench layout | Deterministic layout-tree fixtures (nested splits, multi-surface stacks, floating panes, a saved named layout, a layout referencing a missing surface, a layout referencing a disconnected display, a corrupt layout file). | Tiling invariant holds after every operation (no gap, no overlap, no empty stack); the tree after a scripted operation sequence equals the expected tree exactly; restore reports precisely what it could not restore. | Minimum-size violation, last surface removed from a stack, maximize→restore with a pre-existing deliberate collapse, missing surface, missing display, unreadable/incompatible layout file, locked layout. |
+| US-9 layout accessibility | Keyboard-only operation script; AT announcement capture. | Every drag-reachable operation has a keyboard equivalent that produces the **same** resulting tree (SC 2.5.7); each completed operation emits an announcement without moving focus (SC 4.1.3); focus after move/float/collapse/hide is on a defined, unobscured element (SC 2.4.11). | Resize at a minimum-size boundary, floating pane, collapsed stack, layout switch, reset, locked layout. |
 
 The refresh performance oracle uses an approved fixture manifest, a documented hardware/OS and
 warm/cold setup, at least 30 measurements, start/end events, p95 calculation, and a report of
@@ -353,10 +488,10 @@ failures and outliers. No benchmark result is represented as verified before tha
 | Performance efficiency | Phase 1 shall refresh an affected fixture-derived view with p95 under 500ms on its approved corpus. Phase 2 shall refresh an affected supported C# view with p95 under 2 seconds on the agreed reference repository. Larger-graph navigation budgets are **Flagged** until the graph-store spike measures a representative corpus. |
 | Reliability | A failed extraction, trace import, terminal connection, or audit read shall preserve the last successfully identified view state and visibly identify it as stale or failed. |
 | Security | Workspace-local credentials, terminal tokens, and agent environment secrets shall not be rendered, indexed, written into prompts, or recorded in views/audit surfaces. Prompt dispatch is user-confirmed. |
-| Usability | A keyboard-capable primary user shall reach any core visual surface, the work board, audit history, and prompt draft from the workspace navigation without relying on a pointer-only interaction. |
+| Usability | A keyboard-capable primary user shall reach any core visual surface, the work board, audit history, and prompt draft from the workspace navigation without relying on a pointer-only interaction. **This extends to arranging the workbench: every layout operation reachable by dragging shall have a keyboard equivalent producing the same result (SC 2.5.7).** |
 | Compatibility | The initial product is Windows-desktop-first and must preserve repository/worktree isolation. Other platforms are explicitly out of scope until a later spec. |
 | Maintainability | Extractors and visual projections shall have independently testable artifact contracts; no view is the authoritative store of its source fact. |
-| Portability | Workspace data and saved user layout/query preferences shall have a documented export/recovery path before the product stores irreplaceable user knowledge. |
+| Portability | Workspace data and saved user layout/query preferences shall have a documented export/recovery path before the product stores irreplaceable user knowledge. **A stored workbench layout shall carry a version and shall degrade to the default arrangement — never to a broken window — when it cannot be read.** |
 | Functional suitability | Every displayed relationship shall disclose provenance and confidence; absence of evidence shall remain explicit. |
 
 ## Boundary set
@@ -369,6 +504,10 @@ failures and outliers. No benchmark result is represented as verified before tha
 - Missing, malformed, redacted, or legacy audit entry.
 - Prompt draft with a disconnected, busy, wrong-workspace, or terminated target session.
 - Concurrent workspace refreshes and contradictory advisory claims.
+- Layout at its limits: a pane dragged below its minimum size; the last surface removed from a stack;
+  a deeply nested split; a floating pane on a display that is later disconnected; a saved layout
+  naming a surface that no longer exists; an unreadable or version-incompatible layout file; a
+  maximize/restore cycle over panes the user had already collapsed deliberately; a locked layout.
 - Hostile repository content that attempts to influence an agent through names, generated diagrams,
   logs, source comments, or retrieved content.
 
@@ -545,6 +684,46 @@ flowchart TD
   H -->|cancel| D
 ```
 
+### Arrange the workbench (drag path and keyboard path converge)
+
+```mermaid
+flowchart TD
+  A[Start a layout change] --> B{Pointer or keyboard?}
+  B -->|drag| C[Pick up a surface or a splitter]
+  B -->|keyboard| K[Command palette or pane menu:<br/>Move · Split · Float · Collapse · Resize]
+  C --> D{Layout locked?}
+  K --> D
+  D -->|yes| DL[Refuse and explain: layout is locked] --> Z([Layout unchanged])
+  D -->|no| E{Valid destination?}
+  E -->|drag| F[Show the destination BEFORE release:<br/>split edge · join stack · dock region · float]
+  E -->|keyboard| G[Show the selected edge or target,<br/>arrow keys adjust in declared increments]
+  F --> H{Commit or cancel?}
+  G --> H
+  H -->|Escape / cancel| Z
+  H -->|commit| I{Would it break the tiling<br/>or a minimum size?}
+  I -->|yes| J[Stop at the minimum; refuse the illegal drop] --> F
+  I -->|no| L[Apply: redistribute space, collapse empty stacks]
+  L --> M[Announce the change to AT without moving focus]
+  M --> N[Place focus on a defined, unobscured element]
+  N --> O([Layout persisted for this workspace])
+```
+
+### Restore a layout that cannot be fully honoured
+
+```mermaid
+flowchart TD
+  A[Open workspace] --> B{Stored layout readable?}
+  B -->|no / incompatible version| C[Start from the default arrangement,<br/>say so, PRESERVE the unreadable file] --> Z([Usable window])
+  B -->|yes| D{Every surface still exists?}
+  D -->|no| E[Place the rest validly;<br/>report exactly which surfaces were dropped]
+  D -->|yes| F{Every floating pane's display connected?}
+  E --> F
+  F -->|no| G[Re-home off-screen panes onto a connected display;<br/>report what moved]
+  F -->|yes| H[Restore as saved]
+  G --> H
+  H --> Z
+```
+
 ### Search audit history and recover a tab/session
 
 ```mermaid
@@ -562,9 +741,14 @@ flowchart TD
 
 ## Wireframe-level structure
 
-- **Workspace shell:** vertical primary navigation; a central tab strip for terminals, visual
-  views, and prompts; optional inspector pane; status strip showing workspace/extractor/session
-  health.
+- **Workspace shell (dockable workbench):** vertical primary navigation; a **layout tree** of
+  resizable regions filling the window between the navigation and the status strip; a status strip
+  showing workspace/extractor/session health plus the active named layout. The tree's leaves are
+  **dock stacks**, each holding one or more **surfaces** navigated by a tab strip — terminals,
+  visual views, prompt drafts and inspectors are all surfaces and none is privileged over another.
+  Default arrangement: navigation left, a primary stack centre, an inspector stack right, a
+  terminal stack below the primary. **Every region in the default arrangement can be resized,
+  re-stacked, floated, collapsed or hidden** — the default is a starting point, not a frame.
 - **Explore view:** query/search and filters above; graph/diagram canvas in the central region;
   accessible node list/tree alternative; persistent inspector to the side.
 - **Work board:** board/list toggle, filters, and a card/list presentation where each work item
@@ -592,21 +776,38 @@ flowchart TD
 
 ## UI archetype signature
 
-- **Archetype:** **B1 · Keyboard-Velocity GUI** as the workspace shell, with embedded C1 spatial
-  graph and B3 telemetry/health views where their job requires them.
-- **Signature:** `KeyboardVelocity { Type:OLTP; Arch:SPA; Layout:MasterDetail; Density:Compact;
+- **Archetype:** **B1 · Keyboard-Velocity GUI** composed with the **`MultiPanelWorkstation` layout**
+  (the G-series workstation skeleton), with embedded C1 spatial graph and B3 telemetry/health views
+  where their job requires them.
+- **Signature:** `Workbench { Type:OLTP; Arch:SPA; Layout:MultiPanelWorkstation; Density:Compact;
   Nav:CommandPalette+Sidebar; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer;
-  Color:DarkAdaptive; Type:Utilitarian; Depth:Flat; Sync:LocalFirst; Persistence:Session;
+  Color:DarkAdaptive; Type:Utilitarian; Depth:Flat; Sync:LocalFirst; Persistence:LocalDevice;
   Feedback:Optimistic; Motion:Micro; Pacing:Freeform; Transition:HardCut;
   A11y:WCAG_2.2_AA; }`
 - **Selection:** Auto-selected from the dominant JTBD: an expert must rapidly navigate and
-  coordinate many sessions and evidence surfaces, so keyboard velocity and compact
-  master-detail inspection fit better than a dashboard, a guided flow, or a canvas-only shell.
-  Graph and diagram panes retain their own domain-appropriate interaction patterns inside this
-  shell rather than forcing every task into one view.
-- **Facet deviation:** `Persistence:Session` retains workspace layout/session context; durable
-  prompt drafts, audit records, and coordination evidence have their own explicit retention and
-  export policies.
+  coordinate many sessions and evidence surfaces, so keyboard velocity is the right *feel*.
+  But the **structural** facet is a user-arranged workstation, not a fixed master-detail —
+  the operator's core job is to put several kinds of evidence side by side and rearrange them per
+  task, which `Layout:MasterDetail` cannot express. Graph and diagram panes retain their own
+  domain-appropriate interaction patterns inside this shell rather than forcing every task into one
+  view.
+- **Corrected facets (2026-08-26).** This signature previously read `Layout:MasterDetail;
+  Persistence:Session`. Both were wrong for a dockable workbench and are superseded:
+  - `Layout:MasterDetail` → **`Layout:MultiPanelWorkstation`.** A master-detail skeleton is a fixed
+    two-region arrangement; US-9 requires an arbitrary user-arranged tree of resizable, dockable
+    stacks. Building a workbench against a MasterDetail signature would regress the generated shell
+    toward the mean — exactly the failure the archetype grammar exists to prevent.
+  - `Persistence:Session` → **`Persistence:LocalDevice`.** US-9 requires arrangements to survive
+    application restart, including floating panes and their displays. Session persistence cannot
+    satisfy that, and the prior spec already carried this as an unresolved facet deviation.
+  - **Not adopted from G6 (Multi-Panel Data Terminal):** `Density:UltraDense`, `Nav:CommandPalette`
+    alone, `Color:HighContrast`, `Motion:None`, `Sync:Polling+Multiplayer`. G6 shares this layout
+    skeleton but is a real-time streaming trading terminal; AI-DE is neither streaming nor
+    multiplayer, and its density and motion posture stay B1's.
+- **Facet deviation:** `Persistence:LocalDevice` covers the workbench layout, named layouts and
+  session context, stored per workspace on this device only — never synchronised. Durable prompt
+  drafts, audit records, and coordination evidence have their own explicit retention and export
+  policies and are **not** part of the layout.
 
 ## Medium and platform guidelines
 
@@ -644,6 +845,9 @@ flowchart TD
 | Component | States / transitions | Keyboard and accessibility contract |
 |---|---|---|
 | Navigation, tab strip, panes | default, selected, dirty, loading, disconnected, closed, restored; opening/closing/reordering a tab restores focus to the triggering control or selected pane. | Semantic tab/list roles, current item state, labelled close/reorder controls, predictable focus order, keyboard shortcuts discoverable from a command palette. |
+| **Dock stack** | docked · floating · collapsed · maximized · hidden · **drag-source** (being moved) · **drop-target** (candidate destination, showing *which* destination) · **at-minimum** (resize refused) · **locked** (layout frozen). Single-surface stacks still show their tab strip, so the surface is always nameable and closable. | The stack is a labelled group with an accessible name; its surfaces are a tab list; every state change is announced without moving focus; the focused stack is visibly indicated. |
+| **Pane splitter** | default · hover · **keyboard-selected edge (visibly indicated)** · dragging · at-minimum · locked. | Reachable and operable by keyboard: select an edge, move it in declared increments with the arrow keys, commit or cancel. Exposes its position to assistive technology. |
+| **Layout switcher** | default · open · applying · **reporting a partial restore** (a surface or display was unavailable) · error (unreadable layout, started from default). | Named layouts selectable by keyboard; the applied layout and the axes it captured are announced; a partial restore names exactly what could not be restored. |
 | Graph/diagram canvas and equivalent list | loading, empty, partial, stale, over-limit, selected, unavailable, error/retry; selection and filtering synchronize with the equivalent list. | Pointer-independent node traversal, named nodes/edges/provenance, focusable selection, source-link activation, and no graph-only action. |
 | Prompt editor and context references | empty, dirty, validation error, context blocked/removed, ready/busy/disconnected target, review, confirmation, pending, acknowledged, timed-out, rejected, failed. | Semantic rich-text editing surface; labelled context and target controls; confirmation dialog traps focus, states consequence, and restores focus on cancel/result. |
 | Terminal | starting, ready, busy, disconnected, ended, output-overload, recovery. | Keyboard-native input; terminal status has accessible non-visual announcement; untrusted output cannot cause host actions. |
@@ -698,6 +902,19 @@ flowchart TD
   unknown downstream outcome, inferred content, and verified repository fact.
 - The interface renders `not recorded`, `Inferred`, `Observed`, `stale`, and `redacted` as
   semantically distinct visible states without relying on color alone.
+- **The workbench remains a complete, non-overlapping tiling after every layout operation.** Only
+  floating panes may overlap, and only deliberately.
+- **A move shows its destination before it commits**, and `Escape` cancels it with the layout
+  unchanged.
+- **Every drag-reachable layout operation has a keyboard equivalent that produces an identical
+  resulting layout** (SC 2.5.7), and each is discoverable from the command palette.
+- **Keyboard resize visibly indicates the edge being moved** before the arrow keys move it.
+- **Every completed layout operation is announced to assistive technology without moving focus**
+  (SC 4.1.3), and focus after a move, float, collapse or hide lands on a defined, unobscured element
+  (SC 2.4.11).
+- **A layout that cannot be fully restored says exactly what was lost** and still produces a valid
+  arrangement; an unreadable layout falls back to the default, says so, and preserves the original
+  file.
 
 ---
 
@@ -712,6 +929,8 @@ flowchart TD
 | Audit response representation | Repositories may record summaries rather than full response text, or redact sensitive fields. | Define an audit-reader contract against representative AI-Forward audit logs. |
 | Coordination truthfulness | Existing claims cannot guarantee exclusion without resource-level fencing. | Specify advisory UI semantics first; identify each actual write resource that would require fencing before claiming exclusivity. |
 | Scale and refresh budget | No representative node/edge count or graph interaction budget has been measured. | Benchmark the Phase 0 extractor corpus before selecting storage or renderer. |
+| **Accessible docking has no proven precedent** | US-9's accessibility criteria are stronger than **every** exemplar: Photoshop's own conformance report rates SC 2.1.1 "Does Not Support"; Premiere documents no keyboard docking at all; VS Code's keyboard resize has no default binding and is disabled in floating windows; and **none of the four documents announcing a layout change to assistive technology**. Only Eclipse's `Alt+-` → Size → arrows is a proven keyboard resize. We are ahead of the field, which means no pattern to copy and no library that supplies it. | Prototype the keyboard layout-command set (move · split · float · collapse · resize) plus AT announcements against a real screen reader **before** committing the workbench phase. Verify Eclipse's and VS Code's actual announcement behaviour with NVDA first — a working precedent would let us copy rather than invent. |
+| **Layout persistence across upgrades** | Arrangements are user data the product has promised an export/recovery path for; a layout format without a version has no migration hook and cannot degrade safely. | Wrap whatever the chosen shell library serializes in an owned, versioned envelope from the first release, and test restore against a mutated and an unreadable file. |
 | Personal/work data | Repository files, prompts, audits, and terminal output may contain sensitive data. | Complete STRIDE and privacy review before implementation; establish local retention/redaction and any model egress basis. |
 
 ## Confidence ledger
@@ -725,6 +944,8 @@ flowchart TD
 | A keyboard-velocity shell best fits the primary operator job. | JTBD analysis and B1 catalog posture. | User can override the selected archetype after reviewing this spec. | Inferred |
 
 ## Gate record
+
+`GATE specify · 2026-08-26 (US-9 workbench amendment) · UX Researcher/IA, UX & Accessibility, Test Architect, The Simplifier, Data & Persistence Architect · criteria: layout conceptual model (tree → stack → surface) with the non-overlapping-tiling invariant; falsifiable arrange/hide/named-layout/persistence/accessibility criteria; exemplar matrix sourced from official docs; archetype facets corrected to Layout:MultiPanelWorkstation + Persistence:LocalDevice; UX flows cover the drag path, the keyboard path, and partial restore · verdict: PASS-WITH-CONDITIONS · vetoes→resolution: UX Researcher/IA PASS (drag and keyboard paths converge on one flow); Data & Persistence PASS (layout is preference, never repository truth, and is rebuildable); Simplifier PASS-WITH-CONDITIONS — accepts the capability set as table-stakes evidenced across four exemplars, but holds that named layouts and collapse-to-icon are the two most deferrable pieces if the workbench phase overruns; UX & Accessibility PASS-WITH-CONDITIONS and Test Architect PASS-WITH-CONDITIONS — both conditional on the SC 2.5.7 / 4.1.3 / 2.4.11 criteria being proven red-first against a real screen reader, since no exemplar demonstrates them and no library supplies them.`
 
 `GATE specify · 2026-08-24 · Test Architect, Data & Persistence Architect, UX Researcher/IA, UX & Accessibility, Security & Identity, Privacy & Data Governance · criteria: conceptual model, functional fixture/oracle matrix, UX recovery flows, accessibility/state contract, STRIDE controls, and LINDDUN-lite review present · verdict: PASS-WITH-CONDITIONS · vetoes→resolution: Data & Persistence PASS; UX Researcher/IA PASS; Security, Privacy, UX & Accessibility, and Test Architect clear the specification gate subject to their named pre-implementation evidence gates.`
 
