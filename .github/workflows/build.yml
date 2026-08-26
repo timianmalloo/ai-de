@@ -39,6 +39,14 @@ jobs:
       - name: Test (with run-integrity gate)
         run: python tools/verify-test-run.py
 
+      # A defect class cited by ID in prose cannot fail. Three of them (DC-009/010/011) were cited as
+      # authoritative by four committed artifacts while having no entry in the register at all, and
+      # the register's own header claimed twelve classes over nine. This is DC-001's control widened:
+      # every cited DC-NNN must resolve, the sequence must have no gaps, and the counts are derived
+      # rather than typed.
+      - name: Defect-register integrity gate
+        run: python tools/verify-defect-register.py
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4

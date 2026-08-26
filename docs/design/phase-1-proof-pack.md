@@ -83,11 +83,13 @@ summary: >-
 2. **Scale is measured to 50,000 edges and no further.** `P1-PERF` ran 2026-08-26 — see
    [the results](phase-1-perf-results.md). Every bounded read now meets its budget with wide margin
    and no bounded read scans the fact table, so those targets are **Verified** rather than Inferred.
-   Two qualifiers stand and must travel with any citation of these numbers: **(a)** the refresh
-   budget holds only for the first ~5 generations of a scope — append-only growth takes refresh p95
-   to 567 ms after 10 generations and 785 ms after 20, against a 500 ms budget, and no policy yet
-   triggers the compaction that would mitigate it (defect class DC-010, Phase-2 work item);
-   **(b)** nothing is measured beyond 50,000 edges, so the `simplify:` ceiling has moved, not gone.
+   Two qualifiers stand and must travel with any citation of these numbers: **(a)** an *uncompacted*
+   scope leaves the refresh budget after ~5 generations — append-only growth takes refresh p95 to
+   567 ms after 10 generations and 785 ms after 20, against a 500 ms budget (defect class DC-010).
+   **Resolved 2026-08-26:** `StoreCompactor` restores it (654.64 ms → 333.11 ms measured) and
+   `CheckCompactionNeeded` raises a `store.compaction_due` incident; the policy reports rather than
+   auto-compacts, so the residual is an operator who ignores it. **(b)** nothing is measured beyond
+   50,000 edges, so the `simplify:` ceiling has moved, not gone.
 3. **Fixture fidelity.** Phase 1 proves the *pipeline*, not C# extraction. The fixture extractor has
    no second implementation, so `P1-EXT` pins the interface but nothing yet proves a real extractor
    agrees with it. The conformance suite is a Phase-2 entry criterion.

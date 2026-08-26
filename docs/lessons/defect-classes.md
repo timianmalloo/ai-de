@@ -28,27 +28,50 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 10 · partially-controlled 2 · uncontrolled 0
-**Recurrence since last review:** 1 — DC-008, whose first control was scoped to one test project when the cause was not project-specific (CI4: a second occurrence means the control was wrong, not that someone was careless).
+**Status counts:** controlled 8 · partially-controlled 4 · uncontrolled 0
+*(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
+
+**Recurrences since last review:** 2.
+- **DC-008**, whose first control was scoped to one test project when the cause was not project-specific.
+- **DC-001**, whose first control checked links between files and so could not see three classes cited by ID with no entry in this register.
+
+*Both are CI4: a second occurrence means the control was wrong, not that someone was careless. In both cases the control had been written to fit the instances rather than the class.*
 
 ---
 
 ## Project classes
 
-### DC-001 — A gate artifact is authored in a session and never actually committed
-- **Signature:** a document is referenced by a typed link, appears in the change log, and exists on
-  someone's disk — but `git ls-files` does not know it. Often caused by an ignore rule written for
-  build output swallowing a docs path (`[Rr]elease/` ate `docs/release/`).
-- **Why it survives:** the authoring session sees the file and its own index entry, so every
-  in-session check passes. Only a fresh clone — or a reviewer — discovers the hole.
+### DC-001 — A cited artifact is authored in a session and never actually committed
+- **Signature:** something is referenced as authoritative — by a typed link, a change-log row, or an
+  **identifier cited in prose** — and the thing it names is not in the repository. Often an ignore
+  rule written for build output swallowing a docs path (`[Rr]elease/` ate `docs/release/`); sometimes
+  a file that exists but an **entry inside it that was never written**.
+- **Why it survives:** the authoring session sees the artifact and its own index entry, so every
+  in-session check passes. Only a fresh clone — or a reviewer following the citation — discovers the
+  hole. The identifier variant is quieter still: a reader who trusts the citation never follows it,
+  and a citation carries the *appearance* of grounding whether or not it resolves.
 - **Instances:** 2026-08-25 — `docs/release/ai-native-ide-release-plan.md` (Release Engineer, soft
   veto); the same rule would have hidden any future `docs/release/*`. 2026-08-25 — `spikes/` was
   ignored by the pack default, so three "Verified" contracts cited evidence that was not in the repo
-  (Test Architect, hard veto).
+  (Test Architect, hard veto). 2026-08-26 (**recurrence**) — DC-009, DC-010 and DC-011 were assigned,
+  reasoned about, and cited as authoritative by four committed artifacts, with **no entry in this
+  register**; `architecture.md` cited DC-010 as a controlled class that resolved to nothing, and this
+  file's own header claimed twelve classes over nine. Found while assembling a status table, not by
+  any gate.
 - **Control:** `docs-graph.py validate` reports dangling links and index drift and is run at every
-  skill close; `.gitignore` now re-includes `docs/release/**` and no longer ignores `spikes/`, each
-  with a comment naming this class. Observed failing 2026-08-25 (validate surfaced the dangling
+  skill close; `.gitignore` re-includes `docs/release/**` and no longer ignores `spikes/`, each with
+  a comment naming this class. Observed failing 2026-08-25 (validate surfaced the dangling
   `release-plan-ai-native-ide` edge before the file was recovered).
+  **Widened 2026-08-26 after the recurrence:** `tools/verify-defect-register.py`, run in CI, requires
+  that every `DC-NNN` cited anywhere under `docs/` resolves to a real entry, that the ID sequence has
+  no gaps, that every entry declares a known status, and that the header counts match the entries
+  present. Observed failing on the un-fixed register: six findings, exit 1 — including that the
+  header's `controlled` count was overstated by exactly the three missing entries.
+- **Why the first control was too narrow (CI4):** `docs-graph.py validate` checks *typed links between
+  files*. Both the original instances were missing files, so a file-granular control looked sufficient.
+  The recurrence was a missing **entry within a committed file**, which no link traverses — the class
+  was never really "a file is missing", it was "a citation resolves to nothing", and the control was
+  written to the instances rather than to the class.
 - **Status:** `controlled`
 
 ### DC-002 — A "Verified" label rests on evidence nobody can re-run
@@ -156,6 +179,91 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   fail, because a crashed host currently reports success.
 - **Status:** `controlled` (mitigated in both projects; the count-regression detection is the named
   gap)
+
+### DC-009 — A measurement is believed because its value looks reasonable
+- **Signature:** a probe, benchmark or check returns a number that is plausible for the thing being
+  measured, so nothing prompts a second look — and it is measuring something else. The instrument is
+  pointed at the wrong moment, the wrong object, or a **proxy** for the invariant rather than the
+  invariant.
+- **Why it survives:** the ordinary defence against a bad measurement is that the answer looks wrong.
+  Here it does not. Every instance below produced a figure a reviewer would have accepted, and each
+  was caught only by asking *"could this be looking at the wrong thing?"* — never by the number
+  itself being implausible. Worse, a wrong measurement **launders** into a Verified claim, so it
+  corrupts the evidence trail rather than merely being absent from it (NG7).
+- **Instances:** 2026-08-26 — the DPI probe read the thread's awareness context **before WPF had
+  initialised**, reporting `UNAWARE`; re-measured after `Window.Show()` it read `SYSTEM_AWARE` (the
+  wrong *moment*). 2026-08-26 — the UIA probe reported "splitter not present" from a `ClassName`
+  lookup miss; enumerating every `Thumb` found it (the wrong *object*). 2026-08-26 — the
+  ganged-resize test **summed pane widths** and reported "1319px inside an 885px container", which
+  double-counts vertically stacked panes; there was no overlap (a *proxy* for the invariant).
+  2026-08-26 — the first P1-PERF benchmark shared one store across 30 samples, so it measured
+  append-only growth rather than refresh. 2026-08-26 — a gate's exit code was read through a shell
+  pipe (`python … | tail; echo $?`), which reports `tail`'s status; a working gate was nearly filed
+  as broken.
+- **Control:** ladder rung *always-loaded instruction* — `instrumentation-over-inference.md` IO1–IO12
+  and `end-to-end-integrity.md` E13–E14 (an exit code is not a result; read the state back). Two
+  mechanical controls exist where the class touched code:
+  `NoTwoPanesOverlap_AndNonePaneCollapsesToNothing` asserts the geometric invariant (pairwise
+  intersection) rather than the width-sum proxy, and the P1-PERF harness builds an independent store
+  per sample with growth measured separately. Both were observed failing on the un-fixed code.
+- **Residual risk:** this is the weakest-controlled class in the register, and honestly so. No gate
+  can ask "is this instrument pointed at the right thing?" — the two controls above pin the two
+  specific measurements that were wrong, not the class. The general defence is the standing question
+  at the point of measurement, which is an instruction and therefore fallible.
+- **Note on this ID:** DC-009 was an unused number. The class was evidenced three times over in
+  `docs/reviews/spike-dpi-and-ganged-resize.md` and `docs/design/phase-1-perf-results.md` — which
+  explicitly name it as one recurring shape — but never written down here. It was assigned during
+  the 2026-08-26 register repair, which is itself an instance of DC-001.
+- **Status:** `partially-controlled`
+
+### DC-010 — A system degrades under its own accumulated history and nothing notices
+- **Signature:** a design that never deletes — append-only facts, an event log, an audit trail — meets
+  its performance budget on a fresh store and drifts out of it as history accrues. Every individual
+  write is correct and cheap; the cost is in the *quantity retained*, so no operation is ever the
+  culprit and no error is ever raised.
+- **Why it survives:** benchmarks run against fresh fixtures, which is the one state where the
+  problem is absent by construction. It appears only after real use, arrives gradually, and presents
+  as "the tool feels slow lately" — the shape of problem people stop reporting and start working
+  around.
+- **Instances:** 2026-08-26 — P1-PERF measured refresh p95 at 192 ms on a fresh store, 567 ms after
+  ten generations of the same scope and 785 ms after twenty, against a 500 ms budget. A morning's
+  editing puts a workspace outside budget. The indexes and query plans were correct throughout; the
+  cause was index maintenance over retained superseded generations.
+- **Control:** `StoreCompactor` prunes superseded generations by **rebuild-and-swap**, never by
+  deleting facts — the immutability triggers and the no-REPLACE rule are never suspended on the live
+  store, so the invariant is not hollowed out to fix performance in one place. Detection is the part
+  that closes the class: `WorkspaceCore.CheckCompactionNeeded` raises a `store.compaction_due` health
+  incident naming the scope and its generation count, so a workspace that has quietly become slow
+  **surfaces itself**. Measured 654.64 ms → 333.11 ms across a compaction, dropping 19 generations
+  and 190,000 assertions for 97.6 MiB. Covered by `StoreCompactionTests`.
+- **Residual risk:** the policy reports rather than auto-compacts, deliberately — compaction replaces
+  the database file, so it belongs to a deliberate maintenance moment rather than a background timer
+  that could fire mid-session. An operator who ignores the incident stays slow. Nothing is measured
+  beyond 50,000 edges, so the ceiling has moved rather than gone.
+- **Status:** `controlled`
+
+### DC-011 — A refused operation says nothing, so refusal is indistinguishable from breakage
+- **Signature:** a command is correctly declined — a locked layout, a minimum-size floor, a
+  precondition unmet — and the system's response is *silence*. The control is working exactly as
+  designed, and the user's only available reading is that it is broken.
+- **Why it survives:** the refusal path is the branch tests assert least on, because the assertion is
+  a negative: the operation did **not** happen, and "nothing happened" is trivially true of both the
+  correct refusal and a dead keybinding. It is easy to miss for sighted mouse users, who still see
+  the unchanged layout; it is total for a screen-reader user, for whom silence is the entire
+  response.
+- **Instances:** 2026-08-26 — workbench layout operations refused against a locked layout and against
+  the minimum-size floor returned an unchanged tree and emitted no announcement, so `Ctrl`+`Shift`+`P`
+  → *float* on a locked layout was indistinguishable from a broken command.
+- **Control:** `LayoutResult` carries an `Announcement` on **every** outcome including refusal, and
+  `WorkbenchAnnouncer` emits it through both the live region and the notification API; refusals
+  announce their *reason* ("Layout is locked. Unlock to rearrange panes."), not merely their
+  occurrence. Pinned by `WorkbenchCommandTests` and `WorkbenchControllerTests`.
+- **Residual risk:** **not yet verified by a screen reader.** The automated tests prove the
+  announcement is *produced*; NVDA Part D — the protocol step that would prove it is *heard* —
+  remains un-run (`docs/reviews/nvda-workbench-session.md`), deferred by the owner as low priority.
+  Until it runs, this class is controlled against the code and unverified against the product. A Part
+  D failure means the control needs widening, not that the test was wrong.
+- **Status:** `partially-controlled`
 
 ### DC-012 — A test runner reports success for a run that aborted
 - **Signature:** the summary line says `Passed!` with a plausible number, and the run actually

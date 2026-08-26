@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-design-phase-2",
-  "generated": "2026-08-26T19:35:00Z",
+  "project": "ai-de-fix-register-s2",
+  "generated": "2026-08-26T19:46:03Z",
   "audit": [
     {
       "id": "al-0001",
@@ -538,6 +538,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/design/phase-2-real-code-and-terminal.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0028",
+      "shortname": "repair-defect-register",
+      "datetime": "2026-08-26T19:46:03Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "Repair the defect-class register first — write the three missing entries (DC-009, DC-010, DC-011) and correct the count line",
+      "summary": "Wrote DC-009/010/011, corrected the header counts (controlled was overstated by exactly three), recorded DC-001 as recurred and widened its control to tools/verify-defect-register.py, wired into CI, and corrected two now-false compaction claims in architecture.md and the Phase-1 proof pack",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "tools/verify-defect-register.py"
       ],
       "tags": [],
       "outcome": "success"

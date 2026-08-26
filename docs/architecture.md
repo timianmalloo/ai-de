@@ -561,10 +561,14 @@ implementation (Phase 2 for terminal/visual; `P1-EXT` establishes the extractor 
   **Measured 2026-08-26** — see [P1-PERF results](design/phase-1-perf-results.md). On the 50,000-edge
   corpus every bounded read meets its budget with wide margin (describe p95 5.8 ms, impact p95
   23.6 ms, find p95 61.4 ms) and no bounded read scans the fact table. **Two qualifiers stand:**
-  (a) **the refresh budget holds only for the first ~5 generations of a scope** — append-only growth
-  pushes refresh p95 to 567 ms after 10 generations and 785 ms after 20, against a 500 ms budget, and
-  no policy currently triggers the compaction that would mitigate it (Phase-2 work item, defect class
-  DC-010); (b) nothing is measured beyond 50,000 edges, so the ceiling has moved rather than gone.
+  (a) **an uncompacted scope leaves the refresh budget after ~5 generations** — append-only growth
+  pushes refresh p95 to 567 ms after 10 generations and 785 ms after 20, against a 500 ms budget
+  (defect class DC-010). **Resolved 2026-08-26:** `StoreCompactor` restores it by rebuild-and-swap
+  (654.64 ms → 333.11 ms measured), and `WorkspaceCore.CheckCompactionNeeded` raises a
+  `store.compaction_due` health incident so the condition surfaces itself. The policy **reports
+  rather than auto-compacts** — compaction replaces the database file — so the residual is an
+  operator who ignores the incident; (b) nothing is measured beyond 50,000 edges, so the ceiling has
+  moved rather than gone.
 - Scale beyond the approved corpus (500k+ edges), and WAL checkpoint lag under sustained long reads,
   remain unmeasured.
 - Generated diagram SVG byte determinism and Bicep/DDL adapter contracts are Phase-3 spikes.

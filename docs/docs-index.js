@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T19:34:30Z",
+  "generated": "2026-08-26T19:45:35Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -867,7 +867,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
         }
       ],
-      "sourceSha256": "2454c5777e7132d54b20e21bad3b4909fbd6a68c758ead8d6f9f6e2c016f599d"
+      "sourceSha256": "1bcbc703fc47da2f24c24d07ae93b0c3c3709704678f996ac51610c5db0a8dda"
     },
     {
       "id": "note-20260826-council-review-ai-ide-arch",
@@ -1262,7 +1262,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3abddec26586a394aa72a7b43f9d6148b662141a4b1c2ae804462acec830a958"
+      "sourceSha256": "e4e0cfd9ae3de704d5f61c76f1db484a60647784ef5d4a6b98ebb10d95df0338"
     },
     {
       "id": "lens-code-doc-join",
@@ -1547,7 +1547,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dc82bf963107ea885110e97262fce5e4f1ef19c5c465039bd7a1c8fcbf545852"
+      "sourceSha256": "53589db37edd1ae7891d2712c10bf66202b5d612e7e29379183b50c60ee823ec"
     },
     {
       "id": "release-plan-ai-native-ide",
@@ -3943,7 +3943,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-feat-test-run-integrity-gate — Audit & Change Log",
+      "title": "ai-de-design-phase-2 — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3965,5 +3965,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "a839ba7803f6c2e83e3ebe870b8c56cd875dded8dfbed7898e8d16691c51777a"
+  "graphSha256": "743ce1a1962c3fcaa0cc52e43fec12d70dc67b4a004e9699551768722ff5f0b3"
 };
