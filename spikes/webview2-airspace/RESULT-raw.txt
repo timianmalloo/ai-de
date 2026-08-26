@@ -1,0 +1,124 @@
+
+==============================================================================
+Q0 - environment
+==============================================================================
+WebView2 Runtime : 151.0.4129.107
+
+==============================================================================
+==== HOSTING MODE: Windowed ====
+==============================================================================
+The default `WebView2` control - a child HWND composited by Windows.
+DPI scale        : 1.50x (144 DPI)
+
+==============================================================================
+[Windowed] Q1 - AIRSPACE: does a WPF element render ON TOP of WebView2?
+==============================================================================
+  sample: web-only   @ 1318,750
+  sample: overlay    @ 589,159
+
+  web area, WPF visual tree only : #1E293B  -> pane
+  web area, composited           : #CC3C4B  -> web   [web=38  pane=176  overlay=219]
+  overlay area, composited       : #CC3C4B  -> web   [web=38  pane=176  overlay=219]
+
+  OK  WebView2 renders inside the docked AvalonDock pane.
+  x   AIRSPACE CONFIRMED - the WebView2 draws over the WPF overlay,
+      though the overlay is later in z-order in the same Grid cell.
+
+==============================================================================
+[Windowed] Q3 - does it survive being hidden behind a TAB and brought back?
+==============================================================================
+  hidden tab   : CoreWebView2 alive = True, IsVisible = False
+  restored tab : CoreWebView2 alive = True, pixel #CC3C4B -> web
+  OK  Renders correctly after being hidden and restored.
+
+==============================================================================
+[Windowed] Q4 - does keyboard focus cross the WPF / WebView2 boundary?
+==============================================================================
+  focus start          : TextBox
+  after MoveFocus(Next): TextBox
+  IsTabStop = True, Focusable = True, base = HwndHost
+  ->  Tab traversal did not land on the WebView2 in one step.
+  explicit Focus() accepted: False
+  OK  Focus can be taken back out by WPF.
+
+==============================================================================
+[Windowed] Q5 - does it resize with its pane?
+==============================================================================
+  pane before  : 813x638
+  pane after   : 748x638
+  OK  The WebView2 tracks its pane's size through a docking resize.
+  after resize, sampled #CC3C4B -> web - still rendering.
+
+==============================================================================
+[Windowed] Q2 - does it survive being FLOATED and re-docked?   (DESTRUCTIVE)
+==============================================================================
+  before float : CoreWebView2 alive = True
+  floated      : CoreWebView2 alive = True, size 747x616
+  re-docked    : CoreWebView2 alive = True, size 748x638
+  OK  Survives float and re-dock without losing its browser process.
+
+==============================================================================
+==== HOSTING MODE: Composition ====
+==============================================================================
+`WebView2CompositionControl` - rendered into the WPF visual tree.
+DPI scale        : 1.50x (144 DPI)
+
+==============================================================================
+[Composition] Q1 - AIRSPACE: does a WPF element render ON TOP of WebView2?
+==============================================================================
+  sample: web-only   @ 1318,750
+  sample: overlay    @ 589,159
+
+  web area, WPF visual tree only : #CC3C4B  -> web
+  web area, composited           : #CC3C4B  -> web   [web=38  pane=176  overlay=219]
+  overlay area, composited       : #22C55E  -> overlay   [overlay=0  pane=160  web=255]
+
+  OK  WebView2 renders inside the docked AvalonDock pane.
+  OK  NO AIRSPACE PROBLEM - the WPF overlay draws over the WebView2.
+
+==============================================================================
+[Composition] Q3 - does it survive being hidden behind a TAB and brought back?
+==============================================================================
+  hidden tab   : CoreWebView2 alive = True, IsVisible = False
+  restored tab : CoreWebView2 alive = True, pixel #1E293B -> pane
+  x   Did not render after being restored from a background tab.
+
+==============================================================================
+[Composition] Q4 - does keyboard focus cross the WPF / WebView2 boundary?
+==============================================================================
+  focus start          : TextBox
+  after MoveFocus(Next): TextBox
+  IsTabStop = True, Focusable = True, base = Control
+  ->  Tab traversal did not land on the WebView2 in one step.
+  explicit Focus() accepted: False
+  OK  Focus can be taken back out by WPF.
+
+==============================================================================
+[Composition] Q5 - does it resize with its pane?
+==============================================================================
+  pane before  : 813x637
+  pane after   : 748x637
+  OK  The WebView2 tracks its pane's size through a docking resize.
+  after resize, sampled #CC3C4B -> web - still rendering.
+
+==============================================================================
+[Composition] Q2 - does it survive being FLOATED and re-docked?   (DESTRUCTIVE)
+==============================================================================
+  before float : CoreWebView2 alive = True
+  x dispatcher exception: ArgumentException: Value does not fall within the expected range.
+    origin: at Microsoft.Web.WebView2.Wpf.GraphicsItemD3DImage.UpdateSize(Int32 width, Int32 height)
+Fatal error.
+0xC0000005
+   at ABI.System.IDisposableMethods.Dispose(WinRT.IObjectReference)
+   at Windows.Graphics.Capture.Direct3D11CaptureFrame.Dispose()
+   at Microsoft.Web.WebView2.Wpf.GraphicsItemD3DImage.RequestRender()
+   at Microsoft.Web.WebView2.Wpf.GraphicsItemD3DImage.OnFrameArrived(Windows.Graphics.Capture.Direct3D11CaptureFramePool, System.Object)
+   at WinRT._EventSource_global__Windows_Foundation_TypedEventHandler_global__Windows_Graphics_Capture_Direct3D11CaptureFramePool__object_+EventState.<GetEventInvoke>b__1_0(Windows.Graphics.Capture.Direct3D11CaptureFramePool, System.Object)
+   at WinRT.GenericTypeInstantiations.Windows_Foundation_TypedEventHandler_2_Windows_Graphics_Capture_Direct3D11CaptureFramePool__object.Do_Abi_Invoke(IntPtr, IntPtr, IntPtr)
+   at MS.Win32.UnsafeNativeMethods+ITfMessagePump.GetMessageW(System.Windows.Interop.MSG ByRef, IntPtr, Int32, Int32, Int32 ByRef)
+   at MS.Win32.UnsafeNativeMethods+ITfMessagePump.GetMessageW(System.Windows.Interop.MSG ByRef, IntPtr, Int32, Int32, Int32 ByRef)
+   at System.Windows.Threading.Dispatcher.GetMessage(System.Windows.Interop.MSG ByRef, IntPtr, Int32, Int32)
+   at System.Windows.Threading.Dispatcher.PushFrameImpl(System.Windows.Threading.DispatcherFrame)
+   at System.Windows.Application.RunDispatcher(System.Object)
+   at System.Windows.Application.RunInternal(System.Windows.Window)
+   at Webview2AirspaceSpike.Program.Main()

@@ -69,6 +69,31 @@ contract and selected by the Phase-2 spike.
   plus the in-WebView2 graph renderer selection, are a **Phase-2 prototype spike**; a failure of that
   spike is the explicit **reversal trigger** for this ADR (reconsider a web-native shell).
 
+> ### The reversal trigger was MET on 2026-08-26 — spike S4
+>
+> [`spikes/webview2-airspace`](../../spikes/webview2-airspace/RESULT.md) measured it. **Airspace is
+> real and not marginal:** a WPF overlay placed in the same `Grid` cell as the WebView2, later in
+> z-order, is simply not drawn — its own region samples as web content at a colour distance of 38
+> versus 219. Any popup, context menu, tooltip or drag adorner over the canvas is invisible,
+> **including AvalonDock's own drop-target indicators**, which collides directly with US-9.
+>
+> **`WebView2CompositionControl` is not the mitigation.** It removes airspace exactly (distance 0),
+> and it **terminates the process** when AvalonDock floats its pane — an `ArgumentException` from
+> `GraphicsItemD3DImage.UpdateSize` followed by an uncatchable `0xC0000005` in
+> `Direct3D11CaptureFrame.Dispose()`. It also never repaints after a tab restore. US-9 requires
+> floating panes, so it trades a rendering limitation for a crash.
+>
+> **`Focus()` is refused in both hosting modes** and Tab traversal never reaches the canvas. Under
+> [ADR-0014](0014-accessibility-posture.md) that is no longer an accessibility veto, but routing
+> focus into web content is now a design obligation (`MoveFocusRequested` / `CoreWebView2.MoveFocus`)
+> rather than something that works by default.
+>
+> **This ADR is therefore NOT yet reversed, but it is no longer settled.** A decision is owed before
+> the graph canvas is built: keep the windowed control and forbid WPF chrome over the canvas; reverse
+> this ADR for the canvas and render the graph in WPF; or accept the composition control with
+> floating disabled for that one pane. The spike deliberately does not choose — it establishes that
+> the "just use composition hosting" answer is unavailable.
+
 ## Evidence
 
 Spec comparables and out-of-scope reservation [Verified]. WebView2 airspace/a11y and terminal-control

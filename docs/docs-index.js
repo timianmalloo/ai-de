@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T20:00:31Z",
+  "generated": "2026-08-26T20:37:37Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -417,7 +417,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "76af9fe367fbbd27dc76344409e8978111bd866a1ddad4b5b9e5dbb1882fb2b4"
+      "sourceSha256": "3f06638d36c6b38b519b043bc514da461a96d02f181d962802b80f2446c8ea1a"
     },
     {
       "id": "adr-0006-terminal-delivery-semantics",
@@ -547,7 +547,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fab9d9d70cedfe89495478526d755f5cec7431d794fc291909bb20ee77e17ab0"
+      "sourceSha256": "3cec4ae9959780a189f0308e030a79c27ae725bdf0e96f4a01126a431216bb0e"
     },
     {
       "id": "adr-0009-in-process-first-daemon",
@@ -716,7 +716,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "42282fdf122f0b7c1738819401f286744c81361a6469bbcee89e12c3ca9f1879"
+      "sourceSha256": "b3c538ee3647784545c144f59e0e02aa5bcd52a88480938f34028781e5230713"
     },
     {
       "id": "adr-0013-layout-persistence-envelope",
@@ -752,6 +752,45 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "87b930eaa1ea69027456641a2fe4203d621fcf50dddf2b7afb2608f49f0230e1"
+    },
+    {
+      "id": "adr-0014-accessibility-posture",
+      "path": "docs/adr/0014-accessibility-posture.md",
+      "title": "ADR-0014 — Accessibility is best-effort, not a conformance target, and holds no veto",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The product owner has decided AI-DE is not optimising for accessibility. WCAG 2.2 AA is withdrawn as a conformance obligation and the UX & Accessibility lens no longer holds a hard veto. Existing accessibility work is retained because it is built and passing; it stops being a gate, and every artifact that asserted the obligation is corrected so the repository does not claim conformance it is not pursuing.",
+      "tags": [
+        "architecture",
+        "accessibility",
+        "scope",
+        "governance",
+        "wcag"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c42124967dc05136d8ccee32a1d6a142fe9e8c73ad3343fac28aa30ed9ba6fbc"
     },
     {
       "id": "architecture",
@@ -1212,7 +1251,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5dd587aeab3b885e45f5de7192fe2b0ca214c119306cc63cd2ee9d146397eca9"
+      "sourceSha256": "f4509e1ad85d981e69d86ea550aae6ebfbb608c4dcbee3d1f3c22bc47417035e"
     },
     {
       "id": "audit-log",
@@ -3890,7 +3929,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[Open Audit or a saved tab] --> B{Underlying source/session available?}\n  B -->|audit available| C[Filter timeline and select entry]\n  B -->|session/view ended or unavailable| R[Show preserved identity, last state, and recovery options]\n  R -->|reconnect or reopen succeeds| A\n  R -->|cancel| X([Keep layout; do not retarget])\n  C --> D{Entry integrity and redaction approved?}\n  D -->|yes| E[Show permitted detail and source links]\n  D -->|no, redacted, malformed, or inaccessible| F[Show state and safe recovery/filter action]\n  F --> C"
         }
       ],
-      "sourceSha256": "abf6b2978f6bc8f95299286c25d0a1619740f355df24a3e739d501d996943377"
+      "sourceSha256": "f06ab6e2e7d234cbcfa463c33cf2f6864943ac430b970335379bceaa9e03a6db"
     },
     {
       "id": "threat-model-ai-native-ide",
@@ -3943,7 +3982,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-fix-register-s2 — Audit & Change Log",
+      "title": "ai-de — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3965,5 +4004,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "15afde48755fb840d3fd41fc9a38d7765f354114b4e1e48192d0f5f664e9bec4"
+  "graphSha256": "35a9e9689b446377ab0f6434b43b3a041519236a501b2d2282b3f3c8ecd46c24"
 };

@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!--
+      A FINDING, not a preference. `WebView2CompositionControl` uses Windows.UI.Composition and needs
+      the WinRT projections (`Microsoft.Windows.SDK.NET`); on plain `net10.0-windows` it throws
+      FileNotFoundException from its own Loaded handler. Reaching them requires a Windows SDK TFM.
+      `src/AiDe.App` currently targets `net10.0-windows`, so adopting the composition control means
+      raising the shipped app's target framework — recorded in RESULT.md as a cost of the mitigation.
+    -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <!--
+      The host app declares PerMonitorV2 and the DPI question is part of what S4 asks, so the spike
+      must declare it too. A spike that runs System-aware would measure our own missing manifest and
+      blame WebView2 — the mistake the DPI/ganged-resize spike already made once.
+    -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- The console output IS the result, so keep a console attached to a WinExe. -->
+    <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3485.44" />
+    <PackageReference Include="Dirkster.AvalonDock" Version="5.0.0" />
+  </ItemGroup>
+
+</Project>

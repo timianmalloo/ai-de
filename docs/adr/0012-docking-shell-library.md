@@ -35,9 +35,16 @@ library alone is **172 `.cs` files / ~1.45 MB of C#** (~35–40k lines) excludin
 serializers and themes — a multi-month project for a single developer, and squarely the
 Gratuitous-Reinvention the Solution-Selection Ladder exists to prevent.
 
-The product is under a **WCAG 2.2 AA obligation** (spec Part C; UX & Accessibility holds the
-accessibility hard veto), is single-developer and open-source-friendly, and must **persist and
-migrate user layouts across upgrades**. Those three constraints — not feature count — decide this.
+The product was, at the time of this decision, under a **WCAG 2.2 AA obligation** (spec Part C; UX &
+Accessibility held the accessibility hard veto), is single-developer and open-source-friendly, and
+must **persist and migrate user layouts across upgrades**. Those three constraints — not feature
+count — decided this.
+
+> **Amended 2026-08-26 — [ADR-0014](0014-accessibility-posture.md) withdrew the accessibility
+> obligation.** This decision is **not** reversed by that. The licence, single-developer maintenance,
+> floating-window and layout-persistence constraints stand on their own and still select AvalonDock.
+> What changes is the *justification* for the owned accessibility layer below: it is retained because
+> it is already built, tested and free to keep — not because a conformance level requires it.
 
 ## Decision
 

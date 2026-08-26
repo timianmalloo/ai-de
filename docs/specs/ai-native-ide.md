@@ -99,8 +99,9 @@ instructive. Every claim below is from official documentation (sources in the co
    report rates SC 2.1.1 Keyboard **"Does Not Support"**; Premiere documents "limited support" for
    screen readers; VS Code's keyboard resize has no default binding and is disabled outright in
    floating windows. **No exemplar documents announcing a layout change to assistive technology.**
-   AI-DE is under a WCAG 2.2 AA obligation and therefore cannot copy the category here — US-9's
-   accessibility criteria are deliberately stronger than every exemplar.
+   AI-DE originally treated this as a gap to beat. **Superseded by [ADR-0014](../adr/0014-accessibility-posture.md)
+   (2026-08-26): accessibility is best-effort and holds no veto.** The exemplar finding stands as an
+   observation about the category; it is no longer a requirement AI-DE undertakes to exceed.
 
 [^knowledge-hub]: [`docs/knowledge/index.md`](../knowledge/index.md), “The four findings that
 change the plan” and “Cross-cutting design implications,” compiled 2026-08-23.
@@ -436,7 +437,13 @@ evidence assertion, and any layout may be discarded and rebuilt from its default
   workspace opens, **then** the product starts from the default arrangement, says so, and preserves
   the unreadable file rather than overwriting it.
 
-**Keyboard and assistive technology (WCAG 2.2 AA — deliberately stronger than every exemplar)**
+**Keyboard operability (a product requirement, not an accessibility conformance one)**
+
+*Per [ADR-0014](../adr/0014-accessibility-posture.md), WCAG 2.2 AA is withdrawn as an obligation and
+assistive-technology support is best-effort. The keyboard criteria below are **retained in full**,
+because this is a developer tool whose users work from the keyboard — they describe how the product
+works, not a conformance level it claims. Criteria phrased as screen-reader announcements are kept
+where already built and are not gates.*
 
 - **Given** any layout operation that can be performed by dragging — dock, move, split, join,
   reorder, resize, float — **when** I use only the keyboard, **then** an equivalent command exists
@@ -519,7 +526,7 @@ failures and outliers. No benchmark result is represented as verified before tha
 | Quality attributes | Yes | ISO 25010 requirements and performance budget above. |
 | Threat model (STRIDE) | Yes | Terminal, MCP, prompt dispatch, repository content, local service, and visual rendering are trust boundaries; a detailed threat model is required before implementation. |
 | Privacy and data governance | Yes | Repository work data, prompts, audit entries, and agent output are minimized, local-first by default, redacted on display where recorded, and never sent to a model/provider without a separately established basis. |
-| Accessibility | Yes | Part C requires WCAG 2.2 AA and keyboard access. |
+| Accessibility | **Best-effort — not a conformance target** | Withdrawn as an obligation by [ADR-0014](../adr/0014-accessibility-posture.md). Keyboard operability is retained as an ordinary product requirement. The product is **not** claimed to be usable with a screen reader. |
 | Performance | Yes | Derived-view refresh target stated; graph-store and rendering targets await measured spikes. |
 | Release / rollback | Yes | Workspace metadata and generated projections need a backwards-compatible, exportable migration and recovery path. |
 | Observability | Yes | Refresh/extraction, graph-query, prompt-transfer, and view-failure state need source-attributed, privacy-safe telemetry. |
@@ -783,7 +790,9 @@ flowchart TD
   Nav:CommandPalette+Sidebar; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer;
   Color:DarkAdaptive; Type:Utilitarian; Depth:Flat; Sync:LocalFirst; Persistence:LocalDevice;
   Feedback:Optimistic; Motion:Micro; Pacing:Freeform; Transition:HardCut;
-  A11y:WCAG_2.2_AA; }`
+  A11y:BestEffort; }`
+
+  *(`A11y` was `WCAG_2.2_AA` until [ADR-0014](../adr/0014-accessibility-posture.md).)*
 - **Selection:** Auto-selected from the dominant JTBD: an expert must rapidly navigate and
   coordinate many sessions and evidence surfaces, so keyboard velocity is the right *feel*.
   But the **structural** facet is a user-arranged workstation, not a fixed master-detail —
@@ -862,9 +871,12 @@ flowchart TD
 - **Copy:** write concise, evidence-first status messages. Examples: `Graph is stale — Bicep
   extraction failed. View last successful snapshot`; `Session is busy — prompt remains staged`;
   `Relationship inferred from naming convention; inspect source`.
-- **Accessibility:** meet WCAG 2.2 AA. The future `DESIGN.md` must measure text/non-text contrast
-  in light, dark, and high-contrast modes. Automated checks and documented NVDA keyboard traces
-  cover focus order/restoration, names/roles/value changes, target sizes, and graph/list
+- **Accessibility — best-effort, no conformance claim** ([ADR-0014](../adr/0014-accessibility-posture.md)).
+  Contrast, target sizes and screen-reader traces are not gates and NVDA verification is closed as
+  not-planned. What is already built is kept: automation names, the announcement channel, and the
+  keyboard command path, with their tests. Retained for reference, no longer required: contrast
+  measurement across modes, and traces covering focus order/restoration, names/roles/value changes,
+  target sizes, and graph/list
   equivalence.
 - **Performance:** meet the Part A p95 refresh requirement. On the approved benchmark corpus,
   initial selected-view render shall be p95 under 2 seconds; node selection/focus response p95
@@ -892,8 +904,9 @@ flowchart TD
   implementation approval.
 - `DESIGN.md` defines primitive, semantic, and component tokens plus measured AA contrast in
   light, dark, and high-contrast modes before UI implementation begins.
-- All controls, terminal actions, graph-node operations, and prompt dispatch paths are keyboard
-  operable with the declared focus/role/name/value contract and meet WCAG 2.2 AA.
+- All controls, terminal actions, graph-node operations, and prompt dispatch paths are **keyboard
+  operable** — retained as a product requirement. The focus/role/name/value contract and WCAG 2.2 AA
+  conformance are **no longer claimed** ([ADR-0014](../adr/0014-accessibility-posture.md)).
 - A graph canvas and its equivalent hierarchy/list expose the same selected-node identity,
   provenance, navigation actions, and result-limit state.
 - A user sees a prompt draft’s exact target session identity/generation, workspace, final

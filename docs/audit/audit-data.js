@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de",
-  "generated": "2026-08-26T20:01:32Z",
+  "project": "ai-de-s3-s4",
+  "generated": "2026-08-26T20:38:23Z",
   "audit": [
     {
       "id": "al-0001",
@@ -609,6 +609,25 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0032",
+      "shortname": "spikes-s3-s4-and-accessibility-posture",
+      "datetime": "2026-08-26T20:38:23Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "Spike S3 and S4 and on S1 yes disclose absent generated code ... surpress accessability vetos, i am not optimizing for accessability",
+      "summary": "ADR-0014 withdraws WCAG 2.2 AA as an obligation and the accessibility hard veto; six spec assertions corrected. S3 cleared: own a WPF renderer, GlyphRun per line 6.64ms p95 vs 142.80ms per-cell. S4 MET ADR-0008's reversal trigger: airspace real, and WebView2CompositionControl kills the process when its pane is floated. S1 decided: disclose absent generated code via a scope-level omission state",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0014-accessibility-posture.md",
+        "spikes/terminal-renderer/RESULT.md",
+        "spikes/webview2-airspace/RESULT.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -819,6 +838,30 @@ window.AUDIT_DATA = {
         "before": "b8b7c08",
         "after": "b8b7c0849435b0cd84e8fb8009e6b1be1308065c",
         "branch": "fix/defect-register-and-spike-s2",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0009",
+      "datetime": "2026-08-26T20:38:23Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": "investigate",
+      "title": "Accessibility withdrawn as a conformance target; terminal renderer chosen; ADR-0008's reversal trigger met",
+      "prompt": "Spike S3 and S4; disclose absent generated code; suppress accessibility vetos",
+      "summary": "ADR-0014 accepted. S3 selects an owned WPF renderer with GlyphRun-per-line binding. S4 leaves ADR-0008 unsettled: airspace is real and the composition control crashes the process on float",
+      "rationale": "The owner is not optimising for accessibility, so the veto is suppressed and every artifact claiming WCAG 2.2 AA is corrected rather than left asserting conformance the product does not pursue. S3/S4 are measured rather than reasoned: 21x spread between draw paths, and a native access violation on float.",
+      "artifacts": [
+        "docs/adr/0014-accessibility-posture.md",
+        "docs/adr/0008-shell-host.md",
+        "docs/adr/0005-terminal-runtime-boundary.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "e59738a",
+        "after": "e59738a654ebf8b908075d4f5ea5504ceb025ae5",
+        "branch": "spike/s3-s4-and-a11y-posture",
         "pushed": null,
         "commits": []
       }

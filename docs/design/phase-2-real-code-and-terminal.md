@@ -186,7 +186,7 @@ part needing a spike — it shells out to MSBuild and its failure modes are envi
 | `Controller handles Route` from an attribute | `Verified` | Declared in the artifact. |
 | DI registration `AddScoped<IFoo, Foo>()` | **`Inferred`** | Static approximation; the runtime container may differ. Architecture rule 4 names this explicitly. |
 | ORM entity → table from convention | **`Inferred`** | Convention-derived, not declared. |
-| Anything from a **source generator** | **Absent — not labelled at all** (S2, 2026-08-26) | The security control strips analyzer references before compilation, so generated symbols never enter the model. Measured: 3 source-declared types instead of 4, zero generated documents. The honest consequence is **silence, not a weak label** — and silence must be disclosed to the user rather than read as "nothing there". S1 re-scoped to that disclosure question. |
+| Anything from a **source generator** | **Absent — not labelled at all** (S2, 2026-08-26) | The security control strips analyzer references before compilation, so generated symbols never enter the model. Measured: 3 source-declared types instead of 4, zero generated documents. The honest consequence is **silence, not a weak label**. **Decided 2026-08-26: disclose the absence** — the scope records that analyzer references were stripped, and every projection over it carries a `generated-code-not-analysed` omission state. |
 
 ---
 
@@ -370,10 +370,62 @@ determines a contract rather than an optimisation.
 
 | Spike | Question | Why it gates | Status |
 |---|---|---|---|
-| **S1 — Roslyn source generators** | ~~Are generated symbols visible, and distinguishable from hand-written ones?~~ **Re-scoped by S2:** under the mandated control, generated symbols are **not present at all** — is that absence acceptable, and how is it disclosed? | Still spec-visible, but the question changed. A user asking "what implements `IFoo`" in a repository that *generates* implementations gets an answer correct about hand-written code and silent about the rest. That is a product decision, not a labelling one. | **re-scope before running** |
+| **S1 — Roslyn source generators** | ~~Are generated symbols visible, and distinguishable from hand-written ones?~~ Re-scoped by S2 to: is the absence of generated symbols acceptable, and how is it disclosed? | A user asking "what implements `IFoo`" in a repository that *generates* implementations gets an answer correct about hand-written code and silent about the rest. | **DECIDED 2026-08-26 by the product owner — disclose the absence.** No spike needed: the question was a product call, and it has been made. See below. |
 | **S2 — MSBuildWorkspace load** | Does a real solution load without the host SDK matching exactly, and can analyzers/generators be disabled? | The security control above depends on the answer. If they cannot be disabled, extraction executes repository code and the approach changes. | **CLEARED 2026-08-26** — [result](../../spikes/roslyn-msbuild-workspace/RESULT.md). Both yes, but **the mitigation changed**: MSBuild properties are ineffective; stripping `AnalyzerReferences` is the control. |
-| **S3 — Terminal renderer** | Which renderer meets the keyboard/screen-reader contract? | ADR-0005 defers the choice; the a11y contract is a hard veto, and the UIA probe showed the category is weak here. | not started |
-| **S4 — WebView2 airspace** | Does WebView2 compose with WPF focus, DPI and the docking layout? | ADR-0008's recorded reversal trigger. | not started |
+| **S3 — Terminal renderer** | ~~Which renderer meets the keyboard/screen-reader contract?~~ Re-weighted by [ADR-0014](../adr/0014-accessibility-posture.md) to throughput, fidelity, input, licence and integration cost. | ADR-0005 defers the choice. | **CLEARED 2026-08-26** — [result](../../spikes/terminal-renderer/RESULT.md). **Own a WPF renderer.** `GlyphRun` per line: p95 **6.64 ms** (151 fps ceiling). VT scanning at **2361×** the 1 MiB/s budget. |
+| **S4 — WebView2 airspace** | Does WebView2 compose with WPF focus, DPI and the docking layout? | ADR-0008's recorded reversal trigger. | **RUN 2026-08-26 — TRIGGER MET** — [result](../../spikes/webview2-airspace/RESULT.md). Airspace is real, and the composition control is **not** the fix: it kills the process. A decision is owed. |
+
+### S1 — decided rather than spiked: disclose the absence
+
+The product owner decided on 2026-08-26 to **disclose absent generated code**. There is nothing left
+to measure, so S1 does not run; what it produces instead is a contract:
+
+- The extractor **records, per scope, that analyzer references were stripped** — a scope-level fact,
+  not a per-symbol one, because the absence is a property of how the scope was extracted.
+- Every projection over such a scope carries a **`generated-code-not-analysed` omission state**,
+  reusing the existing bounded-result omission shape rather than inventing a second one. `describe`,
+  `find`, `impact` and `knowledge` all already carry omission state, so this rides an established
+  channel.
+- The UI surfaces it wherever a result could be incomplete because of it — the same treatment a
+  capped result gets. **Silence read as "nothing there" is the failure mode**, and the whole point of
+  the decision is to prevent a confident, incomplete answer.
+- `P2-EXT-06` becomes the test: a fixture project with a generator, extracted under the control,
+  must yield the omission state, and a projection over it must carry it through to the wire.
+
+### S3 — cleared, with a binding implementation constraint
+
+Owning a WPF renderer is viable, and the margin is comfortable. But the spike measured a **21×
+spread between draw paths**: `GlyphRun` per line at 6.64 ms p95 versus `FormattedText` per cell at
+142.80 ms — 7 fps, four times over budget.
+
+That matters because per-cell is the *natural* design. A terminal is conceptually a grid of
+independently styled cells, and modelling it that way is what a competent implementer would write
+first. So the draw path is recorded here as a **design decision, not an optimisation**: `GlyphRun`
+per line with a cached `GlyphTypeface`. ADR-0005 is unchanged — nothing measured argues for letting
+the renderer own session state.
+
+### S4 — the trigger is met, and the obvious mitigation is worse than the problem
+
+Airspace is real in the default control and not marginal: the WPF overlay's own region samples as web
+content at a distance of 38 versus 219. Concretely, any popup, context menu, tooltip or drag adorner
+over the graph canvas is invisible — **including AvalonDock's own drop-target indicators**, which is
+a direct collision with US-9's drop-target preview.
+
+`WebView2CompositionControl` fixes airspace *exactly* (distance 0). It also **terminates the process**
+when AvalonDock floats its pane — an `ArgumentException` from `GraphicsItemD3DImage.UpdateSize`,
+followed by an uncatchable `0xC0000005` in `Direct3D11CaptureFrame.Dispose()` — and never repaints
+after a tab restore. US-9 requires floating panes, so this is not a trade that can be taken.
+
+**A decision is owed before the graph canvas is built.** The options, with the spike deliberately not
+choosing: keep the windowed control and forbid WPF chrome over the canvas; reverse ADR-0008 for the
+canvas and render the graph in WPF; or accept the composition control with floating disabled for that
+one pane. This is now the largest open architectural question in Phase 2.
+
+**Focus does not cross the boundary in either hosting mode** — `Focus()` is refused and Tab traversal
+never lands on the canvas. Under ADR-0014 that is no longer an accessibility veto, but it remains an
+ordinary defect in a keyboard-first tool: routing focus into web content needs the
+`MoveFocusRequested` / `CoreWebView2.MoveFocus` protocol, which is a design obligation rather than
+something that works by construction.
 
 **What S2 established beyond its own question.** A real solution (`AiDe.sln`, 5 projects) loaded in
 1.4 s with **zero** `WorkspaceFailed` diagnostics against a deliberately *older* SDK (10.0.301 host,
@@ -410,9 +462,9 @@ Identity Architect as Phase-2 input.
 
 | | |
 |---|---|
-| **Completed** | Phase-2 design: two contract gaps surfaced and closed on paper, data model (no new facts, and why), three component contracts, failure/STRIDE/LINDDUN analyses, telemetry, the triggered-directive test plan including the newly-owed conformance suite. **Spike S2 run and cleared 2026-08-26**, changing the analyzer-execution mitigation from MSBuild properties (measured ineffective) to stripping `AnalyzerReferences`, and re-scoping S1. |
-| **Remaining** | S1 (re-scoped to disclosure), S3, S4; then implementation in the order terminal → process split → Roslyn. Two S2 findings are open: the dependency-chain advisories and the unprobed MSBuild-task boundary. |
-| **Best next action** | **Spike S3 (terminal renderer)** — S4 is a reversal trigger for a decision already taken, and S1 now depends on a product call about disclosing absent generated code rather than on a measurement. S3 gates a hard accessibility veto in the category the UIA probe already showed to be weak, so it is the one most likely to change the design. |
+| **Completed** | Phase-2 design: two contract gaps surfaced and closed on paper, data model (no new facts, and why), three component contracts, failure/STRIDE/LINDDUN analyses, telemetry, the triggered-directive test plan including the newly-owed conformance suite. **All four spikes resolved 2026-08-26.** S2 changed the analyzer-execution mitigation from MSBuild properties (measured ineffective) to stripping `AnalyzerReferences`. S3 cleared: own a WPF renderer, `GlyphRun` per line. S4 **met its reversal trigger**. S1 decided by the product owner rather than spiked: disclose the absence. |
+| **Remaining** | **One architectural decision is owed before the graph canvas is built** — S4 left ADR-0008's trigger met with no safe mitigation. Then implementation in the order terminal → process split → Roslyn. Open findings: the MSBuildWorkspace dependency-chain advisories, the unprobed MSBuild-task trust boundary, and WebView2 focus routing. |
+| **Best next action** | **Resolve the S4 decision** — keep the windowed control and forbid WPF chrome over the canvas, reverse ADR-0008 for the canvas, or accept the composition control with floating disabled for that pane. It is the only item that blocks a component rather than adding to one, and every hour spent building the canvas before it is settled is at risk. The terminal runtime can proceed in parallel: S3 cleared it and it does not touch this decision. |
 
 ## Gate record
 
