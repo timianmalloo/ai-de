@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T20:37:37Z",
+  "generated": "2026-08-26T21:17:40Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -547,7 +547,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3cec4ae9959780a189f0308e030a79c27ae725bdf0e96f4a01126a431216bb0e"
+      "sourceSha256": "ff9cd140b5ec35a7d882458d68ef27ec266b288aad21c769ce2c9452676ae16e"
     },
     {
       "id": "adr-0009-in-process-first-daemon",
@@ -791,6 +791,47 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c42124967dc05136d8ccee32a1d6a142fe9e8c73ad3343fac28aa30ed9ba6fbc"
+    },
+    {
+      "id": "adr-0015-canvas-hosting-and-overlay-strategy",
+      "path": "docs/adr/0015-canvas-hosting-and-overlay-strategy.md",
+      "title": "ADR-0015 — Host the graph canvas in the windowed WebView2 and yield it to WPF by snapshot swap",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Spike S4 met ADR-0008's reversal trigger: the windowed WebView2 cannot be drawn over, and the composition control that can kills the process when its pane is floated. ADR-0008 is not reversed. The canvas keeps the windowed control, moves its own chrome into the web content, and hides behind a pixel-aligned still frame for the moments shell chrome must cross it.",
+      "tags": [
+        "architecture",
+        "webview2",
+        "wpf",
+        "airspace",
+        "canvas",
+        "docking",
+        "focus"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0008-shell-host",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-phase-2-real-code-and-terminal",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "885e741f87ce2d8e0e7838669d2a4d259932b306a7154119187eff60f2de56d5"
     },
     {
       "id": "architecture",
@@ -1251,7 +1292,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f4509e1ad85d981e69d86ea550aae6ebfbb608c4dcbee3d1f3c22bc47417035e"
+      "sourceSha256": "9a3962eb0e2d36815df0c1d87392692567aa5e3538239be0711ccb74f6572ab4"
     },
     {
       "id": "audit-log",
@@ -4004,5 +4045,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "35a9e9689b446377ab0f6434b43b3a041519236a501b2d2282b3f3c8ecd46c24"
+  "graphSha256": "2726da6e9505d55552b2cfbf7d0a6e078f3a81f5853afaae0a5df5abab263d9d"
 };

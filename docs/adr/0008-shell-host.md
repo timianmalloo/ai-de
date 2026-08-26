@@ -88,11 +88,14 @@ contract and selected by the Phase-2 spike.
 > focus into web content is now a design obligation (`MoveFocusRequested` / `CoreWebView2.MoveFocus`)
 > rather than something that works by default.
 >
-> **This ADR is therefore NOT yet reversed, but it is no longer settled.** A decision is owed before
-> the graph canvas is built: keep the windowed control and forbid WPF chrome over the canvas; reverse
-> this ADR for the canvas and render the graph in WPF; or accept the composition control with
-> floating disabled for that one pane. The spike deliberately does not choose — it establishes that
-> the "just use composition hosting" answer is unavailable.
+> **This ADR is NOT reversed. Resolved 2026-08-26 by [ADR-0015](0015-canvas-hosting-and-overlay-strategy.md):**
+> the canvas keeps the windowed control, moves its own chrome into the web content, and hides behind
+> a pixel-aligned still frame for the moments shell chrome must cross it. The snapshot swap was
+> gut-checked at 150% DPI and holds — aligned to within a pixel of rounding, WPF composites over it,
+> the live canvas returns intact ([spike](../../spikes/webview2-snapshot-swap/RESULT.md)).
+>
+> Rendering the graph in WPF remains the recorded fallback, with ADR-0015 carrying its reversal
+> trigger.
 
 ## Evidence
 

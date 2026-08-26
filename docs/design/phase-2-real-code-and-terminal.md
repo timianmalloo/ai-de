@@ -25,7 +25,7 @@ summary: >-
 
 # Design: Phase 2 — real code, terminal, and process split
 
-- **Status:** In review — **implementation is gated behind four spikes** (below)
+- **Status:** In review — **all four gating spikes resolved 2026-08-26**; one architectural decision they raised is settled in ADR-0015
 - **Spec / architecture:** US-1, US-2, US-3, US-8 · [`docs/architecture.md`](../architecture.md) ·
   ADR-0005 · ADR-0007 · ADR-0009
 - **Delivery phase:** **Phase 2.** **Real:** Roslyn semantic extractor, ConPTY runtime + Job Object,
@@ -439,6 +439,73 @@ the MSBuild packages and eight against `System.Security.Cryptography.Xml` 9.0.0.
 ships. **The shipped extractor gets no such exemption**, and this is carried to the Security &
 Identity Architect as Phase-2 input.
 
+## Focus routing across the canvas boundary
+
+The canvas is the one surface in the workbench that WPF's focus system cannot reach. Spike S4
+measured `Focus()` refused and Tab traversal never landing on it, in **both** hosting modes — so this
+is a property of hosting a browser, not of the hosting mode [ADR-0015](../adr/0015-canvas-hosting-and-overlay-strategy.md)
+chose.
+
+### The documented mechanism does not exist here
+
+`CoreWebView2Controller.MoveFocus` is the documented way to hand focus to web content. **The WPF
+`WebView2` control exposes no controller at all** — verified by enumerating its public declared
+surface, which contains exactly two focus-related members, both `FocusVisualStyle`
+([spike](../../spikes/webview2-snapshot-swap/RESULT.md) finding 6). Those API names *do* appear in
+the assembly's string table, so this is a case where a grep would have confirmed a design that could
+not be built.
+
+What is available: `WebView2` derives from `HwndHost` and therefore owns a real window handle.
+`SetFocus` on it puts focus on the browser's inner input window — **measured**, and read back with
+`GetFocus()` rather than trusting `SetFocus`'s return value, which is the *previously* focused window
+and whose null case is ambiguous between "failed" and "nothing had focus".
+
+### The contract
+
+Focus is **explicit in both directions**. Neither crossing happens by WPF traversal, because
+traversal does not work here.
+
+| Transition | Mechanism | Trigger |
+|---|---|---|
+| **WPF → canvas** | `SetFocus(webView.Handle)`, then read back `GetFocus()` and confirm it landed on the handle or a descendant | The `workbench.focusCanvas` command — command palette, and its bound chord. Also on a canvas click, which the browser handles itself. |
+| **canvas → WPF** | The page traps `Tab` on its last focusable element and `Shift+Tab` on its first, and posts `{kind:"focus.leave", direction}` via `chrome.webview.postMessage`. The host moves WPF focus to the next/previous element. | User tabs off either end of the canvas. |
+| **canvas → WPF (escape)** | The same channel, `{kind:"focus.leave", direction:"restore"}` | `Esc` in the canvas returns focus to whatever last held it before entry. |
+
+Two properties fall out of this, and are stated because they are easy to lose later:
+
+- **The host records the pre-entry focus target** before calling `SetFocus`, so `Esc` has somewhere
+  to return to. Without it, leaving the canvas dumps the user at the start of the tab order.
+- **The page's boundary handlers are the only way out.** A canvas page that forgets them is a
+  keyboard trap — the user enters and cannot leave. That makes it a contract on the page rather than
+  a nicety, and it is the first thing the tests below assert.
+
+### Failure modes
+
+| Mode | Disposition | Control |
+|---|---|---|
+| `SetFocus` does not land (handle not yet created, or the control is hidden behind the snapshot swap) | **detect + announce** | Read back `GetFocus()`. On failure the command reports *"The graph canvas is not ready"* rather than doing nothing — a silent refusal is indistinguishable from a broken key (**DC-011**). |
+| Focus command issued while the snapshot swap is showing | **prevent** | The canvas is hidden and cannot take focus, so `workbench.focusCanvas` is disabled for the duration of a drag and refused with an announced reason. |
+| The page never posts `focus.leave` | **detect** | `P2-FOCUS-03` fails. There is no runtime recovery — a keyboard trap is a defect to fix, not to work around. |
+| A `focus.leave` message is produced by page content rather than the boundary handler | **mitigate** | The channel carries a fixed typed vocabulary and the canvas page is first-party; acting on `focus.leave` moves focus and grants nothing. Consistent with the repository-content-is-untrusted posture: the message has no privileged effect. |
+
+### Tests
+
+| ID | Asserts |
+|---|---|
+| `P2-FOCUS-01` | `workbench.focusCanvas` puts focus on the canvas handle or a descendant, verified via `GetFocus()` — not via the command's return value. |
+| `P2-FOCUS-02` | The pre-entry focus target is recorded, and `Esc` returns focus to exactly that element. |
+| `P2-FOCUS-03` | Tabbing off either end of the canvas returns focus to WPF in the correct direction. **This is the keyboard-trap test**, and the one that must never be allowed to rot. |
+| `P2-FOCUS-04` | With the snapshot swap active, `workbench.focusCanvas` is refused **and announced**, never silently ignored. |
+
+`P2-FOCUS-03` needs a real window and a real WebView2 runtime, so it belongs with the existing
+WPF-hosted tests under `DisableTestParallelization` (**DC-008**), and its absence must fail the run
+rather than be skipped (**DC-012**).
+
+> **Scope note.** Under [ADR-0014](../adr/0014-accessibility-posture.md) none of this is accessibility
+> work and none of it carries an accessibility veto. It is here because AI-DE is a keyboard-first
+> developer tool and "focus the graph" is an ordinary product capability that does not work by
+> default.
+
 ## Flagged risks
 
 - **The `ITerminalSession` extension weakens the Phase-1 conformance claim** until `P2-CONFORM` runs:
@@ -462,9 +529,9 @@ Identity Architect as Phase-2 input.
 
 | | |
 |---|---|
-| **Completed** | Phase-2 design: two contract gaps surfaced and closed on paper, data model (no new facts, and why), three component contracts, failure/STRIDE/LINDDUN analyses, telemetry, the triggered-directive test plan including the newly-owed conformance suite. **All four spikes resolved 2026-08-26.** S2 changed the analyzer-execution mitigation from MSBuild properties (measured ineffective) to stripping `AnalyzerReferences`. S3 cleared: own a WPF renderer, `GlyphRun` per line. S4 **met its reversal trigger**. S1 decided by the product owner rather than spiked: disclose the absence. |
-| **Remaining** | **One architectural decision is owed before the graph canvas is built** — S4 left ADR-0008's trigger met with no safe mitigation. Then implementation in the order terminal → process split → Roslyn. Open findings: the MSBuildWorkspace dependency-chain advisories, the unprobed MSBuild-task trust boundary, and WebView2 focus routing. |
-| **Best next action** | **Resolve the S4 decision** — keep the windowed control and forbid WPF chrome over the canvas, reverse ADR-0008 for the canvas, or accept the composition control with floating disabled for that pane. It is the only item that blocks a component rather than adding to one, and every hour spent building the canvas before it is settled is at risk. The terminal runtime can proceed in parallel: S3 cleared it and it does not touch this decision. |
+| **Completed** | Phase-2 design: two contract gaps closed on paper, data model (no new facts, and why), three component contracts, failure/STRIDE/LINDDUN analyses, telemetry, the triggered-directive test plan including the newly-owed conformance suite. **All four spikes resolved 2026-08-26.** S2 changed the analyzer-execution mitigation to stripping `AnalyzerReferences`. S3: own a WPF renderer, `GlyphRun` per line. S4 met ADR-0008's reversal trigger, **now resolved by [ADR-0015](../adr/0015-canvas-hosting-and-overlay-strategy.md)** — windowed control plus snapshot swap, gut-checked at 150% DPI. S1 decided: disclose the absence. **Focus routing designed** against a verified mechanism, after the documented one turned out not to exist on this control. |
+| **Remaining** | Implementation, in the order terminal → process split → Roslyn. Open findings carried forward: the MSBuildWorkspace dependency-chain advisories, the unprobed MSBuild-task trust boundary, and a possible colour flash at the snapshot swap that only a human observer can settle. |
+| **Best next action** | **Implement the ConPTY terminal runtime.** It is the only Phase-2 component with no open decision in front of it — S3 cleared its renderer and named the binding draw path, ADR-0005's boundary is unchanged, and it does not touch the canvas. It also forces the `ITerminalSession` output extension and the newly-owed D7 conformance suite, which every dispatch test currently written against the fixture depends on. |
 
 ## Gate record
 

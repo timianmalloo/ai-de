@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!--
+      Plain net10.0-windows on purpose: this spike tests the WINDOWED control, which is what
+      src/AiDe.App can host without raising its target framework. The composition control's
+      Windows-SDK TFM requirement was one of the costs that ruled it out (spike S4, finding 5).
+    -->
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <DisableWinExeOutputInference>true</DisableWinExeOutputInference>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3485.44" />
+    <PackageReference Include="Dirkster.AvalonDock" Version="5.0.0" />
+  </ItemGroup>
+
+</Project>

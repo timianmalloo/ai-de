@@ -1,0 +1,118 @@
+
+==============================================================================
+Q0 - environment
+==============================================================================
+WebView2 Runtime : 151.0.4129.107
+DPI scale        : 1.50x - a non-integer scale, which is where alignment errors show
+
+==============================================================================
+Q1 - LIVE: what does the real canvas show?
+==============================================================================
+  crimson centre  (25%,25%)   #CC3C4B  -> crimson
+  blue centre     (75%,25%)   #3867E2  -> blue
+  amber centre    (25%,75%)   #E6A23B  -> amber
+  violet centre   (75%,75%)   #724AE4  -> violet
+  left of v-seam  (49%,25%)   #CC3C4B  -> crimson
+  right of v-seam (51%,25%)   #3867E2  -> blue
+  above h-seam    (25%,49%)   #CC3C4B  -> crimson
+  below h-seam    (25%,51%)   #CC3C4B  -> crimson
+
+==============================================================================
+Q2 - SWAP: capture, hide the control, show the still frame
+==============================================================================
+  capture         : 1620x957 px
+  canvas (device) : 1619x956 px
+  capture latency : 36.5 ms
+  full swap       : 375.3 ms  (includes the settle this harness forces, so it is an upper bound)
+  OK  the capture is the canvas's device size - no resampling needed.
+
+==============================================================================
+Q3 - SEAM: does the still frame match the live frame, pixel for pixel?
+==============================================================================
+  crimson centre  (25%,25%)   #E21D47  -> crimson
+  blue centre     (75%,25%)   #2462EB  -> blue
+  amber centre    (25%,75%)   #F59F15  -> amber
+  violet centre   (75%,75%)   #7C3AEE  -> violet
+  left of v-seam  (49%,25%)   #E21D47  -> crimson
+  right of v-seam (51%,25%)   #2462EB  -> blue
+  above h-seam    (25%,49%)   #E21D47  -> crimson
+  below h-seam    (25%,51%)   #E21D47  -> crimson
+
+sample                      live        snapshot      match
+------------------------------------------------------------------
+crimson centre  (25%,25%)   crimson     crimson       yes
+blue centre     (75%,25%)   blue        blue          yes
+amber centre    (25%,75%)   amber       amber         yes
+violet centre   (75%,75%)   violet      violet        yes
+left of v-seam  (49%,25%)   crimson     crimson       yes
+right of v-seam (51%,25%)   blue        blue          yes
+above h-seam    (25%,49%)   crimson     crimson       yes
+below h-seam    (25%,51%)   crimson     crimson       yes
+
+  OK  every sample agrees, including all four seam-straddling pairs.
+      The still frame is aligned; there is no visible seam to see.
+
+==============================================================================
+Q4 - THE POINT: can WPF now draw over the canvas?
+==============================================================================
+  overlay region  : #22C55E -> overlay
+  OK  the WPF overlay draws over the canvas while the snapshot stands in.
+
+==============================================================================
+Q5 - RESTORE: does the live control come back?
+==============================================================================
+  crimson centre  (25%,25%)   #CC3C4B  -> crimson
+  blue centre     (75%,25%)   #3867E2  -> blue
+  amber centre    (25%,75%)   #E6A23B  -> amber
+  violet centre   (75%,75%)   #724AE4  -> violet
+  left of v-seam  (49%,25%)   #CC3C4B  -> crimson
+  right of v-seam (51%,25%)   #3867E2  -> blue
+  above h-seam    (25%,49%)   #CC3C4B  -> crimson
+  below h-seam    (25%,51%)   #CC3C4B  -> crimson
+  CoreWebView2 alive: True
+  OK  the live canvas is back and identical to before the swap.
+
+==============================================================================
+Q6 - REPEAT: does swapping repeatedly leak or drift?
+==============================================================================
+  8 swap/restore cycles - capture p50 31.9 ms, min 28.2 ms, max 43.0 ms
+  crimson centre  (25%,25%)   #CC3C4B  -> crimson
+  blue centre     (75%,25%)   #3867E2  -> blue
+  amber centre    (25%,75%)   #E6A23B  -> amber
+  violet centre   (75%,75%)   #724AE4  -> violet
+  left of v-seam  (49%,25%)   #CC3C4B  -> crimson
+  right of v-seam (51%,25%)   #3867E2  -> blue
+  above h-seam    (25%,49%)   #CC3C4B  -> crimson
+  below h-seam    (25%,51%)   #CC3C4B  -> crimson
+  OK  the canvas is unchanged after repeated swapping.
+
+==============================================================================
+Q7 - what focus API does the WPF control actually expose?
+==============================================================================
+  type: Microsoft.Web.WebView2.Wpf.WebView2
+  base: System.Windows.Interop.HwndHost
+
+  PUBLIC focus/controller members declared on the WPF control: 2
+    Property FocusVisualStyle : Style
+    Method   get_FocusVisualStyle() : Style
+
+  public CoreWebView2Controller property: no
+  any public property of a Controller type: no
+  non-public controller properties: none
+
+==============================================================================
+Q8 - does the Win32 route into the hosted browser work?
+==============================================================================
+  HwndHost.Handle        : 0x2A105A
+  focus before SetFocus  : 0x1DC0D02
+  focus after SetFocus   : 0xF60C54
+  parent of focused hwnd : 0x1490E6C
+  OK  focus landed on a CHILD of the host - the browser's own input window.
+      That is the outcome that matters: keystrokes reach the page.
+
+==============================================================================
+Verdict
+==============================================================================
+The snapshot-swap mechanism holds on this host: the still frame is
+pixel-aligned, WPF draws over it, and the live canvas returns intact.
+The S4 decision (windowed control + snapshot swap) is supported.

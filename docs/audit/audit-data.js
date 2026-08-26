@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de",
-  "generated": "2026-08-26T21:07:32Z",
+  "project": "ai-de-s4-decision",
+  "generated": "2026-08-26T21:17:40Z",
   "audit": [
     {
       "id": "al-0001",
@@ -643,6 +643,24 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0034",
+      "shortname": "adr-0015-canvas-hosting-focus-design-snapshot-spike",
+      "datetime": "2026-08-26T21:17:40Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "ok go with your recommendation; and design the outstanding focus piece; also do a snapshot-swap spike as a gut check",
+      "summary": "ADR-0015 keeps the windowed WebView2 and yields the canvas by snapshot swap; gut-check spike confirms pixel alignment at 150% DPI, WPF composites over the stand-in, clean restore across 8 cycles, ~34ms capture. Focus routing designed after reflection proved the WPF control exposes no CoreWebView2Controller, so MoveFocus is unavailable; SetFocus on the HwndHost handle measured working",
+      "kind": "skill",
+      "skill": "design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0015-canvas-hosting-and-overlay-strategy.md",
+        "spikes/webview2-snapshot-swap/RESULT.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -877,6 +895,30 @@ window.AUDIT_DATA = {
         "before": "e59738a",
         "after": "e59738a654ebf8b908075d4f5ea5504ceb025ae5",
         "branch": "spike/s3-s4-and-a11y-posture",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0010",
+      "datetime": "2026-08-26T21:17:40Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": "design",
+      "title": "Canvas keeps the windowed WebView2; overlaps handled by snapshot swap; focus routed via Win32",
+      "prompt": "go with your recommendation; design the focus piece; snapshot-swap spike",
+      "summary": "ADR-0015 accepted. ADR-0008 not reversed. Focus enters via SetFocus on the HwndHost handle and leaves via a page-to-host message, because CoreWebView2Controller is not exposed",
+      "rationale": "The windowed control fails as a constraint; the composition control fails as a crash. The snapshot swap was measured aligned to within a pixel of rounding at 150% DPI. The documented focus API does not exist on this control - established by enumerating the public surface, not by grepping the assembly, whose string table contains the names.",
+      "artifacts": [
+        "docs/adr/0015-canvas-hosting-and-overlay-strategy.md",
+        "docs/adr/0008-shell-host.md",
+        "docs/design/phase-2-real-code-and-terminal.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "41ac91e",
+        "after": "41ac91e537282c472ab7461313e2d3be77d6f49b",
+        "branch": "feat/s4-decision-and-focus",
         "pushed": null,
         "commits": []
       }
