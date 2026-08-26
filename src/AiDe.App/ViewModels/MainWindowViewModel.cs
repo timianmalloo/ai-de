@@ -38,6 +38,9 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    /// <summary>The open workspace, or null on first run. The workbench renders surfaces over it.</summary>
+    internal WorkspaceCore? Core => _core;
+
     public string WindowTitle => "AI-DE";
 
     public string Heading => _core is null ? "AI-DE desktop workspace" : $"Workspace · {_core.WorkspaceId}";

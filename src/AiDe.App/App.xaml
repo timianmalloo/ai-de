@@ -8,6 +8,7 @@
               so a token change is one edit and the craft gate can enforce it outward.  -->
         <SolidColorBrush x:Key="SurfaceBrush" Color="#12151A" />
         <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="#1A1F26" />
+        <SolidColorBrush x:Key="SurfaceSunkenBrush" Color="#0D1014" />
         <SolidColorBrush x:Key="BorderBrush" Color="#2A313B" />
         <SolidColorBrush x:Key="TextBrush" Color="#E4E9EF" />
         <SolidColorBrush x:Key="TextMutedBrush" Color="#98A3B2" />

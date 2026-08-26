@@ -28,11 +28,15 @@ public sealed class WorkbenchAdapter
     public const string LeakedNamePrefix = "AvalonDock.";
 
     private readonly ILayoutService _service;
+    private readonly Func<Surface, FrameworkElement>? _contentFactory;
 
-    public WorkbenchAdapter(DockingManager manager, ILayoutService service)
+    public WorkbenchAdapter(
+        DockingManager manager, ILayoutService service,
+        Func<Surface, FrameworkElement>? contentFactory = null)
     {
         Manager = manager;
         _service = service;
+        _contentFactory = contentFactory;
 
         // The naming pass must re-run whenever the layout changes: tabs are realized and recycled as
         // panes are docked, floated and collapsed, so a one-off startup hook would name the first
@@ -119,7 +123,7 @@ public sealed class WorkbenchAdapter
 
     // ── model → AvalonDock projection ─────────────────────────────────────────────────────
 
-    private static LayoutPanel BuildPanel(LayoutNode node)
+    private LayoutPanel BuildPanel(LayoutNode node)
     {
         if (node is SplitNode split)
         {
@@ -153,7 +157,7 @@ public sealed class WorkbenchAdapter
         return single;
     }
 
-    private static LayoutDocumentPane BuildPane(StackNode stack)
+    private LayoutDocumentPane BuildPane(StackNode stack)
     {
         var pane = new LayoutDocumentPane();
         foreach (var surface in stack.Surfaces)
@@ -164,7 +168,7 @@ public sealed class WorkbenchAdapter
                 // so it must be the surface's stable identity, not its display title.
                 ContentId = surface.SurfaceId,
                 Title = surface.Title,
-                Content = new ContentControl(),
+                Content = _contentFactory?.Invoke(surface) ?? new ContentControl(),
             });
         }
 

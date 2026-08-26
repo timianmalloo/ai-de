@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-workbench-drop-targets",
-  "generated": "2026-08-26T16:16:30Z",
+  "project": "ai-de-feat-workbench-shell",
+  "generated": "2026-08-26T16:31:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -414,6 +414,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Workbench/DropTargetResolver.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0021",
+      "shortname": "implement-workbench-shell",
+      "datetime": "2026-08-26T16:31:59Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "yes do #1 (1b.11 MainWindow rebuild)",
+      "summary": "Composition root wiring model/adapter/controller/announcer into MainWindow, replacing the superseded fixed Grid. Surfaces render real evidence; live region is visible AND polite; focus tracking keeps the controller's focused pane honest. 155 tests; app verified launching a live window",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/MainWindow.xaml"
       ],
       "tags": [],
       "outcome": "success"
