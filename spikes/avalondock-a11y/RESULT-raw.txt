@@ -1,0 +1,68 @@
+UIA PROBE — AvalonDock 5.0.0 workbench
+====================================================================================================
+host window : AvalonDock A11y Probe Host  (pid 55428)
+probed      : 2026-08-26 06:56:10
+
+total elements in the control view : 44
+
+-- Every Thumb in the tree (the splitter candidates) --------------------------------
+  ClassName='Thumb' Name='' AutomationId=''
+    KeyboardFocusable=False Enabled=True Bounds=9x715
+    Patterns=[SynchronizedInput]
+  ClassName='GridSplitter' Name='Baseline WPF GridSplitter' AutomationId='BaselineGridSplitter'
+    KeyboardFocusable=True Enabled=True Bounds=1478x9
+    Patterns=[Transform, SynchronizedInput]
+
+── Control types present ───────────────────────────────────────────────────────────
+     7  Button
+     8  Image
+     4  List
+     1  MenuBar
+     1  MenuItem
+     1  Pane
+     3  Tab
+     6  TabItem
+    10  Text
+     2  Thumb
+     1  TitleBar
+
+── Are the panes identifiable to AT? ───────────────────────────────────────────────
+  TabItem/'AvalonDock.Layout.LayoutDocument' [TabItem]
+  TabItem/'AvalonDock.Layout.LayoutDocument' [TabItem]
+  TabItem/'AvalonDock.Layout.LayoutAnchorable' [TabItem]
+  TabItem/'AvalonDock.Layout.LayoutAnchorable' [TabItem]
+  Tab/'Baseline WPF TabControl' [TabControl]
+  TabItem/'Baseline Tab A' [TabItem]
+  TabItem/'Baseline Tab B' [TabItem]
+
+── THE DECIDING QUESTION: is the AvalonDock splitter reachable and resizable? ───────
+  AvalonDock LayoutGridResizerControl    : ControlType=Thumb Name='' KeyboardFocusable=False Enabled=True Offscreen=False
+                                           Patterns=[SynchronizedInput]
+  WPF GridSplitter (control baseline)    : ControlType=Thumb Name='Baseline WPF GridSplitter' KeyboardFocusable=True Enabled=True Offscreen=False
+                                           Patterns=[Transform, SynchronizedInput]
+
+── Keyboard-focusable elements: 15 ───────────────────────────
+  MenuBar/'System Menu Bar'
+  MenuItem/'System'
+  TabItem/'AvalonDock.Layout.LayoutDocument' [TabItem]
+  Button/'' [Button]
+  TabItem/'AvalonDock.Layout.LayoutDocument' [TabItem]
+  TabItem/'AvalonDock.Layout.LayoutAnchorable' [TabItem]
+  TabItem/'AvalonDock.Layout.LayoutAnchorable' [TabItem]
+  List/'' [ItemsControl]
+  List/'' [ItemsControl]
+  List/'' [ItemsControl]
+  List/'' [ItemsControl]
+  Thumb/'Baseline WPF GridSplitter' [GridSplitter]
+  Tab/'Baseline WPF TabControl' [TabControl]
+  TabItem/'Baseline Tab A' [TabItem]
+  TabItem/'Baseline Tab B' [TabItem]
+
+── Elements exposing TransformPattern (programmatic resize): 1 ──
+  Thumb/'Baseline WPF GridSplitter' [GridSplitter]
+
+====================================================================================================
+VERDICT  panes named to AT ........ YES
+VERDICT  AD splitter in UIA tree .. YES
+VERDICT  AD splitter operable ..... NO
+VERDICT  baseline splitter operable YES

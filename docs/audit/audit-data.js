@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-phase-1b-workbench",
-  "generated": "2026-08-26T13:48:07Z",
+  "project": "ai-de-spike-avalondock-a11y",
+  "generated": "2026-08-26T13:58:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -344,6 +344,24 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.Core/Workbench",
         "docs/design/phase-1b-workbench.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0017",
+      "shortname": "spike-avalondock-uia-a11y",
+      "datetime": "2026-08-26T13:58:16Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "do the accessibility insights probe",
+      "summary": "UIA probe against a live AvalonDock window with a WPF baseline in the same tree. Confirmed the splitter is an unnamed unfocusable Thumb with no Transform. NEW finding: every tab reports its .NET type name as its accessible name. Obvious style fix tested and FAILED; a visual-tree naming pass tested and WORKS, app-side, no fork",
+      "kind": "script",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "spikes/avalondock-a11y/RESULT.md",
+        "docs/adr/0012-docking-shell-library.md"
       ],
       "tags": [],
       "outcome": "success"

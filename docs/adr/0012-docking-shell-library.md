@@ -135,11 +135,38 @@ Sources: [Dirkster99/AvalonDock](https://github.com/Dirkster99/AvalonDock) ·
 [Telerik WPF UI Automation support](https://www.telerik.com/products/wpf/documentation/common-information/common-ui-automation) ·
 [BinaryFormatter migration guide](https://learn.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-migration-guide/)
 
+### UIA probe result (2026-08-26) — the ADR survives, the work item grew
+
+The "does a real UIA client see a usable tree?" spike **has been run** — see
+[`spikes/avalondock-a11y/RESULT.md`](../../spikes/avalondock-a11y/RESULT.md). It walked the live UIA
+tree of a real AvalonDock window from a separate process, with a plain WPF `GridSplitter` and
+`TabControl` in the same window as the control baseline.
+
+**Confirmed:** the splitter is in the tree but is an **unnamed, unfocusable `Thumb` with no
+`Transform` pattern**, while the baseline `GridSplitter` beside it has a name, keyboard focus and
+`Transform`. It is the only element in the window with that problem. The command-driven resize
+mitigation above is therefore necessary and remains sufficient.
+
+**Newly discovered, and not anticipated by this ADR:** every AvalonDock tab reports its **.NET type
+name** as its accessible name — `AvalonDock.Layout.LayoutDocument` — rather than its title. All four
+surfaces sound identical to a screen reader. This was invisible to the reflection probe because it is
+a *data-binding* defect, not a missing type, and it is arguably worse than the splitter gap: one
+control can be replaced, but anonymous surfaces defeat navigation entirely.
+
+**Fix established by execution, not proposed:** a typed `TabItem` style binding
+`AutomationProperties.Name` to `Title` — the obvious approach — **was tested and does not work**. A
+~15-line visual-tree pass that names realized `TabItem`s from their bound `LayoutContent.Title`
+**does**, verified in the same probe. It is app-side and requires **no fork**, so the defect does not
+threaten this ADR's licence or maintenance position; it belongs in the Workbench Layout Service's
+adapter and must re-run on layout change.
+
+**Added control:** a regression test asserting no automation name in the workbench begins with
+`AvalonDock.` — this defect would otherwise return silently on any library upgrade.
+
 **Required spikes before Phase-2 implementation accepts this ADR:**
 
 | Unknown | Probe | Cost |
 |---|---|---|
-| Does a real UIA client see a usable tree? | Accessibility Insights for Windows against the AvalonDock demo | ~1 h |
 | Layout round-trip across an app upgrade | Serialize with `JsonLayoutSerializer`, mutate the DTO, reload with `UnresolvedContentHandling.Hide`, assert the parked item restores | ~½ day |
 | Multi-monitor + per-monitor DPI floating | Two monitors at mixed scaling: float, drag across the boundary, save, restart, restore | ~1 h |
 | Ganged resize | Three-pane split; drag the shared splitter; observe whether both neighbours move | ~30 min |

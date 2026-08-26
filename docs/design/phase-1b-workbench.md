@@ -190,11 +190,29 @@ Beyond the failure-mode tests above:
 - `EveryAppliedOperation_ProducesAnAnnouncement` — reflection over the operation union so a **newly
   added operation that forgets its announcement fails the suite**.
 
+## Adapter obligations established by the UIA probe (2026-08-26)
+
+The ADR-0012 UIA probe has run ([`spikes/avalondock-a11y/RESULT.md`](../../spikes/avalondock-a11y/RESULT.md))
+and moved two items out of "risk" and into "specified work":
+
+1. **Name every realized tab from its `LayoutContent.Title`.** AvalonDock reports the .NET *type
+   name* as the accessible name, so all surfaces sound identical to a screen reader. A typed
+   `TabItem` style does **not** fix it (tested); a visual-tree pass on layout change does (tested).
+   This lives in the adapter, not in a startup hook, because it must re-run whenever the layout
+   changes.
+2. **Do not rely on the splitter being reachable.** It is an unnamed, unfocusable `Thumb` with no
+   `Transform` pattern. Resize is a `LayoutOperation.ResizeSplit` driven by command and keyboard,
+   exactly as the model already provides.
+
+**New control (adapter test):** no automation name anywhere in the workbench may begin with
+`AvalonDock.`. Reflection cannot catch this — it is a data-binding defect — so it needs a UIA-level
+assertion that runs against the built shell.
+
 ## Flagged risks
 
-- The AvalonDock adapter is **not** covered by these tests; it is the Phase-1b spike surface, and the
-  four ADR-0012 probes (Accessibility Insights, round-trip, multi-monitor DPI, ganged resize) remain
-  open.
+- The AvalonDock adapter is **not** covered by the model tests; it is the Phase-1b remaining surface.
+  Three ADR-0012 probes remain open (round-trip across upgrade, multi-monitor DPI, ganged resize);
+  the UIA probe is **done**.
 - Announcements are tested as *emitted*; whether a real screen reader **speaks** them is an NVDA
   session, not a unit test. Named, not assumed.
 
