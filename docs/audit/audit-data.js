@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-fix-register-s2",
-  "generated": "2026-08-26T20:00:50Z",
+  "project": "ai-de",
+  "generated": "2026-08-26T20:01:32Z",
   "audit": [
     {
       "id": "al-0001",
@@ -592,6 +592,21 @@ window.AUDIT_DATA = {
         "docs/lessons/defect-classes.md",
         "tools/verify-audit-log.py"
       ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0031",
+      "shortname": "Repair the defect-class register first — write the three missing entries…",
+      "datetime": "2026-08-26T20:01:32Z",
+      "session": "prompt-log",
+      "prompt": "Repair the defect-class register first — write the three missing entries (DC-009, DC-010, DC-011) and correct the count line. Then run Spike S2 (MSBuildWorkspace: does a real solution load without exact SDK match, and can analyzers/source generators be disabled?)",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
       "tags": [],
       "outcome": "success"
     }
