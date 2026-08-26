@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-s3-s4",
-  "generated": "2026-08-26T20:38:23Z",
+  "project": "ai-de",
+  "generated": "2026-08-26T21:07:32Z",
   "audit": [
     {
       "id": "al-0001",
@@ -626,6 +626,21 @@ window.AUDIT_DATA = {
         "spikes/terminal-renderer/RESULT.md",
         "spikes/webview2-airspace/RESULT.md"
       ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0033",
+      "shortname": "ok go with your recommendation; and design the outstanding focus piece; …",
+      "datetime": "2026-08-26T21:07:32Z",
+      "session": "prompt-log",
+      "prompt": "ok go with your recommendation; and design the outstanding focus piece; also do a snapshot-swap spike as a gut check",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
       "tags": [],
       "outcome": "success"
     }
