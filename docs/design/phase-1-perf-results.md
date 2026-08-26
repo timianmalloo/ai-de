@@ -93,9 +93,33 @@ signal when a scope's generation count crosses a threshold. Until that lands, th
 the Phase-1 refresh budget is: **p95 < 500 ms for the first ~5 generations of a scope, degrading
 linearly thereafter.**
 
-Recorded as: `docs/lessons/defect-classes.md` DC-010, Phase-2 work item, and a flagged risk in the
-architecture. **No architecture text should describe refresh as meeting its budget without this
-qualifier.**
+### Resolved 2026-08-26 — compaction, measured
+
+A compaction policy now prunes superseded generations by **rebuilding the store**, never by deleting
+facts (the immutability triggers and the writer's REPLACE ban leave no legitimate DELETE path, and
+manufacturing one would hollow out the invariant everywhere to fix performance in one place). Only
+the latest *complete* snapshot per scope contributes to current evidence, so older generations are
+diagnostics and safe to prune; two are retained for investigation.
+
+Measured on the same corpus and machine:
+
+| | Refresh (one 10k-assertion snapshot) | Budget |
+|---|---:|---|
+| After 20 generations | **654.64 ms** | **over** |
+| After compaction | **333.11 ms** | within |
+
+The compaction dropped 19 superseded generations and 190,000 assertions, reclaiming **97.6 MiB**.
+
+It lands at 333 ms rather than the 192 ms of a pristine store because two generations are retained —
+that is the honest cost of keeping a little history, and it stays comfortably inside budget.
+
+**The policy reports; it does not auto-compact.** Compaction replaces the database file, so it
+belongs to a deliberate maintenance moment rather than a background timer that could fire
+mid-session. `WorkspaceCore.CheckCompactionNeeded` raises a `store.compaction_due` health incident
+naming the scope and its generation count, so a workspace that has quietly become slow surfaces
+itself — that being the shape of problem people stop reporting and start working around.
+
+Recorded as: `docs/lessons/defect-classes.md` DC-010 (now controlled).
 
 ## What changed to reach these numbers
 

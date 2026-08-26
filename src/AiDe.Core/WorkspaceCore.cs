@@ -132,5 +132,38 @@ public sealed class WorkspaceCore : IDisposable
         return result;
     }
 
+    /// <summary>
+    /// Raises a health incident for any scope whose generation count has passed the compaction
+    /// threshold.
+    /// </summary>
+    /// <remarks>
+    /// P1-PERF measured refresh going over budget at roughly ten generations of the same scope. The
+    /// growth is the append-only design working as intended, so the operator is told rather than the
+    /// slowdown being absorbed silently — a workspace that has quietly become slow is the shape of
+    /// problem people stop reporting and start working around.
+    ///
+    /// This reports; it does not compact. Compaction replaces the database file, so it belongs to a
+    /// deliberate maintenance moment, not to a background timer that could fire mid-session.
+    /// </remarks>
+    public IReadOnlyList<(string ScopeId, int Generations)> CheckCompactionNeeded(
+        int threshold = StoreCompactor.DefaultThreshold)
+    {
+        using var reader = Store.BeginRead();
+        var needing = StoreCompactor.ScopesNeedingCompaction(reader, threshold);
+
+        foreach (var (scopeId, generations) in needing)
+        {
+            Incidents.Record("store.compaction_due", scopeId,
+                $"scope has {generations} committed generations; refresh slows measurably past "
+                + $"{threshold}. Compaction reclaims the space without losing current evidence.",
+                DateTimeOffset.UtcNow);
+        }
+
+        return needing;
+    }
+
+    /// <summary>The path compaction operates on. Compaction requires the store to be closed.</summary>
+    public string DatabasePath => Path.Combine(DataDirectory, "workspace.db");
+
     public void Dispose() => Store.Dispose();
 }

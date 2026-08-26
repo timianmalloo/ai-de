@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 8 · partially-controlled 3 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 2 · uncontrolled 1
 **Recurrence since last review:** 1 — DC-008, whose first control was scoped to one test project when the cause was not project-specific (CI4: a second occurrence means the control was wrong, not that someone was careless).
 
 ---

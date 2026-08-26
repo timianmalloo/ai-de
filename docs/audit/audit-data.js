@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-spike-dpi-and-ganged-resize",
-  "generated": "2026-08-26T17:13:02Z",
+  "project": "ai-de-feat-layout-persistence-and-compaction",
+  "generated": "2026-08-26T19:14:55Z",
   "audit": [
     {
       "id": "al-0001",
@@ -485,6 +485,24 @@ window.AUDIT_DATA = {
       "artifacts": [
         "docs/reviews/spike-dpi-and-ganged-resize.md",
         "src/AiDe.App/app.manifest"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0025",
+      "shortname": "implement-persistence-and-compaction",
+      "datetime": "2026-08-26T19:14:55Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "do 1 and 3, skipping NVDA",
+      "summary": "Wired layout persistence (US-9 restart survival) incl. floating bounds and a re-homing off-screen guard; found and fixed a silently-aborting test run (27 of 54 tests never executed); implemented compaction policy for the measured refresh defect - 654ms to 333ms, 97.6 MiB reclaimed",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Store/StoreCompactor.cs",
+        "src/AiDe.App/Workbench/LayoutPersistence.cs"
       ],
       "tags": [],
       "outcome": "success"

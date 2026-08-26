@@ -106,6 +106,68 @@ foreach (var prior in new[] { 0, 5, 10, 20 })
 
 Console.WriteLine();
 
+// ---------------------------------------------------------------- compaction: does it restore the budget?
+// The growth curve above is the defect P1-PERF found. This measures whether the compaction policy
+// actually fixes it, rather than assuming a smaller table must be faster.
+Console.WriteLine("COMPACTION  refresh cost after 20 generations, before and after compacting");
+{
+    var path = Path.Combine(workingDirectory, "compaction.db");
+    var generation = 0L;
+
+    void Commit(WorkspaceStore store)
+    {
+        generation++;
+        var revision = $"{Corpus.Revision}-c{generation}";
+        var batch = refreshAssertions
+            .Select(a => new EvidenceAssertion(
+                a.ScopeId, revision, a.Subject, a.Predicate, a.Object, a.Origin, a.Status, a.Provenance))
+            .ToList();
+        using var writer = store.BeginWrite();
+        writer.DesireScopeGeneration("refresh-scope", generation, revision);
+        writer.CommitSnapshot("refresh-scope", generation, revision, batch, complete: true);
+        writer.Commit();
+    }
+
+    double MeasureOne(WorkspaceStore store)
+    {
+        var watch = Stopwatch.StartNew();
+        Commit(store);
+        watch.Stop();
+        return watch.Elapsed.TotalMilliseconds;
+    }
+
+    double beforeMs;
+    using (var store = WorkspaceStore.Open(path))
+    {
+        for (var i = 0; i < 20; i++) { Commit(store); }
+        beforeMs = MeasureOne(store);
+    }
+
+    SqliteConnection.ClearAllPools();
+    var compaction = new StoreCompactor(path).Compact();
+
+    double afterMs;
+    using (var store = WorkspaceStore.Open(path))
+    {
+        afterMs = MeasureOne(store);
+    }
+
+    Console.WriteLine(string.Create(CultureInfo.InvariantCulture,
+        $"  refresh after 20 generations        {beforeMs,9:F2}ms  {(beforeMs <= RefreshBudgetMs ? "within" : "**OVER**")} budget"));
+    Console.WriteLine($"  {compaction.Summary}");
+    Console.WriteLine(string.Create(CultureInfo.InvariantCulture,
+        $"  refresh after compaction            {afterMs,9:F2}ms  {(afterMs <= RefreshBudgetMs ? "within" : "**OVER**")} budget"));
+
+    if (afterMs > RefreshBudgetMs)
+    {
+        failures.Add($"COMPACTION refresh still {afterMs:F0}ms > {RefreshBudgetMs}ms after compacting");
+    }
+
+    SqliteConnection.ClearAllPools();
+}
+
+Console.WriteLine();
+
 // ---------------------------------------------------------------- corpus load for query benchmarks
 Console.WriteLine($"Loading the {Corpus.TotalEdges:N0}-edge query corpus…");
 var queryDatabase = Path.Combine(workingDirectory, "query.db");
