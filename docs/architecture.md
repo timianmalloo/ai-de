@@ -546,9 +546,16 @@ implementation (Phase 2 for terminal/visual; `P1-EXT` establishes the extractor 
 - Roslyn source-generator visibility and a usable C# SCIP indexer need dedicated Phase-2 spikes.
 - WebView2 airspace/perf/accessibility, terminal renderer selection, layout persistence, and the
   visual graph renderer need Phase-2 prototypes and a11y/perf evidence (ADR-0008 reversal trigger).
-- SQLite graph-scale limits, query limits, and index design need Phase-1 benchmark data; ADR-0002
-  carries a numeric reversal trigger (revisit if `impact` p95 exceeds the stated budget on the
-  approved corpus).
+- ~~SQLite graph-scale limits, query limits, and index design need Phase-1 benchmark data~~
+  **Measured 2026-08-26** — see [P1-PERF results](design/phase-1-perf-results.md). On the 50,000-edge
+  corpus every bounded read meets its budget with wide margin (describe p95 5.8 ms, impact p95
+  23.6 ms, find p95 61.4 ms) and no bounded read scans the fact table. **Two qualifiers stand:**
+  (a) **the refresh budget holds only for the first ~5 generations of a scope** — append-only growth
+  pushes refresh p95 to 567 ms after 10 generations and 785 ms after 20, against a 500 ms budget, and
+  no policy currently triggers the compaction that would mitigate it (Phase-2 work item, defect class
+  DC-010); (b) nothing is measured beyond 50,000 edges, so the ceiling has moved rather than gone.
+- Scale beyond the approved corpus (500k+ edges), and WAL checkpoint lag under sustained long reads,
+  remain unmeasured.
 - Generated diagram SVG byte determinism and Bicep/DDL adapter contracts are Phase-3 spikes.
 - External model/provider rich transfer, enterprise policy, and cross-platform support are not v1
   assumptions; their privacy/legal posture is Flagged and requires a new decision.

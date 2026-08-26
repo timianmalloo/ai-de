@@ -80,9 +80,14 @@ summary: >-
    missing control directly (claims 38–39), which was observed red on a seeded violation. **The gap
    remains for every craft rule beyond raw-colour discipline** (hierarchy, motion, overflow, copy):
    on this surface those are enforced by review only.
-2. **Scale is unmeasured.** `P1-PERF` has not been run. The in-memory neighbour index carries a
-   `simplify:` ceiling (~50k edges); SQLite recursive-CTE latency and index design remain **Inferred**.
-   No performance claim in the architecture may be promoted until that benchmark executes.
+2. **Scale is measured to 50,000 edges and no further.** `P1-PERF` ran 2026-08-26 — see
+   [the results](phase-1-perf-results.md). Every bounded read now meets its budget with wide margin
+   and no bounded read scans the fact table, so those targets are **Verified** rather than Inferred.
+   Two qualifiers stand and must travel with any citation of these numbers: **(a)** the refresh
+   budget holds only for the first ~5 generations of a scope — append-only growth takes refresh p95
+   to 567 ms after 10 generations and 785 ms after 20, against a 500 ms budget, and no policy yet
+   triggers the compaction that would mitigate it (defect class DC-010, Phase-2 work item);
+   **(b)** nothing is measured beyond 50,000 edges, so the `simplify:` ceiling has moved, not gone.
 3. **Fixture fidelity.** Phase 1 proves the *pipeline*, not C# extraction. The fixture extractor has
    no second implementation, so `P1-EXT` pins the interface but nothing yet proves a real extractor
    agrees with it. The conformance suite is a Phase-2 entry criterion.
@@ -94,5 +99,8 @@ summary: >-
 5. **Session processing class is declared, not attested.** Phase 1 trusts the class supplied with the
    caller context. The attestation mechanism is a Phase-4/5 design item; until then only a locally
    launched session should be marked `LocalOnly`.
-6. **No mutation testing has been run**, so "would the suite fail if the code were wrong?" is answered
+6. **`P1-PERF-05` (the 32-producer / 200-events-per-second load model) is not runnable** — the
+   ingestion scheduler and its queue do not exist yet, so the settlement SLI it would measure has no
+   emitting source. Running it now would produce a number with nothing behind it.
+7. **No mutation testing has been run**, so "would the suite fail if the code were wrong?" is answered
    only by the six deliberate red-checks recorded above, not systematically.

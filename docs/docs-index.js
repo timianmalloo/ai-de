@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T01:10:01Z",
+  "generated": "2026-08-26T02:14:28Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -736,7 +736,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
         }
       ],
-      "sourceSha256": "03ba270a9e902abc6b1f5f72ae4368648fa726672b7e065578ebf1279b8329e9"
+      "sourceSha256": "1d8e1636c6de5444ae4460ac3f137cf3f1f482709e896629ff5ff2c1d907a508"
     },
     {
       "id": "note-20260826-council-review-ai-ide-arch",
@@ -1017,7 +1017,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4919e7968748fa003347bb4e13271b33f44ece6462d8311b8bb53b8d5c4a814d"
+      "sourceSha256": "f1d9193c7fd04ecf30e5408ede590f0921e772be2df39724f18b8f4b47edc394"
     },
     {
       "id": "lens-code-doc-join",
@@ -1123,6 +1123,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
     },
     {
+      "id": "perf-results-phase-1",
+      "path": "docs/design/phase-1-perf-results.md",
+      "title": "P1-PERF — Phase-1 performance gate results",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The measured Phase-1 performance run that promotes the architecture's Inferred targets to Verified: refresh, describe, impact, find, knowledge, query plans, and restore RTO on the 50,000-edge corpus — plus the append-only growth curve, which shows the refresh budget failing after ~10 generations.",
+      "tags": [
+        "performance",
+        "benchmark",
+        "phase-1",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "design-phase-1-walking-skeleton",
+          "rel": "documents"
+        },
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "proof-pack-phase-1-walking-skeleton",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cbacfdf7df5b5a73d57d18798703926a1c9100b3f1a58eb779d984079bff1c49"
+    },
+    {
       "id": "plan-ai-native-ide-architecture",
       "path": "docs/plans/ai-native-ide-architecture.md",
       "title": "Execution plan — AI-native IDE architecture",
@@ -1221,7 +1255,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e5a82acfd1a41d02b3bc8186b9386b989a832ec575c5a2e22f383dff592a43f2"
+      "sourceSha256": "dc82bf963107ea885110e97262fce5e4f1ef19c5c465039bd7a1c8fcbf545852"
     },
     {
       "id": "release-plan-ai-native-ide",
@@ -3473,5 +3507,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "0ba84af5a1ec12404913c4394e6c9f6a871c80199f4ecd8b07e44ab94c92a687"
+  "graphSha256": "a35b14f9edaa101f4a1ad9ed2b2f35ef1ed35b5eed996055b9831c62116e81c8"
 };

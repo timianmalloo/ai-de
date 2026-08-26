@@ -107,23 +107,20 @@ public sealed class ProjectionService(WorkspaceStore store)
 
         var limit = Clamp(maxNeighbors, 1, MaxNeighborsCeiling);
         using var reader = store.BeginRead();
-        var all = reader.AllCurrentAssertions();
 
-        var touching = all
-            .Where(a => a.Subject == nodeId || a.Object == nodeId)
-            .OrderBy(a => a.Subject, StringComparer.Ordinal)
-            .ThenBy(a => a.Predicate, StringComparer.Ordinal)
-            .ThenBy(a => a.Object, StringComparer.Ordinal)
-            .ToList();
+        // The bound is applied in SQL, not after materializing the corpus: a bounded read must cost
+        // what its result costs, not what the graph costs (P1-PERF-02).
+        var touching = reader.AssertionsTouching(nodeId, limit);
+        var total = reader.CountAssertionsTouching(nodeId);
 
         var (kept, byteCapped) = TakeWithinByteBudget(touching, limit);
         var edges = kept.Select(ToEdge).ToList();
-        var revision = touching.Count > 0 ? touching[0].ArtifactRevision : "none";
+        var revision = touching.Count > 0 ? touching[0].ArtifactRevision : reader.CurrentSourceRevision();
 
         var bounds = new ResultBounds(
             MaxNodes: 1, MaxEdges: limit, MaxBytes: MaxResultBytes,
             ReturnedNodes: 1, OmittedNodes: 0,
-            ReturnedEdges: edges.Count, OmittedEdges: touching.Count - edges.Count,
+            ReturnedEdges: edges.Count, OmittedEdges: Math.Max(0, total - edges.Count),
             ByteCapped: byteCapped, NextCursor: null);
 
         activity?.SetTag("returned.edges", edges.Count);
@@ -145,9 +142,6 @@ public sealed class ProjectionService(WorkspaceStore store)
         var edgeLimit = Clamp(maxEdges, 1, MaxEdgesCeiling);
 
         using var reader = store.BeginRead();
-        var all = reader.AllCurrentAssertions();
-        var bySubject = all.GroupBy(a => a.Subject, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
 
         var visited = new HashSet<string>(StringComparer.Ordinal) { nodeId };
         var order = new List<string> { nodeId };
@@ -160,12 +154,18 @@ public sealed class ProjectionService(WorkspaceStore store)
         while (queue.Count > 0)
         {
             var current = queue.Dequeue();
-            if (!bySubject.TryGetValue(current, out var outgoing))
+
+            // One indexed lookup per frontier node, bounded by the remaining edge budget. The walk
+            // therefore costs what it visits — previously it grouped the entire corpus up front,
+            // so a 3-node neighbourhood paid for all 50,000 edges (P1-PERF-03).
+            var remaining = edgeLimit - edges.Count + 1;
+            var outgoing = reader.OutgoingAssertions(current, Math.Max(1, remaining));
+            if (outgoing.Count == 0)
             {
                 continue;
             }
 
-            foreach (var assertion in outgoing.OrderBy(a => a.Object, StringComparer.Ordinal))
+            foreach (var assertion in outgoing)
             {
                 if (edges.Count >= edgeLimit)
                 {
@@ -197,7 +197,7 @@ public sealed class ProjectionService(WorkspaceStore store)
             nodeLimit, edgeLimit, MaxResultBytes,
             order.Count, omittedNodes, kept.Count, omittedEdges, byteCapped, null);
 
-        var revision = all.Count > 0 ? all[0].ArtifactRevision : "none";
+        var revision = edges.Count > 0 ? edges[0].ArtifactRevision : reader.CurrentSourceRevision();
         activity?.SetTag("returned.nodes", order.Count);
 
         return new ImpactResult(
@@ -215,16 +215,12 @@ public sealed class ProjectionService(WorkspaceStore store)
 
         var limit = Clamp(maxResults, 1, MaxNeighborsCeiling);
         using var reader = store.BeginRead();
-        var all = reader.AllCurrentAssertions();
 
-        var candidates = all
-            .SelectMany(a => new[] { a.Subject, a.Object })
-            .Where(id => id.Contains(term, StringComparison.OrdinalIgnoreCase))
-            .Distinct(StringComparer.Ordinal)
-            .OrderBy(id => id, StringComparer.Ordinal)
-            .ToList();
+        // Identity columns only: a leading-wildcard LIKE cannot use an index, so the cheapest
+        // correct shape is to scan a covering index instead of hydrating every row's provenance.
+        var (candidates, totalMatched) = reader.SearchNodeIds(term, limit);
 
-        var matches = candidates.Take(limit)
+        var matches = candidates
             .Select(id =>
             {
                 var node = NodeOf(reader, id);
@@ -237,10 +233,10 @@ public sealed class ProjectionService(WorkspaceStore store)
             .ToList();
 
         var bounds = new ResultBounds(
-            limit, 0, MaxResultBytes, matches.Count, candidates.Count - matches.Count,
+            limit, 0, MaxResultBytes, matches.Count, Math.Max(0, totalMatched - matches.Count),
             0, 0, false, null);
 
-        return new FindResult(matches, bounds, all.Count > 0 ? all[0].ArtifactRevision : "none");
+        return new FindResult(matches, bounds, reader.CurrentSourceRevision());
     }
 
     /// <summary>
@@ -254,10 +250,13 @@ public sealed class ProjectionService(WorkspaceStore store)
 
         var limit = Clamp(query.MaxResults, 1, MaxNeighborsCeiling);
         using var reader = store.BeginRead();
-        var all = reader.AllCurrentAssertions();
 
-        var typed = all.Where(a => a.Predicate == "has_type")
-            .ToDictionary(a => a.Subject, a => a, StringComparer.Ordinal);
+        // Knowledge nodes are found by predicate, which has its own index — the projection never
+        // reads the source corpus it is not interested in (P1-PERF-03).
+        var typedAssertions = reader.AssertionsWithPredicate("has_type", MaxNodesCeiling);
+        var typed = typedAssertions
+            .GroupBy(a => a.Subject, StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
 
         var ids = typed.Keys
             .Where(id => query.Term is null || id.Contains(query.Term, StringComparison.OrdinalIgnoreCase))
@@ -269,9 +268,10 @@ public sealed class ProjectionService(WorkspaceStore store)
         foreach (var id in ids.Take(limit))
         {
             var typeAssertion = typed[id];
-            var owner = all.FirstOrDefault(a => a.Subject == id && a.Predicate == "owned_by");
-            var links = all.Where(a => a.Subject == id && a.Predicate is not ("has_type" or "owned_by")).ToList();
-            var backlinks = all.Where(a => a.Object == id && a.Predicate is not ("has_type" or "owned_by")).ToList();
+            var touching = reader.AssertionsTouching(id, MaxEdgesCeiling);
+            var owner = touching.FirstOrDefault(a => a.Subject == id && a.Predicate == "owned_by");
+            var links = touching.Where(a => a.Subject == id && a.Predicate is not ("has_type" or "owned_by")).ToList();
+            var backlinks = touching.Where(a => a.Object == id && a.Predicate is not ("has_type" or "owned_by")).ToList();
 
             // Missing evidence is surfaced as a health finding rather than rendered as a clean node —
             // the spec's "absence of evidence stays explicit".
@@ -306,7 +306,8 @@ public sealed class ProjectionService(WorkspaceStore store)
             limit, MaxEdgesCeiling, MaxResultBytes, nodes.Count, ids.Count - nodes.Count,
             nodes.Sum(n => n.Links.Count + n.Backlinks.Count), 0, false, null);
 
-        return new KnowledgeResult(nodes, bounds, all.Count > 0 ? all[0].ArtifactRevision : "none");
+        return new KnowledgeResult(nodes, bounds,
+            typedAssertions.Count > 0 ? typedAssertions[0].ArtifactRevision : reader.CurrentSourceRevision());
     }
 
     /// <summary>

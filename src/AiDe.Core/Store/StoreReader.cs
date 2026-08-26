@@ -48,7 +48,144 @@ public sealed class StoreReader : IDisposable
         return ReadAssertions(command);
     }
 
-    /// <summary>All current assertions across every scope that has a complete snapshot.</summary>
+    /// <summary>
+    /// The "current generation" filter every bounded read composes with: one row per scope, so the
+    /// join stays tiny while the traversal predicate drives the index.
+    /// </summary>
+    private const string LatestCte = """
+        WITH latest AS (
+            SELECT scope_id, max(generation) AS generation
+            FROM scope_snapshot_committed_fact WHERE complete = 1 GROUP BY scope_id
+        )
+        """;
+
+    private const string AssertionColumns = """
+        a.assertion_id, a.scope_id, a.artifact_revision, a.subject, a.predicate, a.object,
+        a.origin, a.status, a.artifact_path_id, a.source_location, a.extractor_id,
+        a.extractor_version, a.observed_at
+        """;
+
+    /// <summary>Assertions where the node is the subject OR the object, bounded in SQL.</summary>
+    /// <remarks>
+    /// Deliberately a UNION ALL of two single-column lookups rather than one <c>OR</c> predicate:
+    /// SQLite will not use two different indexes to satisfy one OR, so the OR form degrades into
+    /// the full scan this method exists to avoid (measured, P1-PERF 2026-08-26).
+    /// </remarks>
+    public IReadOnlyList<StoredAssertion> AssertionsTouching(string nodeId, int limit)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT * FROM (
+                SELECT {AssertionColumns} FROM evidence_assertion_fact a
+                JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+                WHERE a.subject = $node
+                UNION ALL
+                SELECT {AssertionColumns} FROM evidence_assertion_fact a
+                JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+                WHERE a.object = $node AND a.subject <> $node
+            )
+            ORDER BY subject, predicate, object
+            LIMIT $limit;
+            """, ("$node", nodeId), ("$limit", limit));
+        return ReadAssertions(command);
+    }
+
+    /// <summary>Total assertions touching a node, so a bounded read can report what it omitted.</summary>
+    public int CountAssertionsTouching(string nodeId)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT
+              (SELECT count(*) FROM evidence_assertion_fact a
+                 JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+                 WHERE a.subject = $node)
+            + (SELECT count(*) FROM evidence_assertion_fact a
+                 JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+                 WHERE a.object = $node AND a.subject <> $node);
+            """, ("$node", nodeId));
+        return Convert.ToInt32(command.ExecuteScalar());
+    }
+
+    /// <summary>Outgoing edges only — one traversal step of a bounded impact walk.</summary>
+    public IReadOnlyList<StoredAssertion> OutgoingAssertions(string nodeId, int limit)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT {AssertionColumns} FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.subject = $node
+            ORDER BY a.object
+            LIMIT $limit;
+            """, ("$node", nodeId), ("$limit", limit));
+        return ReadAssertions(command);
+    }
+
+    /// <summary>Assertions with a given predicate — the knowledge projection's entry point.</summary>
+    public IReadOnlyList<StoredAssertion> AssertionsWithPredicate(string predicate, int limit)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT {AssertionColumns} FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.predicate = $predicate
+            ORDER BY a.subject
+            LIMIT $limit;
+            """, ("$predicate", predicate), ("$limit", limit));
+        return ReadAssertions(command);
+    }
+
+    /// <summary>
+    /// Node identities matching a substring, with the total matched so omissions are reportable.
+    /// </summary>
+    /// <remarks>
+    /// A leading-wildcard LIKE cannot use an index, so this selects only the identity columns: it
+    /// scans a covering index rather than hydrating every row's provenance, which is what made the
+    /// naive version cost a full-corpus materialization.
+    /// </remarks>
+    public (IReadOnlyList<string> Matches, int TotalMatched) SearchNodeIds(string term, int limit)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT DISTINCT id FROM (
+                SELECT a.subject AS id FROM evidence_assertion_fact a
+                JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+                WHERE a.subject LIKE $pattern
+                UNION
+                SELECT a.object AS id FROM evidence_assertion_fact a
+                JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+                WHERE a.object LIKE $pattern
+            )
+            ORDER BY id;
+            """, ("$pattern", $"%{term}%"));
+
+        using var reader = command.ExecuteReader();
+        var all = new List<string>();
+        while (reader.Read())
+        {
+            all.Add(reader.GetString(0));
+        }
+
+        return (all.Count > limit ? all[..limit] : all, all.Count);
+    }
+
+    /// <summary>The source revision currently rendered, for a result's provenance header.</summary>
+    public string CurrentSourceRevision()
+    {
+        using var command = Command("""
+            SELECT artifact_revision FROM scope_snapshot_committed_fact
+            WHERE complete = 1 ORDER BY generation DESC, scope_id LIMIT 1;
+            """);
+        return command.ExecuteScalar() as string ?? "none";
+    }
+
+    /// <summary>
+    /// All current assertions across every scope that has a complete snapshot.
+    /// </summary>
+    /// <remarks>
+    /// A deliberate full read, used only where the whole set IS the answer — the claim-cache rebuild.
+    /// Bounded reads must never call this: at 50,000 edges it costs roughly 350 ms of materialization
+    /// no matter how small the caller's result is (measured, P1-PERF 2026-08-26).
+    /// </remarks>
     public IReadOnlyList<StoredAssertion> AllCurrentAssertions()
     {
         using var command = Command("""

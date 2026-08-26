@@ -119,9 +119,13 @@ internal static class WorkspaceSchema
         );
         CREATE UNIQUE INDEX ux_assertion_natural ON evidence_assertion_fact
             (scope_id, artifact_revision, subject, predicate, object, extractor_id);
-        -- Bounded traversal indexes (design: impact/describe must not full-scan).
-        CREATE INDEX ix_assertion_subject ON evidence_assertion_fact (scope_id, generation, subject);
-        CREATE INDEX ix_assertion_object  ON evidence_assertion_fact (scope_id, generation, object);
+        -- Bounded traversal indexes. The traversal column LEADS: a lookup is always "this node,
+        -- in whichever scope/generation is current", so scope_id first would force a scan for the
+        -- node predicate. P1-PERF-04 asserts these are the plans actually chosen.
+        CREATE INDEX ix_assertion_subject   ON evidence_assertion_fact (subject, scope_id, generation);
+        CREATE INDEX ix_assertion_object    ON evidence_assertion_fact (object, scope_id, generation);
+        -- Serves the knowledge projection, which selects by predicate ('has_type', 'owned_by').
+        CREATE INDEX ix_assertion_predicate ON evidence_assertion_fact (predicate, scope_id, generation);
 
         -- Grain: one COMPLETED mutating command for one idempotency key. Single grain because the
         -- effect and the receipt commit in one transaction; only dispatch needs two grains.
