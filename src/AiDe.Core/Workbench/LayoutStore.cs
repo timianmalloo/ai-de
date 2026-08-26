@@ -26,7 +26,11 @@ public sealed record NodeDto(
     List<double>? Weights,
     List<SurfaceDto>? Surfaces,
     int ActiveIndex,
-    string? State);
+    string? State,
+    double? FloatX = null,
+    double? FloatY = null,
+    double? FloatWidth = null,
+    double? FloatHeight = null);
 
 public sealed record SurfaceDto(string SurfaceId, string Kind, string Title);
 
@@ -182,6 +186,13 @@ public sealed class LayoutStore(
             foreach (var floating in restored.Floating.Where(f => !displayIsConnected(f)).ToList())
             {
                 rehomed.Add(floating.Active.Title);
+                // Reporting an off-screen pane without moving it would leave the user told about a
+                // window they still cannot reach. Clearing the bounds re-homes it to the shell's
+                // default placement on a connected display.
+                restored = restored with
+                {
+                    Floating = restored.Floating.Replace(floating, floating with { FloatingBounds = null }),
+                };
             }
         }
 
@@ -249,7 +260,9 @@ public sealed class LayoutStore(
             [.. s.Children.Select(ToDto)], [.. s.Weights], null, 0, null),
         StackNode s => new NodeDto(s.Id, "stack", null, null, null,
             [.. s.Surfaces.Select(f => new SurfaceDto(f.SurfaceId, f.Kind, f.Title))],
-            s.ActiveIndex, s.State.ToString()),
+            s.ActiveIndex, s.State.ToString(),
+            s.FloatingBounds?.X, s.FloatingBounds?.Y,
+            s.FloatingBounds?.Width, s.FloatingBounds?.Height),
         _ => throw new ArgumentException("unknown node", nameof(node)),
     };
 
@@ -262,7 +275,10 @@ public sealed class LayoutStore(
         "stack" => new StackNode(dto.Id,
             [.. (dto.Surfaces ?? []).Select(s => new Surface(s.SurfaceId, s.Kind, s.Title))],
             dto.ActiveIndex,
-            Enum.Parse<StackState>(dto.State ?? nameof(StackState.Docked))),
+            Enum.Parse<StackState>(dto.State ?? nameof(StackState.Docked)),
+            floatingBounds: dto is { FloatX: { } fx, FloatY: { } fy, FloatWidth: { } fw, FloatHeight: { } fh }
+                ? new LayoutRect(fx, fy, fw, fh)
+                : null),
         _ => throw new ArgumentException($"unknown node kind '{dto.Kind}'", nameof(dto)),
     };
 }

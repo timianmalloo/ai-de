@@ -69,9 +69,11 @@ public sealed record StackNode : LayoutNode
 
     public StackNode(string id, ImmutableList<Surface> surfaces, int activeIndex = 0,
         StackState state = StackState.Docked,
-        double minWidth = DefaultMinimum, double minHeight = DefaultMinimum)
+        double minWidth = DefaultMinimum, double minHeight = DefaultMinimum,
+        LayoutRect? floatingBounds = null)
         : base(id)
     {
+        FloatingBounds = floatingBounds;
         if (surfaces.Count == 0)
         {
             throw new ArgumentException("a stack holds at least one surface", nameof(surfaces));
@@ -93,6 +95,16 @@ public sealed record StackNode : LayoutNode
     public double MinWidth { get; init; }
 
     public double MinHeight { get; init; }
+
+    /// <summary>
+    /// Where a floating pane sits, in virtual-screen coordinates. Null while docked.
+    /// </summary>
+    /// <remarks>
+    /// Stored because US-9 requires a floating pane to return to the display it was on. Without it
+    /// the off-screen guard has nothing to test and a restored floating pane would land wherever the
+    /// shell happened to put it.
+    /// </remarks>
+    public LayoutRect? FloatingBounds { get; init; }
 
     public Surface Active => Surfaces[ActiveIndex];
 }

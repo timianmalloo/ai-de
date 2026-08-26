@@ -38,6 +38,9 @@ public sealed class WorkspaceCore : IDisposable
 
     public string RootPath { get; }
 
+    /// <summary>Where workspace-local state lives. The layout file sits beside the fact store (ADR-0013).</summary>
+    public string DataDirectory { get; private set; } = string.Empty;
+
     public WorkspaceStore Store { get; }
 
     public ProjectionService Projections { get; }
@@ -57,7 +60,10 @@ public sealed class WorkspaceCore : IDisposable
         Directory.CreateDirectory(dataDirectory);
         var store = WorkspaceStore.Open(Path.Combine(dataDirectory, "workspace.db"));
         var incidents = new HealthIncidentSidecar(Path.Combine(dataDirectory, "health-incidents.jsonl"));
-        var core = new WorkspaceCore(workspaceId, store, extractor ?? new FixtureExtractor(), incidents, rootPath);
+        var core = new WorkspaceCore(workspaceId, store, extractor ?? new FixtureExtractor(), incidents, rootPath)
+        {
+            DataDirectory = dataDirectory,
+        };
 
         var swept = core.Dispatch.SweepPendingToUnknown();
         if (swept > 0)

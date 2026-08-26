@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
@@ -21,7 +22,7 @@ namespace AiDe.App.Workbench;
 /// share the same <see cref="ILayoutService"/> instance, or the keyboard would mutate one layout
 /// while the view rendered another.
 /// </remarks>
-public sealed class WorkbenchShell
+public sealed class WorkbenchShell : IDisposable
 {
     public WorkbenchShell(WorkspaceCore? core)
     {
@@ -40,8 +41,29 @@ public sealed class WorkbenchShell
 
         Palette = new CommandPalette(Controller, Announcer);
 
+        // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
+        // open there is nothing to persist against, so first-run simply starts from the default.
+        if (core is not null && !string.IsNullOrEmpty(core.DataDirectory))
+        {
+            var surfaces = Service.Current.AllStacks()
+                .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId)
+                .ToHashSet(StringComparer.Ordinal);
+
+            Persistence = new LayoutPersistence(
+                Service, Path.Combine(core.DataDirectory, "layout.json"), surfaces);
+
+            var restored = Persistence.Restore();
+            if (restored.ErrorCode is not null || restored.WasDefaulted)
+            {
+                // A partial or failed restore must be told to the user, not silently absorbed: they
+                // are about to look at an arrangement that is not the one they left.
+                Announcer.Announce(restored.Announcement);
+            }
+        }
+
         Adapter.Render();
         TrackFocusedPane();
+        PersistOnEveryChange();
     }
 
     public ILayoutService Service { get; }
@@ -59,6 +81,9 @@ public sealed class WorkbenchShell
 
     /// <summary>The keyboard route to every layout command (SC 2.5.7).</summary>
     public CommandPalette Palette { get; }
+
+    /// <summary>Saves and restores the arrangement across restarts. Null on first run.</summary>
+    public LayoutPersistence? Persistence { get; }
 
     /// <summary>Binds keyboard commands and the palette to a host element — normally the window.</summary>
     public void Bind(UIElement host)
@@ -129,6 +154,26 @@ public sealed class WorkbenchShell
 
         return null;
     }
+
+    /// <summary>
+    /// Marks the layout dirty after any change, so nothing has to remember to save.
+    /// </summary>
+    /// <remarks>
+    /// Hooked to the adapter's render rather than to individual commands: a save triggered per
+    /// command would miss changes made by a drag, and every new operation would need to remember to
+    /// opt in. One hook downstream of all of them cannot be forgotten.
+    /// </remarks>
+    private void PersistOnEveryChange()
+    {
+        if (Persistence is null)
+        {
+            return;
+        }
+
+        Manager.LayoutUpdated += (_, _) => Persistence.MarkDirty();
+    }
+
+    public void Dispose() => Persistence?.Dispose();
 
     /// <summary>The command palette's rows: every keyboard-reachable layout command.</summary>
     public static IReadOnlyList<WorkbenchCommand> PaletteCommands(string search) =>

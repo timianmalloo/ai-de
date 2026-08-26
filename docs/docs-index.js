@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T17:12:37Z",
+  "generated": "2026-08-26T19:10:19Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1209,7 +1209,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "10ae98254ca0881b1f630616855f7a252176c109773a4c9eb097183fa428347e"
+      "sourceSha256": "0241a9900b17ff06d2b641de9ee74f872790d720dbfdd0b3b9fa0839e74c8b2a"
     },
     {
       "id": "lens-code-doc-join",
@@ -3890,7 +3890,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-spike-layout-upgrade-roundtrip — Audit & Change Log",
+      "title": "ai-de-spike-dpi-and-ganged-resize — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3912,5 +3912,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "c7d1ea2aa718761b475f34c7b00759c4985bb468f857178f17ef97fa06dd7473"
+  "graphSha256": "20908d8d6a60cf0566f642d6e84c95153c05e228f5c49d191b8a5973355b1408"
 };

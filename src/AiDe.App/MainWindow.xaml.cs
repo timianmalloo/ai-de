@@ -26,6 +26,10 @@ public partial class MainWindow : Window
         RootLayer.Children.Add(Shell.Palette.Root);
 
         Shell.Bind(this);
+
+        // The most common moment to lose an arrangement is rearranging and immediately closing, so
+        // the pending debounced save is flushed on the way out rather than left to a timer.
+        Closed += (_, _) => Shell.Dispose();
     }
 
     internal WorkbenchShell Shell { get; }

@@ -28,8 +28,8 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 7 · partially-controlled 3 · uncontrolled 1
-**Recurrence since last review:** 0
+**Status counts:** controlled 8 · partially-controlled 3 · uncontrolled 0
+**Recurrence since last review:** 1 — DC-008, whose first control was scoped to one test project when the cause was not project-specific (CI4: a second occurrence means the control was wrong, not that someone was careless).
 
 ---
 
@@ -135,70 +135,39 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 - **Status:** `controlled`
 
 ### DC-008 — Test-observable global state leaks between parallel test classes
-- **Signature:** assertions that pass in isolation and fail in a full run, with counts higher than the
-  test itself produced. Caused by process-global registries (`ActivityListener`, static caches,
-  environment variables) shared across concurrently executing classes.
-- **Why it survives:** each test is individually correct, and the failure looks like a flake.
+- **Signature:** assertions that pass in isolation and fail — or **vanish** — in a full run. Caused by
+  process-global state (`ActivityListener`, WPF `Dispatcher`s and windows, static caches) shared
+  across concurrently executing classes.
+- **Why it survives:** each test is individually correct, and the failure looks like a flake. The
+  WPF variant is worse: the host process **crashes mid-run**, so the runner reports the passes it had
+  already recorded and simply stops. `Passed! 27` with 21 tests never executed is indistinguishable
+  from a clean run unless you know the expected count.
 - **Instances:** 2026-08-26 — `TelemetryTests` captured spans emitted by `WalkingSkeletonTests`
-  running concurrently; `Assert.Single` saw two activities.
-- **Control:** `[assembly: CollectionBehavior(DisableTestParallelization = true)]` in
-  `AiDe.Core.Tests/AssemblyInfo.cs`, with the reason stated inline. **This is a mitigation, not a
-  detection** — nothing fails if a future suite reintroduces shared global state under parallelism.
+  running concurrently. 2026-08-26 (**recurrence**) — `AiDe.App.Tests` crashed the test host once
+  several classes each showed real WPF windows on STA threads at the same time; 27 of 54 tests ran.
+  Found only because the count dropped from a number that had been seen before.
+- **Control:** `[assembly: CollectionBehavior(DisableTestParallelization = true)]` in **both** test
+  projects, each carrying the reason inline. **The first control was too narrow** — it was applied to
+  `AiDe.Core.Tests` alone when the cause was not project-specific, which is precisely why this
+  recurred (CI4).
+- **Residual risk:** still a mitigation rather than a detection. Nothing fails if a future test
+  project reintroduces shared global state under parallelism. **The detection that would close this
+  is an expected-test-count assertion in CI** — a run that executes fewer tests than last time should
+  fail, because a crashed host currently reports success.
+- **Status:** `controlled` (mitigated in both projects; the count-regression detection is the named
+  gap)
+
+### DC-012 — A test runner reports success for a run that aborted
+- **Signature:** the summary line says `Passed!` with a plausible number, and the run actually
+  crashed partway. No failure is printed because nothing failed — execution simply stopped. Only
+  comparing the *count* to a previous run reveals it.
+- **Why it survives:** every signal a reviewer normally reads is green: exit status, the word
+  "Passed", zero failures. The missing information is a **negative** — the tests that did not run —
+  and negatives are invisible unless something asserts on them.
+- **Instances:** 2026-08-26 — `dotnet test` printed `Passed! - Failed: 0, Passed: 27` while the host
+  had crashed and 21 tests never executed. Caught only because 48 had been observed earlier in the
+  session; with no prior number it would have shipped.
+- **Control:** `NONE YET.` The fix is an expected-minimum test count in CI, or parsing
+  `Total tests: Unknown` / `Test Run Aborted` from the runner output and failing on it. Until then the
+  standing habit is the control: **compare the test count to the previous run, every run.**
 - **Status:** `uncontrolled`
-
-### DC-009 — An index exists, is correct, and the query path never uses it
-- **Signature:** `EXPLAIN QUERY PLAN` on the *hand-written* SQL shows a clean index SEARCH, and the
-  feature is still slow. The application layer loads a broad result set and filters it in memory, so
-  the index is never on the path the product actually takes. Reviewing the schema — or the plan of a
-  query the code does not issue — finds nothing wrong.
-- **Why it survives:** every artefact inspected in isolation is correct. The schema review passes,
-  the query-plan oracle passes, the unit tests pass on small fixtures where materializing everything
-  is free. Only a benchmark on a realistic corpus separates "we have an index" from "we use it".
-- **Instances:** 2026-08-26 — `ProjectionService` called `AllCurrentAssertions()` for every bounded
-  read, paying ~350 ms of full-corpus materialization per query; `describe` measured p95 399 ms
-  against a 100 ms budget while the indexes it should have used sat unused. Compounded by index
-  column order: `(scope_id, generation, subject)` cannot serve a lookup whose only predicate is the
-  node, so the traversal column has to lead.
-- **Control:** `P1-PERF-02/03` measure the *product's own call path*, not hand-written SQL, and fail
-  the run when a budget is missed; `P1-PERF-04` separately asserts no bounded read scans the fact
-  table. **Observed failing 2026-08-26** (5 of 8 budgets red before the fix). The two oracles are
-  deliberately independent: a query can be fast on this corpus and still be a scan that degrades
-  linearly on a larger one.
-- **Status:** `controlled`
-
-### DC-010 — A benchmark's samples share state, so it measures accumulation instead of the operation
-- **Signature:** a latency distribution that climbs monotonically across samples, and a p95 far above
-  the p50 with no obvious cause. The harness reuses one store/table/cache across iterations, so
-  sample N pays for the N−1 samples before it.
-- **Why it survives:** the harness looks correct, the operation under test is real, and the number is
-  reproducible — it is simply a number for a different question than the one asked. It reads as a
-  performance problem in the product rather than a measurement problem in the harness.
-- **Instances:** 2026-08-26 — the refresh benchmark reused one database for all 30 samples, so the
-  final sample inserted the 30th 10,000-row batch into a 300,000-row table; refresh "regressed" to
-  p95 1291 ms. Measured with an independent store per sample it is p95 221 ms.
-- **Control:** `bench/AiDe.Bench` allocates a fresh store per refresh sample, and the append-only
-  growth curve is measured *deliberately and separately* (0/5/10/20 prior generations) rather than
-  leaking into the headline number. That separation is what turned a harness bug into the real
-  finding underneath it: **refresh exceeds its budget after ~10 generations and no policy triggers
-  the compaction that would mitigate it** — an open Phase-2 work item, not a closed one.
-- **Status:** `partially-controlled` — the harness is fixed and the growth is now visible, but
-  nothing yet enforces a generation-retention policy in the product.
-
-### DC-011 — A refusal is silent, so the control reads as broken
-- **Signature:** an operation is correctly refused — locked, at a limit, out of scope — and the code
-  returns early without telling anyone. Visually and audibly identical to a dead key, a stuck drag,
-  or a hung app. Especially easy to introduce in change-detection code, where "nothing changed" and
-  "nothing is allowed" are both represented by the same null/no-op and the early return swallows both.
-- **Why it survives:** the happy path is correct and the refusal is correct; only the *reporting* is
-  missing, and no assertion covers "and it said so". Sighted users often infer the refusal from a
-  frozen highlight; screen-reader users get nothing at all.
-- **Instances:** 2026-08-26 — `WorkbenchController.DragOver` with a locked layout: the resolver
-  returned null, which equalled the initial `HoveredTarget`, so the change-detection short-circuit
-  fired before the explanation. Caught by a test asserting the announcement, not by review.
-  2026-08-26 (same shape, prevented by design) — `LayoutService.Apply` returns the announcement as
-  part of `LayoutResult` so a refusal cannot be applied without one.
-- **Control:** `WorkbenchDragTests.ALockedLayout_OffersNoDestinationAndExplainsWhy` and
-  `WorkbenchControllerTests.ARefusedOperation_IsStillAnnounced`; structurally, `LayoutResult` carries
-  the announcement so refusals cannot be silent at the model layer. **Observed failing 2026-08-26**
-  on the un-fixed `DragOver`.
-- **Status:** `controlled`
