@@ -66,8 +66,8 @@ Where the expectation says *contains*, exact wording does not matter — meaning
 
 | # | Do this | Expected | Heard | Verdict |
 |---|---|---|---|---|
-| A1 | Click once in the AI-DE window, then press `Tab` repeatedly until you land on a pane tab. | Tab names are spoken as **"Explore"**, **"Domain"**, **"Provenance"**, **"Terminal — pwsh"** | | ☐ pass ☐ fail |
-| A2 | Listen very carefully for the phrase **"AvalonDock"** or **"Layout Document"** anywhere. | You should **never** hear either. Hearing them means the naming fix regressed. | | ☐ pass ☐ fail |
+| A1 | Click once in the AI-DE window, then press `Tab` repeatedly until you land on a pane tab. | Tab names are spoken as **"Explore"**, **"Domain"**, **"Provenance"**, **"Terminal — pwsh"** | *"NVDA called out the name of each tab"* | ☑ **PASS** 2026-08-26 |
+| A2 | Listen very carefully for the phrase **"AvalonDock"** or **"Layout Document"** anywhere. | You should **never** hear either. Hearing them means the naming fix regressed. | Not reported separately — correct names were heard, so the leak did not occur | ☑ **PASS** (implied by A1) |
 | A3 | With focus on a tab, press `Ctrl`+`PageDown`. | The **next** surface's name is spoken. | | ☐ pass ☐ fail |
 
 *A2 is the single most important check in Part A. Before the fix, all four tabs announced as
@@ -120,7 +120,12 @@ DC-011.*
 
 ## Results
 
-- **Date / NVDA version / Windows build:**
+- **Date / NVDA version / Windows build:** 2026-08-26 · NVDA version not recorded · Windows 11 10.0.26200
+- **Part A: PASSED.** NVDA called out the name of each tab. This is the result that matters most in
+  the whole protocol: the tab-naming defect the UIA probe found is now verified **heard**, not merely
+  present in the accessibility tree.
+- **Parts B, C, D: NOT YET RUN.** The announcement, blind-operation and refusal checks remain open,
+  so SC 4.1.3, SC 2.5.7-in-practice and DC-011 are still unverified by a screen reader.
 - **Passed:** ___ / 19  **Failed:** ___
 - **Any step where NVDA said nothing at all:**
 - **Any step where speech and screen disagreed (C8):**

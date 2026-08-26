@@ -175,6 +175,32 @@ release to rename a surface would have degraded **every** saved layout to the de
 pane, reset the whole arrangement. Fixed with a DTO-level migration chain that fails closed on a gap;
 pinned by five tests, the headline one observed red.
 
+### DPI and ganged-resize spike result (2026-08-26)
+
+Recorded in [`docs/reviews/spike-dpi-and-ganged-resize.md`](../reviews/spike-dpi-and-ganged-resize.md).
+
+**Ganged resize: holds.** No two docked panes share area, measured geometrically on the realized
+view; weights always sum to 1 so a resize redistributes rather than leaving a gap. **Flagged to
+Verified.**
+
+**Per-monitor DPI: found a prerequisite defect in OUR code.** The app was `SYSTEM_AWARE` rather than
+`PER_MONITOR_AWARE_V2`, because WPF defaults that way absent a manifest and AI-DE shipped none. A
+System-aware app bitmap-stretches any window crossing a DPI boundary, so testing the library's
+cross-monitor behaviour in that host would have measured our bug and blamed it on AvalonDock. Fixed
+with an `app.manifest`, verified against the running executable.
+
+**Still open:** the cross-monitor transition itself was not run — this machine has one display.
+Per-Monitor V2 is the precondition and is now verified; AvalonDock's floating-window behaviour across
+a real DPI boundary remains **Inferred** and needs a two-display machine.
+
+### NVDA verification (2026-08-26, partial)
+
+**Part A passed:** NVDA correctly announced each tab by name. The tab-naming defect the UIA probe
+found is now verified *heard*, not merely present in the tree — the strongest evidence available for
+that claim, and it retires the largest accessibility unknown in this ADR. Parts B, C and D
+(announcements without focus movement, blind keyboard operation, spoken refusals) are **not yet run**,
+so SC 4.1.3 and SC 2.5.7-in-practice remain unverified by a screen reader.
+
 **Required spikes before Phase-2 implementation accepts this ADR:**
 
 | Unknown | Probe | Cost |

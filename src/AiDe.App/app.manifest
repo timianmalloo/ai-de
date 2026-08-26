@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings>
+      <!--
+        Per-Monitor V2, verified by measurement (docs/reviews/spike-dpi-and-ganged-resize.md).
+        WPF defaults to System DPI aware: the app is told the PRIMARY display's DPI once at startup
+        and assumes it everywhere. A floating pane dragged to a different-DPI display is then
+        bitmap-stretched by Windows — blurry, and its coordinates do not round-trip. Since US-9
+        requires floating panes to restore onto the display they were on, this is a prerequisite for
+        the feature rather than a polish item.
+      -->
+      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+    </windowsSettings>
+  </application>
+</assembly>

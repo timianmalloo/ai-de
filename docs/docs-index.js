@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T17:02:45Z",
+  "generated": "2026-08-26T17:12:37Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -716,7 +716,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "36ed7d7aa91bccabb533a9ea0e69c6c0f73382f1bb5a5b00e85ae80666adc60d"
+      "sourceSha256": "42282fdf122f0b7c1738819401f286744c81361a6469bbcee89e12c3ca9f1879"
     },
     {
       "id": "adr-0013-layout-persistence-envelope",
@@ -1570,7 +1570,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "149b637db3f537f3df8c5d7ca886e907a68537812768995251056af4c251b9e1"
+      "sourceSha256": "28af60f3c5209e889a6dbf5fb1c61876baf2f1a0f96cb6b08a7216fbc7481785"
     },
     {
       "id": "review-ui-workbench",
@@ -1684,6 +1684,37 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c04d25afbeb930496cf97e78fe6b92e05aab38e5e5d8523933e8709ee16e19d7"
+    },
+    {
+      "id": "spike-dpi-and-ganged-resize",
+      "path": "docs/reviews/spike-dpi-and-ganged-resize.md",
+      "title": "Spike — per-monitor DPI and ganged resize",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1b",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The last two ADR-0012 spikes. Found the app was System DPI aware rather than Per-Monitor V2 — a prerequisite defect for US-9's floating panes, in our code rather than the docking library's. Fixed and verified against the running executable. Ganged resize holds: no two docked panes share area. The cross-monitor transition itself remains untested for want of a second display.",
+      "tags": [
+        "spike",
+        "dpi",
+        "multi-monitor",
+        "resize",
+        "adr-0012"
+      ],
+      "links": [
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "documents"
+        },
+        {
+          "to": "design-phase-1b-workbench",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "de30aa3e7abb60419e8e66713516a64814a1bce7272df2cc78f7e226ef5cffb4"
     },
     {
       "id": "spike-layout-upgrade-roundtrip",
@@ -3881,5 +3912,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "39d314b7fefc4913d67a1525ca4e03adcd684c5cc0402ebcc4d6ef31015d8acb"
+  "graphSha256": "c7d1ea2aa718761b475f34c7b00759c4985bb468f857178f17ef97fa06dd7473"
 };

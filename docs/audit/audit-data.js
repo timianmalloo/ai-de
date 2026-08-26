@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-spike-layout-upgrade-roundtrip",
-  "generated": "2026-08-26T17:02:29Z",
+  "project": "ai-de-spike-dpi-and-ganged-resize",
+  "generated": "2026-08-26T17:13:02Z",
   "audit": [
     {
       "id": "al-0001",
@@ -467,6 +467,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/reviews/spike-layout-upgrade-roundtrip.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0024",
+      "shortname": "spike-dpi-and-ganged-resize",
+      "datetime": "2026-08-26T17:13:02Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "NVDA successfully called out the name of each tab; do the last two ADR-0012 spikes",
+      "summary": "Ganged resize verified (no two panes share area). DPI spike found the app was SYSTEM_AWARE not PerMonitorV2 - our defect not AvalonDock's - fixed via app.manifest and verified against the running exe. Cross-monitor transition still untested (one display). NVDA Part A recorded as passed",
+      "kind": "script",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/spike-dpi-and-ganged-resize.md",
+        "src/AiDe.App/app.manifest"
       ],
       "tags": [],
       "outcome": "success"
