@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T00:36:39Z",
+  "generated": "2026-08-26T01:10:01Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -909,6 +909,67 @@ window.DOCS_INDEX = {
       "sourceSha256": "03a9b7e08506abe2165e2b34b41510b723df5e29263c7ccc15a3510550cd16c9"
     },
     {
+      "id": "design-phase-1-walking-skeleton",
+      "path": "docs/design/phase-1-walking-skeleton.md",
+      "title": "Phase 1 walking skeleton — detailed design",
+      "type": "design",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The implementable blueprint for AI-DE's Phase-1 walking skeleton: the SQLite fact schema and its enforced immutability control, the in-process authority core with command receipts and the write-ahead two-phase dispatch, the bounded describe/impact/knowledge projections, the stdio MCP gateway with processing-class egress binding, the health sidecar and freshness prober, and the accessible evidence/provenance pane.",
+      "tags": [
+        "design",
+        "phase-1",
+        "walking-skeleton",
+        "fact-store",
+        "mcp",
+        "dispatch",
+        "projections"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "conceptual-model-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0009-in-process-first-daemon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0010-two-phase-dispatch-receipt",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0011-session-processing-class-egress",
+          "rel": "depends-on"
+        },
+        {
+          "to": "threat-model-ai-native-ide",
+          "rel": "depends-on"
+        },
+        {
+          "to": "privacy-review-ai-native-ide",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f519f95c8851ca1f2edea61e1e954947b120bb2f536062f8eada66b11582e387"
+    },
+    {
       "id": "audit-log",
       "path": "docs/audit/audit-log.md",
       "title": "Audit & Change Log",
@@ -928,6 +989,35 @@ window.DOCS_INDEX = {
       "links": [],
       "diagrams": [],
       "sourceSha256": "71819e58949cf27b8efd509901f9d19ca6e787cb2fbec6d274a59b8b8fd5e003"
+    },
+    {
+      "id": "defect-classes",
+      "path": "docs/lessons/defect-classes.md",
+      "title": "Defect-class register",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-24",
+      "reviewSuggested": [],
+      "summary": "The project's register of defect classes — the recurring shapes of things that go wrong here, what each one survives, and the control that now fails when the shape recurs. Seeded from the ten-persona architecture review and the Phase-1 build.",
+      "tags": [
+        "lessons",
+        "defect-classes",
+        "continuous-improvement"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-phase-1-walking-skeleton",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4919e7968748fa003347bb4e13271b33f44ece6462d8311b8bb53b8d5c4a814d"
     },
     {
       "id": "lens-code-doc-join",
@@ -1102,6 +1192,36 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
+    },
+    {
+      "id": "proof-pack-phase-1-walking-skeleton",
+      "path": "docs/design/phase-1-proof-pack.md",
+      "title": "Phase 1 walking skeleton — Proof Pack",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "One row per correctness claim for the Phase-1 walking skeleton, each with its test, its oracle, and whether the test was observed failing before its control existed. Records the three council-veto mechanisms as red-observed, and states the residual risks Phase 1 does not close.",
+      "tags": [
+        "proof-pack",
+        "phase-1",
+        "evidence",
+        "tdd"
+      ],
+      "links": [
+        {
+          "to": "design-phase-1-walking-skeleton",
+          "rel": "documents"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e5a82acfd1a41d02b3bc8186b9386b989a832ec575c5a2e22f383dff592a43f2"
     },
     {
       "id": "release-plan-ai-native-ide",
@@ -3339,7 +3459,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-architecture-ai-ide-arch-v2 — Audit & Change Log",
+      "title": "ai-de-feat-phase-1-walking-skeleton — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3353,5 +3473,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "4c2358b52e7054ee9dff63b95bf0c4e8b059d9d6c053a53e7b7ff65392d79ae8"
+  "graphSha256": "0ba84af5a1ec12404913c4394e6c9f6a871c80199f4ecd8b07e44ab94c92a687"
 };

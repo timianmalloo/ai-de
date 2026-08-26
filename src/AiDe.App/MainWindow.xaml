@@ -6,63 +6,102 @@
         xmlns:viewModels="clr-namespace:AiDe.App.ViewModels"
         mc:Ignorable="d"
         Title="{Binding WindowTitle}"
-        Width="960"
-        Height="600"
-        MinWidth="720"
-        MinHeight="480"
+        Width="1100"
+        Height="700"
+        MinWidth="820"
+        MinHeight="520"
         WindowStartupLocation="CenterScreen"
-        Background="#0F172A">
-    <Window.DataContext>
-        <viewModels:MainWindowViewModel />
-    </Window.DataContext>
-
-    <Grid Margin="48">
+        Background="{StaticResource SurfaceBrush}"
+        FontFamily="Segoe UI Variable Text, Segoe UI"
+        FontSize="13">
+    <!--  Master-detail per the B1 Keyboard-Velocity archetype: list left, provenance right,
+          health strip along the bottom. Compact density, flat depth, dark-adaptive tokens.  -->
+    <Grid Margin="16">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="360" MinWidth="260" />
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <TextBlock FontSize="18"
-                   FontWeight="SemiBold"
-                   Foreground="#38BDF8"
-                   Text="AI-DE" />
-
-        <TextBlock Grid.Row="1"
-                   Margin="0,12,0,32"
-                   FontSize="38"
-                   FontWeight="Bold"
-                   Foreground="#F8FAFC"
+        <TextBlock Grid.Row="0"
+                   Grid.ColumnSpan="3"
+                   Margin="0,0,0,12"
+                   FontSize="18"
+                   Foreground="{StaticResource TextBrush}"
                    Text="{Binding Heading}" />
 
-        <Border Grid.Row="2"
-                Padding="28"
-                Background="#1E293B"
-                CornerRadius="16">
-            <StackPanel>
-                <TextBlock FontSize="18"
-                           FontWeight="SemiBold"
-                           Foreground="#E2E8F0"
-                           Text="Local WPF workspace" />
-                <TextBlock Margin="0,8,0,20"
-                           Foreground="#94A3B8"
-                           Text="The solution is ready for feature development with a testable MVVM seam." />
-                <ItemsControl ItemsSource="{Binding GettingStartedSteps}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Margin="0,6"
-                                       Foreground="#CBD5E1"
-                                       Text="{Binding StringFormat=• {0}}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+        <!--  The accessible evidence list: the permanent keyboard/screen-reader surface,
+              not a fallback for the Phase-2 canvas.  -->
+        <ListBox x:Name="EvidenceList"
+                 Grid.Row="1"
+                 Grid.Column="0"
+                 Background="{StaticResource SurfaceRaisedBrush}"
+                 BorderBrush="{StaticResource BorderBrush}"
+                 BorderThickness="1"
+                 Foreground="{StaticResource TextBrush}"
+                 ItemsSource="{Binding Rows}"
+                 SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
+                 AutomationProperties.Name="Evidence items"
+                 KeyboardNavigation.TabNavigation="Once"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="8,6" />
+                    <Setter Property="MinHeight" Value="28" />
+                    <!--  The row's accessible name carries label, kind AND confidence, so a screen
+                          reader hears everything the visual row shows.  -->
+                    <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <!--  Confidence is glyph + text, never colour alone (WCAG 2.2 AA).  -->
+                        <TextBlock MinWidth="16"
+                                   FontFamily="Cascadia Mono, Consolas"
+                                   Foreground="{StaticResource AccentBrush}"
+                                   Text="{Binding Confidence.Glyph}" />
+                        <TextBlock Margin="6,0,0,0"
+                                   Foreground="{StaticResource TextBrush}"
+                                   Text="{Binding DisplayLabel}"
+                                   TextTrimming="CharacterEllipsis"
+                                   ToolTip="{Binding DisplayLabel}" />
+                        <TextBlock Margin="8,0,0,0"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   Text="{Binding Confidence.Text}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <!--  Provenance pane, in the fixed evidence order:
+              what it is -> confidence/provenance -> related nodes -> source -> limits.  -->
+        <Border Grid.Row="1"
+                Grid.Column="2"
+                Padding="16"
+                Background="{StaticResource SurfaceRaisedBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock AutomationProperties.Name="Provenance for the selected item"
+                           Foreground="{StaticResource TextBrush}"
+                           Text="{Binding ProvenanceText}"
+                           TextWrapping="Wrap" />
+            </ScrollViewer>
         </Border>
 
-        <TextBlock Grid.Row="3"
-                   Margin="0,24,0,0"
-                   Foreground="#64748B"
+        <!--  Health strip: answers the 3 a.m. questions without opening a log.  -->
+        <TextBlock Grid.Row="2"
+                   Grid.ColumnSpan="3"
+                   Margin="0,12,0,0"
+                   AutomationProperties.LiveSetting="Polite"
+                   AutomationProperties.Name="Workspace health"
+                   Foreground="{StaticResource TextMutedBrush}"
                    Text="{Binding StatusMessage}" />
     </Grid>
 </Window>

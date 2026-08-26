@@ -1,9 +1,21 @@
-﻿<Application x:Class="AiDe.App.App"
+<Application x:Class="AiDe.App.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:AiDe.App"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <!--  Semantic brushes mirroring DESIGN.md. Components reference these, never raw values,
+              so a token change is one edit and the craft gate can enforce it outward.  -->
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#12151A" />
+        <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="#1A1F26" />
+        <SolidColorBrush x:Key="BorderBrush" Color="#2A313B" />
+        <SolidColorBrush x:Key="TextBrush" Color="#E4E9EF" />
+        <SolidColorBrush x:Key="TextMutedBrush" Color="#98A3B2" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#5B9DD9" />
+        <SolidColorBrush x:Key="VerifiedBrush" Color="#5FB98F" />
+        <SolidColorBrush x:Key="InferredBrush" Color="#D8A650" />
+        <SolidColorBrush x:Key="UnverifiedBrush" Color="#98A3B2" />
+        <SolidColorBrush x:Key="DangerBrush" Color="#E07A6F" />
+        <SolidColorBrush x:Key="FocusBrush" Color="#8FC0EA" />
     </Application.Resources>
 </Application>

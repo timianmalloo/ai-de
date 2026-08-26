@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-architecture-ai-ide-arch-v2",
-  "generated": "2026-08-26T00:36:34Z",
+  "project": "ai-de-feat-phase-1-walking-skeleton",
+  "generated": "2026-08-26T01:10:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -207,6 +207,44 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0009",
+      "shortname": "design-phase-1-walking-skeleton",
+      "datetime": "2026-08-26T00:49:08Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "C:/Program Files/Git/design phase-1 the walking skeleton",
+      "summary": "Phase-1 detailed design: data model with grains/additivity/per-attribute history, contracts, patterns, failure-mode + STRIDE + LINDDUN analyses, UI design + DESIGN.md, telemetry, full triggered-directive test plan",
+      "kind": "skill",
+      "skill": "design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/phase-1-walking-skeleton.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-26T00:44:31Z",
+      "duration_seconds": 277.0
+    },
+    {
+      "id": "al-0010",
+      "shortname": "implement-phase-1-walking-skeleton",
+      "datetime": "2026-08-26T01:10:09Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "then /implement the walking skeleton",
+      "summary": "Phase-1 walking skeleton implemented red-first: SQLite fact store with spike-verified immutability control, write-ahead two-phase dispatch (ADR-0010), fixture extractor, bounded describe/impact/find/knowledge projections (US-4), MCP processing-class egress gate (ADR-0011), health sidecar, freshness prober, accessible provenance pane wired into WPF. 59 tests green; 6 controls observed RED first; Proof Pack + defect-class register written",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/phase-1-proof-pack.md",
+        "src/AiDe.Core",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -349,6 +387,29 @@ window.AUDIT_DATA = {
         "before": "2b134da951bd364d7f4eca58a663774a918b6001",
         "after": "2b134da951bd364d7f4eca58a663774a918b6001",
         "branch": "architecture/ai-ide-arch-v2",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0006",
+      "datetime": "2026-08-26T00:49:08Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design",
+      "title": "Phase-1 walking skeleton design",
+      "prompt": "C:/Program Files/Git/design phase-1 the walking skeleton",
+      "summary": "Blueprint for the thinnest end-to-end slice: fact store with enforced immutability, in-process core with write-ahead dispatch, bounded projections incl. knowledge (US-4), stdio MCP with egress binding, health sidecar, freshness prober, accessible provenance pane",
+      "rationale": "Turns the v2 architecture into an implementable slice while keeping every council-veto mechanism testable red-first",
+      "artifacts": [
+        "docs/design/phase-1-walking-skeleton.md",
+        "DESIGN.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "a0bd6998aa345435ef995a7dc8d117e10e3e8383",
+        "after": "a0bd6998aa345435ef995a7dc8d117e10e3e8383",
+        "branch": "feat/phase-1-walking-skeleton",
         "pushed": null,
         "commits": []
       }
