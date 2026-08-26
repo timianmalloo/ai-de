@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-spike-avalondock-a11y",
-  "generated": "2026-08-26T13:58:16Z",
+  "project": "ai-de-feat-workbench-adapter",
+  "generated": "2026-08-26T14:21:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -362,6 +362,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "spikes/avalondock-a11y/RESULT.md",
         "docs/adr/0012-docking-shell-library.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0018",
+      "shortname": "implement-workbench-adapter",
+      "datetime": "2026-08-26T14:21:48Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "do the next action then provide a tabular view of all slices with status and next best action",
+      "summary": "AvalonDock adapter: one-way model->view projection, the verified tab-naming pass, and the leaked-name regression control. 4 STA tests; control observed RED reproducing the exact probe defect",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs"
       ],
       "tags": [],
       "outcome": "success"
