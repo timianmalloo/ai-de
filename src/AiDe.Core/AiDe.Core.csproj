@@ -4,6 +4,17 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!--
+      Required by [LibraryImport], which the ConPTY runtime uses. The interop SOURCE GENERATOR emits
+      unsafe marshalling code; this is the cost of source-generated interop rather than a licence to
+      hand-write unsafe code. Nothing outside Terminal/ needs interop at all, and the runtime
+      contains no `unsafe` block of its own.
+
+      The library stays `net10.0` rather than retargeting to Windows: the ConPTY types are annotated
+      [SupportedOSPlatform("windows")], which expresses the requirement without dragging every
+      consumer of the fact store onto a Windows TFM to reach four kernel functions.
+    -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

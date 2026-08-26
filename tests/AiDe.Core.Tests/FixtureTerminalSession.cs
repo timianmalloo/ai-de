@@ -1,3 +1,4 @@
+using System.Threading.Channels;
 using AiDe.Core.Dispatch;
 using AiDe.Core.Facts;
 
@@ -21,18 +22,46 @@ internal sealed class SimulatedProcessCrashException : Exception
 /// never on disk, never in a log — because a test double persisting prompt text would itself be a
 /// privacy finding.
 /// </summary>
-internal sealed class FixtureTerminalSession(
-    string sessionId,
-    long generation,
-    SessionProcessingClass processingClass = SessionProcessingClass.LocalOnly) : ITerminalSession
+/// <remarks>
+/// <para><b>Phase-2 amendment.</b> The contract gained output, activity, exit and resize, so the
+/// fixture gained them too — and gained them for real rather than as stubs. A double that throws
+/// <c>NotImplementedException</c> for half the contract cannot satisfy the D7 conformance suite, and
+/// a conformance suite the fake cannot pass is one that gets quietly narrowed until it does.</para>
+///
+/// <para>It <b>echoes</b> what is written, which is the smallest behaviour that makes the output
+/// channel observably real: a test can write a marker and read it back. It is not a terminal
+/// emulator and interprets nothing.</para>
+/// </remarks>
+internal sealed class FixtureTerminalSession : ITerminalSession
 {
     private readonly List<byte[]> _writes = [];
+    private readonly Channel<TerminalChunk> _output = Channel.CreateUnbounded<TerminalChunk>();
 
-    public string SessionId { get; } = sessionId;
+    private readonly TaskCompletionSource<SessionExit> _exit =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-    public long Generation { get; private set; } = generation;
+    private readonly System.Threading.Lock _gate = new();
+    private bool _disposed;
 
-    public SessionProcessingClass ProcessingClass { get; } = processingClass;
+    public FixtureTerminalSession(
+        string sessionId,
+        long generation,
+        SessionProcessingClass processingClass = SessionProcessingClass.LocalOnly)
+    {
+        SessionId = sessionId;
+        Generation = generation;
+        ProcessingClass = processingClass;
+    }
+
+    public string SessionId { get; }
+
+    public long Generation { get; private set; }
+
+    public SessionProcessingClass ProcessingClass { get; }
+
+    public ChannelReader<TerminalChunk> Output => _output.Reader;
+
+    public SessionActivity Activity { get; private set; } = SessionActivity.Ready;
 
     /// <summary>Number of times bytes were actually accepted — the assertion that proves no re-send.</summary>
     public int AcceptedWriteCount => _writes.Count;
@@ -47,10 +76,20 @@ internal sealed class FixtureTerminalSession(
 
     public bool FailNextWrite { get; set; }
 
+    /// <summary>The dimensions of the last resize, so a test can prove the call reached the session.</summary>
+    public (int Columns, int Rows)? LastResize { get; private set; }
+
     public Task<PtyWriteResult> WriteAsync(
         long expectedGeneration, ReadOnlyMemory<byte> bytes, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
+        if (Activity == SessionActivity.Ended)
+        {
+            // A dead session that accepted bytes would hand back a truthful-looking receipt for a
+            // delivery that cannot have happened (DC-004).
+            return Task.FromResult(PtyWriteResult.Failed);
+        }
 
         if (AdvanceGenerationBeforeNextWrite)
         {
@@ -72,6 +111,7 @@ internal sealed class FixtureTerminalSession(
         }
 
         _writes.Add(bytes.ToArray());
+        _output.Writer.TryWrite(new TerminalChunk(bytes.ToArray(), Truncated: false));
 
         if (CrashAfterAcceptingWrite)
         {
@@ -79,5 +119,46 @@ internal sealed class FixtureTerminalSession(
         }
 
         return Task.FromResult(PtyWriteResult.Accepted);
+    }
+
+    public Task<SessionExit> WaitForExitAsync(CancellationToken cancellationToken) =>
+        _exit.Task.WaitAsync(cancellationToken);
+
+    public ValueTask ResizeAsync(int columns, int rows, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        LastResize = (columns, rows);
+        return ValueTask.CompletedTask;
+    }
+
+    /// <summary>Ends the fixture's notional process — the fake's equivalent of the shell exiting.</summary>
+    public void EndProcess(int? exitCode, bool killed = false)
+    {
+        lock (_gate)
+        {
+            if (Activity == SessionActivity.Ended)
+            {
+                return;
+            }
+
+            Activity = SessionActivity.Ended;
+        }
+
+        // Complete the channel BEFORE the exit task. A reader woken by the exit and then draining
+        // must find a completed channel rather than blocking forever on one more read.
+        _output.Writer.TryComplete();
+        _exit.TrySetResult(new SessionExit(exitCode, killed, DateTimeOffset.UtcNow));
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        if (_disposed)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        _disposed = true;
+        EndProcess(exitCode: null, killed: true);
+        return ValueTask.CompletedTask;
     }
 }

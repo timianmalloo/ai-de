@@ -1,3 +1,4 @@
+using System.Threading.Channels;
 using AiDe.Core.Dispatch;
 using AiDe.Core.Facts;
 using AiDe.Core.Store;
@@ -176,16 +177,47 @@ public sealed class DispatchTests
         Assert.Equal(0, service.SweepPendingToUnknown());
     }
 
+    /// <summary>
+    /// A session that dies before it can accept anything — the crash-before-PTY-write case.
+    /// </summary>
+    /// <remarks>
+    /// Deliberately NOT a <see cref="FixtureTerminalSession"/> with a flag: this one must fail
+    /// *before* the write, and the fixture's crash knob fires after the bytes are accepted. They are
+    /// different points either side of the durable receipt, which is the whole distinction the
+    /// write-ahead protocol turns on.
+    ///
+    /// The members beyond <c>WriteAsync</c> exist only to satisfy the contract; this double never
+    /// reaches them, so they are inert rather than implemented. It is exempt from the D7 conformance
+    /// suite for that reason — it models one failure instant, not a terminal.
+    /// </remarks>
     private sealed class ThrowingBeforeWriteSession(string sessionId, long generation) : ITerminalSession
     {
+        private readonly Channel<TerminalChunk> _output = Channel.CreateUnbounded<TerminalChunk>();
+
         public string SessionId { get; } = sessionId;
 
         public long Generation { get; } = generation;
 
         public SessionProcessingClass ProcessingClass => SessionProcessingClass.LocalOnly;
 
+        public ChannelReader<TerminalChunk> Output => _output.Reader;
+
+        public SessionActivity Activity => SessionActivity.Ready;
+
         public Task<PtyWriteResult> WriteAsync(
             long expectedGeneration, ReadOnlyMemory<byte> bytes, CancellationToken cancellationToken)
             => throw new SimulatedProcessCrashException();
+
+        public Task<SessionExit> WaitForExitAsync(CancellationToken cancellationToken) =>
+            Task.FromResult(new SessionExit(ExitCode: null, Killed: true, DateTimeOffset.UtcNow));
+
+        public ValueTask ResizeAsync(int columns, int rows, CancellationToken cancellationToken) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask DisposeAsync()
+        {
+            _output.Writer.TryComplete();
+            return ValueTask.CompletedTask;
+        }
     }
 }

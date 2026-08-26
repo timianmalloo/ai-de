@@ -508,6 +508,23 @@ rather than be skipped (**DC-012**).
 
 ## Flagged risks
 
+- **UNRESOLVED: the ConPTY child does not attach to the pseudo console in this environment.** The
+  runtime is implemented and **21 of 22** D7 conformance cases pass against it — identity, the
+  generation fence, cancellation, exit, write-after-exit, channel completion, resize, dispose, and
+  that the `Output` channel delivers bytes. The one failure is
+  `Output_DeliversTheChildProcessesOwnOutput`: `cmd.exe` starts, runs and exits with code 0, but its
+  stdout goes to the **parent's** console rather than the pty. Only ConPTY's own 16 startup bytes
+  (`ESC[?9001h ESC[?1004h`) arrive.
+  **What is established:** `CreatePseudoConsole` returns `HRESULT 0`; the attribute list sizes are
+  correct (48 bytes, `STARTUPINFOEX` 112); `UpdateProcThreadAttribute` and `CreateProcessW` both
+  return success; passing the `HPCON` **by value** is the right form (by-pointer produces no output
+  at all). The host process has **no console window** (`GetConsoleWindow() == 0`), all three std
+  handles are **pipes**, yet `GetConsoleProcessList` reports 4 — a headless console arrangement.
+  **What is NOT established:** whether the cause is the environment or the code. A hand-written
+  `ctypes` version fails identically, but it was transcribed from the same mental model, so it is a
+  weak independent check rather than a strong one. **Next step:** run the same probe from a real
+  interactive console session before changing any interop.
+
 - **The `ITerminalSession` extension weakens the Phase-1 conformance claim** until `P2-CONFORM` runs:
   the fixture and the real runtime agree on the half that was specified, and nothing yet proves they
   agree on output, activity or exit.
