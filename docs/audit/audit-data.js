@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-dockable-workspace",
-  "generated": "2026-08-26T13:39:30Z",
+  "project": "ai-de",
+  "generated": "2026-08-26T13:42:06Z",
   "audit": [
     {
       "id": "al-0001",
@@ -312,6 +312,21 @@ window.AUDIT_DATA = {
       "artifacts": [
         "docs/architecture.md"
       ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0015",
+      "shortname": "the tooling should allow resize of panes and docking of elements like ec…",
+      "datetime": "2026-08-26T13:42:06Z",
+      "session": "prompt-log",
+      "prompt": "the tooling should allow resize of panes and docking of elements like eclipse or vs code or photoshop/premiere. step back and make sure this is part of the spec. Consider exemplars in multi-pane, resize, hide, dock, move. /specify these capabilities, then /ui-design, then /define-architecture redo with this consideration, then list how the slices change",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
       "tags": [],
       "outcome": "success"
     }
