@@ -28,14 +28,15 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 8 · partially-controlled 4 · uncontrolled 0
+**Status counts:** controlled 8 · partially-controlled 5 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
-**Recurrences since last review:** 2.
+**Recurrences since last review:** 3.
 - **DC-008**, whose first control was scoped to one test project when the cause was not project-specific.
 - **DC-001**, whose first control checked links between files and so could not see three classes cited by ID with no entry in this register.
+- **DC-013**, which recurred the same day it was first caused, because the first occurrence was repaired without being registered at all.
 
-*Both are CI4: a second occurrence means the control was wrong, not that someone was careless. In both cases the control had been written to fit the instances rather than the class.*
+*All three are CI4: a second occurrence means the control was wrong, not that someone was careless. In the first two the control had been written to fit the instances rather than the class; in the third there was no control at all, because the first occurrence was repaired and never registered — which is the failure this file exists to prevent.*
 
 ---
 
@@ -289,3 +290,29 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   script's. Re-measured without the pipe: 1. A control is only as trustworthy as the measurement
   that says it works — which is this class's own lesson, arriving one level up.
 - **Status:** `controlled`
+
+### DC-013 — A monotonically allocated id is handed out twice because two trees allocate independently
+- **Signature:** an id is assigned by reading the highest one present and adding one. Two working
+  trees each hold the same highest entry, so both hand the same id to the next writer. Neither
+  notices, because within either tree the allocation is correct.
+- **Why it survives:** it is correct in a single checkout, and this repo's own worktree discipline
+  guarantees there is rarely a single checkout. The collision does not surface at the moment it is
+  created; it surfaces later as a merge conflict — or, when the file is append-only and merges
+  cleanly, as two unrelated records sharing an id where one silently wins every lookup. The
+  append-only case is the dangerous one, because nothing fails.
+- **Instances:** 2026-08-26 — `al-0012` allocated in two trees during the Phase-1b work; resolved by
+  discarding one and re-logging. 2026-08-26 (**recurrence, same day**) — `al-0028` allocated to a
+  logged prompt in the primary checkout and to the register-repair entry in a worktree; the merge
+  refused. Both were caused by running a log-writing script in the primary checkout while the
+  session's real work lived in a worktree, which is the WT-discipline violation underneath the class.
+- **Control:** `tools/verify-audit-log.py`, run in CI: no id may be claimed by more than one entry in
+  `audit-log.jsonl` or `change-log.jsonl`. **Observed failing 2026-08-26** against a synthetic log
+  carrying a planted duplicate — reported the id, the count and the fix, exit 1 — and green against
+  the real logs (29 and 8 entries, 0 duplicates).
+- **Residual risk:** detection, not prevention. The gate names the collision *after* it exists, and
+  the repair is still manual renumbering. Making it impossible means changing how ids are allocated
+  — merge-time assignment, or ids that do not depend on knowing the highest — and that lives in the
+  pack's `audit-log.py` rather than this repo, so it is an `/extendaibundle` candidate (CI8) rather
+  than a local fix. Until then the second-order defence is the discipline itself: run log-writing
+  scripts in the tree where the work is.
+- **Status:** `partially-controlled`

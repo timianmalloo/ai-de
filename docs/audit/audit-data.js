@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-fix-register-s2",
-  "generated": "2026-08-26T19:57:48Z",
+  "generated": "2026-08-26T20:00:50Z",
   "audit": [
     {
       "id": "al-0001",
@@ -573,6 +573,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "spikes/roslyn-msbuild-workspace/RESULT.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0030",
+      "shortname": "register-dc-013-audit-id-collision",
+      "datetime": "2026-08-26T20:00:50Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "(continuous improvement, obligated by the collision this session caused)",
+      "summary": "Registered DC-013 — a monotonic id handed out twice because two worktrees allocate independently. Second occurrence in one day; the first was repaired without being registered. Control: tools/verify-audit-log.py in CI, observed failing on a planted duplicate",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "tools/verify-audit-log.py"
       ],
       "tags": [],
       "outcome": "success"

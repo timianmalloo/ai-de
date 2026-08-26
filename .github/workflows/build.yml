@@ -47,6 +47,13 @@ jobs:
       - name: Defect-register integrity gate
         run: python tools/verify-defect-register.py
 
+      # Audit ids are allocated by "highest present, plus one", which is correct in one checkout and
+      # wrong with two — and worktree discipline means there are usually two. It has collided twice.
+      # Append-only logs can merge cleanly with two records under one id, where nothing fails and one
+      # silently wins every lookup (defect class DC-013).
+      - name: Audit-log id uniqueness gate
+        run: python tools/verify-audit-log.py
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
