@@ -50,6 +50,13 @@ public interface ILayoutService
     bool IsLocked { get; set; }
 
     LayoutResult Apply(LayoutOperation operation);
+
+    /// <summary>
+    /// Puts back a previously observed layout. Used to cancel an in-flight interaction — a keyboard
+    /// resize abandoned with Escape must return exactly to where it started, and replaying inverse
+    /// operations would accumulate rounding error instead.
+    /// </summary>
+    void Restore(Layout layout);
 }
 
 /// <summary>
@@ -69,6 +76,12 @@ public sealed class LayoutService(Layout? initial = null) : ILayoutService
     public Layout Current { get; private set; } = initial ?? Layout.Default();
 
     public bool IsLocked { get; set; }
+
+    public void Restore(Layout layout)
+    {
+        layout.AssertInvariant();
+        Current = layout;
+    }
 
     public LayoutResult Apply(LayoutOperation operation)
     {

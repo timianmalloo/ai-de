@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-workbench-adapter",
-  "generated": "2026-08-26T14:21:48Z",
+  "project": "ai-de-feat-workbench-keyboard",
+  "generated": "2026-08-26T15:57:12Z",
   "audit": [
     {
       "id": "al-0001",
@@ -379,6 +379,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchAdapter.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0019",
+      "shortname": "implement-workbench-keyboard-announce",
+      "datetime": "2026-08-26T15:57:12Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "do the 1st step now 1b.8 and 1b.9",
+      "summary": "Keyboard command catalog + controller + UIA announcer. SC 2.5.7 conformance is now a reflection test over the operation union (observed RED); every command announces incl. refusals (observed RED via a real gap the test caught: reorderSurface was listed but unhandled). Eclipse-pattern resize session with exact cancel-to-entry",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
+        "src/AiDe.App/Workbench/WorkbenchController.cs"
       ],
       "tags": [],
       "outcome": "success"
