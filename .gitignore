@@ -24,6 +24,10 @@ mono_crash.*
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+# The build-output patterns above are unanchored and once swallowed docs/release/
+# (defect class DC: gate artifact eaten by an ignore rule). Docs paths are re-included:
+!docs/release/
+!docs/release/**
 x64/
 x86/
 [Ww][Ii][Nn]32/
@@ -485,7 +489,9 @@ $RECYCLE.BIN/
 *.jsonl.lock
 docs/audit/.run-starts.json
 docs/audit/.run-starts.json.tmp
-spikes/
+# spikes/ is NOT ignored in this repo (pack default overridden): a contract labelled
+# Verified must cite committed, re-runnable spike evidence (Test Architect gate,
+# 2026-08-26). Spike build outputs are still excluded by bin/obj rules above.
 
 # Obsidian lens - per-user state (the vault CONFIG is committed; this is not)
 docs/.obsidian/workspace.json

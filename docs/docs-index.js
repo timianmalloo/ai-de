@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-25T22:53:17Z",
+  "generated": "2026-08-26T00:36:39Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -469,6 +469,174 @@ window.DOCS_INDEX = {
       "sourceSha256": "42884af3ece2ffa2df39d5b1ba15b9e9fe06f6409af8bd015984253e88d763b6"
     },
     {
+      "id": "adr-0008-shell-host",
+      "path": "docs/adr/0008-shell-host.md",
+      "title": "ADR-0008 — WPF frame with embedded WebView2 as the shell host",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Architecture v2 supersedes the 2026-08-25 draft: write-ahead dispatch, in-process-first daemon, MCP egress binding, committed spikes"
+        }
+      ],
+      "summary": "Records the desktop shell-host decision the earlier draft left implicit: a WPF window frame with an embedded WebView2 for visual surfaces and a renderer-independent terminal runtime, with the Phase-2 renderer/airspace spike as the explicit reversal trigger.",
+      "tags": [
+        "architecture",
+        "shell",
+        "wpf",
+        "webview2",
+        "desktop"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "abbdb536b4c17be89a62b489f271e563239fe09aad7ab6a8990f94d197186b0f"
+    },
+    {
+      "id": "adr-0009-in-process-first-daemon",
+      "path": "docs/adr/0009-in-process-first-daemon.md",
+      "title": "ADR-0009 — Run the authority core in-process in Phase 1; split to a daemon at Phase 2",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Architecture v2 supersedes the 2026-08-25 draft: write-ahead dispatch, in-process-first daemon, MCP egress binding, committed spikes"
+        }
+      ],
+      "summary": "Refines ADR-0003: the Workspace Authority Core is one logical boundary but runs in-process inside the shell in Phase 1, splitting to a separate per-workspace daemon process only at Phase 2 when the terminal runtime first needs process isolation. The Shell Bootstrap owns the process and upgrade lifecycle.",
+      "tags": [
+        "architecture",
+        "daemon",
+        "phasing",
+        "simplicity",
+        "lifecycle"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0003-workspace-daemon-boundary",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "relates-to"
+        },
+        {
+          "to": "release-plan-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a38e16493aaa02082eaf34ec674a08d9f325708a789fcceb2593f2f781451607"
+    },
+    {
+      "id": "adr-0010-two-phase-dispatch-receipt",
+      "path": "docs/adr/0010-two-phase-dispatch-receipt.md",
+      "title": "ADR-0010 — Write-ahead two-phase dispatch receipt for prompt delivery",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Architecture v2 supersedes the 2026-08-25 draft: write-ahead dispatch, in-process-first daemon, MCP egress binding, committed spikes"
+        }
+      ],
+      "summary": "Refines ADR-0006 with the mechanism that makes at-most-once terminal delivery true: a Pending delivery receipt is committed before the PTY write, the outcome is appended after, and core recovery sweeps any Pending receipt to DeliveryUnknown — so a crash in the write window cannot make a protocol-conformant retry re-deliver a prompt.",
+      "tags": [
+        "architecture",
+        "prompts",
+        "delivery",
+        "idempotency",
+        "crash-safety"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0006-terminal-delivery-semantics",
+          "rel": "relates-to"
+        },
+        {
+          "to": "conceptual-model-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0d9e433782c2c5440631d031839341adf34fcf00dd79b3aef31cbd460c924e23"
+    },
+    {
+      "id": "adr-0011-session-processing-class-egress",
+      "path": "docs/adr/0011-session-processing-class-egress.md",
+      "title": "ADR-0011 — Bind MCP tool authorization to the session processing class",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Architecture v2 supersedes the 2026-08-25 draft: write-ahead dispatch, in-process-first daemon, MCP egress binding, committed spikes"
+        }
+      ],
+      "summary": "Refines ADR-0004: MCP read and write authorization is bound to the target session's declared data-processing class from Phase 1, so an externally-processing agent cannot pull workspace facts via describe/find/impact and forward them to its provider. Closes the unanalyzed indirect-egress path the privacy review had not modelled.",
+      "tags": [
+        "architecture",
+        "mcp",
+        "privacy",
+        "egress",
+        "authorization"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0004-mcp-tool-boundary",
+          "rel": "relates-to"
+        },
+        {
+          "to": "privacy-review-ai-native-ide",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "db6f0ecb82fb50c89a49eb7a819e05a7265cda764a0fbaf0f63a3176f04e7d2a"
+    },
+    {
       "id": "architecture",
       "path": "docs/architecture.md",
       "title": "AI-DE Architecture",
@@ -476,9 +644,9 @@ window.DOCS_INDEX = {
       "status": "in-review",
       "owner": "@timianmalloo",
       "phase": "0",
-      "reviewBy": "2027-02-21",
+      "reviewBy": "2027-02-26",
       "reviewSuggested": [],
-      "summary": "Defines AI-DE as a WPF workspace shell over a per-workspace local daemon that builds provenance-labelled facts from repository artifacts, serves derived visual projections and bounded MCP tools, and keeps agent/model capability outside deterministic source truth.",
+      "summary": "Defines AI-DE as a WPF+WebView2 workspace shell over a per-workspace local authority core that builds provenance-labelled facts from repository artifacts, serves derived visual projections and session-class-governed MCP tools, delivers prompts under a write-ahead two-phase receipt, and keeps agent/model capability outside deterministic source truth. Supersedes the 2026-08-25 draft; resolves the council review's three hard and two soft vetoes.",
       "tags": [
         "architecture",
         "ai-native-ide",
@@ -543,16 +711,64 @@ window.DOCS_INDEX = {
         {
           "to": "adr-0007-agent-session-adapter",
           "rel": "depends-on"
+        },
+        {
+          "to": "adr-0008-shell-host",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0009-in-process-first-daemon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0010-two-phase-dispatch-receipt",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0011-session-processing-class-egress",
+          "rel": "depends-on"
         }
       ],
       "diagrams": [
         {
           "kind": "flowchart",
           "title": "System shape",
-          "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Workspace Shell]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Daemon[Workspace Daemon]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Shell --> Session\n  Shell --> View\n  Shell <--> Daemon\n  Session <--> Agents\n  Session --> Daemon\n  View <--> Daemon\n  Repos --> Ingest\n  Ingest --> Extractors\n  Extractors --> Daemon\n  Daemon --> Registry\n  Daemon --> Store\n  Daemon --> Projection\n  Daemon --> Audit\n  Daemon --> Coordination\n  Mcp <--> Daemon\n  Agents <--> Mcp"
+          "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
         }
       ],
-      "sourceSha256": "f6ccf4d624fb30824300dfc3a640d50dae7bc399a27d6b46bc8a7668138305d5"
+      "sourceSha256": "03ba270a9e902abc6b1f5f72ae4368648fa726672b7e065578ebf1279b8329e9"
+    },
+    {
+      "id": "note-20260826-council-review-ai-ide-arch",
+      "path": "docs/notes/council-review-ai-ide-arch.md",
+      "title": "Ten-persona adversary review of the 2026-08-25 AI-DE architecture found three hard and two soft vetoes",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [
+        {
+          "by": "architecture",
+          "on": "2026-08-25",
+          "reason": "Architecture v2 supersedes the 2026-08-25 draft: write-ahead dispatch, in-process-first daemon, MCP egress binding, committed spikes"
+        }
+      ],
+      "summary": "Records the council review that drove the v2 architecture: which persona raised what, the three hard vetoes and two soft vetoes, and where each is resolved. Blast radius: it is the input of record for every change the v2 architecture makes.",
+      "tags": [
+        "decision-note",
+        "architecture",
+        "review",
+        "personas"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7e30522e21a7914ce2dee4a426e655482aa5b29adc9b1fbb80514a5e3d051c56"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -690,7 +906,7 @@ window.DOCS_INDEX = {
           "mermaid": "classDiagram\n  class WorkspaceRegistry {\n    +WorkspaceId\n    +WorkspaceEpoch\n    +RepositoryMembership\n    +WorktreeMembership\n    invariant one canonical membership per opened identity\n  }\n  class ScopeSnapshot {\n    +ScopeId\n    +DesiredGeneration\n    +CommittedGeneration\n    invariant commit only current desired generation\n  }\n  class RelationshipClaim {\n    +ClaimId\n    invariant one or more attributable assertions\n  }\n  class PromptDraft {\n    +DraftId\n    invariant immutable revision and command binding\n  }\n  class AgentSession {\n    +SessionId\n    +Generation\n    invariant one active worktree reference\n  }\n  class WorkItem {\n    +WorkItemId\n    invariant intent differs from assessment\n  }\n  WorkspaceRegistry --> ScopeSnapshot : contains by identity\n  ScopeSnapshot --> RelationshipClaim : selects assertions\n  PromptDraft --> AgentSession : targets by identity\n  WorkItem --> AgentSession : associates by identity"
         }
       ],
-      "sourceSha256": "a474c3841ebab72b04f4d925cf3cad080ba7e819fe2a74b8ffb772f5813fdc5f"
+      "sourceSha256": "03a9b7e08506abe2165e2b34b41510b723df5e29263c7ccc15a3510550cd16c9"
     },
     {
       "id": "audit-log",
@@ -3004,7 +3220,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "18ac5520bf0c1e49fe364bef4a64dba98753a69771a2dc7e6b8fd0158a09a475"
+      "sourceSha256": "14a6c2968ef01cd2f070b579c32465e650a7d8b2fc995e8e555db3bf6401a47a"
     },
     {
       "id": "spec-ai-native-ide",
@@ -3116,14 +3332,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6841360f4462c8164d4128a2a2513241bdac7a9cf2dbc1cbcf97c18856cbf866"
+      "sourceSha256": "023c4ff3a300e5dcd51c737833040ea35fbf83da6d4a2053a97b6d821955f4ce"
     }
   ],
   "surfaces": [
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-ai-ide-spec — Audit & Change Log",
+      "title": "ai-de-architecture-ai-ide-arch-v2 — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3137,5 +3353,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "ffced45bc6cb922ef5069829c8fe011fca782033ccd76160bd50bb81cfbd554d"
+  "graphSha256": "4c2358b52e7054ee9dff63b95bf0c4e8b059d9d6c053a53e7b7ff65392d79ae8"
 };

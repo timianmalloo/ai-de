@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-ai-ide-architecture",
-  "generated": "2026-08-25T22:53:28Z",
+  "project": "ai-de-architecture-ai-ide-arch-v2",
+  "generated": "2026-08-26T00:36:34Z",
   "audit": [
     {
       "id": "al-0001",
@@ -160,6 +160,53 @@ window.AUDIT_DATA = {
         "branch": "architecture/ai-native-ide",
         "pushed": null
       }
+    },
+    {
+      "id": "al-0006",
+      "shortname": "ground yourself in the repo knowledge and the specs docs/specs, then use…",
+      "datetime": "2026-08-26T00:02:53Z",
+      "session": "prompt-log",
+      "prompt": "ground yourself in the repo knowledge and the specs docs/specs, then use our repo personas and do a critique of the proposed architecture docs/architecture.md",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0007",
+      "shortname": "step back / /define-architecture ai-ide-arch-v2 — use the spec, the orig…",
+      "datetime": "2026-08-26T00:17:11Z",
+      "session": "prompt-log",
+      "prompt": "step back / /define-architecture ai-ide-arch-v2 — use the spec, the original architecture.md and your findings as input; redo the architecture to meet your bar",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0008",
+      "shortname": "define-architecture-ai-ide-arch-v2",
+      "datetime": "2026-08-26T00:36:25Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "/define-architecture ai-ide-arch-v2 — use the spec, the original architecture.md and your findings as input; redo the architecture to meet your bar",
+      "summary": "Superseded the 2026-08-25 architecture: committed 3 re-runnable spikes, ADR-0008..0011, write-ahead dispatch, in-process-first daemon, MCP egress binding; resolved 3 hard + 2 soft vetoes and the verified contradictions",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/architecture.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -279,6 +326,29 @@ window.AUDIT_DATA = {
         "before": "bc50c41853fb2314a783709c58eb0f065f48c402",
         "after": "bc50c41853fb2314a783709c58eb0f065f48c402",
         "branch": "architecture/ai-native-ide",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0005",
+      "datetime": "2026-08-26T00:36:34Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "AI-DE architecture v2 supersedes the 2026-08-25 draft",
+      "prompt": "C:/Program Files/Git/define-architecture ai-ide-arch-v2 — redo the architecture to meet your bar",
+      "summary": "Write-ahead two-phase dispatch receipt (ADR-0010); in-process-first authority core (ADR-0009); MCP authorization bound to session processing class (ADR-0011); WPF+WebView2 shell host recorded (ADR-0008); 3 committed re-runnable spikes; contradictions fixed at source",
+      "rationale": "Ten-persona adversary review of the prior draft raised 3 hard and 2 soft vetoes and verified internal contradictions; this revision resolves each with a mechanism, artifact, or test rather than prose",
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/adr/0010-two-phase-dispatch-receipt.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "2b134da951bd364d7f4eca58a663774a918b6001",
+        "after": "2b134da951bd364d7f4eca58a663774a918b6001",
+        "branch": "architecture/ai-ide-arch-v2",
         "pushed": null,
         "commits": []
       }
