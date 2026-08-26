@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-test-run-integrity-gate",
-  "generated": "2026-08-26T19:26:10Z",
+  "project": "ai-de-design-phase-2",
+  "generated": "2026-08-26T19:35:00Z",
   "audit": [
     {
       "id": "al-0001",
@@ -524,6 +524,23 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0027",
+      "shortname": "design-phase-2",
+      "datetime": "2026-08-26T19:35:00Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "C:/Program Files/Git/design phase 2 then keep the same process... a table of all tasks with status and then the standard table of best next actions",
+      "summary": "Phase-2 design covering Roslyn extractor, ConPTY runtime and the process split. Surfaced two contract gaps in seams Phase 1 called substitutable (ITerminalSession is write-only; IExtractor materialises whole scopes) and a new security threat (MSBuildWorkspace executes repo analyzers/generators). Gated behind four spikes",
+      "kind": "skill",
+      "skill": "design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/phase-2-real-code-and-terminal.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -689,6 +706,28 @@ window.AUDIT_DATA = {
         "before": "a0bd6998aa345435ef995a7dc8d117e10e3e8383",
         "after": "a0bd6998aa345435ef995a7dc8d117e10e3e8383",
         "branch": "feat/phase-1-walking-skeleton",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0007",
+      "datetime": "2026-08-26T19:35:00Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design",
+      "title": "Phase-2 design: scope-per-project, bidirectional terminal seam, restored cross-process boundary",
+      "prompt": "C:/Program Files/Git/design phase 2",
+      "summary": "No new fact table; one scope per project rather than per solution; ITerminalSession extended with a pull-based bounded output channel; analyzers/generators disabled during extraction",
+      "rationale": "Streaming extraction would leak partial results into a store whose invariant is complete-snapshot-only; an event-based output path would let a fast producer drive unbounded work; loading a repository must never execute its code",
+      "artifacts": [
+        "docs/design/phase-2-real-code-and-terminal.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "d42ad03d539bdca589838e86b25285c0928eb691",
+        "after": "d42ad03d539bdca589838e86b25285c0928eb691",
+        "branch": "design/phase-2",
         "pushed": null,
         "commits": []
       }

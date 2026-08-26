@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T19:26:10Z",
+  "generated": "2026-08-26T19:34:30Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1160,6 +1160,59 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "0bf355c353ee96606afda54ba48530644f023c64758729f70f53da3ad7f3e7f7"
+    },
+    {
+      "id": "design-phase-2-real-code-and-terminal",
+      "path": "docs/design/phase-2-real-code-and-terminal.md",
+      "title": "Phase 2 — real code, terminal, and process split: detailed design",
+      "type": "design",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The blueprint for Phase 2's three interlocking components — a real Roslyn extractor, a ConPTY terminal runtime, and the in-process-to-daemon split with its IPC auth and upgrade path. Surfaces two contract gaps in seams Phase 1 declared substitutable, and gates implementation behind four named spikes.",
+      "tags": [
+        "design",
+        "phase-2",
+        "roslyn",
+        "conpty",
+        "process-split",
+        "ipc",
+        "upgrade"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0009-in-process-first-daemon",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0007-agent-session-adapter",
+          "rel": "depends-on"
+        },
+        {
+          "to": "threat-model-ai-native-ide",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-phase-1-walking-skeleton",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0972a5732ce11a29d02230898cb4c0a43f7894e60c7dff28d45a2eb3a8913d18"
     },
     {
       "id": "audit-log",
@@ -3890,7 +3943,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-feat-layout-persistence-and-compaction — Audit & Change Log",
+      "title": "ai-de-feat-test-run-integrity-gate — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3912,5 +3965,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "6f62209a8cf54f41417f4674fe0c6899b9ef5f3cb9c368a6837e5b4299d900f6"
+  "graphSha256": "a839ba7803f6c2e83e3ebe870b8c56cd875dded8dfbed7898e8d16691c51777a"
 };

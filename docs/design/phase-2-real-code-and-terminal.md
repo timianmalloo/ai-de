@@ -1,0 +1,383 @@
+---
+id: design-phase-2-real-code-and-terminal
+title: "Phase 2 — real code, terminal, and process split: detailed design"
+type: design
+status: in-review
+owner: "@timianmalloo"
+phase: "2"
+tags: [design, phase-2, roslyn, conpty, process-split, ipc, upgrade]
+links:
+  - { to: architecture, rel: implements }
+  - { to: spec-ai-native-ide, rel: implements }
+  - { to: adr-0005-terminal-runtime-boundary, rel: depends-on }
+  - { to: adr-0009-in-process-first-daemon, rel: depends-on }
+  - { to: adr-0007-agent-session-adapter, rel: depends-on }
+  - { to: threat-model-ai-native-ide, rel: depends-on }
+  - { to: design-phase-1-walking-skeleton, rel: refines }
+review-by: 2027-02-26
+review-suggested: []
+summary: >-
+  The blueprint for Phase 2's three interlocking components — a real Roslyn extractor, a ConPTY
+  terminal runtime, and the in-process-to-daemon split with its IPC auth and upgrade path. Surfaces
+  two contract gaps in seams Phase 1 declared substitutable, and gates implementation behind four
+  named spikes.
+---
+
+# Design: Phase 2 — real code, terminal, and process split
+
+- **Status:** In review — **implementation is gated behind four spikes** (below)
+- **Spec / architecture:** US-1, US-2, US-3, US-8 · [`docs/architecture.md`](../architecture.md) ·
+  ADR-0005 · ADR-0007 · ADR-0009
+- **Delivery phase:** **Phase 2.** **Real:** Roslyn semantic extractor, ConPTY runtime + Job Object,
+  OSC parser, terminal renderer, separate daemon process, IPC auth protocol, Shell Bootstrap
+  upgrade/rollback with dual-major handshake. **Still mocked:** Bicep/DDL extractors, audit reader,
+  trace import (Phases 3–5).
+- **Author(s) / date:** @timianmalloo · 2026-08-26
+
+## Responsibility
+
+Replace three Phase-1 substitutes with their real implementations, without changing what the layers
+above them believe. Phase 1 deliberately shipped a fixture extractor, a fixture terminal session and
+an in-process core precisely so this phase would be a **substitution**; whether that held is the
+question this design has to answer honestly, and in two places it did not.
+
+**Not** responsible for: Bicep/DDL extraction, the audit reader, runtime traces, or the graph canvas.
+
+---
+
+## Two contract gaps found while grounding
+
+ADR-0009 promised the Phase-1→Phase-2 move would be "a deployment substitution, not a redesign".
+Grounding against the real code shows two seams that were under-specified because the Phase-1 fake
+never exercised them. **Both are recorded here rather than discovered during implementation.**
+
+### Gap 1 — `ITerminalSession` has no output path
+
+```csharp
+public interface ITerminalSession
+{
+    string SessionId { get; }
+    long Generation { get; }
+    SessionProcessingClass ProcessingClass { get; }
+    Task<PtyWriteResult> WriteAsync(long expectedGeneration, ReadOnlyMemory<byte> bytes, CancellationToken ct);
+}
+```
+
+The seam is **write-only**. The Phase-1 fixture recorded bytes and returned; nothing ever needed to
+read. A real terminal is a bidirectional stream whose *output* is the entire point — the renderer
+subscribes to it, the OSC parser reads it, and the resource budget (4 MiB ring, 1 MiB/s truncation
+trigger) is defined over it.
+
+**This is a contract extension, not a redesign** — `WriteAsync` and the generation fence are
+unchanged, so the write-ahead dispatch built on them is untouched. But it means the Phase-1
+conformance claim ("substituting the real runtime is a swap") was true only of the half that was
+specified.
+
+**Design decision:** output is a *pull-based bounded stream*, not an event. An event would let a
+fast-producing process drive unbounded work in whatever thread raised it, which is exactly the
+"1 MiB/s sustained output" case the architecture budgets for. A bounded channel makes backpressure
+representable and truncation a state rather than a crash.
+
+```csharp
+public interface ITerminalSession
+{
+    // …unchanged members…
+
+    /// <summary>Bounded, ephemeral output. Terminal text never enters the fact store (spec privacy).</summary>
+    ChannelReader<TerminalChunk> Output { get; }
+
+    /// <summary>Advisory prompt/exit state parsed from OSC. Never agent acceptance (ADR-0007).</summary>
+    SessionActivity Activity { get; }
+
+    Task<SessionExit> WaitForExitAsync(CancellationToken ct);
+    ValueTask ResizeAsync(int columns, int rows, CancellationToken ct);
+}
+
+public readonly record struct TerminalChunk(ReadOnlyMemory<byte> Bytes, bool Truncated);
+public enum SessionActivity { Starting, Ready, Busy, Disconnected, Ended, OutputOverload }
+public sealed record SessionExit(int? ExitCode, bool Killed, DateTimeOffset At);
+```
+
+### Gap 2 — `IExtractor` materialises the whole scope in memory
+
+`ExtractAsync` returns `ExtractionResult` holding every assertion at once. That is fine for the
+fixture (P1-PERF: 10,000 assertions committed in ~170 ms) and unproven for a real solution, where
+symbol counts are an order of magnitude larger and Roslyn's own compilation load dominates the 60 s
+per-scope budget.
+
+**Design decision: keep the contract, change what a scope is.** Streaming the extractor would leak
+partial results into a store whose whole invariant is "only a *complete* snapshot contributes
+evidence", so the boundary stays all-or-nothing. Instead **a scope becomes one project, not one
+solution** — a natural unit that is independently completable, independently stale-able, and sized
+for the existing budget. A ten-project solution is ten scopes that settle independently, which is
+also better behaviour: one unparseable project marks itself stale without blanking the other nine.
+
+`simplify: one scope per project; ceiling ~50k assertions per project; upgrade trigger = P2-PERF p95
+scope settlement > 10 s on the approved corpus.`
+
+---
+
+## Data model
+
+**Phase 2 adds no new fact table.** Stating that explicitly because the temptation is real: sessions
+have a lifecycle, and lifecycles look like facts.
+
+| Candidate | Decision |
+|---|---|
+| Terminal session lifecycle (start/ready/exit) | **Not a fact.** Session state is ephemeral operational state, not evidence about a repository. The spec makes terminal output ephemeral and forbids it entering the graph; session *state* is the same category. It lives in memory and in `session_dim`'s Type-2 `generation`/`processing_class`, which already exist. |
+| Terminal output | **Never persisted.** Spec privacy: "Display only in the live terminal… never automatically indexed, attached to prompts, or copied into audit/telemetry." |
+| Roslyn symbols | **Existing `evidence_assertion_fact` grain, unchanged.** A C# symbol relation is exactly "one assertion about one normalized (subject, predicate, object) relation at one artifact revision". No new grain is needed, which is the point of having declared it carefully. |
+| Process/daemon identity | **Not a fact.** `core_epoch` already exists in `core_state`. |
+
+**What does change** is the *content* of existing dimensions:
+
+| Dimension | Change | History rule |
+|---|---|---|
+| `node_dim.node_id` | Now a **Roslyn documentation-comment ID** (`T:Namespace.Type`, `M:…`) for C# symbols, per the architecture's extractor rule 4. | Unchanged — Type-2 on `node_kind`. |
+| `node_dim.node_kind` | Gains `csharp.type`, `csharp.member`, `csharp.project`. | Type-2: a node changing kind changes what past assertions meant. |
+| `session_dim` | Gains a real OS process identity alongside the existing generation. | `generation` stays Type-2; the process id is **Type-1** — it identifies a process that no longer exists once the generation advances, so retaining its history would preserve a fact about nothing. |
+
+**Migration:** none. No schema change, so no expand-migrate-contract. Phase-1 fixture nodes and
+Phase-2 Roslyn nodes coexist because they are different scopes with different `node_kind` values —
+the store never had to know which extractor produced a node.
+
+### Change surfaces (E7)
+
+`store` (no change) → `domain model` (`ITerminalSession` extension, `SessionActivity`) → `service`
+(`TerminalRuntime`, `RoslynExtractor`, `IpcServer`/`IpcClient`) → `projection/wire` (IPC envelope
+serialization — **new wire format**) → `client type` (`ITerminalSession` proxy over IPC) → `UI`
+(terminal surface, real session states) → `compute reader` (health view gains daemon liveness).
+
+**The new surface is the IPC wire.** Everything else is a substitution behind an existing contract.
+
+---
+
+## Component 1 — Roslyn semantic extractor
+
+### Contract
+
+```csharp
+public sealed class RoslynExtractor(string extractorVersion) : IExtractor
+{
+    public string ScopeKind => "csharp";
+    public Task<ExtractionResult> ExtractAsync(ExtractionRequest request, CancellationToken ct);
+}
+```
+
+Same `IExtractor` as Phase 1 — the substitution the design promised, with one scope per project.
+
+### Patterns
+
+| Pattern | Why |
+|---|---|
+| **Adapter** (Roslyn `Workspace` → `EvidenceAssertion`) | The store's grain is already right; this only translates. |
+| **Snapshot Replacement** (unchanged) | Inherited from Phase 1; nothing about real symbols changes it. |
+| **Circuit Breaker per scope** (unchanged) | A project that fails to compile quarantines itself; the other projects keep their evidence. |
+
+Ladder: `Microsoft.CodeAnalysis.CSharp.Workspaces` is rung 5 (a dependency), justified because
+re-implementing C# semantic analysis is not a candidate. **`MSBuildWorkspace` specifically** is the
+part needing a spike — it shells out to MSBuild and its failure modes are environmental.
+
+### Confidence rules (spec US-1/US-2 are explicit here)
+
+| Relation | Status | Why |
+|---|---|---|
+| `TypeA depends_on TypeB` from a resolved symbol reference | `Verified` | The compiler resolved it. |
+| `Controller handles Route` from an attribute | `Verified` | Declared in the artifact. |
+| DI registration `AddScoped<IFoo, Foo>()` | **`Inferred`** | Static approximation; the runtime container may differ. Architecture rule 4 names this explicitly. |
+| ORM entity → table from convention | **`Inferred`** | Convention-derived, not declared. |
+| Anything from a **source generator** | **`Unverified` pending Spike S1** | Whether generated symbols are distinguishable from hand-written ones is unknown; if they are not, they cannot honestly be labelled. |
+
+---
+
+## Component 2 — ConPTY terminal runtime
+
+### Contract and lifecycle
+
+```csharp
+public sealed class ConPtyTerminalRuntime : IAsyncDisposable
+{
+    Task<ITerminalSession> StartAsync(TerminalRequest request, CancellationToken ct);
+    IReadOnlyList<ITerminalSession> Sessions { get; }
+}
+
+public sealed record TerminalRequest(
+    string SessionId, string Executable, string WorkingDirectory,
+    int Columns, int Rows, SessionProcessingClass DeclaredProcessingClass);
+```
+
+### Patterns
+
+| Pattern | Where | Rejected alternative |
+|---|---|---|
+| **Process Supervisor + Windows Job Object** | Runtime owns child lifetime | Rejected: relying on process-tree kill. A crashed daemon must not leave agent CLIs running headless against dead pipes — the architecture names this as the failure the Job Object prevents. |
+| **Separate reader/writer service loops** | I/O | Rejected: one loop. ConPTY deadlocks when a full output buffer blocks a write; the spike (`conpty-foundation`) records I/O separation as a documented requirement. |
+| **Bounded channel + drop-oldest** | Output | Rejected: unbounded buffering. A 1 MiB/s producer would otherwise consume memory until the process dies. Truncation becomes `TerminalChunk.Truncated` and `SessionActivity.OutputOverload` — a *state*, not a crash. |
+
+### OSC parsing — advisory only
+
+OSC 133 (prompt markers) drives `SessionActivity.Ready`/`Busy`. Per ADR-0007 this is **never** agent
+acceptance, and per the threat model the parser must:
+- accept only an allowlisted display subset,
+- **disable OSC 52 (clipboard) and OSC 8 (hyperlink) host actions entirely**,
+- require a session nonce before honouring any state claim,
+- treat every sequence as forgeable, because the child process is untrusted.
+
+---
+
+## Component 3 — The process split
+
+This is the phase's real risk. It creates the **first cross-process trust boundary in the product.**
+
+### What moves
+
+| | Phase 1 | Phase 2 |
+|---|---|---|
+| Core | In-process module | Separate `AiDe.Daemon.exe`, one per workspace |
+| `CallerPrincipal` | Shell identity directly | Derived from the authenticated pipe connection |
+| Command transport | Method call | Named pipe, versioned envelope |
+| Lifetime | Shell's | Owned by Shell Bootstrap; terminals in its Job Object |
+
+### IPC contract
+
+Named pipe restricted to the workspace-owner SID. On `OpenWorkspace`, the daemon issues a random
+in-memory capability bound to `{connection, shell process, workspace, epoch}`, validated and revoked
+per command. Envelope, `commandId` idempotency and the stable `CallerPrincipal` are **unchanged from
+the architecture's command protocol** — that specification was written for this boundary and Phase 1
+simply had a shorter path to it.
+
+**Dual-major handshake:** the daemon publishes supported current and previous major IPC versions;
+an unsupported version is rejected with a stable code, never negotiated down silently.
+
+### Upgrade and rollback (Shell Bootstrap)
+
+Side-by-side versioned daemon directories. On upgrade: preflight → forward migration → **health
+gate** → repoint. On gate failure: restore the prior binary and the pre-migration snapshot, verify
+the previous projection, then declare rollback success.
+
+**The health gate is the fast subset only** — schema/version preflight, forward migration, store
+integrity sample, IPC handshake, bounded projection comparison. Full restore/replay equality is
+*asynchronous verification*, because P1-PERF measured a 50k-edge replay against a 15-minute RTO and
+the gate has a 60-second budget. Putting the slow check inside the fast gate is the contradiction the
+council review caught in the v1 architecture; it must not return here.
+
+---
+
+## Failure-mode analysis
+
+| Failure mode | From which choice | Disposition | How addressed | Test |
+|---|---|---|---|---|
+| Daemon crashes, agent CLIs keep running headless | Process split | **prevent** | Terminals in a Job Object with kill-on-close; Bootstrap detects and raises `aide.core.restart` | `P2-TERM-05` |
+| ConPTY deadlock on a full buffer | Single I/O loop | **prevent** | Separate reader/writer loops (spike-documented requirement) | `P2-TERM-02` |
+| A process floods output and exhausts memory | Bounded channel choice | **mitigate + detect** | Drop-oldest with `Truncated`; `OutputOverload` state; `pty.dropped_bytes` metric | `P2-TERM-03` |
+| Terminal text reaches the graph, audit or telemetry | New high-volume untrusted data | **prevent** | Output never crosses into the store; seeded-marker negative test asserts absence everywhere | `P2-PRIV-01` |
+| Roslyn fails to load a project (missing SDK, broken build) | MSBuildWorkspace | **detect + mitigate** | Scope marked stale/failed with a diagnostic; other projects unaffected; last good snapshot renders | `P2-EXT-02` |
+| Roslyn extraction exceeds the 60 s scope budget | Real solution size | **mitigate** | One scope per project; cooperative cancellation; per-scope quarantine after K timeouts | `P2-EXT-04` |
+| Generated symbols indistinguishable from hand-written | Source generators | **detect, then decide** | **Spike S1 gates this.** Until resolved, generated-symbol relations are `Unverified` rather than silently `Verified` | `P2-EXT-06` |
+| Shell and daemon versions mismatch after a rollback | Dual-major handshake | **prevent** | Handshake rejects unsupported versions with a stable code; the post-rollback pairing is an explicit test cell | `P2-UPGRADE-02` |
+| Power loss mid-migration | Upgrade choreography | **recover** | Durable migration journal; incomplete migration on next start triggers automatic snapshot restore | `P2-UPGRADE-03` |
+| Daemon orphaned when the shell dies | Split lifetime | **detect + recover** | Daemon exits when its owning connection closes and no other client attaches within a grace period | `P2-IPC-05` |
+| Two shells open the same workspace | Split lifetime | **prevent** | The existing OS-level workspace ownership lock; the second gets a stable "already open" code | `P2-IPC-06` |
+| A pipe client floods commands | New boundary | **mitigate** | Bounded control lane already specified; per-connection admission | `P2-IPC-07` |
+
+## Adversarial analysis (STRIDE-lite)
+
+**Phase 2 restores the boundary Phase 1 did not have.** ADR-0009 explicitly deferred these controls;
+this is where the deferral is paid back.
+
+| Boundary | Threat | Disposition | Control | Negative test |
+|---|---|---|---|---|
+| Shell → daemon pipe | **S**: another process impersonates the shell | mitigate | Pipe ACL limited to the workspace-owner SID; capability bound to `{connection, process, workspace, epoch}` | `P2-SEC-01` wrong SID → denied |
+| Shell → daemon pipe | **S**: caller claims another workspace in the payload | mitigate | `CallerPrincipal` server-derived from the connection, never read from the payload | `P2-SEC-02` |
+| Shell → daemon pipe | **R**: a command executes with no attributable record | mitigate | Command receipts keyed by stable principal (existing) | `P2-SEC-03` |
+| Shell → daemon pipe | **E**: a revoked capability is replayed | mitigate | Capability validated *and revoked* per command; stale epoch rejected | `P2-SEC-04` replay → denied |
+| Shell → daemon pipe | **D**: command flood | mitigate | Bounded control lane, per-connection admission | `P2-IPC-07` |
+| Terminal process → runtime | **T**: forged OSC claims readiness | mitigate | Session nonce required; OSC advisory only; never agent acceptance | `P2-TERM-06` forged OSC 133 |
+| Terminal process → host | **E**: OSC 52 clipboard write / OSC 8 hyperlink action | mitigate | Both disabled outright, not sanitised | `P2-TERM-07` |
+| Terminal process → UI | **D**: ANSI flood | mitigate | Bounded ring + rate trigger + overload state | `P2-TERM-03` |
+| Repository → Roslyn | **E**: analyzer or source generator executes during load | **mitigate** | Analyzers and generators **disabled** during extraction — loading a repository must never execute its code | `P2-SEC-08` hostile analyzer does not run |
+| Daemon → disk | **E**: same-user process reads the store | **accept** | Unchanged desktop residual (threat model boundary 1). Residual risk: full workspace compromise; out of scope for a single-user local tool. | documented, not tested |
+
+**The Roslyn row is the one that is new and easy to miss.** `MSBuildWorkspace` will, by default, load
+and run a project's analyzers and source generators — arbitrary code from the repository being
+inspected. AI-DE's entire posture is that repository content is untrusted data; executing it during
+extraction would contradict that at the deepest level.
+
+## Privacy analysis (LINDDUN-lite)
+
+| Flow | Finding | Disposition | Control | Retention |
+|---|---|---|---|---|
+| Terminal output → renderer | **D**: the highest-volume personal/work data in the product — credentials, tokens, customer data all pass through a terminal | **mitigate** | Ephemeral by construction: bounded in-memory ring, never written to the store, logs, metrics or traces. Cleared on close. | Process lifetime |
+| Terminal output → OSC parser | **D**: the parser reads every byte | mitigate | Parser extracts state only; it retains no text and emits no text into telemetry | None |
+| C# symbol names → assertions | **I**: identifiers may embed names or ticket ids | mitigate | Existing allowlist: normalized relation metadata and source references only, never raw bodies | Rebuildable |
+| Daemon logs | **D**: a new process with its own log stream | mitigate | Same prohibited-attribute list as the core; `P2-PRIV-02` seeds a secret and asserts absence across daemon logs, metrics and traces | Local, finite |
+| Session process command line | **I**: may contain paths or arguments | **mitigate** | Stored as `session_dim` display metadata only; excluded from telemetry by the existing allowlist | Workspace lifetime |
+
+## Telemetry
+
+New spans: `aide.terminal.session` (extended), `aide.ipc.command`, `aide.daemon.lifecycle`,
+`aide.upgrade.gate`. New metrics: `pty.output_bytes`, `pty.dropped_bytes`, `pty.active_sessions`,
+`ipc.connections`, `ipc.rejected` by code, `daemon.restarts`, `upgrade.gate_duration`,
+`extraction.project_duration`. Stable codes: `AIDE-IPC-VERSION-UNSUPPORTED`,
+`AIDE-IPC-CAPABILITY-INVALID`, `AIDE-IPC-WORKSPACE-LOCKED`, `AIDE-TERM-OVERLOAD`,
+`AIDE-TERM-START-FAILED`, `AIDE-EXTRACT-PROJECT-LOAD-FAILED`, `AIDE-UPGRADE-HEALTH-FAILED`.
+
+**Prohibited, restated because the temptation is highest here:** no terminal text, no command lines,
+no source text, no paths in any span attribute or metric label.
+
+## Test plan
+
+Triggered directives: **D0** + **D1** (OSC parsing, version negotiation logic) + **D2** (OSC byte
+streams and IPC envelopes are wide, hostile-capable input domains) + **D3** (new projects and a new
+process boundary) + **D4** (filesystem, pipes, real MSBuild) + **D5-provider** (the daemon exposes an
+IPC API) + **D6** (the IPC envelope is a payload schema) + **D7** (`ITerminalSession` now has two
+implementations — **the conformance suite ADR-0012 deferred is now owed**). **A-series does not
+fire:** no model call in Phase 2.
+
+**The D7 obligation is new and load-bearing.** Phase 1 had one `ITerminalSession` implementation, so
+no conformance suite was owed. Phase 2 has two, and the fixture is what every dispatch test runs
+against — if the two diverge, every one of those tests is proving something about a fake.
+
+Named suites: `P2-EXT-01..06` (extraction), `P2-TERM-01..07` (terminal), `P2-IPC-01..07`,
+`P2-SEC-01..08`, `P2-UPGRADE-01..03`, `P2-PRIV-01..02`, `P2-CONFORM-01..04` (the `ITerminalSession`
+conformance suite run against **both** implementations), `P2-PERF-01..03`.
+
+---
+
+## Implementation is gated behind four spikes
+
+Per the architecture's flagged risks. **None of this may be built before these run**, because each
+determines a contract rather than an optimisation.
+
+| Spike | Question | Why it gates |
+|---|---|---|
+| **S1 — Roslyn source generators** | Are generated symbols visible, and distinguishable from hand-written ones? | Decides whether generated relations can be labelled at all. If indistinguishable, they must be `Unverified` — a spec-visible confidence outcome, not an implementation detail. |
+| **S2 — MSBuildWorkspace load** | Does a real solution load without the host SDK matching exactly, and can analyzers/generators be disabled? | The security control above depends on the answer. If they cannot be disabled, extraction executes repository code and the approach changes. |
+| **S3 — Terminal renderer** | Which renderer meets the keyboard/screen-reader contract? | ADR-0005 defers the choice; the a11y contract is a hard veto, and the UIA probe showed the category is weak here. |
+| **S4 — WebView2 airspace** | Does WebView2 compose with WPF focus, DPI and the docking layout? | ADR-0008's recorded reversal trigger. |
+
+## Flagged risks
+
+- **The `ITerminalSession` extension weakens the Phase-1 conformance claim** until `P2-CONFORM` runs:
+  the fixture and the real runtime agree on the half that was specified, and nothing yet proves they
+  agree on output, activity or exit.
+- **Cross-monitor DPI remains unverified** (needs a second display) and now matters more, because
+  Phase 2 adds floating terminal panes.
+- **`MSBuildWorkspace` failure modes are environmental** — SDK version, NuGet restore state, missing
+  targets — and are the least predictable dependency in the phase.
+- The scope-per-project decision is measured against nothing yet; `P2-PERF` is its first test.
+
+## Status and next action
+
+| | |
+|---|---|
+| **Completed** | Phase-2 design: two contract gaps surfaced and closed on paper, data model (no new facts, and why), three component contracts, failure/STRIDE/LINDDUN analyses, telemetry, the triggered-directive test plan including the newly-owed conformance suite. |
+| **Remaining** | The four gating spikes, then implementation in the order terminal → process split → Roslyn. |
+| **Best next action** | **Spike S2 (MSBuildWorkspace)** — it decides a *security control*, not just feasibility, and it is the cheapest of the four to run. |
+
+## Gate record
+
+`GATE design · 2026-08-26 · Patterns Expert ⇄ Simplifier (no new fact table justified; scope-per-project chosen over streaming with a simplify: ceiling); Test Architect (D0,D1,D2,D3,D4,D5-provider,D6,D7 enumerated; the D7 conformance suite is newly owed and named); Security & Identity (the cross-process boundary Phase 1 deferred is restored; the Roslyn analyzer-execution threat is new and mitigated); Distributed Systems (dual-major handshake, capability revocation, post-rollback pairing as an explicit cell); Privacy (terminal output is the highest-volume work data in the product and stays ephemeral by construction); SRE (health gate keeps the fast subset only — the v1 contradiction must not return) · verdict: PASS-WITH-CONDITIONS · conditions: the four spikes run before implementation; S1 and S2 may change stated contracts; authors did not self-clear.`
+
+---
+**Handoff:** → spikes S1–S4, then `/implement`.
