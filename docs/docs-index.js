@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T19:45:35Z",
+  "generated": "2026-08-26T19:56:58Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1212,7 +1212,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0972a5732ce11a29d02230898cb4c0a43f7894e60c7dff28d45a2eb3a8913d18"
+      "sourceSha256": "5dd587aeab3b885e45f5de7192fe2b0ca214c119306cc63cd2ee9d146397eca9"
     },
     {
       "id": "audit-log",
@@ -3943,7 +3943,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-design-phase-2 — Audit & Change Log",
+      "title": "ai-de-fix-register-s2 — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3965,5 +3965,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "743ce1a1962c3fcaa0cc52e43fec12d70dc67b4a004e9699551768722ff5f0b3"
+  "graphSha256": "9e3aa8756d822aebe03eba41f2eb8459c00ef3cddb3b69d0f3db508c113a1e41"
 };

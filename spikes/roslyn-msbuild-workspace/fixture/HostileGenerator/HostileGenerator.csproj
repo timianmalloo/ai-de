@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Stands in for a source generator committed to a repository AI-DE is asked to inspect.
+    It is deliberately benign — it writes a sentinel file and nothing else — but it proves the
+    capability: if this file appears, arbitrary repository-authored code ran inside our process.
+    netstandard2.0 is not a choice; it is what Roslyn loads analyzers as.
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <IsRoslynComponent>true</IsRoslynComponent>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!--
+      Deliberately OFF, and this is a finding rather than a convenience.
+
+      With EnforceExtendedAnalyzerRules=true, Roslyn's RS1035 rejects File, Process and Environment
+      outright: "Do not do file IO in analyzers". That reads like a guard against exactly this
+      spike's fixture — but it is a compile-time lint that the GENERATOR'S OWN AUTHOR opts into. A
+      hostile author omits one property and the ban evaporates. It constrains the well-behaved and
+      nobody else, so it is a convention, not a control, and the consumer gets no say in it at all.
+    -->
+    <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

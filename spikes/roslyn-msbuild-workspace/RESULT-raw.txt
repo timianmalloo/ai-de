@@ -1,0 +1,102 @@
+
+==============================================================================
+Q0 — which MSBuild does the host bind to?
+==============================================================================
+MSBuild instances visible to the host: 2
+  - .NET Core SDK 10.0.303  (C:\Program Files\dotnet\sdk\10.0.303)
+  - .NET Core SDK 10.0.301  (C:\Program Files\dotnet\sdk\10.0.301)
+
+Registered the OLDEST instance on purpose: .NET Core SDK 10.0.301
+  Host runtime: 10.0.11
+
+==============================================================================
+Q1 — does a REAL solution load, and does the host SDK have to match?
+==============================================================================
+Solution : AiDe.sln
+Bound to : MSBuild 10.0.301 (the oldest available, on purpose)
+
+Loaded 5 project(s) in 1.4s
+  AiDe.App               docs=16   refs=206  analyzers=8   types=7802 compilation=ok
+  AiDe.App.Tests         docs=12   refs=167  analyzers=8   types=3761 compilation=ok
+  AiDe.Bench             docs=6    refs=167  analyzers=8   types=3829 compilation=ok
+  AiDe.Core              docs=25   refs=167  analyzers=8   types=3826 compilation=ok
+  AiDe.Core.Tests        docs=18   refs=167  analyzers=8   types=3842 compilation=ok
+
+WorkspaceFailed diagnostics: 0
+
+→ A real solution loads against a NON-matching (older) SDK.
+
+==============================================================================
+Q2 — do the repository's generators EXECUTE when we open and compile it?
+==============================================================================
+Suppression: None
+  analyzer references after load : 9
+      Microsoft.CodeAnalysis.CSharp.NetAnalyzers
+      Microsoft.CodeAnalysis.NetAnalyzers
+      HostileGenerator
+      Microsoft.Interop.ComInterfaceGenerator
+      Microsoft.Interop.JavaScript.JSImportGenerator
+      Microsoft.Interop.LibraryImportGenerator
+      Microsoft.Interop.SourceGeneration
+      System.Text.Json.SourceGeneration
+      System.Text.RegularExpressions.Generator
+  sentinel after OpenProjectAsync: silent
+  sentinel after GetCompilation  : FIRED [Initialize,PostInitialization,SourceOutput] pid=18756 (OURS)   (compilation ok)
+  sentinel after GetSourceGenerated: FIRED [Initialize,PostInitialization,SourceOutput] pid=18756 (OURS)   (generated documents: 2)
+  source-declared types visible  : 4  [Order, Customer, OrderLine, Sentinel]
+  compilation diagnostics (error): 0
+
+==============================================================================
+Q3a — does suppression via MSBuild properties stop it?
+==============================================================================
+Suppression: MsBuildProperties
+  analyzer references after load : 9
+      Microsoft.CodeAnalysis.CSharp.NetAnalyzers
+      Microsoft.CodeAnalysis.NetAnalyzers
+      HostileGenerator
+      Microsoft.Interop.ComInterfaceGenerator
+      Microsoft.Interop.JavaScript.JSImportGenerator
+      Microsoft.Interop.LibraryImportGenerator
+      Microsoft.Interop.SourceGeneration
+      System.Text.Json.SourceGeneration
+      System.Text.RegularExpressions.Generator
+  sentinel after OpenProjectAsync: silent
+  sentinel after GetCompilation  : FIRED [Initialize,PostInitialization,SourceOutput] pid=18756 (OURS)   (compilation ok)
+  sentinel after GetSourceGenerated: FIRED [Initialize,PostInitialization,SourceOutput] pid=18756 (OURS)   (generated documents: 2)
+  source-declared types visible  : 4  [Order, Customer, OrderLine, Sentinel]
+  compilation diagnostics (error): 0
+
+==============================================================================
+Q3b — does stripping analyzer references at the Roslyn layer stop it?
+==============================================================================
+Suppression: StripAnalyzerReferences
+  analyzer references after load : 9
+      Microsoft.CodeAnalysis.CSharp.NetAnalyzers
+      Microsoft.CodeAnalysis.NetAnalyzers
+      HostileGenerator
+      Microsoft.Interop.ComInterfaceGenerator
+      Microsoft.Interop.JavaScript.JSImportGenerator
+      Microsoft.Interop.LibraryImportGenerator
+      Microsoft.Interop.SourceGeneration
+      System.Text.Json.SourceGeneration
+      System.Text.RegularExpressions.Generator
+  sentinel after OpenProjectAsync: silent
+  analyzer references after strip: 0
+  sentinel after GetCompilation  : silent   (compilation ok)
+  sentinel after GetSourceGenerated: silent   (generated documents: 0)
+  source-declared types visible  : 3  [Order, Customer, OrderLine]
+  compilation diagnostics (error): 0
+
+==============================================================================
+Verdict
+==============================================================================
+  no suppression            : YES — in-process (pid 18756) · phases: Initialize,PostInitialization,SourceOutput
+  MSBuild properties        : YES — in-process (pid 18756) · phases: Initialize,PostInitialization,SourceOutput
+  stripped AnalyzerReferences: no execution observed
+
+The threat is REAL: repository-authored code ran inside our own process.
+RESULT: the control works — via stripping AnalyzerReferences.
+  Phase 2 may proceed with that control MANDATORY on every load path and pinned
+  by a negative test that fails if a generator ever executes during extraction.
+  Note: MSBuild properties alone did NOT hold. Prefer the Roslyn-layer control,
+  which does not depend on the repository's own build files cooperating.

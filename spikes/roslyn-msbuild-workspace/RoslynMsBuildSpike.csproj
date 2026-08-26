@@ -1,0 +1,85 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>RoslynMsBuildSpike</AssemblyName>
+    <RootNamespace>RoslynMsBuildSpike</RootNamespace>
+    <!--
+      MSBuildLocator requires that the MSBuild assemblies NOT be resolved from this project's own
+      output. Copying them here is the documented way to get an unloadable host.
+    -->
+    <ExcludeAssetsFromMSBuild>true</ExcludeAssetsFromMSBuild>
+
+    <!--
+      SCOPED TO THIS SPIKE ONLY, and it must not travel to the shipped extractor.
+
+      A transitive vulnerability scan reports TEN high-severity advisories
+      reachable from Microsoft.CodeAnalysis.Workspaces.MSBuild 4.14.0 — GHSA-w3q9-fxm7-j8fq against
+      the MSBuild packages, and eight against System.Security.Cryptography.Xml 9.0.0. Bumping
+      Microsoft.Build.Tasks.Core from the 17.7.2 it resolves by default to 17.14.8 clears the
+      original advisory and lands on a newer one, which says something about the chain.
+
+      Why the suppression is defensible HERE and nowhere else: every reference above carries
+      ExcludeAssets="runtime", so none of these assemblies reach the output directory. At runtime
+      MSBuild is loaded from the installed SDK by MSBuildLocator. These are compile-time reference
+      assemblies for a spike that is never shipped or deployed.
+
+      Why it is NOT defensible for the extractor: the shipped component will make the same choice of
+      dependency, and P1-SUPPLY's licence and transitive-CVE gates apply to it in full. This is
+      recorded as a Phase-2 finding in RESULT.md for the Security & Identity Architect, not resolved
+      by this line.
+    -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      The fixture lives under this directory so the spike is one self-contained folder, which means
+      the default glob would otherwise compile the target repository's sources INTO the host. The
+      fixture is input data to be loaded at runtime, never part of this build.
+    -->
+    <Compile Remove="fixture/**" />
+    <None Remove="fixture/**" />
+    <EmbeddedResource Remove="fixture/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.9.1" />
+    <!--
+      NOT ExcludeAssets="runtime". These are Roslyn, and the host needs them at runtime; only the
+      MSBuild assemblies below must be withheld so MSBuildLocator can bind them from the SDK. An
+      earlier revision excluded both and failed at the first workspace call with a
+      FileNotFoundException for Microsoft.CodeAnalysis.Workspaces — the distinction is load-bearing.
+    -->
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <!--
+      Required, and its absence fails in a way worth remembering: without the C# LANGUAGE SERVICE,
+      MSBuildWorkspace loads zero projects and reports "the language 'C#' is not supported" as an
+      ordinary workspace diagnostic rather than an error. A host that only counted sentinel hits
+      would have read that as "no generators executed" — a clean bill of health from an instrument
+      that never ran (defect class DC-009).
+    -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      A finding, recorded here because it is Phase-2 supply-chain evidence rather than spike
+      housekeeping: Microsoft.CodeAnalysis.Workspaces.MSBuild 4.14.0 transitively pulls
+      Microsoft.Build.Tasks.Core 17.7.2, which carries a known HIGH-severity advisory
+      (GHSA-h4j7-5rxr-p4wc). The repo's TreatWarningsAsErrors turned NU1903 into a build failure,
+      which is the gate working — this is the class of thing P1-SUPPLY exists to catch, and it
+      surfaced on the very first Phase-2 dependency.
+
+      Pinned forward at compile time only. At runtime the real MSBuild assemblies come from the SDK
+      via MSBuildLocator (hence ExcludeAssets="runtime" throughout), so the package version governs
+      what we compile against, not what executes.
+    -->
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.8" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+</Project>

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-fix-register-s2",
-  "generated": "2026-08-26T19:46:03Z",
+  "generated": "2026-08-26T19:57:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -559,6 +559,23 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0029",
+      "shortname": "spike-s2-msbuildworkspace",
+      "datetime": "2026-08-26T19:57:48Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "Then run Spike S2, which is the right first spike of the four: it decides whether the analyzer-execution security control is achievable at all, and it is the cheapest to run.",
+      "summary": "S2 cleared with its mitigation changed. A real solution loads against an older SDK with zero diagnostics. Repository-authored generator code DOES execute in the extractor's own process, triggered by GetCompilationAsync. MSBuild properties do not suppress it; stripping AnalyzerReferences does, at a cost of exactly the generated symbols. Re-scopes S1 and surfaces ten transitive advisories",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "spikes/roslyn-msbuild-workspace/RESULT.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -746,6 +763,29 @@ window.AUDIT_DATA = {
         "before": "d42ad03d539bdca589838e86b25285c0928eb691",
         "after": "d42ad03d539bdca589838e86b25285c0928eb691",
         "branch": "design/phase-2",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0008",
+      "datetime": "2026-08-26T19:57:48Z",
+      "session": null,
+      "kind": "design",
+      "skill": "investigate",
+      "title": "Analyzer-execution control moves from MSBuild properties to stripping AnalyzerReferences",
+      "prompt": "Spike S2",
+      "summary": "The Phase-2 design's named mitigation was measured ineffective. The control that holds is solution.WithProjectAnalyzerReferences(id, []) before any compilation is requested",
+      "rationale": "MSBuild properties govern the build rather than the workspace project model, and they are the repository's own build configuration — a control a hostile repository can influence is not a control. Stripping is applied after load, in our process, and depends on nothing in the repository cooperating.",
+      "artifacts": [
+        "spikes/roslyn-msbuild-workspace/RESULT.md",
+        "docs/design/phase-2-real-code-and-terminal.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "b8b7c08",
+        "after": "b8b7c0849435b0cd84e8fb8009e6b1be1308065c",
+        "branch": "fix/defect-register-and-spike-s2",
         "pushed": null,
         "commits": []
       }

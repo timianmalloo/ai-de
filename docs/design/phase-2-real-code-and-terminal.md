@@ -186,7 +186,7 @@ part needing a spike — it shells out to MSBuild and its failure modes are envi
 | `Controller handles Route` from an attribute | `Verified` | Declared in the artifact. |
 | DI registration `AddScoped<IFoo, Foo>()` | **`Inferred`** | Static approximation; the runtime container may differ. Architecture rule 4 names this explicitly. |
 | ORM entity → table from convention | **`Inferred`** | Convention-derived, not declared. |
-| Anything from a **source generator** | **`Unverified` pending Spike S1** | Whether generated symbols are distinguishable from hand-written ones is unknown; if they are not, they cannot honestly be labelled. |
+| Anything from a **source generator** | **Absent — not labelled at all** (S2, 2026-08-26) | The security control strips analyzer references before compilation, so generated symbols never enter the model. Measured: 3 source-declared types instead of 4, zero generated documents. The honest consequence is **silence, not a weak label** — and silence must be disclosed to the user rather than read as "nothing there". S1 re-scoped to that disclosure question. |
 
 ---
 
@@ -273,7 +273,7 @@ council review caught in the v1 architecture; it must not return here.
 | Terminal text reaches the graph, audit or telemetry | New high-volume untrusted data | **prevent** | Output never crosses into the store; seeded-marker negative test asserts absence everywhere | `P2-PRIV-01` |
 | Roslyn fails to load a project (missing SDK, broken build) | MSBuildWorkspace | **detect + mitigate** | Scope marked stale/failed with a diagnostic; other projects unaffected; last good snapshot renders | `P2-EXT-02` |
 | Roslyn extraction exceeds the 60 s scope budget | Real solution size | **mitigate** | One scope per project; cooperative cancellation; per-scope quarantine after K timeouts | `P2-EXT-04` |
-| Generated symbols indistinguishable from hand-written | Source generators | **detect, then decide** | **Spike S1 gates this.** Until resolved, generated-symbol relations are `Unverified` rather than silently `Verified` | `P2-EXT-06` |
+| Generated symbols **absent** from the model, so a query answers confidently about an incomplete picture | The security control that strips analyzer references | **detect + disclose** | S2 settled the mechanism; what remains is product-facing. The extractor **records that a scope had analyzer references stripped**, and any projection over such a scope carries a "generated code not analysed" omission state — the same shape as the existing bounded-result omission, never silent | `P2-EXT-06` |
 | Shell and daemon versions mismatch after a rollback | Dual-major handshake | **prevent** | Handshake rejects unsupported versions with a stable code; the post-rollback pairing is an explicit test cell | `P2-UPGRADE-02` |
 | Power loss mid-migration | Upgrade choreography | **recover** | Durable migration journal; incomplete migration on next start triggers automatic snapshot restore | `P2-UPGRADE-03` |
 | Daemon orphaned when the shell dies | Split lifetime | **detect + recover** | Daemon exits when its owning connection closes and no other client attaches within a grace period | `P2-IPC-05` |
@@ -295,13 +295,32 @@ this is where the deferral is paid back.
 | Terminal process → runtime | **T**: forged OSC claims readiness | mitigate | Session nonce required; OSC advisory only; never agent acceptance | `P2-TERM-06` forged OSC 133 |
 | Terminal process → host | **E**: OSC 52 clipboard write / OSC 8 hyperlink action | mitigate | Both disabled outright, not sanitised | `P2-TERM-07` |
 | Terminal process → UI | **D**: ANSI flood | mitigate | Bounded ring + rate trigger + overload state | `P2-TERM-03` |
-| Repository → Roslyn | **E**: analyzer or source generator executes during load | **mitigate** | Analyzers and generators **disabled** during extraction — loading a repository must never execute its code | `P2-SEC-08` hostile analyzer does not run |
+| Repository → Roslyn | **E**: analyzer or source generator executes during compilation | **mitigate** | `solution.WithProjectAnalyzerReferences(id, [])` before any compilation is requested — **not** MSBuild properties, which S2 measured as ineffective | `P2-SEC-08` hostile generator does not run |
 | Daemon → disk | **E**: same-user process reads the store | **accept** | Unchanged desktop residual (threat model boundary 1). Residual risk: full workspace compromise; out of scope for a single-user local tool. | documented, not tested |
 
-**The Roslyn row is the one that is new and easy to miss.** `MSBuildWorkspace` will, by default, load
-and run a project's analyzers and source generators — arbitrary code from the repository being
-inspected. AI-DE's entire posture is that repository content is untrusted data; executing it during
-extraction would contradict that at the deepest level.
+**The Roslyn row is the one that is new and easy to miss** — and **Spike S2 measured it on
+2026-08-26, changing the mitigation** ([result](../../spikes/roslyn-msbuild-workspace/RESULT.md)).
+
+The threat is confirmed real: the fixture generator executed **inside the extractor's own process**
+(`Initialize`, `PostInitialization` and `SourceOutput` all fired), triggered by `GetCompilationAsync()`
+— the ordinary call an extractor makes to get symbols, with no "just read the project" path that
+avoids it. `OpenProjectAsync` alone is silent, so the trigger is compilation rather than load.
+
+**The mitigation this design originally named does not work.** `RunAnalyzers=false`,
+`RunAnalyzersDuringBuild=false` and `EnforceCodeStyleInBuild=false` left the analyzer references at
+nine and the generator ran regardless. They govern the build, not what `MSBuildWorkspace` puts in
+the project model — and they are in any case **the repository's own build configuration**, so a
+control resting on them is one a hostile repository can influence.
+
+The control that holds is **stripping `AnalyzerReferences` from the loaded solution** before
+requesting a compilation: applied after load, in our process, depending on nothing in the repository
+cooperating. Measured cost is exactly the generated symbols — 3 source-declared types instead of 4,
+zero generated documents, and no compilation errors either way.
+
+Two things worth carrying: **eight analyzer references arrive from the SDK itself** on any ordinary
+.NET project, so the hostile case is the normal case with different intent; and **`RS1035`** ("do not
+do file IO in analyzers") is a compile-time lint the *generator's own author* opts into, so it
+constrains the well-behaved and nobody else. Neither is a control.
 
 ## Privacy analysis (LINDDUN-lite)
 
@@ -349,12 +368,24 @@ conformance suite run against **both** implementations), `P2-PERF-01..03`.
 Per the architecture's flagged risks. **None of this may be built before these run**, because each
 determines a contract rather than an optimisation.
 
-| Spike | Question | Why it gates |
-|---|---|---|
-| **S1 — Roslyn source generators** | Are generated symbols visible, and distinguishable from hand-written ones? | Decides whether generated relations can be labelled at all. If indistinguishable, they must be `Unverified` — a spec-visible confidence outcome, not an implementation detail. |
-| **S2 — MSBuildWorkspace load** | Does a real solution load without the host SDK matching exactly, and can analyzers/generators be disabled? | The security control above depends on the answer. If they cannot be disabled, extraction executes repository code and the approach changes. |
-| **S3 — Terminal renderer** | Which renderer meets the keyboard/screen-reader contract? | ADR-0005 defers the choice; the a11y contract is a hard veto, and the UIA probe showed the category is weak here. |
-| **S4 — WebView2 airspace** | Does WebView2 compose with WPF focus, DPI and the docking layout? | ADR-0008's recorded reversal trigger. |
+| Spike | Question | Why it gates | Status |
+|---|---|---|---|
+| **S1 — Roslyn source generators** | ~~Are generated symbols visible, and distinguishable from hand-written ones?~~ **Re-scoped by S2:** under the mandated control, generated symbols are **not present at all** — is that absence acceptable, and how is it disclosed? | Still spec-visible, but the question changed. A user asking "what implements `IFoo`" in a repository that *generates* implementations gets an answer correct about hand-written code and silent about the rest. That is a product decision, not a labelling one. | **re-scope before running** |
+| **S2 — MSBuildWorkspace load** | Does a real solution load without the host SDK matching exactly, and can analyzers/generators be disabled? | The security control above depends on the answer. If they cannot be disabled, extraction executes repository code and the approach changes. | **CLEARED 2026-08-26** — [result](../../spikes/roslyn-msbuild-workspace/RESULT.md). Both yes, but **the mitigation changed**: MSBuild properties are ineffective; stripping `AnalyzerReferences` is the control. |
+| **S3 — Terminal renderer** | Which renderer meets the keyboard/screen-reader contract? | ADR-0005 defers the choice; the a11y contract is a hard veto, and the UIA probe showed the category is weak here. | not started |
+| **S4 — WebView2 airspace** | Does WebView2 compose with WPF focus, DPI and the docking layout? | ADR-0008's recorded reversal trigger. | not started |
+
+**What S2 established beyond its own question.** A real solution (`AiDe.sln`, 5 projects) loaded in
+1.4 s with **zero** `WorkspaceFailed` diagnostics against a deliberately *older* SDK (10.0.301 host,
+10.0.303 build) — so the environmental fragility flagged below is real but narrower than feared, at
+least across a patch-level mismatch. A cross-major mismatch remains unmeasured.
+
+S2 also surfaced a **supply-chain finding that is not yet resolved**: ten high-severity advisories
+are reachable from `Microsoft.CodeAnalysis.Workspaces.MSBuild` 4.14.0 — `GHSA-w3q9-fxm7-j8fq` against
+the MSBuild packages and eight against `System.Security.Cryptography.Xml` 9.0.0. The spike suppresses
+`NU1903` for itself on the narrow ground that its references are compile-time only and it never
+ships. **The shipped extractor gets no such exemption**, and this is carried to the Security &
+Identity Architect as Phase-2 input.
 
 ## Flagged risks
 
@@ -364,16 +395,24 @@ determines a contract rather than an optimisation.
 - **Cross-monitor DPI remains unverified** (needs a second display) and now matters more, because
   Phase 2 adds floating terminal panes.
 - **`MSBuildWorkspace` failure modes are environmental** — SDK version, NuGet restore state, missing
-  targets — and are the least predictable dependency in the phase.
+  targets — and are the least predictable dependency in the phase. **Narrowed by S2:** a patch-level
+  SDK mismatch loads cleanly with zero diagnostics. A cross-major mismatch, and a repository pinning
+  an SDK that is not installed, remain unmeasured.
+- **The MSBuildWorkspace dependency chain carries ten high-severity advisories** (S2 finding 7), with
+  no clean version identified. Unresolved for the shipped extractor.
+- **Repository-authored MSBuild *tasks* are an unprobed trust boundary.** S2 established that
+  analyzers and generators can be prevented from executing, but `MSBuildWorkspace` still runs MSBuild
+  *evaluation* to load projects, and whether that executes repository-supplied task assemblies was
+  not tested.
 - The scope-per-project decision is measured against nothing yet; `P2-PERF` is its first test.
 
 ## Status and next action
 
 | | |
 |---|---|
-| **Completed** | Phase-2 design: two contract gaps surfaced and closed on paper, data model (no new facts, and why), three component contracts, failure/STRIDE/LINDDUN analyses, telemetry, the triggered-directive test plan including the newly-owed conformance suite. |
-| **Remaining** | The four gating spikes, then implementation in the order terminal → process split → Roslyn. |
-| **Best next action** | **Spike S2 (MSBuildWorkspace)** — it decides a *security control*, not just feasibility, and it is the cheapest of the four to run. |
+| **Completed** | Phase-2 design: two contract gaps surfaced and closed on paper, data model (no new facts, and why), three component contracts, failure/STRIDE/LINDDUN analyses, telemetry, the triggered-directive test plan including the newly-owed conformance suite. **Spike S2 run and cleared 2026-08-26**, changing the analyzer-execution mitigation from MSBuild properties (measured ineffective) to stripping `AnalyzerReferences`, and re-scoping S1. |
+| **Remaining** | S1 (re-scoped to disclosure), S3, S4; then implementation in the order terminal → process split → Roslyn. Two S2 findings are open: the dependency-chain advisories and the unprobed MSBuild-task boundary. |
+| **Best next action** | **Spike S3 (terminal renderer)** — S4 is a reversal trigger for a decision already taken, and S1 now depends on a product call about disclosing absent generated code rather than on a measurement. S3 gates a hard accessibility veto in the category the UIA probe already showed to be weak, so it is the one most likely to change the design. |
 
 ## Gate record
 
