@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-workbench-keyboard",
-  "generated": "2026-08-26T15:57:12Z",
+  "project": "ai-de-feat-workbench-drop-targets",
+  "generated": "2026-08-26T16:16:30Z",
   "audit": [
     {
       "id": "al-0001",
@@ -397,6 +397,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
         "src/AiDe.App/Workbench/WorkbenchController.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0020",
+      "shortname": "implement-workbench-drop-targets",
+      "datetime": "2026-08-26T16:16:30Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "yes do #1",
+      "summary": "Drop-target resolution in Core (WPF-free geometry) closing the SC 2.5.7 loop: pointer and keyboard now converge on the same LayoutOperation, and the equivalence test compares two real paths. Preview derives from the same resolve call as the commit. Caught and fixed a silent-refusal bug on locked drag; registered as defect class DC-011",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/DropTargetResolver.cs"
       ],
       "tags": [],
       "outcome": "success"

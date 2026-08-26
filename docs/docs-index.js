@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-26T14:21:47Z",
+  "generated": "2026-08-26T16:16:30Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1209,7 +1209,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f1d9193c7fd04ecf30e5408ede590f0921e772be2df39724f18b8f4b47edc394"
+      "sourceSha256": "10ae98254ca0881b1f630616855f7a252176c109773a4c9eb097183fa428347e"
     },
     {
       "id": "lens-code-doc-join",
@@ -3789,7 +3789,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-spike-avalondock-a11y — Audit & Change Log",
+      "title": "ai-de-feat-workbench-keyboard — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -3811,5 +3811,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "1a4ab27c3b86da34e157e43cc49e8e1d3b2f47a1e52ff3f7463a61de395a3f03"
+  "graphSha256": "be389e3a9afc2998692b3b571cf9edf7bbe9d98c47f63f716eb46a1f83318d50"
 };

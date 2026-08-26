@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 6 · partially-controlled 3 · uncontrolled 1
+**Status counts:** controlled 7 · partially-controlled 3 · uncontrolled 1
 **Recurrence since last review:** 0
 
 ---
@@ -183,3 +183,22 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   the compaction that would mitigate it** — an open Phase-2 work item, not a closed one.
 - **Status:** `partially-controlled` — the harness is fixed and the growth is now visible, but
   nothing yet enforces a generation-retention policy in the product.
+
+### DC-011 — A refusal is silent, so the control reads as broken
+- **Signature:** an operation is correctly refused — locked, at a limit, out of scope — and the code
+  returns early without telling anyone. Visually and audibly identical to a dead key, a stuck drag,
+  or a hung app. Especially easy to introduce in change-detection code, where "nothing changed" and
+  "nothing is allowed" are both represented by the same null/no-op and the early return swallows both.
+- **Why it survives:** the happy path is correct and the refusal is correct; only the *reporting* is
+  missing, and no assertion covers "and it said so". Sighted users often infer the refusal from a
+  frozen highlight; screen-reader users get nothing at all.
+- **Instances:** 2026-08-26 — `WorkbenchController.DragOver` with a locked layout: the resolver
+  returned null, which equalled the initial `HoveredTarget`, so the change-detection short-circuit
+  fired before the explanation. Caught by a test asserting the announcement, not by review.
+  2026-08-26 (same shape, prevented by design) — `LayoutService.Apply` returns the announcement as
+  part of `LayoutResult` so a refusal cannot be applied without one.
+- **Control:** `WorkbenchDragTests.ALockedLayout_OffersNoDestinationAndExplainsWhy` and
+  `WorkbenchControllerTests.ARefusedOperation_IsStillAnnounced`; structurally, `LayoutResult` carries
+  the announcement so refusals cannot be silent at the model layer. **Observed failing 2026-08-26**
+  on the un-fixed `DragOver`.
+- **Status:** `controlled`

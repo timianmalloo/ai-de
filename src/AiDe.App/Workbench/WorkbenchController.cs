@@ -91,6 +91,87 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     public bool Move(string surfaceId, DropTarget target) =>
         ApplyAndAnnounce(new LayoutOperation.MoveSurface(surfaceId, target));
 
+    // ── the pointer path (1b.10) ──────────────────────────────────────────────────────────
+
+    private bool _lockRefusalAnnounced;
+
+    /// <summary>The destination the in-flight drag currently points at, or null for none.</summary>
+    public DropTarget? HoveredTarget { get; private set; }
+
+    /// <summary>The rectangle the UI should highlight for <see cref="HoveredTarget"/>.</summary>
+    public LayoutRect? HoveredPreview { get; private set; }
+
+    /// <summary>
+    /// Reports pointer movement during a drag. Resolves the destination and its preview from the
+    /// SAME call, so the highlight the user sees and the drop that follows cannot disagree.
+    /// </summary>
+    /// <remarks>
+    /// Announces only when the destination actually changes. Re-announcing on every mouse-move would
+    /// flood a screen reader with the same sentence and drown everything else out.
+    /// </remarks>
+    public DropTarget? DragOver(IReadOnlyList<PaneHitBox> panes, LayoutPoint pointer)
+    {
+        var target = DropTargetResolver.Resolve(panes, pointer, service.IsLocked);
+
+        // The locked case is handled BEFORE the change-detection below. Both a locked resolve and
+        // the initial state are null, so comparing them first would short-circuit and leave the user
+        // with silence — the same "unannounced no-op reads as a dead control" failure the keyboard
+        // path already guards against.
+        if (target is null)
+        {
+            var wasAnnounced = _lockRefusalAnnounced;
+            HoveredTarget = null;
+            HoveredPreview = null;
+            _lockRefusalAnnounced = true;
+            if (!wasAnnounced)
+            {
+                announcer.Announce("Layout is locked. Unlock to rearrange panes.");
+            }
+
+            return null;
+        }
+
+        _lockRefusalAnnounced = false;
+        if (target == HoveredTarget)
+        {
+            return target;
+        }
+
+        HoveredTarget = target;
+
+        var pane = panes.FirstOrDefault(p => p.StackId == target.TargetNodeId);
+        HoveredPreview = target.Kind == DropKind.Float || pane.StackId is null
+            ? null
+            : DropTargetResolver.PreviewFor(pane, target);
+
+        announcer.Announce(DropTargetResolver.Describe(target, TitleOf(target.TargetNodeId)));
+        return target;
+    }
+
+    /// <summary>Commits the drag at the hovered destination. Returns false when there is none.</summary>
+    public bool Drop(string surfaceId)
+    {
+        var target = HoveredTarget;
+        CancelDrag();
+        return target is not null && Move(surfaceId, target);
+    }
+
+    /// <summary>Abandons the drag with the layout untouched (Escape, or the pointer leaving).</summary>
+    public void CancelDrag()
+    {
+        var had = HoveredTarget is not null;
+        HoveredTarget = null;
+        HoveredPreview = null;
+        _lockRefusalAnnounced = false;
+        if (had)
+        {
+            announcer.Announce("Move cancelled.");
+        }
+    }
+
+    private string TitleOf(string stackId) =>
+        service.Current.AllStacks().FirstOrDefault(s => s.Id == stackId)?.Active.Title ?? "the workbench";
+
     // ── keyboard resize (the Eclipse pattern) ─────────────────────────────────────────────
 
     private bool BeginResize()

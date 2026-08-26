@@ -151,3 +151,112 @@ public sealed class WorkbenchControllerTests
         Assert.Equal(target, service.Current.FindStackOf("explore")!.Id);
     }
 }
+
+/// <summary>
+/// The pointer path through the controller (1b.10). The point of these is that the drag and the
+/// keyboard reach the same place through the same operation — the preview the user sees is derived
+/// from the very target the drop will apply.
+/// </summary>
+public sealed class WorkbenchDragTests
+{
+    private static readonly LayoutRect PaneBounds = new(0, 0, 400, 300);
+
+    private static (WorkbenchController C, RecordingAnnouncer A, ILayoutService S, PaneHitBox[] P) Build()
+    {
+        var service = new LayoutService();
+        var announcer = new RecordingAnnouncer();
+        var controller = new WorkbenchController(service, announcer);
+        var stackId = service.Current.FindStackOf("provenance")!.Id;
+        return (controller, announcer, service, [new PaneHitBox(stackId, PaneBounds, 28)]);
+    }
+
+    [Fact]
+    public void DragOver_AnnouncesTheDestinationBeforeAnyDrop()
+    {
+        var (controller, announcer, service, panes) = Build();
+        var before = service.Current.Shape();
+
+        var target = controller.DragOver(panes, new LayoutPoint(10, 150));
+
+        Assert.Equal(DropKind.SplitLeft, target!.Kind);
+        Assert.Contains("Destination: split, left of", announcer.Last, StringComparison.Ordinal);
+        // Hovering must not change anything yet — the user has not released.
+        Assert.Equal(before, service.Current.Shape());
+    }
+
+    // A screen reader flooded with the same sentence on every mouse-move hears nothing useful.
+    [Fact]
+    public void DragOver_AnnouncesOnlyWhenTheDestinationChanges()
+    {
+        var (controller, announcer, _, panes) = Build();
+
+        controller.DragOver(panes, new LayoutPoint(10, 150));
+        controller.DragOver(panes, new LayoutPoint(12, 152));
+        controller.DragOver(panes, new LayoutPoint(14, 148));
+        Assert.Single(announcer.Messages);
+
+        controller.DragOver(panes, new LayoutPoint(390, 150));
+        Assert.Equal(2, announcer.Messages.Count);
+    }
+
+    [Fact]
+    public void ThePreview_IsDerivedFromTheTargetTheDropWillApply()
+    {
+        var (controller, _, _, panes) = Build();
+
+        controller.DragOver(panes, new LayoutPoint(390, 150));
+
+        Assert.Equal(DropKind.SplitRight, controller.HoveredTarget!.Kind);
+        Assert.Equal(new LayoutRect(200, 0, 200, 300), controller.HoveredPreview);
+    }
+
+    [Fact]
+    public void Drop_AppliesTheHoveredDestination()
+    {
+        var (controller, _, service, panes) = Build();
+        controller.DragOver(panes, new LayoutPoint(200, 150));   // centre → join
+
+        Assert.True(controller.Drop("explore"));
+
+        Assert.Equal(panes[0].StackId, service.Current.FindStackOf("explore")!.Id);
+        Assert.Null(controller.HoveredTarget);
+        service.Current.AssertInvariant();
+    }
+
+    [Fact]
+    public void CancelDrag_LeavesTheLayoutUntouchedAndSaysSo()
+    {
+        var (controller, announcer, service, panes) = Build();
+        var before = service.Current.Shape();
+        controller.DragOver(panes, new LayoutPoint(10, 150));
+
+        controller.CancelDrag();
+
+        Assert.Equal(before, service.Current.Shape());
+        Assert.Null(controller.HoveredTarget);
+        Assert.Contains("cancelled", announcer.Last, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Drop_WithNoHoveredDestination_DoesNothing()
+    {
+        var (controller, _, service, _) = Build();
+        var before = service.Current.Shape();
+
+        Assert.False(controller.Drop("explore"));
+        Assert.Equal(before, service.Current.Shape());
+    }
+
+    [Fact]
+    public void ALockedLayout_OffersNoDestinationAndExplainsWhy()
+    {
+        var (controller, announcer, service, panes) = Build();
+        service.IsLocked = true;
+
+        var target = controller.DragOver(panes, new LayoutPoint(200, 150));
+
+        Assert.Null(target);
+        Assert.Contains("locked", announcer.Last, StringComparison.OrdinalIgnoreCase);
+        Assert.False(controller.Drop("explore"));
+    }
+}
