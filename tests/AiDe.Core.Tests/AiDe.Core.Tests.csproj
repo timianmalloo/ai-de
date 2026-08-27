@@ -20,6 +20,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AiDe.Core\AiDe.Core.csproj" />
+
+    <!--
+      A BUILD-ORDER dependency, not an assembly reference. The ConPTY conformance case launches this
+      executable with CREATE_NEW_CONSOLE (DC-014), so it must exist whenever these tests run — and
+      `verify-test-run.py` deliberately runs `dotnet test` PER PROJECT to get per-assembly counts,
+      which would otherwise never build it.
+
+      ReferenceOutputAssembly="false" because the tests start it as a process and must not link it.
+    -->
+    <ProjectReference Include="..\AiDe.Core.TerminalHost\AiDe.Core.TerminalHost.csproj"
+                      ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>
