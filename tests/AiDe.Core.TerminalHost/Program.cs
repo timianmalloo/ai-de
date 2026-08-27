@@ -54,6 +54,11 @@ internal static class Program
             return await OscAsync(report, log);
         }
 
+        if (mode == "integration")
+        {
+            return await IntegrationAsync(report, log);
+        }
+
         ConPtyTerminalSession session;
         try
         {
@@ -209,6 +214,140 @@ internal static class Program
             Write(report, log);
             return 0;
         }
+    }
+
+
+    /// <summary>
+    /// Runs a real PowerShell under the real shell integration and checks the full state loop.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>This is the only test that can fail for the reasons that matter.</b> The script is a
+    /// string until PowerShell runs it: whether PSReadLine is even loaded under
+    /// <c>-NoProfile</c> inside a pseudo console, whether the <c>Enter</c> handler fires, whether
+    /// overriding <c>prompt</c> works when the host has already captured one — none of that is
+    /// visible to a unit test, and all of it decides whether the feature exists.</para>
+    ///
+    /// <para><b>Both phases are checked, and the second is the one that would rot.</b> Reaching
+    /// <c>Ready</c> at a prompt proves the D/A/B path. Reaching <c>Busy</c> while a command runs
+    /// proves <c>C</c> — and if only that one broke, the session would sit at <c>Ready</c> through
+    /// every command while looking perfectly healthy at the prompt.</para>
+    ///
+    /// <para>Exit codes: <b>0</b> the whole loop, <b>3</b> could not start, <b>8</b> never became
+    /// Ready at the prompt, <b>9</b> never became Busy during a command, <b>10</b> never returned to
+    /// Ready afterwards.</para>
+    /// </remarks>
+    private static async Task<int> IntegrationAsync(string? report, StringBuilder log)
+    {
+        ConPtyTerminalSession session;
+        try
+        {
+            session = await ConPtyTerminalSession.StartAsync(
+                new TerminalSessionRequest(
+                    SessionId: "integration-probe",
+                    Generation: 1,
+                    CommandLine: "powershell.exe",
+                    WorkingDirectory: Path.GetTempPath(),
+                    Columns: 80,
+                    Rows: 25,
+                    ProcessingClass: SessionProcessingClass.LocalOnly,
+                    Integration: ShellIntegrationMode.PowerShell),
+                CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            log.AppendLine($"StartAsync threw {ex.GetType().Name}: {ex.Message}");
+            Write(report, log);
+            return 3;
+        }
+
+        await using (session)
+        {
+            // Drained continuously in the background: the output channel drops the oldest entry
+            // when it fills, and a probe that only reads between steps would stall the very session
+            // it is measuring.
+            using var draining = new CancellationTokenSource(TimeSpan.FromSeconds(80));
+            var drain = Task.Run(async () =>
+            {
+                try
+                {
+                    while (await session.Output.WaitToReadAsync(draining.Token))
+                    {
+                        while (session.Output.TryRead(out _))
+                        {
+                        }
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                }
+            });
+
+            if (!await WaitForActivityAsync(session, SessionActivity.Ready, TimeSpan.FromSeconds(30)))
+            {
+                log.AppendLine($"never reached Ready at the prompt; activity is {session.Activity}");
+                log.AppendLine(
+                    "Either the integration did not install (PSReadLine absent, so the script "
+                    + "returns without hooking anything) or its marks are not being believed.");
+                Write(report, log);
+                return 8;
+            }
+
+            log.AppendLine("Ready at the prompt: the D/A/B path is authenticated and believed");
+
+            await SendAsync(session, "Start-Sleep -Seconds 4; 'CMD-DONE'");
+
+            if (!await WaitForActivityAsync(session, SessionActivity.Busy, TimeSpan.FromSeconds(15)))
+            {
+                log.AppendLine($"never reached Busy while a command ran; activity is {session.Activity}");
+                log.AppendLine(
+                    "The C mark is missing, so the session would report Ready for the whole "
+                    + "duration of every command.");
+                Write(report, log);
+                return 9;
+            }
+
+            log.AppendLine("Busy while the command ran: the C mark fires on line accept");
+
+            if (!await WaitForActivityAsync(session, SessionActivity.Ready, TimeSpan.FromSeconds(30)))
+            {
+                log.AppendLine($"never returned to Ready after the command; activity is {session.Activity}");
+                Write(report, log);
+                return 10;
+            }
+
+            log.AppendLine("Ready again after the command: the loop closes");
+            log.AppendLine("integration loop complete");
+
+            draining.Cancel();
+            await drain;
+
+            Write(report, log);
+            return 0;
+        }
+    }
+
+    /// <summary>Polls until the session reports <paramref name="wanted"/>, or the deadline passes.</summary>
+    /// <remarks>
+    /// Polled rather than awaited because activity is a state, not an event — the contract exposes
+    /// no change notification, and inventing one for a probe would be testing something the product
+    /// does not have.
+    /// </remarks>
+    private static async Task<bool> WaitForActivityAsync(
+        ConPtyTerminalSession session, SessionActivity wanted, TimeSpan limit)
+    {
+        var deadline = DateTimeOffset.UtcNow + limit;
+
+        while (DateTimeOffset.UtcNow < deadline)
+        {
+            if (session.Activity == wanted)
+            {
+                return true;
+            }
+
+            await Task.Delay(50);
+        }
+
+        return false;
     }
 
     private static async Task SendAsync(ConPtyTerminalSession session, string line) =>

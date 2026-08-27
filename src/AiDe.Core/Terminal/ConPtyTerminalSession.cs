@@ -15,7 +15,25 @@ public sealed record TerminalSessionRequest(
     string? WorkingDirectory,
     int Columns,
     int Rows,
-    SessionProcessingClass ProcessingClass);
+    SessionProcessingClass ProcessingClass,
+    ShellIntegrationMode Integration = ShellIntegrationMode.None);
+
+/// <summary>Whether the runtime installs its OSC shell integration into the session's shell.</summary>
+/// <remarks>
+/// Opt-in per session rather than always-on: <see cref="CommandLine"/> may be any executable, and
+/// decorating an arbitrary command with PowerShell arguments would corrupt it.
+/// </remarks>
+public enum ShellIntegrationMode
+{
+    /// <summary>Launch the command line as given. The session uses the output heuristic.</summary>
+    None,
+
+    /// <summary>
+    /// Treat the command line as a PowerShell executable and launch it with this session's
+    /// integration installed.
+    /// </summary>
+    PowerShell,
+}
 
 /// <summary>
 /// The real terminal runtime: one ConPTY, one process, one owner loop (ADR-0005).
@@ -78,6 +96,7 @@ public sealed class ConPtyTerminalSession : ITerminalSession
 
     private ConPtyTerminalSession(
         TerminalSessionRequest request,
+        string nonce,
         IntPtr console,
         IntPtr job,
         ConPtyInterop.ProcessInformation process,
@@ -91,8 +110,8 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         // Generated here rather than accepted from the caller: a nonce a caller can choose is one a
         // caller can reuse across sessions, and a value shared between two sessions authenticates
         // claims made by the wrong child.
-        ShellIntegrationNonce = OscParser.NewNonce();
-        _osc = new OscParser(ShellIntegrationNonce);
+        ShellIntegrationNonce = nonce;
+        _osc = new OscParser(nonce);
 
         _console = console;
         _job = job;
@@ -150,6 +169,17 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         ArgumentOutOfRangeException.ThrowIfLessThan(request.Columns, 1);
         ArgumentOutOfRangeException.ThrowIfLessThan(request.Rows, 1);
 
+        // Generated here rather than in the constructor because the integration script has to
+        // carry it and the script is part of the command line — the nonce must therefore exist
+        // before the process does.
+        var nonce = OscParser.NewNonce();
+
+        var commandLine = request.Integration switch
+        {
+            ShellIntegrationMode.PowerShell => ShellIntegration.PowerShellCommandLine(request.CommandLine, nonce),
+            _ => request.CommandLine,
+        };
+
         using var span = Telemetry.StartActivity("terminal.start");
         span?.SetTag("session.id", request.SessionId);
         span?.SetTag("session.generation", request.Generation);
@@ -185,7 +215,7 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         try
         {
             process = ConPtyInterop.StartAttachedProcess(
-                console, request.CommandLine, request.WorkingDirectory);
+                console, commandLine, request.WorkingDirectory);
         }
         catch
         {
@@ -201,7 +231,8 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         // own failure mode where the process never starts if the assign throws.
         ConPtyInterop.AssignProcessToJobObject(job, process.hProcess);
 
-        var session = new ConPtyTerminalSession(request, console, job, process, inputWrite, outputRead);
+        var session = new ConPtyTerminalSession(
+            request, nonce, console, job, process, inputWrite, outputRead);
         session.StartPumping();
         return Task.FromResult(session);
     }

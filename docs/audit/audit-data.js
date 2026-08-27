@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-osc-parser",
-  "generated": "2026-08-27T16:50:40Z",
+  "project": "ai-de-feat-shell-integration",
+  "generated": "2026-08-27T17:09:04Z",
   "audit": [
     {
       "id": "al-0001",
@@ -728,6 +728,38 @@ window.AUDIT_DATA = {
         "sha": "36f0c476b0a26360e8482cf3ec6c55a8413ad763",
         "short": "36f0c476b",
         "branch": "feat/osc-parser",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0038",
+      "shortname": "shell-integration",
+      "datetime": "2026-08-27T17:09:04Z",
+      "session": "shell-integration-2026-08-27",
+      "prompt": "yes write the shell-integration script now",
+      "summary": "PowerShell shell integration: the shell-side half that makes the OSC nonce control operate instead of lying dormant. Measured end to end through a real pseudo console — a real powershell.exe reaches Ready at its prompt, Busy while a 4s command runs, and Ready again after. Closed two unknowns: PSReadLine DOES load under -NoProfile inside ConPTY, and -EncodedCommand survives the ConPTY launch path. Key rule is all-or-nothing: an authenticated claim retires the output heuristic, so an integration emitting D/A/B but not C would pin a session at Ready for the length of every command — worse than no integration. The script therefore checks it can hook line-accept BEFORE overriding anything and installs nothing if it cannot; that bail-out has a behavioural test running the real script in a PowerShell with an emptied module path. Nonce moved to StartAsync since it must exist before the process does; non-hex nonces are refused rather than escaped. 11/11 mutations caught (2 survived the first run, both faults in my mutations, not the controls). 233 Core tests (+17), four gates clean.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/ShellIntegration.cs",
+        "src/AiDe.Core/Terminal/ConPtyTerminalSession.cs",
+        "tests/AiDe.Core.Tests/ShellIntegrationTests.cs",
+        "tests/AiDe.Core.Tests/ShellIntegrationRoundTripTests.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "terminal",
+        "security"
+      ],
+      "outcome": "success",
+      "goal": "Ship the shell-integration script so the OSC nonce control actually executes in a real session",
+      "done_when": "A PowerShell integration emits the full 133 loop signed with the session nonce, proven through a real ConPTY that the session reaches Ready at a prompt and Busy during a command, gates clean, committed",
+      "git": {
+        "sha": "131f6fcb014ba0e2dde58a275f3c19e19dc6fb09",
+        "short": "131f6fcb0",
+        "branch": "feat/shell-integration",
         "pushed": null
       }
     }

@@ -255,6 +255,48 @@ threat model beside 133) is not spoken and is never honoured.
 
 Seven controls were mutation-tested one at a time; all seven were caught.
 
+### Shell integration — the half that makes the control operate
+
+**BUILT 2026-08-27.** `ShellIntegration.PowerShellScript(nonce)` composes the shell-side script;
+`TerminalSessionRequest.Integration` opts a session into it and the runtime decorates the command
+line itself.
+
+**The nonce forced the shape.** It is generated per session and lives only in memory, so no script a
+user commits to a profile can carry it — the integration must be composed at session start, by us,
+from that session's secret. That is also what makes it a control: the script is the only thing that
+knows the nonce. Consequently the **nonce is generated in `StartAsync` before the process exists**,
+not in the constructor, because it has to be inside the command line.
+
+**All of the loop, or none of it — and this is a safety rule, not tidiness.** An authenticated claim
+retires the output heuristic. An integration that marked the prompt (`D`/`A`/`B`) but not command
+start (`C`) would therefore pin a session at `Ready` for the whole duration of every command: a
+confident wrong answer, and strictly worse than the coarse signal it displaced. So the script checks
+it can hook line-accept **before** overriding anything and returns without installing if it cannot.
+A session with no integration is supported; a session with half of one is not.
+
+**Measured 2026-08-27 through a real pseudo console** (`P2-TERM-08`, `mode: integration`): a real
+`powershell.exe` reached `Ready` at its prompt, `Busy` while a 4-second command ran, and `Ready`
+again afterwards. Two unknowns closed on the way — **PSReadLine does load under `-NoProfile` inside
+ConPTY**, and `-EncodedCommand` survives the ConPTY launch path.
+
+| Decision | Why |
+|---|---|
+| `-EncodedCommand` (UTF-16LE base64) | The script's quotes, `;` and `$` would otherwise cross two parsers — the Win32 command line and PowerShell's. Base64 has no metacharacters. |
+| `-NoProfile` | A user profile can redefine `prompt` after us, print banners, or fail; none of that should change what the product reports. |
+| Non-hex nonce **refused, not escaped** | Escaping is a standing claim about PowerShell quoting rules that must remain true forever. Every nonce we generate is hex. |
+| Enter handler calls `AcceptLine()` **then** marks `C` | Ends PSReadLine's render first, so the write cannot land mid-repaint. The command does not start until the handler returns, so `C` still precedes its first output byte. |
+| PowerShell only | `cmd.exe` has no line-accept hook and its prompt is a string, not a function, so it can only ever produce the half-loop the rule above forbids. A cmd session keeps the heuristic. |
+
+**Known redundancy, stated so it is not mistaken for load-bearing:** for *state*, `D` and `A` both
+mean `Ready`, and deleting either changes no reported activity. `D` is kept because it carries the
+finished command's exit code — the only place command success is reported at all.
+
+Eleven controls were mutation-tested one at a time; all eleven were caught. Two survived the first
+run and both were faults in the mutations rather than the controls: one commented a line out with
+`#`, leaving the asserted substring in the file, and one relied on a text-position assertion that
+could not see a disabled guard. The second is why the bail-out now has a **behavioural** test that
+runs the real script in a PowerShell whose module path is emptied.
+
 ---
 
 ## Component 3 — The process split
@@ -572,7 +614,7 @@ rather than be skipped (**DC-012**).
 | | |
 |---|---|
 | **Completed** | Phase-2 design: two contract gaps closed on paper, data model (no new facts, and why), three component contracts, failure/STRIDE/LINDDUN analyses, telemetry, the triggered-directive test plan including the newly-owed conformance suite. **All four spikes resolved 2026-08-26.** S2 changed the analyzer-execution mitigation to stripping `AnalyzerReferences`. S3: own a WPF renderer, `GlyphRun` per line. S4 met ADR-0008's reversal trigger, **now resolved by [ADR-0015](../adr/0015-canvas-hosting-and-overlay-strategy.md)** — windowed control plus snapshot swap, gut-checked at 150% DPI. S1 decided: disclose the absence. **Focus routing designed** against a verified mechanism, after the documented one turned out not to exist on this control. |
-| **Remaining** | The terminal renderer (S3's `GlyphRun`-per-line constraint), then the process split, then Roslyn. **The OSC parser landed 2026-08-27** and with it the measurement that OSC survives ConPTY. **Newly owed:** the shell-integration script that echoes `ShellIntegrationNonce` — the nonce is generated and checked, but nothing injects it yet, so a real session has no integration and falls back to the heuristic. Open findings carried forward: the MSBuildWorkspace dependency-chain advisories, the unprobed MSBuild-task trust boundary, and a possible colour flash at the snapshot swap that only a human observer can settle. |
+| **Remaining** | The terminal renderer (S3's `GlyphRun`-per-line constraint), then the process split, then Roslyn. **The OSC parser landed 2026-08-27** and with it the measurement that OSC survives ConPTY. **The shell integration landed 2026-08-27**, so the OSC control now operates in a real session rather than lying dormant. **Newly owed:** nothing in the product yet *starts* a session with `Integration: PowerShell` — that arrives with the terminal surface, alongside the renderer. Open findings carried forward: the MSBuildWorkspace dependency-chain advisories, the unprobed MSBuild-task trust boundary, and a possible colour flash at the snapshot swap that only a human observer can settle. |
 | **Best next action (superseded 2026-08-27 — the runtime and the OSC parser are built)** | **Implement the ConPTY terminal runtime.** It is the only Phase-2 component with no open decision in front of it — S3 cleared its renderer and named the binding draw path, ADR-0005's boundary is unchanged, and it does not touch the canvas. It also forces the `ITerminalSession` output extension and the newly-owed D7 conformance suite, which every dispatch test currently written against the fixture depends on. |
 
 ## Gate record
