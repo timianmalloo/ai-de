@@ -95,6 +95,19 @@ public sealed record IpcResponse(
         $"IPC major {requested} is not supported by this build", IpcVersion.Supported);
 }
 
+/// <summary>What a successful handshake returns.</summary>
+/// <remarks>
+/// <para><b>The epoch is here because there is nowhere else it can come from.</b> Every command
+/// states the epoch it was authored against and the daemon rejects a mismatch — which leaves a shell
+/// that has just connected unable to ask for the epoch, because asking is itself a command subject
+/// to the fence. Returning it from the handshake is the only ordering that terminates.</para>
+///
+/// <para>The alternative — exempting an <c>epoch</c> operation from the fence — would put a hole in
+/// the check to work around an ordering problem, and holes in fences are how the next thing gets
+/// exempted too.</para>
+/// </remarks>
+public sealed record IpcOpenResult(string Capability, long Epoch);
+
 /// <summary>Who is on the other end of a connection, as established by the transport.</summary>
 /// <remarks>
 /// Built by the transport from the authenticated connection, never from anything the caller sends.

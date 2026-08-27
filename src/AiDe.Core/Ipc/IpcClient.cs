@@ -33,6 +33,9 @@ public sealed class IpcClient : IAsyncDisposable
     /// <summary>The capability this connection holds, once a workspace has been opened.</summary>
     public bool IsOpen => _capability is not null;
 
+    /// <summary>The epoch the daemon reported at handshake, which every request is judged against.</summary>
+    public long Epoch { get; private set; }
+
     /// <summary>Connects to the daemon serving <paramref name="pipeName"/>.</summary>
     public static async Task<IpcClient> ConnectAsync(
         string pipeName, TimeSpan timeout, CancellationToken cancellationToken)
@@ -71,10 +74,20 @@ public sealed class IpcClient : IAsyncDisposable
                     workspaceId, epoch, null, null)),
             cancellationToken).ConfigureAwait(false);
 
-        if (response.Ok)
+        if (!response.Ok)
         {
-            _capability = response.Payload;
+            return response;
         }
+
+        var opened = JsonSerializer.Deserialize<IpcOpenResult>(response.Payload!, Wire);
+        if (opened is null)
+        {
+            return IpcResponse.Error(
+                IpcErrorCodes.MalformedEnvelope, "the daemon's handshake response was not readable");
+        }
+
+        _capability = opened.Capability;
+        Epoch = opened.Epoch;
 
         return response;
     }

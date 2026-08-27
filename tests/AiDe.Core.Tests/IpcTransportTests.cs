@@ -267,6 +267,7 @@ public sealed class IpcTransportTests
             await Send(raw, IpcMessage.Open, "open", null);
             var opened = await Receive(raw);
             Assert.True(opened.Ok, opened.Reason);
+            var capability = Capability(opened);
 
             // Written and read CONCURRENTLY, which is what a real pipelining client does and what
             // this had to become: with the writes done first, the responses fill the pipe's buffer,
@@ -279,7 +280,7 @@ public sealed class IpcTransportTests
             {
                 for (var i = 0; i < Flood; i++)
                 {
-                    await Send(raw, IpcMessage.Invoke, "describe", opened.Payload);
+                    await Send(raw, IpcMessage.Invoke, "describe", capability);
                 }
             });
 
@@ -531,6 +532,10 @@ public sealed class IpcTransportTests
     }
 
     // ---- helpers for the raw-frame cases ------------------------------------------
+
+    /// <summary>The capability out of a handshake response, which now carries the epoch too.</summary>
+    private static string Capability(IpcResponse opened) =>
+        System.Text.Json.JsonSerializer.Deserialize<IpcOpenResult>(opened.Payload!)!.Capability;
 
     private static Task Send(Stream pipe, string kind, string operation, string? capability) =>
         IpcFraming.WriteAsync(

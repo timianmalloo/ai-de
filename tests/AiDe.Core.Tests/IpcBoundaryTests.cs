@@ -27,6 +27,17 @@ public sealed class IpcBoundaryTests
         return (endpoint, registry);
     }
 
+    /// <summary>The capability from a handshake response.</summary>
+    /// <remarks>
+    /// The handshake returns <see cref="IpcOpenResult"/> rather than a bare token, because the epoch
+    /// has to travel with it: a freshly connected shell cannot ask for the epoch, since asking is a
+    /// command and every command is judged against the epoch it claims.
+    /// </remarks>
+    private static string? Capability(IpcResponse response) =>
+        response.Payload is null
+            ? null
+            : System.Text.Json.JsonSerializer.Deserialize<IpcOpenResult>(response.Payload)!.Capability;
+
     private static IpcPeer Peer(int processId = 1234, string connection = "conn-a") =>
         new("S-1-5-21-owner", processId, connection);
 
@@ -49,7 +60,7 @@ public sealed class IpcBoundaryTests
         var response = endpoint.OpenWorkspace(Request(null), Peer());
 
         Assert.True(response.Ok);
-        Assert.False(string.IsNullOrWhiteSpace(response.Payload));
+        Assert.False(string.IsNullOrWhiteSpace(Capability(response)));
         Assert.Equal(1, registry.Count);
     }
 
@@ -99,7 +110,7 @@ public sealed class IpcBoundaryTests
     {
         var (endpoint, _) = Daemon();
         var peer = Peer();
-        var token = endpoint.OpenWorkspace(Request(null), peer).Payload;
+        var token = Capability(endpoint.OpenWorkspace(Request(null), peer));
 
         var response = endpoint.Invoke(Request(token), peer);
 
@@ -137,7 +148,7 @@ public sealed class IpcBoundaryTests
     {
         var (endpoint, _) = Daemon();
         var original = Peer(connection: "conn-a");
-        var token = endpoint.OpenWorkspace(Request(null), original).Payload;
+        var token = Capability(endpoint.OpenWorkspace(Request(null), original));
 
         var thief = Peer(connection: "conn-b");
         var response = endpoint.Invoke(Request(token), thief);
@@ -153,7 +164,7 @@ public sealed class IpcBoundaryTests
     {
         var (endpoint, _) = Daemon();
         var original = Peer(processId: 1234);
-        var token = endpoint.OpenWorkspace(Request(null), original).Payload;
+        var token = Capability(endpoint.OpenWorkspace(Request(null), original));
 
         var impostor = Peer(processId: 5678);
         var response = endpoint.Invoke(Request(token), impostor);
@@ -167,7 +178,7 @@ public sealed class IpcBoundaryTests
     {
         var (endpoint, _) = Daemon();
         var peer = Peer();
-        var token = endpoint.OpenWorkspace(Request(null), peer).Payload;
+        var token = Capability(endpoint.OpenWorkspace(Request(null), peer));
 
         var response = endpoint.Invoke(Request(token, workspace: "ws-other"), peer);
 
@@ -182,7 +193,7 @@ public sealed class IpcBoundaryTests
     {
         var (endpoint, registry) = Daemon();
         var peer = Peer();
-        var token = endpoint.OpenWorkspace(Request(null), peer).Payload!;
+        var token = Capability(endpoint.OpenWorkspace(Request(null), peer))!;
 
         Assert.True(registry.Revoke(token));
 
@@ -211,7 +222,7 @@ public sealed class IpcBoundaryTests
     public void Revoke_IsIdempotent()
     {
         var (endpoint, registry) = Daemon();
-        var token = endpoint.OpenWorkspace(Request(null), Peer()).Payload!;
+        var token = Capability(endpoint.OpenWorkspace(Request(null), Peer()))!;
 
         Assert.True(registry.Revoke(token));
         Assert.False(registry.Revoke(token));
@@ -224,7 +235,7 @@ public sealed class IpcBoundaryTests
     {
         var (endpoint, _) = Daemon();
         var peer = Peer();
-        var token = endpoint.OpenWorkspace(Request(null), peer).Payload;
+        var token = Capability(endpoint.OpenWorkspace(Request(null), peer));
 
         var response = endpoint.Invoke(Request(token, epoch: Epoch - 1), peer);
 
@@ -243,7 +254,7 @@ public sealed class IpcBoundaryTests
         endpoint.Register("describe", (_, _) => IpcResponse.Success("described"));
 
         var peer = Peer();
-        var token = endpoint.OpenWorkspace(Request(null), peer).Payload;
+        var token = Capability(endpoint.OpenWorkspace(Request(null), peer));
 
         epoch++;   // the core restarted underneath the holder
 
@@ -263,7 +274,7 @@ public sealed class IpcBoundaryTests
     {
         var (endpoint, _) = Daemon();
         var peer = Peer();
-        var token = endpoint.OpenWorkspace(Request(null), peer).Payload;
+        var token = Capability(endpoint.OpenWorkspace(Request(null), peer));
 
         var response = endpoint.Invoke(
             Request(token, operation: operation, commandId: commandId), peer);
@@ -277,7 +288,7 @@ public sealed class IpcBoundaryTests
     {
         var (endpoint, _) = Daemon();
         var peer = Peer();
-        var token = endpoint.OpenWorkspace(Request(null), peer).Payload;
+        var token = Capability(endpoint.OpenWorkspace(Request(null), peer));
 
         var response = endpoint.Invoke(Request(token, operation: "drop-everything"), peer);
 
@@ -378,7 +389,7 @@ public sealed class IpcBoundaryTests
         var peer = Peer();
 
         var tokens = Enumerable.Range(0, 64)
-            .Select(_ => endpoint.OpenWorkspace(Request(null), peer).Payload!)
+            .Select(_ => Capability(endpoint.OpenWorkspace(Request(null), peer))!)
             .ToList();
 
         Assert.Equal(64, tokens.Distinct(StringComparer.Ordinal).Count());

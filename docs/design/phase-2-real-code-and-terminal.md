@@ -424,6 +424,30 @@ underneath it, and the split is now real rather than designed.
 `find`, `impact` and the dispatch surface behind the endpoint is the next piece of the process split,
 and doing half of it here would leave a boundary partly crossed — worse than one honestly not yet.
 
+#### The read surface now crosses the boundary
+
+**BUILT 2026-08-27.** `WorkspaceOperations` registers `describe`, `impact`, `find` and `knowledge`
+on the endpoint; `WorkspaceClient` is the typed proxy; the daemon opens a real `WorkspaceCore`.
+Until this, the boundary existed and almost nothing crossed it.
+
+**The property the tests assert is agreement**: each projection is run in process and across the
+pipe against one store, and the whole results are compared. Serialisation is where agreement is
+lost — a field that does not round-trip, an enum that renumbers, a bound nothing read — and
+comparing a node id would catch none of them.
+
+**Enums travel as strings.** By number, inserting a member renumbers every later one, and the
+dual-major handshake exists so an old shell may meet a new daemon: that is a wire break with no
+error and no symptom except wrong answers.
+
+**The handshake now returns the epoch** (`IpcOpenResult`), which a protocol gap forced. Every
+command states the epoch it was authored against and the daemon rejects a mismatch — so a freshly
+connected shell could not ask for the epoch, because asking is itself a command subject to the
+fence. Returning it from the handshake is the only ordering that terminates; exempting an `epoch`
+operation would have put a hole in the fence to work around an ordering problem.
+
+**Not moved:** dispatch. Writing to a terminal and staging a prompt carry ADR-0010's two-phase
+receipt semantics, and half-crossing that boundary is worse than not yet crossing it.
+
 #### Three controls that could not fire, and what replaced them
 
 Mutation testing found the same shape three times, now registered as **DC-016**:

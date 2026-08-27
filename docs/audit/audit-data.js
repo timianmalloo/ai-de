@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-ipc-transport",
-  "generated": "2026-08-27T18:41:05Z",
+  "project": "ai-de-feat-daemon-operations",
+  "generated": "2026-08-27T19:16:22Z",
   "audit": [
     {
       "id": "al-0001",
@@ -831,6 +831,38 @@ window.AUDIT_DATA = {
         "sha": "c1cc9defa01ba1d4fbf91b1672c3a54fa2cf172e",
         "short": "c1cc9defa",
         "branch": "feat/ipc-transport",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0041",
+      "shortname": "daemon-operations",
+      "datetime": "2026-08-27T19:16:22Z",
+      "session": "daemon-operations-2026-08-27",
+      "prompt": "do your best next action - the daemon endpoint and then carry on to the P2-UPGRADE",
+      "summary": "The core's read surface now crosses the boundary: describe/impact/find/knowledge registered on the daemon endpoint, a typed WorkspaceClient proxy, and the daemon opening a real WorkspaceCore. Tests assert AGREEMENT — each projection run in process and over the pipe against one store, whole results compared, because serialisation is where agreement is lost. A protocol gap surfaced and was closed properly: every command is judged against the epoch it claims, so a freshly connected shell could not ask for the epoch (asking is itself a command); the handshake now returns IpcOpenResult carrying capability AND epoch, rather than putting a hole in the fence. Enums travel as strings so adding a member cannot renumber existing ones under a dual-major handshake. Also caught my own vacuous tests: the fixture committed under a scope the assertions did not carry, so both sides were empty and compared equal — non-vacuity guards added (DC-015). Dispatch deliberately NOT moved: it carries ADR-0010 two-phase receipts and half-crossing is worse than not yet. 418 tests (+11), four gates clean.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/WorkspaceOperations.cs",
+        "src/AiDe.Core/Ipc/WorkspaceClient.cs",
+        "src/AiDe.Daemon/Program.cs",
+        "tests/AiDe.Core.Tests/DaemonOperationsTests.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "ipc",
+        "process-split"
+      ],
+      "outcome": "success",
+      "goal": "Move the core's read surface behind the daemon endpoint so the trust boundary is actually used",
+      "done_when": "describe/impact/find/knowledge answered by a daemon over a pipe, agreeing with the in-process projection, gates clean, committed",
+      "git": {
+        "sha": "905e602e728b029376cf582277cd71924ad0ad95",
+        "short": "905e602e7",
+        "branch": "feat/daemon-operations",
         "pushed": null
       }
     }

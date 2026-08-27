@@ -73,11 +73,15 @@ public sealed class DaemonEndpoint
                 "this daemon serves a different workspace");
         }
 
-        var capability = _capabilities.Issue(peer, WorkspaceId, _epochOf(WorkspaceId));
+        var epoch = _epochOf(WorkspaceId);
+        var capability = _capabilities.Issue(peer, WorkspaceId, epoch);
         span?.SetTag("ipc.capability_issued", true);
 
-        // The token is the payload and appears nowhere else — not in the span, not in a log.
-        return IpcResponse.Success(capability.Token);
+        // The token rides in the payload and appears nowhere else — not in the span, not in a log.
+        // The epoch travels with it because a freshly connected shell cannot ask for it: asking is a
+        // command, and every command is judged against the epoch it claims.
+        return IpcResponse.Success(
+            System.Text.Json.JsonSerializer.Serialize(new IpcOpenResult(capability.Token, epoch)));
     }
 
     /// <summary>Handles a command: every gate, in order, before any operation runs.</summary>

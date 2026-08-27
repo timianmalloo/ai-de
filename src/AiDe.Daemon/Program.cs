@@ -1,4 +1,5 @@
 using System.Runtime.Versioning;
+using AiDe.Core;
 using AiDe.Core.Ipc;
 
 namespace AiDe.Daemon;
@@ -57,10 +58,18 @@ internal static class Program
 
         using (workspaceLock)
         {
+            WorkspaceCore? core = null;
+
             try
             {
                 var pipeName = IpcPipeName.ForWorkspace(workspacePath);
-                var server = new IpcServer(pipeName, BuildEndpoint(workspacePath), options);
+
+                // Opened AFTER the lock and before the pipe. A daemon that published an endpoint and
+                // then failed to open its store would be reachable while unable to answer anything.
+                var (endpoint, opened) = OpenWorkspace(workspacePath);
+                core = opened;
+
+                var server = new IpcServer(pipeName, endpoint, options);
 
                 // stdout, so a supervisor can confirm which pipe to reach without guessing. The
                 // workspace PATH is not printed: the name is derived precisely so the path does not
@@ -83,32 +92,46 @@ internal static class Program
                 await Console.Error.WriteLineAsync($"daemon could not start: {ex.Message}");
                 return ExitStartupFailed;
             }
+            finally
+            {
+                // Closed before the workspace lock is released, so the next daemon never finds the
+                // store still held by a process that has already given up its claim to the workspace.
+                core?.Dispose();
+            }
         }
     }
 
     /// <summary>
-    /// The operations this daemon serves.
+    /// Opens the workspace and puts its read surface behind the endpoint.
     /// </summary>
     /// <remarks>
-    /// <para><b>Deliberately minimal, and stated so rather than disguised.</b> This phase delivers
-    /// the boundary — process, pipe, identity, lifetime — not the migration of the core's command
-    /// surface behind it. <c>ping</c> and <c>epoch</c> are real operations that exercise the whole
-    /// path end to end; moving <c>describe</c>, <c>find</c>, <c>impact</c> and the dispatch surface
-    /// across is the next piece of the process split, and doing half of it here would leave a
-    /// boundary that is partly crossed, which is worse than one that is honestly not yet.</para>
+    /// <para><b>Read projections and the daemon's own two operations.</b> Dispatch — writing to a
+    /// terminal, staging a prompt — carries the two-phase receipt semantics of ADR-0010 and moves
+    /// across as its own piece of work; registering a handler that half-implemented it would leave
+    /// the boundary partly crossed, which is worse than one honestly not yet.</para>
     ///
-    /// <para>The epoch is fixed at 1 for the same reason: reading it from the store means opening
-    /// the store, which is the migration above.</para>
+    /// <para><b>The workspace id is the derived pipe name, not the path.</b> It travels in every
+    /// request and appears in operator output, and the pipe name was already computed precisely so
+    /// the path does not have to.</para>
     /// </remarks>
-    private static DaemonEndpoint BuildEndpoint(string workspacePath)
+    private static (DaemonEndpoint Endpoint, WorkspaceCore Core) OpenWorkspace(string workspacePath)
     {
+        var workspaceId = IpcPipeName.ForWorkspace(workspacePath);
+
+        var core = WorkspaceCore.Open(
+            workspaceId,
+            workspacePath,
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AiDe", "workspaces", workspaceId));
+
         var endpoint = new DaemonEndpoint(
-            IpcPipeName.ForWorkspace(workspacePath), new CapabilityRegistry(), _ => 1);
+            workspaceId, new CapabilityRegistry(), _ => core.Store.CoreEpoch);
 
-        endpoint.Register("ping", (_, _) => IpcResponse.Success("pong"));
-        endpoint.Register("epoch", (_, _) => IpcResponse.Success("1"));
+        DaemonOperations.Register(endpoint, () => core.Store.CoreEpoch);
+        WorkspaceOperations.Register(endpoint, core.Projections);
 
-        return endpoint;
+        return (endpoint, core);
     }
 
     /// <summary>Reads a duration flag, ignoring anything malformed rather than failing to start.</summary>
