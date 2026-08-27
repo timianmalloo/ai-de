@@ -191,10 +191,32 @@ public sealed class ConPtyTerminalSession : ITerminalSession
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        // A write to a disposed session is a FAILED delivery, not an exception. Letting
+        // ObjectDisposedException escape would hand the caller a crash where the contract promises a
+        // result — and the write-ahead dispatch above it turns an unexpected throw into a Pending
+        // attempt that the recovery sweep must later resolve as DeliveryUnknown. That is a truthful
+        // "we cannot know" standing in for a knowable "it definitely did not land".
+        lock (_stateGate)
+        {
+            if (_disposed)
+            {
+                return PtyWriteResult.Failed;
+            }
+        }
+
         // The gate is what makes "compare the generation and write" one indivisible step. Checking
         // outside it would leave a window in which the process is replaced between the check and the
         // write, and a confirmed prompt would land in a session the user never approved.
-        await _writeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await _writeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Disposed between the check above and this wait. Same answer, for the same reason.
+            return PtyWriteResult.Failed;
+        }
+
         try
         {
             if (Activity == SessionActivity.Ended)
@@ -232,7 +254,15 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         }
         finally
         {
-            _writeGate.Release();
+            try
+            {
+                _writeGate.Release();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Disposed while this write was in flight. Nothing to release, and throwing from a
+                // finally would replace whatever result the write actually produced.
+            }
         }
     }
 
