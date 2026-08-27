@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 5 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 6 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 3.
@@ -342,3 +342,36 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   in-process for a capability the host lacks. The general defence is the diagnostic above.
 - **Status:** `controlled`
 
+
+### DC-015 — A success check coarser than the claim it is standing in for
+- **Signature:** a verification passes, and it would also have passed had the specific thing it
+  exists to prove never happened. The check is real, the green is real, and it is answering a
+  broader question than the one being asked — "did *something* succeed" in place of "did *this*
+  succeed".
+- **Why it survives:** it is indistinguishable from a correct pass. There is no red to investigate
+  and no anomaly to notice, because the only evidence of the gap is a *counterfactual* — what the
+  check would have done if the work had been skipped — and nobody runs that by default. It is most
+  likely exactly where the work is parameterised: the parameter is what varies, and the success
+  signal usually is not.
+- **Instances:**
+  - 2026-08-27 — `OscRoundTripTests` passed in ~200 ms while never running the OSC probe. The `mode`
+    argument silently never reached the out-of-process helper, so it ran the *other* probe, which
+    also succeeds and also exits `0`. The exit code could not distinguish which of two probes had
+    run. Caught only because 200 ms was implausibly fast for two PowerShell round trips — i.e. by
+    a human noticing a duration, which is not a control.
+  - 2026-08-27 — the scripted edit that was supposed to add that `mode` argument did not apply, and
+    its own guard (`assert s != before`, over the whole file) passed because *other* replacements in
+    the same script had applied. A file-level "something changed" assertion cannot see a specific
+    substitution that silently matched nothing.
+- **Control:** **assert on evidence the work produced, not on its status code.** The round-trip test
+  now asserts the helper's report contains `activity after the forged claim: Busy` and
+  `activity after the authenticated claim: Ready` — strings only the OSC probe can emit — so the
+  test name and the work it did cannot come apart. **Observed failing 2026-08-27** on the un-fixed
+  code: with the `mode` argument still not wired through, the exit-code assertions passed and the
+  report assertions failed. For scripted edits the equivalent is per-replacement assertion: check
+  each pattern is present *before* substituting, never a single file-level diff check.
+- **Residual risk:** nothing mechanically detects a *new* coarse check. The general defence is the
+  question — *would this still pass if the specific thing I am claiming had not happened?* — asked of
+  any verification whose subject is parameterised, and of any status code shared by more than one
+  code path.
+- **Status:** `partially-controlled`

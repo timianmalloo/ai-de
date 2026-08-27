@@ -69,7 +69,10 @@ public sealed class ConPtyTerminalSession : ITerminalSession
     private IntPtr _thread;
     private IntPtr _job;
 
-    private SessionActivity _activity = SessionActivity.Starting;
+    private readonly TerminalActivityState _state = new();
+    private readonly OscParser _osc;
+    private readonly List<OscEvent> _oscEvents = [];
+
     private bool _truncatedSinceLastChunk;
     private bool _disposed;
 
@@ -84,6 +87,12 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         SessionId = request.SessionId;
         Generation = request.Generation;
         ProcessingClass = request.ProcessingClass;
+
+        // Generated here rather than accepted from the caller: a nonce a caller can choose is one a
+        // caller can reuse across sessions, and a value shared between two sessions authenticates
+        // claims made by the wrong child.
+        ShellIntegrationNonce = OscParser.NewNonce();
+        _osc = new OscParser(ShellIntegrationNonce);
 
         _console = console;
         _job = job;
@@ -108,6 +117,17 @@ public sealed class ConPtyTerminalSession : ITerminalSession
 
     public SessionProcessingClass ProcessingClass { get; }
 
+    /// <summary>
+    /// The secret this session's injected shell integration must echo back in its OSC 133 sequences
+    /// for them to be believed.
+    /// </summary>
+    /// <remarks>
+    /// Public because the integration script has to be given it; per-session and in-memory because a
+    /// nonce that outlived the session would authenticate a later child's claims. It is not a
+    /// credential for anything else — the worst a leak buys is the ability to lie about activity.
+    /// </remarks>
+    public string ShellIntegrationNonce { get; }
+
     public ChannelReader<TerminalChunk> Output => _output.Reader;
 
     public SessionActivity Activity
@@ -116,7 +136,7 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         {
             lock (_stateGate)
             {
-                return _activity;
+                return _state.Current;
             }
         }
     }
@@ -277,7 +297,7 @@ public sealed class ConPtyTerminalSession : ITerminalSession
 
         lock (_stateGate)
         {
-            if (_activity == SessionActivity.Ended || _console == IntPtr.Zero)
+            if (_state.Current == SessionActivity.Ended || _console == IntPtr.Zero)
             {
                 return ValueTask.CompletedTask;
             }
@@ -320,13 +340,25 @@ public sealed class ConPtyTerminalSession : ITerminalSession
                     break; // EOF: the console's write end is closed, so the process is gone.
                 }
 
+                // Read for state BEFORE the chunk is published. The output channel drops the oldest
+                // entry under load, so a parser fed from the reader's side would lose exactly the
+                // sequences emitted during a flood — the moment activity state matters most.
+                _oscEvents.Clear();
+                var claimed = _osc.Consume(buffer.AsSpan(0, read), _oscEvents);
+
                 lock (_stateGate)
                 {
-                    if (_activity is SessionActivity.Starting or SessionActivity.Ready)
+                    if (claimed is not null)
                     {
-                        _activity = SessionActivity.Busy;
+                        _state.OnOscClaim(claimed.Value);
+                    }
+                    else
+                    {
+                        _state.OnOutput();
                     }
                 }
+
+                RecordOscEvents();
 
                 var chunk = new TerminalChunk(buffer.AsSpan(0, read).ToArray(), _truncatedSinceLastChunk);
                 _truncatedSinceLastChunk = false;
@@ -345,10 +377,7 @@ public sealed class ConPtyTerminalSession : ITerminalSession
                     _truncatedSinceLastChunk = true;
                     lock (_stateGate)
                     {
-                        if (_activity != SessionActivity.Ended)
-                        {
-                            _activity = SessionActivity.OutputOverload;
-                        }
+                        _state.OnOverload();
                     }
                 }
             }
@@ -363,6 +392,37 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         finally
         {
             _output.Writer.TryComplete();
+        }
+    }
+
+    /// <summary>
+    /// Emits a span for any OSC sequence that was refused, so a rejected control is visible rather
+    /// than silent.
+    /// </summary>
+    /// <remarks>
+    /// <para>Honoured sequences are deliberately not recorded: they are the normal case and would be
+    /// pure volume. A <i>refusal</i> is the interesting event — a burst of
+    /// <see cref="OscDisposition.RefusedUnauthenticated"/> means something in the session is emitting
+    /// state claims it cannot authenticate, which is either broken integration or a child trying it
+    /// on, and both are worth being able to see.</para>
+    ///
+    /// <para><b>Kind and disposition only.</b> Both are values from our own closed enums, so no byte
+    /// the child chose can reach telemetry through here — which is the rule for the whole terminal
+    /// path, restated at the one place that writes to a span from inside the read loop.</para>
+    /// </remarks>
+    private void RecordOscEvents()
+    {
+        foreach (var osc in _oscEvents)
+        {
+            if (osc.Disposition is OscDisposition.Honoured or OscDisposition.Ignored)
+            {
+                continue;
+            }
+
+            using var span = Telemetry.StartActivity("terminal.osc.refused");
+            span?.SetTag("session.id", SessionId);
+            span?.SetTag("osc.kind", osc.Kind.ToString());
+            span?.SetTag("osc.disposition", osc.Disposition.ToString());
         }
     }
 
@@ -394,12 +454,12 @@ public sealed class ConPtyTerminalSession : ITerminalSession
     {
         lock (_stateGate)
         {
-            if (_activity == SessionActivity.Ended)
+            if (_state.Current == SessionActivity.Ended)
             {
                 return;
             }
 
-            _activity = SessionActivity.Ended;
+            _state.OnEnded();
         }
 
         // Complete the channel first so a reader woken by the exit and then draining finds a

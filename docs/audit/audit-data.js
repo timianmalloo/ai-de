@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-ipc",
-  "generated": "2026-08-27T16:14:39Z",
+  "project": "ai-de-feat-osc-parser",
+  "generated": "2026-08-27T16:50:40Z",
   "audit": [
     {
       "id": "al-0001",
@@ -697,6 +697,39 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0037",
+      "shortname": "osc-parser",
+      "datetime": "2026-08-27T16:50:40Z",
+      "session": "osc-parser-2026-08-27",
+      "prompt": "do the OSC parser task next; but dont forget to always give me the update of the tasks and status and the best next action <<< both in tabular form when yhou finish a turn",
+      "summary": "OSC 133 parser for the terminal runtime, nonce-authenticated and advisory-only. Closed the unknown that gated the whole feature: measured through a real pseudo console that OSC SURVIVES the ConPTY round trip — an authenticated OSC 133;D drove the session to Ready, an unauthenticated one left it at Busy. Before this, SessionActivity.Ready was a declared state nothing produced. Per-session 128-bit nonce, length-checked and fixed-time compared; OSC 52/8 refused outright rather than sanitised (no clipboard or hyperlink code path exists to reach); OSC 633 never honoured. First authenticated claim makes OSC authoritative so the output heuristic retires and a shell's own prompt cannot undo the Ready it just announced. Payload capped at 1 KiB with resync so an unterminated flood cannot grow without limit. 7/7 mutations caught. 216 Core tests (+33), all four gates clean. Registered DC-015 after a test passed in 200ms without running its probe: a success check coarser than the claim it stands for.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/OscParser.cs",
+        "src/AiDe.Core/Terminal/TerminalActivityState.cs",
+        "tests/AiDe.Core.Tests/OscParserTests.cs",
+        "tests/AiDe.Core.Tests/OscRoundTripTests.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "phase-2",
+        "terminal",
+        "security"
+      ],
+      "outcome": "success",
+      "goal": "Implement the OSC parser: close P2-TERM-06/07 and make SessionActivity.Ready a state the runtime actually produces",
+      "done_when": "Allowlisted OSC subset parsed, OSC 52/8 disabled outright, session nonce required before any state claim, forged-OSC-133 negative test red-then-green, wired into ConPtyTerminalSession, four gates clean, committed",
+      "git": {
+        "sha": "36f0c476b0a26360e8482cf3ec6c55a8413ad763",
+        "short": "36f0c476b",
+        "branch": "feat/osc-parser",
+        "pushed": null
+      }
     }
   ],
   "changes": [

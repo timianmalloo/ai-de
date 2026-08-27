@@ -368,12 +368,12 @@ public sealed class ConPtyTerminalSessionConformanceTests : TerminalSessionConfo
     /// </remarks>
     public override async Task Output_DeliversTheChildProcessesOwnOutput()
     {
-        var helper = LocateHelper();
+        var helper = TerminalHostLauncher.LocateHelper();
         var report = Path.Combine(Path.GetTempPath(), $"aide-conpty-host-{Guid.NewGuid():N}.log");
 
         try
         {
-            var exitCode = await RunInNewConsoleAsync(helper, report, TimeSpan.FromSeconds(45));
+            var exitCode = await TerminalHostLauncher.RunInNewConsoleAsync(helper, report, TimeSpan.FromSeconds(45));
             var detail = File.Exists(report) ? File.ReadAllText(report) : "(no report written)";
 
             Assert.True(exitCode != 4, $"the helper had no console — the launch flag is wrong.\n{detail}");
@@ -393,87 +393,4 @@ public sealed class ConPtyTerminalSessionConformanceTests : TerminalSessionConfo
             }
         }
     }
-
-    /// <summary>The helper executable, built alongside the tests and found relative to them.</summary>
-    private static string LocateHelper()
-    {
-        var root = Path.GetFullPath(Path.Combine(
-            AppContext.BaseDirectory, "..", "..", "..", "..", "AiDe.Core.TerminalHost", "bin"));
-        var configuration = Directory.Exists(Path.Combine(root, "Release")) ? "Release" : "Debug";
-        var candidate = Path.Combine(root, configuration, "net10.0", "AiDe.Core.TerminalHost.exe");
-
-        Assert.True(
-            File.Exists(candidate),
-            $"the terminal host helper was not built. Expected it at:\n  {candidate}\n"
-            + "Build the solution rather than the test project alone.");
-
-        return candidate;
-    }
-
-    /// <summary>
-    /// Starts the helper with <c>CREATE_NEW_CONSOLE</c> and waits for its verdict.
-    /// </summary>
-    /// <remarks>
-    /// <c>Process.Start</c> cannot request a new console, so this is the one place a test needs
-    /// interop of its own.
-    /// </remarks>
-    private static async Task<int> RunInNewConsoleAsync(string exe, string report, TimeSpan limit)
-    {
-        const uint CREATE_NEW_CONSOLE = 0x00000010;
-
-        var startup = new NativeStartupInfo { cb = Marshal.SizeOf<NativeStartupInfo>() };
-        var commandLine = $"\"{exe}\" \"{report}\"\0".ToCharArray();
-
-        if (!CreateProcessW(
-                null, ref commandLine[0], IntPtr.Zero, IntPtr.Zero, false, CREATE_NEW_CONSOLE,
-                IntPtr.Zero, Path.GetDirectoryName(exe), ref startup, out var info))
-        {
-            Assert.Fail($"could not start the helper: Win32 error {Marshal.GetLastWin32Error()}");
-        }
-
-        try
-        {
-            using var process = System.Diagnostics.Process.GetProcessById(info.dwProcessId);
-            using var deadline = new CancellationTokenSource(limit);
-            await process.WaitForExitAsync(deadline.Token);
-            return process.ExitCode;
-        }
-        catch (OperationCanceledException)
-        {
-            Assert.Fail("the terminal host helper did not exit within its deadline");
-            return -1;
-        }
-        finally
-        {
-            CloseHandle(info.hThread);
-            CloseHandle(info.hProcess);
-        }
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct NativeStartupInfo
-    {
-        public int cb;
-        public IntPtr lpReserved, lpDesktop, lpTitle;
-        public int dwX, dwY, dwXSize, dwYSize, dwXCountChars, dwYCountChars, dwFillAttribute, dwFlags;
-        public short wShowWindow, cbReserved2;
-        public IntPtr lpReserved2, hStdInput, hStdOutput, hStdError;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct NativeProcessInformation
-    {
-        public IntPtr hProcess, hThread;
-        public int dwProcessId, dwThreadId;
-    }
-
-    [DllImport("kernel32.dll", EntryPoint = "CreateProcessW", SetLastError = true, CharSet = CharSet.Unicode)]
-    private static extern bool CreateProcessW(
-        string? applicationName, ref char commandLine, IntPtr processAttributes,
-        IntPtr threadAttributes, bool inheritHandles, uint creationFlags, IntPtr environment,
-        string? currentDirectory, ref NativeStartupInfo startupInfo,
-        out NativeProcessInformation information);
-
-    [DllImport("kernel32.dll", SetLastError = true)]
-    private static extern bool CloseHandle(IntPtr handle);
 }

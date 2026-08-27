@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-27T00:27:47Z",
+  "generated": "2026-08-27T16:50:58Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1292,7 +1292,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "15b2c7f10ec21ac6477409513a9499a42b9ed36f4171a8e8acf50a86348f31a5"
+      "sourceSha256": "5b2370fff1c170a8cef28f010a5cb05caccd9715b7d0c1894de26d8cab0bf287"
     },
     {
       "id": "audit-log",
@@ -1342,7 +1342,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "93373be82e4b9a04534ec898bad4027695c57220d725ae318ee7b8dee2214b62"
+      "sourceSha256": "103c6521e4b3940b44d47520f0e602c6bde00e795017ec8ea52bf0e3fe28e445"
     },
     {
       "id": "lens-code-doc-join",
@@ -4023,7 +4023,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-s4-decision — Audit & Change Log",
+      "title": "ai-de-feat-osc-parser — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4045,5 +4045,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "6220611ee239d58eeb53065aad4a0ba6542117472dd1109bfc8b4f92cb06517a"
+  "graphSha256": "dd7059caa0909092c33b6207719547d27c7c1c5639c0053e54f6a3a538d7bf82"
 };
