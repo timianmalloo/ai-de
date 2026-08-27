@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Text;
 using AiDe.Core.Dispatch;
+using AiDe.Core;
 using AiDe.Core.Facts;
 using AiDe.Core.Terminal;
 
@@ -58,6 +60,11 @@ internal static class Program
         if (mode == "integration")
         {
             return await IntegrationAsync(report, log);
+        }
+
+        if (mode == "privacy")
+        {
+            return await PrivacyAsync(report, log);
         }
 
         ConPtyTerminalSession session;
@@ -349,6 +356,174 @@ internal static class Program
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// `P2-PRIV-01` — a secret printed by a terminal must reach the screen and nowhere else.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Terminal output is the highest-volume personal and work data in the product.</b>
+    /// Credentials, tokens and customer data all pass through a terminal, and the design's answer is
+    /// that it is ephemeral by construction: a bounded in-memory ring, never written to the store,
+    /// logs, metrics or traces. That is an <i>absence</i>, and the only honest way to assert an
+    /// absence is to seed something unique and go looking for it.</para>
+    ///
+    /// <para><b>The non-vacuity check is the important half.</b> An absence over an empty set is
+    /// free — if the secret never reached the terminal at all, every assertion below passes while
+    /// proving nothing. So this first requires the seed to arrive on the output channel, and only
+    /// then requires it to be nowhere else.</para>
+    ///
+    /// <para>It runs here because a real ConPTY child needs a real console (<b>DC-014</b>), and a
+    /// real child is the point: a fixture session would only prove that the fixture keeps secrets.</para>
+    ///
+    /// <para>Exit codes: <b>0</b> the seed reached the screen and nothing else, <b>3</b> could not
+    /// start, <b>6</b> it reached a span attribute, <b>7</b> it reached a file in the workspace,
+    /// <b>8</b> it never reached the terminal, so every assertion would have been vacuous, <b>9</b>
+    /// a workspace file could not be read, so the check did not cover what it claims to.</para>
+    /// </remarks>
+    private static async Task<int> PrivacyAsync(string? report, StringBuilder log)
+    {
+        // Generated per run, so a stale artifact from a previous run can neither cause a pass nor a
+        // failure, and unique enough that a match cannot be coincidence.
+        var seed = "AIDE-PRIV-" + Guid.NewGuid().ToString("N");
+
+        var captured = new List<Activity>();
+        using var listener = new ActivityListener
+        {
+            // Every source, not a prefix. A listener scoped to a naming convention cannot see a
+            // source that broke it, which is exactly how a privacy net develops a hole.
+            ShouldListenTo = _ => true,
+            Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+            ActivityStopped = activity => { lock (captured) { captured.Add(activity); } },
+        };
+        ActivitySource.AddActivityListener(listener);
+
+        var workspaceRoot = Path.Combine(Path.GetTempPath(), $"aide-priv-root-{Guid.NewGuid():N}");
+        var dataDirectory = Path.Combine(Path.GetTempPath(), $"aide-priv-data-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(workspaceRoot);
+
+        ConPtyTerminalSession session;
+        WorkspaceCore core;
+
+        try
+        {
+            // A REAL workspace beside the terminal, so "output never crosses into the store" is
+            // asserted against a store that exists and has been written to, not an empty directory.
+            core = WorkspaceCore.Open("priv", workspaceRoot, dataDirectory);
+            await core.RefreshScopeAsync("fixture", "rev-1");
+
+            session = await ConPtyTerminalSession.StartAsync(
+                new TerminalSessionRequest(
+                    SessionId: "privacy-probe",
+                    Generation: 1,
+                    // The seed is in the COMMAND LINE as well as printed later. The privacy
+                    // analysis says a session's command line "may contain paths or arguments" and
+                    // is excluded from telemetry — a separate claim from output, and one nothing
+                    // tested until a mutation added a command-line tag and no test failed.
+                    CommandLine: $"cmd.exe /c echo {seed} && echo {seed}",
+                    WorkingDirectory: Path.GetTempPath(),
+                    Columns: 80,
+                    Rows: 25,
+                    ProcessingClass: SessionProcessingClass.LocalOnly),
+                CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            log.AppendLine($"could not start: {ex.GetType().Name}: {ex.Message}");
+            Write(report, log);
+            return 3;
+        }
+
+        await using (session)
+        {
+            // The child prints the seed twice on its own, so nothing needs to be typed. WaitForAsync
+            // requires two occurrences, which is why the command line echoes it twice.
+            var reached = await WaitForAsync(session, seed, log);
+
+            if (!reached)
+            {
+                log.AppendLine("the seed never reached the output channel; every absence below would be vacuous");
+                Write(report, log);
+                return 8;
+            }
+
+            log.AppendLine("the seed reached the terminal's output channel, as it must");
+
+            var spanLeaks = new List<string>();
+
+            lock (captured)
+            {
+                foreach (var activity in captured)
+                {
+                    foreach (var tag in activity.Tags)
+                    {
+                        if ((tag.Value ?? string.Empty).Contains(seed, StringComparison.Ordinal))
+                        {
+                            spanLeaks.Add($"{activity.OperationName}/{tag.Key}");
+                        }
+                    }
+                }
+
+                log.AppendLine($"spans captured: {captured.Count}");
+            }
+
+            if (spanLeaks.Count > 0)
+            {
+                log.AppendLine("LEAKED into span attributes: " + string.Join(", ", spanLeaks));
+                Write(report, log);
+                return 6;
+            }
+
+            // CLOSED BEFORE SCANNING. SQLite holds the database open, and the first run of this
+            // probe reported it could not read workspace.db — so the most important file in the
+            // check was not being covered at all. The honest report exposed it; leaving the core
+            // open would have left a passing test that skipped the store.
+            core.Dispose();
+
+            // Every file the workspace wrote: the store, the audit trail, the health sidecar.
+            var fileLeaks = new List<string>();
+            var unreadable = new List<string>();
+            var scanned = 0;
+
+            foreach (var file in Directory.EnumerateFiles(dataDirectory, "*", SearchOption.AllDirectories))
+            {
+                try
+                {
+                    scanned++;
+                    if (File.ReadAllText(file).Contains(seed, StringComparison.Ordinal))
+                    {
+                        fileLeaks.Add(Path.GetFileName(file));
+                    }
+                }
+                catch (IOException)
+                {
+                    // A FAILURE, not a note. A file this run could not read is a file the check did
+                    // not cover, and a pass that skipped the store would be exactly the kind of
+                    // absence-over-an-empty-set this whole probe exists to avoid.
+                    unreadable.Add(Path.GetFileName(file));
+                }
+            }
+
+            log.AppendLine($"workspace files scanned: {scanned - unreadable.Count} of {scanned}");
+
+            if (unreadable.Count > 0)
+            {
+                log.AppendLine("NOT COVERED — these files could not be read: " + string.Join(", ", unreadable));
+                Write(report, log);
+                return 9;
+            }
+
+            if (fileLeaks.Count > 0)
+            {
+                log.AppendLine("LEAKED into workspace files: " + string.Join(", ", fileLeaks));
+                Write(report, log);
+                return 7;
+            }
+
+            log.AppendLine("the seed reached no span attribute and no workspace file");
+            Write(report, log);
+            return 0;
+        }
     }
 
     private static async Task SendAsync(ConPtyTerminalSession session, string line) =>

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 8 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 9 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 3.
@@ -459,4 +459,36 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 - **Residual risk:** this control covers the evidence surface only. Nothing fails when a new surface
   is added with the same shape of glue, and the general defence remains E11/E12 — prove the rendered
   surface, not the model behind it — plus actually running the application.
+- **Status:** `partially-controlled`
+
+### DC-018 — A guard that watches by name, and a name that moved
+- **Signature:** a control selects what it protects by a naming convention — a prefix, a suffix, a
+  folder, an attribute — and something correct is added under a different name. The control keeps
+  passing, because it is looking at a set the new thing is not in. Nothing is broken; something is
+  simply unwatched, and the gap is silent by construction.
+- **Why it survives:** the control is green and the new code is fine. There is no failure to
+  investigate, and no reviewer of the new code has any reason to think about a convention enforced
+  somewhere else entirely. It compounds quietly: the longer the gap exists, the more code accretes
+  inside it, and the harder the eventual correction is to make safely.
+- **Instances:** 2026-08-27 — `TelemetryTests` enforces the privacy floor ("no path, prompt or
+  source text in a span attribute") over `ActivitySource`s whose name begins `aide.`. Every source
+  added with the process split was named `AiDe.Core.Ipc` / `AiDe.Core.Terminal` /
+  `AiDe.Core.Upgrade`. For four commits the IPC boundary, the terminal runtime and the upgrade
+  coordinator emitted spans that **no privacy assertion could see** — including spans on the first
+  cross-process trust boundary in the product.
+- **Control:** the sources were renamed under `aide.`, and
+  `PrivacyMarkerTests.EveryActivitySource_IsUnderTheAideNamespace` now fails when one is not — it
+  scans the source text, so an emitter that no test exercises is still covered. Its own privacy
+  listener subscribes to **every** source rather than a prefix, because a listener scoped to the
+  convention cannot see the thing that broke it. **Observed failing 2026-08-27** by renaming a source
+  back.
+- **The second lesson, which cost more than the first:** that scan was itself vacuous on its first
+  attempt. It matched `new ActivitySource("…")` while every declaration in the codebase is
+  target-typed `ActivitySource X = new("…")`, so it scanned **zero** sources and passed. Mutation
+  caught it. The control now asserts a **minimum match count** — a scan that finds nothing satisfies
+  every assertion about what it found (**DC-015**).
+- **Residual risk:** the same shape applies to any other name-selected control — test discovery by
+  filename, `[SupportedOSPlatform]`, the docs-graph frontmatter sweep. The general defence is to ask
+  of every convention-scoped control: *what is the set this actually looks at, and what would it take
+  for something to be outside it?*
 - **Status:** `partially-controlled`

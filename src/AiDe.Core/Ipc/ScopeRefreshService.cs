@@ -59,7 +59,7 @@ public sealed record RefreshStatusRequest(string CommandId);
 /// </remarks>
 public sealed class ScopeRefreshService
 {
-    private static readonly ActivitySource Telemetry = new("AiDe.Core.Ipc");
+    private static readonly ActivitySource Telemetry = new("aide.ipc.command");
 
     /// <summary>Finished jobs kept for collection by a client that has not asked yet.</summary>
     /// <remarks>

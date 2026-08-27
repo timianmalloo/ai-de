@@ -639,6 +639,47 @@ too late for every store already on disk, which is the same reason `LayoutMigrat
 | Two shells open the same workspace | Split lifetime | **prevent** | The existing OS-level workspace ownership lock; the second gets a stable "already open" code | `P2-IPC-06` |
 | A pipe client floods commands | New boundary | **mitigate** | Bounded control lane already specified; per-connection admission | `P2-IPC-07` |
 
+### Privacy, seeded and measured (P2-PRIV-01/02)
+
+**BUILT 2026-08-27.** `TerminalPrivacyTests` (P2-PRIV-01, out of process against a real ConPTY child)
+and `PrivacyMarkerTests` (P2-PRIV-02, the daemon's own spans).
+
+**An absence is seeded, never reasoned about.** Reading the code and concluding nothing writes output
+to the store is an inference; printing a unique string and then searching every span attribute and
+every file the workspace wrote is a measurement.
+
+**Two ways these tests could have lied, and both did before they were fixed:**
+
+- **The seed never arriving** makes every absence hold trivially. The probe now requires the seed to
+  reach the output channel before it asserts it is nowhere else.
+- **A file that could not be read** is a file the scan did not cover. The first run reported *"could
+  not read workspace.db"* — SQLite held it open, so **the store, the most important file in the
+  check, was never scanned** while the probe reported success. The core is now closed before
+  scanning, and an unreadable file fails the run rather than being noted.
+
+**The command line is asserted as well as the output**, because the privacy analysis makes them
+separate claims: a session's command line "may contain paths or arguments" and is excluded from
+telemetry. Nothing tested that until a mutation added a command-line tag and no test failed; the seed
+now travels in both.
+
+#### The privacy net had a hole for four commits — DC-018
+
+`TelemetryTests` enforces the floor over `ActivitySource`s named `aide.*`. Every source added with
+the process split was named `AiDe.Core.*`. **The IPC boundary, the terminal runtime and the upgrade
+coordinator were emitting spans no privacy assertion could see** — including spans on the first
+cross-process trust boundary in the product.
+
+The sources are renamed (`aide.ipc.command`, `aide.ipc.connection`, `aide.terminal.runtime`,
+`aide.upgrade.gate`), and a control now fails when one is not. It scans source text rather than
+reflecting, so an emitter no test exercises is still covered — and its own listener subscribes to
+*every* source, because a listener scoped to the convention cannot see what broke it.
+
+**That control was itself vacuous on the first attempt**: it matched `new ActivitySource("…")` while
+every declaration is target-typed `= new("…")`, so it scanned zero sources and passed. It now asserts
+a minimum match count.
+
+Four controls were mutation-tested; all four were caught.
+
 ## Adversarial analysis (STRIDE-lite)
 
 **Phase 2 restores the boundary Phase 1 did not have.** ADR-0009 explicitly deferred these controls;

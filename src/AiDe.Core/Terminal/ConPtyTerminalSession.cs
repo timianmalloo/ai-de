@@ -67,7 +67,7 @@ public sealed class ConPtyTerminalSession : ITerminalSession
 
     private const int ReadBufferSize = 4096;
 
-    private static readonly ActivitySource Telemetry = new("AiDe.Core.Terminal");
+    private static readonly ActivitySource Telemetry = new("aide.terminal.runtime");
 
     private readonly Channel<TerminalChunk> _output;
     private readonly TaskCompletionSource<SessionExit> _exit =

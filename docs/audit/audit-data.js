@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-refresh-across-boundary",
-  "generated": "2026-08-27T20:54:28Z",
+  "project": "ai-de-feat-privacy-markers",
+  "generated": "2026-08-27T21:16:27Z",
   "audit": [
     {
       "id": "al-0001",
@@ -964,6 +964,37 @@ window.AUDIT_DATA = {
         "sha": "6e377660d8257dc0cd796be4ffddb44507f2bf61",
         "short": "6e377660d",
         "branch": "feat/refresh-across-boundary",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0045",
+      "shortname": "privacy-markers",
+      "datetime": "2026-08-27T21:16:27Z",
+      "session": "privacy-markers-2026-08-27",
+      "prompt": "do your best next action then we can go through decisions to make",
+      "summary": "P2-PRIV-01/02 by seeded marker rather than by inference. FOUND THE PRIVACY NET HAD A HOLE: TelemetryTests enforces the floor over ActivitySources named aide.*, and every source added with the process split was named AiDe.Core.* — so for four commits the IPC boundary, terminal runtime and upgrade coordinator emitted spans no privacy assertion could see, including spans on the first cross-process trust boundary. Renamed them and added a control that fails when one escapes; registered DC-018 (a guard that watches by name, and a name that moved). THAT CONTROL WAS ITSELF VACUOUS at first — it matched 'new ActivitySource(...)' while every declaration is target-typed '= new(...)', so it scanned ZERO sources and passed; mutation caught it, and it now asserts a minimum match count. The terminal probe also lied twice before it was fixed: the seed must arrive before any absence is asserted, and the first run could not read workspace.db because SQLite held it open, so the store — the most important file — was never scanned while the probe reported success. The core is now closed before scanning and an unreadable file fails the run. Command line seeded as well as output, because the privacy analysis makes them separate claims and nothing tested the command-line one. 4/4 mutations caught. 487 tests (+8), four gates clean.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/PrivacyMarkerTests.cs",
+        "tests/AiDe.Core.Tests/TerminalPrivacyTests.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "phase-2",
+        "privacy",
+        "telemetry"
+      ],
+      "outcome": "success",
+      "goal": "P2-PRIV-01/02: seed a secret and prove it reaches no store, log, metric or trace",
+      "done_when": "Terminal output and daemon payloads proven absent from spans and workspace files by seeded markers, with non-vacuity guards; gates clean; committed",
+      "git": {
+        "sha": "2ebc71f6d3774e221e0d8dc6a86870a079e17342",
+        "short": "2ebc71f6d",
+        "branch": "feat/privacy-markers",
         "pushed": null
       }
     }

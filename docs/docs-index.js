@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-27T20:52:51Z",
+  "generated": "2026-08-27T21:16:27Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1292,7 +1292,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6afe05aa779d4b755814484a622c86fcadbcd6c79076230b9a7eff1592cdc3f6"
+      "sourceSha256": "da971cf7b090fdd0e2faf4aaecbeaaa6c339fc31d8919e4cc317e3116b704d25"
     },
     {
       "id": "audit-log",
@@ -1342,7 +1342,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9af6f332241a7fe849d7a2556150c9e505421308318b3ab32fa6c40195136d06"
+      "sourceSha256": "ba2e61d547687ccbb3a748ac1530326928930aa0897bf4292b4e1910dd3c5281"
     },
     {
       "id": "lens-code-doc-join",
@@ -4023,7 +4023,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-feat-shell-uses-daemon — Audit & Change Log",
+      "title": "ai-de-feat-refresh-across-boundary — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4045,5 +4045,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "3528e5c0f87f5132d99881ce17605de2fb10e09f07d0e25b54c413a68b91dbde"
+  "graphSha256": "558181560e920a158cc063391f777ade540d441d2c77d0957f97c9b02703f303"
 };

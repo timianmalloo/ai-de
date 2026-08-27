@@ -72,7 +72,7 @@ public sealed record IpcServerOptions(
 [SupportedOSPlatform("windows")]
 public sealed class IpcServer
 {
-    private static readonly ActivitySource Telemetry = new("AiDe.Core.Ipc");
+    private static readonly ActivitySource Telemetry = new("aide.ipc.connection");
 
     private static readonly JsonSerializerOptions Wire = new(JsonSerializerDefaults.Web);
 

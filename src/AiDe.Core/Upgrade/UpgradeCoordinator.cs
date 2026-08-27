@@ -60,7 +60,7 @@ public sealed record RecoveryResult(bool Recovered, string? Failure);
 /// </remarks>
 public sealed class UpgradeCoordinator(string storePath, string workDirectory)
 {
-    private static readonly ActivitySource Telemetry = new("AiDe.Core.Upgrade");
+    private static readonly ActivitySource Telemetry = new("aide.upgrade.gate");
 
     private static string JournalPathFor(string workDirectory) =>
         Path.Combine(workDirectory, "migration.journal");

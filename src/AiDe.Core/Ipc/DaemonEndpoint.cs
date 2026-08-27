@@ -19,7 +19,7 @@ namespace AiDe.Core.Ipc;
 /// </remarks>
 public sealed class DaemonEndpoint
 {
-    private static readonly ActivitySource Telemetry = new("AiDe.Core.Ipc");
+    private static readonly ActivitySource Telemetry = new("aide.ipc.command");
 
     private readonly CapabilityRegistry _capabilities;
     private readonly Func<string, long> _epochOf;
