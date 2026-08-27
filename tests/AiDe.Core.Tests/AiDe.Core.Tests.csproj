@@ -31,6 +31,22 @@
     -->
     <ProjectReference Include="..\AiDe.Core.TerminalHost\AiDe.Core.TerminalHost.csproj"
                       ReferenceOutputAssembly="false" />
+
+    <!--
+      The daemon, built alongside the tests so DaemonProcessTests cannot silently skip.
+
+      Those tests start it as a real second process — the only way to prove the process split at
+      all. Without this reference it is simply absent on a clean clone, and the case fails on a
+      missing file, which reads as broken tooling rather than as the question going unasked (DC-012).
+
+      ReferenceOutputAssembly="false" because it is started, never linked, and
+      SkipGetTargetFrameworkProperties because the daemon targets net10.0-windows while these
+      tests target net10.0 — without it the build refuses a reference it is only using for
+      ordering.
+    -->
+    <ProjectReference Include="..\..\src\AiDe.Daemon\AiDe.Daemon.csproj"
+                      ReferenceOutputAssembly="false"
+                      SkipGetTargetFrameworkProperties="true" />
   </ItemGroup>
 
 </Project>

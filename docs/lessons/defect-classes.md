@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 6 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 7 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 3.
@@ -394,4 +394,41 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   question — *would this still pass if the specific thing I am claiming had not happened?* — asked of
   any verification whose subject is parameterised, and of any status code shared by more than one
   code path.
+- **Status:** `partially-controlled`
+
+### DC-016 — A control that cannot fire in the environment that verifies it
+- **Signature:** a guard, check or limit that reads as protection and whose failing branch is
+  unreachable — either by construction, or in every environment where it is exercised. It passes
+  review because the code is correct, and it passes testing because the condition it guards never
+  occurs. Deleting it changes no test result, which is the diagnostic.
+- **Why it survives:** every signal points the right way. The control is present, its logic is
+  right, its intent is documented, and the suite is green. What is missing is a **negative** — proof
+  that it can say no — and negatives are invisible unless something forces them. It hides
+  particularly well behind an outer control that already prevents the case: the inner one is then
+  correct, unreachable, and indistinguishable from load-bearing.
+- **Instances (all 2026-08-27, all on the IPC transport):**
+  - **Unreachable by construction.** A per-connection in-flight semaphore intended to refuse a
+    command flood. The serve loop reads, answers, then reads again, so in-flight is one by
+    construction and the refusal could never happen. Found only because a test written to *expect*
+    the refusal deadlocked instead.
+  - **Unreachable in the verifying environment.** The owner-SID check on each connection. The pipe's
+    ACL admits only the current user, so every peer a single-user test can produce is already
+    correct. Mutation proved it: the check was deleted outright and nothing failed.
+  - **Present but inert.** `WorkspaceLock` guarding one daemon per workspace with a Windows mutex
+    alone. A mutex is owned by a *thread* and is re-entrant, so a second acquisition inside one
+    process succeeds — and ADR-0009 keeps an in-process daemon as a supported hosting mode, making
+    that the case the lock most needed to cover.
+- **Control:** **mutation is the detector, and it must run on every control at this boundary** —
+  disable each one and require a test to fail. Then, per outcome: *unreachable by construction* is
+  **deleted**, not made reachable by adding machinery to justify it (the semaphore was removed and
+  the real bound — serial service, capped frames, capped connections — documented instead);
+  *unreachable in the environment* is made testable by **injecting what it compares against** rather
+  than left as a comment (`IpcServer` now takes an expected owner SID, so a server told to expect a
+  different owner must refuse the peer it gets); *present but inert* is a plain defect and is fixed.
+  **Observed failing 2026-08-27:** all three were found this way, two of them only after a mutation
+  run reported `*** SURVIVED ***`.
+- **Residual risk:** mutation testing is invoked by hand. Nothing fails when a new control ships
+  without one, and the register cannot see a guard nobody thought to disable. The general defence is
+  the question asked of every control as it is written: **what would have to happen for this to say
+  no, and can that happen here?**
 - **Status:** `partially-controlled`

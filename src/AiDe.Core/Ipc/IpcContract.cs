@@ -19,6 +19,19 @@ public static class IpcErrorCodes
     public const string WorkspaceMismatch = "ipc.workspace_mismatch";
     public const string EpochStale = "ipc.epoch_stale";
     public const string NotAuthorized = "ipc.not_authorized";
+
+    /// <summary>The connection is already at its in-flight limit. A refusal, never a queue.</summary>
+    public const string Busy = "ipc.busy";
+
+    /// <summary>Another daemon already serves this workspace.</summary>
+    public const string WorkspaceLocked = "ipc.workspace_locked";
+
+    /// <summary>
+    /// The daemon went away without answering. A transport fact, deliberately NOT an authorization
+    /// one: reporting a vanished daemon as "not authorized" sends every investigation to the wrong
+    /// place, and it briefly did exactly that here.
+    /// </summary>
+    public const string TransportClosed = "ipc.transport_closed";
 }
 
 /// <summary>

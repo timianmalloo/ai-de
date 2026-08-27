@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-terminal-renderer",
-  "generated": "2026-08-27T17:39:42Z",
+  "project": "ai-de-feat-ipc-transport",
+  "generated": "2026-08-27T18:41:05Z",
   "audit": [
     {
       "id": "al-0001",
@@ -795,6 +795,42 @@ window.AUDIT_DATA = {
         "sha": "3632d0b7817712a3cfc3bb368eacc32f9b6fe245",
         "short": "3632d0b78",
         "branch": "feat/terminal-renderer",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0040",
+      "shortname": "ipc-transport",
+      "datetime": "2026-08-27T18:41:05Z",
+      "session": "ipc-transport-2026-08-27",
+      "prompt": "do your best next action (named-pipe transport...)",
+      "summary": "Named-pipe transport and AiDe.Daemon.exe: the process split ADR-0009 deferred is now a real second process. Length-prefixed framing with the cap checked BEFORE allocation; pipe name derived by hash so it does not disclose the workspace path; one explicit owner-only ACL read back by a test; peer SID and PID from the kernel, derived after the first frame because Windows refuses impersonation until a read has happened; workspace lock taken before a pipe exists; daemon exits when nobody needs it. MUTATION FOUND THE SAME SHAPE THREE TIMES, now registered as DC-016 (a control that cannot fire in the environment that verifies it): an in-flight semaphore unreachable by construction (REMOVED, and the real bound documented — serial service plus caps, backpressure not refusal); the owner-SID check unreachable in a single-user environment (made testable by injecting the expected SID); and WorkspaceLock inert in-process because a Windows mutex is thread-owned and re-entrant, which matters because ADR-0009 keeps an in-process daemon supported. Two defects found by tests first: a deaf client could hold a listener forever (response-write timeout added), and the idle reaper sampled instead of remembering, so a short-lived client left the daemon waiting out the 60s startup grace. 10/10 mutations caught; four needed a runtime-false because if(false) trips CS0162 and fails the build. Daemon serves ping/epoch only — moving the core's command surface behind it is the next piece, stated rather than half-done. 406 tests (+42), four gates clean.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/IpcFraming.cs",
+        "src/AiDe.Core/Ipc/IpcPipe.cs",
+        "src/AiDe.Core/Ipc/IpcServer.cs",
+        "src/AiDe.Core/Ipc/IpcClient.cs",
+        "src/AiDe.Daemon/Program.cs",
+        "tests/AiDe.Core.Tests/DaemonProcessTests.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "phase-2",
+        "ipc",
+        "security",
+        "process-split"
+      ],
+      "outcome": "success",
+      "goal": "Build the named-pipe transport and AiDe.Daemon.exe, turning the transport-free IPC decision layer into a real cross-process boundary",
+      "done_when": "A client reaches a daemon over an owner-SID-restricted pipe; workspace lock, orphan grace exit and flood bounds work; security tests run against a real pipe; gates clean; committed",
+      "git": {
+        "sha": "c1cc9defa01ba1d4fbf91b1672c3a54fa2cf172e",
+        "short": "c1cc9defa",
+        "branch": "feat/ipc-transport",
         "pushed": null
       }
     }

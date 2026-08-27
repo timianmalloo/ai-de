@@ -403,6 +403,65 @@ council review caught in the v1 architecture; it must not return here.
 
 ---
 
+### The named-pipe transport and the daemon process
+
+**BUILT 2026-08-27.** `IpcFraming`, `IpcPipeName`, `WorkspaceLock`, `IpcPipeFactory`, `IpcServer`,
+`IpcClient`, and `src/AiDe.Daemon` — a real second process. The decision layer landed transport-free
+in `36f0c47` precisely so its security choices were testable without a socket; this is the plumbing
+underneath it, and the split is now real rather than designed.
+
+| Concern | Decision |
+|---|---|
+| Framing | 4-byte big-endian length + UTF-8, capped at 1 MiB. The prefix is attacker-chosen, so the cap is checked **before** any allocation. A short read is `null` ("peer hung up"), not an exception — only a negative or oversized length is a protocol violation. |
+| Pipe name | `aide.` + half a SHA-256 of the lowercased path. Derived so both ends agree without talking, and hashed so the name — which any process can enumerate — does not disclose which repository a user has open. |
+| ACL | Exactly one Allow rule, for the owner SID. Nothing for Everyone, Authenticated Users or Administrators. Read back by a test rather than trusted. |
+| Client | `PipeOptions.CurrentUserOnly`, which defends the **opposite** direction: the ACL stops another user reaching our daemon, this stops us reaching theirs. |
+| Peer identity | SID by impersonation, PID from `GetNamedPipeClientProcessId` — both from the kernel, never from the payload. Derived **after the first frame**, because Windows refuses to impersonate "until data has been read from that pipe"; no authorization decision is made before it exists. |
+| Workspace lock | A `Local\` named mutex taken **first**, before a pipe exists. Kernel-released on death, so no staleness heuristic. |
+| Daemon lifetime | Exits when nobody has needed it for the grace period. An orphan holds the workspace lock invisibly, making the workspace unopenable. |
+
+**Scope stated rather than disguised:** the daemon serves `ping` and `epoch`. Moving `describe`,
+`find`, `impact` and the dispatch surface behind the endpoint is the next piece of the process split,
+and doing half of it here would leave a boundary partly crossed — worse than one honestly not yet.
+
+#### Three controls that could not fire, and what replaced them
+
+Mutation testing found the same shape three times, now registered as **DC-016**:
+
+- **A per-connection in-flight semaphore** meant to refuse a command flood. The serve loop reads,
+  answers, then reads again, so in-flight is one by construction and the refusal was unreachable.
+  **Removed rather than made reachable** by adding concurrency the design does not want. What
+  actually bounds a flood is serial service per connection, the frame cap, and the connection cap —
+  a client that writes faster than we read blocks on its own write, which is backpressure applied by
+  the kernel rather than memory spent by us.
+- **The owner-SID check**, unreachable in a single-user environment because the ACL already admits
+  only that user. Deleting it failed no test. `IpcServer` now accepts the **expected** owner SID, so
+  a server told to expect a different one must refuse the peer it gets.
+- **`WorkspaceLock`**, which used a Windows mutex alone. A mutex is owned by a *thread* and is
+  re-entrant, so a second acquisition inside one process succeeded — and ADR-0009 keeps an
+  in-process daemon as a supported hosting mode, which is exactly the case it most needed to cover.
+  It now tracks in-process holders as well.
+
+#### Two defects the tests found before a user could
+
+- **A deaf client could hold a listener indefinitely.** A client that pipelines requests and never
+  drains responses fills the pipe buffer; the daemon blocks writing, stops reading, and that
+  listener is held for as long as the client likes. With a fixed pool, enough of them make the
+  daemon unreachable. Found when a flood test deadlocked. Fixed with a response-write timeout that
+  abandons the connection, and covered by `AClientThatNeverReads_IsDisconnected`.
+- **The idle reaper sampled instead of remembering.** It polled `ActiveConnections` every 100 ms, so
+  a client that connected and left between polls was never observed — the daemon then waited out the
+  full 60-second *startup* grace instead of the short *idle* one. The reaper now decides from
+  `ServedConnections` and a stamp written when a connection ends.
+
+`P2-IPC-07` is therefore satisfied by **backpressure and caps, not by a refusal code** — recorded
+here because the design's wording ("per-connection admission") implies a rejection that this shape
+of server cannot produce without adding concurrency for its own sake.
+
+Ten controls were mutation-tested one at a time; all ten were caught. Four needed a runtime-false
+rather than `if (false)`, which trips CS0162 under `TreatWarningsAsErrors` and fails the build — an
+empty result reading as "all passed" is the DC-012 shape, already recorded once on this boundary.
+
 ## Failure-mode analysis
 
 | Failure mode | From which choice | Disposition | How addressed | Test |
@@ -680,7 +739,7 @@ rather than be skipped (**DC-012**).
 | | |
 |---|---|
 | **Completed** | Phase-2 design: two contract gaps closed on paper, data model (no new facts, and why), three component contracts, failure/STRIDE/LINDDUN analyses, telemetry, the triggered-directive test plan including the newly-owed conformance suite. **All four spikes resolved 2026-08-26.** S2 changed the analyzer-execution mitigation to stripping `AnalyzerReferences`. S3: own a WPF renderer, `GlyphRun` per line. S4 met ADR-0008's reversal trigger, **now resolved by [ADR-0015](../adr/0015-canvas-hosting-and-overlay-strategy.md)** — windowed control plus snapshot swap, gut-checked at 150% DPI. S1 decided: disclose the absence. **Focus routing designed** against a verified mechanism, after the documented one turned out not to exist on this control. |
-| **Remaining** | The terminal renderer (S3's `GlyphRun`-per-line constraint), then the process split, then Roslyn. **The OSC parser landed 2026-08-27** and with it the measurement that OSC survives ConPTY. **The shell integration landed 2026-08-27**, so the OSC control now operates in a real session rather than lying dormant. **The renderer landed 2026-08-27** and with it the terminal surface, so the whole of Phase 2's first component — runtime, security, state and display — is now reachable by a user. Component 1 is complete. Open findings carried forward: the MSBuildWorkspace dependency-chain advisories, the unprobed MSBuild-task trust boundary, and a possible colour flash at the snapshot swap that only a human observer can settle. |
+| **Remaining** | **The transport and daemon process landed 2026-08-27.** Still owed on component 3: moving the core's command surface behind the endpoint, and the upgrade/rollback choreography (`P2-UPGRADE-01..03`). Then component 2 (Roslyn), which needs a decision on the dependency-chain advisories before it needs code. Carried findings unchanged. |
 | **Best next action (superseded 2026-08-27 — the runtime and the OSC parser are built)** | **Implement the ConPTY terminal runtime.** It is the only Phase-2 component with no open decision in front of it — S3 cleared its renderer and named the binding draw path, ADR-0005's boundary is unchanged, and it does not touch the canvas. It also forces the `ITerminalSession` output extension and the newly-owed D7 conformance suite, which every dispatch test currently written against the fixture depends on. |
 
 ## Gate record
