@@ -20,9 +20,6 @@ public static class IpcErrorCodes
     public const string EpochStale = "ipc.epoch_stale";
     public const string NotAuthorized = "ipc.not_authorized";
 
-    /// <summary>The connection is already at its in-flight limit. A refusal, never a queue.</summary>
-    public const string Busy = "ipc.busy";
-
     /// <summary>Another daemon already serves this workspace.</summary>
     public const string WorkspaceLocked = "ipc.workspace_locked";
 
