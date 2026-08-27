@@ -4,6 +4,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using AiDe.Core;
+using AiDe.Core.Ipc;
 using AiDe.Core.Projections;
 using AiDe.Core.Workbench;
 using AvalonDock;
@@ -191,11 +192,31 @@ public sealed class WorkbenchShell : IDisposable
     /// Panes already on screen are re-rendered, because a pane showing "not available in this build"
     /// after the workspace opened is worse than one that never claimed anything.
     /// </remarks>
-    public void AttachWorkspace(IWorkspaceQueries queries, string? dataDirectory)
+    public void AttachWorkspace(
+        IWorkspaceQueries queries,
+        string? dataDirectory,
+        IWorkspaceCommands? commands = null,
+        string scopeId = "fixture",
+        string artifactRevision = "rev-1")
     {
         ArgumentNullException.ThrowIfNull(queries);
 
         _factory = new SurfaceContentFactory(queries);
+
+        // The palette's re-index command is inert until a workspace exists to re-index. Wiring it
+        // here rather than at construction is what makes it act on THIS workspace.
+        if (commands is not null)
+        {
+            Controller.WorkspaceRefresh = async () =>
+            {
+                var status = await commands.RefreshScopeAsync(
+                    scopeId, artifactRevision, CancellationToken.None);
+
+                return status.State == ScopeRefreshState.Completed
+                    ? $"Re-indexed: {status.AssertionCount} assertion(s). Reopen a pane to see them."
+                    : $"Re-indexing failed: {status.Failure}";
+            };
+        }
 
         if (!string.IsNullOrEmpty(dataDirectory) && Persistence is null)
         {

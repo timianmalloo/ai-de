@@ -521,6 +521,61 @@ Mutation also found an **unreachable catch** in the fix itself: the pane already
 and only cancellation escapes it, so the general `catch` wrote a message that could never appear. It
 was removed rather than kept (**DC-016**).
 
+### The first write crosses: scope refresh
+
+**BUILT 2026-08-27.** `ScopeRefreshService` on the daemon, `IWorkspaceCommands` as the write seam,
+`WorkspaceClient.RefreshScopeAsync` on the shell, and a `workspace.refresh` palette command so it is
+reachable from the keyboard.
+
+**Started and polled, never awaited on the wire.** A scope has a 60-second budget and the lane
+serves one request at a time per connection — a refresh that answered only on completion would hold
+that connection for the whole budget, and the response-write timeout would abandon it first. **The
+control lane carries commands; a command that starts long work returns once the work is started.**
+
+**The command id is the idempotency key**, exactly as the architecture's command protocol says, and
+this is the first place it matters across a process boundary: two extractions of one scope both bump
+the generation and the loser's work is discarded after costing a full budget. Deduplication has two
+guards — a fast path for the sequential retry, and `TryAdd` for the concurrent one — and only the
+second is load-bearing.
+
+**Job records are bounded**, because they are keyed by a caller-chosen id: an unbounded map is a
+memory leak any client can drive. A *running* job is never evicted — its status is the only record
+that the extraction is happening.
+
+**An incomplete extraction is a failure, not a refresh of zero.** The previous snapshot keeps
+rendering, and reporting success would present stale evidence as freshly confirmed.
+
+**Reads and writes are separate seams.** `IWorkspaceQueries` and `IWorkspaceCommands`: a read repeats
+freely, a write bumps a generation, carries an idempotency key and is judged against the epoch fence.
+One interface would put a name on the seam that half its members contradict.
+
+#### Two defects the mutation run found
+
+- **Announcements were not marshalled.** A re-index reports its outcome from background work, and the
+  live region is a WPF control — an unmarshalled call throws exactly when the product is trying to
+  tell the user something. `WorkbenchAnnouncer` now marshals internally, because it owns the control
+  and is the only thing that knows a dispatcher is involved. `RecordingAnnouncer` could not catch
+  this (it has no dispatcher), so the test creates a real one on an STA thread.
+- **`RecordingAnnouncer` was not thread-safe**, and now receives announcements from background work.
+
+**The existing catalog conformance test earned its keep**: adding `workspace.refresh` without a
+handler failed immediately with *"palette lists commands that do nothing"* — the SC 2.5.7 control
+working exactly as intended.
+
+#### Prompt dispatch is blocked on a divergence, not on effort
+
+`ADR-0010`'s two-phase receipts are the remaining half of dispatch, and they cannot move until a
+prior question is settled: **the design puts terminals in the daemon and the implementation puts them
+in the shell.** The failure-mode table says *"a crashed **daemon** must not leave agent CLIs running
+headless"*, which only holds if terminal processes are the daemon's children — but `TerminalSurface`
+creates its `ConPtyTerminalSession` in the shell process, where a daemon crash orphans nothing
+because the daemon never owned them.
+
+Moving them raises a real design question rather than an implementation one: terminal output is a
+high-rate stream and the IPC lane is request/response, so it needs either a second lane or a
+different shape. **Recorded here rather than resolved, because half-crossing it would leave prompt
+dispatch fenced against a session the daemon does not own.**
+
 ### Upgrade and rollback (P2-UPGRADE-01..03)
 
 **BUILT 2026-08-27.** `MigrationJournal`, `StoreSnapshot`, `HealthGate`, `UpgradeCoordinator`,

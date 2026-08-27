@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-shell-uses-daemon",
-  "generated": "2026-08-27T20:01:09Z",
+  "project": "ai-de-feat-refresh-across-boundary",
+  "generated": "2026-08-27T20:54:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -931,6 +931,39 @@ window.AUDIT_DATA = {
         "sha": "df783e9b407705f314486aca3fb83c2303537a15",
         "short": "df783e9b4",
         "branch": "feat/shell-uses-daemon",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0044",
+      "shortname": "refresh-across-boundary",
+      "datetime": "2026-08-27T20:54:28Z",
+      "session": "refresh-across-boundary-2026-08-27",
+      "prompt": "do your best next action",
+      "summary": "The first WRITE crosses the boundary: scope refresh. Started-and-polled rather than awaited on the wire, because a scope has a 60s budget and the lane serves one request at a time per connection — the control lane carries commands, and a command that starts long work returns once it is started. The command id is the idempotency key and this is where it first matters across processes; deduplication has two guards and only the concurrent one (TryAdd) is load-bearing, which a mutation run proved by disabling it with nothing failing. Job records are bounded because they are keyed by a caller-chosen id; a running job is never evicted. An incomplete extraction is a failure, not a refresh of zero. Reads and writes are separate seams. TWO DEFECTS FOUND BY MUTATION: announcements were not marshalled to the UI thread, so a re-index reporting its outcome from background work would throw exactly when telling the user something (fixed in WorkbenchAnnouncer, which owns the control); and RecordingAnnouncer was not thread-safe. The existing SC 2.5.7 catalog conformance test caught my palette entry having no handler. 9/9 mutations caught. 479 tests (+16), four gates clean. PROMPT DISPATCH IS BLOCKED ON A DIVERGENCE, NOT EFFORT: the design puts terminals in the daemon ('a crashed daemon must not leave agent CLIs running headless') and TerminalSurface creates them in the shell — recorded rather than half-crossed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/ScopeRefreshService.cs",
+        "src/AiDe.Core/Ipc/IWorkspaceCommands.cs",
+        "src/AiDe.App/Workbench/WorkbenchController.cs",
+        "tests/AiDe.Core.Tests/ScopeRefreshTests.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "ipc",
+        "process-split",
+        "ingestion"
+      ],
+      "outcome": "success",
+      "goal": "Move the first write across the daemon boundary — scope refresh — so a daemon-backed workspace can be told to index",
+      "done_when": "A shell re-indexes a scope over the pipe, idempotently, with a keyboard-reachable trigger; gates clean; committed",
+      "git": {
+        "sha": "6e377660d8257dc0cd796be4ffddb44507f2bf61",
+        "short": "6e377660d",
+        "branch": "feat/refresh-across-boundary",
         "pushed": null
       }
     }

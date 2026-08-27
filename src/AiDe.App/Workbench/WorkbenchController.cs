@@ -26,6 +26,15 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
 
     public bool IsResizing => _resize.IsActive;
 
+    /// <summary>
+    /// Asks the workspace to re-index itself. Set when a workspace attaches; null before that.
+    /// </summary>
+    /// <remarks>
+    /// A delegate rather than a workspace handle: the controller's job is layout and command
+    /// dispatch, and giving it something it could read evidence from would invite exactly that.
+    /// </remarks>
+    public Func<Task<string>>? WorkspaceRefresh { get; set; }
+
     /// <summary>Runs a catalog command by id. Returns false when the id is unknown.</summary>
     public bool Execute(string commandId)
     {
@@ -33,6 +42,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         {
             case "workbench.resetLayout":
                 return ApplyAndAnnounce(new LayoutOperation.ResetToDefault());
+
+            case "workspace.refresh":
+                return RefreshWorkspace();
 
             case "workbench.toggleLock":
                 service.IsLocked = !service.IsLocked;
@@ -264,6 +276,47 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         }
 
         return ApplyAndAnnounce(build(FocusedStackId));
+    }
+
+    /// <summary>Starts a re-index and announces both the start and the outcome.</summary>
+    /// <remarks>
+    /// <para><b>Announced twice on purpose.</b> Re-indexing takes as long as it takes, and a command
+    /// that acknowledged nothing until it finished would be indistinguishable from a key that did
+    /// not register — so the operator is told it started, and told again what happened.</para>
+    ///
+    /// <para>With no workspace attached this still returns handled, and says so. A command in the
+    /// palette that silently does nothing is the failure the catalog's conformance test exists to
+    /// prevent (<b>DC-011</b>).</para>
+    /// </remarks>
+    private bool RefreshWorkspace()
+    {
+        var refresh = WorkspaceRefresh;
+
+        if (refresh is null)
+        {
+            announcer.Announce("No workspace is open, so there is nothing to re-index.");
+            return true;
+        }
+
+        announcer.Announce("Re-indexing the workspace. The current evidence keeps rendering.");
+
+        _ = Task.Run(async () =>
+        {
+            string outcome;
+
+            try
+            {
+                outcome = await refresh();
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                outcome = $"Re-indexing failed: {ex.Message}";
+            }
+
+            announcer.Announce(outcome);
+        });
+
+        return true;
     }
 
     private bool ApplyAndAnnounce(LayoutOperation operation)

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-27T20:00:53Z",
+  "generated": "2026-08-27T20:52:51Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1292,7 +1292,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "65757b1e2cc10c155053d74a76a093ce0d3cfdb2193d9f9a85b1c5e2ddca56ab"
+      "sourceSha256": "6afe05aa779d4b755814484a622c86fcadbcd6c79076230b9a7eff1592cdc3f6"
     },
     {
       "id": "audit-log",
@@ -4023,7 +4023,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-feat-daemon-operations — Audit & Change Log",
+      "title": "ai-de-feat-shell-uses-daemon — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4045,5 +4045,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "ac52e5371584bf125ae4b1ba4c1dcb6c353b9fc8619ddde2658d24d0aa201380"
+  "graphSha256": "3528e5c0f87f5132d99881ce17605de2fb10e09f07d0e25b54c413a68b91dbde"
 };

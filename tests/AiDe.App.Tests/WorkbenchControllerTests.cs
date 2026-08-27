@@ -22,6 +22,102 @@ public sealed class WorkbenchControllerTests
         return (controller, announcer, service);
     }
 
+    [Fact]
+    public void ARealAnnouncer_AcceptsAnAnnouncementFromABackgroundThread()
+    {
+        // Announcements now arrive from background work — a re-index reports its outcome when it
+        // finishes — and the live region is a WPF control, so an unmarshalled call throws exactly
+        // when the product is trying to tell the user something.
+        //
+        // RecordingAnnouncer cannot catch this: it has no dispatcher. Mutation proved it, by
+        // removing the marshalling and failing nothing (DC-016).
+        Exception? thrown = null;
+
+        var thread = new Thread(() =>
+        {
+            var liveRegion = new System.Windows.Controls.TextBlock();
+            var announcer = new WorkbenchAnnouncer(liveRegion);
+
+            try
+            {
+                // Off the STA thread that owns the control, which is the whole point.
+                Task.Run(() => announcer.Announce("from background work"))
+                    .GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                thrown = ex;
+            }
+        });
+
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        Assert.True(thread.Join(TimeSpan.FromSeconds(20)), "the STA thread did not finish");
+
+        Assert.Null(thrown);
+    }
+
+    // ---- workspace.refresh: a write, reached from the palette ---------------
+
+    [Fact]
+    public async Task Refresh_AnnouncesThatItStarted_AndThenWhatHappened()
+    {
+        // Announced twice on purpose. Re-indexing takes as long as it takes, and a command that
+        // acknowledged nothing until it finished would be indistinguishable from a key that never
+        // registered.
+        var (controller, announcer, _) = Build();
+        controller.WorkspaceRefresh = () => Task.FromResult("Re-indexed: 12 assertion(s).");
+
+        Assert.True(controller.Execute("workspace.refresh"));
+        Assert.Contains(announcer.Messages, a => a.Contains("Re-indexing", StringComparison.Ordinal));
+
+        await WaitForAnnouncement(announcer, "12 assertion");
+    }
+
+    [Fact]
+    public async Task Refresh_AnnouncesAFailure_RatherThanFallingSilent()
+    {
+        // The outcome a user most needs told. A re-index that failed silently leaves the previous
+        // evidence rendering with nothing to say it is now stale.
+        var (controller, announcer, _) = Build();
+        controller.WorkspaceRefresh = () => Task.FromException<string>(
+            new InvalidOperationException("the extractor could not read the repository"));
+
+        Assert.True(controller.Execute("workspace.refresh"));
+
+        await WaitForAnnouncement(announcer, "failed");
+    }
+
+    [Fact]
+    public void Refresh_WithNoWorkspace_SaysSoInsteadOfDoingNothing()
+    {
+        // A palette command that silently does nothing is exactly what the catalog conformance test
+        // exists to prevent, and "no workspace" is the state where it is easiest to ship.
+        var (controller, announcer, _) = Build();
+
+        Assert.True(controller.Execute("workspace.refresh"));
+        Assert.Contains(
+            announcer.Messages,
+            a => a.Contains("nothing to re-index", StringComparison.Ordinal));
+    }
+
+    private static async Task WaitForAnnouncement(RecordingAnnouncer announcer, string fragment)
+    {
+        var deadline = DateTimeOffset.UtcNow + TimeSpan.FromSeconds(5);
+
+        while (DateTimeOffset.UtcNow < deadline)
+        {
+            if (announcer.Messages.Any(a => a.Contains(fragment, StringComparison.OrdinalIgnoreCase)))
+            {
+                return;
+            }
+
+            await Task.Delay(10);
+        }
+
+        Assert.Fail($"nothing announced containing '{fragment}'; heard: {string.Join(" | ", announcer.Messages)}");
+    }
+
     // The headline: every catalog command announces something when invoked.
     [Fact]
     public void EveryCatalogCommand_Announces()

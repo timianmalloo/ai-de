@@ -34,7 +34,7 @@ public sealed class IpcRequestException(string code, string reason)
 /// epoch would defeat it while appearing to work.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
-public sealed class WorkspaceClient : IWorkspaceQueries, IAsyncDisposable
+public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IAsyncDisposable
 {
     private readonly IpcClient _client;
     private readonly string _workspaceId;
@@ -97,6 +97,44 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IAsyncDisposable
         QueryAsync<KnowledgeResult>(
             WorkspaceOperations.Knowledge, new KnowledgeRequest(term, type, maxResults), cancellationToken);
 
+    /// <summary>
+    /// Asks the daemon to re-index a scope, and waits for it to finish.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Start-then-poll, because the wire cannot hold a 60-second operation.</b> The lane
+    /// serves one request at a time per connection, so a refresh that answered only on completion
+    /// would occupy that connection for the whole budget — and the daemon's response-write timeout
+    /// would abandon it first.</para>
+    ///
+    /// <para><b>One command id for the whole exchange.</b> It is the idempotency key: if the start
+    /// reply is lost and the caller retries, the daemon returns the job it already has rather than
+    /// extracting the scope twice.</para>
+    /// </remarks>
+    public async Task<ScopeRefreshStatus> RefreshScopeAsync(
+        string scopeId, string artifactRevision, CancellationToken cancellationToken)
+    {
+        var commandId = Guid.NewGuid().ToString("N");
+
+        var status = await QueryAsync<ScopeRefreshStatus>(
+            ScopeRefreshService.Operations.Refresh,
+            new RefreshRequest(scopeId, artifactRevision),
+            cancellationToken,
+            commandId).ConfigureAwait(false);
+
+        while (status.State == ScopeRefreshState.Running)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await Task.Delay(TimeSpan.FromMilliseconds(150), cancellationToken).ConfigureAwait(false);
+
+            status = await QueryAsync<ScopeRefreshStatus>(
+                ScopeRefreshService.Operations.RefreshStatus,
+                new RefreshStatusRequest(commandId),
+                cancellationToken).ConfigureAwait(false);
+        }
+
+        return status;
+    }
+
     /// <summary>Re-reads the daemon's epoch, for a caller recovering from a stale-epoch rejection.</summary>
     public async Task<long> RefreshEpochAsync(CancellationToken cancellationToken)
     {
@@ -110,11 +148,11 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IAsyncDisposable
     }
 
     private async Task<TResult> QueryAsync<TResult>(
-        string operation, object payload, CancellationToken cancellationToken)
+        string operation, object payload, CancellationToken cancellationToken, string? commandId = null)
     {
         var response = await _client.InvokeAsync(
             operation,
-            Guid.NewGuid().ToString("N"),
+            commandId ?? Guid.NewGuid().ToString("N"),
             _workspaceId,
             _epoch,
             JsonSerializer.Serialize(payload, WorkspaceOperations.Wire),

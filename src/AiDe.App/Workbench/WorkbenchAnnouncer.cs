@@ -53,6 +53,16 @@ public sealed class WorkbenchAnnouncer : IWorkbenchAnnouncer
             return;
         }
 
+        // Marshalled here, not by every caller. This type owns the control and is therefore the only
+        // one that knows a dispatcher is involved — and the moment an announcement can come from
+        // background work (a re-index reporting its outcome), a caller that forgot would throw at
+        // exactly the point it was trying to tell the user something.
+        if (!_liveRegion.Dispatcher.CheckAccess())
+        {
+            _liveRegion.Dispatcher.InvokeAsync(() => Announce(message));
+            return;
+        }
+
         Last = message;
         _liveRegion.Text = message;
 
@@ -87,15 +97,42 @@ public sealed class WorkbenchAnnouncer : IWorkbenchAnnouncer
 /// <summary>A headless announcer for tests and for any host without a live region yet.</summary>
 public sealed class RecordingAnnouncer : IWorkbenchAnnouncer
 {
+    // Guarded because announcements now arrive from background work as well as from the UI thread:
+    // a re-index reports its outcome when it finishes. An unsynchronised List would corrupt or throw
+    // under exactly the case this records.
+    private readonly System.Threading.Lock _gate = new();
     private readonly List<string> _messages = [];
 
-    public IReadOnlyList<string> Messages => _messages;
+    public IReadOnlyList<string> Messages
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return [.. _messages];
+            }
+        }
+    }
 
-    public string Last => _messages.Count == 0 ? string.Empty : _messages[^1];
+    public string Last
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _messages.Count == 0 ? string.Empty : _messages[^1];
+            }
+        }
+    }
 
     public void Announce(string message)
     {
-        if (!string.IsNullOrWhiteSpace(message))
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return;
+        }
+
+        lock (_gate)
         {
             _messages.Add(message);
         }

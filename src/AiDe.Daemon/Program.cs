@@ -149,6 +149,26 @@ internal static class Program
         DaemonOperations.Register(endpoint, () => core.Store.CoreEpoch);
         WorkspaceOperations.Register(endpoint, core.Projections);
 
+        // Ingestion, which is a WRITE and the first one to cross. Started and polled rather than
+        // awaited on the wire: a scope has a 60-second budget and the lane serves one request at a
+        // time per connection.
+        new ScopeRefreshService(async (scopeId, revision, ct) =>
+        {
+            var result = await core.RefreshScopeAsync(scopeId, revision, ct);
+
+            if (!result.Complete)
+            {
+                // Surfaced as a failure rather than a count of zero. An incomplete extraction leaves
+                // the previous snapshot rendering, and reporting it as a successful refresh of
+                // nothing is precisely the clean-empty-success over rotting evidence the product
+                // exists to avoid.
+                throw new InvalidOperationException(
+                    string.Join("; ", result.Diagnostics.Select(d => $"{d.ErrorCode}: {d.Message}")));
+            }
+
+            return result.Assertions.Count;
+        }).Register(endpoint);
+
         return (endpoint, core);
     }
 

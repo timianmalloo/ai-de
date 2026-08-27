@@ -68,6 +68,15 @@ public static class WorkbenchCommandCatalog
         new("workbench.toggleLock", "Lock/unlock layout", "Ctrl+K, L",
             OperationKind: "",   // a mode, not a tree mutation
             "Freezes the arrangement so a stray drag cannot change it."),
+
+        // Not a layout command, and the first entry here that is not. Re-indexing is a WRITE that
+        // crosses the daemon boundary, and it needs a keyboard-reachable trigger for the same reason
+        // every layout operation does: an action available only by some other route is an action a
+        // keyboard-first operator does not have.
+        new("workspace.refresh", "Re-index this workspace", "Ctrl+K, Ctrl+I",
+            OperationKind: "",   // ingestion, not a tree mutation
+            "Asks the daemon to re-read the repository. The current evidence keeps rendering until "
+            + "a complete snapshot replaces it."),
     ];
 
     public static IEnumerable<WorkbenchCommand> Search(string term) =>

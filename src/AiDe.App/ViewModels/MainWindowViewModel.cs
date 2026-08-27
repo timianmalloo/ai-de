@@ -34,7 +34,23 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
 
     /// <summary>Opens over the in-process core (ADR-0009's first hosting mode).</summary>
     public MainWindowViewModel(WorkspaceCore core)
-        : this(new LocalWorkspaceQueries(core.Projections), core.WorkspaceId, core.DataDirectory, core.Incidents)
+        : this(
+            new LocalWorkspaceQueries(core.Projections),
+            core.WorkspaceId,
+            core.DataDirectory,
+            core.Incidents,
+            new LocalWorkspaceCommands(async (scopeId, revision, ct) =>
+            {
+                var result = await core.RefreshScopeAsync(scopeId, revision, ct);
+
+                // An incomplete extraction is a failure, not a refresh of zero: the previous
+                // snapshot still renders, and calling that success presents stale evidence as
+                // freshly confirmed.
+                return result.Complete
+                    ? result.Assertions.Count
+                    : throw new InvalidOperationException(
+                        string.Join("; ", result.Diagnostics.Select(d => $"{d.ErrorCode}: {d.Message}")));
+            }))
     {
     }
 
@@ -51,9 +67,11 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         IWorkspaceQueries queries,
         string workspaceId,
         string? dataDirectory,
-        HealthIncidentSidecar? incidents = null)
+        HealthIncidentSidecar? incidents = null,
+        IWorkspaceCommands? commands = null)
     {
         Queries = queries;
+        Commands = commands;
         WorkspaceId = workspaceId;
         DataDirectory = dataDirectory;
         _incidents = incidents;
@@ -64,6 +82,9 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
 
     /// <summary>The read surface the workbench renders over, or null on first run.</summary>
     internal IWorkspaceQueries? Queries { get; }
+
+    /// <summary>The write surface, when one is available.</summary>
+    internal IWorkspaceCommands? Commands { get; }
 
     /// <summary>Where this shell's own state lives. Layout is the shell's, not the workspace's.</summary>
     internal string? DataDirectory { get; }
@@ -213,7 +234,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
             // path does not travel with it — which makes it exactly the wrong thing to show a user
             // who wants to know which workspace they are looking at.
             var model = new MainWindowViewModel(
-                client, new DirectoryInfo(root).Name, dataDirectory);
+                client, new DirectoryInfo(root).Name, dataDirectory, incidents: null, commands: client);
             await model.RefreshAsync(cancellationToken).ConfigureAwait(true);
             return model;
         }

@@ -49,7 +49,7 @@ public partial class MainWindow : Window
 
         if (viewModel.Queries is not null)
         {
-            Shell.AttachWorkspace(viewModel.Queries, viewModel.DataDirectory);
+            Shell.AttachWorkspace(viewModel.Queries, viewModel.DataDirectory, viewModel.Commands);
         }
     }
 

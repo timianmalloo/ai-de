@@ -29,6 +29,15 @@ public static class IpcErrorCodes
     /// place, and it briefly did exactly that here.
     /// </summary>
     public const string TransportClosed = "ipc.transport_closed";
+
+    /// <summary>
+    /// This daemon has no record of the command being asked about.
+    /// </summary>
+    /// <remarks>
+    /// Distinct from a failure of the command itself: "I never started that, or no longer remember
+    /// it" is information a caller acts on differently from "it ran and did not work".
+    /// </remarks>
+    public const string CommandUnknown = "ipc.command_unknown";
 }
 
 /// <summary>
