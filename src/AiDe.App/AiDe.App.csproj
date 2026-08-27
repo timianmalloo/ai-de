@@ -17,6 +17,34 @@
     <ProjectReference Include="..\AiDe.Core\AiDe.Core.csproj" />
   </ItemGroup>
 
+  <!--
+    The daemon ships WITH the shell, in a subfolder of its own.
+
+    Beside the shell rather than on PATH because the pair are versioned together: finding "a" daemon
+    somewhere else is how a shell ends up talking to a build it was never tested against.
+
+    In its OWN folder rather than merged into the shell's output because the two share assemblies,
+    and copying one build's AiDe.Core.dll over another's is a clobber waiting for the first version
+    where they differ — which is exactly the mismatch the dual-major handshake exists to survive.
+
+    ReferenceOutputAssembly="false" because the shell launches the daemon and never links it;
+    SkipGetTargetFrameworkProperties because the reference is for build ordering only.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\AiDe.Daemon\AiDe.Daemon.csproj"
+                      ReferenceOutputAssembly="false"
+                      SkipGetTargetFrameworkProperties="true" />
+  </ItemGroup>
+
+  <Target Name="CopyDaemonBesideShell" AfterTargets="Build">
+    <ItemGroup>
+      <DaemonPayload Include="$(MSBuildThisFileDirectory)..\AiDe.Daemon\bin\$(Configuration)\net10.0-windows\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DaemonPayload)"
+          DestinationFolder="$(OutDir)daemon\%(RecursiveDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
+
   <ItemGroup>
     <InternalsVisibleTo Include="AiDe.App.Tests" />
   </ItemGroup>

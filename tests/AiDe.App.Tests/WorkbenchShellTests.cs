@@ -30,7 +30,7 @@ public sealed class WorkbenchShellTests
 
     private static T WithShell<T>(Func<WorkbenchShell, Window, T> assert) => OnStaThread(() =>
     {
-        var shell = new WorkbenchShell(core: null);   // first-run: no workspace open
+        var shell = new WorkbenchShell(queries: null);   // first-run: no workspace open
         var window = new Window
         {
             Content = shell.Manager,

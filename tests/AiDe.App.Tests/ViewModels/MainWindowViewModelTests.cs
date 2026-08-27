@@ -37,6 +37,30 @@ public sealed class MainWindowViewModelTests : IDisposable
         Assert.NotEmpty(viewModel.GettingStartedSteps);
     }
 
+    /// <summary>
+    /// Waits for the provenance pane to catch up with the current selection.
+    /// </summary>
+    /// <remarks>
+    /// Selecting is synchronous; describing the selected node is not, because it may cross the
+    /// daemon boundary. A property setter cannot await, so the view model starts the work and the
+    /// pane updates when it lands — and a test that read the text immediately would be asserting on
+    /// the state before the answer, which is a race that would pass most of the time.
+    /// </remarks>
+    private static async Task WaitForProvenance(MainWindowViewModel viewModel)
+    {
+        var deadline = DateTimeOffset.UtcNow + TimeSpan.FromSeconds(5);
+
+        while (DateTimeOffset.UtcNow < deadline)
+        {
+            if (viewModel.ProvenanceText.Length > 0)
+            {
+                return;
+            }
+
+            await Task.Delay(10);
+        }
+    }
+
     [Fact]
     public async Task WithAWorkspace_ListsEvidenceAndReportsTheRenderedRevision()
     {
@@ -44,6 +68,7 @@ public sealed class MainWindowViewModelTests : IDisposable
         await core.RefreshScopeAsync("fixture", "rev-1");
 
         var viewModel = new MainWindowViewModel(core);
+        await viewModel.RefreshAsync();
 
         Assert.NotEmpty(viewModel.Rows);
         Assert.Contains("rev-1", viewModel.StatusMessage, StringComparison.Ordinal);
@@ -57,6 +82,7 @@ public sealed class MainWindowViewModelTests : IDisposable
         using var core = WorkspaceCore.Open("ws-app", _fixtureRoot, _dataDirectory);
         await core.RefreshScopeAsync("fixture", "rev-1");
         var viewModel = new MainWindowViewModel(core);
+        await viewModel.RefreshAsync();
 
         viewModel.SelectedRow = viewModel.Rows.First(r => r.NodeId == "Order");
 
@@ -74,9 +100,12 @@ public sealed class MainWindowViewModelTests : IDisposable
         using var core = WorkspaceCore.Open("ws-app", _fixtureRoot, _dataDirectory);
         await core.RefreshScopeAsync("fixture", "rev-1");
         var viewModel = new MainWindowViewModel(core);
+        await viewModel.RefreshAsync();
         viewModel.SelectedRow = viewModel.Rows[0];
+        await WaitForProvenance(viewModel);
 
         viewModel.SelectedRow = null;
+        await WaitForProvenance(viewModel);
 
         Assert.Contains("Select an item", viewModel.ProvenanceText, StringComparison.Ordinal);
     }
@@ -91,6 +120,7 @@ public sealed class MainWindowViewModelTests : IDisposable
         await core.RefreshScopeAsync("fixture", "rev-2");
 
         var viewModel = new MainWindowViewModel(core);
+        await viewModel.RefreshAsync();
 
         Assert.Contains("incident", viewModel.StatusMessage, StringComparison.OrdinalIgnoreCase);
     }

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-daemon-operations",
-  "generated": "2026-08-27T19:30:14Z",
+  "project": "ai-de-feat-shell-uses-daemon",
+  "generated": "2026-08-27T20:01:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -897,6 +897,40 @@ window.AUDIT_DATA = {
         "sha": "1a71f8ca6565eb7c610076cc46d69dee199bb812",
         "short": "1a71f8ca6",
         "branch": "feat/daemon-operations",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0043",
+      "shortname": "shell-uses-daemon",
+      "datetime": "2026-08-27T20:01:09Z",
+      "session": "shell-uses-daemon-2026-08-27",
+      "prompt": "do your best next action",
+      "summary": "The shell now launches and uses the daemon. IWorkspaceQueries is the seam both hosting modes satisfy (ADR-0009 keeps both), ShellBootstrap connects-then-launches, and the daemon ships in a folder beside the shell. MEASURED BY RUNNING IT: the app spawns exactly one daemon and renders its evidence panes from answers that crossed the pipe. No fallback to in-process when the daemon will not start — that would work while abandoning the boundary, the lock and the epoch fence exactly when they matter (DC-011). FOUND A DEFECT 459 PASSING TESTS COULD NOT SEE: making the pane async left the factory binding Rows and StatusMessage at construction, so both evidence panes sat on 'Loading evidence...' permanently; the pane view model was correct and covered, and nothing asserted on what the CONTROL showed. Found by running the app and looking at it. Registered DC-017 (verified one layer below the one that actually fails) with SurfaceContentTests as the control — it builds the surface through the real factory, pumps the dispatcher, and asserts on what is displayed. Mutation then found an unreachable catch in my own fix (the pane already degrades internally), removed per DC-016. Also fixed the heading showing a hash where a user wants a folder name. 463 tests (+9 net after refactor), four gates clean.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/IWorkspaceQueries.cs",
+        "src/AiDe.Core/Ipc/ShellBootstrap.cs",
+        "src/AiDe.App/ViewModels/MainWindowViewModel.cs",
+        "tests/AiDe.App.Tests/SurfaceContentTests.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "phase-2",
+        "ipc",
+        "process-split",
+        "ui"
+      ],
+      "outcome": "success",
+      "goal": "Make the shell launch and use the daemon, so the process split is the product rather than a demonstration",
+      "done_when": "A real daemon is started on demand, the shell queries it over the pipe, the in-process path survives behind a seam, gates clean, committed",
+      "git": {
+        "sha": "df783e9b407705f314486aca3fb83c2303537a15",
+        "short": "df783e9b4",
+        "branch": "feat/shell-uses-daemon",
         "pushed": null
       }
     }

@@ -34,7 +34,7 @@ public sealed class IpcRequestException(string code, string reason)
 /// epoch would defeat it while appearing to work.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
-public sealed class WorkspaceClient : IAsyncDisposable
+public sealed class WorkspaceClient : IWorkspaceQueries, IAsyncDisposable
 {
     private readonly IpcClient _client;
     private readonly string _workspaceId;

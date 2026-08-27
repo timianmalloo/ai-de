@@ -15,7 +15,7 @@ namespace AiDe.App.Workbench;
 /// content are independent of where it is docked (US-9). This factory is the single place that
 /// mapping lives, so adding a surface kind never means touching the layout model.
 /// </remarks>
-public sealed class SurfaceContentFactory(ProjectionService? projections)
+public sealed class SurfaceContentFactory(IWorkspaceQueries? queries)
 {
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
     public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal"];
@@ -24,7 +24,7 @@ public sealed class SurfaceContentFactory(ProjectionService? projections)
     {
         var content = surface.Kind switch
         {
-            "view" or "inspector" when projections is not null => EvidenceContent(surface),
+            "view" or "inspector" when queries is not null => EvidenceContent(surface),
             "terminal" => Terminal(surface),
             _ => Unavailable(surface),
         };
@@ -37,12 +37,10 @@ public sealed class SurfaceContentFactory(ProjectionService? projections)
 
     private FrameworkElement EvidenceContent(Surface surface)
     {
-        var pane = new EvidencePaneViewModel(projections!);
-        pane.Load();
+        var pane = new EvidencePaneViewModel(queries!);
 
         var list = new ListBox
         {
-            ItemsSource = pane.Rows,
             DisplayMemberPath = nameof(EvidenceRow.DisplayLabel),
             BorderThickness = new Thickness(0),
             Background = null,
@@ -60,7 +58,52 @@ public sealed class SurfaceContentFactory(ProjectionService? projections)
         var stack = new StackPanel { Margin = new Thickness(12) };
         stack.Children.Add(list);
         stack.Children.Add(status);
+
+        // Started, not awaited — a factory that blocked on a pipe round trip would freeze the window
+        // while a pane is being built. The pane shows its Loading state until the answer arrives.
+        //
+        // The controls MUST be updated when it does. An earlier revision bound `pane.Rows` and
+        // `pane.StatusMessage` at construction and left it there: the load replaces `Rows` with a
+        // new list and `Rows` is not observable, so the pane sat on "Loading evidence…" forever.
+        // Every test passed — the pane view model was correct, and nothing asserted on what the
+        // control showed. Found by running the application.
+        _ = LoadInto(pane, list, status);
+
         return stack;
+    }
+
+    /// <summary>Loads the pane and pushes the result into its controls, on the UI thread.</summary>
+    /// <remarks>
+    /// <para><b>Failure is shown because the pane reports it, and this shows what the pane says.</b>
+    /// An unreachable workspace becomes the pane's error state, and pushing that text into the
+    /// control is what stops it presenting as merely slow.</para>
+    ///
+    /// <para>Marshalled explicitly because the continuation runs wherever the IPC round trip
+    /// completed, and touching a WPF control from that thread throws.</para>
+    /// </remarks>
+    private static async Task LoadInto(EvidencePaneViewModel pane, ListBox list, TextBlock status)
+    {
+        try
+        {
+            await pane.LoadAsync();
+        }
+        catch (OperationCanceledException)
+        {
+            // The ONLY thing that escapes LoadAsync. The pane catches everything else itself and
+            // degrades to an explicit error state with its own message, which the update below then
+            // shows.
+            //
+            // An earlier revision also caught the general case here and wrote its own message. That
+            // branch was unreachable — mutation proved it, by deleting it and failing nothing — and
+            // a control that cannot fire reads as protection while providing none (DC-016).
+            return;
+        }
+
+        await list.Dispatcher.InvokeAsync(() =>
+        {
+            list.ItemsSource = pane.Rows;
+            status.Text = pane.StatusMessage;
+        });
     }
 
     /// <summary>A live terminal: a real ConPTY session, drawn by the real renderer.</summary>

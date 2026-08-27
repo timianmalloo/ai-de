@@ -56,7 +56,7 @@ public sealed record ProvenanceSection(string Heading, IReadOnlyList<string> Lin
 /// to exist permanently, exposing the same selected-node identity, provenance, navigation actions and
 /// result-limit state as the Phase-2 canvas will.
 /// </remarks>
-public sealed class EvidencePaneViewModel(ProjectionService projections)
+public sealed class EvidencePaneViewModel(IWorkspaceQueries queries)
 {
     private IReadOnlyList<EvidenceRow> _allRows = [];
 
@@ -76,14 +76,15 @@ public sealed class EvidencePaneViewModel(ProjectionService projections)
     /// <summary>Announced through a live region, so state changes reach a screen reader without motion.</summary>
     public string LiveAnnouncement { get; private set; } = string.Empty;
 
-    public void Load(string searchTerm = "")
+    public async Task LoadAsync(string searchTerm = "", CancellationToken cancellationToken = default)
     {
         State = PaneState.Loading;
         StatusMessage = "Loading evidence…";
 
         try
         {
-            var result = projections.Find(searchTerm, ProjectionService.MaxNeighborsCeiling);
+            var result = await queries.FindAsync(
+                searchTerm, ProjectionService.MaxNeighborsCeiling, cancellationToken);
             SourceRevision = result.SourceRevision;
 
             _allRows = [.. result.Matches.Select(m => new EvidenceRow(
@@ -139,10 +140,11 @@ public sealed class EvidencePaneViewModel(ProjectionService projections)
     /// Selects a node and builds its provenance in the spec's fixed order:
     /// what it is → confidence/provenance → related nodes → source location → actions.
     /// </summary>
-    public void Select(string nodeId)
+    public async Task SelectAsync(string nodeId, CancellationToken cancellationToken = default)
     {
         SelectedNodeId = nodeId;
-        var describe = projections.Describe(nodeId, ProjectionService.MaxNeighborsCeiling);
+        var describe = await queries.DescribeAsync(
+            nodeId, ProjectionService.MaxNeighborsCeiling, cancellationToken);
 
         var sections = new List<ProvenanceSection>
         {

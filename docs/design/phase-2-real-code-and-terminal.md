@@ -486,6 +486,41 @@ Ten controls were mutation-tested one at a time; all ten were caught. Four neede
 rather than `if (false)`, which trips CS0162 under `TreatWarningsAsErrors` and fails the build — an
 empty result reading as "all passed" is the DC-012 shape, already recorded once on this boundary.
 
+### The shell uses the daemon
+
+**BUILT 2026-08-27.** `IWorkspaceQueries` (the seam), `LocalWorkspaceQueries` (in-process),
+`WorkspaceClient` (remote), `ShellBootstrap` (connect-or-launch), and the app switched onto it. The
+daemon ships in a `daemon/` folder beside the shell.
+
+**Measured by running it:** the app starts, spawns exactly one daemon process, and renders its
+evidence panes from answers that crossed the pipe. Before this the split existed in tests and
+nowhere a user could reach.
+
+| Decision | Why |
+|---|---|
+| Connect, then launch | One daemon per workspace is enforced by the lock, so launching first would mean the second shell starts a process whose only job is to discover it is redundant. Racing shells are safe *because* of the lock — adding our own would put a second mechanism in front of the one that already decides correctly. |
+| No fallback to in-process | A shell that quietly ran the core itself would work, and would abandon the trust boundary, the workspace lock and the epoch fence at the moment they were most obviously needed. The failure is shown (**DC-011**). |
+| The seam is async | The remote case is the real one. A synchronous seam blocks a UI thread for a pipe round trip; the local adapter completes immediately and pays nothing. |
+| Window first, workspace second | Reaching a daemon can mean a cold process start. A window that appears only once another process has launched looks like a failure to launch, so the shell shows immediately and `AttachWorkspace` points it at the daemon when it resolves. |
+| Daemon in its own folder | The two share assemblies. Merging the outputs is a clobber waiting for the first version where they differ — which is exactly what the dual-major handshake exists to survive. |
+| Heading shows the folder name | The workspace id is a hash *so the path does not travel with it*, which makes it the wrong thing to show a user asking which workspace they are in. |
+
+#### The defect 459 passing tests could not see
+
+Moving the pane to async left `SurfaceContentFactory` binding `pane.Rows` and `pane.StatusMessage`
+at construction — before the load ran. `Rows` is replaced by the load and is not observable, so both
+evidence panes sat on *"Loading evidence…"* permanently. The pane view model was correct and had its
+own test class; nothing asserted on what the **control** displayed. It was found by running the
+application and looking at it.
+
+Registered as **DC-017 — verified one layer below the one that actually fails**, with
+`SurfaceContentTests` as the control: it builds the surface through the real factory, pumps the
+dispatcher, and asserts on what the control ends up showing.
+
+Mutation also found an **unreachable catch** in the fix itself: the pane already degrades internally
+and only cancellation escapes it, so the general `catch` wrote a message that could never appear. It
+was removed rather than kept (**DC-016**).
+
 ### Upgrade and rollback (P2-UPGRADE-01..03)
 
 **BUILT 2026-08-27.** `MigrationJournal`, `StoreSnapshot`, `HealthGate`, `UpgradeCoordinator`,

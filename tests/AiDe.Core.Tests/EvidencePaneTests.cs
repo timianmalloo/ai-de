@@ -1,3 +1,4 @@
+using AiDe.Core.Projections;
 using AiDe.Core;
 using AiDe.Core.Facts;
 using AiDe.Core.Health;
@@ -20,12 +21,12 @@ public sealed class EvidencePaneTests : IDisposable
 
     // P1-UI-01 — empty state guides to the first action instead of showing nothing.
     [Fact]
-    public void Load_WithNoCommittedSnapshot_ShowsTheEmptyStateNotASilentBlank()
+    public async Task Load_WithNoCommittedSnapshot_ShowsTheEmptyStateNotASilentBlank()
     {
         using var core = OpenCore();
-        var pane = new EvidencePaneViewModel(core.Projections);
+        var pane = new EvidencePaneViewModel(new LocalWorkspaceQueries(core.Projections));
 
-        pane.Load();
+        await pane.LoadAsync();
 
         Assert.Equal(PaneState.Empty, pane.State);
         Assert.Contains("No evidence yet", pane.StatusMessage, StringComparison.Ordinal);
@@ -38,8 +39,8 @@ public sealed class EvidencePaneTests : IDisposable
         using var core = OpenCore();
         await core.RefreshScopeAsync("fixture", "rev-1");
 
-        var pane = new EvidencePaneViewModel(core.Projections);
-        pane.Load();
+        var pane = new EvidencePaneViewModel(new LocalWorkspaceQueries(core.Projections));
+        await pane.LoadAsync();
 
         Assert.Equal(PaneState.Ready, pane.State);
         Assert.NotEmpty(pane.Rows);
@@ -54,8 +55,8 @@ public sealed class EvidencePaneTests : IDisposable
     {
         using var core = OpenCore();
         await core.RefreshScopeAsync("fixture", "rev-1");
-        var pane = new EvidencePaneViewModel(core.Projections);
-        pane.Load();
+        var pane = new EvidencePaneViewModel(new LocalWorkspaceQueries(core.Projections));
+        await pane.LoadAsync();
         var rowsBefore = pane.Rows.Count;
 
         pane.MarkStale("fixture extraction failed");
@@ -72,8 +73,8 @@ public sealed class EvidencePaneTests : IDisposable
     {
         using var core = OpenCore();
         await core.RefreshScopeAsync("fixture", "rev-1");
-        var pane = new EvidencePaneViewModel(core.Projections);
-        pane.Load();
+        var pane = new EvidencePaneViewModel(new LocalWorkspaceQueries(core.Projections));
+        await pane.LoadAsync();
 
         pane.Filter("zzz-nothing-matches");
 
@@ -88,10 +89,10 @@ public sealed class EvidencePaneTests : IDisposable
     {
         using var core = OpenCore();
         await core.RefreshScopeAsync("fixture", "rev-1");
-        var pane = new EvidencePaneViewModel(core.Projections);
-        pane.Load();
+        var pane = new EvidencePaneViewModel(new LocalWorkspaceQueries(core.Projections));
+        await pane.LoadAsync();
 
-        pane.Select("Order");
+        await pane.SelectAsync("Order");
 
         var headings = pane.Provenance.Select(s => s.Heading).ToList();
         Assert.Equal("What it is", headings[0]);
@@ -106,10 +107,10 @@ public sealed class EvidencePaneTests : IDisposable
     {
         using var core = OpenCore();
         await core.RefreshScopeAsync("fixture", "rev-1");
-        var pane = new EvidencePaneViewModel(core.Projections);
-        pane.Load();
+        var pane = new EvidencePaneViewModel(new LocalWorkspaceQueries(core.Projections));
+        await pane.LoadAsync();
 
-        pane.Select("NodeThatDoesNotExist");
+        await pane.SelectAsync("NodeThatDoesNotExist");
 
         var confidence = Assert.Single(pane.Provenance, s => s.Heading == "Confidence and provenance");
         Assert.Contains("not recorded", confidence.Lines);
@@ -120,7 +121,7 @@ public sealed class EvidencePaneTests : IDisposable
     [InlineData(VerificationStatus.Verified, "Verified")]
     [InlineData(VerificationStatus.Inferred, "Inferred")]
     [InlineData(VerificationStatus.Unverified, "Unverified")]
-    public void ConfidenceBadge_CarriesGlyphAndTextNotColourAlone(VerificationStatus status, string expectedText)
+    public async Task ConfidenceBadge_CarriesGlyphAndTextNotColourAlone(VerificationStatus status, string expectedText)
     {
         var badge = ConfidenceBadge.For(status);
 
@@ -137,8 +138,8 @@ public sealed class EvidencePaneTests : IDisposable
     {
         using var core = OpenCore();
         await core.RefreshScopeAsync("fixture", "rev-1");
-        var pane = new EvidencePaneViewModel(core.Projections);
-        pane.Load();
+        var pane = new EvidencePaneViewModel(new LocalWorkspaceQueries(core.Projections));
+        await pane.LoadAsync();
 
         var row = pane.Rows[0];
 
@@ -153,10 +154,10 @@ public sealed class EvidencePaneTests : IDisposable
     {
         using var core = OpenCore();
         await core.RefreshScopeAsync("fixture", "rev-1");
-        var pane = new EvidencePaneViewModel(core.Projections);
-        pane.Load();
+        var pane = new EvidencePaneViewModel(new LocalWorkspaceQueries(core.Projections));
+        await pane.LoadAsync();
 
-        pane.Select("Order");
+        await pane.SelectAsync("Order");
         var describeAll = core.Projections.Describe("Order", 50);
 
         // With the full cap there is nothing omitted, so no limit section should appear —
@@ -168,7 +169,7 @@ public sealed class EvidencePaneTests : IDisposable
     // Health incidents dedup by {class, scope} with a count, so a flapping condition cannot
     // flood out the incident that mattered.
     [Fact]
-    public void HealthSidecar_CollapsesRepeatOccurrencesAndSurvivesReopen()
+    public async Task HealthSidecar_CollapsesRepeatOccurrencesAndSurvivesReopen()
     {
         var path = Path.Combine(_dataDirectory, "incidents.jsonl");
         var sidecar = new HealthIncidentSidecar(path);
@@ -186,7 +187,7 @@ public sealed class EvidencePaneTests : IDisposable
     }
 
     [Fact]
-    public void HealthSidecar_AcknowledgedIncidentsLeaveTheOpenList()
+    public async Task HealthSidecar_AcknowledgedIncidentsLeaveTheOpenList()
     {
         var path = Path.Combine(_dataDirectory, "ack.jsonl");
         var sidecar = new HealthIncidentSidecar(path);
@@ -200,7 +201,7 @@ public sealed class EvidencePaneTests : IDisposable
 
     // The sidecar exists precisely so an unwritable store can still report itself.
     [Fact]
-    public void HealthSidecar_WritesOutsideTheWorkspaceDatabase()
+    public async Task HealthSidecar_WritesOutsideTheWorkspaceDatabase()
     {
         var path = Path.Combine(_dataDirectory, "outside", "incidents.jsonl");
         var sidecar = new HealthIncidentSidecar(path);

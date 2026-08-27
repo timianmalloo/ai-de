@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 7 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 8 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 3.
@@ -431,4 +431,32 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   without one, and the register cannot see a guard nobody thought to disable. The general defence is
   the question asked of every control as it is written: **what would have to happen for this to say
   no, and can that happen here?**
+- **Status:** `partially-controlled`
+
+### DC-017 — Verified one layer below the one that actually fails
+- **Signature:** the model is correct and thoroughly tested; the defect lives entirely in the
+  untested code between it and what the user sees. Every test passes, the logic is right, and the
+  screen is wrong. It appears most reliably at a boundary the suite treats as trivial: the
+  imperative glue that copies a view model into a control, a serializer, a formatter — the layers
+  nobody writes a test for because "there is no logic in it".
+- **Why it survives:** coverage looks complete, because the *interesting* part is covered. The
+  untested part has no branches and no obvious behaviour, which is exactly why nothing was written
+  for it — and why a change in the layer beneath (here: synchronous becoming asynchronous) can
+  invalidate it without any test noticing.
+- **Instances:** 2026-08-27 — the evidence pane became asynchronous when the shell moved onto the
+  daemon. `SurfaceContentFactory` kept binding `pane.Rows` and `pane.StatusMessage` at construction,
+  before the load ran. `Rows` is replaced by the load and is not observable, so both panes sat on
+  *"Loading evidence…"* permanently. The pane view model was correct and had a dedicated test class;
+  459 tests passed. It was found by **running the application and looking at it**.
+- **Control:** `SurfaceContentTests` — builds the surface through the real factory, pumps the
+  dispatcher, and asserts on **what the control ends up showing**: that rows arrive, that the status
+  text stops saying "Loading", and that an unreachable workspace says so instead. **Observed failing
+  2026-08-27** by restoring the construction-time binding, which the suite then caught.
+- **The diagnostic that would have saved the time:** when a layer changes from synchronous to
+  asynchronous, every consumer that read a value *once* is now reading it too early. That is a
+  mechanical consequence, not a subtle one — the question to ask of each consumer is *"what does
+  this show before the answer arrives, and what makes it change?"*
+- **Residual risk:** this control covers the evidence surface only. Nothing fails when a new surface
+  is added with the same shape of glue, and the general defence remains E11/E12 — prove the rendered
+  surface, not the model behind it — plus actually running the application.
 - **Status:** `partially-controlled`

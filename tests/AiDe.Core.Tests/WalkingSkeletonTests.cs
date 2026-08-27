@@ -281,9 +281,9 @@ public sealed class WalkingSkeletonTests : IDisposable
         using var core = OpenCore();
         await core.RefreshScopeAsync("fixture", "rev-1");
 
-        var pane = new EvidencePaneViewModel(core.Projections);
-        pane.Load();
-        pane.Select("Order");
+        var pane = new EvidencePaneViewModel(new LocalWorkspaceQueries(core.Projections));
+        await pane.LoadAsync();
+        await pane.SelectAsync("Order");
 
         var caller = new McpCallerContext("ws-1", "session-1", SessionProcessingClass.LocalOnly,
             new CallerPrincipal("agent-1", CallerKind.McpClient));

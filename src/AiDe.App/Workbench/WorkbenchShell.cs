@@ -4,6 +4,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using AiDe.Core;
+using AiDe.Core.Projections;
 using AiDe.Core.Workbench;
 using AvalonDock;
 
@@ -24,7 +25,9 @@ namespace AiDe.App.Workbench;
 /// </remarks>
 public sealed class WorkbenchShell : IDisposable
 {
-    public WorkbenchShell(WorkspaceCore? core)
+    private SurfaceContentFactory _factory;
+
+    public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
         Service = new LayoutService();
 
@@ -32,25 +35,33 @@ public sealed class WorkbenchShell : IDisposable
         LiveRegion.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
         Announcer = new WorkbenchAnnouncer(LiveRegion);
 
-        var factory = new SurfaceContentFactory(core?.Projections);
+        _factory = new SurfaceContentFactory(queries);
         Manager = new DockingManager();
         AutomationProperties.SetName(Manager, "Workbench");
 
-        Adapter = new WorkbenchAdapter(Manager, Service, factory.Create);
+        // Indirected through a field so the workspace can arrive AFTER the window exists. The
+        // shell is built synchronously and shown immediately; reaching a daemon may take a cold
+        // start, and a window that appears only once a process has launched looks like a failure to
+        // launch.
+        Adapter = new WorkbenchAdapter(Manager, Service, surface => _factory.Create(surface));
         Controller = new WorkbenchController(Service, Announcer);
 
         Palette = new CommandPalette(Controller, Announcer);
 
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
         // open there is nothing to persist against, so first-run simply starts from the default.
-        if (core is not null && !string.IsNullOrEmpty(core.DataDirectory))
+        //
+        // The directory is passed in rather than read off a core: the shell no longer holds one.
+        // Layout is the SHELL's state, not the workspace's — it stays local even when the evidence
+        // it arranges is answered by another process.
+        if (!string.IsNullOrEmpty(workspaceDataDirectory))
         {
             var surfaces = Service.Current.AllStacks()
                 .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId)
                 .ToHashSet(StringComparer.Ordinal);
 
             Persistence = new LayoutPersistence(
-                Service, Path.Combine(core.DataDirectory, "layout.json"), surfaces);
+                Service, Path.Combine(workspaceDataDirectory, "layout.json"), surfaces);
 
             var restored = Persistence.Restore();
             if (restored.ErrorCode is not null || restored.WasDefaulted)
@@ -83,7 +94,7 @@ public sealed class WorkbenchShell : IDisposable
     public CommandPalette Palette { get; }
 
     /// <summary>Saves and restores the arrangement across restarts. Null on first run.</summary>
-    public LayoutPersistence? Persistence { get; }
+    public LayoutPersistence? Persistence { get; private set; }
 
     /// <summary>Binds keyboard commands and the palette to a host element — normally the window.</summary>
     public void Bind(UIElement host)
@@ -171,6 +182,38 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         Manager.LayoutUpdated += (_, _) => Persistence.MarkDirty();
+    }
+
+    /// <summary>
+    /// Points the shell at a workspace that became available after it was built.
+    /// </summary>
+    /// <remarks>
+    /// Panes already on screen are re-rendered, because a pane showing "not available in this build"
+    /// after the workspace opened is worse than one that never claimed anything.
+    /// </remarks>
+    public void AttachWorkspace(IWorkspaceQueries queries, string? dataDirectory)
+    {
+        ArgumentNullException.ThrowIfNull(queries);
+
+        _factory = new SurfaceContentFactory(queries);
+
+        if (!string.IsNullOrEmpty(dataDirectory) && Persistence is null)
+        {
+            var surfaces = Service.Current.AllStacks()
+                .SelectMany(stack => stack.Surfaces).Select(surface => surface.SurfaceId)
+                .ToHashSet(StringComparer.Ordinal);
+
+            Persistence = new LayoutPersistence(
+                Service, Path.Combine(dataDirectory, "layout.json"), surfaces);
+
+            var restored = Persistence.Restore();
+            if (restored.ErrorCode is not null || restored.WasDefaulted)
+            {
+                Announcer.Announce(restored.Announcement);
+            }
+        }
+
+        Adapter.Render();
     }
 
     public void Dispose() => Persistence?.Dispose();
