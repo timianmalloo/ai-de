@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-conpty",
-  "generated": "2026-08-27T00:28:58Z",
+  "project": "ai-de-ipc",
+  "generated": "2026-08-27T16:14:39Z",
   "audit": [
     {
       "id": "al-0001",
@@ -676,6 +676,24 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.Core/Terminal/ConPtyTerminalSession.cs",
         "tests/AiDe.Core.Tests/TerminalSessionConformanceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0036",
+      "shortname": "implement-daemon-ipc-boundary",
+      "datetime": "2026-08-27T16:14:39Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "yes do the next steps but go back to a tabular summary of tasks",
+      "summary": "IPC boundary for the process split: versioned envelope with dual-major handshake, capability registry bound to connection/process/workspace/epoch, DaemonEndpoint with a fixed check order. 25 negative security tests, all seven controls mutation-verified. 237 tests green",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/DaemonEndpoint.cs",
+        "tests/AiDe.Core.Tests/IpcBoundaryTests.cs"
       ],
       "tags": [],
       "outcome": "success"
