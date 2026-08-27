@@ -20,6 +20,19 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\AiDe.App\AiDe.App.csproj" />
+
+    <!--
+      The GUI terminal probe, built alongside the tests so the case cannot silently skip.
+
+      TerminalGuiHostTests starts this as a process to ask whether ConPTY delivers output to a
+      host with no console — the product's own configuration. Without this reference the probe is
+      simply absent on a clean clone and the test fails on a missing file, which reads as broken
+      tooling rather than as the question going unasked (DC-012).
+
+      ReferenceOutputAssembly="false" because it is started, never linked.
+    -->
+    <ProjectReference Include="..\AiDe.App.TerminalProbe\AiDe.App.TerminalProbe.csproj"
+                      ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

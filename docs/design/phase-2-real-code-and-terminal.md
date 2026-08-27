@@ -255,6 +255,72 @@ threat model beside 133) is not spoken and is never honoured.
 
 Seven controls were mutation-tested one at a time; all seven were caught.
 
+### Terminal renderer — the surface
+
+**BUILT 2026-08-27.** `TerminalScreen` + `VtParser` in Core (no WPF), `TerminalView` +
+`TerminalPalette` + `TerminalInput` in the app, joined by `TerminalSurface`. The Phase-1b
+placeholder pane is replaced by a live session, and **`TerminalSurface` is the first thing in the
+product that passes `Integration: PowerShell`** — until now nothing did.
+
+**S3's constraint is now enforced rather than recorded.** The renderer draws one `GlyphRun` per
+*run of identical style* per line, and `AFullScreenRedraw_StaysInsideTheFrameBudget` measures a
+200×50 screen at **5.50 ms p95** against a 16.67 ms budget — consistent with S3's 6.64 ms for this
+path and three orders away from the 142.80 ms per-cell path. A mutation that reverts the run loop to
+one draw per cell **is caught by that test**, which is what turns a design decision into a control:
+per-cell text is the natural implementation and nothing about it looks wrong until it is measured.
+
+**The model holds no WPF.** Wrapping, scrolling, erase extents and cursor clamping are
+data-structure rules; behind a rendering framework each would be verifiable only by drawing pixels
+and reading them back.
+
+**Two parsers over one stream, deliberately.** `OscParser` reads for authenticated state and is a
+security control; `VtParser` reads for what to draw and *skips* OSC so a title or clipboard sequence
+never appears as text. Merging them would put display concerns inside the control.
+
+| Decision | Why |
+|---|---|
+| Runs, not whole lines | A line rarely has one style. Same shape as the measured path; what real terminals do. |
+| Present on the rendering tick, gated on `IsDirty` | The 1 MiB/s budget is an *output* rate, not a *draw* rate. Redrawing per write spends the budget on states nobody observes; without the dirty flag a motionless terminal repaints forever. |
+| Parse off the UI thread, draw on it | Marshalling every chunk to the dispatcher would put a megabyte a second of parse work on the thread that must stay responsive to typing. |
+| Scrolling, no scrollback | History needs its own memory budget. Growing the viewport to fake it puts an unbounded allocation behind an innocuous property, sized by the child process. |
+| Palette in `App.xaml` | Raw colour literals are legal in exactly one file (`TokenDisciplineTests`). The ANSI sixteen are a required vocabulary — what a theme may choose is the shade, never the meaning. |
+| Keys mapped away from the control | Every entry has an exact right answer and a wrong one is a key that silently does nothing. Text arrives through `OnTextInput`, never mapped from key codes, or every non-US layout breaks. |
+
+#### DC-014's condition was too strong, and it nearly cost the architecture
+
+`AiDe.App` is a GUI application with **no console at all**. Read literally, DC-014 ("ConPTY attaches
+a child only when the launching process owns a real console") says every terminal pane in the
+product must be permanently empty — and **no test in the suite would have failed**, because none ran
+in that configuration.
+
+Two stand-ins gave two wrong answers before the real one. A probe calling `FreeConsole()` to
+*simulate* a GUI host captured nothing. A genuine WinExe probe *still* captured nothing when started
+by the test host, because with `UseShellExecute = false` the child inherits the runner's redirected
+standard handles. Shell-executed, the same binary captured **291 characters**.
+
+**The operative condition is which standard handles the host was given, not whether it owns a
+console.** `tests/AiDe.App.TerminalProbe` is a WinExe whose `OutputType` *is* the thing under test,
+and DC-014 now carries the correction. The corollary is general: **a stand-in for a configuration is
+not evidence about that configuration.**
+
+#### Measured in the real app, with one finding only running it could produce
+
+The app was launched and a terminal pane rendered a live PowerShell prompt. It also showed:
+
+> *PowerShell detected that you might be using a screen reader and has disabled PSReadLine for
+> compatibility purposes.*
+
+So on this machine **the shell integration correctly declines to install** — no line-accept hook, so
+no `C` mark, so per the all-or-nothing rule it installs nothing and the session keeps the heuristic.
+The control behaves exactly as designed; what is new is the *frequency*. The no-integration path is
+not an exotic fallback, it is what happens on any machine where PowerShell detects a screen reader.
+
+**Not mitigated, and deliberately so.** The obvious fix — `Import-Module PSReadLine` from our script
+— overrides an accessibility accommodation the shell made on the user's behalf. ADR-0014 withdrew
+the conformance *obligation*; it did not license undoing an accommodation to gain a nicer status
+indicator. Carried as a known limitation: on such machines Ready/Busy comes from the coarse
+heuristic.
+
 ### Shell integration — the half that makes the control operate
 
 **BUILT 2026-08-27.** `ShellIntegration.PowerShellScript(nonce)` composes the shell-side script;
@@ -614,7 +680,7 @@ rather than be skipped (**DC-012**).
 | | |
 |---|---|
 | **Completed** | Phase-2 design: two contract gaps closed on paper, data model (no new facts, and why), three component contracts, failure/STRIDE/LINDDUN analyses, telemetry, the triggered-directive test plan including the newly-owed conformance suite. **All four spikes resolved 2026-08-26.** S2 changed the analyzer-execution mitigation to stripping `AnalyzerReferences`. S3: own a WPF renderer, `GlyphRun` per line. S4 met ADR-0008's reversal trigger, **now resolved by [ADR-0015](../adr/0015-canvas-hosting-and-overlay-strategy.md)** — windowed control plus snapshot swap, gut-checked at 150% DPI. S1 decided: disclose the absence. **Focus routing designed** against a verified mechanism, after the documented one turned out not to exist on this control. |
-| **Remaining** | The terminal renderer (S3's `GlyphRun`-per-line constraint), then the process split, then Roslyn. **The OSC parser landed 2026-08-27** and with it the measurement that OSC survives ConPTY. **The shell integration landed 2026-08-27**, so the OSC control now operates in a real session rather than lying dormant. **Newly owed:** nothing in the product yet *starts* a session with `Integration: PowerShell` — that arrives with the terminal surface, alongside the renderer. Open findings carried forward: the MSBuildWorkspace dependency-chain advisories, the unprobed MSBuild-task trust boundary, and a possible colour flash at the snapshot swap that only a human observer can settle. |
+| **Remaining** | The terminal renderer (S3's `GlyphRun`-per-line constraint), then the process split, then Roslyn. **The OSC parser landed 2026-08-27** and with it the measurement that OSC survives ConPTY. **The shell integration landed 2026-08-27**, so the OSC control now operates in a real session rather than lying dormant. **The renderer landed 2026-08-27** and with it the terminal surface, so the whole of Phase 2's first component — runtime, security, state and display — is now reachable by a user. Component 1 is complete. Open findings carried forward: the MSBuildWorkspace dependency-chain advisories, the unprobed MSBuild-task trust boundary, and a possible colour flash at the snapshot swap that only a human observer can settle. |
 | **Best next action (superseded 2026-08-27 — the runtime and the OSC parser are built)** | **Implement the ConPTY terminal runtime.** It is the only Phase-2 component with no open decision in front of it — S3 cleared its renderer and named the binding draw path, ADR-0005's boundary is unchanged, and it does not touch the canvas. It also forces the `ITerminalSession` output extension and the newly-owed D7 conformance suite, which every dispatch test currently written against the fixture depends on. |
 
 ## Gate record

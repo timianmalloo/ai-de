@@ -25,7 +25,7 @@ public sealed class SurfaceContentFactory(ProjectionService? projections)
         var content = surface.Kind switch
         {
             "view" or "inspector" when projections is not null => EvidenceContent(surface),
-            "terminal" => TerminalPlaceholder(),
+            "terminal" => Terminal(surface),
             _ => Unavailable(surface),
         };
 
@@ -63,19 +63,13 @@ public sealed class SurfaceContentFactory(ProjectionService? projections)
         return stack;
     }
 
-    private static FrameworkElement TerminalPlaceholder()
-    {
-        // Phase 1b still mocks the terminal runtime (ADR-0009 splits the process at Phase 2). Saying
-        // so on the surface is better than rendering a convincing but fake console.
-        var text = new TextBlock
-        {
-            Text = "Terminal sessions arrive in Phase 2. This pane is a placeholder.",
-            Margin = new Thickness(12),
-            TextWrapping = TextWrapping.Wrap,
-        };
-        text.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
-        return text;
-    }
+    /// <summary>A live terminal: a real ConPTY session, drawn by the real renderer.</summary>
+    /// <remarks>
+    /// Replaces the Phase-1b placeholder. The surface owns the session's lifetime, so the factory
+    /// hands one back and does not keep it — a pane that is closed disposes what it built.
+    /// </remarks>
+    private static FrameworkElement Terminal(Surface surface) =>
+        new TerminalSurface(surface.SurfaceId, surface.Title);
 
     private static FrameworkElement Unavailable(Surface surface)
     {

@@ -338,8 +338,28 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   *what does the test host lack that a real run has* before changing any code under test. The
   distinguishing measurement here was three lines — `GetConsoleWindow()`, the std handle file types,
   and `GetConsoleProcessList` — and it should have been the first thing run, not the last.
+- **Instances:** 2026-08-27 — the same class, reached from the other side. Building the terminal
+  renderer raised the question this entry's own wording appeared to settle: `AiDe.App` is a GUI
+  application with **no console at all**, so if "the host must own a real console" were the rule,
+  every terminal pane in the product would be permanently empty — and no test in the suite would
+  have failed, because none of them ran in that configuration. **Two stand-ins gave two wrong
+  answers before the real one:** a probe calling `FreeConsole()` to *simulate* a GUI host captured
+  nothing (`FreeConsole` does not leave a process as one that never had a console); then a genuine
+  WinExe probe *still* captured nothing when started by the test host, because with
+  `UseShellExecute = false` the child inherits the runner's **redirected standard handles**.
+  Shell-executed, the same binary captured 291 characters.
+- **Correction to this entry (CI4):** the operative condition is **which standard handles the host
+  was given**, not whether it owns a console. The original wording is a description of the two cases
+  measured in 2026-08-26 rather than the rule behind them, and taken literally it argues against the
+  product's actual architecture.
+- **Control (extended):** `tests/AiDe.App.TerminalProbe` — a **WinExe** probe whose `OutputType`
+  *is* the thing under test, started shell-executed by `TerminalGuiHostTests`, asserting a GUI host
+  with no console receives child output. **Observed failing 2026-08-27** in both wrong
+  configurations before it passed in the right one.
 - **Residual risk:** detection is still human judgement; nothing fails when a new test is written
-  in-process for a capability the host lacks. The general defence is the diagnostic above.
+  in-process for a capability the host lacks. The general defence is the diagnostic above, plus its
+  corollary from this instance: **a stand-in for a configuration is not evidence about that
+  configuration** — if the answer decides whether a feature exists, reproduce the real thing.
 - **Status:** `controlled`
 
 

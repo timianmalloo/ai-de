@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-shell-integration",
-  "generated": "2026-08-27T17:09:04Z",
+  "project": "ai-de-feat-terminal-renderer",
+  "generated": "2026-08-27T17:39:42Z",
   "audit": [
     {
       "id": "al-0001",
@@ -760,6 +760,41 @@ window.AUDIT_DATA = {
         "sha": "131f6fcb014ba0e2dde58a275f3c19e19dc6fb09",
         "short": "131f6fcb0",
         "branch": "feat/shell-integration",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0039",
+      "shortname": "terminal-renderer",
+      "datetime": "2026-08-27T17:39:42Z",
+      "session": "terminal-renderer-2026-08-27",
+      "prompt": "yes do the best next action you suggested",
+      "summary": "WPF terminal renderer: screen model and VT parser in Core (no WPF), GlyphRun-per-run renderer, palette as App.xaml tokens, key mapping, and the TerminalSurface that finally passes Integration: PowerShell. Measured 5.50ms p95 for a 200x50 full redraw against a 16.67ms budget — S3 predicted 6.64ms for this path and 142.80ms for per-cell; a mutation reverting to per-cell IS caught, so S3's constraint is now a control rather than a note. CORRECTED DC-014: its condition ('the host must own a real console') is too strong and read literally says the product's own GUI architecture cannot host terminals. Two stand-ins gave two wrong answers — FreeConsole() does not reproduce a GUI host, and a WinExe probe still fails when it inherits a test runner's redirected handles. The real rule is WHICH STANDARD HANDLES THE HOST WAS GIVEN. Added AiDe.App.TerminalProbe, a WinExe whose OutputType is the thing under test. 11/11 mutations caught. Ran the real app: a live PowerShell prompt renders, and it surfaced that PSReadLine is disabled here (screen-reader detection), so shell integration correctly declines to install rather than emit a half-loop — carried as a known limitation, NOT mitigated, because forcing it would override an accessibility accommodation. 364 tests (+81), four gates clean.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/TerminalScreen.cs",
+        "src/AiDe.Core/Terminal/VtParser.cs",
+        "src/AiDe.App/Workbench/TerminalView.cs",
+        "src/AiDe.App/Workbench/TerminalSurface.cs",
+        "tests/AiDe.App.TerminalProbe/Program.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "phase-2",
+        "terminal",
+        "ui",
+        "performance"
+      ],
+      "outcome": "success",
+      "goal": "Build the WPF terminal renderer and the surface that opens a session with shell integration on",
+      "done_when": "A terminal surface renders real session output with colour and cursor, keyboard input reaches the session, the draw path is measured against S3's budget, gates clean, committed",
+      "git": {
+        "sha": "3632d0b7817712a3cfc3bb368eacc32f9b6fe245",
+        "short": "3632d0b78",
+        "branch": "feat/terminal-renderer",
         "pushed": null
       }
     }

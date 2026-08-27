@@ -18,5 +18,36 @@
         <SolidColorBrush x:Key="UnverifiedBrush" Color="#98A3B2" />
         <SolidColorBrush x:Key="DangerBrush" Color="#E07A6F" />
         <SolidColorBrush x:Key="FocusBrush" Color="#8FC0EA" />
+
+        <!--  Terminal palette. The ANSI sixteen are a REQUIRED vocabulary: programs address them by
+              index and expect red to read as red, so unlike the semantic tokens above these cannot
+              be freely rethemed. What is chosen here is the shade — each one pulled toward the
+              design language, and each checked to stay legible on the terminal ground rather than
+              adopted from a default palette that assumed a different background.
+              The four that have a semantic twin ARE that twin: red is DangerBrush, green is
+              VerifiedBrush, yellow is InferredBrush, blue is AccentBrush — so a failing build and a
+              failing gate are the same red.  -->
+        <Color x:Key="TerminalAnsi0">#1A1F26</Color>
+        <Color x:Key="TerminalAnsi1">#E07A6F</Color>
+        <Color x:Key="TerminalAnsi2">#5FB98F</Color>
+        <Color x:Key="TerminalAnsi3">#D8A650</Color>
+        <Color x:Key="TerminalAnsi4">#5B9DD9</Color>
+        <Color x:Key="TerminalAnsi5">#B08AD0</Color>
+        <Color x:Key="TerminalAnsi6">#5FB2B9</Color>
+        <Color x:Key="TerminalAnsi7">#C3CBD6</Color>
+        <Color x:Key="TerminalAnsi8">#5A6472</Color>
+        <Color x:Key="TerminalAnsi9">#F09A90</Color>
+        <Color x:Key="TerminalAnsi10">#84D2AC</Color>
+        <Color x:Key="TerminalAnsi11">#EFC275</Color>
+        <Color x:Key="TerminalAnsi12">#8FC0EA</Color>
+        <Color x:Key="TerminalAnsi13">#CBA9E4</Color>
+        <Color x:Key="TerminalAnsi14">#88CDD3</Color>
+        <Color x:Key="TerminalAnsi15">#F2F6FA</Color>
+
+        <!--  The terminal's own ground and ink. Sunken rather than Surface: a terminal is a well the
+              workspace looks into, and the depth is what separates program output from chrome.  -->
+        <Color x:Key="TerminalBackground">#0D1014</Color>
+        <Color x:Key="TerminalForeground">#E4E9EF</Color>
+        <Color x:Key="TerminalCursor">#5B9DD9</Color>
     </Application.Resources>
 </Application>

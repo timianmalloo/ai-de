@@ -33,6 +33,7 @@ internal static class Program
     [DllImport("kernel32.dll")]
     private static extern IntPtr GetConsoleWindow();
 
+
     private static async Task<int> Main(string[] args)
     {
         var report = args.Length > 0 ? args[0] : null;
