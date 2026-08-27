@@ -47,6 +47,19 @@ internal static class Program
         Run("A — close console pipe ends BEFORE CreateProcess", closeEarly: true);
         Run("B — close console pipe ends AFTER CreateProcess", closeEarly: false);
 
+        // THE HYPOTHESIS. A host with no console of its own (which is every `dotnet test` host,
+        // and this agent sandbox) may be why the child never attaches. AllocConsole gives this
+        // process a real one; if C succeeds where A and B failed, the console is the variable and
+        // the interop was never wrong.
+        Header("C — same as A, but AllocConsole() FIRST");
+        var had = GetConsoleWindow();
+        var allocated = AllocConsole();
+        Console.WriteLine($"  console before            : 0x{had:X}");
+        Console.WriteLine($"  AllocConsole()            : {allocated}, "
+            + $"lastError {Marshal.GetLastWin32Error()}");
+        Console.WriteLine($"  console after             : 0x{GetConsoleWindow():X}");
+        Run("C — with an allocated console", closeEarly: true);
+
         Header("What to send back");
         Console.WriteLine("  The whole output of this run. The lines that decide it are:");
         Console.WriteLine("   • 'first read returned' — 0 means EOF with no data (no writer on the pipe)");
@@ -276,6 +289,9 @@ internal static class Program
 
     [DllImport("kernel32.dll")]
     private static extern IntPtr GetConsoleWindow();
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool AllocConsole();
 
     [DllImport("kernel32.dll")]
     private static extern IntPtr GetStdHandle(int which);

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 8 · partially-controlled 5 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 5 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 3.
@@ -316,3 +316,29 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   than a local fix. Until then the second-order defence is the discipline itself: run log-writing
   scripts in the tree where the work is.
 - **Status:** `partially-controlled`
+
+### DC-014 — A capability cannot be tested because the test host lacks something the product has
+- **Signature:** a feature works when the application is run normally and fails identically in every
+  test environment. The failure looks like a product defect, so the instinct is to change product
+  code — and any change "fixes" nothing, because the variable was never in the code.
+- **Why it survives:** the test is honest, the assertion is right, and the red is real. Nothing
+  distinguishes "the product is broken" from "the harness cannot host this". Worse, the pressure is
+  to weaken the assertion until it passes, which converts a true red into a permanent blind spot.
+- **Instances:** 2026-08-26 — ConPTY attaches a child process to a pseudo console only when the
+  launching process owns a **real console**. A `dotnet test` host never does; its stdio is
+  redirected. `Output_DeliversTheChildProcessesOwnOutput` therefore failed in every test run while
+  the identical code captured 90 bytes of child output under `dotnet run` from a terminal. Several
+  hours went into the interop before the console was suspected.
+- **Control:** run the case **out of process** in a host that has the capability —
+  `tests/AiDe.Core.TerminalHost` launched with `CREATE_NEW_CONSOLE`, driving the real
+  `ConPtyTerminalSession` and reporting by exit code, with a report file so a failure says *why*
+  rather than just returning a number. Verified capturing 297 characters of child output, and it
+  passes in the very sandbox where the in-process form cannot.
+- **The diagnostic that would have saved the time:** when a test fails identically everywhere, ask
+  *what does the test host lack that a real run has* before changing any code under test. The
+  distinguishing measurement here was three lines — `GetConsoleWindow()`, the std handle file types,
+  and `GetConsoleProcessList` — and it should have been the first thing run, not the last.
+- **Residual risk:** detection is still human judgement; nothing fails when a new test is written
+  in-process for a capability the host lacks. The general defence is the diagnostic above.
+- **Status:** `controlled`
+

@@ -508,23 +508,16 @@ rather than be skipped (**DC-012**).
 
 ## Flagged risks
 
-- **UNRESOLVED: the ConPTY child does not attach to the pseudo console in this environment.** The
-  runtime is implemented and **21 of 22** D7 conformance cases pass against it — identity, the
-  generation fence, cancellation, exit, write-after-exit, channel completion, resize, dispose, and
-  that the `Output` channel delivers bytes. The one failure is
-  `Output_DeliversTheChildProcessesOwnOutput`: `cmd.exe` starts, runs and exits with code 0, but its
-  stdout goes to the **parent's** console rather than the pty. Only ConPTY's own 16 startup bytes
-  (`ESC[?9001h ESC[?1004h`) arrive.
-  **What is established:** `CreatePseudoConsole` returns `HRESULT 0`; the attribute list sizes are
-  correct (48 bytes, `STARTUPINFOEX` 112); `UpdateProcThreadAttribute` and `CreateProcessW` both
-  return success; passing the `HPCON` **by value** is the right form (by-pointer produces no output
-  at all). The host process has **no console window** (`GetConsoleWindow() == 0`), all three std
-  handles are **pipes**, yet `GetConsoleProcessList` reports 4 — a headless console arrangement.
-  **What is NOT established:** whether the cause is the environment or the code. A hand-written
-  `ctypes` version fails identically, but it was transcribed from the same mental model, so it is a
-  weak independent check rather than a strong one. **Next step:** run the same probe from a real
-  interactive console session before changing any interop.
-
+- **RESOLVED — ConPTY child attachment requires the host to own a real console.** The D7 case
+  `Output_DeliversTheChildProcessesOwnOutput` failed for a reason that was never in the runtime.
+  Measured 2026-08-26: identical code captures the child's stdout under `dotnet run` from a terminal
+  (90 bytes, marker present, in both handle-closing orders) and captures nothing under a console-less
+  host. A `dotnet test` host is always console-less because its stdio is redirected. The interop was
+  correct throughout — `CreatePseudoConsole` HRESULT 0, attribute list 48 bytes, `STARTUPINFOEX` 112,
+  `HPCON` passed by value (by-pointer yields no output at all).
+  **Control:** the case now runs **out of process** via `tests/AiDe.Core.TerminalHost`, launched with
+  `CREATE_NEW_CONSOLE`, driving the real `ConPtyTerminalSession` and reporting by exit code. Verified
+  capturing 297 characters of child output. Registered as defect class **DC-014**.
 - **The `ITerminalSession` extension weakens the Phase-1 conformance claim** until `P2-CONFORM` runs:
   the fixture and the real runtime agree on the half that was specified, and nothing yet proves they
   agree on output, activity or exit.

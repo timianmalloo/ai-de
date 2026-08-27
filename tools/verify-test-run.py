@@ -50,7 +50,25 @@ for _stream in (sys.stdout, sys.stderr):
 
 
 def discover_projects() -> list[Path]:
-    return sorted(REPO.glob("tests/*/*.csproj"))
+    """Test projects under tests/ — not every project that happens to live there.
+
+    `tests/` also holds HELPERS: AiDe.Core.TerminalHost is an executable the ConPTY conformance case
+    launches with its own console, because ConPTY cannot attach a child from a console-less test host
+    (DC-014). A helper produces no .trx, so globbing blindly makes this gate report "the test host
+    almost certainly crashed" about a project that was never a test — a false alarm that trains people
+    to ignore the gate, which is worse than the silence it exists to prevent.
+
+    `<IsTestProject>false</IsTestProject>` is the declaration; it is opt-OUT, so a genuine test project
+    that forgets it is still checked.
+    """
+    projects = []
+    for project in sorted(REPO.glob("tests/*/*.csproj")):
+        text = project.read_text(encoding="utf-8", errors="replace").lower()
+        if "<istestproject>false</istestproject>" in text.replace(" ", ""):
+            continue
+        projects.append(project)
+
+    return projects
 
 
 def run_tests(projects: list[Path]) -> None:

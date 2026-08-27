@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-s4-decision",
-  "generated": "2026-08-26T21:17:40Z",
+  "project": "ai-de-conpty",
+  "generated": "2026-08-27T00:28:58Z",
   "audit": [
     {
       "id": "al-0001",
@@ -658,6 +658,24 @@ window.AUDIT_DATA = {
       "artifacts": [
         "docs/adr/0015-canvas-hosting-and-overlay-strategy.md",
         "spikes/webview2-snapshot-swap/RESULT.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0035",
+      "shortname": "implement-conpty-terminal-runtime",
+      "datetime": "2026-08-27T00:28:58Z",
+      "session": "4e957874-10fd-4d1b-a6b7-41042277c103",
+      "prompt": "yes do the best next action now",
+      "summary": "ConPTY terminal runtime, extended ITerminalSession contract, and the D7 conformance suite. Root-caused the child-attachment failure to the test host lacking a real console (not the interop); fixed with an out-of-process helper launched with CREATE_NEW_CONSOLE. 212 tests green",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/ConPtyTerminalSession.cs",
+        "tests/AiDe.Core.Tests/TerminalSessionConformanceTests.cs"
       ],
       "tags": [],
       "outcome": "success"
