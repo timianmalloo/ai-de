@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feat-daemon-operations",
-  "generated": "2026-08-27T19:16:22Z",
+  "generated": "2026-08-27T19:30:14Z",
   "audit": [
     {
       "id": "al-0001",
@@ -862,6 +862,40 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "905e602e728b029376cf582277cd71924ad0ad95",
         "short": "905e602e7",
+        "branch": "feat/daemon-operations",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0042",
+      "shortname": "upgrade-rollback",
+      "datetime": "2026-08-27T19:30:14Z",
+      "session": "upgrade-rollback-2026-08-27",
+      "prompt": "do your best next action - the daemon endpoint and then carry on to the P2-UPGRADE",
+      "summary": "Upgrade and rollback: journal, snapshot, health gate, coordinator, side-by-side installs, and startup recovery wired into the daemon so the mechanism is used rather than merely present. Ordering is the design — snapshot, journal, migrate, gate, commit — with the point of no return last, because an upgrade that fails halfway leaves a store no binary can read. The 60s gate budget is ENFORCED, keeping the slow replay check asynchronous (P1-PERF: 50k-edge replay vs a 15-minute RTO); a gate that only documented its budget would pass it. THREE DEFECTS FOUND: rollback derived the store path from the snapshot's filename and passed only because the fixture put both in one folder; the atomic replace was not atomic because File.ReadAllText does not share delete, so a concurrent reader made the WRITER throw on Windows; and even after that fix a delete-pending file needs a bounded retry. TWO TESTS PROVED NOTHING until mutation said so — the enum-naming test asserted a round-tripped value, which numeric enums also satisfy, and nothing distinguished atomic replacement from an in-place write. Pruning protects the current build explicitly because after a rollback the current version is an older one. 13/13 mutations caught. 454 tests (+36), four gates clean. Health gate CONTENTS for a real schema migration are not built — the store has no migration chain yet — stated rather than faked.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Claude Code",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Upgrade/MigrationJournal.cs",
+        "src/AiDe.Core/Upgrade/HealthGate.cs",
+        "src/AiDe.Core/Upgrade/UpgradeCoordinator.cs",
+        "src/AiDe.Core/Upgrade/DaemonInstallation.cs",
+        "tests/AiDe.Core.Tests/UpgradeTests.cs",
+        "tests/AiDe.Core.Tests/DaemonInstallationTests.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "upgrade",
+        "rollback"
+      ],
+      "outcome": "success",
+      "goal": "Build P2-UPGRADE-01..03: side-by-side daemon builds, health gate, rollback, and a durable migration journal",
+      "done_when": "Upgrade repoints on a passing gate, rolls back on a failing one, and an interrupted migration is undone at the next start; gates clean; committed",
+      "git": {
+        "sha": "1a71f8ca6565eb7c610076cc46d69dee199bb812",
+        "short": "1a71f8ca6",
         "branch": "feat/daemon-operations",
         "pushed": null
       }

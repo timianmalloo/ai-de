@@ -163,16 +163,26 @@ public sealed class DaemonOperationsTests : IDisposable
     [Fact]
     public async Task AnEnumField_TravelsAsAName_SoAddingAMemberCannotRenumberIt()
     {
-        // With numeric enums, inserting a member shifts every later one. The dual-major handshake
-        // exists so an old shell may meet a new daemon, which makes that a wire break with no error
-        // and no symptom except wrong answers.
+        // Asserted on the WIRE TEXT, not on the round-tripped value. An earlier version of this test
+        // checked that the enum came back equal — which a NUMERIC enum also satisfies, so it passed
+        // whether or not the converter was configured. Mutation proved it: removing the string
+        // converter failed nothing.
+        //
+        // The property is that the payload carries a NAME. By number, inserting a member renumbers
+        // every later one, and the dual-major handshake exists so an old shell may meet a new
+        // daemon: that is a wire break with no error and no symptom except wrong answers.
         await WithDaemon(async client =>
         {
             var result = await client.FindAsync("Service", 5, CancellationToken.None);
-
             Assert.NotEmpty(result.Matches);
             Assert.All(result.Matches, m => Assert.Equal(AuthorshipOrigin.RepositoryArtifact, m.Authorship));
         });
+
+        var wire = System.Text.Json.JsonSerializer.Serialize(
+            _projections.Find("Service", 5), WorkspaceOperations.Wire);
+
+        Assert.Contains("\"RepositoryArtifact\"", wire, StringComparison.Ordinal);
+        Assert.DoesNotContain("\"authorship\":0", wire, StringComparison.OrdinalIgnoreCase);
     }
 
     // ---- the epoch fence still applies across the boundary --------------------

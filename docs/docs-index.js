@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-27T19:16:07Z",
+  "generated": "2026-08-27T19:29:55Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1292,7 +1292,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f26ede456342b231b570f84c32de473f5cdf2e5cd686710dd39f6431b0d79143"
+      "sourceSha256": "e8ee6c30cd642bb911151a5bd98db55e7ea4ac431d7d5bf141677f3d832f3fbd"
     },
     {
       "id": "audit-log",
@@ -4023,7 +4023,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-feat-ipc-transport — Audit & Change Log",
+      "title": "ai-de-feat-daemon-operations — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4045,5 +4045,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "4044b30b0c20ab094dd20277b8747e20191196017b674e6673de16810d159e71"
+  "graphSha256": "1a705aecdd78c5c5f38c9c5101d28f51fb95ac603e3e2b53948f60504b48e854"
 };

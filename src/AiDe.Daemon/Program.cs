@@ -1,6 +1,7 @@
 using System.Runtime.Versioning;
 using AiDe.Core;
 using AiDe.Core.Ipc;
+using AiDe.Core.Upgrade;
 
 namespace AiDe.Daemon;
 
@@ -118,12 +119,29 @@ internal static class Program
     {
         var workspaceId = IpcPipeName.ForWorkspace(workspacePath);
 
-        var core = WorkspaceCore.Open(
-            workspaceId,
-            workspacePath,
-            Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "AiDe", "workspaces", workspaceId));
+        var dataDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "AiDe", "workspaces", workspaceId);
+
+        // BEFORE the store is opened. A migration interrupted by a power loss leaves a store that
+        // may be anything, and the only thing known to be good is its snapshot — so the next start
+        // is where that gets undone, because nothing at the moment of the crash got to run.
+        var recovery = UpgradeCoordinator.RecoverIfIncomplete(
+            Path.Combine(dataDirectory, "workspace.db"), dataDirectory);
+
+        if (recovery.Recovered)
+        {
+            Console.WriteLine("recovered an interrupted migration; the pre-migration store was restored");
+        }
+        else if (recovery.Failure is not null)
+        {
+            // Announced, never swallowed. A store left half-migrated with no snapshot is a state the
+            // operator has to know about; opening it anyway and hoping is how corruption becomes
+            // permanent.
+            Console.Error.WriteLine(recovery.Failure);
+        }
+
+        var core = WorkspaceCore.Open(workspaceId, workspacePath, dataDirectory);
 
         var endpoint = new DaemonEndpoint(
             workspaceId, new CapabilityRegistry(), _ => core.Store.CoreEpoch);

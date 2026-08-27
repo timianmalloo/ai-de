@@ -486,6 +486,52 @@ Ten controls were mutation-tested one at a time; all ten were caught. Four neede
 rather than `if (false)`, which trips CS0162 under `TreatWarningsAsErrors` and fails the build — an
 empty result reading as "all passed" is the DC-012 shape, already recorded once on this boundary.
 
+### Upgrade and rollback (P2-UPGRADE-01..03)
+
+**BUILT 2026-08-27.** `MigrationJournal`, `StoreSnapshot`, `HealthGate`, `UpgradeCoordinator`,
+`DaemonInstallation` — and the daemon runs `RecoverIfIncomplete` at startup, before it opens the
+store, so the mechanism is used rather than merely present.
+
+**The asymmetry that shapes all of it:** an upgrade that fails halfway is worse than one that never
+started. A store migrated to a schema the running binary cannot read is a workspace nobody can open,
+with the user's evidence inside it. So the ordering is: **snapshot → journal → migrate → gate →
+commit**, and the point of no return (deleting the snapshot) is last.
+
+| Piece | Decision |
+|---|---|
+| Journal | Latest state only, not a log — it answers one question and a history would make that a parse. Replaced by temp-then-rename. A torn journal reads as "nothing in flight" rather than throwing, because the recovery path must not be the thing that crashes after a crash. |
+| Snapshot | Copied, never moved. Renaming would leave a window with no store at all, which is the one state a crash must never find. |
+| Health gate | The **fast subset**, with the 60-second budget **enforced**. Full restore/replay equality stays asynchronous — P1-PERF measured a 50k-edge replay against a 15-minute RTO, and a gate that merely documented its budget would pass it. Stops at the first failure (later checks assume earlier ones held) and reports every check it ran, because a green gate is evidence the gate passed, not that its contents did. |
+| Rollback | Undoing a migration that already happened, not declining to run one — which is why the snapshot exists at all. |
+| Recovery | A separate startup entry point, because the case it handles is the one where nothing got to finish. |
+| Side-by-side | Keeping the previous build is what makes rollback possible: restoring a store achieves nothing if the only binary on disk is the one that could not read it. Repointing is one atomic write and is the commit. Pruning protects the current build **explicitly** — after a rollback the current version is an *older* one, exactly when "keep the newest N" would delete what is running. |
+
+#### Three defects the mutation run and its tests found
+
+- **Rollback restored to the wrong path.** It derived the store's location from the snapshot's
+  filename and passed only because the fixture put both in one directory. The store and the upgrade's
+  scratch space are independent by design; a workspace with its store elsewhere would have had the
+  snapshot restored to a path that is not the store — a rollback that silently does nothing.
+- **The atomic replace was not atomic.** `File.ReadAllText` does not share delete, so on Windows a
+  concurrent reader makes the *writer* throw `UnauthorizedAccessException` from `File.Move`. Readers
+  now open with `FileShare.ReadWrite | FileShare.Delete`.
+- **And it still needed a bounded retry.** With a reader holding the previous file, the renamed-over
+  name is left *delete-pending*, and the next replace can fail with access-denied though nothing is
+  wrong. Twenty attempts with a small backoff; the last is allowed to throw, because a journal that
+  cannot be written is a real failure the caller must not proceed past.
+
+**Two tests that proved nothing until mutation said so:** the enum-naming test asserted a
+round-tripped value, which a *numeric* enum also satisfies — it now asserts on the wire text; and
+nothing distinguished atomic replacement from an in-place write, which is now covered by a
+concurrent reader that must never observe a torn journal.
+
+Thirteen controls were mutation-tested one at a time; all thirteen were caught.
+
+**Not built:** the health gate's *contents* for a real schema migration — the store has one schema
+version and no migration chain yet, so the gate is exercised with checks supplied by its caller. The
+mechanism ships before the first breaking change because a migration hook added afterwards is added
+too late for every store already on disk, which is the same reason `LayoutMigrations` shipped empty.
+
 ## Failure-mode analysis
 
 | Failure mode | From which choice | Disposition | How addressed | Test |
