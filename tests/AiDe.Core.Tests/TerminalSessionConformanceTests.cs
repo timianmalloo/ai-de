@@ -320,12 +320,35 @@ public sealed class ConPtyTerminalSessionConformanceTests : TerminalSessionConfo
         return session;
     }
 
+    /// <summary>
+    /// Ends the session, preferring the polite path and falling back to the kill path.
+    /// </summary>
+    /// <remarks>
+    /// <para>Writing <c>exit</c> only works if the child is reading the pseudo console's input — and
+    /// on a console-less host it is not attached at all (DC-014), so it never sees the bytes and
+    /// never leaves. Waiting on that produced four cases that hung to their 60-second deadline and,
+    /// before this, <b>passed by luck</b> when the child happened to die for unrelated reasons. A
+    /// test that green-lights on timing is worse than one that fails.</para>
+    ///
+    /// <para>So this asks politely, then kills. The cases built on it — exit completes, every caller
+    /// sees the same result, activity reaches Ended, writes fail afterwards, the channel completes —
+    /// are all true of a killed process, so nothing is weakened by ending it that way. The
+    /// <i>natural</i> exit path is covered where it can actually work: the out-of-process helper,
+    /// whose child exits on its own.</para>
+    /// </remarks>
     protected override async Task RequestExitAsync(ITerminalSession session)
     {
-        // Ask cmd.exe to leave of its own accord, so the exit path under test is the ordinary one
-        // rather than the kill path. If it will not go, the Job Object takes it on dispose.
-        await session.WriteAsync(
-            session.Generation, Encoding.UTF8.GetBytes("exit\r"), Token);
+        await session.WriteAsync(session.Generation, Encoding.UTF8.GetBytes("exit\r"), Token);
+
+        var exited = await Task.WhenAny(
+            session.WaitForExitAsync(Token), Task.Delay(TimeSpan.FromSeconds(2), Token));
+
+        if (exited is not Task<SessionExit>)
+        {
+            // DisposeAsync closes the pseudo console, terminates the child if it is still running,
+            // and completes the exit. It is idempotent, so the test's own `await using` is unharmed.
+            await session.DisposeAsync();
+        }
     }
 
     /// <summary>
