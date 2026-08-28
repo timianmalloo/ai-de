@@ -28,10 +28,7 @@
         <!--  Menu bar. Every item here also has a keyboard chord and a palette entry, and the chord
               is shown beside it — a command reachable only by a chord nobody was told about is a
               command nobody uses, which is what this row exists to fix.  -->
-        <Menu Grid.Row="0"
-              x:Name="MainMenu"
-              Background="{StaticResource SurfaceSunkenBrush}"
-              Foreground="{StaticResource TextBrush}" />
+        <Menu Grid.Row="0" x:Name="MainMenu" />
 
         <!--  Title strip: workspace identity and the named-layout switcher.  -->
         <Grid Grid.Row="1"

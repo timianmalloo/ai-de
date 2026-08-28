@@ -97,6 +97,41 @@ public sealed class TerminalSurface : ContentControl, IDisposable
     /// </remarks>
     public static string CommandLine { get; set; } = "powershell.exe";
 
+    /// <summary>
+    /// Which executable THIS pane runs, chosen when it is created.
+    /// </summary>
+    /// <remarks>
+    /// Per surface rather than the static default: an agent terminal and a shell terminal coexist,
+    /// and a single global would make opening one silently change the other on its next restart.
+    /// </remarks>
+    public string? Executable { get; init; }
+
+    /// <summary>Agent executables this build knows how to watch for readiness.</summary>
+    public static IReadOnlyList<string> AvailableAgents { get; } =
+        [.. AgentReadinessWatcher.KnownAgents.Keys.Where(IsOnPath)];
+
+    /// <summary>Whether an executable can actually be launched, so the menu never offers a dead one.</summary>
+    private static bool IsOnPath(string executable)
+    {
+        var paths = (Environment.GetEnvironmentVariable("PATH") ?? string.Empty)
+            .Split(System.IO.Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
+
+        return paths.Any(dir =>
+        {
+            try
+            {
+                return System.IO.File.Exists(System.IO.Path.Combine(dir, executable + ".exe"))
+                    || System.IO.File.Exists(System.IO.Path.Combine(dir, executable + ".cmd"))
+                    || System.IO.File.Exists(System.IO.Path.Combine(dir, executable));
+            }
+            catch (ArgumentException)
+            {
+                // A malformed PATH entry is the user's, not ours, and must not stop the list.
+                return false;
+            }
+        });
+    }
+
     /// <summary>How this session's readiness is established, for the dispatch policy to consult.</summary>
     public ReadinessEvidence ReadinessEvidence =>
         _session is { } session && session.GetType() == typeof(ConPtyTerminalSession)
@@ -120,7 +155,8 @@ public sealed class TerminalSurface : ContentControl, IDisposable
         try
         {
             // An agent CLI gets a readiness watcher; a shell does not need one.
-            var executable = System.IO.Path.GetFileNameWithoutExtension(CommandLine);
+            var launch = Executable ?? CommandLine;
+            var executable = System.IO.Path.GetFileNameWithoutExtension(launch);
             if (AgentReadinessWatcher.KnownAgents.TryGetValue(executable, out var pattern))
             {
                 AgentReadiness = new AgentReadinessWatcher(pattern);
@@ -130,7 +166,7 @@ public sealed class TerminalSurface : ContentControl, IDisposable
                 new TerminalSessionRequest(
                     SessionId: sessionId,
                     Generation: 1,
-                    CommandLine: CommandLine,
+                    CommandLine: launch,
                     // The WORKSPACE, not wherever the shell happened to be launched from. A
                     // terminal in a developer tool that opens somewhere unrelated to the repository
                     // on screen makes the user's first command a cd.

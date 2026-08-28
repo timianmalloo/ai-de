@@ -129,30 +129,30 @@ public sealed record Layout(
 {
     public static Layout Default()
     {
-        // The graph canvas is a TAB in the primary stack rather than a fourth pane: it is an
-        // alternative way to read the same evidence Explore shows, not a second thing to watch at
-        // the same time — and a default layout that opens a WebView2 in its own pane pays for the
-        // browser on every start whether or not the user wants the graph.
-        var primary = new StackNode("stack-primary",
+        // Console at the bottom across the full width; workspace on the left; graph and domain on
+        // the right. The console spans both columns because a terminal is used WITH whatever is
+        // above it, not beside one column of it.
+        var workspace = new StackNode("stack-workspace",
             [
                 new Surface("explore", "view", "Explore"),
-                new Surface("domain", "view", "Domain"),
-                new Surface("graph", "canvas", "Graph"),
-            ]);
-        var terminal = new StackNode("stack-terminal",
-            [new Surface("terminal-1", "terminal", "Terminal — pwsh")]);
-        // Contexts sit BESIDE provenance rather than in the primary stack: both answer "what am I
-        // looking at", and the graph is what they are answering it about.
-        var inspector = new StackNode("stack-inspector",
-            [
                 new Surface("provenance", "inspector", "Provenance"),
                 new Surface("contexts", "contexts", "Contexts"),
             ]);
 
-        var left = new SplitNode("split-left", Orientation.Vertical,
-            [primary, terminal], [0.72, 0.28]);
-        var root = new SplitNode("split-root", Orientation.Horizontal,
-            [left, inspector], [0.74, 0.26]);
+        var graph = new StackNode("stack-graph",
+            [
+                new Surface("graph", "canvas", "Graph"),
+                new Surface("domain", "view", "Domain"),
+            ]);
+
+        var terminal = new StackNode("stack-terminal",
+            [new Surface("terminal-1", "terminal", "Terminal — pwsh")]);
+
+        var columns = new SplitNode("split-columns", Orientation.Horizontal,
+            [workspace, graph], [0.38, 0.62]);
+
+        var root = new SplitNode("split-root", Orientation.Vertical,
+            [columns, terminal], [0.68, 0.32]);
 
         return new Layout(root, [], ImmutableDictionary<string, StackState>.Empty);
     }

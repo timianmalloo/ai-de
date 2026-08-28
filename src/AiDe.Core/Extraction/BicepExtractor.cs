@@ -45,6 +45,15 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
     [GeneratedRegex(@"^\s*name:\s*(?<name>.+)$", RegexOptions.Multiline)]
     private static partial Regex NameProperty();
 
+    // dependsOn is either a single-line array or a block. Both forms are captured up to the closing
+    // bracket, and the SYMBOLS inside are what matter — a dependsOn on an expression is not a
+    // resource reference this reader can resolve, and is left out rather than guessed at.
+    [GeneratedRegex(@"dependsOn:\s*\[(?<body>[^\]]*)\]", RegexOptions.Multiline)]
+    private static partial Regex DependsOnBlock();
+
+    [GeneratedRegex(@"^\s*(?<symbol>[A-Za-z_]\w*)\s*$", RegexOptions.Multiline)]
+    private static partial Regex BareSymbol();
+
     public Task<ExtractionResult> ExtractAsync(ExtractionRequest request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -87,6 +96,18 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
             new(request.ScopeId, request.ArtifactRevision, subject, predicate, obj,
                 EvidenceOrigin.Static, VerificationStatus.Verified, provenance);
 
+        // Where each declaration ends, so a dependsOn is attributed to the resource that contains
+        // it rather than to whichever declaration happened to come before it in the file.
+        var declarationStarts = ResourceDeclaration().Matches(text).Select(m => m.Index)
+            .Concat(ModuleDeclaration().Matches(text).Select(m => m.Index))
+            .OrderBy(i => i).ToList();
+
+        int declarationEnds(int start)
+        {
+            var next = declarationStarts.FirstOrDefault(i => i > start, -1);
+            return next < 0 ? text.Length : next;
+        }
+
         foreach (Match match in ResourceDeclaration().Matches(text))
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -124,6 +145,13 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
             {
                 assertions.Add(Fact(node, "is_conditional", "true", provenance));
                 conditionals++;
+            }
+
+            // The resource GRAPH, not just the resource list. dependsOn is the only place a Bicep
+            // template states deployment order outright, and it is the edge a C4 view is made of.
+            foreach (var dependency in DependenciesAfter(text, match.Index, declarationEnds))
+            {
+                assertions.Add(Fact(node, "depends_on", $"{request.ScopeId}/{dependency}", provenance));
             }
 
             var name = NameAfter(text, match.Index);
@@ -195,6 +223,24 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
         }
 
         return Task.FromResult(new ExtractionResult(assertions, Complete: true, []));
+    }
+
+    /// <summary>The symbols a declaration's own <c>dependsOn</c> names.</summary>
+    /// <remarks>
+    /// Bounded to this declaration's span. Searching forward without a bound attributes a later
+    /// resource's dependencies to an earlier one, which produces edges that are individually
+    /// plausible and collectively a fiction.
+    /// </remarks>
+    private static IEnumerable<string> DependenciesAfter(string text, int start, Func<int, int> endOf)
+    {
+        var end = endOf(start);
+        var match = DependsOnBlock().Match(text, start);
+        if (!match.Success || match.Index >= end) yield break;
+
+        foreach (Match symbol in BareSymbol().Matches(match.Groups["body"].Value))
+        {
+            yield return symbol.Groups["symbol"].Value;
+        }
     }
 
     private static string NameAfter(string text, int declarationIndex)

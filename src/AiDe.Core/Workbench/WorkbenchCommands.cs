@@ -91,6 +91,14 @@ public static class WorkbenchCommandCatalog
             string.Empty,
             "Finds every C# project and indexes one scope per target framework. Reports what was not analysed."),
 
+        // The command that makes agent dispatch reachable at all. An agent session gets a readiness
+        // watcher instead of shell integration, so it can be dispatched to rather than only refused.
+        new("terminal.newAgent", "New agent terminal…", "Ctrl+K, A",
+            // AddSurface's keyboard equivalent (SC 2.5.7). Declared rather than left empty: the
+            // conformance test reflects over the operation union, and it caught this immediately.
+            nameof(LayoutOperation.AddSurface),
+            "Opens a terminal running an installed agent CLI. Prompts can be dispatched to it once it reaches its prompt."),
+
         new("workbench.dispatchPrompt", "Dispatch prompt to terminal…", "Ctrl+K, P",
             string.Empty,
             "Type a prompt and press Enter. The recorded delivery receipt is announced, including when delivery is unknown."),

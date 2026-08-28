@@ -86,6 +86,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
             };
 
             var edges = new List<CanvasEdge>();
+            var filtered = 0;
             var seen = new HashSet<string>(StringComparer.Ordinal) { describe.Node.NodeId };
             var disclosures = new List<string>();
 
@@ -104,17 +105,31 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
                     ? edge.Object
                     : edge.Subject;
 
+                var otherContext = ContextOf(other);
+                if (ContextFilter is not null &&
+                    !string.Equals(otherContext, ContextFilter, StringComparison.Ordinal))
+                {
+                    filtered++;
+                    continue;
+                }
+
                 if (seen.Add(other))
                 {
-                    nodes.Add(new CanvasNode(other, Shorten(other), "source", IsRoot: false, Context: ContextOf(other)));
+                    nodes.Add(new CanvasNode(other, Shorten(other), "source", IsRoot: false, Context: otherContext));
                 }
 
                 edges.Add(new CanvasEdge(edge.Subject, edge.Object, edge.Predicate, edge.Status.ToString()));
             }
 
+            // A filter that hid things silently would look like a small graph. The count is stated,
+            // and so is the filter itself.
             var message = edges.Count == 0
-                ? $"{describe.Node.DisplayLabel} has no recorded relationships."
-                : null;
+                ? ContextFilter is null
+                    ? $"{describe.Node.DisplayLabel} has no recorded relationships."
+                    : $"{describe.Node.DisplayLabel} has no neighbours in {ContextFilter}."
+                : ContextFilter is not null
+                    ? $"Showing only {ContextFilter}. {filtered} neighbour(s) in other contexts hidden."
+                    : null;
 
             return new CanvasGraph(
                 nodes, edges, describe.Node.NodeId, describe.Bounds.OmittedEdges,
@@ -138,6 +153,16 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
     /// ADR-0016 refuses.
     /// </remarks>
     public Func<string, string?> ContextLookup { get; set; } = _ => null;
+
+    /// <summary>
+    /// When set, only nodes in this context are drawn.
+    /// </summary>
+    /// <remarks>
+    /// The ROOT is kept even when it is outside the filter, and labelled as such. Dropping it would
+    /// leave a graph with no anchor and no way back — a filter that can strip the thing you were
+    /// looking at is one nobody trusts twice.
+    /// </remarks>
+    public string? ContextFilter { get; set; }
 
     private string? ContextOf(string nodeId) => ContextLookup(nodeId);
 

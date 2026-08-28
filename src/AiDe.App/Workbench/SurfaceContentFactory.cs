@@ -114,7 +114,15 @@ public sealed class SurfaceContentFactory(IWorkspaceQueries? queries)
     /// hands one back and does not keep it — a pane that is closed disposes what it built.
     /// </remarks>
     private static FrameworkElement Terminal(Surface surface) =>
-        new TerminalSurface(surface.SurfaceId, surface.Title);
+        // An "agent:<exe>" surface id carries which executable this pane runs, so the layout — which
+        // is persisted — remembers it. Storing it anywhere else would restore an agent pane as a
+        // shell after a restart.
+        new TerminalSurface(surface.SurfaceId, surface.Title)
+        {
+            Executable = surface.SurfaceId.StartsWith("agent:", StringComparison.Ordinal)
+                ? surface.SurfaceId["agent:".Length..].Split('#')[0]
+                : null,
+        };
 
     private static FrameworkElement Unavailable(Surface surface)
     {

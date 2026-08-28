@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T22:43:41Z",
+  "generated": "2026-08-28T23:10:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1177,6 +1177,33 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0058",
+      "shortname": "client-defects-and-phase3-steps",
+      "datetime": "2026-08-28T23:10:09Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "a few things:\n1: the menu wording is illegible because of the colors\n2: what are the icons on the vertical left side for they seem non functional\n3: default layout: console at the bottom, left column: workspace, right column: graph, domain\n4: right now if i move the graph tab to the right pane it reorders with the graph and whatever was on the right to the left ... moves need to match where i move them and not reorder in a different way\n--------------------\nwork through these and then do the next 5 items from above then again end with the summary and next steps tables",
+      "summary": "Four reported client defects fixed, then the next five Phase 3 steps.\n\n**Defects.** Menu dropdowns were light-on-light because a MenuItem popup keeps the system light\ntemplate regardless of the Menu's own colours; styled MenuItem/ContextMenu/Separator instead of\nrecolouring the Menu again. The vertical icon strips were AvalonDock auto-hide anchor sides,\nvisible even though nothing in this build auto-hides — collapsed. Default layout is now console\nbottom / workspace left / graph+domain right. Drop placement was the real bug: MoveSurface always\nwrapped the target in a new split, producing [Left, [Right, New]] and giving the nested split\nfresh 50/50 weights that moved panes the user never touched; it now inserts a sibling at the\nrequested index when the parent split already runs in that orientation, taking half of the target\npane's own weight.\n\n**Steps.** Contexts surface with crossing counts; the agent-dispatch spike re-run now exits 8\n(REFUSED) instead of reporting an accepted write into a trust dialog — the readiness contract\nproven by the case that produced it; clicking a context filters the canvas and states how many\nneighbours it hid; Ctrl+K, A opens an agent terminal (agents filtered to those on PATH); Bicep\ndependsOn edges bounded to each declaration's span.\n\n**A control fired.** Adding AddSurface to the layout operation union failed the SC 2.5.7\nconformance test for having no declared keyboard equivalent, and the announcement conformance test\nfor having no announcement. Both were real gaps in the new operation, found by reflection over the\nunion rather than by review.\n\nGate: 596 tests green (App 106, Core 490), defect register, audit log and docs graph all clean,\napp verified launching.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "defect",
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Fix the four reported client defects, then complete the next five Phase 3 steps, and close with the manual-test, status and next-step tables",
+      "done_when": "All four defects fixed with a test each; five steps landed; full gate green; committed and pushed; tables produced",
+      "change": "cl-0045",
+      "git": {
+        "sha": "bdfd15cc0b7c30bc3f156e2ba877ce0b5afeae75",
+        "short": "bdfd15cc0",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -2248,6 +2275,59 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "e1941d81ade0d23d75aed97a7995cd79c9180674",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0044",
+      "datetime": "2026-08-28T23:09:29Z",
+      "session": null,
+      "kind": "design",
+      "skill": null,
+      "title": "Client defects: menu legibility, dead anchor strips, default layout, drop placement",
+      "prompt": null,
+      "summary": "Four defects reported against the running client, all fixed with a control each.\n\n1. **Menu wording illegible.** The Menu had a dark background and light foreground, but a\n   MenuItem's *dropdown* renders in a popup that keeps the system light template — so light text\n   landed on a light background. Fixed by styling MenuItem/ContextMenu/Separator in App.xaml, not\n   by recolouring the Menu again.\n2. **Dead icon strips down the left and right edges.** They were AvalonDock's auto-hide anchor\n   sides, rendered permanently because the theme gives them a visible background even when empty.\n   Nothing in this build auto-hides a pane, so a control that cannot do anything was showing\n   controls. Collapsed via a LayoutAnchorSideControl style.\n3. **Default layout.** Now console at the bottom, workspace column on the left (Explore,\n   Provenance, Contexts), graph column on the right (Graph, Domain) — 0.38/0.62 across, 0.68/0.32\n   down.\n4. **Dropping a tab reordered unrelated panes.** MoveSurface always wrapped the target in a NEW\n   split, so dropping right of the right-hand pane produced [Left, [Right, New]]: the pane landed\n   where the user asked in the tree and somewhere else on screen, and the nested split's fresh\n   50/50 weights moved panes the user never touched. Now, when the parent split already runs in\n   the drop's orientation, the surface is inserted as a SIBLING at the requested index and takes\n   half of the target pane's own weight — every other pane keeps its width. Three tests pin it,\n   including that the neighbours' weights are unchanged.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.App/App.xaml",
+        "src/AiDe.Core/Workbench/LayoutService.cs",
+        "src/AiDe.Core/Workbench/LayoutModel.cs"
+      ],
+      "tags": [
+        "defect",
+        "ui"
+      ],
+      "git": {
+        "before": null,
+        "after": "bdfd15cc0b7c30bc3f156e2ba877ce0b5afeae75",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0045",
+      "datetime": "2026-08-28T23:09:29Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Phase 3: contexts surface, proven dispatch refusal, context filter, agent terminals, dependsOn",
+      "prompt": null,
+      "summary": "Five steps on the Phase 3 join.\n\n1. **Contexts surface.** Declared bounded contexts render as boxes carrying symbols, internal\n   edges and crossings — the crossing count is the evidence for whether the boundary held. An\n   invalid map renders its problems rather than a partial diagram.\n2. **Dispatch refuses an unready agent, proven.** The agent-dispatch spike now exits 8 (REFUSED)\n   where it previously reported PtyWriteAccepted for a prompt Claude Code's trust gate ate. The\n   refusal happens before the write-ahead, so nothing is typed into whatever dialog is on screen\n   and no durable attempt is recorded.\n3. **Context click filters the graph.** Choosing a context box shows only that context on the\n   canvas and states how many neighbours were hidden — a filter that hides without saying so is\n   how a graph starts lying. Mouse and keyboard both, with automation names.\n4. **New agent terminal command.** Ctrl+K, A opens a terminal bound to a chosen agent CLI, offered\n   only for agents actually on PATH. AddSurface joined the layout operation union and the SC 2.5.7\n   conformance test immediately failed it for having no declared keyboard equivalent — the control\n   working, not a nuisance.\n5. **Bicep dependsOn edges.** depends_on is now extracted, bounded to each declaration's own span\n   so a later resource's dependencies cannot be attributed to an earlier one.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/ContextMapSurface.cs",
+        "spikes/agent-dispatch/RESULT.md",
+        "src/AiDe.Core/Extraction/BicepExtractor.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "bdfd15cc0b7c30bc3f156e2ba877ce0b5afeae75",
         "branch": "main",
         "pushed": true,
         "commits": []

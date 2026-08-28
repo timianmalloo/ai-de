@@ -47,6 +47,10 @@ try
         3 => "VERDICT: VOID — the agent CLI did not start. Nothing was measured.",
         6 => "VERDICT: the receipt recorded an accepted write and the agent never answered. Either the\n"
              + "         agent needs a different submit convention, or the prompt was written into a void.",
+        8 => "VERDICT: REFUSED, and that is the fix working. Readiness could not be established, so\n"
+             + "         the prompt was NOT written into whatever the agent is showing, and no durable\n"
+             + "         attempt was recorded. Before the readiness contract this identical run reported\n"
+             + "         PtyWriteAccepted for a prompt the trust gate ate.",
         _ => $"VERDICT: the probe exited {exitCode}. See the log above.",
     });
 

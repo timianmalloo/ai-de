@@ -67,6 +67,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workspace.open":
                 return OpenWorkspace();
 
+            case "terminal.newAgent":
+                return NewAgentTerminal();
+
             case "workbench.focusCanvas":
                 return FocusCanvas();
 
@@ -364,6 +367,18 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
 
     /// <summary>Chooses and opens a workspace. Set by the window that can show a folder picker.</summary>
     public Func<Task<string>>? WorkspaceOpen { get; set; }
+
+    /// <summary>Opens a terminal running an agent CLI. Set by the shell that can create surfaces.</summary>
+    public Func<string>? NewAgentTerminalRequested { get; set; }
+
+    private bool NewAgentTerminal()
+    {
+        announcer.Announce(NewAgentTerminalRequested is null
+            ? "Agent terminals are not available in this build."
+            : NewAgentTerminalRequested());
+
+        return true;
+    }
 
     private bool OpenWorkspace()
     {

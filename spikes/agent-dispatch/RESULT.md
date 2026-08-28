@@ -1,5 +1,11 @@
 # Spike — prompt dispatch into a real agent CLI
 
+> **Re-run 2026-08-28 after the readiness contract: the probe now exits 8, REFUSED.** The identical
+> run that produced the finding below — `PtyWriteAccepted` for a prompt the trust gate ate — now
+> refuses *before* the write-ahead, so nothing is written into the dialog and no durable attempt is
+> recorded. The original finding is kept unchanged underneath, because it is the evidence the
+> contract was built from.
+
 **Run 2026-08-28** · `claude` (Claude Code) 2.1.251 · dispatched across a real daemon into a real ConPTY session
 **Re-run:** `dotnet run --project spikes/agent-dispatch [-- <agent> <trusted-dir>]`
 
@@ -77,4 +83,4 @@ have been worse than this red one.
 |---|---|
 | ADR-0010 (receipt) | **Stands.** It behaved correctly; the residual is not a defect in it |
 | ADR-0010's residual | **Not closed. Re-characterised**: the gap is session readiness, not the receipt |
-| ADR-0007 (session adapter) | **Now owes an agent-readiness contract**, and a refusal path when readiness cannot be established |
+| ADR-0007 (session adapter) | **Contract added and proven.** `SessionReadiness` is three-valued, dispatch refuses anything but `Ready`, and `AgentReadinessWatcher` supplies a positive signal from a configured prompt marker — a weaker, separately-named kind of evidence than the OSC 133 nonce. Re-running this spike now exits **8 (refused)** instead of reporting an accepted write |

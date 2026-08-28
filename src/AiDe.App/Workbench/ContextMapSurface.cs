@@ -38,6 +38,9 @@ public sealed class ContextMapSurface : ContentControl
     /// <summary>Supplies the view. Null until a workspace with a context map attaches.</summary>
     public Func<ContextMapView>? Source { get; set; }
 
+    /// <summary>Raised when a context box is chosen, so another surface can show only that context.</summary>
+    public event EventHandler<string>? ContextSelected;
+
     public void Refresh() => Render(Source?.Invoke());
 
     private void Render(ContextMapView? view)
@@ -75,7 +78,27 @@ public sealed class ContextMapSurface : ContentControl
 
         foreach (var context in view.Contexts.OrderByDescending(c => c.Symbols))
         {
-            _body.Children.Add(ContextBox(context));
+            var box = ContextBox(context);
+            var name = context.Name;
+
+            box.Cursor = System.Windows.Input.Cursors.Hand;
+            box.ToolTip = $"Show only {name} in the graph";
+            box.MouseLeftButtonUp += (_, _) => ContextSelected?.Invoke(this, name);
+
+            // Keyboard-reachable, because a filter only a mouse can apply is a filter half the users
+            // do not have.
+            box.Focusable = true;
+            box.KeyDown += (_, e) =>
+            {
+                if (e.Key is System.Windows.Input.Key.Enter or System.Windows.Input.Key.Space)
+                {
+                    ContextSelected?.Invoke(this, name);
+                    e.Handled = true;
+                }
+            };
+
+            AutomationProperties.SetName(box, $"{name}. {context.Symbols} symbols, {context.Crossings} crossings.");
+            _body.Children.Add(box);
         }
 
         _body.Children.Add(Heading("Crossings"));

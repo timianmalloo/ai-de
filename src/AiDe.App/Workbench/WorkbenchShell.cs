@@ -36,6 +36,7 @@ public sealed class WorkbenchShell : IDisposable
     private SurfaceContentFactory _factory;
     private IWorkspaceQueries? _queries;
     private string? _workspaceRoot;
+    private CanvasGraphViewModel? _canvasGraph;
 
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
@@ -59,6 +60,35 @@ public sealed class WorkbenchShell : IDisposable
 
         Palette = new CommandPalette(Controller, Announcer);
         Prompt = new PromptBar(Announcer);
+
+        Controller.NewAgentTerminalRequested = () =>
+        {
+            var agent = TerminalSurface.AvailableAgents.FirstOrDefault();
+            if (agent is null)
+            {
+                // Named rather than a generic failure: the fix is to install one, and the user
+                // cannot act on "not available".
+                return "No agent CLI was found on PATH. Looked for: "
+                    + string.Join(", ", AgentReadinessWatcher.KnownAgents.Keys) + ".";
+            }
+
+            var terminalStack = Service.Current.AllStacks()
+                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"));
+
+            if (terminalStack is null) return "There is no terminal pane to open it beside.";
+
+            var id = $"agent:{agent}#{Guid.NewGuid().ToString("N")[..6]}";
+            var result = Service.Apply(new LayoutOperation.AddSurface(
+                terminalStack.Id, new Surface(id, "terminal", agent)));
+
+            Adapter.Render();
+            BindCanvas();
+            BindContexts();
+
+            return result.Applied
+                ? $"{agent} terminal opened. Dispatch is refused until it reaches its prompt."
+                : result.Announcement;
+        };
         Controller.PromptBarOpen = Prompt.Open;
 
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
@@ -371,7 +401,34 @@ public sealed class WorkbenchShell : IDisposable
             return new ContextProjection(map, assertions).Compute();
         };
 
+        // Choosing a context filters the graph to it. The two views already share colours; this is
+        // what makes them one tool rather than two pictures of the same data.
+        pane.ContextSelected -= OnContextSelected;
+        pane.ContextSelected += OnContextSelected;
+
         pane.Refresh();
+    }
+
+    private void OnContextSelected(object? sender, string context)
+    {
+        var canvas = Service.Current.AllStacks()
+            .SelectMany(stack => stack.Surfaces)
+            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .OfType<CanvasSurface>()
+            .FirstOrDefault();
+
+        if (canvas is null || _canvasGraph is null) return;
+
+        // Toggling: choosing the context already shown clears the filter, so the way out is the same
+        // gesture as the way in.
+        _canvasGraph.ContextFilter =
+            string.Equals(_canvasGraph.ContextFilter, context, StringComparison.Ordinal) ? null : context;
+
+        Announcer.Announce(_canvasGraph.ContextFilter is null
+            ? "Graph filter cleared."
+            : $"Graph filtered to {context}.");
+
+        _ = canvas.RefreshAsync();
     }
 
     internal void BindCanvas()
@@ -394,6 +451,7 @@ public sealed class WorkbenchShell : IDisposable
         // The canvas reads the SAME projection every other pane does, rather than a graph-shaped
         // API of its own: two ways to ask what the graph contains is two answers that can disagree.
         var graph = new CanvasGraphViewModel(_queries);
+        _canvasGraph = graph;
 
         // Nodes carry their declared context so the canvas can colour by it. Loaded once per bind
         // rather than per node: the map is a file, and re-reading it for every node in a graph would

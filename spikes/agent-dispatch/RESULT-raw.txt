@@ -6,17 +6,16 @@ helper : C:\Projects\ai-de\tests\AiDe.Core.TerminalHost\bin\Debug\net10.0\AiDe.C
 
 cwd    : C:\Projects\ai-de  (a TRUSTED folder — see RESULT.md)
 
-receipt state  : PtyWriteAccepted
-receipt error  : (none)
-marker acted on: False
-the receipt says the write was accepted, but the session never produced
-the marker — the prompt was written and NOT acted on.
----- last 1600 bytes of session output ----
-[?9001h[?1004h[?25l[2J[m[H]0;claude[?25h[?2004h[?1004h[?2031h[<u[>5u[>4;2m[?2026h[?2026l[>0q[?25l[38;2;150;108;30m
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────[1m[3;2HAccessing[1Cworkspace:[m[1m[5;2HC:\Projects\ai-de[22m[7;2HQuick[1Csafety[1Ccheck:[1CIs[1Cthis[1Ca[1Cproject[1Cyou[1Ccreated[1Cor[1Cone[1Cyou[1Ctrust?[1C(Like[1Cyour[1Cown[1Ccode,[1Ca[1Cwell-known[1Copen[1Csource[8;2Hproject,[1Cor[1Cwork[1Cfrom[1Cyour[1Cteam).[1CIf[1Cnot,[1Ctake[1Ca[1Cmoment[1Cto[1Creview[1Cwhat's[1Cin[1Cthis[1Cfolder[1Cfirst.[10;2HClaude[1CCode'll[1Cbe[1Cable[1Cto[1Cread,[1Cedit,[1Cand[1Cexecute[1Cfiles[1Chere.[38;2;102;102;102m]8;id=u-zaxmda%5166649326141359084;https://code.claude.com/docs/en/security\[12;2HSecurity guide[38;2;87;105;247m]8;;\[14;2H❯[1CNo,[1Cexit[m[15;4HYes,[1CI[1Ctrust[1Cthis[1Cfolder[38;2;102;102;102m[17;2HEnter[1Cto[1Cconfirm[1C·[1CEsc[1Cto[1Ccancel[<u[>5u[>4;2m[m[?1006l[?1003l[?1002l[?1000l[>4m[<u[?2031l[?2004l
-]0;[?25h
+readiness      : Unknown (observed pattern)
+REFUSED before the write-ahead: This session does not report when it is ready for input, so a prompt could be consumed by whatever it is currently showing — a sign-in, a confirmation, or a reply in progress. Type into the terminal directly, or use a session with shell integration.
+This is the fix working. The prompt was NOT written into whatever the
+agent is currently showing, and no durable attempt was recorded.
+---- last 900 bytes of session output ----
+────────────────────────────────────────────────────────────────────────────────────────────────────────────[1m[3;2HAccessing[1Cworkspace:[m[1m[5;2HC:\Projects\ai-de[22m[7;2HQuick[1Csafety[1Ccheck:[1CIs[1Cthis[1Ca[1Cproject[1Cyou[1Ccreated[1Cor[1Cone[1Cyou[1Ctrust?[1C(Like[1Cyour[1Cown[1Ccode,[1Ca[1Cwell-known[1Copen[1Csource[8;2Hproject,[1Cor[1Cwork[1Cfrom[1Cyour[1Cteam).[1CIf[1Cnot,[1Ctake[1Ca[1Cmoment[1Cto[1Creview[1Cwhat's[1Cin[1Cthis[1Cfolder[1Cfirst.[10;2HClaude[1CCode'll[1Cbe[1Cable[1Cto[1Cread,[1Cedit,[1Cand[1Cexecute[1Cfiles[1Chere.[38;2;102;102;102m]8;id=u-zaxmda%5166649326141359084;https://code.claude.com/docs/en/security\[12;2HSecurity guide[38;2;87;105;247m]8;;\[14;2H❯[1CNo,[1Cexit[m[15;4HYes,[1CI[1Ctrust[1Cthis[1Cfolder[38;2;102;102;102m[17;2HEnter[1Cto[1Cconfirm[1C·[1CEsc[1Cto[1Ccancel[>0q[m
 ---- end ----
 
 ================================================================================================
-VERDICT: the receipt recorded an accepted write and the agent never answered. Either the
-         agent needs a different submit convention, or the prompt was written into a void.
+VERDICT: REFUSED, and that is the fix working. Readiness could not be established, so
+         the prompt was NOT written into whatever the agent is showing, and no durable
+         attempt was recorded. Before the readiness contract this identical run reported
+         PtyWriteAccepted for a prompt the trust gate ate.

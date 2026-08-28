@@ -34,6 +34,14 @@ public abstract record LayoutOperation
 
     public sealed record CloseSurface(string SurfaceId) : LayoutOperation;
 
+    /// <summary>Adds a new surface as a tab in an existing stack.</summary>
+    /// <remarks>
+    /// Into a STACK rather than a new pane: a second terminal is another tab beside the first, not a
+    /// second region competing for the same space. The caller names the stack so the choice of where
+    /// stays with whoever knows why.
+    /// </remarks>
+    public sealed record AddSurface(string StackId, Surface Surface) : LayoutOperation;
+
     public sealed record ResetToDefault : LayoutOperation;
 }
 
@@ -104,6 +112,7 @@ public sealed class LayoutService(Layout? initial = null) : ILayoutService
                 LayoutOperation.ActivateSurface op => ActivateSurface(op),
                 LayoutOperation.ReorderSurface op => ReorderSurface(op),
                 LayoutOperation.CloseSurface op => CloseSurface(op),
+                LayoutOperation.AddSurface op => AddSurface(op),
                 LayoutOperation.ResetToDefault => new LayoutResult(
                     Layout.Default(), true, null, "Workbench layout reset to the default."),
                 _ => Refuse(LayoutErrorCodes.InvalidTarget, "Unsupported layout operation.", activity),
@@ -190,19 +199,77 @@ public sealed class LayoutService(Layout? initial = null) : ILayoutService
                 $"{surface.Title} moved into {stack.Surfaces[0].Title}.");
         }
 
-        // Split: wrap the target in a new split with the moved surface beside it.
         var newStack = new StackNode(NextId("stack"), [surface]);
         var orientation = op.Target.Kind is DropKind.SplitLeft or DropKind.SplitRight
             ? Orientation.Horizontal
             : Orientation.Vertical;
         var before = op.Target.Kind is DropKind.SplitLeft or DropKind.SplitTop;
 
-        ImmutableList<LayoutNode> children = before ? [newStack, target] : [target, newStack];
-        var split = new SplitNode(NextId("split"), orientation, children, [0.5, 0.5]);
-        var replaced = Replace(detached, target.Id, split);
+        // INSERT AS A SIBLING when the target already sits in a split of the same orientation.
+        //
+        // Wrapping unconditionally is what made a drop look like a reorder: dropping to the right of
+        // the right-hand pane of [Left, Right] produced [Left, [Right, New]] — the pane went where
+        // the user asked in the tree and somewhere else on screen, and the new nested split reset
+        // its weights to 50/50 so the unrelated panes moved too.
+        var parent = ParentOf(detached.Root, target.Id);
+        Layout replaced;
+
+        if (parent is SplitNode host && host.Orientation == orientation)
+        {
+            var index = host.Children.FindIndex(c => c.Id == target.Id);
+            var at = before ? index : index + 1;
+
+            // The new pane takes half of the TARGET's width, not an equal share of the whole split.
+            // Taking an equal share would move every other divider on the row, which is the "why did
+            // everything else move" half of the same defect.
+            var weights = host.Weights.ToBuilder();
+            var half = weights[index] / 2;
+            weights[index] = half;
+            weights.Insert(at, half);
+
+            var grown = host with
+            {
+                Children = host.Children.Insert(at, newStack),
+                Weights = SplitNode.Normalize(weights.ToImmutable()),
+            };
+
+            replaced = Replace(detached, host.Id, grown);
+        }
+        else
+        {
+            // Different orientation, or the target is the root: a new split is the only way to
+            // express the arrangement.
+            ImmutableList<LayoutNode> children = before ? [newStack, target] : [target, newStack];
+            var split = new SplitNode(NextId("split"), orientation, children, [0.5, 0.5]);
+            replaced = Replace(detached, target.Id, split);
+        }
 
         var where = op.Target.Kind.ToString().Replace("Split", string.Empty).ToLowerInvariant();
         return new LayoutResult(replaced, true, null, $"{surface.Title} moved to the {where}.");
+    }
+
+    private LayoutResult AddSurface(LayoutOperation.AddSurface op)
+    {
+        if (Current.Walk().FirstOrDefault(n => n.Id == op.StackId) is not StackNode stack)
+        {
+            return new LayoutResult(Current, false, LayoutErrorCodes.InvalidTarget, "No such pane.");
+        }
+
+        if (stack.Surfaces.Any(s => s.SurfaceId == op.Surface.SurfaceId))
+        {
+            // Already there. Activated rather than duplicated: asking twice for the same surface is
+            // a user expecting to be taken to it, not to get a second one.
+            return ActivateSurface(new LayoutOperation.ActivateSurface(op.Surface.SurfaceId));
+        }
+
+        var grown = stack with
+        {
+            Surfaces = stack.Surfaces.Add(op.Surface),
+            ActiveIndex = stack.Surfaces.Count,
+        };
+
+        return new LayoutResult(
+            Replace(Current, stack.Id, grown), true, null, $"{op.Surface.Title} opened.");
     }
 
     private LayoutResult ResizeSplit(LayoutOperation.ResizeSplit op)
@@ -417,6 +484,26 @@ public sealed class LayoutService(Layout? initial = null) : ILayoutService
         }
 
         return layout with { Root = Replace(layout.Root, id, replacement) };
+    }
+
+    /// <summary>The split that directly contains <paramref name="id"/>, or null for the root.</summary>
+    /// <remarks>
+    /// Needed because a drop beside a pane must know whether a suitable split already exists. Walking
+    /// for it each time rather than storing parent links: the tree is immutable and small, and a
+    /// stored parent is a second thing that can disagree with the structure.
+    /// </remarks>
+    private static SplitNode? ParentOf(LayoutNode node, string id)
+    {
+        if (node is not SplitNode split) return null;
+        if (split.Children.Any(c => c.Id == id)) return split;
+
+        foreach (var child in split.Children)
+        {
+            var found = ParentOf(child, id);
+            if (found is not null) return found;
+        }
+
+        return null;
     }
 
     private static LayoutNode Replace(LayoutNode node, string id, LayoutNode replacement)

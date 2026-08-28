@@ -36,6 +36,9 @@ internal static class DispatchProbe
     internal const int WrittenButNotActedOn = 6;
     internal const int Threw = 7;
 
+    /// <summary>Refused because readiness could not be established. The fix working, not a failure.</summary>
+    internal const int RefusedNotReady = 8;
+
     /// <summary>
     /// Runs the probe against <paramref name="commandLine"/>.
     /// </summary>
@@ -110,6 +113,12 @@ internal static class DispatchProbe
                 using var draining = new CancellationTokenSource(TimeSpan.FromSeconds(120));
 
                 var captured = new StringBuilder();
+
+                // An agent session gets a readiness watcher; a shell reports through OSC 133.
+                var watcher = AgentReadinessWatcher.KnownAgents.TryGetValue(
+                    Path.GetFileNameWithoutExtension(commandLine), out var readyPattern)
+                    ? new AgentReadinessWatcher(readyPattern)
+                    : null;
                 var drain = Task.Run(async () =>
                 {
                     var buffer = captured;
@@ -119,7 +128,9 @@ internal static class DispatchProbe
                         {
                             while (session.Output.TryRead(out var chunk))
                             {
-                                buffer.Append(Encoding.UTF8.GetString(chunk.Bytes.Span));
+                                var text = Encoding.UTF8.GetString(chunk.Bytes.Span);
+                                buffer.Append(text);
+                                watcher?.Observe(text);
                                 if (Occurrences(buffer.ToString(), marker) >= expectedOccurrences)
                                 {
                                     seen.TrySetResult(true);
@@ -152,8 +163,35 @@ internal static class DispatchProbe
                     SessionId: session.SessionId,
                     SessionGeneration: session.Generation);
 
+                // READINESS FIRST. This is what the trust-gate finding produced: an agent that has
+                // not reached its prompt is refused rather than written into, and the refusal leaves
+                // no durable attempt behind.
+                var readiness = watcher is null
+                    ? SessionReadiness.Ready
+                    : watcher.IsReady ? SessionReadiness.Ready : SessionReadiness.Unknown;
+
+                log.AppendLine($"readiness      : {readiness}" +
+                               (watcher is null ? " (shell integration)" : " (observed pattern)"));
+
+                if (readiness != SessionReadiness.Ready)
+                {
+                    log.AppendLine("REFUSED before the write-ahead: " + SessionReadinessPolicy.Explain(readiness));
+                    log.AppendLine("This is the fix working. The prompt was NOT written into whatever the");
+                    log.AppendLine("agent is currently showing, and no durable attempt was recorded.");
+
+                    var tailNow = captured.ToString();
+                    log.AppendLine("---- last 900 bytes of session output ----");
+                    log.AppendLine(tailNow.Length > 900 ? tailNow[^900..] : tailNow);
+                    log.AppendLine("---- end ----");
+
+                    await draining.CancelAsync();
+                    await life.CancelAsync();
+                    return RefusedNotReady;
+                }
+
                 var receipt = await BoundaryDispatcher.BeginAndWriteAsync(
-                    command, session, client.DispatchBeginAsync, client.DispatchFinalizeAsync);
+                    command, session, client.DispatchBeginAsync, client.DispatchFinalizeAsync,
+                    CancellationToken.None, readiness);
 
                 log.AppendLine($"receipt state  : {receipt.State}");
                 log.AppendLine($"receipt error  : {receipt.ErrorCode ?? "(none)"}");

@@ -118,6 +118,9 @@ public sealed class WorkbenchLayoutTests
         Run(new LayoutOperation.SetStackState(StackIdOf(service.Current, "provenance"), StackState.Collapsed));
         Run(new LayoutOperation.MoveSurface("domain",
             new DropTarget(StackIdOf(service.Current, "terminal-1"), DropKind.JoinStack)));
+        Run(new LayoutOperation.AddSurface(
+            StackIdOf(service.Current, "terminal-1"),
+            new Surface("agent:claude#probe", "terminal", "Agent — claude")));
         Run(new LayoutOperation.CloseSurface("domain"));
         Run(new LayoutOperation.ResetToDefault());
 
@@ -125,6 +128,75 @@ public sealed class WorkbenchLayoutTests
     }
 
     // ── Structural invariants ─────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void DroppingBesideAPaneInsertsASibling_RatherThanNestingANewSplit()
+    {
+        // The reported defect. Dropping to the right of the right-hand pane produced
+        // [Left, [Right, New]] — the pane went where the user asked in the tree and somewhere else
+        // on screen, and the nested split's fresh 50/50 weights moved the unrelated panes too.
+        var service = new LayoutService();
+        var columns = service.Current.Walk().OfType<SplitNode>()
+            .First(sp => sp.Orientation == Orientation.Horizontal);
+
+        var right = (StackNode)columns.Children[^1];
+        var before = columns.Children.Count;
+
+        var result = service.Apply(new LayoutOperation.MoveSurface(
+            "provenance", new DropTarget(right.Id, DropKind.SplitRight)));
+
+        Assert.True(result.Applied);
+
+        var after = service.Current.Walk().OfType<SplitNode>().First(sp => sp.Id == columns.Id);
+
+        // Same split, one more child — not a new split wrapped around the target.
+        Assert.Equal(before + 1, after.Children.Count);
+        Assert.Equal(right.Id, after.Children[^2].Id);
+
+        service.Current.AssertInvariant();
+    }
+
+    [Fact]
+    public void DroppingLeftOfAPanePlacesItBeforeThatPane()
+    {
+        var service = new LayoutService();
+        var columns = service.Current.Walk().OfType<SplitNode>()
+            .First(sp => sp.Orientation == Orientation.Horizontal);
+
+        var right = (StackNode)columns.Children[^1];
+
+        service.Apply(new LayoutOperation.MoveSurface(
+            "provenance", new DropTarget(right.Id, DropKind.SplitLeft)));
+
+        var after = service.Current.Walk().OfType<SplitNode>().First(sp => sp.Id == columns.Id);
+        var target = after.Children.FindIndex(c => c.Id == right.Id);
+
+        // The moved pane sits immediately BEFORE the drop target, which is what "drop on its left"
+        // means and is the half a wrapping implementation got right by accident.
+        Assert.Contains(after.Children[target - 1].Id, service.Current.Walk()
+            .OfType<StackNode>().Where(st => st.Surfaces.Any(su => su.SurfaceId == "provenance"))
+            .Select(st => st.Id));
+    }
+
+    [Fact]
+    public void DroppingBesideAPaneTakesHalfOfThatPane_NotAnEqualShareOfTheRow()
+    {
+        // The "why did everything else move" half of the defect: an equal share would shift every
+        // other divider on the row.
+        var service = new LayoutService();
+        var columns = service.Current.Walk().OfType<SplitNode>()
+            .First(sp => sp.Orientation == Orientation.Horizontal);
+
+        var left = (StackNode)columns.Children[0];
+        var untouched = columns.Weights[^1];
+
+        service.Apply(new LayoutOperation.MoveSurface(
+            "provenance", new DropTarget(left.Id, DropKind.SplitRight)));
+
+        var after = service.Current.Walk().OfType<SplitNode>().First(sp => sp.Id == columns.Id);
+
+        Assert.Equal(untouched, after.Weights[^1], precision: 3);
+    }
 
     [Fact]
     public void RemovingTheLastSurface_DestroysTheStackAndCollapsesTheSplit()
@@ -137,6 +209,12 @@ public sealed class WorkbenchLayoutTests
         // happening to hold exactly one — which stopped being true the moment a surface was added
         // beside it, failing a test that has nothing to do with the change.
         var stack = service.Current.FindStackOf("provenance")!;
+
+        // The split that HOLDS it, found rather than named. Naming split-root made this test depend
+        // on the default arrangement, so changing where a pane lives failed a test about collapsing.
+        var holder = service.Current.Walk().OfType<SplitNode>()
+            .First(sp => sp.Children.Any(c => c.Id == stack.Id));
+
         LayoutResult result = default!;
 
         foreach (var surfaceId in stack.Surfaces.Select(s => s.SurfaceId).ToList())
@@ -147,7 +225,7 @@ public sealed class WorkbenchLayoutTests
         Assert.True(result.Applied);
         Assert.Equal(before - 1, service.Current.Walk().OfType<StackNode>().Count());
         // The split that held it had two children; losing one collapses it into the survivor.
-        Assert.DoesNotContain(service.Current.Walk(), n => n.Id == "split-root");
+        Assert.DoesNotContain(service.Current.Walk(), n => n.Id == holder.Id);
         service.Current.AssertInvariant();
     }
 
