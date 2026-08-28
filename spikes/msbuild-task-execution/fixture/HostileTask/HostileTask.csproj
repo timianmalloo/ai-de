@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The attacker's own task assembly. A real hostile repository would commit this prebuilt, or
+    pull it from a package; building it here is the spike standing in for that.
+  -->
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- Not our product code; its warnings are the attacker's problem, not the gate's. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.8" ExcludeAssets="runtime" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>

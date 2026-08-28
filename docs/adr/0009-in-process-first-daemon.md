@@ -2,7 +2,7 @@
 id: adr-0009-in-process-first-daemon
 title: "ADR-0009 — Run the authority core in-process in Phase 1; split to a daemon at Phase 2"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, daemon, phasing, simplicity, lifecycle]
@@ -23,7 +23,7 @@ review-suggested:
 
 # ADR-0009: Run the authority core in-process in Phase 1; split to a daemon at Phase 2
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-26
 - **Deciders:** Product owner, The Simplifier, Tech Lead, Enterprise Architect
 - **Context spec/architecture:** docs/architecture.md

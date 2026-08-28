@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-feat-privacy-markers",
-  "generated": "2026-08-27T21:16:27Z",
+  "project": "ai-de",
+  "generated": "2026-08-28T17:03:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -997,6 +997,51 @@ window.AUDIT_DATA = {
         "branch": "feat/privacy-markers",
         "pushed": null
       }
+    },
+    {
+      "id": "al-0046",
+      "shortname": "my sessions terminated after my machine restarted overnight; ground your…",
+      "datetime": "2026-08-28T15:37:49Z",
+      "session": "prompt-log",
+      "prompt": "my sessions terminated after my machine restarted overnight; ground yourself in the repo, directives, guidance, skills and knowledge; review the session history and audit log; baseline on all tasks done and what tasks are still needed to be done; also clean up any work trees not in use anymore",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0047",
+      "shortname": "decisions-d1-d7-and-spike-d3",
+      "datetime": "2026-08-28T16:36:08Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "prompt": "D1..D7 answered by the product owner; execute the accepted decisions",
+      "summary": "Recorded decisions D1-D7 (cl-0011..cl-0017); promoted ADR-0001..0013 to accepted except 0010; corrected the P2-TERM-05 failure row and resolved the dispatch divergence; refreshed the stale Phase-2 status; built and ran spike D3, which found MSBuildWorkspace executes repository-supplied code across all four vectors; registered DC-019",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0048",
+      "shortname": "strategy-1-extraction-decision",
+      "datetime": "2026-08-28T17:03:48Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "prompt": "spike the sandbox and the non-MSBuild extraction then lets evaluate options; go with Strategy 1; commit and push all",
+      "summary": "Adopted Strategy 1 for Component 1: extraction reads the project file as data and compiles with Roslyn directly, never using MSBuildWorkspace, disclosing unresolved references. Backed by two spikes - D3 (MSBuildWorkspace executes repository code, 4/4 vectors) and the containment comparison (job object alone contains nothing; low integrity + job blocks all four; no-MSBuild recovers 159/159 types 6.2x faster).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -1256,6 +1301,274 @@ window.AUDIT_DATA = {
         "after": "41ac91e537282c472ab7461313e2d3be77d6f49b",
         "branch": "feat/s4-decision-and-focus",
         "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0011",
+      "datetime": "2026-08-28T16:28:49Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "decision",
+      "skill": null,
+      "title": "D1 — Terminal processes stay in the shell; the daemon-crash failure row is corrected",
+      "prompt": "D1..D7 answered by the product owner",
+      "summary": "Terminals remain owned by the shell process (TerminalSurface creates ConPtyTerminalSession). The P2-TERM-05 failure row is rewritten from 'Daemon crashes' to 'Shell crashes', because the Job Object that mitigates it is owned by the creating process.",
+      "rationale": "The mitigation already exists and already fires: JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE is implemented in ConPtyInterop and reaps children when the owning process dies. Only the threat sentence was wrong. Moving terminals to the daemon would add a second IPC lane, framing cost and a backpressure design for a stream whose consumer (the WPF surface, measured 5.50ms p95) lives in the shell — and would invert ADR-0003, which scopes the daemon to evidence rather than UI.",
+      "artifacts": [
+        "docs/design/phase-2-real-code-and-terminal.md"
+      ],
+      "tags": [
+        "phase-2"
+      ],
+      "git": {
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0012",
+      "datetime": "2026-08-28T16:28:49Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "decision",
+      "skill": null,
+      "title": "D2 — MSBuildWorkspace advisories: adopt the spike's reference posture and verify the output; do not block Component 1",
+      "prompt": "D1..D7 answered by the product owner",
+      "summary": "The shipped extractor adopts ExcludeAssets=runtime plus MSBuildLocator, as the S2 spike did. The advisory finding is then verified by inspecting the built output directory for the flagged assemblies. Component 1 is NOT gated on this.",
+      "rationale": "S2's csproj records that every reference is compile-time only and MSBuild is loaded at runtime from the installed SDK, so none of the flagged assemblies reach the output. The exposure is therefore very likely a reference-assembly artifact rather than shipped code, and the residual is the user's own SDK which they already execute to build. Verification is cheap and concrete (list bin/), turning a scanner finding into a measured fact. Abandoning MSBuildWorkspace would discard S2's measured result to solve a problem that may not exist.",
+      "artifacts": [
+        "spikes/roslyn-msbuild-workspace/RESULT.md"
+      ],
+      "tags": [
+        "phase-2"
+      ],
+      "git": {
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0013",
+      "datetime": "2026-08-28T16:28:49Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "decision",
+      "skill": null,
+      "title": "D3 — Repository-authored MSBuild tasks are spiked before Component 1, results returned for review",
+      "prompt": "D1..D7 answered by the product owner",
+      "summary": "A spike loads a fixture project carrying a hostile UsingTask through MSBuildWorkspace and asserts the task never executes. Results are reported for a separate product-owner decision; Component 1 remains gated on it.",
+      "rationale": "Loading a repository must never execute its code, and this path is unproven: S2 established that analyzers and generators can be suppressed, but MSBuild evaluation still runs to load projects and repository-supplied task assemblies were never tested. Intuition has already failed once in this exact area — the design's named mitigation (MSBuild properties) was measured ineffective, and EnforceExtendedAnalyzerRules turned out to be one line the attacker sets in their own project.",
+      "artifacts": [
+        "spikes/msbuild-task-execution/"
+      ],
+      "tags": [
+        "phase-2"
+      ],
+      "git": {
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0014",
+      "datetime": "2026-08-28T16:28:50Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "decision",
+      "skill": null,
+      "title": "D4 — ADR-0001..0013 promoted to accepted; ADR-0010 held at proposed",
+      "prompt": "D1..D7 answered by the product owner",
+      "summary": "Twelve ADRs move from status: proposed to status: accepted. ADR-0010 (two-phase dispatch receipt) stays proposed.",
+      "rationale": "These are not proposals, they are shipped: ADR-0003's boundary is a running daemon, ADR-0012's docking shell is the workbench, ADR-0013's envelope round-trips in tests. Recording a decision the product depends on as 'proposed' is a false record and makes the two genuinely recent decisions (0014, 0015) indistinguishable from settled ones. ADR-0010 is held because nothing is built and it depends on D1.",
+      "artifacts": [
+        "docs/adr/"
+      ],
+      "tags": [
+        "phase-2"
+      ],
+      "git": {
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0015",
+      "datetime": "2026-08-28T16:28:50Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "decision",
+      "skill": null,
+      "title": "D5 — Cross-monitor DPI accepted as a documented unverified risk, non-blocking",
+      "prompt": "D1..D7 answered by the product owner",
+      "summary": "Cross-monitor DPI verification is deferred and explicitly non-blocking. It is validated once multi-monitor hardware is available and the product is further along.",
+      "rationale": "The owner is working on a laptop without a second display, so the measurement is hardware-gated rather than decision-gated. The DPI arithmetic already has evidence — the snapshot swap measured aligned to within a pixel of rounding at 150% DPI — so what is missing is the monitor-transition case specifically. The failure mode is visual misalignment on a multi-monitor drag: user-visible, not data-threatening, and fixable when observed.",
+      "artifacts": [
+        "docs/design/phase-2-real-code-and-terminal.md"
+      ],
+      "tags": [
+        "phase-2"
+      ],
+      "git": {
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0016",
+      "datetime": "2026-08-28T16:28:50Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "decision",
+      "skill": null,
+      "title": "D6 — Terminal ships viewport-only for Phase 2; scrollback goes to the backlog",
+      "prompt": "D1..D7 answered by the product owner",
+      "summary": "TerminalScreen remains viewport-only for Phase 2. Scrollback is recorded as a backlog item with its designed upgrade path, and named as a known product limitation rather than a technical note.",
+      "rationale": "Growing the viewport to provide history would put an unbounded allocation behind an innocuous property, sized by an untrusted child process. The upgrade path is already designed — a bounded ring beside the screen, not inside it — so this is deferral rather than debt. It is named as a product limitation because Phase 2's human validation is 'launch pwsh and observe real session state', and a developer who cannot scroll back to read build errors will read that as broken.",
+      "artifacts": [
+        "src/AiDe.Core/Terminal/TerminalScreen.cs"
+      ],
+      "tags": [
+        "phase-2"
+      ],
+      "git": {
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0017",
+      "datetime": "2026-08-28T16:28:50Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "decision",
+      "skill": null,
+      "title": "D7 — Phase-2 performance is baselined before Component 1",
+      "prompt": "D1..D7 answered by the product owner",
+      "summary": "P2-PERF is established before the Roslyn extractor lands, so the extractor's cost is a delta against a known floor rather than a first observation.",
+      "rationale": "Six simplify: ceilings are live in shipped code and no upgrade trigger has ever been evaluated. Measuring after Component 1 lands entangles the first real number with the largest new subsystem, leaving it unclear which half moved it. NOTE: discovered while planning — P2-PERF-01..03 is named in the test plan but never specified, and its only stated budget (scope settlement p95 > 10s) measures Roslyn extraction, which does not exist. The work is therefore specify-and-build, not run.",
+      "artifacts": [
+        "bench/AiDe.Bench/"
+      ],
+      "tags": [
+        "phase-2"
+      ],
+      "git": {
+        "before": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0018",
+      "datetime": "2026-08-28T16:36:01Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "decision",
+      "skill": null,
+      "title": "D3 spike result: MSBuildWorkspace executes repository-supplied code — Component 1 blocked",
+      "prompt": null,
+      "summary": "Loading a hostile project through MSBuildWorkspace.OpenProjectAsync executed all four repository-supplied vectors (Exec in InitialTargets, RoslynCodeTaskFactory inline task, UsingTask assembly, design-time target hook) with zero WorkspaceFailed diagnostics and a cleanly loaded project. Two vectors require nothing but the checked-in .csproj. Registered as DC-019.",
+      "rationale": "The principle is absolute: loading a repository must never execute its code. S2's analyzer/generator control is correct but covers a mechanism rather than the boundary. The probe carries a positive control and a non-vacuity guard, and the positive control caught a real path bug on the first run that would otherwise have produced a false all-clear. No containment has been designed or tested; candidates are labelled Inferred.",
+      "artifacts": [
+        "spikes/msbuild-task-execution/RESULT.md"
+      ],
+      "tags": [
+        "phase-2",
+        "security"
+      ],
+      "git": {
+        "before": null,
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0019",
+      "datetime": "2026-08-28T16:39:16Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "P2-PERF-01..03 specified; P2-PERF-02 measured — the daemon boundary costs ~0.35ms flat",
+      "prompt": null,
+      "summary": "The suite was named in the test plan with no cases and one budget that measured a component which does not exist. Now specified with three cases and budgets. P2-PERF-02 measured: describe 0.58ms in process vs 0.92ms over the pipe, impact 0.43ms vs 0.79ms, on a 50k-edge corpus, 30 warm samples, Release.",
+      "rationale": "A simplify: ceiling whose upgrade trigger points at an unspecified suite has no trigger. The boundary tax is ~0.35ms flat and reads as 1.6-1.8x only because the projections are sub-millisecond; against the 100ms describe budget that is 0.35 percent. P2-PERF-01 stays blocked behind Component 1. Scope: one client, one connection, no contention.",
+      "artifacts": [
+        "bench/AiDe.Bench/P2Perf.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "performance"
+      ],
+      "git": {
+        "before": null,
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0020",
+      "datetime": "2026-08-28T16:56:10Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Containment spike: both options work — low-integrity sandbox and no-MSBuild extraction measured",
+      "prompt": null,
+      "summary": "A job object alone does not contain the D3 attack (4/4 vectors land). Low integrity plus a job object blocks all four and extraction still succeeds. A no-MSBuild path (project file parsed as data, Roslyn compiled directly) recovers 159 of 159 types on src/AiDe.Core in 359ms against MSBuildWorkspace's 2210ms, and never runs repository code.",
+      "rationale": "Option A's first run appeared to show low integrity breaks MSBuild; the real cause was the child inheriting an unwritable TEMP, and repointing TMP/TEMP fixed it entirely - a containment that fails environmentally is indistinguishable from one that cannot work. Option B's structural safety is bounded by project.assets.json, which is data but is produced by restore, which is itself MSBuild evaluation. Network egress under Option A is unmeasured; Option B's fidelity on ProjectReference, multi-targeting and custom globs is untested.",
+      "artifacts": [
+        "spikes/extraction-containment/RESULT.md"
+      ],
+      "tags": [
+        "phase-2",
+        "security"
+      ],
+      "git": {
+        "before": null,
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0021",
+      "datetime": "2026-08-28T17:01:55Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "architecture",
+      "skill": null,
+      "title": "Component 1 adopts Strategy 1: extraction never runs repository code; MSBuildWorkspace dropped",
+      "prompt": null,
+      "summary": "The Roslyn extractor reads the project file as data and compiles with Roslyn directly, always. MSBuildWorkspace is not used. Where package references cannot be resolved the projection discloses the omission rather than answering silently. The low-integrity sandbox (A2) is kept as a measured escape hatch, adopted only by a further decision that closes its network-egress gap.",
+      "rationale": "Strategy 1 is the only option where 'loading a repository never executes its code' stays literally true rather than conditional. It is 6.2x faster on the common path (359ms vs 2210ms) and its failure mode is a visible disclosed omission rather than a silent one, matching the precedent S1 set for absent generated symbols. Accepted risk: Option B's fidelity is measured on one project with no ProjectReference; multi-targeting, custom globs and Directory.Build.props are untested, and fidelity failures in an extractor are silent - so a fidelity spike against AiDe.App and a multi-targeted project is owed before the extractor ships.",
+      "artifacts": [
+        "docs/design/phase-2-real-code-and-terminal.md"
+      ],
+      "tags": [
+        "phase-2",
+        "security"
+      ],
+      "git": {
+        "before": null,
+        "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
         "commits": []
       }
     }

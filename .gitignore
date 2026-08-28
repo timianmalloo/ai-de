@@ -506,3 +506,8 @@ docs/.obsidian/plugins/*/styles.css
 
 # Graphify code knowledge graph - a build output, regenerable from source (GK3)
 graphify-out/
+
+# Spike run artifacts: the D3/containment fixture writes marker files to prove that repository
+# code executed. They are the OUTPUT of a run, regenerated every time; RESULT-raw.txt is the
+# committed evidence.
+spikes/msbuild-task-execution/fixture/markers/

@@ -1,0 +1,74 @@
+Extraction containment — evaluating Options A and B against the D3 fixture
+============================================================================================================
+fixture   : C:\Projects\ai-de\spikes\msbuild-task-execution\fixture\HostileProject\HostileProject.csproj
+markers   : C:\Projects\ai-de\spikes\msbuild-task-execution\fixture\markers
+============================================================================================================
+
+PROBE 0 — POSITIVE CONTROL: uncontained child, same fixture
+  markers fired   : 4/4  [marker-exec.txt, marker-inline.txt, marker-usingtask.txt, marker-designtime.txt]
+  extraction      : loaded=True documents=3 types=1
+  wall clock      : 2028 ms
+  => baseline established: the attack fires AND extraction works
+
+PROBE 1 — OPTION A, part 1: bounded job object only (no integrity drop)
+  markers fired   : 4/4  [marker-exec.txt, marker-inline.txt, marker-usingtask.txt, marker-designtime.txt]
+  extraction      : loaded=True documents=3 types=1
+  wall clock      : 2386 ms
+  => a job object bounds LIFETIME and RESOURCES. It does not bound what a process may write.
+
+PROBE 2 — OPTION A, part 2: LOW INTEGRITY child inside the bounded job
+  low-IL scratch  : C:\Users\malla\AppData\Local\Temp\aide-contain\b63d17d0f9334ec880af7958b1bf47ff\low (icacls ok)
+  launch          : started=True exit=0 
+  markers fired   : 0/4  []
+  extraction      : loaded=True documents=3 types=1 error=Msbuild failed when processing the file 'C:\Projects\ai-de\spikes\msbuild-task-execution\fixture\HostileProject\HostileProject.csproj' with message: The "InlinePwn" task failed unexpectedly.
+System.UnauthorizedAccessException: Access to the path 'C:\Projects\ai-de\spikes\msbuild-task-execution\fixture\markers\marker-inline.txt' is denied.
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.File.OpenHandle(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize)
+   at System.IO.File.WriteToFile(String path, FileMode mode, ReadOnlySpan`1 contents, Encoding encoding)
+   at System.IO.File.WriteAllText(String path, String contents, Encoding encoding)
+   at InlineCode.InlinePwn.Execute()
+   at Microsoft.Build.BackEnd.TaskExecutionHost.Execute()
+   at Microsoft.Build.BackEnd.TaskBuilder.ExecuteInstantiatedTask(TaskExecutionHost taskExecutionHost, TaskLoggingContext taskLoggingContext, TaskHost taskHost, ItemBucket bucket, TaskExecutionMode howToExecuteTask) | Msbuild failed when processing the file 'C:\Projects\ai-de\spikes\msbuild-task-execution\fixture\HostileProject\HostileProject.csproj' with message: The "HostileTask.MarkerTask" task failed unexpectedly.
+System.UnauthorizedAccessException: Access to the path 'C:\Projects\ai-de\spikes\msbuild-task-execution\fixture\markers\marker-usingtask.txt' is denied.
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.CreateFile(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options)
+   at Microsoft.Win32.SafeHandles.SafeFileHandle.Open(String fullPath, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize, Nullable`1 unixCreateMode)
+   at System.IO.File.OpenHandle(String path, FileMode mode, FileAccess access, FileShare share, FileOptions options, Int64 preallocationSize)
+   at System.IO.File.WriteToFile(String path, FileMode mode, ReadOnlySpan`1 contents, Encoding encoding)
+   at System.IO.File.WriteAllText(String path, String contents, Encoding encoding)
+   at HostileTask.MarkerTask.Execute() in C:\Projects\ai-de\spikes\msbuild-task-execution\fixture\HostileTask\MarkerTask.cs:line 19
+   at Microsoft.Build.BackEnd.TaskExecutionHost.Execute()
+   at Microsoft.Build.BackEnd.TaskBuilder.ExecuteInstantiatedTask(TaskExecutionHost taskExecutionHost, TaskLoggingContext taskLoggingContext, TaskHost taskHost, ItemBucket bucket, TaskExecutionMode howToExecuteTask)
+  wall clock      : 2035 ms
+
+PROBE 3 — OPTION B: no MSBuild at all. Project file read as DATA.
+  markers fired   : 0/4  []
+  extraction      : loaded=True sources=1 refs=167 types=1 members=9
+  wall clock      : 212 ms
+    - framework references from the ref pack: C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\10.0.11\ref\net10.0
+    - project.assets.json present: 0 package assemblies resolved (restore had already run)
+
+FIDELITY — Option B's symbols against the MSBuildWorkspace baseline
+  baseline types  : 1
+  option B types  : 1
+  missing from B  : 0
+  only in B       : 0
+  NOTE: the hostile fixture has ONE type. Agreement here proves almost nothing,
+        which is why the same comparison runs against a real project below.
+
+FIDELITY — the same comparison on a REAL project (src/AiDe.Core)
+  MSBuildWorkspace : 49 documents, 159 types, 2210 ms
+  Option B         : 46 sources, 159 types, 359 ms
+  agreement        : 100.0% of baseline types recovered
+  missing from B   : 0
+    - framework references from the ref pack: C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\10.0.11\ref\net10.0
+    - project.assets.json present: 4 package assemblies resolved (restore had already run)
+
+============================================================================================================
+OPTION COMPARISON
+option                            repo code runs?   attack landed?   extraction works?  yield
+uncontained (today's design)      yes               YES              yes                1 types
+A1 job object only                yes               YES              yes                1 types
+A2 low integrity + job            yes               no               yes                1 types
+B  no MSBuild (data only)         NO                no               yes                1 types
+============================================================================================================

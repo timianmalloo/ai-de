@@ -2,7 +2,7 @@
 id: adr-0005-terminal-runtime-boundary
 title: "ADR-0005 — Own ConPTY lifecycle behind a renderer-independent runtime"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, terminal, conpty, sessions, wpf]
@@ -21,7 +21,7 @@ summary: >-
 
 # ADR-0005: Own ConPTY lifecycle behind a renderer-independent runtime
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-25
 - **Deciders:** Product owner, SRE and Desktop review
 

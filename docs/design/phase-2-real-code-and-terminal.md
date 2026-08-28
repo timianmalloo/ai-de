@@ -154,6 +154,24 @@ serialization — **new wire format**) → `client type` (`ITerminalSession` pro
 
 ## Component 1 — Roslyn semantic extractor
 
+> **DECIDED 2026-08-28 (`cl-0021`) — the extractor does NOT use `MSBuildWorkspace`.**
+> D3 measured that loading a repository through `MSBuildWorkspace` executes code the repository
+> supplied ([D3 result](../../spikes/msbuild-task-execution/RESULT.md)). Of the two containments
+> measured ([containment result](../../spikes/extraction-containment/RESULT.md)), **Strategy 1 is
+> adopted: read the project file as data and compile with Roslyn directly, always.** Repository code
+> never executes — the principle stays literally true rather than becoming conditional. Where package
+> references cannot be resolved (a fresh clone has no `project.assets.json`, and producing one is
+> itself MSBuild evaluation), the projection **discloses the omission** rather than answering
+> silently — the same shape S1 chose for absent generated symbols.
+>
+> The low-integrity sandbox (**A2**) is built, measured and kept as an escape hatch. Adopting it is a
+> deliberate decision that must first close its **unmeasured network-egress gap**, not an automatic
+> fallback.
+>
+> **The contract below is therefore owed a rewrite** — it still names `MSBuildWorkspace` and a spike
+> that has since run. Recorded rather than silently edited, because a stale contract that contradicts
+> a decision is exactly the DC-019 shape this phase just paid for.
+
 ### Contract
 
 ```csharp
@@ -562,19 +580,30 @@ One interface would put a name on the seam that half its members contradict.
 handler failed immediately with *"palette lists commands that do nothing"* — the SC 2.5.7 control
 working exactly as intended.
 
-#### Prompt dispatch is blocked on a divergence, not on effort
+#### The dispatch divergence, resolved: terminals stay in the shell
 
-`ADR-0010`'s two-phase receipts are the remaining half of dispatch, and they cannot move until a
-prior question is settled: **the design puts terminals in the daemon and the implementation puts them
-in the shell.** The failure-mode table says *"a crashed **daemon** must not leave agent CLIs running
-headless"*, which only holds if terminal processes are the daemon's children — but `TerminalSurface`
-creates its `ConPtyTerminalSession` in the shell process, where a daemon crash orphans nothing
-because the daemon never owned them.
+**DECIDED 2026-08-28 (D1, `cl-0011`).** `ADR-0010`'s two-phase receipts were recorded here as blocked
+on a prior question: the failure table read as though terminals were the daemon's children, while
+`TerminalSurface` creates its `ConPtyTerminalSession` in the shell.
 
-Moving them raises a real design question rather than an implementation one: terminal output is a
-high-rate stream and the IPC lane is request/response, so it needs either a second lane or a
-different shape. **Recorded here rather than resolved, because half-crossing it would leave prompt
-dispatch fenced against a session the daemon does not own.**
+**The divergence was in this document, not between the document and the code.** The *What moves*
+table above already places terminals in Shell Bootstrap's Job Object — shell-side. Only the
+failure row said otherwise, and it has been corrected.
+
+**The mitigation was never missing.** `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` is implemented in
+`ConPtyInterop`, and a Job Object is owned by the process that creates it. The control fires when
+the *shell* dies, which is the case that actually strands a CLI. A daemon crash leaves terminals
+running because they were never its children — correct behaviour, now recorded as such.
+
+Terminals are **not** moved to the daemon. Terminal output is the highest-rate stream in the product
+and its consumer — the WPF surface, measured at 5.50 ms p95 against a 16.67 ms budget — lives in the
+shell. Crossing a request/response pipe would buy a second lane, framing cost and a fresh
+backpressure design for a stream that would have to come straight back. It would also invert
+[ADR-0003](../adr/0003-workspace-daemon-boundary.md), which scopes the daemon to evidence rather
+than to UI.
+
+**Prompt dispatch is therefore unblocked**, and `ADR-0010` is the remaining work rather than the
+remaining question.
 
 ### Upgrade and rollback (P2-UPGRADE-01..03)
 
@@ -626,7 +655,8 @@ too late for every store already on disk, which is the same reason `LayoutMigrat
 
 | Failure mode | From which choice | Disposition | How addressed | Test |
 |---|---|---|---|---|
-| Daemon crashes, agent CLIs keep running headless | Process split | **prevent** | Terminals in a Job Object with kill-on-close; Bootstrap detects and raises `aide.core.restart` | `P2-TERM-05` |
+| **Shell** crashes, agent CLIs keep running headless | Terminal ownership (D1) | **prevent** | Terminals in the shell's Job Object with `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE`; the kernel reaps them when the owning process dies | `P2-TERM-05` |
+| Daemon crashes while terminals run | Process split | **tolerate** | Terminals are the shell's children and are unaffected; Bootstrap detects and raises `aide.core.restart`. This is correct behaviour, not an orphan | `P2-IPC-05` |
 | ConPTY deadlock on a full buffer | Single I/O loop | **prevent** | Separate reader/writer loops (spike-documented requirement) | `P2-TERM-02` |
 | A process floods output and exhausts memory | Bounded channel choice | **mitigate + detect** | Drop-oldest with `Truncated`; `OutputOverload` state; `pty.dropped_bytes` metric | `P2-TERM-03` |
 | Terminal text reaches the graph, audit or telemetry | New high-volume untrusted data | **prevent** | Output never crosses into the store; seeded-marker negative test asserts absence everywhere | `P2-PRIV-01` |
@@ -760,6 +790,38 @@ against — if the two diverge, every one of those tests is proving something ab
 Named suites: `P2-EXT-01..06` (extraction), `P2-TERM-01..07` (terminal), `P2-IPC-01..07`,
 `P2-SEC-01..08`, `P2-UPGRADE-01..03`, `P2-PRIV-01..02`, `P2-CONFORM-01..04` (the `ITerminalSession`
 conformance suite run against **both** implementations), `P2-PERF-01..03`.
+
+### `P2-PERF-01..03` — specified 2026-08-28
+
+The suite was named here from the start and never given cases. Naming a gate is not specifying one,
+and a `simplify:` ceiling whose upgrade trigger points at an unspecified suite has no trigger at all.
+
+| Case | What it measures | Budget | Status |
+|---|---|---|---|
+| `P2-PERF-01` | **Scope settlement** — one Roslyn scope (one project) from load to committed snapshot. The first and only test of the scope-per-project decision. | p95 **< 10 s** on the approved corpus (from the `simplify:` marker above) | **BLOCKED** — needs Component 1, which D3 blocks. |
+| `P2-PERF-02` | **The daemon boundary tax** — the same projection run in process and over a real pipe against **one** store, so the difference is serialisation plus transport and nothing else. | The Phase-1 user-facing budgets still hold end to end: `describe` p95 < 100 ms, `impact` p95 < 250 ms | ✅ **MEASURED 2026-08-28** |
+| `P2-PERF-03` | **Terminal throughput** — sustained output at the architecture's 1 MiB/s case, against the renderer's frame budget. | Draw p95 **< 16.67 ms** for a 200×50 redraw; VT scan sustains ≥ 1 MiB/s | Partially covered: S3 measured 6.64 ms and the shipped renderer 5.50 ms p95, and `AFullScreenRedraw_StaysInsideTheFrameBudget` guards it. **Not yet driven at a sustained 1 MiB/s.** |
+
+**`P2-PERF-02`, measured** (`dotnet run --project bench/AiDe.Bench -c Release -- p2`, 50,000-edge
+corpus, 30 warm samples, Release):
+
+| Projection | In process p95 | Over the pipe p95 | Boundary tax | Headroom to budget |
+|---|---|---|---|---|
+| `describe` | 0.58 ms | **0.92 ms** | +0.34 ms (1.6×) | 99.08 ms |
+| `impact` | 0.43 ms | **0.79 ms** | +0.36 ms (1.8×) | 249.21 ms |
+
+**The multiplier is the wrong number to fear.** Crossing the boundary costs roughly **0.35 ms flat**
+— framing, a pipe write, a read and deserialisation — which lands as 1.6–1.8× only because the
+projections themselves are sub-millisecond. Against the budgets that actually gate the user's
+experience, the boundary consumes **0.35% of `describe`'s 100 ms** and less of `impact`'s. The
+process split is not a performance risk on the read path at this corpus size, and now that is
+measured rather than assumed.
+
+Cold first call over the pipe is 14.73 ms (describe) against 13.85 ms in process — the connect and
+handshake are a one-off, not a per-call cost.
+
+**What this does not cover:** one client, one connection, no contention, and a 50k-edge corpus. It
+says nothing about concurrent shells, a saturated control lane, or the write path.
 
 ---
 
@@ -918,30 +980,32 @@ rather than be skipped (**DC-012**).
   **Control:** the case now runs **out of process** via `tests/AiDe.Core.TerminalHost`, launched with
   `CREATE_NEW_CONSOLE`, driving the real `ConPtyTerminalSession` and reporting by exit code. Verified
   capturing 297 characters of child output. Registered as defect class **DC-014**.
-- **The `ITerminalSession` extension weakens the Phase-1 conformance claim** until `P2-CONFORM` runs:
+- **RESOLVED — the `ITerminalSession` conformance claim.** `P2-CONFORM` now runs: `TerminalSessionConformanceTests` is executed against **both** `FixtureTerminalSession` and `ConPtyTerminalSession`, so the dispatch tests written against the fixture prove something about the seam. Originally flagged as:
   the fixture and the real runtime agree on the half that was specified, and nothing yet proves they
   agree on output, activity or exit.
-- **Cross-monitor DPI remains unverified** (needs a second display) and now matters more, because
+- **ACCEPTED (D5, `cl-0015`) — cross-monitor DPI remains unverified** and is explicitly **non-blocking**. The owner works on a laptop with no second display; this is validated once multi-monitor hardware is available and the product is further along. The DPI arithmetic already has evidence — the snapshot swap measured aligned to within a pixel of rounding at 150% DPI — so what is missing is the monitor-*transition* case. Failure mode is visual misalignment on a multi-monitor drag: user-visible, not data-threatening. Originally flagged because
   Phase 2 adds floating terminal panes.
 - **`MSBuildWorkspace` failure modes are environmental** — SDK version, NuGet restore state, missing
   targets — and are the least predictable dependency in the phase. **Narrowed by S2:** a patch-level
   SDK mismatch loads cleanly with zero diagnostics. A cross-major mismatch, and a repository pinning
   an SDK that is not installed, remain unmeasured.
-- **The MSBuildWorkspace dependency chain carries ten high-severity advisories** (S2 finding 7), with
+- **DECIDED (D2, `cl-0012`) — the MSBuildWorkspace dependency chain carries ten high-severity advisories** (S2 finding 7). The shipped extractor **adopts the spike's posture** — every reference `ExcludeAssets="runtime"`, MSBuild loaded at runtime from the installed SDK via `MSBuildLocator` — and the claim is then **verified by inspecting the built output directory** for the flagged assemblies. If none ship, the exposure is a reference-assembly artifact and the residual is the user's own SDK, which they already execute to build their code. **Component 1 is not blocked on this.** Originally flagged
   no clean version identified. Unresolved for the shipped extractor.
-- **Repository-authored MSBuild *tasks* are an unprobed trust boundary.** S2 established that
-  analyzers and generators can be prevented from executing, but `MSBuildWorkspace` still runs MSBuild
-  *evaluation* to load projects, and whether that executes repository-supplied task assemblies was
-  not tested.
-- The scope-per-project decision is measured against nothing yet; `P2-PERF` is its first test.
+- **RESOLVED (D3 → `cl-0021`) — loading a repository through `MSBuildWorkspace` executes repository-supplied code, so the extractor will not use it.** D3 measured all four vectors firing on `OpenProjectAsync` with **zero** `WorkspaceFailed` diagnostics; two need nothing but the checked-in `.csproj`. Both containments were then measured: a job object alone contains **nothing** (4/4 still land), low integrity + job blocks all four with extraction intact, and a no-MSBuild path recovers **159/159 types on `AiDe.Core` at 359 ms against 2210 ms**. **Strategy 1 adopted** — no MSBuild, ever; disclose unresolved references. Registered as **DC-019**. **Residual, live:** Option B's fidelity is proven on one project with no `ProjectReference`; multi-targeting, custom globs and `Directory.Build.props` are untested, and fidelity failures are silent.
+- **ACCEPTED (D6, `cl-0016`) — the terminal has no scrollback, and this is a stated product limitation for Phase 2.** `TerminalScreen` is viewport-only: when the cursor passes the last row the grid shifts up and the top row is discarded. The engineering reason holds (history needs its own memory budget; growing the viewport would put an unbounded allocation behind an innocuous property, sized by an untrusted child process) and the upgrade path is designed — a bounded ring *beside* the screen, not inside it. **Backlogged, not forgotten.** It is named here as a product limitation rather than a technical note because Phase 2's human validation is *"launch `pwsh`, observe real session state"*, and a developer who runs a build and cannot scroll up to read the errors will read that as broken.
+- **CLOSED (D7, `cl-0017`) — `P2-PERF-01..03` was named in the test plan but never specified.** Found 2026-08-28: the suite was cited three times with no cases and one budget, and that budget measured Roslyn extraction, which does not exist. Now specified below. **`P2-PERF-02` is measured**; `P2-PERF-01` is blocked behind Component 1 (D3).
 
 ## Status and next action
 
+*Refreshed 2026-08-28 after the D1–D7 decision round (`cl-0011`..`cl-0017`), spike D3
+(`cl-0018`), the P2-PERF gate (`cl-0019`), the containment spike (`cl-0020`) and the Strategy-1
+decision (`cl-0021`).*
+
 | | |
 |---|---|
-| **Completed** | Phase-2 design: two contract gaps closed on paper, data model (no new facts, and why), three component contracts, failure/STRIDE/LINDDUN analyses, telemetry, the triggered-directive test plan including the newly-owed conformance suite. **All four spikes resolved 2026-08-26.** S2 changed the analyzer-execution mitigation to stripping `AnalyzerReferences`. S3: own a WPF renderer, `GlyphRun` per line. S4 met ADR-0008's reversal trigger, **now resolved by [ADR-0015](../adr/0015-canvas-hosting-and-overlay-strategy.md)** — windowed control plus snapshot swap, gut-checked at 150% DPI. S1 decided: disclose the absence. **Focus routing designed** against a verified mechanism, after the documented one turned out not to exist on this control. |
-| **Remaining** | **The transport and daemon process landed 2026-08-27.** Still owed on component 3: moving the core's command surface behind the endpoint, and the upgrade/rollback choreography (`P2-UPGRADE-01..03`). Then component 2 (Roslyn), which needs a decision on the dependency-chain advisories before it needs code. Carried findings unchanged. |
-| **Best next action (superseded 2026-08-27 — the runtime and the OSC parser are built)** | **Implement the ConPTY terminal runtime.** It is the only Phase-2 component with no open decision in front of it — S3 cleared its renderer and named the binding draw path, ADR-0005's boundary is unchanged, and it does not touch the canvas. It also forces the `ITerminalSession` output extension and the newly-owed D7 conformance suite, which every dispatch test currently written against the fixture depends on. |
+| **Completed** | **Component 2 complete**: ConPTY runtime, OSC 133 parser, PowerShell shell integration, WPF renderer, `P2-CONFORM` against both implementations. **Component 3 complete except dispatch**: named-pipe transport and `AiDe.Daemon.exe`, capability-bound IPC, the read surface across the boundary, the shell using the daemon, scope refresh, `P2-UPGRADE-01..03`, and `P2-PRIV-01/02` (which found DC-018). **`P2-PERF-01..03` specified**, and `P2-PERF-02` measured: the daemon boundary costs **~0.35 ms flat**, 0.35% of `describe`'s budget. **The extraction trust boundary is settled**: D3 proved `MSBuildWorkspace` executes repository code; both containments were measured; Strategy 1 adopted. 487 tests, four gates green. |
+| **Remaining** | **Component 1 is unblocked but owes a contract rewrite** — the design above still names `MSBuildWorkspace`. Before the extractor ships, an **Option-B fidelity spike** is owed against `AiDe.App` (which has a `ProjectReference`) and a multi-targeted project, because the 159/159 result comes from one project with neither. **Prompt dispatch (`ADR-0010`) is unblocked** by D1 and is work rather than a question. `P2-FOCUS-01..04` is designed and unbuilt. `P2-PERF-03` needs a sustained 1 MiB/s drive. Cross-monitor DPI accepted-unverified (D5); scrollback backlogged (D6). |
+| **Best next action** | **Spike Option B's fidelity on `AiDe.App` and a multi-targeted project.** It is the one measurement standing between the adopted strategy and a contract that can be written with confidence — and a fidelity failure in an extractor is silent, so it will not announce itself later. Then rewrite the Component 1 contract against the measured result. |
 
 ## Gate record
 

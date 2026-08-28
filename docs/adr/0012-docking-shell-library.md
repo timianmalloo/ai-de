@@ -2,7 +2,7 @@
 id: adr-0012-docking-shell-library
 title: "ADR-0012 — Adopt AvalonDock for the workbench shell, with an owned accessibility layer"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, ui, docking, accessibility, wpf, licence]
@@ -22,7 +22,7 @@ review-suggested:
 
 # ADR-0012: Adopt AvalonDock for the workbench shell, with an owned accessibility layer
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-26
 - **Deciders:** Product owner, Enterprise Architect, UX & Accessibility, Security & Identity
 - **Context spec/architecture:** docs/architecture.md · docs/specs/ai-native-ide.md

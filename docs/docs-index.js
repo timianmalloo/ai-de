@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-27T21:16:27Z",
+  "generated": "2026-08-28T17:02:12Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -200,7 +200,7 @@ window.DOCS_INDEX = {
       "path": "docs/adr/0001-derived-evidence-views.md",
       "title": "ADR-0001 — Use derived evidence views, not editable models",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-21",
@@ -238,14 +238,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "924787a5b96645a9d2d18bfb405d001cc1db5fee670bb71266a4bd10e90876ef"
+      "sourceSha256": "5ec1ed24b419ad311f8d5d33935da93ddef1a0fdf503e9af7c198d0f580e9472"
     },
     {
       "id": "adr-0002-workspace-fact-store",
       "path": "docs/adr/0002-workspace-fact-store.md",
       "title": "ADR-0002 — Use SQLite dimensions and append-only facts per workspace",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-21",
@@ -284,14 +284,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8752d891ca1d8a19d1d3689f3b6d24bf0b130790c2ab7d67ab09fa0437d0f3a1"
+      "sourceSha256": "84b2fcf0514bba14b9bed6d6015f7f33e275ba8c884422048006408f81cc2f72"
     },
     {
       "id": "adr-0003-workspace-daemon-boundary",
       "path": "docs/adr/0003-workspace-daemon-boundary.md",
       "title": "ADR-0003 — Run one local daemon per workspace",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-21",
@@ -325,14 +325,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7231417001b667d333fa0c573be127f33903bcf62f05d05af5b6d988ef67bd24"
+      "sourceSha256": "ff95dc0733ac146e111dbc579135f54300a50cfb39123c2749e3c8c5fec02405"
     },
     {
       "id": "adr-0004-mcp-tool-boundary",
       "path": "docs/adr/0004-mcp-tool-boundary.md",
       "title": "ADR-0004 — Expose bounded, typed MCP tools with deterministic authorization",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-21",
@@ -371,14 +371,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "59a13a28be923c66dad038c763e929889badbbec173f22c70f5129eb469e54d0"
+      "sourceSha256": "553372c817edd06466dc1e35419366b6d8069186181e87ebac5be9469bd52714"
     },
     {
       "id": "adr-0005-terminal-runtime-boundary",
       "path": "docs/adr/0005-terminal-runtime-boundary.md",
       "title": "ADR-0005 — Own ConPTY lifecycle behind a renderer-independent runtime",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-21",
@@ -417,14 +417,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3f06638d36c6b38b519b043bc514da461a96d02f181d962802b80f2446c8ea1a"
+      "sourceSha256": "6859822872b83d6539c6848bffee2aff8abeb942afe761c4b27aecfc1c11b594"
     },
     {
       "id": "adr-0006-terminal-delivery-semantics",
       "path": "docs/adr/0006-terminal-delivery-semantics.md",
       "title": "ADR-0006 — Treat terminal prompt delivery as an at-most-once attempt",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-21",
@@ -459,14 +459,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9a9beadef0f913dc5e912c7d0f8f2958cb85670ece53623cf093776379fccffc"
+      "sourceSha256": "f50e9cfa1bb1fb03f32a5bc2b3056a2c1040213765e3ddf2297a71d477f882f1"
     },
     {
       "id": "adr-0007-agent-session-adapter",
       "path": "docs/adr/0007-agent-session-adapter.md",
       "title": "ADR-0007 — Separate terminal readiness from agent acceptance",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-21",
@@ -501,14 +501,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "af334a7134895301053f1600a2e0a3d851018f78065c9fc630f7cd1312e7d34c"
+      "sourceSha256": "cbb8970fd7460bda29361be8c62399ac6c8abd7e5f013028cd28d3e665f36c59"
     },
     {
       "id": "adr-0008-shell-host",
       "path": "docs/adr/0008-shell-host.md",
       "title": "ADR-0008 — WPF frame with embedded WebView2 as the shell host",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-26",
@@ -547,14 +547,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ff9cd140b5ec35a7d882458d68ef27ec266b288aad21c769ce2c9452676ae16e"
+      "sourceSha256": "f1cf3a2bb6bcc4a130038db1405f1c3864196e2ca04911b6b4adfff7c2765421"
     },
     {
       "id": "adr-0009-in-process-first-daemon",
       "path": "docs/adr/0009-in-process-first-daemon.md",
       "title": "ADR-0009 — Run the authority core in-process in Phase 1; split to a daemon at Phase 2",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-26",
@@ -592,7 +592,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a38e16493aaa02082eaf34ec674a08d9f325708a789fcceb2593f2f781451607"
+      "sourceSha256": "b93e12696e706df378d3910127156fe982b5bc9cd7290022463b371984151806"
     },
     {
       "id": "adr-0010-two-phase-dispatch-receipt",
@@ -640,7 +640,7 @@ window.DOCS_INDEX = {
       "path": "docs/adr/0011-session-processing-class-egress.md",
       "title": "ADR-0011 — Bind MCP tool authorization to the session processing class",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-26",
@@ -674,14 +674,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "db6f0ecb82fb50c89a49eb7a819e05a7265cda764a0fbaf0f63a3176f04e7d2a"
+      "sourceSha256": "03bd4d120b4460bf57546de1aafb9dc42b47b2608af5cbca66cdd219190d272a"
     },
     {
       "id": "adr-0012-docking-shell-library",
       "path": "docs/adr/0012-docking-shell-library.md",
       "title": "ADR-0012 — Adopt AvalonDock for the workbench shell, with an owned accessibility layer",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-26",
@@ -716,14 +716,14 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b3c538ee3647784545c144f59e0e02aa5bcd52a88480938f34028781e5230713"
+      "sourceSha256": "52761971b212e0d6feaa59f3d3290061fd324ea5d6e15b2c44b1563d286b8a09"
     },
     {
       "id": "adr-0013-layout-persistence-envelope",
       "path": "docs/adr/0013-layout-persistence-envelope.md",
       "title": "ADR-0013 — Persist the workbench layout in an owned versioned envelope, outside the fact store",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-26",
@@ -751,7 +751,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "87b930eaa1ea69027456641a2fe4203d621fcf50dddf2b7afb2608f49f0230e1"
+      "sourceSha256": "c8e1bdbea455700c2b6f9ab34fc7dbef4fb2baa8ceca7ee3d0dff23f72498993"
     },
     {
       "id": "adr-0014-accessibility-posture",
@@ -1292,7 +1292,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "da971cf7b090fdd0e2faf4aaecbeaaa6c339fc31d8919e4cc317e3116b704d25"
+      "sourceSha256": "2ce0ae3e2f06985a99902fb17f477da10642b765835e4b4d0f3b622f7053e6e0"
     },
     {
       "id": "audit-log",
@@ -1342,7 +1342,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ba2e61d547687ccbb3a748ac1530326928930aa0897bf4292b4e1910dd3c5281"
+      "sourceSha256": "6485afc275675ce022972ee9b64e0005594cd0805f1713c91d9957ee40a59f8c"
     },
     {
       "id": "lens-code-doc-join",
@@ -4023,7 +4023,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-feat-refresh-across-boundary — Audit & Change Log",
+      "title": "ai-de — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -4045,5 +4045,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "558181560e920a158cc063391f777ade540d441d2c77d0957f97c9b02703f303"
+  "graphSha256": "49fadcd5fbabc5fe7ac8e76c336313d21ae0e7d8bc3c4395d4eaf793203e8a3d"
 };

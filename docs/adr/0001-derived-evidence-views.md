@@ -2,7 +2,7 @@
 id: adr-0001-derived-evidence-views
 title: "ADR-0001 — Use derived evidence views, not editable models"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, provenance, diagrams, source-of-truth]
@@ -21,7 +21,7 @@ summary: >-
 
 # ADR-0001: Use derived evidence views, not editable models
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-25
 - **Deciders:** Product owner, Architecture council
 

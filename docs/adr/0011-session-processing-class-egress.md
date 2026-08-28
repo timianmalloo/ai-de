@@ -2,7 +2,7 @@
 id: adr-0011-session-processing-class-egress
 title: "ADR-0011 — Bind MCP tool authorization to the session processing class"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, mcp, privacy, egress, authorization]
@@ -22,7 +22,7 @@ review-suggested:
 
 # ADR-0011: Bind MCP tool authorization to the session processing class
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-26
 - **Deciders:** Product owner, Privacy & Data Governance, Security & Identity, AI Systems
 - **Context spec/architecture:** docs/architecture.md

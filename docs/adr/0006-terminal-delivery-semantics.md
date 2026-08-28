@@ -2,7 +2,7 @@
 id: adr-0006-terminal-delivery-semantics
 title: "ADR-0006 — Treat terminal prompt delivery as an at-most-once attempt"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, terminal, prompts, idempotency, delivery]
@@ -21,7 +21,7 @@ summary: >-
 
 # ADR-0006: Treat terminal prompt delivery as an at-most-once attempt
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-25
 - **Deciders:** Product owner, Distributed Systems review
 

@@ -12,6 +12,22 @@ using Microsoft.Data.Sqlite;
 // **FAIL** and the run exits non-zero, because the point of the gate is to convert the
 // architecture's Inferred targets into measured ones — including when the measurement is bad news.
 
+// P2-PERF runs as a separate gate: `dotnet run --project bench/AiDe.Bench -c Release -- p2`.
+// Kept behind an argument rather than appended to this run, because the Phase-1 numbers are a
+// committed baseline and folding a second workload into the same process would change them.
+if (args.Length > 0 && args[0].Equals("p2", StringComparison.OrdinalIgnoreCase))
+{
+    // The daemon boundary is named pipes with an owner-SID ACL, so the whole gate is Windows-only.
+    // Refusing loudly beats measuring nothing and reporting a pass.
+    if (!OperatingSystem.IsWindows())
+    {
+        Console.WriteLine("P2-PERF: this gate measures the named-pipe daemon boundary and requires Windows.");
+        return 2;
+    }
+
+    return await P2Perf.RunAsync();
+}
+
 const int Samples = 30;                 // the architecture's stated minimum
 const double RefreshBudgetMs = 500;
 const double DescribeBudgetMs = 100;

@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>MsBuildTaskSpike</AssemblyName>
+    <RootNamespace>MsBuildTaskSpike</RootNamespace>
+
+    <!-- MSBuildLocator requires the MSBuild assemblies NOT be resolved from this project's output. -->
+    <ExcludeAssetsFromMSBuild>true</ExcludeAssetsFromMSBuild>
+
+    <!--
+      SCOPED TO THIS SPIKE ONLY - same reasoning as spikes/roslyn-msbuild-workspace, and it must not
+      travel to the shipped extractor. Every reference below carries ExcludeAssets="runtime" where it
+      is an MSBuild assembly; at runtime MSBuild binds from the installed SDK via MSBuildLocator.
+      D2 (cl-0012) decides the shipped posture and requires it be VERIFIED against the output
+      directory rather than assumed.
+    -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The fixture is input data loaded at runtime, never part of this build. -->
+    <Compile Remove="fixture/**" />
+    <None Remove="fixture/**" />
+    <EmbeddedResource Remove="fixture/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.9.1" />
+    <!--
+      NOT ExcludeAssets="runtime": these are Roslyn and the host needs them. Only MSBuild itself is
+      withheld. S2 recorded that excluding both fails at the first workspace call.
+    -->
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <!--
+      Required. Without the C# LANGUAGE SERVICE, MSBuildWorkspace loads ZERO projects and says so as
+      an ordinary diagnostic - and a probe that only counted markers would read that as "nothing
+      executed": a clean bill of health from an instrument that never ran (DC-009). The non-vacuity
+      guard in TaskExecutionProbe exists because of exactly this.
+    -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+  </ItemGroup>
+
+</Project>

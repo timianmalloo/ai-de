@@ -2,7 +2,7 @@
 id: adr-0004-mcp-tool-boundary
 title: "ADR-0004 — Expose bounded, typed MCP tools with deterministic authorization"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, mcp, tools, security, agents]
@@ -22,7 +22,7 @@ summary: >-
 
 # ADR-0004: Expose bounded, typed MCP tools with deterministic authorization
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-25
 - **Deciders:** Product owner, Security and AI Systems review
 

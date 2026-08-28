@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 9 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 10 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 3.
@@ -491,4 +491,37 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   filename, `[SupportedOSPlatform]`, the docs-graph frontmatter sweep. The general defence is to ask
   of every convention-scoped control: *what is the set this actually looks at, and what would it take
   for something to be outside it?*
+- **Status:** `partially-controlled`
+
+### DC-019 — A trust boundary assumed safe because an adjacent control was proven
+- **Signature:** a control is designed, measured and shown to work against one mechanism, and the
+  boundary it sits on is thereafter treated as closed. A *different* mechanism crossing the same
+  boundary is never probed, because the proven control is remembered as protecting the boundary
+  rather than the one path it actually covers. The evidence is real; the generalisation is not.
+- **Why it survives:** everything about it reads as diligence. There is a spike, a measurement, a
+  named control and a test — and citing it feels like citing evidence. The gap is invisible precisely
+  because the adjacent work was done *well*: a boundary with a proven control attracts less scrutiny
+  than one with none, so the unprobed path ends up safer-looking than an untouched one would be.
+- **Instances:** 2026-08-26/28 — S2 proved that repository-authored **analyzers and source
+  generators** can be prevented from executing during extraction (strip `AnalyzerReferences`). The
+  Phase-2 design carried that as the analyzer-execution mitigation and recorded MSBuild *tasks* as
+  merely "unprobed". Spike D3 measured that path: loading a hostile project through
+  `MSBuildWorkspace.OpenProjectAsync` executed **all four** repository-supplied vectors — `Exec`, a
+  `RoslynCodeTaskFactory` inline task, a `UsingTask` assembly, and a design-time-target hook — with
+  **zero** workspace diagnostics. Two of the four need nothing but the checked-in `.csproj`. The
+  analyzer control was correct and never covered this.
+- **Control:** the spike is committed and re-runnable
+  (`dotnet run --project spikes/msbuild-task-execution`), and its **exit code is the assertion**:
+  `1` when repository code executes. It carries a positive control and a non-vacuity guard, because
+  the safe-looking answer is the one a broken probe produces — and it did, on the first run
+  (**DC-009**, **DC-016**). It becomes a shipped test the moment Component 1 acquires a containment,
+  so the containment is proven against the same fixture rather than argued.
+- **The generalisation to apply elsewhere:** when a control is proven, write down *the path it
+  covers*, not the boundary it sits on — then ask what else crosses that boundary. Every "we
+  established that X cannot happen" in a design should name the mechanism X travels by, and every
+  other mechanism is unprobed until it is probed.
+- **Residual risk:** **live.** No containment for MSBuild task execution has been designed or tested;
+  Component 1 is blocked on that decision. The same shape should be checked against the other proven
+  controls in this repo — the MCP egress denial, the capability-revocation path and the fact-store
+  immutability triggers each cover a named mechanism, not a boundary.
 - **Status:** `partially-controlled`

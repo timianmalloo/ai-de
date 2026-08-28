@@ -2,7 +2,7 @@
 id: adr-0008-shell-host
 title: "ADR-0008 — WPF frame with embedded WebView2 as the shell host"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, shell, wpf, webview2, desktop]
@@ -22,7 +22,7 @@ review-suggested:
 
 # ADR-0008: WPF frame with embedded WebView2 as the shell host
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-26
 - **Deciders:** Product owner, Enterprise Architect, Desktop review
 - **Context spec/architecture:** docs/architecture.md

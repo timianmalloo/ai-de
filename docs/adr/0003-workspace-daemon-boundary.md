@@ -2,7 +2,7 @@
 id: adr-0003-workspace-daemon-boundary
 title: "ADR-0003 — Run one local daemon per workspace"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, daemon, workspace, isolation]
@@ -20,7 +20,7 @@ summary: >-
 
 # ADR-0003: Run one local daemon per workspace
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-25
 - **Deciders:** Product owner, Enterprise and Distributed Systems review
 

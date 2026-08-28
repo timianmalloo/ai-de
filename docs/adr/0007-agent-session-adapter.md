@@ -2,7 +2,7 @@
 id: adr-0007-agent-session-adapter
 title: "ADR-0007 — Separate terminal readiness from agent acceptance"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, agents, terminal, prompts, contracts]
@@ -21,7 +21,7 @@ summary: >-
 
 # ADR-0007: Separate terminal readiness from agent acceptance
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-25
 - **Deciders:** Product owner, Enterprise and Distributed Systems review
 

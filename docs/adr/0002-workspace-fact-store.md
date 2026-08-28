@@ -2,7 +2,7 @@
 id: adr-0002-workspace-fact-store
 title: "ADR-0002 — Use SQLite dimensions and append-only facts per workspace"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, sqlite, facts, dimensions, provenance]
@@ -22,7 +22,7 @@ summary: >-
 
 # ADR-0002: Use SQLite dimensions and append-only facts per workspace
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-08-25
 - **Deciders:** Product owner, Data & Persistence review
 

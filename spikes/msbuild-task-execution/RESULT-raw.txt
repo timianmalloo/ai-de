@@ -1,0 +1,45 @@
+D3 — repository-authored MSBuild task execution
+====================================================================================================
+fixture     : C:\Projects\ai-de\spikes\msbuild-task-execution\fixture\HostileProject\HostileProject.csproj
+markers     : C:\Projects\ai-de\spikes\msbuild-task-execution\fixture\markers
+runtime     : 10.0.11
+====================================================================================================
+
+SETUP — building the attacker's task assembly (vector 1 only)
+  HostileTask build: ok
+
+PROBE 0 — POSITIVE CONTROL: does a real `dotnet build` fire the vectors?
+  MARKERS AFTER A REAL BUILD:
+    [EXECUTED] exec        built-in Exec task in InitialTargets (no custom assembly needed)
+    [EXECUTED] inline      RoslynCodeTaskFactory inline C# (no custom assembly needed)
+    [EXECUTED] usingtask   repository-authored task assembly via UsingTask
+    [EXECUTED] designtime  Exec hooked BeforeTargets on design-time targets
+    => 4 of 4 vectors executed
+
+  Positive control OK — 4 vector(s) demonstrably CAN fire: exec, inline, usingtask, designtime
+
+MSBuild     : .NET Core SDK 10.0.303 at C:\Program Files\dotnet\sdk\10.0.303
+
+PROBE 1 — MSBuildWorkspace.OpenProjectAsync on the hostile project
+
+  WorkspaceFailed diagnostics : 0
+
+  NON-VACUITY GUARD
+    project loaded            : yes
+    source documents          : 3
+    assembly name             : HostileProject
+    metadata references       : 167
+    => the workspace really did evaluate this project
+
+  MARKERS AFTER OpenProjectAsync:
+    [EXECUTED] exec        built-in Exec task in InitialTargets (no custom assembly needed)
+    [EXECUTED] inline      RoslynCodeTaskFactory inline C# (no custom assembly needed)
+    [EXECUTED] usingtask   repository-authored task assembly via UsingTask
+    [EXECUTED] designtime  Exec hooked BeforeTargets on design-time targets
+    => 4 of 4 vectors executed
+
+====================================================================================================
+VERDICT: REPOSITORY CODE EXECUTED. Vectors that fired: exec, inline, usingtask, designtime.
+         Loading a repository executes its code. Component 1 cannot proceed on this path
+         without a containment decision.
+====================================================================================================
