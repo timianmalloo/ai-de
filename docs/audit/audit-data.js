@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T19:33:14Z",
+  "generated": "2026-08-28T20:08:27Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1087,6 +1087,21 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0052",
+      "shortname": "external-corpus-canvas-nav-phase-3",
+      "datetime": "2026-08-28T20:08:27Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "prompt": "do all of these 5 steps then summarize what i can manually test in the client; use my TheTerrace repo for the target repo to index",
+      "summary": "Extended fidelity to TheTerrace and closed two gaps; indexed it through the product path (11,041 assertions, 4/4 scopes) which exposed tuple types leaking in as graph nodes; added canvas navigation with click-to-re-root and a radial layout; exposed daemon/health/MCP diagnostics; opened Phase 3. 547 tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -1837,6 +1852,55 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "f415e024016455119fe36d82ef72e9dfbd1f209d",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0031",
+      "datetime": "2026-08-28T20:08:27Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Fidelity extended to an external repository: two real gaps found and closed",
+      "prompt": null,
+      "summary": "Measured against TheTerrace (811 C# files, Directory.Build.props, central package management, Blazor Web SDK). Two gaps closed: inherited build properties, and the ASP.NET Core reference pack. Result: no worse than MSBuildWorkspace on any project measured; TheTerrace itself now 100 percent edge resolution over 17,501 edges.",
+      "rationale": "AiDe's own projects were the corpus the extractor was built against, which makes them the worst possible evidence that it works. The external repository immediately exposed what its own could not: REHEARSAL is defined in Directory.Build.props so five test classes were compiled out and disappeared from the graph entirely, and Microsoft.NET.Sdk.Web implies a framework reference that no NuGet package supplies. The verdict now compares against the BASELINE rather than perfection, because MSBuildWorkspace carries 46 bad edges on one of these projects itself and 'worse than 100 percent' would condemn Option B for a limitation both share.",
+      "artifacts": [
+        "spikes/extraction-fidelity/RESULT-theterrace.txt"
+      ],
+      "tags": [
+        "phase-2",
+        "extraction"
+      ],
+      "git": {
+        "before": null,
+        "after": "a77bb092728cab170e5043baddb06fac06b91740",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0032",
+      "datetime": "2026-08-28T20:08:27Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Phase 3 opened and grounded: the planned DDL parser is replaced by an EF-migration reader",
+      "prompt": null,
+      "summary": "Phase-3 design written against a real repository rather than the phase plan. TheTerrace has zero .sql files and 63 EF Core migration classes, so the planned DDL parser would have had no corpus. Three components: Bicep-as-data, EF-migration schema reader, and the joins with their confidence rules.",
+      "rationale": "Checking the plan against a repository that was not written for this tool changed the component list before any code existed - the failure the Phase-2 spikes were introduced to prevent. Both new extractors inherit Phase 2's constraint that a build is never invoked: bicep build is a compiler on repository-supplied input, which is the D3 shape again. Confidence is the deliverable rather than the edge, because an inferred join across three artifacts looks more impressive than a verified one inside one and is exactly what a user would act on without checking.",
+      "artifacts": [
+        "docs/design/phase-3-architecture-data-infra.md"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "a77bb092728cab170e5043baddb06fac06b91740",
         "branch": "main",
         "pushed": true,
         "commits": []

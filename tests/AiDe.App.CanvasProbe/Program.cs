@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using AiDe.App.Workbench;
+using AiDe.Core.Presentation;
 using AiDe.Core.Workbench;
 
 namespace AiDe.App.CanvasProbe;
@@ -51,6 +52,19 @@ internal static class Program
     private static int Run()
     {
         var canvas = new CanvasSurface("canvas-probe", "Graph");
+
+        // The canvas MUST be populated for this test to mean anything. With no graph the page takes
+        // its empty-graph escape and leaves on the first Tab — which passes, while proving nothing
+        // about tabbing off the END of a populated node list. That regression appeared the moment
+        // navigation was added, and it appeared as a still-green test.
+        canvas.GraphSource = (rootId, _) => Task.FromResult(new CanvasGraph(
+            [
+                new CanvasNode("Shop.Order", "Order", "source", IsRoot: true),
+                new CanvasNode("Shop.Customer", "Customer", "source", IsRoot: false),
+                new CanvasNode("Shop.Ledger", "Ledger", "source", IsRoot: false),
+            ],
+            [new CanvasEdge("Shop.Order", "Shop.Customer", "depends_on", "Verified")],
+            "Shop.Order", 0, [], null));
         var before = new Button { Content = "before" };
         var after = new Button { Content = "after" };
 
@@ -136,7 +150,16 @@ internal static class Program
         }
 
         var seen = await canvas.EvaluateAsync("String(window.__tabsSeen || 0)");
-        Console.Out.WriteLine($"tab keydowns seen by the page: {seen}");
+        var nodeCount = await canvas.EvaluateAsync("String(document.querySelectorAll('.node').length)");
+        Console.Out.WriteLine($"tab keydowns seen by the page: {seen}, nodes rendered: {nodeCount}");
+
+        // Non-vacuity: an empty canvas leaves on the FIRST Tab by design, which would pass this test
+        // while proving nothing about the end of a node list.
+        if (nodeCount.Trim('"') is "0" or "")
+        {
+            Console.Error.WriteLine("the canvas rendered no nodes — this test would pass vacuously");
+            return CanvasNeverLoaded;
+        }
 
         if (reported is null)
         {

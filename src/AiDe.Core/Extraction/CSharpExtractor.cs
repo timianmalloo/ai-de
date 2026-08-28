@@ -234,7 +234,15 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                     break;
 
                 case INamedTypeSymbol { IsGenericType: true } generic:
-                    if (Resolved(generic)) yield return generic.ConstructedFrom;
+                    // A tuple is unwrapped into its ELEMENTS and never emitted itself. Indexing a
+                    // real repository put "(T1, T2)" and "(T1, T2, T3)" among the most-connected
+                    // nodes in the graph — the unbound display form of ValueTuple, which is a
+                    // language construct rather than anything a user would navigate to.
+                    if (!generic.IsTupleType && !IsNoise(generic))
+                    {
+                        yield return generic.ConstructedFrom;
+                    }
+
                     foreach (var argument in generic.TypeArguments)
                     {
                         foreach (var t in Unwrap(argument)) yield return t;
@@ -243,19 +251,29 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                     break;
 
                 default:
-                    // Void and type parameters are noise as graph nodes: every method that returns
-                    // nothing would otherwise gain an edge to the same node.
-                    if (Resolved(type) &&
-                        type.SpecialType != SpecialType.System_Void &&
-                        type.TypeKind != TypeKind.TypeParameter)
-                    {
-                        yield return type;
-                    }
-
+                    if (IsNoise(type)) break;
+                    yield return type;
                     break;
             }
         }
     }
+
+    /// <summary>
+    /// Types that are language machinery rather than anything a user would navigate to.
+    /// </summary>
+    /// <remarks>
+    /// Found by indexing someone else's repository: <c>void</c>, type parameters and tuples are
+    /// everywhere, so as nodes they become the highest-degree things in the graph while meaning
+    /// nothing. Their type ARGUMENTS still produce edges — a method returning
+    /// <c>(Order, Customer)</c> depends on both.
+    /// </remarks>
+    private static bool IsNoise(ITypeSymbol type) =>
+        !Resolved(type) ||
+        type.SpecialType == SpecialType.System_Void ||
+        type.TypeKind == TypeKind.TypeParameter ||
+        type.TypeKind == TypeKind.Dynamic ||
+        type is INamedTypeSymbol { IsTupleType: true } ||
+        string.IsNullOrEmpty(type.Name);
 
     private static void Walk(INamespaceSymbol ns, List<INamedTypeSymbol> into)
     {

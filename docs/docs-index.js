@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-28T19:33:14Z",
+  "generated": "2026-08-28T20:08:27Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1293,6 +1293,46 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "7bc863996e870a105ef018e1946ded1589b22b4b50702c83b94a29477296bbef"
+    },
+    {
+      "id": "design-phase-3-architecture-data-infra",
+      "path": "docs/design/phase-3-architecture-data-infra.md",
+      "title": "Design: Phase 3 — architecture, data and infrastructure joins",
+      "type": "design",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Phase 3 joins C# evidence to infrastructure and schema evidence. Grounded in a real repository rather than the phase plan: its schema is EF Core migrations, not DDL files, so the planned \"DDL parser\" would have found nothing. Three components, one of which the phase plan did not have.",
+      "tags": [
+        "design",
+        "phase-3",
+        "bicep",
+        "ddl",
+        "domain",
+        "joins"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "design-phase-2-real-code-and-terminal",
+          "rel": "refines"
+        },
+        {
+          "to": "review-phase-2-exit",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0001-derived-evidence-views",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "38f8e891c9d78c301179c784cbda136f65ae6e14f650af86ef2337b8ff1859c5"
     },
     {
       "id": "audit-log",
@@ -4078,5 +4118,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "5703f3caad6924c8c3fd7d8394745fcdc3fe34d413b4e16dab97a7a191f38a2b"
+  "graphSha256": "87be10901fc0f662db01185a107b0cb8ec000e6963b87393b2d2388cd080f715"
 };

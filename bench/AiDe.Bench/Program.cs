@@ -15,6 +15,12 @@ using Microsoft.Data.Sqlite;
 // P2-PERF runs as a separate gate: `dotnet run --project bench/AiDe.Bench -c Release -- p2`.
 // Kept behind an argument rather than appended to this run, because the Phase-1 numbers are a
 // committed baseline and folding a second workload into the same process would change them.
+// `-- index <path>` indexes any repository through the product's own path.
+if (args.Length > 1 && args[0].Equals("index", StringComparison.OrdinalIgnoreCase))
+{
+    return await IndexRepository.RunAsync(args[1]);
+}
+
 if (args.Length > 0 && args[0].Equals("p2", StringComparison.OrdinalIgnoreCase))
 {
     // The daemon boundary is named pipes with an owner-SID ACL, so the whole gate is Windows-only.

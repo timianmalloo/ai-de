@@ -93,7 +93,7 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         try
         {
             await _view.EnsureCoreWebView2Async();
-            _view.NavigateToString(Page);
+            _view.NavigateToString(CanvasPage.Html);
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
@@ -124,7 +124,21 @@ public sealed class CanvasSurface : ContentControl, IDisposable
             return;
         }
 
-        if (message is null || !string.Equals(message.Kind, "focus.leave", StringComparison.Ordinal))
+        if (message is null) return;
+
+        if (string.Equals(message.Kind, "node.activate", StringComparison.Ordinal))
+        {
+            // Re-rooting is a READ. The page names a node and the host asks the projection about it;
+            // nothing the page can say grants it anything it did not already have.
+            if (!string.IsNullOrWhiteSpace(message.NodeId))
+            {
+                _ = RefreshAsync(message.NodeId);
+            }
+
+            return;
+        }
+
+        if (!string.Equals(message.Kind, "focus.leave", StringComparison.Ordinal))
         {
             return;
         }
@@ -139,7 +153,7 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         FocusLeaveRequested?.Invoke(this, direction);
     }
 
-    private sealed record CanvasMessage(string Kind, string? Direction);
+    private sealed record CanvasMessage(string Kind, string? Direction, string? NodeId);
 
     /// <summary>
     /// Sends a key to the page through the browser's own input layer.
@@ -199,120 +213,5 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         _disposed = true;
         _view.Dispose();
     }
-
-    /// <summary>
-    /// The canvas page. Inlined rather than deployed as an asset so the boundary handlers cannot be
-    /// separated from the control that depends on them.
-    /// </summary>
-    internal const string Page = """
-        <!doctype html>
-        <html lang="en">
-        <head><meta charset="utf-8"><title>Graph canvas</title>
-        <style>
-          body { font: 14px system-ui, sans-serif; margin: 0; padding: 16px; background: #1e1e1e; color: #ddd; }
-          h1 { font-size: 15px; margin: 0 0 4px; }
-          #caption { color: #999; margin: 0 0 12px; }
-          #warn { color: #e8b339; margin: 0 0 12px; }
-          .node { display: inline-block; padding: 8px 12px; margin: 6px; border: 1px solid #555;
-                  border-radius: 4px; background: #2a2a2a; cursor: pointer; }
-          .node.root { border-color: #4da3ff; background: #21303f; }
-          .node:focus { outline: 2px solid #4da3ff; outline-offset: 2px; }
-          .edge { color: #8a8a8a; font-size: 12px; margin: 2px 0 2px 12px; }
-        </style></head>
-        <body>
-          <h1>Graph canvas</h1>
-          <p id="caption">Waiting for the workspace…</p>
-          <p id="warn"></p>
-          <div id="nodes"></div>
-          <div id="edges"></div>
-          <script>
-            function leave(direction) {
-              window.chrome.webview.postMessage({ kind: 'focus.leave', direction: direction });
-            }
-
-            function focusable() { return Array.prototype.slice.call(document.querySelectorAll('.node')); }
-
-            // Entry lands on the browser's input window with nothing in the page focused, so the
-            // first node is claimed explicitly. Without this the user arrives inside the canvas with
-            // no visible focus and their first Tab appears to do nothing.
-            function claimFocus() {
-              var nodes = focusable();
-              var active = document.activeElement;
-              if (nodes.length && (!active || active === document.body)) { nodes[0].focus(); }
-            }
-            window.addEventListener('focus', claimFocus);
-            document.addEventListener('pointerdown', claimFocus);
-
-            // Handled at the DOCUMENT level against the CURRENT node list, not per element: the
-            // graph is re-rendered whenever the workspace changes, and element-scoped handlers would
-            // be lost with the nodes they were attached to — the keyboard trap would come back
-            // silently the first time real data arrived.
-            document.addEventListener('keydown', function (e) {
-              if (e.key === 'Escape') { e.preventDefault(); leave('restore'); return; }
-              if (e.key !== 'Tab') { return; }
-              window.__tabsSeen = (window.__tabsSeen || 0) + 1;
-
-              var nodes = focusable();
-              var active = document.activeElement;
-
-              // With no nodes at all there is nothing to tab through, so EITHER direction leaves.
-              // An empty graph must not be a trap.
-              if (nodes.length === 0) { e.preventDefault(); leave(e.shiftKey ? 'backward' : 'forward'); return; }
-
-              if (!e.shiftKey && active === nodes[nodes.length - 1]) { e.preventDefault(); leave('forward'); }
-              else if (e.shiftKey && (active === nodes[0] || active === document.body)) {
-                e.preventDefault(); leave('backward');
-              }
-            });
-
-            function render(graph) {
-              var caption = document.getElementById('caption');
-              var warn = document.getElementById('warn');
-              var nodesEl = document.getElementById('nodes');
-              var edgesEl = document.getElementById('edges');
-
-              nodesEl.innerHTML = '';
-              edgesEl.innerHTML = '';
-
-              (graph.nodes || []).forEach(function (n) {
-                var el = document.createElement('span');
-                el.className = 'node' + (n.isRoot ? ' root' : '');
-                el.tabIndex = 0;
-                el.textContent = n.label;
-                el.title = n.id;
-                nodesEl.appendChild(el);
-              });
-
-              (graph.edges || []).forEach(function (edge) {
-                var el = document.createElement('div');
-                el.className = 'edge';
-                el.textContent = edge.from + ' --' + edge.predicate + '--> ' + edge.to;
-                edgesEl.appendChild(el);
-              });
-
-              caption.textContent = graph.message
-                ? graph.message
-                : (graph.nodes || []).length + ' node(s), ' + (graph.edges || []).length + ' edge(s). '
-                  + 'Tab moves between nodes; Tab off either end or press Escape to return.';
-
-              // Truncation and non-extraction are DIFFERENT and both are stated: omitted edges exist
-              // and were not returned, disclosures were never extracted at all. A graph that shows
-              // neither looks complete.
-              var notes = [];
-              if (graph.omitted > 0) { notes.push(graph.omitted + ' edge(s) omitted by the result bound'); }
-              if ((graph.disclosures || []).length) { notes.push('not analysed: ' + graph.disclosures.join(', ')); }
-              warn.textContent = notes.join(' — ');
-
-              claimFocus();
-            }
-
-            window.chrome.webview.addEventListener('message', function (e) {
-              var payload = e.data;
-              if (payload && payload.kind === 'graph') { render(payload.graph); }
-            });
-          </script>
-        </body>
-        </html>
-        """;
 
 }

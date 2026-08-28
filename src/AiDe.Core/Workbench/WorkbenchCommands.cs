@@ -74,6 +74,13 @@ public static class WorkbenchCommandCatalog
         // The command that makes the extractor visible. Its announcement carries the DISCLOSURES,
         // because a graph that silently omits package types looks complete and the user has no way
         // to know it is not.
+        // Read-only on purpose. Upgrade and rollback are choreographed against a store a running
+        // binary may not be able to read halfway through, so the shell REPORTS the state and names
+        // what a rollback would do; the act itself stays with the Bootstrap.
+        new("workspace.diagnostics", "Show daemon, health and MCP diagnostics", "Ctrl+K, D",
+            string.Empty,
+            "Reports the daemon version, whether a rollback is possible, open health incidents, and the registered MCP tools."),
+
         new("workspace.indexSolution", "Index C# projects in this workspace", "Ctrl+K, I",
             string.Empty,
             "Finds every C# project and indexes one scope per target framework. Reports what was not analysed."),

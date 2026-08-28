@@ -61,6 +61,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workspace.indexSolution":
                 return IndexSolution();
 
+            case "workspace.diagnostics":
+                return ShowDiagnostics();
+
             case "workbench.focusCanvas":
                 return FocusCanvas();
 
@@ -352,6 +355,18 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// Indexes the workspace's C# projects. Set when a workspace attaches; null before that.
     /// </summary>
     public Func<Task<string>>? WorkspaceIndex { get; set; }
+
+    /// <summary>Reports daemon, health and MCP state. Set when a workspace attaches.</summary>
+    public Func<string>? WorkspaceDiagnostics { get; set; }
+
+    private bool ShowDiagnostics()
+    {
+        announcer.Announce(WorkspaceDiagnostics is null
+            ? "No workspace is open, so there is nothing to report."
+            : WorkspaceDiagnostics());
+
+        return true;
+    }
 
     private bool IndexSolution()
     {

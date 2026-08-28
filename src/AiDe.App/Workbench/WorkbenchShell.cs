@@ -6,6 +6,8 @@ using System.Windows.Input;
 using AiDe.Core;
 using AiDe.Core.Ipc;
 using AiDe.Core.Projections;
+using AiDe.Core.Health;
+using AiDe.Core.Upgrade;
 using AiDe.Core.Presentation;
 using AiDe.Core.Workbench;
 using AvalonDock;
@@ -264,6 +266,16 @@ public sealed class WorkbenchShell : IDisposable
                     command, session, dispatch.DispatchBeginAsync, dispatch.DispatchFinalizeAsync);
             };
         }
+
+        // Diagnostics needs no daemon connection: the installation layout is on disk and the
+        // incident sidecar is a local file, so the state is readable even when the daemon is not.
+        var diagnostics = new WorkspaceDiagnosticsViewModel(
+            string.IsNullOrEmpty(dataDirectory) ? null : new DaemonInstallation(dataDirectory),
+            string.IsNullOrEmpty(dataDirectory)
+                ? null
+                : new HealthIncidentSidecar(Path.Combine(dataDirectory, "health-incidents.jsonl")));
+
+        Controller.WorkspaceDiagnostics = () => diagnostics.Read().Describe();
 
         if (commands is not null)
         {
