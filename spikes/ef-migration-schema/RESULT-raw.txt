@@ -1,0 +1,32 @@
+Phase-3 spike — EF migrations as schema evidence
+========================================================================================================
+repository : C:\Projects\TheTerrace
+migrations : C:\Projects\TheTerrace\src\TheTerrace\Infrastructure\Data\Migrations
+========================================================================================================
+
+migrations read : 62
+tables after fold: 64
+columns         : 566
+parse time      : 109 ms
+
+oracle          : AppDbContextModelSnapshot.cs — 62 table(s)
+
+TABLE AGREEMENT
+  in both            : 62
+  missing from fold  : 0
+  only in fold       : 2  TeamAliasFixtureRepair, TeamAliasRepair
+
+  tables dropped by a later migration : 0
+  tables renamed by a later migration : 0
+
+========================================================================================================
+every table EF maps, found by the fold: 100.0%
+
+Tables the fold reports and the model does not: these are created by a migration and
+never mapped to an entity. The model snapshot answers "what does EF map?"; the fold
+answers "what do the migrations create?". For a graph about a DATABASE the second is
+the right question, so these are kept and DISCLOSED, not discarded.
+
+VERDICT: the fold recovers every table EF maps, and additionally finds tables the model
+         does not. Migrations are viable schema evidence — and the planned DDL parser is
+         the wrong component for a .NET repository, which has no DDL to parse.

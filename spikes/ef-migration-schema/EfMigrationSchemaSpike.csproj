@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Phase-3 spike 3. Reads EF Core MIGRATIONS as data — Roslyn syntax only, no EF, no database, no
+    `dotnet ef`. Phase 2's constraint carries forward: a repository's build is never invoked.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>EfMigrationSchemaSpike</AssemblyName>
+    <RootNamespace>EfMigrationSchemaSpike</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+  </ItemGroup>
+
+</Project>

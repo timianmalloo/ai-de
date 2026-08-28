@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-28T20:08:27Z",
+  "generated": "2026-08-28T20:39:24Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -599,7 +599,7 @@ window.DOCS_INDEX = {
       "path": "docs/adr/0010-two-phase-dispatch-receipt.md",
       "title": "ADR-0010 — Write-ahead two-phase dispatch receipt for prompt delivery",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "0",
       "reviewBy": "2027-02-26",
@@ -633,7 +633,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0d9e433782c2c5440631d031839341adf34fcf00dd79b3aef31cbd460c924e23"
+      "sourceSha256": "908e24547cde974ec89a8c28248c6aa274d23c06046fd2aa211536f1a3a22746"
     },
     {
       "id": "adr-0011-session-processing-class-egress",
@@ -832,6 +832,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "885e741f87ce2d8e0e7838669d2a4d259932b306a7154119187eff60f2de56d5"
+    },
+    {
+      "id": "adr-0016-bounded-context-declaration",
+      "path": "docs/adr/0016-bounded-context-declaration.md",
+      "title": "ADR-0016 — Bounded contexts are declared in one reviewable file, never inferred",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "A bounded context is a modelling decision with no evidence in a repository, so it is declared in a committed file and validated against extracted symbols. Folder convention is rejected on measured grounds: the obvious candidate in a real repository has 31 folders that are UI features, not contexts.",
+      "tags": [
+        "architecture",
+        "ddd",
+        "bounded-context",
+        "phase-3",
+        "curation"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "design-phase-3-architecture-data-infra",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0001-derived-evidence-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f82be054beae87b768967422527c396d8c609333e036241a2753e2b49cd4c03c"
     },
     {
       "id": "architecture",
@@ -4118,5 +4153,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "87be10901fc0f662db01185a107b0cb8ec000e6963b87393b2d2388cd080f715"
+  "graphSha256": "55fc9eaf00ed55afbf0f90bb17d3528d5c82f8216e561e1c44075d24a082697f"
 };

@@ -1,0 +1,30 @@
+Phase-3 spike — Bicep read as data, measured against the compiler
+========================================================================================================
+source : C:\Projects\TheTerrace\infra\main.bicep
+oracle : C:\Users\malla\AppData\Local\Temp\claude\C--projects-ai-de\79f8657c-008d-44a7-b6f7-46c339804d70\scratchpad\main.json  (az bicep build, run once by hand)
+========================================================================================================
+
+declarations read : 24 resource(s), 0 module(s), 18 param(s)
+secure parameters : 1 (invitationPepper)
+dependsOn lines   : 0
+
+oracle            : 24 resource(s), 18 param(s)
+
+RESOURCE TYPE AGREEMENT
+  distinct types in oracle : 19
+  distinct types read      : 19
+  missing from the read    : 0
+  only in the read         : 0
+
+PARAMETERS: 18 expected, 0 missed
+
+NAMES: 16 of 24 resource names are literals; 8 are expressions and stay unresolved.
+  An unresolved name is kept verbatim and DISCLOSED. A guessed one would be a
+  confident wrong answer in a join, which is worse than an absent edge.
+
+========================================================================================================
+VERDICT: the declarative read recovers every resource TYPE and every parameter the
+         compiler produces. Bicep can be read as data — the product does not need the
+         compiler, and Phase 2's no-build principle holds into Phase 3.
+         WHAT IT DOES NOT RECOVER: resolved names. Joins that need a literal resource
+         name are Inferred-at-best and must say so.

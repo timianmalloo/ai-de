@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T20:08:27Z",
+  "generated": "2026-08-28T20:39:23Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1102,6 +1102,21 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0053",
+      "shortname": "phase-3-spikes-and-adr-0010",
+      "datetime": "2026-08-28T20:39:23Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "prompt": "do all of these 5 steps then summarize what i can manually test in the client",
+      "summary": "Ran both Phase-3 spikes against TheTerrace (Bicep 24/24, EF 62/62 tables), proposed ADR-0016 for bounded-context declaration, added workspace.open so the daemon path is reachable without an environment variable, and promoted ADR-0010 after proving dispatch reaches and is executed by a live session. 548 tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -1901,6 +1916,80 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "a77bb092728cab170e5043baddb06fac06b91740",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0033",
+      "datetime": "2026-08-28T20:39:23Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Phase-3 spikes clear: Bicep readable as data, EF migrations are viable schema evidence",
+      "prompt": null,
+      "summary": "Bicep declarative read recovers 24/24 resources, 19/19 types and 18/18 parameters against an az bicep build oracle. The EF migration fold recovers 62/62 tables EF maps in 99ms, plus two the model does not map. Both confirm Phase-3 components 1 and 2 as designed.",
+      "rationale": "Both spikes existed to test a CONTRACT, not an optimisation: the product may not run bicep build or dotnet ef for the same reason it may not run MSBuild, so if the declarative read had been insufficient the design would have had to change rather than the principle. The EF result is asymmetric on purpose - the fold found two tables EF's own snapshot omits, created by a migration's Up and never dropped, so the fold is more correct than its oracle about what the database contains. Treating that as an error would have taught the component to hide real tables. Residual: raw Sql() statements are not read, and 8 of 24 Bicep names are expressions that stay unresolved and disclosed.",
+      "artifacts": [
+        "spikes/ef-migration-schema/RESULT.md"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "e8f521d185d7c66ecf1916a89535a698ece80764",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0034",
+      "datetime": "2026-08-28T20:39:23Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "architecture",
+      "skill": null,
+      "title": "ADR-0016 proposed: bounded contexts are declared in one validated file, never inferred",
+      "prompt": null,
+      "summary": "A committed docs/bounded-contexts.yaml authored by a human and validated against extracted symbols: unknown namespaces fail, coverage is reported, and overlap is an error rather than a merge. Folder convention rejected on measured grounds.",
+      "rationale": "The corpus repository's obvious candidate - src/TheTerrace/Features - has 31 folders that are UI features, not bounded contexts: AskAi, Ai and Conversation almost certainly share one model. Inferring 31 contexts from 31 folders would produce a diagram that looks authoritative and teaches the user something false about their own system, which is worse than a missing one because a wrong boundary is harder to notice. Attributes in code were rejected because they require editing the analysed repository to analyse it. STATUS PROPOSED: this is the one Phase-3 input with no evidence behind it and needs the product owner's confirmation.",
+      "artifacts": [
+        "docs/adr/0016-bounded-context-declaration.md"
+      ],
+      "tags": [
+        "phase-3",
+        "ddd"
+      ],
+      "git": {
+        "before": null,
+        "after": "e8f521d185d7c66ecf1916a89535a698ece80764",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0035",
+      "datetime": "2026-08-28T20:39:23Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "architecture",
+      "skill": null,
+      "title": "ADR-0010 promoted to accepted: dispatch proven against a live session",
+      "prompt": null,
+      "summary": "DispatchLiveSessionTests runs a real daemon over a real pipe, dispatches to a real ConPTY PowerShell, and requires a unique marker to come back OUT of the terminal before passing. Also added workspace.open (Ctrl+K, O) so a workspace can be chosen rather than only inherited from an environment variable.",
+      "rationale": "The existing dispatch tests wrote to a FIXTURE session, so they proved the receipt consistent with itself and said nothing about whether an accepted prompt reached a process that could act on it. A receipt alone cannot distinguish delivered from written-into-a-void; the marker can. Residual stated rather than closed: the live session is a shell, not an agent CLI, so agent-specific behaviour belongs to the session adapter (ADR-0007) rather than to this receipt - and if dispatching to a real agent CLI later shows the receipt itself must change, this decision is the one to revisit.",
+      "artifacts": [
+        "docs/adr/0010-two-phase-dispatch-receipt.md"
+      ],
+      "tags": [
+        "phase-2",
+        "dispatch"
+      ],
+      "git": {
+        "before": null,
+        "after": "e8f521d185d7c66ecf1916a89535a698ece80764",
         "branch": "main",
         "pushed": true,
         "commits": []

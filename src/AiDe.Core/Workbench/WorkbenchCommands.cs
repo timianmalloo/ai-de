@@ -77,6 +77,12 @@ public static class WorkbenchCommandCatalog
         // Read-only on purpose. Upgrade and rollback are choreographed against a store a running
         // binary may not be able to read halfway through, so the shell REPORTS the state and names
         // what a rollback would do; the act itself stays with the Bootstrap.
+        // Without this the daemon path was reachable only by setting an environment variable before
+        // launch, which made indexing untestable by anyone who did not already know that.
+        new("workspace.open", "Open a repository as a workspace…", "Ctrl+K, O",
+            string.Empty,
+            "Choose a folder. Its daemon is started if it is not already running, and its evidence becomes queryable."),
+
         new("workspace.diagnostics", "Show daemon, health and MCP diagnostics", "Ctrl+K, D",
             string.Empty,
             "Reports the daemon version, whether a rollback is possible, open health incidents, and the registered MCP tools."),

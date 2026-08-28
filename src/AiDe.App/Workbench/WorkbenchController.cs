@@ -64,6 +64,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workspace.diagnostics":
                 return ShowDiagnostics();
 
+            case "workspace.open":
+                return OpenWorkspace();
+
             case "workbench.focusCanvas":
                 return FocusCanvas();
 
@@ -358,6 +361,21 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
 
     /// <summary>Reports daemon, health and MCP state. Set when a workspace attaches.</summary>
     public Func<string>? WorkspaceDiagnostics { get; set; }
+
+    /// <summary>Chooses and opens a workspace. Set by the window that can show a folder picker.</summary>
+    public Func<Task<string>>? WorkspaceOpen { get; set; }
+
+    private bool OpenWorkspace()
+    {
+        if (WorkspaceOpen is null)
+        {
+            announcer.Announce("Opening a workspace is not available in this build.");
+            return true;
+        }
+
+        _ = RunAndAnnounce(WorkspaceOpen);
+        return true;
+    }
 
     private bool ShowDiagnostics()
     {

@@ -2,7 +2,7 @@
 id: adr-0010-two-phase-dispatch-receipt
 title: "ADR-0010 — Write-ahead two-phase dispatch receipt for prompt delivery"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "0"
 tags: [architecture, prompts, delivery, idempotency, crash-safety]
@@ -22,7 +22,7 @@ review-suggested:
 
 # ADR-0010: Write-ahead two-phase dispatch receipt for prompt delivery
 
-- **Status:** Proposed
+- **Status:** Accepted — promoted 2026-08-28
 - **Date:** 2026-08-26
 - **Deciders:** Product owner, Distributed Systems Architect, Data & Persistence Architect
 - **Context spec/architecture:** docs/architecture.md
@@ -38,6 +38,24 @@ state is `NotRecorded`, not `DeliveryUnknown`; a protocol-conformant retry reads
 exists to prevent. The Data & Persistence review added that a single immutable "one outcome per key"
 receipt grain cannot represent an attempt-then-outcome lifecycle, and the AI Systems review required the
 generation check and the write to be atomic (LOA P8: idempotency at side-effect boundaries).
+
+## Promoted 2026-08-28, and what the evidence does and does not cover
+
+The Phase-2 exit review held this ADR at `proposed` on one condition: the receipt had only ever been
+exercised against a **fixture** session, so it proved consistent with itself and nothing more.
+
+**Closed by `DispatchLiveSessionTests`.** A real daemon over a real named pipe records the
+write-ahead attempt; a real ConPTY PowerShell receives the prompt; and the prompt asks the shell to
+emit a unique marker which must come back **out** of the terminal before the test passes. A receipt
+alone could not distinguish "delivered" from "written into a void" — the marker can. Run out of
+process because ConPTY needs a real console (DC-014).
+
+**Residual, stated rather than closed:** the live session is a shell, not an agent CLI. What is
+proven is the *receipt protocol* against a real long-running interactive process. What is not proven
+is agent-specific behaviour — an agent that buffers input, that takes minutes to respond, or that
+expects a different submit convention. Those belong to the session *adapter* (ADR-0007), not to this
+receipt, which is why they do not hold this ADR open. **If dispatching to a real agent CLI later
+shows the receipt itself needs to change, this decision is the one to revisit.**
 
 ## Decision
 

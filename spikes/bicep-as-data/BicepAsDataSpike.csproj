@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Phase-3 spike 2. Reads .bicep DECLARATIVELY — no `bicep build`, no compiler.
+
+    The product may not invoke the Bicep compiler for the same reason it may not invoke MSBuild:
+    spike D3 measured that compiling repository-supplied input executes repository-supplied logic.
+    This spike runs the compiler ONCE to produce an oracle, which is what a spike is for; the
+    component it justifies never does.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>BicepAsDataSpike</AssemblyName>
+    <RootNamespace>BicepAsDataSpike</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,190 @@
+using System.Runtime.Versioning;
+using System.Text;
+using AiDe.Core.Dispatch;
+using AiDe.Core.Facts;
+using AiDe.Core.Ipc;
+using AiDe.Core.Store;
+using AiDe.Core.Terminal;
+
+namespace AiDe.Core.TerminalHost;
+
+/// <summary>
+/// <b>ADR-0010 end to end, against a live session.</b>
+/// </summary>
+/// <remarks>
+/// <para>A real daemon over a real pipe records the write-ahead attempt; a real ConPTY PowerShell
+/// receives the prompt; the outcome is finalized; and the prompt is proven to have been
+/// <i>acted on</i> rather than merely written.</para>
+///
+/// <para><b>The marker is the point.</b> A receipt saying <c>PtyWriteAccepted</c> proves bytes left
+/// the process. It does not prove the session did anything with them — and a dispatch protocol whose
+/// only evidence is its own receipt is a protocol agreeing with itself. So the prompt asks the shell
+/// to emit a unique string, and this waits for that string to come back <i>out</i> of the terminal.
+/// The marker appears twice (the shell echoes the line before running it), so the second occurrence
+/// is what proves execution rather than echo.</para>
+///
+/// <para>Out of process because ConPTY needs a real console (<b>DC-014</b>), and the daemon is stood
+/// up for real rather than mocked because a receipt that never crossed a boundary proves nothing
+/// about the boundary.</para>
+/// </remarks>
+[SupportedOSPlatform("windows")]
+internal static class DispatchProbe
+{
+    internal const int Ok = 0;
+    internal const int SessionDidNotStart = 3;
+    internal const int ReceiptNotAccepted = 5;
+    internal const int WrittenButNotActedOn = 6;
+    internal const int Threw = 7;
+
+    internal static async Task<int> RunAsync(StringBuilder log)
+    {
+        var marker = "AIDEDISPATCH" + Guid.NewGuid().ToString("N")[..12].ToUpperInvariant();
+        var dataDirectory = Path.Combine(
+            Path.GetTempPath(), "aide-dispatch-probe", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(dataDirectory);
+
+        var pipeName = "aide-dispatch-probe-" + Guid.NewGuid().ToString("N")[..12];
+
+        try
+        {
+            using var store = WorkspaceStore.Open(Path.Combine(dataDirectory, "workspace.db"));
+
+            var endpoint = new DaemonEndpoint(pipeName, new CapabilityRegistry(), _ => store.CoreEpoch);
+            DaemonOperations.Register(endpoint, () => store.CoreEpoch);
+            WorkspaceOperations.RegisterDispatch(endpoint, new BoundaryDispatcher(store));
+
+            var server = new IpcServer(
+                pipeName, endpoint, new IpcServerOptions(StartupGrace: TimeSpan.FromSeconds(60)));
+
+            using var life = new CancellationTokenSource(TimeSpan.FromSeconds(150));
+            var running = server.RunAsync(life.Token);
+
+            ConPtyTerminalSession session;
+            try
+            {
+                session = await ConPtyTerminalSession.StartAsync(
+                    new TerminalSessionRequest(
+                        SessionId: "dispatch-probe",
+                        Generation: 1,
+                        CommandLine: "powershell.exe",
+                        WorkingDirectory: Path.GetTempPath(),
+                        Columns: 120,
+                        Rows: 30,
+                        ProcessingClass: SessionProcessingClass.LocalOnly,
+                        Integration: ShellIntegrationMode.PowerShell),
+                    CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                log.AppendLine($"StartAsync threw {ex.GetType().Name}: {ex.Message}");
+                return SessionDidNotStart;
+            }
+
+            await using (session)
+            {
+                var seen = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                using var draining = new CancellationTokenSource(TimeSpan.FromSeconds(120));
+
+                var drain = Task.Run(async () =>
+                {
+                    var buffer = new StringBuilder();
+                    try
+                    {
+                        while (await session.Output.WaitToReadAsync(draining.Token))
+                        {
+                            while (session.Output.TryRead(out var chunk))
+                            {
+                                buffer.Append(Encoding.UTF8.GetString(chunk.Bytes.Span));
+                                if (Occurrences(buffer.ToString(), marker) >= 2)
+                                {
+                                    seen.TrySetResult(true);
+                                }
+                            }
+                        }
+                    }
+                    catch (OperationCanceledException)
+                    {
+                    }
+                });
+
+                // Let the shell reach its first prompt before writing to it. A prompt delivered into
+                // a shell that is still starting is dropped, and would look like a protocol failure.
+                await Task.Delay(TimeSpan.FromSeconds(8));
+
+                await using var client = await WorkspaceClient.ConnectAsync(
+                    pipeName, TimeSpan.FromSeconds(30), CancellationToken.None);
+
+                var body = "Write-Output " + Quote(marker) + "\r\n";
+
+                var command = new DispatchCommand(
+                    WorkspaceId: "probe",
+                    WorkspaceEpoch: await client.EpochAsync(CancellationToken.None),
+                    Caller: new CallerPrincipal("probe", CallerKind.Shell),
+                    CommandId: Guid.NewGuid().ToString("N"),
+                    DraftId: "draft-probe",
+                    RevisionNo: 1,
+                    Body: body,
+                    SessionId: session.SessionId,
+                    SessionGeneration: session.Generation);
+
+                var receipt = await BoundaryDispatcher.BeginAndWriteAsync(
+                    command, session, client.DispatchBeginAsync, client.DispatchFinalizeAsync);
+
+                log.AppendLine($"receipt state  : {receipt.State}");
+                log.AppendLine($"receipt error  : {receipt.ErrorCode ?? "(none)"}");
+
+                if (receipt.State != DispatchState.PtyWriteAccepted)
+                {
+                    log.AppendLine("the daemon did not record an accepted write");
+                    await life.CancelAsync();
+                    return ReceiptNotAccepted;
+                }
+
+                var acted = await Task.WhenAny(seen.Task, Task.Delay(TimeSpan.FromSeconds(60))) == seen.Task;
+
+                await draining.CancelAsync();
+                try { await drain; } catch (OperationCanceledException) { }
+                await life.CancelAsync();
+                try { await running; } catch (OperationCanceledException) { }
+
+                log.AppendLine($"marker acted on: {acted}");
+
+                if (!acted)
+                {
+                    log.AppendLine("the receipt says the write was accepted, but the session never produced");
+                    log.AppendLine("the marker — the prompt was written and NOT acted on.");
+                    return WrittenButNotActedOn;
+                }
+
+                log.AppendLine("dispatch crossed a real daemon, reached a live session, was EXECUTED,");
+                log.AppendLine("and the durable receipt agrees with what the session actually did.");
+                return Ok;
+            }
+        }
+        catch (Exception ex)
+        {
+            log.AppendLine($"dispatch probe threw {ex.GetType().Name}: {ex.Message}");
+            return Threw;
+        }
+        finally
+        {
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+            try { Directory.Delete(dataDirectory, recursive: true); } catch (IOException) { }
+        }
+    }
+
+    /// <summary>A single-quoted PowerShell literal, built without embedding a quote in C# source.</summary>
+    private static string Quote(string value) => (char)39 + value + (char)39;
+
+    private static int Occurrences(string text, string value)
+    {
+        var count = 0;
+        for (var i = text.IndexOf(value, StringComparison.Ordinal); i >= 0;
+             i = text.IndexOf(value, i + value.Length, StringComparison.Ordinal))
+        {
+            count++;
+        }
+
+        return count;
+    }
+}

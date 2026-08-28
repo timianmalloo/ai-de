@@ -67,6 +67,13 @@ internal static class Program
             return await PrivacyAsync(report, log);
         }
 
+        if (mode == "dispatch")
+        {
+            var code = await DispatchProbe.RunAsync(log);
+            Write(report, log);
+            return code;
+        }
+
         ConPtyTerminalSession session;
         try
         {

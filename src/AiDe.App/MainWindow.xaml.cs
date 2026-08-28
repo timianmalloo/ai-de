@@ -33,6 +33,10 @@ public partial class MainWindow : Window
         Closed += (_, _) => Shell.Dispose();
 
         Loaded += async (_, _) => await OpenWorkspaceAsync();
+
+        // The folder picker lives here because only a Window can show one; the controller holds the
+        // command and knows nothing about dialogs.
+        Shell.Controller.WorkspaceOpen = ChooseAndOpenAsync;
     }
 
     /// <summary>Reaches the workspace's daemon and points the window at it.</summary>
@@ -51,6 +55,40 @@ public partial class MainWindow : Window
         {
             Shell.AttachWorkspace(viewModel.Queries, viewModel.DataDirectory, viewModel.Commands);
         }
+    }
+
+    /// <summary>Shows a folder picker and opens the chosen repository as a workspace.</summary>
+    /// <remarks>
+    /// Returns the sentence to announce rather than announcing itself, so every outcome — chosen,
+    /// cancelled, failed — comes back through one path and none of them can be silent.
+    /// </remarks>
+    private async Task<string> ChooseAndOpenAsync()
+    {
+        var dialog = new Microsoft.Win32.OpenFolderDialog
+        {
+            Title = "Choose a repository to open as a workspace",
+            Multiselect = false,
+        };
+
+        if (dialog.ShowDialog(this) != true)
+        {
+            return "No workspace was opened.";
+        }
+
+        var viewModel = await MainWindowViewModel.OpenAsync(dialog.FolderName);
+        DataContext = viewModel;
+
+        if (viewModel.Queries is null)
+        {
+            return viewModel.StatusMessage;
+        }
+
+        Shell.AttachWorkspace(viewModel.Queries, viewModel.DataDirectory, viewModel.Commands);
+        Shell.Adapter.Render();
+        Shell.BindCanvas();
+
+        return $"Workspace open: {System.IO.Path.GetFileName(dialog.FolderName.TrimEnd((char)92))}. " +
+               "Press Ctrl+K, I to index its C# projects.";
     }
 
     internal WorkbenchShell Shell { get; }

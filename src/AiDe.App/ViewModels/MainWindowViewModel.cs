@@ -211,9 +211,21 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     /// <para>Absent a configured root the app shows its first-run state rather than inventing a
     /// workspace.</para>
     /// </remarks>
-    public static async Task<MainWindowViewModel> OpenDefaultAsync(CancellationToken cancellationToken = default)
+    public static Task<MainWindowViewModel> OpenDefaultAsync(CancellationToken cancellationToken = default) =>
+        OpenAsync(Environment.GetEnvironmentVariable("AIDE_WORKSPACE_ROOT"), cancellationToken);
+
+    /// <summary>
+    /// Opens the workspace rooted at <paramref name="root"/>, launching its daemon if needed.
+    /// </summary>
+    /// <remarks>
+    /// Split out from <see cref="OpenDefaultAsync"/> so a workspace can be CHOSEN rather than only
+    /// inherited from an environment variable. Until this existed the daemon path was reachable
+    /// only by setting AIDE_WORKSPACE_ROOT before launch, which made every command that needs a
+    /// workspace — indexing especially — untestable by anyone who did not already know that.
+    /// </remarks>
+    public static async Task<MainWindowViewModel> OpenAsync(
+        string? root, CancellationToken cancellationToken = default)
     {
-        var root = Environment.GetEnvironmentVariable("AIDE_WORKSPACE_ROOT");
         if (string.IsNullOrWhiteSpace(root) || !Directory.Exists(root))
         {
             return new MainWindowViewModel();
