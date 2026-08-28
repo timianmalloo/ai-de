@@ -124,15 +124,33 @@ public sealed class BoundaryDispatcher(WorkspaceStore store)
     /// sequence for the remote case is how the two modes would drift into disagreeing about when the
     /// attempt becomes durable.</para>
     /// </remarks>
+    /// <param name="readiness">
+    /// Whether the session is known to be waiting for input. **Refused unless
+    /// <see cref="SessionReadiness.Ready"/>**, and refused BEFORE anything is made durable.
+    /// </param>
     public static async Task<DispatchReceipt> BeginAndWriteAsync(
         DispatchCommand command,
         ITerminalSession session,
         Func<DispatchCommand, CancellationToken, Task<DispatchBeginResult>> begin,
         Func<string, DispatchState, string?, CancellationToken, Task<DispatchReceipt>> finalize,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        SessionReadiness readiness = SessionReadiness.Ready)
     {
         ArgumentNullException.ThrowIfNull(command);
         ArgumentNullException.ThrowIfNull(session);
+
+        // Refused BEFORE the write-ahead, so a refusal leaves no durable attempt behind — there is
+        // nothing to sweep to DeliveryUnknown, because nothing was attempted.
+        //
+        // Measured, not theoretical: dispatched into a real agent CLI showing its first-run trust
+        // gate, the write was accepted and the prompt was consumed by that dialog, where the same
+        // Enter that submits a prompt confirms "No, exit". PtyWriteAccepted was true about the bytes
+        // and misleading about the outcome (spikes/agent-dispatch).
+        if (readiness != SessionReadiness.Ready)
+        {
+            throw new WorkspaceStoreException(
+                DispatchErrorCodes.SessionNotReady, SessionReadinessPolicy.Explain(readiness));
+        }
 
         // Checked HERE because this is the only place that holds the real session. Sending the
         // session id across the boundary and comparing it there would compare the caller's claim

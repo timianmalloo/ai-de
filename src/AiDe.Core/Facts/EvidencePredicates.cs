@@ -29,6 +29,7 @@ public static class EvidencePredicates
         "api_version", "resource_type", "resource_name", "resource_name_expression",
         "module_path", "parameter_type", "is_secret",
         "has_column", "introduced_by",
+        "is_existing_reference", "is_loop", "is_conditional",
     };
 
     /// <summary>The SQL literal list for an <c>IN</c> clause. Built from the same set.</summary>

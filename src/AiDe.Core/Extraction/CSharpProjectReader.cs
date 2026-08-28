@@ -39,6 +39,17 @@ public static class ExtractionDisclosures
     public const string BicepExpressionsNotEvaluated = "bicep-expressions-not-evaluated";
 
     /// <summary>
+    /// A template declares loops or conditional resources, so the DECLARATION count is not the
+    /// deployment count.
+    /// </summary>
+    /// <remarks>
+    /// A <c>[for ...]</c> resource becomes one deployed resource per item in a collection nothing
+    /// here evaluates, and an <c>if (...)</c> resource may not be deployed at all. Reporting "24
+    /// resources" for a template that deploys forty, or eighteen, would be a confident wrong number.
+    /// </remarks>
+    public const string BicepResourceCountIndeterminate = "bicep-resource-count-indeterminate";
+
+    /// <summary>
     /// The schema is what the migrations INTEND, not what a server holds.
     /// </summary>
     /// <remarks>

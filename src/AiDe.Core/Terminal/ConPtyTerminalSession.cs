@@ -111,6 +111,7 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         // caller can reuse across sessions, and a value shared between two sessions authenticates
         // claims made by the wrong child.
         ShellIntegrationNonce = nonce;
+        HasReadinessEvidence = false;
         _osc = new OscParser(nonce);
 
         _console = console;
@@ -146,6 +147,17 @@ public sealed class ConPtyTerminalSession : ITerminalSession
     /// credential for anything else — the worst a leak buys is the ability to lie about activity.
     /// </remarks>
     public string ShellIntegrationNonce { get; }
+
+    /// <summary>
+    /// Whether anything AUTHENTICATES this session's claim about its own state.
+    /// </summary>
+    /// <remarks>
+    /// True only with shell integration: OSC 133 signed with the session nonce is what makes
+    /// <see cref="SessionActivity.Ready"/> a claim rather than an inference. Without it, activity is
+    /// derived from output timing — and a quiet agent mid-thought looks exactly like an idle one,
+    /// which is how a prompt ends up in a confirmation dialog.
+    /// </remarks>
+    public bool HasReadinessEvidence { get; private set; }
 
     public ChannelReader<TerminalChunk> Output => _output.Reader;
 
@@ -233,6 +245,11 @@ public sealed class ConPtyTerminalSession : ITerminalSession
 
         var session = new ConPtyTerminalSession(
             request, nonce, console, job, process, inputWrite, outputRead);
+
+        // Set from the REQUEST, not from later observation: a session either launched with shell
+        // integration or it did not, and inferring it afterwards from whether an OSC ever arrived
+        // would make "no integration" and "integration that has not spoken yet" the same state.
+        session.HasReadinessEvidence = request.Integration != ShellIntegrationMode.None;
         session.StartPumping();
         return Task.FromResult(session);
     }

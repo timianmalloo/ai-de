@@ -6,7 +6,21 @@ namespace AiDe.Core.Presentation;
 public sealed record CanvasNode(string Id, string Label, string Kind, bool IsRoot);
 
 /// <summary>One edge as the canvas draws it.</summary>
-public sealed record CanvasEdge(string From, string To, string Predicate, string Status);
+public sealed record CanvasEdge(string From, string To, string Predicate, string Status)
+{
+    /// <summary>
+    /// True for a join across artifact types — code to schema, schema to infrastructure.
+    /// </summary>
+    /// <remarks>
+    /// Drawn differently because it is a different KIND of claim. An edge inside one artifact was
+    /// resolved by a compiler; a join between two was resolved by a convention or a literal match,
+    /// and it looks more authoritative than it is precisely because it spans more.
+    /// </remarks>
+    public bool IsJoin => Predicate is "maps_to" or "hosted_on" or "is_declared_secret";
+
+    /// <summary>True when the claim is a convention rather than a declaration.</summary>
+    public bool IsInferred => string.Equals(Status, "Inferred", StringComparison.Ordinal);
+}
 
 /// <summary>
 /// What the canvas renders, including what it could not show.

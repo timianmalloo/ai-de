@@ -49,6 +49,7 @@ internal static class IndexRepository
             Console.WriteLine($"assertions: {result.Assertions:N0}");
             Console.WriteLine($"failed    : {(result.Failed.Count == 0 ? "none" : string.Join(", ", result.Failed))}");
             Console.WriteLine($"disclosed : {(result.Disclosures.Count == 0 ? "none" : string.Join(", ", result.Disclosures))}");
+            Console.WriteLine($"contexts  : {result.Contexts ?? "(no docs/bounded-contexts.yaml)"}");
             Console.WriteLine();
 
             // The point of indexing is that you can then ASK something. A count of rows proves the

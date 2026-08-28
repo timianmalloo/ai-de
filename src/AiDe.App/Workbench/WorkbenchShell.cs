@@ -9,6 +9,7 @@ using AiDe.Core.Projections;
 using AiDe.Core.Health;
 using AiDe.Core.Upgrade;
 using AiDe.Core.Presentation;
+using AiDe.Core.Terminal;
 using AiDe.Core.Workbench;
 using AvalonDock;
 using AiDe.Core.Dispatch;
@@ -262,8 +263,15 @@ public sealed class WorkbenchShell : IDisposable
                     SessionId: session.SessionId,
                     SessionGeneration: session.Generation);
 
+                // Readiness decides whether this is attempted at all. A session that cannot report
+                // when it is waiting for input may be showing a sign-in or a confirmation, and a
+                // prompt sent into one of those is consumed by it.
+                var readiness = SessionReadinessPolicy.Evaluate(
+                    session, (surface.Session as ConPtyTerminalSession)?.HasReadinessEvidence ?? false);
+
                 return await BoundaryDispatcher.BeginAndWriteAsync(
-                    command, session, dispatch.DispatchBeginAsync, dispatch.DispatchFinalizeAsync);
+                    command, session, dispatch.DispatchBeginAsync, dispatch.DispatchFinalizeAsync,
+                    CancellationToken.None, readiness);
             };
         }
 

@@ -104,6 +104,161 @@ public sealed class Phase3ExtractorTests : IDisposable
         Assert.DoesNotContain(Where(result, "is_secret"), a => a.Subject.EndsWith("#namePrefix", StringComparison.Ordinal));
     }
 
+    [Fact]
+    public async Task LoopsConditionalsAndExistingReferencesAreRecordedDistinctly()
+    {
+        var path = Write("infra/shapes.bicep", """
+            param enable bool = true
+            param names array = ['a', 'b']
+
+            resource existingSql 'Microsoft.Sql/servers@2022-05-01' existing = {
+              name: 'already-there'
+            }
+
+            resource many 'Microsoft.Storage/storageAccounts@2023-01-01' = [for n in names: {
+              name: n
+            }]
+
+            resource maybe 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (enable) {
+              name: 'role'
+            }
+            """);
+
+        var result = await new BicepExtractor().ExtractAsync(Request("bicep:shapes", path), CancellationToken.None);
+
+        // All three are still resources — the point is that each carries WHAT IT IS as well.
+        Assert.Equal(3, Where(result, "has_type").Count(a => a.Object == "azure-resource"));
+
+        Assert.Contains(Where(result, "is_existing_reference"), a => a.Subject.EndsWith("/existingSql", StringComparison.Ordinal));
+        Assert.Contains(Where(result, "is_loop"), a => a.Subject.EndsWith("/many", StringComparison.Ordinal));
+        Assert.Contains(Where(result, "is_conditional"), a => a.Subject.EndsWith("/maybe", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task ATemplateWithLoopsDisclosesThatItsResourceCountIsNotADeploymentCount()
+    {
+        // "3 resources" for a template that deploys one, several, or none of them would be a
+        // confident wrong number — and a count is exactly the kind of thing nobody re-checks.
+        var path = Write("infra/shapes.bicep", """
+            param names array = ['a']
+            resource many 'Microsoft.Storage/storageAccounts@2023-01-01' = [for n in names: {
+              name: n
+            }]
+            """);
+
+        var result = await new BicepExtractor().ExtractAsync(Request("bicep:shapes", path), CancellationToken.None);
+
+        Assert.Contains(
+            Where(result, CSharpExtractor.DisclosurePredicate),
+            a => a.Object == ExtractionDisclosures.BicepResourceCountIndeterminate);
+    }
+
+    [Fact]
+    public async Task ATemplateWithoutLoopsDoesNotDiscloseAnIndeterminateCount()
+    {
+        // The disclosure has to be absent when it does not apply, or it becomes noise every scope
+        // carries and nobody reads.
+        var path = Write("infra/plain.bicep", Template);
+        var result = await new BicepExtractor().ExtractAsync(Request("bicep:plain", path), CancellationToken.None);
+
+        Assert.DoesNotContain(
+            Where(result, CSharpExtractor.DisclosurePredicate),
+            a => a.Object == ExtractionDisclosures.BicepResourceCountIndeterminate);
+    }
+
+    // ---- bounded contexts (ADR-0016) ---------------------------------------
+
+    [Fact]
+    public void AContextNamingANamespaceThatDoesNotExistFailsLoudly()
+    {
+        // The drift ADR-0016 exists to make fail. Almost always a renamed namespace, and invisible
+        // without this check.
+        var path = Write("docs/bounded-contexts.yaml", """
+            contexts:
+              - name: Sales
+                includes:
+                  - Shop.Sales.*
+              - name: Ghost
+                includes:
+                  - Shop.Removed.*
+            """);
+
+        var map = BoundedContextReader.Load(path, ["Shop.Sales.Order"]);
+
+        Assert.False(map.IsValid);
+        Assert.Contains(map.Problems, p => p.Code == "AIDE-CTX-UNKNOWN-NAMESPACE");
+    }
+
+    [Fact]
+    public void OverlappingContextsAreAnError_NotAMerge()
+    {
+        // Contexts that overlap are not bounded. Picking the first match would hide a real modelling
+        // problem behind a tool that appears to work.
+        var path = Write("docs/bounded-contexts.yaml", """
+            contexts:
+              - name: A
+                includes:
+                  - Shop.*
+              - name: B
+                includes:
+                  - Shop.Sales.*
+            """);
+
+        var map = BoundedContextReader.Load(path, ["Shop.Sales.Order"]);
+
+        Assert.False(map.IsValid);
+        Assert.Contains(map.Problems, p => p.Code == "AIDE-CTX-OVERLAP");
+    }
+
+    [Fact]
+    public void CoverageIsReported_SoPartialContextsCannotLookComplete()
+    {
+        var path = Write("docs/bounded-contexts.yaml", """
+            contexts:
+              - name: Sales
+                includes:
+                  - Shop.Sales.*
+            """);
+
+        var map = BoundedContextReader.Load(path, ["Shop.Sales.Order", "Shop.Billing.Invoice"]);
+
+        Assert.True(map.IsValid);
+        Assert.Equal(0.5, map.Coverage);
+        Assert.Contains("Shop.Billing.Invoice", map.Uncovered);
+        Assert.Contains("50", map.Describe(), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void UnsupportedYamlIsRejectedByLine_NotSilentlyIgnored()
+    {
+        // A config file whose parser ignores what it does not understand means something different
+        // from what its author read.
+        var path = Write("docs/bounded-contexts.yaml", """
+            contexts:
+              - name: Sales
+                includes:
+                  - Shop.Sales.*
+                owner: &anchor someone
+            """);
+
+        var map = BoundedContextReader.Load(path, ["Shop.Sales.Order"]);
+
+        Assert.False(map.IsValid);
+        Assert.Contains(map.Problems, p => p.Code == "AIDE-CTX-UNSUPPORTED");
+    }
+
+    [Fact]
+    public void NoFileIsNotAnError_ButAlsoNotContexts()
+    {
+        // A repository with no map gets no contexts, and the domain projection is unavailable rather
+        // than guessed.
+        var map = BoundedContextReader.Load(Path.Combine(_root, "nope.yaml"), ["Shop.Sales.Order"]);
+
+        Assert.True(map.IsValid);
+        Assert.Empty(map.Contexts);
+        Assert.Contains("No bounded contexts are declared", map.Describe(), StringComparison.Ordinal);
+    }
+
     // ---- EF schema ----------------------------------------------------------
 
     private void WriteMigration(string name, string body) =>

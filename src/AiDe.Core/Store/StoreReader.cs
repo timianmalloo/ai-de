@@ -142,6 +142,31 @@ public sealed class StoreReader : IDisposable
     /// scans a covering index rather than hydrating every row's provenance, which is what made the
     /// naive version cost a full-corpus materialization.
     /// </remarks>
+    /// <summary>
+    /// Subjects this workspace's own artifacts DECLARE — the things it owns.
+    /// </summary>
+    /// <remarks>
+    /// Distinct from every node in the graph, which also contains external package types a
+    /// repository merely depends on. Any denominator that counts those is measuring the wrong
+    /// population — bounded-context coverage above all, because nobody can assign
+    /// <c>Azure.Storage.Blobs.BlobClient</c> to a context in their own codebase.
+    /// </remarks>
+    public IReadOnlyList<string> ReadDeclaredSubjects()
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT DISTINCT a.subject FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.predicate = 'declared_in'
+            ORDER BY a.subject;
+            """);
+
+        using var reader = command.ExecuteReader();
+        var subjects = new List<string>();
+        while (reader.Read()) subjects.Add(reader.GetString(0));
+        return subjects;
+    }
+
     public (IReadOnlyList<string> Matches, int TotalMatched) SearchNodeIds(string term, int limit)
     {
         using var command = Command($"""

@@ -37,7 +37,8 @@ public sealed record IndexSummary(
     int ScopesIndexed,
     int Assertions,
     IReadOnlyList<string> Failed,
-    IReadOnlyList<string> Disclosures)
+    IReadOnlyList<string> Disclosures,
+    string? Contexts = null)
 {
     /// <summary>One sentence for the announcement channel, including what was NOT seen.</summary>
     public string Describe()
@@ -50,6 +51,10 @@ public sealed record IndexSummary(
         // Disclosures are part of the result, not a footnote: a graph that silently omits package
         // types looks complete, and the user has no way to know it is not.
         if (Disclosures.Count > 0) text += " Not analysed: " + string.Join(", ", Disclosures) + ".";
+
+        // Coverage is reported alongside the count, so "we have contexts" cannot quietly mean
+        // "we have contexts for a fraction of the code" (ADR-0016).
+        if (!string.IsNullOrWhiteSpace(Contexts)) text += " " + Contexts;
         return text;
     }
 }

@@ -155,7 +155,8 @@ public sealed class WorkspaceCore : IDisposable
         int ScopesIndexed,
         int Assertions,
         IReadOnlyList<string> Failed,
-        IReadOnlyList<string> Disclosures);
+        IReadOnlyList<string> Disclosures,
+        string? Contexts = null);
 
     /// <summary>
     /// Discovers every C# scope under the workspace root and refreshes each one.
@@ -221,7 +222,38 @@ public sealed class WorkspaceCore : IDisposable
             }
         }
 
-        return new IndexResult(scopes.Count, indexed, assertions, failed, [.. disclosures.Order(StringComparer.Ordinal)]);
+        // The context map is validated against what was ACTUALLY extracted, at the end of the run —
+        // validating it against nothing would only check the file's shape, which is the half that
+        // never goes stale.
+        var contextSummary = ValidateContexts();
+
+        return new IndexResult(
+            scopes.Count, indexed, assertions,
+            failed, [.. disclosures.Order(StringComparer.Ordinal)], contextSummary);
+    }
+
+    /// <summary>Loads and validates the declared bounded contexts against the extracted symbols.</summary>
+    private string? ValidateContexts()
+    {
+        var path = Path.Combine(RootPath, BoundedContextReader.DefaultRelativePath);
+        if (!File.Exists(path)) return null;
+
+        // Coverage is over what the repository DECLARES, not over every node in the graph.
+        // The first run reported "52% of 2,086 symbols" with a denominator that included
+        // AngleSharp.Dom.IElement and Azure.Storage.Blobs.BlobClient — external types nobody can
+        // put in a bounded context. A percentage with the wrong denominator is a confident wrong
+        // number, and coverage is exactly the figure someone would quote.
+        List<string> symbols;
+        List<string> tables;
+        using (var reader = Store.BeginRead())
+        {
+            var declared = reader.ReadDeclaredSubjects();
+            symbols = [.. declared.Where(id => !id.StartsWith("table:", StringComparison.Ordinal))];
+            tables = [.. declared.Where(id => id.StartsWith("table:", StringComparison.Ordinal))
+                .Select(id => id["table:".Length..])];
+        }
+
+        return BoundedContextReader.Load(path, symbols, tables).Describe();
     }
 
     /// <summary>

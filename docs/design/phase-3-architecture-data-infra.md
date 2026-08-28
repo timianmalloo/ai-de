@@ -122,11 +122,13 @@ symbols so a context naming a namespace that does not exist fails loudly.
 
 ## Status and next action
 
+*Refreshed 2026-08-28.*
+
 | | |
 |---|---|
-| **Completed** | The phase opened and grounded against a real repository, which changed the component list before any code was written: the planned DDL parser is replaced by an EF-migration reader because the corpus has no DDL. |
-| **Remaining** | Everything. Three spikes and one decision are owed before implementation. |
-| **Best next action** | **Item 1 — finish the carried Phase-2 fidelity condition.** Phase 3 joins whatever the C# extractor produces to two other artifact types; an error there is multiplied rather than contained. |
+| **Completed** | **Components 1 and 2 are built**, each on a spike that measured its contract first: Bicep read as data (24/24 resources, 19/19 types, 18/18 params against `az bicep build`), and EF migrations folded into schema (62/62 tables against EF's own model snapshot, 99 ms). Loops, conditionals and `existing` references are recorded distinctly and a template containing them discloses that its resource count is not a deployment count. **Component 3's joins compute** with confidence as the deliverable — a convention match is `Inferred`, an unresolved Bicep name produces no join at all, and the canvas draws joins in blue-solid/amber-dashed with a legend. **ADR-0016 is accepted and implemented**: `docs/bounded-contexts.yaml` is loaded, validated against the extracted symbols, and its coverage reported. TheTerrace indexes **7 scopes / 12,042 assertions** with six disclosures and a validated context map at **68% of 1,432 declared symbols**. |
+| **Remaining** | The domain and C4 **projections** over the contexts — the map is loaded and validated, and nothing yet draws a context. `ProjectReference`-aware code→schema joins (today the match is on type name). Bicep **modules** are read but no corpus has exercised them. And the readiness contract added for agents (ADR-0007) is enforced on dispatch but has no *positive* signal yet: an agent can only be refused, never accepted. |
+| **Best next action** | **Draw the contexts.** The map validates and reports coverage, and a context map nobody can see is a config file. It is also the first thing that makes the joins legible: a `maps_to` edge means something quite different inside one context than across two. |
 
 ---
-**Handoff:** → spikes 2 and 3, after the carried Phase-2 condition is closed.
+**Handoff:** → the domain and C4 projections over the declared contexts.

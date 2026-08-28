@@ -159,7 +159,8 @@ internal static class Program
         {
             var result = await core.IndexCSharpAsync(revision, ct);
             return new IndexSummary(
-                result.ScopesFound, result.ScopesIndexed, result.Assertions, result.Failed, result.Disclosures);
+                result.ScopesFound, result.ScopesIndexed, result.Assertions,
+                result.Failed, result.Disclosures, result.Contexts);
         });
 
         // Ingestion, which is a WRITE and the first one to cross. Started and polled rather than

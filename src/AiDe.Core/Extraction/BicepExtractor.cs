@@ -27,7 +27,13 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
 
     public string ScopeKind => "bicep";
 
-    [GeneratedRegex(@"^\s*resource\s+(?<symbol>\w+)\s+'(?<type>[^@']+)@(?<api>[^']+)'\s*=", RegexOptions.Multiline)]
+    // Captures what follows the '=' so a loop, a condition or an `existing` reference is
+    // recognised rather than missed. The previous form required '=' to be followed by '{' on the
+    // same line, which silently dropped every `[for ...]` and every `if (...)` resource — a
+    // template using them would have reported a smaller infrastructure than it has.
+    [GeneratedRegex(
+        @"^\s*resource\s+(?<symbol>\w+)\s+'(?<type>[^@']+)@(?<api>[^']+)'\s+(?<existing>existing\s+)?=\s*(?<tail>.*)$",
+        RegexOptions.Multiline)]
     private static partial Regex ResourceDeclaration();
 
     [GeneratedRegex(@"^\s*module\s+(?<symbol>\w+)\s+'(?<path>[^']+)'\s*=", RegexOptions.Multiline)]
@@ -68,6 +74,8 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
         var fileName = Path.GetFileName(path);
         var scopeNode = CSharpExtractor.ScopeNodeId(request.ScopeId);
         var unresolved = 0;
+        var loops = 0;
+        var conditionals = 0;
 
         Provenance At(int index)
         {
@@ -87,10 +95,36 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
             var node = $"{request.ScopeId}/{symbol}";
             var provenance = At(match.Index);
 
+            var tail = match.Groups["tail"].Value.TrimStart();
+            var isExisting = match.Groups["existing"].Success;
+            var isLoop = tail.StartsWith("[for", StringComparison.Ordinal);
+            var isConditional = tail.StartsWith("if", StringComparison.Ordinal);
+
             assertions.Add(Fact(node, "has_type", "azure-resource", provenance));
             assertions.Add(Fact(node, "resource_type", match.Groups["type"].Value, provenance));
             assertions.Add(Fact(node, "api_version", match.Groups["api"].Value, provenance));
             assertions.Add(Fact(node, "declared_in", request.ScopeId, provenance));
+
+            // `existing` REFERENCES a resource this template does not deploy. Recorded distinctly,
+            // because "this template creates a SQL server" and "this template talks to one someone
+            // else creates" are different facts about ownership.
+            if (isExisting) assertions.Add(Fact(node, "is_existing_reference", "true", provenance));
+
+            // A loop declares an unknown NUMBER of resources — one per item in a collection this
+            // reader does not evaluate. The declaration is one row; how many it becomes is not
+            // knowable here, so it is stated rather than counted as one.
+            if (isLoop)
+            {
+                assertions.Add(Fact(node, "is_loop", "true", provenance));
+                loops++;
+            }
+
+            // A conditional resource may or may not be deployed, and the condition is an expression.
+            if (isConditional)
+            {
+                assertions.Add(Fact(node, "is_conditional", "true", provenance));
+                conditionals++;
+            }
 
             var name = NameAfter(text, match.Index);
             if (name.Length == 0) continue;
@@ -141,12 +175,23 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
             }
         }
 
+        var scopeProvenance = new Provenance(fileName, "1:1", ExtractorId, extractorVersion, observedAt);
+
         if (unresolved > 0)
         {
             assertions.Add(Fact(
                 scopeNode, CSharpExtractor.DisclosurePredicate,
-                ExtractionDisclosures.BicepExpressionsNotEvaluated,
-                new Provenance(fileName, "1:1", ExtractorId, extractorVersion, observedAt)));
+                ExtractionDisclosures.BicepExpressionsNotEvaluated, scopeProvenance));
+        }
+
+        // How many resources a loop actually deploys depends on a collection nobody here evaluates,
+        // and whether a conditional one is deployed depends on an expression. Both are disclosed so
+        // a resource count is never mistaken for a deployment count.
+        if (loops > 0 || conditionals > 0)
+        {
+            assertions.Add(Fact(
+                scopeNode, CSharpExtractor.DisclosurePredicate,
+                ExtractionDisclosures.BicepResourceCountIndeterminate, scopeProvenance));
         }
 
         return Task.FromResult(new ExtractionResult(assertions, Complete: true, []));

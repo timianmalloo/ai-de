@@ -36,6 +36,8 @@ internal static class CanvasPage
                   border: 1px solid #555; border-radius: 4px; background: #2a2a2a; cursor: pointer;
                   white-space: nowrap; max-width: 210px; overflow: hidden; text-overflow: ellipsis; }
           .node.root { border-color: #4da3ff; background: #21303f; font-weight: 600; }
+          .legend { color: #999; font-size: 12px; margin-top: 8px; }
+          .legend b { color: #ddd; font-weight: 600; }
           .node:focus { outline: 2px solid #4da3ff; outline-offset: 2px; }
         </style></head>
         <body>
@@ -46,6 +48,7 @@ internal static class CanvasPage
           <p id="caption">Waiting for the workspace&#8230;</p>
           <p id="warn"></p>
           <div id="stage"><svg id="edges"></svg></div>
+          <p class="legend" id="legend"></p>
           <script>
             function post(msg) { window.chrome.webview.postMessage(msg); }
             function leave(direction) { post({ kind: 'focus.leave', direction: direction }); }
@@ -156,15 +159,41 @@ internal static class CanvasPage
                 placed[n.id] = { x: x, y: y };
               });
 
+              var joins = 0, inferred = 0;
+
               (graph.edges || []).forEach(function (edge) {
                 var a = placed[edge.from], b = placed[edge.to];
                 if (!a || !b) { return; }
                 var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                 line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
                 line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
-                line.setAttribute('stroke', '#3d3d3d');
+
+                // A join across artifact types is drawn differently from a compiler-resolved edge,
+                // and an INFERRED one is dashed. A convention-derived link between a class and a
+                // table looks more authoritative than it is precisely because it spans more, so the
+                // drawing has to say which kind of claim it is.
+                if (edge.isJoin) {
+                  joins++;
+                  line.setAttribute('stroke', edge.isInferred ? '#c98b2e' : '#4da3ff');
+                  line.setAttribute('stroke-width', '2');
+                  if (edge.isInferred) { line.setAttribute('stroke-dasharray', '5 4'); inferred++; }
+                  var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                  title.textContent = edge.predicate + ' (' + edge.status + ')';
+                  line.appendChild(title);
+                } else {
+                  line.setAttribute('stroke', '#3d3d3d');
+                }
+
                 svg.appendChild(line);
               });
+
+              var legend = document.getElementById('legend');
+              legend.innerHTML = joins === 0
+                ? ''
+                : joins + ' join(s) across artifact types: '
+                  + '<b style="color:#4da3ff">solid blue</b> = declared, '
+                  + '<b style="color:#c98b2e">dashed amber</b> = inferred from a convention ('
+                  + inferred + ' of ' + joins + '). Hover a line for its basis.';
 
               caption.textContent = graph.message
                 ? graph.message

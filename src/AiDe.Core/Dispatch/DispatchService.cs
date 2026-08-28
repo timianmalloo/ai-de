@@ -13,6 +13,15 @@ public static class DispatchErrorCodes
     public const string EpochStale = "AIDE-AUTH-EPOCH-STALE";
     public const string SessionUnknown = "AIDE-DISPATCH-SESSION-UNKNOWN";
     public const string WriteFailed = "AIDE-DISPATCH-WRITE-FAILED";
+
+    /// <summary>
+    /// The session does not report readiness, or reports that it is not ready.
+    /// </summary>
+    /// <remarks>
+    /// A refusal, not a failure: nothing was attempted and no receipt exists, so a retry once the
+    /// session is ready is a first attempt rather than a duplicate.
+    /// </remarks>
+    public const string SessionNotReady = "AIDE-DISPATCH-SESSION-NOT-READY";
 }
 
 /// <summary>A user-confirmed request to transfer one immutable prompt revision to one session.</summary>

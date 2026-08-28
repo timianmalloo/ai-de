@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T21:16:30Z",
+  "generated": "2026-08-28T22:15:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1132,6 +1132,21 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0055",
+      "shortname": "readiness-contexts-joins-bicep-shapes",
+      "datetime": "2026-08-28T22:15:43Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "prompt": "do all of these 5 steps then summarize what i can manually test in the client",
+      "summary": "Dispatch now refuses on unestablished readiness; bounded contexts load, validate and report coverage; the canvas draws joins by confidence; Bicep handles loops, conditionals and existing references with a count disclosure; TheTerrace has an authored context map at 68% coverage. 567 tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -2079,6 +2094,56 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "46598e7812ea9bfe854ead3abeaf8e53fe7c8450",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0039",
+      "datetime": "2026-08-28T22:15:43Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Dispatch refuses when session readiness cannot be established (ADR-0007)",
+      "prompt": null,
+      "summary": "SessionReadiness is three-valued - Ready, NotReady, Unknown - and BoundaryDispatcher refuses anything but Ready, before the write-ahead so a refusal leaves no durable attempt. Readiness evidence today means shell integration: OSC 133 signed with the session nonce.",
+      "rationale": "Unknown and NotReady are different situations with different correct responses, and collapsing them is how a prompt gets sent into a dialog box - measured against a real agent CLI whose trust gate consumed the prompt. Derived output timing deliberately does not count as evidence: a quiet agent mid-thought looks exactly like an idle one. The refusal happens before anything is made durable, so there is no Pending attempt to sweep and a retry once ready is a first attempt rather than a duplicate.",
+      "artifacts": [
+        "src/AiDe.Core/Dispatch/SessionReadiness.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "dispatch"
+      ],
+      "git": {
+        "before": null,
+        "after": "0f4223c3b22d86a4df15b551be43bd62dc351104",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0040",
+      "datetime": "2026-08-28T22:15:43Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Bounded contexts load and validate; TheTerrace's map covers 68% of its declared symbols",
+      "prompt": null,
+      "summary": "BoundedContextReader loads a deliberately small YAML subset, validates every include pattern against extracted symbols, treats overlap as an error and reports coverage. TheTerrace's authored map: 5 contexts, 68% of 1,432 declared symbols, 459 deliberately uncovered.",
+      "rationale": "Two corrections came from first real use. The subset reader rejected the first genuine map because it used folded block scalars - that is the simplify: marker's named upgrade trigger firing rather than the parser growing on convenience, so folded scalars are supported and anchors and nested maps are still rejected by name. And coverage was first computed over every node in the graph, reporting 52 percent of 2,086 symbols with a denominator that included AngleSharp and Azure package types nobody can assign to a context; it is now over subjects the repository DECLARES, which is 68 percent of 1,432. A percentage with the wrong denominator is a confident wrong number, and coverage is exactly the figure someone would quote.",
+      "artifacts": [
+        "src/AiDe.Core/Extraction/BoundedContextMap.cs"
+      ],
+      "tags": [
+        "phase-3",
+        "ddd"
+      ],
+      "git": {
+        "before": null,
+        "after": "0f4223c3b22d86a4df15b551be43bd62dc351104",
         "branch": "main",
         "pushed": true,
         "commits": []
