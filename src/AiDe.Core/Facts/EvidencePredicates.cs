@@ -30,6 +30,7 @@ public static class EvidencePredicates
         "module_path", "parameter_type", "is_secret",
         "has_column", "introduced_by",
         "is_existing_reference", "is_loop", "is_conditional",
+        "declares_table",
     };
 
     /// <summary>The SQL literal list for an <c>IN</c> clause. Built from the same set.</summary>

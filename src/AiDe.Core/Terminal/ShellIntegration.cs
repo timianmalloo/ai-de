@@ -116,9 +116,17 @@ public static class ShellIntegration
 
         var encoded = Convert.ToBase64String(Encoding.Unicode.GetBytes(PowerShellScript(nonce)));
 
-        // -NoProfile for determinism: a user profile can redefine prompt after us, print banners, or
-        // fail outright, and none of that should change what the product reports about a session.
-        return $"\"{executablePath}\" -NoLogo -NoProfile -NoExit -EncodedCommand {encoded}";
+        // THE PROFILE IS LOADED. It was suppressed for determinism, and that was the wrong trade for
+        // a developer tool: a profile is where PATH additions, aliases and tool shims live, so
+        // -NoProfile produced a terminal in which the user's own tools were not on PATH. A terminal
+        // that does not behave like the user's terminal is not a terminal they can work in.
+        //
+        // The determinism concern is met by ORDER rather than by suppression. The profile runs
+        // first, then this -EncodedCommand, and the script captures whatever prompt it finds and
+        // wraps it — so the user keeps their prompt and the integration still marks the whole loop.
+        // A profile that fails or prints a banner is cosmetic; a profile that redefines prompt
+        // cannot win, because it has already run by the time this installs.
+        return $"\"{executablePath}\" -NoLogo -NoExit -EncodedCommand {encoded}";
     }
 
     /// <summary>

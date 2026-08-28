@@ -89,6 +89,14 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     /// <summary>Where this shell's own state lives. Layout is the shell's, not the workspace's.</summary>
     internal string? DataDirectory { get; }
 
+    /// <summary>The repository this workspace is over. Null before one is opened.</summary>
+    /// <remarks>
+    /// Distinct from <see cref="DataDirectory"/>, which is where the SHELL keeps its own state. New
+    /// terminals open here, because a terminal in a developer tool that starts somewhere unrelated
+    /// to the repository on screen makes the user's first command a cd.
+    /// </remarks>
+    internal string? WorkspaceRoot { get; private set; }
+
     internal string? WorkspaceId { get; }
 
     public string WindowTitle => "AI-DE";
@@ -246,7 +254,10 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
             // path does not travel with it — which makes it exactly the wrong thing to show a user
             // who wants to know which workspace they are looking at.
             var model = new MainWindowViewModel(
-                client, new DirectoryInfo(root).Name, dataDirectory, incidents: null, commands: client);
+                client, new DirectoryInfo(root).Name, dataDirectory, incidents: null, commands: client)
+            {
+                WorkspaceRoot = root,
+            };
             await model.RefreshAsync(cancellationToken).ConfigureAwait(true);
             return model;
         }

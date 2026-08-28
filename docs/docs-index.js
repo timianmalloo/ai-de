@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-28T22:15:44Z",
+  "generated": "2026-08-28T22:31:22Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [

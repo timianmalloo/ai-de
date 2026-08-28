@@ -66,6 +66,18 @@ public sealed class TerminalSurface : ContentControl, IDisposable
     /// </remarks>
     public ITerminalSession? Session => _session;
 
+    /// <summary>
+    /// Where new sessions start. Set when a workspace attaches; the process directory otherwise.
+    /// </summary>
+    /// <remarks>
+    /// Static rather than per-instance because a surface is constructed by the layout factory before
+    /// any workspace is known, and a pane created after one opens should still land in the right
+    /// place. `simplify: a static default rather than threading the workspace through the surface
+    /// factory; ceiling is one workspace per shell, which the workspace lock already enforces;
+    /// upgrade trigger = a shell hosts two workspaces at once.`
+    /// </remarks>
+    public static string? WorkingDirectory { get; set; }
+
     private FrameworkElement BuildView()
     {
         var view = new TerminalView(_screen);
@@ -84,7 +96,10 @@ public sealed class TerminalSurface : ContentControl, IDisposable
                     SessionId: sessionId,
                     Generation: 1,
                     CommandLine: "powershell.exe",
-                    WorkingDirectory: Environment.CurrentDirectory,
+                    // The WORKSPACE, not wherever the shell happened to be launched from. A
+                    // terminal in a developer tool that opens somewhere unrelated to the repository
+                    // on screen makes the user's first command a cd.
+                    WorkingDirectory: WorkingDirectory ?? Environment.CurrentDirectory,
                     Columns: columns,
                     Rows: rows,
                     ProcessingClass: SessionProcessingClass.LocalOnly,

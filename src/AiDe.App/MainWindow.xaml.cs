@@ -37,6 +37,10 @@ public partial class MainWindow : Window
         // The folder picker lives here because only a Window can show one; the controller holds the
         // command and knows nothing about dialogs.
         Shell.Controller.WorkspaceOpen = ChooseAndOpenAsync;
+
+        // Built from the command catalog, so the menu cannot offer something the product no longer
+        // does — and every item shows its chord, which is how the chord becomes discoverable.
+        MainMenuBuilder.Build(MainMenu, Shell.Controller, Close);
     }
 
     /// <summary>Reaches the workspace's daemon and points the window at it.</summary>
@@ -53,7 +57,9 @@ public partial class MainWindow : Window
 
         if (viewModel.Queries is not null)
         {
-            Shell.AttachWorkspace(viewModel.Queries, viewModel.DataDirectory, viewModel.Commands);
+            Shell.AttachWorkspace(
+                viewModel.Queries, viewModel.DataDirectory, viewModel.Commands,
+                workspaceRoot: viewModel.WorkspaceRoot);
         }
     }
 
@@ -83,7 +89,10 @@ public partial class MainWindow : Window
             return viewModel.StatusMessage;
         }
 
-        Shell.AttachWorkspace(viewModel.Queries, viewModel.DataDirectory, viewModel.Commands);
+        Shell.AttachWorkspace(
+            viewModel.Queries, viewModel.DataDirectory, viewModel.Commands,
+            workspaceRoot: viewModel.WorkspaceRoot);
+
         Shell.Adapter.Render();
         Shell.BindCanvas();
 

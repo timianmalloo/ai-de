@@ -3,7 +3,7 @@ using AiDe.Core.Projections;
 namespace AiDe.Core.Presentation;
 
 /// <summary>One node as the canvas draws it.</summary>
-public sealed record CanvasNode(string Id, string Label, string Kind, bool IsRoot);
+public sealed record CanvasNode(string Id, string Label, string Kind, bool IsRoot, string? Context = null);
 
 /// <summary>One edge as the canvas draws it.</summary>
 public sealed record CanvasEdge(string From, string To, string Predicate, string Status)
@@ -81,7 +81,8 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
             var nodes = new List<CanvasNode>
             {
-                new(describe.Node.NodeId, describe.Node.DisplayLabel, describe.Node.NodeKind, IsRoot: true),
+                new(describe.Node.NodeId, describe.Node.DisplayLabel, describe.Node.NodeKind,
+                    IsRoot: true, Context: ContextOf(describe.Node.NodeId)),
             };
 
             var edges = new List<CanvasEdge>();
@@ -105,7 +106,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
                 if (seen.Add(other))
                 {
-                    nodes.Add(new CanvasNode(other, Shorten(other), "source", IsRoot: false));
+                    nodes.Add(new CanvasNode(other, Shorten(other), "source", IsRoot: false, Context: ContextOf(other)));
                 }
 
                 edges.Add(new CanvasEdge(edge.Subject, edge.Object, edge.Predicate, edge.Status.ToString()));
@@ -127,6 +128,18 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
             return Empty($"The graph could not be loaded: {ex.Message}");
         }
     }
+
+    /// <summary>
+    /// The declared context a node belongs to, or null.
+    /// </summary>
+    /// <remarks>
+    /// Null is a real answer and is drawn as such: a node in no context is uncovered, not
+    /// unimportant, and colouring it as though it belonged somewhere would be the inference
+    /// ADR-0016 refuses.
+    /// </remarks>
+    public Func<string, string?> ContextLookup { get; set; } = _ => null;
+
+    private string? ContextOf(string nodeId) => ContextLookup(nodeId);
 
     /// <summary>The last path segment, so a canvas of fully-qualified names stays readable.</summary>
     private static string Shorten(string nodeId)

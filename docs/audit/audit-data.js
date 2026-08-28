@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T22:15:43Z",
+  "generated": "2026-08-28T22:31:22Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1147,6 +1147,21 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0056",
+      "shortname": "terminal-env-menu-contexts-readiness",
+      "datetime": "2026-08-28T22:31:22Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "prompt": "terminal has no local env variables; no way to point at a local repo - need a file menu; AND do the next 5 things",
+      "summary": "Fixed two reported defects (terminal profile/PATH, no menu) and completed five steps: contexts drawn and coloured, positive agent readiness, Verified [Table] joins, TheTerrace map validated at 68%, Bicep modules exercised. 588 tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -2144,6 +2159,55 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "0f4223c3b22d86a4df15b551be43bd62dc351104",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0041",
+      "datetime": "2026-08-28T22:31:22Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "The terminal loads the user's profile; the menu bar makes commands discoverable",
+      "prompt": null,
+      "summary": "Two user-reported defects. -NoProfile removed the user's own tooling from PATH inside the product's terminal; the profile now loads and the integration wraps whatever prompt it finds. And a menu bar built from the command catalog replaces chord-only access to opening a workspace. New terminals also open in the workspace root.",
+      "rationale": "The determinism argument for -NoProfile was real and was the wrong trade for a developer tool: a terminal in which the user's tools are not on PATH is not a terminal they can work in. It is met by ORDER instead - the profile runs first, then the integration script captures and wraps the prompt it finds, so a profile cannot redefine the prompt after us. A test asserts -NoProfile is absent, because it is a one-word change nothing else would notice. The menu is built from the same catalog the palette reads, so it cannot offer something the product no longer does, and every item shows its chord - a command reachable only by an untold chord is not a feature.",
+      "artifacts": [
+        "src/AiDe.App/Workbench/MainMenuBuilder.cs"
+      ],
+      "tags": [
+        "defect",
+        "terminal"
+      ],
+      "git": {
+        "before": null,
+        "after": "4bbda153310879b4501b4125ca8062cef1600eae",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0042",
+      "datetime": "2026-08-28T22:31:22Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Contexts are drawn; agents can now be READY; a declared [Table] join is Verified",
+      "prompt": null,
+      "summary": "ContextProjection groups the graph by declared context and counts crossings separately from internal edges, with direction kept. AgentReadinessWatcher gives an agent a positive readiness signal from a configured prompt marker, named as weaker evidence than the nonce. A [Table] attribute produces a Verified code-to-schema join and suppresses the conventional one. Bicep modules are exercised.",
+      "rationale": "Owners are resolved for edge TARGETS as well as subjects - resolving only subjects left every node that appears solely as a target outside every context, so a crossing between two contexts counted as none. Readiness from an observed pattern is accepted because the alternative measured in spikes/agent-dispatch is that an agent can only ever be refused, a correct refusal that is also a dead end; it is a distinct evidence kind because ADR-0007's bar for claiming the agent ACCEPTED a prompt is unchanged and still unmet, and readiness is lost again on new output because a watcher that latched would report a mid-response agent as available. A declared table suppresses the conventional match so the user is never given two edges for one question the code already answers.",
+      "artifacts": [
+        "src/AiDe.Core/Projections/ContextProjection.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "4bbda153310879b4501b4125ca8062cef1600eae",
         "branch": "main",
         "pushed": true,
         "commits": []

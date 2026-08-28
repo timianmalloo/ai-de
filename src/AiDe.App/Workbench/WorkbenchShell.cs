@@ -8,6 +8,7 @@ using AiDe.Core.Ipc;
 using AiDe.Core.Projections;
 using AiDe.Core.Health;
 using AiDe.Core.Upgrade;
+using AiDe.Core.Extraction;
 using AiDe.Core.Presentation;
 using AiDe.Core.Terminal;
 using AiDe.Core.Workbench;
@@ -34,6 +35,7 @@ public sealed class WorkbenchShell : IDisposable
 {
     private SurfaceContentFactory _factory;
     private IWorkspaceQueries? _queries;
+    private string? _workspaceRoot;
 
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
@@ -218,7 +220,8 @@ public sealed class WorkbenchShell : IDisposable
         string? dataDirectory,
         IWorkspaceCommands? commands = null,
         string scopeId = "fixture",
-        string artifactRevision = "rev-1")
+        string artifactRevision = "rev-1",
+        string? workspaceRoot = null)
     {
         ArgumentNullException.ThrowIfNull(queries);
 
@@ -239,6 +242,10 @@ public sealed class WorkbenchShell : IDisposable
                     : $"Re-indexing failed: {status.Failure}";
             };
         }
+
+        // New terminals open in the workspace, not wherever the shell was launched from.
+        _workspaceRoot = workspaceRoot;
+        if (!string.IsNullOrEmpty(workspaceRoot)) TerminalSurface.WorkingDirectory = workspaceRoot;
 
         // Prompt dispatch: the shell owns the terminal, the daemon owns the receipt (D1), so the
         // choreography runs here with the two durable phases supplied by whoever holds the store.
@@ -338,6 +345,22 @@ public sealed class WorkbenchShell : IDisposable
         // The canvas reads the SAME projection every other pane does, rather than a graph-shaped
         // API of its own: two ways to ask what the graph contains is two answers that can disagree.
         var graph = new CanvasGraphViewModel(_queries);
+
+        // Nodes carry their declared context so the canvas can colour by it. Loaded once per bind
+        // rather than per node: the map is a file, and re-reading it for every node in a graph would
+        // make navigation cost scale with the map.
+        if (!string.IsNullOrEmpty(_workspaceRoot))
+        {
+            var contexts = BoundedContextReader.Load(
+                Path.Combine(_workspaceRoot, BoundedContextReader.DefaultRelativePath), []);
+
+            if (contexts.Contexts.Count > 0)
+            {
+                graph.ContextLookup = id => contexts.Contexts
+                    .FirstOrDefault(c => c.Includes.Any(p => BoundedContextReader.Matches(p, id)))?.Name;
+            }
+        }
+
         canvas.GraphSource = (rootId, ct) => graph.LoadAsync(rootId, cancellationToken: ct);
 
         canvas.FocusLeaveRequested += (_, direction) =>

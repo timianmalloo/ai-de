@@ -131,6 +131,20 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                     request, subject, "implements", contract.ToDisplayString(), VerificationStatus.Verified, provenance));
             }
 
+            // A [Table("orders")] attribute is a DECLARATION, so the code-to-schema join it produces
+            // is Verified rather than a naming-convention guess. This is the one join in the phase
+            // that a repository states outright, and it is worth reading precisely because every
+            // other one is inferred.
+            var declaredTable = type.GetAttributes()
+                .FirstOrDefault(a => a.AttributeClass?.Name is "TableAttribute" or "Table")
+                ?.ConstructorArguments.FirstOrDefault().Value as string;
+
+            if (!string.IsNullOrEmpty(declaredTable))
+            {
+                assertions.Add(Assertion(
+                    request, subject, "declares_table", declaredTable, VerificationStatus.Verified, provenance));
+            }
+
             foreach (var target in DependsOn(type).Distinct(SymbolEqualityComparer.Default).OfType<ITypeSymbol>())
             {
                 assertions.Add(Assertion(

@@ -26,6 +26,30 @@ public enum SessionReadiness
     NotReady,
 }
 
+/// <summary>How a session's readiness was established. Not all evidence is equal.</summary>
+public enum ReadinessEvidence
+{
+    /// <summary>Nothing reports it.</summary>
+    None,
+
+    /// <summary>
+    /// OSC 133 signed with the session nonce — the session's own authenticated claim.
+    /// </summary>
+    ShellIntegrationNonce,
+
+    /// <summary>
+    /// A configured marker was seen in the session's output.
+    /// </summary>
+    /// <remarks>
+    /// <b>Weaker than the nonce, and deliberately named so.</b> Output is forgeable in principle,
+    /// and a pattern can match a line that merely mentions the prompt. It is accepted because the
+    /// alternative measured in <c>spikes/agent-dispatch</c> is that an agent can only ever be
+    /// refused — a correct refusal that is also a dead end. ADR-0007's bar for claiming the agent
+    /// ACCEPTED a prompt is unchanged and still unmet; this establishes only that it is listening.
+    /// </remarks>
+    ObservedPattern,
+}
+
 /// <summary>
 /// Establishes whether a session is ready for a prompt, from evidence rather than from hope.
 /// </summary>
@@ -50,15 +74,19 @@ public static class SessionReadinessPolicy
     /// OSC 133 nonce. Derived output timing does not count: a quiet agent mid-thought looks exactly
     /// like an idle one.
     /// </param>
-    public static SessionReadiness Evaluate(ITerminalSession session, bool hasReadinessEvidence)
+    public static SessionReadiness Evaluate(ITerminalSession session, bool hasReadinessEvidence) =>
+        Evaluate(session, hasReadinessEvidence ? ReadinessEvidence.ShellIntegrationNonce : ReadinessEvidence.None);
+
+    /// <summary>Readiness for <paramref name="session"/>, given what kind of evidence exists.</summary>
+    public static SessionReadiness Evaluate(ITerminalSession session, ReadinessEvidence evidence)
     {
         ArgumentNullException.ThrowIfNull(session);
 
-        // Checked BEFORE the evidence flag: a session that has ended is not "unknown", whatever its
+        // Checked BEFORE the evidence kind: a session that has ended is not "unknown", whatever its
         // integration reports, and saying so is more useful than saying nothing.
         if (session.Activity == SessionActivity.Ended) return SessionReadiness.NotReady;
 
-        if (!hasReadinessEvidence) return SessionReadiness.Unknown;
+        if (evidence == ReadinessEvidence.None) return SessionReadiness.Unknown;
 
         return session.Activity switch
         {

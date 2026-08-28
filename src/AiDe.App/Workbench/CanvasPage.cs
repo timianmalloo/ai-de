@@ -130,6 +130,8 @@ internal static class CanvasPage
               var cx = width / 2;
               var cy = height / 2;
               var placed = {};
+              var contexts = {};
+              var uncovered = 0;
               var others = nodes.filter(function (n) { return !n.isRoot; });
               var radius = Math.max(80, Math.min(cx, cy) - 70);
 
@@ -150,6 +152,19 @@ internal static class CanvasPage
                   var angle = (i / Math.max(1, others.length)) * Math.PI * 2 - Math.PI / 2;
                   x = cx + Math.cos(angle) * radius;
                   y = cy + Math.sin(angle) * radius;
+                }
+
+                // Coloured by declared context. A node in NO context keeps the neutral border —
+                // uncovered is a real answer, and tinting it as though it belonged somewhere would
+                // be the inference the context map exists to avoid.
+                if (n.context) {
+                  var hue = 0, i2 = 0;
+                  for (i2 = 0; i2 < n.context.length; i2++) { hue = (hue * 31 + n.context.charCodeAt(i2)) % 360; }
+                  el.style.borderColor = 'hsl(' + hue + ', 55%, 55%)';
+                  el.title = n.id + '  [' + n.context + ']';
+                  contexts[n.context] = 'hsl(' + hue + ', 55%, 55%)';
+                } else {
+                  uncovered++;
                 }
 
                 el.style.left = x + 'px';
@@ -188,12 +203,21 @@ internal static class CanvasPage
               });
 
               var legend = document.getElementById('legend');
-              legend.innerHTML = joins === 0
+              var contextNames = Object.keys(contexts);
+              var contextLegend = contextNames.length === 0
                 ? ''
-                : joins + ' join(s) across artifact types: '
+                : 'contexts: ' + contextNames.map(function (c) {
+                    return '<b style="color:' + contexts[c] + '">' + c + '</b>';
+                  }).join(', ')
+                  + (uncovered > 0 ? ' &middot; ' + uncovered + ' node(s) in no declared context' : '')
+                  + '<br>';
+
+              legend.innerHTML = contextLegend + (joins === 0
+                ? ''
+                : joins + ' join(s) across artifact types: ' '
                   + '<b style="color:#4da3ff">solid blue</b> = declared, '
                   + '<b style="color:#c98b2e">dashed amber</b> = inferred from a convention ('
-                  + inferred + ' of ' + joins + '). Hover a line for its basis.';
+                  + inferred + ' of ' + joins + '). Hover a line for its basis.');
 
               caption.textContent = graph.message
                 ? graph.message

@@ -52,6 +52,23 @@ public sealed class JoinProjection(IReadOnlyList<EvidenceAssertion> assertions)
             .Select(a => a.Subject)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
+        // ---------------------------------------------------------------- code → schema (declared)
+        // Read FIRST, so a type that declares its table is never also joined by convention. Two
+        // edges between the same pair — one Verified, one Inferred — would leave the user deciding
+        // which to believe about a question the code already answers.
+        var declared = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var declaration in assertions.Where(a => a.Predicate == "declares_table"))
+        {
+            var table = "table:" + declaration.Object;
+            declared.Add(declaration.Subject);
+
+            edges.Add(new JoinEdge(
+                declaration.Subject, table, "maps_to",
+                VerificationStatus.Verified,
+                $"the type declares [Table(\"{declaration.Object}\")]"));
+        }
+
         // ---------------------------------------------------------------- code → schema
         // A type whose simple name matches a table name. This is EF's pluralisation convention read
         // backwards, and it is a GUESS: two unrelated types can share a table's name, and a table
@@ -59,7 +76,8 @@ public sealed class JoinProjection(IReadOnlyList<EvidenceAssertion> assertions)
         foreach (var type in assertions
             .Where(a => a.Predicate == "has_type" && a.Object is "class" or "record")
             .Select(a => a.Subject)
-            .Distinct(StringComparer.Ordinal))
+            .Distinct(StringComparer.Ordinal)
+            .Where(t => !declared.Contains(t)))
         {
             var simple = SimpleName(type);
             foreach (var table in tables)
