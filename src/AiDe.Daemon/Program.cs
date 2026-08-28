@@ -1,4 +1,6 @@
 using System.Runtime.Versioning;
+using AiDe.Core.Dispatch;
+using AiDe.Core.Extraction;
 using AiDe.Core;
 using AiDe.Core.Ipc;
 using AiDe.Core.Upgrade;
@@ -141,13 +143,24 @@ internal static class Program
             Console.Error.WriteLine(recovery.Failure);
         }
 
-        var core = WorkspaceCore.Open(workspaceId, workspacePath, dataDirectory);
+        // The composite routes csharp: scopes to the real extractor and everything else to the
+        // fixture one, so a workspace can hold both while Phase 2's fixture evidence still renders.
+        var core = WorkspaceCore.Open(
+            workspaceId, workspacePath, dataDirectory,
+            new CompositeExtractor(new CSharpExtractor(), new FixtureExtractor()));
 
         var endpoint = new DaemonEndpoint(
             workspaceId, new CapabilityRegistry(), _ => core.Store.CoreEpoch);
 
         DaemonOperations.Register(endpoint, () => core.Store.CoreEpoch);
         WorkspaceOperations.Register(endpoint, core.Projections);
+        WorkspaceOperations.RegisterDispatch(endpoint, new BoundaryDispatcher(core.Store));
+        WorkspaceOperations.RegisterIndex(endpoint, async (revision, ct) =>
+        {
+            var result = await core.IndexCSharpAsync(revision, ct);
+            return new IndexSummary(
+                result.ScopesFound, result.ScopesIndexed, result.Assertions, result.Failed, result.Disclosures);
+        });
 
         // Ingestion, which is a WRITE and the first one to cross. Started and polled rather than
         // awaited on the wire: a scope has a 60-second budget and the lane serves one request at a

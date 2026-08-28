@@ -79,8 +79,14 @@ public sealed class WorkspaceCore : IDisposable
     /// Extracts one scope and commits it as a complete snapshot. An incomplete extraction is recorded
     /// as a health incident and the previous snapshot stands — a failed refresh never empties the graph.
     /// </summary>
+    /// <param name="rootPathOverride">
+    /// What the extractor should read, when it is not the workspace root. A C# scope is one PROJECT
+    /// built for one framework, so the request must carry that project's path — the workspace root
+    /// names the repository, not the thing being extracted.
+    /// </param>
     public async Task<ExtractionResult> RefreshScopeAsync(
-        string scopeId, string artifactRevision, CancellationToken cancellationToken = default)
+        string scopeId, string artifactRevision, CancellationToken cancellationToken = default,
+        string? rootPathOverride = null)
     {
         using var activity = Activity.StartActivity("aide.ingestion.scope");
         activity?.SetTag("scope.id", scopeId);
@@ -95,7 +101,9 @@ public sealed class WorkspaceCore : IDisposable
         }
 
         var result = await _extractor
-            .ExtractAsync(new ExtractionRequest(scopeId, RootPath, artifactRevision, generation), cancellationToken)
+            .ExtractAsync(
+                new ExtractionRequest(scopeId, rootPathOverride ?? RootPath, artifactRevision, generation),
+                cancellationToken)
             .ConfigureAwait(false);
 
         if (!result.Complete)
@@ -130,6 +138,82 @@ public sealed class WorkspaceCore : IDisposable
         activity?.SetTag("outcome", "committed");
         activity?.SetTag("assertion.count", result.Assertions.Count);
         return result;
+    }
+
+    /// <summary>The result of indexing a whole repository's C# scopes.</summary>
+    /// <param name="Failed">Scopes that did not complete — each already has a health incident.</param>
+    public sealed record IndexResult(
+        int ScopesFound,
+        int ScopesIndexed,
+        int Assertions,
+        IReadOnlyList<string> Failed,
+        IReadOnlyList<string> Disclosures);
+
+    /// <summary>
+    /// Discovers every C# scope under the workspace root and refreshes each one.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Per scope, not per repository.</b> Each project/framework pair gets its own budget,
+    /// its own generation and its own snapshot, so one project that fails to load quarantines itself
+    /// and leaves every other project's evidence standing (<c>P2-EXT-02</c>).</para>
+    ///
+    /// <para><b>The per-scope budget is enforced here.</b> A 60-second cap per scope, from the
+    /// design — applied with a linked token so a caller cancelling the whole index still stops
+    /// everything, while one slow project cannot consume the entire run.</para>
+    /// </remarks>
+    public async Task<IndexResult> IndexCSharpAsync(
+        string artifactRevision, CancellationToken cancellationToken = default,
+        TimeSpan? perScopeBudget = null)
+    {
+        var scopes = CSharpScopeDiscovery.Discover(RootPath);
+        var budget = perScopeBudget ?? TimeSpan.FromSeconds(60);
+
+        var indexed = 0;
+        var assertions = 0;
+        var failed = new List<string>();
+        var disclosures = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var scope in scopes)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            using var perScope = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            perScope.CancelAfter(budget);
+
+            ExtractionResult result;
+            try
+            {
+                result = await RefreshScopeAsync(
+                    scope.ScopeId, artifactRevision, perScope.Token, scope.ProjectPath).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+            {
+                // The scope's own budget expired. Quarantine it and keep going: the alternative is
+                // one unloadable project costing the user every other project's evidence.
+                Incidents.Record("extraction.timeout", scope.ScopeId,
+                    $"scope exceeded its {budget.TotalSeconds:F0}s budget", DateTimeOffset.UtcNow);
+                failed.Add(scope.ScopeId);
+                continue;
+            }
+
+            if (!result.Complete)
+            {
+                failed.Add(scope.ScopeId);
+                continue;
+            }
+
+            indexed++;
+            assertions += result.Assertions.Count;
+
+            foreach (var disclosure in result.Assertions
+                .Where(a => a.Predicate == CSharpExtractor.DisclosurePredicate)
+                .Select(a => a.Object))
+            {
+                disclosures.Add(disclosure);
+            }
+        }
+
+        return new IndexResult(scopes.Count, indexed, assertions, failed, [.. disclosures.Order(StringComparer.Ordinal)]);
     }
 
     /// <summary>

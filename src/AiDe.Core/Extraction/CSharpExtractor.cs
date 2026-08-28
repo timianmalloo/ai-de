@@ -51,8 +51,19 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         // The framework is carried on the scope id's suffix when the caller made one scope per
         // framework; otherwise the project's first declared framework is used.
         var frameworks = _reader.TargetFrameworks(projectPath);
+        if (frameworks.Count == 0)
+        {
+            // Discovery still produced a scope for this project so it would be counted rather than
+            // vanish; this is where that scope becomes a reported failure.
+            return Task.FromResult(new ExtractionResult(
+                [], Complete: false,
+                [new ExtractionDiagnostic(
+                    "AIDE-EXT-PROJECT-UNREADABLE", request.ScopeId,
+                    "the project file could not be read as XML")]));
+        }
+
         var tfm = frameworks.FirstOrDefault(f =>
-            request.ScopeId.EndsWith(f, StringComparison.OrdinalIgnoreCase)) ?? frameworks.FirstOrDefault() ?? "net10.0";
+            request.ScopeId.EndsWith(f, StringComparison.OrdinalIgnoreCase)) ?? frameworks[0];
 
         CSharpCompilationResult compiled;
         try

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-28T18:26:37Z",
+  "generated": "2026-08-28T19:33:14Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1292,7 +1292,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b0972142a47ba161ecff65f0980f870d59cc52b39ea7f220e8ab1b710d813f53"
+      "sourceSha256": "7bc863996e870a105ef018e1946ded1589b22b4b50702c83b94a29477296bbef"
     },
     {
       "id": "audit-log",
@@ -1704,6 +1704,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "28af60f3c5209e889a6dbf5fb1c61876baf2f1a0f96cb6b08a7216fbc7481785"
+    },
+    {
+      "id": "review-phase-2-exit",
+      "path": "docs/reviews/phase-2-exit.md",
+      "title": "Phase-2 exit review — real code, terminal, and process split",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Phase 2's three components are built and measured. Every capability the phase promised is demonstrable, four gates are green over 541 tests, and the three performance budgets are met with large headroom. Five residual risks are carried into Phase 3, three of them by explicit decision.",
+      "tags": [
+        "review",
+        "phase-gate",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-phase-2-real-code-and-terminal",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "93530824cad8aa85f88148cf8dbd63ddf813e1358e5b9417e81170e2eb95a71f"
     },
     {
       "id": "review-ui-workbench",
@@ -4045,5 +4078,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "f3e69e18d9876dfdc043e893627a8ec6a3cce54ed5add1f9529778beb2d85563"
+  "graphSha256": "5703f3caad6924c8c3fd7d8394745fcdc3fe34d413b4e16dab97a7a191f38a2b"
 };

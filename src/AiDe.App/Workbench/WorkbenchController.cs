@@ -58,6 +58,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workspace.refresh":
                 return RefreshWorkspace();
 
+            case "workspace.indexSolution":
+                return IndexSolution();
+
             case "workbench.focusCanvas":
                 return FocusCanvas();
 
@@ -139,8 +142,33 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// Announces only when the destination actually changes. Re-announcing on every mouse-move would
     /// flood a screen reader with the same sentence and drown everything else out.
     /// </remarks>
+    /// <summary>
+    /// Raised when a drag starts and when it ends, so an airspace-limited surface can stand aside.
+    /// </summary>
+    /// <remarks>
+    /// ADR-0015: the windowed WebView2 is drawn by the OS above every WPF element in the same space,
+    /// so a drop indicator over the canvas is simply not visible. For the duration of a drag the
+    /// canvas is swapped for a still frame. The composition control fixes the airspace problem and
+    /// then kills the process when a pane is floated, which is why this exists at all.
+    /// </remarks>
+    public event Action<bool>? DragStateChanged;
+
+    private bool _dragging;
+
+    private void SetDragging(bool dragging)
+    {
+        if (_dragging == dragging) return;
+        _dragging = dragging;
+        DragStateChanged?.Invoke(dragging);
+    }
+
     public DropTarget? DragOver(IReadOnlyList<PaneHitBox> panes, LayoutPoint pointer)
     {
+        // Raised on the FIRST DragOver rather than on a separate begin call: this is the earliest
+        // moment the workbench knows a drag is happening, and a swap that starts later than the
+        // drop indicator flickers the canvas back over it.
+        SetDragging(true);
+
         var target = DropTargetResolver.Resolve(panes, pointer, service.IsLocked);
 
         // The locked case is handled BEFORE the change-detection below. Both a locked resolve and
@@ -189,6 +217,7 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// <summary>Abandons the drag with the layout untouched (Escape, or the pointer leaving).</summary>
     public void CancelDrag()
     {
+        SetDragging(false);
         var had = HoveredTarget is not null;
         HoveredTarget = null;
         HoveredPreview = null;
@@ -318,6 +347,44 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// Opens the prompt bar. Set when the shell builds one; null in a headless controller.
     /// </summary>
     public Action? PromptBarOpen { get; set; }
+
+    /// <summary>
+    /// Indexes the workspace's C# projects. Set when a workspace attaches; null before that.
+    /// </summary>
+    public Func<Task<string>>? WorkspaceIndex { get; set; }
+
+    private bool IndexSolution()
+    {
+        if (WorkspaceIndex is null)
+        {
+            announcer.Announce("No workspace is open to index.");
+            return true;
+        }
+
+        announcer.Announce("Indexing C# projects…");
+        _ = RunAndAnnounce(WorkspaceIndex);
+        return true;
+    }
+
+    /// <summary>
+    /// Runs a long command and announces whatever it reports, including a failure.
+    /// </summary>
+    /// <remarks>
+    /// Fire-and-announce rather than awaited: the command returns to the palette immediately, and
+    /// the outcome arrives on the announcement channel. A thrown exception is announced too — a
+    /// command that started and then said nothing is indistinguishable from one that hung.
+    /// </remarks>
+    private async Task RunAndAnnounce(Func<Task<string>> work)
+    {
+        try
+        {
+            announcer.Announce(await work());
+        }
+        catch (Exception ex)
+        {
+            announcer.Announce($"Indexing failed: {ex.Message}");
+        }
+    }
 
     private bool OpenPromptBar()
     {

@@ -71,6 +71,13 @@ public static class WorkbenchCommandCatalog
         // explicit command the graph is unreachable from the keyboard entirely.
         // Also not a layout operation. The receipt, not the send, is what this command exists to
         // surface — a prompt reaching an agent session cannot be taken back.
+        // The command that makes the extractor visible. Its announcement carries the DISCLOSURES,
+        // because a graph that silently omits package types looks complete and the user has no way
+        // to know it is not.
+        new("workspace.indexSolution", "Index C# projects in this workspace", "Ctrl+K, I",
+            string.Empty,
+            "Finds every C# project and indexes one scope per target framework. Reports what was not analysed."),
+
         new("workbench.dispatchPrompt", "Dispatch prompt to terminal…", "Ctrl+K, P",
             string.Empty,
             "Type a prompt and press Enter. The recorded delivery receipt is announced, including when delivery is unknown."),

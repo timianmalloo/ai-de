@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using AiDe.Core.Presentation;
 using AiDe.Core.Workbench;
 using Microsoft.Web.WebView2.Wpf;
 
@@ -38,7 +39,11 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         FocusTarget = new CanvasFocusTarget(_view, () => _obscured);
         Content = _view;
 
-        _view.NavigationCompleted += (_, _) => Ready = true;
+        _view.NavigationCompleted += async (_, _) =>
+        {
+            Ready = true;
+            await RefreshAsync();
+        };
         _view.WebMessageReceived += OnWebMessage;
 
         Loaded += async (_, _) => await InitialiseAsync();
@@ -54,6 +59,26 @@ public sealed class CanvasSurface : ContentControl, IDisposable
 
     /// <summary>Raised when the page reports that focus should leave the canvas.</summary>
     public event EventHandler<CanvasFocusDirection>? FocusLeaveRequested;
+
+    /// <summary>
+    /// Supplies the graph to draw. Null until a workspace attaches, in which case the page says so.
+    /// </summary>
+    public Func<string?, CancellationToken, Task<CanvasGraph>>? GraphSource { get; set; }
+
+    /// <summary>Loads the graph around <paramref name="rootId"/> and pushes it to the page.</summary>
+    public async Task RefreshAsync(string? rootId = null, CancellationToken cancellationToken = default)
+    {
+        if (!Ready) return;
+
+        var graph = GraphSource is null
+            ? new CanvasGraph([], [], null, 0, [], "No workspace is open. Open one to see its graph.")
+            : await GraphSource(rootId, cancellationToken);
+
+        // Serialised with the SAME options the incoming direction uses, so a field that survives one
+        // way survives the other.
+        _view.CoreWebView2?.PostWebMessageAsJson(JsonSerializer.Serialize(
+            new { kind = "graph", graph }, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+    }
 
     /// <summary>
     /// Shows a still frame in place of the live canvas for the duration of a drag (ADR-0015).
@@ -185,55 +210,109 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         <head><meta charset="utf-8"><title>Graph canvas</title>
         <style>
           body { font: 14px system-ui, sans-serif; margin: 0; padding: 16px; background: #1e1e1e; color: #ddd; }
+          h1 { font-size: 15px; margin: 0 0 4px; }
+          #caption { color: #999; margin: 0 0 12px; }
+          #warn { color: #e8b339; margin: 0 0 12px; }
           .node { display: inline-block; padding: 8px 12px; margin: 6px; border: 1px solid #555;
                   border-radius: 4px; background: #2a2a2a; cursor: pointer; }
+          .node.root { border-color: #4da3ff; background: #21303f; }
           .node:focus { outline: 2px solid #4da3ff; outline-offset: 2px; }
+          .edge { color: #8a8a8a; font-size: 12px; margin: 2px 0 2px 12px; }
         </style></head>
         <body>
-          <h1 style="font-size:15px">Graph canvas</h1>
-          <p style="color:#999">Tab moves between nodes. Tab off either end, or press Escape, to return to the workbench.</p>
-          <div id="nodes">
-            <span class="node" tabindex="0" id="first">Service.Orders</span>
-            <span class="node" tabindex="0">Service.Billing</span>
-            <span class="node" tabindex="0" id="last">Service.Catalog</span>
-          </div>
+          <h1>Graph canvas</h1>
+          <p id="caption">Waiting for the workspace…</p>
+          <p id="warn"></p>
+          <div id="nodes"></div>
+          <div id="edges"></div>
           <script>
-            // The ONLY way out of the canvas. WPF traversal cannot leave it, so a page without these
-            // handlers is a keyboard trap: the user enters and cannot get back.
             function leave(direction) {
               window.chrome.webview.postMessage({ kind: 'focus.leave', direction: direction });
             }
 
-            var first = document.getElementById('first');
-            var last = document.getElementById('last');
+            function focusable() { return Array.prototype.slice.call(document.querySelectorAll('.node')); }
 
             // Entry lands on the browser's input window with nothing in the page focused, so the
             // first node is claimed explicitly. Without this the user arrives inside the canvas with
             // no visible focus and their first Tab appears to do nothing.
             function claimFocus() {
+              var nodes = focusable();
               var active = document.activeElement;
-              if (!active || active === document.body) { first.focus(); }
+              if (nodes.length && (!active || active === document.body)) { nodes[0].focus(); }
             }
             window.addEventListener('focus', claimFocus);
             document.addEventListener('pointerdown', claimFocus);
-            claimFocus();
 
-            // Handled at the DOCUMENT level, not per element: an element-scoped handler stops firing
-            // the moment the graph is re-rendered with different nodes, and the trap would return
-            // silently.
+            // Handled at the DOCUMENT level against the CURRENT node list, not per element: the
+            // graph is re-rendered whenever the workspace changes, and element-scoped handlers would
+            // be lost with the nodes they were attached to — the keyboard trap would come back
+            // silently the first time real data arrived.
             document.addEventListener('keydown', function (e) {
               if (e.key === 'Escape') { e.preventDefault(); leave('restore'); return; }
               if (e.key !== 'Tab') { return; }
               window.__tabsSeen = (window.__tabsSeen || 0) + 1;
 
+              var nodes = focusable();
               var active = document.activeElement;
-              if (!e.shiftKey && active === last) { e.preventDefault(); leave('forward'); }
-              else if (e.shiftKey && (active === first || active === document.body)) {
+
+              // With no nodes at all there is nothing to tab through, so EITHER direction leaves.
+              // An empty graph must not be a trap.
+              if (nodes.length === 0) { e.preventDefault(); leave(e.shiftKey ? 'backward' : 'forward'); return; }
+
+              if (!e.shiftKey && active === nodes[nodes.length - 1]) { e.preventDefault(); leave('forward'); }
+              else if (e.shiftKey && (active === nodes[0] || active === document.body)) {
                 e.preventDefault(); leave('backward');
               }
+            });
+
+            function render(graph) {
+              var caption = document.getElementById('caption');
+              var warn = document.getElementById('warn');
+              var nodesEl = document.getElementById('nodes');
+              var edgesEl = document.getElementById('edges');
+
+              nodesEl.innerHTML = '';
+              edgesEl.innerHTML = '';
+
+              (graph.nodes || []).forEach(function (n) {
+                var el = document.createElement('span');
+                el.className = 'node' + (n.isRoot ? ' root' : '');
+                el.tabIndex = 0;
+                el.textContent = n.label;
+                el.title = n.id;
+                nodesEl.appendChild(el);
+              });
+
+              (graph.edges || []).forEach(function (edge) {
+                var el = document.createElement('div');
+                el.className = 'edge';
+                el.textContent = edge.from + ' --' + edge.predicate + '--> ' + edge.to;
+                edgesEl.appendChild(el);
+              });
+
+              caption.textContent = graph.message
+                ? graph.message
+                : (graph.nodes || []).length + ' node(s), ' + (graph.edges || []).length + ' edge(s). '
+                  + 'Tab moves between nodes; Tab off either end or press Escape to return.';
+
+              // Truncation and non-extraction are DIFFERENT and both are stated: omitted edges exist
+              // and were not returned, disclosures were never extracted at all. A graph that shows
+              // neither looks complete.
+              var notes = [];
+              if (graph.omitted > 0) { notes.push(graph.omitted + ' edge(s) omitted by the result bound'); }
+              if ((graph.disclosures || []).length) { notes.push('not analysed: ' + graph.disclosures.join(', ')); }
+              warn.textContent = notes.join(' — ');
+
+              claimFocus();
+            }
+
+            window.chrome.webview.addEventListener('message', function (e) {
+              var payload = e.data;
+              if (payload && payload.kind === 'graph') { render(payload.graph); }
             });
           </script>
         </body>
         </html>
         """;
+
 }

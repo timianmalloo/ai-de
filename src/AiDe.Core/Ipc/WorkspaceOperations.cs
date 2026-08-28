@@ -30,6 +30,9 @@ public sealed record DispatchBeginRequest(DispatchCommand Command);
 /// <summary>Phase 2 of a dispatch: record the outcome the shell observed.</summary>
 public sealed record DispatchFinalizeRequest(string DispatchKey, DispatchState State, string? ErrorCode);
 
+/// <summary>Index every C# scope in the workspace.</summary>
+public sealed record IndexSolutionRequest(string ArtifactRevision);
+
 /// <summary>Operations every daemon answers, whatever workspace it serves.</summary>
 /// <remarks>
 /// Separate from the projections because they are about the <i>daemon</i> rather than the
@@ -84,6 +87,7 @@ public static class WorkspaceOperations
     public const string Knowledge = "knowledge";
     public const string DispatchBegin = "dispatch.begin";
     public const string DispatchFinalize = "dispatch.finalize";
+    public const string IndexSolution = "index.solution";
 
     /// <summary>
     /// How every payload on this boundary is encoded.
@@ -160,6 +164,20 @@ public static class WorkspaceOperations
     /// <see cref="WorkspaceStoreException"/> is mapped, because it is the type that carries one;
     /// everything else still escapes.</para>
     /// </remarks>
+    /// <summary>Registers the workspace-wide C# index on <paramref name="endpoint"/>.</summary>
+    public static void RegisterIndex(DaemonEndpoint endpoint, Func<string, CancellationToken, Task<IndexSummary>> index)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+        ArgumentNullException.ThrowIfNull(index);
+
+        endpoint.Register(IndexSolution, (request, _) =>
+            Refusable(() => Handle<IndexSolutionRequest>(request, body =>
+                // Awaited here because the control lane serves one request at a time per connection
+                // and the per-scope budget already bounds the total. If indexing ever outgrows that,
+                // it becomes started-and-polled like scope refresh rather than a longer timeout.
+                index(body.ArtifactRevision, CancellationToken.None).GetAwaiter().GetResult())));
+    }
+
     private static IpcResponse Refusable(Func<IpcResponse> operation)
     {
         try

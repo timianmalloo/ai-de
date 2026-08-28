@@ -19,6 +19,39 @@ public interface IWorkspaceCommands
     /// <summary>Re-indexes a scope and reports how it went.</summary>
     Task<ScopeRefreshStatus> RefreshScopeAsync(
         string scopeId, string artifactRevision, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Discovers and indexes every C# scope in the workspace — one per (project, target framework).
+    /// </summary>
+    /// <remarks>
+    /// Awaited on the wire rather than started-and-polled, unlike scope refresh: indexing a
+    /// repository is the user pressing a button and waiting for a graph, and its own per-scope
+    /// budget already bounds how long it can take.
+    /// </remarks>
+    Task<IndexSummary> IndexSolutionAsync(string artifactRevision, CancellationToken cancellationToken);
+}
+
+/// <summary>What an index run found, as the shell reports it.</summary>
+public sealed record IndexSummary(
+    int ScopesFound,
+    int ScopesIndexed,
+    int Assertions,
+    IReadOnlyList<string> Failed,
+    IReadOnlyList<string> Disclosures)
+{
+    /// <summary>One sentence for the announcement channel, including what was NOT seen.</summary>
+    public string Describe()
+    {
+        if (ScopesFound == 0) return "No C# projects found in this workspace.";
+
+        var text = $"Indexed {ScopesIndexed} of {ScopesFound} scope(s): {Assertions:N0} assertion(s).";
+        if (Failed.Count > 0) text += $" {Failed.Count} scope(s) failed and were quarantined.";
+
+        // Disclosures are part of the result, not a footnote: a graph that silently omits package
+        // types looks complete, and the user has no way to know it is not.
+        if (Disclosures.Count > 0) text += " Not analysed: " + string.Join(", ", Disclosures) + ".";
+        return text;
+    }
 }
 
 /// <summary>The write surface applied by a core in this process.</summary>
@@ -27,9 +60,17 @@ public interface IWorkspaceCommands
 /// in-process mode reports — a completed count, or a failure with its reason — is decided in one
 /// place and testable without a store.
 /// </remarks>
-public sealed class LocalWorkspaceCommands(Func<string, string, CancellationToken, Task<int>> refresh)
+public sealed class LocalWorkspaceCommands(
+    Func<string, string, CancellationToken, Task<int>> refresh,
+    Func<string, CancellationToken, Task<IndexSummary>>? index = null)
     : IWorkspaceCommands
 {
+    /// <inheritdoc />
+    public Task<IndexSummary> IndexSolutionAsync(string artifactRevision, CancellationToken cancellationToken) =>
+        index is null
+            ? Task.FromResult(new IndexSummary(0, 0, 0, [], []))
+            : index(artifactRevision, cancellationToken);
+
     public async Task<ScopeRefreshStatus> RefreshScopeAsync(
         string scopeId, string artifactRevision, CancellationToken cancellationToken)
     {

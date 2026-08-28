@@ -6,6 +6,7 @@ using System.Windows.Input;
 using AiDe.Core;
 using AiDe.Core.Ipc;
 using AiDe.Core.Projections;
+using AiDe.Core.Presentation;
 using AiDe.Core.Workbench;
 using AvalonDock;
 using AiDe.Core.Dispatch;
@@ -29,6 +30,7 @@ namespace AiDe.App.Workbench;
 public sealed class WorkbenchShell : IDisposable
 {
     private SurfaceContentFactory _factory;
+    private IWorkspaceQueries? _queries;
 
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
@@ -38,6 +40,7 @@ public sealed class WorkbenchShell : IDisposable
         LiveRegion.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
         Announcer = new WorkbenchAnnouncer(LiveRegion);
 
+        _queries = queries;
         _factory = new SurfaceContentFactory(queries);
         Manager = new DockingManager();
         AutomationProperties.SetName(Manager, "Workbench");
@@ -216,6 +219,7 @@ public sealed class WorkbenchShell : IDisposable
     {
         ArgumentNullException.ThrowIfNull(queries);
 
+        _queries = queries;
         _factory = new SurfaceContentFactory(queries);
 
         // The palette's re-index command is inert until a workspace exists to re-index. Wiring it
@@ -259,6 +263,12 @@ public sealed class WorkbenchShell : IDisposable
                 return await BoundaryDispatcher.BeginAndWriteAsync(
                     command, session, dispatch.DispatchBeginAsync, dispatch.DispatchFinalizeAsync);
             };
+        }
+
+        if (commands is not null)
+        {
+            Controller.WorkspaceIndex = async () =>
+                (await commands.IndexSolutionAsync(artifactRevision, CancellationToken.None)).Describe();
         }
 
         if (!string.IsNullOrEmpty(dataDirectory) && Persistence is null)
@@ -305,8 +315,19 @@ public sealed class WorkbenchShell : IDisposable
         var router = new CanvasFocusRouter(canvas.FocusTarget, new WpfHostFocusScope(Manager));
         Controller.CanvasFocus = router;
 
+        // The canvas reads the SAME projection every other pane does, rather than a graph-shaped
+        // API of its own: two ways to ask what the graph contains is two answers that can disagree.
+        var graph = new CanvasGraphViewModel(_queries);
+        canvas.GraphSource = (rootId, ct) => graph.LoadAsync(rootId, cancellationToken: ct);
+
         canvas.FocusLeaveRequested += (_, direction) =>
             Announcer.Announce(router.Leave(direction).Announcement);
+
+        // ADR-0015's snapshot swap, driven by the real drag rather than left as a method nothing
+        // calls. While it is set the canvas also REFUSES focus and says why (P2-FOCUS-04), so the
+        // two halves of "the canvas is standing aside" cannot drift apart.
+        Controller.DragStateChanged -= canvas.SetObscured;
+        Controller.DragStateChanged += canvas.SetObscured;
     }
 
     /// <summary>The terminal pane the user is working in, or null when none is focused.</summary>

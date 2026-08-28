@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T18:33:35Z",
+  "generated": "2026-08-28T19:33:14Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1072,6 +1072,21 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0051",
+      "shortname": "phase-2-completion",
+      "datetime": "2026-08-28T19:33:14Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "prompt": "do all of these 5 steps then summarize what i can manually test in the client and show the standard status and next steps",
+      "summary": "Wired the extractor to the shell, rendered real graph data in the canvas, tested P2-EXT-02 broken-load quarantine, drove the snapshot swap from the real drag, and wrote the Phase-2 exit review. Found and fixed a defect where an unparseable project vanished from discovery. 541 tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -1797,6 +1812,31 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "34bcab91205a203402b00a487c3a7c49357b2234",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0030",
+      "datetime": "2026-08-28T19:33:14Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "architecture",
+      "skill": null,
+      "title": "Phase 2 exits: all three components built, measured, and gated PASS-WITH-CONDITIONS",
+      "prompt": null,
+      "summary": "Extractor wired to the shell (Ctrl+K, I) with one scope per (project, framework) and per-scope quarantine; canvas renders real projection data with omissions and disclosures shown; snapshot swap driven by the real drag; DC-020's control widened; Phase-2 exit review written. 541 tests, four gates green, all three perf budgets met.",
+      "rationale": "Two conditions attach to the pass. The Option-B fidelity spike must be extended to shared projects and Directory.Build.props before another repository is indexed in anger, because a fidelity failure in an extractor is silent and the 100 percent result comes from four shapes that do not include them. ADR-0010 stays proposed until dispatch runs against a real agent session rather than a terminal. Discovery gained a scope for unreadable projects after a test found they VANISHED entirely - not indexed, not failed, not counted - which is the silent incompleteness this design exists to prevent.",
+      "artifacts": [
+        "docs/reviews/phase-2-exit.md"
+      ],
+      "tags": [
+        "phase-2",
+        "review"
+      ],
+      "git": {
+        "before": null,
+        "after": "f415e024016455119fe36d82ef72e9dfbd1f209d",
         "branch": "main",
         "pushed": true,
         "commits": []

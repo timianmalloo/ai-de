@@ -1097,15 +1097,14 @@ cannot catch a regression where the host swallows the key before the browser see
 
 ## Status and next action
 
-*Refreshed 2026-08-28 after the D1–D7 decision round (`cl-0011`..`cl-0017`), spike D3
-(`cl-0018`), the P2-PERF gate (`cl-0019`), the containment spike (`cl-0020`) and the Strategy-1
-decision (`cl-0021`).*
+*Refreshed 2026-08-28. **Phase 2 is complete** — see the
+[exit review](../reviews/phase-2-exit.md).*
 
 | | |
 |---|---|
-| **Completed** | **Component 2 complete**: ConPTY runtime, OSC 133 parser, PowerShell shell integration, WPF renderer, `P2-CONFORM` against both implementations. **Component 3 complete except dispatch**: named-pipe transport and `AiDe.Daemon.exe`, capability-bound IPC, the read surface across the boundary, the shell using the daemon, scope refresh, `P2-UPGRADE-01..03`, and `P2-PRIV-01/02` (which found DC-018). **`P2-PERF-01..03` specified**, and `P2-PERF-02` measured: the daemon boundary costs **~0.35 ms flat**, 0.35% of `describe`'s budget. **The extraction trust boundary is settled**: D3 proved `MSBuildWorkspace` executes repository code; both containments were measured; Strategy 1 adopted. 487 tests, four gates green. |
-| **Remaining** | **Component 1 is unblocked but owes a contract rewrite** — the design above still names `MSBuildWorkspace`. Before the extractor ships, an **Option-B fidelity spike** is owed against `AiDe.App` (which has a `ProjectReference`) and a multi-targeted project, because the 159/159 result comes from one project with neither. **Prompt dispatch (`ADR-0010`) is unblocked** by D1 and is work rather than a question. `P2-FOCUS-01..04` is designed and unbuilt. `P2-PERF-03` needs a sustained 1 MiB/s drive. Cross-monitor DPI accepted-unverified (D5); scrollback backlogged (D6). |
-| **Best next action** | **Spike Option B's fidelity on `AiDe.App` and a multi-targeted project.** It is the one measurement standing between the adopted strategy and a contract that can be written with confidence — and a fidelity failure in an extractor is silent, so it will not announce itself later. Then rewrite the Component 1 contract against the measured result. |
+| **Completed** | **All three components.** Component 1: `CSharpExtractor` reads the project file as data and never runs MSBuild, emitting disclosures as facts on the scope node; discovery yields one scope per (project, framework); a broken or slow project quarantines itself and raises a health incident (`P2-EXT-02/04`). Component 2: ConPTY runtime, OSC 133, shell integration, WPF renderer, `P2-CONFORM` against both implementations. Component 3: named-pipe transport, `AiDe.Daemon.exe`, the read surface, scope refresh, prompt dispatch (`ADR-0010`) across the boundary, `P2-UPGRADE-01..03`, `P2-PRIV-01/02`. The workbench now indexes (`Ctrl+K, I`), dispatches (`Ctrl+K, P`), focuses the canvas (`Ctrl+K, G`) and renders real graph data. **541 tests; four gates green; all three performance budgets met with an order of magnitude of headroom.** |
+| **Remaining (carried to Phase 3)** | **The Option-B fidelity spike is the first owed item**, not a Phase-3 feature: 100% edge resolution is measured on four project shapes but not on shared projects, `Directory.Build.props` inheritance or `Compile Link`, and a fidelity failure in an extractor is *silent*. Built-but-unreachable: upgrade/rollback has no UI, MCP tools are not exposed, the canvas has no navigation or layout algorithm. `ADR-0010` stays `proposed` until dispatch is exercised against a real agent session. Accepted by decision: A2's network gap, cross-monitor DPI (D5), no scrollback (D6). |
+| **Best next action** | **Extend the fidelity spike to the unmet project shapes.** It is the one open item that can be wrong without anyone noticing, and it gates indexing any repository other than this one with confidence. |
 
 ## Gate record
 

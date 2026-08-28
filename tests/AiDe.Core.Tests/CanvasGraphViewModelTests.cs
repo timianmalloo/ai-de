@@ -1,0 +1,171 @@
+using AiDe.Core.Facts;
+using AiDe.Core.Presentation;
+using AiDe.Core.Projections;
+
+namespace AiDe.Core.Tests;
+
+/// <summary>
+/// What the canvas draws, decided in Core where it can be tested without a browser.
+/// </summary>
+/// <remarks>
+/// The interesting cases are the ones where the graph is <b>incomplete</b>. A canvas that renders
+/// twelve nodes when the projection bounded the answer at twelve, or that omits package types
+/// because nothing restored them, looks exactly like a small honest graph — so the omissions have to
+/// travel with the data rather than being left for the user to infer.
+/// </remarks>
+public sealed class CanvasGraphViewModelTests
+{
+    private sealed class StubQueries : IWorkspaceQueries
+    {
+        public DescribeResult? Describe { get; set; }
+        public List<FindMatch> Matches { get; } = [];
+        public Exception? Throw { get; set; }
+        public string? LastDescribedNode { get; private set; }
+
+        public Task<DescribeResult> DescribeAsync(string nodeId, int maxNeighbors, CancellationToken ct)
+        {
+            if (Throw is not null) throw Throw;
+            LastDescribedNode = nodeId;
+            return Task.FromResult(Describe ?? Empty(nodeId));
+        }
+
+        public Task<FindResult> FindAsync(string term, int maxResults, CancellationToken ct)
+        {
+            if (Throw is not null) throw Throw;
+            return Task.FromResult(new FindResult(Matches, Bounds(0), "rev-1"));
+        }
+
+        public Task<ImpactResult> ImpactAsync(string nodeId, int maxNodes, int maxEdges, CancellationToken ct) =>
+            Task.FromResult(new ImpactResult(nodeId, [], [], Bounds(0), "rev-1"));
+
+        public Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
+            Task.FromResult(new KnowledgeResult([], Bounds(0), "rev-1"));
+
+        private static DescribeResult Empty(string nodeId) =>
+            new(new NodeView(nodeId, "source", nodeId), [], Bounds(0), "rev-1");
+
+        internal static ResultBounds Bounds(int omittedEdges) =>
+            new(100, 100, 100_000, 1, 0, 0, omittedEdges, false, null);
+    }
+
+    private static EdgeView Edge(string subject, string predicate, string obj) =>
+        new(subject, predicate, obj, VerificationStatus.Verified, EvidenceOrigin.Static, "rev-1",
+            new Provenance("Orders.cs", "1:1", "csharp-extractor", "1.0.0", DateTimeOffset.UtcNow));
+
+    [Fact]
+    public async Task WithNoWorkspace_ItSaysSo_RatherThanRenderingAnEmptyGraph()
+    {
+        var graph = await new CanvasGraphViewModel(null).LoadAsync();
+
+        Assert.Empty(graph.Nodes);
+        Assert.Contains("No workspace", graph.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task WithNothingIndexed_ItNamesTheCommandThatWouldFixIt()
+    {
+        // Three different empty states exist and they need three different next actions. "Nothing
+        // indexed" is the one the user can act on immediately.
+        var graph = await new CanvasGraphViewModel(new StubQueries()).LoadAsync();
+
+        Assert.Empty(graph.Nodes);
+        Assert.Contains("Index C# projects", graph.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ItRendersTheNeighbourhoodOfTheFirstFoundNode()
+    {
+        var queries = new StubQueries();
+        queries.Matches.Add(new FindMatch("Shop.Order", "source", "Order", AuthorshipOrigin.RepositoryArtifact));
+        queries.Describe = new DescribeResult(
+            new NodeView("Shop.Order", "source", "Order"),
+            [Edge("Shop.Order", "depends_on", "Shop.Customer"), Edge("Shop.Ledger", "depends_on", "Shop.Order")],
+            StubQueries.Bounds(0), "rev-1");
+
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+
+        Assert.Equal("Shop.Order", graph.RootId);
+        Assert.Equal(3, graph.Nodes.Count);
+        Assert.Contains(graph.Nodes, n => n.Id == "Shop.Customer");
+
+        // The edge that points AT the root counts too — a graph that only followed outgoing edges
+        // would hide every caller.
+        Assert.Contains(graph.Nodes, n => n.Id == "Shop.Ledger");
+        Assert.Single(graph.Nodes, n => n.IsRoot);
+    }
+
+    [Fact]
+    public async Task DisclosuresAreLiftedOutOfTheGraph_AndReportedSeparately()
+    {
+        // They arrive as ordinary facts because that is how the extractor records them, but a
+        // "discloses" arrow to a node called "packages-not-restored" is noise on a canvas.
+        var queries = new StubQueries();
+        queries.Matches.Add(new FindMatch("scope:csharp:A:net10.0", "source", "scope", AuthorshipOrigin.RepositoryArtifact));
+        queries.Describe = new DescribeResult(
+            new NodeView("scope:csharp:A:net10.0", "source", "scope"),
+            [
+                Edge("scope:csharp:A:net10.0", "discloses", "packages-not-restored"),
+                Edge("scope:csharp:A:net10.0", "discloses", "generated-code-not-analysed"),
+            ],
+            StubQueries.Bounds(0), "rev-1");
+
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+
+        Assert.Empty(graph.Edges);
+        Assert.Equal(["generated-code-not-analysed", "packages-not-restored"], graph.Disclosures);
+        Assert.DoesNotContain(graph.Nodes, n => n.Id == "packages-not-restored");
+    }
+
+    [Fact]
+    public async Task ATruncatedResultCarriesItsOmittedCount()
+    {
+        var queries = new StubQueries();
+        queries.Matches.Add(new FindMatch("Shop.Order", "source", "Order", AuthorshipOrigin.RepositoryArtifact));
+        queries.Describe = new DescribeResult(
+            new NodeView("Shop.Order", "source", "Order"),
+            [Edge("Shop.Order", "depends_on", "Shop.Customer")],
+            StubQueries.Bounds(omittedEdges: 37), "rev-1");
+
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+
+        // Without this a bounded graph is indistinguishable from a small one.
+        Assert.Equal(37, graph.Omitted);
+    }
+
+    [Fact]
+    public async Task ANodeWithNoRelationshipsSaysThat_RatherThanRenderingBlank()
+    {
+        var queries = new StubQueries();
+        queries.Matches.Add(new FindMatch("Shop.Loner", "source", "Loner", AuthorshipOrigin.RepositoryArtifact));
+
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+
+        Assert.Single(graph.Nodes);
+        Assert.Contains("no recorded relationships", graph.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task AFailingWorkspaceReportsTheFailure_AndDoesNotThrowIntoTheShell()
+    {
+        // The canvas is one pane; a workspace that cannot answer must not take the shell down, and
+        // an empty graph would read as "there is nothing here".
+        var queries = new StubQueries { Throw = new InvalidOperationException("pipe closed") };
+
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+
+        Assert.Empty(graph.Nodes);
+        Assert.Contains("could not be loaded", graph.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("pipe closed", graph.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AnExplicitRootIsUsedWithoutSearching()
+    {
+        var queries = new StubQueries();
+        queries.Matches.Add(new FindMatch("Shop.NotThisOne", "source", "x", AuthorshipOrigin.RepositoryArtifact));
+
+        await new CanvasGraphViewModel(queries).LoadAsync("Shop.Chosen");
+
+        Assert.Equal("Shop.Chosen", queries.LastDescribedNode);
+    }
+}
