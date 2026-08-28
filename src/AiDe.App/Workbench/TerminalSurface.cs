@@ -78,6 +78,34 @@ public sealed class TerminalSurface : ContentControl, IDisposable
     /// </remarks>
     public static string? WorkingDirectory { get; set; }
 
+    /// <summary>
+    /// Watches for an agent's prompt marker, when this session runs one.
+    /// </summary>
+    /// <remarks>
+    /// Null for a shell: a shell reports readiness through OSC 133 signed with the session nonce,
+    /// which is stronger evidence and needs no pattern. This exists only so an agent CLI can be
+    /// something other than permanently refused.
+    /// </remarks>
+    public AgentReadinessWatcher? AgentReadiness { get; private set; }
+
+    /// <summary>
+    /// What this pane runs. PowerShell unless a caller asks for something else.
+    /// </summary>
+    /// <remarks>
+    /// An agent CLI named here gets a readiness watcher and can therefore be dispatched to; a shell
+    /// gets OSC 133 integration instead, which is stronger.
+    /// </remarks>
+    public static string CommandLine { get; set; } = "powershell.exe";
+
+    /// <summary>How this session's readiness is established, for the dispatch policy to consult.</summary>
+    public ReadinessEvidence ReadinessEvidence =>
+        _session is { } session && session.GetType() == typeof(ConPtyTerminalSession)
+        && ((ConPtyTerminalSession)session).HasReadinessEvidence
+            ? ReadinessEvidence.ShellIntegrationNonce
+            : AgentReadiness is not null
+                ? ReadinessEvidence.ObservedPattern
+                : ReadinessEvidence.None;
+
     private FrameworkElement BuildView()
     {
         var view = new TerminalView(_screen);
@@ -91,11 +119,18 @@ public sealed class TerminalSurface : ContentControl, IDisposable
     {
         try
         {
+            // An agent CLI gets a readiness watcher; a shell does not need one.
+            var executable = System.IO.Path.GetFileNameWithoutExtension(CommandLine);
+            if (AgentReadinessWatcher.KnownAgents.TryGetValue(executable, out var pattern))
+            {
+                AgentReadiness = new AgentReadinessWatcher(pattern);
+            }
+
             _session = await ConPtyTerminalSession.StartAsync(
                 new TerminalSessionRequest(
                     SessionId: sessionId,
                     Generation: 1,
-                    CommandLine: "powershell.exe",
+                    CommandLine: CommandLine,
                     // The WORKSPACE, not wherever the shell happened to be launched from. A
                     // terminal in a developer tool that opens somewhere unrelated to the repository
                     // on screen makes the user's first command a cd.
@@ -106,7 +141,9 @@ public sealed class TerminalSurface : ContentControl, IDisposable
 
                     // The reason the nonce exists. Without this the session reports Ready/Busy from
                     // the coarse "bytes arrived" heuristic and the OSC control never runs.
-                    Integration: ShellIntegrationMode.PowerShell),
+                    Integration: AgentReadiness is null
+                        ? ShellIntegrationMode.PowerShell
+                        : ShellIntegrationMode.None),
                 _shutdown.Token);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
@@ -135,6 +172,12 @@ public sealed class TerminalSurface : ContentControl, IDisposable
                 while (session.Output.TryRead(out var chunk))
                 {
                     _parser.Consume(chunk.Bytes.Span);
+
+                    // Fed from the SAME chunk the screen gets, so readiness cannot disagree with
+                    // what the user is looking at. Only for an agent session — a shell's OSC 133 is
+                    // stronger evidence and needs no pattern.
+                    AgentReadiness?.Observe(
+                        System.Text.Encoding.UTF8.GetString(chunk.Bytes.Span));
                 }
             }
         }

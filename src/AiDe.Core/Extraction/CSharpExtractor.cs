@@ -145,6 +145,14 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                     request, subject, "declares_table", declaredTable, VerificationStatus.Verified, provenance));
             }
 
+            foreach (var (entity, table) in FluentTableMappings(type))
+            {
+                // A Fluent `builder.Entity<Order>().ToTable("orders")` is as much a declaration as
+                // the attribute, and it is the MORE common style — without it the commonest way of
+                // stating the mapping fell back to a name-matching guess.
+                assertions.Add(Assertion(request, entity, "declares_table", table, VerificationStatus.Verified, provenance));
+            }
+
             foreach (var target in DependsOn(type).Distinct(SymbolEqualityComparer.Default).OfType<ITypeSymbol>())
             {
                 assertions.Add(Assertion(
@@ -288,6 +296,50 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         type.TypeKind == TypeKind.Dynamic ||
         type is INamedTypeSymbol { IsTupleType: true } ||
         string.IsNullOrEmpty(type.Name);
+
+    /// <summary>
+    /// Entity-to-table mappings stated with the Fluent API inside this type.
+    /// </summary>
+    /// <remarks>
+    /// <para>Matches <c>Entity&lt;T&gt;()...ToTable("name")</c> anywhere in the type's own source —
+    /// a <c>DbContext.OnModelCreating</c> or an <c>IEntityTypeConfiguration&lt;T&gt;</c>. The entity
+    /// comes from the generic argument and the table from a string literal, so both sides are
+    /// declared and the join they produce is <see cref="VerificationStatus.Verified"/>.</para>
+    ///
+    /// <para><b>Only literal names.</b> A table name built from a variable or a constant is not
+    /// resolved — the same rule the Bicep reader follows, and for the same reason: a guessed name
+    /// produces a confident wrong join between a class and a table.</para>
+    /// </remarks>
+    private static IEnumerable<(string Entity, string Table)> FluentTableMappings(INamedTypeSymbol type)
+    {
+        foreach (var reference in type.DeclaringSyntaxReferences)
+        {
+            var root = reference.GetSyntax();
+
+            foreach (var call in root.DescendantNodes()
+                .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax>())
+            {
+                if (call.Expression is not Microsoft.CodeAnalysis.CSharp.Syntax.MemberAccessExpressionSyntax member) continue;
+                if (member.Name.Identifier.ValueText != "ToTable") continue;
+
+                var table = call.ArgumentList.Arguments
+                    .Select(a => a.Expression)
+                    .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.LiteralExpressionSyntax>()
+                    .FirstOrDefault(l => l.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.StringLiteralExpression))
+                    ?.Token.ValueText;
+
+                if (string.IsNullOrEmpty(table)) continue;
+
+                // Walk back down the fluent chain for the Entity<T>() that owns this ToTable.
+                var entity = member.Expression.DescendantNodesAndSelf()
+                    .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.GenericNameSyntax>()
+                    .FirstOrDefault(g => g.Identifier.ValueText == "Entity")
+                    ?.TypeArgumentList.Arguments.FirstOrDefault()?.ToString();
+
+                if (!string.IsNullOrEmpty(entity)) yield return (entity, table);
+            }
+        }
+    }
 
     private static void Walk(INamespaceSymbol ns, List<INamedTypeSymbol> into)
     {

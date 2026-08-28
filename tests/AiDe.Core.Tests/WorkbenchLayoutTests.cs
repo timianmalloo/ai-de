@@ -132,7 +132,17 @@ public sealed class WorkbenchLayoutTests
         var service = new LayoutService();
         var before = service.Current.Walk().OfType<StackNode>().Count();
 
-        var result = service.Apply(new LayoutOperation.CloseSurface("provenance"));
+        // EVERY surface in the stack, derived rather than assumed. The property under test is "the
+        // LAST surface destroys the stack", and naming one surface made that depend on the stack
+        // happening to hold exactly one — which stopped being true the moment a surface was added
+        // beside it, failing a test that has nothing to do with the change.
+        var stack = service.Current.FindStackOf("provenance")!;
+        LayoutResult result = default!;
+
+        foreach (var surfaceId in stack.Surfaces.Select(s => s.SurfaceId).ToList())
+        {
+            result = service.Apply(new LayoutOperation.CloseSurface(surfaceId));
+        }
 
         Assert.True(result.Applied);
         Assert.Equal(before - 1, service.Current.Walk().OfType<StackNode>().Count());

@@ -141,8 +141,13 @@ public sealed record Layout(
             ]);
         var terminal = new StackNode("stack-terminal",
             [new Surface("terminal-1", "terminal", "Terminal — pwsh")]);
+        // Contexts sit BESIDE provenance rather than in the primary stack: both answer "what am I
+        // looking at", and the graph is what they are answering it about.
         var inspector = new StackNode("stack-inspector",
-            [new Surface("provenance", "inspector", "Provenance")]);
+            [
+                new Surface("provenance", "inspector", "Provenance"),
+                new Surface("contexts", "contexts", "Contexts"),
+            ]);
 
         var left = new SplitNode("split-left", Orientation.Vertical,
             [primary, terminal], [0.72, 0.28]);

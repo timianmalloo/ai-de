@@ -14,8 +14,13 @@ public sealed class WorkbenchStoreTests : IDisposable
 
     private string Path_ => Path.Combine(_dir, "layout.json");
 
+    // DERIVED from the default layout, not typed. This list is "the surfaces this release ships",
+    // which changes whenever one is added — and a hardcoded copy turns adding a surface into three
+    // unrelated test failures that say nothing about persistence. It has already done so twice.
     private static readonly HashSet<string> AllSurfaces =
-        ["explore", "domain", "graph", "terminal-1", "provenance"];
+        [.. AiDe.Core.Workbench.Layout.Default().AllStacks()
+            .SelectMany(stack => stack.Surfaces).Select(surface => surface.SurfaceId)];
+
 
     [Fact]
     public void Envelope_RoundTripsTheLayoutExactly()

@@ -15,8 +15,11 @@ public sealed class LayoutPersistenceTests : IDisposable
 
     private string File_ => Path.Combine(_dir, "layout.json");
 
+    // DERIVED from the default layout: see the note in WorkbenchStoreTests.
     private static readonly HashSet<string> Surfaces =
-        ["explore", "domain", "graph", "terminal-1", "provenance"];
+        [.. AiDe.Core.Workbench.Layout.Default().AllStacks()
+            .SelectMany(stack => stack.Surfaces).Select(surface => surface.SurfaceId)];
+
 
     private LayoutPersistence Open(ILayoutService service, Func<StackNode, bool>? display = null) =>
         new(service, File_, Surfaces, display, debounceMilliseconds: 20);

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T22:31:22Z",
+  "generated": "2026-08-28T22:43:41Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1162,6 +1162,21 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0057",
+      "shortname": "context-pane-agent-readiness-fluent-menu",
+      "datetime": "2026-08-28T22:43:41Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "prompt": "do all of these 5 steps then summarize what i can manually test in the client",
+      "summary": "Context map pane with crossing counts; readiness watcher wired into terminals so an agent can be dispatched to; Fluent ToTable read as a declaration; TheTerrace map committed on a review branch; Edit/Window menus and recent workspaces. Layout surface fixtures now DERIVE from Layout.Default so adding a surface stops breaking unrelated tests. 593 tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -2208,6 +2223,31 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "4bbda153310879b4501b4125ca8062cef1600eae",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0043",
+      "datetime": "2026-08-28T22:43:41Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "The context map is drawn; agents can be dispatched to; Fluent ToTable is a declaration",
+      "prompt": null,
+      "summary": "ContextMapSurface renders contexts as boxes with symbol, internal-edge and crossing counts, colour-matched to the canvas, and refuses to draw an invalid map. TerminalSurface feeds AgentReadinessWatcher from the same chunks the screen gets. Fluent Entity<T>().ToTable(\"name\") is read as a declaration. Menu gains Edit/Window and recent workspaces.",
+      "rationale": "The crossing count is what a context map exists to show - a context with none is isolated and one with hundreds is not bounded, and neither is visible from a list of names. An invalid map renders its problems rather than a partial diagram, because a diagram drawn from a file that failed validation is wrong in a way nobody can see. Readiness is fed from the same chunk the screen receives so it cannot disagree with what the user is looking at. Only literal table names are read, the same rule the Bicep reader follows. A new coverage test caught workbench.reorderSurface having no menu entry - a command in the catalog and no menu is reachable only by a chord again, which is the defect the menu exists to fix.",
+      "artifacts": [
+        "src/AiDe.App/Workbench/ContextMapSurface.cs"
+      ],
+      "tags": [
+        "phase-3",
+        "ui"
+      ],
+      "git": {
+        "before": null,
+        "after": "e1941d81ade0d23d75aed97a7995cd79c9180674",
         "branch": "main",
         "pushed": true,
         "commits": []

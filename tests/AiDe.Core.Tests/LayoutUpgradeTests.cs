@@ -19,7 +19,7 @@ public sealed class LayoutUpgradeTests : IDisposable
 
     /// <summary>The surface set a LATER release ships, after renaming the terminal surface.</summary>
     private static readonly HashSet<string> V2Surfaces =
-        ["explore", "domain", "graph", "provenance", "terminal.session.1"];
+        ["explore", "domain", "graph", "contexts", "provenance", "terminal.session.1"];
 
     private void WriteV1Layout()
     {
@@ -68,7 +68,7 @@ public sealed class LayoutUpgradeTests : IDisposable
         store.Save(Layout.Default());
         var before = File.GetLastWriteTimeUtc(Path_);
 
-        var result = store.Load(new HashSet<string> { "explore", "domain", "graph", "provenance", "terminal-1" });
+        var result = store.Load(new HashSet<string> { "explore", "domain", "graph", "contexts", "provenance", "terminal-1" });
 
         Assert.False(result.WasDefaulted);
         Assert.Null(result.ErrorCode);
@@ -103,7 +103,7 @@ public sealed class LayoutUpgradeTests : IDisposable
 
         WriteV1Layout();
         var store = new LayoutStore(Path_, appVersion: "0.5.0", migrations: migrations);
-        store.Load(new HashSet<string> { "explore", "domain", "graph", "provenance", "terminal-1" }, assumedCurrentVersion: 3);
+        store.Load(new HashSet<string> { "explore", "domain", "graph", "contexts", "provenance", "terminal-1" }, assumedCurrentVersion: 3);
 
         Assert.Equal([1, 2], applied);
     }

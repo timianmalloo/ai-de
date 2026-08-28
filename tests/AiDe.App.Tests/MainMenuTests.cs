@@ -89,6 +89,68 @@ public sealed class MainMenuTests
     });
 
     [Fact]
+    public void TheMenuCoversEveryCatalogCommand() => OnSta(() =>
+    {
+        // The control for a fuller menu: a command added to the catalog and not to any menu is
+        // reachable only by a chord again, which is the defect this whole surface exists to fix.
+        var (menu, _) = Build();
+        var offered = Items(menu).Select(i => i.Header?.ToString()).ToHashSet(StringComparer.Ordinal);
+
+        var missing = WorkbenchCommandCatalog.All
+            .Where(c => !offered.Contains(c.Title))
+            .Select(c => c.Id)
+            .ToList();
+
+        Assert.True(missing.Count == 0, "catalog commands with no menu entry: " + string.Join(", ", missing));
+    });
+
+    [Fact]
+    public void RecentWorkspacesArePersistedNewestFirst_AndDeduplicated()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "aide-recent-" + Guid.NewGuid().ToString("N"));
+        var a = Path.Combine(dir, "alpha");
+        var b = Path.Combine(dir, "beta");
+        Directory.CreateDirectory(a);
+        Directory.CreateDirectory(b);
+
+        try
+        {
+            MainMenuBuilder.RememberWorkspace(dir, a);
+            MainMenuBuilder.RememberWorkspace(dir, b);
+            MainMenuBuilder.RememberWorkspace(dir, a);
+
+            var recent = MainMenuBuilder.RecentWorkspaces(dir);
+
+            Assert.Equal([a, b], recent);
+        }
+        finally
+        {
+            try { Directory.Delete(dir, recursive: true); } catch (IOException) { }
+        }
+    }
+
+    [Fact]
+    public void ARecentWorkspaceThatNoLongerExistsIsDropped()
+    {
+        // A menu offering something that cannot work teaches the user to distrust the menu.
+        var dir = Path.Combine(Path.GetTempPath(), "aide-recent-" + Guid.NewGuid().ToString("N"));
+        var gone = Path.Combine(dir, "deleted");
+        Directory.CreateDirectory(gone);
+
+        try
+        {
+            MainMenuBuilder.RememberWorkspace(dir, gone);
+            Directory.Delete(gone);
+
+            Assert.Empty(MainMenuBuilder.RecentWorkspaces(dir));
+        }
+        finally
+        {
+            try { Directory.Delete(dir, recursive: true); } catch (IOException) { }
+        }
+    }
+
+    [Fact]
     public void TheFileMenuOffersAnExit_WhenTheHostSuppliesOne() => OnSta(() =>
     {
         var announcer = new RecordingAnnouncer();

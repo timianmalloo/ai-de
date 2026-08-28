@@ -273,8 +273,17 @@ public sealed class WorkbenchShell : IDisposable
                 // Readiness decides whether this is attempted at all. A session that cannot report
                 // when it is waiting for input may be showing a sign-in or a confirmation, and a
                 // prompt sent into one of those is consumed by it.
-                var readiness = SessionReadinessPolicy.Evaluate(
-                    session, (surface.Session as ConPtyTerminalSession)?.HasReadinessEvidence ?? false);
+                // The surface knows how ITS session reports readiness — OSC 133 for a shell, an
+                // observed prompt marker for an agent, nothing otherwise — and an agent that has
+                // not yet reached its prompt is refused rather than written into.
+                var evidence = surface.ReadinessEvidence;
+                var ready = evidence == ReadinessEvidence.ObservedPattern
+                    ? surface.AgentReadiness?.IsReady == true
+                    : session.Activity == SessionActivity.Ready;
+
+                var readiness = evidence == ReadinessEvidence.None
+                    ? SessionReadiness.Unknown
+                    : ready ? SessionReadiness.Ready : SessionReadiness.NotReady;
 
                 return await BoundaryDispatcher.BeginAndWriteAsync(
                     command, session, dispatch.DispatchBeginAsync, dispatch.DispatchFinalizeAsync,
@@ -316,6 +325,7 @@ public sealed class WorkbenchShell : IDisposable
 
         Adapter.Render();
         BindCanvas();
+        BindContexts();
     }
 
     /// <summary>
@@ -325,6 +335,45 @@ public sealed class WorkbenchShell : IDisposable
     /// Called after every render rather than once: a canvas pane can be closed and reopened, and a
     /// router still holding the old surface would focus a control that is no longer in the tree.
     /// </remarks>
+    /// <summary>Connects the context pane to the workspace's declared map, if there is one.</summary>
+    internal void BindContexts()
+    {
+        var pane = Service.Current.AllStacks()
+            .SelectMany(stack => stack.Surfaces)
+            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .OfType<ContextMapSurface>()
+            .FirstOrDefault();
+
+        if (pane is null || string.IsNullOrEmpty(_workspaceRoot) || _queries is null) return;
+
+        pane.Source = () =>
+        {
+            // Validated against the symbols actually extracted, every refresh. A map validated once
+            // at startup would keep drawing after the code it names had been renamed.
+            var path = Path.Combine(_workspaceRoot, BoundedContextReader.DefaultRelativePath);
+            var found = _queries.FindAsync(string.Empty, 20_000, CancellationToken.None)
+                .GetAwaiter().GetResult();
+
+            var symbols = found.Matches.Select(m => m.NodeId).ToList();
+            var map = BoundedContextReader.Load(path, symbols);
+
+            var assertions = new List<AiDe.Core.Facts.EvidenceAssertion>();
+            foreach (var match in found.Matches.Take(4000))
+            {
+                var describe = _queries.DescribeAsync(match.NodeId, 60, CancellationToken.None)
+                    .GetAwaiter().GetResult();
+
+                assertions.AddRange(describe.Neighbors.Select(e => new AiDe.Core.Facts.EvidenceAssertion(
+                    "view", e.ArtifactRevision, e.Subject, e.Predicate, e.Object,
+                    e.Origin, e.Status, e.Provenance)));
+            }
+
+            return new ContextProjection(map, assertions).Compute();
+        };
+
+        pane.Refresh();
+    }
+
     internal void BindCanvas()
     {
         var canvas = Service.Current.AllStacks()

@@ -40,7 +40,7 @@ public partial class MainWindow : Window
 
         // Built from the command catalog, so the menu cannot offer something the product no longer
         // does — and every item shows its chord, which is how the chord becomes discoverable.
-        MainMenuBuilder.Build(MainMenu, Shell.Controller, Close);
+        RebuildMenu();
     }
 
     /// <summary>Reaches the workspace's daemon and points the window at it.</summary>
@@ -63,6 +63,27 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>Where this installation keeps state that is not any one workspace's.</summary>
+    private static string ShellStateDirectory => System.IO.Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AiDe");
+
+    /// <summary>
+    /// Rebuilds the menu, including the recent list.
+    /// </summary>
+    /// <remarks>
+    /// Rebuilt after every open rather than once at startup: the recent list changes when a
+    /// workspace is opened, and a menu built once would show a list that is always one behind.
+    /// </remarks>
+    private void RebuildMenu() => MainMenuBuilder.Build(
+        MainMenu,
+        Shell.Controller,
+        Close,
+        MainMenuBuilder.RecentWorkspaces(ShellStateDirectory),
+        path => _ = OpenAndAnnounceAsync(path));
+
+    private async Task OpenAndAnnounceAsync(string path) =>
+        Shell.Announcer.Announce(await OpenWorkspaceAtAsync(path));
+
     /// <summary>Shows a folder picker and opens the chosen repository as a workspace.</summary>
     /// <remarks>
     /// Returns the sentence to announce rather than announcing itself, so every outcome — chosen,
@@ -81,7 +102,13 @@ public partial class MainWindow : Window
             return "No workspace was opened.";
         }
 
-        var viewModel = await MainWindowViewModel.OpenAsync(dialog.FolderName);
+        return await OpenWorkspaceAtAsync(dialog.FolderName);
+    }
+
+    /// <summary>Opens a specific folder as a workspace and reports the outcome.</summary>
+    private async Task<string> OpenWorkspaceAtAsync(string folder)
+    {
+        var viewModel = await MainWindowViewModel.OpenAsync(folder);
         DataContext = viewModel;
 
         if (viewModel.Queries is null)
@@ -95,8 +122,14 @@ public partial class MainWindow : Window
 
         Shell.Adapter.Render();
         Shell.BindCanvas();
+        Shell.BindContexts();
 
-        return $"Workspace open: {System.IO.Path.GetFileName(dialog.FolderName.TrimEnd((char)92))}. " +
+        // Remembered only on SUCCESS. A folder that could not be opened does not belong in a list
+        // whose whole promise is that clicking an entry works.
+        MainMenuBuilder.RememberWorkspace(ShellStateDirectory, folder);
+        RebuildMenu();
+
+        return $"Workspace open: {System.IO.Path.GetFileName(folder.TrimEnd((char)92))}. " +
                "Press Ctrl+K, I to index its C# projects.";
     }
 

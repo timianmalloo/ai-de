@@ -204,6 +204,70 @@ public sealed class Phase3ProjectionTests : IDisposable
         Assert.Equal(0, join.InferredCount);
     }
 
+    [Fact]
+    public async Task AFluentToTableCallIsReadAsADeclaration()
+    {
+        // The MORE common style than the attribute. Without it, the commonest way of stating the
+        // mapping fell back to a name-matching guess.
+        var project = Write("Fluent/Fluent.csproj", """
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+            </Project>
+            """);
+
+        Write("Fluent/Context.cs", """
+            namespace Shop;
+
+            public class Order { }
+
+            public class AppContext
+            {
+                public void OnModelCreating(dynamic modelBuilder)
+                {
+                    modelBuilder.Entity<Order>().ToTable("orders");
+                }
+            }
+            """);
+
+        var result = await new CSharpExtractor().ExtractAsync(
+            new ExtractionRequest("csharp:Fluent:net10.0", project, "rev-1", 1), CancellationToken.None);
+
+        Assert.Contains(
+            result.Assertions,
+            a => a.Predicate == "declares_table" && a.Object == "orders");
+    }
+
+    [Fact]
+    public async Task ATableNameThatIsNotALiteralIsNotRead()
+    {
+        // Same rule the Bicep reader follows: a guessed name produces a confident wrong join.
+        var project = Write("Var/Var.csproj", """
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+            </Project>
+            """);
+
+        Write("Var/Context.cs", """
+            namespace Shop;
+
+            public class Order { }
+
+            public class AppContext
+            {
+                private const string Name = "orders";
+                public void OnModelCreating(dynamic modelBuilder)
+                {
+                    modelBuilder.Entity<Order>().ToTable(Name);
+                }
+            }
+            """);
+
+        var result = await new CSharpExtractor().ExtractAsync(
+            new ExtractionRequest("csharp:Var:net10.0", project, "rev-1", 1), CancellationToken.None);
+
+        Assert.DoesNotContain(result.Assertions, a => a.Predicate == "declares_table");
+    }
+
     // ---- Bicep modules ------------------------------------------------------
 
     [Fact]
