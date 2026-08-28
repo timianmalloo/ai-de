@@ -50,12 +50,26 @@ emit a unique marker which must come back **out** of the terminal before the tes
 alone could not distinguish "delivered" from "written into a void" — the marker can. Run out of
 process because ConPTY needs a real console (DC-014).
 
-**Residual, stated rather than closed:** the live session is a shell, not an agent CLI. What is
-proven is the *receipt protocol* against a real long-running interactive process. What is not proven
-is agent-specific behaviour — an agent that buffers input, that takes minutes to respond, or that
-expects a different submit convention. Those belong to the session *adapter* (ADR-0007), not to this
-receipt, which is why they do not hold this ADR open. **If dispatching to a real agent CLI later
-shows the receipt itself needs to change, this decision is the one to revisit.**
+**The residual was then measured, and it is not in this receipt.**
+[`spikes/agent-dispatch`](../../spikes/agent-dispatch/RESULT.md) dispatched into a real `claude` CLI:
+the receipt recorded `PtyWriteAccepted` and the agent never answered, because Claude Code opens on a
+modal **trust gate** and the prompt was consumed by that dialog — where the same `
+` that submits
+a prompt also confirms the highlighted option, *"No, exit"*.
+
+**The protocol behaved exactly as designed.** A write *was* accepted; bytes reached the pty. The
+receipt did not claim delivery to an agent because it never claims that, and the independent marker
+check caught the difference. A protocol that reported success there would have been wrong. This is
+the case ADR-0010 exists for, demonstrated.
+
+**What the gap actually is:** an agent CLI has no readiness signal. A shell has OSC 133 and the
+integration nonce; an agent showing a trust gate, authenticating, or mid-response looks identical
+from outside to one that is ready, and a prompt dispatched into any of those is silently consumed.
+That is **ADR-0007's** contract to grow — with a **refusal** when readiness cannot be established,
+rather than an attempt reported as accepted. It does not reopen this decision.
+
+**Not done, deliberately:** the trust dialog was not auto-confirmed to make the spike pass. That
+would be the tool answering a safety question on the user's behalf.
 
 ## Decision
 

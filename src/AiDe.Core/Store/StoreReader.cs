@@ -154,6 +154,9 @@ public sealed class StoreReader : IDisposable
                 SELECT a.object AS id FROM evidence_assertion_fact a
                 JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
                 WHERE a.object LIKE $pattern
+                  -- An attribute's object is a VALUE. Without this, api_version puts dates in the
+                  -- graph and resource_name_expression puts unevaluated strings there.
+                  AND a.predicate NOT IN ({AiDe.Core.Facts.EvidencePredicates.SqlList})
             )
             ORDER BY id;
             """, ("$pattern", $"%{term}%"));

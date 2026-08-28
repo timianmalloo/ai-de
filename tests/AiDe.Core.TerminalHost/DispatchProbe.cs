@@ -36,7 +36,29 @@ internal static class DispatchProbe
     internal const int WrittenButNotActedOn = 6;
     internal const int Threw = 7;
 
-    internal static async Task<int> RunAsync(StringBuilder log)
+    /// <summary>
+    /// Runs the probe against <paramref name="commandLine"/>.
+    /// </summary>
+    /// <param name="commandLine">
+    /// The process to dispatch into. PowerShell is the portable case the suite runs; an agent CLI is
+    /// the case that closes ADR-0010's stated residual, and it lives in a spike because a CI box has
+    /// no agent installed and a test that skipped would report green while proving nothing.
+    /// </param>
+    /// <param name="prompt">
+    /// What to send. It must produce the marker in the session's OUTPUT — a receipt alone cannot
+    /// tell a delivered prompt from one written into a void.
+    /// </param>
+    /// <param name="settleSeconds">
+    /// How long to let the process reach its input state. A shell needs a moment; an agent CLI needs
+    /// considerably longer, and a prompt sent before it is listening is simply dropped.
+    /// </param>
+    internal static async Task<int> RunAsync(
+        StringBuilder log,
+        string commandLine = "powershell.exe",
+        string? prompt = null,
+        int settleSeconds = 8,
+        int expectedOccurrences = 2,
+        string? workingDirectory = null)
     {
         var marker = "AIDEDISPATCH" + Guid.NewGuid().ToString("N")[..12].ToUpperInvariant();
         var dataDirectory = Path.Combine(
@@ -66,12 +88,14 @@ internal static class DispatchProbe
                     new TerminalSessionRequest(
                         SessionId: "dispatch-probe",
                         Generation: 1,
-                        CommandLine: "powershell.exe",
-                        WorkingDirectory: Path.GetTempPath(),
+                        CommandLine: commandLine,
+                        WorkingDirectory: workingDirectory ?? Path.GetTempPath(),
                         Columns: 120,
                         Rows: 30,
                         ProcessingClass: SessionProcessingClass.LocalOnly,
-                        Integration: ShellIntegrationMode.PowerShell),
+                        Integration: commandLine.Contains("powershell", StringComparison.OrdinalIgnoreCase)
+                            ? ShellIntegrationMode.PowerShell
+                            : ShellIntegrationMode.None),
                     CancellationToken.None);
             }
             catch (Exception ex)
@@ -85,9 +109,10 @@ internal static class DispatchProbe
                 var seen = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
                 using var draining = new CancellationTokenSource(TimeSpan.FromSeconds(120));
 
+                var captured = new StringBuilder();
                 var drain = Task.Run(async () =>
                 {
-                    var buffer = new StringBuilder();
+                    var buffer = captured;
                     try
                     {
                         while (await session.Output.WaitToReadAsync(draining.Token))
@@ -95,7 +120,7 @@ internal static class DispatchProbe
                             while (session.Output.TryRead(out var chunk))
                             {
                                 buffer.Append(Encoding.UTF8.GetString(chunk.Bytes.Span));
-                                if (Occurrences(buffer.ToString(), marker) >= 2)
+                                if (Occurrences(buffer.ToString(), marker) >= expectedOccurrences)
                                 {
                                     seen.TrySetResult(true);
                                 }
@@ -109,7 +134,7 @@ internal static class DispatchProbe
 
                 // Let the shell reach its first prompt before writing to it. A prompt delivered into
                 // a shell that is still starting is dropped, and would look like a protocol failure.
-                await Task.Delay(TimeSpan.FromSeconds(8));
+                await Task.Delay(TimeSpan.FromSeconds(settleSeconds));
 
                 await using var client = await WorkspaceClient.ConnectAsync(
                     pipeName, TimeSpan.FromSeconds(30), CancellationToken.None);
@@ -153,6 +178,15 @@ internal static class DispatchProbe
                 {
                     log.AppendLine("the receipt says the write was accepted, but the session never produced");
                     log.AppendLine("the marker — the prompt was written and NOT acted on.");
+
+                    // The tail of what the session DID say. Without it this failure is
+                    // indistinguishable between "the process never started", "it was not ready" and
+                    // "it needs a different submit convention" — three different fixes.
+                    var tail = captured.ToString();
+                    tail = tail.Length > 1600 ? tail[^1600..] : tail;
+                    log.AppendLine("---- last 1600 bytes of session output ----");
+                    log.AppendLine(tail);
+                    log.AppendLine("---- end ----");
                     return WrittenButNotActedOn;
                 }
 

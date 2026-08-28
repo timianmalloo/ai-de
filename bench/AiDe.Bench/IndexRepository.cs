@@ -30,7 +30,7 @@ internal static class IndexRepository
         Console.WriteLine($"Indexing {root}");
         Console.WriteLine(new string('=', 100));
 
-        var scopes = CSharpScopeDiscovery.Discover(root);
+        var scopes = CSharpScopeDiscovery.DiscoverAll(root);
         Console.WriteLine($"discovered {scopes.Count} scope(s):");
         foreach (var scope in scopes) Console.WriteLine($"  {scope.ScopeId}");
         Console.WriteLine();

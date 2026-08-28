@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T20:39:23Z",
+  "generated": "2026-08-28T21:16:30Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1117,6 +1117,21 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0054",
+      "shortname": "phase-3-components-and-agent-dispatch",
+      "datetime": "2026-08-28T21:16:30Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "prompt": "do all of these 5 steps then summarize what i can manually test in the client",
+      "summary": "Accepted ADR-0016; built the Bicep and EF schema extractors and the join projection; TheTerrace indexes 7 scopes / 12,034 assertions with five disclosures; measured agent dispatch and found the receipt correct while agents lack a readiness signal. 559 tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -1990,6 +2005,80 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "e8f521d185d7c66ecf1916a89535a698ece80764",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0036",
+      "datetime": "2026-08-28T21:16:30Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "architecture",
+      "skill": null,
+      "title": "ADR-0016 accepted: bounded contexts declared in one validated file",
+      "prompt": null,
+      "summary": "Promoted from proposed to accepted on the product owner's confirmation. A committed docs/bounded-contexts.yaml validated against extracted symbols; unknown namespaces fail, coverage is reported, overlap is an error.",
+      "rationale": "Raised as proposed because it is the one Phase-3 input evidence cannot decide, and recorded as a judgement made once rather than a finding so a later reader is not misled about its basis.",
+      "artifacts": [
+        "docs/adr/0016-bounded-context-declaration.md"
+      ],
+      "tags": [
+        "phase-3",
+        "ddd"
+      ],
+      "git": {
+        "before": null,
+        "after": "46598e7812ea9bfe854ead3abeaf8e53fe7c8450",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0037",
+      "datetime": "2026-08-28T21:16:30Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Phase-3 components 1 and 2 built; joins computed with confidence as the deliverable",
+      "prompt": null,
+      "summary": "BicepExtractor and EfSchemaExtractor ship, wired into discovery and the composite router. JoinProjection computes code-to-schema, schema-to-infrastructure and code-to-infrastructure edges, each carrying how it was established. TheTerrace now indexes 7 scopes and 12,034 assertions with five disclosures.",
+      "rationale": "Joins are computed rather than stored: writing a derived claim back as a fact would put two definitions of one quantity in the store and they would drift the first time an extractor changed. A convention-derived join is Inferred however obvious it looks, and no join is made on an unresolved Bicep name at all - the gap is disclosed instead. Indexing TheTerrace exposed a defect the fidelity work could not: api_version put dates in the graph and resource_name_expression put unevaluated strings there, because every assertion object was being upserted as a node. The predicate rule now lives in one place used by both ingest and search - the first fix touched only ingest and search kept returning the junk, which is two places deciding the same thing with one of them wrong.",
+      "artifacts": [
+        "src/AiDe.Core/Projections/JoinProjection.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "46598e7812ea9bfe854ead3abeaf8e53fe7c8450",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0038",
+      "datetime": "2026-08-28T21:16:30Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Agent dispatch measured: the receipt is right and agents have no readiness signal",
+      "prompt": null,
+      "summary": "Dispatch into a real claude CLI records PtyWriteAccepted and the agent never answers, because Claude Code opens on a modal trust gate that consumes the prompt. Reproduced in two working directories. ADR-0010's residual is re-characterised rather than closed.",
+      "rationale": "The protocol behaved exactly as designed: a write WAS accepted, bytes reached the pty, and the receipt never claimed delivery to an agent because it never claims that - the independent marker check caught the difference. The gap is that an agent CLI has no equivalent of OSC 133: showing a trust gate, authenticating, mid-response and ready all look identical from outside, and a prompt dispatched into any of the first three is silently consumed. That is ADR-0007's contract to grow, with a refusal when readiness cannot be established. The trust dialog was deliberately NOT auto-confirmed - that would be the tool answering a safety question on the user's behalf, and a green result bought that way is worse than a red one.",
+      "artifacts": [
+        "spikes/agent-dispatch/RESULT.md"
+      ],
+      "tags": [
+        "phase-2",
+        "dispatch"
+      ],
+      "git": {
+        "before": null,
+        "after": "46598e7812ea9bfe854ead3abeaf8e53fe7c8450",
         "branch": "main",
         "pushed": true,
         "commits": []

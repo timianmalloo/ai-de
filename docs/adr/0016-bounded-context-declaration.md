@@ -2,7 +2,7 @@
 id: adr-0016-bounded-context-declaration
 title: "ADR-0016 — Bounded contexts are declared in one reviewable file, never inferred"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "3"
 tags: [architecture, ddd, bounded-context, phase-3, curation]
@@ -20,8 +20,9 @@ summary: >-
 
 # ADR-0016: Bounded contexts are declared, never inferred
 
-- **Status:** Proposed — **this one needs the product owner's confirmation.** Every other Phase-3
-  input has evidence behind it; this one is the decision that evidence cannot make.
+- **Status:** Accepted 2026-08-28. Raised as `proposed` because this is the one Phase-3 input
+  evidence cannot decide; the product owner confirmed the recommendation rather than amending it.
+  Recorded that way so a later reader knows it was a judgement made once, not a finding.
 - **Phase:** 3
 
 ## Context

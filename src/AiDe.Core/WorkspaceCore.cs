@@ -124,9 +124,17 @@ public sealed class WorkspaceCore : IDisposable
         {
             writer.CommitSnapshot(scopeId, generation, artifactRevision, result.Assertions, complete: true);
 
-            foreach (var nodeId in result.Assertions
-                .SelectMany(a => new[] { a.Subject, a.Object })
-                .Distinct(StringComparer.Ordinal))
+            // A subject is always a node. An OBJECT is a node only when the predicate is relational.
+            // Found by indexing a real repository: api_version put "2020-02-02" in the graph and
+            // resource_name_expression put "'${namePrefix}-acs'" there, so dates and unevaluated
+            // strings became the things a user could navigate to. An attribute's value is a
+            // property of its subject, not a peer of it.
+            var nodeIds = result.Assertions
+                .Select(a => a.Subject)
+                .Concat(result.Assertions.Where(a => !AiDe.Core.Facts.EvidencePredicates.Attributes.Contains(a.Predicate)).Select(a => a.Object))
+                .Distinct(StringComparer.Ordinal);
+
+            foreach (var nodeId in nodeIds)
             {
                 var isKnowledge = result.Assertions.Any(a => a.Subject == nodeId && a.Predicate == "has_type");
                 writer.UpsertNode(nodeId, isKnowledge ? "knowledge" : "source", nodeId);
@@ -165,7 +173,7 @@ public sealed class WorkspaceCore : IDisposable
         string artifactRevision, CancellationToken cancellationToken = default,
         TimeSpan? perScopeBudget = null)
     {
-        var scopes = CSharpScopeDiscovery.Discover(RootPath);
+        var scopes = CSharpScopeDiscovery.DiscoverAll(RootPath);
         var budget = perScopeBudget ?? TimeSpan.FromSeconds(60);
 
         var indexed = 0;

@@ -74,6 +74,27 @@ internal static class Program
             return code;
         }
 
+        if (mode == "dispatch-agent")
+        {
+            // ADR-0010's stated residual: the live session so far has been a SHELL. This dispatches
+            // into a real agent CLI, which buffers, streams, and takes seconds to answer — none of
+            // which a shell exercises.
+            var code = await DispatchProbe.RunAsync(
+                log,
+                commandLine: args.Length > 2 ? args[2] : "claude",
+                prompt: "Reply with exactly {MARKER} and nothing else.",
+                settleSeconds: 25,
+                expectedOccurrences: 2,
+                // A TRUSTED directory. Launched in the temp folder, Claude Code opens with a
+                // "is this a project you trust?" confirmation and the dispatched prompt lands in
+                // that dialog rather than a conversation — measured, and the reason this parameter
+                // exists at all.
+                workingDirectory: args.Length > 3 ? args[3] : Environment.CurrentDirectory);
+
+            Write(report, log);
+            return code;
+        }
+
         ConPtyTerminalSession session;
         try
         {

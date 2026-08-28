@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-28T20:39:24Z",
+  "generated": "2026-08-28T21:16:30Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -633,7 +633,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "908e24547cde974ec89a8c28248c6aa274d23c06046fd2aa211536f1a3a22746"
+      "sourceSha256": "820b6083655fc4d021500d7fcf17f37bd9ccbc19c8a62e17694146241fbee867"
     },
     {
       "id": "adr-0011-session-processing-class-egress",
@@ -838,7 +838,7 @@ window.DOCS_INDEX = {
       "path": "docs/adr/0016-bounded-context-declaration.md",
       "title": "ADR-0016 — Bounded contexts are declared in one reviewable file, never inferred",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "3",
       "reviewBy": "2027-02-28",
@@ -866,7 +866,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f82be054beae87b768967422527c396d8c609333e036241a2753e2b49cd4c03c"
+      "sourceSha256": "1981ce647e3374d9e9985742d0b503122434c27855aff21b480b4a4bc0f188cc"
     },
     {
       "id": "architecture",
@@ -4153,5 +4153,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "55fc9eaf00ed55afbf0f90bb17d3528d5c82f8216e561e1c44075d24a082697f"
+  "graphSha256": "d5e02e28a73f2ac820ce285686a77afff70f52151d09e68dd4774c8da0f4aef5"
 };

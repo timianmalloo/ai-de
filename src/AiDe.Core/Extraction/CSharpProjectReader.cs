@@ -34,6 +34,29 @@ public static class ExtractionDisclosures
     /// compiles, so it is stated rather than assumed away.
     /// </remarks>
     public const string BuildConditionsNotEvaluated = "build-conditions-not-evaluated";
+
+    /// <summary>A Bicep resource name is an expression only the compiler could resolve.</summary>
+    public const string BicepExpressionsNotEvaluated = "bicep-expressions-not-evaluated";
+
+    /// <summary>
+    /// The schema is what the migrations INTEND, not what a server holds.
+    /// </summary>
+    /// <remarks>
+    /// They diverge — a hand-applied change, a failed deployment, a database restored from an older
+    /// backup — and a join that pretended otherwise would be exactly the inferred-edge failure this
+    /// phase is most exposed to.
+    /// </remarks>
+    public const string SchemaFromMigrationsNotDatabase = "schema-from-migrations-not-database";
+
+    /// <summary>
+    /// A migration changed the schema through raw <c>Sql()</c>, which is not legible as syntax.
+    /// </summary>
+    /// <remarks>
+    /// Owed by the spike rather than invented here: the corpus repository has four such statements,
+    /// and they create indexes and move data. A fold that stayed silent about them would report a
+    /// schema that looks complete.
+    /// </remarks>
+    public const string SchemaChangedByRawSqlNotRead = "schema-changed-by-raw-sql-not-read";
 }
 
 /// <summary>One project, compiled for one target framework, plus what could not be seen.</summary>

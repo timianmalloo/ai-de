@@ -64,6 +64,96 @@ public static class CSharpScopeDiscovery
         return scopes;
     }
 
+    /// <summary>
+    /// Every Phase-3 scope: C# projects, Bicep templates, and EF migration directories.
+    /// </summary>
+    /// <remarks>
+    /// One list rather than three call sites, because a repository is indexed as a whole and a
+    /// caller that had to remember to ask for infrastructure separately would eventually forget.
+    /// </remarks>
+    public static IReadOnlyList<ScopeDescriptor> DiscoverAll(string rootPath, CSharpProjectReader? reader = null)
+    {
+        var scopes = new List<ScopeDescriptor>(Discover(rootPath, reader));
+
+        if (!Directory.Exists(rootPath)) return scopes;
+
+        foreach (var template in Walk(rootPath, "*.bicep").OrderBy(p => p, StringComparer.OrdinalIgnoreCase))
+        {
+            var name = Path.GetFileNameWithoutExtension(template);
+            scopes.Add(new ScopeDescriptor($"bicep:{name}", template, "bicep"));
+        }
+
+        // One scope per Migrations DIRECTORY, not per migration: the schema is the fold over all of
+        // them, so a scope per file would be a scope per increment of an answer nobody wants
+        // incrementally.
+        foreach (var directory in MigrationDirectories(rootPath).OrderBy(p => p, StringComparer.OrdinalIgnoreCase))
+        {
+            var owner = Path.GetFileName(Path.GetDirectoryName(directory.TrimEnd(Path.DirectorySeparatorChar))!);
+            scopes.Add(new ScopeDescriptor($"schema:{owner}", directory, "schema"));
+        }
+
+        return scopes;
+    }
+
+    private static IEnumerable<string> MigrationDirectories(string root)
+    {
+        var pending = new Stack<string>();
+        pending.Push(root);
+
+        while (pending.Count > 0)
+        {
+            var directory = pending.Pop();
+
+            IEnumerable<string> children;
+            try { children = Directory.EnumerateDirectories(directory); }
+            catch (UnauthorizedAccessException) { continue; }
+            catch (IOException) { continue; }
+
+            foreach (var child in children)
+            {
+                var name = Path.GetFileName(child);
+                if (Skip.Contains(name, StringComparer.OrdinalIgnoreCase)) continue;
+
+                if (string.Equals(name, "Migrations", StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return child;
+                    continue;
+                }
+
+                pending.Push(child);
+            }
+        }
+    }
+
+    private static IEnumerable<string> Walk(string root, string pattern)
+    {
+        var pending = new Stack<string>();
+        pending.Push(root);
+
+        while (pending.Count > 0)
+        {
+            var directory = pending.Pop();
+
+            string[] files;
+            try { files = Directory.GetFiles(directory, pattern); }
+            catch (UnauthorizedAccessException) { continue; }
+            catch (IOException) { continue; }
+
+            foreach (var file in files) yield return file;
+
+            IEnumerable<string> children;
+            try { children = Directory.EnumerateDirectories(directory); }
+            catch (UnauthorizedAccessException) { continue; }
+            catch (IOException) { continue; }
+
+            foreach (var child in children)
+            {
+                if (Skip.Contains(Path.GetFileName(child), StringComparer.OrdinalIgnoreCase)) continue;
+                pending.Push(child);
+            }
+        }
+    }
+
     private static IEnumerable<string> Projects(string root)
     {
         var pending = new Stack<string>();
@@ -103,12 +193,32 @@ public static class CSharpScopeDiscovery
 /// already the scope's identity — a separate mapping is a second thing that can disagree with the
 /// ids actually in the store.
 /// </remarks>
-public sealed class CompositeExtractor(IExtractor csharp, IExtractor fallback) : IExtractor
+public sealed class CompositeExtractor(
+    IExtractor csharp,
+    IExtractor fallback,
+    IExtractor? bicep = null,
+    IExtractor? schema = null) : IExtractor
 {
     public string ScopeKind => "composite";
 
-    public Task<ExtractionResult> ExtractAsync(ExtractionRequest request, CancellationToken cancellationToken) =>
-        request.ScopeId.StartsWith("csharp:", StringComparison.Ordinal)
-            ? csharp.ExtractAsync(request, cancellationToken)
-            : fallback.ExtractAsync(request, cancellationToken);
+    /// <summary>Extractors by scope-id prefix. Added ones need no change here.</summary>
+    private readonly Dictionary<string, IExtractor> _routes = new(StringComparer.Ordinal)
+    {
+        ["csharp:"] = csharp,
+        ["bicep:"] = bicep ?? new BicepExtractor(),
+        ["schema:"] = schema ?? new EfSchemaExtractor(),
+    };
+
+    public Task<ExtractionResult> ExtractAsync(ExtractionRequest request, CancellationToken cancellationToken)
+    {
+        foreach (var (prefix, extractor) in _routes)
+        {
+            if (request.ScopeId.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                return extractor.ExtractAsync(request, cancellationToken);
+            }
+        }
+
+        return fallback.ExtractAsync(request, cancellationToken);
+    }
 }
