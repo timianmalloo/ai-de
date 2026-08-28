@@ -1037,24 +1037,31 @@ Two properties fall out of this, and are stated because they are easy to lose la
 | `P2-FOCUS-03` | Tabbing off either end of the canvas returns focus to WPF in the correct direction. **This is the keyboard-trap test**, and the one that must never be allowed to rot. |
 | `P2-FOCUS-04` | With the snapshot swap active, `workbench.focusCanvas` is refused **and announced**, never silently ignored. |
 
-**BUILT 2026-08-28 — the host half.** `CanvasFocusRouter` (Core, no WPF) holds the policy:
-obscured-before-ready ordering, the pre-entry focus record, restore-with-forward-fallback when the
-pre-entry element is gone, and an announced refusal on every path. `workbench.focusCanvas`
-(`Ctrl+K, G`) is in the catalog and routed through `WorkbenchController`. **12 tests cover
-`P2-FOCUS-01`, `-02` and `-04`.**
+**BUILT 2026-08-28 — complete, including the keyboard-trap test.** `CanvasFocusRouter` (Core, no
+WPF) holds the policy; `CanvasFocusTarget` implements the Win32 half over the `HwndHost`;
+`CanvasSurface` is the windowed WebView2 pane with the page's boundary handlers inlined so they
+cannot be separated from the control that depends on them. `workbench.focusCanvas` (`Ctrl+K, G`)
+routes through `WorkbenchController`.
 
-**The canvas surface itself does not exist yet** — there is no WebView2 reference in `AiDe.App` and
-no canvas surface kind. That is a working state rather than a gap: with no canvas attached the
-command still appears, is still keyboard-reachable, and refuses with *"The graph canvas is not
-ready."* Hiding it would make "the graph cannot be focused" indistinguishable from "the graph does
-not exist", and the chord would produce silence (**DC-011**).
+| Test | State |
+|---|---|
+| `P2-FOCUS-01` | ✅ In-process seam tests **and** a real WebView2: focus lands, verified by reading `GetFocus` back |
+| `P2-FOCUS-02` | ✅ Pre-entry focus recorded; `Esc` restores it; falls forward when that element is gone |
+| `P2-FOCUS-03` | ✅ **Out of process** (`tests/AiDe.App.CanvasProbe`) — a real window, a real WebView2, real keys |
+| `P2-FOCUS-04` | ✅ Refused **and announced** while the snapshot swap is showing |
 
-**`P2-FOCUS-03` is OWED and is not approximated.** The keyboard-trap test needs a real window, a real
-WebView2 runtime and the canvas page's own boundary handlers, so it belongs with the existing
-WPF-hosted tests under `DisableTestParallelization` (**DC-008**), and its absence must fail the run
-rather than be skipped (**DC-012**). It is deliberately **not** written against the test fake:
-a keyboard-trap test that cannot fail for the reason it exists is worse than none (**DC-016**), because
-it would report the trap as tested. It lands with the canvas surface.
+**`P2-FOCUS-03` took three routes to get honest, and the first two failed silently-looking.** A
+posted `WM_KEYDOWN` never reaches Chromium's key handling. `SendInput` delivers to the **foreground**
+window, which neither a `dotnet test` host nor a shell-launched probe can hold. Both produced the
+same symptom — *"the page never posted `focus.leave`"* — which reads exactly like a keyboard trap.
+The difference was measured, not guessed: the page reported `activeElement="first"`, so focus **had**
+landed, while `window.__tabsSeen` was **0**. A trap test that fails because the keys never arrived is
+**DC-016** wearing the right label, and it would have been "fixed" by weakening the assertion. Keys
+now enter through the browser's own input layer, and the probe reports 3 Tab keydowns seen before
+`focus.leave` arrives.
+
+**What that still does not cover:** the OS→browser hop. Injecting at the renderer's input layer
+cannot catch a regression where the host swallows the key before the browser sees it.
 
 > **Scope note.** Under [ADR-0014](../adr/0014-accessibility-posture.md) none of this is accessibility
 > work and none of it carries an accessibility veto. It is here because AI-DE is a keyboard-first

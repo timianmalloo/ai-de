@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T17:43:08Z",
+  "generated": "2026-08-28T18:26:37Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1057,6 +1057,21 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0050",
+      "shortname": "extractor-canvas-dispatch-ui-perf",
+      "datetime": "2026-08-28T18:26:37Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "prompt": "do all of these 5 steps then summarize what i can manually test in the client and show the standard status and next steps",
+      "summary": "Completed all five: CSharpExtractor with disclosure facts; the WebView2 canvas with P2-FOCUS-03 running out of process after two measured dead ends; prompt dispatch wired into the shell UI; DC-020's control widened to every operation; P2-PERF-01 measured at 723ms p95 against a 10s budget. 526 tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -1682,6 +1697,81 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0026",
+      "datetime": "2026-08-28T18:26:17Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "P2-FOCUS complete: the canvas ships and the keyboard-trap test runs out of process",
+      "prompt": null,
+      "summary": "CanvasSurface (windowed WebView2, ADR-0015) with inlined boundary handlers, CanvasFocusTarget over the HwndHost, and the canvas surface kind wired into the shell. P2-FOCUS-01..04 all pass; -03 runs out of process via tests/AiDe.App.CanvasProbe.",
+      "rationale": "Two input routes failed before the third worked, and both failed with the SAME symptom as a genuine keyboard trap: a posted WM_KEYDOWN never reaches Chromium's key handling, and SendInput goes to the foreground window which no test host can hold. Diagnosed rather than guessed - the page reported activeElement=first while window.__tabsSeen was 0, proving focus had landed and the keys had not arrived. A trap test that fails because input never arrived is DC-016 wearing the right label and would have been 'fixed' by weakening the assertion. Residual: injecting at the renderer's input layer does not cover the OS-to-browser hop.",
+      "artifacts": [
+        "src/AiDe.App/Workbench/CanvasSurface.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "focus"
+      ],
+      "git": {
+        "before": null,
+        "after": "78777c88f521256134172e627dc46a78ebd6feff",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0027",
+      "datetime": "2026-08-28T18:26:37Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "architecture",
+      "skill": null,
+      "title": "CSharpExtractor ships: real C# symbols with no MSBuild, disclosures as facts",
+      "prompt": null,
+      "summary": "CSharpProjectReader reads the project file as data and produces a Roslyn compilation; CSharpExtractor emits has_type, declared_in, inherits, implements and depends_on assertions plus disclosure facts on the scope node. 11 tests. P2-PERF-01 measured: AiDe.Core settles in 723ms p95 against a 10s budget, 1,281 assertions.",
+      "rationale": "Disclosures are emitted as ordinary facts on a scope node rather than a new table, keeping the Phase-2 decision that no new fact table is added - and making them queryable by every existing projection for free. An edge that did not resolve is NOT emitted: labelling it Inferred would be worse than silence because the name is whatever the source typed and the edge would point at a node that may not exist. Complete stays true when extraction succeeds, because the disclosures are IN the snapshot rather than missing from it; marking it incomplete would quarantine every unrestored project, which is most of them on a fresh clone.",
+      "artifacts": [
+        "src/AiDe.Core/Extraction/CSharpExtractor.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "extraction"
+      ],
+      "git": {
+        "before": null,
+        "after": "78777c88f521256134172e627dc46a78ebd6feff",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0028",
+      "datetime": "2026-08-28T18:26:37Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Prompt dispatch reaches the UI; DC-020's control widened to every operation",
+      "prompt": null,
+      "summary": "PromptBar stages a prompt for the focused terminal and reports the receipt, with a distinct sentence per DispatchState and DeliveryUnknown never shown as success. workbench.dispatchPrompt (Ctrl+K, P). Every registered IPC operation now goes through Refusable, not just dispatch.",
+      "rationale": "The receipt is what the UI exists to surface: a prompt delivered to an agent session cannot be undone, so DeliveryUnknown must read as unknown and warn about resending rather than rounding to sent. A dispatch that threw is not a dispatch that did not happen - the write-ahead attempt may already be durable - so the UI says 'did not complete, check the receipt' rather than 'failed'. DC-020's control was widened past the operations that needed it: no read projection throws a domain refusal today, and nothing would have failed if one were added.",
+      "artifacts": [
+        "src/AiDe.App/Workbench/PromptBar.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "dispatch"
+      ],
+      "git": {
+        "before": null,
+        "after": "78777c88f521256134172e627dc46a78ebd6feff",
         "branch": "main",
         "pushed": true,
         "commits": []

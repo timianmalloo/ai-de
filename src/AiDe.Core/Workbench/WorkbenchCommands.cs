@@ -69,6 +69,12 @@ public static class WorkbenchCommandCatalog
         // that every DRAGGABLE operation has a keyboard path, and focusing the canvas is not one.
         // It is here because WPF traversal cannot reach the canvas at all (spike S4), so without an
         // explicit command the graph is unreachable from the keyboard entirely.
+        // Also not a layout operation. The receipt, not the send, is what this command exists to
+        // surface — a prompt reaching an agent session cannot be taken back.
+        new("workbench.dispatchPrompt", "Dispatch prompt to terminal…", "Ctrl+K, P",
+            string.Empty,
+            "Type a prompt and press Enter. The recorded delivery receipt is announced, including when delivery is unknown."),
+
         new("workbench.focusCanvas", "Focus graph canvas", "Ctrl+K, G",
             string.Empty,
             "Moves focus into the graph. Tab off either end or press Escape to come back."),

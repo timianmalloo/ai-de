@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    A GUI-SUBSYSTEM host that owns the foreground, which is the entire point of this project.
+
+    P2-FOCUS-03 drives a REAL Tab through SendInput, and SendInput goes to the FOREGROUND window.
+    A `dotnet test` host cannot take the foreground, so the synthesized key never reached the
+    browser: measured directly — the page reported activeElement="first" (so focus HAD landed) with
+    zero Tab keydowns seen. That is defect class DC-014 exactly: a capability that cannot be tested
+    because the test host lacks something the product has.
+
+    Same control the ConPTY case took: run it out of process, in the configuration under test, and
+    report by exit code.
+  -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>AiDe.App.CanvasProbe</AssemblyName>
+
+    <!-- A HELPER, not a test project: no framework, no .trx. See the TerminalProbe note. -->
+    <IsTestProject>false</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AiDe.App\AiDe.App.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -130,10 +130,13 @@ internal static class P2Perf
 
         var throughputOk = TerminalThroughput.Run();
 
+        var repoRoot = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+        var settlementOk = ScopeSettlement.Run(repoRoot);
+
         Console.WriteLine(new string('=', 110));
-        var ok = failures.Count == 0 && throughputOk;
+        var ok = failures.Count == 0 && throughputOk && settlementOk;
         Console.WriteLine(ok
-            ? "P2-PERF: PASS — boundary and terminal throughput both inside budget."
+            ? "P2-PERF: PASS — boundary, terminal throughput and scope settlement all inside budget."
             : "P2-PERF: FAIL — see the cases marked **FAIL** above.");
         return ok ? 0 : 1;
 

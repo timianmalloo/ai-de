@@ -61,6 +61,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workbench.focusCanvas":
                 return FocusCanvas();
 
+            case "workbench.dispatchPrompt":
+                return OpenPromptBar();
+
             case "workbench.toggleLock":
                 service.IsLocked = !service.IsLocked;
                 announcer.Announce(service.IsLocked
@@ -311,6 +314,23 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// failure to dispatch. Returning false would make the palette treat a legitimate "the canvas is
     /// mid-drag" refusal as an unknown command.
     /// </remarks>
+    /// <summary>
+    /// Opens the prompt bar. Set when the shell builds one; null in a headless controller.
+    /// </summary>
+    public Action? PromptBarOpen { get; set; }
+
+    private bool OpenPromptBar()
+    {
+        if (PromptBarOpen is null)
+        {
+            announcer.Announce("Prompt dispatch is not available in this build.");
+            return true;
+        }
+
+        PromptBarOpen();
+        return true;
+    }
+
     private bool FocusCanvas()
     {
         if (CanvasFocus is null)

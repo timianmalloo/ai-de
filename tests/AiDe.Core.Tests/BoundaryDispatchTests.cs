@@ -213,5 +213,46 @@ public sealed class BoundaryDispatchTests : IDisposable
         Assert.Null(new DispatchService(_workspace.Store).ReadReceipt(command.DispatchKey));
     }
 
+    // ---- DC-020: the control, widened past the operations that needed it ----
+
+    [Fact]
+    public async Task ADomainRefusalFromAnyOperation_IsRefused_AndTheDaemonSurvivesToAnswerTheNext()
+    {
+        // The generalisation, not the instance. A refusal that throws is correct while the caller
+        // shares its stack; behind a server it is a shared-fate event. Asserting that the NEXT
+        // request still answers is the half that proves the daemon lived.
+        var endpoint = new DaemonEndpoint(
+            _pipeName, new CapabilityRegistry(), _ => _workspace.Store.CoreEpoch);
+
+        DaemonOperations.Register(endpoint, () => _workspace.Store.CoreEpoch);
+        WorkspaceOperations.Register(endpoint, new ProjectionService(_workspace.Store));
+        WorkspaceOperations.RegisterDispatch(endpoint, new BoundaryDispatcher(_workspace.Store));
+
+        var server = new IpcServer(
+            _pipeName, endpoint, new IpcServerOptions(StartupGrace: TimeSpan.FromSeconds(45)));
+
+        using var life = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+        var running = server.RunAsync(life.Token);
+
+        try
+        {
+            await using var client = await WorkspaceClient.ConnectAsync(
+                _pipeName, TimeSpan.FromSeconds(20), CancellationToken.None);
+
+            var stale = Command() with { WorkspaceEpoch = _workspace.Store.CoreEpoch + 99 };
+            await Assert.ThrowsAnyAsync<Exception>(() => client.DispatchBeginAsync(stale, CancellationToken.None));
+
+            // The daemon must still be serving. Before the fix this hung or faulted, because the
+            // refusal had escaped the listen loop.
+            var epoch = await client.RefreshEpochAsync(CancellationToken.None);
+            Assert.Equal(_workspace.Store.CoreEpoch, epoch);
+        }
+        finally
+        {
+            await life.CancelAsync();
+            try { await running; } catch (OperationCanceledException) { }
+        }
+    }
+
     public void Dispose() => _workspace.Dispose();
 }

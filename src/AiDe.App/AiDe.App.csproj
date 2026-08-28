@@ -11,6 +11,12 @@
 
   <ItemGroup>
     <PackageReference Include="Dirkster.AvalonDock" Version="5.0.0" />
+    <!--
+      ADR-0015: the windowed WebView2 control, kept, with overlaps handled by a snapshot swap. The
+      composition control was measured killing the process with a native access violation when its
+      pane is floated (spike webview2-airspace).
+    -->
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3485.44" />
   </ItemGroup>
 
   <ItemGroup>

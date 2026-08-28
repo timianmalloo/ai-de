@@ -8,6 +8,8 @@ using AiDe.Core.Ipc;
 using AiDe.Core.Projections;
 using AiDe.Core.Workbench;
 using AvalonDock;
+using AiDe.Core.Dispatch;
+using AiDe.Core.Facts;
 
 namespace AiDe.App.Workbench;
 
@@ -48,6 +50,8 @@ public sealed class WorkbenchShell : IDisposable
         Controller = new WorkbenchController(Service, Announcer);
 
         Palette = new CommandPalette(Controller, Announcer);
+        Prompt = new PromptBar(Announcer);
+        Controller.PromptBarOpen = Prompt.Open;
 
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
         // open there is nothing to persist against, so first-run simply starts from the default.
@@ -94,6 +98,9 @@ public sealed class WorkbenchShell : IDisposable
     /// <summary>The keyboard route to every layout command (SC 2.5.7).</summary>
     public CommandPalette Palette { get; }
 
+    /// <summary>Stages a prompt for the focused terminal and reports the delivery receipt.</summary>
+    public PromptBar Prompt { get; }
+
     /// <summary>Saves and restores the arrangement across restarts. Null on first run.</summary>
     public LayoutPersistence? Persistence { get; private set; }
 
@@ -106,6 +113,14 @@ public sealed class WorkbenchShell : IDisposable
         // pane selection underneath it while the user is choosing a command.
         host.PreviewKeyDown += (_, e) =>
         {
+            // Before the palette: both are overlay surfaces, and a prompt containing the word the
+            // palette filters on must reach the prompt box rather than the command list.
+            if (Prompt.HandleKey(e.Key))
+            {
+                e.Handled = true;
+                return;
+            }
+
             if (Palette.HandleKey(e.Key))
             {
                 e.Handled = true;
@@ -218,6 +233,34 @@ public sealed class WorkbenchShell : IDisposable
             };
         }
 
+        // Prompt dispatch: the shell owns the terminal, the daemon owns the receipt (D1), so the
+        // choreography runs here with the two durable phases supplied by whoever holds the store.
+        if (commands is IWorkspaceDispatch dispatch)
+        {
+            Prompt.Dispatch = async body =>
+            {
+                var surface = FocusedTerminal()
+                    ?? throw new InvalidOperationException("focus a terminal pane before dispatching");
+
+                var session = surface.Session
+                    ?? throw new InvalidOperationException("the terminal has not started yet");
+
+                var command = new DispatchCommand(
+                    WorkspaceId: scopeId,
+                    WorkspaceEpoch: await dispatch.EpochAsync(CancellationToken.None),
+                    Caller: new CallerPrincipal(Environment.UserName, CallerKind.Shell),
+                    CommandId: Guid.NewGuid().ToString("N"),
+                    DraftId: $"draft-{session.SessionId}",
+                    RevisionNo: 1,
+                    Body: body,
+                    SessionId: session.SessionId,
+                    SessionGeneration: session.Generation);
+
+                return await BoundaryDispatcher.BeginAndWriteAsync(
+                    command, session, dispatch.DispatchBeginAsync, dispatch.DispatchFinalizeAsync);
+            };
+        }
+
         if (!string.IsNullOrEmpty(dataDirectory) && Persistence is null)
         {
             var surfaces = Service.Current.AllStacks()
@@ -235,6 +278,54 @@ public sealed class WorkbenchShell : IDisposable
         }
 
         Adapter.Render();
+        BindCanvas();
+    }
+
+    /// <summary>
+    /// Connects the focus router to a canvas pane once one is on screen.
+    /// </summary>
+    /// <remarks>
+    /// Called after every render rather than once: a canvas pane can be closed and reopened, and a
+    /// router still holding the old surface would focus a control that is no longer in the tree.
+    /// </remarks>
+    internal void BindCanvas()
+    {
+        var canvas = Service.Current.AllStacks()
+            .SelectMany(stack => stack.Surfaces)
+            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .OfType<CanvasSurface>()
+            .FirstOrDefault();
+
+        if (canvas is null)
+        {
+            Controller.CanvasFocus = null;
+            return;
+        }
+
+        var router = new CanvasFocusRouter(canvas.FocusTarget, new WpfHostFocusScope(Manager));
+        Controller.CanvasFocus = router;
+
+        canvas.FocusLeaveRequested += (_, direction) =>
+            Announcer.Announce(router.Leave(direction).Announcement);
+    }
+
+    /// <summary>The terminal pane the user is working in, or null when none is focused.</summary>
+    /// <remarks>
+    /// Derived from the controller's focused surface rather than from a remembered handle: dispatch
+    /// must go to the pane the user is looking at, and a cached reference goes stale the moment a
+    /// pane is closed.
+    /// </remarks>
+    internal TerminalSurface? FocusedTerminal()
+    {
+        var focused = Controller.FocusedSurfaceId;
+        if (focused is null) return null;
+
+        return Manager.GetType() is not null
+            ? FindTerminal(Adapter, focused)
+            : null;
+
+        static TerminalSurface? FindTerminal(WorkbenchAdapter adapter, string surfaceId) =>
+            adapter.ContentFor(surfaceId) as TerminalSurface;
     }
 
     public void Dispose() => Persistence?.Dispose();

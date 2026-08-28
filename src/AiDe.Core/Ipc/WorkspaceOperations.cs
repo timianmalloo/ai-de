@@ -105,18 +105,22 @@ public static class WorkspaceOperations
         ArgumentNullException.ThrowIfNull(endpoint);
         ArgumentNullException.ThrowIfNull(projections);
 
+        // Every operation goes through Refusable, including the reads. None of the projections
+        // throws a domain refusal TODAY — the point is that if one is added that does, it is
+        // refused rather than taking the daemon down for every attached shell (DC-020). A control
+        // that covers only the operations that happened to need it is not a control for the shape.
         endpoint.Register(Describe, (request, _) =>
-            Handle<DescribeRequest>(request, body => projections.Describe(body.NodeId, body.MaxNeighbors)));
+            Refusable(() => Handle<DescribeRequest>(request, body => projections.Describe(body.NodeId, body.MaxNeighbors))));
 
         endpoint.Register(Impact, (request, _) =>
-            Handle<ImpactRequest>(request, body => projections.Impact(body.NodeId, body.MaxNodes, body.MaxEdges)));
+            Refusable(() => Handle<ImpactRequest>(request, body => projections.Impact(body.NodeId, body.MaxNodes, body.MaxEdges))));
 
         endpoint.Register(Find, (request, _) =>
-            Handle<FindRequest>(request, body => projections.Find(body.Term, body.MaxResults)));
+            Refusable(() => Handle<FindRequest>(request, body => projections.Find(body.Term, body.MaxResults))));
 
         endpoint.Register(Knowledge, (request, _) =>
-            Handle<KnowledgeRequest>(request, body =>
-                projections.Knowledge(new KnowledgeQuery(body.Term, body.Type, body.MaxResults))));
+            Refusable(() => Handle<KnowledgeRequest>(request, body =>
+                projections.Knowledge(new KnowledgeQuery(body.Term, body.Type, body.MaxResults)))));
     }
 
     /// <summary>

@@ -157,6 +157,19 @@ public sealed class WorkbenchAdapter
         return single;
     }
 
+    /// <summary>
+    /// The content element currently hosting <paramref name="surfaceId"/>, or null.
+    /// </summary>
+    /// <remarks>
+    /// Read from AvalonDock's own tree by <c>ContentId</c> rather than from a parallel dictionary:
+    /// a second map of surface-to-content is a second thing to keep in step with a layout the user
+    /// rearranges, and it would go stale exactly when a pane is moved or closed.
+    /// </remarks>
+    public FrameworkElement? ContentFor(string surfaceId) =>
+        Manager.Layout?.Descendents().OfType<LayoutDocument>()
+            .FirstOrDefault(d => string.Equals(d.ContentId, surfaceId, StringComparison.Ordinal))
+            ?.Content as FrameworkElement;
+
     private LayoutDocumentPane BuildPane(StackNode stack)
     {
         var pane = new LayoutDocumentPane();

@@ -36,7 +36,7 @@ public sealed class IpcRequestException(string code, string reason)
 /// epoch would defeat it while appearing to work.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
-public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IAsyncDisposable
+public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWorkspaceDispatch, IAsyncDisposable
 {
     private readonly IpcClient _client;
     private readonly string _workspaceId;
@@ -151,6 +151,9 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IAs
     }
 
     /// <summary>Re-reads the daemon's epoch, for a caller recovering from a stale-epoch rejection.</summary>
+    /// <inheritdoc />
+    public Task<long> EpochAsync(CancellationToken cancellationToken) => RefreshEpochAsync(cancellationToken);
+
     public async Task<long> RefreshEpochAsync(CancellationToken cancellationToken)
     {
         var response = await _client

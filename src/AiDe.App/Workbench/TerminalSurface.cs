@@ -54,6 +54,18 @@ public sealed class TerminalSurface : ContentControl, IDisposable
     /// <summary>What the session is doing, as the runtime understands it.</summary>
     public SessionActivity Activity => _session?.Activity ?? SessionActivity.Starting;
 
+    /// <summary>
+    /// The live session, or null before it starts. Exposed so prompt dispatch can write to the
+    /// terminal this pane owns.
+    /// </summary>
+    /// <remarks>
+    /// The terminal lives HERE, in the shell, not in the daemon (D1) — so the shell is the only
+    /// process that can perform the side effect, while the daemon is the only one that can make the
+    /// attempt durable. That split is why <c>BoundaryDispatcher</c> takes its two phases as
+    /// delegates rather than owning them.
+    /// </remarks>
+    public ITerminalSession? Session => _session;
+
     private FrameworkElement BuildView()
     {
         var view = new TerminalView(_screen);
