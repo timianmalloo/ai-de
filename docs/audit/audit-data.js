@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T18:26:37Z",
+  "generated": "2026-08-28T18:33:35Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1772,6 +1772,31 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "78777c88f521256134172e627dc46a78ebd6feff",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0029",
+      "datetime": "2026-08-28T18:33:35Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "The graph canvas joins the default layout as a tab in the primary stack",
+      "prompt": null,
+      "summary": "Layout.Default gains a 'graph' canvas surface alongside Explore and Domain. Test fixtures enumerating the shipped surface set were updated, and WorkbenchAdapterTests now derives its expected count from the model instead of hardcoding it.",
+      "rationale": "Without this the canvas is unreachable: there is no command to open a surface, so a built-but-unlisted canvas would be dead code the user cannot see. A tab in the primary stack rather than a fourth pane, because it is an alternative reading of the same evidence Explore shows and a default layout that opens a WebView2 in its own pane pays for the browser on every start. The hardcoded count of 4 in WorkbenchAdapterTests was replaced by one derived from Layout.Default: the assertion is 'every surface is projected', and a typed count turns adding a surface into a failure that says nothing about projection.",
+      "artifacts": [
+        "src/AiDe.Core/Workbench/LayoutModel.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "ui"
+      ],
+      "git": {
+        "before": null,
+        "after": "34bcab91205a203402b00a487c3a7c49357b2234",
         "branch": "main",
         "pushed": true,
         "commits": []

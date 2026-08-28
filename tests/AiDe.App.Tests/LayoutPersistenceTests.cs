@@ -16,7 +16,7 @@ public sealed class LayoutPersistenceTests : IDisposable
     private string File_ => Path.Combine(_dir, "layout.json");
 
     private static readonly HashSet<string> Surfaces =
-        ["explore", "domain", "terminal-1", "provenance"];
+        ["explore", "domain", "graph", "terminal-1", "provenance"];
 
     private LayoutPersistence Open(ILayoutService service, Func<StackNode, bool>? display = null) =>
         new(service, File_, Surfaces, display, debounceMilliseconds: 20);

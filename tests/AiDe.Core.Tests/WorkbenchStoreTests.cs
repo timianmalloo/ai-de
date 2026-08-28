@@ -15,7 +15,7 @@ public sealed class WorkbenchStoreTests : IDisposable
     private string Path_ => Path.Combine(_dir, "layout.json");
 
     private static readonly HashSet<string> AllSurfaces =
-        ["explore", "domain", "terminal-1", "provenance"];
+        ["explore", "domain", "graph", "terminal-1", "provenance"];
 
     [Fact]
     public void Envelope_RoundTripsTheLayoutExactly()

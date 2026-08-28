@@ -129,8 +129,16 @@ public sealed record Layout(
 {
     public static Layout Default()
     {
+        // The graph canvas is a TAB in the primary stack rather than a fourth pane: it is an
+        // alternative way to read the same evidence Explore shows, not a second thing to watch at
+        // the same time — and a default layout that opens a WebView2 in its own pane pays for the
+        // browser on every start whether or not the user wants the graph.
         var primary = new StackNode("stack-primary",
-            [new Surface("explore", "view", "Explore"), new Surface("domain", "view", "Domain")]);
+            [
+                new Surface("explore", "view", "Explore"),
+                new Surface("domain", "view", "Domain"),
+                new Surface("graph", "canvas", "Graph"),
+            ]);
         var terminal = new StackNode("stack-terminal",
             [new Surface("terminal-1", "terminal", "Terminal — pwsh")]);
         var inspector = new StackNode("stack-inspector",

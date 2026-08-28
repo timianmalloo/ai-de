@@ -111,9 +111,16 @@ public sealed class WorkbenchAdapterTests
         var titles = WithRealizedWorkbench(a =>
             Documents(a.Manager.Layout).Select(d => d.Title).ToList());
 
-        Assert.Equal(4, titles.Count);
+        // Derived from the model rather than typed: the assertion is "every surface is projected",
+        // and a hardcoded count turns adding a surface into an unrelated test failure that says
+        // nothing about whether projection works.
+        var expected = AiDe.Core.Workbench.Layout.Default()
+            .AllStacks().SelectMany(stack => stack.Surfaces).Count();
+
+        Assert.Equal(expected, titles.Count);
         Assert.Contains("Explore", titles);
         Assert.Contains("Provenance", titles);
+        Assert.Contains("Graph", titles);
     }
 
     // ContentId is what reunites a restored layout with its content, so it must be the stable
