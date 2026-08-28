@@ -112,7 +112,7 @@ solution** — a natural unit that is independently completable, independently s
 for the existing budget. A ten-project solution is ten scopes that settle independently, which is
 also better behaviour: one unparseable project marks itself stale without blanking the other nine.
 
-`simplify: one scope per project; ceiling ~50k assertions per project; upgrade trigger = P2-PERF p95
+`simplify: one scope per (project, target framework); ceiling ~50k assertions per scope; upgrade trigger = P2-PERF p95
 scope settlement > 10 s on the approved corpus.`
 
 ---
@@ -168,33 +168,86 @@ serialization — **new wire format**) → `client type` (`ITerminalSession` pro
 > deliberate decision that must first close its **unmeasured network-egress gap**, not an automatic
 > fallback.
 >
-> **The contract below is therefore owed a rewrite** — it still names `MSBuildWorkspace` and a spike
-> that has since run. Recorded rather than silently edited, because a stale contract that contradicts
-> a decision is exactly the DC-019 shape this phase just paid for.
+> **The contract below was rewritten 2026-08-28** against a measured prototype
+> ([fidelity result](../../spikes/extraction-fidelity/RESULT.md)), not an inferred one.
 
 ### Contract
 
 ```csharp
-public sealed class RoslynExtractor(string extractorVersion) : IExtractor
+public sealed class CSharpExtractor(string extractorVersion) : IExtractor
 {
     public string ScopeKind => "csharp";
     public Task<ExtractionResult> ExtractAsync(ExtractionRequest request, CancellationToken ct);
 }
 ```
 
-Same `IExtractor` as Phase 1 — the substitution the design promised, with one scope per project.
+Same `IExtractor` as Phase 1 — the substitution the design promised. Named `CSharpExtractor` rather
+than `RoslynExtractor`: Roslyn is still the semantic engine, but the name previously implied the
+Roslyn *workspace* layer, which is exactly the part that is not used.
+
+**One scope per (project, target framework).** Not per project. `MultiTarget` in the fidelity spike
+declares `net10.0;netstandard2.0` and its `#if`-gated types differ between them; a single scope per
+project would have to pick one framework and be silently wrong about the others. `MSBuildWorkspace`
+loaded one framework and saw one of the two conditional types — the grain is the finding.
+
+### What it reads, and what it never does
+
+**The project file is data.** Nothing below evaluates MSBuild or runs a target, so there is no path
+by which a repository's build logic executes ([D3](../../spikes/msbuild-task-execution/RESULT.md)).
+
+| Input | Source | Why it is safe |
+|---|---|---|
+| Sources | SDK default glob, minus `bin/`+`obj/`, honouring `Compile Remove`/`Include` | Directory enumeration |
+| Target frameworks | `TargetFramework` / `TargetFrameworks` | XML attribute read |
+| Preprocessor symbols | Framework symbols synthesised per TFM (`NET10_0`, `*_OR_GREATER`, `NETSTANDARD2_0`, `WINDOWS`) + literal `DefineConstants` | Documented SDK behaviour |
+| Global usings | The documented `ImplicitUsings` set + explicit `<Using Include>` | **Reproduced, not read from `obj/`** |
+| Framework references | `Microsoft.NETCore.App.Ref` / `NETStandard.Library.Ref`, plus `Microsoft.WindowsDesktop.App.Ref` **first** when `UseWPF`/`UseWindowsForms` | Reference assemblies on disk |
+| Project references | `ProjectReference` resolved recursively and compiled from source, cycle-guarded, depth-capped | Same rules, one level down |
+| Package references | `obj/project.assets.json` **when present** | A JSON file; reading it executes nothing |
+
+`simplify: recursive ProjectReference compilation rather than a build-order graph; ceiling is a
+depth of 8; upgrade trigger = a real repository exceeds it or the repeated sub-compilation shows up
+in P2-PERF-01.`
+
+### The three disclosures this design owes the user
+
+Every one is an **omission state on the projection**, never a silent answer — the shape S1 set for
+absent generated symbols.
+
+| Disclosure | When | Why it cannot be fixed by trying harder |
+|---|---|---|
+| `packages-not-restored` | No `obj/project.assets.json` | Producing one requires `dotnet restore`, which **is** MSBuild evaluation — the thing this design refuses |
+| `xaml-generated-members-not-analysed` | `UseWPF`, and a `.xaml` with a code-behind partial | `InitializeComponent` and friends are generated into `obj/*.g.cs`. Measured: costs **0 types and 0 edges** on `AiDe.App`, because the generated half is UI wiring |
+| `generated-code-not-analysed` | Always, under the S2 control | Unchanged from the 2026-08-26 decision |
+
+### Measured fidelity (the basis for all of the above)
+
+Against `MSBuildWorkspace` on four project shapes — no-reference, `ProjectReference`+WPF,
+`ProjectReference`, and multi-targeted:
+
+| | Result |
+|---|---|
+| Dependency edges resolved | **100.0%** on all four (3138, 300, 11, 3 edges) |
+| Types lost | **0** on all four |
+| Speed | **46–74 ms** vs MSBuildWorkspace's **796–1963 ms** (~25×) |
+
+**Read the history with the number.** The spike's *first* run reported 82–89% edge resolution, and
+that was two defects in the harness — missing implicit usings, and a `WindowsBase` facade shadowing
+the real assembly — not a limit of the approach. Had it stopped there, the recorded conclusion would
+have been "Option B loses ~15% of edges" and the strategy would likely have been reversed.
 
 ### Patterns
 
 | Pattern | Why |
 |---|---|
-| **Adapter** (Roslyn `Workspace` → `EvidenceAssertion`) | The store's grain is already right; this only translates. |
+| **Adapter** (Roslyn `Compilation` → `EvidenceAssertion`) | The store's grain is already right; this only translates. Note the source is a `Compilation`, not a `Workspace`. |
 | **Snapshot Replacement** (unchanged) | Inherited from Phase 1; nothing about real symbols changes it. |
 | **Circuit Breaker per scope** (unchanged) | A project that fails to compile quarantines itself; the other projects keep their evidence. |
 
-Ladder: `Microsoft.CodeAnalysis.CSharp.Workspaces` is rung 5 (a dependency), justified because
-re-implementing C# semantic analysis is not a candidate. **`MSBuildWorkspace` specifically** is the
-part needing a spike — it shells out to MSBuild and its failure modes are environmental.
+Ladder: `Microsoft.CodeAnalysis.CSharp` is rung 5 (a dependency), justified because re-implementing
+C# semantic analysis is not a candidate. **`Microsoft.CodeAnalysis.Workspaces.MSBuild` is not taken**
+— the layer that would have supplied project loading is the layer that executes repository code, and
+replacing it costs ~250 lines of project-file reading measured at full fidelity.
 
 ### Confidence rules (spec US-1/US-2 are explicit here)
 
@@ -800,7 +853,7 @@ and a `simplify:` ceiling whose upgrade trigger points at an unspecified suite h
 |---|---|---|---|
 | `P2-PERF-01` | **Scope settlement** — one Roslyn scope (one project) from load to committed snapshot. The first and only test of the scope-per-project decision. | p95 **< 10 s** on the approved corpus (from the `simplify:` marker above) | **BLOCKED** — needs Component 1, which D3 blocks. |
 | `P2-PERF-02` | **The daemon boundary tax** — the same projection run in process and over a real pipe against **one** store, so the difference is serialisation plus transport and nothing else. | The Phase-1 user-facing budgets still hold end to end: `describe` p95 < 100 ms, `impact` p95 < 250 ms | ✅ **MEASURED 2026-08-28** |
-| `P2-PERF-03` | **Terminal throughput** — sustained output at the architecture's 1 MiB/s case, against the renderer's frame budget. | Draw p95 **< 16.67 ms** for a 200×50 redraw; VT scan sustains ≥ 1 MiB/s | Partially covered: S3 measured 6.64 ms and the shipped renderer 5.50 ms p95, and `AFullScreenRedraw_StaysInsideTheFrameBudget` guards it. **Not yet driven at a sustained 1 MiB/s.** |
+| `P2-PERF-03` | **Terminal throughput** — output *held* at the architecture's 1 MiB/s case, not burst through it. | Rate actually sustained; chunk parse p95 **< 16.67 ms**; per-chunk cost must not grow across the run | ✅ **MEASURED 2026-08-28** |
 
 **`P2-PERF-02`, measured** (`dotnet run --project bench/AiDe.Bench -c Release -- p2`, 50,000-edge
 corpus, 30 warm samples, Release):
@@ -822,6 +875,31 @@ handshake are a one-off, not a per-call cost.
 
 **What this does not cover:** one client, one connection, no contention, and a 50k-edge corpus. It
 says nothing about concurrent shells, a saturated control lane, or the write path.
+
+**`P2-PERF-03`, measured** (200×50 screen, 64 KiB chunks of plausible build output — text with SGR,
+cursor and erase traffic — held at 1 MiB/s for 10 s):
+
+| | Result |
+|---|---|
+| Sustained rate | **1.00 MiB/s over 10.0 s** (10.0 MiB, 160 chunks) |
+| Chunk parse | p50 **1.05 ms**, p95 **1.80 ms**, p99 1.96 ms |
+| Per-chunk drift | 0.897 ms (first quarter) → 1.191 ms (last quarter), **+0.293 ms** |
+| Unthrottled ceiling | **77 MiB/s** — 77× the budget |
+
+**The drift check is the reason to sustain rather than burst.** A burst measures the fast path; a
+parser that allocates per escape sequence looks fine for a moment and degrades as the heap fills.
+The observed +0.293 ms is well inside the doubling threshold that fails the gate, but it is *not*
+zero, and it is now a tracked number rather than an assumption.
+
+**A discrepancy worth recording rather than smoothing over.** S3 reported VT scanning at **2361×**
+the budget; this measures **77×**. They are not the same quantity — S3 scanned, this one *scans and
+applies to the screen model*, writing cells, moving the cursor and scrolling. Neither number is
+wrong; the S3 figure must simply never be quoted as end-to-end terminal throughput, because it
+excludes the work that dominates.
+
+**What this does not cover:** the **draw** half. It needs a dispatcher and a real visual tree, so it
+stays in `AFullScreenRedraw_StaysInsideTheFrameBudget` (5.50 ms p95, App tests). This number is a
+parse-and-model cost and must not be quoted as a frame time.
 
 ---
 
@@ -959,9 +1037,24 @@ Two properties fall out of this, and are stated because they are easy to lose la
 | `P2-FOCUS-03` | Tabbing off either end of the canvas returns focus to WPF in the correct direction. **This is the keyboard-trap test**, and the one that must never be allowed to rot. |
 | `P2-FOCUS-04` | With the snapshot swap active, `workbench.focusCanvas` is refused **and announced**, never silently ignored. |
 
-`P2-FOCUS-03` needs a real window and a real WebView2 runtime, so it belongs with the existing
+**BUILT 2026-08-28 — the host half.** `CanvasFocusRouter` (Core, no WPF) holds the policy:
+obscured-before-ready ordering, the pre-entry focus record, restore-with-forward-fallback when the
+pre-entry element is gone, and an announced refusal on every path. `workbench.focusCanvas`
+(`Ctrl+K, G`) is in the catalog and routed through `WorkbenchController`. **12 tests cover
+`P2-FOCUS-01`, `-02` and `-04`.**
+
+**The canvas surface itself does not exist yet** — there is no WebView2 reference in `AiDe.App` and
+no canvas surface kind. That is a working state rather than a gap: with no canvas attached the
+command still appears, is still keyboard-reachable, and refuses with *"The graph canvas is not
+ready."* Hiding it would make "the graph cannot be focused" indistinguishable from "the graph does
+not exist", and the chord would produce silence (**DC-011**).
+
+**`P2-FOCUS-03` is OWED and is not approximated.** The keyboard-trap test needs a real window, a real
+WebView2 runtime and the canvas page's own boundary handlers, so it belongs with the existing
 WPF-hosted tests under `DisableTestParallelization` (**DC-008**), and its absence must fail the run
-rather than be skipped (**DC-012**).
+rather than be skipped (**DC-012**). It is deliberately **not** written against the test fake:
+a keyboard-trap test that cannot fail for the reason it exists is worse than none (**DC-016**), because
+it would report the trap as tested. It lands with the canvas surface.
 
 > **Scope note.** Under [ADR-0014](../adr/0014-accessibility-posture.md) none of this is accessibility
 > work and none of it carries an accessibility veto. It is here because AI-DE is a keyboard-first

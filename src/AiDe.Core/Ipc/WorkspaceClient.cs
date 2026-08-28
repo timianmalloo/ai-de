@@ -1,6 +1,8 @@
 using System.Runtime.Versioning;
 using System.Text.Json;
 using AiDe.Core.Projections;
+using AiDe.Core.Dispatch;
+using AiDe.Core.Facts;
 
 namespace AiDe.Core.Ipc;
 
@@ -87,6 +89,19 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IAs
         string nodeId, int maxNodes, int maxEdges, CancellationToken cancellationToken) =>
         QueryAsync<ImpactResult>(
             WorkspaceOperations.Impact, new ImpactRequest(nodeId, maxNodes, maxEdges), cancellationToken);
+
+    /// <summary>Phase 1 of a dispatch, answered by the daemon that owns the store.</summary>
+    public Task<DispatchBeginResult> DispatchBeginAsync(
+        DispatchCommand command, CancellationToken cancellationToken) =>
+        QueryAsync<DispatchBeginResult>(
+            WorkspaceOperations.DispatchBegin, new DispatchBeginRequest(command), cancellationToken);
+
+    /// <summary>Phase 2 of a dispatch. Idempotent: a retried finalize returns the existing receipt.</summary>
+    public Task<DispatchReceipt> DispatchFinalizeAsync(
+        string dispatchKey, DispatchState state, string? errorCode, CancellationToken cancellationToken) =>
+        QueryAsync<DispatchReceipt>(
+            WorkspaceOperations.DispatchFinalize,
+            new DispatchFinalizeRequest(dispatchKey, state, errorCode), cancellationToken);
 
     public Task<FindResult> FindAsync(string term, int maxResults, CancellationToken cancellationToken) =>
         QueryAsync<FindResult>(

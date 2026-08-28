@@ -65,6 +65,14 @@ public static class WorkbenchCommandCatalog
             nameof(LayoutOperation.ResetToDefault),
             "Returns to the default arrangement."),
 
+        // Not a layout operation, so it carries no OperationKind: SC 2.5.7's conformance test asks
+        // that every DRAGGABLE operation has a keyboard path, and focusing the canvas is not one.
+        // It is here because WPF traversal cannot reach the canvas at all (spike S4), so without an
+        // explicit command the graph is unreachable from the keyboard entirely.
+        new("workbench.focusCanvas", "Focus graph canvas", "Ctrl+K, G",
+            string.Empty,
+            "Moves focus into the graph. Tab off either end or press Escape to come back."),
+
         new("workbench.toggleLock", "Lock/unlock layout", "Ctrl+K, L",
             OperationKind: "",   // a mode, not a tree mutation
             "Freezes the arrangement so a stray drag cannot change it."),

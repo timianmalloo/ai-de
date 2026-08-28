@@ -1,6 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AiDe.Core.Projections;
+using AiDe.Core.Dispatch;
+using AiDe.Core.Facts;
+using AiDe.Core.Store;
 
 namespace AiDe.Core.Ipc;
 
@@ -20,6 +23,12 @@ public sealed record FindRequest(string Term, int MaxResults);
 
 /// <inheritdoc cref="DescribeRequest"/>
 public sealed record KnowledgeRequest(string? Term, string? Type, int MaxResults);
+
+/// <summary>Phase 1 of a dispatch: make the attempt durable before any byte leaves the shell.</summary>
+public sealed record DispatchBeginRequest(DispatchCommand Command);
+
+/// <summary>Phase 2 of a dispatch: record the outcome the shell observed.</summary>
+public sealed record DispatchFinalizeRequest(string DispatchKey, DispatchState State, string? ErrorCode);
 
 /// <summary>Operations every daemon answers, whatever workspace it serves.</summary>
 /// <remarks>
@@ -73,6 +82,8 @@ public static class WorkspaceOperations
     public const string Impact = "impact";
     public const string Find = "find";
     public const string Knowledge = "knowledge";
+    public const string DispatchBegin = "dispatch.begin";
+    public const string DispatchFinalize = "dispatch.finalize";
 
     /// <summary>
     /// How every payload on this boundary is encoded.
@@ -106,6 +117,55 @@ public static class WorkspaceOperations
         endpoint.Register(Knowledge, (request, _) =>
             Handle<KnowledgeRequest>(request, body =>
                 projections.Knowledge(new KnowledgeQuery(body.Term, body.Type, body.MaxResults))));
+    }
+
+    /// <summary>
+    /// Registers the two durable phases of prompt dispatch (ADR-0010) on <paramref name="endpoint"/>.
+    /// </summary>
+    /// <remarks>
+    /// Separate from the projection registration because these are the first WRITES on the read
+    /// endpoint, and because a daemon can legitimately serve projections without them.
+    /// </remarks>
+    public static void RegisterDispatch(DaemonEndpoint endpoint, BoundaryDispatcher dispatcher)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+        ArgumentNullException.ThrowIfNull(dispatcher);
+
+        endpoint.Register(DispatchBegin, (request, _) =>
+            Refusable(() => Handle<DispatchBeginRequest>(request, body => dispatcher.Begin(body.Command))));
+
+        endpoint.Register(DispatchFinalize, (request, _) =>
+            Refusable(() => Handle<DispatchFinalizeRequest>(request, body =>
+                dispatcher.Finalize(body.DispatchKey, body.State, body.ErrorCode))));
+    }
+
+    /// <summary>
+    /// Turns a domain refusal into a stable error response instead of letting it escape.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Found by a test, and it was worse than it looked.</b> A stale-epoch dispatch threw a
+    /// <see cref="WorkspaceStoreException"/> out of the handler, past <see cref="Handle{TRequest}"/>
+    /// — which deliberately guards only decoding — and out of the server's listen loop. One client
+    /// holding a stale epoch would have taken the daemon down for <i>every</i> shell attached to the
+    /// workspace.</para>
+    ///
+    /// <para><b>Why the distinction matters and is not a widening of the catch.</b> `Handle`'s rule
+    /// stands: a projection that throws is a defect in us and must not be swallowed. But a stale
+    /// epoch is not a defect — it is the expected answer when the core was replaced under a caller,
+    /// and the design requires it to come back as a stable denial code. Only
+    /// <see cref="WorkspaceStoreException"/> is mapped, because it is the type that carries one;
+    /// everything else still escapes.</para>
+    /// </remarks>
+    private static IpcResponse Refusable(Func<IpcResponse> operation)
+    {
+        try
+        {
+            return operation();
+        }
+        catch (WorkspaceStoreException ex)
+        {
+            return IpcResponse.Error(ex.ErrorCode, ex.Message);
+        }
     }
 
     /// <summary>Decodes a payload, runs the projection, and encodes the result.</summary>

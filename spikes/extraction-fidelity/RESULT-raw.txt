@@ -1,0 +1,49 @@
+Option B fidelity — the project shapes the first measurement never met
+======================================================================================================================
+
+--- AiDe.Core   (no ProjectReference — the known case)
+    declared target frameworks : net10.0
+    MSBuildWorkspace : loaded=True documents=  49 types= 159 edges= 3138 unresolved=   0 (100.0% resolved)    1945 ms
+    Option B [net10.0         ] sources=  47 types= 159 edges= 3138 unresolved=   0 (100.0% resolved)      78 ms
+        - project.assets.json present: 4 package assemblies
+        - compiler errors: CS8795x14, CS0165x8
+        -   first: Partial method 'ConPtyInterop.CreatePseudoConsole(ConPtyInterop.Coord, SafeFileHandle, SafeFileHandle, uint, out nint)' must have an implementation part because it has accessibility modifiers.
+    types recovered  : 159/159 (100.0%)
+
+--- AiDe.App    (ProjectReference x2, WPF, net10.0-windows)
+    declared target frameworks : net10.0-windows
+    MSBuildWorkspace : loaded=True documents=  20 types=  18 edges=  309 unresolved=   0 (100.0% resolved)    1066 ms
+    Option B [net10.0-windows ] sources=  16 types=  18 edges=  300 unresolved=   0 (100.0% resolved)      97 ms
+        - WindowsDesktop reference pack added first (UseWPF/UseWindowsForms)
+        - project.assets.json present: 6 package assemblies
+        - compiler errors: CS0103x4, CS0104x1
+        -   first: The name 'InitializeComponent' does not exist in the current context
+    types recovered  : 18/18 (100.0%)
+
+--- AiDe.Daemon (ProjectReference, net10.0-windows)
+    declared target frameworks : net10.0-windows
+    MSBuildWorkspace : loaded=True documents=   4 types=   1 edges=   11 unresolved=   0 (100.0% resolved)     808 ms
+    Option B [net10.0-windows ] sources=   2 types=   1 edges=   11 unresolved=   0 (100.0% resolved)      78 ms
+        - project.assets.json present: 4 package assemblies
+    types recovered  : 1/1 (100.0%)
+
+--- MultiTarget (net10.0 + netstandard2.0, DefineConstants)
+    declared target frameworks : net10.0, netstandard2.0
+    MSBuildWorkspace : loaded=True documents=   3 types=   3 edges=    3 unresolved=   0 (100.0% resolved)     606 ms
+    Option B [net10.0         ] sources=   1 types=   3 edges=    3 unresolved=   0 (100.0% resolved)       6 ms
+        - project.assets.json ABSENT — package references unresolved (a fresh clone is in this state)
+    Option B [netstandard2.0  ] sources=   1 types=   3 edges=    3 unresolved=   0 (100.0% resolved)       9 ms
+        - project.assets.json ABSENT — package references unresolved (a fresh clone is in this state)
+    types recovered  : 3/3 (100.0%)
+      only in B (all TFMs union) : MultiTarget.LegacyOnly
+
+======================================================================================================================
+SUMMARY — edge resolution is the number that matters; a type count cannot see a broken reference
+
+project                                                   baseline edges    option B edges    B resolved   types lost
+AiDe.Core   (no ProjectReference — the known case)        3138 (0 bad)      3138 (0 bad)      100.0%       0
+AiDe.App    (ProjectReference x2, WPF, net10.0-windows)   309 (0 bad)       300 (0 bad)       100.0%       0
+AiDe.Daemon (ProjectReference, net10.0-windows)           11 (0 bad)        11 (0 bad)        100.0%       0
+MultiTarget (net10.0 + netstandard2.0, DefineConstants)   3 (0 bad)         3 (0 bad)         100.0%       0
+======================================================================================================================
+VERDICT: Option B holds on every shape measured — no type loss, edge resolution >= 99%.

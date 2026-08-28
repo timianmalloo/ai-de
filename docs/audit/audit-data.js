@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T17:03:48Z",
+  "generated": "2026-08-28T17:43:08Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1042,6 +1042,21 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0049",
+      "shortname": "next-five-fidelity-focus-dispatch-perf",
+      "datetime": "2026-08-28T17:43:08Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "prompt": "yes do these next in order continue until you have done all 5 and then bring back the summary and next steps",
+      "summary": "Completed all five next steps: Option B fidelity spike (100% edge resolution, 0 type loss on four shapes; its own first run's 82-89% was two harness defects); Component 1 contract rewritten with scope grain per (project, TFM); P2-FOCUS-01/02/04 built with -03 recorded as owed; prompt dispatch across the boundary, which found DC-020; P2-PERF-03 measured. 505 tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -1567,6 +1582,106 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "1889c33eb11213decb9292eeb22b3115790c0e74",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0022",
+      "datetime": "2026-08-28T17:27:43Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Component 1 contract rewritten against a measured prototype; scope grain is (project, target framework)",
+      "prompt": null,
+      "summary": "Option B measured 100% dependency-edge resolution and zero type loss against MSBuildWorkspace on four project shapes including ProjectReference, WPF and multi-targeting, at ~25x the speed. Contract rewritten: CSharpExtractor, one scope per (project, target framework), project file read as data, three named disclosure states.",
+      "rationale": "The scope grain changed from per-project to per-(project,TFM) because a multi-targeted project's #if-gated types differ between frameworks and a single scope would be silently wrong about the others. The spike's own first run reported 82-89% edge resolution, which was two harness defects - missing implicit usings (the SDK generates them into obj/, which the extractor deliberately does not read) and a WindowsBase 4.0 facade shadowing the real 10.0 assembly - not a limit of the approach; stopping at that number would probably have reversed the strategy. Measuring edges rather than types was decisive: a broken project reference leaves every local type intact and turns its edges into error types, which a type count scores as perfect.",
+      "artifacts": [
+        "spikes/extraction-fidelity/RESULT.md"
+      ],
+      "tags": [
+        "phase-2",
+        "extraction"
+      ],
+      "git": {
+        "before": null,
+        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0023",
+      "datetime": "2026-08-28T17:33:41Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "P2-FOCUS-01/02/04 built at the host seam; P2-FOCUS-03 recorded as owed, not approximated",
+      "prompt": null,
+      "summary": "CanvasFocusRouter holds the focus policy in Core with no WPF dependency; workbench.focusCanvas (Ctrl+K, G) is in the catalog and routed through WorkbenchController. 12 tests. The graph canvas surface itself does not exist - no WebView2 reference in AiDe.App - so the command refuses and announces rather than being hidden.",
+      "rationale": "Splitting policy from mechanism lets the rules that do not need a window be tested without one; a rule that can only be tested with a real WebView2 running is a rule that stops being tested. P2-FOCUS-03 is deliberately NOT written against the fake: a keyboard-trap test that cannot fail for the reason it exists would report the trap as tested (DC-016). Keeping the command visible-and-refusing rather than hidden follows DC-011 - silence is indistinguishable from a broken key.",
+      "artifacts": [
+        "src/AiDe.Core/Workbench/CanvasFocusRouter.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "focus"
+      ],
+      "git": {
+        "before": null,
+        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0024",
+      "datetime": "2026-08-28T17:43:08Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "Prompt dispatch crosses the boundary; a stale-epoch refusal would have killed the daemon (DC-020)",
+      "prompt": null,
+      "summary": "BoundaryDispatcher splits ADR-0010's two-phase receipt so the daemon owns durability and the shell owns the pty. dispatch.begin and dispatch.finalize registered; WorkspaceClient extended; 6 tests covering agreement, idempotency, retried-finalize, the shell-crash window, and the two checks that must stay on their own side of the boundary.",
+      "rationale": "D1 put terminals in the shell and the store in the daemon, so the two halves of a two-phase delivery are now in different processes. The session-binding check stays with the caller because the daemon has no session to check against - checking there would compare the caller's claim with itself. A test written to assert no attempt is recorded on a stale epoch instead brought the server down: the WorkspaceStoreException escaped Handle (which guards only decoding) and left IpcServer's listen loop, so one client with a stale epoch would have killed the daemon for every shell. Registered as DC-020 and fixed by mapping only WorkspaceStoreException - the type carrying a stable denial code - onto IpcResponse.Error.",
+      "artifacts": [
+        "src/AiDe.Core/Dispatch/BoundaryDispatcher.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "dispatch"
+      ],
+      "git": {
+        "before": null,
+        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0025",
+      "datetime": "2026-08-28T17:43:08Z",
+      "session": "decisions-d1-d7-2026-08-28",
+      "kind": "design",
+      "skill": null,
+      "title": "P2-PERF-03 measured: 1 MiB/s held for 10s with drift tracked",
+      "prompt": null,
+      "summary": "Sustained 1.00 MiB/s through the VT parser and screen model for 10s: chunk parse p50 1.05ms, p95 1.80ms, per-chunk drift +0.293ms first-to-last quarter, unthrottled ceiling 77 MiB/s.",
+      "rationale": "A burst measures the fast path; holding the rate is what exposes accumulation, which is why the gate fails on per-chunk growth rather than only on absolute latency. S3's 2361x figure is scanning only - this measures scan plus screen-model application - so S3's number must never be quoted as end-to-end terminal throughput. The draw half stays in the App tests because it needs a dispatcher and a visual tree; this number is not a frame time.",
+      "artifacts": [
+        "bench/AiDe.Bench/TerminalThroughput.cs"
+      ],
+      "tags": [
+        "phase-2",
+        "performance"
+      ],
+      "git": {
+        "before": null,
+        "after": "a45ba05ab7f43b4d552a72954d076b78f1b6ac51",
         "branch": "main",
         "pushed": true,
         "commits": []

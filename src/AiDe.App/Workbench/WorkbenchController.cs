@@ -35,6 +35,18 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// </remarks>
     public Func<Task<string>>? WorkspaceRefresh { get; set; }
 
+    /// <summary>
+    /// Routes focus across the canvas boundary. Set when a graph canvas surface attaches.
+    /// </summary>
+    /// <remarks>
+    /// <b>Null until the canvas exists, and that is a working state rather than a gap.</b> The
+    /// command stays in the catalog and stays keyboard-reachable; with no canvas it refuses and says
+    /// so, which is the same path a canvas that has not created its handle yet takes. Hiding the
+    /// command instead would make "the graph cannot be focused" indistinguishable from "the graph
+    /// does not exist", and a user who pressed the chord would get silence (<b>DC-011</b>).
+    /// </remarks>
+    public CanvasFocusRouter? CanvasFocus { get; set; }
+
     /// <summary>Runs a catalog command by id. Returns false when the id is unknown.</summary>
     public bool Execute(string commandId)
     {
@@ -45,6 +57,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
 
             case "workspace.refresh":
                 return RefreshWorkspace();
+
+            case "workbench.focusCanvas":
+                return FocusCanvas();
 
             case "workbench.toggleLock":
                 service.IsLocked = !service.IsLocked;
@@ -288,6 +303,26 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// palette that silently does nothing is the failure the catalog's conformance test exists to
     /// prevent (<b>DC-011</b>).</para>
     /// </remarks>
+    /// <summary>
+    /// <c>workbench.focusCanvas</c> — moves focus into the graph canvas, or says why it cannot.
+    /// </summary>
+    /// <remarks>
+    /// Always returns true: the command IS handled, and its refusal is an outcome rather than a
+    /// failure to dispatch. Returning false would make the palette treat a legitimate "the canvas is
+    /// mid-drag" refusal as an unknown command.
+    /// </remarks>
+    private bool FocusCanvas()
+    {
+        if (CanvasFocus is null)
+        {
+            announcer.Announce("The graph canvas is not ready.");
+            return true;
+        }
+
+        announcer.Announce(CanvasFocus.Enter().Announcement);
+        return true;
+    }
+
     private bool RefreshWorkspace()
     {
         var refresh = WorkspaceRefresh;

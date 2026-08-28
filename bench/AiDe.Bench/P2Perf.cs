@@ -122,13 +122,20 @@ internal static class P2Perf
             failures.Add($"impact over the pipe p95 {pipeImpact.P95:F2}ms exceeds the {ImpactBudgetMs}ms budget");
 
         Console.WriteLine(new string('=', 110));
-        if (failures.Count == 0)
-        {
-            Console.WriteLine("P2-PERF-02: PASS — the daemon boundary keeps both reads inside the Phase-1 budgets.");
-            return 0;
-        }
+        Console.WriteLine(failures.Count == 0
+            ? "P2-PERF-02: PASS — the daemon boundary keeps both reads inside the Phase-1 budgets."
+            : string.Empty);
         foreach (var f in failures) Console.WriteLine($"**FAIL** {f}");
-        return 1;
+        Console.WriteLine();
+
+        var throughputOk = TerminalThroughput.Run();
+
+        Console.WriteLine(new string('=', 110));
+        var ok = failures.Count == 0 && throughputOk;
+        Console.WriteLine(ok
+            ? "P2-PERF: PASS — boundary and terminal throughput both inside budget."
+            : "P2-PERF: FAIL — see the cases marked **FAIL** above.");
+        return ok ? 0 : 1;
 
         static void Report(string name, Summary inProc, Summary pipe, double budget)
         {

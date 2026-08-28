@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 10 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 11 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 3.
@@ -524,4 +524,34 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   Component 1 is blocked on that decision. The same shape should be checked against the other proven
   controls in this repo — the MCP egress denial, the capability-revocation path and the fact-store
   immutability triggers each cover a named mechanism, not a boundary.
+- **Status:** `partially-controlled`
+
+### DC-020 — A domain refusal that was a local exception becomes a shared-process outage
+- **Signature:** code that refuses by throwing is correct while its caller is on the same stack — the
+  exception reaches the one caller who asked. The same code then moves behind a server that handles
+  many callers, and the throw now escapes into a shared loop. **The refusal is still right; its blast
+  radius is not.** One caller supplying an ordinary, expected-to-be-refused input takes the service
+  down for everyone.
+- **Why it survives:** nothing about the refusal looks wrong, because nothing about it *is* wrong.
+  It has a stable error code, a clear message and probably a test — a test that passes, because it
+  calls the method directly and asserts the throw. The defect lives entirely in the distance between
+  the throw and the new boundary, which no single file shows.
+- **Instances:** 2026-08-28 — `BoundaryDispatcher.Begin` throws `WorkspaceStoreException` on a stale
+  epoch, which is the correct answer when the core was replaced under a caller. Behind the daemon it
+  escaped `Handle` (which guards only decoding, deliberately), left `IpcServer`'s listen loop, and
+  **would have killed the daemon for every shell attached to the workspace**. Found by
+  `AStaleEpochIsRefusedByTheDaemon_AndRecordsNoAttempt`, which was written to assert that no attempt
+  was recorded and instead brought the server down.
+- **Control:** `WorkspaceOperations.Refusable` maps `WorkspaceStoreException` — the type that carries
+  a stable denial code — onto `IpcResponse.Error`, and **only** that type. The distinction is the
+  control: a projection that throws anything else is a defect in us and must still escape rather than
+  be swallowed into a shrug. The test asserts both that the caller is refused and that the daemon
+  survives to answer the next request.
+- **The generalisation to apply elsewhere:** when moving code behind a boundary that serves more than
+  one caller, enumerate **every way it can refuse** and ask what the refusal reaches now. A `throw`
+  that used to unwind to one caller is a shared-fate event the moment a dispatch loop sits above it.
+  The question is not "is this refusal correct" but "who else is standing behind it".
+- **Residual risk:** only the dispatch operations are wrapped. The read projections do not currently
+  throw domain refusals, but nothing yet **fails** if one is added that does — the control covers the
+  operations that needed it rather than the shape.
 - **Status:** `partially-controlled`

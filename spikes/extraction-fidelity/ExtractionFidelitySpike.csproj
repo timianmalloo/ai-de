@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>ExtractionFidelitySpike</AssemblyName>
+    <RootNamespace>ExtractionFidelitySpike</RootNamespace>
+    <ExcludeAssetsFromMSBuild>true</ExcludeAssetsFromMSBuild>
+    <!-- Windows-only by construction: integrity levels and job objects are Win32. -->
+    <SupportedOSPlatform>windows</SupportedOSPlatform>
+    <!-- Scoped to this spike only; same reasoning as spikes/roslyn-msbuild-workspace (D2, cl-0012). -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      The fixture is input DATA loaded at runtime, never part of this build. Without this the
+      default glob compiles the fixture's own generated obj/ output into the host and the build
+      fails on duplicate assembly attributes.
+    -->
+    <Compile Remove="fixture/**" />
+    <None Remove="fixture/**" />
+    <EmbeddedResource Remove="fixture/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.9.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+  </ItemGroup>
+
+</Project>
