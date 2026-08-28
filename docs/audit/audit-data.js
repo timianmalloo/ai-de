@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T23:10:09Z",
+  "generated": "2026-08-28T23:47:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1204,6 +1204,32 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0059",
+      "shortname": "phase3-surfacing-five-steps",
+      "datetime": "2026-08-28T23:47:09Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do all of these 5 steps then summarize what i can manually test in the client\nand show the standard status and next steps",
+      "summary": "Five steps, two of which I had proposed on a wrong premise and corrected by opening the code before\nbuilding.\n\n**Layout persistence already existed and was wired.** The proposal to add it was wrong; the real\ndefect was that a runtime-created agent terminal was dropped on every restart, because availability\nwas decided from a whitelist of ids snapshotted from the default layout. Availability is now decided\nby KIND — can content be built for this — and a kind the build no longer has is still dropped and\nstill reported, so the control did not get quietly widened into a no-op.\n\n**JoinProjection already existed and had no production caller.** Written, tested, never called by the\nrunning app. It is now a surface, splitting Verified from Inferred rather than ranking them together,\nwith the basis on every row and the disclosures stated.\n\nReadiness markers are configurable per agent (agent-readiness.json), fail closed on an uncompilable\npattern, and the watcher exposes the tail it judged so tuning is measurement. Crossings carry their\nmember edges, capped, with the true weight and the undisclosed count kept separate. Uncovered symbols\nare ranked by namespace so a percentage becomes a task.\n\n**A defect class was registered.** Adding the joins surface turned LayoutUpgradeTests red with a\nmigration error for a change unrelated to migration: the fixture held its own copy of \"the surfaces\nthis release ships\". Third occurrence, first registration — DC-021.\n\nGate: 612 tests green (App 108, Core 504), defect register, audit log and docs graph clean, app\nverified launching.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Land the five proposed next actions, verify each against the code before building, and close with the manual-test, status and next-step tables",
+      "done_when": "Five steps landed with a test each; the full gate green; change-log, audit and defect register updated; committed and pushed; tables produced",
+      "change": "cl-0047",
+      "git": {
+        "sha": "971a687bb86a177cc464a087645ec42a0737ac39",
+        "short": "971a687bb",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -2328,6 +2354,57 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "bdfd15cc0b7c30bc3f156e2ba877ce0b5afeae75",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0046",
+      "datetime": "2026-08-28T23:46:55Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Phase 3 surfacing: restorable runtime surfaces, configurable readiness, openable crossings, a joins pane, ranked uncovered",
+      "prompt": null,
+      "summary": "Five steps to make the Phase 3 evidence usable. Two of the five were proposed on a wrong premise and\nwere corrected by opening the code first.\n\n1. **A surface created at runtime now survives a restart.** Layout persistence already existed and\n   was wired — the proposal to \"add\" it was wrong. The real defect was that availability was decided\n   from a whitelist of surface IDS snapshotted from the default layout, so an agent terminal, whose\n   id is minted when it opens (agent:claude#a1b2c3), was dropped on EVERY launch and announced as no\n   longer available. Availability is now \"can content be built for this\", which is a property of the\n   surface's KIND. A surface whose kind this build no longer has is still dropped and still reported,\n   so the control keeps firing for the case it was written for.\n2. **Readiness markers are configurable per agent.** A built-in marker that does not match a real\n   agent's prompt refuses that agent forever, and the only way to change one was a rebuild.\n   agent-readiness.json in the workspace state directory overrides or adds them. A pattern that does\n   not compile is reported and the built-in stays in force — never \"assume ready\". An explicitly\n   empty marker means \"this agent has none\", which makes the refusal deliberate rather than the\n   accident of a pattern that happens never to match. AgentReadinessWatcher.LastJudged exposes the\n   tail it actually tested, so tuning is measurement rather than guessing at what an agent prints.\n3. **A crossing can be opened.** \"Editorial → Football, 47 edges\" was a claim about the user's code\n   they could not check, act on or disagree with. Each crossing now carries the member edges, capped\n   at 200 — with Weight staying the true total and Undisclosed stating the difference, so the cap\n   never becomes a quieter wrong number.\n4. **The joins are visible.** JoinProjection was written, tested, and had NO production caller: a\n   projection nobody can see. It is now a surface in the workspace column, rendering Verified and\n   Inferred under separate headings with the basis on every row, and stating what could not be\n   joined rather than reading as completeness.\n5. **Uncovered symbols became a task.** \"68% of 1,432 covered\" tells the user a number and gives\n   them nowhere to start. Uncovered symbols are now ranked by namespace, largest first, with\n   examples. The grouping is presentation only — nothing assigns a symbol to a context, because a\n   symbol placed in \"the nearest\" one is inference dressed as a declaration.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/LayoutStore.cs",
+        "src/AiDe.Core/Terminal/AgentReadinessProfiles.cs",
+        "src/AiDe.Core/Projections/ContextProjection.cs",
+        "src/AiDe.App/Workbench/JoinSurface.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "971a687bb86a177cc464a087645ec42a0737ac39",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0047",
+      "datetime": "2026-08-28T23:46:55Z",
+      "session": null,
+      "kind": "knowledge",
+      "skill": null,
+      "title": "DC-021 registered: a fixture that restates what the product declares",
+      "prompt": null,
+      "summary": "DC-021 — a fixture restates what the product declares, so shipping a feature breaks unrelated tests.\n\nAdding the joins surface turned LayoutUpgradeTests red with AIDE-LAYOUT-PARTIAL-RESTORE: a migration\nerror, for a change that had nothing to do with migration. The fixture held its own copy of \"the\nsurfaces this release ships\".\n\nThis was the THIRD occurrence and the first time it was registered. WorkbenchStoreTests hit it twice\nand was fixed in place, with a comment saying so — a repair scoped to the file where it hurt rather\nthan to the class. Registered now, with every layout fixture deriving its surface set from\nLayout.Default(). Residual risk recorded honestly: derivation is a convention, and nothing yet fails\nwhen a new fixture types the list out again.",
+      "rationale": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "continuous-improvement"
+      ],
+      "git": {
+        "before": null,
+        "after": "971a687bb86a177cc464a087645ec42a0737ac39",
         "branch": "main",
         "pushed": true,
         "commits": []

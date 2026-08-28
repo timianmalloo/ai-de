@@ -19,21 +19,29 @@ public sealed class LayoutPersistence : IDisposable
 {
     private readonly ILayoutService _service;
     private readonly LayoutStore _store;
-    private readonly IReadOnlySet<string> _availableSurfaces;
+    private readonly SurfaceAvailability _availability;
     private readonly Func<StackNode, bool> _displayIsConnected;
     private readonly System.Timers.Timer _debounce;
     private bool _disposed;
 
+    /// <param name="restorableKinds">
+    /// Surface kinds the shell can build content for. Surfaces CREATED at runtime — an agent
+    /// terminal, for one — have ids that no fixed list can contain, so without this they were
+    /// dropped on every restart and announced as no longer available.
+    /// </param>
     public LayoutPersistence(
         ILayoutService service,
         string layoutFilePath,
         IReadOnlySet<string> availableSurfaces,
         Func<StackNode, bool>? displayIsConnected = null,
-        double debounceMilliseconds = 750)
+        double debounceMilliseconds = 750,
+        IReadOnlySet<string>? restorableKinds = null)
     {
         _service = service;
         _store = new LayoutStore(layoutFilePath);
-        _availableSurfaces = availableSurfaces;
+        _availability = new SurfaceAvailability(
+            availableSurfaces,
+            restorableKinds ?? new HashSet<string>(StringComparer.Ordinal));
         _displayIsConnected = displayIsConnected ?? VirtualScreen.IsOnAConnectedDisplay;
 
         _debounce = new System.Timers.Timer(debounceMilliseconds) { AutoReset = false };
@@ -46,7 +54,7 @@ public sealed class LayoutPersistence : IDisposable
     /// <summary>Loads the saved arrangement, or the default when there is none or it cannot be honoured.</summary>
     public RestoreResult Restore()
     {
-        var result = _store.Load(_availableSurfaces, _displayIsConnected);
+        var result = _store.Load(_availability, _displayIsConnected);
         LastRestore = result;
         _service.Restore(result.Layout);
         return result;

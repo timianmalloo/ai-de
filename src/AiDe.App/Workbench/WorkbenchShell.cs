@@ -69,7 +69,7 @@ public sealed class WorkbenchShell : IDisposable
                 // Named rather than a generic failure: the fix is to install one, and the user
                 // cannot act on "not available".
                 return "No agent CLI was found on PATH. Looked for: "
-                    + string.Join(", ", AgentReadinessWatcher.KnownAgents.Keys) + ".";
+                    + string.Join(", ", TerminalSurface.Profiles.All.Select(p => p.Agent)) + ".";
             }
 
             var terminalStack = Service.Current.AllStacks()
@@ -84,6 +84,7 @@ public sealed class WorkbenchShell : IDisposable
             Adapter.Render();
             BindCanvas();
             BindContexts();
+            BindJoins();
 
             return result.Applied
                 ? $"{agent} terminal opened. Dispatch is refused until it reaches its prompt."
@@ -103,8 +104,19 @@ public sealed class WorkbenchShell : IDisposable
                 .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId)
                 .ToHashSet(StringComparer.Ordinal);
 
+            // Readiness markers are workspace state, like the layout: the agent a team runs and the
+            // prompt it draws are properties of the repository being worked on, not of the machine.
+            TerminalSurface.Profiles = AgentReadinessProfiles.Load(workspaceDataDirectory);
+            foreach (var problem in TerminalSurface.Profiles.Problems)
+            {
+                // A marker that could not be compiled is announced, never absorbed. Absorbing it
+                // would leave the user tuning a file that is not in force.
+                Announcer.Announce(problem);
+            }
+
             Persistence = new LayoutPersistence(
-                Service, Path.Combine(workspaceDataDirectory, "layout.json"), surfaces);
+                Service, Path.Combine(workspaceDataDirectory, "layout.json"), surfaces,
+                restorableKinds: SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal));
 
             var restored = Persistence.Restore();
             if (restored.ErrorCode is not null || restored.WasDefaulted)
@@ -343,8 +355,19 @@ public sealed class WorkbenchShell : IDisposable
                 .SelectMany(stack => stack.Surfaces).Select(surface => surface.SurfaceId)
                 .ToHashSet(StringComparer.Ordinal);
 
+            // Readiness markers are workspace state, like the layout: the agent a team runs and the
+            // prompt it draws are properties of the repository being worked on, not of the machine.
+            TerminalSurface.Profiles = AgentReadinessProfiles.Load(dataDirectory);
+            foreach (var problem in TerminalSurface.Profiles.Problems)
+            {
+                // A marker that could not be compiled is announced, never absorbed. Absorbing it
+                // would leave the user tuning a file that is not in force.
+                Announcer.Announce(problem);
+            }
+
             Persistence = new LayoutPersistence(
-                Service, Path.Combine(dataDirectory, "layout.json"), surfaces);
+                Service, Path.Combine(dataDirectory, "layout.json"), surfaces,
+                restorableKinds: SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal));
 
             var restored = Persistence.Restore();
             if (restored.ErrorCode is not null || restored.WasDefaulted)
@@ -356,6 +379,7 @@ public sealed class WorkbenchShell : IDisposable
         Adapter.Render();
         BindCanvas();
         BindContexts();
+        BindJoins();
     }
 
     /// <summary>
@@ -387,24 +411,59 @@ public sealed class WorkbenchShell : IDisposable
             var symbols = found.Matches.Select(m => m.NodeId).ToList();
             var map = BoundedContextReader.Load(path, symbols);
 
-            var assertions = new List<AiDe.Core.Facts.EvidenceAssertion>();
-            foreach (var match in found.Matches.Take(4000))
-            {
-                var describe = _queries.DescribeAsync(match.NodeId, 60, CancellationToken.None)
-                    .GetAwaiter().GetResult();
-
-                assertions.AddRange(describe.Neighbors.Select(e => new AiDe.Core.Facts.EvidenceAssertion(
-                    "view", e.ArtifactRevision, e.Subject, e.Predicate, e.Object,
-                    e.Origin, e.Status, e.Provenance)));
-            }
-
-            return new ContextProjection(map, assertions).Compute();
+            return new ContextProjection(map, ReadAssertions(found)).Compute();
         };
 
         // Choosing a context filters the graph to it. The two views already share colours; this is
         // what makes them one tool rather than two pictures of the same data.
         pane.ContextSelected -= OnContextSelected;
         pane.ContextSelected += OnContextSelected;
+
+        pane.Refresh();
+    }
+
+    /// <summary>Every neighbour edge of every matched node, as assertions.</summary>
+    /// <remarks>
+    /// Shared by the context and join panes rather than read twice. Two reads of the same store
+    /// would be two chances to disagree, and a context map and a join view that disagree about the
+    /// same edge is a defect the user has no way to diagnose.
+    /// </remarks>
+    private List<AiDe.Core.Facts.EvidenceAssertion> ReadAssertions(AiDe.Core.Projections.FindResult found)
+    {
+        var assertions = new List<AiDe.Core.Facts.EvidenceAssertion>();
+        if (_queries is null) return assertions;
+
+        foreach (var match in found.Matches.Take(4000))
+        {
+            var describe = _queries.DescribeAsync(match.NodeId, 60, CancellationToken.None)
+                .GetAwaiter().GetResult();
+
+            assertions.AddRange(describe.Neighbors.Select(e => new AiDe.Core.Facts.EvidenceAssertion(
+                "view", e.ArtifactRevision, e.Subject, e.Predicate, e.Object,
+                e.Origin, e.Status, e.Provenance)));
+        }
+
+        return assertions;
+    }
+
+    /// <summary>Connects the joins pane to the workspace's own evidence.</summary>
+    internal void BindJoins()
+    {
+        var pane = Service.Current.AllStacks()
+            .SelectMany(stack => stack.Surfaces)
+            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .OfType<JoinSurface>()
+            .FirstOrDefault();
+
+        if (pane is null || _queries is null) return;
+
+        pane.Source = () =>
+        {
+            var found = _queries.FindAsync(string.Empty, 20_000, CancellationToken.None)
+                .GetAwaiter().GetResult();
+
+            return new JoinProjection(ReadAssertions(found)).Compute();
+        };
 
         pane.Refresh();
     }

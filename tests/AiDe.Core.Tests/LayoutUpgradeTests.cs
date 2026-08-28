@@ -18,8 +18,17 @@ public sealed class LayoutUpgradeTests : IDisposable
     private string Path_ => Path.Combine(_dir, "layout.json");
 
     /// <summary>The surface set a LATER release ships, after renaming the terminal surface.</summary>
+    // DERIVED from the default layout, with the v1→v2 rename applied — not typed. A hardcoded copy
+    // turns "a release added a surface" into unrelated persistence failures that say nothing about
+    // migration, which it has now done three times. Same rule as WorkbenchStoreTests.
     private static readonly HashSet<string> V2Surfaces =
-        ["explore", "domain", "graph", "contexts", "provenance", "terminal.session.1"];
+        [.. Layout.Default().AllStacks().SelectMany(stack => stack.Surfaces)
+            .Select(surface => surface.SurfaceId == "terminal-1" ? "terminal.session.1" : surface.SurfaceId)];
+
+    /// <summary>The surfaces this release ships, at the current schema version.</summary>
+    private static readonly HashSet<string> CurrentSurfaces =
+        [.. Layout.Default().AllStacks().SelectMany(stack => stack.Surfaces)
+            .Select(surface => surface.SurfaceId)];
 
     private void WriteV1Layout()
     {
@@ -68,7 +77,7 @@ public sealed class LayoutUpgradeTests : IDisposable
         store.Save(Layout.Default());
         var before = File.GetLastWriteTimeUtc(Path_);
 
-        var result = store.Load(new HashSet<string> { "explore", "domain", "graph", "contexts", "provenance", "terminal-1" });
+        var result = store.Load(CurrentSurfaces);
 
         Assert.False(result.WasDefaulted);
         Assert.Null(result.ErrorCode);
@@ -103,7 +112,7 @@ public sealed class LayoutUpgradeTests : IDisposable
 
         WriteV1Layout();
         var store = new LayoutStore(Path_, appVersion: "0.5.0", migrations: migrations);
-        store.Load(new HashSet<string> { "explore", "domain", "graph", "contexts", "provenance", "terminal-1" }, assumedCurrentVersion: 3);
+        store.Load(CurrentSurfaces, assumedCurrentVersion: 3);
 
         Assert.Equal([1, 2], applied);
     }

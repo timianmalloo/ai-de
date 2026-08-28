@@ -106,9 +106,24 @@ public sealed class TerminalSurface : ContentControl, IDisposable
     /// </remarks>
     public string? Executable { get; init; }
 
-    /// <summary>Agent executables this build knows how to watch for readiness.</summary>
-    public static IReadOnlyList<string> AvailableAgents { get; } =
-        [.. AgentReadinessWatcher.KnownAgents.Keys.Where(IsOnPath)];
+    /// <summary>
+    /// The readiness markers in force, built in plus whatever the workspace configured.
+    /// </summary>
+    /// <remarks>
+    /// Settable because a built-in marker that does not match an agent's real prompt refuses that
+    /// agent forever, and until this the only way to change one was a rebuild. Defaults to the
+    /// built-ins so a shell with no configuration behaves exactly as before.
+    /// </remarks>
+    public static AgentReadinessProfiles Profiles { get; set; } = AgentReadinessProfiles.BuiltIn;
+
+    /// <summary>Agent executables this build can watch for readiness AND that exist on PATH.</summary>
+    /// <remarks>
+    /// Read through <see cref="Profiles"/> rather than the static built-ins, so an agent added by
+    /// configuration is offered — otherwise configuring a marker would set up a watcher for an agent
+    /// no menu would ever open.
+    /// </remarks>
+    public static IReadOnlyList<string> AvailableAgents =>
+        [.. Profiles.All.Select(p => p.Agent).Where(IsOnPath)];
 
     /// <summary>Whether an executable can actually be launched, so the menu never offers a dead one.</summary>
     private static bool IsOnPath(string executable)
@@ -157,10 +172,7 @@ public sealed class TerminalSurface : ContentControl, IDisposable
             // An agent CLI gets a readiness watcher; a shell does not need one.
             var launch = Executable ?? CommandLine;
             var executable = System.IO.Path.GetFileNameWithoutExtension(launch);
-            if (AgentReadinessWatcher.KnownAgents.TryGetValue(executable, out var pattern))
-            {
-                AgentReadiness = new AgentReadinessWatcher(pattern);
-            }
+            AgentReadiness = Profiles.WatcherFor(executable);
 
             _session = await ConPtyTerminalSession.StartAsync(
                 new TerminalSessionRequest(

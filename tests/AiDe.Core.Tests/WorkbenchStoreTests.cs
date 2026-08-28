@@ -22,6 +22,56 @@ public sealed class WorkbenchStoreTests : IDisposable
             .SelectMany(stack => stack.Surfaces).Select(surface => surface.SurfaceId)];
 
 
+    /// <summary>What the shell now passes: the shipped ids, plus every kind it can build.</summary>
+    private static readonly SurfaceAvailability Availability =
+        new(AllSurfaces, new HashSet<string>(StringComparer.Ordinal)
+            { "view", "inspector", "terminal", "canvas", "contexts", "joins" });
+
+    [Fact]
+    public void ASurfaceCreatedAtRuntimeSurvivesARestart()
+    {
+        // The reported shape, as an assertion. An agent terminal's id is minted when it is opened
+        // (agent:claude#a1b2c3), so no list of shipped ids can contain it — and the restore dropped
+        // it as "no longer available" on EVERY launch, announcing the loss of a pane the shell was
+        // perfectly able to rebuild.
+        var service = new LayoutService();
+        var stack = service.Current.FindStackOf("terminal-1")!;
+        service.Apply(new LayoutOperation.AddSurface(
+            stack.Id, new Surface("agent:claude#a1b2c3", "terminal", "claude")));
+
+        var store = new LayoutStore(Path_);
+        store.Save(service.Current);
+
+        var restored = store.Load(Availability);
+
+        Assert.Null(restored.ErrorCode);
+        Assert.Empty(restored.MissingSurfaces);
+        Assert.Contains(restored.Layout.AllStacks().SelectMany(s => s.Surfaces),
+            s => s.SurfaceId == "agent:claude#a1b2c3");
+    }
+
+    [Fact]
+    public void ASurfaceOfAKindThisBuildNoLongerHas_IsStillDroppedAndReported()
+    {
+        // The other half, and the reason availability-by-kind is not just "accept everything". A
+        // kind that was removed cannot be built, and restoring it would produce a pane rendering
+        // nothing. The control must still fire, or widening availability quietly disabled it.
+        var service = new LayoutService();
+        var stack = service.Current.FindStackOf("terminal-1")!;
+        service.Apply(new LayoutOperation.AddSurface(
+            stack.Id, new Surface("legacy-1", "timeline", "Timeline")));
+
+        var store = new LayoutStore(Path_);
+        store.Save(service.Current);
+
+        var restored = store.Load(Availability);
+
+        Assert.Equal(LayoutErrorCodes.PartialRestore, restored.ErrorCode);
+        Assert.Contains("Timeline", restored.MissingSurfaces);
+        Assert.DoesNotContain(restored.Layout.AllStacks().SelectMany(s => s.Surfaces),
+            s => s.SurfaceId == "legacy-1");
+    }
+
     [Fact]
     public void Envelope_RoundTripsTheLayoutExactly()
     {

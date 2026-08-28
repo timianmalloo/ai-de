@@ -34,6 +34,30 @@ public sealed record NodeDto(
 
 public sealed record SurfaceDto(string SurfaceId, string Kind, string Title);
 
+/// <summary>
+/// What the application can currently provide, as the restore's reconciliation asks it.
+/// </summary>
+/// <remarks>
+/// <para><b>Ids alone were wrong.</b> The shell passed the surface ids present in the DEFAULT
+/// layout, so anything created at runtime — an agent terminal, whose id is
+/// <c>agent:claude#&lt;guid&gt;</c> — was unknown at restore and dropped as "no longer available".
+/// The user was told their agent pane was gone, every launch, because the check asked the wrong
+/// question.</para>
+///
+/// <para><b>The right question is whether content can be BUILT for it</b>, which is a property of
+/// the surface's kind. Ids are still honoured for the fixed surfaces. A surface whose kind this
+/// build no longer has is still dropped and still reported — the control keeps firing for the case
+/// it was written for.</para>
+/// </remarks>
+public sealed record SurfaceAvailability(IReadOnlySet<string> Ids, IReadOnlySet<string> Kinds)
+{
+    public static SurfaceAvailability OfIds(IReadOnlySet<string> ids) =>
+        new(ids, new HashSet<string>(StringComparer.Ordinal));
+
+    public bool CanProvide(Surface surface) =>
+        Kinds.Contains(surface.Kind) || Ids.Contains(surface.SurfaceId);
+}
+
 /// <summary>What a restore actually managed to do — never a silent success.</summary>
 public sealed record RestoreResult(
     Layout Layout,
@@ -90,6 +114,13 @@ public sealed class LayoutStore(
     /// <param name="displayIsConnected">Whether a floating pane's display is still present.</param>
     public RestoreResult Load(
         IReadOnlySet<string> availableSurfaces,
+        Func<StackNode, bool>? displayIsConnected = null,
+        int? assumedCurrentVersion = null)
+        => Load(SurfaceAvailability.OfIds(availableSurfaces), displayIsConnected, assumedCurrentVersion);
+
+    /// <inheritdoc cref="Load(IReadOnlySet{string}, Func{StackNode, bool}, int?)"/>
+    public RestoreResult Load(
+        SurfaceAvailability availability,
         Func<StackNode, bool>? displayIsConnected = null,
         int? assumedCurrentVersion = null)
     {
@@ -167,12 +198,12 @@ public sealed class LayoutStore(
         // Detach destroys an emptied stack and collapses the orphaned split.
         var missing = restored.AllStacks()
             .SelectMany(s => s.Surfaces)
-            .Where(s => !availableSurfaces.Contains(s.SurfaceId))
+            .Where(s => !availability.CanProvide(s))
             .Select(s => s.Title)
             .ToList();
 
         foreach (var id in restored.AllStacks().SelectMany(s => s.Surfaces)
-                     .Where(s => !availableSurfaces.Contains(s.SurfaceId))
+                     .Where(s => !availability.CanProvide(s))
                      .Select(s => s.SurfaceId).ToList())
         {
             restored = LayoutService.Detach(restored, id) ?? Layout.Default();

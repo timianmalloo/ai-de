@@ -28,13 +28,14 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 11 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 12 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
-**Recurrences since last review:** 3.
+**Recurrences since last review:** 4.
 - **DC-008**, whose first control was scoped to one test project when the cause was not project-specific.
 - **DC-001**, whose first control checked links between files and so could not see three classes cited by ID with no entry in this register.
 - **DC-013**, which recurred the same day it was first caused, because the first occurrence was repaired without being registered at all.
+- **DC-021**, which reached its *third* occurrence before it was registered at all: each repair was cheap enough to make asking why unnecessary.
 
 *All three are CI4: a second occurrence means the control was wrong, not that someone was careless. In the first two the control had been written to fit the instances rather than the class; in the third there was no control at all, because the first occurrence was repaired and never registered — which is the failure this file exists to prevent.*
 
@@ -554,4 +555,38 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 - **Residual risk:** only the dispatch operations are wrapped. The read projections do not currently
   throw domain refusals, but nothing yet **fails** if one is added that does — the control covers the
   operations that needed it rather than the shape.
+- **Status:** `partially-controlled`
+
+### DC-021 — A fixture restates what the product declares, so shipping a feature breaks unrelated tests
+- **Signature:** a test needs "the set of things this release ships" — surfaces, kinds, commands,
+  error codes — and writes the list out by hand. The list is correct on the day it is typed. The next
+  release adds a member, and tests **about something else entirely** go red: the failure says
+  *persistence is broken* when what actually happened is *a pane was added*. The signal points away
+  from the change that caused it, so the cheapest reading is "fix the fixture", which restores green
+  and leaves the next occurrence fully loaded.
+- **Why it survives:** the hand-written list is not wrong when written and is never revisited, because
+  nothing about it is suspicious. It also *passes* for every change that does not touch the set, which
+  is most of them — so the interval between occurrences is long enough that each one reads as a
+  one-off. And the repair is genuinely trivial, which is exactly what stops anyone asking why it
+  happened a third time.
+- **Instances:**
+  - 2026-08 — `WorkbenchStoreTests` hardcoded the surface ids; broke twice as surfaces were added,
+    and was changed to derive from `Layout.Default()` with a comment recording both.
+  - 2026-08-28 — `LayoutUpgradeTests` held the same list in two more places and broke on the `joins`
+    surface: `ALayoutAlreadyAtTheCurrentVersion_IsNotMigrated` failed with `AIDE-LAYOUT-PARTIAL-RESTORE`,
+    a migration error for a change that had nothing to do with migration. **Third occurrence of the
+    class, first time it was registered** — the earlier fix was scoped to the file where it hurt.
+- **Control:** every layout fixture derives its surface set from `Layout.Default()`, the product's own
+  declaration, with the v1→v2 rename applied where the test needs the post-migration ids. A fixture
+  that derives cannot disagree with the product, so the class is *made impossible* for this set rather
+  than watched for.
+- **The generalisation to apply elsewhere:** when a test needs "everything the product currently has",
+  it must **ask the product**, never restate it. `SurfaceContentFactory.KnownKinds`,
+  `WorkbenchCommandCatalog.All` and `LayoutOperation`'s nested types are already read by reflection in
+  the conformance tests — this is the same rule applied to fixtures, which is where it kept being
+  forgotten. The tell is a collection literal in a test that names product concepts.
+- **Residual risk:** derivation is a convention, not a mechanism. Nothing yet **fails** when a new
+  fixture types the list out again; the register entry and the two comments are the only thing
+  carrying it. Rung reached: *make it impossible* for the layout fixtures, *register entry only* for
+  the shape.
 - **Status:** `partially-controlled`

@@ -34,6 +34,19 @@ public sealed class AgentReadinessWatcher(string readyPattern, int windowBytes =
     /// <summary>True when the marker was the most recent thing seen.</summary>
     public bool IsReady { get; private set; }
 
+    /// <summary>
+    /// The tail this watcher last tested, and whether it matched.
+    /// </summary>
+    /// <remarks>
+    /// Tuning a marker by reasoning about what an agent probably prints is how a pattern that never
+    /// matches survives for months. This is what it actually printed, so a user fixing a pattern is
+    /// reading evidence. Capped, because it is a diagnostic and not a scrollback.
+    /// </remarks>
+    public string LastJudged { get; private set; } = string.Empty;
+
+    /// <summary>The pattern being tested, so a refusal can name the marker that did not match.</summary>
+    public string Pattern => _ready.ToString();
+
     /// <summary>Feeds output through the watcher.</summary>
     /// <remarks>
     /// Only the tail is kept. An agent produces a lot of output and matching over all of it would
@@ -53,6 +66,7 @@ public sealed class AgentReadinessWatcher(string readyPattern, int windowBytes =
                 var tail = _window.ToString();
                 var match = _ready.Match(tail);
                 IsReady = match.Success && match.Index + match.Length >= tail.TrimEnd().Length;
+                LastJudged = tail.Length <= 400 ? tail : tail[^400..];
             }
             catch (RegexMatchTimeoutException)
             {

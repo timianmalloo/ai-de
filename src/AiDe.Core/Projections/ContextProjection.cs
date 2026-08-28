@@ -14,15 +14,51 @@ public sealed record ContextView(
     int InternalEdges,
     int Crossings);
 
+/// <summary>One symbol-level edge that crosses a context boundary.</summary>
+public sealed record CrossingMember(string Subject, string Predicate, string Object);
+
 /// <summary>One relationship between contexts, and how much traffic it carries.</summary>
-public sealed record ContextEdge(string From, string To, int Weight);
+/// <param name="Weight">Every edge counted, including any beyond <paramref name="Members"/>.</param>
+/// <param name="Members">
+/// The edges themselves, capped.
+/// </param>
+/// <remarks>
+/// <b>A count is not evidence.</b> "Editorial → Football, 47 edges" is a number the user cannot
+/// check, act on, or disagree with; the 47 edges are the thing they came for, and until the count
+/// can be opened it is an assertion about their code that they have to take on trust. Capped
+/// because a crossing can run to thousands and a pane that renders all of them is a pane that
+/// stops responding — <see cref="Weight"/> stays the true total, so the cap never becomes a
+/// quieter wrong number.
+/// </remarks>
+public sealed record ContextEdge(
+    string From,
+    string To,
+    int Weight,
+    IReadOnlyList<CrossingMember> Members)
+{
+    public const int MemberCap = 200;
+
+    /// <summary>How many edges exist beyond the ones listed.</summary>
+    public int Undisclosed => Math.Max(0, Weight - Members.Count);
+}
+
+/// <summary>Symbols outside every context, gathered by the namespace they live in.</summary>
+/// <remarks>
+/// <b>A percentage is not a task.</b> "68% covered" tells the user a number and gives them nowhere
+/// to start; six namespaces ranked by size tells them which declaration to write next. The grouping
+/// is presentation only — nothing here assigns a symbol to a context, because a symbol placed in
+/// "the nearest" context is inference dressed as a declaration, which is exactly what ADR-0016
+/// rejected folder convention for.
+/// </remarks>
+public sealed record UncoveredGroup(string Namespace, int Symbols, IReadOnlyList<string> Examples);
 
 /// <summary>The domain view: contexts, what connects them, and what belongs to none.</summary>
 public sealed record ContextMapView(
     IReadOnlyList<ContextView> Contexts,
     IReadOnlyList<ContextEdge> Edges,
     int UncoveredSymbols,
-    IReadOnlyList<string> Problems)
+    IReadOnlyList<string> Problems,
+    IReadOnlyList<UncoveredGroup> UncoveredGroups)
 {
     public bool IsValid => Problems.Count == 0;
 }
@@ -47,7 +83,8 @@ public sealed class ContextProjection(BoundedContextMap map, IReadOnlyList<Facts
         {
             // An invalid map draws NOTHING. A partially-applied context map is a diagram that is
             // wrong in a way nobody can see, which is worse than an absent one.
-            return new ContextMapView([], [], map.TotalSymbols, [.. map.Problems.Select(p => p.Message)]);
+            return new ContextMapView([], [], map.TotalSymbols,
+                [.. map.Problems.Select(p => p.Message)], []);
         }
 
         var relational = assertions
@@ -68,6 +105,7 @@ public sealed class ContextProjection(BoundedContextMap map, IReadOnlyList<Facts
 
         var internalEdges = new Dictionary<string, int>(StringComparer.Ordinal);
         var crossings = new Dictionary<(string From, string To), int>();
+        var members = new Dictionary<(string From, string To), List<CrossingMember>>();
 
         foreach (var edge in relational)
         {
@@ -84,6 +122,15 @@ public sealed class ContextProjection(BoundedContextMap map, IReadOnlyList<Facts
             // different statements about who depends on whom, and a context map that collapsed them
             // would hide the one thing it exists to show.
             crossings[(from, to)] = crossings.GetValueOrDefault((from, to)) + 1;
+
+            var bucket = members.TryGetValue((from, to), out var existing)
+                ? existing
+                : members[(from, to)] = [];
+
+            if (bucket.Count < ContextEdge.MemberCap)
+            {
+                bucket.Add(new CrossingMember(edge.Subject, edge.Predicate, edge.Object));
+            }
         }
 
         var views = map.Contexts.Select(c =>
@@ -97,10 +144,36 @@ public sealed class ContextProjection(BoundedContextMap map, IReadOnlyList<Facts
         }).ToList();
 
         var edges = crossings
-            .Select(kv => new ContextEdge(kv.Key.From, kv.Key.To, kv.Value))
+            .Select(kv => new ContextEdge(kv.Key.From, kv.Key.To, kv.Value,
+                members.TryGetValue(kv.Key, out var m) ? m : []))
             .OrderByDescending(e => e.Weight)
             .ToList();
 
-        return new ContextMapView(views, edges, map.Uncovered.Count, []);
+        return new ContextMapView(views, edges, map.Uncovered.Count, [], GroupUncovered(map.Uncovered));
+    }
+
+    /// <summary>
+    /// Ranks the uncovered symbols by the namespace they sit in, largest first.
+    /// </summary>
+    /// <remarks>
+    /// The namespace is the symbol's own text, split at the last dot — not a guess at which context
+    /// it belongs to. A symbol with no dot is grouped under "(no namespace)" rather than dropped:
+    /// silently omitting the ones that do not fit the shape is how a coverage report starts
+    /// disagreeing with the coverage number beside it.
+    /// </remarks>
+    internal static IReadOnlyList<UncoveredGroup> GroupUncovered(IReadOnlyList<string> uncovered) =>
+        [.. uncovered
+            .GroupBy(NamespaceOf, StringComparer.Ordinal)
+            .Select(g => new UncoveredGroup(
+                g.Key,
+                g.Count(),
+                [.. g.Order(StringComparer.Ordinal).Take(5)]))
+            .OrderByDescending(g => g.Symbols)
+            .ThenBy(g => g.Namespace, StringComparer.Ordinal)];
+
+    private static string NamespaceOf(string symbol)
+    {
+        var cut = symbol.LastIndexOf('.');
+        return cut > 0 ? symbol[..cut] : "(no namespace)";
     }
 }

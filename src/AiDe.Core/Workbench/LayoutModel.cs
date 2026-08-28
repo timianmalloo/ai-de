@@ -137,6 +137,7 @@ public sealed record Layout(
                 new Surface("explore", "view", "Explore"),
                 new Surface("provenance", "inspector", "Provenance"),
                 new Surface("contexts", "contexts", "Contexts"),
+                new Surface("joins", "joins", "Joins"),
             ]);
 
         var graph = new StackNode("stack-graph",

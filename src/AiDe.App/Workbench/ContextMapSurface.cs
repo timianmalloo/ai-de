@@ -112,12 +112,7 @@ public sealed class ContextMapSurface : ContentControl
 
         foreach (var edge in view.Edges.Take(30))
         {
-            _body.Children.Add(new TextBlock
-            {
-                Text = $"{edge.From}  →  {edge.To}     {edge.Weight} edge(s)",
-                Margin = new Thickness(0, 2, 0, 0),
-                FontFamily = new FontFamily("Cascadia Mono, Consolas"),
-            });
+            _body.Children.Add(Crossing(edge));
         }
 
         // Coverage is stated with the contexts, not tucked away: "we have contexts" must not quietly
@@ -127,6 +122,77 @@ public sealed class ContextMapSurface : ContentControl
                 ? "Every declared symbol belongs to a context."
                 : $"{view.UncoveredSymbols} declared symbol(s) belong to no context. That may be correct — " +
                   "forcing them into one to raise a number is how a context map stops meaning anything."));
+
+        // Ranked by namespace, because a percentage tells the user a number and gives them nowhere
+        // to start. Six namespaces tells them which declaration to write next.
+        foreach (var group in view.UncoveredGroups.Take(8))
+        {
+            var text = new TextBlock
+            {
+                Text = $"{group.Symbols,6}  {group.Namespace}",
+                FontFamily = new FontFamily("Cascadia Mono, Consolas"),
+                Margin = new Thickness(0, 2, 0, 0),
+                Opacity = 0.85,
+                ToolTip = string.Join(Environment.NewLine, group.Examples),
+            };
+
+            AutomationProperties.SetName(text,
+                $"{group.Symbols} uncovered symbols in {group.Namespace}");
+            _body.Children.Add(text);
+        }
+
+        if (view.UncoveredGroups.Count > 8)
+        {
+            _body.Children.Add(Muted($"{view.UncoveredGroups.Count - 8} more namespace(s) not shown."));
+        }
+    }
+
+    /// <summary>
+    /// One crossing, expandable into the edges that make it.
+    /// </summary>
+    /// <remarks>
+    /// <b>The count was unfalsifiable.</b> "Editorial → Football, 47 edges" is a claim about the
+    /// user's code that they cannot check, act on, or disagree with. Collapsed by default because
+    /// the counts are the summary; opened, it names the symbols, and where the list is capped it
+    /// says how many it is not showing rather than quietly ending.
+    /// </remarks>
+    private static Expander Crossing(ContextEdge edge)
+    {
+        var members = new StackPanel { Margin = new Thickness(16, 4, 0, 6) };
+
+        foreach (var member in edge.Members)
+        {
+            members.Children.Add(new TextBlock
+            {
+                Text = $"{member.Subject}  —{member.Predicate}→  {member.Object}",
+                FontFamily = new FontFamily("Cascadia Mono, Consolas"),
+                TextWrapping = TextWrapping.Wrap,
+                Opacity = 0.8,
+                Margin = new Thickness(0, 1, 0, 0),
+            });
+        }
+
+        if (edge.Undisclosed > 0)
+        {
+            members.Children.Add(new TextBlock
+            {
+                Text = $"… and {edge.Undisclosed} more not listed.",
+                Opacity = 0.6,
+                Margin = new Thickness(0, 4, 0, 0),
+            });
+        }
+
+        var header = new TextBlock
+        {
+            Text = $"{edge.From}  →  {edge.To}     {edge.Weight} edge(s)",
+            FontFamily = new FontFamily("Cascadia Mono, Consolas"),
+        };
+
+        var expander = new Expander { Header = header, Content = members, Margin = new Thickness(0, 2, 0, 0) };
+        AutomationProperties.SetName(expander,
+            $"{edge.From} to {edge.To}, {edge.Weight} edges. Expand to list them.");
+
+        return expander;
     }
 
     private static Border ContextBox(ContextView context)

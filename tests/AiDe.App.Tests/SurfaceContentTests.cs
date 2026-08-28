@@ -161,6 +161,39 @@ public sealed class SurfaceContentTests
         Assert.Contains("not available", text, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void EveryKindTheFactoryClaimsToKnow_ProducesSomethingOtherThanTheUnavailablePane()
+    {
+        // KnownKinds is load-bearing now: the restore uses it to decide what it can rebuild, so a
+        // kind listed there and not handled below would resurrect a pane that renders nothing.
+        OnStaThread(() =>
+        {
+            var factory = new SurfaceContentFactory(new StubQueries());
+
+            foreach (var kind in SurfaceContentFactory.KnownKinds)
+            {
+                var content = factory.Create(new Surface($"s-{kind}", kind, kind));
+                Assert.False(content is TextBlock t && t.Text.Contains("not available",
+                    StringComparison.OrdinalIgnoreCase), kind);
+            }
+
+            return 0;
+        });
+    }
+
+    [Fact]
+    public void TheJoinsSurfaceIsBuilt_AndIsInTheDefaultLayout()
+    {
+        // JoinProjection was written, tested, and never called by the running application. A
+        // projection nobody can see is a control that cannot fire.
+        var content = OnStaThread(() =>
+            new SurfaceContentFactory(null).Create(new Surface("joins", "joins", "Joins")));
+
+        Assert.IsType<JoinSurface>(content);
+        Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces),
+            s => s.Kind == "joins");
+    }
+
     /// <summary>A read surface that fails, standing in for a daemon that cannot be reached.</summary>
     private sealed class ThrowingQueries : IWorkspaceQueries
     {
