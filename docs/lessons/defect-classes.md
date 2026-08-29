@@ -576,17 +576,25 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
     surface: `ALayoutAlreadyAtTheCurrentVersion_IsNotMigrated` failed with `AIDE-LAYOUT-PARTIAL-RESTORE`,
     a migration error for a change that had nothing to do with migration. **Third occurrence of the
     class, first time it was registered** — the earlier fix was scoped to the file where it hurt.
-- **Control:** every layout fixture derives its surface set from `Layout.Default()`, the product's own
-  declaration, with the v1→v2 rename applied where the test needs the post-migration ids. A fixture
-  that derives cannot disagree with the product, so the class is *made impossible* for this set rather
-  than watched for.
+- **Control:** `tools/verify-fixture-derivation.py`, run in CI. It derives the product's vocabulary
+  from the product — surface ids from `Layout.Default()`, kinds from `SurfaceContentFactory.KnownKinds`
+  — and fails when three or more of those identifiers appear as literals inside one collection in a
+  test. Three, because naming one or two specific things is what a test is *for*; three in a
+  collection is someone enumerating a set. The escape hatch is a stated reason
+  (`fixture-derivation: ok — <why>`), not a flag. Every layout fixture now derives from
+  `Layout.Default()`, with the v1→v2 rename applied where a test needs post-migration ids.
+- **Observed failing:** the gate found two live cases the hour it was written — the kinds set in
+  `WorkbenchStoreTests` (added the previous day, by the same hand that registered this class) and a
+  three-name literal in `Load_WithAMissingSurface_NamesItAndStillProducesAValidLayout`. It also fails
+  closed: an empty derived vocabulary is an error, not a pass over everything.
 - **The generalisation to apply elsewhere:** when a test needs "everything the product currently has",
   it must **ask the product**, never restate it. `SurfaceContentFactory.KnownKinds`,
   `WorkbenchCommandCatalog.All` and `LayoutOperation`'s nested types are already read by reflection in
   the conformance tests — this is the same rule applied to fixtures, which is where it kept being
   forgotten. The tell is a collection literal in a test that names product concepts.
-- **Residual risk:** derivation is a convention, not a mechanism. Nothing yet **fails** when a new
-  fixture types the list out again; the register entry and the two comments are the only thing
-  carrying it. Rung reached: *make it impossible* for the layout fixtures, *register entry only* for
-  the shape.
+- **Residual risk:** the gate reads C# with regexes, so it sees single-line collection literals and
+  the two vocabularies it knows. A list spread over several lines, or one enumerating command ids,
+  passes. That is deliberate — a cross-line matcher produced false positives on ordinary code, and a
+  lint people switch off is worth less than a narrow one they keep. Rung reached: *automated control*
+  for the shape it covers.
 - **Status:** `partially-controlled`

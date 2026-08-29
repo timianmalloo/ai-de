@@ -47,6 +47,14 @@ jobs:
       - name: Defect-register integrity gate
         run: python tools/verify-defect-register.py
 
+      # DC-021: a fixture that restates a list the product declares. Three occurrences before it was
+      # registered, because each repair was cheap enough that nobody asked why. The register recorded
+      # the residual honestly — derivation was a convention and nothing failed when the next fixture
+      # typed the list out again. This is the missing half. It found two live cases the hour it was
+      # written, one of them a day old.
+      - name: Fixture-derivation gate
+        run: python tools/verify-fixture-derivation.py
+
       # Audit ids are allocated by "highest present, plus one", which is correct in one checkout and
       # wrong with two — and worktree discipline means there are usually two. It has collided twice.
       # Append-only logs can merge cleanly with two records under one id, where nothing fails and one

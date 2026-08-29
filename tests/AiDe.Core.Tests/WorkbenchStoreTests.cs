@@ -23,9 +23,15 @@ public sealed class WorkbenchStoreTests : IDisposable
 
 
     /// <summary>What the shell now passes: the shipped ids, plus every kind it can build.</summary>
+    /// <remarks>
+    /// The KINDS are derived too — from the surfaces the default layout declares, which is the same
+    /// source the shell's factory is kept in step with. Typing them out is DC-021, and this file is
+    /// where that class was first repaired.
+    /// </remarks>
     private static readonly SurfaceAvailability Availability =
-        new(AllSurfaces, new HashSet<string>(StringComparer.Ordinal)
-            { "view", "inspector", "terminal", "canvas", "contexts", "joins" });
+        new(AllSurfaces,
+            Layout.Default().AllStacks().SelectMany(stack => stack.Surfaces)
+                .Select(s => s.Kind).ToHashSet(StringComparer.Ordinal));
 
     [Fact]
     public void ASurfaceCreatedAtRuntimeSurvivesARestart()
@@ -124,8 +130,11 @@ public sealed class WorkbenchStoreTests : IDisposable
         Directory.CreateDirectory(_dir);
         var store = new LayoutStore(Path_);
         store.Save(Layout.Default());
+        // Read from the constant, not typed. A test that hardcodes the current version silently
+        // stops testing anything the release after it — the same shape as DC-021, one field wide.
         File.WriteAllText(Path_, File.ReadAllText(Path_)
-            .Replace("\"schemaVersion\": 1", "\"schemaVersion\": 99", StringComparison.Ordinal));
+            .Replace($"\"schemaVersion\": {LayoutStore.CurrentSchemaVersion}", "\"schemaVersion\": 99",
+                StringComparison.Ordinal));
 
         var result = store.Load(AllSurfaces);
 
@@ -141,7 +150,10 @@ public sealed class WorkbenchStoreTests : IDisposable
         var store = new LayoutStore(Path_);
         store.Save(Layout.Default());
 
-        var result = store.Load(new HashSet<string> { "explore", "domain", "provenance" });   // terminal-1 gone
+        // Everything except the terminal, derived rather than listed: the point of the case is the
+        // ONE surface that is gone, and spelling out the others makes it a case about all of them.
+        var result = store.Load(new HashSet<string>(
+            AllSurfaces.Where(id => id != "terminal-1"), StringComparer.Ordinal));
 
         Assert.Equal(LayoutErrorCodes.PartialRestore, result.ErrorCode);
         Assert.Contains("Terminal — pwsh", result.MissingSurfaces);

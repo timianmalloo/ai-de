@@ -465,7 +465,36 @@ public sealed class WorkbenchShell : IDisposable
             return new JoinProjection(ReadAssertions(found)).Compute();
         };
 
+        pane.NodeSelected -= OnJoinNodeSelected;
+        pane.NodeSelected += OnJoinNodeSelected;
+
         pane.Refresh();
+    }
+
+    /// <summary>Centres the graph on a join's endpoint.</summary>
+    /// <remarks>
+    /// Any context filter in force is cleared first. A join whose endpoint sits outside the filtered
+    /// context would otherwise centre the graph on a node the canvas has been told not to draw, and
+    /// the user would click a row and watch nothing happen.
+    /// </remarks>
+    private void OnJoinNodeSelected(object? sender, string nodeId)
+    {
+        var canvas = Service.Current.AllStacks()
+            .SelectMany(stack => stack.Surfaces)
+            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .OfType<CanvasSurface>()
+            .FirstOrDefault();
+
+        if (canvas is null) return;
+
+        if (_canvasGraph?.ContextFilter is not null)
+        {
+            _canvasGraph.ContextFilter = null;
+            Announcer.Announce("Graph filter cleared.");
+        }
+
+        Announcer.Announce($"Graph centred on {nodeId}.");
+        _ = canvas.RefreshAsync(nodeId);
     }
 
     private void OnContextSelected(object? sender, string context)

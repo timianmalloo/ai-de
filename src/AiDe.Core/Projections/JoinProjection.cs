@@ -128,6 +128,19 @@ public sealed class JoinProjection(IReadOnlyList<EvidenceAssertion> assertions)
             disclosures = [.. disclosures, "sql-resource-name-unresolved"];
         }
 
+        // -------------------------------------------------------- infrastructure → infrastructure
+        // Declared dependsOn. VERIFIED, and this is the one place in the projection where that word
+        // is cheap to earn: both ends are symbols the template itself names, and the edge is read
+        // rather than corresponded. The extractor already emitted these and nothing consumed them —
+        // the same shipped-but-unreachable shape as the projection itself.
+        foreach (var dependency in assertions.Where(a => a.Predicate == "depends_on"))
+        {
+            edges.Add(new JoinEdge(
+                dependency.Subject, dependency.Object, "depends_on",
+                VerificationStatus.Verified,
+                "declared in the resource's dependsOn"));
+        }
+
         // ---------------------------------------------------------------- code → infrastructure
         // Verified when both sides are literals: a parameter declared in the template and a string
         // literal in code that matches it exactly. This is the one join in the phase that can be

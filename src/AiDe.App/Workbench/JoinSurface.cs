@@ -44,6 +44,13 @@ public sealed class JoinSurface : ContentControl
     /// <summary>Supplies the joins. Null until a workspace attaches.</summary>
     public Func<JoinResult>? Source { get; set; }
 
+    /// <summary>Raised when a join's endpoint is chosen, so the graph can centre on it.</summary>
+    /// <remarks>
+    /// A pane that names a symbol the canvas can already draw, and leaves the user to retype it into
+    /// a search box, is two tools that happen to share a window.
+    /// </remarks>
+    public event EventHandler<string>? NodeSelected;
+
     public void Refresh() => Render(Source?.Invoke());
 
     private void Render(JoinResult? result)
@@ -135,10 +142,26 @@ public sealed class JoinSurface : ContentControl
                 BorderThickness = new Thickness(2, 0, 0, 0),
                 Padding = new Thickness(8, 2, 0, 2),
                 Child = panel,
+                Cursor = System.Windows.Input.Cursors.Hand,
+                ToolTip = $"Centre the graph on {edge.From}",
+                Focusable = true,
+            };
+
+            // The FROM end, because that is the side the user is reasoning about: "this type maps to
+            // that table" is a question about the type. The To end is one hop away in the graph.
+            var node = edge.From;
+            box.MouseLeftButtonUp += (_, _) => NodeSelected?.Invoke(this, node);
+            box.KeyDown += (_, e) =>
+            {
+                if (e.Key is System.Windows.Input.Key.Enter or System.Windows.Input.Key.Space)
+                {
+                    NodeSelected?.Invoke(this, node);
+                    e.Handled = true;
+                }
             };
 
             AutomationProperties.SetName(box,
-                $"{status}. {edge.From} {edge.Kind} {edge.To}. {edge.Basis}");
+                $"{status}. {edge.From} {edge.Kind} {edge.To}. {edge.Basis}. Activate to centre the graph on {edge.From}.");
 
             _body.Children.Add(box);
         }

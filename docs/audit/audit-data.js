@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-28T23:47:09Z",
+  "generated": "2026-08-29T00:05:47Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1230,6 +1230,32 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0060",
+      "shortname": "measured-readiness-and-four-steps",
+      "datetime": "2026-08-29T00:05:47Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do all of these 5 steps then summarize what i can manually test in the client\nand show the standard status and next steps",
+      "summary": "Five steps. The first one measured, and the measurement withdrew my own proposal.\n\n**Readiness.** I had written that one measurement would turn agent dispatch from always-refused into\nworking. It does not. A new observe-agent instrument captured what Claude Code actually draws:\nthe trust gate appears even in this repository's own directory; the chevron in the output is the\nselection cursor of that dialog sitting on \"No, exit\"; and the screen is a TUI drawn with absolute\ncursor addressing, so a tail-anchored regex over the byte stream asks where the cursor went last\nrather than what the screen says. A looser marker — the obvious repair — would report READY at the\nmost dangerous possible moment. The built-in marker is left exactly as it is, the captured bytes are\na committed fixture, and the negative control was observed failing on a loosened pattern before being\naccepted. Screen-buffer readiness is recorded as the next real step.\n\n**The other four landed.** Join rows centre the graph on their From end, clearing any context filter\nfirst. The migration chain's placeholder — a worked example describing a rename the product never\nperformed — was replaced by the real v1→v2 step, so the joins pane reaches users who already have a\nsaved layout; the example moved into the test that documents it. depends_on is consumed as a Verified\njoin. And DC-021 has an automated control: verify-fixture-derivation.py, which found two live cases\nthe hour it was written, one of them a day old and written by the same hand that registered the class.\n\nGate: 616 tests green (App 108, Core 508), five verifiers clean, app verified launching.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Land the five proposed next actions, measuring rather than reasoning where the step calls for it, and close with the manual-test, status and next-step tables",
+      "done_when": "Five steps landed with a control each; readiness measured against real agent output; full gate green; committed and pushed; tables produced",
+      "change": "cl-0049",
+      "git": {
+        "sha": "97aad79e5061819896356312a83a957cc4152280",
+        "short": "97aad79e5",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -2405,6 +2431,58 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "971a687bb86a177cc464a087645ec42a0737ac39",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0048",
+      "datetime": "2026-08-29T00:05:32Z",
+      "session": null,
+      "kind": "knowledge",
+      "skill": null,
+      "title": "Agent readiness measured: the marker approach cannot work for a full-screen agent",
+      "prompt": null,
+      "summary": "Step 1 of the five was \"tune claude's readiness marker against real output — one measurement turns\ndispatch from always-refused into working.\" The measurement was taken, and it withdraws my own\nnext-step.\n\nA new instrument, `observe-agent`, launches an agent CLI under ConPTY and prints what it actually\ndraws, with control characters made visible, and reports whether each configured marker matched THAT\noutput. It asserts nothing; it exists so a marker is written against measured bytes.\n\nThree findings, all recorded in spikes/agent-readiness/RESULT.md.\n\n1. The trust gate appears even in C:\\Projects\\ai-de — the directory where this project's Claude Code\n   sessions run every day. It is not an artefact of an unfamiliar folder; it is the normal first\n   screen for a session this shell starts.\n2. The chevron IS in the output — at ESC[14;2H, as the selection cursor of the trust dialog, sitting\n   on \"No, exit\". A looser marker, which is the obvious repair when a pattern does not match, would\n   have reported READY at the exact moment dispatch is most dangerous: the Enter that submits a\n   prompt is the Enter that confirms \"No, exit\". The shipped conservative pattern correctly reports\n   no match.\n3. The output is a full-screen TUI drawn with absolute cursor addressing, not lines. A tail-anchored\n   regex over the byte stream asks where the cursor went last, not what the screen says. Making the\n   pattern cleverer cannot fix that — the information is not in the ordering of the bytes.\n   Establishing readiness for a full-screen agent needs a VT parser maintaining a cell grid.\n\nConsequence: the marker mechanism is kept, the built-in claude marker is left exactly as it is\nbecause refusing is the right answer for the screens observed, and screen-buffer readiness is\nrecorded as the next real step rather than attempted. The captured output is committed as a test\nfixture and ARealTrustGateIsNotMistakenForAPrompt pins it — observed failing on a loosened marker\nbefore being accepted.",
+      "rationale": null,
+      "artifacts": [
+        "spikes/agent-readiness/RESULT.md",
+        "tests/AiDe.Core.TerminalHost/ObserveProbe.cs"
+      ],
+      "tags": [
+        "spike",
+        "dispatch"
+      ],
+      "git": {
+        "before": null,
+        "after": "97aad79e5061819896356312a83a957cc4152280",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0049",
+      "datetime": "2026-08-29T00:05:32Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Joins to graph, a real layout migration, dependsOn consumed, and a gate for DC-021",
+      "prompt": null,
+      "summary": "The remaining four steps.\n\n**Joins are clickable through to the graph.** A pane naming symbols the canvas can already draw, and\nleaving the user to retype them into a search box, is two tools sharing a window. Activating a join\nrow centres the graph on its From end — the side the user is reasoning about — clearing any context\nfilter first, because centring on a node the canvas has been told not to draw would look like a\nclick that did nothing.\n\n**A real migration replaced the placeholder.** LayoutMigrations shipped with one entry: a worked\nEXAMPLE describing a rename the product never performed. The chain therefore looked exercised while\ndoing nothing, and the joins pane added last turn would have reached only users with no saved layout\n— nobody who has used the product. The chain now carries the real v1 to v2 step, which adds the pane\nbeside its anchor in whatever tree the user actually has; the rename example moved into the test that\ndocuments it. If the anchor is gone the migration does nothing: a user who closed that area has said\nsomething, and re-opening it under a new name is not an upgrade.\n\n**dependsOn is consumed.** The Bicep extractor emitted depends_on and nothing read it — the same\nshipped-but-unreachable shape as the join projection itself. It is now a Verified join edge, and this\nis the one place in the projection where Verified is cheap to earn: both ends are symbols the\ntemplate names, and the edge is read rather than corresponded.\n\n**DC-021 has an automated control.** tools/verify-fixture-derivation.py derives the product's own\nvocabulary from the product and fails when three or more of those identifiers appear as literals in\none collection in a test. It found two live cases the hour it was written — one of them the kinds set\nI added the previous day, in the same commit that registered the class. Wired into CI. It fails\nclosed: an empty derived vocabulary is an error, not a pass over everything.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/LayoutMigrations.cs",
+        "tools/verify-fixture-derivation.py",
+        "src/AiDe.Core/Projections/JoinProjection.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "97aad79e5061819896356312a83a957cc4152280",
         "branch": "main",
         "pushed": true,
         "commits": []

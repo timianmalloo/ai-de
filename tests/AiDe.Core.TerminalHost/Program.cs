@@ -74,6 +74,20 @@ internal static class Program
             return code;
         }
 
+        if (mode == "observe-agent")
+        {
+            // An instrument, not a test. It prints what the agent actually draws, so a readiness
+            // marker is written against measured output instead of a memory of what a CLI prints.
+            var code = await ObserveProbe.RunAsync(
+                log,
+                commandLine: args.Length > 2 ? args[2] : "claude",
+                workingDirectory: args.Length > 3 ? args[3] : Environment.CurrentDirectory,
+                settleSeconds: args.Length > 4 && int.TryParse(args[4], out var settle) ? settle : 20);
+
+            Write(report, log);
+            return code;
+        }
+
         if (mode == "dispatch-agent")
         {
             // ADR-0010's stated residual: the live session so far has been a SHELL. This dispatches

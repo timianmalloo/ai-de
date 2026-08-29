@@ -126,6 +126,43 @@ public sealed class Phase3SurfacingTests : IDisposable
         Assert.Equal("NEVERMATCHES$", watcher.Pattern);
     }
 
+    [Fact]
+    public void ARealTrustGateIsNotMistakenForAPrompt()
+    {
+        // MEASURED, not imagined. spikes/agent-readiness captured what Claude Code actually draws
+        // when this shell starts it, and the bytes contain a chevron — at ESC[14;2H, as the SELECTION
+        // CURSOR of the trust dialog, sitting on "No, exit".
+        //
+        // A looser marker is the obvious repair when a pattern does not match, and it would report
+        // READY at the exact moment dispatch is most dangerous: the Enter that submits a prompt is
+        // the Enter that confirms "No, exit". This is the negative control on that repair.
+        var watcher = new AgentReadinessWatcher(AgentReadinessWatcher.KnownAgents["claude"]);
+        watcher.Observe(TrustGateOutput());
+
+        Assert.False(watcher.IsReady);
+        Assert.Contains("❯", watcher.LastJudged, StringComparison.Ordinal);
+    }
+
+    /// <summary>The captured session output, control characters restored.</summary>
+    /// <remarks>
+    /// Stored escaped so the fixture is readable and diffable in exactly the whitespace a
+    /// tail-anchored pattern turns on. Unescaped here so the watcher sees the real bytes.
+    /// </remarks>
+    private static string TrustGateOutput()
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "fixtures", "claude-trust-gate.escaped.txt");
+        Assert.True(File.Exists(path), $"the captured agent output is missing: {path}");
+
+        return File.ReadAllText(path)
+            .Replace("<ESC>", "\u001b", StringComparison.Ordinal)
+            .Replace("<BEL>", "\a", StringComparison.Ordinal)
+            .Replace("<TAB>", "\t", StringComparison.Ordinal)
+            .Replace("<CR>", "\r", StringComparison.Ordinal)
+            // The escaper prints a real newline after <LF> so the dump wraps; both go.
+            .Replace("<LF>\n", "\n", StringComparison.Ordinal)
+            .Replace("<LF>", "\n", StringComparison.Ordinal);
+    }
+
     // ── Crossings can be opened ───────────────────────────────────────────────────────────
 
     private static EvidenceAssertion Edge(string subject, string obj) =>

@@ -17,17 +17,66 @@ public static class LayoutMigrations
     /// The shipped migration chain.
     /// </summary>
     /// <remarks>
-    /// Empty until the schema first changes — but the *mechanism* ships from day one, because a
-    /// migration hook added after the first breaking change is added too late for every layout
-    /// already on disk. The v1→v2 entry below is the worked example the round-trip spike exercises.
+    /// <para>The mechanism shipped from day one, because a migration hook added after the first
+    /// breaking change is added too late for every layout already on disk. Its first entry was a
+    /// worked EXAMPLE — a rename that never happened in the product — which meant the chain looked
+    /// exercised while doing nothing, and the first real release that added a surface reached
+    /// existing users only if they knew to reset their layout. That example now lives in the test
+    /// that documents it; this is the real chain.</para>
     /// </remarks>
     public static IReadOnlyList<LayoutMigration> Default { get; } =
     [
-        // v1 → v2: the terminal surface was renamed when sessions gained stable identities.
-        // Renaming without a migration would silently drop the pane from every saved layout —
-        // the user would open the app and find their terminal simply gone from the arrangement.
-        new(1, dto => RenameSurface(dto, "terminal-1", "terminal.session.1")),
+        // v1 → v2: the Joins pane was added. Without this, a saved layout simply does not contain it
+        // and the feature is invisible to everyone who has ever arranged their workbench — the
+        // people most likely to have opinions about it.
+        new(1, dto => AddSurfaceBeside(dto, "contexts", new SurfaceDto("joins", "joins", "Joins"))),
     ];
+
+    /// <summary>
+    /// Adds a surface into whichever stack already holds <paramref name="anchorSurfaceId"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Beside an anchor rather than at a fixed path.</b> The saved tree is the user's, not
+    /// the default's: a stack id computed from the shipped layout may not exist in theirs at all.</para>
+    ///
+    /// <para><b>A missing anchor means the migration does nothing.</b> If the user closed the pane
+    /// this one belongs beside, they have said something about that area of the workbench, and
+    /// re-opening it under a new name is not an upgrade. A surface already present is left alone, so
+    /// the step is safe to re-run.</para>
+    /// </remarks>
+    public static LayoutDto AddSurfaceBeside(LayoutDto dto, string anchorSurfaceId, SurfaceDto surface)
+    {
+        if (Contains(dto.Root, surface.SurfaceId) || dto.Floating.Any(f => Contains(f, surface.SurfaceId)))
+        {
+            return dto;
+        }
+
+        return new LayoutDto(
+            AddIn(dto.Root, anchorSurfaceId, surface),
+            [.. dto.Floating.Select(f => AddIn(f, anchorSurfaceId, surface))]);
+    }
+
+    private static bool Contains(NodeDto node, string surfaceId) =>
+        (node.Surfaces ?? []).Any(s => s.SurfaceId == surfaceId)
+        || (node.Children ?? []).Any(c => Contains(c, surfaceId));
+
+    private static NodeDto AddIn(NodeDto node, string anchorSurfaceId, SurfaceDto surface)
+    {
+        if (node.Kind == "stack")
+        {
+            var surfaces = node.Surfaces ?? [];
+            return surfaces.Any(s => s.SurfaceId == anchorSurfaceId)
+                ? node with { Surfaces = [.. surfaces, surface] }
+                : node;
+        }
+
+        return node with
+        {
+            Children = node.Children is null
+                ? null
+                : [.. node.Children.Select(c => AddIn(c, anchorSurfaceId, surface))],
+        };
+    }
 
     /// <summary>Rewrites one surface id throughout a layout, preserving its position and tab order.</summary>
     public static LayoutDto RenameSurface(LayoutDto dto, string oldId, string newId) =>

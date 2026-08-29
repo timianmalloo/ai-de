@@ -19,6 +19,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!--
+      Captured agent output, used as a fixture. Copied rather than embedded so it stays readable in
+      the repository: it is evidence a human has to be able to inspect, not just bytes a test loads.
+    -->
+    <None Include="fixtures\**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\AiDe.Core\AiDe.Core.csproj" />
 
     <!--

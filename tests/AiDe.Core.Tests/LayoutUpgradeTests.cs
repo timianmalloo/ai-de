@@ -17,6 +17,18 @@ public sealed class LayoutUpgradeTests : IDisposable
 
     private string Path_ => Path.Combine(_dir, "layout.json");
 
+    /// <summary>
+    /// The rename that used to sit in the shipped chain as a worked example.
+    /// </summary>
+    /// <remarks>
+    /// It documents a rename the product never performed. It lives here now, because a placeholder
+    /// in the SHIPPED chain made the mechanism look exercised while doing nothing — and the first
+    /// real release that added a surface reached existing users only if they knew to reset their
+    /// layout. The hypothetical belongs in the test that asserts it; the chain ships what happened.
+    /// </remarks>
+    private static readonly IReadOnlyList<LayoutMigration> RenameChain =
+        [new(1, dto => LayoutMigrations.RenameSurface(dto, "terminal-1", "terminal.session.1"))];
+
     /// <summary>The surface set a LATER release ships, after renaming the terminal surface.</summary>
     // DERIVED from the default layout, with the v1→v2 rename applied — not typed. A hardcoded copy
     // turns "a release added a surface" into unrelated persistence failures that say nothing about
@@ -30,11 +42,73 @@ public sealed class LayoutUpgradeTests : IDisposable
         [.. Layout.Default().AllStacks().SelectMany(stack => stack.Surfaces)
             .Select(surface => surface.SurfaceId)];
 
-    private void WriteV1Layout()
+    /// <summary>A layout as the release that called the terminal surface "terminal-1" saved it.</summary>
+    private void WriteV1Layout() => WriteFileAtSchema1(Layout.Default());
+
+    /// <summary>Writes a layout and stamps the envelope back to schema 1.</summary>
+    /// <remarks>
+    /// Save always writes the CURRENT version, so a genuinely older file cannot be produced by the
+    /// shipped writer. Rewriting the field is the honest stand-in: everything else about the file is
+    /// exactly what version 1 wrote, because version 1 wrote this payload shape.
+    /// </remarks>
+    private void WriteFileAtSchema1(Layout layout)
     {
-        // A layout saved by the release that called the terminal surface "terminal-1".
-        var store = new LayoutStore(Path_, appVersion: "0.3.0");
-        store.Save(Layout.Default());
+        new LayoutStore(Path_, appVersion: "0.3.0").Save(layout);
+        File.WriteAllText(Path_, File.ReadAllText(Path_)
+            .Replace("\"schemaVersion\": 2", "\"schemaVersion\": 1", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void ASurfaceAddedByThisRelease_ReachesALayoutSavedBeforeIt()
+    {
+        // The defect this migration exists for. Adding a pane to Layout.Default reaches only people
+        // with no saved layout — which is nobody who has used the product. Everyone who has ever
+        // arranged their workbench got the feature only if they knew to reset it.
+        var before = Layout.Default();
+        var withoutJoins = LayoutService.Detach(before, "joins")!;
+        WriteFileAtSchema1(withoutJoins);
+
+        var result = new LayoutStore(Path_, appVersion: "0.4.0").Load(CurrentSurfaces);
+
+        Assert.False(result.WasDefaulted);
+        Assert.Null(result.ErrorCode);
+        Assert.Contains(result.Layout.AllStacks().SelectMany(stack => stack.Surfaces),
+            surface => surface.SurfaceId == "joins");
+
+        // Beside its anchor, not wherever the tree happened to allow it.
+        Assert.Contains(result.Layout.FindStackOf("joins")!.Surfaces, s => s.SurfaceId == "contexts");
+    }
+
+    [Fact]
+    public void APaneTheUserClosedIsNotReopenedUnderANewName()
+    {
+        // If the anchor is gone, the user has said something about that area of the workbench.
+        // Re-opening it as a different pane is not an upgrade.
+        var stripped = LayoutService.Detach(LayoutService.Detach(Layout.Default(), "joins")!, "contexts")!;
+        WriteFileAtSchema1(stripped);
+
+        var result = new LayoutStore(Path_, appVersion: "0.4.0").Load(CurrentSurfaces);
+
+        Assert.DoesNotContain(result.Layout.AllStacks().SelectMany(stack => stack.Surfaces),
+            surface => surface.SurfaceId == "joins");
+    }
+
+    [Fact]
+    public void TheMigrationIsSafeToReRun()
+    {
+        // Rewritten on read so it is not re-migrated every launch — but a step that duplicated the
+        // surface if it ever ran twice would violate the layout's own uniqueness invariant, which
+        // fails as a corrupt file rather than as a duplicate tab.
+        var start = new LayoutDto(LayoutStore.ToDto(LayoutService.Detach(Layout.Default(), "joins")!.Root), []);
+        var once = LayoutMigrations.AddSurfaceBeside(start, "contexts", new SurfaceDto("joins", "joins", "Joins"));
+
+        var twice = LayoutMigrations.AddSurfaceBeside(once, "contexts", new SurfaceDto("joins", "joins", "Joins"));
+
+        var layout = new Layout(LayoutStore.FromDto(twice.Root), [],
+            System.Collections.Immutable.ImmutableDictionary<string, StackState>.Empty);
+
+        layout.AssertInvariant();
+        Assert.Single(layout.AllStacks().SelectMany(s => s.Surfaces), s => s.SurfaceId == "joins");
     }
 
     // The upgrade path: an old file, a new app, and a surface that was renamed between them.
@@ -45,7 +119,7 @@ public sealed class LayoutUpgradeTests : IDisposable
 
         // assumedCurrentVersion: 2 simulates the LATER build — the file is v1, the app is v2, and
         // the gap between them is what the migration chain exists to cross.
-        var store = new LayoutStore(Path_, appVersion: "0.4.0", migrations: LayoutMigrations.Default);
+        var store = new LayoutStore(Path_, appVersion: "0.4.0", migrations: RenameChain);
         var result = store.Load(V2Surfaces, assumedCurrentVersion: 2);
 
         Assert.False(result.WasDefaulted);
@@ -61,7 +135,7 @@ public sealed class LayoutUpgradeTests : IDisposable
     public void AMigratedLayout_IsRewrittenAtTheCurrentSchemaVersion()
     {
         WriteV1Layout();
-        var store = new LayoutStore(Path_, appVersion: "0.4.0", migrations: LayoutMigrations.Default);
+        var store = new LayoutStore(Path_, appVersion: "0.4.0", migrations: RenameChain);
 
         store.Load(V2Surfaces, assumedCurrentVersion: 2);
 
@@ -73,7 +147,7 @@ public sealed class LayoutUpgradeTests : IDisposable
     [Fact]
     public void ALayoutAlreadyAtTheCurrentVersion_IsNotMigrated()
     {
-        var store = new LayoutStore(Path_, appVersion: "0.4.0", migrations: LayoutMigrations.Default);
+        var store = new LayoutStore(Path_, appVersion: "0.4.0", migrations: RenameChain);
         store.Save(Layout.Default());
         var before = File.GetLastWriteTimeUtc(Path_);
 

@@ -80,7 +80,15 @@ public sealed class LayoutStore(
     string appVersion = "0.3.0",
     IReadOnlyList<LayoutMigration>? migrations = null)
 {
-    public const int CurrentSchemaVersion = 1;
+    /// <summary>
+    /// Bumped to 2 when the Joins pane was added.
+    /// </summary>
+    /// <remarks>
+    /// The version is what makes a shipped surface reach a user who has already arranged their
+    /// workbench. Adding a pane to <see cref="Layout.Default"/> alone reaches only people with no
+    /// saved layout, which is nobody who has used the product.
+    /// </remarks>
+    public const int CurrentSchemaVersion = 2;
 
     private static readonly JsonSerializerOptions Json = new()
     {
