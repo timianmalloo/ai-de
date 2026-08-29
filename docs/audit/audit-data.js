@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-29T21:58:07Z",
+  "generated": "2026-08-29T22:04:13Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1966,6 +1966,27 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/App.xaml",
         "src/AiDe.App/MainWindow.xaml"
+      ],
+      "tags": [
+        "facelift",
+        "icons"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0110",
+      "shortname": "icon-system-menus",
+      "datetime": "2026-08-29T22:04:13Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Extend the icon system to the menus.",
+      "summary": "Menu icons: added an Icon column to the MenuItem submenu template + two geometries (IconLayout, IconRefresh), and wired MainMenuBuilder.IconFor to set MenuItem.Icon per command via a keyword map (terminal/prompt/open/index/refresh/canvas -> icon, layout default), stroked from the shared geometry set in the palette muted colour. 12 geometries validated to parse; menu+icon renders standalone. Build 0/0; App.Tests 121/121.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/MainMenuBuilder.cs",
+        "src/AiDe.App/App.xaml"
       ],
       "tags": [
         "facelift",

@@ -1,5 +1,7 @@
 using System.IO;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using AiDe.Core.Workbench;
 
 namespace AiDe.App.Workbench;
@@ -25,6 +27,44 @@ internal static class MainMenuBuilder
     /// Grouped by what the user is trying to DO, not by which subsystem implements it: opening a
     /// workspace and indexing it are one errand, and they live in different classes.
     /// </remarks>
+    /// <summary>
+    /// The icon for a menu command — a stroked <see cref="System.Windows.Shapes.Path"/> from the
+    /// shared geometry set (App.xaml), keyed off the command id. Visual only (Design owns how a menu
+    /// looks); a keyword heuristic with a layout-icon default so every item is iconed consistently.
+    /// Null when app resources are not loaded (tests).
+    /// </summary>
+    private static System.Windows.Shapes.Path? IconFor(string id)
+    {
+        var key = id switch
+        {
+            _ when id.Contains("terminal", StringComparison.Ordinal) => "IconTerminal",
+            _ when id.Contains("prompt", StringComparison.Ordinal) || id.Contains("dispatch", StringComparison.Ordinal) => "IconSend",
+            "workspace.open" => "IconFolderOpen",
+            _ when id.Contains("index", StringComparison.Ordinal) => "IconGraph",
+            _ when id.Contains("refresh", StringComparison.Ordinal) => "IconRefresh",
+            _ when id.Contains("canvas", StringComparison.Ordinal) => "IconGraph",
+            _ => "IconLayout",
+        };
+
+        if (Application.Current?.TryFindResource(key) is not Geometry geometry)
+        {
+            return null;
+        }
+
+        return new System.Windows.Shapes.Path
+        {
+            Data = geometry,
+            Stretch = Stretch.Uniform,
+            Width = 15,
+            Height = 15,
+            Stroke = Application.Current?.TryFindResource("TextMutedBrush") as Brush ?? Brushes.Gray,
+            StrokeThickness = 1.5,
+            StrokeLineJoin = PenLineJoin.Round,
+            StrokeStartLineCap = PenLineCap.Round,
+            StrokeEndLineCap = PenLineCap.Round,
+        };
+    }
+
     private static readonly (string Menu, string[] CommandIds)[] Layout =
     [
         // CORE-OWNED DATA in a design-owned file: which commands exist and which menu they belong
@@ -128,6 +168,7 @@ internal static class MainMenuBuilder
                     Header = command.Title,
                     InputGestureText = command.Gesture,
                     ToolTip = command.Hint,
+                    Icon = IconFor(command.Id),
                 };
 
                 var captured = command.Id;
