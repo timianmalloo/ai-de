@@ -6,8 +6,8 @@ status: proposed
 owner: "@timianmalloo"
 tags: [collaboration, contracts, ownership, worktrees]
 links:
-  - { to: session-worktree-discipline, rel: refines }
   - { to: architecture, rel: relates-to }
+  - { to: knowledge-hub, rel: relates-to }
 review-by: 2026-11-29
 summary: >-
   Who owns which files, which interfaces are the seam between them, and how a change to that seam is
@@ -138,6 +138,22 @@ A change to anything in §3 follows the same three steps, whichever session star
 layout model and the migration chain; Design adds the control. Do it in that order, and land the Core
 half first — a kind in a saved layout with no control behind it renders an honest "unavailable" pane,
 whereas a control for a kind nothing produces is dead code nobody notices.
+
+---
+
+## 4a. Open requests from Core to Design
+
+Additive, already landed on `main`, and safe to ignore until you get to them — but each is something
+a user currently cannot see.
+
+| Request | Why | Where |
+|---|---|---|
+| Render the **evidence shortfall** | Every number both panes show is computed from a bounded read: 20,000 search results, 4,000 nodes described, 60 neighbours each. When a cap bites, the counts become lower bounds and look identical to complete ones. Core announces it today, which reaches assistive technology and nothing else | `EvidenceRead.Shortfall` — Core will add it to `ContextMapView` and `JoinResult` on request, additively |
+| Show `ContextEdge.DominantTarget` more prominently | 57 of 72 crossings being one class is the difference between "this boundary failed" and "this boundary is carrying the ORM". It is currently a grey suffix on the expander header | `ContextEdge.DominantTarget`, `DominantCount` |
+| A visual state for `ContextMapView.IsDeclared == false` | "No context map is declared" is currently a heading and a muted paragraph. It is the *first* thing a new workspace shows, and it is closer to an empty state than to a message | `ContextMapView.IsDeclared` |
+
+Core will not implement these; they are rendering. They are listed because a request made in
+conversation is a request the next session cannot read.
 
 ---
 

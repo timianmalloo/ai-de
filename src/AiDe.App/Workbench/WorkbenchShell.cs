@@ -413,7 +413,10 @@ public sealed class WorkbenchShell : IDisposable
             var symbols = found.Matches.Select(m => m.NodeId).ToList();
             var map = BoundedContextReader.Load(path, symbols);
 
-            return new ContextProjection(map, ReadAssertions(found)).Compute();
+            var read = ReadAssertions(found);
+            AnnounceShortfall("Contexts", read);
+
+            return new ContextProjection(map, read.Assertions).Compute();
         };
 
         // Choosing a context filters the graph to it. The two views already share colours; this is
@@ -430,23 +433,72 @@ public sealed class WorkbenchShell : IDisposable
     /// would be two chances to disagree, and a context map and a join view that disagree about the
     /// same edge is a defect the user has no way to diagnose.
     /// </remarks>
-    private List<AiDe.Core.Facts.EvidenceAssertion> ReadAssertions(AiDe.Core.Projections.FindResult found)
-    {
-        var assertions = new List<AiDe.Core.Facts.EvidenceAssertion>();
-        if (_queries is null) return assertions;
+    /// <summary>How many matched nodes are described, and how many neighbours each contributes.</summary>
+    /// <remarks>
+    /// Named rather than inline, because they are the reason a count can be a lower bound. Every
+    /// number both panes show is computed from this read.
+    /// </remarks>
+    private const int NodesToDescribe = 4000;
+    private const int NeighboursPerNode = 60;
 
-        foreach (var match in found.Matches.Take(4000))
+    /// <summary>Every neighbour edge of every matched node, with what the read did NOT see.</summary>
+    /// <remarks>
+    /// Shared by the context and join panes rather than read twice. Two reads of the same store
+    /// would be two chances to disagree, and a context map and a join view that disagree about the
+    /// same edge is a defect the user has no way to diagnose.
+    /// </remarks>
+    private AiDe.Core.Projections.EvidenceRead ReadAssertions(AiDe.Core.Projections.FindResult found)
+    {
+        if (_queries is null) return AiDe.Core.Projections.EvidenceRead.Empty;
+
+        var assertions = new List<AiDe.Core.Facts.EvidenceAssertion>();
+        var read = 0;
+        var atLimit = 0;
+
+        foreach (var match in found.Matches.Take(NodesToDescribe))
         {
-            var describe = _queries.DescribeAsync(match.NodeId, 60, CancellationToken.None)
+            var describe = _queries.DescribeAsync(match.NodeId, NeighboursPerNode, CancellationToken.None)
                 .GetAwaiter().GetResult();
+
+            read++;
+
+            // A node returning exactly the limit is a node whose neighbours MAY have been cut. It is
+            // counted as truncated rather than resolved, because the read cannot tell the difference
+            // and guessing in the flattering direction is how a cap becomes a quieter wrong number.
+            if (describe.Neighbors.Count >= NeighboursPerNode) atLimit++;
 
             assertions.AddRange(describe.Neighbors.Select(e => new AiDe.Core.Facts.EvidenceAssertion(
                 "view", e.ArtifactRevision, e.Subject, e.Predicate, e.Object,
                 e.Origin, e.Status, e.Provenance)));
         }
 
-        return assertions;
+        return new AiDe.Core.Projections.EvidenceRead(
+            assertions, found.Matches.Count, read, NeighboursPerNode, atLimit);
     }
+
+    /// <summary>
+    /// Tells the user when a pane's numbers are lower bounds.
+    /// </summary>
+    /// <remarks>
+    /// Announced from the shell rather than drawn by the panes: the caps live here, the panes render
+    /// what they are given, and a surface computing its own caveat would be a second definition of a
+    /// fact this side already owns. The panes will show it too once the view models carry it —
+    /// recorded as a request in docs/collaboration/session-contracts.md.
+    /// </remarks>
+    private void AnnounceShortfall(string pane, AiDe.Core.Projections.EvidenceRead read)
+    {
+        if (read.Shortfall is not { } shortfall) return;
+
+        // Once per distinct sentence. A refresh that repeats the same caveat trains the user to
+        // ignore it, and the caveat is the part that matters.
+        var message = $"{pane}: {shortfall}";
+        if (string.Equals(message, _lastShortfall, StringComparison.Ordinal)) return;
+
+        _lastShortfall = message;
+        Announcer.Announce(message);
+    }
+
+    private string? _lastShortfall;
 
     /// <summary>
     /// Reports any terminal pane that is waiting on a person.
@@ -487,7 +539,10 @@ public sealed class WorkbenchShell : IDisposable
             var found = _queries.FindAsync(string.Empty, 20_000, CancellationToken.None)
                 .GetAwaiter().GetResult();
 
-            return new JoinProjection(ReadAssertions(found)).Compute();
+            var read = ReadAssertions(found);
+            AnnounceShortfall("Joins", read);
+
+            return new JoinProjection(read.Assertions).Compute();
         };
 
         pane.NodeSelected -= OnJoinNodeSelected;

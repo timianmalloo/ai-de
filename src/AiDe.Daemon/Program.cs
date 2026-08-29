@@ -143,11 +143,12 @@ internal static class Program
             Console.Error.WriteLine(recovery.Failure);
         }
 
-        // The composite routes csharp: scopes to the real extractor and everything else to the
-        // fixture one, so a workspace can hold both while Phase 2's fixture evidence still renders.
+        // ONE composition, shared with every other entry point. The daemon previously composed only
+        // C# and the fixture adapter, so the running application could not see infrastructure or
+        // schema at all — while a spike composed all four and reported joins the product had no way
+        // to show. Two answers to "what does this tool read", depending which door you came in.
         var core = WorkspaceCore.Open(
-            workspaceId, workspacePath, dataDirectory,
-            new CompositeExtractor(new CSharpExtractor(), new FixtureExtractor()));
+            workspaceId, workspacePath, dataDirectory, WorkspaceExtractors.Default());
 
         var endpoint = new DaemonEndpoint(
             workspaceId, new CapabilityRegistry(), _ => core.Store.CoreEpoch);

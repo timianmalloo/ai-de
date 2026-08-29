@@ -163,6 +163,84 @@ public sealed class Phase3SurfacingTests : IDisposable
             .Replace("<LF>", "\n", StringComparison.Ordinal);
     }
 
+    // ── A bounded read says what it did not see ───────────────────────────────────────────
+
+    [Fact]
+    public void ACompleteReadSaysNothing()
+    {
+        // Silence is the correct output when there is nothing to caveat. A banner on every refresh
+        // is a banner the user stops reading, and then the one that mattered goes unread too.
+        var read = new EvidenceRead([], NodesMatched: 12, NodesRead: 12, NeighbourLimit: 60,
+            NodesAtNeighbourLimit: 0);
+
+        Assert.True(read.IsComplete);
+        Assert.Null(read.Shortfall);
+    }
+
+    [Fact]
+    public void UnreadNodesAreNamedWithTheirCount()
+    {
+        var read = new EvidenceRead([], NodesMatched: 9000, NodesRead: 4000, NeighbourLimit: 60,
+            NodesAtNeighbourLimit: 0);
+
+        Assert.False(read.IsComplete);
+        Assert.Contains("5,000 of 9,000", read.Shortfall!, StringComparison.Ordinal);
+        Assert.Contains("lower bounds", read.Shortfall!, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void BothCausesAreReported_BecauseTheyHaveDifferentFixes()
+    {
+        // "The workspace is bigger than the search cap" and "these nodes are unusually connected"
+        // are different problems. Collapsing them into one sentence leaves the reader guessing which
+        // they have, and the fixes point in opposite directions.
+        var read = new EvidenceRead([], NodesMatched: 9000, NodesRead: 4000, NeighbourLimit: 60,
+            NodesAtNeighbourLimit: 17);
+
+        Assert.Contains("were not read", read.Shortfall!, StringComparison.Ordinal);
+        Assert.Contains("17 node(s) had more than 60", read.Shortfall!, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ANodeExactlyAtTheLimitCountsAsTruncated()
+    {
+        // The read cannot tell "exactly 60 neighbours" from "60 of many", and guessing in the
+        // flattering direction is how a cap becomes a quieter wrong number.
+        var read = new EvidenceRead([], NodesMatched: 1, NodesRead: 1, NeighbourLimit: 60,
+            NodesAtNeighbourLimit: 1);
+
+        Assert.False(read.IsComplete);
+        Assert.NotNull(read.Shortfall);
+    }
+
+    // ── One composition, and it routes where it says ──────────────────────────────────────
+
+    [Fact]
+    public void TheShippedCompositionRoutesEveryScopeKindToItsOwnExtractor()
+    {
+        // The router is four positional constructor parameters and getting their order wrong is
+        // SILENT: a mis-ordered composite sent every bicep: scope to the schema extractor, both
+        // failed, and the run reported a repository with no infrastructure in it. That happened, in
+        // a spike, and it produced a confidently wrong write-up before anyone noticed.
+        var composite = Assert.IsType<CompositeExtractor>(WorkspaceExtractors.Default());
+
+        foreach (var (prefix, kind) in WorkspaceExtractors.RoutedKinds)
+        {
+            Assert.Equal(kind, composite.RouteFor(prefix + "anything").ScopeKind);
+        }
+    }
+
+    [Fact]
+    public void AnUnknownScopeKindFallsThroughRatherThanBeingMisrouted()
+    {
+        // The fallback is a real answer, not a hole: Phase 2's fixture evidence still renders beside
+        // real extraction, and a scope kind this build does not know must not be quietly handed to
+        // whichever extractor happens to be first.
+        var composite = Assert.IsType<CompositeExtractor>(WorkspaceExtractors.Default());
+
+        Assert.Equal("fixture", composite.RouteFor("timeline:whatever").ScopeKind);
+    }
+
     // ── The screen, not the byte stream ───────────────────────────────────────────────────
 
     [Fact]

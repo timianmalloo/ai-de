@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-29T16:29:07Z",
+  "generated": "2026-08-29T16:35:59Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2020,16 +2020,16 @@ window.DOCS_INDEX = {
       ],
       "links": [
         {
-          "to": "session-worktree-discipline",
-          "rel": "refines"
+          "to": "architecture",
+          "rel": "relates-to"
         },
         {
-          "to": "architecture",
+          "to": "knowledge-hub",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "339cdf0e54f350a36642850de7331889fb34b91a2b4deffab5c597e61a12086a"
+      "sourceSha256": "f45fb13e630638c458a4ff63d9027b63bed8b8cc5ea97bd286e623c25f479cbb"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -5163,5 +5163,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "2cb2fa94b26ff95a6b16da1439cb784f51c6b95775772bbbb7c21917a01e459e"
+  "graphSha256": "85ce8d8edb4d1f6df2b6387201eec3e9746fd1467a0bc527e398c2f9ed040ee4"
 };

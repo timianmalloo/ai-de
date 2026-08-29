@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T16:24:40Z",
+  "generated": "2026-08-29T16:35:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1404,6 +1404,33 @@ window.AUDIT_DATA = {
         "short": "21068ab3f",
         "branch": "session/phase3-pane-probes",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-0067",
+      "shortname": "session-contract-and-core-composition",
+      "datetime": "2026-08-29T16:35:59Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "there are two sessions working in two different worktrees\nyour sessions need to be collaborative with each other\none session, the claude code session, will work on the core capabilities (the workspace, analyzing the repo contents, implementing the extractors and building the graph for the tool and the overall tool interaction between surfaces), the other session, the GitHub copilot session, will work on the styling and the distinct design surfaces.\nBoth sessions have to agree on contracts (interfaces and abstractions) and on what files they are working on to minimize conflicts and merge complexity.\n-----------\nlook at your work, choose next steps that align to your accountability\ndo your next steps\nthen provide the standard tables of status and next steps at the end of your turn\n----\nthis session is the claude code session working on the core capabilities",
+      "summary": "Chose work on the core side of the line, and wrote the line down first.\n\nThe contract (docs/collaboration/session-contracts.md, status: proposed) states the seam in one\nsentence — Core produces view models, Design renders them — lists file ownership rather than\ndescribing it, names the eight contract types and the two invariants neither session may break\nalone, and gives the three-step protocol for changing any of them. Section 6 lists what it does NOT\nsettle, because writing one session's preference down as settled is how a proposal becomes a fait\naccompli. Three render requests are recorded in it rather than made in conversation.\n\nThen two core defects.\n\nThe daemon composed only the C# extractor and the fixture adapter, so the running application could\nnot see infrastructure or schema — while a spike composed all four and reported joins the product had\nno way to show. One composition now, WorkspaceExtractors.Default(), used by both, with named\narguments and a test that reads the routing decision rather than trusting parameter order. Observed\nfailing on the exact mis-ordering that caused the original wrong conclusion: expected \"bicep\", actual\n\"schema\".\n\nAnd every number both panes show was computed from a bounded read — 20,000 matches, 4,000 nodes, 60\nneighbours each — that never said so. On the repositories measured the caps are slack, and nothing in\nthe output would change if they were not: the counts would just be smaller and still presented as\nfacts. EvidenceRead reports what the read did not see, both causes separately because their fixes\npoint in opposite directions, and a node at exactly the limit counts as truncated.\n\nGate: 647 tests green (App 115, Core 532), six verifiers clean.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "collaboration",
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Write the contract between the two sessions, then do core-side work only: one extractor composition shared by every entry point, and a bounded read that reports what it did not see",
+      "done_when": "Contract committed and pushed for the other session to read; core defects fixed with a control each; no Design-owned file edited; full gate green; tables produced",
+      "change": "cl-0061",
+      "git": {
+        "sha": "6db9b6f43e70b8a05994becd344aa86e58e9b37c",
+        "short": "6db9b6f43",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
       }
     }
   ],
@@ -2886,6 +2913,56 @@ window.AUDIT_DATA = {
         "after": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
         "branch": "session/phase3-pane-probes",
         "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0060",
+      "datetime": "2026-08-29T16:35:40Z",
+      "session": null,
+      "kind": "decision",
+      "skill": null,
+      "title": "A written contract between the core and design sessions",
+      "prompt": null,
+      "summary": "Two sessions now work this repository at once — core capabilities here, styling and design surfaces\nin the other tree. docs/collaboration/session-contracts.md is the proposal, written down because\n\"we'll coordinate\" is not a coordination mechanism and the first thing two sessions lose is not code\nbut agreement about what each thought was true.\n\nThe seam is one sentence: Core produces view models, Design renders them. A view model is a record\nwith no behaviour and no WPF types, carrying what the user needs to know INCLUDING what could not be\nestablished — a projection that hides a gap forces the surface to invent one. Neither side reaches\nacross: Core does not choose colour or control, Design does not compute a number, because a number\ncomputed in a surface is a second definition of a quantity that already has one.\n\nFile ownership is listed rather than described, with the shared files and the rule each carries.\nDerived files — docs-index.js, audit-data.js — are called out because a hand-merged generated file is\na conflict resolved into a lie.\n\nSection 6 is deliberate: what this does NOT settle. Fast-forward versus pull request, whether view\nmodels should carry presentation hints, and where visual regression evidence lives are joint\ndecisions, and writing one session's preference down as settled is how a proposal becomes a fait\naccompli. Status is proposed, not accepted.\n\nThree requests to Design are recorded in 4a rather than made in conversation, each additive and\nalready on main.",
+      "rationale": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [
+        "collaboration"
+      ],
+      "git": {
+        "before": null,
+        "after": "6db9b6f43e70b8a05994becd344aa86e58e9b37c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0061",
+      "datetime": "2026-08-29T16:35:40Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "One extractor composition, and a bounded read that says what it missed",
+      "prompt": null,
+      "summary": "Two core defects, both about a boundary telling the truth about itself.\n\n**The running app could not see what the spike could.** The daemon composed only the C# extractor and\nthe fixture adapter, so infrastructure and schema were invisible to the product while a spike\ncomposed all four and reported joins the app had no way to show — two answers to \"what does this tool\nread\", depending which door you came in. WorkspaceExtractors.Default() is now the single composition,\nused by the daemon and the spike, with named arguments.\n\nThat matters because the hand-written form is easy to get wrong SILENTLY: the spike once passed its\nextractors positionally, which put BicepExtractor in the fallback slot and routed every bicep scope\nto the schema extractor. Both failed and the write-up concluded the repository had no Bicep. It has\ntwo templates and 24 resource declarations. CompositeExtractor.RouteFor now exposes the routing\ndecision so a test can read it, and the test was observed failing on that exact mis-ordering:\nexpected \"bicep\", actual \"schema\".\n\n**Every number both panes show was computed from a bounded read that never said so.** The shell\nsearches with a 20,000 cap, describes 4,000 of the matches, and takes 60 neighbours from each. On the\nrepositories measured so far all three are slack — and nothing in the output would change if they\nwere not. The counts would simply be smaller and still be presented as facts. EvidenceRead carries\nwhat the read did not see; the shell announces it once per distinct sentence, and reports BOTH causes\nseparately because \"bigger than the search cap\" and \"these nodes are unusually connected\" have\nopposite fixes. A node returning exactly the limit counts as truncated, because the read cannot tell\nthe difference and guessing in the flattering direction is how a cap becomes a quieter wrong number.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/WorkspaceExtractors.cs",
+        "src/AiDe.Core/Projections/EvidenceRead.cs",
+        "src/AiDe.Daemon/Program.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "6db9b6f43e70b8a05994becd344aa86e58e9b37c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
         "commits": []
       }
     }
