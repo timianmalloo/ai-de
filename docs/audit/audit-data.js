@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-29T21:44:35Z",
+  "generated": "2026-08-29T21:50:23Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1920,6 +1920,26 @@ window.AUDIT_DATA = {
       "artifacts": [
         "docs/reviews/ui-facelift.md",
         "src/AiDe.App/App.xaml"
+      ],
+      "tags": [
+        "facelift",
+        "ui-design"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0108",
+      "shortname": "ui-design-elevate-visualization",
+      "datetime": "2026-08-29T21:50:23Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "visualize the proposed facelift improvements",
+      "summary": "Authored docs/mockups/facelift-elevate.html: a self-contained visualization of the four highest-leverage elevate proposals - icon-clean menu (no goofy block), icon-activity rail with labels+active state, tabs with a type-glyph, and Wayfinder empty/loading/error states - with the review harness (state/theme/viewport/motion) and token-layer contrast readout. Craft gate: 2 Minor (side-tab = deliberate IDE active-indicator per DX3/U12; flat-type-hierarchy nit). design-lint clean.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/facelift-elevate.html"
       ],
       "tags": [
         "facelift",

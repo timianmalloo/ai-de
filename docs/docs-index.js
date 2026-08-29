@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T21:44:35Z",
+  "generated": "2026-08-29T21:50:23Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1790,6 +1790,38 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "019b6dfead9d172ec258bf9ada3019edcd311fc3601c556dc544132abe0ca999"
+    },
+    {
+      "id": "mockup-facelift-elevate",
+      "path": "docs/mockups/facelift-elevate.md",
+      "title": "Facelift elevate proposals — visualization",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@copilot-design",
+      "phase": "facelift",
+      "reviewBy": "2026-11-29",
+      "reviewSuggested": [],
+      "summary": "A self-contained visualization of the four highest-leverage /ui-design elevate proposals — an icon'd clean menu (no goofy block), an icon'd activity rail with labels + active state, tabs with a type-glyph, and Wayfinder empty/loading/error states — with the standard review harness.",
+      "tags": [
+        "ui-design",
+        "mockup",
+        "facelift",
+        "icons",
+        "wayfinder",
+        "elevate"
+      ],
+      "links": [
+        {
+          "to": "review-ui-facelift",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "972566ded69ae803c0c7d0db809c589dc7e8c8dca6ce4594ccd2bbe0b3ae500b"
     },
     {
       "id": "mockup-knowledge-explorer",
@@ -5610,6 +5642,14 @@ window.DOCS_INDEX = {
       "artifactId": "audit-log"
     },
     {
+      "id": "surface-mockups-facelift-elevate",
+      "path": "docs/mockups/facelift-elevate.html",
+      "title": "AI-DE facelift — elevate proposals (visualization)",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-facelift-elevate"
+    },
+    {
       "id": "surface-mockups-app-facelift",
       "path": "docs/mockups/app-facelift.html",
       "title": "AI-DE Facelift — soft-islands shell (mockup)",
@@ -5658,5 +5698,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "155bb3dbb67f47f95ac28a9cf6e827d5426e1a485425e4cb9a36f9abccbfe616"
+  "graphSha256": "aca48e83bbff767d8e7f72417e1deb72c59574b9a6ae5d8c65cdd0a9a2dc192f"
 };
