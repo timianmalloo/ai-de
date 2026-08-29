@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-29T18:03:43Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-29T17:49:42Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1629,6 +1629,32 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0092",
+      "shortname": "bulk-read-retraction-menu-catalog-broken-build",
+      "datetime": "2026-08-29T17:48:53Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "Five core steps, plus a defect of my own that surfaced first.\n\nThe design session had to re-emit an audit entry \"lost to a DC-013 merge collision\" — lost by MY\nresolution. Unioning an append-only file keyed by id, with setdefault, silently drops one side where\nboth used the same id, and the gate stays green because uniqueness is satisfied precisely by the\nremoval. Registered as DC-026 and given a tool that unions by CONTENT so nothing can be dropped. The\ncurrent log is complete: 75 entries, 75 unique ids, and the only gaps are the fifteen my race probe\nburned.\n\nThe bulk evidence read closes the residual from last turn exactly. The panes now see 12,100 of 12,100\nassertions and 124 of 124 join edges — zero divergence, where before they rebuilt the set node by\nnode through a 50-neighbour Describe and lost two edges. Paged, with a cursor that is the same tuple\nthe ORDER BY uses, pinned with a page size of one so every boundary is exercised.\n\nA departed scope's evidence is retired by an empty snapshot at a higher generation — superseded,\nnever deleted, because destroying the rows would destroy the record of what the graph once said.\n\nEvery catalog command now declares its menu, so Core stops needing to edit a design-owned file to add\none; the switch is a one-line change recorded as a request.\n\nAnd the fifth repository — a real one with a deliberate syntax error — indexed as \"10 of 10, 0\nfailed\" and disclosed nothing, because Roslyn returns a tree with error nodes rather than throwing.\nFourth instance of DC-025. Worth stating: I nearly reported it from an experiment that had not run,\nand it became a finding only after the broken file was verified to exist.\n\nGate: 669 tests green (App 117, Core 552), six verifiers clean.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Do the five listed core next steps: a paged bulk evidence read, register the absence class, move menu placement to the catalog, measure a repository that does not build, and retract departed scopes",
+      "done_when": "Each step landed with a control; my own merge defect registered and tooled; full gate green; committed, merged and published; tables produced",
+      "change": "cl-0068",
+      "git": {
+        "sha": "5af8dd94aeae26d187fd0b6b805453b04e60b06c",
+        "short": "5af8dd94a",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false
+      }
+    },
+    {
       "id": "al-0093",
       "shortname": "facelift-palette-and-cards",
       "datetime": "2026-08-29T17:49:24Z",
@@ -1642,26 +1668,6 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/CommandPalette.cs",
         "src/AiDe.App/Workbench/ContextMapSurface.cs"
-      ],
-      "tags": [
-        "facelift"
-      ],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0094",
-      "shortname": "facelift-craftgate-and-avalondock-decision",
-      "datetime": "2026-08-29T18:03:43Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "prompt": "Screenshot confirms dark theme renders; execute next styling steps to completion.",
-      "summary": "Ran the deterministic craft gate (Impeccable) over all 5 mockups; documented the code-node syntax palette + a scrim token in DESIGN.md (cleared design-system-color), fixed one heading skip; design-lint clean. Recorded the AvalonDock tab accent-retokenization as an evidence-backed deferral (squared tabs = IDE convention; accent lives in embedded vstheme+BAML, no cheap override). Build 0/0, tests 117/117.",
-      "kind": "skill",
-      "skill": "ui-design",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "docs/reviews/ui-mockups-craft-gate.md",
-        "docs/notes/avalondock-tab-styling-decision.md"
       ],
       "tags": [
         "facelift"
@@ -3322,6 +3328,57 @@ window.AUDIT_DATA = {
         "after": "dd1c53793935746bc3aa6c5a175c1cf5c99f9a8b",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0067",
+      "datetime": "2026-08-29T17:48:34Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "The panes read the store exactly: a paged bulk evidence query",
+      "prompt": null,
+      "summary": "The panes now see exactly what the store holds — 12,100 of 12,100 assertions, 124 of 124 join edges,\nzero divergence. They were rebuilding that set node by node through Describe, which bounds neighbours\nat 50 and lost two edges doing it, and which asks the store for a graph walk when what is wanted is a\ntable scan.\n\nEvidenceAsync is the question they were actually asking: one page of every current assertion, paged\nbecause it crosses a pipe and an unbounded response would breach the result-byte cap. The cursor is\nthe last row's (subject, predicate, object) — the same tuple the ORDER BY uses, so a page boundary\ncannot skip or repeat a row; an id-based cursor would order by something the query does not, which is\nhow paging quietly loses records. A malformed cursor restarts rather than throwing, because it is\nopaque and a caller was never meant to construct one.\n\nPinned with a page size of ONE, so every boundary in the set is exercised: the union of the pages\nequals the whole set, nothing repeated. A comfortable page size would test that the query runs, not\nthat the cursor is right.\n\nTwo more things landed with it. A departed scope's evidence is now retired by committing an EMPTY\nsnapshot at a higher generation — superseded, never deleted, because the store is append-only and\ndestroying the rows would destroy the record of what the graph once said. Removing a project used to\nleave its symbols and crossings in every projection indefinitely. And every catalog command now\ndeclares its menu, so the builder can derive its grouping and Core stops needing to edit a\ndesign-owned file to add a command at all.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/ProjectionService.cs",
+        "src/AiDe.Core/Store/StoreReader.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "5af8dd94aeae26d187fd0b6b805453b04e60b06c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0068",
+      "datetime": "2026-08-29T17:48:34Z",
+      "session": null,
+      "kind": "knowledge",
+      "skill": null,
+      "title": "DC-025 absence rendered as success, and DC-026 a merge that de-duplicates on the disputed key",
+      "prompt": null,
+      "summary": "Two defect classes registered, one of them mine.\n\nDC-025, absence rendered as success. A projection computes over a set that is empty BECAUSE NOTHING\nWAS COLLECTED, the arithmetic is correct, and the surface renders that zero with the vocabulary of\ncompleteness. Four instances now, all found by pointing the panes at real repositories and none by a\ntest: a missing context map read as perfect coverage; a search bounded at fifty read as the whole\nworkspace; unreadable source read as no source; and now a file that does not parse. Roslyn does not\nthrow on broken source — it returns a tree with error nodes — so extraction succeeds and simply finds\nless, which is indistinguishable from a smaller file. That is the state a developer is in most often,\nand it disclosed nothing. Fixed with source-did-not-parse, which names the files and their count\nwhile still contributing what did parse.\n\nWorth recording honestly: the fourth instance was nearly reported from an experiment that had not\nrun. The script meant to corrupt a file silently did nothing, and the assertion-count difference I\nwas about to attribute to a syntax error had another cause entirely. It became a finding only after\nthe broken file was verified to exist.\n\nDC-026 is mine. Resolving an append-only merge conflict by unioning KEYED BY ID, with setdefault,\nsilently dropped a design-session entry — the gate stayed green throughout, because uniqueness was\nsatisfied precisely by the removal. The defect is not the collision; it is de-duplicating on the\nfield that is in dispute. tools/merge-append-only-log.py unions by content so nothing can be dropped,\nre-issues a contested id from the shared counter, and prints the count in, the count out, and every\nre-issue — a merge that resolves silently is indistinguishable from one that lost something.",
+      "rationale": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "tools/merge-append-only-log.py"
+      ],
+      "tags": [
+        "continuous-improvement"
+      ],
+      "git": {
+        "before": null,
+        "after": "5af8dd94aeae26d187fd0b6b805453b04e60b06c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
         "commits": []
       }
     }

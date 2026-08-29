@@ -417,7 +417,7 @@ public sealed class WorkbenchShell : IDisposable
             var symbols = found.Matches.Select(m => m.NodeId).ToList();
             var map = BoundedContextReader.Load(path, symbols);
 
-            var read = ReadAssertions(found);
+            var read = ReadAssertions();
             AnnounceShortfall("Contexts", read);
 
             return new ContextProjection(map, read.Assertions).Compute();
@@ -437,61 +437,57 @@ public sealed class WorkbenchShell : IDisposable
     /// would be two chances to disagree, and a context map and a join view that disagree about the
     /// same edge is a defect the user has no way to diagnose.
     /// </remarks>
-    /// <summary>How many matched nodes are described, and how many neighbours each contributes.</summary>
+    /// <summary>How many assertions are asked for per page.</summary>
     /// <remarks>
-    /// Named rather than inline, because they are the reason a count can be a lower bound. Every
-    /// number both panes show is computed from this read.
+    /// The panes want every current assertion. They used to rebuild that set node by node through
+    /// Describe, bounded at 50 neighbours each, which lost two join edges of 124 on a real
+    /// repository and asked the store for a graph walk when a table scan was wanted. Paged because
+    /// the answer crosses a pipe.
     /// </remarks>
-    private const int NodesToDescribe = 4000;
+    private const int AssertionsPerPage = AiDe.Core.Projections.ProjectionService.MaxEvidencePageCeiling;
 
     /// <summary>
-    /// Asked of the service, and it is the service's own ceiling rather than a number chosen here.
+    /// A safety bound on paging, so a runaway cursor cannot spin for ever.
     /// </summary>
     /// <remarks>
-    /// It used to be 60 against a ceiling of 50, so the truncation check compared against a limit
-    /// that could never be reached — a control that cannot fire, reporting on a cap that was already
-    /// biting. Two definitions of one quantity is the defect signature; this is the one definition.
+    /// Two million assertions is far beyond anything measured — the largest real workspace read so
+    /// far held twelve thousand. Hitting it is a defect signal, and it is reported as a shortfall
+    /// rather than silently ending the read.
     /// </remarks>
-    private const int NeighboursPerNode = AiDe.Core.Projections.ProjectionService.MaxNeighborsCeiling;
+    private const int MaxPages = 1000;
 
-    /// <summary>Every neighbour edge of every matched node, with what the read did NOT see.</summary>
+    /// <summary>Every current assertion, with what the read did NOT see.</summary>
     /// <remarks>
     /// Shared by the context and join panes rather than read twice. Two reads of the same store
     /// would be two chances to disagree, and a context map and a join view that disagree about the
     /// same edge is a defect the user has no way to diagnose.
     /// </remarks>
-    private AiDe.Core.Projections.EvidenceRead ReadAssertions(AiDe.Core.Projections.FindResult found)
+    private AiDe.Core.Projections.EvidenceRead ReadAssertions()
     {
         if (_queries is null) return AiDe.Core.Projections.EvidenceRead.Empty;
 
         var assertions = new List<AiDe.Core.Facts.EvidenceAssertion>();
-        var read = 0;
-        var atLimit = 0;
+        string? cursor = null;
+        var pages = 0;
 
-        foreach (var match in found.Matches.Take(NodesToDescribe))
+        do
         {
-            var describe = _queries.DescribeAsync(match.NodeId, NeighboursPerNode, CancellationToken.None)
+            var page = _queries.EvidenceAsync(cursor, AssertionsPerPage, CancellationToken.None)
                 .GetAwaiter().GetResult();
 
-            read++;
-
-            // A node returning exactly the limit is a node whose neighbours MAY have been cut. It is
-            // counted as truncated rather than resolved, because the read cannot tell the difference
-            // and guessing in the flattering direction is how a cap becomes a quieter wrong number.
-            if (describe.Neighbors.Count >= NeighboursPerNode) atLimit++;
-
-            assertions.AddRange(describe.Neighbors.Select(e => new AiDe.Core.Facts.EvidenceAssertion(
-                "view", e.ArtifactRevision, e.Subject, e.Predicate, e.Object,
-                e.Origin, e.Status, e.Provenance)));
+            assertions.AddRange(page.Assertions);
+            cursor = page.NextCursor;
+            pages++;
         }
+        while (cursor is not null && pages < MaxPages);
 
-        // Matched, not returned. found.Matches is what the SEARCH gave back after its own cap;
-        // Bounds.OmittedNodes is what it left behind, and the service has been reporting it all
-        // along while this method counted the rows in front of it and called that the total.
-        var matched = found.Matches.Count + Math.Max(0, found.Bounds.OmittedNodes);
-
+        // Complete unless the page cap stopped us, which is the only way this read can now be short.
         return new AiDe.Core.Projections.EvidenceRead(
-            assertions, matched, read, NeighboursPerNode, atLimit);
+            assertions,
+            NodesMatched: assertions.Count,
+            NodesRead: cursor is null ? assertions.Count : 0,
+            NeighbourLimit: AssertionsPerPage,
+            NodesAtNeighbourLimit: 0);
     }
 
     /// <summary>
@@ -557,7 +553,7 @@ public sealed class WorkbenchShell : IDisposable
             var found = _queries.FindAsync(string.Empty, AiDe.Core.Projections.ProjectionService.MaxSearchResultsCeiling, CancellationToken.None)
                 .GetAwaiter().GetResult();
 
-            var read = ReadAssertions(found);
+            var read = ReadAssertions();
             AnnounceShortfall("Joins", read);
 
             return new JoinProjection(read.Assertions).Compute();

@@ -46,6 +46,10 @@ public sealed class CanvasGraphViewModelTests
 
         internal static ResultBounds Bounds(int omittedEdges) =>
             new(100, 100, 100_000, 1, 0, 0, omittedEdges, false, null);
+
+        public Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
+            Task.FromResult(new EvidencePage([], null, "rev-1"));
+
     }
 
     private static EdgeView Edge(string subject, string predicate, string obj) =>

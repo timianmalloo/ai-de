@@ -232,6 +232,49 @@ public sealed class StoreReader : IDisposable
     /// Bounded reads must never call this: at 50,000 edges it costs roughly 350 ms of materialization
     /// no matter how small the caller's result is (measured, P1-PERF 2026-08-26).
     /// </remarks>
+    /// <summary>
+    /// A page of the current assertions, ordered stably, starting after <paramref name="after"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Paged because the caller is across a pipe.</b> The panes want every current
+    /// assertion — 12,085 of them on one real repository — and they were reconstructing that set one
+    /// node at a time through <c>Describe</c>, which is bounded at 50 neighbours per node and lost
+    /// two join edges out of 124 doing it. A single unbounded response would blow the result-byte
+    /// cap instead, so the answer is neither: pages, with a cursor.</para>
+    ///
+    /// <para>The cursor is the last row's <c>(subject, predicate, object)</c> — the same tuple the
+    /// ORDER BY uses, so a page boundary cannot skip or repeat a row. An id-based cursor would order
+    /// by something the query does not, which is how paging quietly loses records.</para>
+    /// </remarks>
+    public IReadOnlyList<StoredAssertion> CurrentAssertionPage(
+        (string Subject, string Predicate, string Object)? after, int limit)
+    {
+        var sql = """
+            SELECT a.assertion_id, a.scope_id, a.artifact_revision, a.subject, a.predicate, a.object,
+                   a.origin, a.status, a.artifact_path_id, a.source_location, a.extractor_id,
+                   a.extractor_version, a.observed_at
+            FROM evidence_assertion_fact a
+            JOIN (
+                SELECT scope_id, max(generation) AS generation
+                FROM scope_snapshot_committed_fact WHERE complete = 1 GROUP BY scope_id
+            ) latest ON latest.scope_id = a.scope_id AND latest.generation = a.generation
+            """;
+
+        sql += after is null
+            ? " ORDER BY a.subject, a.predicate, a.object LIMIT $limit;"
+            : """
+               WHERE (a.subject, a.predicate, a.object) > ($s, $p, $o)
+               ORDER BY a.subject, a.predicate, a.object LIMIT $limit;
+              """;
+
+        using var command = after is null
+            ? Command(sql, ("$limit", limit))
+            : Command(sql, ("$s", after.Value.Subject), ("$p", after.Value.Predicate),
+                      ("$o", after.Value.Object), ("$limit", limit));
+
+        return ReadAssertions(command);
+    }
+
     public IReadOnlyList<StoredAssertion> AllCurrentAssertions()
     {
         using var command = Command("""

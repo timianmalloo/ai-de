@@ -194,6 +194,42 @@ public sealed class WorkspaceCore : IDisposable
         int ScopesReused = 0);
 
     /// <summary>
+    /// Retires a departed scope's evidence by committing an EMPTY snapshot over it.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Superseded, never deleted.</b> The store is append-only and every projection reads
+    /// the latest generation per scope, so an empty snapshot at a higher generation retires the
+    /// evidence while the history that produced it stays readable. Deleting the rows would destroy
+    /// the record of what the graph once said, which is the thing an audit trail is for.</para>
+    ///
+    /// <para><b>The graph was drawing deleted code.</b> Removing a project left its symbols, edges
+    /// and crossings in every projection indefinitely: nothing re-extracted a scope that no longer
+    /// existed, so nothing ever replaced its snapshot. The departure was noticed before this; now it
+    /// is acted on.</para>
+    ///
+    /// <para>A failure here is recorded and swallowed. One scope that cannot be retired must not
+    /// cost the caller the rest of an index run, and the stale evidence it leaves is exactly the
+    /// state that already existed.</para>
+    /// </remarks>
+    private void RetractScope(string scopeId, string artifactRevision)
+    {
+        try
+        {
+            var generation = Interlocked.Increment(ref _generation);
+
+            using var writer = Store.BeginWrite();
+            writer.DesireScopeGeneration(scopeId, generation, artifactRevision);
+            writer.CommitSnapshot(scopeId, generation, artifactRevision, [], complete: true);
+            writer.Commit();
+        }
+        catch (Store.WorkspaceStoreException ex)
+        {
+            Incidents.Record("extraction.retraction_failed", scopeId,
+                $"the departed scope's evidence could not be retired: {ex.ErrorCode}", DateTimeOffset.UtcNow);
+        }
+    }
+
+    /// <summary>
     /// Whether the store still holds a committed snapshot for a scope we are about to skip.
     /// </summary>
     /// <remarks>
@@ -249,10 +285,10 @@ public sealed class WorkspaceCore : IDisposable
 
         foreach (var gone in departed)
         {
-            // Announced, not silently dropped: evidence for a scope that no longer exists is still
-            // in the store, and the operator is the one who decides whether that matters.
             Incidents.Record("extraction.scope_departed", gone,
                 "the scope was indexed before and no longer exists in the workspace", DateTimeOffset.UtcNow);
+
+            RetractScope(gone, artifactRevision);
         }
 
         var indexed = 0;

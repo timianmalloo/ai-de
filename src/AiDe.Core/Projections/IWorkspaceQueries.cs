@@ -26,6 +26,16 @@ public interface IWorkspaceQueries
     Task<FindResult> FindAsync(string term, int maxResults, CancellationToken cancellationToken);
 
     Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// One page of every current assertion.
+    /// </summary>
+    /// <remarks>
+    /// The question the evidence panes are actually asking. They were rebuilding this set node by
+    /// node through <c>Describe</c>, which bounds neighbours at 50 and lost two join edges of 124
+    /// doing it — and which asks the store for a graph walk when what is wanted is a table scan.
+    /// </remarks>
+    Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken cancellationToken);
 }
 
 /// <summary>The read surface answered by a <see cref="ProjectionService"/> in this process.</summary>
@@ -51,4 +61,8 @@ public sealed class LocalWorkspaceQueries(ProjectionService projections) : IWork
     public Task<KnowledgeResult> KnowledgeAsync(
         string? term, string? type, int maxResults, CancellationToken cancellationToken) =>
         Task.FromResult(projections.Knowledge(new KnowledgeQuery(term, type, maxResults)));
+
+    public Task<EvidencePage> EvidenceAsync(
+        string? cursor, int maxAssertions, CancellationToken cancellationToken) =>
+        Task.FromResult(projections.Evidence(cursor, maxAssertions));
 }

@@ -55,6 +55,51 @@ public sealed record FindMatch(string NodeId, string NodeKind, string DisplayLab
 
 public sealed record FindResult(IReadOnlyList<FindMatch> Matches, ResultBounds Bounds, string SourceRevision);
 
+/// <summary>One page of current evidence, and where to continue.</summary>
+/// <param name="NextCursor">Null when this page is the last. Opaque to the caller, by design.</param>
+public sealed record EvidencePage(
+    IReadOnlyList<Facts.EvidenceAssertion> Assertions,
+    string? NextCursor,
+    string SourceRevision);
+
+/// <summary>
+/// The paging cursor: the last row's ordering tuple, encoded.
+/// </summary>
+/// <remarks>
+/// Base64 of the three ordered fields, so it survives a JSON round trip and a caller cannot
+/// construct one by hand and expect it to mean something. Ordering by the same tuple the cursor
+/// carries is what makes a page boundary unable to skip or repeat a row.
+/// </remarks>
+internal static class EvidenceCursor
+{
+    private const char Separator = '';
+
+    internal static string Format(string subject, string predicate, string obj) =>
+        Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(
+            string.Join(Separator, subject, predicate, obj)));
+
+    internal static (string Subject, string Predicate, string Object)? Parse(string? cursor)
+    {
+        if (string.IsNullOrWhiteSpace(cursor)) return null;
+
+        try
+        {
+            var parts = System.Text.Encoding.UTF8
+                .GetString(Convert.FromBase64String(cursor))
+                .Split(Separator);
+
+            // A malformed cursor restarts from the beginning rather than throwing. The caller gets
+            // rows it has already seen, which is wasteful and correct; the alternative is a failed
+            // read for a value the caller was never supposed to inspect.
+            return parts.Length == 3 ? (parts[0], parts[1], parts[2]) : null;
+        }
+        catch (FormatException)
+        {
+            return null;
+        }
+    }
+}
+
 /// <summary>
 /// Who authored a record. Carried on every read result so a consuming agent can tell a repository
 /// fact from something another agent wrote — without it, an agent-authored note is laundered back
@@ -116,6 +161,16 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// <see cref="MaxResultBytes"/> still applies underneath.</para>
     /// </remarks>
     public const int MaxSearchResultsCeiling = 20_000;
+
+    /// <summary>
+    /// Assertions per evidence page.
+    /// </summary>
+    /// <remarks>
+    /// Sized so a page stays comfortably inside <see cref="MaxResultBytes"/> once serialised — an
+    /// assertion carries its provenance, so it is far heavier per row than a search match. The
+    /// caller pages; it does not get one enormous answer, and it does not get a silent truncation.
+    /// </remarks>
+    public const int MaxEvidencePageCeiling = 2_000;
 
     public DescribeResult Describe(string nodeId, int maxNeighbors)
     {
@@ -223,6 +278,42 @@ public sealed class ProjectionService(WorkspaceStore store)
             kept.Select(ToEdge).ToList(),
             bounds,
             revision);
+    }
+
+    /// <summary>
+    /// One page of every current assertion, for a caller that wants the whole set.
+    /// </summary>
+    /// <remarks>
+    /// The panes want all of it and were rebuilding it node by node through <see cref="Describe"/>,
+    /// which bounds neighbours at 50 and dropped two join edges of 124 doing so. This asks the
+    /// question they were actually asking. Bounded per page rather than per call, so it can cross a
+    /// pipe without breaching the result-byte cap.
+    /// </remarks>
+    public EvidencePage Evidence(string? cursor, int maxAssertions)
+    {
+        using var activity = Activity.StartActivity("aide.projection.query");
+        activity?.SetTag("projection", "evidence");
+
+        var limit = Clamp(maxAssertions, 1, MaxEvidencePageCeiling);
+        using var reader = store.BeginRead();
+
+        var after = EvidenceCursor.Parse(cursor);
+        var rows = reader.CurrentAssertionPage(after, limit);
+
+        activity?.SetTag("returned.assertions", rows.Count);
+
+        // A page that came back full MIGHT have more behind it; one that came back short cannot.
+        // Erring towards "there is more" costs one empty round trip and never loses a row.
+        var next = rows.Count < limit
+            ? null
+            : EvidenceCursor.Format(rows[^1].Subject, rows[^1].Predicate, rows[^1].Object);
+
+        return new EvidencePage(
+            [.. rows.Select(r => new EvidenceAssertion(
+                r.ScopeId, r.ArtifactRevision, r.Subject, r.Predicate, r.Object,
+                r.Origin, r.Status, r.Provenance))],
+            next,
+            reader.CurrentSourceRevision());
     }
 
     public FindResult Find(string term, int maxResults)

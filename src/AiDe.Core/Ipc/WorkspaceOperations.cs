@@ -21,6 +21,10 @@ public sealed record ImpactRequest(string NodeId, int MaxNodes, int MaxEdges);
 /// <inheritdoc cref="DescribeRequest"/>
 public sealed record FindRequest(string Term, int MaxResults);
 
+/// <summary>Asks for one page of every current assertion.</summary>
+/// <param name="Cursor">Null for the first page; otherwise the previous page's NextCursor.</param>
+public sealed record EvidenceRequest(string? Cursor, int MaxAssertions);
+
 /// <inheritdoc cref="DescribeRequest"/>
 public sealed record KnowledgeRequest(string? Term, string? Type, int MaxResults);
 
@@ -94,6 +98,7 @@ public static class WorkspaceOperations
     public const string Impact = "impact";
     public const string Find = "find";
     public const string Knowledge = "knowledge";
+    public const string Evidence = "evidence";
     public const string DispatchBegin = "dispatch.begin";
     public const string DispatchFinalize = "dispatch.finalize";
     public const string IndexSolution = "index.solution";
@@ -122,6 +127,10 @@ public static class WorkspaceOperations
         // throws a domain refusal TODAY — the point is that if one is added that does, it is
         // refused rather than taking the daemon down for every attached shell (DC-020). A control
         // that covers only the operations that happened to need it is not a control for the shape.
+        endpoint.Register(Evidence, (request, _) =>
+            Refusable(() => Handle<EvidenceRequest>(request,
+                body => projections.Evidence(body.Cursor, body.MaxAssertions))));
+
         endpoint.Register(Describe, (request, _) =>
             Refusable(() => Handle<DescribeRequest>(request, body => projections.Describe(body.NodeId, body.MaxNeighbors))));
 
