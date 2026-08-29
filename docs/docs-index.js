@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-29T15:29:01Z",
+  "generated": "2026-08-29T15:31:53Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1015,6 +1015,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "7e30522e21a7914ce2dee4a426e655482aa5b29adc9b1fbb80514a5e3d051c56"
+    },
+    {
+      "id": "note-20260829-wpf-styling-knowledge-scope",
+      "path": "docs/notes/note-20260829-wpf-styling-knowledge-scope.md",
+      "title": "WPF-styling knowledge request split into two new bases; diagram/UML/ERM cross-referenced, not duplicated",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "The /collectknowledge run for \"modern soft WPF styling + widget libraries + diagram/UML/ERM/test dashboards\" produced two new bases (wpf-modern-ui-styling, operational-and-test-dashboards) and reconciled the already-covered diagram/UML/ERM asks by cross-reference rather than duplication.",
+      "tags": [
+        "decision-note",
+        "collectknowledge",
+        "scope",
+        "wpf",
+        "dashboards"
+      ],
+      "links": [
+        {
+          "to": "kb-wpf-modern-ui-styling",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-operational-and-test-dashboards",
+          "rel": "relates-to"
+        },
+        {
+          "to": "knowledge-hub",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "29fd3d867b020629533f39b66ac24a4f2cab17f15302933a007d557bcb777817"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -2636,6 +2671,88 @@ window.DOCS_INDEX = {
       "sourceSha256": "0e1fa237687b9b4bd8cfc1c88ea5f9ffd652d90d4bd8acebb7257c98a78cffc2"
     },
     {
+      "id": "kb-dashboards-data",
+      "path": "docs/knowledge/operational-and-test-dashboards/data-and-constants.md",
+      "title": "Operational & Test Dashboards — data, constants & layout rules",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Concrete method definitions, layout rules, charting-library licences and the metrics/percentiles a trustworthy operational or test pane must show.",
+      "tags": [
+        "dashboards",
+        "constants",
+        "layout",
+        "red",
+        "use",
+        "licences"
+      ],
+      "links": [
+        {
+          "to": "kb-operational-and-test-dashboards",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "337e4c728d1405586dfdc318e5ba9a9d56a70ab55fac537df05f7bcf678fbd7d"
+    },
+    {
+      "id": "kb-dashboards-glossary",
+      "path": "docs/knowledge/operational-and-test-dashboards/glossary.md",
+      "title": "Operational & Test Dashboards — glossary",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Precise definitions for the dashboard/observability/test-reporting vocabulary so the panes and their docs agree.",
+      "tags": [
+        "glossary",
+        "dashboards",
+        "red",
+        "use",
+        "ci-cd",
+        "test"
+      ],
+      "links": [
+        {
+          "to": "kb-operational-and-test-dashboards",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "257c14947ac974ff50218804ee4276d3370d6387b8b5d235b625049e5b048258"
+    },
+    {
+      "id": "kb-dashboards-open-questions",
+      "path": "docs/knowledge/operational-and-test-dashboards/open-questions.md",
+      "title": "Operational & Test Dashboards — open questions & failure modes",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "What the dashboards research could not settle, the domain's silent failure modes, and the disconfirming views deliberately sought against building bespoke visualisation panes.",
+      "tags": [
+        "open-questions",
+        "failure-modes",
+        "dashboards",
+        "disconfirming"
+      ],
+      "links": [
+        {
+          "to": "kb-operational-and-test-dashboards",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "75b67bc90d7977f3ed9aeba931199be6deb7c668ead5b9376b257134ea1fde71"
+    },
+    {
       "id": "kb-dashboards-references",
       "path": "docs/knowledge/operational-and-test-dashboards/references.md",
       "title": "Operational & Test Dashboards — references",
@@ -2689,6 +2806,30 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "f06a8d9175207e63a62009c25e9f8db4d1d0c8db81c93727737aaa1932d0ffe8"
+    },
+    {
+      "id": "kb-dashboards-sources",
+      "path": "docs/knowledge/operational-and-test-dashboards/sources.md",
+      "title": "Operational & Test Dashboards — sources",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The full access-dated source list behind the operational-and-test-dashboards base, keyed [D1]..[D14] as cited throughout the topic.",
+      "tags": [
+        "sources",
+        "citations"
+      ],
+      "links": [
+        {
+          "to": "kb-operational-and-test-dashboards",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "edab3da6a68e7fa4d9d623fac19b106f5f0192b6a6b1d8229f59f3f3358163d0"
     },
     {
       "id": "kb-diagram-generation",
@@ -3673,7 +3814,7 @@ window.DOCS_INDEX = {
           "rel": "refines"
         },
         {
-          "to": "kb-microservice-interaction-visualization",
+          "to": "kb-microservice-interaction",
           "rel": "relates-to"
         },
         {
@@ -3682,7 +3823,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7f193cf805a8eba971d51344e6b328c3022565c389a760e62b6b8069cb9cb7c2"
+      "sourceSha256": "1a5d8c571ce92bf0e7075ebebd3132fdb2fb0ceea9df6ce3133f5e0ff6d6ec71"
     },
     {
       "id": "kb-shell-comparables",
@@ -4296,7 +4437,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8d3ab8b90f918be929ac080fcc9e3166ac9618a623a7efd56a1b437013bca0be"
+      "sourceSha256": "7612ff0e969c449e5884f429d4de8349ad6fdcf6f1336231a20b5d35c34ccf32"
     },
     {
       "id": "privacy-review-ai-native-ide",
@@ -4489,5 +4630,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "fb46f4153636a01de29ab0e1321843e3c6fe33c414d4d126b97641ca7147f8bd"
+  "graphSha256": "74272cbd80ca24f513b5cdcf92477930d8398939a6a2b130eda996531c3a3657"
 };

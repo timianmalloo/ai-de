@@ -8,7 +8,7 @@ phase: ""
 tags: [dashboards, test-results, ci-cd, observability, metrics, charting, grafana, allure]
 links:
   - { to: knowledge-hub, rel: refines }
-  - { to: kb-microservice-interaction-visualization, rel: relates-to }
+  - { to: kb-microservice-interaction, rel: relates-to }
   - { to: kb-diagram-generation, rel: relates-to }
 review-by: 2026-11-27
 review-suggested: []

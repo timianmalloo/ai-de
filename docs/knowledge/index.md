@@ -74,7 +74,21 @@ one.** → [`uml-mde-and-4gl/`](uml-mde-and-4gl/index.md)
 
 ---
 
-## The ten knowledge bases
+## The knowledge bases
+
+The ten below establish the AI-DE thesis and substrate. Two more (2026-08-29) establish the **WPF client's
+visual layer**, requested to make the shell modern and soft rather than boxy:
+
+| Topic | What it establishes | The finding to read first |
+|---|---|---|
+| [**Modern & Soft WPF Styling**](wpf-modern-ui-styling/index.md) | DWM rounded corners/Mica, WindowChrome, the .NET Fluent theme, MIT control libraries, soft-shadow perf, IDE UX exemplars | The **built-in .NET 9/10 Fluent theme** makes the modern look library-optional; **effects don't composite over hosted panes** (airspace) |
+| [**Operational & Test Dashboards**](operational-and-test-dashboards/index.md) | Test reporting (Allure/ReportPortal), CI-as-DAG, RED/USE metrics, MIT charting libs (ScottPlot/LiveCharts2/OxyPlot) | A dashboard is **6–12 actionable panels with drill-down**, and must **expose the silent failures** (means hide tails; green ≠ gate ran) |
+
+The user's diagram / UML / ERM requests were **already covered** and are cross-referenced, not duplicated:
+diagramming → `diagram-generation`, UML/MDE/generative → `uml-mde-and-4gl`, ERM/ORM → `domain-modeling-and-erm`,
+trace/topology → `microservice-interaction-visualization`.
+
+## The ten thesis & substrate bases
 
 | Topic | What it establishes | The finding to read first |
 |---|---|---|
