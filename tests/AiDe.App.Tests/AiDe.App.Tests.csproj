@@ -33,6 +33,18 @@
     -->
     <ProjectReference Include="..\AiDe.App.TerminalProbe\AiDe.App.TerminalProbe.csproj"
                       ReferenceOutputAssembly="false" />
+
+    <!--
+      The canvas probe, for the same reason and found the same way: a full clean followed by a
+      Release-only build left P2FOCUS03 failing with "the canvas probe was not built". The message
+      was honest — the probe genuinely was not there — but the cause was a missing build-order edge,
+      not a broken product, and on a clean clone it reads as broken tooling rather than as the
+      keyboard-trap question going unasked (DC-012).
+
+      ReferenceOutputAssembly="false" because it is started as a process, never linked.
+    -->
+    <ProjectReference Include="..\AiDe.App.CanvasProbe\AiDe.App.CanvasProbe.csproj"
+                      ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>

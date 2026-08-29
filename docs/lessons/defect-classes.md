@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 13 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 14 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -611,11 +611,17 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   passes, because it supplies assertions from the producer the author was thinking of. And the defect
   **fails in the flattering direction**: a join producing nothing gets investigated on sight, while
   one producing the largest Verified count the product has ever shown looks like the feature working.
-- **Instances:** 2026-08-29 — `JoinProjection` joined every `depends_on` assertion as a resource
+- **Instances:**
+  - 2026-08-29 — `JoinProjection` joined every `depends_on` assertion as a resource
   dependency. On TheTerrace that was **7,426 edges reported Verified**, each carrying *"declared in
   the resource's dependsOn"*, in a repository containing no Bicep and no `dependsOn` at all. Found by
   `spikes/joins-on-a-real-repo` — the first time any projection had been run over a real codebase
   rather than a fixture. It had shipped the previous day.
+  - 2026-08-29, same file, the join immediately below it — `hosted_on` matched the whole
+    `Microsoft.Sql/*` family, so 64 tables joined to a server, a database AND a virtual-network rule:
+    **192 edges, each claiming "the only literally-named SQL resource in this template"**, of which
+    there were three. Found in the same run, after the first fix, by reading the numbers rather than
+    the code.
 - **Control:** the join qualifies on the **kind of thing**, not the predicate: the subject must carry
   a `resource_type` assertion. Two tests, both required — a code-origin `depends_on` is not joined,
   and a resource-origin one still is, because narrowing a join until it can no longer fire is not a
@@ -625,8 +631,45 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   its scope, its origin — never on the predicate string alone. And treat a **fixed basis string** as
   the smell: if the sentence explaining an edge cannot be wrong when the edge is wrong, it is
   decoration. The wider tell is any projection whose output has only ever been seen over fixtures.
-- **Residual risk:** `maps_to`, `has_type` and `declared_in` are also emitted by more than one
-  extractor and are consumed by predicate today. They have not produced a false basis yet because
-  their meanings happen to agree — an agreement nothing enforces. No gate covers this shape; the
-  control is one join deep.
+- **Residual risk (now MEASURED, not assumed):** a predicate-by-extractor census over a real
+  repository says `declared_in`, `has_type` and `discloses` are each emitted by **all three**
+  extractors. `has_type` is consumed by predicate in three places and is safe **by accident** — its
+  object values (`class`, `record`, `table`, `azure-parameter`) happen to partition cleanly by
+  producer, and nothing enforces that partition. `declared_in` and `discloses` are shared but not
+  used for joins. The spike prints the census on every run, so the next collision is visible before
+  it is joined; there is still no gate.
+- **Status:** `partially-controlled`
+
+### DC-023 — A gate keeps passing because it runs a stale build of the thing it tests
+- **Signature:** a test drives a separate executable — an out-of-process probe, a CLI, a helper — and
+  that executable is **not** a build-order dependency of the test project. It was built once, by
+  somebody building the whole solution, and every run since has exercised that old binary. The gate
+  is green. It is green about a version of the product that no longer exists, and the gap widens
+  silently with every commit.
+- **Why it survives:** nothing looks wrong. The test passes, quickly, and passing is the outcome
+  everyone is looking for. The staleness is invisible from the test's own output: there is no
+  "compiled at" line, and the probe's exit code says the same thing whether it is a day or a month
+  old. It surfaces only when the binary is *absent* — a clean clone, or a clean followed by a build
+  in a different configuration — and then it reads as broken tooling rather than as a question that
+  had stopped being asked.
+- **Instances:** 2026-08-29 — a full clean and Release rebuild left `P2FOCUS03` failing with *"the
+  canvas probe was not built"*. `AiDe.App.CanvasProbe` was never a `ProjectReference` of
+  `AiDe.App.Tests`, unlike the terminal probe and the daemon beside it, which carry comments
+  explaining exactly why they are. Once built from current source the probe failed for real: the
+  canvas page contained a **JavaScript syntax error** (`' join(s) across artifact types: ' '`) that
+  broke the whole `<script>`, so **the Graph pane rendered nothing at all**. The C# compiler cannot
+  see inside an embedded page, no unit test renders one, and the one control that could have caught
+  it had been running a binary from before the error was introduced.
+- **Control:** the probe is a `ProjectReference` with `ReferenceOutputAssembly="false"`, so it is
+  rebuilt whenever the tests are. The probe already refuses to pass vacuously (it fails if the canvas
+  renders zero nodes), which is what turned "green" into a precise diagnosis the moment it ran
+  against current source.
+- **The generalisation to apply elsewhere:** **anything a test executes must be built by that test's
+  project.** The tell is a test that launches a path under another project's `bin/`. And the second
+  lesson is narrower and sharper: **an embedded page is unchecked code.** HTML and JavaScript inside
+  a C# string get no compiler, no analyzer and no test — the only thing standing between a typo and a
+  dead pane is a probe that actually renders it.
+- **Residual risk:** the three probes are covered by hand-written references. Nothing **fails** when
+  a fourth is added without one, and nothing checks embedded JavaScript for syntax at build time —
+  the canvas probe is still the only thing that would notice.
 - **Status:** `partially-controlled`

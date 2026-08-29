@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-29T14:50:51Z",
+  "generated": "2026-08-29T15:28:56Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1279,6 +1279,32 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "27ce744843701cf1416eb4140acddad2c4a0b2f9",
         "short": "27ce74484",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-0062",
+      "shortname": "clean-rebuild-and-four-defects",
+      "datetime": "2026-08-29T15:28:56Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "commit and push all, merge and make sure main is clean\ndo a full clean and rebuild so i can test the state of the app while you do work\nthen continue with the next 5 steps and then provide the standard status and next steps tables at the end of your turn",
+      "summary": "Main was already clean and both remote branches were already fully merged — nothing to merge, and I\nsaid so rather than performing a no-op. A full clean and Release rebuild was published to\nartifacts/app for the user to test while work continued, deliberately outside the Debug path so\nongoing builds could not disturb it.\n\nThe clean rebuild immediately earned its keep. P2FOCUS03 failed with \"the canvas probe was not\nbuilt\": AiDe.App.CanvasProbe was never a ProjectReference of the test project, so it had been built\nonce by a full-solution build and every run since had exercised that stale executable. Rebuilt from\ncurrent source it failed for real — the canvas page carried a JavaScript syntax error that broke the\nwhole script, and THE GRAPH PANE WAS RENDERING NOTHING AT ALL. Registered as DC-023: a gate that\nkeeps passing because it runs a stale build of the thing it tests.\n\nRunning the panes over TheTerrace found two more. hosted_on matched the whole Microsoft.Sql/* family\nand produced a Cartesian product — 64 tables x 3 resources = 192 edges, each claiming to be the only\nliterally-named SQL resource, of which there were three. And the context-coverage denominator counted\nBicep parameters, so the map was blamed for artifacts it was never about.\n\nA defect in the spike itself produced a confidently wrong write-up before that: extractors passed\npositionally put BicepExtractor in the fallback slot, so every bicep scope was routed to the schema\nextractor and failed, and the write-up concluded the repository had no Bicep. It has two templates\nand 24 resources. Fixed with named arguments and corrected in the record.\n\nThe readiness watcher now uses the same TerminalScreen and VtParser the pane renders with; the\nScreenBuffer written last turn was a duplicate of a screen model this repository already had, and was\ndeleted.\n\nFinding worth acting on: 57 of the 72 Football-to-Operations crossings on TheTerrace are one class,\nAppDbContext. Operations is not a boundary that failed; the map counts shared persistence as domain\ncoupling.\n\nGate: 628 tests green (App 108, Core 520), five verifiers clean, Release build verified launching.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Confirm main is clean and merged, publish a stable Release build for the user to test, then land the next five steps and close with the standard tables",
+      "done_when": "Main verified clean and fully merged; a Release build published and verified launching; five steps landed with a control each; full gate green; committed and pushed; tables produced",
+      "change": "cl-0053",
+      "git": {
+        "sha": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
+        "short": "27adc7d93",
         "branch": "main",
         "pushed": true
       }
@@ -2561,6 +2587,57 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "27ce744843701cf1416eb4140acddad2c4a0b2f9",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0052",
+      "datetime": "2026-08-29T15:28:36Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Four defects: a Cartesian join, a wrong denominator, a dead Graph pane, and a stale probe",
+      "prompt": null,
+      "summary": "Four defects, found by running the panes over a real repository and by a clean rebuild.\n\n**1. A Cartesian product presented as 192 findings.** With the Bicep extractor finally routed\ncorrectly, hosted_on matched the whole Microsoft.Sql/* family: 64 tables joined to a server, a\ndatabase AND a virtual-network rule, each edge claiming \"the only literally-named SQL resource in\nthis template\" — of which there were three. Second instance of DC-022, in the join immediately below\nthe one that produced it. A table lives in a DATABASE; narrowed to that, with exactly one candidate\njoining and more than one producing no edges plus a sql-database-ambiguous disclosure. 192 to 64.\n\n**2. Coverage counted artifacts the map was never about.** The uncovered list's second-largest bucket\nwas \"(no namespace)\" at 114, and they were Bicep parameters. A bounded-context map is a statement\nabout a codebase's domain, and counting a template's parameters against it gets worse the more\ninfrastructure a team writes. Coverage is judged against code symbols only now, one rule in one\nplace. 525 uncovered to 412.\n\n**3. The Graph pane rendered nothing at all.** The canvas page carried a JavaScript syntax error —\na stray quote in the legend string — which broke the entire script. The C# compiler cannot see\ninside an embedded page and no unit test renders one.\n\n**4. The control that should have caught it was running a stale binary.** AiDe.App.CanvasProbe was\nnever a ProjectReference of AiDe.App.Tests, unlike the terminal probe and daemon beside it. It had\nbeen built once by a full-solution build and every run since exercised that old executable. The full\nclean the user asked for is what exposed it: the test failed with \"the canvas probe was not built\",\nand once rebuilt from current source it failed for real. Registered as DC-023.\n\nAlso: the readiness watcher now uses the SAME TerminalScreen and VtParser the pane renders with. The\nScreenBuffer written for it last turn was a duplicate of a screen model this repository already had —\ndeleted, because two models of one terminal disagree the first time either is fixed, and readiness\ndisagreeing with what the user is looking at is the whole defect it was built to close.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/JoinProjection.cs",
+        "src/AiDe.App/Workbench/CanvasPage.cs",
+        "tests/AiDe.App.Tests/AiDe.App.Tests.csproj",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "defect"
+      ],
+      "git": {
+        "before": null,
+        "after": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0053",
+      "datetime": "2026-08-29T15:28:36Z",
+      "session": null,
+      "kind": "knowledge",
+      "skill": null,
+      "title": "TheTerrace measured: 57 of 72 crossings are one DbContext",
+      "prompt": null,
+      "summary": "What the panes show on TheTerrace, and the one recommendation worth acting on.\n\n7 of 7 scopes, 12,043 assertions, 4.5 seconds. One verified join — invitationPepper, declared\n@secure(), value never read. 123 inferred: 64 hosted_on and 59 maps_to, every one resting on EF's\nnaming convention and saying so on its own row. Six disclosures.\n\nOperations looked like a boundary that never held — 172 crossings against 225 internal edges on 198\nsymbols. Opening the crossing says otherwise: 57 of the 72 Football-to-Operations edges are a single\nclass, TheTerrace.Infrastructure.Data.AppDbContext, which sits inside Operations' Infrastructure.*\npattern. Every repository that touches the database registers as a domain boundary crossing. That is\nshared persistence, not coupling between two contexts.\n\nThe recommendation, which is TheTerrace's to make and not this repository's: give shared\ninfrastructure its own context named for what it is, or leave it uncovered. Either way the crossing\ncounts start measuring domain coupling instead of counting the ORM. The other crossings survive that\nchange and are real — IAiCompletion and IPromptMapper reaching from Football and Editorial into\nAssistant, ICoachReader and ISquadReader reaching back.\n\nThe DC-022 residual is now measured rather than assumed. A predicate-by-extractor census over the\nsame run: declared_in, has_type and discloses are each emitted by all three extractors. has_type is\nconsumed by predicate in three places and is safe BY ACCIDENT — its object values happen to partition\ncleanly by producer, and nothing enforces that. The spike prints the census on every run so the next\ncollision is visible before it is joined.",
+      "rationale": null,
+      "artifacts": [
+        "spikes/joins-on-a-real-repo/RESULT.md"
+      ],
+      "tags": [
+        "spike"
+      ],
+      "git": {
+        "before": null,
+        "after": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
         "branch": "main",
         "pushed": true,
         "commits": []

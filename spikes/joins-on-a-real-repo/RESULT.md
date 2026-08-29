@@ -1,116 +1,148 @@
-# Spike — the Joins pane, on a real repository
+# Spike — the Joins and Contexts panes, on a real repository
 
-**Run 2026-08-29** · `C:\Projects\TheTerrace` · the same projections the pane runs, over the same
-store the daemon writes
+**Runs 2026-08-28 and 2026-08-29** · `C:\Projects\TheTerrace` · the same projections the panes run,
+over the same store the daemon writes
 **Re-run:** `dotnet run --project spikes/joins-on-a-real-repo [-- <repo> <store-dir>]`
 
 ## Why this exists
 
 Four turns of extractors, projections and panes shipped without anyone asking the only question that
-matters: on an actual codebase, are the joins any good? A pane that renders correctly and says
+matters: on an actual codebase, is any of this any good? A pane that renders correctly and says
 nothing useful is indistinguishable from one that works, right up until a user opens it.
 
-## What it found first: a defect, in the join added the previous turn
+It found four defects. Three were in the product; one was in this spike, and it produced a confidently
+wrong write-up before it was caught.
+
+---
+
+## Defect 1 — 7,426 joins with a fabricated reason
+
+First run:
 
 ```
 7426 verified · 59 inferred
-
-── Verified ── 7426 edge(s)
-      7,426  depends_on
        TheTerrace.Components.Display  --depends_on->  string
          declared in the resource's dependsOn
-       TheTerrace.E2ETests.BlazorCircuit  --depends_on->  Microsoft.Playwright.IPage
-         declared in the resource's dependsOn
 ```
 
-**`depends_on` is not a Bicep word.** The C# extractor emits it for type dependencies — 7,426 of them
-in this repository — and the join was written against the *predicate* rather than against the kind of
-thing the predicate was on. Every one of those edges was reported **Verified**, with the basis
-*"declared in the resource's dependsOn"*.
+**`depends_on` is not a Bicep word.** The C# extractor emits it for type dependencies. The join was
+written against the *predicate* rather than the kind of thing the predicate was on, and its basis was
+a fixed string that never had to agree with the evidence again.
 
-There is no `dependsOn` anywhere in TheTerrace. There is no Bicep in it at all. The sentence was
-false 7,426 times, next to a number large enough to look like the feature working.
+It failed in the flattering direction — the largest Verified count the pane had ever shown.
+Registered as **DC-022**, fixed by requiring the subject to carry `resource_type`.
 
-Two things made it dangerous rather than merely wrong:
+## Defect 2 — this spike's own harness, and the wrong conclusion it produced
 
-- **It fails in the flattering direction.** A join that produced nothing would have been investigated
-  on sight. This produced the largest Verified count the pane has ever shown.
-- **The basis is a fixed string.** It was written once, beside a predicate name, and never had to
-  agree with the evidence again — so nothing in the code could disagree with it. Registered as
-  **DC-022**.
+The first write-up concluded *"there is no Bicep in TheTerrace at all"*, from `scopes: 5 of 7` and
+zero infrastructure predicates. Both scopes that failed were Bicep.
 
-Fixed by requiring the subject to be a declared resource (`resource_type`). Re-run:
+The cause was here, not in the product:
 
-```
-0 verified · 59 inferred
+```csharp
+new CompositeExtractor(new CSharpExtractor(), new BicepExtractor(), new EfSchemaExtractor())
+//                                            ^ this is the `fallback` parameter
 ```
 
-Zero is the correct answer for a repository with no infrastructure templates.
+Passed positionally, `BicepExtractor` landed in the fallback slot and every `bicep:` scope was routed
+to the **schema** extractor, which failed them. `TheTerrace/infra/` contains `main.bicep` and
+`provider-vault.bicep`, 24 resource declarations between them.
 
-## What the pane actually shows on this repository
+Fixed with named arguments. **A harness defect and a product defect look identical from the output** —
+the tell was that the failures were named after a facility the repository visibly has.
+
+With it fixed: **7 of 7 scopes, 12,043 assertions, 0 failures.**
+
+## Defect 3 — a Cartesian product presented as 192 findings
+
+With Bicep actually extracting:
+
+```
+── Inferred ── 251 edge(s)
+        192  hosted_on
+```
+
+64 tables × 3 `Microsoft.Sql/*` resources. Every table was joined to a **server**, a **database**
+*and* a **virtual-network rule**, each edge claiming *"the only literally-named SQL resource in this
+template"* — of which there were three, so the sentence was false 192 times. DC-022 again, in the
+join immediately below the one that produced it.
+
+A table lives in a **database**. Narrowed to `Microsoft.Sql/servers/databases`, and:
+
+- exactly one candidate → join, with a basis derived from that count;
+- more than one → **no edges** and a `sql-database-ambiguous` disclosure, because which database
+  holds a table is a question the evidence does not answer, and answering it twice is worse than not
+  answering.
+
+Result: **192 → 64**, one per table.
+
+## Defect 4 — coverage counted artifacts the map was never about
+
+```
+  uncovered: 525 symbol(s), by namespace:
+       362  TheTerrace.Tests
+       114  (no namespace)
+             bicep:main#appInsightsName
+             bicep:main#backupStorageRedundancy
+```
+
+The `(no namespace)` bucket was **Bicep parameters**. A bounded-context map is a statement about a
+codebase's domain; counting a template's parameters against it blames the map for artifacts it was
+never about — and the number gets *worse* the more infrastructure a team writes. Coverage is now
+judged against code symbols only (`BoundedContextReader.IsCodeSymbol`), one rule in one place because
+two callers already needed it. **525 → 412**, and the phantom bucket is gone.
+
+---
+
+## What the panes now show
 
 | | |
 |---|---|
-| Scopes indexed | 5 of 7, in 4.9s |
-| Assertions | 11,836 |
-| Verified joins | **0** |
-| Inferred joins | 59, all `maps_to` |
-| Disclosures | `build-conditions-not-evaluated`, `generated-code-not-analysed`, `schema-changed-by-raw-sql-not-read`, `schema-from-migrations-not-database` |
+| Scopes | 7 of 7, 12,043 assertions, 4.5s |
+| Verified joins | **1** — `invitationPepper` declared `@secure()`, value never read |
+| Inferred joins | 123 — 64 `hosted_on`, 59 `maps_to` |
+| Disclosures | 6, including `bicep-expressions-not-evaluated` and `schema-from-migrations-not-database` |
 
-The 59 inferred joins are EF's naming convention read backwards — `AiRoute` → `table:AiRoute`,
-`Competition` → `table:Competition`. They look right, and the pane says plainly that nothing declares
-them. **Zero verified is the honest headline**: this repository declares no `[Table]` attributes, has
-no Bicep, and the schema is read from migrations rather than a database. The pane is not
-under-reporting; there is nothing stronger to report.
+One verified join is the honest headline: this repository declares no `[Table]` attributes, so every
+code→schema edge rests on EF's naming convention, and the pane says so on every row.
 
-## The contexts pane, same run
+## The contexts pane, and the finding worth acting on
 
 ```
      516 symbols ·     902 internal ·    190 crossing   Football
      198 symbols ·     225 internal ·    172 crossing   Operations
-     149 symbols ·     185 internal ·     74 crossing   Editorial
-     145 symbols ·     228 internal ·     93 crossing   Assistant
-      85 symbols ·     104 internal ·     41 crossing   Membership
-
-  top crossings:
-        72  Football -> Operations       37  Operations -> Football
-        27  Assistant -> Football        23  Football -> Assistant
+     149 symbols ·     185 internal ·      74 crossing  Editorial
+     145 symbols ·     228 internal ·      93 crossing  Assistant
+      85 symbols ·     104 internal ·      41 crossing  Membership
 ```
 
-Every crossing is under the 200 member cap, so the drill-down lists all of them — the "and N more"
-path is untested by this repository and remains covered only by its unit test.
-
-**Operations is the finding.** 198 symbols carrying 172 crossings against 225 internal edges: nearly
-as much traffic leaving it as staying inside. Football, four times its size, keeps 902 edges internal
-against 190 crossing. Whether that means Operations is a shared kernel doing its job or a boundary
-that never held is a question for the person who drew the map — which is the point of showing the
-number rather than scoring it.
-
-## Uncovered symbols
+Operations looked like a boundary that never held: 172 crossings against 225 internal edges. Opening
+the crossing says otherwise.
 
 ```
-  uncovered: 474 symbol(s), by namespace:
-       360  TheTerrace.Tests
-        65  (no namespace)
-        16  TheTerrace.Features.Playground
-        11  TheTerrace.Features.Rehearsal
+        72  Football -> Operations
+              57x  TheTerrace.Infrastructure.Data.AppDbContext
+               2x  TheTerrace.Features.Chronology.IPendingWorkQueue
 ```
 
-**360 of the 474 are tests**, which no context map should claim. The grouping turned "474 uncovered"
-from a number that reads as a gap into one line that reads as *correct*, and four small namespaces
-that are worth a decision. Coverage as a percentage would still say 68%; it would just say it about
-the wrong thing.
+**57 of the 72 are one class.** `AppDbContext` sits inside Operations' `TheTerrace.Infrastructure.*`
+pattern, so every repository that touches the database registers as a domain boundary crossing. That
+is shared persistence, not coupling between Football and Operations.
 
-`(no namespace)` at 65 is worth a look on its own — those are symbols the extractor recorded with no
-dot in their name, and whether they are top-level programs, generated types, or an extraction defect
-is not yet known.
+**Recommendation for the map** (TheTerrace's to make, not this repository's): give shared
+infrastructure — the DbContext and what travels with it — its own context, named for what it is, or
+leave it uncovered. Either way the crossing counts start measuring domain coupling instead of
+counting the ORM. The other crossings survive that change and are real: `IAiCompletion` and
+`IPromptMapper` reaching from Football and Editorial into Assistant, `ICoachReader`/`ISquadReader`
+reaching the other way.
+
+The remaining uncovered symbols are led by **362 tests**, which no context map should claim.
 
 ## Consequence
 
 | | |
 |---|---|
-| `depends_on` join | **Fixed and pinned.** Two tests: a code-origin `depends_on` is not joined; a resource-origin one still is |
-| DC-022 | Registered — a predicate shared by two extractors, joined as if it had one meaning |
-| The Joins pane | **Honest on a real repository.** 0 verified is the right answer here and says so |
-| Contexts | Usable. Operations is the boundary worth examining |
-| Next | `(no namespace)` × 65, and the 2 scopes of 7 that failed to index |
+| DC-022 | Two instances now, both in `JoinProjection`, both from joining on a predicate name |
+| DC-022's residual | **Measured, not assumed.** `declared_in`, `has_type` and `discloses` are each emitted by all three extractors. `has_type` is safe *by accident* — its object values (`class`, `table`, `azure-parameter`) partition cleanly by producer. Nothing enforces that |
+| The spike | Named arguments, and a predicate-by-extractor census printed on every run so the next collision is visible before it is joined |
+| TheTerrace's map | One concrete recommendation, with the 57 edges that justify it |

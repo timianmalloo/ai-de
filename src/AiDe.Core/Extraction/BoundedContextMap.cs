@@ -93,6 +93,15 @@ public static class BoundedContextReader
         var (contexts, problems) = Parse(lines);
         Validate(contexts, knownSymbols, knownTables ?? [], problems);
 
+        // Judged against CODE symbols only. Measured on a real repository: the uncovered list was
+        // led by 114 entries with no namespace, and they were Bicep parameters — bicep:main#appName
+        // and friends. A bounded-context map is a statement about a codebase's domain; counting a
+        // template's parameters against it blames the map for artifacts it was never about, and
+        // makes the coverage number quietly wrong in the flattering direction for anyone who adds
+        // infrastructure. The same shape as counting package types in the denominator, which was
+        // fixed once already.
+        knownSymbols = [.. knownSymbols.Where(IsCodeSymbol)];
+
         var covered = knownSymbols
             .Where(symbol => contexts.Any(c => c.Includes.Any(p => Matches(p, symbol))))
             .ToList();
@@ -104,6 +113,18 @@ public static class BoundedContextReader
 
         return new BoundedContextMap(contexts, problems, uncovered, covered.Count, knownSymbols.Count);
     }
+
+    /// <summary>
+    /// Whether an id names a code symbol, as opposed to another artifact kind's subject.
+    /// </summary>
+    /// <remarks>
+    /// Scope-qualified ids — <c>bicep:main#appName</c>, <c>table:Orders</c>, <c>schema:...</c> — are
+    /// subjects of other artifact kinds. They are real evidence and they belong in the store; they
+    /// are simply not what a bounded-context map is about. The rule lives here rather than at each
+    /// call site because two callers already need it and a second copy is a second thing to drift.
+    /// </remarks>
+    public static bool IsCodeSymbol(string id) =>
+        !string.IsNullOrEmpty(id) && !id.Contains(':', StringComparison.Ordinal);
 
     /// <summary>Whether a namespace pattern covers a symbol. <c>*</c> is a suffix wildcard only.</summary>
     public static bool Matches(string pattern, string symbol) =>

@@ -214,7 +214,7 @@ internal static class CanvasPage
 
               legend.innerHTML = contextLegend + (joins === 0
                 ? ''
-                : joins + ' join(s) across artifact types: ' '
+                : joins + ' join(s) across artifact types: '
                   + '<b style="color:#4da3ff">solid blue</b> = declared, '
                   + '<b style="color:#c98b2e">dashed amber</b> = inferred from a convention ('
                   + inferred + ' of ' + joins + '). Hover a line for its basis.');

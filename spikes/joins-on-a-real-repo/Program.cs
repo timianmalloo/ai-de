@@ -30,9 +30,17 @@ Console.WriteLine($"repository : {root}");
 Console.WriteLine($"store      : {data}");
 Console.WriteLine(new string('=', 100));
 
+// NAMED, not positional. The first run passed these by position, so BicepExtractor landed in the
+// `fallback` slot and every bicep: scope was routed to the schema extractor — which reported the two
+// Bicep scopes as failures and left the run with no infrastructure evidence at all. The harness was
+// wrong, and the write-up that concluded "TheTerrace has no Bicep" was wrong with it.
 using var core = WorkspaceCore.Open(
     "joins-spike", root, data,
-    new CompositeExtractor(new CSharpExtractor(), new BicepExtractor(), new EfSchemaExtractor()));
+    new CompositeExtractor(
+        csharp: new CSharpExtractor(),
+        fallback: new FixtureExtractor(),
+        bicep: new BicepExtractor(),
+        schema: new EfSchemaExtractor()));
 
 var started = DateTimeOffset.UtcNow;
 var index = await core.IndexCSharpAsync("spike-1", CancellationToken.None);
@@ -41,6 +49,12 @@ var elapsed = DateTimeOffset.UtcNow - started;
 Console.WriteLine($"scopes     : {index.ScopesIndexed} of {index.ScopesFound} indexed in {elapsed.TotalSeconds:F1}s");
 Console.WriteLine($"assertions : {index.Assertions:N0}");
 Console.WriteLine($"failed     : {index.Failed.Count}");
+foreach (var failure in index.Failed)
+{
+    // Named, not counted. "2 of 7 failed" is a number the user cannot act on, and everything the
+    // panes show downstream rests on the 5 that worked.
+    Console.WriteLine($"             {failure}");
+}
 Console.WriteLine($"disclosed  : {string.Join(", ", index.Disclosures)}");
 Console.WriteLine();
 
@@ -130,6 +144,16 @@ else
     {
         Console.WriteLine($"    {edge.Weight,6:N0}  {edge.From} -> {edge.To}   " +
                           $"(listing {edge.Members.Count}, {edge.Undisclosed} beyond the cap)");
+
+        // What the coupling IS, not just how much of it there is. A count names a boundary worth
+        // looking at; the objects name the thing being shared.
+        foreach (var shared in edge.Members
+            .GroupBy(m => m.Object, StringComparer.Ordinal)
+            .OrderByDescending(g => g.Count())
+            .Take(4))
+        {
+            Console.WriteLine($"            {shared.Count(),4}x  {shared.Key}");
+        }
     }
 
     Console.WriteLine();
@@ -137,7 +161,30 @@ else
     foreach (var group in contexts.UncoveredGroups.Take(8))
     {
         Console.WriteLine($"    {group.Symbols,6:N0}  {group.Namespace}");
+        foreach (var example in group.Examples.Take(6)) Console.WriteLine($"             {example}");
     }
+}
+
+Console.WriteLine();
+Console.WriteLine(new string('=', 100));
+Console.WriteLine("PREDICATES BY EXTRACTOR — the DC-022 residual, measured");
+Console.WriteLine(new string('=', 100));
+
+// Which scope kinds emit which predicate. A predicate emitted by more than one is a name two
+// producers gave different meanings to, and every consumer that joins on the predicate alone is
+// one template away from the 7,426-edge defect.
+foreach (var group in assertions
+    .GroupBy(a => a.Predicate)
+    .OrderBy(g => g.Key, StringComparer.Ordinal))
+{
+    var kinds = group
+        .Select(a => a.ScopeId.Contains(':') ? a.ScopeId[..a.ScopeId.IndexOf(':')] : a.ScopeId)
+        .Distinct(StringComparer.Ordinal)
+        .Order(StringComparer.Ordinal)
+        .ToList();
+
+    var flag = kinds.Count > 1 ? "  <-- SHARED" : string.Empty;
+    Console.WriteLine($"  {group.Count(),8:N0}  {group.Key,-28}  {string.Join(", ", kinds)}{flag}");
 }
 
 return 0;

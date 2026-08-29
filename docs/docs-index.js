@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-29T14:50:52Z",
+  "generated": "2026-08-29T15:29:01Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1417,7 +1417,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f701a3839bdeb480662fcc8a7a0d0b5e705183a7d39faadbea2a147ca4fc6eca"
+      "sourceSha256": "a99ea3c3e92dd4405ca5721735f6ef508ab4f3e2074022f2ad41e8be566007f2"
     },
     {
       "id": "lens-code-doc-join",
@@ -2610,6 +2610,87 @@ window.DOCS_INDEX = {
       "sourceSha256": "1c65f3654c86052f3131f11eb495cae96fe2cfe4925391d6828cccb1b1819ed0"
     },
     {
+      "id": "kb-dashboards-comparables",
+      "path": "docs/knowledge/operational-and-test-dashboards/comparables.md",
+      "title": "Operational & Test Dashboards — comparables & tools",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Named tools and libraries for test-result, CI/CD and metrics visualisation, with licence, role and where each fits an embedded WPF pane.",
+      "tags": [
+        "dashboards",
+        "tools",
+        "charting-libraries",
+        "licences"
+      ],
+      "links": [
+        {
+          "to": "kb-operational-and-test-dashboards",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0e1fa237687b9b4bd8cfc1c88ea5f9ffd652d90d4bd8acebb7257c98a78cffc2"
+    },
+    {
+      "id": "kb-dashboards-references",
+      "path": "docs/knowledge/operational-and-test-dashboards/references.md",
+      "title": "Operational & Test Dashboards — references",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The authoritative methods, docs and specs behind operational/test dashboards — RED, USE, Grafana best practices, the reporting tools' docs, and the charting-library licences.",
+      "tags": [
+        "dashboards",
+        "references",
+        "red",
+        "use",
+        "standards"
+      ],
+      "links": [
+        {
+          "to": "kb-operational-and-test-dashboards",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "365e245b2b9ef65861078de061c358aaab03bfdeff429d4c8daa076aa1956b1a"
+    },
+    {
+      "id": "kb-dashboards-sota",
+      "path": "docs/knowledge/operational-and-test-dashboards/state-of-the-art.md",
+      "title": "Operational & Test Dashboards — state of the art",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Current best practice for test-result, CI/CD and operational-metrics visualisation — the reporting tools, the pipeline-as-diagram path, and the RED/USE dashboard methods.",
+      "tags": [
+        "dashboards",
+        "red",
+        "use",
+        "allure",
+        "reportportal",
+        "grafana"
+      ],
+      "links": [
+        {
+          "to": "kb-operational-and-test-dashboards",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f06a8d9175207e63a62009c25e9f8db4d1d0c8db81c93727737aaa1932d0ffe8"
+    },
+    {
       "id": "kb-diagram-generation",
       "path": "docs/knowledge/diagram-generation/index.md",
       "title": "Diagram Generation & Rendering — domain knowledge",
@@ -3566,6 +3647,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "528921d798a95942fc68bb2e663d80faf61960e5f271498463a514701b2f9cca"
     },
     {
+      "id": "kb-operational-and-test-dashboards",
+      "path": "docs/knowledge/operational-and-test-dashboards/index.md",
+      "title": "Operational & Test Result Dashboards — domain knowledge",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Evidence base for the AI-DE panes that visualise test results, CI/CD pipeline execution, and operational logs/metrics: the reporting tools (Allure, ReportPortal), pipeline-as-diagram tools, the RED/USE dashboard methods, the permissive charting libraries (LiveCharts2, ScottPlot, OxyPlot), and the design rules that keep a dashboard actionable rather than a wall of numbers.",
+      "tags": [
+        "dashboards",
+        "test-results",
+        "ci-cd",
+        "observability",
+        "metrics",
+        "charting",
+        "grafana",
+        "allure"
+      ],
+      "links": [
+        {
+          "to": "knowledge-hub",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-microservice-interaction-visualization",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-diagram-generation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7f193cf805a8eba971d51344e6b328c3022565c389a760e62b6b8069cb9cb7c2"
+    },
+    {
       "id": "kb-shell-comparables",
       "path": "docs/knowledge/ai-native-ide-shell/comparables.md",
       "title": "AI-Native IDE Shell — comparable hosts",
@@ -3922,6 +4041,223 @@ window.DOCS_INDEX = {
       "sourceSha256": "1fa02af1bdd314c93269bab55213440634a2cedd04077553c96c9aa663c95d49"
     },
     {
+      "id": "kb-wpf-modern-ui-styling",
+      "path": "docs/knowledge/wpf-modern-ui-styling/index.md",
+      "title": "Modern & Soft WPF UI Styling — domain knowledge",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Evidence base for giving the AiDe.App WPF shell a modern, soft, rounded look — Windows 11 DWM rounded corners and Mica, WindowChrome custom title bars, the built-in .NET Fluent theme, the permissive (MIT) control-library landscape, soft-shadow performance, and the IDE/editor UX exemplars (JetBrains New UI / Islands, VS Code, Zed, DaVinci Resolve) that inform it.",
+      "tags": [
+        "wpf",
+        "styling",
+        "fluent",
+        "windowchrome",
+        "dwm",
+        "mica",
+        "control-libraries",
+        "ide-ux",
+        "dark-theme"
+      ],
+      "links": [
+        {
+          "to": "knowledge-hub",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-ai-native-ide-shell",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fd8551f9b15d5fb4f602a55fa7f5db5820394a4415eb9f410121bd28916c4996"
+    },
+    {
+      "id": "kb-wpf-styling-comparables",
+      "path": "docs/knowledge/wpf-modern-ui-styling/comparables.md",
+      "title": "Modern WPF Styling — comparables & libraries",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The permissively-licensed WPF control/styling library landscape (named, with licence, look and maintenance), plus the IDE and creative-tool UX exemplars that define the modern-soft target.",
+      "tags": [
+        "wpf",
+        "control-libraries",
+        "ide-ux",
+        "exemplars",
+        "licences"
+      ],
+      "links": [
+        {
+          "to": "kb-wpf-modern-ui-styling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4403e77044dd3a52fcec0f327ce1c52d094f51eb8f17a1536d67cf8abd8975da"
+    },
+    {
+      "id": "kb-wpf-styling-data",
+      "path": "docs/knowledge/wpf-modern-ui-styling/data-and-constants.md",
+      "title": "Modern WPF Styling — data, constants & recipes",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Concrete attribute values, licence/version facts, soft-shadow/rounded recipes and a starter token scale for a modern-soft WPF look.",
+      "tags": [
+        "wpf",
+        "constants",
+        "recipes",
+        "tokens"
+      ],
+      "links": [
+        {
+          "to": "kb-wpf-modern-ui-styling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7a9be5f0d48034753c328f46d84e6f1773de154c066fb7fc9c820184964a5de0"
+    },
+    {
+      "id": "kb-wpf-styling-glossary",
+      "path": "docs/knowledge/wpf-modern-ui-styling/glossary.md",
+      "title": "Modern WPF Styling — glossary",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Precise definitions for the WPF-styling vocabulary — WindowChrome, DWM corner preference, Mica, Fluent theme, ThemeMode, elevation — so the styling code and its docs agree.",
+      "tags": [
+        "glossary",
+        "wpf",
+        "dwm",
+        "fluent"
+      ],
+      "links": [
+        {
+          "to": "kb-wpf-modern-ui-styling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5959b3b76b63a28304c248b13bd86ff8a1086d67a3929025dde35c3062f2ec8e"
+    },
+    {
+      "id": "kb-wpf-styling-open-questions",
+      "path": "docs/knowledge/wpf-modern-ui-styling/open-questions.md",
+      "title": "Modern WPF Styling — open questions & failure modes",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "What the WPF-styling research could not settle, the domain's silent failure modes, and the disconfirming views deliberately sought against \"adopt a modern WPF UI library\".",
+      "tags": [
+        "open-questions",
+        "failure-modes",
+        "wpf",
+        "disconfirming"
+      ],
+      "links": [
+        {
+          "to": "kb-wpf-modern-ui-styling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d9b14167c4f8e077385675ad5b7cbccfd5889dbe832dee4880df17a292b3c8e6"
+    },
+    {
+      "id": "kb-wpf-styling-references",
+      "path": "docs/knowledge/wpf-modern-ui-styling/references.md",
+      "title": "Modern WPF Styling — references",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The authoritative API surfaces, standards and reference kits behind modern WPF styling — the ones to quote rather than recall.",
+      "tags": [
+        "wpf",
+        "references",
+        "apis",
+        "standards"
+      ],
+      "links": [
+        {
+          "to": "kb-wpf-modern-ui-styling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3422d88cf23f3d5ababc54941c4c5f617a7e4d1da6defb2ab8cd3a43205a67cb"
+    },
+    {
+      "id": "kb-wpf-styling-sota",
+      "path": "docs/knowledge/wpf-modern-ui-styling/state-of-the-art.md",
+      "title": "Modern WPF Styling — state of the art",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Current best practice for a modern, soft WPF look: the DWM + WindowChrome + Fluent-theme stack, the Mica situation, soft-shadow technique, and rounded-control re-templating.",
+      "tags": [
+        "wpf",
+        "fluent",
+        "dwm",
+        "windowchrome",
+        "mica"
+      ],
+      "links": [
+        {
+          "to": "kb-wpf-modern-ui-styling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a960243c9034f212ea6524e29316ee24d6daa301550df6760c15f91671b8f273"
+    },
+    {
+      "id": "kb-wpf-styling-sources",
+      "path": "docs/knowledge/wpf-modern-ui-styling/sources.md",
+      "title": "Modern WPF Styling — sources",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The full access-dated source list behind the WPF-modern-ui-styling base, keyed [W1]..[W25] as cited throughout the topic.",
+      "tags": [
+        "sources",
+        "citations"
+      ],
+      "links": [
+        {
+          "to": "kb-wpf-modern-ui-styling",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3a5dbfa74db1a03b721985696d85edda617bf9acc4ccad90292d98e23560e595"
+    },
+    {
       "id": "knowledge-hub",
       "path": "docs/knowledge/index.md",
       "title": "AI-DE Domain Knowledge — index",
@@ -4153,5 +4489,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "6e5cde9caf761f39bfc14db34723ace257e876049b29a299a302b54e25e3b7c5"
+  "graphSha256": "fb46f4153636a01de29ab0e1321843e3c6fe33c414d4d126b97641ca7147f8bd"
 };

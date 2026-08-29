@@ -363,14 +363,56 @@ public sealed class Phase3ExtractorTests : IDisposable
     [Fact]
     public void NoJoinIsMadeOnAnUnresolvedResourceName_AndTheGapIsDisclosed()
     {
+        // A DATABASE, not a server: a table lives in a database, and the join was narrowed to that
+        // after a real template produced 64 tables x 3 Microsoft.Sql/* resources = 192 edges. A
+        // disclosure about a server would be about a resource the join never considers.
         var join = new JoinProjection([
             Fact("table:Orders", "has_type", "table"),
-            Fact("bicep:main/sql", "resource_type", "Microsoft.Sql/servers"),
-            Fact("bicep:main/sql", "resource_name_expression", "'${prefix}-sql'"),
+            Fact("bicep:main/sqlDb", "resource_type", "Microsoft.Sql/servers/databases"),
+            Fact("bicep:main/sqlDb", "resource_name_expression", "'${prefix}-sql'"),
         ]).Compute();
 
         Assert.DoesNotContain(join.Edges, e => e.Kind == "hosted_on");
         Assert.Contains("sql-resource-name-unresolved", join.Disclosures);
+    }
+
+    [Fact]
+    public void TwoDatabasesMeanNoJoinAtAll_AndTheAmbiguityIsStated()
+    {
+        // MEASURED: matching the whole Microsoft.Sql/* family against every table produced a
+        // Cartesian product — 192 edges on one real template — each carrying "the only literally
+        // named SQL resource". With two candidates, which one holds a table is a question the
+        // evidence does not answer, and answering it twice is worse than not answering (DC-022).
+        var join = new JoinProjection([
+            Fact("table:Orders", "has_type", "table"),
+            Fact("bicep:main/primary", "resource_type", "Microsoft.Sql/servers/databases"),
+            Fact("bicep:main/primary", "resource_name", "terrace-primary"),
+            Fact("bicep:main/replica", "resource_type", "Microsoft.Sql/servers/databases"),
+            Fact("bicep:main/replica", "resource_name", "terrace-replica"),
+        ]).Compute();
+
+        Assert.DoesNotContain(join.Edges, e => e.Kind == "hosted_on");
+        Assert.Contains("sql-database-ambiguous", join.Disclosures);
+    }
+
+    [Fact]
+    public void OneDatabaseStillHostsTheTables()
+    {
+        // The other half. Narrowing a join until it can no longer fire is not a fix (DC-016).
+        var join = new JoinProjection([
+            Fact("table:Orders", "has_type", "table"),
+            Fact("bicep:main/db", "resource_type", "Microsoft.Sql/servers/databases"),
+            Fact("bicep:main/db", "resource_name", "terrace-db"),
+            // A server and a vnet rule alongside it, which used to multiply the edges by three.
+            Fact("bicep:main/server", "resource_type", "Microsoft.Sql/servers"),
+            Fact("bicep:main/server", "resource_name", "terrace-sql"),
+            Fact("bicep:main/rule", "resource_type", "Microsoft.Sql/servers/virtualNetworkRules"),
+            Fact("bicep:main/rule", "resource_name", "terrace-rule"),
+        ]).Compute();
+
+        var edge = Assert.Single(join.Edges, e => e.Kind == "hosted_on");
+        Assert.Equal("bicep:main/db", edge.To);
+        Assert.Contains("only literally-named SQL database", edge.Basis, StringComparison.Ordinal);
     }
 
     [Fact]

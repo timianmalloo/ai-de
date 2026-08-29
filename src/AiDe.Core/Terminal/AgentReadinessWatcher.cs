@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AiDe.Core.Terminal;
@@ -14,8 +15,12 @@ namespace AiDe.Core.Terminal;
 /// <para><b>It matches the rendered screen, not the byte stream.</b> The first version matched the
 /// tail of the output, which for a line-oriented shell is the same question and for an agent is not:
 /// <c>spikes/agent-readiness</c> measured a full-screen TUI drawn with absolute cursor addressing,
-/// where the last bytes are wherever the cursor went, not what the user is looking at. The
-/// <see cref="ScreenBuffer"/> answers the question the pattern was always meant to ask.</para>
+/// where the last bytes are wherever the cursor went, not what the user is looking at.</para>
+///
+/// <para><b>Through the SAME screen the pane renders</b> — <see cref="TerminalScreen"/> driven by
+/// <see cref="VtParser"/>. A second screen model was written for this and then deleted: two models
+/// of one terminal disagree the first time either is fixed, and readiness disagreeing with what the
+/// user is looking at is the whole defect this was built to close.</para>
 ///
 /// <para><b>It is weaker evidence than the nonce and is labelled as such.</b> A pattern can match a
 /// line that merely mentions the prompt, and output is in principle forgeable. It establishes that
@@ -31,7 +36,8 @@ public sealed class AgentReadinessWatcher
 {
     private readonly Regex _ready;
     private readonly Regex? _attention;
-    private readonly ScreenBuffer _screen;
+    private readonly TerminalScreen _screen;
+    private readonly VtParser _parser;
     private readonly System.Threading.Lock _gate = new();
 
     public AgentReadinessWatcher(string readyPattern, string? attentionPattern = null,
@@ -41,7 +47,8 @@ public sealed class AgentReadinessWatcher
 
         _ready = Compile(readyPattern);
         _attention = attentionPattern is null ? null : Compile(attentionPattern);
-        _screen = new ScreenBuffer(rows, columns);
+        _screen = new TerminalScreen(columns, rows);
+        _parser = new VtParser(_screen);
     }
 
     /// <summary>True when the marker is on the last drawn line of the screen.</summary>
@@ -71,16 +78,16 @@ public sealed class AgentReadinessWatcher
     {
         lock (_gate)
         {
-            _screen.Feed(text);
+            _parser.Consume(Encoding.UTF8.GetBytes(text.ToString()));
 
-            var rendered = _screen.Render();
-            LastJudged = rendered.TrimEnd('\n');
+            var lines = Lines();
+            LastJudged = string.Join('\n', lines);
 
             try
             {
                 // Anchored to the last DRAWN line. The question is whether the agent is waiting now,
                 // and a prompt higher up the screen is history however recently it was painted.
-                IsReady = _ready.IsMatch(_screen.LastNonEmptyLine());
+                IsReady = _ready.IsMatch(LastDrawnLine(lines));
             }
             catch (RegexMatchTimeoutException)
             {
@@ -120,6 +127,39 @@ public sealed class AgentReadinessWatcher
                 // would tell the user to answer a question that is not on screen.
             }
         }
+    }
+
+    /// <summary>The screen as lines, trailing blanks removed.</summary>
+    private List<string> Lines()
+    {
+        var lines = new List<string>(_screen.Rows);
+        var builder = new StringBuilder(_screen.Columns);
+
+        for (var row = 0; row < _screen.Rows; row++)
+        {
+            builder.Clear();
+            for (var column = 0; column < _screen.Columns; column++) builder.Append(_screen[row, column].Character);
+            lines.Add(builder.ToString().TrimEnd());
+        }
+
+        return lines;
+    }
+
+    /// <summary>
+    /// The last line with anything on it.
+    /// </summary>
+    /// <remarks>
+    /// The screen's analogue of "the tail". Where a shell's prompt is the last thing WRITTEN, an
+    /// agent's is the last thing DRAWN, and those are different rows of the same buffer.
+    /// </remarks>
+    private static string LastDrawnLine(List<string> lines)
+    {
+        for (var row = lines.Count - 1; row >= 0; row--)
+        {
+            if (lines[row].Length > 0) return lines[row];
+        }
+
+        return string.Empty;
     }
 
     private static Regex Compile(string pattern) =>

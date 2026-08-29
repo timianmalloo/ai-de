@@ -169,36 +169,30 @@ public sealed class Phase3SurfacingTests : IDisposable
     public void TextLandsWhereTheCursorSaysItDoes_NotWhereItArrived()
     {
         // The measured shape. An agent draws with absolute addressing and repaints regions in
-        // whatever order it likes, so the LAST bytes are not the BOTTOM line.
-        var screen = new ScreenBuffer(rows: 5, columns: 20);
-        screen.Feed("\u001b[3;1Hmiddle");
-        screen.Feed("\u001b[1;1Htop");
+        // whatever order it likes, so the LAST bytes are not the BOTTOM line. Asserted through the
+        // watcher rather than a screen of its own: a second model of one terminal disagrees with the
+        // pane the first time either is fixed.
+        var watcher = new AgentReadinessWatcher(readyPattern: "^middle$");
+        watcher.Observe("\u001b[3;1Hmiddle" + "\u001b[1;1Htop");
 
-        Assert.Equal("top", screen.Line(0));
-        Assert.Equal("middle", screen.Line(2));
-        Assert.Equal("middle", screen.LastNonEmptyLine());
+        Assert.Contains("top", watcher.LastJudged, StringComparison.Ordinal);
+        Assert.Contains("middle", watcher.LastJudged, StringComparison.Ordinal);
+
+        // "middle" is on row 3 and "top" on row 1, so the last DRAWN line is middle — even though
+        // "top" was the last thing written.
+        Assert.True(watcher.IsReady);
     }
 
     [Fact]
     public void EscapeSequencesNeverBecomeScreenText()
     {
         // A parser that fell through to "write the bytes as text" would put escape codes into the
-        // screen it models, and a readiness pattern would match text no human ever saw.
-        var screen = new ScreenBuffer(rows: 3, columns: 40);
-        screen.Feed("\u001b[38;2;150;108;30mcoloured\u001b[m \u001b]0;title\adone");
+        // screen it models, and the readiness pattern would match text no human ever saw.
+        var watcher = new AgentReadinessWatcher(readyPattern: "NEVER");
+        watcher.Observe("\u001b[38;2;150;108;30mcoloured\u001b[m \u001b]0;title\adone");
 
-        Assert.Equal("coloured done", screen.Line(0));
-    }
-
-    [Fact]
-    public void ErasingTheDisplayClearsWhatWasDrawn()
-    {
-        var screen = new ScreenBuffer(rows: 4, columns: 20);
-        screen.Feed("\u001b[1;1Hstale");
-        screen.Feed("\u001b[2Jfresh");
-
-        Assert.DoesNotContain("stale", screen.Render(), StringComparison.Ordinal);
-        Assert.Contains("fresh", screen.Render(), StringComparison.Ordinal);
+        Assert.Contains("coloured done", watcher.LastJudged, StringComparison.Ordinal);
+        Assert.DoesNotContain("38;2;150", watcher.LastJudged, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -206,12 +200,11 @@ public sealed class Phase3SurfacingTests : IDisposable
     {
         // Against the CAPTURED bytes. The dialog's text is spread across rows 3 to 17 by absolute
         // addressing, and only a screen model puts it back together.
-        var screen = new ScreenBuffer();
-        screen.Feed(TrustGateOutput());
-        var rendered = screen.Render();
+        var watcher = new AgentReadinessWatcher(readyPattern: "NEVER");
+        watcher.Observe(TrustGateOutput());
 
-        Assert.Contains("Quick safety check", rendered, StringComparison.Ordinal);
-        Assert.Contains("Yes, I trust this folder", rendered, StringComparison.Ordinal);
+        Assert.Contains("Quick safety check", watcher.LastJudged, StringComparison.Ordinal);
+        Assert.Contains("Yes, I trust this folder", watcher.LastJudged, StringComparison.Ordinal);
     }
 
     // ── The trust gate is a state, not a silent refusal ───────────────────────────────────

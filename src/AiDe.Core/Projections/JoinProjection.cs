@@ -97,31 +97,46 @@ public sealed class JoinProjection(IReadOnlyList<EvidenceAssertion> assertions)
         // Only when a Bicep resource name is a LITERAL. Eight of the 24 resources in a real template
         // are expressions, and matching against an unresolved expression would produce an edge whose
         // basis is a string nobody has evaluated.
-        var sqlResources = assertions
-            .Where(a => a.Predicate == "resource_type" && a.Object.StartsWith("Microsoft.Sql/", StringComparison.OrdinalIgnoreCase))
+        // A table lives in a DATABASE, not in a server and not in a virtual-network rule. Measured:
+        // TheTerrace's template declares three Microsoft.Sql/* resources, and matching the whole
+        // family produced 64 tables x 3 resources = 192 edges — a Cartesian product presented as 192
+        // findings, none of which says which database holds which table.
+        var databases = assertions
+            .Where(a => a.Predicate == "resource_type"
+                && a.Object.StartsWith("Microsoft.Sql/servers/databases", StringComparison.OrdinalIgnoreCase))
             .Select(a => a.Subject)
             .ToHashSet(StringComparer.Ordinal);
 
         var literalNames = assertions
-            .Where(a => a.Predicate == "resource_name" && sqlResources.Contains(a.Subject))
+            .Where(a => a.Predicate == "resource_name" && databases.Contains(a.Subject))
             .ToList();
 
-        foreach (var resource in literalNames)
+        // Exactly one, or none. With two databases in a template, "which one holds this table" is a
+        // question the evidence does not answer, and answering it twice is worse than not answering.
+        // The basis is derived from the count rather than asserting uniqueness in a fixed string that
+        // could never disagree with the template (DC-022).
+        if (literalNames.Count == 1)
         {
+            var resource = literalNames[0];
+
             foreach (var table in tables)
             {
                 edges.Add(new JoinEdge(
                     table, resource.Subject, "hosted_on",
                     VerificationStatus.Inferred,
-                    $"'{resource.Object}' is the only literally-named SQL resource in this template; " +
+                    $"'{resource.Object}' is the only literally-named SQL database in this template; " +
                     "no connection string was matched"));
             }
+        }
+        else if (literalNames.Count > 1 && tables.Count > 0)
+        {
+            disclosures = [.. disclosures, "sql-database-ambiguous"];
         }
 
         // A SQL resource whose name is an EXPRESSION cannot be joined at all, and that is stated
         // rather than approximated.
         var expressionNamed = assertions
-            .Count(a => a.Predicate == "resource_name_expression" && sqlResources.Contains(a.Subject));
+            .Count(a => a.Predicate == "resource_name_expression" && databases.Contains(a.Subject));
 
         if (expressionNamed > 0 && tables.Count > 0)
         {
