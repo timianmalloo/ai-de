@@ -275,6 +275,39 @@ store vs pane, joins:
 50-neighbour describe cap — which the shortfall line already reports on the same run. Before the fix
 the panes read 50 nodes of 2,164; the honest residual is now two edges and a sentence saying so.
 
+---
+
+## Scale — 2026-08-29
+
+Nothing available here is much larger than TheTerrace, so this is a **synthetic** workspace: 20
+projects, 2,400 types, cross-project references. Labelled synthetic because it is, and reported
+because the paging, the caps and the fingerprint cache were all sized on repositories a fifth this
+size.
+
+```
+scopes     : 20 of 20 indexed (0 reused) in 13.5s
+re-index   : 0 indexed, 20 reused in 0.1s
+assertions : 21,066
+pane read  : 21,066 assertion(s) over 11 page(s) in 185ms via the query path
+store read : 21,066 assertion(s) directly
+shortfall  : (none — the panes see the whole workspace)
+```
+
+| | |
+|---|---|
+| First index | **13.5s** — about 0.68s per project of 120 types, roughly linear |
+| Re-index, nothing changed | **0.1s**, 20 scopes reused |
+| Paged read of everything | **185ms** over 11 pages, exact agreement with the store |
+| Shortfall | none — no cap bit at 21,066 assertions |
+
+**The read is not the problem at this size; extraction is.** 185ms to page 21,066 assertions against
+13.5s to produce them says the next scale work belongs in the extractor, not the query path — and the
+fingerprint cache already means that 13.5s is paid once rather than per refresh.
+
+The honest limit: this says nothing about a repository with deep inheritance, heavy generics, or
+thousands of package references, because the generator produces none of those. It bounds the shape it
+tested and no more.
+
 ## Consequence
 
 | | |

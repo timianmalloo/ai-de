@@ -334,6 +334,20 @@ public sealed class WorkspaceCore : IDisposable
             if (!result.Complete)
             {
                 failed.Add(scope.ScopeId);
+
+                // The last good snapshot deliberately keeps rendering (see RefreshScopeAsync), which
+                // is right — a failed extraction must not blank the graph. But what renders is now
+                // OLD, and until this nothing said so: the panes drew a stale scope exactly like a
+                // current one, and only the incident sidecar knew. Retracting instead would obey
+                // this loop and contradict that decision, so the answer is to state it.
+                using var staleReader = Store.BeginRead();
+                if (staleReader.LatestCommittedSnapshot(scope.ScopeId) is { } stale
+                    && !string.Equals(stale.ArtifactRevision, artifactRevision, StringComparison.Ordinal))
+                {
+                    disclosures.Add(
+                        $"stale-scope ({scope.ScopeId} still shows evidence from {stale.ArtifactRevision})");
+                }
+
                 continue;
             }
 

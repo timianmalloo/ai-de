@@ -1,0 +1,239 @@
+using AiDe.Core;
+using AiDe.Core.Extraction;
+using AiDe.Core.Facts;
+using AiDe.Core.Projections;
+
+namespace AiDe.Core.Tests;
+
+/// <summary>
+/// Workspaces that are missing something, and what the tool says about it.
+/// </summary>
+/// <remarks>
+/// <para><b>The control for DC-025 — absence rendered as success.</b> Four instances, every one found
+/// by pointing the panes at a real repository and none by a test: a missing context map read as
+/// perfect coverage, a search bounded at fifty read as the whole workspace, unreadable source read as
+/// no source, and a file that would not parse read as a smaller file. Each time the arithmetic was
+/// right and the claim was false, which is why counting more carefully could never have caught
+/// them.</para>
+///
+/// <para><b>Fixtures always have the thing.</b> That is the whole reason the class survived: a
+/// fixture is built by the person building the feature, so it contains a context map, compiles, and
+/// is written in the language the extractor reads. This file is the opposite — a corpus of
+/// workspaces defined by what they LACK, each asserting that the absence is stated rather than
+/// rendered as a clean zero.</para>
+///
+/// <para><b>Every case asserts a sentence, not a count.</b> A count is what was already right.</para>
+/// </remarks>
+public sealed class LackingWorkspaceTests : IDisposable
+{
+    private readonly string _dir =
+        Path.Combine(Path.GetTempPath(), "aide-lacking", Guid.NewGuid().ToString("N"));
+
+    public void Dispose()
+    {
+        try { Directory.Delete(_dir, recursive: true); } catch (IOException) { }
+    }
+
+    private string Make(string name, Action<string> build)
+    {
+        var root = Path.Combine(_dir, name);
+        Directory.CreateDirectory(root);
+        build(root);
+        return root;
+    }
+
+    private async Task<WorkspaceCore.IndexResult> IndexAsync(string root)
+    {
+        using var core = WorkspaceCore.Open(
+            "lacking", root, Path.Combine(_dir, "data", Guid.NewGuid().ToString("N")),
+            WorkspaceExtractors.Default());
+
+        return await core.IndexCSharpAsync("rev-1", CancellationToken.None);
+    }
+
+    private static void Project(string root, string source = "namespace N { public class Good { } }")
+    {
+        File.WriteAllText(Path.Combine(root, "Lacking.csproj"),
+            """<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup></Project>""");
+        File.WriteAllText(Path.Combine(root, "Good.cs"), source);
+    }
+
+    // ── Lacking: anything at all ──────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task AnEmptyWorkspaceSaysThereWasNothingToRead()
+    {
+        var result = await IndexAsync(Make("empty", _ => { }));
+
+        Assert.Equal(0, result.ScopesFound);
+
+        // The only case where a clean zero IS the truth — and it still has to be a sentence, because
+        // a pane rendering nothing is what every other case in this file looks like.
+        var summary = new Ipc.IndexSummary(
+            result.ScopesFound, result.ScopesIndexed, result.Assertions,
+            result.Failed, result.Disclosures, result.Contexts, result.ScopesReused);
+
+        Assert.Contains("No C# projects", summary.Describe(), StringComparison.Ordinal);
+    }
+
+    // ── Lacking: a language this build can read ───────────────────────────────────────────
+
+    [Fact]
+    public async Task AWorkspaceOfUnreadableLanguagesNamesThem()
+    {
+        // Measured on a real repository: 63 Python files produced zero scopes, zero assertions and
+        // an EMPTY disclosure list — indistinguishable from an empty directory.
+        var root = Make("polyglot", r =>
+        {
+            File.WriteAllText(Path.Combine(r, "main.py"), "print('hi')");
+            File.WriteAllText(Path.Combine(r, "app.ts"), "export const a = 1;");
+        });
+
+        var result = await IndexAsync(root);
+
+        Assert.Contains(result.Disclosures, d => d.StartsWith("python-not-analysed", StringComparison.Ordinal));
+        Assert.Contains(result.Disclosures, d => d.StartsWith("typescript-not-analysed", StringComparison.Ordinal));
+    }
+
+    // ── Lacking: source that parses ───────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task AProjectWithSourceThatWillNotParseSaysWhichFile()
+    {
+        // Roslyn returns a tree with error nodes rather than throwing, so extraction SUCCEEDS and
+        // finds less. The state a developer is in most often.
+        var root = Make("unparseable", r =>
+        {
+            Project(r);
+            File.WriteAllText(Path.Combine(r, "Bad.cs"), "namespace N { public class Bad { void M( { } }");
+        });
+
+        var result = await IndexAsync(root);
+
+        Assert.Contains(result.Disclosures, d => d.StartsWith("source-did-not-parse", StringComparison.Ordinal));
+        Assert.Contains(result.Disclosures, d => d.Contains("Bad.cs", StringComparison.Ordinal));
+
+        // Still indexed: half a project's evidence beats none, provided the gap is stated.
+        Assert.Empty(result.Failed);
+    }
+
+    // ── Lacking: a declared context map ───────────────────────────────────────────────────
+
+    [Fact]
+    public async Task AWorkspaceWithNoContextMapDoesNotClaimFullCoverage()
+    {
+        var root = Make("nomap", r => Project(r));
+        await IndexAsync(root);
+
+        using var core = WorkspaceCore.Open(
+            "lacking", root, Path.Combine(_dir, "data", "nomap"), WorkspaceExtractors.Default());
+
+        using var reader = core.Store.BeginRead();
+        var map = BoundedContextReader.Load(
+            Path.Combine(root, BoundedContextReader.DefaultRelativePath), reader.ReadDeclaredSubjects());
+
+        var view = new ContextProjection(map, []).Compute();
+
+        // The field, not a cleverer count. No map means no uncovered list, so every number reads as
+        // complete — and it did, in the sentence "every declared symbol belongs to a context".
+        Assert.False(view.IsDeclared);
+    }
+
+    // ── Lacking: evidence the read could reach ────────────────────────────────────────────
+
+    [Fact]
+    public void ABoundedReadThatMissedSomethingSaysSo()
+    {
+        // The panes computed crossings, joins and coverage from 50 nodes of 2,164 and presented the
+        // result as the answer. The shortfall is the sentence that could not previously be said.
+        var short_ = new EvidenceRead([], NodesMatched: 2164, NodesRead: 50, NeighbourLimit: 50,
+            NodesAtNeighbourLimit: 0);
+
+        Assert.False(short_.IsComplete);
+        Assert.Contains("lower bounds", short_.Shortfall!, StringComparison.Ordinal);
+
+        // And silence when there is nothing to caveat — a banner on every refresh is a banner
+        // nobody reads, and then the one that mattered goes unread too.
+        var whole = new EvidenceRead([], 2164, 2164, 50, 0);
+        Assert.Null(whole.Shortfall);
+    }
+
+    // ── Lacking: a successful extraction, where the graph shows the LAST one ──────────────
+
+    [Fact]
+    public async Task AFailedScopeSaysItsEvidenceIsStale()
+    {
+        // A failed extraction deliberately leaves the last good snapshot rendering — blanking the
+        // graph on a build error would be worse. But what renders is then OLD, and nothing said so:
+        // a stale scope drew exactly like a current one, and only the incident sidecar knew.
+        //
+        // The fix states it rather than retracting, because retracting would contradict a decision
+        // recorded in RefreshScopeAsync rather than build on it.
+        var root = Make("goes-bad", r =>
+        {
+            Project(r);
+            File.WriteAllText(Path.Combine(r, "infra.bicep"),
+                "resource site 'Microsoft.Web/sites@2023-01-01' = {" + (char)10 + "  name: 'ok'" + (char)10 + "}" + (char)10);
+        });
+
+        var data = Path.Combine(_dir, "data", "goes-bad");
+
+        using (var first = WorkspaceCore.Open("stale", root, data, WorkspaceExtractors.Default()))
+        {
+            var initial = await first.IndexCSharpAsync("rev-1", CancellationToken.None);
+            Assert.Empty(initial.Failed);
+        }
+
+        // An extractor that now refuses the bicep scope, with the C# one untouched.
+        using var core = WorkspaceCore.Open("stale", root, data,
+            new CompositeExtractor(
+                csharp: new CSharpExtractor(),
+                fallback: new FixtureExtractor(),
+                bicep: new RefusingExtractor(),
+                schema: new EfSchemaExtractor()));
+
+        var result = await core.IndexCSharpAsync("rev-2", CancellationToken.None, force: true);
+
+        Assert.Contains("bicep:infra", result.Failed);
+        Assert.Contains(result.Disclosures, d => d.StartsWith("stale-scope", StringComparison.Ordinal));
+        Assert.Contains(result.Disclosures, d => d.Contains("rev-1", StringComparison.Ordinal));
+    }
+
+    /// <summary>An extractor that always fails, for exercising the stale path.</summary>
+    private sealed class RefusingExtractor : IExtractor
+    {
+        public string ScopeKind => "refusing";
+
+        public Task<ExtractionResult> ExtractAsync(ExtractionRequest request, CancellationToken cancellationToken) =>
+            Task.FromResult(new ExtractionResult([], false,
+                [new ExtractionDiagnostic("AIDE-TEST-REFUSED", request.ScopeId, "refused on purpose")]));
+    }
+
+    // ── The rule the corpus exists to hold ────────────────────────────────────────────────
+
+    [Fact]
+    public async Task EveryLackingWorkspaceSaysSomethingAboutWhatItCouldNotDo()
+    {
+        // The generalisation, asserted rather than described: a workspace missing something must
+        // never produce a result that is silent about it. Adding a new kind of absence to this list
+        // is how the next instance gets caught before a real repository finds it.
+        var cases = new (string Name, Action<string> Build)[]
+        {
+            ("only-python", r => File.WriteAllText(Path.Combine(r, "a.py"), "x = 1")),
+            ("broken-source", r =>
+            {
+                Project(r);
+                File.WriteAllText(Path.Combine(r, "Bad.cs"), "class Bad { void M( { }");
+            }),
+            ("no-packages", r => Project(r)),
+        };
+
+        foreach (var (name, build) in cases)
+        {
+            var result = await IndexAsync(Make(name, build));
+
+            Assert.True(result.Disclosures.Count > 0,
+                $"'{name}' produced a result with nothing to say about what it could not read");
+        }
+    }
+}

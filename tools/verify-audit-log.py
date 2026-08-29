@@ -16,10 +16,15 @@ re-logging it, which is the right fix and leaves no trace that would stop the th
 This checks, for each log:
 
   1. no id appears twice
-  2. ids parse as <prefix>-<number>
-  3. every line is valid JSON with an id at all
+  2. no id present in the committed version has DISAPPEARED
+  3. ids parse as <prefix>-<number>
+  4. every line is valid JSON with an id at all
 
-(1) is the class. The rest are the cheap neighbours worth having while the file is open.
+(1) is the class. (2) is the hole (1) left, and it cost a real entry: resolving a merge by unioning
+keyed on id silently dropped one side, and THIS GATE STAYED GREEN — because uniqueness was satisfied
+precisely by the removal. A control that only counts duplicates cannot see a deletion, and an
+append-only log has no legitimate reason to shrink (DC-026). The rest are cheap neighbours worth
+having while the file is open.
 
 Usage
   python tools/verify-audit-log.py                     check the committed logs
@@ -49,6 +54,58 @@ for _stream in (sys.stdout, sys.stderr):
             _stream.reconfigure(encoding="utf-8", errors="replace")
         except (ValueError, OSError):
             pass
+
+
+def committed_ids(path: Path) -> set[str] | None:
+    """The ids in HEAD's version of this file, or None when git cannot say."""
+    import subprocess
+
+    relative = path.relative_to(REPO).as_posix()
+
+    try:
+        result = subprocess.run(["git", "show", f"HEAD:{relative}"],
+                                cwd=REPO, capture_output=True, timeout=30, check=False)
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+    if result.returncode != 0:
+        return None                      # new file, or no git: nothing to compare against
+
+    found: set[str] = set()
+    for line in result.stdout.decode("utf-8", "replace").splitlines():
+        if not line.strip():
+            continue
+        try:
+            identifier = json.loads(line).get("id")
+        except json.JSONDecodeError:
+            continue
+        if identifier:
+            found.add(str(identifier))
+
+    return found
+
+
+def check_no_entry_vanished(path: Path, present: set[str]) -> list[str]:
+    """
+    An append-only log may grow. It may not shrink.
+
+    Compared against HEAD rather than against a stored count, because the question is "did this
+    working copy lose something that was committed", and HEAD is the only thing that knows.
+    """
+    was = committed_ids(path)
+    if was is None:
+        return []
+
+    gone = sorted(was - present)
+    if not gone:
+        return []
+
+    return [
+        f"{path.name}: {len(gone)} id(s) present in HEAD are missing here: "
+        + ", ".join(gone[:8]) + ("…" if len(gone) > 8 else "")
+        + " — an append-only log does not shrink. A merge resolved by de-duplicating on id drops "
+          "one side silently (DC-026); use tools/merge-append-only-log.py."
+    ]
 
 
 def check(path: Path) -> list[str]:
@@ -87,7 +144,21 @@ def check(path: Path) -> list[str]:
             f"independently. Renumber the later one; do not merge two records under one id.")
 
     print(f"{path.name:<24} {len(ids):>4} entries, {len(duplicates)} duplicate id(s)")
+    findings.extend(check_no_entry_vanished(path, {
+        str(json.loads(line).get("id"))
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip() and _parses(line)
+    }))
+
     return findings
+
+
+def _parses(line: str) -> bool:
+    try:
+        json.loads(line)
+        return True
+    except json.JSONDecodeError:
+        return False
 
 
 def main(argv: list[str]) -> int:

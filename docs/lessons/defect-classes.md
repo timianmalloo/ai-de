@@ -769,10 +769,20 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   own field rather than in the phrasing. The tell is a projection whose empty case shares a code path
   with its complete case. Related to DC-009 (a measurement believed because its value looks
   reasonable); this is its mirror — a measurement believed because its value looks *clean*.
-- **Residual risk:** no gate. Four instances were found by running the product over five real
-  repositories, and nothing fails when a fifth kind of absence is added. A fixture corpus of
-  deliberately-lacking workspaces — no map, no supported language, source that will not parse,
-  nothing at all — would turn this into a control rather than a habit. Note also that the fourth
+- **Control:** `tests/AiDe.Core.Tests/LackingWorkspaceTests.cs` — a corpus of workspaces defined by
+  what they LACK: empty, only-Python, source that will not parse, no context map, a read that was
+  bounded, and a scope whose extraction failed so the graph shows an older revision. Every case
+  asserts a **sentence**, never a count, because the counts were always right. The last case is the
+  generalisation itself: a workspace missing something must not produce a result that is silent about
+  it, and adding a new kind of absence to that list is how the next instance gets caught before a
+  real repository finds it.
+- **Why a corpus and not a rule:** fixtures always have the thing. That is the whole reason this
+  class survived four times — a fixture is written by the person building the feature, so it contains
+  a context map, compiles, and is in the language the extractor reads. The corpus is the deliberate
+  opposite.
+- **Residual risk:** the corpus covers the kinds of absence already met. Nothing fails for a kind
+  nobody has thought of, and the sixth instance will still arrive from a real repository. Note also
+  that the fourth
   instance was nearly reported from an experiment that had not run: the script meant to corrupt a
   file silently did nothing, and the assertion-count difference had another cause entirely. The
   finding only became real once the broken file was verified to exist.
@@ -792,7 +802,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   sessions, a `setdefault`-keyed union dropped a design-session entry. It was noticed only because
   its author went looking, and re-emitted by hand as `al-0090`. `verify-audit-log.py` was green
   throughout: it checks that no id is claimed twice, and one had just been removed.
-- **Control:** `tools/merge-append-only-log.py`. It unions by **content**, so nothing can be dropped;
+- **Control:** two, because one was not enough. `tools/merge-append-only-log.py` unions by **content**, so nothing can be dropped;
   an id claimed by two different entries is re-issued from the shared counter rather than resolved by
   discarding; upstream keeps the contested id because it is already published; and it prints the
   count in, the count out, and every re-issue, because a merge that resolves silently is
@@ -801,6 +811,13 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   If two records disagree about an id, the id is the least trustworthy thing about them. Union on
   content, then repair identity. And a "0 dropped" line in the output is worth more than a paragraph
   of care, because it is checkable.
-- **Residual risk:** the tool has to be reached for. Nothing forces its use during a rebase, and the
-  next resolution under time pressure is exactly as free to hand-roll a script as this one was.
+- **And the gate that missed it now looks for the loss:** `verify-audit-log.py` compares each log
+  against `HEAD` and fails when an id present in the committed version has disappeared. It only
+  counted duplicates before, which is why it stayed green while an entry was being removed —
+  uniqueness was satisfied *precisely by* the removal. **Observed failing** on a log with its last
+  entry deleted: *"1 id(s) present in HEAD are missing here: al-0093 — an append-only log does not
+  shrink."*
+- **Residual risk:** the merge tool has to be reached for; nothing forces its use during a rebase.
+  The gate is the backstop that does not have to be remembered, but it only sees losses against
+  `HEAD`, so a loss introduced and committed in one step is invisible to it.
 - **Status:** `partially-controlled`

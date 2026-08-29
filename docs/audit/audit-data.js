@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T17:49:42Z",
+  "generated": "2026-08-29T18:05:08Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1673,6 +1673,52 @@ window.AUDIT_DATA = {
         "facelift"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0094",
+      "shortname": "facelift-craftgate-and-avalondock-decision",
+      "datetime": "2026-08-29T18:03:43Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Screenshot confirms dark theme renders; execute next styling steps to completion.",
+      "summary": "Ran the deterministic craft gate (Impeccable) over all 5 mockups; documented the code-node syntax palette + a scrim token in DESIGN.md (cleared design-system-color), fixed one heading skip; design-lint clean. Recorded the AvalonDock tab accent-retokenization as an evidence-backed deferral (squared tabs = IDE convention; accent lives in embedded vstheme+BAML, no cheap override). Build 0/0, tests 117/117.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/ui-mockups-craft-gate.md",
+        "docs/notes/avalondock-tab-styling-decision.md"
+      ],
+      "tags": [
+        "facelift"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0095",
+      "shortname": "lacking-corpus-shrink-gate-daemon-paging-scale",
+      "datetime": "2026-08-29T18:04:24Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "Five core steps. One of them changed on inspection, which is the useful part.\n\nThe listed step was \"retract on scope failure\". Opening RefreshScopeAsync first showed that keeping\nthe last good snapshot on failure is a DELIBERATE recorded decision — blanking the graph on a build\nerror would be worse — so retracting would have contradicted it rather than built on it. The real gap\nwas that what renders is then OLD and nothing said so. Failure now discloses stale-scope with the\nrevision still on screen, and the snapshot keeps rendering.\n\nDC-025 has a control instead of a habit: a corpus of workspaces defined by what they LACK — empty,\nonly-Python, unparseable source, no context map, a bounded read, a failed scope. Every case asserts a\nsentence rather than a count, because the counts were always right. Fixtures always have the thing,\nwhich is why the class survived four times; this is the deliberate opposite.\n\nThe gate that missed DC-026 now looks for the loss: verify-audit-log.py compares each log against\nHEAD and fails when a committed id has disappeared. It only counted duplicates before, which is\nexactly why it stayed green while my merge removed an entry — uniqueness was satisfied precisely by\nthe removal. Observed failing.\n\nEvidenceAsync is proven across the daemon at a page size of one, so the cursor is exercised at every\nboundary. The last three cross-boundary defects were all \"right in process, wrong through the pipe\".\n\nAnd scale, measured on a synthetic workspace and labelled as such: 20 projects, 2,400 types, 21,066\nassertions. First index 13.5s, re-index 0.1s, paged read of everything 185ms with exact agreement.\nThe read is not the problem at this size; extraction is.\n\nGate: 677 tests green (App 117, Core 560), six verifiers clean.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Do the five listed core next steps: a lacking-workspace corpus, prove paging across the daemon, measure at scale, detect a shrinking log, and address stale evidence on scope failure",
+      "done_when": "Each step landed with a control observed working; the retraction step reconciled with the recorded decision it would have contradicted; full gate green; committed, merged and published; tables produced",
+      "change": "cl-0070",
+      "git": {
+        "sha": "8ec320e3553fa7d9a11a9dd288c67ca5b02985e4",
+        "short": "8ec320e35",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -3379,6 +3425,56 @@ window.AUDIT_DATA = {
         "after": "5af8dd94aeae26d187fd0b6b805453b04e60b06c",
         "branch": "session/phase3-pane-probes",
         "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0069",
+      "datetime": "2026-08-29T18:04:06Z",
+      "session": null,
+      "kind": "knowledge",
+      "skill": null,
+      "title": "A corpus of workspaces defined by what they lack, and a gate that notices a shrinking log",
+      "prompt": null,
+      "summary": "DC-025 has a control instead of a habit, and the gate that missed DC-026 now looks for the loss.\n\nLackingWorkspaceTests is a corpus of workspaces defined by what they LACK: empty, only-Python, source\nthat will not parse, no context map, a read that was bounded, and a scope whose extraction failed so\nthe graph shows an older revision. Every case asserts a SENTENCE, never a count, because the counts\nwere always right — that is what made the class survive four times. Fixtures always have the thing:\nthey are written by the person building the feature, so they contain a context map, compile, and are\nin the language the extractor reads. This corpus is the deliberate opposite. Its last case is the\ngeneralisation itself — a workspace missing something must never produce a result that is silent\nabout it — so adding a new kind of absence is how the next instance gets caught before a real\nrepository finds it.\n\nverify-audit-log.py now compares each log against HEAD and fails when an id present in the committed\nversion has disappeared. It only counted duplicates before, which is exactly why it stayed green\nwhile my merge removed an entry: uniqueness was satisfied PRECISELY BY the removal. Observed failing\non a log with its last entry deleted. The residual is honest — it sees losses against HEAD, so a loss\nintroduced and committed in one step is still invisible.\n\nAnd the paged evidence read is proven across the daemon, at a page size of one so the cursor is\nexercised at every boundary rather than the test proving only that a single response deserialises.\nThe last three cross-boundary defects were all \"right in process, wrong through the pipe\".",
+      "rationale": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/LackingWorkspaceTests.cs",
+        "tools/verify-audit-log.py"
+      ],
+      "tags": [
+        "continuous-improvement"
+      ],
+      "git": {
+        "before": null,
+        "after": "8ec320e3553fa7d9a11a9dd288c67ca5b02985e4",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0070",
+      "datetime": "2026-08-29T18:04:06Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Stale scopes are stated, not retracted; and the read scales where extraction does not",
+      "prompt": null,
+      "summary": "A step changed on inspection, and a measurement taken rather than guessed.\n\nThe listed step was \"retract on scope failure, not just departure\". Opening the code first showed\nthat keeping the last good snapshot on failure is a DELIBERATE decision, recorded in\nRefreshScopeAsync: blanking the graph on a build error would be worse. Retracting would have\ncontradicted that rather than built on it. The real gap was that what renders is then OLD and nothing\nsaid so — a stale scope drew exactly like a current one, and only the incident sidecar knew. So the\nfailure now discloses stale-scope with the revision still being shown, and the snapshot keeps\nrendering.\n\nScale, measured on a SYNTHETIC workspace and labelled as such because nothing available here is much\nlarger than TheTerrace: 20 projects, 2,400 types, 21,066 assertions.\n\n  first index                13.5s  (about 0.68s per project of 120 types, roughly linear)\n  re-index, nothing changed   0.1s  (20 scopes reused)\n  paged read of everything   185ms  (11 pages, exact agreement with the store)\n  shortfall                  none   (no cap bit at 21,066 assertions)\n\nThe read is not the problem at this size; extraction is. 185ms to page 21,066 assertions against\n13.5s to produce them says the next scale work belongs in the extractor rather than the query path —\nand the fingerprint cache already means that 13.5s is paid once rather than per refresh. The honest\nlimit: this says nothing about deep inheritance, heavy generics or thousands of package references,\nbecause the generator produces none of those. It bounds the shape it tested and no more.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/WorkspaceCore.cs",
+        "spikes/joins-on-a-real-repo/RESULT.md"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "8ec320e3553fa7d9a11a9dd288c67ca5b02985e4",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
         "commits": []
       }
     }

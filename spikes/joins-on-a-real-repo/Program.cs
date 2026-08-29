@@ -89,6 +89,7 @@ foreach (var group in assertions.GroupBy(a => a.Predicate).OrderByDescending(g =
 var queries = new LocalWorkspaceQueries(core.Projections);
 
 var paneAssertions = new List<EvidenceAssertion>();
+var paneStarted = DateTimeOffset.UtcNow;
 string? cursor = null;
 var pages = 0;
 
@@ -107,8 +108,9 @@ var paneRead = new EvidenceRead(paneAssertions, paneAssertions.Count, paneAssert
     ProjectionService.MaxEvidencePageCeiling, 0);
 
 Console.WriteLine();
+var paneElapsed = DateTimeOffset.UtcNow - paneStarted;
 Console.WriteLine($"pane read  : {paneAssertions.Count:N0} assertion(s) over {pages} page(s) " +
-                  "via the query path");
+                  $"in {paneElapsed.TotalMilliseconds:N0}ms via the query path");
 Console.WriteLine($"store read : {assertions.Count:N0} assertion(s) directly");
 Console.WriteLine($"shortfall  : {paneRead.Shortfall ?? "(none — the panes see the whole workspace)"}");
 

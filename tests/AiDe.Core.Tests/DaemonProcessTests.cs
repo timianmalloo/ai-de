@@ -208,6 +208,74 @@ public sealed class DaemonProcessTests
         }
     }
 
+    [Fact]
+    public async Task TheDaemon_PagesEveryAssertion_AcrossThePipe()
+    {
+        // The last three cross-boundary defects were all "right in process, wrong through the pipe":
+        // an extractor composition the daemon did not have, a search ceiling the daemon applied
+        // differently, and a request field the wire did not carry. Paging is the newest thing to
+        // cross, and a cursor is exactly the sort of state that survives a unit test and not a
+        // serialiser.
+        var workspace = FreshWorkspace();
+        Directory.CreateDirectory(Path.Combine(workspace, "infra"));
+
+        await File.WriteAllTextAsync(Path.Combine(workspace, "infra", "main.bicep"),
+            """
+            param siteName string = 'aide-probe'
+            param region string = 'westus'
+
+            resource site 'Microsoft.Web/sites@2023-01-01' = {
+              name: siteName
+              location: region
+            }
+
+            resource plan 'Microsoft.Web/serverfarms@2023-01-01' = {
+              name: 'aide-plan'
+              location: region
+            }
+            """);
+
+        var (daemon, pipeName) = await StartDaemonAsync(workspace, "--startup-seconds", "60");
+
+        try
+        {
+            await using var client = await WorkspaceClient.ConnectAsync(
+                pipeName, TimeSpan.FromSeconds(20), CancellationToken.None);
+
+            var summary = await client.IndexSolutionAsync("probe-1", CancellationToken.None);
+            Assert.True(summary.Assertions > 0, summary.Describe());
+
+            // A page size of ONE, so the cursor is exercised at every boundary rather than the test
+            // proving only that a single response deserialises.
+            var seen = new List<string>();
+            string? cursor = null;
+            var pages = 0;
+
+            do
+            {
+                var page = await client.EvidenceAsync(cursor, 1, CancellationToken.None);
+                seen.AddRange(page.Assertions.Select(a => $"{a.Subject}|{a.Predicate}|{a.Object}"));
+                cursor = page.NextCursor;
+                pages++;
+            }
+            while (cursor is not null && pages < 500);
+
+            Assert.Null(cursor);                                   // it ended, rather than hitting the cap
+            Assert.Equal(summary.Assertions, seen.Count);           // every one, exactly once
+            Assert.Equal(seen.Count, seen.Distinct(StringComparer.Ordinal).Count());
+
+            // And the payload survived the wire intact, provenance included — the field a join's
+            // basis is qualified by (DC-022).
+            var single = await client.EvidenceAsync(null, 50, CancellationToken.None);
+            Assert.All(single.Assertions, a =>
+                Assert.False(string.IsNullOrWhiteSpace(a.Provenance.ExtractorId)));
+        }
+        finally
+        {
+            Stop(daemon);
+        }
+    }
+
     // ---- P2-IPC-06: one daemon per workspace, across processes ---------------
 
     [Fact]
