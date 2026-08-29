@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T20:31:12Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-29T21:08:00Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1858,6 +1858,27 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0104",
+      "shortname": "soften-dropdown-menus",
+      "datetime": "2026-08-29T21:08:00Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "The menus have thick borders and look clunky - soften them.",
+      "summary": "Retemplated the four MenuItem roles + ContextMenu in App.xaml: dropdowns are now thin (1px) rounded (8px) floating popups on a subtle soft shadow, replacing the clunky thick square system chrome. A standalone XamlReader probe caught and fixed a launch-crashing forward StaticResource (TextMutedBrush referenced before its definition -> DynamicResource) before it shipped; then validated the real templates parse+apply and the submenu opens. Added MenuTemplateTests (render guard). App.dll compiles clean; full local suite blocked by the running app (relaunch to see + let it run).",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/App.xaml",
+        "tests/AiDe.App.Tests/MenuTemplateTests.cs"
+      ],
+      "tags": [
+        "facelift",
+        "menus"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [

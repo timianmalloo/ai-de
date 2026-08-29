@@ -32,31 +32,153 @@
             <Setter Property="Background" Value="{StaticResource MenuBorderBrush}" />
         </Style>
 
+        <!--
+            MENU TEMPLATES. The default WPF MenuItem/ContextMenu popups keep the system chrome —
+            a thick square border and a heavy shadow — which read as clunky against the soft
+            facelift. These retemplate the four MenuItem roles and the ContextMenu so every dropdown
+            is a THIN (1px), ROUNDED (8px) surface that floats on a subtle shadow. A menu Popup is a
+            composited window of its own, so a DropShadow here is airspace-safe (unlike over a pane).
+        -->
+        <ControlTemplate x:Key="MenuItemTopLevelItem" TargetType="{x:Type MenuItem}">
+            <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6"
+                    Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter TargetName="Bd" Property="Background" Value="{StaticResource MenuHoverBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="#7C8896" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="MenuItemTopLevelHeader" TargetType="{x:Type MenuItem}">
+            <Grid>
+                <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="6"
+                        Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                    <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center" />
+                </Border>
+                <Popup x:Name="Popup" IsOpen="{TemplateBinding IsSubmenuOpen}" Placement="Bottom"
+                       AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
+                    <Border Background="{StaticResource MenuBackgroundBrush}" BorderBrush="{StaticResource MenuBorderBrush}"
+                            BorderThickness="1" CornerRadius="8" Padding="0,4" Margin="2,2,12,12" SnapsToDevicePixels="True">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.45" Color="#000000" />
+                        </Border.Effect>
+                        <ItemsPresenter Grid.IsSharedSizeScope="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                    </Border>
+                </Popup>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter TargetName="Bd" Property="Background" Value="{StaticResource MenuHoverBrush}" />
+                </Trigger>
+                <Trigger Property="IsSubmenuOpen" Value="True">
+                    <Setter TargetName="Bd" Property="Background" Value="{StaticResource MenuHoverBrush}" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="MenuItemSubmenuItem" TargetType="{x:Type MenuItem}">
+            <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="5"
+                    Margin="4,1" Padding="9,5" SnapsToDevicePixels="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Gesture" />
+                    </Grid.ColumnDefinitions>
+                    <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="{TemplateBinding InputGestureText}" Margin="28,0,0,0"
+                               VerticalAlignment="Center" Foreground="{DynamicResource TextMutedBrush}" />
+                </Grid>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter TargetName="Bd" Property="Background" Value="{StaticResource MenuHoverBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="#7C8896" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="MenuItemSubmenuHeader" TargetType="{x:Type MenuItem}">
+            <Grid>
+                <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="5"
+                        Margin="4,1" Padding="9,5" SnapsToDevicePixels="True">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center" />
+                        <Path Grid.Column="1" Data="M0,0 L4,4 L0,8 Z" Fill="{DynamicResource TextMutedBrush}"
+                              Margin="20,0,0,0" VerticalAlignment="Center" />
+                    </Grid>
+                </Border>
+                <Popup x:Name="Popup" IsOpen="{TemplateBinding IsSubmenuOpen}" Placement="Right" HorizontalOffset="-4"
+                       AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
+                    <Border Background="{StaticResource MenuBackgroundBrush}" BorderBrush="{StaticResource MenuBorderBrush}"
+                            BorderThickness="1" CornerRadius="8" Padding="0,4" Margin="2,2,12,12" SnapsToDevicePixels="True">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.45" Color="#000000" />
+                        </Border.Effect>
+                        <ItemsPresenter Grid.IsSharedSizeScope="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                    </Border>
+                </Popup>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsHighlighted" Value="True">
+                    <Setter TargetName="Bd" Property="Background" Value="{StaticResource MenuHoverBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="#7C8896" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
         <Style TargetType="MenuItem">
             <Setter Property="Background" Value="{StaticResource MenuBackgroundBrush}" />
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-            <Setter Property="BorderBrush" Value="{StaticResource MenuBorderBrush}" />
-            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Padding" Value="9,4" />
+            <Setter Property="Template" Value="{StaticResource MenuItemSubmenuItem}" />
             <Style.Triggers>
-                <Trigger Property="IsHighlighted" Value="True">
-                    <Setter Property="Background" Value="{StaticResource MenuHoverBrush}" />
-                    <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                <Trigger Property="Role" Value="TopLevelHeader">
+                    <Setter Property="Template" Value="{StaticResource MenuItemTopLevelHeader}" />
+                    <Setter Property="Background" Value="Transparent" />
                 </Trigger>
-                <!--  A disabled item must still be READABLE, just clearly unavailable.  -->
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Foreground" Value="#7C8896" />
+                <Trigger Property="Role" Value="TopLevelItem">
+                    <Setter Property="Template" Value="{StaticResource MenuItemTopLevelItem}" />
+                    <Setter Property="Background" Value="Transparent" />
+                </Trigger>
+                <Trigger Property="Role" Value="SubmenuHeader">
+                    <Setter Property="Template" Value="{StaticResource MenuItemSubmenuHeader}" />
                 </Trigger>
             </Style.Triggers>
         </Style>
 
         <!--
-            The dropdown surface itself. Without this the popup keeps the system's light chrome and
-            the styled items sit on it, which is the mismatch in a different place.
+            The right-click / context dropdown surface: a thin, rounded, floating card, matching the
+            top-level menu popups so every dropdown in the app reads the same.
         -->
         <Style TargetType="ContextMenu">
             <Setter Property="Background" Value="{StaticResource MenuBackgroundBrush}" />
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
-            <Setter Property="BorderBrush" Value="{StaticResource MenuBorderBrush}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContextMenu}">
+                        <Border Background="{StaticResource MenuBackgroundBrush}" BorderBrush="{StaticResource MenuBorderBrush}"
+                                BorderThickness="1" CornerRadius="8" Padding="0,4" Margin="2,2,12,12" SnapsToDevicePixels="True">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.45" Color="#000000" />
+                            </Border.Effect>
+                            <ItemsPresenter Grid.IsSharedSizeScope="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!--
