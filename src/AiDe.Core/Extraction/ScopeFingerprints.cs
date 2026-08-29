@@ -1,0 +1,184 @@
+using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+
+namespace AiDe.Core.Extraction;
+
+/// <summary>
+/// What a scope's inputs looked like the last time it was extracted successfully.
+/// </summary>
+/// <remarks>
+/// <para><b>Every index re-extracted every scope.</b> On a real repository that is 4.5 seconds and
+/// seven scopes, and it grows with the codebase — paid in full whether one file changed or none.
+/// A fingerprint that has not moved means the evidence in the store is already the answer.</para>
+///
+/// <para><b>A skip is reported, never disguised as work.</b> <c>IndexResult</c> counts reused scopes
+/// separately from indexed ones, because "7 of 7 indexed" would be a true sentence about a run that
+/// read nothing, and the operator's next question after a surprising graph is always "did it
+/// actually look?".</para>
+///
+/// <para><b>It fails towards re-extraction.</b> An unreadable directory, a missing sidecar, a
+/// changed extractor version — every uncertainty produces a fingerprint that does not match, and the
+/// scope is read again. The cost of an unnecessary extraction is seconds; the cost of a skipped one
+/// is a graph that quietly describes code that no longer exists.</para>
+/// </remarks>
+public sealed class ScopeFingerprints
+{
+    /// <summary>
+    /// Bumped whenever extraction output could change for unchanged input.
+    /// </summary>
+    /// <remarks>
+    /// Part of every fingerprint, so upgrading the product invalidates the whole sidecar. Without it
+    /// an extractor improvement would reach only the files a user happened to touch afterwards —
+    /// and the graph would be a mix of two extractor generations with nothing saying so.
+    /// </remarks>
+    public const string ExtractorGeneration = "2026-08-29.1";
+
+    private const string FileName = "scope-fingerprints.json";
+
+    private static readonly HashSet<string> Skip = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "bin", "obj", ".git", ".vs", "node_modules", "artifacts", "packages", "TestResults",
+    };
+
+    private readonly string _path;
+    private readonly Dictionary<string, string> _byScope;
+
+    private ScopeFingerprints(string path, Dictionary<string, string> byScope)
+    {
+        _path = path;
+        _byScope = byScope;
+    }
+
+    public static ScopeFingerprints Load(string dataDirectory)
+    {
+        var path = Path.Combine(dataDirectory, FileName);
+
+        try
+        {
+            if (File.Exists(path))
+            {
+                var stored = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(path));
+                if (stored is not null)
+                {
+                    return new ScopeFingerprints(path, new Dictionary<string, string>(stored, StringComparer.Ordinal));
+                }
+            }
+        }
+        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+        {
+            // An unreadable sidecar means every scope is re-extracted. That is the slow answer, and
+            // it is the only safe one: a corrupt cache that is trusted is worse than no cache.
+        }
+
+        return new ScopeFingerprints(path, new Dictionary<string, string>(StringComparer.Ordinal));
+    }
+
+    /// <summary>True when this scope's inputs are byte-for-byte what they were when it last ran.</summary>
+    public bool IsUnchanged(string scopeId, string fingerprint) =>
+        fingerprint.Length > 0
+        && _byScope.TryGetValue(scopeId, out var previous)
+        && string.Equals(previous, fingerprint, StringComparison.Ordinal);
+
+    public void Record(string scopeId, string fingerprint)
+    {
+        if (fingerprint.Length == 0)
+        {
+            // A fingerprint that could not be computed is not recorded. Recording an empty one would
+            // make the next run believe an unreadable scope was up to date.
+            _byScope.Remove(scopeId);
+            return;
+        }
+
+        _byScope[scopeId] = fingerprint;
+    }
+
+    /// <summary>Forgets a scope, so the next run reads it whatever the filesystem says.</summary>
+    public void Invalidate(string scopeId) => _byScope.Remove(scopeId);
+
+    public void Save()
+    {
+        try
+        {
+            var directory = Path.GetDirectoryName(_path);
+            if (!string.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
+
+            File.WriteAllText(_path, JsonSerializer.Serialize(
+                _byScope, new JsonSerializerOptions { WriteIndented = true }));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // A cache that cannot be written is a slow next run, never a failed this one.
+        }
+    }
+
+    /// <summary>
+    /// A stable digest of a scope's input files: relative path, size and modification time.
+    /// </summary>
+    /// <remarks>
+    /// <para>Not content hashes. Reading every byte of every file to decide whether to read every
+    /// byte of every file is a cache that costs what it saves. Path, length and mtime miss only an
+    /// edit that preserves both size and timestamp, which a tool does not do by accident.</para>
+    ///
+    /// <para>Returns empty when the scope's inputs cannot be enumerated, and an empty fingerprint
+    /// never matches — so an unreadable scope is always re-read.</para>
+    /// </remarks>
+    public static string Compute(string rootPath, ScopeDescriptor scope)
+    {
+        var target = File.Exists(scope.ProjectPath)
+            ? Path.GetDirectoryName(scope.ProjectPath) ?? rootPath
+            : Directory.Exists(scope.ProjectPath) ? scope.ProjectPath : rootPath;
+
+        var entries = new List<string>();
+
+        try
+        {
+            foreach (var file in Enumerate(target))
+            {
+                var info = new FileInfo(file);
+                entries.Add(string.Create(CultureInfo.InvariantCulture,
+                    $"{Path.GetRelativePath(target, file)}|{info.Length}|{info.LastWriteTimeUtc.Ticks}"));
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return string.Empty;
+        }
+
+        if (entries.Count == 0) return string.Empty;
+
+        entries.Sort(StringComparer.Ordinal);
+
+        var payload = Encoding.UTF8.GetBytes(
+            ExtractorGeneration + "\n" + scope.TargetFramework + "\n" + string.Join("\n", entries));
+
+        return Convert.ToHexStringLower(SHA256.HashData(payload));
+    }
+
+    private static IEnumerable<string> Enumerate(string directory)
+    {
+        var pending = new Stack<string>();
+        pending.Push(directory);
+
+        while (pending.Count > 0)
+        {
+            var current = pending.Pop();
+
+            string[] files;
+            try { files = Directory.GetFiles(current); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            foreach (var file in files) yield return file;
+
+            IEnumerable<string> children;
+            try { children = Directory.EnumerateDirectories(current); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            foreach (var child in children)
+            {
+                if (!Skip.Contains(Path.GetFileName(child))) pending.Push(child);
+            }
+        }
+    }
+}

@@ -65,6 +65,16 @@ public sealed class WorkspaceCore : IDisposable
             DataDirectory = dataDirectory,
         };
 
+        // Seeded from the store, not from zero. The counter is in memory and the store is not, so a
+        // workspace's second index after a restart re-used generation 1 and violated the desired-
+        // generation primary key. The daemon opens the store fresh on every start, which made
+        // "index, restart, index" fail every time — and nothing had ever indexed twice across a
+        // reopen, so nothing had ever noticed.
+        using (var reader = store.BeginRead())
+        {
+            core._generation = reader.HighestDesiredGeneration();
+        }
+
         var swept = core.Dispatch.SweepPendingToUnknown();
         if (swept > 0)
         {
@@ -91,6 +101,25 @@ public sealed class WorkspaceCore : IDisposable
         using var activity = Activity.StartActivity("aide.ingestion.scope");
         activity?.SetTag("scope.id", scopeId);
         activity?.SetTag("artifact.revision", artifactRevision);
+
+        // Re-extracting a revision the store already holds is a NO-OP, decided here rather than
+        // absorbed by the database.
+        //
+        // The natural key deliberately rejects the same fact twice for one revision (P1-STORE-05),
+        // and that is a control worth keeping — but "index again" is an ordinary thing for a user to
+        // do, and before this it surfaced as a raw SQLite UNIQUE-constraint exception from the
+        // middle of a run. Making the WRITE idempotent would have silenced the control; making the
+        // CALLER idempotent leaves it strict and answers the user's actual question, which is
+        // "is the graph current for this revision" — and it is.
+        using (var probe = Store.BeginRead())
+        {
+            if (probe.LatestCommittedSnapshot(scopeId) is { AssertionCount: > 0 } snapshot
+                && string.Equals(snapshot.ArtifactRevision, artifactRevision, StringComparison.Ordinal))
+            {
+                activity?.SetTag("scope.reused", true);
+                return new ExtractionResult([], true, []);
+            }
+        }
 
         var generation = Interlocked.Increment(ref _generation);
 
@@ -150,13 +179,35 @@ public sealed class WorkspaceCore : IDisposable
 
     /// <summary>The result of indexing a whole repository's C# scopes.</summary>
     /// <param name="Failed">Scopes that did not complete — each already has a health incident.</param>
+    /// <param name="ScopesReused">
+    /// Scopes whose inputs had not changed, so nothing was re-read. Reported separately from
+    /// <paramref name="ScopesIndexed"/> because a skip presented as work is the difference between
+    /// "it looked and found nothing" and "it did not look".
+    /// </param>
     public sealed record IndexResult(
         int ScopesFound,
         int ScopesIndexed,
         int Assertions,
         IReadOnlyList<string> Failed,
         IReadOnlyList<string> Disclosures,
-        string? Contexts = null);
+        string? Contexts = null,
+        int ScopesReused = 0);
+
+    /// <summary>
+    /// Whether the store still holds a committed snapshot for a scope we are about to skip.
+    /// </summary>
+    /// <remarks>
+    /// The fingerprint says the INPUTS have not changed; it says nothing about whether the output
+    /// survived. A store rebuilt, compacted or replaced under an unchanged working tree would
+    /// otherwise leave the scope skipped forever and its evidence permanently missing.
+    /// </remarks>
+    private static bool Reusable(Store.StoreReader reader, string scopeId)
+    {
+        using (reader)
+        {
+            return reader.LatestCommittedSnapshot(scopeId) is { AssertionCount: > 0 };
+        }
+    }
 
     /// <summary>
     /// Discovers every C# scope under the workspace root and refreshes each one.
@@ -170,12 +221,22 @@ public sealed class WorkspaceCore : IDisposable
     /// design — applied with a linked token so a caller cancelling the whole index still stops
     /// everything, while one slow project cannot consume the entire run.</para>
     /// </remarks>
+    /// <param name="force">
+    /// Re-extract every scope even when its inputs are unchanged. The escape hatch for "I do not
+    /// believe the cache", which is a thing an operator must always be able to say.
+    /// </param>
     public async Task<IndexResult> IndexCSharpAsync(
         string artifactRevision, CancellationToken cancellationToken = default,
-        TimeSpan? perScopeBudget = null)
+        TimeSpan? perScopeBudget = null, bool force = false)
     {
         var scopes = CSharpScopeDiscovery.DiscoverAll(RootPath);
         var budget = perScopeBudget ?? TimeSpan.FromSeconds(60);
+
+        // Unchanged scopes are not re-read. The fingerprint covers each scope's input files and the
+        // extractor generation, so upgrading the product invalidates everything rather than leaving
+        // a graph built by two extractor versions with nothing saying which.
+        var fingerprints = ScopeFingerprints.Load(DataDirectory);
+        var reused = 0;
 
         var indexed = 0;
         var assertions = 0;
@@ -185,6 +246,18 @@ public sealed class WorkspaceCore : IDisposable
         foreach (var scope in scopes)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            var fingerprint = ScopeFingerprints.Compute(RootPath, scope);
+
+            if (!force && fingerprints.IsUnchanged(scope.ScopeId, fingerprint)
+                && Store.BeginRead() is var probe && Reusable(probe, scope.ScopeId))
+            {
+                // Counted as REUSED, not indexed. "7 of 7 indexed" would be a true sentence about a
+                // run that read nothing, and the question after a surprising graph is always
+                // "did it actually look?".
+                reused++;
+                continue;
+            }
 
             using var perScope = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             perScope.CancelAfter(budget);
@@ -213,6 +286,7 @@ public sealed class WorkspaceCore : IDisposable
 
             indexed++;
             assertions += result.Assertions.Count;
+            fingerprints.Record(scope.ScopeId, fingerprint);
 
             foreach (var disclosure in result.Assertions
                 .Where(a => a.Predicate == CSharpExtractor.DisclosurePredicate)
@@ -226,10 +300,11 @@ public sealed class WorkspaceCore : IDisposable
         // validating it against nothing would only check the file's shape, which is the half that
         // never goes stale.
         var contextSummary = ValidateContexts();
+        fingerprints.Save();
 
         return new IndexResult(
             scopes.Count, indexed, assertions,
-            failed, [.. disclosures.Order(StringComparer.Ordinal)], contextSummary);
+            failed, [.. disclosures.Order(StringComparer.Ordinal)], contextSummary, reused);
     }
 
     /// <summary>Loads and validates the declared bounded contexts against the extracted symbols.</summary>

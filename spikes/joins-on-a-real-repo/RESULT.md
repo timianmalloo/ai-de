@@ -188,6 +188,46 @@ and a workspace with no map is told so in its own words instead of being congrat
 **One repository could not have found this.** TheTerrace has a map, so every code path that runs when
 there is none had never been exercised against real evidence.
 
+---
+
+## A third repository — 2026-08-29
+
+`C:\Projects\meridian-finance-planner`. 10 scopes, 4,308 assertions, 2.8s — and the first
+repository whose Bicep actually uses `dependsOn`.
+
+```
+6 verified · 56 inferred
+
+── Verified ── 6 edge(s)
+       bicep:private-network/sqlDnsZoneGroup  --depends_on->  bicep:private-network/dnsZones
+         declared in the resource's dependsOn
+```
+
+**The DC-022 collision is live here, not hypothetical.** The predicate census reports:
+
+```
+     2,310  depends_on                    bicep, csharp  <-- SHARED
+```
+
+On TheTerrace `depends_on` was C#-only, so the fix could only be checked against tests. Here both
+producers emit it in one store, and the qualifier is the only thing keeping 2,304 C# type
+dependencies out of a pane that would have reported every one of them as *"declared in the
+resource's dependsOn"*. Six is the right answer, and each of the six is a real `dependsOn` between
+two real resources.
+
+The joins pane's positive half is now measured as well as tested — which matters, because narrowing
+a join until it can no longer fire is the failure mode a negative-only test cannot see.
+
+### Incremental re-index, measured
+
+```
+scopes     : 10 of 10 indexed (0 reused) in 2.8s
+re-index   : 0 indexed, 10 reused in 0.1s
+```
+
+TheTerrace: **4.3s → 0.1s**. The reuse is counted separately from the indexing, because "10 of 10
+indexed" would be a true sentence about a run that read nothing.
+
 ## Consequence
 
 | | |

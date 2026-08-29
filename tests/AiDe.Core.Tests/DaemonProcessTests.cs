@@ -28,7 +28,19 @@ public sealed class DaemonProcessTests
     {
         var root = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "AiDe.Daemon", "bin"));
-        var configuration = Directory.Exists(Path.Combine(root, "Release")) ? "Release" : "Debug";
+
+        // The configuration THESE TESTS were built in, read from their own output path — not
+        // "Release if that folder happens to exist". The old rule preferred a Release daemon left
+        // behind by an earlier publish, so a Debug test run drove a binary from a different commit
+        // and reported on a product that was not the one under test (DC-023). It did exactly that
+        // here: the daemon gained the full extractor composition and the test still failed, because
+        // it was running yesterday's daemon.
+        var configuration = AppContext.BaseDirectory.Contains(
+            Path.DirectorySeparatorChar + "Release" + Path.DirectorySeparatorChar,
+            StringComparison.OrdinalIgnoreCase)
+            ? "Release"
+            : "Debug";
+
         var candidate = Path.Combine(root, configuration, "net10.0-windows", "AiDe.Daemon.exe");
 
         Assert.True(
@@ -115,6 +127,80 @@ public sealed class DaemonProcessTests
 
             // The peer really is another process — the whole point of the phase.
             Assert.NotEqual(Environment.ProcessId, daemon.Id);
+        }
+        finally
+        {
+            Stop(daemon);
+        }
+    }
+
+    // ---- the daemon extracts what the product claims to extract --------------
+
+    [Fact]
+    public async Task TheDaemon_ReturnsInfrastructureEvidence_AcrossThePipe()
+    {
+        // The daemon composed only the C# extractor and the fixture adapter, so a workspace's
+        // infrastructure was invisible to the running application while a spike — which composed all
+        // four in process — reported joins the product had no way to show. The composition is shared
+        // now; this is the assertion that the SHIPPED PROCESS actually uses it.
+        //
+        // Across the pipe on purpose. Everything else about this is unit-tested in process, and the
+        // in-process answer was right the whole time the product's was wrong.
+        var workspace = FreshWorkspace();
+        Directory.CreateDirectory(Path.Combine(workspace, "infra"));
+
+        await File.WriteAllTextAsync(Path.Combine(workspace, "infra", "main.bicep"),
+            """
+            param siteName string = 'aide-probe'
+
+            resource site 'Microsoft.Web/sites@2023-01-01' = {
+              name: siteName
+              location: resourceGroup().location
+            }
+            """);
+
+        var (daemon, pipeName) = await StartDaemonAsync(workspace, "--startup-seconds", "60");
+
+        try
+        {
+            await using var client = await WorkspaceClient.ConnectAsync(
+                pipeName, TimeSpan.FromSeconds(20), CancellationToken.None);
+
+            var summary = await client.IndexSolutionAsync("probe-1", CancellationToken.None);
+
+            Assert.True(summary.ScopesIndexed > 0,
+                $"nothing was indexed; {summary.Failed.Count} scope(s) failed");
+            Assert.Empty(summary.Failed);
+
+            // The resource itself, by name, read back through the daemon's own read surface. A count
+            // would pass on any evidence at all, which is exactly what the C#-only composition
+            // produced.
+            var found = await client.FindAsync("site", 200, CancellationToken.None);
+            Assert.NotEmpty(found.Matches);
+
+            // Asked of every match rather than of the first. "site" matches the PARAMETER
+            // (bicep:main#siteName) before the resource, and a test that described only the first
+            // hit failed while the daemon was returning exactly the evidence it was asked for — a
+            // wrong assertion about a working fix, which is the most expensive kind to debug.
+            var predicates = new List<string>();
+
+            foreach (var match in found.Matches)
+            {
+                var described = await client.DescribeAsync(match.NodeId, 60, CancellationToken.None);
+                predicates.AddRange(described.Neighbors.Select(e => e.Predicate));
+            }
+
+            Assert.Contains("resource_type", predicates);
+            Assert.Contains("api_version", predicates);
+
+            // And the extractor that produced it, so "infrastructure evidence" is not being read
+            // from a C# assertion that happens to share a predicate name (DC-022).
+            var resource = await client.DescribeAsync(
+                found.Matches.First(m => !m.NodeId.Contains('#', StringComparison.Ordinal)).NodeId,
+                60, CancellationToken.None);
+
+            Assert.All(resource.Neighbors, e =>
+                Assert.Equal("bicep-extractor", e.Provenance.ExtractorId));
         }
         finally
         {

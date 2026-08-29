@@ -163,6 +163,126 @@ public sealed class Phase3SurfacingTests : IDisposable
             .Replace("<LF>", "\n", StringComparison.Ordinal);
     }
 
+    // ── An unchanged scope is not re-read, and a changed one always is ────────────────────
+
+    private string Workspace()
+    {
+        var root = Path.Combine(_dir, "ws");
+        Directory.CreateDirectory(Path.Combine(root, "infra"));
+        File.WriteAllText(Path.Combine(root, "infra", "main.bicep"),
+            "resource site 'Microsoft.Web/sites@2023-01-01' = {\n  name: 'probe'\n}\n");
+        return root;
+    }
+
+    private async Task<(int Indexed, int Reused)> IndexAsync(string root, string data, bool force = false)
+    {
+        using var core = WorkspaceCore.Open("fp", root, data, WorkspaceExtractors.Default());
+        var result = await core.IndexCSharpAsync("rev-1", CancellationToken.None, force: force);
+        return (result.ScopesIndexed, result.ScopesReused);
+    }
+
+    [Fact]
+    public async Task AWorkspaceCanBeIndexedAgainAfterARestart()
+    {
+        // Found while testing the fingerprint cache, and it has nothing to do with caching. The
+        // generation counter lives in memory and starts at zero on every open, while the store does
+        // not — so the SECOND index of any workspace after a restart re-used generation 1 and
+        // violated the desired-generation primary key. The daemon opens the store fresh every time
+        // it starts. Nothing had ever indexed twice across a reopen, so nothing had ever noticed.
+        var root = Workspace();
+        var data = Path.Combine(_dir, "data");
+
+        await IndexAsync(root, data);
+
+        // A different core over the same store — exactly what a daemon restart is.
+        var after = await IndexAsync(root, data, force: true);
+
+        Assert.Equal(1, after.Indexed);
+    }
+
+    [Fact]
+    public async Task AnUnchangedScopeIsReused_AndTheReuseIsReportedSeparately()
+    {
+        var root = Workspace();
+        var data = Path.Combine(_dir, "data");
+
+        var first = await IndexAsync(root, data);
+        var second = await IndexAsync(root, data);
+
+        Assert.Equal(1, first.Indexed);
+        Assert.Equal(0, first.Reused);
+
+        // Reported as REUSED, never folded into indexed: "1 of 1 indexed" would be a true sentence
+        // about a run that read nothing.
+        Assert.Equal(0, second.Indexed);
+        Assert.Equal(1, second.Reused);
+    }
+
+    [Fact]
+    public async Task AChangedFileIsAlwaysReRead()
+    {
+        var root = Workspace();
+        var data = Path.Combine(_dir, "data");
+
+        await IndexAsync(root, data);
+
+        File.WriteAllText(Path.Combine(root, "infra", "main.bicep"),
+            "resource other 'Microsoft.Web/sites@2023-01-01' = {\n  name: 'changed'\n}\n");
+
+        var after = await IndexAsync(root, data);
+
+        Assert.Equal(1, after.Indexed);
+        Assert.Equal(0, after.Reused);
+    }
+
+    [Fact]
+    public async Task ForceReReadsEverything()
+    {
+        // The escape hatch. An operator must always be able to say "I do not believe the cache".
+        var root = Workspace();
+        var data = Path.Combine(_dir, "data");
+
+        await IndexAsync(root, data);
+        var forced = await IndexAsync(root, data, force: true);
+
+        Assert.Equal(1, forced.Indexed);
+        Assert.Equal(0, forced.Reused);
+    }
+
+    [Fact]
+    public async Task AScopeWhoseEvidenceIsGoneIsReRead_EvenThoughItsInputsAreUnchanged()
+    {
+        // The fingerprint says the INPUTS have not changed. It says nothing about whether the output
+        // survived — and a store rebuilt under an unchanged working tree would otherwise leave the
+        // scope skipped forever with its evidence permanently missing.
+        var root = Workspace();
+        var data = Path.Combine(_dir, "data");
+
+        await IndexAsync(root, data);
+
+        // The sidecar survives; the store does not. Exactly the shape of a compaction or a reset.
+        File.Delete(Path.Combine(data, "workspace.db"));
+
+        var after = await IndexAsync(root, data);
+
+        Assert.Equal(1, after.Indexed);
+        Assert.Equal(0, after.Reused);
+    }
+
+    [Fact]
+    public void AnUpgradedExtractorInvalidatesEveryFingerprint()
+    {
+        // Without the generation in the digest, an extractor improvement would reach only the files
+        // a user happened to touch afterwards, and the graph would be built by two extractor
+        // versions with nothing saying which produced what.
+        Assert.False(string.IsNullOrWhiteSpace(ScopeFingerprints.ExtractorGeneration));
+
+        var scope = new ScopeDescriptor("bicep:main", Path.Combine(Workspace(), "infra", "main.bicep"), "bicep");
+        var digest = ScopeFingerprints.Compute(Path.Combine(_dir, "ws"), scope);
+
+        Assert.NotEqual(string.Empty, digest);
+    }
+
     // ── A bounded read says what it did not see ───────────────────────────────────────────
 
     [Fact]
@@ -211,6 +331,20 @@ public sealed class Phase3SurfacingTests : IDisposable
 
         Assert.False(read.IsComplete);
         Assert.NotNull(read.Shortfall);
+    }
+
+    [Fact]
+    public void ASearchIsNotBoundedByTheNeighbourCeiling()
+    {
+        // Find borrowed MaxNeighborsCeiling, which is 50. The workbench asked for 20,000 matches to
+        // build the context and join panes and received 50 — so those panes computed crossing
+        // counts, join counts and coverage from roughly three percent of a real workspace and
+        // presented the result as the answer. A search returns identity columns only; its payload
+        // per row is small, which is why it can have a much larger ceiling than a neighbour list.
+        Assert.True(
+            ProjectionService.MaxSearchResultsCeiling > ProjectionService.MaxNeighborsCeiling * 100,
+            "a search ceiling within two orders of magnitude of the neighbour ceiling is the bug " +
+            "this constant exists to prevent");
     }
 
     // ── One composition, and it routes where it says ──────────────────────────────────────

@@ -100,6 +100,23 @@ public sealed class ProjectionService(WorkspaceStore store)
     public const int MaxNodesCeiling = 200;
     public const int MaxResultBytes = 64 * 1024;
 
+    /// <summary>
+    /// The ceiling on a SEARCH, which is a different question from a neighbour list.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Find used to borrow <see cref="MaxNeighborsCeiling"/>, and 50 is the wrong number
+    /// for it by two orders of magnitude.</b> The workbench asks for 20,000 matches to build the
+    /// context and join panes; it received 50. Those panes were computing crossing counts, join
+    /// counts and coverage from roughly three percent of a real workspace, and presenting the result
+    /// as the answer — while a spike reading the store directly showed the whole picture and
+    /// disagreed with the product for days.</para>
+    ///
+    /// <para>A search returns identity columns only — id, kind, label — so the payload per row is
+    /// small and bounded, which is why this ceiling can be large where the neighbour one cannot.
+    /// <see cref="MaxResultBytes"/> still applies underneath.</para>
+    /// </remarks>
+    public const int MaxSearchResultsCeiling = 20_000;
+
     public DescribeResult Describe(string nodeId, int maxNeighbors)
     {
         using var activity = Activity.StartActivity("aide.projection.query");
@@ -213,7 +230,7 @@ public sealed class ProjectionService(WorkspaceStore store)
         using var activity = Activity.StartActivity("aide.projection.query");
         activity?.SetTag("projection", "find");
 
-        var limit = Clamp(maxResults, 1, MaxNeighborsCeiling);
+        var limit = Clamp(maxResults, 1, MaxSearchResultsCeiling);
         using var reader = store.BeginRead();
 
         // Identity columns only: a leading-wildcard LIKE cannot use an index, so the cheapest

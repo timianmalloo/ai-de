@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-29T16:51:28Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-29T17:04:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1496,6 +1496,32 @@ window.AUDIT_DATA = {
     },
     {
       "id": "al-0071",
+      "shortname": "daemon-proof-caps-incremental-third-repo",
+      "datetime": "2026-08-29T17:03:22Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "the other session is working now and has been instructed to accept your contract\ndo the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "Four core steps, and they uncovered four more defects than they were aimed at.\n\nProving the daemon's extraction across the pipe failed first against a STALE Release daemon —\nLocateDaemon preferred Release if the folder existed rather than following the configuration the\ntests were built in. DC-023 in the harness. With that fixed the daemon does return infrastructure\nevidence, asserted against the provenance extractor id rather than a predicate name.\n\nRaising the caps found the real one: ProjectionService.Find borrowed MaxNeighborsCeiling, so the\nworkbench asked for 20,000 matches and received 50. The context and join panes have been computing\ncrossing counts, join counts and coverage from roughly three percent of a real workspace and\npresenting it as the answer — while the spike read the store directly and showed everything. On\nTheTerrace the panes now see 2,164 nodes instead of 50. The shell also invented its own total instead\nof reading ResultBounds.OmittedNodes, and asked for 60 neighbours against a ceiling of 50, so the\ntruncation warning could never fire. It fires on 26 nodes now.\n\nIncremental re-index takes TheTerrace from 4.3s to 0.1s, with reuse counted separately because \"7 of\n7 indexed\" would be a true sentence about a run that read nothing. Testing it across a reopen found\nthat THE SECOND INDEX OF ANY WORKSPACE AFTER A RESTART FAILED — the generation counter started at\nzero on every open while the store did not. The daemon opens the store fresh every start; nothing had\never indexed twice across a reopen.\n\nA third repository made the DC-022 collision live rather than hypothetical: it emits depends_on from\nBOTH extractors, 2,310 of them, and the subject qualifier is the only thing keeping 2,304 C# type\ndependencies out of the joins. Six verified edges, each a real dependsOn between two real resources.\n\nGate: 655 tests green (App 115, Core 540), six verifiers clean. Zero design-owned files touched.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Do the four listed core next steps: prove daemon extraction across the pipe, fix the read caps, make re-index incremental, and measure a third repository",
+      "done_when": "Each step landed with a control; every defect found on the way registered or fixed; no design-owned file edited; full gate green; tables produced",
+      "change": "cl-0064",
+      "git": {
+        "sha": "62fe22519a048983d643746158f665b8079f8541",
+        "short": "62fe22519",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0072",
       "shortname": "design-session-contract-accept-4a",
       "datetime": "2026-08-29T16:51:28Z",
       "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
@@ -3067,6 +3093,57 @@ window.AUDIT_DATA = {
         "after": "d81828191646a2031f702165854e6f816918571a",
         "branch": "feature/app-facelift-and-graph-surfaces",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0063",
+      "datetime": "2026-08-29T17:03:02Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "The panes were reading 50 nodes; the search now has its own ceiling",
+      "prompt": null,
+      "summary": "Two defects the panes had been living with, both about a boundary lying about how much it saw.\n\n**The panes were computing from at most 50 nodes.** ProjectionService.Find borrowed\nMaxNeighborsCeiling, which is 50. The workbench asked for 20,000 matches to build the context and\njoin panes and received 50 — so crossing counts, join counts and coverage were computed from roughly\nthree percent of a real workspace and presented as the answer, while the spike read the store\ndirectly and showed the whole picture. The two disagreed for days and nothing said so. A search\nreturns identity columns only, so its payload per row is small and its ceiling can be large;\nMaxSearchResultsCeiling is now its own constant at 20,000. On TheTerrace the panes went from 50 nodes\nto 2,164.\n\n**And the read reported a total it had made up.** ReadAssertions counted the rows in front of it and\ncalled that the number of matching nodes, while ResultBounds.OmittedNodes had been carrying the true\nremainder all along. The shell reads the bounds now. The neighbour limit was also wrong in the other\ndirection — the shell asked for 60 against a ceiling of 50, so the truncation check compared against\na limit that could never be reached: a control that could not fire, guarding a cap that was already\nbiting. It reads the service's own constant now, and on TheTerrace it fires for real on 26 nodes.\n\nAlso proven across the pipe: the daemon returns infrastructure evidence, asserted against the\nprovenance extractor id rather than a predicate name. That test first failed against a STALE Release\ndaemon, because LocateDaemon preferred Release if the folder existed rather than following the\nconfiguration the tests were built in — DC-023 in the harness, fixed.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/ProjectionService.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tests/AiDe.Core.Tests/DaemonProcessTests.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "62fe22519a048983d643746158f665b8079f8541",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0064",
+      "datetime": "2026-08-29T17:03:02Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Incremental re-index, and the restart that could never index twice",
+      "prompt": null,
+      "summary": "Incremental re-index, and two defects it uncovered on the way.\n\nEvery index re-extracted every scope: 4.3 seconds on TheTerrace, 2.8 on another repository, paid in\nfull whether one file changed or none. ScopeFingerprints digests each scope's input files by path,\nsize and modification time, plus an extractor generation so upgrading the product invalidates\neverything rather than leaving a graph built by two extractor versions with nothing saying which.\nTheTerrace re-indexes in 0.1s now, ten scopes reused.\n\nThe reuse is counted separately from the indexing. \"7 of 7 indexed\" would be a true sentence about a\nrun that read nothing, and the question after a surprising graph is always whether it actually\nlooked. It fails towards re-extraction: an unreadable directory, a missing sidecar or a scope whose\ncommitted evidence has gone all produce a re-read, because the cost of an unnecessary extraction is\nseconds and the cost of a skipped one is a graph describing code that no longer exists.\n\nTesting it across a reopen found something unrelated and worse: THE SECOND INDEX OF ANY WORKSPACE\nAFTER A RESTART FAILED. The generation counter lives in memory and started at zero on every open\nwhile the store did not, so it re-used generation 1 and violated the desired-generation primary key.\nThe daemon opens the store fresh every time it starts. Nothing had ever indexed twice across a\nreopen, so nothing had ever noticed. Seeded from the store now.\n\nAnd re-extracting a revision the store already holds surfaced as a raw SQLite UNIQUE-constraint\nexception from the middle of a run. The first fix silenced the natural key with INSERT OR IGNORE —\nwhich broke an existing test asserting that key rejects duplicates, and rightly so: that control is\ndeliberate. The caller is idempotent instead. Re-extracting a revision already committed returns\nwithout writing, the store stays strict, and \"index again\" answers the user's real question, which\nis whether the graph is current for this revision.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/ScopeFingerprints.cs",
+        "src/AiDe.Core/WorkspaceCore.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "62fe22519a048983d643746158f665b8079f8541",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
         "commits": []
       }
     }

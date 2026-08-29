@@ -1,3 +1,4 @@
+using System.Globalization;
 using AiDe.Core.Facts;
 using Microsoft.Data.Sqlite;
 
@@ -194,6 +195,23 @@ public sealed class StoreReader : IDisposable
         }
 
         return (all.Count > limit ? all[..limit] : all, all.Count);
+    }
+
+    /// <summary>
+    /// The highest generation any scope has ever been asked for, or 0 for an empty store.
+    /// </summary>
+    /// <remarks>
+    /// The in-memory counter starts at zero on every open, so without this a workspace's SECOND
+    /// index after a restart re-uses generation 1 and violates the desired-generation primary key.
+    /// The daemon opens the store fresh every time it starts, which made "index, restart, index"
+    /// a guaranteed failure — found by a test that indexed twice across a reopen, which nothing had
+    /// done before.
+    /// </remarks>
+    public long HighestDesiredGeneration()
+    {
+        using var command = Command("SELECT COALESCE(MAX(generation), 0) FROM scope_generation_desired_fact;");
+        var value = command.ExecuteScalar();
+        return value is null or DBNull ? 0 : Convert.ToInt64(value, CultureInfo.InvariantCulture);
     }
 
     /// <summary>The source revision currently rendered, for a result's provenance header.</summary>

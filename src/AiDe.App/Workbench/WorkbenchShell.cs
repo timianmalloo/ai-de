@@ -407,7 +407,7 @@ public sealed class WorkbenchShell : IDisposable
             // Validated against the symbols actually extracted, every refresh. A map validated once
             // at startup would keep drawing after the code it names had been renamed.
             var path = Path.Combine(_workspaceRoot, BoundedContextReader.DefaultRelativePath);
-            var found = _queries.FindAsync(string.Empty, 20_000, CancellationToken.None)
+            var found = _queries.FindAsync(string.Empty, AiDe.Core.Projections.ProjectionService.MaxSearchResultsCeiling, CancellationToken.None)
                 .GetAwaiter().GetResult();
 
             var symbols = found.Matches.Select(m => m.NodeId).ToList();
@@ -439,7 +439,16 @@ public sealed class WorkbenchShell : IDisposable
     /// number both panes show is computed from this read.
     /// </remarks>
     private const int NodesToDescribe = 4000;
-    private const int NeighboursPerNode = 60;
+
+    /// <summary>
+    /// Asked of the service, and it is the service's own ceiling rather than a number chosen here.
+    /// </summary>
+    /// <remarks>
+    /// It used to be 60 against a ceiling of 50, so the truncation check compared against a limit
+    /// that could never be reached — a control that cannot fire, reporting on a cap that was already
+    /// biting. Two definitions of one quantity is the defect signature; this is the one definition.
+    /// </remarks>
+    private const int NeighboursPerNode = AiDe.Core.Projections.ProjectionService.MaxNeighborsCeiling;
 
     /// <summary>Every neighbour edge of every matched node, with what the read did NOT see.</summary>
     /// <remarks>
@@ -472,8 +481,13 @@ public sealed class WorkbenchShell : IDisposable
                 e.Origin, e.Status, e.Provenance)));
         }
 
+        // Matched, not returned. found.Matches is what the SEARCH gave back after its own cap;
+        // Bounds.OmittedNodes is what it left behind, and the service has been reporting it all
+        // along while this method counted the rows in front of it and called that the total.
+        var matched = found.Matches.Count + Math.Max(0, found.Bounds.OmittedNodes);
+
         return new AiDe.Core.Projections.EvidenceRead(
-            assertions, found.Matches.Count, read, NeighboursPerNode, atLimit);
+            assertions, matched, read, NeighboursPerNode, atLimit);
     }
 
     /// <summary>
@@ -536,7 +550,7 @@ public sealed class WorkbenchShell : IDisposable
 
         pane.Source = () =>
         {
-            var found = _queries.FindAsync(string.Empty, 20_000, CancellationToken.None)
+            var found = _queries.FindAsync(string.Empty, AiDe.Core.Projections.ProjectionService.MaxSearchResultsCeiling, CancellationToken.None)
                 .GetAwaiter().GetResult();
 
             var read = ReadAssertions(found);
