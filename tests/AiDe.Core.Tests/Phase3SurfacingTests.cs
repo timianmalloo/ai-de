@@ -163,6 +163,94 @@ public sealed class Phase3SurfacingTests : IDisposable
             .Replace("<LF>", "\n", StringComparison.Ordinal);
     }
 
+    // ── The screen, not the byte stream ───────────────────────────────────────────────────
+
+    [Fact]
+    public void TextLandsWhereTheCursorSaysItDoes_NotWhereItArrived()
+    {
+        // The measured shape. An agent draws with absolute addressing and repaints regions in
+        // whatever order it likes, so the LAST bytes are not the BOTTOM line.
+        var screen = new ScreenBuffer(rows: 5, columns: 20);
+        screen.Feed("\u001b[3;1Hmiddle");
+        screen.Feed("\u001b[1;1Htop");
+
+        Assert.Equal("top", screen.Line(0));
+        Assert.Equal("middle", screen.Line(2));
+        Assert.Equal("middle", screen.LastNonEmptyLine());
+    }
+
+    [Fact]
+    public void EscapeSequencesNeverBecomeScreenText()
+    {
+        // A parser that fell through to "write the bytes as text" would put escape codes into the
+        // screen it models, and a readiness pattern would match text no human ever saw.
+        var screen = new ScreenBuffer(rows: 3, columns: 40);
+        screen.Feed("\u001b[38;2;150;108;30mcoloured\u001b[m \u001b]0;title\adone");
+
+        Assert.Equal("coloured done", screen.Line(0));
+    }
+
+    [Fact]
+    public void ErasingTheDisplayClearsWhatWasDrawn()
+    {
+        var screen = new ScreenBuffer(rows: 4, columns: 20);
+        screen.Feed("\u001b[1;1Hstale");
+        screen.Feed("\u001b[2Jfresh");
+
+        Assert.DoesNotContain("stale", screen.Render(), StringComparison.Ordinal);
+        Assert.Contains("fresh", screen.Render(), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void TheRenderedScreenIsWhatTheUserWouldSee()
+    {
+        // Against the CAPTURED bytes. The dialog's text is spread across rows 3 to 17 by absolute
+        // addressing, and only a screen model puts it back together.
+        var screen = new ScreenBuffer();
+        screen.Feed(TrustGateOutput());
+        var rendered = screen.Render();
+
+        Assert.Contains("Quick safety check", rendered, StringComparison.Ordinal);
+        Assert.Contains("Yes, I trust this folder", rendered, StringComparison.Ordinal);
+    }
+
+    // ── The trust gate is a state, not a silent refusal ───────────────────────────────────
+
+    [Fact]
+    public void AnAgentWaitingOnAPersonSaysSo_AndIsNotReady()
+    {
+        // Measured: this gate is the NORMAL first screen, not an edge case. Reporting it as an
+        // unexplained refusal is DC-011 — refusal indistinguishable from breakage.
+        var watcher = AgentReadinessProfiles.BuiltIn.WatcherFor("claude")!;
+        watcher.Observe(TrustGateOutput());
+
+        Assert.True(watcher.NeedsAttention);
+        Assert.Contains("trust", watcher.AttentionLine, StringComparison.OrdinalIgnoreCase);
+        Assert.False(watcher.IsReady);
+    }
+
+    [Fact]
+    public void AttentionOutranksAPromptLookingScreen()
+    {
+        // The dialog draws a chevron on its selected option. Even a marker that matches it must not
+        // produce READY while a person is being asked a safety question.
+        var watcher = new AgentReadinessWatcher(readyPattern: ".", attentionPattern: "trust");
+        watcher.Observe("\u001b[1;1HDo you trust this folder?");
+
+        Assert.True(watcher.NeedsAttention);
+        Assert.False(watcher.IsReady);
+    }
+
+    [Fact]
+    public void WithNoDialogOnScreen_ThePromptLineDecides()
+    {
+        var watcher = new AgentReadinessWatcher(readyPattern: "^>$", attentionPattern: "trust");
+        watcher.Observe("thinking...\u001b[2;1H> ");
+
+        Assert.False(watcher.NeedsAttention);
+        Assert.True(watcher.IsReady);
+    }
+
     // ── Crossings can be opened ───────────────────────────────────────────────────────────
 
     private static EvidenceAssertion Edge(string subject, string obj) =>
@@ -221,6 +309,41 @@ public sealed class Phase3SurfacingTests : IDisposable
         Assert.Equal(ContextEdge.MemberCap + 25, crossing.Weight);
         Assert.Equal(ContextEdge.MemberCap, crossing.Members.Count);
         Assert.Equal(25, crossing.Undisclosed);
+    }
+
+    // ── A predicate is a name, and two extractors gave it two meanings ────────────────────
+
+    private static EvidenceAssertion Say(string subject, string predicate, string obj) =>
+        new("view", "rev-1", subject, predicate, obj, EvidenceOrigin.Static, VerificationStatus.Verified,
+            new Provenance("test", null, "test", "1", DateTimeOffset.UnixEpoch));
+
+    [Fact]
+    public void ADependsOnFromCodeIsNotReportedAsAResourceDependency()
+    {
+        // MEASURED on a real repository: `depends_on` is the C# extractor's predicate for type
+        // dependencies — 7,426 of them — and joining on the predicate alone attached the basis
+        // "declared in the resource's dependsOn" to every one. A large number with a false sentence
+        // beside it, which is the most convincing kind of wrong (DC-022).
+        var result = new JoinProjection([
+            Say("TheTerrace.Components.Display", "depends_on", "string"),
+        ]).Compute();
+
+        Assert.DoesNotContain(result.Edges, e => e.Kind == "depends_on");
+    }
+
+    [Fact]
+    public void ADependsOnBetweenDeclaredResourcesIsStillJoined()
+    {
+        // The other half. Narrowing a join until it can no longer fire is not a fix.
+        var result = new JoinProjection([
+            Say("sqlServer", "resource_type", "Microsoft.Sql/servers"),
+            Say("sqlServer", "depends_on", "vnet"),
+        ]).Compute();
+
+        var edge = Assert.Single(result.Edges, e => e.Kind == "depends_on");
+        Assert.Equal("sqlServer", edge.From);
+        Assert.Equal("vnet", edge.To);
+        Assert.Equal(VerificationStatus.Verified, edge.Status);
     }
 
     // ── Uncovered symbols become a task ───────────────────────────────────────────────────

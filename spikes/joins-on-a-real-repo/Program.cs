@@ -1,0 +1,143 @@
+using AiDe.Core;
+using AiDe.Core.Extraction;
+using AiDe.Core.Facts;
+using AiDe.Core.Projections;
+
+// ---------------------------------------------------------------------------------------------
+// The Joins pane, computed over a real repository.
+//
+// Four turns of extractors, projections and panes have shipped without anyone asking the only
+// question that matters: on an actual codebase, are the joins any good? A pane that renders
+// correctly and says nothing useful is indistinguishable from one that works, right up until a
+// user opens it.
+//
+// This runs the SAME projections the pane runs, over the SAME store the daemon writes, so the
+// answer is about the product rather than about a harness.
+// ---------------------------------------------------------------------------------------------
+
+var root = args.Length > 0 ? args[0] : @"C:\Projects\TheTerrace";
+var data = args.Length > 1
+    ? args[1]
+    : Path.Combine(Path.GetTempPath(), "aide-joins-spike", Guid.NewGuid().ToString("N"));
+
+if (!Directory.Exists(root))
+{
+    Console.WriteLine($"VOID — {root} does not exist. Nothing was measured.");
+    return 2;
+}
+
+Console.WriteLine($"repository : {root}");
+Console.WriteLine($"store      : {data}");
+Console.WriteLine(new string('=', 100));
+
+using var core = WorkspaceCore.Open(
+    "joins-spike", root, data,
+    new CompositeExtractor(new CSharpExtractor(), new BicepExtractor(), new EfSchemaExtractor()));
+
+var started = DateTimeOffset.UtcNow;
+var index = await core.IndexCSharpAsync("spike-1", CancellationToken.None);
+var elapsed = DateTimeOffset.UtcNow - started;
+
+Console.WriteLine($"scopes     : {index.ScopesIndexed} of {index.ScopesFound} indexed in {elapsed.TotalSeconds:F1}s");
+Console.WriteLine($"assertions : {index.Assertions:N0}");
+Console.WriteLine($"failed     : {index.Failed.Count}");
+Console.WriteLine($"disclosed  : {string.Join(", ", index.Disclosures)}");
+Console.WriteLine();
+
+using var reader = core.Store.BeginRead();
+var stored = reader.AllCurrentAssertions();
+
+var assertions = stored
+    .Select(a => new EvidenceAssertion(
+        a.ScopeId, a.ArtifactRevision, a.Subject, a.Predicate, a.Object, a.Origin, a.Status, a.Provenance))
+    .ToList();
+
+Console.WriteLine($"read back  : {assertions.Count:N0} assertion(s)");
+Console.WriteLine();
+Console.WriteLine("predicates present:");
+foreach (var group in assertions.GroupBy(a => a.Predicate).OrderByDescending(g => g.Count()).Take(20))
+{
+    Console.WriteLine($"  {group.Count(),8:N0}  {group.Key}");
+}
+
+Console.WriteLine();
+Console.WriteLine(new string('=', 100));
+Console.WriteLine("THE JOINS PANE");
+Console.WriteLine(new string('=', 100));
+
+var joins = new JoinProjection(assertions).Compute();
+
+Console.WriteLine($"{joins.VerifiedCount} verified · {joins.InferredCount} inferred");
+Console.WriteLine();
+
+foreach (var status in new[] { VerificationStatus.Verified, VerificationStatus.Inferred })
+{
+    var edges = joins.Edges.Where(e => e.Status == status).ToList();
+    Console.WriteLine($"── {status} ── {edges.Count} edge(s)");
+
+    foreach (var kind in edges.GroupBy(e => e.Kind).OrderByDescending(g => g.Count()))
+    {
+        Console.WriteLine($"     {kind.Count(),6:N0}  {kind.Key}");
+    }
+
+    foreach (var edge in edges.Take(8))
+    {
+        Console.WriteLine($"       {edge.From}  --{edge.Kind}->  {edge.To}");
+        Console.WriteLine($"         {edge.Basis}");
+    }
+
+    Console.WriteLine();
+}
+
+Console.WriteLine("what could not be joined:");
+foreach (var disclosure in joins.Disclosures)
+{
+    Console.WriteLine($"  - {disclosure}");
+}
+
+if (joins.Disclosures.Count == 0)
+{
+    Console.WriteLine("  (nothing withheld)");
+}
+
+Console.WriteLine();
+Console.WriteLine(new string('=', 100));
+Console.WriteLine("THE CONTEXTS PANE");
+Console.WriteLine(new string('=', 100));
+
+var symbols = reader.ReadDeclaredSubjects();
+var map = BoundedContextReader.Load(
+    Path.Combine(root, BoundedContextReader.DefaultRelativePath), symbols);
+
+var contexts = new ContextProjection(map, assertions).Compute();
+
+if (!contexts.IsValid)
+{
+    Console.WriteLine("the context map is invalid and is not drawn:");
+    foreach (var problem in contexts.Problems.Take(10)) Console.WriteLine($"  - {problem}");
+}
+else
+{
+    foreach (var context in contexts.Contexts.OrderByDescending(c => c.Symbols))
+    {
+        Console.WriteLine($"  {context.Symbols,6:N0} symbols · {context.InternalEdges,7:N0} internal · " +
+                          $"{context.Crossings,6:N0} crossing   {context.Name}");
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("  top crossings:");
+    foreach (var edge in contexts.Edges.Take(6))
+    {
+        Console.WriteLine($"    {edge.Weight,6:N0}  {edge.From} -> {edge.To}   " +
+                          $"(listing {edge.Members.Count}, {edge.Undisclosed} beyond the cap)");
+    }
+
+    Console.WriteLine();
+    Console.WriteLine($"  uncovered: {contexts.UncoveredSymbols:N0} symbol(s), by namespace:");
+    foreach (var group in contexts.UncoveredGroups.Take(8))
+    {
+        Console.WriteLine($"    {group.Symbols,6:N0}  {group.Namespace}");
+    }
+}
+
+return 0;

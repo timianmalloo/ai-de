@@ -59,6 +59,50 @@ public sealed class LayoutUpgradeTests : IDisposable
     }
 
     [Fact]
+    public void TheShippedChain_CoversEveryVersionGap()
+    {
+        // Each step is tested; nothing asserted that the STEPS JOIN UP. A version bumped without a
+        // migration beside it degrades every older layout to the default with
+        // AIDE-LAYOUT-VERSION-UNSUPPORTED — correct behaviour, and a silent loss of everyone's
+        // arrangement on upgrade day. This is the only assertion that fails the moment that happens.
+        var steps = LayoutMigrations.Default.Select(m => m.FromVersion).ToHashSet();
+
+        for (var version = 1; version < LayoutStore.CurrentSchemaVersion; version++)
+        {
+            Assert.True(steps.Contains(version),
+                $"no migration from schema {version}; a layout at that version cannot reach " +
+                $"{LayoutStore.CurrentSchemaVersion} and would be reset to the default.");
+        }
+    }
+
+    [Fact]
+    public void ALayoutFromTheOldestSchema_ArrivesValidAtTheCurrentOne()
+    {
+        // The whole path a real user takes, rather than one step of it. Every earlier test pins a
+        // single hop with an assumed version; this one runs the SHIPPED chain at the SHIPPED
+        // version, which is the only combination anybody actually upgrades through.
+        WriteFileAtSchema1(Layout.Default());
+
+        var result = new LayoutStore(Path_, appVersion: "0.4.0").Load(CurrentSurfaces);
+
+        Assert.False(result.WasDefaulted);
+        Assert.Null(result.ErrorCode);
+        Assert.Empty(result.MissingSurfaces);
+        result.Layout.AssertInvariant();
+
+        // Every surface this release ships is present after the climb — derived, so adding one and
+        // forgetting its migration fails here rather than on a user's machine.
+        var restored = result.Layout.AllStacks().SelectMany(stack => stack.Surfaces)
+            .Select(surface => surface.SurfaceId).ToHashSet(StringComparer.Ordinal);
+
+        Assert.Equal(CurrentSurfaces.OrderBy(id => id, StringComparer.Ordinal),
+            restored.OrderBy(id => id, StringComparer.Ordinal));
+
+        Assert.Contains($"\"schemaVersion\": {LayoutStore.CurrentSchemaVersion}",
+            File.ReadAllText(Path_), StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void ASurfaceAddedByThisRelease_ReachesALayoutSavedBeforeIt()
     {
         // The defect this migration exists for. Adding a pane to Layout.Default reaches only people

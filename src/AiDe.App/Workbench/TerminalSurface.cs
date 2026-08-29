@@ -106,6 +106,8 @@ public sealed class TerminalSurface : ContentControl, IDisposable
     /// </remarks>
     public string? Executable { get; init; }
 
+    private string? _lastAnnouncedAttention;
+
     /// <summary>
     /// The readiness markers in force, built in plus whatever the workspace configured.
     /// </summary>
@@ -146,6 +148,24 @@ public sealed class TerminalSurface : ContentControl, IDisposable
             }
         });
     }
+
+    /// <summary>Raised the first time this pane starts waiting on a person.</summary>
+    public event EventHandler<string>? AttentionRequired;
+
+    /// <summary>
+    /// What this pane is waiting for, in words, or null when nothing is.
+    /// </summary>
+    /// <remarks>
+    /// The trust gate is the NORMAL first screen for an agent this shell starts — measured in
+    /// <c>spikes/agent-readiness</c>, in a directory whose sessions run every day. Treating it as an
+    /// unexplained refusal leaves the user with a pane that will not accept a prompt and never says
+    /// why. The shell reports it and points at the pane; it does not answer it, because answering a
+    /// safety question on the user's behalf is exactly what that gate exists to prevent.
+    /// </remarks>
+    public string? AwaitingUser =>
+        AgentReadiness is { NeedsAttention: true } watcher
+            ? $"{Executable ?? "The terminal"} is waiting for you: “{watcher.AttentionLine}” Answer it in the terminal pane."
+            : null;
 
     /// <summary>How this session's readiness is established, for the dispatch policy to consult.</summary>
     public ReadinessEvidence ReadinessEvidence =>
@@ -226,6 +246,16 @@ public sealed class TerminalSurface : ContentControl, IDisposable
                     // stronger evidence and needs no pattern.
                     AgentReadiness?.Observe(
                         System.Text.Encoding.UTF8.GetString(chunk.Bytes.Span));
+
+                    // Announced on the EDGE, not on every chunk. A dialog repaints constantly, and
+                    // repeating the same sentence into a screen reader on each repaint is how an
+                    // announcement becomes noise the user learns to ignore.
+                    var awaiting = AwaitingUser;
+                    if (!string.Equals(awaiting, _lastAnnouncedAttention, StringComparison.Ordinal))
+                    {
+                        _lastAnnouncedAttention = awaiting;
+                        if (awaiting is not null) AttentionRequired?.Invoke(this, awaiting);
+                    }
                 }
             }
         }

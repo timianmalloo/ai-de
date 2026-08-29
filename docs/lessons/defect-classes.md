@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 12 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 13 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -597,4 +597,36 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   passes. That is deliberate — a cross-line matcher produced false positives on ordinary code, and a
   lint people switch off is worth less than a narrow one they keep. Rung reached: *automated control*
   for the shape it covers.
+- **Status:** `partially-controlled`
+
+### DC-022 — A predicate shared by two producers, consumed as if it had one meaning
+- **Signature:** a fact store keyed by `(subject, predicate, object)` collects assertions from
+  several extractors. Two of them independently pick the same natural-language predicate for
+  different relations — `depends_on` means *"this Bicep resource declares dependsOn"* to one and
+  *"this type references that type"* to the other. A consumer then joins on the **predicate alone**
+  and attaches a **fixed basis string** naming the meaning it had in mind. Every fact from the other
+  producer is now reported with a reason that is false about it.
+- **Why it survives:** the basis is written once, next to the predicate name, and never has to agree
+  with the evidence again — nothing in the code can disagree with a string literal. The unit test
+  passes, because it supplies assertions from the producer the author was thinking of. And the defect
+  **fails in the flattering direction**: a join producing nothing gets investigated on sight, while
+  one producing the largest Verified count the product has ever shown looks like the feature working.
+- **Instances:** 2026-08-29 — `JoinProjection` joined every `depends_on` assertion as a resource
+  dependency. On TheTerrace that was **7,426 edges reported Verified**, each carrying *"declared in
+  the resource's dependsOn"*, in a repository containing no Bicep and no `dependsOn` at all. Found by
+  `spikes/joins-on-a-real-repo` — the first time any projection had been run over a real codebase
+  rather than a fixture. It had shipped the previous day.
+- **Control:** the join qualifies on the **kind of thing**, not the predicate: the subject must carry
+  a `resource_type` assertion. Two tests, both required — a code-origin `depends_on` is not joined,
+  and a resource-origin one still is, because narrowing a join until it can no longer fire is not a
+  fix (DC-016). Observed failing: before the fix the first test reported 1 edge, after it 0.
+- **The generalisation to apply elsewhere:** **a predicate is a name, and names collide.** When
+  consuming facts, qualify on evidence that identifies the producer's domain — the subject's type,
+  its scope, its origin — never on the predicate string alone. And treat a **fixed basis string** as
+  the smell: if the sentence explaining an edge cannot be wrong when the edge is wrong, it is
+  decoration. The wider tell is any projection whose output has only ever been seen over fixtures.
+- **Residual risk:** `maps_to`, `has_type` and `declared_in` are also emitted by more than one
+  extractor and are consumed by predicate today. They have not produced a false basis yet because
+  their meanings happen to agree — an agreement nothing enforces. No gate covers this shape; the
+  control is one join deep.
 - **Status:** `partially-controlled`

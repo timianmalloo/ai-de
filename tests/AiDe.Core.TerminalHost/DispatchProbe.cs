@@ -115,10 +115,10 @@ internal static class DispatchProbe
                 var captured = new StringBuilder();
 
                 // An agent session gets a readiness watcher; a shell reports through OSC 133.
-                var watcher = AgentReadinessWatcher.KnownAgents.TryGetValue(
-                    Path.GetFileNameWithoutExtension(commandLine), out var readyPattern)
-                    ? new AgentReadinessWatcher(readyPattern)
-                    : null;
+                // Through the profiles, so the probe judges readiness exactly as the product does.
+                // A probe evaluating the pattern its own way can report a state the shell never sees.
+                var watcher = AgentReadinessProfiles.BuiltIn.WatcherFor(
+                    Path.GetFileNameWithoutExtension(commandLine));
                 var drain = Task.Run(async () =>
                 {
                     var buffer = captured;

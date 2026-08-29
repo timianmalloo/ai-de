@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-29T00:05:47Z",
+  "generated": "2026-08-29T14:50:51Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1256,6 +1256,32 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0061",
+      "shortname": "screen-model-and-joins-on-a-real-repo",
+      "datetime": "2026-08-29T14:50:51Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do all of these 5 steps then summarize what i can manually test in the client\nand show the standard status and next steps",
+      "summary": "Five steps. The third one found a defect in the second-to-last turn's work.\n\n**A screen model.** ScreenBuffer is a small VT interpreter — cursor movement, erasure, text, nothing\nelse. Readiness now matches the rendered screen anchored to the last drawn line, because the earlier\nmeasurement showed an agent's last bytes are wherever the cursor went rather than what the user sees.\nThe built-in markers are anchored at both ends and remain explicitly unverified against a ready agent.\n\n**The trust gate is a state.** NeedsAttention, searched across the whole screen, outranking readiness,\nannounced once per transition rather than per repaint. Before this the shell refused and said nothing,\nwhich is indistinguishable from a broken pane (DC-011).\n\n**The joins, on a real repository — and DC-022.** The first run over TheTerrace reported 7,426\nverified joins, each carrying \"declared in the resource's dependsOn\", in a repository containing no\nBicep and no dependsOn at all. depends_on is the C# extractor's predicate for type dependencies; the\njoin qualified on the PREDICATE rather than the kind of thing it was on, and its basis was a fixed\nstring that could never disagree with the evidence. It failed in the flattering direction — the\nlargest Verified count the pane had ever shown. Fixed, pinned by two tests, registered. After the fix:\n0 verified, 59 inferred, which is the correct answer for that repository.\n\nThe contexts pane in the same run is usable, and names Operations as the boundary worth examining.\n360 of 474 uncovered symbols are tests — the namespace grouping turned a number that reads as a gap\ninto a line that reads as correct.\n\n**Two controls widened.** The fixture-derivation gate now watches command ids (29 identifiers,\nobserved firing on a planted literal), and the migration chain has both an end-to-end test and one\nasserting the steps join up — which fails the moment a version is bumped without a migration.\n\nGate: 627 tests green (App 108, Core 519), five verifiers clean, app verified launching.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Land the five proposed next actions, running the projections over a real repository rather than reasoning about them, and close with the manual-test, status and next-step tables",
+      "done_when": "Five steps landed with a control each; the joins measured on TheTerrace; full gate green; committed and pushed; tables produced",
+      "change": "cl-0051",
+      "git": {
+        "sha": "27ce744843701cf1416eb4140acddad2c4a0b2f9",
+        "short": "27ce74484",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -2483,6 +2509,58 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "97aad79e5061819896356312a83a957cc4152280",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0050",
+      "datetime": "2026-08-29T14:50:34Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Readiness moves to a screen model; the trust gate becomes a state the user can act on",
+      "prompt": null,
+      "summary": "The readiness question, answered at the right layer.\n\n**A screen model.** ScreenBuffer is a small VT interpreter — cursor movement, erasure, text, and\nnothing else. Colour, styling, scroll regions and alternate buffers are consumed and discarded\nbecause none of them change which cell a character occupies. It exists because the measurement said\nthe byte stream cannot answer the question: an agent draws with absolute cursor addressing, so the\nlast bytes are wherever the cursor went, not what the user is looking at. Fed the captured trust-gate\nbytes, it reconstructs the dialog across rows 1 to 16.\n\n**Readiness now matches the rendered screen**, anchored to the last drawn line rather than the tail\nof the buffer. The built-in markers are anchored at both ends: the measured gate draws \"❯ No, exit\",\nand a pattern allowing text after the chevron would call that dialog a prompt. They remain unverified\nagainst a READY agent, because reaching one means answering the trust gate, which this tool will not\ndo on the user's behalf — that is stated where the patterns live.\n\n**Attention is a state, not a silent refusal.** An agent showing a trust gate is not busy and not\nready; it is waiting for a person, and the measurement showed that gate is the NORMAL first screen.\nThe watcher reports NeedsAttention with the line that matched, searched across the whole screen\nrather than the last line, because the gate puts its question ten rows above its buttons. Attention\noutranks readiness. The pane announces it once per transition, not per repaint.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/ScreenBuffer.cs",
+        "src/AiDe.Core/Terminal/AgentReadinessWatcher.cs"
+      ],
+      "tags": [
+        "dispatch"
+      ],
+      "git": {
+        "before": null,
+        "after": "27ce744843701cf1416eb4140acddad2c4a0b2f9",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0051",
+      "datetime": "2026-08-29T14:50:34Z",
+      "session": null,
+      "kind": "knowledge",
+      "skill": null,
+      "title": "DC-022: a predicate shared by two extractors, joined as if it had one meaning",
+      "prompt": null,
+      "summary": "The Joins pane, run over TheTerrace — and the defect that found.\n\nFour turns of extractors and panes had shipped without anyone asking whether the joins are any good\non a real codebase. The first run answered: 7,426 verified joins, every one carrying \"declared in the\nresource's dependsOn\", in a repository with no Bicep and no dependsOn anywhere in it.\n\ndepends_on is not a Bicep word. The C# extractor emits it for type dependencies. The join was written\nagainst the PREDICATE rather than the kind of thing the predicate was on, and the basis was a fixed\nstring that never had to agree with the evidence again. It failed in the flattering direction: the\nlargest Verified count the pane had ever shown. Registered as DC-022 and fixed by qualifying on the\nsubject carrying resource_type; two tests, because narrowing a join until it cannot fire is not a fix.\n\nAfter the fix: 0 verified, 59 inferred. Zero is the correct answer for a repository that declares no\n[Table] attributes and has no infrastructure templates, and the pane says so plainly rather than\nimplying completeness.\n\nThe contexts pane in the same run is usable. Operations carries 172 crossings against 225 internal\nedges on 198 symbols — nearly as much traffic leaving as staying — while Football, four times its\nsize, keeps 902 internal against 190 crossing. And 360 of the 474 uncovered symbols are tests, which\nno context map should claim: the namespace grouping turned a number that reads as a gap into one line\nthat reads as correct plus four small namespaces worth a decision.\n\nAlso: the fixture-derivation gate now watches command ids as well (29 identifiers), observed firing\non a planted three-command literal; and the migration chain has an end-to-end test plus one asserting\nthe steps JOIN UP, which fails the moment a version is bumped without a migration beside it.",
+      "rationale": null,
+      "artifacts": [
+        "spikes/joins-on-a-real-repo/RESULT.md",
+        "src/AiDe.Core/Projections/JoinProjection.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "continuous-improvement",
+        "spike"
+      ],
+      "git": {
+        "before": null,
+        "after": "27ce744843701cf1416eb4140acddad2c4a0b2f9",
         "branch": "main",
         "pushed": true,
         "commits": []

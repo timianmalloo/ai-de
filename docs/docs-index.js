@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-29T00:05:51Z",
+  "generated": "2026-08-29T14:50:52Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1417,7 +1417,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8d8ace435e9d24b59a77502857cbd01adc7208efbf5f457e1ff8a74a4d3cbd92"
+      "sourceSha256": "f701a3839bdeb480662fcc8a7a0d0b5e705183a7d39faadbea2a147ca4fc6eca"
     },
     {
       "id": "lens-code-doc-join",
@@ -4153,5 +4153,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "a6d450ce50054885a32686b06932be554bd62b430dbb2336caaacf25e8aa4270"
+  "graphSha256": "6e5cde9caf761f39bfc14db34723ace257e876049b29a299a302b54e25e3b7c5"
 };

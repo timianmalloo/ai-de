@@ -133,7 +133,19 @@ public sealed class JoinProjection(IReadOnlyList<EvidenceAssertion> assertions)
         // is cheap to earn: both ends are symbols the template itself names, and the edge is read
         // rather than corresponded. The extractor already emitted these and nothing consumed them —
         // the same shipped-but-unreachable shape as the projection itself.
-        foreach (var dependency in assertions.Where(a => a.Predicate == "depends_on"))
+        // Restricted to subjects that ARE declared infrastructure resources. `depends_on` is not a
+        // Bicep word — the C# extractor emits it for type dependencies, 7,426 of them on one real
+        // repository — and joining on the predicate alone attached the basis "declared in the
+        // resource's dependsOn" to every one of them. Measured in spikes/joins-on-a-real-repo, which
+        // is the only reason it was caught: the pane rendered, the count was large, and the sentence
+        // was false (DC-022).
+        var resources = assertions
+            .Where(a => a.Predicate == "resource_type")
+            .Select(a => a.Subject)
+            .ToHashSet(StringComparer.Ordinal);
+
+        foreach (var dependency in assertions
+            .Where(a => a.Predicate == "depends_on" && resources.Contains(a.Subject)))
         {
             edges.Add(new JoinEdge(
                 dependency.Subject, dependency.Object, "depends_on",

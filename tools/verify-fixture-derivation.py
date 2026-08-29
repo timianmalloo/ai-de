@@ -10,9 +10,9 @@ It happened three times before it was registered. The register entry recorded th
 honestly: derivation was a convention, and nothing failed when the next fixture typed the list out
 again. This is that missing control.
 
-**What it looks for.** The product's own vocabulary — the surface ids in `Layout.Default()` and the
-kinds in `SurfaceContentFactory.KnownKinds` — appearing as three or more quoted literals inside one
-collection literal in a test file. Three is the threshold because one or two identifiers is a test
+**What it looks for.** The product's own vocabulary — surface ids from `Layout.Default()`, kinds from
+`SurfaceContentFactory.KnownKinds`, and command ids from `WorkbenchCommandCatalog` — appearing as
+three or more quoted literals inside one collection literal in a test file. Three is the threshold because one or two identifiers is a test
 naming the specific things it is about, which is exactly what a test should do; three or more in a
 collection is someone enumerating the set.
 
@@ -44,9 +44,12 @@ TEST_ROOT = ROOT / "tests"
 
 LAYOUT_MODEL = ROOT / "src" / "AiDe.Core" / "Workbench" / "LayoutModel.cs"
 SURFACE_FACTORY = ROOT / "src" / "AiDe.App" / "Workbench" / "SurfaceContentFactory.cs"
+COMMAND_CATALOG = ROOT / "src" / "AiDe.Core" / "Workbench" / "WorkbenchCommands.cs"
 
 SURFACE_ID = re.compile(r'new Surface\("([^"]+)"')
 KNOWN_KINDS = re.compile(r"KnownKinds\s*\{\s*get;\s*\}\s*=\s*\[([^\]]*)\]", re.S)
+# A catalog entry opens with its id: new("workbench.resetLayout", "Reset workbench layout", ...).
+COMMAND_ID = re.compile(r'new\("([a-z][A-Za-z0-9]*\.[A-Za-z0-9]+)"')
 QUOTED = re.compile(r'"([^"\\]*)"')
 ALLOW = re.compile(r"fixture-derivation:\s*ok", re.I)
 
@@ -69,6 +72,9 @@ def vocabulary() -> set[str]:
         match = KNOWN_KINDS.search(SURFACE_FACTORY.read_text(encoding="utf-8"))
         if match:
             words.update(QUOTED.findall(match.group(1)))
+
+    if COMMAND_CATALOG.exists():
+        words.update(COMMAND_ID.findall(COMMAND_CATALOG.read_text(encoding="utf-8")))
 
     return words
 
@@ -104,7 +110,8 @@ def main() -> int:
         # Failing closed. An empty vocabulary would make this gate pass over everything, which is a
         # control that cannot fire — the exact shape it exists to prevent.
         print("verify-fixture-derivation: FAILED — derived no vocabulary from the product source.")
-        print("  looked in:", LAYOUT_MODEL.relative_to(ROOT), "and", SURFACE_FACTORY.relative_to(ROOT))
+        for source in (LAYOUT_MODEL, SURFACE_FACTORY, COMMAND_CATALOG):
+            print("  looked in:", source.relative_to(ROOT))
         return 1
 
     if "--list" in sys.argv:

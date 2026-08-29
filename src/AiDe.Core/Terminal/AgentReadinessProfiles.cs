@@ -9,7 +9,14 @@ namespace AiDe.Core.Terminal;
 /// different weight when a dispatch is later refused, and "why did it refuse" is unanswerable if the
 /// answer is "some pattern".
 /// </param>
-public sealed record AgentReadinessProfile(string Agent, string Pattern, string Origin);
+/// <param name="AttentionPattern">
+/// A screen that is waiting on a PERSON — a trust gate, an auth prompt. Null when nothing is known
+/// to need answering. Separate from <paramref name="Pattern"/> because "waiting for you" and "busy"
+/// are different situations with different correct responses, and collapsing them leaves a pane that
+/// refuses without ever saying why.
+/// </param>
+public sealed record AgentReadinessProfile(
+    string Agent, string Pattern, string Origin, string? AttentionPattern = null);
 
 /// <summary>
 /// Per-agent readiness markers, built in and user-supplied.
@@ -53,7 +60,8 @@ public sealed class AgentReadinessProfiles
 
     /// <summary>The built-in markers, with no file involved.</summary>
     public static AgentReadinessProfiles BuiltIn { get; } = new(
-        AgentReadinessWatcher.KnownAgents.Select(kv => new AgentReadinessProfile(kv.Key, kv.Value, "built-in")),
+        AgentReadinessWatcher.KnownAgents.Select(kv => new AgentReadinessProfile(
+            kv.Key, kv.Value, "built-in", AgentReadinessWatcher.KnownAttention.GetValueOrDefault(kv.Key))),
         []);
 
     /// <summary>Loads the overrides beside the built-ins. A missing file is the ordinary case.</summary>
@@ -114,7 +122,13 @@ public sealed class AgentReadinessProfiles
                 continue;
             }
 
-            profiles[agent] = new AgentReadinessProfile(agent, pattern, FileName);
+            // The attention pattern is kept from the built-in. Overriding the READY marker is
+            // routine tuning; silently dropping the dialog detector with it would turn a tuned
+            // profile into one that cannot tell a prompt from a trust gate.
+            profiles[agent] = new AgentReadinessProfile(
+                agent, pattern, FileName,
+                profiles.GetValueOrDefault(agent)?.AttentionPattern
+                    ?? AgentReadinessWatcher.KnownAttention.GetValueOrDefault(agent));
         }
 
         return new AgentReadinessProfiles(profiles.Values, problems);
@@ -126,7 +140,9 @@ public sealed class AgentReadinessProfiles
 
     /// <summary>A watcher for an agent, or null — the caller must treat null as "cannot establish".</summary>
     public AgentReadinessWatcher? WatcherFor(string agent) =>
-        For(agent) is { } profile ? new AgentReadinessWatcher(profile.Pattern) : null;
+        For(agent) is { } profile
+            ? new AgentReadinessWatcher(profile.Pattern, profile.AttentionPattern)
+            : null;
 
     /// <summary>Writes the current markers as a starting point for the user to edit.</summary>
     public static string WriteTemplate(string stateDirectory)

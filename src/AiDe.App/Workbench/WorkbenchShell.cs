@@ -85,6 +85,7 @@ public sealed class WorkbenchShell : IDisposable
             BindCanvas();
             BindContexts();
             BindJoins();
+            BindTerminalAttention();
 
             return result.Applied
                 ? $"{agent} terminal opened. Dispatch is refused until it reaches its prompt."
@@ -380,6 +381,7 @@ public sealed class WorkbenchShell : IDisposable
         BindCanvas();
         BindContexts();
         BindJoins();
+        BindTerminalAttention();
     }
 
     /// <summary>
@@ -445,6 +447,29 @@ public sealed class WorkbenchShell : IDisposable
 
         return assertions;
     }
+
+    /// <summary>
+    /// Reports any terminal pane that is waiting on a person.
+    /// </summary>
+    /// <remarks>
+    /// Measured: an agent CLI opens on a trust gate even in a directory whose sessions run daily
+    /// (<c>spikes/agent-readiness</c>). Before this the shell simply refused to dispatch and said
+    /// nothing, which is indistinguishable from a broken pane (DC-011).
+    /// </remarks>
+    internal void BindTerminalAttention()
+    {
+        foreach (var terminal in Service.Current.AllStacks()
+            .SelectMany(stack => stack.Surfaces)
+            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .OfType<TerminalSurface>())
+        {
+            terminal.AttentionRequired -= OnTerminalAttentionRequired;
+            terminal.AttentionRequired += OnTerminalAttentionRequired;
+        }
+    }
+
+    private void OnTerminalAttentionRequired(object? sender, string message) =>
+        Announcer.Announce(message);
 
     /// <summary>Connects the joins pane to the workspace's own evidence.</summary>
     internal void BindJoins()
