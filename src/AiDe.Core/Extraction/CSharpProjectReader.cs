@@ -203,7 +203,15 @@ public sealed class CSharpProjectReader
 
         var trees = new List<SyntaxTree>();
         var unparsed = new List<string>();
-        foreach (var file in Sources(doc, dir))
+
+        // Enumeration timed on its own. Raw File.ReadAllText of 120 files costs ~5ms outside this
+        // process, and the in-extractor "read" timer said 600ms — a hundredfold gap that has to be
+        // somewhere, and a lazy IEnumerable evaluated inside the loop is the obvious candidate.
+        var sourcesWatch = System.Diagnostics.Stopwatch.StartNew();
+        var sources = Sources(doc, dir).ToList();
+        sourcesWatch.Stop();
+
+        foreach (var file in sources)
         {
             cancellationToken.ThrowIfCancellationRequested();
             try
@@ -245,7 +253,8 @@ public sealed class CSharpProjectReader
         if (Environment.GetEnvironmentVariable("AIDE_EXTRACTION_TIMING") is not null)
         {
             Console.Error.WriteLine(
-                $"[timing]   read {ioWatch.ElapsedMilliseconds}ms, parse {parseWatch.ElapsedMilliseconds}ms " +
+                $"[timing]   enumerate {sourcesWatch.ElapsedMilliseconds}ms, read {ioWatch.ElapsedMilliseconds}ms, " +
+                $"parse {parseWatch.ElapsedMilliseconds}ms " +
                 $"for {trees.Count} file(s) ({Trees.Hits:N0} reused, {Trees.Misses:N0} parsed)");
         }
 

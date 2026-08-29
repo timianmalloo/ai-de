@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-29T21:08:00Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-29T21:09:04Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1879,6 +1879,32 @@ window.AUDIT_DATA = {
         "menus"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0105",
+      "shortname": "python-extractor-paging-tie-io-measured",
+      "datetime": "2026-08-29T21:08:20Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "A second language, and a paging defect the second language exposed.\n\nPythonExtractor reads modules, top-level classes and functions, and import edges. Six repositories\nhad disclosed unread Python before it existed; the disclosure was right and it is not a substitute,\nbecause a graph that says \"there is Python here and I cannot see it\" is honest and still blind.\n\nIt reads STRUCTURE, not semantics, and says so on every scope: imports are not resolved, nested\ndeclarations are invisible, dynamic imports are not followed. Declarations are recognised at column\nzero only — an indented def is a method, and claiming it as a module-level function would put a\nsymbol in the graph that no importer can reach. Import edges are INFERRED, because the target is the\nmodule path as written and whether it resolves to anything is not established here; calling that\nVerified is precisely the defect DC-022 is about. A simplify: marker records the ceiling and the\nupgrade trigger.\n\nPython also came OFF the unanalysed-languages list on the same day, because a closed gap reported as\nopen is the same defect as an open one hidden.\n\nMeasured on the repository that started this: ai-forward produced ZERO assertions and an empty\ndisclosure list three turns ago. It now produces 2,158 assertions across 5 scopes in 0.2 seconds,\nwith its remaining gaps named.\n\nAnd that run exposed a real paging defect: 2,158 in the store, 2,157 through the paged read.\n(subject, predicate, object) is NOT unique — two scopes can assert the same triple — so a cursor over\nthat ordering silently loses exactly the rows that tie, when a page boundary lands on one. Scope is\npart of the ordering and the cursor now, and a test builds two identical Python packages to\nmanufacture the tie deliberately.\n\nThe I/O question was measured rather than assumed and is only half answered. Raw reads of 120 files\ncost 5ms outside this product and 73ms on first touch from a different process — a 15x first-access\npenalty consistent with on-access scanning. Inside the extractor the same volume costs ~500ms, which\nis seven times worse again and is NOT explained. Recorded as a gap rather than a claim; the tree\ncache removes the cost on re-index whichever explanation turns out to be right.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Do the listed next steps: cross-process tree caching, a second-language extractor, the merge-protocol ask, the scanner measurement, and rendering the disclosures",
+      "done_when": "Each step landed, deferred with a stated reason, or named as belonging to the design session; full gate green; committed, merged and published",
+      "change": "cl-0075",
+      "git": {
+        "sha": "ccd9276972fdd91b6bb5df921979224e02ed476f",
+        "short": "ccd927697",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false
+      }
     }
   ],
   "changes": [
@@ -3735,6 +3761,31 @@ window.AUDIT_DATA = {
         "after": "192fb3d05894f43aac6eb4e1cc920f572bf682dc",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0075",
+      "datetime": "2026-08-29T21:08:10Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "A second language extractor, and the paging tie it exposed",
+      "prompt": null,
+      "summary": "A second language, and a paging defect the second language exposed.\n\nPythonExtractor reads modules, top-level classes and functions, and import edges. Six repositories\nhad disclosed unread Python before it existed; the disclosure was right and it is not a substitute,\nbecause a graph that says \"there is Python here and I cannot see it\" is honest and still blind.\n\nIt reads STRUCTURE, not semantics, and says so on every scope: imports are not resolved, nested\ndeclarations are invisible, dynamic imports are not followed. Declarations are recognised at column\nzero only — an indented def is a method, and claiming it as a module-level function would put a\nsymbol in the graph that no importer can reach. Import edges are INFERRED, because the target is the\nmodule path as written and whether it resolves to anything is not established here; calling that\nVerified is precisely the defect DC-022 is about. A simplify: marker records the ceiling and the\nupgrade trigger.\n\nPython also came OFF the unanalysed-languages list on the same day, because a closed gap reported as\nopen is the same defect as an open one hidden.\n\nMeasured on the repository that started this: ai-forward produced ZERO assertions and an empty\ndisclosure list three turns ago. It now produces 2,158 assertions across 5 scopes in 0.2 seconds,\nwith its remaining gaps named.\n\nAnd that run exposed a real paging defect: 2,158 in the store, 2,157 through the paged read.\n(subject, predicate, object) is NOT unique — two scopes can assert the same triple — so a cursor over\nthat ordering silently loses exactly the rows that tie, when a page boundary lands on one. Scope is\npart of the ordering and the cursor now, and a test builds two identical Python packages to\nmanufacture the tie deliberately.\n\nThe I/O question was measured rather than assumed and is only half answered. Raw reads of 120 files\ncost 5ms outside this product and 73ms on first touch from a different process — a 15x first-access\npenalty consistent with on-access scanning. Inside the extractor the same volume costs ~500ms, which\nis seven times worse again and is NOT explained. Recorded as a gap rather than a claim; the tree\ncache removes the cost on re-index whichever explanation turns out to be right.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/PythonExtractor.cs",
+        "src/AiDe.Core/Store/StoreReader.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "ccd9276972fdd91b6bb5df921979224e02ed476f",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
         "commits": []
       }
     }

@@ -247,7 +247,7 @@ public sealed class StoreReader : IDisposable
     /// by something the query does not, which is how paging quietly loses records.</para>
     /// </remarks>
     public IReadOnlyList<StoredAssertion> CurrentAssertionPage(
-        (string Subject, string Predicate, string Object)? after, int limit)
+        (string Subject, string Predicate, string Object, string ScopeId)? after, int limit)
     {
         var sql = """
             SELECT a.assertion_id, a.scope_id, a.artifact_revision, a.subject, a.predicate, a.object,
@@ -260,17 +260,21 @@ public sealed class StoreReader : IDisposable
             ) latest ON latest.scope_id = a.scope_id AND latest.generation = a.generation
             """;
 
+        // SCOPE is part of the ordering and the cursor. (subject, predicate, object) is NOT unique:
+        // two scopes can assert the same triple — measured on a real repository, where the page
+        // boundary landed on such a tie and one assertion of 2,158 was skipped. A cursor over a
+        // non-unique ordering loses exactly the rows that tie, silently.
         sql += after is null
-            ? " ORDER BY a.subject, a.predicate, a.object LIMIT $limit;"
+            ? " ORDER BY a.subject, a.predicate, a.object, a.scope_id LIMIT $limit;"
             : """
-               WHERE (a.subject, a.predicate, a.object) > ($s, $p, $o)
-               ORDER BY a.subject, a.predicate, a.object LIMIT $limit;
+               WHERE (a.subject, a.predicate, a.object, a.scope_id) > ($s, $p, $o, $scope)
+               ORDER BY a.subject, a.predicate, a.object, a.scope_id LIMIT $limit;
               """;
 
         using var command = after is null
             ? Command(sql, ("$limit", limit))
             : Command(sql, ("$s", after.Value.Subject), ("$p", after.Value.Predicate),
-                      ("$o", after.Value.Object), ("$limit", limit));
+                      ("$o", after.Value.Object), ("$scope", after.Value.ScopeId), ("$limit", limit));
 
         return ReadAssertions(command);
     }

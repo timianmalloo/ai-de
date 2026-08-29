@@ -74,11 +74,11 @@ internal static class EvidenceCursor
 {
     private const char Separator = '';
 
-    internal static string Format(string subject, string predicate, string obj) =>
+    internal static string Format(string subject, string predicate, string obj, string scopeId) =>
         Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(
-            string.Join(Separator, subject, predicate, obj)));
+            string.Join(Separator, subject, predicate, obj, scopeId)));
 
-    internal static (string Subject, string Predicate, string Object)? Parse(string? cursor)
+    internal static (string Subject, string Predicate, string Object, string ScopeId)? Parse(string? cursor)
     {
         if (string.IsNullOrWhiteSpace(cursor)) return null;
 
@@ -91,7 +91,7 @@ internal static class EvidenceCursor
             // A malformed cursor restarts from the beginning rather than throwing. The caller gets
             // rows it has already seen, which is wasteful and correct; the alternative is a failed
             // read for a value the caller was never supposed to inspect.
-            return parts.Length == 3 ? (parts[0], parts[1], parts[2]) : null;
+            return parts.Length == 4 ? (parts[0], parts[1], parts[2], parts[3]) : null;
         }
         catch (FormatException)
         {
@@ -306,7 +306,7 @@ public sealed class ProjectionService(WorkspaceStore store)
         // Erring towards "there is more" costs one empty round trip and never loses a row.
         var next = rows.Count < limit
             ? null
-            : EvidenceCursor.Format(rows[^1].Subject, rows[^1].Predicate, rows[^1].Object);
+            : EvidenceCursor.Format(rows[^1].Subject, rows[^1].Predicate, rows[^1].Object, rows[^1].ScopeId);
 
         return new EvidencePage(
             [.. rows.Select(r => new EvidenceAssertion(

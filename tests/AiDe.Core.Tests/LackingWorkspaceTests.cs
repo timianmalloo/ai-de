@@ -91,7 +91,9 @@ public sealed class LackingWorkspaceTests : IDisposable
 
         var result = await IndexAsync(root);
 
-        Assert.Contains(result.Disclosures, d => d.StartsWith("python-not-analysed", StringComparison.Ordinal));
+        // Python is EXTRACTED now, so it must not also be disclosed as unread — a closed gap
+        // reported as open is the same defect as an open one hidden.
+        Assert.DoesNotContain(result.Disclosures, d => d.StartsWith("python-not-analysed", StringComparison.Ordinal));
         Assert.Contains(result.Disclosures, d => d.StartsWith("typescript-not-analysed", StringComparison.Ordinal));
     }
 
@@ -207,6 +209,68 @@ public sealed class LackingWorkspaceTests : IDisposable
         public Task<ExtractionResult> ExtractAsync(ExtractionRequest request, CancellationToken cancellationToken) =>
             Task.FromResult(new ExtractionResult([], false,
                 [new ExtractionDiagnostic("AIDE-TEST-REFUSED", request.ScopeId, "refused on purpose")]));
+    }
+
+    // -- No longer lacking: Python is read, and what is NOT read is stated ---------------
+
+    [Fact]
+    public async Task PythonIsExtracted_WithItsGapsDeclared()
+    {
+        // Six repositories disclosed unread Python before anything could read it. The disclosure was
+        // right and it is not a substitute: a graph that says "there is Python here and I cannot see
+        // it" is honest and still blind.
+        var root = Make("python", r =>
+        {
+            Directory.CreateDirectory(Path.Combine(r, "pkg"));
+            File.WriteAllText(Path.Combine(r, "pkg", "service.py"),
+                "import os" + (char)10 +
+                "from .models import Order" + (char)10 +
+                "" + (char)10 +
+                "class Service:" + (char)10 +
+                "    def handle(self):" + (char)10 +
+                "        pass" + (char)10 +
+                "" + (char)10 +
+                "def main():" + (char)10 +
+                "    pass" + (char)10);
+        });
+
+        var result = await IndexAsync(root);
+        Assert.Equal(1, result.ScopesIndexed);
+
+        using var core = WorkspaceCore.Open("py", root, Path.Combine(_dir, "pydata"),
+            WorkspaceExtractors.Default());
+        await core.IndexCSharpAsync("rev-1", CancellationToken.None);
+
+        using var reader = core.Store.BeginRead();
+        var facts = reader.AllCurrentAssertions();
+
+        Assert.Contains(facts, a => a.Predicate == "has_type" && a.Object == "python-class"
+            && a.Subject.EndsWith("Service", StringComparison.Ordinal));
+        Assert.Contains(facts, a => a.Predicate == "has_type" && a.Object == "python-function"
+            && a.Subject.EndsWith("main", StringComparison.Ordinal));
+        Assert.Contains(facts, a => a.Predicate == "imports" && a.Object == "os");
+
+        // The METHOD is not claimed. Only column-zero declarations are seen, and asserting `handle`
+        // as a module-level function would put a symbol in the graph no importer can reach.
+        Assert.DoesNotContain(facts, a => a.Subject.EndsWith(".handle", StringComparison.Ordinal));
+
+        // An import target is INFERRED: the module path as written, not a resolved symbol. Calling
+        // that Verified is exactly the defect DC-022 is about.
+        Assert.All(facts.Where(a => a.Predicate == "imports"),
+            a => Assert.Equal(VerificationStatus.Inferred, a.Status));
+
+        // And every gap is stated rather than left silent.
+        var disclosed = facts.Where(a => a.Predicate == "discloses").Select(a => a.Object).ToList();
+        Assert.Contains(PythonExtractor.Disclosures.ImportsNotResolved, disclosed);
+        Assert.Contains(PythonExtractor.Disclosures.NestedDeclarationsNotAnalysed, disclosed);
+        Assert.Contains(PythonExtractor.Disclosures.DynamicImportsNotAnalysed, disclosed);
+    }
+
+    [Fact]
+    public void TheCompositionRoutesPythonToThePythonExtractor()
+    {
+        var composite = Assert.IsType<CompositeExtractor>(WorkspaceExtractors.Default());
+        Assert.Equal("python", composite.RouteFor("python:pkg").ScopeKind);
     }
 
     // -- Lacking: an environment a child process can carry -------------------------------

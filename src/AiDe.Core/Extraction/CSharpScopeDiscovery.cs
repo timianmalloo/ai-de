@@ -92,7 +92,48 @@ public static class CSharpScopeDiscovery
             scopes.Add(new ScopeDescriptor($"schema:{owner}", directory, "schema"));
         }
 
+        // One scope per directory that directly contains Python, so a package is a scope and a
+        // repository of loose scripts is one scope rather than none. Six repositories disclosed
+        // unread Python before there was anything to read it with.
+        foreach (var directory in PythonDirectories(rootPath).OrderBy(p => p, StringComparer.OrdinalIgnoreCase))
+        {
+            var relative = Path.GetRelativePath(rootPath, directory).Replace(Path.DirectorySeparatorChar, '/');
+            scopes.Add(new ScopeDescriptor($"python:{relative}", directory, "python"));
+        }
+
         return scopes;
+    }
+
+    /// <summary>Directories holding Python directly, excluding vendored and generated trees.</summary>
+    private static IEnumerable<string> PythonDirectories(string root)
+    {
+        var skip = new HashSet<string>(Skip, StringComparer.OrdinalIgnoreCase)
+        {
+            "__pycache__", ".venv", "venv", ".tox", "site-packages",
+        };
+
+        var pending = new Stack<string>();
+        pending.Push(root);
+
+        while (pending.Count > 0)
+        {
+            var current = pending.Pop();
+
+            string[] files;
+            try { files = Directory.GetFiles(current, "*.py"); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            if (files.Length > 0) yield return current;
+
+            IEnumerable<string> children;
+            try { children = Directory.EnumerateDirectories(current); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            foreach (var child in children)
+            {
+                if (!skip.Contains(Path.GetFileName(child))) pending.Push(child);
+            }
+        }
     }
 
     private static IEnumerable<string> MigrationDirectories(string root)
@@ -197,7 +238,8 @@ public sealed class CompositeExtractor(
     IExtractor csharp,
     IExtractor fallback,
     IExtractor? bicep = null,
-    IExtractor? schema = null) : IExtractor
+    IExtractor? schema = null,
+    IExtractor? python = null) : IExtractor
 {
     public string ScopeKind => "composite";
 
@@ -207,6 +249,7 @@ public sealed class CompositeExtractor(
         ["csharp:"] = csharp,
         ["bicep:"] = bicep ?? new BicepExtractor(),
         ["schema:"] = schema ?? new EfSchemaExtractor(),
+        ["python:"] = python ?? new PythonExtractor(),
     };
 
     /// <summary>Which extractor a scope id resolves to. Exposed so routing can be ASSERTED.</summary>

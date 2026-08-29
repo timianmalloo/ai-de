@@ -27,7 +27,9 @@ public static class UnanalysedLanguages
     /// </remarks>
     private static readonly (string Extension, string Language)[] Known =
     [
-        (".py", "Python"),
+        // .py is NOT here: PythonExtractor reads it now, and disclosing a gap that has been closed
+        // is the same defect as hiding one that has not. What Python extraction cannot see is
+        // disclosed by that extractor, on the scope, in its own words.
         (".ts", "TypeScript"),
         (".tsx", "TypeScript"),
         (".js", "JavaScript"),

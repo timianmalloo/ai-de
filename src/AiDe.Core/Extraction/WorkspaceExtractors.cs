@@ -23,7 +23,8 @@ public static class WorkspaceExtractors
         csharp: new CSharpExtractor(),
         fallback: new FixtureExtractor(),
         bicep: new BicepExtractor(),
-        schema: new EfSchemaExtractor());
+        schema: new EfSchemaExtractor(),
+        python: new PythonExtractor());
 
     /// <summary>
     /// The scope-id prefix each extractor answers for, as the router reads them.
@@ -38,5 +39,6 @@ public static class WorkspaceExtractors
             ["csharp:"] = "csharp",
             ["bicep:"] = "bicep",
             ["schema:"] = "schema",
+            ["python:"] = "python",
         };
 }

@@ -400,8 +400,10 @@ public sealed class Phase3SurfacingTests : IDisposable
 
         var disclosures = UnanalysedLanguages.Survey(root);
 
-        Assert.Contains(disclosures, d => d.StartsWith("python-not-analysed", StringComparison.Ordinal));
-        Assert.Contains(disclosures, d => d.Contains("(2 file(s))", StringComparison.Ordinal));
+        // Python moved OFF this list when PythonExtractor started reading it. TypeScript is still
+        // unread and is still named — the survey reports what is genuinely not analysed, and a
+        // language that gained an extractor must leave the list on the same day.
+        Assert.DoesNotContain(disclosures, d => d.StartsWith("python-not-analysed", StringComparison.Ordinal));
         Assert.Contains(disclosures, d => d.StartsWith("typescript-not-analysed", StringComparison.Ordinal));
         Assert.DoesNotContain(disclosures, d => d.StartsWith("javascript", StringComparison.Ordinal));
     }
@@ -567,6 +569,51 @@ public sealed class Phase3SurfacingTests : IDisposable
 
         // Nothing repeated — the failure mode a cursor over a non-unique ordering produces.
         Assert.Equal(paged.Count, paged.Select(key).Distinct(StringComparer.Ordinal).Count());
+    }
+
+    [Fact]
+    public async Task PagingDoesNotLoseARowWhenTwoScopesAssertTheSameTriple()
+    {
+        // MEASURED on a real repository: 2,158 assertions in the store, 2,157 through the paged
+        // read. (subject, predicate, object) is NOT unique — two scopes can assert the same triple —
+        // and a cursor over a non-unique ordering silently loses exactly the rows that tie, when a
+        // page boundary happens to land on one. The scope is part of the ordering and the cursor now.
+        var root = Path.Combine(_dir, "ties");
+        Directory.CreateDirectory(Path.Combine(root, "a"));
+        Directory.CreateDirectory(Path.Combine(root, "b"));
+
+        // Two identical modules in two scopes: the same triples from different scope ids.
+        foreach (var package in new[] { "a", "b" })
+        {
+            File.WriteAllText(Path.Combine(root, package, "same.py"),
+                "import os" + (char)10 + "class Same:" + (char)10 + "    pass" + (char)10);
+        }
+
+        using var core = WorkspaceCore.Open("ties", root, Path.Combine(_dir, "tiedata"),
+            WorkspaceExtractors.Default());
+
+        await core.IndexCSharpAsync("rev-1", CancellationToken.None);
+
+        int inStore;
+        using (var reader = core.Store.BeginRead())
+        {
+            inStore = reader.AllCurrentAssertions().Count;
+        }
+
+        var queries = new LocalWorkspaceQueries(core.Projections);
+        var paged = 0;
+        string? cursor = null;
+
+        // A page size of one, so every boundary — including the tied ones — is a boundary.
+        do
+        {
+            var page = await queries.EvidenceAsync(cursor, 1, CancellationToken.None);
+            paged += page.Assertions.Count;
+            cursor = page.NextCursor;
+        }
+        while (cursor is not null && paged <= inStore + 10);
+
+        Assert.Equal(inStore, paged);
     }
 
     [Fact]
