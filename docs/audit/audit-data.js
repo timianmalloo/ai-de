@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T17:04:36Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-29T17:26:45Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1538,6 +1538,27 @@ window.AUDIT_DATA = {
       "tags": [
         "collaboration",
         "ui-design"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0073",
+      "shortname": "implement-facelift-and-4a",
+      "datetime": "2026-08-29T17:26:45Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Execute autonomously on the design next steps: implement the soft-islands facelift theme and render the Core->Design 4a states.",
+      "summary": "Implemented in WPF (Design-owned): App.xaml radius/elevation tokens + keyed RoundedButton style; MainWindow.xaml.cs DWM dark title bar + Win11 rounded corners (AllowsTransparency stays false); rounded chrome buttons; ContextMapSurface.cs 4a — IsDeclared==false now a first-run empty state (glyph+line+action) and DominantTarget promoted to an accent emphasis chip, ContextBox radius 4->8, IndianRed->DangerBrush token. Build 0/0; App.Tests 115/115 green.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/App.xaml",
+        "src/AiDe.App/Workbench/ContextMapSurface.cs"
+      ],
+      "tags": [
+        "implement",
+        "facelift"
       ],
       "outcome": "success"
     }

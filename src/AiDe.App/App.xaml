@@ -75,6 +75,55 @@
         <SolidColorBrush x:Key="DangerBrush" Color="#E07A6F" />
         <SolidColorBrush x:Key="FocusBrush" Color="#8FC0EA" />
 
+        <!--
+            FACELIFT — soft islands. Radii are TOKENS: a control rounds by referencing these, never a
+            literal, so the craft gate can enforce it and one edit resizes them all. Elevation is
+            reserved for COMPOSITED chrome (the command-palette overlay, dialogs) and is NEVER applied
+            over an HwndHost/WebView2 pane, where WPF effects do not composite (the airspace rule the
+            wpf-styling-expert holds a veto on). Panes soften with radius + border, not shadow.
+        -->
+        <CornerRadius x:Key="RadiusMd">6</CornerRadius>
+        <CornerRadius x:Key="RadiusLg">10</CornerRadius>
+        <CornerRadius x:Key="RadiusIsland">12</CornerRadius>
+        <DropShadowEffect x:Key="ElevationRaised" BlurRadius="16" ShadowDepth="0" Opacity="0.34" Color="#000000" />
+
+        <!--  A rounded chrome button. Keyed, not the default Button style, so AvalonDock's own
+              buttons keep their template. Hover uses the menu-hover ground; focus draws a visible
+              ring (WCAG 2.4.7); disabled dims but stays readable.  -->
+        <Style x:Key="RoundedButton" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+            <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Chrome"
+                                CornerRadius="{StaticResource RadiusMd}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="{StaticResource MenuHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource FocusBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!--  Terminal palette. The ANSI sixteen are a REQUIRED vocabulary: programs address them by
               index and expect red to read as red, so unlike the semantic tokens above these cannot
               be freely rethemed. What is chosen here is the shade — each one pulled toward the

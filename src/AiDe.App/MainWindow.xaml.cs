@@ -1,4 +1,6 @@
+using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 using AiDe.App.ViewModels;
 using AiDe.App.Workbench;
 
@@ -140,4 +142,35 @@ public partial class MainWindow : Window
         Shell.Controller.Execute("workbench.resetLayout");
         Shell.Adapter.Render();
     }
+
+    // FACELIFT — the window's own chrome, drawn by DWM, not by us. AllowsTransparency stays False
+    // (the WPF default) so the system keeps the drop shadow and the Windows 11 rounded corners; the
+    // AllowsTransparency=True path would disable both, which is the single most common modern-WPF
+    // defect (WPF-TRANSPARENCY-TRAP). Here we only opt in explicitly and darken the caption so the
+    // title bar matches the app instead of flashing a light system bar on a dark window.
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+
+        var hwnd = new WindowInteropHelper(this).Handle;
+        if (hwnd == IntPtr.Zero)
+        {
+            return;
+        }
+
+        // A hint, not a guarantee: pre-Windows-11 and unusual composition states ignore it, and that
+        // is the correct outcome — the window is still a normal, usable window, just not rounded.
+        int dark = 1;
+        _ = DwmSetWindowAttribute(hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ref dark, sizeof(int));
+
+        int round = DWMWCP_ROUND;
+        _ = DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE, ref round, sizeof(int));
+    }
+
+    private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
+    private const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
+    private const int DWMWCP_ROUND = 2;
+
+    [DllImport("dwmapi.dll", SetLastError = true)]
+    private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
 }

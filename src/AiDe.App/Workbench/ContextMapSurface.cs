@@ -67,7 +67,7 @@ public sealed class ContextMapSurface : ContentControl
                     Text = "• " + problem,
                     TextWrapping = TextWrapping.Wrap,
                     Margin = new Thickness(0, 2, 0, 0),
-                    Foreground = Brushes.IndianRed,
+                    Foreground = Res("DangerBrush"),
                 });
             }
 
@@ -76,13 +76,15 @@ public sealed class ContextMapSurface : ContentControl
 
         if (!view.IsDeclared)
         {
-            // Said FIRST and said plainly. With no map every count below reads as complete coverage,
-            // which is the sentence a fully-mapped codebase produces — measured on a repository that
-            // simply has no map.
-            _body.Children.Add(Heading("No context map is declared for this workspace"));
-            _body.Children.Add(Muted(
-                "Nothing here says the code is uncovered, because nothing has been claimed about it " +
-                "yet. Add docs/bounded-contexts.yaml to group the domain view."));
+            // A first-run EMPTY STATE, not a heading and a muted paragraph (Core->Design contract
+            // 4a): a glyph, one line, and the first action. With no map every count below would read
+            // as complete coverage, so the surface says plainly that nothing has been claimed yet.
+            _body.Children.Add(EmptyState(
+                glyph: "\u25F2",
+                title: "No context map is declared yet",
+                line: "AiDe found code here but no declared map to check it against. Nothing is marked " +
+                      "uncovered, because nothing has been claimed about it yet.",
+                action: "Add docs/bounded-contexts.yaml to group the domain view."));
             return;
         }
 
@@ -208,12 +210,11 @@ public sealed class ContextMapSurface : ContentControl
         // tool knew and the user had to open the list to find out.
         if (edge.DominantTarget is { } dominant)
         {
-            header.Children.Add(new TextBlock
-            {
-                Text = $"   — {edge.DominantCount} of them reach {ShortName(dominant.Object)}",
-                Opacity = 0.75,
-                VerticalAlignment = VerticalAlignment.Center,
-            });
+            // Promoted OUT of the grey suffix (Core->Design contract 4a): the dominant class is the
+            // difference between "this boundary failed" and "this boundary is carrying the ORM", so it
+            // reads as an emphasis chip, not muted trailing text.
+            header.Children.Add(DominantChip(
+                $"{edge.DominantCount} of {edge.Weight} \u2192 {ShortName(dominant.Object)}"));
         }
 
         var expander = new Expander { Header = header, Content = members, Margin = new Thickness(0, 2, 0, 0) };
@@ -259,7 +260,7 @@ public sealed class ContextMapSurface : ContentControl
             // The same hue the canvas uses for this context, so the two views are one picture.
             BorderBrush = new SolidColorBrush(FromHsl(hue)),
             BorderThickness = new Thickness(2, 2, 2, 2),
-            CornerRadius = new CornerRadius(4),
+            CornerRadius = new CornerRadius(8),
             Padding = new Thickness(10),
             Margin = new Thickness(0, 6, 0, 0),
             Child = panel,
@@ -307,4 +308,82 @@ public sealed class ContextMapSurface : ContentControl
         Opacity = 0.7,
         Margin = new Thickness(0, 8, 0, 0),
     };
+
+    /// <summary>A design-language brush by key, falling back to grey rather than throwing.</summary>
+    private static Brush Res(string key) =>
+        (Application.Current?.TryFindResource(key) as Brush) ?? Brushes.Gray;
+
+    /// <summary>
+    /// The dominant crossing class as an accent emphasis chip (Core-&gt;Design contract 4a), so the
+    /// "57 of 72 are ORM" signal is glanceable instead of hidden in a grey trailing suffix.
+    /// </summary>
+    private static Border DominantChip(string text) => new()
+    {
+        Background = Res("SurfaceRaisedBrush"),
+        BorderBrush = Res("AccentBrush"),
+        BorderThickness = new Thickness(1),
+        CornerRadius = new CornerRadius(999),
+        Padding = new Thickness(8, 0, 8, 1),
+        Margin = new Thickness(10, 0, 0, 0),
+        VerticalAlignment = VerticalAlignment.Center,
+        Child = new TextBlock
+        {
+            Text = text,
+            Foreground = Res("AccentBrush"),
+            FontWeight = FontWeights.SemiBold,
+            FontSize = 11,
+        },
+    };
+
+    /// <summary>
+    /// A first-run empty state — glyph, one line, first action — used where absence is the message
+    /// and a heading-plus-paragraph would read as a mistake rather than a state (DESIGN.md
+    /// state.not-declared).
+    /// </summary>
+    private static StackPanel EmptyState(string glyph, string title, string line, string action)
+    {
+        var panel = new StackPanel
+        {
+            Margin = new Thickness(0, 40, 0, 0),
+            HorizontalAlignment = HorizontalAlignment.Center,
+        };
+
+        panel.Children.Add(new TextBlock
+        {
+            Text = glyph,
+            FontSize = 34,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Foreground = Res("TextMutedBrush"),
+        });
+
+        panel.Children.Add(new TextBlock
+        {
+            Text = title,
+            FontWeight = FontWeights.SemiBold,
+            FontSize = 15,
+            Margin = new Thickness(0, 10, 0, 4),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Foreground = Res("TextBrush"),
+        });
+
+        panel.Children.Add(new TextBlock
+        {
+            Text = line,
+            TextWrapping = TextWrapping.Wrap,
+            MaxWidth = 420,
+            TextAlignment = TextAlignment.Center,
+            Opacity = 0.75,
+            Foreground = Res("TextMutedBrush"),
+        });
+
+        panel.Children.Add(new TextBlock
+        {
+            Text = action,
+            Margin = new Thickness(0, 10, 0, 0),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Foreground = Res("AccentBrush"),
+        });
+
+        return panel;
+    }
 }
