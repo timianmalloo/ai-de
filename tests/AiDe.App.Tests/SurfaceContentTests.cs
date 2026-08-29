@@ -73,6 +73,10 @@ public sealed class SurfaceContentTests
         public Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
             Task.FromResult(new KnowledgeResult(
                 [], new ResultBounds(1, 1, 1024, 0, 0, 0, 0, false, null), "rev-1"));
+
+        public Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
+            Task.FromResult(new EvidencePage([], null, "rev-1"));
+
     }
 
     /// <summary>What a built surface ended up showing.</summary>
@@ -208,5 +212,9 @@ public sealed class SurfaceContentTests
 
         public Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
             throw new InvalidOperationException("the daemon is not reachable");
+
+        public Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
+            throw new InvalidOperationException("the daemon is not reachable");
+
     }
 }

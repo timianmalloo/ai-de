@@ -103,6 +103,11 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
             WorkspaceOperations.DispatchFinalize,
             new DispatchFinalizeRequest(dispatchKey, state, errorCode), cancellationToken);
 
+    public Task<EvidencePage> EvidenceAsync(
+        string? cursor, int maxAssertions, CancellationToken cancellationToken) =>
+        QueryAsync<EvidencePage>(
+            WorkspaceOperations.Evidence, new EvidenceRequest(cursor, maxAssertions), cancellationToken);
+
     public Task<FindResult> FindAsync(string term, int maxResults, CancellationToken cancellationToken) =>
         QueryAsync<FindResult>(
             WorkspaceOperations.Find, new FindRequest(term, maxResults), cancellationToken);

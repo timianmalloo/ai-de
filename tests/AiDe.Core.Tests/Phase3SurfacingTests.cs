@@ -1,3 +1,4 @@
+using AiDe.Core.Workbench;
 using AiDe.Core.Ipc;
 using AiDe.Core.Extraction;
 using AiDe.Core.Facts;
@@ -315,6 +316,45 @@ public sealed class Phase3SurfacingTests : IDisposable
     }
 
     [Fact]
+    public async Task ADepartedScopesEvidenceStopsBeingDrawn_ButItsHistorySurvives()
+    {
+        // Removing a project left its symbols, edges and crossings in every projection for ever:
+        // nothing re-extracts a scope that no longer exists, so nothing ever replaced its snapshot.
+        // The graph kept drawing deleted code.
+        var root = Workspace();
+        var data = Path.Combine(_dir, "data");
+
+        File.WriteAllText(Path.Combine(root, "infra", "second.bicep"),
+            "resource departed 'Microsoft.Web/sites@2023-01-01' = {" + (char)10 + "  name: 'departed'" + (char)10 + "}" + (char)10);
+
+        await IndexAsync(root, data);
+
+        using (var before = WorkspaceCore.Open("fp", root, data, WorkspaceExtractors.Default()))
+        using (var reader = before.Store.BeginRead())
+        {
+            Assert.Contains(reader.AllCurrentAssertions(), a => a.ScopeId == "bicep:second");
+        }
+
+        File.Delete(Path.Combine(root, "infra", "second.bicep"));
+        await IndexAsync(root, data);
+
+        using var core = WorkspaceCore.Open("fp", root, data, WorkspaceExtractors.Default());
+        using var after = core.Store.BeginRead();
+
+        // Retired from the CURRENT view…
+        Assert.DoesNotContain(after.AllCurrentAssertions(), a => a.ScopeId == "bicep:second");
+
+        // …and superseded rather than deleted: the snapshot that retired it is a real, empty,
+        // committed generation, so what the graph once said is still readable.
+        var snapshot = after.LatestCommittedSnapshot("bicep:second");
+        Assert.NotNull(snapshot);
+        Assert.Equal(0, snapshot!.Value.AssertionCount);
+
+        // The surviving scope is untouched.
+        Assert.Contains(after.AllCurrentAssertions(), a => a.ScopeId == "bicep:main");
+    }
+
+    [Fact]
     public async Task ForceReachesTheCoreThroughTheCommandSurface()
     {
         // The escape hatch existed as an API parameter with nothing able to reach it. This is the
@@ -385,6 +425,165 @@ public sealed class Phase3SurfacingTests : IDisposable
         File.WriteAllText(Path.Combine(root, "Program.cs"), "class P { }");
 
         Assert.Empty(UnanalysedLanguages.Survey(root));
+    }
+
+    [Fact]
+    public void EveryCatalogCommandDeclaresItsMenu()
+    {
+        // Placement is a Core decision that used to live in a design-owned file: a conformance test
+        // requires every catalog command to be reachable from a menu, so adding one here forced an
+        // edit there. Declaring it on the command lets the menu builder derive its grouping, and the
+        // seam stops crossing. This is the half that makes the derivation possible — a command with
+        // no menu would silently vanish from a builder that reads this field.
+        var homeless = WorkbenchCommandCatalog.All
+            .Where(c => string.IsNullOrWhiteSpace(c.Menu))
+            .Select(c => c.Id)
+            .ToList();
+
+        Assert.True(homeless.Count == 0,
+            "catalog commands with no declared menu: " + string.Join(", ", homeless));
+    }
+
+    [Fact]
+    public void DeclaredMenusMatchWhatTheBuilderRenders()
+    {
+        // The two sources agree today, and this is what fails the moment they stop — which is the
+        // window in which the builder can be switched over safely by the design session.
+        var declared = WorkbenchCommandCatalog.All
+            .GroupBy(c => c.Menu, StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal);
+
+        Assert.Equal(4, declared["_File"]);
+        Assert.Equal(2, declared["_Edit"]);
+        Assert.Equal(4, declared["_View"]);
+        Assert.Equal(6, declared["_Window"]);
+        Assert.Equal(2, declared["_Terminal"]);
+        Assert.Equal(1, declared["_Help"]);
+    }
+
+    [Fact]
+    public async Task ASourceFileThatDoesNotParseIsDisclosed()
+    {
+        // The state a developer is in most often, and it was invisible. Roslyn does not throw on
+        // broken source — it returns a tree with error nodes — so the extraction SUCCEEDS and simply
+        // finds less, which is indistinguishable from a smaller file. Measured on a copy of a real
+        // repository with one deliberate syntax error: 10 of 10 scopes, 0 failed, and nothing
+        // anywhere saying a file had not been read (DC-025, fourth instance).
+        var root = Path.Combine(_dir, "broken");
+        Directory.CreateDirectory(root);
+
+        File.WriteAllText(Path.Combine(root, "Broken.csproj"),
+            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework>" +
+            "</PropertyGroup></Project>");
+
+        File.WriteAllText(Path.Combine(root, "Good.cs"), "namespace N { public class Good { } }");
+        File.WriteAllText(Path.Combine(root, "Bad.cs"), "namespace N { public class Bad { void M( { } }");
+
+        using var core = WorkspaceCore.Open("broken", root, Path.Combine(_dir, "data"),
+            WorkspaceExtractors.Default());
+
+        var result = await core.IndexCSharpAsync("rev-1", CancellationToken.None);
+
+        Assert.Contains(result.Disclosures, d => d.StartsWith("source-did-not-parse", StringComparison.Ordinal));
+        Assert.Contains(result.Disclosures, d => d.Contains("Bad.cs", StringComparison.Ordinal));
+
+        // The scope is NOT failed: half a file's evidence is better than none, as long as the gap is
+        // stated. A build error must not cost the developer every other type in the project.
+        Assert.Empty(result.Failed);
+        Assert.Equal(1, result.ScopesIndexed);
+    }
+
+    [Fact]
+    public async Task AProjectThatParsesCleanlyDisclosesNoParseFailure()
+    {
+        // The other half. A disclosure that fires on every project is noise, and this one would be
+        // read as "your code is broken" by everyone whose code is fine.
+        var root = Path.Combine(_dir, "clean");
+        Directory.CreateDirectory(root);
+
+        File.WriteAllText(Path.Combine(root, "Clean.csproj"),
+            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>net10.0</TargetFramework>" +
+            "</PropertyGroup></Project>");
+
+        File.WriteAllText(Path.Combine(root, "Good.cs"), "namespace N { public class Good { } }");
+
+        using var core = WorkspaceCore.Open("clean", root, Path.Combine(_dir, "data2"),
+            WorkspaceExtractors.Default());
+
+        var result = await core.IndexCSharpAsync("rev-1", CancellationToken.None);
+
+        Assert.DoesNotContain(result.Disclosures,
+            d => d.StartsWith("source-did-not-parse", StringComparison.Ordinal));
+    }
+
+    // ── Paging that cannot skip or repeat a row ───────────────────────────────────────────
+
+    [Fact]
+    public async Task PagingReturnsEveryAssertionExactlyOnce()
+    {
+        // The panes want every current assertion and were rebuilding that set node by node through
+        // Describe, bounded at 50 neighbours, which lost two join edges of 124 on a real repository.
+        // Paging is the fix, and paging is where records quietly go missing — so this asserts the
+        // union of the pages equals the whole set, with nothing repeated.
+        var root = Workspace();
+        var data = Path.Combine(_dir, "data");
+
+        using var core = WorkspaceCore.Open("page", root, data, WorkspaceExtractors.Default());
+        await core.IndexCSharpAsync("rev-1", CancellationToken.None);
+
+        var queries = new LocalWorkspaceQueries(core.Projections);
+
+        List<EvidenceAssertion> everything;
+        using (var reader = core.Store.BeginRead())
+        {
+            everything = [.. reader.AllCurrentAssertions().Select(a => new EvidenceAssertion(
+                a.ScopeId, a.ArtifactRevision, a.Subject, a.Predicate, a.Object,
+                a.Origin, a.Status, a.Provenance))];
+        }
+
+        Assert.NotEmpty(everything);
+
+        // A page size of ONE, so every boundary in the set is exercised. A comfortable page size
+        // tests that the query runs, not that the cursor is right.
+        var paged = new List<EvidenceAssertion>();
+        string? cursor = null;
+        var pages = 0;
+
+        do
+        {
+            var page = await queries.EvidenceAsync(cursor, 1, CancellationToken.None);
+            paged.AddRange(page.Assertions);
+            cursor = page.NextCursor;
+            pages++;
+        }
+        while (cursor is not null && pages < 500);
+
+        Assert.Equal(everything.Count, paged.Count);
+
+        var key = (EvidenceAssertion a) => $"{a.Subject}|{a.Predicate}|{a.Object}";
+        Assert.Equal(
+            everything.Select(key).OrderBy(k => k, StringComparer.Ordinal),
+            paged.Select(key).OrderBy(k => k, StringComparer.Ordinal));
+
+        // Nothing repeated — the failure mode a cursor over a non-unique ordering produces.
+        Assert.Equal(paged.Count, paged.Select(key).Distinct(StringComparer.Ordinal).Count());
+    }
+
+    [Fact]
+    public async Task AMalformedCursorRestartsRatherThanFailing()
+    {
+        // The cursor is opaque and a caller was never meant to construct one. A read that throws on
+        // a value nobody was supposed to inspect turns a cosmetic problem into a dead pane.
+        var root = Workspace();
+        var data = Path.Combine(_dir, "data");
+
+        using var core = WorkspaceCore.Open("page", root, data, WorkspaceExtractors.Default());
+        await core.IndexCSharpAsync("rev-1", CancellationToken.None);
+
+        var queries = new LocalWorkspaceQueries(core.Projections);
+        var page = await queries.EvidenceAsync("not-a-cursor", 50, CancellationToken.None);
+
+        Assert.NotEmpty(page.Assertions);
     }
 
     // ── A bounded read says what it did not see ───────────────────────────────────────────

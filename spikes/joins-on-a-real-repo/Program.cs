@@ -87,33 +87,28 @@ foreach (var group in assertions.GroupBy(a => a.Predicate).OrderByDescending(g =
 // the whole workspace. A spike that only reads the store cannot see that class of defect at all.
 // ---------------------------------------------------------------------------------------------
 var queries = new LocalWorkspaceQueries(core.Projections);
-var paneFound = await queries.FindAsync(string.Empty, ProjectionService.MaxSearchResultsCeiling,
-    CancellationToken.None);
 
 var paneAssertions = new List<EvidenceAssertion>();
-var atLimit = 0;
+string? cursor = null;
+var pages = 0;
 
-foreach (var match in paneFound.Matches.Take(4000))
+do
 {
-    var described = await queries.DescribeAsync(
-        match.NodeId, ProjectionService.MaxNeighborsCeiling, CancellationToken.None);
+    var page = await queries.EvidenceAsync(cursor, ProjectionService.MaxEvidencePageCeiling,
+        CancellationToken.None);
 
-    if (described.Neighbors.Count >= ProjectionService.MaxNeighborsCeiling) atLimit++;
-
-    paneAssertions.AddRange(described.Neighbors.Select(e => new EvidenceAssertion(
-        "view", e.ArtifactRevision, e.Subject, e.Predicate, e.Object, e.Origin, e.Status, e.Provenance)));
+    paneAssertions.AddRange(page.Assertions);
+    cursor = page.NextCursor;
+    pages++;
 }
+while (cursor is not null && pages < 1000);
 
-var paneRead = new EvidenceRead(
-    paneAssertions,
-    paneFound.Matches.Count + Math.Max(0, paneFound.Bounds.OmittedNodes),
-    Math.Min(paneFound.Matches.Count, 4000),
-    ProjectionService.MaxNeighborsCeiling,
-    atLimit);
+var paneRead = new EvidenceRead(paneAssertions, paneAssertions.Count, paneAssertions.Count,
+    ProjectionService.MaxEvidencePageCeiling, 0);
 
 Console.WriteLine();
-Console.WriteLine($"pane read  : {paneFound.Matches.Count:N0} node(s) searched, " +
-                  $"{paneAssertions.Count:N0} assertion(s) via the query path");
+Console.WriteLine($"pane read  : {paneAssertions.Count:N0} assertion(s) over {pages} page(s) " +
+                  "via the query path");
 Console.WriteLine($"store read : {assertions.Count:N0} assertion(s) directly");
 Console.WriteLine($"shortfall  : {paneRead.Shortfall ?? "(none — the panes see the whole workspace)"}");
 

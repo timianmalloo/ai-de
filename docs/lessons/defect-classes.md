@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 10 · partially-controlled 14 · uncontrolled 0
+**Status counts:** controlled 10 · partially-controlled 16 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -730,4 +730,77 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 - **Residual risk:** an hour is a guess dressed as a constant. A session idle longer than that is
   still unprotected, and a tree on a filesystem with coarse timestamps reports ages that are only
   roughly right. The registration path remains the strong signal; this is the floor beneath it.
+- **Status:** `partially-controlled`
+
+### DC-025 — Absence rendered as success
+- **Signature:** a projection computes over a set that is **empty because nothing was collected**,
+  and the arithmetic is correct: zero uncovered symbols, zero omitted nodes, zero unread files. The
+  surface then renders that zero with the vocabulary of completeness — *"every declared symbol
+  belongs to a context"*, *"the panes see the whole workspace"*, an empty disclosure list. **Nothing
+  here** and **nothing I could look at** produce identical output.
+- **Why it survives:** every number is right, so no test asserting a number can fail. It cannot be
+  fixed by counting more carefully, which is the first thing anyone tries. And it only appears on
+  input the developer does not have: a workspace with no context map, a repository in a language the
+  extractors do not read, a store larger than the read caps. Fixtures are built by the same person
+  who built the feature, so fixtures always have the thing.
+- **Instances:** all three found by pointing the panes at real repositories, none by a test.
+  - 2026-08-29 — a workspace with no `bounded-contexts.yaml` reported `0 uncovered` and *"Every
+    declared symbol belongs to a context"*, the sentence a fully-mapped codebase produces. Fixed with
+    `ContextMapView.IsDeclared` — a separate field, because no cleverer count could carry it.
+  - 2026-08-29 — `Find` borrowed the neighbour ceiling, so the panes read 50 nodes of 2,164 and
+    reported crossings, joins and coverage from three percent of the workspace as the answer. Fixed
+    with a search ceiling of its own, and `EvidenceRead.Shortfall` to say when a cap bit.
+  - 2026-08-29 — a repository of 63 Python and 40 TypeScript files produced zero scopes, zero
+    assertions and an **empty disclosure list**: indistinguishable from an empty directory, with the
+    mechanism whose whole job is to report what went unread reporting nothing. Fixed with
+    `UnanalysedLanguages.Survey`.
+  - 2026-08-29 — a copy of a real repository with **one deliberate syntax error** indexed as
+    `10 of 10 scopes, 0 failed`, produced fewer assertions, and disclosed nothing. Roslyn does not
+    throw on broken source: it returns a tree with error nodes, so extraction SUCCEEDS and simply
+    finds less — indistinguishable from a smaller file. This is the state a developer is in most
+    often. Fixed with `ExtractionDisclosures.SourceDidNotParse`, which names the files and their
+    count while still contributing what did parse.
+- **Control:** each fix carries the same shape — **a field that distinguishes "none" from "not
+  looked at"**, and a test for BOTH directions, because a disclosure that fires on every workspace is
+  noise and one that never fires is decoration. `spikes/joins-on-a-real-repo` runs the panes over a
+  named repository and prints what they see, which is how all three were found.
+- **The generalisation to apply elsewhere:** whenever a surface is about to render a zero, ask
+  **"could this zero mean I did not look?"** — and if it could, the answer belongs in the data as its
+  own field rather than in the phrasing. The tell is a projection whose empty case shares a code path
+  with its complete case. Related to DC-009 (a measurement believed because its value looks
+  reasonable); this is its mirror — a measurement believed because its value looks *clean*.
+- **Residual risk:** no gate. Four instances were found by running the product over five real
+  repositories, and nothing fails when a fifth kind of absence is added. A fixture corpus of
+  deliberately-lacking workspaces — no map, no supported language, source that will not parse,
+  nothing at all — would turn this into a control rather than a habit. Note also that the fourth
+  instance was nearly reported from an experiment that had not run: the script meant to corrupt a
+  file silently did nothing, and the assertion-count difference had another cause entirely. The
+  finding only became real once the broken file was verified to exist.
+- **Status:** `partially-controlled`
+
+### DC-026 — A merge resolution that de-duplicates by the key in dispute
+- **Signature:** two branches append to one file, the merge conflicts, and the resolution unions the
+  two sides **keyed by an identifier**. Where both sides used the same identifier for different
+  content — which is the whole reason the conflict is interesting — the union keeps whichever side it
+  read first and **silently discards the other**. The result parses, validates, and is short by one
+  entry that nobody will look for.
+- **Why it survives:** it looks like the careful option. Keying by id is what de-duplication means,
+  the gate afterwards passes (uniqueness is satisfied precisely BECAUSE one was dropped), and the
+  loss is invisible unless someone remembers writing the entry that is gone. The resolution is also
+  written fresh each time, under time pressure, at the end of a piece of work.
+- **Instances:** 2026-08-29 — resolving an `audit-log.jsonl` conflict between the core and design
+  sessions, a `setdefault`-keyed union dropped a design-session entry. It was noticed only because
+  its author went looking, and re-emitted by hand as `al-0090`. `verify-audit-log.py` was green
+  throughout: it checks that no id is claimed twice, and one had just been removed.
+- **Control:** `tools/merge-append-only-log.py`. It unions by **content**, so nothing can be dropped;
+  an id claimed by two different entries is re-issued from the shared counter rather than resolved by
+  discarding; upstream keeps the contested id because it is already published; and it prints the
+  count in, the count out, and every re-issue, because a merge that resolves silently is
+  indistinguishable from one that lost something.
+- **The generalisation to apply elsewhere:** **never de-duplicate on the field that is in conflict.**
+  If two records disagree about an id, the id is the least trustworthy thing about them. Union on
+  content, then repair identity. And a "0 dropped" line in the output is worth more than a paragraph
+  of care, because it is checkable.
+- **Residual risk:** the tool has to be reached for. Nothing forces its use during a rebase, and the
+  next resolution under time pressure is exactly as free to hand-roll a script as this one was.
 - **Status:** `partially-controlled`
