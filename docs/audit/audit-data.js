@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-29T15:40:01Z",
+  "generated": "2026-08-29T16:00:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1356,6 +1356,29 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0065",
+      "shortname": "collectknowledge-graph-experience-and-rendering",
+      "datetime": "2026-08-29T16:00:15Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Rich end-to-end experience over the unified code graph + knowledge graph: navigate and introspect any node (walk from a C# file node to read code, then to related metadata/knowledge that informed it). We use Obsidian and Graphify for graph enablement with the LLM; compose them for a great in-editor experience. Accumulate knowledge on: knowledge graphs/GraphRAG/Obsidian/Graphify; connected 2D/3D graph and knowledge-base visualization; building KG visualizations/explorers in WPF (best practices, repos, libraries, controls); design/review surfaces for code-editor viewing leveraging VS Code/Eclipse/JetBrains (public-domain/permissive only); and markdown/HTML visualization/rendering controls for the editor (permissive only).",
+      "summary": "Two new sourced KBs: graph-experience-and-visualization (GraphRAG + LazyGraphRAG/LightRAG, 2D/3D force-graph libs Sigma/Cytoscape/3d-force-graph/Reagraph MIT-Apache, node-based UIs React Flow, composing Obsidian+Graphify, WebView2-hosted explorer over native GraphX, node-introspection router as the load-bearing new piece) and editor-and-content-rendering-surfaces (Monaco/AvalonEdit/RoslynPad + Markdig/Markdig.Wpf all MIT/BSD, native-vs-web/airspace decision matrix, only Monaco cleanly reusable from VS Code). Flagged code-knowledge-graphs #8 (GraphRAG 26-85x) for review given LazyGraphRAG ~700x cheaper.",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/knowledge/graph-experience-and-visualization/index.md",
+        "docs/knowledge/editor-and-content-rendering-surfaces/index.md"
+      ],
+      "tags": [
+        "knowledge-graph",
+        "graphrag",
+        "visualization",
+        "wpf"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -2762,6 +2785,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "68598f3479f1ce2028f54b9007d7aec40d085847",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0057",
+      "datetime": "2026-08-29T16:00:16Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Established unified graph-experience and content-rendering knowledge for the AiDe.App editor",
+      "prompt": "Rich end-to-end experience over the unified code graph + knowledge graph: navigate and introspect any node (walk from a C# file node to read code, then to related metadata/knowledge that informed it). We use Obsidian and Graphify for graph enablement with the LLM; compose them for a great in-editor experience. Accumulate knowledge on: knowledge graphs/GraphRAG/Obsidian/Graphify; connected 2D/3D graph and knowledge-base visualization; building KG visualizations/explorers in WPF (best practices, repos, libraries, controls); design/review surfaces for code-editor viewing leveraging VS Code/Eclipse/JetBrains (public-domain/permissive only); and markdown/HTML visualization/rendering controls for the editor (permissive only).",
+      "summary": "Design should: build a node-introspection router that fuses the Graphify code graph and the docs knowledge graph and routes each node to its renderer; host the graph explorer as a web force-graph (Sigma/3d-force-graph) in the shared WebView2 pane, not native GraphX; use hybrid GraphRAG (bounded neighbourhoods) and evaluate LazyGraphRAG/LightRAG on the code graph; render content native (Markdig.Wpf, AvalonEdit/RoslynPad) for plain markdown/C# and web (Monaco/HTML) for breadth/interactivity; carry edge provenance/confidence everywhere.",
+      "rationale": "The core user scenario is walking from a C# node to the knowledge that informed it; these are the sourced, permissive-license means (all MIT/BSD/Apache) and the composition of Obsidian+Graphify, with GraphRAG cost reconciled.",
+      "artifacts": [
+        "docs/knowledge/graph-experience-and-visualization/index.md",
+        "docs/knowledge/editor-and-content-rendering-surfaces/index.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "f335c4f6ef9dd5544c99ba7565982f58bd7ed2bf",
+        "after": "f335c4f6ef9dd5544c99ba7565982f58bd7ed2bf",
         "branch": "main",
         "pushed": true,
         "commits": []

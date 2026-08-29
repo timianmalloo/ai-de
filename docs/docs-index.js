@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-29T15:40:01Z",
+  "generated": "2026-08-29T15:59:38Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1015,6 +1015,46 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "7e30522e21a7914ce2dee4a426e655482aa5b29adc9b1fbb80514a5e3d051c56"
+    },
+    {
+      "id": "note-20260829-graph-experience-knowledge-scope",
+      "path": "docs/notes/note-20260829-graph-experience-knowledge-scope.md",
+      "title": "Graph-experience request split into two new bases; GraphRAG cost finding flagged for update",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "The /collectknowledge run for the unified code+knowledge graph experience produced two new bases (graph-experience-and-visualization, editor-and-content-rendering-surfaces); GraphRAG/Obsidian/ Graphify overlap with existing code-knowledge-graphs and pack standards was reconciled, and finding #8 (GraphRAG 26-85x cost) was flagged for update by LazyGraphRAG.",
+      "tags": [
+        "decision-note",
+        "collectknowledge",
+        "scope",
+        "graph",
+        "graphrag",
+        "rendering"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-experience-and-visualization",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-code-knowledge-graphs",
+          "rel": "relates-to"
+        },
+        {
+          "to": "knowledge-hub",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "892e2274dcebfc123ff9f21bb8459ca475fb2e99f6ca2e6607b8e7b5cd5abf3f"
     },
     {
       "id": "note-20260829-wpf-styling-knowledge-scope",
@@ -2297,7 +2337,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-21",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "kb-graph-experience-and-visualization",
+          "on": "2026-08-29",
+          "reason": "LazyGraphRAG (~700x cheaper global queries) and LightRAG materially update finding #8 (GraphRAG = 26-85x cost); revisit the cost conclusion"
+        }
+      ],
       "summary": "Evidence base for storing and querying a code knowledge graph. Headline: Kuzu — the store the seed architecture selected — was archived in October 2025, and no embedded, actively maintained, permissively licensed Cypher store with a first-class .NET API exists to replace it.",
       "tags": [
         "knowledge-graph",
@@ -2320,7 +2366,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bc051fece64a5cd8ecb1de710cd67ce2b51a9a3e3dae9bf1727596103d5f9ed2"
+      "sourceSha256": "963274b7b88aa76c07383e53a7ca386289ac37d7009d6098c8f299b814f336f4"
     },
     {
       "id": "kb-codegraph-comparables",
@@ -2484,6 +2530,193 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "b4c64638fb83e9b5c66cc1bd944b180f939926bcf1f12a7ce6e7c22b233e7d9e"
+    },
+    {
+      "id": "kb-content-rendering-comparables",
+      "path": "docs/knowledge/editor-and-content-rendering-surfaces/comparables.md",
+      "title": "Editor & Content Rendering Surfaces — comparables & libraries",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Named code-viewing and markdown/HTML-rendering libraries for WPF, with licence, role and fit for the node-introspection panes.",
+      "tags": [
+        "monaco",
+        "avalonedit",
+        "roslynpad",
+        "markdig",
+        "libraries",
+        "licences"
+      ],
+      "links": [
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c85926fe9aba23bea65c6c559361adfebce1f43b8c052d9c2cd1cbf04b6363c8"
+    },
+    {
+      "id": "kb-content-rendering-data",
+      "path": "docs/knowledge/editor-and-content-rendering-surfaces/data-and-constants.md",
+      "title": "Editor & Content Rendering Surfaces — data, constants & decision matrix",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The licence facts and the per-node-type renderer decision matrix for the introspection panes.",
+      "tags": [
+        "decision-matrix",
+        "licences",
+        "monaco",
+        "avalonedit",
+        "markdig"
+      ],
+      "links": [
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ac53465338c492158679f5a1e56df9b448a5cd0f1419ea5778a354f8da915f70"
+    },
+    {
+      "id": "kb-content-rendering-glossary",
+      "path": "docs/knowledge/editor-and-content-rendering-surfaces/glossary.md",
+      "title": "Editor & Content Rendering Surfaces — glossary",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Precise definitions for the code-viewing and content-rendering vocabulary so the panes and their docs agree.",
+      "tags": [
+        "glossary",
+        "monaco",
+        "avalonedit",
+        "markdig",
+        "webview2"
+      ],
+      "links": [
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d7ce0dcdf8abb3e26b7606c2760f4793ef9312bc6dc388c0d2e3445ba21eb8c9"
+    },
+    {
+      "id": "kb-content-rendering-open-questions",
+      "path": "docs/knowledge/editor-and-content-rendering-surfaces/open-questions.md",
+      "title": "Editor & Content Rendering Surfaces — open questions & failure modes",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "What the rendering-surface research could not settle, the domain's failure modes, and the disconfirming views sought against each renderer choice.",
+      "tags": [
+        "open-questions",
+        "failure-modes",
+        "disconfirming",
+        "monaco",
+        "avalonedit"
+      ],
+      "links": [
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "246aeca1997e3b36fbf01a89b4e3c7a59cd76e8ec9119c9006aeb96d6e5b51da"
+    },
+    {
+      "id": "kb-content-rendering-references",
+      "path": "docs/knowledge/editor-and-content-rendering-surfaces/references.md",
+      "title": "Editor & Content Rendering Surfaces — references",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The authoritative repos, docs and licence facts behind the code-viewing and markdown/HTML rendering options — the ones to quote rather than recall.",
+      "tags": [
+        "monaco",
+        "avalonedit",
+        "roslynpad",
+        "markdig",
+        "references"
+      ],
+      "links": [
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d8dfa216c6dcbba7ec8301934642a036b2df79223bc09fb8bba8ace6df5fad69"
+    },
+    {
+      "id": "kb-content-rendering-sota",
+      "path": "docs/knowledge/editor-and-content-rendering-surfaces/state-of-the-art.md",
+      "title": "Editor & Content Rendering Surfaces — state of the art",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Current best practice for viewing code and rendering markdown/HTML in a WPF desktop app — the native (AvalonEdit/RoslynPad/Markdig.Wpf) vs web (Monaco/WebView2) options and when each wins.",
+      "tags": [
+        "monaco",
+        "avalonedit",
+        "roslynpad",
+        "markdig",
+        "webview2"
+      ],
+      "links": [
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "dd5626d2f11aa7ded2e39a5c669845784b18672fdad20f77e1a2ae33ca24992f"
+    },
+    {
+      "id": "kb-content-rendering-sources",
+      "path": "docs/knowledge/editor-and-content-rendering-surfaces/sources.md",
+      "title": "Editor & Content Rendering Surfaces — sources",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The full access-dated source list behind the editor-and-content-rendering-surfaces base, keyed [ED1]..[ED8] as cited throughout the topic.",
+      "tags": [
+        "sources",
+        "citations"
+      ],
+      "links": [
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3bf7cf79a0aff9b926ca04669baba36609b9c7ae7d558e1866405e3c801ad2bf"
     },
     {
       "id": "kb-coord-comparables",
@@ -3217,6 +3450,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "1962d80f744c31fcb92896eeff72b9b40afc5ee7717c4a4d5a3fecb89266e883"
     },
     {
+      "id": "kb-editor-and-content-rendering-surfaces",
+      "path": "docs/knowledge/editor-and-content-rendering-surfaces/index.md",
+      "title": "Editor & Content Rendering Surfaces — domain knowledge",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Evidence base for the AI-DE content-rendering panes: viewing/reviewing code (Monaco via WebView2, AvalonEdit, RoslynPad — all MIT) and rendering markdown/HTML (Markdig + Markdig.Wpf, or WebView2), with the permissive-licence facts and the native-vs-web trade-off for each surface.",
+      "tags": [
+        "monaco",
+        "avalonedit",
+        "roslynpad",
+        "markdig",
+        "webview2",
+        "code-viewing",
+        "markdown",
+        "html",
+        "wpf"
+      ],
+      "links": [
+        {
+          "to": "knowledge-hub",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-ai-native-ide-shell",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-graph-experience-and-visualization",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-wpf-modern-ui-styling",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2cfbae8301d899891cdc49373446df9aeb3d323bb0c76d3b276467a62cf8190c"
+    },
+    {
       "id": "kb-extraction-comparables",
       "path": "docs/knowledge/code-and-infra-extraction/comparables.md",
       "title": "Code & Infrastructure Extraction — comparable tools",
@@ -3376,6 +3652,233 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "60b057ac873a207d260e689da3b421f27295567dd54e2382fd20a2852b809819"
+    },
+    {
+      "id": "kb-graph-experience-and-visualization",
+      "path": "docs/knowledge/graph-experience-and-visualization/index.md",
+      "title": "Unified Graph Experience & Visualization — domain knowledge",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Evidence base for the AI-DE end-to-end graph experience — a unified code-graph + knowledge-graph a user navigates and introspects node by node (walk from a C# file to the knowledge that informed it). Covers GraphRAG and its cheaper variants, composing Obsidian + Graphify, 2D/3D graph visualization libraries, node-based UIs, and how to host a graph explorer in a WPF/WebView2 shell.",
+      "tags": [
+        "knowledge-graph",
+        "graphrag",
+        "obsidian",
+        "graphify",
+        "graph-visualization",
+        "3d",
+        "force-graph",
+        "node-introspection"
+      ],
+      "links": [
+        {
+          "to": "knowledge-hub",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-code-knowledge-graphs",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-diagram-generation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-ai-native-ide-shell",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "70638c2fbc0d66de962b867bd2523f54626eb6e0e466864fe08b02f1326a34d4"
+    },
+    {
+      "id": "kb-graph-experience-comparables",
+      "path": "docs/knowledge/graph-experience-and-visualization/comparables.md",
+      "title": "Unified Graph Experience — comparables & libraries",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Named graph-visualization libraries, node-based UI frameworks, Obsidian graph plugins, and desktop knowledge-graph apps — with licence, role and fit for an embedded WPF/WebView2 explorer.",
+      "tags": [
+        "graph-visualization",
+        "libraries",
+        "licences",
+        "obsidian-plugins",
+        "node-editors"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-experience-and-visualization",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a79e7129068d782f36fa2f61cfeb77716ecc110c2148442315844d5aae539248"
+    },
+    {
+      "id": "kb-graph-experience-data",
+      "path": "docs/knowledge/graph-experience-and-visualization/data-and-constants.md",
+      "title": "Unified Graph Experience — data, constants & thresholds",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The cost figures, scale thresholds, licences and provenance mappings to quote for the graph experience — GraphRAG costs, renderer scale limits, and the code↔knowledge edge model.",
+      "tags": [
+        "graphrag",
+        "constants",
+        "thresholds",
+        "licences",
+        "graph-visualization"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-experience-and-visualization",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cd881438c822a7f2869e646e05d45c05d7210e7f9e5a99b6ddd57ec957554083"
+    },
+    {
+      "id": "kb-graph-experience-glossary",
+      "path": "docs/knowledge/graph-experience-and-visualization/glossary.md",
+      "title": "Unified Graph Experience — glossary",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Precise definitions for the graph-experience vocabulary — GraphRAG, community detection, force- directed layout, node introspection, the code↔docs join — so the code and its docs agree.",
+      "tags": [
+        "glossary",
+        "graphrag",
+        "graph-visualization",
+        "obsidian",
+        "graphify"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-experience-and-visualization",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1586d965392fc2e884f191c55fcbeb7b6d771a20d9616c8b5aefc0a768dae28e"
+    },
+    {
+      "id": "kb-graph-experience-open-questions",
+      "path": "docs/knowledge/graph-experience-and-visualization/open-questions.md",
+      "title": "Unified Graph Experience — open questions & failure modes",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "What the graph-experience research could not settle, the domain's silent failure modes, and the disconfirming views deliberately sought against building a custom in-editor graph explorer.",
+      "tags": [
+        "open-questions",
+        "failure-modes",
+        "graphrag",
+        "graph-visualization",
+        "disconfirming"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-experience-and-visualization",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9296a203b2a814ee6d26951fe5a2932cc473770914ac7f3bda6d3b11fb1e3ef0"
+    },
+    {
+      "id": "kb-graph-experience-references",
+      "path": "docs/knowledge/graph-experience-and-visualization/references.md",
+      "title": "Unified Graph Experience — references",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The authoritative sources behind GraphRAG, the graph-viz libraries, and the Obsidian/Graphify composition — the ones to quote rather than recall.",
+      "tags": [
+        "graphrag",
+        "references",
+        "graph-visualization",
+        "standards"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-experience-and-visualization",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f6371f685e7853f90580ea11b98df574c17d39e19e0ef31adddc6e6fd25f4b4b"
+    },
+    {
+      "id": "kb-graph-experience-sota",
+      "path": "docs/knowledge/graph-experience-and-visualization/state-of-the-art.md",
+      "title": "Unified Graph Experience — state of the art",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Current best practice for GraphRAG retrieval, 2D/3D graph visualization, and composing Obsidian + Graphify into a navigable code+knowledge graph experience.",
+      "tags": [
+        "graphrag",
+        "graph-visualization",
+        "3d",
+        "obsidian",
+        "force-graph"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-experience-and-visualization",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3f364082dd16155eef255addfc36d97d51a0a800f3c0c25ea6e439cbd79095b7"
+    },
+    {
+      "id": "kb-graph-experience-sources",
+      "path": "docs/knowledge/graph-experience-and-visualization/sources.md",
+      "title": "Unified Graph Experience — sources",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The full access-dated source list behind the graph-experience-and-visualization base, keyed [GX1]..[GX22] as cited throughout the topic.",
+      "tags": [
+        "sources",
+        "citations"
+      ],
+      "links": [
+        {
+          "to": "kb-graph-experience-and-visualization",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "15882694b21d15a8b7c5abcad9848e31ce1c2a34fddc66f32d4f4c5ca2c1b02f"
     },
     {
       "id": "kb-mcp-agent-integration",
@@ -4437,7 +4940,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7612ff0e969c449e5884f429d4de8349ad6fdcf6f1336231a20b5d35c34ccf32"
+      "sourceSha256": "4ca22685db704bea072312d2a683d8e771a5c5ce2757822e8527e25b9087ab78"
     },
     {
       "id": "privacy-review-ai-native-ide",
@@ -4630,5 +5133,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "f84c734fd8b1052b30255ebe85bd31b1dd7e59590f087139fcae9551ca3604da"
+  "graphSha256": "238f8930994cc5c3f1a1e1ba8db68b89a6e69424d229e684d068ed85537300e2"
 };

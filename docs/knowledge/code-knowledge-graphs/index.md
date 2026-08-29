@@ -10,7 +10,8 @@ links:
   - { to: knowledge-hub, rel: refines }
   - { to: seed-ai-native-ide-sketch, rel: relates-to }
 review-by: 2026-11-21
-review-suggested: []
+review-suggested:
+  - { by: kb-graph-experience-and-visualization, on: 2026-08-29, reason: "LazyGraphRAG (~700x cheaper global queries) and LightRAG materially update finding #8 (GraphRAG = 26-85x cost); revisit the cost conclusion" }
 summary: >-
   Evidence base for storing and querying a code knowledge graph. Headline: Kuzu — the store the
   seed architecture selected — was archived in October 2025, and no embedded, actively

@@ -76,15 +76,23 @@ one.** → [`uml-mde-and-4gl/`](uml-mde-and-4gl/index.md)
 
 ## The knowledge bases
 
-The ten below establish the AI-DE thesis and substrate. Two more (2026-08-29) establish the **WPF client's
-visual layer**, requested to make the shell modern and soft rather than boxy:
+The ten below establish the AI-DE thesis and substrate. Four more (2026-08-29) establish the **WPF client's
+visual & interaction layer** — the modern-soft look, the operational panes, the unified graph experience, and
+the content-rendering surfaces:
 
 | Topic | What it establishes | The finding to read first |
 |---|---|---|
 | [**Modern & Soft WPF Styling**](wpf-modern-ui-styling/index.md) | DWM rounded corners/Mica, WindowChrome, the .NET Fluent theme, MIT control libraries, soft-shadow perf, IDE UX exemplars | The **built-in .NET 9/10 Fluent theme** makes the modern look library-optional; **effects don't composite over hosted panes** (airspace) |
 | [**Operational & Test Dashboards**](operational-and-test-dashboards/index.md) | Test reporting (Allure/ReportPortal), CI-as-DAG, RED/USE metrics, MIT charting libs (ScottPlot/LiveCharts2/OxyPlot) | A dashboard is **6–12 actionable panels with drill-down**, and must **expose the silent failures** (means hide tails; green ≠ gate ran) |
+| [**Unified Graph Experience & Visualization**](graph-experience-and-visualization/index.md) | GraphRAG (+LazyGraphRAG/LightRAG), 2D/3D force-graph libs (Sigma/Cytoscape/3d-force-graph, MIT), node-based UIs, composing Obsidian + Graphify | Embed a **web force-graph in WebView2** (not native GraphX); the load-bearing new piece is the **node-introspection router** fusing code+knowledge |
+| [**Editor & Content Rendering Surfaces**](editor-and-content-rendering-surfaces/index.md) | Code viewing (Monaco/AvalonEdit/RoslynPad — MIT) and markdown/HTML (Markdig/Markdig.Wpf, WebView2) | Every option is **MIT**; **native for plain markdown & C#, web (Monaco/HTML) for breadth & interactivity**; only Monaco is cleanly reusable from VS Code |
+
+**Material update flagged:** the graph-experience base records **LazyGraphRAG (~700× cheaper global queries)**,
+which revises Code-Knowledge-Graphs finding #8 (GraphRAG = 26–85× cost) — that base is flagged for review.
 
 The user's diagram / UML / ERM requests were **already covered** and are cross-referenced, not duplicated:
+diagramming → `diagram-generation`, UML/MDE/generative → `uml-mde-and-4gl`, ERM/ORM → `domain-modeling-and-erm`,
+trace/topology → `microservice-interaction-visualization`.
 diagramming → `diagram-generation`, UML/MDE/generative → `uml-mde-and-4gl`, ERM/ORM → `domain-modeling-and-erm`,
 trace/topology → `microservice-interaction-visualization`.
 
