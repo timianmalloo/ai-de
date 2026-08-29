@@ -1,0 +1,75 @@
+name: UI craft (mockups)
+
+# The slow ring for the design surfaces (CE4): the deterministic UI craft detector
+# (Impeccable, wrapped by ui-craft-gate.py, ui-craft-detection.md CD8) run over the
+# committed mockups and the design language. It is ADVISORY here, not a merge gate:
+# the IDE mockups carry deliberate dense-meta text (DX17) the detector flags as Major,
+# so a hard --gate would fail on intended density. This job produces the review as a
+# step summary + artifact so drift is visible; flipping to --gate is a follow-up once
+# the dense-meta findings are dispositioned in docs/reviews/ui-mockups-craft-gate.md.
+
+on:
+  pull_request:
+    paths:
+      - 'docs/mockups/**'
+      - 'DESIGN.md'
+      - 'docs/ai-forward-pack/scripts/ui-craft-gate.py'
+  schedule:
+    - cron: '17 6 * * 1'   # Mondays, slow ring
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  craft:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install the detector
+        run: npm i -g impeccable
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      # design-lint (inward): every DESIGN.md {token} reference resolves. This one IS
+      # allowed to fail the job - an unresolved token is an authoring defect, not a
+      # matter of taste (CD5).
+      - name: Design-language lint (inward, strict)
+        run: python docs/ai-forward-pack/scripts/design-lint.py DESIGN.md --strict
+
+      # ui-craft-gate (outward): the built mockups vs DESIGN.md. Advisory - the report
+      # is emitted to the job summary and uploaded, and the step never fails the ring.
+      # A detector that scanned nothing exits non-zero (CD9), which we DO surface.
+      - name: UI craft detector (outward, advisory)
+        shell: bash
+        run: |
+          set -o pipefail
+          python docs/ai-forward-pack/scripts/ui-craft-gate.py docs/mockups --markdown \
+            | tee craft-report.md >> "$GITHUB_STEP_SUMMARY" || {
+              status=$?
+              # exit 2 == detector produced no JSON (nothing scanned); that is a real
+              # failure worth surfacing. Any finding-based nonzero is advisory here.
+              if [ "$status" -eq 2 ]; then
+                echo "::error::craft detector scanned nothing (CD9) - install/toolchain problem"
+                exit 2
+              fi
+              echo "::notice::craft findings present (advisory, non-blocking on the slow ring)"
+            }
+
+      - name: Upload craft report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-craft-report
+          path: craft-report.md
+          if-no-files-found: warn

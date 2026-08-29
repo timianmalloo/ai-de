@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T18:05:08Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-29T18:12:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1719,6 +1719,25 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0096",
+      "shortname": "harness-labels-and-ci-craftgate",
+      "datetime": "2026-08-29T18:12:36Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Do the harness label bump and wire the craft gate into CI.",
+      "summary": "Bumped review-harness micro-labels 10px->11px across 4 mockups (cleared the undersized-text findings; app-facelift 12->6, residue is deliberate dense chrome). Added .github/workflows/ui-craft.yml: a slow-ring advisory craft-detector workflow (design-lint strict + ui-craft-gate report to step summary + artifact).",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        ".github/workflows/ui-craft.yml"
+      ],
+      "tags": [
+        "facelift"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
