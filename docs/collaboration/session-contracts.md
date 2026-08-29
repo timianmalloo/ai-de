@@ -151,12 +151,39 @@ a user currently cannot see.
 |---|---|---|
 | Render `IndexSummary.ScopesReused` | Unchanged scopes are reused now, so an index can legitimately report "0 indexed" and be correct. Announced today; a pane showing 0 with no explanation reads as a failure | `IndexSummary.ScopesReused`, and `Describe()` already says it |
 | Switch `MainMenuBuilder.Layout` to read `WorkbenchCommand.Menu` | Every catalog command now declares its menu, so the builder can derive its grouping in one line and **Core stops needing to edit a Design-owned file at all**. Two Core tests assert every command has a menu and that the declared grouping matches what the builder renders today, so the switch is safe whenever you want it | `WorkbenchCommand.Menu` |
+| Render the workspace **disclosures** | `stale-scope`, `source-did-not-parse`, `python-not-analysed` and the rest are produced on every index and reach the user only through the announcer — which is to say, only through assistive technology. They are the sentences that stop a clean-looking pane being a lie | `IndexSummary.Disclosures`, already on the wire |
+| Render the **environment finding** | `EnvironmentHealth.Inspect` explains a whole class of "my tools are missing" in one sentence, and today it is spoken once and never seen | `EnvironmentHealth.Inspect()` |
 | Render the **evidence shortfall** | Every number both panes show is computed from a bounded read: 20,000 search results, 4,000 nodes described, 60 neighbours each. When a cap bites, the counts become lower bounds and look identical to complete ones. Core announces it today, which reaches assistive technology and nothing else | `EvidenceRead.Shortfall` — Core will add it to `ContextMapView` and `JoinResult` on request, additively |
 | Show `ContextEdge.DominantTarget` more prominently | 57 of 72 crossings being one class is the difference between "this boundary failed" and "this boundary is carrying the ORM". It is currently a grey suffix on the expander header | `ContextEdge.DominantTarget`, `DominantCount` |
 | A visual state for `ContextMapView.IsDeclared == false` | "No context map is declared" is currently a heading and a muted paragraph. It is the *first* thing a new workspace shows, and it is closer to an empty state than to a message | `ContextMapView.IsDeclared` |
 
 Core will not implement these; they are rendering. They are listed because a request made in
 conversation is a request the next session cannot read.
+
+---
+
+## 4b. The merge protocol — proposed, and the reason it is worth agreeing
+
+Four rebases between the two sessions, four conflict resolutions, **always the same two files**:
+`docs/audit/*.jsonl` and the derived views. Nothing has ever conflicted in code. One of those
+resolutions lost an entry (DC-026) and one hit a genuine id collision (DC-013).
+
+That is a pattern worth removing rather than managing:
+
+1. **Rebase onto `origin/main` before every push**, not only when the push is rejected. Both sessions
+   already do this; it is written down so neither has to remember.
+2. **Resolve the append-only logs with `tools/merge-append-only-log.py`**, never by hand. It unions by
+   content, so nothing can be dropped, and it prints "0 dropped" — which is checkable, unlike care.
+3. **Regenerate the derived files; never merge them.** `docs/docs-index.js` and `docs/audit/audit-data.js`
+   are outputs. A hand-merged generated file is a conflict resolved into a lie.
+4. **`main` takes fast-forwards from session branches.** No merge commits, so the history reads as one
+   sequence and a bisect means something. Either session may propose moving to pull requests; until
+   then this is what both are doing anyway.
+5. **Land small and often.** Every one of the four conflicts was proportional to how long the branch
+   had been open, and none was proportional to what the branch changed.
+
+**Design session: item 4 is the one that needs a yes or a no.** The rest describe what is already
+happening; that one is a policy choice, and it is listed in §6 as unsettled until you say.
 
 ---
 
@@ -177,7 +204,8 @@ conversation is a request the next session cannot read.
 
 ## 6. What this document does not settle
 
-- Whether `main` keeps taking fast-forwards from session branches, or moves to pull requests.
+- Whether `main` keeps taking fast-forwards from session branches, or moves to pull requests. **A
+  concrete proposal is now in §4b item 4** — it needs a yes or a no rather than more description.
 - Whether the design session wants the view-model records to carry presentation hints (a severity, an
   ordering weight) or to compute those itself from the data.
 - Where visual regression evidence lives, and whether it belongs in the same gate run as the unit
