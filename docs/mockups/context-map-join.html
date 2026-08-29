@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-motion="normal">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Context Map & Join surfaces — Core→Design §4a (mockup)</title>
+<style>
+  :root{
+    --surface:#12151A;--surface-raised:#1A1F26;--surface-sunken:#0D1014;--border:#2A313B;
+    --text:#E4E9EF;--text-muted:#98A3B2;--accent:#5B9DD9;--accent-contrast:#0D1014;
+    --verified:#5FB98F;--inferred:#D8A650;--unverified:#98A3B2;--danger:#E07A6F;--focus:#8FC0EA;--locked:#D8A650;
+    --r-md:6px;--r-lg:10px;--r-island:12px;--el-resting:0 1px 3px rgba(0,0,0,.28);
+    --ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;--mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  }
+  html[data-theme="light"]{--surface:#F4F6F9;--surface-raised:#FFF;--surface-sunken:#E9EDF2;--border:#D2D9E2;--text:#1A2029;--text-muted:#5A6472;--accent:#2F6DA6;--focus:#2F6DA6;--verified:#2E8B60;--inferred:#9A6B12;}
+  html[data-theme="hc"]{--surface:#000;--surface-raised:#000;--surface-sunken:#000;--border:#FFF;--text:#FFF;--text-muted:#FFF;--accent:#00E5FF;--focus:#FF0;--inferred:#FFD400;--verified:#00FF7F;--el-resting:none;}
+  html[data-motion="reduced"] *{transition:none!important;animation:none!important}
+  *{box-sizing:border-box} body{margin:0;background:var(--surface);color:var(--text);font:13px/1.45 var(--ui);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  .harness{background:var(--surface-sunken);border-bottom:1px solid var(--border);padding:6px 10px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:11px}
+  .harness b{color:var(--text-muted);font-weight:600;text-transform:uppercase;font-size:10px}
+  .harness select{background:var(--surface-raised);color:var(--text);border:1px solid var(--border);border-radius:var(--r-md);padding:3px 8px;font:inherit}
+  .topbar{height:38px;display:flex;align-items:center;gap:10px;padding:0 12px;background:var(--surface-raised);border-bottom:1px solid var(--border)}
+  .seg{display:flex;border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+  .seg button{background:transparent;color:var(--text-muted);border:0;padding:4px 12px;font:inherit;cursor:pointer}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-contrast);font-weight:600}
+  .note{margin-left:auto;color:var(--text-muted);font-size:11px}
+  .wrap{flex:1;overflow:auto;padding:16px;display:flex;justify-content:center}
+  .pane{width:min(760px,100%);background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-island);box-shadow:var(--el-resting);overflow:hidden}
+  .ph{height:30px;display:flex;align-items:center;gap:8px;padding:0 12px;border-bottom:1px solid var(--border);font-weight:600;font-size:12px}
+  .pb{padding:12px}
+  .mono{font:12px var(--mono)}
+  /* count treatments */
+  .cnt{font:12px var(--mono);color:var(--text)}
+  .cnt.cap{color:var(--text)} .cap-chip{display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding:0 6px;border-radius:999px;font-size:10px;border:1px solid var(--inferred);color:var(--inferred)}
+  .cap-chip::before{content:"≥"} 
+  /* crossing rows */
+  .row{border:1px solid var(--border);border-radius:var(--r-lg);margin-bottom:8px;overflow:hidden}
+  .rh{display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer}
+  .rh .lbl{font-weight:600}
+  .dom{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .dom .chip{display:inline-flex;align-items:center;gap:4px;padding:1px 8px;border-radius:999px;font-size:11px;background:color-mix(in srgb,var(--accent) 22%, transparent);color:var(--accent);border:1px solid var(--accent);font-weight:600}
+  .bar{height:3px;background:var(--surface-sunken)}
+  .bar > i{display:block;height:3px;background:var(--accent)}
+  .exp{padding:0 12px 10px;color:var(--text-muted);font-size:12px;display:none}
+  .row.open .exp{display:block}
+  .prov{display:inline-flex;align-items:center;gap:3px;padding:0 6px;border-radius:999px;font-size:10px;border:1px solid var(--border);margin-left:6px}
+  .prov.v{color:var(--verified)}.prov.i{color:var(--inferred)}.prov.f{color:var(--unverified)}
+  /* join table */
+  table{width:100%;border-collapse:collapse;font-size:12px} th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--border)} th{color:var(--text-muted);font-size:10px;text-transform:uppercase}
+  td.st .s{display:inline-flex;align-items:center;gap:5px}
+  .dot{width:8px;height:8px;border-radius:50%} .ok{background:var(--verified)} .inf{background:var(--inferred)} .no{background:var(--danger)}
+  /* empty state */
+  .empty{padding:40px 20px;text-align:center;color:var(--text-muted)}
+  .empty .g{font-size:34px} .empty h3{color:var(--text);margin:10px 0 4px;font-size:15px}
+  .btn{background:var(--accent);color:var(--accent-contrast);border:0;border-radius:var(--r-md);padding:7px 14px;font:inherit;font-weight:600;cursor:pointer;margin-top:10px}
+  .err{padding:40px;text-align:center;color:var(--danger)}
+  [hidden]{display:none!important}
+  .callout{background:var(--surface-sunken);border:1px dashed var(--inferred);border-radius:var(--r-md);padding:6px 10px;font-size:11px;color:var(--text-muted);margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="harness" role="region" aria-label="Review harness">
+  <b>Harness</b>
+  <span><b>Theme </b><select id="h-theme"><option value="dark">Dark</option><option value="light">Light</option><option value="hc">High contrast</option></select></span>
+  <span><b>Motion </b><select id="h-motion"><option value="normal">Normal</option><option value="reduced">Reduced</option></select></span>
+  <span><b>Read </b><select id="h-read"><option value="capped">Capped (shortfall)</option><option value="exact">Exact</option></select></span>
+  <span><b>Map </b><select id="h-decl"><option value="declared">Declared</option><option value="not">Not declared</option><option value="error">Error</option></select></span>
+</div>
+
+<div class="topbar">
+  <strong style="font-size:12px">Interaction surfaces</strong>
+  <span class="seg" role="group" aria-label="Surface">
+    <button id="s-ctx" aria-pressed="true">Context Map</button>
+    <button id="s-join" aria-pressed="false">Joins</button></span>
+  <span class="note">renders Core view models · ContextMapView / JoinResult (contract §3, §4a)</span>
+</div>
+
+<div class="wrap">
+  <!-- ===== CONTEXT MAP ===== -->
+  <section class="pane" id="ctx">
+    <div class="ph">◲ Context Map <span class="prov" style="border-color:var(--border);color:var(--text-muted)">ContextMapView</span></div>
+    <div class="pb" id="ctx-body">
+      <div class="callout">§4a: bounded reads show <b>≥ N</b> when capped · dominant class promoted out of the grey suffix · undeclared → empty state.</div>
+      <div style="margin-bottom:10px">Crossings described: <span class="cnt cap" id="ctx-count">≥ 20,000<span class="cap-chip" title="Read capped at 20,000 results; the true total is higher">capped</span></span></div>
+
+      <div class="row open">
+        <div class="rh" onclick="this.parentElement.classList.toggle('open')">
+          <span class="lbl">Ledger ↔ Agents</span>
+          <span class="prov v">✓ declared</span>
+          <span class="dom"><span class="chip">ORM · 57 of 72</span></span>
+        </div>
+        <div class="bar"><i style="width:79%"></i></div>
+        <div class="exp">57 of 72 crossings are <b>ORM</b> (dominant). 9 DI <span class="prov i">~ inferred</span>, 6 config <span class="prov f">? flagged</span>. This boundary is carrying the ORM — not failing.</div>
+      </div>
+
+      <div class="row">
+        <div class="rh" onclick="this.parentElement.classList.toggle('open')">
+          <span class="lbl">Ledger ↔ Audit</span>
+          <span class="prov f">? undeclared</span>
+          <span class="dom"><span class="chip" style="background:color-mix(in srgb,var(--inferred) 22%,transparent);color:var(--inferred);border-color:var(--inferred)">events · 12 of 14</span></span>
+        </div>
+        <div class="bar"><i style="width:86%;background:var(--inferred)"></i></div>
+        <div class="exp">Crossing not declared in the context map — an <b>uncovered group</b>. 12 of 14 are event edges.</div>
+      </div>
+    </div>
+
+    <!-- IsDeclared == false empty state (§4a) -->
+    <div class="empty" id="ctx-empty" hidden>
+      <div class="g">◲</div>
+      <h3>No context map is declared yet</h3>
+      <div>AI-DE found bounded contexts in the code but no declared map to check them against.</div>
+      <button class="btn">Declare the first context</button>
+    </div>
+    <div class="err" id="ctx-err" hidden><div style="font-size:24px">⚠</div><div>Context map read failed.</div><button class="btn">Retry</button></div>
+  </section>
+
+  <!-- ===== JOINS ===== -->
+  <section class="pane" id="join" hidden>
+    <div class="ph">⇄ Joins <span class="prov" style="border-color:var(--border);color:var(--text-muted)">JoinResult</span></div>
+    <div class="pb">
+      <div style="margin-bottom:10px">Joins evaluated: <span class="cnt cap" id="join-count">≥ 4,000<span class="cap-chip" title="Node description read capped at 4,000">capped</span></span></div>
+      <table>
+        <thead><tr><th>Join</th><th>Status</th><th>Basis</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">code→infra: OrderSvc→sql</td><td class="st"><span class="s"><span class="dot ok"></span>satisfied</span></td><td>connection string <span class="prov v">✓ extracted</span></td></tr>
+          <tr><td class="mono">code→data: EF→Ledger</td><td class="st"><span class="s"><span class="dot inf"></span>inferred</span></td><td>fluent mapping <span class="prov i">~ inferred</span></td></tr>
+          <tr><td class="mono">svc→runtime: trace</td><td class="st"><span class="s"><span class="dot no"></span>unmet</span></td><td>no trace observed <span class="prov f">? not recorded</span></td></tr>
+        </tbody>
+      </table>
+      <p style="color:var(--text-muted);font-size:11px;margin-top:10px">Every join shows its <b>Status</b> and <b>Basis</b> (contract §3). "unmet" and "not recorded" are explicit — an empty join never renders as satisfied.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+  const H=document.documentElement;
+  h_theme.onchange=e=>H.setAttribute('data-theme',e.target.value);
+  h_motion.onchange=e=>H.setAttribute('data-motion',e.target.value);
+  s_ctx.onclick=()=>{ctx.hidden=false;join.hidden=true;s_ctx.setAttribute('aria-pressed','true');s_join.setAttribute('aria-pressed','false');};
+  s_join.onclick=()=>{join.hidden=false;ctx.hidden=true;s_join.setAttribute('aria-pressed','true');s_ctx.setAttribute('aria-pressed','false');};
+  h_read.onchange=e=>{const cap=e.target.value==='capped';
+    document.getElementById('ctx-count').innerHTML = cap ? '≥ 20,000<span class="cap-chip" title="Read capped at 20,000">capped</span>' : '20,000';
+    document.getElementById('join-count').innerHTML = cap ? '≥ 4,000<span class="cap-chip" title="Read capped at 4,000">capped</span>' : '4,000';};
+  h_decl.onchange=e=>{const v=e.target.value;
+    document.getElementById('ctx-body').hidden = v!=='declared';
+    document.getElementById('ctx-empty').hidden = v!=='not';
+    document.getElementById('ctx-err').hidden = v!=='error';};
+</script>
+</body>
+</html>

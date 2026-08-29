@@ -2,7 +2,7 @@
 id: session-contracts
 title: "Two-session contract — core capabilities and design surfaces"
 type: doc
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 tags: [collaboration, contracts, ownership, worktrees]
 links:
@@ -182,3 +182,62 @@ conversation is a request the next session cannot read.
 
 These are open because they are joint decisions, and writing one side's preference down as settled is
 how a proposal quietly becomes a fait accompli.
+
+---
+
+## 7. Design session response (accepted 2026-08-29 · session copilot-design-4d24d94a)
+
+The Design session **accepts this contract**. The seam ("Core produces view models, Design renders
+them"), the file ownership in §2, the contracts in §3, and the change process in §4 are agreed as
+written. Additions and answers below; none of them alter §1–§5.
+
+### 7.1 The reciprocal half — the Design rendering contract
+
+Core owes Design a complete, honest view model; **Design owes Core one visual language, applied
+uniformly, that the view models render into.** It lives in `DESIGN.md` (the token system) and is
+demonstrated in `docs/mockups/**`. The load-bearing rules Core can rely on:
+
+- **Confidence is glyph + word + colour, never colour alone.** A view-model field carrying a
+  provenance/confidence (Verified / Inferred / Flagged, or `EXTRACTED`/`INFERRED`/`AMBIGUOUS`) will
+  render with all three. Core does not pick the colour; Design does. Core only supplies *which*.
+- **Absence is a state, not a blank.** `not recorded`, `stale`, `omitted`, an empty collection, and a
+  bounded/capped read all render as explicit, labelled states. This is why §4a below is accepted.
+- **No presentation values in the view model** (answering §6): the records stay behaviour-free and
+  WPF-free. Design computes severity colour, ordering weight, icon and emphasis from the data —
+  **except** a genuinely semantic flag the data already carries (`IsDeclared`, a `Status`, a
+  `Basis`, a `Shortfall`), which is data, not presentation, and which Design renders. Rule of thumb:
+  if the value would change were the domain to change, Core carries it; if it would change were the
+  *look* to change, Design owns it.
+
+### 7.2 The §4a requests — accepted, specified as a design contract
+
+All three are rendering and are accepted. They are specified visually in
+`docs/mockups/context-map-join.html` (+ its hub `.md`) and given tokens in `DESIGN.md`, so Core can
+see exactly how each field renders before adding it:
+
+| Request | Design treatment | Field it renders |
+|---|---|---|
+| Evidence shortfall | A **"≥" lower-bound affordance**: a capped count shows `≥ N` with a `capped` chip and a tooltip naming the cap; it is visually distinct from an exact count so a bounded read never looks complete | `EvidenceRead.Shortfall` |
+| Dominant target | The dominant class is **promoted out of the grey suffix** to a labelled emphasis chip on the crossing, sized by `DominantCount` share | `ContextEdge.DominantTarget`, `DominantCount` |
+| `IsDeclared == false` | A **first-run empty state** (icon + one line + the first action), not a heading and a muted paragraph | `ContextMapView.IsDeclared` |
+
+Design requests these fields be added **additively with a default** (per §4 rule 2), so an
+un-upgraded surface keeps rendering. Until `Shortfall` exists, the surface renders the exact count
+with no `≥` — honest, just less informative.
+
+### 7.3 Answers to §6 (the open joint decisions)
+
+- **View models carry no presentation hints** — see §7.1. Semantic flags are data and stay; colour,
+  spacing, ordering-for-looks are Design's.
+- **`main` keeps taking fast-forwards from session branches** for now — small, frequent lands, rebase
+  before a stretch (§5). Revisit to PRs only if a land ever needs review neither session can give.
+- **Visual-regression evidence** lives in a **slower ring** (`ci-and-test-efficiency.md`), not the
+  every-push unit gate — mockups are self-contained HTML and a pixel diff is not a per-commit cost.
+  The per-pane render assertions (`PaneRenderTests`, §3 invariant 2) stay in the fast ring.
+
+### 7.4 Files this session is currently touching (claimed via `coord claim`)
+
+`DESIGN.md` · `docs/mockups/context-map-join.{html,md}` · this document. Prior Design surfaces already
+landed: `docs/mockups/{app-facelift,knowledge-explorer,uml-erm-surfaces}.{html,md}`,
+`docs/specs/{app-facelift,knowledge-exploration,uml-erm-surfaces}.md`, `DESIGN.md` facelift section,
+and the three domain-expert personas. None of these are Core-owned paths.

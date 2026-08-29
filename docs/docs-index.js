@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-29T16:46:09Z",
+  "generated": "2026-08-29T16:51:28Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1700,6 +1700,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "98851314dd309675045d8853c60fd958a9af98fc61c65aafa880abd30f7e5d7e"
     },
     {
+      "id": "mockup-context-map-join",
+      "path": "docs/mockups/context-map-join.md",
+      "title": "Context Map & Join surfaces — Core→Design §4a rendering (mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Self-contained mockup rendering the Core session's ContextMapView and JoinResult view models, demonstrating the three accepted §4a requests — bounded-read \"≥ N (capped)\" counts, the dominant crossing class promoted out of the grey suffix, and the IsDeclared==false first-run empty state.",
+      "tags": [
+        "mockup",
+        "context-map",
+        "join",
+        "evidence-shortfall",
+        "collaboration"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "019b6dfead9d172ec258bf9ada3019edcd311fc3601c556dc544132abe0ca999"
+    },
+    {
       "id": "mockup-knowledge-explorer",
       "path": "docs/mockups/knowledge-explorer.md",
       "title": "Knowledge Explorer — graph + node introspection (mockup)",
@@ -2163,7 +2194,7 @@ window.DOCS_INDEX = {
       "path": "docs/collaboration/session-contracts.md",
       "title": "Two-session contract — core capabilities and design surfaces",
       "type": "doc",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2026-11-29",
@@ -2186,7 +2217,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f45fb13e630638c458a4ff63d9027b63bed8b8cc5ea97bd286e623c25f479cbb"
+      "sourceSha256": "e8536ecf57cc655e771463987347a80fce6ee93503f8a699c0f287d111f211f6"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -5444,7 +5475,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -5474,6 +5505,14 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     },
     {
+      "id": "surface-mockups-context-map-join",
+      "path": "docs/mockups/context-map-join.html",
+      "title": "Context Map & Join surfaces — Core→Design §4a (mockup)",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-context-map-join"
+    },
+    {
       "id": "surface-mockups-knowledge-explorer",
       "path": "docs/mockups/knowledge-explorer.html",
       "title": "Knowledge Explorer — graph + node introspection (mockup)",
@@ -5490,5 +5529,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "73ee39469d9da9bf2ded8cb388146e6f15b8cf53409deea6ab27cfe35803e6ab"
+  "graphSha256": "e9563d9d9cfe107549f7e7b44f4c74301cb25ef4364d62e50497567676e2e8d2"
 };

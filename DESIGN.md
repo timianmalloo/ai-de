@@ -231,3 +231,24 @@ the same commands the palette runs; they never diverge.
 **Provenance is a correctness rule, not decoration:** an inferred edge rendered identically to an extracted one
 is `GRAPH-PROVENANCE-LAUNDERED` (kg-visualization-ux-expert, hard escalation). Colour is the third signal; the
 glyph and the word carry it when hue is unavailable.
+
+### §4a rendering tokens — bounded reads & emphasis (Core→Design requests)
+
+The Core session's view models admit their own bounds (`EvidenceRead.Shortfall`) and carry a dominant
+crossing target (`ContextEdge.DominantTarget`/`DominantCount`) and a declared flag
+(`ContextMapView.IsDeclared`). Design renders each as an explicit state — a bounded read must never
+look complete, a dominant class must not hide in a grey suffix, and an undeclared map is an empty
+state, not a sentence.
+
+| Token | Value | Role |
+|---|---|---|
+| `count.lower-bound` | `≥ N` in `{typography.mono}` + `capped` chip (`{colors.inferred}`) + tooltip naming the cap | A capped/bounded count — visually distinct from an exact count so a shortfall never reads as complete |
+| `count.exact` | `N` in `{typography.mono}`, `{colors.text}` | A complete count (no cap bit) |
+| `emphasis.dominant` | chip in `{colors.accent}` at `{typography.weight-medium}`, width ∝ `DominantCount` share | Promotes the dominant crossing class out of the grey suffix |
+| `emphasis.dominant-bar` | 3px `{colors.accent}` share bar under the crossing row | The "57 of 72 are ORM" signal, made glanceable |
+| `state.not-declared` | first-run empty state: `{icon.lg}` glyph + one line + first-action button | `IsDeclared == false` — an empty state, not a heading + muted paragraph |
+
+**The bounded-read rule is a correctness rule (`EvidenceRead.Shortfall`):** a count that is a lower
+bound and one that is exact must be **distinguishable at a glance**. `20,000 results` and `≥ 20,000
+results (capped)` are different claims; rendering them identically is the surface inventing the
+completeness the read could not establish — the same failure class as provenance laundering.
