@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T18:26:40Z",
+  "generated": "2026-08-29T20:15:58Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1806,6 +1806,32 @@ window.AUDIT_DATA = {
         "avalondock"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0100",
+      "shortname": "path-cleanup-measured-limit-extraction-profile",
+      "datetime": "2026-08-29T20:15:57Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "Four of the five listed steps done, plus one of the five deferred ones. What was not done is named\nrather than half-landed.\n\nThe user PATH is cleaned: 21,528 characters and 206 entries down to 1,150 and 19. The 187 removed\nentries were all throwaway build directories that were ALREADY ABSENT FROM DISK, which is what made\nthe removal safe rather than a judgement call, and the previous value is backed up to\n%LOCALAPPDATA%\\AiDe. Verified after: a .cmd shim in a fresh process receives PATH, and both copilot\nand claude resolve through it.\n\nThe cmd limit is bisected rather than quoted — 8,151 carried, 8,152 dropped, with \"The input line is\ntoo long\" printed at the boundary — and pinned by a test so it cannot drift back to a documented\nnumber nobody measured.\n\nEnvironmentHealth measures every variable now, not only PATH: any oversized one is dropped by the\nsame mechanism, and checking only the variable that happened to bite is how a class gets found twice.\nAvailableAgents stops trusting a PATH filter that an unhealthy environment invalidates, offering\nevery agent instead — a menu that silently omits one is invisible, while a launch that fails is not,\nand the shell has already said why.\n\nExtraction is profiled: roughly 98% of the cost is the READ phase, 505-616ms per project against\n6-15ms for the symbol walk once the JIT is warm. The previous \"extraction is the cost\" was true and\nuseless. This moves the next optimisation to avoiding the read — per file rather than per scope — and\nsays plainly that making the walk faster would recover about one percent.\n\nNOT done, and listed rather than implied: surfacing stale-scope and source-did-not-parse in the panes\n(design-owned rendering, recorded as a request), file-granularity incremental extraction, a\nsecond-language extractor, and agreeing a merge policy with the design session.\n\nGate: 681 tests green (App 118, Core 563), six verifiers clean.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Do the listed next steps: clean the user PATH, carry the deferred core work, widen the environment check, stop trusting the PATH filter, and bisect the cmd limit",
+      "done_when": "The reported symptom verified fixed at its cause; each remaining step landed with a control or explicitly named as not done; full gate green; committed, merged and published",
+      "change": "cl-0073",
+      "git": {
+        "sha": "f5fb23aaa1ed763026de8a647956f7475824174c",
+        "short": "f5fb23aaa",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -3585,6 +3611,56 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "2731758925df4bb4b06ffae1f2186ad43cc82958",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0072",
+      "datetime": "2026-08-29T20:13:51Z",
+      "session": null,
+      "kind": "decision",
+      "skill": null,
+      "title": "The PATH is cleaned, the cmd limit is measured, and extraction is profiled",
+      "prompt": null,
+      "summary": "The reported symptom is fixed, at its actual cause.\n\nThe user PATH went from 21,528 characters and 206 entries to 1,150 and 19. The 187 removed entries\nwere all of the shape Temp\\biohacker-nuget-<guid>\\dotnet-home\\.dotnet\\tools, and every one of them\nwas ALREADY ABSENT FROM DISK — a directory that does not exist cannot be providing a tool, which is\nwhat made the removal safe rather than a judgement call. The previous value is backed up to\n%LOCALAPPDATA%\\AiDe\\user-path-backup-<timestamp>.txt. Verified after: a .cmd shim in a fresh process\nreceives the PATH, and both copilot and claude resolve through it.\n\nThe cmd limit is now measured rather than quoted. Bisected: cmd carries 8,151 characters and drops\n8,152, printing \"The input line is too long\" and losing the value. The documented figure is 8,191 and\nthe ~40-character difference is the variable's own name plus block overhead, which is why the message\nstill says \"may be dropped\" — not because the number is unmeasured, but because it shifts with the\nname.\n\nEnvironmentHealth now measures every variable, not only PATH: any oversized one is dropped by the\nsame mechanism, and checking only the variable that happened to bite is how a class gets found twice.\n\nAnd AvailableAgents no longer trusts a filter the environment invalidates. When the environment is\nunhealthy the PATH filter is skipped and every agent is offered, because a menu that silently omits\nan agent is invisible while a launch that fails is not — and the shell has already said why.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/EnvironmentHealth.cs",
+        "src/AiDe.App/Workbench/TerminalSurface.cs"
+      ],
+      "tags": [
+        "investigation"
+      ],
+      "git": {
+        "before": null,
+        "after": "f5fb23aaa1ed763026de8a647956f7475824174c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0073",
+      "datetime": "2026-08-29T20:13:51Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "98% of extraction is the read, not the walk",
+      "prompt": null,
+      "summary": "Extraction profiled, and the answer moves the next optimisation to the other half.\n\nThe previous measurement said \"the read is not the problem at this size; extraction is\" — true and\nuseless, because it did not say which part of extraction. AIDE_EXTRACTION_TIMING splits each scope\ninto the READ phase (parse the sources, build the compilation, resolve references) and the WALK phase\n(visit symbols, emit assertions):\n\n  read 505-616ms per project, walk 6-15ms once the JIT is warm\n\nRoughly 98% of the cost is the read. The first scope's 260ms walk is JIT rather than work, and a\ntotal without the split would have attributed it to the walk and sent the next optimisation at the\nwrong half.\n\nSo incremental work belongs in AVOIDING the read — which the fingerprint cache already does per\nscope and would do better per file. Making the symbol walk faster would recover about one percent.\n\nEmitted on the normal path as activity tags, with an env var for the console form: a feature is not\ndone until its behaviour is measurable without a re-run.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/CSharpExtractor.cs",
+        "spikes/joins-on-a-real-repo/RESULT.md"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "f5fb23aaa1ed763026de8a647956f7475824174c",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
         "commits": []
