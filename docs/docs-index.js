@@ -1,8 +1,8 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
-  "project": "AI-DE",
-  "generated": "2026-08-29T18:25:55Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-29T18:26:40Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1553,7 +1553,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eb4d722ed3586353d984dcd59b0123b9409cf77ad9779fc20fc844230e86d33a"
+      "sourceSha256": "aa6d9839b8e483acd9d06e04b51eaed948c9a324af88c8608175d649cfc51669"
     },
     {
       "id": "domain-experts",
@@ -1599,6 +1599,36 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6168931fd44d94873de6f714eef265ce58b2f58cb01a70458db388ec1475e0b5"
+    },
+    {
+      "id": "inv-0001-agent-terminal-environment",
+      "path": "docs/investigations/INV-0001-agent-terminals-lack-the-users-environment.md",
+      "title": "INV-0001 — Agent terminals lack the user's PATH and profile",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-29",
+      "reviewSuggested": [],
+      "summary": "A reported loss of the user's PATH and profile in agent terminals. The verified cause is not in AI-DE: the machine's PATH is 22,297 characters and cmd.exe silently drops a variable that large, so every .cmd shim starts with an empty PATH — inside and outside the product. What was ours is that the terminal rendered the broken environment as a healthy one.",
+      "tags": [
+        "investigation",
+        "terminal",
+        "environment",
+        "rca"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5ce843ed61cd48e6f0fa4875bbf9c221c2dd38e799ff2e96b773424f91be118c"
     },
     {
       "id": "lens-code-doc-join",
@@ -5540,7 +5570,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-facelift — Audit & Change Log",
+      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -5594,5 +5624,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "714d8e5b5b255ace2d570c00e3e489ae66bc73a33700d872beff2a591b440f24"
+  "graphSha256": "fe38cee2ea9a91d0d99661aaeb9b2ae07e32dfb18a98abd220a56cec75e70bf5"
 };

@@ -25,11 +25,23 @@ internal static class ObserveProbe
         StringBuilder log,
         string commandLine,
         string workingDirectory,
-        int settleSeconds)
+        int settleSeconds,
+        bool hosted = false)
     {
         log.AppendLine($"observing  : {commandLine}");
         log.AppendLine($"cwd        : {workingDirectory}");
         log.AppendLine($"settle     : {settleSeconds}s");
+        log.AppendLine($"hosted     : {hosted}");
+
+        // The PARENT's own environment, printed before the child starts. Without this the question
+        // "was the environment lost at the parent or between parent and child" cannot be answered,
+        // and every hypothesis about the child is unfalsifiable.
+        var parentPath = Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
+        log.AppendLine($"parent PATH: {parentPath.Length} chars, " +
+                       $"{parentPath.Split(';', StringSplitOptions.RemoveEmptyEntries).Length} entries");
+        log.AppendLine($"parent has System32: " +
+                       parentPath.Contains("System32", StringComparison.OrdinalIgnoreCase));
+        log.AppendLine($"parent env vars: {Environment.GetEnvironmentVariables().Count}");
         log.AppendLine();
 
         ITerminalSession session;
@@ -44,7 +56,12 @@ internal static class ObserveProbe
                     Columns: 120,
                     Rows: 30,
                     ProcessingClass: SessionProcessingClass.LocalOnly,
-                    Integration: ShellIntegrationMode.None),
+                    // `hosted` runs the command inside the user's login shell, which is what the
+                    // product now does for an agent. Both paths are available here so the before
+                    // and the after are measured by the same instrument.
+                    Integration: hosted
+                        ? ShellIntegrationMode.PowerShellHostedAgent
+                        : ShellIntegrationMode.None),
                 CancellationToken.None);
         }
         catch (Exception ex)

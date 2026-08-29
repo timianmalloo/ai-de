@@ -86,6 +86,7 @@ public sealed class WorkbenchShell : IDisposable
             BindContexts();
             BindJoins();
             BindTerminalAttention();
+        AnnounceEnvironmentHealth();
 
             return result.Applied
                 ? $"{agent} terminal opened. Dispatch is refused until it reaches its prompt."
@@ -386,6 +387,7 @@ public sealed class WorkbenchShell : IDisposable
         BindContexts();
         BindJoins();
         BindTerminalAttention();
+        AnnounceEnvironmentHealth();
     }
 
     /// <summary>
@@ -536,6 +538,27 @@ public sealed class WorkbenchShell : IDisposable
 
     private void OnTerminalAttentionRequired(object? sender, string message) =>
         Announcer.Announce(message);
+
+    /// <summary>
+    /// Says so when this machine's environment cannot survive being handed to a child process.
+    /// </summary>
+    /// <remarks>
+    /// Announced ONCE per shell, not per terminal: it is a property of the machine, and repeating it
+    /// for every pane would turn the one message that explains a whole class of confusion into
+    /// noise. Not a failure — the terminal works — so it is said and the shell carries on.
+    /// </remarks>
+    internal void AnnounceEnvironmentHealth()
+    {
+        if (_environmentAnnounced) return;
+        _environmentAnnounced = true;
+
+        foreach (var finding in AiDe.Core.Terminal.EnvironmentHealth.Inspect())
+        {
+            Announcer.Announce(finding);
+        }
+    }
+
+    private bool _environmentAnnounced;
 
     /// <summary>Connects the joins pane to the workspace's own evidence.</summary>
     internal void BindJoins()

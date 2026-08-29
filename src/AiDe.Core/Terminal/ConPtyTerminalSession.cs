@@ -16,7 +16,8 @@ public sealed record TerminalSessionRequest(
     int Columns,
     int Rows,
     SessionProcessingClass ProcessingClass,
-    ShellIntegrationMode Integration = ShellIntegrationMode.None);
+    ShellIntegrationMode Integration = ShellIntegrationMode.None,
+    string ShellPath = "powershell.exe");
 
 /// <summary>Whether the runtime installs its OSC shell integration into the session's shell.</summary>
 /// <remarks>
@@ -27,6 +28,21 @@ public enum ShellIntegrationMode
 {
     /// <summary>Launch the command line as given. The session uses the output heuristic.</summary>
     None,
+
+    /// <summary>
+    /// Run the command line as an AGENT hosted inside the user's login shell.
+    /// </summary>
+    /// <remarks>
+    /// <para>Launching an agent directly was the defect behind "the agent sessions do not have my
+    /// profile or my environment variables". The measurement found something sharper than a missing
+    /// profile: an agent whose launcher is a <c>.cmd</c> shim — every npm-installed CLI — runs under
+    /// <c>cmd.exe</c>, and cmd drops any environment variable past its limit. A 22,297-character
+    /// PATH becomes an EMPTY PATH, and the agent cannot find node, git, or itself.</para>
+    ///
+    /// <para>Hosting it in the login shell gives it the profile, PATHEXT resolution for shims, and a
+    /// shell that handles a long PATH — which together are what "works with my profile" means.</para>
+    /// </remarks>
+    PowerShellHostedAgent,
 
     /// <summary>
     /// Treat the command line as a PowerShell executable and launch it with this session's
@@ -189,6 +205,8 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         var commandLine = request.Integration switch
         {
             ShellIntegrationMode.PowerShell => ShellIntegration.PowerShellCommandLine(request.CommandLine, nonce),
+            ShellIntegrationMode.PowerShellHostedAgent =>
+                ShellIntegration.AgentCommandLine(request.ShellPath, request.CommandLine, nonce),
             _ => request.CommandLine,
         };
 
@@ -249,7 +267,11 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         // Set from the REQUEST, not from later observation: a session either launched with shell
         // integration or it did not, and inferring it afterwards from whether an OSC ever arrived
         // would make "no integration" and "integration that has not spoken yet" the same state.
-        session.HasReadinessEvidence = request.Integration != ShellIntegrationMode.None;
+        // The HOSTED AGENT mode installs the integration but must NOT claim readiness evidence from
+        // it. The nonce reports when the SHELL is at its prompt, and for a hosted agent that means
+        // the agent has EXITED — the precise opposite of ready. Agent readiness stays with the
+        // marker watcher, which is weaker evidence and named as such (ADR-0007).
+        session.HasReadinessEvidence = request.Integration == ShellIntegrationMode.PowerShell;
         session.StartPumping();
         return Task.FromResult(session);
     }

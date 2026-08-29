@@ -209,9 +209,14 @@ public sealed class TerminalSurface : ContentControl, IDisposable
 
                     // The reason the nonce exists. Without this the session reports Ready/Busy from
                     // the coarse "bytes arrived" heuristic and the OSC control never runs.
+                    // An agent is HOSTED in the user's shell rather than launched beside it, so it
+                    // gets the profile, PATHEXT resolution for .cmd/.ps1 shims, and a shell that
+                    // survives a long PATH. Launched directly it inherited cmd's environment limits
+                    // and started with no PATH at all.
                     Integration: AgentReadiness is null
                         ? ShellIntegrationMode.PowerShell
-                        : ShellIntegrationMode.None),
+                        : ShellIntegrationMode.PowerShellHostedAgent,
+                    ShellPath: CommandLine),
                 _shutdown.Token);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)

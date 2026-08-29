@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 10 · partially-controlled 16 · uncontrolled 0
+**Status counts:** controlled 10 · partially-controlled 17 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -820,4 +820,36 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 - **Residual risk:** the merge tool has to be reached for; nothing forces its use during a rebase.
   The gate is the backstop that does not have to be remembered, but it only sees losses against
   `HEAD`, so a loss introduced and committed in one step is invisible to it.
+- **Status:** `partially-controlled`
+
+### DC-027 — The environment a parent hands a child is not the one the child receives
+- **Signature:** a process verifies its own state, passes it to a child by inheritance, and assumes
+  arrival. Somewhere between them a limit applies — a variable too long, a block too large, a shell
+  in the middle with a smaller cap than the parent — and the child starts **missing something it was
+  given**. Nothing fails. The child simply cannot find its tools, and the blame lands on whatever
+  launched it.
+- **Why it survives:** every test runs in a small, clean environment where nothing is near a limit,
+  so the loss is unreachable from a test suite. The parent's own checks all pass — it *does* have the
+  variable — and the natural instrument (`Environment.GetEnvironmentVariable` in the parent) answers
+  a different question from the one that matters. Worst of all it presents as the launching tool's
+  defect, so investigation starts in the wrong codebase and stays there.
+- **Instances:** 2026-08-29 — reported as "the agent sessions do not have my profile or my
+  environment variables". The machine's PATH is **22,297 characters**; `cmd.exe` silently drops a
+  variable that size, so every `.cmd` shim — which is every npm-installed CLI — started with an
+  **empty PATH**. Proven not to be the product: the same shim from a plain PowerShell also received
+  an empty PATH, and trimming to 1,799 characters made it arrive whole. Two turns of work went into
+  the wrong codebase first, because the symptom is indistinguishable from a launcher bug.
+- **Control:** `EnvironmentHealth.Inspect`, announced once per shell. It states the size, the limit
+  and the **largest repeated group** of PATH entries — because 200 unique paths is a number, not a
+  lead, and the entries that caused this are unique by construction (a GUID each) so nothing groups
+  them by literal value. Two tests, both directions: a healthy PATH says nothing, because a warning
+  that fires everywhere is noise. **It never edits the environment** — a tool that silently rewrites
+  PATH to make itself work has hidden the problem from the only person who can fix it.
+- **The generalisation to apply elsewhere:** when a child process misbehaves, **ask the child what it
+  received** before theorising about what was sent. The parent's copy is not evidence. The cheap
+  decisive probe is to run the same thing with no part of your product involved: if it fails there
+  too, the investigation moves out of your codebase in one step instead of three.
+- **Residual risk:** only PATH is inspected, and only against cmd's documented limit. Any other
+  oversized variable fails identically and is unchecked; the exact cut-off was never bisected, so the
+  message says "may be dropped" rather than asserting a number nobody measured.
 - **Status:** `partially-controlled`

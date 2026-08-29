@@ -209,6 +209,43 @@ public sealed class LackingWorkspaceTests : IDisposable
                 [new ExtractionDiagnostic("AIDE-TEST-REFUSED", request.ScopeId, "refused on purpose")]));
     }
 
+    // -- Lacking: an environment a child process can carry -------------------------------
+
+    [Fact]
+    public void AnOversizedPathIsReportedWithItsSizeAndItsCause()
+    {
+        // MEASURED on the reporting machine: PATH is 22,297 characters and cmd.exe silently drops a
+        // variable that large, so every .cmd shim - which is every npm-installed CLI - starts with
+        // an EMPTY PATH. Proven not to be this product's doing: the same shim run from a plain
+        // PowerShell also received an empty PATH, and trimming PATH to 1,799 characters made it
+        // arrive whole. What WAS ours is that the terminal opened looking perfectly healthy.
+        var junk = string.Join(";", Enumerable.Range(0, 200).Select(i =>
+            $@"C:\Users\u\AppData\Local\Temp\build-nuget-{i:x8}deadbeef{i:x4}\dotnet-home\.dotnet\tools"));
+
+        var findings = AiDe.Core.Terminal.EnvironmentHealth.Inspect($@"C:\Windows\system32;{junk}");
+
+        var finding = Assert.Single(findings);
+        Assert.Contains("cmd.exe", finding, StringComparison.Ordinal);
+
+        // The number, so the user can see how far past the limit they are...
+        Assert.Contains(AiDe.Core.Terminal.EnvironmentHealth.CmdVariableLimit.ToString("N0"),
+            finding, StringComparison.Ordinal);
+
+        // ...and the CAUSE, because two hundred unique paths is a number, not a lead. The entries
+        // are unique by construction, so grouping on the literal path finds nothing.
+        Assert.Contains("200 entries", finding, StringComparison.Ordinal);
+        Assert.Contains("Temp", finding, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AHealthyPathSaysNothing()
+    {
+        // The other half. This message explains a whole class of confusion exactly once; said on
+        // every machine it would be noise, and then unread on the machine it was written for.
+        Assert.Empty(AiDe.Core.Terminal.EnvironmentHealth.Inspect(
+            @"C:\Windows\system32;C:\Windows;C:\Program Files\dotnet"));
+    }
+
     // ── The rule the corpus exists to hold ────────────────────────────────────────────────
 
     [Fact]

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-29T18:25:55Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-29T18:26:40Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1758,6 +1758,34 @@ window.AUDIT_DATA = {
         "canvas"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0098",
+      "shortname": "investigate-INV-0001",
+      "datetime": "2026-08-29T18:24:54Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "/investigate — i am noticing that the agent sessions are still not using \"my profile\" they dont have my path or environment variables, for example ghcp and claude code are both installed so they should both work with my profile\nonce you understand what the issue is implement the solution dont wait for review\n--------------------------------------------------\nalso do all the next steps as usual and then provide the status and next steps table as usual",
+      "summary": "Reported: \"the agent sessions do not have my profile or my environment variables — ghcp and claude\nare both installed so they should both work.\"\n\nThe verified cause is not in this product. The machine's PATH is 22,297 characters and cmd.exe\nsilently drops a variable that large, so every .cmd shim — which is every npm-installed CLI — starts\nwith an EMPTY PATH and cannot find node, git or itself. claude works because claude.exe is a real\nexecutable with no cmd in the path; ghcp does not exist at all, and the Copilot CLI has an npm .cmd\nshim. That asymmetry is the entire symptom.\n\nNecessary and sufficient, both measured: at 22,297 characters a cmd child receives an empty PATH,\nreproduced twice including once with no part of AI-DE involved; trimmed to 1,799 characters the same\nchild receives the full PATH. AI-DE passes the environment correctly — PowerShell started from the\nsame inherited block reads all 22,297 characters and resolves claude.\n\nFive hypotheses were ruled out with evidence, including one flag removed and re-measured, and the\nbelief that the profile was at fault — which is where two turns of work went first, because the\nsymptom is indistinguishable from a launcher bug.\n\nThe cause of the 22,297 characters: roughly 190 entries of the shape Temp\\biohacker-nuget-<guid>\\\ndotnet-home\\.dotnet\\tools, appended to the PERSISTED user PATH by another project's build tooling and\nnever removed. Each is unique, so there is nothing to de-duplicate.\n\nWhat was ours is the silence. The terminal opened, looked healthy, and the tools were absent with\nnothing saying why. EnvironmentHealth.Inspect now states the size, the limit and the largest repeated\ngroup — because 200 unique paths is a number, not a lead — announced once per shell, never per pane.\nIt does not edit PATH: a tool that silently rewrites the environment to make itself work has hidden\nthe problem from the only person who can fix it.\n\nAgents are now hosted in the login shell rather than launched beside it, which delivers the profile\nhalf of the request and makes .ps1 shims resolve. It is recorded honestly as NOT fixing the reported\nsymptom — a .cmd shim invoked from the hosting shell still starts cmd, which still drops the PATH.\nMeasured, not assumed.\n\nRegistered as DC-027: the environment a parent hands a child is not the one the child receives.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/investigations/INV-0001-agent-terminals-lack-the-users-environment.md"
+      ],
+      "tags": [
+        "investigation"
+      ],
+      "outcome": "success",
+      "goal": "Find the verified root cause of agent terminals lacking the user's PATH and profile, implement the fix without waiting for review, and register the class",
+      "done_when": "Cause proven necessary and sufficient; competing causes ruled out with evidence; fix implemented and tested; DC-027 registered; investigation artifact written and indexed",
+      "change": "cl-0071",
+      "git": {
+        "sha": "2731758925df4bb4b06ffae1f2186ad43cc82958",
+        "short": "273175892",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
     },
     {
       "id": "al-0099",
@@ -3532,6 +3560,31 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "8ec320e3553fa7d9a11a9dd288c67ca5b02985e4",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0071",
+      "datetime": "2026-08-29T18:24:27Z",
+      "session": null,
+      "kind": "decision",
+      "skill": null,
+      "title": "INV-0001: a 22,297-character PATH, and cmd.exe drops it",
+      "prompt": null,
+      "summary": "Reported: \"the agent sessions do not have my profile or my environment variables — ghcp and claude\nare both installed so they should both work.\"\n\nThe verified cause is not in this product. The machine's PATH is 22,297 characters and cmd.exe\nsilently drops a variable that large, so every .cmd shim — which is every npm-installed CLI — starts\nwith an EMPTY PATH and cannot find node, git or itself. claude works because claude.exe is a real\nexecutable with no cmd in the path; ghcp does not exist at all, and the Copilot CLI has an npm .cmd\nshim. That asymmetry is the entire symptom.\n\nNecessary and sufficient, both measured: at 22,297 characters a cmd child receives an empty PATH,\nreproduced twice including once with no part of AI-DE involved; trimmed to 1,799 characters the same\nchild receives the full PATH. AI-DE passes the environment correctly — PowerShell started from the\nsame inherited block reads all 22,297 characters and resolves claude.\n\nFive hypotheses were ruled out with evidence, including one flag removed and re-measured, and the\nbelief that the profile was at fault — which is where two turns of work went first, because the\nsymptom is indistinguishable from a launcher bug.\n\nThe cause of the 22,297 characters: roughly 190 entries of the shape Temp\\biohacker-nuget-<guid>\\\ndotnet-home\\.dotnet\\tools, appended to the PERSISTED user PATH by another project's build tooling and\nnever removed. Each is unique, so there is nothing to de-duplicate.\n\nWhat was ours is the silence. The terminal opened, looked healthy, and the tools were absent with\nnothing saying why. EnvironmentHealth.Inspect now states the size, the limit and the largest repeated\ngroup — because 200 unique paths is a number, not a lead — announced once per shell, never per pane.\nIt does not edit PATH: a tool that silently rewrites the environment to make itself work has hidden\nthe problem from the only person who can fix it.\n\nAgents are now hosted in the login shell rather than launched beside it, which delivers the profile\nhalf of the request and makes .ps1 shims resolve. It is recorded honestly as NOT fixing the reported\nsymptom — a .cmd shim invoked from the hosting shell still starts cmd, which still drops the PATH.\nMeasured, not assumed.\n\nRegistered as DC-027: the environment a parent hands a child is not the one the child receives.",
+      "rationale": null,
+      "artifacts": [
+        "docs/investigations/INV-0001-agent-terminals-lack-the-users-environment.md",
+        "src/AiDe.Core/Terminal/EnvironmentHealth.cs"
+      ],
+      "tags": [
+        "investigation"
+      ],
+      "git": {
+        "before": null,
+        "after": "2731758925df4bb4b06ffae1f2186ad43cc82958",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
         "commits": []

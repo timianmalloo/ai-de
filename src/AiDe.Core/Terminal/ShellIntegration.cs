@@ -130,6 +130,46 @@ public static class ShellIntegration
     }
 
     /// <summary>
+    /// A command line that runs <paramref name="agent"/> INSIDE the user's login shell.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>An agent used to be launched directly, and that was the defect.</b> Reported as
+    /// "the agent sessions do not have my profile or my environment variables", and the measurement
+    /// found something sharper than a missing profile: a child that is a <c>.cmd</c> or <c>.bat</c>
+    /// shim — which is what every npm-installed CLI is — starts through <c>cmd.exe</c>, and
+    /// <b>cmd drops any environment variable past its own limit</b>. This machine's PATH is 22,297
+    /// characters, so a cmd-hosted agent starts with an <b>empty PATH</b> and cannot find node, git
+    /// or anything else. Measured: a cmd child through this ConPTY reported
+    /// <c>PATH=[]</c> while PowerShell started from the same inherited block reported all 22,297
+    /// characters and resolved <c>claude</c>.</para>
+    ///
+    /// <para><b>So the agent runs where the user's own commands run.</b> The login shell loads the
+    /// profile — the aliases, functions and variables the request was actually about — resolves
+    /// PATHEXT so a <c>.cmd</c> or <c>.ps1</c> shim works, and handles a long PATH correctly
+    /// because it is not cmd. The agent becomes exactly what typing its name in their terminal
+    /// does, which is the only definition of "works with my profile" that holds up.</para>
+    ///
+    /// <para>The agent's name is passed as a single-quoted PowerShell string with internal quotes
+    /// doubled, and invoked with <c>&amp;</c>. A name is not a command line here: quoting it means a
+    /// path with a space runs, and a name with an apostrophe cannot end the string early.</para>
+    /// </remarks>
+    public static string AgentCommandLine(string shellPath, string agent, string nonce)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(shellPath);
+        ArgumentException.ThrowIfNullOrWhiteSpace(agent);
+
+        var quoted = "'" + agent.Replace("'", "''", StringComparison.Ordinal) + "'";
+
+        // The integration script FIRST, so the prompt marker and the OSC nonce are installed before
+        // the agent takes the screen; then the agent itself. -NoExit keeps the shell after the agent
+        // exits, so a crashed agent leaves a usable terminal rather than a closed pane.
+        var script = PowerShellScript(nonce) + Environment.NewLine + "& " + quoted;
+        var encoded = Convert.ToBase64String(Encoding.Unicode.GetBytes(script));
+
+        return $"\"{shellPath}\" -NoLogo -NoExit -EncodedCommand {encoded}";
+    }
+
+    /// <summary>
     /// Refuses anything that is not plain hex.
     /// </summary>
     /// <remarks>

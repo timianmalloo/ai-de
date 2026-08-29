@@ -82,7 +82,8 @@ internal static class Program
                 log,
                 commandLine: args.Length > 2 ? args[2] : "claude",
                 workingDirectory: args.Length > 3 ? args[3] : Environment.CurrentDirectory,
-                settleSeconds: args.Length > 4 && int.TryParse(args[4], out var settle) ? settle : 20);
+                settleSeconds: args.Length > 4 && int.TryParse(args[4], out var settle) ? settle : 20,
+                hosted: args.Length > 5 && string.Equals(args[5], "hosted", StringComparison.OrdinalIgnoreCase));
 
             Write(report, log);
             return code;
