@@ -192,10 +192,15 @@ public sealed class CommandPalette
             VerticalAlignment = VerticalAlignment.Top,
             Margin = new Thickness(0, 80, 0, 0),
             BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(12),
             Visibility = Visibility.Collapsed,
         };
         border.SetResourceReference(Border.BackgroundProperty, "SurfaceRaisedBrush");
         border.SetResourceReference(Border.BorderBrushProperty, "AccentBrush");
+        // Elevation belongs on COMPOSITED chrome — this overlay is WPF over WPF, so a soft shadow is
+        // correct here (unlike over an HwndHost/WebView2 pane, where it would not composite). Set by
+        // resource reference so it tracks the token.
+        border.SetResourceReference(UIElement.EffectProperty, "ElevationRaised");
         AutomationProperties.SetName(border, "Command palette");
         return border;
     }

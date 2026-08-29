@@ -257,12 +257,14 @@ public sealed class ContextMapSurface : ContentControl
 
         return new Border
         {
-            // The same hue the canvas uses for this context, so the two views are one picture.
+            // A raised card on the dark pane: the same hue the canvas uses for this context on the
+            // border, a subtle raised ground, and a softer island radius.
+            Background = Res("SurfaceRaisedBrush"),
             BorderBrush = new SolidColorBrush(FromHsl(hue)),
-            BorderThickness = new Thickness(2, 2, 2, 2),
-            CornerRadius = new CornerRadius(8),
-            Padding = new Thickness(10),
-            Margin = new Thickness(0, 6, 0, 0),
+            BorderThickness = new Thickness(1, 1, 1, 1),
+            CornerRadius = new CornerRadius(10),
+            Padding = new Thickness(12),
+            Margin = new Thickness(0, 8, 0, 0),
             Child = panel,
         };
     }

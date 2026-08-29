@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-29T17:43:15Z",
+  "generated": "2026-08-29T17:49:24Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1625,6 +1625,26 @@ window.AUDIT_DATA = {
       "tags": [
         "facelift",
         "avalondock"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0093",
+      "shortname": "facelift-palette-and-cards",
+      "datetime": "2026-08-29T17:49:24Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Continue the facelift: soften the composited chrome and the evidence cards.",
+      "summary": "Command palette overlay: island corner radius + ElevationRaised soft shadow (composited chrome, airspace-correct). Context boxes: raised SurfaceRaised card ground + island radius + 1px hue border. Build 0/0; App.Tests 117/117.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/CommandPalette.cs",
+        "src/AiDe.App/Workbench/ContextMapSurface.cs"
+      ],
+      "tags": [
+        "facelift"
       ],
       "outcome": "success"
     }
