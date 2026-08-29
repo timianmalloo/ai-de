@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-29T18:12:36Z",
+  "generated": "2026-08-29T18:18:17Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1736,6 +1736,26 @@ window.AUDIT_DATA = {
       ],
       "tags": [
         "facelift"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0097",
+      "shortname": "canvas-2d-3d-toggle",
+      "datetime": "2026-08-29T18:18:17Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Implement CanvasSurface 2D/3D.",
+      "summary": "Added a self-contained 2D<->3D toggle to the canvas page: Fibonacci-sphere layout + hand-rolled perspective projection (no CDN), drag-to-rotate, 2/3 keyboard shortcuts, depth-cued scale/opacity/z-order. Default stays 2D so the focus probe is unaffected. Retokenized the canvas accent to #5B9DD9. Preserved the keyboard-trap/focus/__tabsSeen/node.activate contracts (P2-FOCUS-01/03 pass through real WebView2). Build 0/0; App.Tests 117/117; embedded-script gate OK.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/CanvasPage.cs"
+      ],
+      "tags": [
+        "facelift",
+        "canvas"
       ],
       "outcome": "success"
     }
