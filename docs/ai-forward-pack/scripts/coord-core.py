@@ -852,7 +852,53 @@ def worktree_is_clean(path):
     return not [p for p in (out or "").split("\0") if p.strip()], None
 
 
-def worktree_safety(record, primary, cwd, live_keys, index):
+# How recently a tree must have been touched to count as in use, and how much of it to look at.
+#
+# MEASURED NEED. A tree was reported "clean, merged, unheld" and removed, and a live session
+# recreated it within the minute and wrote a marker reading "facelift worktree in use". Nothing was
+# lost, because the cleanliness checks were correct — but the LIVENESS check was not: it read a
+# registration ledger, and that session had never registered. A ledger says who signed in; the
+# filesystem says who is working.
+#
+# Sixty minutes because a session between actions is still a session, and the cost of waiting an
+# hour to reclaim a directory is nothing against the cost of deleting one somebody is in. The scan
+# is capped and skips build output, so it stays cheap on a large tree; hitting the cap is treated as
+# "recently touched" rather than as an answer, because a partial scan cannot prove absence.
+WORKTREE_IDLE_SECONDS = 3600
+WORKTREE_SCAN_CAP = 4000
+WORKTREE_SCAN_SKIP = {".git", "bin", "obj", "node_modules", ".vs", "artifacts", "packages"}
+
+
+def worktree_touched_within(path, seconds, now):
+    """Whether anything in the tree was modified recently. Fail-safe: unknown means yes."""
+    newest = 0.0
+    seen = 0
+
+    try:
+        for directory, subdirectories, files in os.walk(path):
+            subdirectories[:] = [d for d in subdirectories if d not in WORKTREE_SCAN_SKIP]
+
+            for name in files:
+                seen += 1
+                if seen > WORKTREE_SCAN_CAP:
+                    # A tree too large to read is not a tree anyone can prove is idle.
+                    return True, "scan cap reached; treated as in use"
+
+                try:
+                    newest = max(newest, os.path.getmtime(os.path.join(directory, name)))
+                except OSError:
+                    continue
+    except OSError as error:
+        return True, "could not scan ({})".format(error.__class__.__name__)
+
+    if newest <= 0:
+        return False, "nothing readable to date"
+
+    age = now - newest
+    return age < seconds, "last modified {:.0f} minute(s) ago".format(max(age, 0) / 60)
+
+
+def worktree_safety(record, primary, cwd, live_keys, index, now=None):
     """WT7, in order, fail-safe. Returns (safe, reason).
 
     Every condition is a HARD STOP that reports rather than removes. A cleanup that deletes
@@ -884,7 +930,16 @@ def worktree_safety(record, primary, cwd, live_keys, index):
     branch = record.get("branch")
     if branch and index.get(branch, 0) > 1:
         return False, "branch {} is checked out in another tree".format(_safe(branch, 60))
-    return True, "clean, merged, unheld"
+
+    # Last, because it is the weakest signal and the most expensive: everything above answers from
+    # git, and this one answers from the filesystem. It is here because git could not see the
+    # session that was actually working (WT7).
+    recent, detail = worktree_touched_within(
+        path, WORKTREE_IDLE_SECONDS, now if now is not None else time.time())
+    if recent:
+        return False, "touched recently - {} - a session may be in it".format(detail)
+
+    return True, "clean, merged, unheld, idle - {}".format(detail)
 
 
 def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,

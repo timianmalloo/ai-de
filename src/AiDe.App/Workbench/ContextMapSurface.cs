@@ -74,6 +74,18 @@ public sealed class ContextMapSurface : ContentControl
             return;
         }
 
+        if (!view.IsDeclared)
+        {
+            // Said FIRST and said plainly. With no map every count below reads as complete coverage,
+            // which is the sentence a fully-mapped codebase produces — measured on a repository that
+            // simply has no map.
+            _body.Children.Add(Heading("No context map is declared for this workspace"));
+            _body.Children.Add(Muted(
+                "Nothing here says the code is uncovered, because nothing has been claimed about it " +
+                "yet. Add docs/bounded-contexts.yaml to group the domain view."));
+            return;
+        }
+
         _body.Children.Add(Heading($"{view.Contexts.Count} declared context(s)"));
 
         foreach (var context in view.Contexts.OrderByDescending(c => c.Symbols))
@@ -182,15 +194,35 @@ public sealed class ContextMapSurface : ContentControl
             });
         }
 
-        var header = new TextBlock
+        var headerText = $"{edge.From}  →  {edge.To}     {edge.Weight} edge(s)";
+
+        var header = new StackPanel { Orientation = Orientation.Horizontal };
+        header.Children.Add(new TextBlock
         {
-            Text = $"{edge.From}  →  {edge.To}     {edge.Weight} edge(s)",
+            Text = headerText,
             FontFamily = new FontFamily("Cascadia Mono, Consolas"),
-        };
+        });
+
+        // Said on the header, where the count is, because that is the number it corrects. On a real
+        // repository 57 of 72 edges were one class and the crossing read as a failed boundary; the
+        // tool knew and the user had to open the list to find out.
+        if (edge.DominantTarget is { } dominant)
+        {
+            header.Children.Add(new TextBlock
+            {
+                Text = $"   — {edge.DominantCount} of them reach {ShortName(dominant.Object)}",
+                Opacity = 0.75,
+                VerticalAlignment = VerticalAlignment.Center,
+            });
+        }
 
         var expander = new Expander { Header = header, Content = members, Margin = new Thickness(0, 2, 0, 0) };
         AutomationProperties.SetName(expander,
-            $"{edge.From} to {edge.To}, {edge.Weight} edges. Expand to list them.");
+            $"{edge.From} to {edge.To}, {edge.Weight} edges." +
+            (edge.DominantTarget is { } target
+                ? $" {edge.DominantCount} of them reach {target.Object}."
+                : string.Empty) +
+            " Expand to list them.");
 
         return expander;
     }
@@ -232,6 +264,13 @@ public sealed class ContextMapSurface : ContentControl
             Margin = new Thickness(0, 6, 0, 0),
             Child = panel,
         };
+    }
+
+    /// <summary>The last segment of a dotted name, for a header that has to stay one line.</summary>
+    private static string ShortName(string name)
+    {
+        var cut = name.LastIndexOf('.');
+        return cut > 0 && cut < name.Length - 1 ? name[(cut + 1)..] : name;
     }
 
     /// <summary>The canvas colours by <c>hsl(h, 55%, 55%)</c>; this matches it.</summary>

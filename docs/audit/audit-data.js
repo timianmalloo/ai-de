@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-29T16:39:17Z",
+  "generated": "2026-08-29T16:46:10Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1382,11 +1382,64 @@ window.AUDIT_DATA = {
     },
     {
       "id": "al-0066",
+      "shortname": "worktree-correction-and-second-repository",
+      "datetime": "2026-08-29T16:24:40Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "the other session is complete (was supposed to be in a different work tree)\nin fact the repo guidance is all work is done in new work trees so this should have been in a different tree as well so this session did not follow repo guidance\n----\ncommit and push all then make sure main is up to data AND then create a work tree for this session\n----\nthen do the next steps you listed autonomously and provide the standard status and next step tables when you are done",
+      "summary": "The correction was fair: WT1 requires a writing session to start in its own worktree, and this one\nworked in the primary checkout for its whole life. It now runs in\nC:/Projects/ai-de-session-phase3-pane-probes on session/phase3-pane-probes, registered.\n\nCleaning up the other session's tree produced the turn's most important finding. The tree was removed\non a verdict of \"clean, merged, unheld\" — and a live session recreated it within the minute and wrote\na marker saying it was in use. Nothing was lost, because every cleanliness check was correct. The\nliveness check was not: it read a registration ledger, and that session had never registered.\nDC-024, controlled by a filesystem recency condition observed failing in both directions.\n\nFive steps. The panes are rendered and read rather than merely constructed, with a rule that no\nevidence pane may render nothing. A crossing dominated by one object now names it, so the finding\nthat took a human reading a list is computed. A second repository was measured — BioHacker, no EF,\n26 Bicep resources — where zero joins is correct and says so, but where the absence of a context map\nwas being rendered as PERFECT COVERAGE: \"Every declared symbol belongs to a context\", from a\nworkspace that has never claimed anything. One repository could not have found that. And TheTerrace's\nPlatform split is applied on a local branch in its own worktree, not pushed.\n\nGate: 641 tests green (App 115, Core 526), six verifiers clean.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Move this session into its own worktree as WT1 requires, then land the five next steps autonomously and close with the standard tables",
+      "done_when": "Session running in its own registered worktree; five steps landed with a control each; full gate green; committed and pushed; tables produced",
+      "change": "cl-0059",
+      "git": {
+        "sha": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
+        "short": "21068ab3f",
+        "branch": "session/phase3-pane-probes",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0067",
+      "shortname": "session-contract-and-core-composition",
+      "datetime": "2026-08-29T16:35:59Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "there are two sessions working in two different worktrees\nyour sessions need to be collaborative with each other\none session, the claude code session, will work on the core capabilities (the workspace, analyzing the repo contents, implementing the extractors and building the graph for the tool and the overall tool interaction between surfaces), the other session, the GitHub copilot session, will work on the styling and the distinct design surfaces.\nBoth sessions have to agree on contracts (interfaces and abstractions) and on what files they are working on to minimize conflicts and merge complexity.\n-----------\nlook at your work, choose next steps that align to your accountability\ndo your next steps\nthen provide the standard tables of status and next steps at the end of your turn\n----\nthis session is the claude code session working on the core capabilities",
+      "summary": "Chose work on the core side of the line, and wrote the line down first.\n\nThe contract (docs/collaboration/session-contracts.md, status: proposed) states the seam in one\nsentence — Core produces view models, Design renders them — lists file ownership rather than\ndescribing it, names the eight contract types and the two invariants neither session may break\nalone, and gives the three-step protocol for changing any of them. Section 6 lists what it does NOT\nsettle, because writing one session's preference down as settled is how a proposal becomes a fait\naccompli. Three render requests are recorded in it rather than made in conversation.\n\nThen two core defects.\n\nThe daemon composed only the C# extractor and the fixture adapter, so the running application could\nnot see infrastructure or schema — while a spike composed all four and reported joins the product had\nno way to show. One composition now, WorkspaceExtractors.Default(), used by both, with named\narguments and a test that reads the routing decision rather than trusting parameter order. Observed\nfailing on the exact mis-ordering that caused the original wrong conclusion: expected \"bicep\", actual\n\"schema\".\n\nAnd every number both panes show was computed from a bounded read — 20,000 matches, 4,000 nodes, 60\nneighbours each — that never said so. On the repositories measured the caps are slack, and nothing in\nthe output would change if they were not: the counts would just be smaller and still presented as\nfacts. EvidenceRead reports what the read did not see, both causes separately because their fixes\npoint in opposite directions, and a node at exactly the limit counts as truncated.\n\nGate: 647 tests green (App 115, Core 532), six verifiers clean.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "collaboration",
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Write the contract between the two sessions, then do core-side work only: one extractor composition shared by every entry point, and a bounded read that reports what it did not see",
+      "done_when": "Contract committed and pushed for the other session to read; core defects fixed with a control each; no Design-owned file edited; full gate green; tables produced",
+      "change": "cl-0061",
+      "git": {
+        "sha": "6db9b6f43e70b8a05994becd344aa86e58e9b37c",
+        "short": "6db9b6f43",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-0068",
       "shortname": "adddomainexperts-graph-wpf-uml",
-      "datetime": "2026-08-29T16:39:17Z",
+      "datetime": "2026-08-29T16:46:10Z",
       "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "prompt": "adddomainexperts: (1) a graph-visualization/knowledge-graph-UX lens citing the graph bases; (2) a WPF styling/design expert from the wpf knowledge; (3) a UML and ERM expert.",
-      "summary": "Added 3 domain experts (kg-visualization-ux-expert, wpf-styling-expert, uml-erm-modelling-expert) as dual-form personas with seams vs Domain Researcher/UX-A/Native-Desktop/Data&Persistence, proportional vetoes, owned anti-patterns; registry docs/domain-experts.md written; roster now 23+3=26; rejected candidates recorded.",
+      "prompt": "adddomainexperts x3: graph-viz/KG-UX, WPF styling, UML/ERM experts",
+      "summary": "Added 3 domain experts (kg-visualization-ux-expert, wpf-styling-expert, uml-erm-modelling-expert) + docs/domain-experts.md registry; roster 23+3=26.",
       "kind": "skill",
       "skill": "adddomainexperts",
       "tool": "Copilot CLI",
@@ -1395,18 +1448,17 @@ window.AUDIT_DATA = {
         "docs/domain-experts.md"
       ],
       "tags": [
-        "personas",
-        "domain-experts"
+        "personas"
       ],
       "outcome": "success"
     },
     {
-      "id": "al-0067",
+      "id": "al-0069",
       "shortname": "specify-facelift-knowledge-uml",
-      "datetime": "2026-08-29T16:39:17Z",
+      "datetime": "2026-08-29T16:46:10Z",
       "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "prompt": "specify: (1) overall styling/facelift (rounded/softer, icons, menu system); (2) knowledge exploration surface (traversable graph over all artifacts, UML/ERM-grounded, 2D/3D toggle, per-node natural render md/html/code); (3) UML & ERM surfaces (first-class, polished, off the repo graph).",
-      "summary": "Three 3-layer specs written & grounded: app-facelift (flat->soft-islands evolution, icon+menu system), knowledge-exploration (bounded neighbourhood node-walk, provenance-shown, 2D-default, natural renderers), uml-erm-surfaces (derived read-only C4/UML/ER, crow's-foot, notation-valid). Falsifiable Gherkin criteria; archetypes auto-selected with JTBD rationale.",
+      "prompt": "specify x3: facelift, knowledge exploration, UML/ERM surfaces",
+      "summary": "Three 3-layer specs: app-facelift, knowledge-exploration, uml-erm-surfaces.",
       "kind": "skill",
       "skill": "specify",
       "tool": "Copilot CLI",
@@ -1422,12 +1474,12 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
-      "id": "al-0068",
-      "shortname": "ui-design-facelift-explorer-models",
-      "datetime": "2026-08-29T16:39:17Z",
+      "id": "al-0070",
+      "shortname": "ui-design-three-surfaces",
+      "datetime": "2026-08-29T16:46:10Z",
       "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "prompt": "ui-design the three surfaces from their specs: the app facelift, the knowledge graph + node visualizations, and the UML/ERM surfaces.",
-      "summary": "DESIGN.md evolved to soft-islands (radii/elevation/icon/menu + provenance/inferred-relationship/read-only-banner tokens). Three self-contained dependency-free mockups with review harnesses and hard states: app-facelift.html, knowledge-explorer.html (2D/3D graph + node-introspection router + provenance legend), uml-erm-surfaces.html (crow's-foot ER + UML class + C4, permanent read-only banner, inferred dashed).",
+      "prompt": "ui-design the facelift, knowledge explorer, and UML/ERM surfaces",
+      "summary": "DESIGN.md soft-islands + 3 self-contained mockups with harnesses and hard states.",
       "kind": "skill",
       "skill": "ui-design",
       "tool": "Copilot CLI",
@@ -1438,8 +1490,7 @@ window.AUDIT_DATA = {
         "docs/mockups/uml-erm-surfaces.html"
       ],
       "tags": [
-        "ui-design",
-        "mockup"
+        "ui-design"
       ],
       "outcome": "success"
     }
@@ -2878,23 +2929,123 @@ window.AUDIT_DATA = {
     },
     {
       "id": "cl-0058",
-      "datetime": "2026-08-29T16:39:17Z",
+      "datetime": "2026-08-29T16:24:22Z",
+      "session": null,
+      "kind": "knowledge",
+      "skill": null,
+      "title": "DC-024: the worktree cleanup asked a ledger whether anyone was there",
+      "prompt": null,
+      "summary": "This session moved into its own worktree, which repo guidance required from the start and it did not\ndo. Every commit before this one was written directly in the primary checkout — recorded here rather\nthan quietly corrected, because the register exists for the agent's own defects too.\n\nCleaning up afterwards produced a worse finding. coord worktree cleanup --remove deleted\nC:/Projects/ai-de-facelift reporting \"clean, merged, unheld\" — and a LIVE session recreated the tree\nwithin the minute and wrote a marker reading \"facelift worktree in use\". Nothing was lost: the\ncleanliness checks were all correct, the tree had no uncommitted work and no unique commits. The\nLIVENESS check was the wrong one. It read live_keys — a registration ledger — and that session had\nnever run coord session start. A ledger says who signed in; it never says nobody is there.\n\nRegistered as DC-024 and controlled: worktree_safety now ends with a filesystem condition. A tree\nwhose files were modified within the last hour is HELD whatever the ledger says. The scan skips build\noutput, is capped at 4,000 files, and treats hitting the cap as in-use rather than as an answer,\nbecause a partial scan cannot prove absence. The reason string carries the age, so \"idle\" is a\nmeasurement someone can disagree with rather than a verdict.\n\nObserved failing in both directions on a scratch tree: clean, merged and unregistered it reported\nKEEP - touched recently - last modified 0 minute(s) ago; with its files backdated two hours it became\nWOULD - clean, merged, unheld, idle - last modified 120 minute(s) ago. A safety rule that never\npermits anything is not a safety rule.",
+      "rationale": null,
+      "artifacts": [
+        "docs/ai-forward-pack/scripts/coord-core.py",
+        ".claude/knowledge/session-worktree-discipline.md"
+      ],
+      "tags": [
+        "continuous-improvement"
+      ],
+      "git": {
+        "before": null,
+        "after": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0059",
+      "datetime": "2026-08-29T16:24:23Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Panes rendered and read; a second repository finds absence rendered as coverage",
+      "prompt": null,
+      "summary": "The panes are now rendered and read, and a second repository was measured.\n\nPaneRenderTests walks the visual tree of the Joins and Contexts panes and asserts on CONTENT, never\non a control count — \"has four children\" passes for four empty labels. In-process on an STA thread\nrather than as another out-of-process probe: the canvas needs a real foreground window because it\ndrives a browser through SendInput, and these panes build their own children. The last case is the\nrule both must keep: no evidence pane, in any of its six states, may render no readable text.\nObserved failing by making one pane silent.\n\nA crossing dominated by one object now says which one. Found by eye once — 57 of 72 edges were\nAppDbContext — and a signal a person has to notice is a signal that gets noticed once. Majority of\nthe listed members, computed over what was actually examined rather than extrapolated to the full\nweight, with the undisclosed count still beside it. Three tests including the boundary: exactly half\nis not domination.\n\nBioHacker was measured as a second repository, deliberately a different shape — 25 scopes, 26 Bicep\nresources, no Entity Framework. Zero joins is the correct answer there and the pane says so. But it\nhas no context map, and the pane reported \"0 uncovered\" and \"Every declared symbol belongs to a\ncontext\" — the sentence a fully-mapped codebase produces. The arithmetic was right, which is why a\ncleverer count could not have fixed it. ContextMapView carries IsDeclared now and says plainly that\nnothing has been claimed about the code yet. One repository could not have found this: TheTerrace has\na map, so every path that runs when there is none had never been exercised.\n\nAnd TheTerrace's Platform split is applied on a branch in its own worktree — docs/platform-context,\ncommitted locally and NOT pushed, because that repository is the user's to publish.",
+      "rationale": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/PaneRenderTests.cs",
+        "src/AiDe.Core/Projections/ContextProjection.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0060",
+      "datetime": "2026-08-29T16:35:40Z",
+      "session": null,
+      "kind": "decision",
+      "skill": null,
+      "title": "A written contract between the core and design sessions",
+      "prompt": null,
+      "summary": "Two sessions now work this repository at once — core capabilities here, styling and design surfaces\nin the other tree. docs/collaboration/session-contracts.md is the proposal, written down because\n\"we'll coordinate\" is not a coordination mechanism and the first thing two sessions lose is not code\nbut agreement about what each thought was true.\n\nThe seam is one sentence: Core produces view models, Design renders them. A view model is a record\nwith no behaviour and no WPF types, carrying what the user needs to know INCLUDING what could not be\nestablished — a projection that hides a gap forces the surface to invent one. Neither side reaches\nacross: Core does not choose colour or control, Design does not compute a number, because a number\ncomputed in a surface is a second definition of a quantity that already has one.\n\nFile ownership is listed rather than described, with the shared files and the rule each carries.\nDerived files — docs-index.js, audit-data.js — are called out because a hand-merged generated file is\na conflict resolved into a lie.\n\nSection 6 is deliberate: what this does NOT settle. Fast-forward versus pull request, whether view\nmodels should carry presentation hints, and where visual regression evidence lives are joint\ndecisions, and writing one session's preference down as settled is how a proposal becomes a fait\naccompli. Status is proposed, not accepted.\n\nThree requests to Design are recorded in 4a rather than made in conversation, each additive and\nalready on main.",
+      "rationale": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [
+        "collaboration"
+      ],
+      "git": {
+        "before": null,
+        "after": "6db9b6f43e70b8a05994becd344aa86e58e9b37c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0061",
+      "datetime": "2026-08-29T16:35:40Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "One extractor composition, and a bounded read that says what it missed",
+      "prompt": null,
+      "summary": "Two core defects, both about a boundary telling the truth about itself.\n\n**The running app could not see what the spike could.** The daemon composed only the C# extractor and\nthe fixture adapter, so infrastructure and schema were invisible to the product while a spike\ncomposed all four and reported joins the app had no way to show — two answers to \"what does this tool\nread\", depending which door you came in. WorkspaceExtractors.Default() is now the single composition,\nused by the daemon and the spike, with named arguments.\n\nThat matters because the hand-written form is easy to get wrong SILENTLY: the spike once passed its\nextractors positionally, which put BicepExtractor in the fallback slot and routed every bicep scope\nto the schema extractor. Both failed and the write-up concluded the repository had no Bicep. It has\ntwo templates and 24 resource declarations. CompositeExtractor.RouteFor now exposes the routing\ndecision so a test can read it, and the test was observed failing on that exact mis-ordering:\nexpected \"bicep\", actual \"schema\".\n\n**Every number both panes show was computed from a bounded read that never said so.** The shell\nsearches with a 20,000 cap, describes 4,000 of the matches, and takes 60 neighbours from each. On the\nrepositories measured so far all three are slack — and nothing in the output would change if they\nwere not. The counts would simply be smaller and still be presented as facts. EvidenceRead carries\nwhat the read did not see; the shell announces it once per distinct sentence, and reports BOTH causes\nseparately because \"bigger than the search cap\" and \"these nodes are unusually connected\" have\nopposite fixes. A node returning exactly the limit counts as truncated, because the read cannot tell\nthe difference and guessing in the flattering direction is how a cap becomes a quieter wrong number.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/WorkspaceExtractors.cs",
+        "src/AiDe.Core/Projections/EvidenceRead.cs",
+        "src/AiDe.Daemon/Program.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "6db9b6f43e70b8a05994becd344aa86e58e9b37c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0062",
+      "datetime": "2026-08-29T16:46:10Z",
       "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
       "kind": "decision",
-      "skill": "adddomainexperts",
-      "title": "Added 3 domain experts and specified+mocked the facelift, knowledge-explorer, and UML/ERM surfaces",
-      "prompt": "adddomainexperts x3 + specify x3 + ui-design x3 for the app facelift, knowledge exploration, and UML/ERM surfaces.",
-      "summary": "Roster: 23 general + 3 domain experts (graph-viz/KG-UX, WPF-styling, UML/ERM). Design direction: workbench evolves flat->soft-islands. Surfaces: node-introspection router over a bounded provenance-carrying graph with 2D/3D; first-class derived read-only UML/ERM off the graph.",
-      "rationale": "Gives the swarm subject-matter judgment for the graph/WPF/UML domains and grounds the three new surfaces in sourced knowledge and the existing DESIGN.md.",
+      "skill": "ui-design",
+      "title": "Domain experts + facelift/knowledge/UML-ERM specs and mockups",
+      "prompt": "domain experts + specify + ui-design chain",
+      "summary": "Roster 26; flat->soft-islands; node-introspection router; derived read-only UML/ERM.",
+      "rationale": "Subject-matter judgment + three grounded surfaces.",
       "artifacts": [
         "docs/domain-experts.md"
       ],
       "tags": [],
       "git": {
-        "before": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
-        "after": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
+        "before": null,
+        "after": "d81828191646a2031f702165854e6f816918571a",
         "branch": "feature/app-facelift-and-graph-surfaces",
-        "pushed": null,
+        "pushed": true,
         "commits": []
       }
     }

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-29T16:38:21Z",
+  "generated": "2026-08-29T16:46:09Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1522,7 +1522,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3cd777ae946e3c2c8c4b033e13e8bc3735df3f2fd0c156d328566fe535863748"
+      "sourceSha256": "e1e58f61c59d4ce625e3f134414260b45e4323725e1b3b62105d9c794f8fc30d"
     },
     {
       "id": "domain-experts",
@@ -2157,6 +2157,36 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c04d25afbeb930496cf97e78fe6b92e05aab38e5e5d8523933e8709ee16e19d7"
+    },
+    {
+      "id": "session-contracts",
+      "path": "docs/collaboration/session-contracts.md",
+      "title": "Two-session contract — core capabilities and design surfaces",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-29",
+      "reviewSuggested": [],
+      "summary": "Who owns which files, which interfaces are the seam between them, and how a change to that seam is agreed. Written by the core session so the design session can disagree with something concrete.",
+      "tags": [
+        "collaboration",
+        "contracts",
+        "ownership",
+        "worktrees"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "knowledge-hub",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f45fb13e630638c458a4ff63d9027b63bed8b8cc5ea97bd286e623c25f479cbb"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -5414,7 +5444,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de — Audit & Change Log",
+      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -5460,5 +5490,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b485169a4493a2d8a526594769ec56c7d0a5e51b114137e031a41619321b186f"
+  "graphSha256": "73ee39469d9da9bf2ded8cb388146e6f15b8cf53409deea6ab27cfe35803e6ab"
 };

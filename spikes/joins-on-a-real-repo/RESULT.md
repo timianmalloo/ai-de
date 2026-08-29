@@ -155,6 +155,39 @@ is committed to this one so the numbers above can be reproduced.
 
 The remaining uncovered symbols are led by **362 tests**, which no context map should claim.
 
+---
+
+## A second repository — 2026-08-29
+
+`C:\Projects\BioHacker`, chosen because it is a different shape: 20 projects, 26 Bicep resources,
+and no Entity Framework at all.
+
+```
+scopes     : 25 of 25 indexed in 3.3s
+assertions : 2,405
+0 verified · 0 inferred
+```
+
+**Zero joins is the right answer** and the pane says so: with no `DbContext` there are no tables, so
+there is nothing for code or infrastructure to be joined to. The three disclosures it prints are the
+reasons.
+
+### The finding: absence rendered as perfect coverage
+
+BioHacker has no `docs/bounded-contexts.yaml`. The contexts pane reported:
+
+```
+  uncovered: 0 symbol(s)
+```
+
+and the surface said **"Every declared symbol belongs to a context."** That is the sentence a
+fully-mapped codebase produces. The arithmetic was right — no map means no uncovered list — and that
+is exactly why a cleverer count could not have fixed it. `ContextMapView` now carries `IsDeclared`,
+and a workspace with no map is told so in its own words instead of being congratulated.
+
+**One repository could not have found this.** TheTerrace has a map, so every code path that runs when
+there is none had never been exercised against real evidence.
+
 ## Consequence
 
 | | |

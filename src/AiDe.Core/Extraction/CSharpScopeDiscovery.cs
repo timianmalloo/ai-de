@@ -209,16 +209,26 @@ public sealed class CompositeExtractor(
         ["schema:"] = schema ?? new EfSchemaExtractor(),
     };
 
-    public Task<ExtractionResult> ExtractAsync(ExtractionRequest request, CancellationToken cancellationToken)
+    /// <summary>Which extractor a scope id resolves to. Exposed so routing can be ASSERTED.</summary>
+    /// <remarks>
+    /// The router is four positional constructor parameters, and getting their order wrong is silent:
+    /// a mis-ordered composite routes bicep scopes to the schema extractor, both fail, and the run
+    /// reports a repository with no infrastructure in it. That happened. A test can now read the
+    /// decision instead of trusting the call site.
+    /// </remarks>
+    public IExtractor RouteFor(string scopeId)
     {
         foreach (var (prefix, extractor) in _routes)
         {
-            if (request.ScopeId.StartsWith(prefix, StringComparison.Ordinal))
+            if (scopeId.StartsWith(prefix, StringComparison.Ordinal))
             {
-                return extractor.ExtractAsync(request, cancellationToken);
+                return extractor;
             }
         }
 
-        return fallback.ExtractAsync(request, cancellationToken);
+        return fallback;
     }
+
+    public Task<ExtractionResult> ExtractAsync(ExtractionRequest request, CancellationToken cancellationToken) =>
+        RouteFor(request.ScopeId).ExtractAsync(request, cancellationToken);
 }

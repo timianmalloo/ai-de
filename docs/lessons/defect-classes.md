@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 14 · uncontrolled 0
+**Status counts:** controlled 9 · partially-controlled 15 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -681,4 +681,40 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   **fails** when a fourth is added without one. The syntax gate proves a script PARSES, which is not
   the same as proving it works — only the canvas probe rendering the page does that, and only for the
   canvas.
+- **Status:** `partially-controlled`
+
+### DC-024 — A liveness check that reads a ledger instead of the world
+- **Signature:** a destructive operation is gated on "is anybody using this?", and the gate answers
+  from a **registration** — a session table, a lock file, a lease — rather than from the thing
+  itself. Everything registered is protected. Everything *unregistered* is reported as idle, which
+  is the same word the tool uses for genuinely abandoned, so the operator cannot tell "nobody is
+  here" from "nobody signed in". The gate is correct about its ledger and wrong about the world.
+- **Why it survives:** the ledger is right almost always, because most participants do register.
+  The failure needs a participant that skipped registration AND a moment when every other signal is
+  clean — for a worktree, a session sitting between a commit and its next edit. That window is
+  narrow, so the tool is trusted for a long time before it is wrong once, destructively.
+- **Instances:** 2026-08-29 — `coord worktree cleanup --remove` deleted
+  `C:/Projects/ai-de-facelift`, reported *"clean, merged, unheld"*, and a live session **recreated
+  the tree within the minute** and wrote a marker reading *"facelift worktree in use"*. Its
+  cleanliness checks were all correct — the tree had no uncommitted work and no unique commits, so
+  nothing was lost — but `unheld` came from `live_keys`, and that session had never run
+  `coord session start`. Found by looking at the directory afterwards rather than by any alarm.
+- **Control:** `worktree_safety` gains a filesystem condition after the git ones: a tree whose files
+  were modified within `WORKTREE_IDLE_SECONDS` (3600) is **held**, whatever the ledger says. The scan
+  skips build output, is capped at 4,000 files, and treats hitting the cap as *in use* — a partial
+  scan cannot prove absence. The reason string now carries the age, so "idle" is a measurement the
+  operator can disagree with rather than a verdict.
+- **Observed failing:** a scratch worktree, clean and fully merged and unregistered, was reported
+  `KEEP … touched recently - last modified 0 minute(s) ago`; with its files backdated two hours it
+  became `WOULD … clean, merged, unheld, idle - last modified 120 minute(s) ago`. Both directions,
+  because a safety rule that never permits anything is not a safety rule.
+- **The generalisation to apply elsewhere:** before anything irreversible, ask **what would tell me
+  this is in use, and does my check actually look at that?** A ledger is evidence that someone
+  announced themselves, never that nobody is there. The tell is a gate whose reason string says
+  "unheld", "unclaimed" or "no active session" — every one of those is a statement about a record.
+  Where the world can be read directly, read it, and let the ledger be the fast path rather than the
+  answer.
+- **Residual risk:** an hour is a guess dressed as a constant. A session idle longer than that is
+  still unprotected, and a tree on a filesystem with coarse timestamps reports ages that are only
+  roughly right. The registration path remains the strong signal; this is the floor beneath it.
 - **Status:** `partially-controlled`

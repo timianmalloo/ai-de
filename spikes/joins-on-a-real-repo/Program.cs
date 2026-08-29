@@ -32,17 +32,11 @@ Console.WriteLine($"repository : {root}");
 Console.WriteLine($"store      : {data}");
 Console.WriteLine(new string('=', 100));
 
-// NAMED, not positional. The first run passed these by position, so BicepExtractor landed in the
-// `fallback` slot and every bicep: scope was routed to the schema extractor — which reported the two
-// Bicep scopes as failures and left the run with no infrastructure evidence at all. The harness was
-// wrong, and the write-up that concluded "TheTerrace has no Bicep" was wrong with it.
-using var core = WorkspaceCore.Open(
-    "joins-spike", root, data,
-    new CompositeExtractor(
-        csharp: new CSharpExtractor(),
-        fallback: new FixtureExtractor(),
-        bicep: new BicepExtractor(),
-        schema: new EfSchemaExtractor()));
+// The SAME composition the daemon uses. This spike once built its own, passed the extractors
+// positionally, and routed every bicep: scope to the schema extractor — both failed, and the
+// write-up concluded the repository had no Bicep. A harness that composes the product differently
+// is measuring a product that does not ship.
+using var core = WorkspaceCore.Open("joins-spike", root, data, WorkspaceExtractors.Default());
 
 var started = DateTimeOffset.UtcNow;
 var index = await core.IndexCSharpAsync("spike-1", CancellationToken.None);
