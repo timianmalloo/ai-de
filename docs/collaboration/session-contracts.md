@@ -93,6 +93,7 @@ other session may not read it — reading is how contracts stay honest.
 | `docs/lessons/defect-classes.md` | **Append only.** Both sessions add classes; nobody rewrites another's entry |
 | `docs/audit/*.jsonl` | Append only, through `audit-log.py`. Never hand-edited — ids collide (DC-013) |
 | `docs/docs-index.js` | **Derived. Never hand-edited.** Regenerate with `docs-graph.py derive`; a conflict here is resolved by regenerating, never by merging |
+| `MainMenuBuilder.Layout` — the command→menu mapping only | **Core-owned data inside a Design-owned file.** Which commands exist and which menu they belong to is a Core decision, and `TheMenuCoversEveryCatalogCommand` makes adding a command and placing it one atomic change. Core edits **only that array**; everything else in the file is Design's. Proposal: move the mapping onto the catalog entry so the seam stops crossing here at all |
 
 ---
 
@@ -148,6 +149,7 @@ a user currently cannot see.
 
 | Request | Why | Where |
 |---|---|---|
+| Render `IndexSummary.ScopesReused` | Unchanged scopes are reused now, so an index can legitimately report "0 indexed" and be correct. Announced today; a pane showing 0 with no explanation reads as a failure | `IndexSummary.ScopesReused`, and `Describe()` already says it |
 | Render the **evidence shortfall** | Every number both panes show is computed from a bounded read: 20,000 search results, 4,000 nodes described, 60 neighbours each. When a cap bites, the counts become lower bounds and look identical to complete ones. Core announces it today, which reaches assistive technology and nothing else | `EvidenceRead.Shortfall` — Core will add it to `ContextMapView` and `JoinResult` on request, additively |
 | Show `ContextEdge.DominantTarget` more prominently | 57 of 72 crossings being one class is the difference between "this boundary failed" and "this boundary is carrying the ORM". It is currently a grey suffix on the expander header | `ContextEdge.DominantTarget`, `DominantCount` |
 | A visual state for `ContextMapView.IsDeclared == false` | "No context map is declared" is currently a heading and a muted paragraph. It is the *first* thing a new workspace shows, and it is closer to an empty state than to a message | `ContextMapView.IsDeclared` |

@@ -1,3 +1,4 @@
+using AiDe.Core.Ipc;
 using AiDe.Core.Extraction;
 using AiDe.Core.Facts;
 using AiDe.Core.Projections;
@@ -281,6 +282,109 @@ public sealed class Phase3SurfacingTests : IDisposable
         var digest = ScopeFingerprints.Compute(Path.Combine(_dir, "ws"), scope);
 
         Assert.NotEqual(string.Empty, digest);
+    }
+
+    [Fact]
+    public async Task AScopeThatDisappearsIsForgotten_AndItsDepartureIsRecorded()
+    {
+        // A project appearing or leaving is not a change to any EXISTING scope, so every per-scope
+        // fingerprint can be identical while the workspace's shape has changed underneath. A new
+        // scope is always read because it has nothing to match; the case that needed closing is the
+        // opposite one — evidence for a scope that has gone, sitting in the store describing code
+        // that no longer exists, with nothing to remove it and nothing to say so.
+        var root = Workspace();
+        var data = Path.Combine(_dir, "data");
+
+        File.WriteAllText(Path.Combine(root, "infra", "second.bicep"),
+            "resource other 'Microsoft.Web/sites@2023-01-01' = {" + (char)10 + "  name: 'second'" + (char)10 + "}" + (char)10);
+
+        var first = await IndexAsync(root, data);
+        Assert.Equal(2, first.Indexed);
+
+        File.Delete(Path.Combine(root, "infra", "second.bicep"));
+
+        var after = await IndexAsync(root, data);
+
+        // The survivor is reused; the departed one is gone from the sidecar rather than reused
+        // forever.
+        Assert.Equal(1, after.Reused);
+        Assert.Equal(0, after.Indexed);
+
+        var incidents = File.ReadAllText(Path.Combine(data, "health-incidents.jsonl"));
+        Assert.Contains("scope_departed", incidents, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task ForceReachesTheCoreThroughTheCommandSurface()
+    {
+        // The escape hatch existed as an API parameter with nothing able to reach it. This is the
+        // path the Ctrl+K, Shift+I command takes.
+        var root = Workspace();
+        var data = Path.Combine(_dir, "data");
+
+        using var core = WorkspaceCore.Open("fp", root, data, WorkspaceExtractors.Default());
+        var commands = new LocalWorkspaceCommands(
+            (_, _, _) => Task.FromResult(0),
+            (revision, force, ct) => core.IndexCSharpAsync(revision, ct, force: force)
+                .ContinueWith(t => new IndexSummary(
+                    t.Result.ScopesFound, t.Result.ScopesIndexed, t.Result.Assertions,
+                    t.Result.Failed, t.Result.Disclosures, t.Result.Contexts, t.Result.ScopesReused), ct));
+
+        await commands.IndexSolutionAsync("rev-1", CancellationToken.None);
+
+        var cached = await commands.IndexSolutionAsync("rev-1", CancellationToken.None);
+        Assert.Equal(1, cached.ScopesReused);
+        Assert.Contains("reused", cached.Describe(), StringComparison.OrdinalIgnoreCase);
+
+        var forced = await commands.IndexSolutionAsync("rev-1", CancellationToken.None, force: true);
+        Assert.Equal(0, forced.ScopesReused);
+    }
+
+    [Fact]
+    public void SourceThisBuildCannotReadIsDisclosed()
+    {
+        // MEASURED on a fourth repository: 63 Python files and 40 TypeScript produced zero scopes,
+        // zero assertions and an EMPTY disclosure list — indistinguishable from an empty directory.
+        // Third repository in a row where the arithmetic was right and the claim was false.
+        var root = Path.Combine(_dir, "polyglot");
+        Directory.CreateDirectory(Path.Combine(root, "app"));
+        Directory.CreateDirectory(Path.Combine(root, "node_modules", "junk"));
+
+        File.WriteAllText(Path.Combine(root, "app", "main.py"), "print('hi')");
+        File.WriteAllText(Path.Combine(root, "app", "util.py"), "x = 1");
+        File.WriteAllText(Path.Combine(root, "app", "index.ts"), "export const a = 1;");
+
+        // Vendored code is somebody else's; counting it would make the disclosure a number about
+        // node_modules rather than about this repository.
+        File.WriteAllText(Path.Combine(root, "node_modules", "junk", "vendored.js"), "module.exports = {}");
+
+        var disclosures = UnanalysedLanguages.Survey(root);
+
+        Assert.Contains(disclosures, d => d.StartsWith("python-not-analysed", StringComparison.Ordinal));
+        Assert.Contains(disclosures, d => d.Contains("(2 file(s))", StringComparison.Ordinal));
+        Assert.Contains(disclosures, d => d.StartsWith("typescript-not-analysed", StringComparison.Ordinal));
+        Assert.DoesNotContain(disclosures, d => d.StartsWith("javascript", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void AWorkspaceWithNothingToIndexStillSaysWhatItDidNotRead()
+    {
+        var summary = new IndexSummary(0, 0, 0, [], ["python-not-analysed (63 file(s))"]);
+
+        Assert.Contains("python-not-analysed", summary.Describe(), StringComparison.Ordinal);
+        Assert.Contains("Not analysed", summary.Describe(), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ACSharpWorkspaceDisclosesNothingItCanRead()
+    {
+        // The other half: a disclosure that fires on every workspace is noise, and a repository this
+        // build CAN read must not be told its own source went unanalysed.
+        var root = Path.Combine(_dir, "csonly");
+        Directory.CreateDirectory(root);
+        File.WriteAllText(Path.Combine(root, "Program.cs"), "class P { }");
+
+        Assert.Empty(UnanalysedLanguages.Survey(root));
     }
 
     // ── A bounded read says what it did not see ───────────────────────────────────────────

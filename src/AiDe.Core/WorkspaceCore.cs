@@ -238,6 +238,23 @@ public sealed class WorkspaceCore : IDisposable
         var fingerprints = ScopeFingerprints.Load(DataDirectory);
         var reused = 0;
 
+        // The SET of scopes is part of the workspace's shape, and it changes without any individual
+        // scope changing. Reconciling here drops the memory of scopes that have gone, so their
+        // absence is noticed rather than silently reused forever.
+        var departed = fingerprints.Known
+            .Where(id => !scopes.Any(s => string.Equals(s.ScopeId, id, StringComparison.Ordinal)))
+            .ToList();
+
+        fingerprints.Reconcile(scopes.Select(s => s.ScopeId));
+
+        foreach (var gone in departed)
+        {
+            // Announced, not silently dropped: evidence for a scope that no longer exists is still
+            // in the store, and the operator is the one who decides whether that matters.
+            Incidents.Record("extraction.scope_departed", gone,
+                "the scope was indexed before and no longer exists in the workspace", DateTimeOffset.UtcNow);
+        }
+
         var indexed = 0;
         var assertions = 0;
         var failed = new List<string>();
@@ -301,6 +318,15 @@ public sealed class WorkspaceCore : IDisposable
         // never goes stale.
         var contextSummary = ValidateContexts();
         fingerprints.Save();
+
+        // Source this build cannot read is DISCLOSED, not omitted. Measured on a repository of 63
+        // Python and 40 TypeScript files: it produced zero scopes, zero assertions and an empty
+        // disclosure list, which is indistinguishable from an empty directory. "Nothing here" and
+        // "nothing I can read" must not render identically.
+        foreach (var language in UnanalysedLanguages.Survey(RootPath))
+        {
+            disclosures.Add(language);
+        }
 
         return new IndexResult(
             scopes.Count, indexed, assertions,

@@ -117,6 +117,29 @@ Console.WriteLine($"pane read  : {paneFound.Matches.Count:N0} node(s) searched, 
 Console.WriteLine($"store read : {assertions.Count:N0} assertion(s) directly");
 Console.WriteLine($"shortfall  : {paneRead.Shortfall ?? "(none — the panes see the whole workspace)"}");
 
+// Do the panes AGREE with the store? For weeks they did not and nothing said so: the search borrowed
+// the neighbour ceiling, so the panes computed from 50 nodes while this spike read everything. The
+// two answers are now computed side by side, because "the cap is raised" is a claim about agreement
+// and agreement is checkable.
+var storeJoins = new JoinProjection(assertions).Compute();
+var paneJoins = new JoinProjection(paneRead.Assertions).Compute();
+
+Console.WriteLine();
+Console.WriteLine("store vs pane, joins:");
+Console.WriteLine($"  verified   store {storeJoins.VerifiedCount,6:N0}   pane {paneJoins.VerifiedCount,6:N0}");
+Console.WriteLine($"  inferred   store {storeJoins.InferredCount,6:N0}   pane {paneJoins.InferredCount,6:N0}");
+
+var storeKinds = storeJoins.Edges.Select(e => $"{e.From}|{e.Kind}|{e.To}").ToHashSet(StringComparer.Ordinal);
+var paneKinds = paneJoins.Edges.Select(e => $"{e.From}|{e.Kind}|{e.To}").ToHashSet(StringComparer.Ordinal);
+
+Console.WriteLine($"  only in store : {storeKinds.Except(paneKinds).Count():N0}");
+Console.WriteLine($"  only in pane  : {paneKinds.Except(storeKinds).Count():N0}");
+
+foreach (var missing in storeKinds.Except(paneKinds).Take(4))
+{
+    Console.WriteLine($"      store-only: {missing}");
+}
+
 Console.WriteLine();
 Console.WriteLine(new string('=', 100));
 Console.WriteLine("THE JOINS PANE");

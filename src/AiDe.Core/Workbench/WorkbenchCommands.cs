@@ -91,6 +91,13 @@ public static class WorkbenchCommandCatalog
             string.Empty,
             "Finds every C# project and indexes one scope per target framework. Reports what was not analysed."),
 
+        // Unchanged scopes are reused, which is almost always what the user wants and occasionally
+        // is not. An operator must always be able to say "I do not believe the cache", and until
+        // this existed that sentence had an API parameter behind it and no way to reach it.
+        new("workspace.reindexAll", "Re-index everything (ignore the cache)", "Ctrl+K, Shift+I",
+            string.Empty,
+            "Re-reads every scope even when its files have not changed. Slower, and the answer when the graph disagrees with the code."),
+
         // The command that makes agent dispatch reachable at all. An agent session gets a readiness
         // watcher instead of shell integration, so it can be dispatched to rather than only refused.
         new("terminal.newAgent", "New agent terminal…", "Ctrl+K, A",

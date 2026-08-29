@@ -28,7 +28,9 @@ public interface IWorkspaceCommands
     /// repository is the user pressing a button and waiting for a graph, and its own per-scope
     /// budget already bounds how long it can take.
     /// </remarks>
-    Task<IndexSummary> IndexSolutionAsync(string artifactRevision, CancellationToken cancellationToken);
+    /// <param name="force">Re-extract every scope even when its inputs are unchanged.</param>
+    Task<IndexSummary> IndexSolutionAsync(
+        string artifactRevision, CancellationToken cancellationToken, bool force = false);
 }
 
 /// <summary>What an index run found, as the shell reports it.</summary>
@@ -38,14 +40,32 @@ public sealed record IndexSummary(
     int Assertions,
     IReadOnlyList<string> Failed,
     IReadOnlyList<string> Disclosures,
-    string? Contexts = null)
+    string? Contexts = null,
+    int ScopesReused = 0)
 {
     /// <summary>One sentence for the announcement channel, including what was NOT seen.</summary>
     public string Describe()
     {
-        if (ScopesFound == 0) return "No C# projects found in this workspace.";
+        if (ScopesFound == 0)
+        {
+            // Even with nothing to index, what was NOT read is the whole answer. A repository full
+            // of Python reported "no projects found" and said nothing about the Python.
+            var nothing = "No C# projects, Bicep templates or EF migrations found in this workspace.";
+            return Disclosures.Count > 0
+                ? nothing + " Not analysed: " + string.Join(", ", Disclosures) + "."
+                : nothing;
+        }
 
         var text = $"Indexed {ScopesIndexed} of {ScopesFound} scope(s): {Assertions:N0} assertion(s).";
+
+        // Reuse is said out loud. "Indexed 0 of 7" with nothing else would read as a failure, and
+        // "7 of 7" would be a true sentence about a run that read nothing — the operator's question
+        // after a surprising graph is always whether it actually looked.
+        if (ScopesReused > 0)
+        {
+            text += $" {ScopesReused} scope(s) were unchanged and reused; " +
+                    "use Re-index everything to read them again.";
+        }
         if (Failed.Count > 0) text += $" {Failed.Count} scope(s) failed and were quarantined.";
 
         // Disclosures are part of the result, not a footnote: a graph that silently omits package
@@ -67,14 +87,15 @@ public sealed record IndexSummary(
 /// </remarks>
 public sealed class LocalWorkspaceCommands(
     Func<string, string, CancellationToken, Task<int>> refresh,
-    Func<string, CancellationToken, Task<IndexSummary>>? index = null)
+    Func<string, bool, CancellationToken, Task<IndexSummary>>? index = null)
     : IWorkspaceCommands
 {
     /// <inheritdoc />
-    public Task<IndexSummary> IndexSolutionAsync(string artifactRevision, CancellationToken cancellationToken) =>
+    public Task<IndexSummary> IndexSolutionAsync(
+        string artifactRevision, CancellationToken cancellationToken, bool force = false) =>
         index is null
             ? Task.FromResult(new IndexSummary(0, 0, 0, [], []))
-            : index(artifactRevision, cancellationToken);
+            : index(artifactRevision, force, cancellationToken);
 
     public async Task<ScopeRefreshStatus> RefreshScopeAsync(
         string scopeId, string artifactRevision, CancellationToken cancellationToken)

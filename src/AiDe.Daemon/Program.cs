@@ -156,12 +156,12 @@ internal static class Program
         DaemonOperations.Register(endpoint, () => core.Store.CoreEpoch);
         WorkspaceOperations.Register(endpoint, core.Projections);
         WorkspaceOperations.RegisterDispatch(endpoint, new BoundaryDispatcher(core.Store));
-        WorkspaceOperations.RegisterIndex(endpoint, async (revision, ct) =>
+        WorkspaceOperations.RegisterIndex(endpoint, async (revision, force, ct) =>
         {
-            var result = await core.IndexCSharpAsync(revision, ct);
+            var result = await core.IndexCSharpAsync(revision, ct, force: force);
             return new IndexSummary(
                 result.ScopesFound, result.ScopesIndexed, result.Assertions,
-                result.Failed, result.Disclosures, result.Contexts);
+                result.Failed, result.Disclosures, result.Contexts, result.ScopesReused);
         });
 
         // Ingestion, which is a WRITE and the first one to cross. Started and polled rather than

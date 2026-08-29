@@ -58,6 +58,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workspace.refresh":
                 return RefreshWorkspace();
 
+            case "workspace.reindexAll":
+                return ReindexAll();
+
             case "workspace.indexSolution":
                 return IndexSolution();
 
@@ -362,6 +365,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// </summary>
     public Func<Task<string>>? WorkspaceIndex { get; set; }
 
+    /// <summary>Re-reads every scope, ignoring the fingerprint cache.</summary>
+    public Func<Task<string>>? WorkspaceReindexAll { get; set; }
+
     /// <summary>Reports daemon, health and MCP state. Set when a workspace attaches.</summary>
     public Func<string>? WorkspaceDiagnostics { get; set; }
 
@@ -398,6 +404,22 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             ? "No workspace is open, so there is nothing to report."
             : WorkspaceDiagnostics());
 
+        return true;
+    }
+
+    private bool ReindexAll()
+    {
+        if (WorkspaceReindexAll is null)
+        {
+            announcer.Announce("No workspace is open to index.");
+            return true;
+        }
+
+        // Says it is ignoring the cache, because the only reason to run this is that the user does
+        // not trust the fast answer, and a command that looks identical to the fast one gives them
+        // no way to tell which they got.
+        announcer.Announce("Re-indexing every scope, ignoring the cache…");
+        _ = RunAndAnnounce(WorkspaceReindexAll);
         return true;
     }
 
