@@ -47,8 +47,14 @@ public sealed class JoinProjection(IReadOnlyList<EvidenceAssertion> assertions)
             .Order(StringComparer.Ordinal)
             .ToList();
 
+        // Every `has_type` read below is qualified by the SHAPE OF THE SUBJECT as well as the
+        // object value. `has_type` is emitted by all three extractors — measured, not assumed — and
+        // its object values partition cleanly by producer only by accident. Qualifying on the
+        // subject makes the partition something this code enforces rather than something it relies
+        // on (DC-022's residual, closed for this consumer).
         var tables = assertions
-            .Where(a => a.Predicate == "has_type" && a.Object == "table")
+            .Where(a => a.Predicate == "has_type" && a.Object == "table"
+                && a.Subject.StartsWith("table:", StringComparison.Ordinal))
             .Select(a => a.Subject)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
@@ -74,7 +80,8 @@ public sealed class JoinProjection(IReadOnlyList<EvidenceAssertion> assertions)
         // backwards, and it is a GUESS: two unrelated types can share a table's name, and a table
         // configured with ToTable("orders") is not matched at all. Inferred, and labelled.
         foreach (var type in assertions
-            .Where(a => a.Predicate == "has_type" && a.Object is "class" or "record")
+            .Where(a => a.Predicate == "has_type" && a.Object is "class" or "record"
+                && Extraction.BoundedContextReader.IsCodeSymbol(a.Subject))
             .Select(a => a.Subject)
             .Distinct(StringComparer.Ordinal)
             .Where(t => !declared.Contains(t)))
@@ -173,7 +180,8 @@ public sealed class JoinProjection(IReadOnlyList<EvidenceAssertion> assertions)
         // literal in code that matches it exactly. This is the one join in the phase that can be
         // Verified, which is why it is worth having.
         var parameters = assertions
-            .Where(a => a.Predicate == "has_type" && a.Object == "azure-parameter")
+            .Where(a => a.Predicate == "has_type" && a.Object == "azure-parameter"
+                && a.Subject.Contains('#', StringComparison.Ordinal))
             .Select(a => a.Subject[(a.Subject.IndexOf('#') + 1)..])
             .ToHashSet(StringComparer.Ordinal);
 

@@ -129,12 +129,29 @@ the crossing says otherwise.
 pattern, so every repository that touches the database registers as a domain boundary crossing. That
 is shared persistence, not coupling between Football and Operations.
 
-**Recommendation for the map** (TheTerrace's to make, not this repository's): give shared
-infrastructure — the DbContext and what travels with it — its own context, named for what it is, or
-leave it uncovered. Either way the crossing counts start measuring domain coupling instead of
-counting the ORM. The other crossings survive that change and are real: `IAiCompletion` and
-`IPromptMapper` reaching from Football and Editorial into Assistant, `ICoachReader`/`ISquadReader`
-reaching the other way.
+### The recommendation, measured rather than asserted
+
+`proposed/bounded-contexts.yaml` moves `TheTerrace.Infrastructure.*` out of Operations into a
+**Platform** context. It was run through the same projection (`-- <repo> "" <map>`), so this is a
+measurement of the proposal, not an opinion about it:
+
+| | Operations before | Operations after |
+|---|---|---|
+| Symbols | 198 | 109 |
+| Internal edges | 225 | 170 |
+| **Crossings** | **172** | **47** |
+
+`Football → Operations` falls from **72 to 15**. The new Platform context carries 161 crossings
+against 37 internal edges — which is what shared infrastructure looks like, now labelled as such
+instead of being mistaken for a domain boundary that failed.
+
+Operations was never the problem. **It was a boundary that mostly holds, wearing the ORM's traffic.**
+
+The other crossings survive the change and are real: `IAiCompletion` and `IPromptMapper` reaching
+from Football and Editorial into Assistant, `ICoachReader`/`ISquadReader` reaching the other way.
+
+**This is TheTerrace's call, and nothing here has been applied to that repository.** The proposed map
+is committed to this one so the numbers above can be reproduced.
 
 The remaining uncovered symbols are led by **362 tests**, which no context map should claim.
 
@@ -143,6 +160,6 @@ The remaining uncovered symbols are led by **362 tests**, which no context map s
 | | |
 |---|---|
 | DC-022 | Two instances now, both in `JoinProjection`, both from joining on a predicate name |
-| DC-022's residual | **Measured, not assumed.** `declared_in`, `has_type` and `discloses` are each emitted by all three extractors. `has_type` is safe *by accident* — its object values (`class`, `table`, `azure-parameter`) partition cleanly by producer. Nothing enforces that |
+| DC-022's residual | **Measured, then closed for this consumer.** `declared_in`, `has_type` and `discloses` are each emitted by all three extractors, and `has_type`'s object values partitioned by producer only by accident. Every `has_type` read in `JoinProjection` is now qualified by the SHAPE OF THE SUBJECT as well — `table:` prefix, `#` fragment, or a dotted code symbol — so the partition is enforced rather than relied on. Three tests, including that a real code type is still joined |
 | The spike | Named arguments, and a predicate-by-extractor census printed on every run so the next collision is visible before it is joined |
 | TheTerrace's map | One concrete recommendation, with the 57 edges that justify it |

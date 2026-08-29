@@ -1,0 +1,90 @@
+# Bounded contexts for TheTerrace.
+#
+# AUTHORED BY HAND, on purpose (ADR-0016 in the AI-DE repository). A bounded context is where a team
+# decides one model ends and another begins; nothing in a repository says where that is. The
+# src/TheTerrace/Features folder has 31 entries and they are UI features, not contexts — Ai, AskAi
+# and Conversation almost certainly share one model, and inferring 31 contexts from 31 folders would
+# produce a map that looks authoritative and is wrong.
+#
+# Validated on every index against the symbols actually extracted:
+#   - a pattern matching nothing FAILS (it is almost always a renamed namespace)
+#   - two contexts claiming the same symbol FAILS (contexts that overlap are not bounded)
+#   - symbols matched by nothing are counted and named, so partial coverage cannot look complete
+#
+# Deliberately incomplete. The groupings below are the ones the names make defensible; the rest are
+# left uncovered and reported rather than guessed into a context they may not belong to. Coverage
+# going up is a decision someone makes, not a gap to close for its own sake.
+
+contexts:
+  - name: Football
+    description: The domain core — competitions, teams, fixtures and what is derived from them.
+    includes:
+      - TheTerrace.Features.Competitions.*
+      - TheTerrace.Features.Fixtures.*
+      - TheTerrace.Features.Teams.*
+      - TheTerrace.Features.Matches.*
+      - TheTerrace.Features.Transfers.*
+      - TheTerrace.Features.ClubAnalysis.*
+      - TheTerrace.Features.Predictions.*
+
+  - name: Editorial
+    description: Sourced content and everything published from it.
+    includes:
+      - TheTerrace.Features.News.*
+      - TheTerrace.Features.Media.*
+      - TheTerrace.Features.Digest.*
+      - TheTerrace.Features.Social.*
+      - TheTerrace.Features.Research.*
+      - TheTerrace.Features.Sources.*
+      - TheTerrace.Features.SourceHealth.*
+
+  - name: Assistant
+    description: >-
+      The model-facing surface. Grouped because they share prompts, contracts and a conversation
+      model — the case that makes folder-per-context obviously wrong.
+    includes:
+      - TheTerrace.Features.Ai.*
+      - TheTerrace.Features.AskAi.*
+      - TheTerrace.Features.Conversation.*
+      - TheTerrace.Features.Prompts.*
+      - TheTerrace.Features.CoachDossier.*
+
+  - name: Membership
+    description: Who someone is and what they may do.
+    includes:
+      - TheTerrace.Features.Identity.*
+      - TheTerrace.Features.Setup.*
+
+  - name: Operations
+    description: >-
+      Running the thing — scheduling, refresh, release and the record of what happened. Not a domain
+      context in the DDD sense; declared because the alternative is leaving a quarter of the code
+      uncovered and unexplained.
+    includes:
+      - TheTerrace.Features.Chronology.*
+      - TheTerrace.Features.Refresh.*
+      - TheTerrace.Features.Readiness.*
+      - TheTerrace.Features.Release.*
+      - TheTerrace.Features.Platform.*
+      - TheTerrace.Features.DataCatalog.*
+
+  - name: Platform
+    description: >-
+      Shared persistence and the plumbing every context sits on. Split out of Operations because
+      57 of the 72 Football-to-Operations crossings were a single class, AppDbContext: every
+      repository touching the database registered as a domain boundary crossing, and the crossing
+      counts were measuring the ORM rather than the model.
+    includes:
+      - TheTerrace.Infrastructure.*
+
+# Deliberately NOT assigned to a context, and why:
+#
+#   Features.Admin       — a UI surface over several contexts, not a model of its own.
+#   Features.Rehearsal   — compile-time only; absent from a published build entirely.
+#   Features.Playground  — a scratch surface.
+#   Features.Shell       — presentation.
+#   Components.*         — Razor components; they render contexts, they are not one.
+#   Kernel.*             — shared primitives that by definition belong to no single context.
+#
+# Each of these will appear in the "uncovered" count. That is the correct outcome, not a to-do:
+# forcing them into a context to make a number go up is how a context map stops meaning anything.

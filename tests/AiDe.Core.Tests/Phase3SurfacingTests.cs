@@ -339,6 +339,48 @@ public sealed class Phase3SurfacingTests : IDisposable
         Assert.Equal(VerificationStatus.Verified, edge.Status);
     }
 
+    [Fact]
+    public void AHasTypeFromTheWrongProducerIsNotConsumedAsACodeType()
+    {
+        // has_type is emitted by ALL THREE extractors — measured over a real repository, not assumed
+        // — and its object values partition by producer only by accident. This makes the partition
+        // something the code enforces: a bicep-scoped subject claiming to be a class is not joined as
+        // one, whatever the object value says (DC-022's residual).
+        var result = new JoinProjection([
+            Say("bicep:main#Order", "has_type", "class"),
+            Say("table:Order", "has_type", "table"),
+        ]).Compute();
+
+        Assert.DoesNotContain(result.Edges, e => e.Kind == "maps_to");
+    }
+
+    [Fact]
+    public void ACodeTypeIsStillJoinedToItsTable()
+    {
+        // The other half, every time: a qualifier that also blocks the real case is not a fix.
+        var result = new JoinProjection([
+            Say("Shop.Sales.Order", "has_type", "class"),
+            Say("table:Order", "has_type", "table"),
+        ]).Compute();
+
+        var edge = Assert.Single(result.Edges, e => e.Kind == "maps_to");
+        Assert.Equal("Shop.Sales.Order", edge.From);
+        Assert.Equal(VerificationStatus.Inferred, edge.Status);
+    }
+
+    [Fact]
+    public void ATableSubjectMustCarryTheTablePrefix()
+    {
+        // A code type that happened to be described as a "table" by another extractor must not
+        // become a join target. Nothing emits this today; that is exactly when a qualifier is cheap.
+        var result = new JoinProjection([
+            Say("Shop.Sales.Order", "has_type", "class"),
+            Say("Shop.Sales.Order", "has_type", "table"),
+        ]).Compute();
+
+        Assert.DoesNotContain(result.Edges, e => e.Kind == "maps_to");
+    }
+
     // ── Uncovered symbols become a task ───────────────────────────────────────────────────
 
     [Fact]

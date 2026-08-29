@@ -660,16 +660,25 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   broke the whole `<script>`, so **the Graph pane rendered nothing at all**. The C# compiler cannot
   see inside an embedded page, no unit test renders one, and the one control that could have caught
   it had been running a binary from before the error was introduced.
-- **Control:** the probe is a `ProjectReference` with `ReferenceOutputAssembly="false"`, so it is
-  rebuilt whenever the tests are. The probe already refuses to pass vacuously (it fails if the canvas
-  renders zero nodes), which is what turned "green" into a precise diagnosis the moment it ran
-  against current source.
+- **Control (two, because there were two failures):** the probe is a `ProjectReference` with
+  `ReferenceOutputAssembly="false"`, so it is rebuilt whenever the tests are — and it already refuses
+  to pass vacuously, which is what turned "green" into a precise diagnosis the moment it ran against
+  current source. Separately, `tools/verify-embedded-scripts.py` parses every inline `<script>` this
+  repository embeds in a C# string or an HTML template, with `node --check` where Node exists and a
+  narrower lexical scan where it does not, naming which mode it ran in rather than degrading quietly.
+- **Observed failing:** the syntax gate's *first* finding was its own false positive — a `<script src>`
+  inside an HTML comment, reported as a dead script — which was fixed rather than tuned around. It was
+  then verified against the real defect: reintroducing the stray quote produced
+  `CanvasPage.cs: script starts at line 52 — SyntaxError: Invalid or unexpected token`. Thirteen
+  script blocks are checked in under a second, twelve of them in the docs templates, which fail
+  exactly as silently.
 - **The generalisation to apply elsewhere:** **anything a test executes must be built by that test's
   project.** The tell is a test that launches a path under another project's `bin/`. And the second
   lesson is narrower and sharper: **an embedded page is unchecked code.** HTML and JavaScript inside
   a C# string get no compiler, no analyzer and no test — the only thing standing between a typo and a
   dead pane is a probe that actually renders it.
-- **Residual risk:** the three probes are covered by hand-written references. Nothing **fails** when
-  a fourth is added without one, and nothing checks embedded JavaScript for syntax at build time —
-  the canvas probe is still the only thing that would notice.
+- **Residual risk:** the probes are covered by hand-written `ProjectReference` entries, and nothing
+  **fails** when a fourth is added without one. The syntax gate proves a script PARSES, which is not
+  the same as proving it works — only the canvas probe rendering the page does that, and only for the
+  canvas.
 - **Status:** `partially-controlled`

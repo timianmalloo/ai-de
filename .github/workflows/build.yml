@@ -55,6 +55,13 @@ jobs:
       - name: Fixture-derivation gate
         run: python tools/verify-fixture-derivation.py
 
+      # An embedded page gets no compiler, no analyzer and no test. A stray quote in the canvas page
+      # broke its whole <script>, so the Graph pane rendered NOTHING — invisible to the build,
+      # invisible to 628 tests, and the one probe that would have caught it was running a stale
+      # binary (DC-023). Uses node --check where Node exists and says so when it falls back.
+      - name: Embedded-script syntax gate
+        run: python tools/verify-embedded-scripts.py
+
       # Audit ids are allocated by "highest present, plus one", which is correct in one checkout and
       # wrong with two — and worktree discipline means there are usually two. It has collided twice.
       # Append-only logs can merge cleanly with two records under one id, where nothing fails and one

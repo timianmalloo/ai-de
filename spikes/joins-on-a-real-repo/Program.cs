@@ -16,7 +16,9 @@ using AiDe.Core.Projections;
 // ---------------------------------------------------------------------------------------------
 
 var root = args.Length > 0 ? args[0] : @"C:\Projects\TheTerrace";
-var data = args.Length > 1
+// An empty second argument means "pick one for me", so a caller who only wants to override the
+// THIRD argument does not have to invent a store path.
+var data = args.Length > 1 && !string.IsNullOrWhiteSpace(args[1])
     ? args[1]
     : Path.Combine(Path.GetTempPath(), "aide-joins-spike", Guid.NewGuid().ToString("N"));
 
@@ -120,8 +122,12 @@ Console.WriteLine("THE CONTEXTS PANE");
 Console.WriteLine(new string('=', 100));
 
 var symbols = reader.ReadDeclaredSubjects();
-var map = BoundedContextReader.Load(
-    Path.Combine(root, BoundedContextReader.DefaultRelativePath), symbols);
+
+// A third argument points at an ALTERNATIVE map, so a proposed change to someone else's context
+// declarations can be measured before it is recommended — and without editing their repository.
+var mapPath = args.Length > 2 ? args[2] : Path.Combine(root, BoundedContextReader.DefaultRelativePath);
+Console.WriteLine($"context map: {mapPath}");
+var map = BoundedContextReader.Load(mapPath, symbols);
 
 var contexts = new ContextProjection(map, assertions).Compute();
 

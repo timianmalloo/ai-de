@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-08-29T15:28:56Z",
+  "generated": "2026-08-29T15:40:01Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1305,6 +1305,54 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
         "short": "27adc7d93",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-0063",
+      "shortname": "collectknowledge-wpf-ui-and-dashboards",
+      "datetime": "2026-08-29T15:32:49Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Build a WPF client with modern/softer styling (rounded corners, drop shadows): acquire best practices for WPF window/tab styling; best permissive-license open-source WPF UI control/styling libraries; exemplars for modern native UX, IDE and video-editing interfaces; plus diagramming, UML/generative-from-UML, ERM/ORM visualization, and visualizing test results, CI/CD execution and operational logs/metrics.",
+      "summary": "Two new sourced KBs: wpf-modern-ui-styling (DWM rounded corners/Mica, WindowChrome, .NET Fluent theme, MIT control libs WPF-UI/MahApps/HandyControl/MaterialDesign, soft-shadow perf, JetBrains New-UI/Islands + IDE/editor UX exemplars) and operational-and-test-dashboards (Allure/ReportPortal, CI-as-DAG, RED/USE, MIT charting ScottPlot/LiveCharts2/OxyPlot). Diagram/UML/ERM asks cross-referenced to existing bases, not duplicated.",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/knowledge/wpf-modern-ui-styling/index.md",
+        "docs/knowledge/operational-and-test-dashboards/index.md"
+      ],
+      "tags": [
+        "wpf",
+        "styling",
+        "dashboards"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0064",
+      "shortname": "embedded-script-gate-and-measured-map",
+      "datetime": "2026-08-29T15:40:01Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "commit and push all, merge and make sure main is clean\ndo a full clean and rebuild so i can test the state of the app while you do work\nthen continue with the next 5 steps and then provide the standard status and next steps tables at the end of your turn",
+      "summary": "Housekeeping found uncommitted work from ANOTHER session in this same checkout — two knowledge bases\non the client's visual layer. Read before committing rather than swept in, committed because \"all\"\nmeans all, and flagged: two sessions in one checkout share an index, a HEAD and one set of generated\nartifacts, which is the arrangement the worktree discipline exists to avoid. Both remote branches\nwere already fully merged; nothing to merge, and saying so beats a no-op.\n\nFive steps.\n\nAn embedded page now gets a parser. verify-embedded-scripts.py checks 13 inline script blocks with\nnode --check, naming its mode and failing closed. Its first finding was its own false positive — a\n<script src> in an HTML comment — fixed rather than tuned around, then verified against the real\ndefect. That covers both the \"add a check\" and \"audit the other pages\" steps: twelve of the thirteen\nblocks are in docs templates that would fail exactly as silently.\n\nDC-022's residual is closed for the consumer that had it. has_type is emitted by all three extractors\nand its object values partitioned by producer only by accident; every read now qualifies on the shape\nof the subject too, with a test for the real case still working as well as for the two bad ones.\n\nThe dangling docs link resolved itself when the other session's work landed. I did not fix it and am\nnot claiming to.\n\nAnd TheTerrace's map recommendation was MEASURED rather than asserted: a proposed Platform context\ntakes Operations from 172 crossings to 47 and Football-to-Operations from 72 to 15. Nothing was\napplied to that repository.\n\nGate: 631 tests green (App 108, Core 523), six verifiers clean, Release build published and verified.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Commit and push everything including another session's work, confirm main clean and merged, publish a testable Release build, land the next five steps, and close with the standard tables",
+      "done_when": "Main clean, merged and pushed; a Release build published and verified launching; five steps landed with a control each; full gate green; tables produced",
+      "change": "cl-0056",
+      "git": {
+        "sha": "68598f3479f1ce2028f54b9007d7aec40d085847",
+        "short": "68598f347",
         "branch": "main",
         "pushed": true
       }
@@ -2638,6 +2686,82 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0054",
+      "datetime": "2026-08-29T15:32:49Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Established WPF modern-styling and operational/test-dashboard knowledge for the AiDe.App client",
+      "prompt": "Build a WPF client with modern/softer styling (rounded corners, drop shadows): acquire best practices for WPF window/tab styling; best permissive-license open-source WPF UI control/styling libraries; exemplars for modern native UX, IDE and video-editing interfaces; plus diagramming, UML/generative-from-UML, ERM/ORM visualization, and visualizing test results, CI/CD execution and operational logs/metrics.",
+      "summary": "Design should reach the modern-soft look via the in-box .NET 9/10 Fluent theme + WindowChrome + DWM rounded corners (library-optional); reserve WPF effects for chrome not hosted panes (airspace); build three distinct dashboard panes (test/CI/metrics) that expose silent failures (percentiles, gate-ran, flaky-vs-failing) and use MIT charting only.",
+      "rationale": "The client must look modern rather than boxy; these are the sourced, permissive-license means and the design rules, with diagram/UML/ERM reconciled to existing bases.",
+      "artifacts": [
+        "docs/knowledge/wpf-modern-ui-styling/index.md",
+        "docs/knowledge/operational-and-test-dashboards/index.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "27adc7d93c323fd278bf0edc91f6fbf7da7c139e",
+        "after": "68598f3479f1ce2028f54b9007d7aec40d085847",
+        "branch": "main",
+        "pushed": true,
+        "commits": [
+          "68598f3 docs: two knowledge bases on the client's visual layer",
+          "5c23ffe fix: the Graph pane was rendering nothing, and the test for it was a month stale"
+        ]
+      }
+    },
+    {
+      "id": "cl-0055",
+      "datetime": "2026-08-29T15:39:44Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Embedded scripts get a parser; DC-022's residual closed by qualifying on subject shape",
+      "prompt": null,
+      "summary": "An embedded page gets no compiler, no analyzer and no test — so it now gets a parser.\n\nverify-embedded-scripts.py parses every inline <script> this repository embeds in a C# string or an\nHTML template. With Node present it uses node --check, which is the parser the browser uses; without\nit, a narrower lexical scan for unterminated strings and unbalanced brackets. It NAMES which mode it\nran in, because a gate that silently degrades to a weaker check is worse than one that fails, and it\nfails closed when it finds nothing to check.\n\nThirteen script blocks in under a second: the canvas page, and twelve in the docs templates — the\nDocs Explorer, the Audit Explorer, the dream and mockup harnesses — every one of which would fail\nexactly as silently, rendering an empty shell nobody would attribute to a typo.\n\nThe gate's FIRST finding was its own false positive: a <script src> inside an HTML comment, reported\nas a dead script. Fixed rather than tuned around. Then verified against the real defect —\nreintroducing the stray quote produced \"CanvasPage.cs: script starts at line 52 — SyntaxError:\nInvalid or unexpected token\".\n\nThat answers both the \"add a check\" and the \"audit the other pages\" steps: the audit is the gate, and\nit runs on every push rather than once.",
+      "rationale": null,
+      "artifacts": [
+        "tools/verify-embedded-scripts.py",
+        ".github/workflows/build.yml"
+      ],
+      "tags": [
+        "defect"
+      ],
+      "git": {
+        "before": null,
+        "after": "68598f3479f1ce2028f54b9007d7aec40d085847",
+        "branch": "main",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0056",
+      "datetime": "2026-08-29T15:39:44Z",
+      "session": null,
+      "kind": "knowledge",
+      "skill": null,
+      "title": "TheTerrace's map, measured: Operations 172 crossings to 47",
+      "prompt": null,
+      "summary": "DC-022's residual, closed for the consumer that had it.\n\nA predicate-by-extractor census over a real repository showed declared_in, has_type and discloses are\neach emitted by all three extractors, and that has_type's object values partition by producer ONLY BY\nACCIDENT — class, record, table, azure-parameter happen not to collide, and nothing enforced that.\n\nEvery has_type read in JoinProjection is now qualified by the shape of the SUBJECT as well as the\nobject value: a table must carry the table: prefix, an Azure parameter must carry a # fragment, and a\ncode type must be a dotted symbol with no scope prefix. Three tests: a bicep-scoped subject claiming\nto be a class is not joined as one, a code type still IS joined to its table, and a code symbol\ndescribed as a \"table\" by some future extractor does not become a join target. The middle one matters\nas much as the others — a qualifier that also blocks the real case is not a fix.\n\nAlso measured, not asserted: the recommendation for TheTerrace's context map. proposed/\nbounded-contexts.yaml moves TheTerrace.Infrastructure.* out of Operations into a Platform context and\nwas run through the same projection. Operations goes from 198 symbols / 225 internal / 172 crossings\nto 109 / 170 / 47, and Football-to-Operations falls from 72 to 15. Platform then carries 161 crossings\nagainst 37 internal edges, which is what shared infrastructure looks like once it is labelled as\nsuch. Operations was never the problem — it was a boundary that mostly holds, wearing the ORM's\ntraffic. Nothing was applied to TheTerrace; the proposed map lives here so the numbers reproduce.\n\nThe dangling docs link resolved itself when the other session's knowledge bases were committed. The\ngraph reports zero dangling targets; I did not fix it and am not claiming to have.",
+      "rationale": null,
+      "artifacts": [
+        "spikes/joins-on-a-real-repo/RESULT.md",
+        "src/AiDe.Core/Projections/JoinProjection.cs"
+      ],
+      "tags": [
+        "spike"
+      ],
+      "git": {
+        "before": null,
+        "after": "68598f3479f1ce2028f54b9007d7aec40d085847",
         "branch": "main",
         "pushed": true,
         "commits": []
