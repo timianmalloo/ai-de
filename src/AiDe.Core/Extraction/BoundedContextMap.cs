@@ -22,7 +22,8 @@ public sealed record BoundedContextMap(
     IReadOnlyList<ContextProblem> Problems,
     IReadOnlyList<string> Uncovered,
     int CoveredSymbols,
-    int TotalSymbols)
+    int TotalSymbols,
+    bool IsDeclared = true)
 {
     public bool IsValid => Problems.Count == 0;
 
@@ -78,7 +79,10 @@ public static class BoundedContextReader
     {
         if (!File.Exists(path))
         {
-            return new BoundedContextMap([], [], [], 0, knownSymbols.Count);
+            // IsDeclared: false, and it matters. With no map there is no uncovered list, so every
+            // count reads as complete coverage — which is what a second repository's pane actually
+            // said before this argument existed.
+            return new BoundedContextMap([], [], [], 0, knownSymbols.Count, IsDeclared: false);
         }
 
         string[] lines;

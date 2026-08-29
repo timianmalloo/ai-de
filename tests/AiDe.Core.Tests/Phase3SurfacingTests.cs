@@ -381,6 +381,52 @@ public sealed class Phase3SurfacingTests : IDisposable
         Assert.DoesNotContain(result.Edges, e => e.Kind == "maps_to");
     }
 
+    [Fact]
+    public void ACrossingDominatedByOneObjectSaysWhichOne()
+    {
+        // Found by eye once, so now it is computed. On TheTerrace, 57 of the 72 Football-to-
+        // Operations edges were AppDbContext, which made a boundary that mostly holds look like one
+        // that never did. A signal a person has to notice is a signal that gets noticed once.
+        var edges = Enumerable.Range(0, 9).Select(i => Edge($"Ed.A{i}", "Fb.AppDbContext"))
+            .Concat([Edge("Ed.B", "Fb.Other")])
+            .ToList();
+
+        var crossing = Assert.Single(new ContextProjection(Map(
+            [.. edges.Select(e => e.Subject), .. edges.Select(e => e.Object)]), edges).Compute().Edges);
+
+        Assert.Equal("Fb.AppDbContext", crossing.DominantTarget!.Object);
+        Assert.Equal(9, crossing.DominantCount);
+    }
+
+    [Fact]
+    public void AnEvenlySpreadCrossingNamesNothing()
+    {
+        // The half that stops this becoming noise. Ordinary coupling reaches many things, and a
+        // signal that fires on every crossing tells the user nothing about any of them.
+        var edges = Enumerable.Range(0, 8).Select(i => Edge($"Ed.A{i}", $"Fb.X{i}")).ToList();
+
+        var crossing = Assert.Single(new ContextProjection(Map(
+            [.. edges.Select(e => e.Subject), .. edges.Select(e => e.Object)]), edges).Compute().Edges);
+
+        Assert.Null(crossing.DominantTarget);
+        Assert.Equal(0, crossing.DominantCount);
+    }
+
+    [Fact]
+    public void ExactlyHalfIsNotDomination()
+    {
+        // "Most of this crossing is one thing" is the claim. Half is not most, and a boundary rule
+        // that fires ON the boundary is the kind of detail nobody checks until it misleads someone.
+        var edges = Enumerable.Range(0, 3).Select(i => Edge($"Ed.A{i}", "Fb.Shared"))
+            .Concat(Enumerable.Range(0, 3).Select(i => Edge($"Ed.B{i}", $"Fb.Other{i}")))
+            .ToList();
+
+        var crossing = Assert.Single(new ContextProjection(Map(
+            [.. edges.Select(e => e.Subject), .. edges.Select(e => e.Object)]), edges).Compute().Edges);
+
+        Assert.Null(crossing.DominantTarget);
+    }
+
     // ── Uncovered symbols become a task ───────────────────────────────────────────────────
 
     [Fact]

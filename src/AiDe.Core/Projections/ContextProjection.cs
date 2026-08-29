@@ -38,8 +38,48 @@ public sealed record ContextEdge(
 {
     public const int MemberCap = 200;
 
+    /// <summary>
+    /// The share of listed members one object must reach before the crossing is called dominated.
+    /// </summary>
+    /// <remarks>
+    /// Half. Not tuned — chosen because "most of this crossing is one thing" is the claim being
+    /// made, and a majority is what that sentence means. A lower bar would flag ordinary coupling
+    /// to a widely-used type; a higher one would have missed nothing real yet and is not worth the
+    /// extra digit of false precision.
+    /// </remarks>
+    public const double DominanceShare = 0.5;
+
     /// <summary>How many edges exist beyond the ones listed.</summary>
     public int Undisclosed => Math.Max(0, Weight - Members.Count);
+
+    /// <summary>
+    /// The single object most of this crossing points at, or null when no one object dominates.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Found by eye once, so now it is computed.</b> On a real repository 57 of the 72
+    /// Football-to-Operations edges were one class — <c>AppDbContext</c> — which made a boundary
+    /// that mostly holds look like one that never did. Nothing in the tool said so; a human read a
+    /// list. A signal a person has to notice is a signal that gets noticed once.</para>
+    ///
+    /// <para>Computed over the LISTED members, so a capped crossing reports the share of what it
+    /// actually examined rather than extrapolating to the full weight. <see cref="Undisclosed"/>
+    /// stays beside it, because a majority of 200 out of 4,000 is a different statement.</para>
+    /// </remarks>
+    public CrossingMember? DominantTarget =>
+        Members.Count == 0
+            ? null
+            : Members
+                .GroupBy(m => m.Object, StringComparer.Ordinal)
+                .Where(g => g.Count() > Members.Count * DominanceShare)
+                .OrderByDescending(g => g.Count())
+                .Select(g => g.First())
+                .FirstOrDefault();
+
+    /// <summary>How many listed members point at <see cref="DominantTarget"/>.</summary>
+    public int DominantCount =>
+        DominantTarget is { } target
+            ? Members.Count(m => string.Equals(m.Object, target.Object, StringComparison.Ordinal))
+            : 0;
 }
 
 /// <summary>Symbols outside every context, gathered by the namespace they live in.</summary>
@@ -53,12 +93,23 @@ public sealed record ContextEdge(
 public sealed record UncoveredGroup(string Namespace, int Symbols, IReadOnlyList<string> Examples);
 
 /// <summary>The domain view: contexts, what connects them, and what belongs to none.</summary>
+/// <param name="IsDeclared">
+/// Whether a context map exists at all.
+/// </param>
+/// <remarks>
+/// <b>Absence is not coverage.</b> Measured on a second repository, which has no
+/// <c>bounded-contexts.yaml</c>: the pane reported zero uncovered symbols and said "every declared
+/// symbol belongs to a context", which is the sentence a fully-mapped codebase produces. Nothing was
+/// wrong with the arithmetic — no map means no uncovered list — and that is exactly why it needed a
+/// separate field rather than a cleverer count.
+/// </remarks>
 public sealed record ContextMapView(
     IReadOnlyList<ContextView> Contexts,
     IReadOnlyList<ContextEdge> Edges,
     int UncoveredSymbols,
     IReadOnlyList<string> Problems,
-    IReadOnlyList<UncoveredGroup> UncoveredGroups)
+    IReadOnlyList<UncoveredGroup> UncoveredGroups,
+    bool IsDeclared = true)
 {
     public bool IsValid => Problems.Count == 0;
 }
@@ -84,7 +135,7 @@ public sealed class ContextProjection(BoundedContextMap map, IReadOnlyList<Facts
             // An invalid map draws NOTHING. A partially-applied context map is a diagram that is
             // wrong in a way nobody can see, which is worse than an absent one.
             return new ContextMapView([], [], map.TotalSymbols,
-                [.. map.Problems.Select(p => p.Message)], []);
+                [.. map.Problems.Select(p => p.Message)], [], map.IsDeclared);
         }
 
         var relational = assertions
@@ -149,7 +200,8 @@ public sealed class ContextProjection(BoundedContextMap map, IReadOnlyList<Facts
             .OrderByDescending(e => e.Weight)
             .ToList();
 
-        return new ContextMapView(views, edges, map.Uncovered.Count, [], GroupUncovered(map.Uncovered));
+        return new ContextMapView(
+            views, edges, map.Uncovered.Count, [], GroupUncovered(map.Uncovered), map.IsDeclared);
     }
 
     /// <summary>

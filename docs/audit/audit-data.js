@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de",
-  "generated": "2026-08-29T16:00:16Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-29T16:24:40Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1379,6 +1379,32 @@ window.AUDIT_DATA = {
         "wpf"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0066",
+      "shortname": "worktree-correction-and-second-repository",
+      "datetime": "2026-08-29T16:24:40Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "the other session is complete (was supposed to be in a different work tree)\nin fact the repo guidance is all work is done in new work trees so this should have been in a different tree as well so this session did not follow repo guidance\n----\ncommit and push all then make sure main is up to data AND then create a work tree for this session\n----\nthen do the next steps you listed autonomously and provide the standard status and next step tables when you are done",
+      "summary": "The correction was fair: WT1 requires a writing session to start in its own worktree, and this one\nworked in the primary checkout for its whole life. It now runs in\nC:/Projects/ai-de-session-phase3-pane-probes on session/phase3-pane-probes, registered.\n\nCleaning up the other session's tree produced the turn's most important finding. The tree was removed\non a verdict of \"clean, merged, unheld\" — and a live session recreated it within the minute and wrote\na marker saying it was in use. Nothing was lost, because every cleanliness check was correct. The\nliveness check was not: it read a registration ledger, and that session had never registered.\nDC-024, controlled by a filesystem recency condition observed failing in both directions.\n\nFive steps. The panes are rendered and read rather than merely constructed, with a rule that no\nevidence pane may render nothing. A crossing dominated by one object now names it, so the finding\nthat took a human reading a list is computed. A second repository was measured — BioHacker, no EF,\n26 Bicep resources — where zero joins is correct and says so, but where the absence of a context map\nwas being rendered as PERFECT COVERAGE: \"Every declared symbol belongs to a context\", from a\nworkspace that has never claimed anything. One repository could not have found that. And TheTerrace's\nPlatform split is applied on a local branch in its own worktree, not pushed.\n\nGate: 641 tests green (App 115, Core 526), six verifiers clean.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Move this session into its own worktree as WT1 requires, then land the five next steps autonomously and close with the standard tables",
+      "done_when": "Session running in its own registered worktree; five steps landed with a control each; full gate green; committed and pushed; tables produced",
+      "change": "cl-0059",
+      "git": {
+        "sha": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
+        "short": "21068ab3f",
+        "branch": "session/phase3-pane-probes",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -2810,6 +2836,56 @@ window.AUDIT_DATA = {
         "after": "f335c4f6ef9dd5544c99ba7565982f58bd7ed2bf",
         "branch": "main",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0058",
+      "datetime": "2026-08-29T16:24:22Z",
+      "session": null,
+      "kind": "knowledge",
+      "skill": null,
+      "title": "DC-024: the worktree cleanup asked a ledger whether anyone was there",
+      "prompt": null,
+      "summary": "This session moved into its own worktree, which repo guidance required from the start and it did not\ndo. Every commit before this one was written directly in the primary checkout — recorded here rather\nthan quietly corrected, because the register exists for the agent's own defects too.\n\nCleaning up afterwards produced a worse finding. coord worktree cleanup --remove deleted\nC:/Projects/ai-de-facelift reporting \"clean, merged, unheld\" — and a LIVE session recreated the tree\nwithin the minute and wrote a marker reading \"facelift worktree in use\". Nothing was lost: the\ncleanliness checks were all correct, the tree had no uncommitted work and no unique commits. The\nLIVENESS check was the wrong one. It read live_keys — a registration ledger — and that session had\nnever run coord session start. A ledger says who signed in; it never says nobody is there.\n\nRegistered as DC-024 and controlled: worktree_safety now ends with a filesystem condition. A tree\nwhose files were modified within the last hour is HELD whatever the ledger says. The scan skips build\noutput, is capped at 4,000 files, and treats hitting the cap as in-use rather than as an answer,\nbecause a partial scan cannot prove absence. The reason string carries the age, so \"idle\" is a\nmeasurement someone can disagree with rather than a verdict.\n\nObserved failing in both directions on a scratch tree: clean, merged and unregistered it reported\nKEEP - touched recently - last modified 0 minute(s) ago; with its files backdated two hours it became\nWOULD - clean, merged, unheld, idle - last modified 120 minute(s) ago. A safety rule that never\npermits anything is not a safety rule.",
+      "rationale": null,
+      "artifacts": [
+        "docs/ai-forward-pack/scripts/coord-core.py",
+        ".claude/knowledge/session-worktree-discipline.md"
+      ],
+      "tags": [
+        "continuous-improvement"
+      ],
+      "git": {
+        "before": null,
+        "after": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0059",
+      "datetime": "2026-08-29T16:24:23Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Panes rendered and read; a second repository finds absence rendered as coverage",
+      "prompt": null,
+      "summary": "The panes are now rendered and read, and a second repository was measured.\n\nPaneRenderTests walks the visual tree of the Joins and Contexts panes and asserts on CONTENT, never\non a control count — \"has four children\" passes for four empty labels. In-process on an STA thread\nrather than as another out-of-process probe: the canvas needs a real foreground window because it\ndrives a browser through SendInput, and these panes build their own children. The last case is the\nrule both must keep: no evidence pane, in any of its six states, may render no readable text.\nObserved failing by making one pane silent.\n\nA crossing dominated by one object now says which one. Found by eye once — 57 of 72 edges were\nAppDbContext — and a signal a person has to notice is a signal that gets noticed once. Majority of\nthe listed members, computed over what was actually examined rather than extrapolated to the full\nweight, with the undisclosed count still beside it. Three tests including the boundary: exactly half\nis not domination.\n\nBioHacker was measured as a second repository, deliberately a different shape — 25 scopes, 26 Bicep\nresources, no Entity Framework. Zero joins is the correct answer there and the pane says so. But it\nhas no context map, and the pane reported \"0 uncovered\" and \"Every declared symbol belongs to a\ncontext\" — the sentence a fully-mapped codebase produces. The arithmetic was right, which is why a\ncleverer count could not have fixed it. ContextMapView carries IsDeclared now and says plainly that\nnothing has been claimed about the code yet. One repository could not have found this: TheTerrace has\na map, so every path that runs when there is none had never been exercised.\n\nAnd TheTerrace's Platform split is applied on a branch in its own worktree — docs/platform-context,\ncommitted locally and NOT pushed, because that repository is the user's to publish.",
+      "rationale": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/PaneRenderTests.cs",
+        "src/AiDe.Core/Projections/ContextProjection.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": null,
         "commits": []
       }
     }

@@ -138,6 +138,15 @@ python3 docs/ai-forward-pack/scripts/coord-core.py worktree cleanup
 python3 docs/ai-forward-pack/scripts/coord-core.py worktree cleanup --remove
 ```
 
+**WT7a — Liveness is read from the filesystem, not only from the registry.** A tree whose files
+were modified in the last hour is **held**, whatever the session ledger says. Measured: a tree
+reported *"clean, merged, unheld"* was removed, and a live session recreated it within the minute
+and wrote a marker saying it was in use — it had simply never run `coord session start`. Every
+cleanliness check had been correct; the liveness check had answered from a record rather than from
+the world (**DC-024**). The scan skips build output, is capped, and treats hitting the cap as *in
+use*, because a partial scan cannot prove absence. The reason string carries the age, so "idle" is a
+measurement a human can disagree with.
+
 **WT12 — The tool reports its refusals, not just its actions.** `cleanup` prints every tree it
 declined to remove and the condition that stopped it. A cleanup that silently skips is
 indistinguishable from a cleanup that found nothing, and the difference is exactly the
