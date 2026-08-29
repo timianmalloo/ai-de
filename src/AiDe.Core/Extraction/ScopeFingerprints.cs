@@ -97,6 +97,34 @@ public sealed class ScopeFingerprints
     /// <summary>Forgets a scope, so the next run reads it whatever the filesystem says.</summary>
     public void Invalidate(string scopeId) => _byScope.Remove(scopeId);
 
+    /// <summary>
+    /// Forgets every scope this run did not see, and reports whether the SET of scopes changed.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>A project appearing is not a change to any existing scope.</b> Every per-scope
+    /// fingerprint can be identical while the workspace has gained a project, lost one, or had one
+    /// renamed — and a cache keyed only per scope would report "all reused" for a workspace whose
+    /// shape had changed underneath it.</para>
+    ///
+    /// <para>Discovery runs on every index regardless, so a NEW scope is always extracted — it has
+    /// no fingerprint to match. The case this closes is the opposite one: a scope that has gone.
+    /// Its evidence would otherwise sit in the store forever, describing code that no longer exists,
+    /// with nothing to remove it and nothing to say so.</para>
+    /// </remarks>
+    public bool Reconcile(IEnumerable<string> discoveredScopeIds)
+    {
+        var present = new HashSet<string>(discoveredScopeIds, StringComparer.Ordinal);
+        var departed = _byScope.Keys.Where(id => !present.Contains(id)).ToList();
+
+        foreach (var id in departed) _byScope.Remove(id);
+
+        var arrived = present.Count(id => !_byScope.ContainsKey(id));
+        return departed.Count > 0 || arrived > 0;
+    }
+
+    /// <summary>Scope ids this sidecar still remembers. For reporting what a run left behind.</summary>
+    public IReadOnlyCollection<string> Known => _byScope.Keys;
+
     public void Save()
     {
         try
@@ -126,19 +154,32 @@ public sealed class ScopeFingerprints
     /// </remarks>
     public static string Compute(string rootPath, ScopeDescriptor scope)
     {
-        var target = File.Exists(scope.ProjectPath)
-            ? Path.GetDirectoryName(scope.ProjectPath) ?? rootPath
-            : Directory.Exists(scope.ProjectPath) ? scope.ProjectPath : rootPath;
+        // What the scope actually READS, which is not the same for every kind.
+        //
+        // A C# scope is a project directory: its extraction depends on every source file under it.
+        // A Bicep scope is ONE TEMPLATE, and a schema scope is one Migrations directory. Treating a
+        // single-file scope as its containing folder made two templates in one `infra/` directory
+        // share a fingerprint basis, so deleting either invalidated both — over-invalidation, which
+        // is safe but wrong, and it made "one scope departed" look like "everything changed".
+        var single = scope.ScopeId.StartsWith("bicep:", StringComparison.Ordinal)
+            && File.Exists(scope.ProjectPath);
+
+        var target = single
+            ? scope.ProjectPath
+            : File.Exists(scope.ProjectPath)
+                ? Path.GetDirectoryName(scope.ProjectPath) ?? rootPath
+                : Directory.Exists(scope.ProjectPath) ? scope.ProjectPath : rootPath;
 
         var entries = new List<string>();
 
         try
         {
-            foreach (var file in Enumerate(target))
+            foreach (var file in single ? [target] : Enumerate(target))
             {
                 var info = new FileInfo(file);
+                var name = single ? Path.GetFileName(file) : Path.GetRelativePath(target, file);
                 entries.Add(string.Create(CultureInfo.InvariantCulture,
-                    $"{Path.GetRelativePath(target, file)}|{info.Length}|{info.LastWriteTimeUtc.Ticks}"));
+                    $"{name}|{info.Length}|{info.LastWriteTimeUtc.Ticks}"));
             }
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)

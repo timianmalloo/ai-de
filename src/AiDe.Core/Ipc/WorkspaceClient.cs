@@ -152,9 +152,10 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
 
     /// <summary>Re-reads the daemon's epoch, for a caller recovering from a stale-epoch rejection.</summary>
     /// <inheritdoc />
-    public Task<IndexSummary> IndexSolutionAsync(string artifactRevision, CancellationToken cancellationToken) =>
+    public Task<IndexSummary> IndexSolutionAsync(
+        string artifactRevision, CancellationToken cancellationToken, bool force = false) =>
         QueryAsync<IndexSummary>(
-            WorkspaceOperations.IndexSolution, new IndexSolutionRequest(artifactRevision), cancellationToken);
+            WorkspaceOperations.IndexSolution, new IndexSolutionRequest(artifactRevision, force), cancellationToken);
 
     /// <inheritdoc />
     public Task<long> EpochAsync(CancellationToken cancellationToken) => RefreshEpochAsync(cancellationToken);

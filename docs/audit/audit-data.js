@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-29T17:33:25Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-29T17:30:11Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1563,24 +1563,30 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
-      "id": "al-0074",
-      "shortname": "test-4a-rendering",
-      "datetime": "2026-08-29T17:33:25Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "prompt": "Continue autonomously: prove the 4a rendering with tests and tighten the dominant-chip phrasing.",
-      "summary": "Added two ContextMapSurface render tests: the not-declared empty state offers a first action, and the dominant crossing target is surfaced on the crossing without opening it. Tightened the dominant chip denominator from Weight to Members.Count to avoid overclaiming when the member list is capped. App.Tests 117/117 green.",
-      "kind": "manual",
-      "skill": "implement",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "tests/AiDe.App.Tests/PaneRenderTests.cs"
-      ],
+      "id": "al-0089",
+      "shortname": "id-prevention-scope-shape-force-fourth-repo",
+      "datetime": "2026-08-29T17:29:03Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "Five core steps, and the pattern of the last three turns held: each one found something adjacent.\n\nRe-baselining the measurements taken at 50 nodes turned out to be checkable rather than a re-run, so\nit is checked on every spike run now: 122 of 124 join edges agree between the pane read and the\nstore. The published numbers came from the direct store read and stand; the two edges the panes still\nmiss are cut by the 50-neighbour describe cap, and the shortfall line reports them on the same run.\n\nDC-013 is prevented rather than detected. Every worktree of a repository shares one git common\ndirectory; a counter there with an exclusive-create lock makes allocation atomic across sessions.\nSixteen concurrent allocations from two worktrees returned sixteen distinct ids where the old\nallocator returns one. Promoted to controlled, with the residual stated: two separate clones do not\nshare a git directory.\n\nFingerprinting the workspace shape rather than only each scope found two things. A departed scope is\nnow reconciled out and recorded as a health incident instead of being reused forever while its\nevidence describes code that no longer exists. And a single-file scope is fingerprinted by its own\nfile — treating a Bicep template as its directory made two templates in one folder share a basis, so\ndeleting either invalidated both.\n\nForce is reachable: Ctrl+K, Shift+I, threaded additively through the wire so an older client still\nmeans \"use the cache\". Adding a command required one line in a design-owned file because the\nconformance test makes adding and placing a command atomic — written into the contract as Core-owned\ndata inside a Design-owned file, with a proposal to move it onto the catalog.\n\nThe fourth repository — 63 Python files, no C# — produced zero scopes and an EMPTY DISCLOSURE LIST,\nindistinguishable from an empty directory. Third repository running to find the same shape: right\narithmetic, false claim. Unanalysed languages are named with counts now.\n\nGate: 660 tests green (App 115, Core 545), six verifiers clean.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
       "tags": [
-        "test",
-        "facelift"
+        "phase-3"
       ],
-      "outcome": "success"
+      "outcome": "success",
+      "goal": "Do the five listed core next steps: re-baseline the pane measurements, prevent DC-013 across agents, fingerprint the workspace shape, make force reachable, and measure a non-.NET repository",
+      "done_when": "Each step landed with a control; the seam crossing recorded in the contract; full gate green; committed, merged and published; tables produced",
+      "change": "cl-0066",
+      "git": {
+        "sha": "dd1c53793935746bc3aa6c5a175c1cf5c99f9a8b",
+        "short": "dd1c53793",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -3185,6 +3191,57 @@ window.AUDIT_DATA = {
         "after": "62fe22519a048983d643746158f665b8079f8541",
         "branch": "session/phase3-pane-probes",
         "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0065",
+      "datetime": "2026-08-29T17:28:43Z",
+      "session": null,
+      "kind": "knowledge",
+      "skill": null,
+      "title": "DC-013 prevented: ids allocated from a lock-guarded counter every worktree shares",
+      "prompt": null,
+      "summary": "DC-013 is prevented now rather than detected. Three occurrences, the last between two AGENTS rather\nthan two trees of one — which broke the previous control, because \"run log-writing scripts in the\ntree where the work is\" is advice that cannot reach a session that is not yours.\n\nEvery worktree of a repository shares ONE git common directory. A counter placed there is visible to\nall of them, and an exclusive-create lock makes the read-modify-write atomic. The file's own highest\nid remains the floor, so a counter that is missing, stale or from a fresh clone can only ever be\ncaught up to reality, never fall behind it.\n\nSixteen concurrent allocations issued from two different worktrees of this repository returned\nsixteen distinct ids. The previous allocator returns the same one to all sixteen. Gaps are expected\nand harmless: an id is an identifier, not a count, and the gate checks uniqueness rather than\ncontiguity. Promoted to controlled, with the honest residual — two separate CLONES do not share a\ngit directory and would still collide, and a stale lock falls back to the old behaviour by design.\n\nTwo more things the fingerprint work needed. The scope SET is part of a workspace's shape and changes\nwithout any individual scope changing, so a departed scope is now reconciled out of the sidecar and\nrecorded as a health incident rather than reused forever while its evidence describes code that no\nlonger exists. And a single-file scope is fingerprinted by its own file: treating a Bicep template as\nits containing directory made two templates in one infra/ folder share a basis, so deleting either\ninvalidated both.",
+      "rationale": null,
+      "artifacts": [
+        "docs/ai-forward-pack/scripts/audit-log.py",
+        "src/AiDe.Core/Extraction/ScopeFingerprints.cs"
+      ],
+      "tags": [
+        "continuous-improvement"
+      ],
+      "git": {
+        "before": null,
+        "after": "dd1c53793935746bc3aa6c5a175c1cf5c99f9a8b",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0066",
+      "datetime": "2026-08-29T17:28:43Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Force is reachable, and a fourth repository finds absence rendered as emptiness",
+      "prompt": null,
+      "summary": "Two escape hatches and a fourth repository.\n\n**Force is reachable.** It existed as an API parameter with nothing able to reach it. Ctrl+K, Shift+I\nre-reads every scope ignoring the cache, threaded through the wire contract additively — a client\nbuilt before the field still decodes and still means \"use the cache\", which is the safe reading of an\nabsent flag. The command announces that it is ignoring the cache, because the only reason to run it\nis that the user does not trust the fast answer and a command that looks identical gives them no way\nto tell which they got. IndexSummary reports reuse in words for the same reason: \"Indexed 0 of 7\"\nwith nothing else reads as a failure.\n\nAdding a command required one line in a Design-owned file, because the conformance test makes adding\na command and placing it in a menu one atomic change. Written down rather than done quietly: the\ncommand-to-menu mapping is now recorded as Core-owned DATA inside a Design-owned file, with a\nproposal to move it onto the catalog entry so the seam stops crossing there.\n\n**A fourth repository, chosen for what it lacks.** 63 Python files, 40 TypeScript, no C#, no Bicep,\nno migrations. It produced zero scopes, zero assertions and an EMPTY DISCLOSURE LIST —\nindistinguishable from an empty directory, with the mechanism whose entire job is to say what was not\nread saying nothing. Third repository in a row to find the same shape: a missing context map read as\nperfect coverage, a bounded search read as the whole workspace, unreadable source read as no source.\nEach time the arithmetic was right and the claim was false.\n\nUnanalysedLanguages names what is present and unread, with counts, because \"some Python\" and \"10,760\nPython files\" are different statements about how much of a repository the graph is silent on.\nVendored directories are excluded and a C#-only workspace discloses nothing, because a disclosure\nthat fires everywhere is noise.\n\nAnd the caps fix is now checkable on every run: 122 of 124 join edges agree between the pane read and\nthe store, the two missing are cut by the neighbour cap, and the shortfall line reports them.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/UnanalysedLanguages.cs",
+        "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "dd1c53793935746bc3aa6c5a175c1cf5c99f9a8b",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
         "commits": []
       }
     }

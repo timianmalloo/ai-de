@@ -31,7 +31,16 @@ public sealed record DispatchBeginRequest(DispatchCommand Command);
 public sealed record DispatchFinalizeRequest(string DispatchKey, DispatchState State, string? ErrorCode);
 
 /// <summary>Index every C# scope in the workspace.</summary>
-public sealed record IndexSolutionRequest(string ArtifactRevision);
+/// <param name="Force">
+/// Re-extract every scope even when its inputs are unchanged.
+/// </param>
+/// <remarks>
+/// Additive with a default, so a client built before this field still decodes and still means "use
+/// the cache" — which is the safe reading of an absent flag. It exists because an operator must
+/// always be able to say "I do not believe the cache", and until it was reachable that sentence had
+/// no button behind it.
+/// </remarks>
+public sealed record IndexSolutionRequest(string ArtifactRevision, bool Force = false);
 
 /// <summary>Operations every daemon answers, whatever workspace it serves.</summary>
 /// <remarks>
@@ -165,7 +174,7 @@ public static class WorkspaceOperations
     /// everything else still escapes.</para>
     /// </remarks>
     /// <summary>Registers the workspace-wide C# index on <paramref name="endpoint"/>.</summary>
-    public static void RegisterIndex(DaemonEndpoint endpoint, Func<string, CancellationToken, Task<IndexSummary>> index)
+    public static void RegisterIndex(DaemonEndpoint endpoint, Func<string, bool, CancellationToken, Task<IndexSummary>> index)
     {
         ArgumentNullException.ThrowIfNull(endpoint);
         ArgumentNullException.ThrowIfNull(index);
@@ -175,7 +184,7 @@ public static class WorkspaceOperations
                 // Awaited here because the control lane serves one request at a time per connection
                 // and the per-scope budget already bounds the total. If indexing ever outgrows that,
                 // it becomes started-and-polled like scope refresh rather than a longer timeout.
-                index(body.ArtifactRevision, CancellationToken.None).GetAwaiter().GetResult())));
+                index(body.ArtifactRevision, body.Force, CancellationToken.None).GetAwaiter().GetResult())));
     }
 
     private static IpcResponse Refusable(Func<IpcResponse> operation)

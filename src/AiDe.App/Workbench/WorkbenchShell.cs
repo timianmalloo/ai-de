@@ -348,6 +348,10 @@ public sealed class WorkbenchShell : IDisposable
         {
             Controller.WorkspaceIndex = async () =>
                 (await commands.IndexSolutionAsync(artifactRevision, CancellationToken.None)).Describe();
+
+            Controller.WorkspaceReindexAll = async () =>
+                (await commands.IndexSolutionAsync(artifactRevision, CancellationToken.None, force: true))
+                    .Describe();
         }
 
         if (!string.IsNullOrEmpty(dataDirectory) && Persistence is null)

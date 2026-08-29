@@ -33,7 +33,7 @@ Conventions
   every git call degrades gracefully when git or a repo is absent. This tool never invents a
   prompt or a summary; required fields must be supplied (flags, --*-file, or --from-json -).
 """
-import argparse, datetime, html, json, os, re, subprocess, sys
+import argparse, datetime, html, json, os, re, subprocess, sys, time
 
 # Windows consoles default to cp1252, which cannot encode the box/arrow glyphs this
 # tool prints - `prompt-log.py --help` crashed outright with UnicodeEncodeError (FR-047).
@@ -202,13 +202,89 @@ def append_log(root, which, entry):
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
-def next_id(entries, prefix):
+def _git_common_dir(root):
+    """The directory every worktree of this repository shares, or None."""
+    try:
+        cwd = os.path.dirname(os.path.abspath(root)) or "."
+        r = subprocess.run(["git", "rev-parse", "--git-common-dir"],
+                           cwd=cwd, capture_output=True, text=True, timeout=15)
+        if r.returncode != 0:
+            return None
+        path = r.stdout.strip()
+        return path if os.path.isabs(path) else os.path.abspath(os.path.join(cwd, path))
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+def _reserve(root, prefix, floor):
+    """
+    Reserve the next number for `prefix`, atomically across every worktree of this repository.
+
+    DC-013, three times: an id allocated as "highest present, plus one" is correct inside one
+    checkout and wrong the moment there are two. The third occurrence was between two AGENTS rather
+    than two trees of one — which broke the previous control, because "do not run a log-writing
+    script in the primary checkout while a worktree is open" is advice that cannot reach a session
+    that is not yours.
+
+    Every worktree of a repository shares ONE git common directory. A counter there is visible to
+    both, and an exclusive-create lock around it makes the read-modify-write atomic — so two
+    sessions cannot be handed the same number, whatever order they run in.
+
+    The file's own highest id is still the floor, so a counter that is missing, stale, or from a
+    fresh clone can only ever be caught up to reality, never behind it. Without git this returns
+    None and the caller falls back to the old behaviour, which is exactly as safe as it ever was.
+    """
+    shared = _git_common_dir(root)
+    if not shared or not os.path.isdir(shared):
+        return None
+
+    counter = os.path.join(shared, "aide-id-counter-{}.txt".format(prefix))
+    lock = counter + ".lock"
+
+    for _ in range(200):
+        try:
+            handle = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            time.sleep(0.01)
+            continue
+        except OSError:
+            return None
+
+        try:
+            stored = 0
+            try:
+                with open(counter, "r", encoding="utf-8") as f:
+                    stored = int((f.read() or "0").strip() or 0)
+            except (OSError, ValueError):
+                stored = 0
+
+            allocated = max(stored, floor) + 1
+
+            with open(counter, "w", encoding="utf-8") as f:
+                f.write(str(allocated))
+
+            return allocated
+        finally:
+            os.close(handle)
+            try:
+                os.unlink(lock)
+            except OSError:
+                pass
+
+    # A lock held for two seconds is a stale lock or a very unlucky day. Falling back is safe: the
+    # file's own highest id still applies, and verify-audit-log.py is the backstop either way.
+    return None
+
+
+def next_id(entries, prefix, root=None):
     n = 0
     for e in entries:
         m = re.match(prefix + r"-(\d+)$", str(e.get("id", "")))
         if m:
             n = max(n, int(m.group(1)))
-    return f"{prefix}-{n + 1:04d}"
+
+    reserved = _reserve(root, prefix, n) if root is not None else None
+    return f"{prefix}-{reserved if reserved is not None else n + 1:04d}"
 
 
 # ---------- git helpers (always graceful) ----------
@@ -368,7 +444,7 @@ def cmd_append(args):
         return 2
     entries = read_log(args.root, "audit")
     entry = {
-        "id": next_id(entries, "al"),
+        "id": next_id(entries, "al", args.root),
         "shortname": shortname,
         "datetime": args.datetime or base.get("datetime") or now_iso(),
         "session": session,
@@ -418,7 +494,7 @@ def cmd_change(args):
     before = args.git_before or base.get("git_before")
     entries = read_log(args.root, "change")
     entry = {
-        "id": next_id(entries, "cl"),
+        "id": next_id(entries, "cl", args.root),
         "datetime": args.datetime or now_iso(),
         "session": args.session or base.get("session"),
         "kind": args.kind or base.get("kind") or "decision",
@@ -609,7 +685,7 @@ def cmd_import(args):
             continue
         if len(summary) > 280:
             summary = summary[:277] + "…"
-        eid = next_id(entries, "al")
+        eid = next_id(entries, "al", args.root)
         entry = {
             "id": eid,
             "shortname": r.get("shortname") or (r.get("session", "") or "session")[:8] + f"-t{r.get('turn_index', added)}",

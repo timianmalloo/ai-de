@@ -228,6 +228,53 @@ re-index   : 0 indexed, 10 reused in 0.1s
 TheTerrace: **4.3s → 0.1s**. The reuse is counted separately from the indexing, because "10 of 10
 indexed" would be a true sentence about a run that read nothing.
 
+---
+
+## A fourth repository, chosen for what it lacks — 2026-08-29
+
+`C:\Projectsi-forward`: 63 Python files, 40 TypeScript, no C#, no Bicep, no migrations.
+
+```
+scopes     : 0 of 0 indexed (0 reused) in 0.0s
+assertions : 0
+disclosed  :
+```
+
+Every number correct, and **indistinguishable from an empty directory**. "Nothing here" and "nothing
+I can read" rendered identically, and the disclosure list — the mechanism whose entire job is to say
+what was not read — was empty.
+
+That is the **third repository in a row** to find the same shape: a missing context map read as
+perfect coverage, a bounded search read as the whole workspace, unreadable source read as no source.
+Each time the arithmetic was right and the claim was false, which is why none of them could have been
+fixed by counting more carefully.
+
+`UnanalysedLanguages.Survey` now names what is present and unread:
+
+```
+disclosed  : javascript-not-analysed (27 file(s)), python-not-analysed (63 file(s))
+```
+
+The count is part of it, because "some Python" and "10,760 Python files" are different statements
+about how much of a repository the graph is silent on. Vendored directories are excluded — a number
+about `node_modules` is a number about somebody else's code. And a C#-only workspace discloses
+nothing, because a disclosure that fires everywhere is noise.
+
+### Do the panes agree with the store now?
+
+The caps fix is checkable, so it is checked on every run:
+
+```
+store vs pane, joins:
+  verified   store      1   pane      1
+  inferred   store    123   pane    121
+  only in store : 2      only in pane : 0
+```
+
+**122 of 124 edges agree.** The two missing both involve `PlayerSeasonStat` and are cut by the
+50-neighbour describe cap — which the shortfall line already reports on the same run. Before the fix
+the panes read 50 nodes of 2,164; the honest residual is now two edges and a sentence saying so.
+
 ## Consequence
 
 | | |

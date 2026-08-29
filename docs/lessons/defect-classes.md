@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 9 · partially-controlled 15 · uncontrolled 0
+**Status counts:** controlled 10 · partially-controlled 14 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -309,19 +309,27 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   common; the rebase reported it as a content conflict in an append-only file. Resolved the way the
   session contract prescribes for that file: union both sides, keep the id already published on
   `main`, re-issue the other as `al-0072`, regenerate the derived views. `verify-audit-log.py` is
-  what confirmed the result. Both were caused by running a log-writing script in the primary checkout while the
+  what confirmed the result. The first two were caused by running a log-writing script in the primary checkout while the
   session's real work lived in a worktree, which is the WT-discipline violation underneath the class.
 - **Control:** `tools/verify-audit-log.py`, run in CI: no id may be claimed by more than one entry in
   `audit-log.jsonl` or `change-log.jsonl`. **Observed failing 2026-08-26** against a synthetic log
   carrying a planted duplicate — reported the id, the count and the fix, exit 1 — and green against
   the real logs (29 and 8 entries, 0 duplicates).
-- **Residual risk:** detection, not prevention. The gate names the collision *after* it exists, and
-  the repair is still manual renumbering. Making it impossible means changing how ids are allocated
-  — merge-time assignment, or ids that do not depend on knowing the highest — and that lives in the
-  pack's `audit-log.py` rather than this repo, so it is an `/extendaibundle` candidate (CI8) rather
-  than a local fix. Until then the second-order defence is the discipline itself: run log-writing
-  scripts in the tree where the work is.
-- **Status:** `partially-controlled`
+- **Prevention, added 2026-08-29 after the third occurrence:** `audit-log.py` no longer allocates by
+  "highest present, plus one" alone. **Every worktree of a repository shares one git common
+  directory**, so a counter placed there is visible to all of them; an exclusive-create lock makes
+  the read-modify-write atomic, and the file's own highest id remains the floor so the counter can
+  only ever be caught up to reality, never fall behind it. Two sessions cannot be handed the same
+  number whatever order they run in.
+- **Observed working:** sixteen concurrent allocations issued from two different worktrees of this
+  repository returned sixteen distinct ids (`al-0073`…`al-0088`). The previous allocator returns
+  `al-0073` to all sixteen. Gaps are expected and harmless — an id is an identifier, not a count, and
+  the gate checks uniqueness rather than contiguity.
+- **Residual risk:** it is one repository's worth of prevention. Two separate CLONES do not share a
+  git directory and would still collide, and a stale lock falls back to the old behaviour by design
+  rather than blocking a log write. `verify-audit-log.py` remains the backstop for both, and this
+  belongs upstream in the pack (`/extendaibundle`, CI8) rather than only here.
+- **Status:** `controlled`
 
 ### DC-014 — A capability cannot be tested because the test host lacks something the product has
 - **Signature:** a feature works when the application is run normally and fails identically in every

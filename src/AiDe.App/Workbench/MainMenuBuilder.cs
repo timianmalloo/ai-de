@@ -27,7 +27,11 @@ internal static class MainMenuBuilder
     /// </remarks>
     private static readonly (string Menu, string[] CommandIds)[] Layout =
     [
-        ("_File", ["workspace.open", "workspace.indexSolution", "workspace.refresh"]),
+        // CORE-OWNED DATA in a design-owned file: which commands exist and which menu they belong
+        // to is a Core decision, and TheMenuCoversEveryCatalogCommand makes adding a command and
+        // placing it one atomic change. Recorded in docs/collaboration/session-contracts.md, with a
+        // proposal to move this mapping onto the catalog entry so the seam stops crossing here.
+        ("_File", ["workspace.open", "workspace.indexSolution", "workspace.reindexAll", "workspace.refresh"]),
         ("_Edit", ["workbench.moveSurface", "workbench.resizePane"]),
         ("_View", ["workbench.focusCanvas", "workbench.nextSurface", "workbench.previousSurface",
                    "workbench.reorderSurface"]),
