@@ -78,3 +78,28 @@ Only on explicit go-ahead, and via the **least-fragile** route: author a minimal
 component/themes/generic.xaml`) with **only** the document-accent brush overridden — validated
 against every pane state (float, dock, auto-hide, empty) before landing, since an incomplete
 dictionary theme blanks panes.
+
+## Update (2026-08-29) — accent retokenization IMPLEMENTED; only corner-rounding stays deferred
+
+On the user's instruction ("don't defer — do this work"), the **accent retokenization is done**,
+and a lower-risk route than the one feared above was found and used.
+
+**What changed the risk calculus.** A runtime probe (construct a `DockingManager`, apply
+`Vs2013DarkTheme`, enumerate the merged resources — then disposed) established the real keys: the
+VS accent is the `#007ACC` family (`#1C97EA` hover, `#0E6198` pressed, `#52B0EF`/`#0097FB` light)
+spread across ~30 component resource keys (`DocumentWellTabSelectedActiveBackground`,
+`ToolWindowCaptionActiveBackground`, `ControlAccentBrushKey`, …).
+
+**The route used — value-based override, no template surgery.** `DockThemeAccents.Retokenise`
+recolours every themed brush whose **colour** is in that VS-blue family to the palette equivalent
+(`#5B9DD9` / `#7DB4E3` / `#3E7AB0` / `#8FC0EA`), writing the results as **direct entries** into the
+manager's resources — which take precedence over the same keys in its merged theme dictionaries, so
+the tab/caption templates' `DynamicResource` lookups resolve to ours. No `DictionaryTheme`, no
+retemplating, no blanking risk. Called once from the Design-owned `MainWindow.xaml.cs` after the
+theme is applied. Proven by `DockThemeAccentsTests` (the selected-tab key flips `#007ACC` → `#5B9DD9`).
+
+**Still deferred: rounding the document-tab corners.** That genuinely does require retemplating
+`LayoutDocumentTabItem` (the corner is baked into the template geometry, not a brush), which is the
+fragile surgery this note warned against — and squared document tabs remain the IDE convention
+(VS / VS Code / JetBrains). Left square by design; revisit only on explicit request via the
+minimal-DictionaryTheme route above.

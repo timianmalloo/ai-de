@@ -25,8 +25,10 @@ public partial class MainWindow : Window
         // square tabs), which clashed with the dark shell and was the "clunky, square" look. A dark
         // theme is applied HERE — in the Design-owned window, not the Core-owned WorkbenchShell — so
         // the panes and tabs read as part of the app instead of a white rectangle bolted on. Its
-        // accents are pulled toward our tokens by the AvalonDock brush overrides in App.xaml.
+        // accents are then pulled from VS blue toward our palette by DockThemeAccents (a value-based
+        // brush override, no template surgery — see the AvalonDock decision note).
         Shell.Manager.Theme = new AvalonDock.Themes.Vs2013DarkTheme();
+        AiDe.App.Workbench.DockThemeAccents.Retokenise(Shell.Manager);
 
         LiveRegionHost.Content = Shell.LiveRegion;
 

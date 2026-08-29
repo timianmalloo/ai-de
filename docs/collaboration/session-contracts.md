@@ -276,6 +276,15 @@ IDE convention that **document tabs are squared** (VS / VS Code / JetBrains), th
 squared tabs and the VS accent and apply "soft islands" only to panels, cards, buttons, and overlays
 (done). Revisit only on explicit go-ahead via the minimal-DictionaryTheme route in the decision note.
 
+**Update (2026-08-29, later — accent retokenization DONE on user instruction).** A cheaper route than
+the DictionaryTheme surgery was found: a runtime probe established the real accent keys (the `#007ACC`
+family across ~30 component keys), and `DockThemeAccents.Retokenise` recolours every themed brush of
+that colour to our palette (`#5B9DD9` etc.) as **direct manager-resource entries** — which beat the
+merged theme via `DynamicResource`, with no template surgery and no blanking risk. Wired in
+`MainWindow.xaml.cs` after the theme is applied; proven by `DockThemeAccentsTests` (selected-tab key
+`#007ACC` → `#5B9DD9`). Only **corner-rounding** stays deferred (it needs template retemplating, and
+squared tabs are the IDE convention).
+
 **Craft gate (Design).** The five facelift mockups are now under the deterministic UI craft detector
 (`ui-craft-gate.py` / Impeccable). This run documented the code-node **syntax palette** and a **scrim**
 in `DESIGN.md` (cleared the `design-system-color` cluster) and fixed one heading skip; residual findings

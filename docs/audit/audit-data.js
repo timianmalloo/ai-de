@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-29T18:18:17Z",
+  "generated": "2026-08-29T18:25:55Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1756,6 +1756,26 @@ window.AUDIT_DATA = {
       "tags": [
         "facelift",
         "canvas"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0099",
+      "shortname": "avalondock-accent-retokenized",
+      "datetime": "2026-08-29T18:25:55Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Do not defer - retokenize the AvalonDock accent to the palette.",
+      "summary": "Retokenized the AvalonDock VS2013 dark accent from VS blue (#007ACC family) to the app palette (#5B9DD9 etc.) via DockThemeAccents.Retokenise - a value-based brush override written as direct manager-resource entries (beats the merged theme via DynamicResource, no template surgery, no blanking risk). Real keys established by a runtime probe (disposed). Proven by DockThemeAccentsTests (selected-tab key #007ACC->#5B9DD9). Corner-rounding stays deferred (needs retemplating; squared tabs are the IDE convention). Clean build 0/0; App.Tests 118/118.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/DockThemeAccents.cs"
+      ],
+      "tags": [
+        "facelift",
+        "avalondock"
       ],
       "outcome": "success"
     }
