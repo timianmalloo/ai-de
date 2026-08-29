@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T21:46:17Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-29T21:58:07Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1951,6 +1951,27 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0109",
+      "shortname": "icon-system-rail",
+      "datetime": "2026-08-29T21:58:07Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Build the icon system (recommended next step).",
+      "summary": "Icon system foundation + activity-rail slice: added 10 Lucide-style stroke Geometry resources to App.xaml (keyed by role, palette-inheriting, no image assets). Replaced the rail cryptic Unicode glyphs (◫◑✎◷) with real vector icons + labels (Explore/Coordinate/Compose/Audit), stroke bound to each button Foreground (accent when active). All 10 geometries validated to parse (bounds computed) standalone - no crash-on-launch. Build 0/0; App.Tests 121/121.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/App.xaml",
+        "src/AiDe.App/MainWindow.xaml"
+      ],
+      "tags": [
+        "facelift",
+        "icons"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [

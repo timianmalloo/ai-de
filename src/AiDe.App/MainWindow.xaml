@@ -58,49 +58,57 @@
         <!--  Body: navigation rail plus the docking host.  -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="44" />
+                <ColumnDefinition Width="56" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0"
                         Background="{StaticResource SurfaceSunkenBrush}"
                         KeyboardNavigation.TabNavigation="Once">
-                <Button Margin="6,8,6,2"
-                        Height="32"
-                        Style="{StaticResource RoundedButton}"
-                        AutomationProperties.Name="Explore"
-                        Background="{StaticResource SurfaceRaisedBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        Content="◫"
-                        Foreground="{StaticResource AccentBrush}"
-                        ToolTip="Explore" />
-                <Button Margin="6,2"
-                        Height="32"
-                        Style="{StaticResource RoundedButton}"
-                        AutomationProperties.Name="Coordinate"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Content="◑"
-                        Foreground="{StaticResource TextMutedBrush}"
-                        ToolTip="Coordinate" />
-                <Button Margin="6,2"
-                        Height="32"
-                        Style="{StaticResource RoundedButton}"
-                        AutomationProperties.Name="Compose"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Content="✎"
-                        Foreground="{StaticResource TextMutedBrush}"
-                        ToolTip="Compose" />
-                <Button Margin="6,2"
-                        Height="32"
-                        Style="{StaticResource RoundedButton}"
-                        AutomationProperties.Name="Audit"
-                        Background="Transparent"
-                        BorderThickness="0"
-                        Content="◷"
-                        Foreground="{StaticResource TextMutedBrush}"
-                        ToolTip="Audit" />
+                <Button Margin="6,8,6,2" Height="46" Style="{StaticResource RoundedButton}"
+                        AutomationProperties.Name="Explore" Background="{StaticResource SurfaceRaisedBrush}"
+                        BorderBrush="{StaticResource BorderBrush}" Foreground="{StaticResource AccentBrush}" ToolTip="Explore">
+                    <StackPanel>
+                        <Path Width="20" Height="20" Stretch="Uniform" Data="{StaticResource IconExplore}"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                        <TextBlock Text="Explore" FontSize="9" Margin="0,2,0,0" HorizontalAlignment="Center"
+                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                    </StackPanel>
+                </Button>
+                <Button Margin="6,2" Height="46" Style="{StaticResource RoundedButton}"
+                        AutomationProperties.Name="Coordinate" Background="Transparent" BorderThickness="0"
+                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Coordinate">
+                    <StackPanel>
+                        <Path Width="20" Height="20" Stretch="Uniform" Data="{StaticResource IconCoordinate}"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                        <TextBlock Text="Coordinate" FontSize="9" Margin="0,2,0,0" HorizontalAlignment="Center"
+                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                    </StackPanel>
+                </Button>
+                <Button Margin="6,2" Height="46" Style="{StaticResource RoundedButton}"
+                        AutomationProperties.Name="Compose" Background="Transparent" BorderThickness="0"
+                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Compose">
+                    <StackPanel>
+                        <Path Width="20" Height="20" Stretch="Uniform" Data="{StaticResource IconCompose}"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                        <TextBlock Text="Compose" FontSize="9" Margin="0,2,0,0" HorizontalAlignment="Center"
+                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                    </StackPanel>
+                </Button>
+                <Button Margin="6,2" Height="46" Style="{StaticResource RoundedButton}"
+                        AutomationProperties.Name="Audit" Background="Transparent" BorderThickness="0"
+                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Audit">
+                    <StackPanel>
+                        <Path Width="20" Height="20" Stretch="Uniform" Data="{StaticResource IconAudit}"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                        <TextBlock Text="Audit" FontSize="9" Margin="0,2,0,0" HorizontalAlignment="Center"
+                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                    </StackPanel>
+                </Button>
             </StackPanel>
 
             <!--  The docking host is injected by the composition root, not declared here: the
