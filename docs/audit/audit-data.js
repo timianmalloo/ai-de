@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-29T17:34:09Z",
+  "generated": "2026-08-29T17:43:15Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1604,6 +1604,27 @@ window.AUDIT_DATA = {
       ],
       "tags": [
         "test"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0091",
+      "shortname": "facelift-avalondock-dark-theme",
+      "datetime": "2026-08-29T17:43:15Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "A screenshot showed the docking panes still white/square. Dark-theme AvalonDock properly and systematically.",
+      "summary": "Root cause of the clunky look: AvalonDock rendered its default LIGHT theme (white panes, light square tabs). Fixed by applying Vs2013DarkTheme from the Design-owned MainWindow.xaml.cs (not Core WorkbenchShell); added additive dep Dirkster.AvalonDock.Themes.VS2013 5.0.0 (MIT); recorded in contract 7.5. Build 0/0; App.Tests 117/117.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/MainWindow.xaml.cs",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [
+        "facelift",
+        "avalondock"
       ],
       "outcome": "success"
     }

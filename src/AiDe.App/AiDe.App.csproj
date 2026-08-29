@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dirkster.AvalonDock" Version="5.0.0" />
+    <PackageReference Include="Dirkster.AvalonDock.Themes.VS2013" Version="5.0.0" />
     <!--
       ADR-0015: the windowed WebView2 control, kept, with overlaps handled by a snapshot swap. The
       composition control was measured killing the process with a native access violation when its
@@ -37,18 +38,14 @@
     SkipGetTargetFrameworkProperties because the reference is for build ordering only.
   -->
   <ItemGroup>
-    <ProjectReference Include="..\AiDe.Daemon\AiDe.Daemon.csproj"
-                      ReferenceOutputAssembly="false"
-                      SkipGetTargetFrameworkProperties="true" />
+    <ProjectReference Include="..\AiDe.Daemon\AiDe.Daemon.csproj" ReferenceOutputAssembly="false" SkipGetTargetFrameworkProperties="true" />
   </ItemGroup>
 
   <Target Name="CopyDaemonBesideShell" AfterTargets="Build">
     <ItemGroup>
       <DaemonPayload Include="$(MSBuildThisFileDirectory)..\AiDe.Daemon\bin\$(Configuration)\net10.0-windows\**\*" />
     </ItemGroup>
-    <Copy SourceFiles="@(DaemonPayload)"
-          DestinationFolder="$(OutDir)daemon\%(RecursiveDir)"
-          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(DaemonPayload)" DestinationFolder="$(OutDir)daemon\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
 
   <ItemGroup>

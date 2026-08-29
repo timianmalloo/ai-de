@@ -243,3 +243,21 @@ with no `≥` — honest, just less informative.
 landed: `docs/mockups/{app-facelift,knowledge-explorer,uml-erm-surfaces}.{html,md}`,
 `docs/specs/{app-facelift,knowledge-exploration,uml-erm-surfaces}.md`, `DESIGN.md` facelift section,
 and the three domain-expert personas. None of these are Core-owned paths.
+
+### 7.5 AvalonDock theming (Design) + one additive dependency
+
+**Observed:** the running app showed the docking host in AvalonDock's default **light** theme — white
+pane backgrounds, light square tabs — which is the "clunky, square" look a screenshot caught. The
+token/button facelift never touched it because the panes are AvalonDock's own chrome.
+
+**Decision (Design accountability — "Theme, tokens, window chrome"):** the dark theme is applied from
+the **Design-owned `MainWindow.xaml.cs`** via `Shell.Manager.Theme = new Vs2013DarkTheme()`, *not* by
+editing the Core-owned `WorkbenchShell.cs` where the `DockingManager` is constructed. Design reaches the
+Manager through the shell it already holds; Core's composition is untouched.
+
+**One additive dependency** (per §4 rule 2, written down here): `Dirkster.AvalonDock.Themes.VS2013`
+5.0.0 (MIT, same author as the AvalonDock already referenced) — the base `Dirkster.AvalonDock` ships
+only `GenericTheme`/`DictionaryTheme`, so a dark theme needs the companion package. It is added to
+`src/AiDe.App/AiDe.App.csproj` (claimed via `coord`), is additive, and changes no Core code path.
+**Follow-up:** pull the theme's accents toward our tokens (`AccentBrush`, `SurfaceRaised`) via AvalonDock
+brush overrides, once the dark direction is confirmed on screen.

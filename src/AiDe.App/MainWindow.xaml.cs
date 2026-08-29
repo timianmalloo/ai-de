@@ -20,6 +20,14 @@ public partial class MainWindow : Window
 
         Shell = new WorkbenchShell(null);
         WorkbenchHost.Content = Shell.Manager;
+
+        // FACELIFT — the docking host ships AvalonDock's default LIGHT theme (white panes, light
+        // square tabs), which clashed with the dark shell and was the "clunky, square" look. A dark
+        // theme is applied HERE — in the Design-owned window, not the Core-owned WorkbenchShell — so
+        // the panes and tabs read as part of the app instead of a white rectangle bolted on. Its
+        // accents are pulled toward our tokens by the AvalonDock brush overrides in App.xaml.
+        Shell.Manager.Theme = new AvalonDock.Themes.Vs2013DarkTheme();
+
         LiveRegionHost.Content = Shell.LiveRegion;
 
         // Keyboard commands bind to the window so they work wherever focus is inside it —
