@@ -63,10 +63,7 @@
                 <Popup x:Name="Popup" IsOpen="{TemplateBinding IsSubmenuOpen}" Placement="Bottom"
                        AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
                     <Border Background="{StaticResource MenuBackgroundBrush}" BorderBrush="{StaticResource MenuBorderBrush}"
-                            BorderThickness="1" CornerRadius="8" Padding="0,4" Margin="2,2,12,12" SnapsToDevicePixels="True">
-                        <Border.Effect>
-                            <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.45" Color="#000000" />
-                        </Border.Effect>
+                            BorderThickness="1" CornerRadius="8" Padding="0,4" SnapsToDevicePixels="True">
                         <ItemsPresenter Grid.IsSharedSizeScope="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
                 </Popup>
@@ -121,10 +118,7 @@
                 <Popup x:Name="Popup" IsOpen="{TemplateBinding IsSubmenuOpen}" Placement="Right" HorizontalOffset="-4"
                        AllowsTransparency="True" Focusable="False" PopupAnimation="Fade">
                     <Border Background="{StaticResource MenuBackgroundBrush}" BorderBrush="{StaticResource MenuBorderBrush}"
-                            BorderThickness="1" CornerRadius="8" Padding="0,4" Margin="2,2,12,12" SnapsToDevicePixels="True">
-                        <Border.Effect>
-                            <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.45" Color="#000000" />
-                        </Border.Effect>
+                            BorderThickness="1" CornerRadius="8" Padding="0,4" SnapsToDevicePixels="True">
                         <ItemsPresenter Grid.IsSharedSizeScope="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
                 </Popup>
@@ -170,10 +164,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ContextMenu}">
                         <Border Background="{StaticResource MenuBackgroundBrush}" BorderBrush="{StaticResource MenuBorderBrush}"
-                                BorderThickness="1" CornerRadius="8" Padding="0,4" Margin="2,2,12,12" SnapsToDevicePixels="True">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.45" Color="#000000" />
-                            </Border.Effect>
+                                BorderThickness="1" CornerRadius="8" Padding="0,4" SnapsToDevicePixels="True">
                             <ItemsPresenter Grid.IsSharedSizeScope="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                         </Border>
                     </ControlTemplate>

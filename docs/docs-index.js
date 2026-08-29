@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T21:09:04Z",
+  "generated": "2026-08-29T21:44:35Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2136,6 +2136,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "93530824cad8aa85f88148cf8dbd63ddf813e1358e5b9417e81170e2eb95a71f"
+    },
+    {
+      "id": "review-ui-facelift",
+      "path": "docs/reviews/ui-facelift.md",
+      "title": "UI review — the facelift, elevate pass",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@copilot-design",
+      "phase": "facelift",
+      "reviewBy": "2026-11-29",
+      "reviewSuggested": [],
+      "summary": "An elevate-mode /ui-design review of the shipped WPF facelift from live screenshots: the menu \"goofy block\" root-caused and fixed, the craft-gate measurement recorded, and a ranked plan of what else to do to reach best-in-class — led by a cohesive icon system.",
+      "tags": [
+        "ui-design",
+        "review",
+        "facelift",
+        "elevate"
+      ],
+      "links": [
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-workbench",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-app-facelift",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e6fc17eb78821401cdff091a21bb0bdef37626774fcb439d93c8fb0b6b0e5249"
     },
     {
       "id": "review-ui-mockups-craft-gate",
@@ -5570,7 +5604,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -5624,5 +5658,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6b32b9bc1bb151781a31ade7a2c0e183398b434180edfcdb16e58a7f1e062789"
+  "graphSha256": "155bb3dbb67f47f95ac28a9cf6e827d5426e1a485425e4cb9a36f9abccbfe616"
 };

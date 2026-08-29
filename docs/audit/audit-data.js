@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T21:09:04Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-29T21:44:35Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1905,6 +1905,27 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": false
       }
+    },
+    {
+      "id": "al-0106",
+      "shortname": "ui-design-facelift-elevate",
+      "datetime": "2026-08-29T21:44:35Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "the menus still have a goofy block; /ui-design review, elevate and visualize; give me a list of proposed things to consider",
+      "summary": "Elevate-mode UI review. Root-caused + fixed the menu \"goofy block\" (popup Border had a lopsided Margin 2,2,12,12 + DropShadow -> the margin/shadow rendered as a light frame, and violated the radius+border-not-shadow principle; now the border fills the popup, clean rounded thin card). Recorded the craft-gate measurement (41 findings, all deliberate dense-meta/harness-chrome). Wrote docs/reviews/ui-facelift.md with rubric findings + a ranked plan led by a cohesive icon system, empty-state Wayfinders, rail affordances, and node inspection. Standalone-validated the menu parses+applies; App.Tests 121/121.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/ui-facelift.md",
+        "src/AiDe.App/App.xaml"
+      ],
+      "tags": [
+        "facelift",
+        "ui-design"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
