@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-29T16:24:40Z",
+  "generated": "2026-08-29T16:29:07Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2000,6 +2000,36 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c04d25afbeb930496cf97e78fe6b92e05aab38e5e5d8523933e8709ee16e19d7"
+    },
+    {
+      "id": "session-contracts",
+      "path": "docs/collaboration/session-contracts.md",
+      "title": "Two-session contract — core capabilities and design surfaces",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-29",
+      "reviewSuggested": [],
+      "summary": "Who owns which files, which interfaces are the seam between them, and how a change to that seam is agreed. Written by the core session so the design session can disagree with something concrete.",
+      "tags": [
+        "collaboration",
+        "contracts",
+        "ownership",
+        "worktrees"
+      ],
+      "links": [
+        {
+          "to": "session-worktree-discipline",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "339cdf0e54f350a36642850de7331889fb34b91a2b4deffab5c597e61a12086a"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -5133,5 +5163,5 @@ window.DOCS_INDEX = {
       "artifactId": "spec-ai-native-ide"
     }
   ],
-  "graphSha256": "264094795d02a1f0cf47be69890c29253654bd32d5e9db1298f3c48bb6904f8d"
+  "graphSha256": "2cb2fa94b26ff95a6b16da1439cb784f51c6b95775772bbbb7c21917a01e459e"
 };
