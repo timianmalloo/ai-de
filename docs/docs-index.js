@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-29T17:49:49Z",
+  "generated": "2026-08-29T18:04:12Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1194,6 +1194,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "7ea5df0924025831925b7064e9769adbb912fc28e69dc6a09ed91540e8cfdd8a"
     },
     {
+      "id": "note-avalondock-tab-styling",
+      "path": "docs/notes/avalondock-tab-styling-decision.md",
+      "title": "Decision — AvalonDock document-tab accent & corner styling",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@copilot-design",
+      "phase": "facelift",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Records the deliberate decision NOT to retokenize the AvalonDock VS2013 dark theme's document-tab accent hue or round its tab corners, with the runtime evidence that made that a high-risk/low-value change, and the IDE-convention rationale for squared tabs.",
+      "tags": [
+        "wpf",
+        "avalondock",
+        "theming",
+        "facelift",
+        "deviation"
+      ],
+      "links": [
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "381c8c983de86d55d02423f77ade0329cc68b413b521adaab86962a654d8ac50"
+    },
+    {
       "id": "note-collectknowledge-session-2026-08-23",
       "path": "docs/notes/collectknowledge-session-2026-08-23.md",
       "title": "Decision note — /collectknowledge run, 2026-08-23",
@@ -2077,6 +2108,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "93530824cad8aa85f88148cf8dbd63ddf813e1358e5b9417e81170e2eb95a71f"
     },
     {
+      "id": "review-ui-mockups-craft-gate",
+      "path": "docs/reviews/ui-mockups-craft-gate.md",
+      "title": "Craft-gate review — facelift mockups",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@copilot-design",
+      "phase": "facelift",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The deterministic UI craft detector (ui-craft-gate.py / Impeccable) run over the five facelift mockups: measurement, translated findings, and the ranked plan. Material token-discipline and a11y findings were fixed this run; the residue is review-harness chrome and deliberate dense-IDE meta.",
+      "tags": [
+        "ui-design",
+        "craft-gate",
+        "review",
+        "facelift"
+      ],
+      "links": [
+        {
+          "to": "mockup-app-facelift",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-knowledge-explorer",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-uml-erm-surfaces",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "24d9164538e3176c623194f377abb8f8b3a3d5c5c4a9397ef41c1da2c3de6ddf"
+    },
+    {
       "id": "review-ui-workbench",
       "path": "docs/reviews/ui-workbench.md",
       "title": "UI review — AI-DE dockable workbench",
@@ -2217,7 +2282,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9da2de03d9281597d79b550f463c7209189521a76f3f452fbed89936ca31d5a1"
+      "sourceSha256": "e031e9a0a95681cd5bc65a828ce3b29184c6b2c2d2b0b25d24ac2bc26c1bac7e"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -5529,5 +5594,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "347ef7beed51a86390fedab330b1580d9af30ee54f2acf01ba57deaef91407e1"
+  "graphSha256": "963e53259be68fd1772b7d8574258a507e9b45abde307e3321dc6bab8443e150"
 };
