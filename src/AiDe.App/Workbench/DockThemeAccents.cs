@@ -5,7 +5,8 @@ using AvalonDock;
 namespace AiDe.App.Workbench;
 
 /// <summary>
-/// Pulls the AvalonDock VS2013 dark theme's accent from VS blue toward the app's palette.
+/// Retokenises the AvalonDock VS2013 dark theme to the app palette — the VS-blue accent to our
+/// accent, and the theme's background/border grays to our surface/border tokens.
 /// </summary>
 /// <remarks>
 /// <para><b>By value, not by key name.</b> The theme's accent is the VS-blue family
@@ -25,9 +26,14 @@ namespace AiDe.App.Workbench;
 /// </remarks>
 public static class DockThemeAccents
 {
-    // VS accent-blue family -> palette equivalents (DESIGN.md: accent #5B9DD9, focus #8FC0EA).
+    // VS accent-blue family -> palette equivalents (DESIGN.md: accent #5B9DD9, focus #8FC0EA), plus
+    // the theme's dark background/border grays -> our surface/border tokens, so the docking chrome
+    // reads as one palette AND the rounded island cards (SurfaceRaised #1A1F26) sit over darker gaps
+    // (surface #12151A / sunken #0D1014) and so read as RAISED. Text grays are deliberately left
+    // alone. Every value was established by enumerating a themed manager at runtime, not guessed.
     private static readonly IReadOnlyDictionary<uint, Color> Map = new Dictionary<uint, Color>
     {
+        // accent family
         [0xFF007ACC] = Rgb("#5B9DD9"), // primary accent: selected tab / active caption / control accent
         [0xFF1C97EA] = Rgb("#7DB4E3"), // hover
         [0xFF0E6198] = Rgb("#3E7AB0"), // pressed / darker
@@ -35,6 +41,14 @@ public static class DockThemeAccents
         [0xFF0097FB] = Rgb("#8FC0EA"), // accent text
         [0xFF55AAFF] = Rgb("#8FC0EA"), // accent text hover
         [0xFF59A8DE] = Rgb("#7DB4E3"), // caption grip
+        // surface / border grays -> our dark palette
+        [0xFF2D2D30] = Rgb("#12151A"), // dominant chrome background -> surface
+        [0xFF252526] = Rgb("#0D1014"), // document well background -> sunken
+        [0xFF1B1B1C] = Rgb("#0D1014"), // darkest background -> sunken
+        [0xFF3F3F46] = Rgb("#2A313B"), // divider / border
+        [0xFF3E3E40] = Rgb("#2A313B"), // divider / border
+        [0xFF393939] = Rgb("#2A313B"), // divider / border
+        [0xFF46464A] = Rgb("#2A313B"), // divider / border
     };
 
     /// <summary>

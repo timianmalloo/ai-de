@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T18:26:40Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-29T20:27:14Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1804,6 +1804,26 @@ window.AUDIT_DATA = {
       "tags": [
         "facelift",
         "avalondock"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0101",
+      "shortname": "rounded-soft-islands",
+      "datetime": "2026-08-29T20:27:14Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "I am not seeing the rounded/softer feel - deliver it.",
+      "summary": "Delivered rounded soft-island panes: SurfaceChrome.WrapAsIsland frames each non-windowed pane content as a rounded bordered inset card (radius+border, no shadow - airspace-safe), applied at the SurfaceContentFactory seam; windowed canvas/terminal returned unwrapped to preserve OfType<CanvasSurface> focus wiring. DockThemeAccents extended to retokenize the theme background/border grays to our surface/sunken/border tokens so islands read as raised over darker gaps. Canvas page palette aligned to DESIGN.md tokens. Full solution green (680 tests; App.Tests 118 baseline bumped, Core 562); clean build 0/0. Document-tab corner rounding remains (needs retemplating).",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SurfaceChrome.cs",
+        "src/AiDe.App/Workbench/DockThemeAccents.cs"
+      ],
+      "tags": [
+        "facelift"
       ],
       "outcome": "success"
     }

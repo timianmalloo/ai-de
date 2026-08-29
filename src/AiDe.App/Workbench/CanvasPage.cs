@@ -30,26 +30,26 @@ internal static class CanvasPage
         <head><meta charset="utf-8"><title>Graph canvas</title>
         <style>
           :root { color-scheme: dark; }
-          body { font: 14px system-ui, sans-serif; margin: 0; padding: 12px 16px; background: #1e1e1e; color: #ddd; }
+          body { font: 14px system-ui, sans-serif; margin: 0; padding: 12px 16px; background: #12151A; color: #E4E9EF; }
           header { display: flex; align-items: baseline; gap: 12px; }
           h1 { font-size: 15px; margin: 0; }
-          button.chrome { font: inherit; background: #2a2a2a; color: #ddd; border: 1px solid #555;
+          button.chrome { font: inherit; background: #1A1F26; color: #E4E9EF; border: 1px solid #2A313B;
                   border-radius: 8px; padding: 2px 10px; cursor: pointer; }
           button.chrome[disabled] { opacity: .4; cursor: default; }
           #mode { margin-left: auto; }
-          #caption { color: #999; margin: 6px 0 0; }
-          #warn { color: #e8b339; margin: 4px 0 0; min-height: 1em; }
+          #caption { color: #98A3B2; margin: 6px 0 0; }
+          #warn { color: #D8A650; margin: 4px 0 0; min-height: 1em; }
           #stage { position: relative; height: 440px; margin-top: 10px; border-radius: 10px;
-                   background: #1b1b1c; overflow: hidden; }
+                   background: #0D1014; overflow: hidden; }
           #stage.grab { cursor: grab; }
           #stage.grabbing { cursor: grabbing; }
           svg { position: absolute; inset: 0; width: 100%; height: 100%; }
           .node { position: absolute; transform: translate(-50%, -50%); padding: 6px 10px;
-                  border: 1px solid #555; border-radius: 8px; background: #2a2a2a; cursor: pointer;
+                  border: 1px solid #2A313B; border-radius: 8px; background: #1A1F26; cursor: pointer;
                   white-space: nowrap; max-width: 210px; overflow: hidden; text-overflow: ellipsis; }
           .node.root { border-color: #5B9DD9; background: #21303f; font-weight: 600; }
-          .legend { color: #999; font-size: 12px; margin-top: 8px; }
-          .legend b { color: #ddd; font-weight: 600; }
+          .legend { color: #98A3B2; font-size: 12px; margin-top: 8px; }
+          .legend b { color: #E4E9EF; font-weight: 600; }
           .node:focus { outline: 2px solid #5B9DD9; outline-offset: 2px; }
         </style></head>
         <body>
@@ -300,14 +300,14 @@ internal static class CanvasPage
 
                 if (edge.isJoin) {
                   joins++;
-                  line.setAttribute('stroke', edge.isInferred ? '#c98b2e' : '#5B9DD9');
+                  line.setAttribute('stroke', edge.isInferred ? '#D8A650' : '#5B9DD9');
                   line.setAttribute('stroke-width', '2');
                   if (edge.isInferred) { line.setAttribute('stroke-dasharray', '5 4'); inferred++; }
                   var title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
                   title.textContent = edge.predicate + ' (' + edge.status + ')';
                   line.appendChild(title);
                 } else {
-                  line.setAttribute('stroke', '#3d3d3d');
+                  line.setAttribute('stroke', '#2A313B');
                 }
 
                 svg.appendChild(line);
@@ -330,7 +330,7 @@ internal static class CanvasPage
                 ? ''
                 : joins + ' join(s) across artifact types: '
                   + '<b style="color:#5B9DD9">solid blue</b> = declared, '
-                  + '<b style="color:#c98b2e">dashed amber</b> = inferred from a convention ('
+                  + '<b style="color:#D8A650">dashed amber</b> = inferred from a convention ('
                   + inferred + ' of ' + joins + '). Hover a line for its basis.');
 
               caption.textContent = graph.message

@@ -52,6 +52,10 @@ public sealed class SurfaceContentTests
         return result!;
     }
 
+    /// <summary>Unwraps the SurfaceChrome island frame the factory puts around non-windowed panes.</summary>
+    private static FrameworkElement Unwrap(FrameworkElement content) =>
+        content is System.Windows.Controls.Border { Child: FrameworkElement inner } ? inner : content;
+
     /// <summary>A read surface that answers immediately with one known match.</summary>
     private sealed class StubQueries : IWorkspaceQueries
     {
@@ -94,7 +98,7 @@ public sealed class SurfaceContentTests
             var content = new SurfaceContentFactory(queries)
                 .Create(new Surface("view-1", "view", "Explore"));
 
-            var stack = Assert.IsType<StackPanel>(content);
+            var stack = Assert.IsType<StackPanel>(Unwrap(content));
             var list = stack.Children.OfType<ListBox>().Single();
             var status = stack.Children.OfType<TextBlock>().Single();
 
@@ -159,7 +163,7 @@ public sealed class SurfaceContentTests
         var text = OnStaThread(() =>
         {
             var content = new SurfaceContentFactory(null).Create(new Surface("view-1", "view", "Explore"));
-            return Assert.IsType<TextBlock>(content).Text;
+            return Assert.IsType<TextBlock>(Unwrap(content)).Text;
         });
 
         Assert.Contains("not available", text, StringComparison.OrdinalIgnoreCase);
@@ -177,7 +181,7 @@ public sealed class SurfaceContentTests
             foreach (var kind in SurfaceContentFactory.KnownKinds)
             {
                 var content = factory.Create(new Surface($"s-{kind}", kind, kind));
-                Assert.False(content is TextBlock t && t.Text.Contains("not available",
+                Assert.False(Unwrap(content) is TextBlock t && t.Text.Contains("not available",
                     StringComparison.OrdinalIgnoreCase), kind);
             }
 
@@ -193,7 +197,7 @@ public sealed class SurfaceContentTests
         var content = OnStaThread(() =>
             new SurfaceContentFactory(null).Create(new Surface("joins", "joins", "Joins")));
 
-        Assert.IsType<JoinSurface>(content);
+        Assert.IsType<JoinSurface>(Unwrap(content));
         Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces),
             s => s.Kind == "joins");
     }

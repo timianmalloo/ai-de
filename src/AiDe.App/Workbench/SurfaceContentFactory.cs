@@ -35,7 +35,19 @@ public sealed class SurfaceContentFactory(IWorkspaceQueries? queries)
         // Every surface carries its title into the accessibility tree in its own right, not only via
         // its tab — a screen-reader user who moves focus into the pane must still know where they are.
         AutomationProperties.SetName(content, surface.Title);
-        return content;
+
+        // The facelift frames each pane's content as a soft "island" card (rounded + bordered +
+        // inset). This is a purely visual wrap — "if it changes how a pane looks, Design owns it"
+        // (session-contracts §"Design owns") — and it is transparent to the render-invariant tests,
+        // which read the content's text through the tree.
+        //
+        // The windowed kinds (canvas WebView2, terminal HwndHost) are returned UNWRAPPED: a rounded
+        // Border cannot clip a child HWND to its corners anyway (airspace), and — load-bearing — the
+        // shell finds the live canvas by `Adapter.ContentFor(id).OfType<CanvasSurface>()` to wire its
+        // focus, filtering and re-centring, so a wrapper that hid the type would silently break those.
+        return surface.Kind is "canvas" or "terminal"
+            ? content
+            : SurfaceChrome.WrapAsIsland(content);
     }
 
     private FrameworkElement EvidenceContent(Surface surface)

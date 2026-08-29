@@ -289,3 +289,20 @@ squared tabs are the IDE convention).
 (`ui-craft-gate.py` / Impeccable). This run documented the code-node **syntax palette** and a **scrim**
 in `DESIGN.md` (cleared the `design-system-color` cluster) and fixed one heading skip; residual findings
 are review-harness chrome (CD14) and deliberate dense-IDE meta. Record: `docs/reviews/ui-mockups-craft-gate.md`.
+
+**Update (2026-08-29, later — rounded "soft island" panes + full palette retokenization).** User
+feedback (screenshot): the accent landed but the app still read as hard/square, not rounded/soft.
+Delivered, all Design-owned ("if it changes how a pane looks, Design owns it"):
+- **Island frames.** `SurfaceChrome.WrapAsIsland` frames each pane's content as a rounded (`RadiusLg`),
+  bordered, inset card — radius + border, **no shadow** (respects the airspace veto; App.xaml line 83).
+  Applied at the single `SurfaceContentFactory.Create` seam. **Windowed kinds (canvas, terminal) are
+  returned UNWRAPPED** — a Border cannot round-clip a child HWND (airspace), and the shell finds the
+  live canvas via `Adapter.ContentFor(id).OfType<CanvasSurface>()` to wire focus/filter/re-centre, so
+  a wrapper hiding the type would have silently broken those (caught by reading, E11/E15).
+- **Surface retokenization.** `DockThemeAccents` now also maps the theme's background/border grays to
+  our tokens (`#2D2D30`→surface, `#252526`/`#1B1B1C`→sunken, divider grays→border), so the docking
+  chrome is one palette AND the lighter raised island cards sit over darker gaps (read as raised).
+- **Canvas palette.** The graph page's VS-default grays retokenized to DESIGN.md tokens.
+- Touched the Core-listed `SurfaceContentFactory.cs` for the **visual wrap only** (one return
+  statement); no kind mapping or behaviour changed. Full solution green: 680 tests, App.Tests 118
+  (baseline bumped), Core.Tests 562. **Still square: document-tab corners** (needs retemplating).
