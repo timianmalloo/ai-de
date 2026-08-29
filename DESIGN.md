@@ -25,6 +25,15 @@ colors:
   drop-forbidden: "#E07A6F"
   float-chrome: "#232A33"
   locked: "#D8A650"
+  scrim: "rgba(0,0,0,0.55)"
+  # Syntax palette — a deliberately SEPARATE system for the code-node view (Material Palenight
+  # family). Chrome tokens above never colour code; these never colour chrome. Documented here so
+  # token discipline is satisfied and the craft detector treats them as intentional, not drift.
+  syntax-keyword: "#C792EA"
+  syntax-type: "#82AAFF"
+  syntax-comment: "#5A6472"
+  syntax-string: "#C3E88D"
+  syntax-highlight: "#B08CD9"
 typography:
   ui: "Segoe UI Variable Text, Segoe UI, system-ui, sans-serif"
   mono: "Cascadia Mono, Consolas, ui-monospace, monospace"

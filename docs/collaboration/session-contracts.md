@@ -261,3 +261,21 @@ only `GenericTheme`/`DictionaryTheme`, so a dark theme needs the companion packa
 `src/AiDe.App/AiDe.App.csproj` (claimed via `coord`), is additive, and changes no Core code path.
 **Follow-up:** pull the theme's accents toward our tokens (`AccentBrush`, `SurfaceRaised`) via AvalonDock
 brush overrides, once the dark direction is confirmed on screen.
+
+**Update (2026-08-29 — confirmed on screen; accent retokenization deferred by decision).** The dark
+theme is confirmed rendering correctly (screenshot): panes, title bar, and tab strips read as one dark
+surface, matching the approved mockups. The accent-retokenization follow-up above is now a **recorded
+deviation, deferred** — see `docs/notes/avalondock-tab-styling-decision.md`. Runtime evidence (STA probe
+over the theme assembly, since disposed): the VS2013 accent comes from an embedded `.vstheme` colour
+table + compiled BAML implicit styles, with **no app-reachable `DynamicResource` accent key**; the
+`Cider` tab colours are all dark grays, so the selected-tab blue lives deep in AvalonDock's document-well
+templates. Retokenizing it needs a full custom `DictionaryTheme` (must be complete or panes blank) or
+retemplating `LayoutDocumentTabItem` — high-risk on third-party docking chrome. Combined with the
+IDE convention that **document tabs are squared** (VS / VS Code / JetBrains), the decision is to keep
+squared tabs and the VS accent and apply "soft islands" only to panels, cards, buttons, and overlays
+(done). Revisit only on explicit go-ahead via the minimal-DictionaryTheme route in the decision note.
+
+**Craft gate (Design).** The five facelift mockups are now under the deterministic UI craft detector
+(`ui-craft-gate.py` / Impeccable). This run documented the code-node **syntax palette** and a **scrim**
+in `DESIGN.md` (cleared the `design-system-color` cluster) and fixed one heading skip; residual findings
+are review-harness chrome (CD14) and deliberate dense-IDE meta. Record: `docs/reviews/ui-mockups-craft-gate.md`.

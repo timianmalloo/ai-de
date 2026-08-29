@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-29T17:49:24Z",
+  "generated": "2026-08-29T18:03:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1642,6 +1642,26 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/CommandPalette.cs",
         "src/AiDe.App/Workbench/ContextMapSurface.cs"
+      ],
+      "tags": [
+        "facelift"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0094",
+      "shortname": "facelift-craftgate-and-avalondock-decision",
+      "datetime": "2026-08-29T18:03:43Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Screenshot confirms dark theme renders; execute next styling steps to completion.",
+      "summary": "Ran the deterministic craft gate (Impeccable) over all 5 mockups; documented the code-node syntax palette + a scrim token in DESIGN.md (cleared design-system-color), fixed one heading skip; design-lint clean. Recorded the AvalonDock tab accent-retokenization as an evidence-backed deferral (squared tabs = IDE convention; accent lives in embedded vstheme+BAML, no cheap override). Build 0/0, tests 117/117.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/ui-mockups-craft-gate.md",
+        "docs/notes/avalondock-tab-styling-decision.md"
       ],
       "tags": [
         "facelift"

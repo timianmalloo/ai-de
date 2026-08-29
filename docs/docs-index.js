@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-29T17:30:52Z",
+  "generated": "2026-08-29T18:03:43Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1194,6 +1194,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "7ea5df0924025831925b7064e9769adbb912fc28e69dc6a09ed91540e8cfdd8a"
     },
     {
+      "id": "note-avalondock-tab-styling",
+      "path": "docs/notes/avalondock-tab-styling-decision.md",
+      "title": "Decision — AvalonDock document-tab accent & corner styling",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@copilot-design",
+      "phase": "facelift",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "Records the deliberate decision NOT to retokenize the AvalonDock VS2013 dark theme's document-tab accent hue or round its tab corners, with the runtime evidence that made that a high-risk/low-value change, and the IDE-convention rationale for squared tabs.",
+      "tags": [
+        "wpf",
+        "avalondock",
+        "theming",
+        "facelift",
+        "deviation"
+      ],
+      "links": [
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "381c8c983de86d55d02423f77ade0329cc68b413b521adaab86962a654d8ac50"
+    },
+    {
       "id": "note-collectknowledge-session-2026-08-23",
       "path": "docs/notes/collectknowledge-session-2026-08-23.md",
       "title": "Decision note — /collectknowledge run, 2026-08-23",
@@ -2077,6 +2108,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "93530824cad8aa85f88148cf8dbd63ddf813e1358e5b9417e81170e2eb95a71f"
     },
     {
+      "id": "review-ui-mockups-craft-gate",
+      "path": "docs/reviews/ui-mockups-craft-gate.md",
+      "title": "Craft-gate review — facelift mockups",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@copilot-design",
+      "phase": "facelift",
+      "reviewBy": "2026-11-27",
+      "reviewSuggested": [],
+      "summary": "The deterministic UI craft detector (ui-craft-gate.py / Impeccable) run over the five facelift mockups: measurement, translated findings, and the ranked plan. Material token-discipline and a11y findings were fixed this run; the residue is review-harness chrome and deliberate dense-IDE meta.",
+      "tags": [
+        "ui-design",
+        "craft-gate",
+        "review",
+        "facelift"
+      ],
+      "links": [
+        {
+          "to": "mockup-app-facelift",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-knowledge-explorer",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-uml-erm-surfaces",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "24d9164538e3176c623194f377abb8f8b3a3d5c5c4a9397ef41c1da2c3de6ddf"
+    },
+    {
       "id": "review-ui-workbench",
       "path": "docs/reviews/ui-workbench.md",
       "title": "UI review — AI-DE dockable workbench",
@@ -2217,7 +2282,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8f8a8a60a567200a5ba5f51fbcad1cfa2e5cd8af4cadef35432b9e6cd3019921"
+      "sourceSha256": "99ec6a526bff0e396a24ccccda96fb38eba7fcfd8d160efe7937f39e7b112813"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -5475,7 +5540,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -5529,5 +5594,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7b46c63f2806b5151d53c88ecf37a048a44fa38a65ad2714b8d52e4e4267a530"
+  "graphSha256": "ebf5835d8e32dba25c190f6d3f4babaf10b21e15d2f21a7ddbaa53d55679b813"
 };
