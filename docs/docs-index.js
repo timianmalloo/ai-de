@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "AI-DE",
-  "generated": "2026-08-29T15:59:38Z",
+  "generated": "2026-08-29T16:38:21Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1017,6 +1017,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "7e30522e21a7914ce2dee4a426e655482aa5b29adc9b1fbb80514a5e3d051c56"
     },
     {
+      "id": "note-20260829-facelift-flat-to-soft-islands",
+      "path": "docs/notes/note-20260829-facelift-flat-to-soft-islands.md",
+      "title": "Facelift direction: evolve the workbench from strict-flat to soft islands, not a redesign",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "The facelift evolves the existing DESIGN.md rather than replacing it — three facet moves (Depth Flat→SoftShadow, rounded.lg 8→10 + island 12, Nav +MenuBar) toward the JetBrains Islands register, with density and the WCAG/confidence floors held constant.",
+      "tags": [
+        "decision-note",
+        "ui-design",
+        "facelift",
+        "design-language"
+      ],
+      "links": [
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-app-facelift",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "746291198f9e8528308389186ed236cd4106249c3ee9e403a5c868e0977a0381"
+    },
+    {
       "id": "note-20260829-graph-experience-knowledge-scope",
       "path": "docs/notes/note-20260829-graph-experience-knowledge-scope.md",
       "title": "Graph-experience request split into two new bases; GraphRAG cost finding flagged for update",
@@ -1495,6 +1525,51 @@ window.DOCS_INDEX = {
       "sourceSha256": "3cd777ae946e3c2c8c4b033e13e8bc3735df3f2fd0c156d328566fe535863748"
     },
     {
+      "id": "domain-experts",
+      "path": "docs/domain-experts.md",
+      "title": "AI-DE Domain Experts — the project's subject-matter lenses",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "The three subject-matter expert lenses added to AI-DE's persona swarm — knowledge-graph visualization/UX, modern WPF styling, and UML/ERM modelling — each with its lens, seam against the general personas, veto, and grounding bases, plus the candidates the gate rejected.",
+      "tags": [
+        "personas",
+        "domain-experts",
+        "roster",
+        "graph-visualization",
+        "wpf",
+        "uml",
+        "erm"
+      ],
+      "links": [
+        {
+          "to": "knowledge-hub",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-graph-experience-and-visualization",
+          "rel": "documents"
+        },
+        {
+          "to": "kb-wpf-modern-ui-styling",
+          "rel": "documents"
+        },
+        {
+          "to": "kb-uml-mde-and-4gl",
+          "rel": "documents"
+        },
+        {
+          "to": "kb-domain-modeling-and-erm",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6168931fd44d94873de6f714eef265ce58b2f58cb01a70458db388ec1475e0b5"
+    },
+    {
       "id": "lens-code-doc-join",
       "path": "docs/lenses/code-doc-join.md",
       "title": "Lens - code/doc join",
@@ -1596,6 +1671,88 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
+    },
+    {
+      "id": "mockup-app-facelift",
+      "path": "docs/mockups/app-facelift.md",
+      "title": "App Facelift — soft-islands shell (mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Self-contained, dependency-free mockup of the facelift shell — soft rounded island panes with resting elevation, a discoverable menu bar + icon system, a focused-pane indicator, and a review harness (theme · motion · density · state · focus). The .html is data; this .md is its graph node.",
+      "tags": [
+        "mockup",
+        "facelift",
+        "soft-islands",
+        "menu",
+        "icons"
+      ],
+      "links": [
+        {
+          "to": "spec-app-facelift",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "98851314dd309675045d8853c60fd958a9af98fc61c65aafa880abd30f7e5d7e"
+    },
+    {
+      "id": "mockup-knowledge-explorer",
+      "path": "docs/mockups/knowledge-explorer.md",
+      "title": "Knowledge Explorer — graph + node introspection (mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Self-contained mockup of the knowledge exploration surface — a bounded 2D neighbourhood graph with a 2D/3D toggle, a node-introspection panel that routes each node to its natural renderer (code editor, rendered markdown, rendered html, proof), a provenance legend, and empty / loading / too-large states. The .html is data; this .md is its graph node.",
+      "tags": [
+        "mockup",
+        "knowledge-graph",
+        "2d-3d",
+        "node-introspection",
+        "provenance"
+      ],
+      "links": [
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2ba356a6b77d2ed153dcf4f491c25b1bf8595ddfc2f0bcd2cba0459438ad9e36"
+    },
+    {
+      "id": "mockup-uml-erm-surfaces",
+      "path": "docs/mockups/uml-erm-surfaces.md",
+      "title": "UML & ERM Surfaces — derived views (mockup)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Self-contained mockup of the first-class UML & ERM surfaces — a model catalog master-detail with a crow's-foot ER diagram, a UML class diagram (composition/aggregation/dependency), and a C4 context view, all read-only with a permanent derived-view banner, inferred relationships dashed, and generation-error / too-large-curated / attempt-edit states. The .html is data; this .md is its node.",
+      "tags": [
+        "mockup",
+        "uml",
+        "erm",
+        "c4",
+        "derived-views",
+        "read-only"
+      ],
+      "links": [
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9207edfaa5dc6f86fc08966edc223d6689c8107ad9edbb9e7c10882d5b187550"
     },
     {
       "id": "mockup-workbench",
@@ -5061,6 +5218,152 @@ window.DOCS_INDEX = {
       "sourceSha256": "f06ab6e2e7d234cbcfa463c33cf2f6864943ac430b970335379bceaa9e03a6db"
     },
     {
+      "id": "spec-app-facelift",
+      "path": "docs/specs/app-facelift.md",
+      "title": "Application Facelift — styling, icons & menu system (spec)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Specifies the visual facelift of the AI-DE workbench — an evolution from strict-flat to soft rounded \"islands\" (subtle elevation, larger radii, Fluent theme + DWM), a consistent icon system, and a discoverable menu + command system — without weakening the evidence-first density or the WCAG 2.2 AA / confidence-not-colour-alone floors.",
+      "tags": [
+        "facelift",
+        "styling",
+        "soft-islands",
+        "icons",
+        "menu",
+        "wpf",
+        "fluent"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-wpf-modern-ui-styling",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-ai-native-ide-shell",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Part B — UX specification (how it works)",
+          "mermaid": "flowchart TD\n  A[Operator opens app] --> B{Wants an action}\n  B -->|knows the shortcut| C[Command palette / shortcut] --> Z[Action runs]\n  B -->|browsing| D[Menu bar] --> E{Action enabled?}\n  E -->|yes| Z\n  E -->|no, disabled| F[Hover shows reason] --> D\n  B -->|change look| G[View menu → Theme] --> H[Dark/Light/High-contrast]\n  H --> I{Applied?} -->|yes| J[Instant re-theme, announced] \n  I -->|token fails AA| K[Blocked at build by contrast audit — never ships]"
+        }
+      ],
+      "sourceSha256": "b9c49e5aaf87e7290f150837b4cdad32506f2b3d7ae9846832d74fd67e7b11a4"
+    },
+    {
+      "id": "spec-knowledge-exploration",
+      "path": "docs/specs/knowledge-exploration.md",
+      "title": "Knowledge Exploration Surface (spec)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Specifies the knowledge exploration surface — one traversable graph over every repo artifact (code, knowledge, specs, architecture, generated artifacts) with a 2D/3D toggle, node introspection that renders each node in its natural form (md/html rendered, code in a syntax-highlighted editor), and visualizations grounded in standard UML/ERM notation.",
+      "tags": [
+        "knowledge-graph",
+        "exploration",
+        "traversal",
+        "2d-3d",
+        "node-introspection",
+        "uml",
+        "erm"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-graph-experience-and-visualization",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "implements"
+        },
+        {
+          "to": "conceptual-model-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Part B — UX specification (how it works)",
+          "mermaid": "flowchart TD\n  A[Open explorer] --> B[Search or pick a start node]\n  B --> C[Bounded neighbourhood renders in 2D]\n  C --> D{Select a node}\n  D --> E[Introspection panel routes by type]\n  E -->|code| F[Syntax-highlighted read-only editor]\n  E -->|knowledge/md| G[Rendered markdown]\n  E -->|html| H[Rendered html]\n  E -->|diagram| I[Diagram pane]\n  E --> J[List typed edges with provenance]\n  J -->|select edge| K[Focus moves to target - the node-walk] --> C\n  C --> L{Toggle 3D?}\n  L -->|yes| M[3D force layout, selection preserved] --> C\n  C --> N{Structural view?}\n  N -->|UML/ERM| O[Standard-notation view over the neighbourhood]\n  D -->|no neighbours| P[Explicit empty neighbourhood state]\n  C -->|too large| Q[Bounded 'showing N of M' + expand]\n  M -->|occlusion/lost| R[Return to 2D preserves node] --> C"
+        }
+      ],
+      "sourceSha256": "646404f73a065ad6bf3e2c5a172a9b7b22d4d267796317697815ca9f535a79e3"
+    },
+    {
+      "id": "spec-uml-erm-surfaces",
+      "path": "docs/specs/uml-erm-surfaces.md",
+      "title": "UML & ERM Surfaces (spec)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Specifies first-class UML and ERM surfaces generated as read-only views of the repo graph — C4/class/component/sequence UML and crow's-foot ER diagrams — with notation validity enforced, the derived-view (never-editable) rule preserved, and polished visualization that composes with the knowledge exploration surface.",
+      "tags": [
+        "uml",
+        "erm",
+        "c4",
+        "class-diagram",
+        "er-diagram",
+        "derived-views",
+        "structurizr",
+        "mermaid"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-uml-mde-and-4gl",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-domain-modeling-and-erm",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-diagram-generation",
+          "rel": "implements"
+        },
+        {
+          "to": "conceptual-model-ai-native-ide",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Part B — UX specification (how it works)",
+          "mermaid": "flowchart TD\n  A[Open Model surface] --> B[Pick a view: C4 / UML class / UML component / ER]\n  B --> C{Scope}\n  C --> D[Select system / bounded context]\n  D --> E[Generate view from graph]\n  E --> F{Generation ok?}\n  F -->|yes| G[Notation-valid diagram renders]\n  F -->|no| H[Bounded error: 'could not generate' + reason; last-known marked stale]\n  G --> I{C4 level switch?}\n  I -->|context/container/component| E\n  G --> J{Drill?}\n  J -->|select element| K[Jump to node in knowledge explorer - node-walk]\n  G --> L{Attempt edit?}\n  L -->|yes| M[Read-only: 'this is a derived view; edit the source' + link to code]\n  G -->|too large at this level| N[Curation applied: 'showing curated view; N elements folded']"
+        }
+      ],
+      "sourceSha256": "6c93704c427bfade09fe56d333323118227d06b282a0fb2d6f9a841119e947cb"
+    },
+    {
       "id": "threat-model-ai-native-ide",
       "path": "docs/security/ai-native-ide-threat-model.md",
       "title": "AI-DE threat model",
@@ -5117,6 +5420,14 @@ window.DOCS_INDEX = {
       "artifactId": "audit-log"
     },
     {
+      "id": "surface-mockups-app-facelift",
+      "path": "docs/mockups/app-facelift.html",
+      "title": "AI-DE Facelift — soft-islands shell (mockup)",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-app-facelift"
+    },
+    {
       "id": "surface-mockups-workbench",
       "path": "docs/mockups/workbench.html",
       "title": "AI-DE Workbench — mockup",
@@ -5131,7 +5442,23 @@ window.DOCS_INDEX = {
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "spec-ai-native-ide"
+    },
+    {
+      "id": "surface-mockups-knowledge-explorer",
+      "path": "docs/mockups/knowledge-explorer.html",
+      "title": "Knowledge Explorer — graph + node introspection (mockup)",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-knowledge-explorer"
+    },
+    {
+      "id": "surface-mockups-uml-erm-surfaces",
+      "path": "docs/mockups/uml-erm-surfaces.html",
+      "title": "UML & ERM Surfaces — derived views (mockup)",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "238f8930994cc5c3f1a1e1ba8db68b89a6e69424d229e684d068ed85537300e2"
+  "graphSha256": "b485169a4493a2d8a526594769ec56c7d0a5e51b114137e031a41619321b186f"
 };

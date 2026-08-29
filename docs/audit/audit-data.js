@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de",
-  "generated": "2026-08-29T16:00:16Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-29T16:39:17Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1377,6 +1377,69 @@ window.AUDIT_DATA = {
         "graphrag",
         "visualization",
         "wpf"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0066",
+      "shortname": "adddomainexperts-graph-wpf-uml",
+      "datetime": "2026-08-29T16:39:17Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "adddomainexperts: (1) a graph-visualization/knowledge-graph-UX lens citing the graph bases; (2) a WPF styling/design expert from the wpf knowledge; (3) a UML and ERM expert.",
+      "summary": "Added 3 domain experts (kg-visualization-ux-expert, wpf-styling-expert, uml-erm-modelling-expert) as dual-form personas with seams vs Domain Researcher/UX-A/Native-Desktop/Data&Persistence, proportional vetoes, owned anti-patterns; registry docs/domain-experts.md written; roster now 23+3=26; rejected candidates recorded.",
+      "kind": "skill",
+      "skill": "adddomainexperts",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/domain-experts.md"
+      ],
+      "tags": [
+        "personas",
+        "domain-experts"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0067",
+      "shortname": "specify-facelift-knowledge-uml",
+      "datetime": "2026-08-29T16:39:17Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "specify: (1) overall styling/facelift (rounded/softer, icons, menu system); (2) knowledge exploration surface (traversable graph over all artifacts, UML/ERM-grounded, 2D/3D toggle, per-node natural render md/html/code); (3) UML & ERM surfaces (first-class, polished, off the repo graph).",
+      "summary": "Three 3-layer specs written & grounded: app-facelift (flat->soft-islands evolution, icon+menu system), knowledge-exploration (bounded neighbourhood node-walk, provenance-shown, 2D-default, natural renderers), uml-erm-surfaces (derived read-only C4/UML/ER, crow's-foot, notation-valid). Falsifiable Gherkin criteria; archetypes auto-selected with JTBD rationale.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/app-facelift.md",
+        "docs/specs/knowledge-exploration.md",
+        "docs/specs/uml-erm-surfaces.md"
+      ],
+      "tags": [
+        "spec"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0068",
+      "shortname": "ui-design-facelift-explorer-models",
+      "datetime": "2026-08-29T16:39:17Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "ui-design the three surfaces from their specs: the app facelift, the knowledge graph + node visualizations, and the UML/ERM surfaces.",
+      "summary": "DESIGN.md evolved to soft-islands (radii/elevation/icon/menu + provenance/inferred-relationship/read-only-banner tokens). Three self-contained dependency-free mockups with review harnesses and hard states: app-facelift.html, knowledge-explorer.html (2D/3D graph + node-introspection router + provenance legend), uml-erm-surfaces.html (crow's-foot ER + UML class + C4, permanent read-only banner, inferred dashed).",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/app-facelift.html",
+        "docs/mockups/knowledge-explorer.html",
+        "docs/mockups/uml-erm-surfaces.html"
+      ],
+      "tags": [
+        "ui-design",
+        "mockup"
       ],
       "outcome": "success"
     }
@@ -2810,6 +2873,28 @@ window.AUDIT_DATA = {
         "after": "f335c4f6ef9dd5544c99ba7565982f58bd7ed2bf",
         "branch": "main",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0058",
+      "datetime": "2026-08-29T16:39:17Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "decision",
+      "skill": "adddomainexperts",
+      "title": "Added 3 domain experts and specified+mocked the facelift, knowledge-explorer, and UML/ERM surfaces",
+      "prompt": "adddomainexperts x3 + specify x3 + ui-design x3 for the app facelift, knowledge exploration, and UML/ERM surfaces.",
+      "summary": "Roster: 23 general + 3 domain experts (graph-viz/KG-UX, WPF-styling, UML/ERM). Design direction: workbench evolves flat->soft-islands. Surfaces: node-introspection router over a bounded provenance-carrying graph with 2D/3D; first-class derived read-only UML/ERM off the graph.",
+      "rationale": "Gives the swarm subject-matter judgment for the graph/WPF/UML domains and grounds the three new surfaces in sourced knowledge and the existing DESIGN.md.",
+      "artifacts": [
+        "docs/domain-experts.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
+        "after": "21068ab3fcf1a7cd9021ac5babfa9d7f95495b6c",
+        "branch": "feature/app-facelift-and-graph-surfaces",
+        "pushed": null,
         "commits": []
       }
     }

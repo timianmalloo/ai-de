@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-motion="normal">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UML & ERM Surfaces — derived views (mockup)</title>
+<style>
+  :root{
+    --surface:#12151A;--surface-raised:#1A1F26;--surface-sunken:#0D1014;--border:#2A313B;
+    --text:#E4E9EF;--text-muted:#98A3B2;--accent:#5B9DD9;--accent-contrast:#0D1014;
+    --verified:#5FB98F;--inferred:#D8A650;--unverified:#98A3B2;--danger:#E07A6F;--focus:#8FC0EA;--locked:#D8A650;
+    --r-md:6px;--r-lg:10px;--r-island:12px;--el-resting:0 1px 3px rgba(0,0,0,.28);--el-raised:0 4px 12px rgba(0,0,0,.34);
+    --ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;--mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+  }
+  html[data-theme="light"]{--surface:#F4F6F9;--surface-raised:#FFF;--surface-sunken:#E9EDF2;--border:#D2D9E2;--text:#1A2029;--text-muted:#5A6472;--accent:#2F6DA6;--focus:#2F6DA6;--verified:#2E8B60;--inferred:#9A6B12;}
+  html[data-theme="hc"]{--surface:#000;--surface-raised:#000;--surface-sunken:#000;--border:#FFF;--text:#FFF;--text-muted:#FFF;--accent:#00E5FF;--focus:#FF0;--inferred:#FFD400;--el-resting:none;--el-raised:none;}
+  html[data-motion="reduced"] *{transition:none!important;animation:none!important}
+  *{box-sizing:border-box} body{margin:0;background:var(--surface);color:var(--text);font:13px/1.4 var(--ui);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+  .harness{background:var(--surface-sunken);border-bottom:1px solid var(--border);padding:6px 10px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:11px}
+  .harness b{color:var(--text-muted);font-weight:600;text-transform:uppercase;font-size:10px}
+  .harness select{background:var(--surface-raised);color:var(--text);border:1px solid var(--border);border-radius:var(--r-md);padding:3px 8px;font:inherit}
+  .topbar{height:38px;display:flex;align-items:center;gap:10px;padding:0 12px;background:var(--surface-raised);border-bottom:1px solid var(--border)}
+  .topbar strong{font-size:12px}
+  .crumb{color:var(--text-muted);font-size:11px}
+  .seg{display:flex;border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;margin-left:auto}
+  .seg button{background:transparent;color:var(--text-muted);border:0;padding:4px 10px;font:inherit;cursor:pointer}
+  .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-contrast);font-weight:600}
+  .main{flex:1;display:grid;grid-template-columns:220px 1fr;min-height:0}
+  .cat{background:var(--surface-raised);border-right:1px solid var(--border);overflow:auto;padding:10px}
+  .cat h4{margin:12px 0 4px;font-size:10px;text-transform:uppercase;color:var(--text-muted);letter-spacing:.05em}
+  .cat .it{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:var(--r-md);cursor:pointer;font-size:12px}
+  .cat .it:hover{background:var(--surface-sunken)} .cat .it[aria-current="true"]{background:var(--surface-sunken);color:var(--accent);font-weight:600}
+  .stage{position:relative;background:var(--surface);overflow:auto;display:flex;flex-direction:column}
+  .banner{display:flex;align-items:center;gap:8px;background:var(--surface-raised);border-bottom:1px solid var(--border);color:var(--locked);padding:5px 12px;font-size:11px}
+  .banner .lk{font-weight:600}
+  .banner a{margin-left:auto;color:var(--accent);text-decoration:none;font-size:11px}
+  .diagram{flex:1;padding:18px;overflow:auto}
+  svg{background:var(--surface);max-width:100%}
+  .ent{fill:var(--surface-raised);stroke:var(--border)}
+  .ent-h{fill:var(--surface-sunken)}
+  .tx{fill:var(--text);font:12px var(--ui)} .txm{fill:var(--text-muted);font:11px var(--mono)}
+  .rel{stroke:var(--verified);stroke-width:1.4;fill:none}
+  .rel.inf{stroke:var(--inferred);stroke-dasharray:5 3}
+  .card{fill:var(--verified);font:10px var(--mono)}
+  .legend{display:flex;gap:16px;padding:8px 18px;color:var(--text-muted);font-size:11px;border-top:1px solid var(--border)}
+  .state{position:absolute;inset:38px 0 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text-muted);background:var(--surface)}
+  .state.err{color:var(--danger)} .btn{background:var(--accent);color:var(--accent-contrast);border:0;border-radius:var(--r-md);padding:6px 14px;font:inherit;font-weight:600;cursor:pointer}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="harness" role="region" aria-label="Review harness">
+  <b>Harness</b>
+  <span><b>Theme </b><select id="h-theme"><option value="dark">Dark</option><option value="light">Light</option><option value="hc">High contrast</option></select></span>
+  <span><b>Motion </b><select id="h-motion"><option value="normal">Normal</option><option value="reduced">Reduced</option></select></span>
+  <span><b>View state </b><select id="h-state"><option value="ok">Rendered</option><option value="gen">Generating</option><option value="err">Generation error</option><option value="curated">Too large (curated)</option></select></span>
+  <span><b>Try to edit </b><select id="h-edit"><option value="no">—</option><option value="yes">Attempt edit</option></select></span>
+</div>
+
+<div class="topbar">
+  <strong>Model surface</strong>
+  <span class="crumb" id="crumb">Ledger context › ER diagram</span>
+  <span class="seg" role="group" aria-label="View kind">
+    <button data-v="er" aria-pressed="true">ER</button>
+    <button data-v="uml" aria-pressed="false">UML class</button>
+    <button data-v="c4" aria-pressed="false">C4 context</button>
+  </span>
+</div>
+
+<div class="main">
+  <aside class="cat" aria-label="Model catalog">
+    <h4>C4</h4>
+    <div class="it" data-go="c4">◲ Context</div><div class="it">▢ Container</div><div class="it">▣ Component</div>
+    <h4>UML</h4>
+    <div class="it" data-go="uml">▧ Class · Ledger</div><div class="it">◫ Component</div><div class="it">⇄ Sequence · post entry</div>
+    <h4>ERM</h4>
+    <div class="it" aria-current="true" data-go="er">⛃ ER · Ledger</div><div class="it">⛃ ER · Agents</div>
+  </aside>
+
+  <section class="stage">
+    <div class="banner"><span class="lk">🔒 Derived view — read-only.</span> Generated from the repo graph. Edit the source to change it.
+      <a href="#" id="drill">↳ Open in graph</a></div>
+
+    <!-- ER diagram (crow's-foot; Account 1—* JournalEntry; M:N Agent–Account via Mandate) -->
+    <div class="diagram" id="v-er">
+      <svg viewBox="0 0 720 420" role="img" aria-label="ER diagram of the Ledger context. Account has many JournalEntries; Agent and Account relate many-to-many through Mandate.">
+        <!-- Account -->
+        <g><rect class="ent-h" x="40" y="60" width="150" height="24" rx="6"/><rect class="ent" x="40" y="84" width="150" height="70" rx="0"/>
+          <text class="tx" x="52" y="77">Account</text>
+          <text class="txm" x="52" y="104">PK AccountId</text><text class="txm" x="52" y="122">  Name</text><text class="txm" x="52" y="140">  Type</text></g>
+        <!-- JournalEntry -->
+        <g><rect class="ent-h" x="420" y="60" width="180" height="24" rx="6"/><rect class="ent" x="420" y="84" width="180" height="88" rx="0"/>
+          <text class="tx" x="432" y="77">JournalEntry</text>
+          <text class="txm" x="432" y="104">PK EntryId</text><text class="txm" x="432" y="122">FK DebitAccountId</text>
+          <text class="txm" x="432" y="140">FK CreditAccountId</text><text class="txm" x="432" y="158">  Amount</text></g>
+        <!-- Mandate (associative entity for Agent M:N Account) -->
+        <g><rect class="ent-h" x="230" y="280" width="160" height="24" rx="6"/><rect class="ent" x="230" y="304" width="160" height="56" rx="0"/>
+          <text class="tx" x="242" y="297">Mandate <tspan class="txm">(assoc.)</tspan></text>
+          <text class="txm" x="242" y="324">PK,FK AgentId</text><text class="txm" x="242" y="342">PK,FK AccountId</text></g>
+        <!-- Agent -->
+        <g><rect class="ent-h" x="40" y="300" width="120" height="24" rx="6"/><rect class="ent" x="40" y="324" width="120" height="40" rx="0"/>
+          <text class="tx" x="52" y="317">Agent</text><text class="txm" x="52" y="344">PK AgentId</text></g>
+        <!-- relationships with crow's-foot cardinality -->
+        <path class="rel" d="M190 119 H420"/>
+        <text class="card" x="200" y="112">1</text><text class="card" x="395" y="112">∗</text>
+        <path class="rel" d="M160 344 H230"/><text class="card" x="205" y="338">∗</text>
+        <path class="rel" d="M310 280 V172 H420" /><text class="card" x="316" y="200">∗</text>
+        <path class="rel inf" d="M115 154 V300"/><text class="card" x="120" y="240" style="fill:var(--inferred)">~ inferred (EF map)</text>
+      </svg>
+    </div>
+
+    <!-- UML class -->
+    <div class="diagram" id="v-uml" hidden>
+      <svg viewBox="0 0 720 380" role="img" aria-label="UML class diagram: JournalEntry composed of Money, depends on Account, aggregated by Ledger.">
+        <g><rect class="ent-h" x="270" y="40" width="180" height="22" rx="6"/><rect class="ent" x="270" y="62" width="180" height="70"/>
+          <text class="tx" x="282" y="55">«record» JournalEntry</text>
+          <text class="txm" x="282" y="82">+ Amount: Money</text><text class="txm" x="282" y="100">+ Balances(): bool</text></g>
+        <g><rect class="ent-h" x="290" y="240" width="140" height="22" rx="6"/><rect class="ent" x="290" y="262" width="140" height="44"/>
+          <text class="tx" x="302" y="255">«value» Money</text><text class="txm" x="302" y="284">+ Amount, Currency</text></g>
+        <g><rect class="ent-h" x="520" y="130" width="150" height="22" rx="6"/><rect class="ent" x="520" y="152" width="150" height="44"/>
+          <text class="tx" x="532" y="145">Account</text><text class="txm" x="532" y="174">+ AccountId</text></g>
+        <g><rect class="ent-h" x="40" y="40" width="150" height="22" rx="6"/><rect class="ent" x="40" y="62" width="150" height="44"/>
+          <text class="tx" x="52" y="55">«aggregate» Ledger</text><text class="txm" x="52" y="84">root</text></g>
+        <!-- composition (filled diamond) JournalEntry ◆— Money -->
+        <path class="rel" d="M360 132 V240"/><path d="M360 132 l6 8 l-6 8 l-6 -8 z" fill="var(--verified)"/>
+        <text class="card" x="366" y="185">1</text>
+        <!-- dependency (dashed open arrow) JournalEntry ..> Account -->
+        <path class="rel inf" d="M450 90 H520"/><text class="card" x="470" y="84" style="fill:var(--inferred)">«use» ~DI</text>
+        <!-- aggregation (open diamond) Ledger ◇— JournalEntry -->
+        <path class="rel" d="M190 70 H270"/><path d="M270 70 l-8 -6 l-8 6 l8 6 z" fill="none" stroke="var(--verified)"/>
+        <text class="card" x="225" y="64">1</text><text class="card" x="248" y="64">∗</text>
+      </svg>
+    </div>
+
+    <!-- C4 context -->
+    <div class="diagram" id="v-c4" hidden>
+      <svg viewBox="0 0 720 320" role="img" aria-label="C4 context: Operator uses AI-DE which reads the Repository.">
+        <g><circle cx="120" cy="120" r="34" class="ent"/><text class="tx" x="98" y="118">Operator</text><text class="txm" x="92" y="134">[person]</text></g>
+        <g><rect class="ent" x="300" y="80" width="150" height="80" rx="10"/><text class="tx" x="322" y="115">AI-DE</text><text class="txm" x="322" y="134">[software system]</text></g>
+        <g><rect class="ent" x="560" y="80" width="130" height="80" rx="10"/><text class="tx" x="580" y="115">Repository</text><text class="txm" x="580" y="134">[external]</text></g>
+        <path class="rel" d="M154 120 H300"/><text class="card" x="190" y="112" style="fill:var(--text-muted)">directs agents</text>
+        <path class="rel" d="M450 120 H560"/><text class="card" x="470" y="112" style="fill:var(--text-muted)">reads</text>
+      </svg>
+    </div>
+
+    <div class="legend"><span>— solid = extracted (Verified)</span><span style="color:var(--inferred)">‑ ‑ dashed = inferred (DI/ORM)</span><span>crow's-foot: 1 · ∗ many</span></div>
+
+    <div class="state" id="st-gen" hidden><div style="font-size:22px">◴</div><div>Generating view from the graph…</div></div>
+    <div class="state err" id="st-err" hidden><div style="font-size:24px">⚠</div><div><b>Could not generate the container view.</b></div><div style="font-size:12px">Reason: schema element <code>Mandate</code> unresolved. Showing the last generated view (marked stale).</div><button class="btn">Retry</button></div>
+    <div class="state" id="st-cur" hidden style="background:transparent;pointer-events:none;align-items:flex-end;justify-content:flex-start;padding:52px 18px"><div style="background:var(--surface-raised);border:1px solid var(--border);border-radius:var(--r-lg);padding:6px 10px;font-size:11px;pointer-events:auto">▦ Showing a curated view — 24 low-level elements folded. <a href="#" style="color:var(--accent)">Expand</a></div></div>
+    <div class="state err" id="st-edit" hidden style="background:rgba(0,0,0,.55)"><div style="background:var(--surface-raised);color:var(--text);border:1px solid var(--inferred);border-radius:var(--r-lg);padding:16px 20px;max-width:340px;text-align:center"><div style="font-size:22px">🔒</div><b>This is a derived view — read-only.</b><p style="color:var(--text-muted);font-size:12px">Edit the source (code / model) and the diagram regenerates. Diagrams never diverge from the code.</p><button class="btn" onclick="document.getElementById('st-edit').hidden=true;document.getElementById('h-edit').value='no'">Open source</button></div></div>
+  </section>
+</div>
+
+<script>
+  const H=document.documentElement;
+  h_theme.onchange=e=>H.setAttribute('data-theme',e.target.value);
+  h_motion.onchange=e=>H.setAttribute('data-motion',e.target.value);
+  function show(v){['er','uml','c4'].forEach(x=>document.getElementById('v-'+x).hidden=x!==v);
+    document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===v));
+    document.getElementById('crumb').textContent='Ledger context › '+({er:'ER diagram',uml:'UML class',c4:'C4 context'})[v];}
+  document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>show(b.dataset.v));
+  document.querySelectorAll('.cat .it[data-go]').forEach(i=>i.onclick=()=>{
+    document.querySelectorAll('.cat .it').forEach(x=>x.removeAttribute('aria-current'));i.setAttribute('aria-current','true');show(i.dataset.go);});
+  h_state.onchange=e=>{const v=e.target.value;
+    st_gen.hidden=v!=='gen';st_err.hidden=v!=='err';st_cur.hidden=v!=='curated';};
+  h_edit.onchange=e=>{document.getElementById('st-edit').hidden=e.target.value!=='yes';};
+  document.getElementById('drill').onclick=e=>{e.preventDefault();alert('→ Jumps to this element in the Knowledge Explorer (the node-walk).');};
+</script>
+</body>
+</html>

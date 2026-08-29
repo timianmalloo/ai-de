@@ -31,9 +31,10 @@ typography:
   scale: [11px, 12px, 13px, 15px, 18px, 22px]
   weight-normal: 400
   weight-medium: 600
-rounded: { sm: 3px, md: 5px, lg: 8px }
+rounded: { sm: 4px, md: 6px, lg: 10px, island: 12px }
 spacing: { scale: [2px, 4px, 6px, 8px, 12px, 16px, 24px, 32px] }
-elevation: { flat: none, raised: "0 1px 2px rgba(0,0,0,0.35)", dialog: "0 8px 24px rgba(0,0,0,0.5)" }
+elevation: { flat: none, resting: "0 1px 3px rgba(0,0,0,0.28)", raised: "0 4px 12px rgba(0,0,0,0.34)", dialog: "0 8px 24px rgba(0,0,0,0.5)" }
+icon: { sm: 16px, md: 20px, lg: 24px, stroke: 1.5px }
 motion: { fast: 150ms, base: 200ms, ease: "cubic-bezier(0.2, 0, 0, 1)" }
 ---
 
@@ -177,3 +178,56 @@ for a workbench, and it is why the motion inventory is short by design rather th
 - `Restored 5 of 6 panes. "Trace Viewer" is no longer available and was not restored.`
 - `Display 2 is not connected. "Terminal 2" was moved onto this display.`
 - `Workbench layout could not be read and was reset to the default. Your previous layout file was kept.`
+
+---
+
+## Facelift — soft islands (spec-app-facelift)
+
+The workbench evolves from **strict-flat** to **soft islands**: the same dense, evidence-first, AA-legible
+surface, now with gently rounded, subtly-elevated panes that read as separate cards — the JetBrains
+New-UI/Islands register (`kb-wpf-modern-ui-styling`). **Density is unchanged; only the surface softens.** The
+evolution is three facet moves on the existing archetype (grammar G9), not a new archetype:
+`Depth: Flat → SoftShadow` · `rounded.lg 8px → 10px (+ rounded.island 12px)` · `Nav: +MenuBar`.
+
+### What softens, and the hard limits
+
+| Softens | Stays hard |
+|---|---|
+| Pane corners → `{rounded.island}`; window → **DWM** rounded corners + system shadow | **`AllowsTransparency=False`** (or the DWM shadow/corners die — `WPF-TRANSPARENCY-TRAP`) |
+| Docked island panes gain `{elevation.resting}` | **No effect over an `HwndHost`/WebView2 pane** (airspace — `WPF-EFFECT-OVER-AIRSPACE`) |
+| Floating panes/dialogs use `{elevation.raised}`/`{elevation.dialog}` | Shadows are **few, static, cached** (`CacheMode=BitmapCache`); GPU stays flat |
+| Theme is **Fluent-wired**, accent-tracks the OS | Softened greys still meet **WCAG AA** (contrast audit fails the gate otherwise) |
+| Layout still animates at **0ms** | Confidence is still **glyph + word + colour**, never colour alone |
+
+Mica is a **Windows-11 / .NET-10** enhancement on the window backdrop only (gutters), gated on availability
+(Flagged) and never assumed to show *through* hosted panes.
+
+### Icon system
+
+One permissive line-icon set (recommend **Fluent System Icons**, MIT), single `{icon.stroke}` weight,
+`{icon.md}` default grid (`{icon.sm}` in dense strips, `{icon.lg}` in the menu). **Every icon-only control
+carries an accessible name and a tooltip** — an icon is never the sole label. Icons inherit `{colors.text}` /
+`{colors.text-muted}`; the accent icon is reserved for the one primary action per surface.
+
+### Menu & command system
+
+A **menu bar** (File · Edit · View · Graph · Model · Agents · Window · Help) is the *discovery* path over the
+existing command palette (Cmd/Ctrl-K, the *power* path). A **Command** = `{ id, label, icon, shortcut,
+enabled-predicate, disabled-reason }`. Menu-item states: default / hover / focus / **disabled-with-reason**
+(the reason shows on hover — an inert control never leaves the user guessing) / checked. The menu bar surfaces
+the same commands the palette runs; they never diverge.
+
+### New tokens for the graph & model surfaces
+
+| Token | Value | Role |
+|---|---|---|
+| `provenance.verified` | `{colors.verified}` + ✓ + "Verified" | An `EXTRACTED` edge / observed fact |
+| `provenance.inferred` | `{colors.inferred}` + ~ + "Inferred" | An `INFERRED` edge (DI/ORM/dynamic) — **dashed** in diagrams |
+| `provenance.flagged` | `{colors.unverified}` + ? + "Flagged" | An `AMBIGUOUS`/unconfirmed edge |
+| `relationship.inferred-stroke` | 1px **dashed** `{colors.inferred}` | Inferred UML/ER relationship — never shown as a solid extracted fact |
+| `banner.readonly` | `{colors.locked}` strip + lock glyph + "Derived view — read-only" | On every generated UML/ER/graph model view |
+| `metric.legend` | perceptually-uniform ramp + unit legend | Betweenness/community overlay — **never rainbow/jet** (TQ3) |
+
+**Provenance is a correctness rule, not decoration:** an inferred edge rendered identically to an extracted one
+is `GRAPH-PROVENANCE-LAUNDERED` (kg-visualization-ux-expert, hard escalation). Colour is the third signal; the
+glyph and the word carry it when hue is unavailable.
