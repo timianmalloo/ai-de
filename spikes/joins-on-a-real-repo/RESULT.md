@@ -300,6 +300,25 @@ shortfall  : (none — the panes see the whole workspace)
 | Paged read of everything | **185ms** over 11 pages, exact agreement with the store |
 | Shortfall | none — no cap bit at 21,066 assertions |
 
+### Where the extraction time actually goes — profiled 2026-08-29
+
+`AIDE_EXTRACTION_TIMING=1` splits each scope into the READ phase (parse the sources, build the
+compilation, resolve references) and the WALK phase (visit the symbols and emit assertions):
+
+```
+[timing] csharp:Proj00: read 567ms, walk 260ms, 1,076 assertion(s)   <- first scope, JIT included
+[timing] csharp:Proj04: read 607ms, walk   7ms, 1,070 assertion(s)
+[timing] csharp:Proj07: read 505ms, walk   6ms, 1,077 assertion(s)
+```
+
+**Roughly 98% of the cost is the read**, and the walk is 6–15ms once the JIT is warm. The first
+scope's 260ms walk is JIT, not work — reading the total without the split would have attributed it
+to the walk and sent the next optimisation at the wrong half.
+
+So incremental work belongs in *avoiding the read*, which the fingerprint cache already does at scope
+granularity, and would do better at file granularity. Making the symbol walk faster would recover
+about one percent.
+
 **The read is not the problem at this size; extraction is.** 185ms to page 21,066 assertions against
 13.5s to produce them says the next scale work belongs in the extractor, not the query path — and the
 fingerprint cache already means that 13.5s is paid once rather than per refresh.

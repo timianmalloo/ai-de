@@ -238,6 +238,22 @@ public sealed class LackingWorkspaceTests : IDisposable
     }
 
     [Fact]
+    public void TheLimitIsTheMeasuredOneNotTheDocumentedOne()
+    {
+        // Bisected on the reporting machine: cmd carried 8,151 characters and dropped 8,152, printing
+        // "The input line is too long" and losing the value. The documented figure is 8,191; the
+        // difference is the variable's own name plus block overhead. Pinned so the constant cannot
+        // drift back to a number nobody measured.
+        Assert.Equal(8151, AiDe.Core.Terminal.EnvironmentHealth.CmdVariableLimit);
+
+        var justUnder = new string('x', AiDe.Core.Terminal.EnvironmentHealth.CmdVariableLimit);
+        var justOver = new string('x', AiDe.Core.Terminal.EnvironmentHealth.CmdVariableLimit + 1);
+
+        Assert.Empty(AiDe.Core.Terminal.EnvironmentHealth.Inspect(justUnder));
+        Assert.NotEmpty(AiDe.Core.Terminal.EnvironmentHealth.Inspect(justOver));
+    }
+
+    [Fact]
     public void AHealthyPathSaysNothing()
     {
         // The other half. This message explains a whole class of confusion exactly once; said on

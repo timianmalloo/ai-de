@@ -125,9 +125,23 @@ public sealed class TerminalSurface : ContentControl, IDisposable
     /// no menu would ever open.
     /// </remarks>
     public static IReadOnlyList<string> AvailableAgents =>
-        [.. Profiles.All.Select(p => p.Agent).Where(IsOnPath)];
+        // When the environment is unhealthy the FILTER is unreliable, so it is not applied. A menu
+        // that silently omits an agent is invisible; a launch that fails is not, and the shell has
+        // already announced why (DC-027). Offering something that may fail beats hiding something
+        // that would have worked.
+        AiDe.Core.Terminal.EnvironmentHealth.Inspect().Count > 0
+            ? [.. Profiles.All.Select(p => p.Agent)]
+            : [.. Profiles.All.Select(p => p.Agent).Where(IsOnPath)];
 
-    /// <summary>Whether an executable can actually be launched, so the menu never offers a dead one.</summary>
+    /// <summary>
+    /// Whether an executable can be launched, so the menu never offers a dead one.
+    /// </summary>
+    /// <remarks>
+    /// <b>It asks about THIS process's PATH, which is not the question.</b> What matters is the PATH
+    /// the child receives, and those differ whenever something between them applies a limit — cmd
+    /// drops an oversized variable entirely (DC-027). The answer is still useful when the
+    /// environment is healthy and is bypassed when it is not, rather than being trusted blindly.
+    /// </remarks>
     private static bool IsOnPath(string executable)
     {
         var paths = (Environment.GetEnvironmentVariable("PATH") ?? string.Empty)

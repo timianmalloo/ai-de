@@ -30,17 +30,53 @@ public static class EnvironmentHealth
     /// The size past which <c>cmd.exe</c> stops carrying a variable.
     /// </summary>
     /// <remarks>
-    /// The documented command-line and variable limit for <c>cmd.exe</c>. Measured behaviour on the
-    /// reporting machine brackets it: a 22,297-character PATH arrived empty, a 1,799-character PATH
-    /// arrived whole. The exact cut-off was not bisected, so this is the documented figure and the
-    /// message says "may be dropped" rather than asserting a threshold nobody measured.
+    /// <b>Bisected, not quoted.</b> On the reporting machine <c>cmd.exe</c> carried a variable of
+    /// 8,151 characters and dropped one of 8,152 — printing "The input line is too long" and then
+    /// losing the value. The documented figure is 8,191; the ~40-character difference is the
+    /// variable's own name and the block overhead, so the exact cut-off shifts slightly with the
+    /// name. The message still says "may be dropped" because of that, not because the number is
+    /// unmeasured.
     /// </remarks>
-    public const int CmdVariableLimit = 8191;
+    public const int CmdVariableLimit = 8151;
 
-    /// <summary>Findings about the environment, in the words a user can act on. Empty when healthy.</summary>
+    /// <summary>
+    /// Findings about the whole environment, in words a user can act on. Empty when healthy.
+    /// </summary>
+    /// <remarks>
+    /// PATH is checked in detail because it is the one whose loss stops tools resolving, but ANY
+    /// oversized variable is dropped the same way and by the same mechanism — so every variable is
+    /// measured and the others are named together. Checking only the variable that happened to bite
+    /// is how the second instance of a class gets found by a user rather than by the tool.
+    /// </remarks>
     public static IReadOnlyList<string> Inspect(string? path = null)
     {
-        var value = path ?? Environment.GetEnvironmentVariable("PATH") ?? string.Empty;
+        var findings = new List<string>();
+        findings.AddRange(InspectPath(path ?? Environment.GetEnvironmentVariable("PATH") ?? string.Empty));
+
+        if (path is not null) return findings;          // an explicit PATH is a PATH-only question
+
+        var oversized = Environment.GetEnvironmentVariables()
+            .Cast<System.Collections.DictionaryEntry>()
+            .Select(e => (Name: e.Key?.ToString() ?? string.Empty, Length: e.Value?.ToString()?.Length ?? 0))
+            .Where(v => v.Length > CmdVariableLimit
+                && !string.Equals(v.Name, "PATH", StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(v => v.Length)
+            .ToList();
+
+        if (oversized.Count > 0)
+        {
+            findings.Add(
+                $"{oversized.Count:N0} other environment variable(s) are past the same limit and " +
+                "will be dropped for the same reason: " +
+                string.Join(", ", oversized.Take(5).Select(v => $"{v.Name} ({v.Length:N0} chars)")) +
+                (oversized.Count > 5 ? ", …" : string.Empty) + ".");
+        }
+
+        return findings;
+    }
+
+    private static IReadOnlyList<string> InspectPath(string value)
+    {
         if (value.Length <= CmdVariableLimit) return [];
 
         var entries = value.Split(';', StringSplitOptions.RemoveEmptyEntries);

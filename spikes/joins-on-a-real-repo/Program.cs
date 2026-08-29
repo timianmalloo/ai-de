@@ -38,9 +38,17 @@ Console.WriteLine(new string('=', 100));
 // is measuring a product that does not ship.
 using var core = WorkspaceCore.Open("joins-spike", root, data, WorkspaceExtractors.Default());
 
+// WHERE the extraction time goes, measured rather than attributed. "Extraction is the cost" was the
+// last measurement's conclusion; it did not say which part, and the obvious suspect is rarely it.
+var discoverStarted = DateTimeOffset.UtcNow;
+var discovered = CSharpScopeDiscovery.DiscoverAll(root);
+var discoverElapsed = DateTimeOffset.UtcNow - discoverStarted;
+
 var started = DateTimeOffset.UtcNow;
 var index = await core.IndexCSharpAsync("spike-1", CancellationToken.None);
 var elapsed = DateTimeOffset.UtcNow - started;
+
+Console.WriteLine($"discovery  : {discovered.Count} scope(s) found in {discoverElapsed.TotalMilliseconds:N0}ms");
 
 Console.WriteLine($"scopes     : {index.ScopesIndexed} of {index.ScopesFound} indexed " +
                   $"({index.ScopesReused} reused) in {elapsed.TotalSeconds:F1}s");

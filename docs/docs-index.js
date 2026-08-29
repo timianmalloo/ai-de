@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T20:27:15Z",
+  "generated": "2026-08-29T20:27:16Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [

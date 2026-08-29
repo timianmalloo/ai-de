@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using AiDe.Core.Facts;
 using Microsoft.CodeAnalysis;
 
@@ -65,6 +66,11 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         var tfm = frameworks.FirstOrDefault(f =>
             request.ScopeId.EndsWith(f, StringComparison.OrdinalIgnoreCase)) ?? frameworks[0];
 
+        // Where a scope's time goes, emitted on the normal path. "Extraction is the cost" was true and
+        // useless: it did not say whether the cost is reading the project, building the compilation,
+        // or walking the symbols, and those have opposite fixes.
+        var readStarted = System.Diagnostics.Stopwatch.StartNew();
+
         CSharpCompilationResult compiled;
         try
         {
@@ -90,6 +96,9 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                 "AIDE-EXT-LOAD-FAILED", request.ScopeId, $"the project could not be compiled for {tfm}"));
             return Task.FromResult(new ExtractionResult(assertions, Complete: false, diagnostics));
         }
+
+        var readMs = readStarted.ElapsedMilliseconds;
+        var walkStarted = System.Diagnostics.Stopwatch.StartNew();
 
         // Disclosures FIRST, so a scope whose extraction is later truncated still carries the
         // reasons it is incomplete. A truncated list that lost its caveats is worse than a short one.
@@ -163,6 +172,19 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         // Complete means "this is the whole snapshot for this scope", which it is: the disclosures
         // are IN the snapshot rather than missing from it. Marking it incomplete would quarantine
         // every unrestored project, which is most of them on a fresh clone.
+        // Emitted on the NORMAL path, no flag to remember: an operator asking "why is indexing slow"
+        // gets the split rather than a total they have to guess at.
+        Activity.Current?.SetTag("extraction.read_ms", readMs);
+        Activity.Current?.SetTag("extraction.walk_ms", walkStarted.ElapsedMilliseconds);
+        Activity.Current?.SetTag("extraction.assertions", assertions.Count);
+
+        if (Environment.GetEnvironmentVariable("AIDE_EXTRACTION_TIMING") is not null)
+        {
+            Console.Error.WriteLine(
+                $"[timing] {request.ScopeId}: read {readMs}ms, walk {walkStarted.ElapsedMilliseconds}ms, " +
+                $"{assertions.Count:N0} assertion(s)");
+        }
+
         return Task.FromResult(new ExtractionResult(assertions, Complete: true, diagnostics));
     }
 
