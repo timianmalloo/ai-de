@@ -29,6 +29,7 @@ public partial class MainWindow : Window
         // brush override, no template surgery — see the AvalonDock decision note).
         Shell.Manager.Theme = new AvalonDock.Themes.Vs2013DarkTheme();
         AiDe.App.Workbench.DockThemeAccents.Retokenise(Shell.Manager);
+        AiDe.App.Workbench.DockRoundedTabs.Apply(Shell.Manager);
 
         LiveRegionHost.Content = Shell.LiveRegion;
 

@@ -103,3 +103,21 @@ theme is applied. Proven by `DockThemeAccentsTests` (the selected-tab key flips 
 fragile surgery this note warned against — and squared document tabs remain the IDE convention
 (VS / VS Code / JetBrains). Left square by design; revisit only on explicit request via the
 minimal-DictionaryTheme route above.
+
+## Update (2026-08-29, later — document-tab corners ARE rounded now, on user instruction)
+
+The user confirmed the accent/islands landed but still wanted the rounded/softer feel, so the tabs
+were rounded too — safely, and it turned out to be tractable:
+
+- **The tabs are `LayoutDocumentTabItem`, a `ContentControl`** (the workbench docks every surface in a
+  `LayoutDocumentPane`), so a plain `ContentPresenter` shows the title.
+- **The template was extracted from the assembly** (`XamlWriter.Save` of the theme's real style), so
+  the drag, selection and close-command bindings are the theme's own, not a guess. Three changes:
+  the `Header` border gets `CornerRadius="7,7,0,0"` and loses its bottom line; the two `XamlWriter`
+  serialization artifacts (a null `Content`, a black title foreground) are replaced with
+  `Content="{Binding Title}"` and the palette text brush; and a selected-state trigger darkens the
+  title to `SurfaceSunken` so it stays legible on the accent-blue selected tab.
+- **Verified functionally, not just visually** (`DockRoundedTabsTests`): a real bound document is
+  arranged through a real window and the test asserts the `Header` is actually rounded **and** the
+  title renders — the two things a blind retemplate breaks. It compiles as a Page (BAML-validated).
+- Lives in `DockRoundedTabs.xaml` + `.cs`, merged after `DockThemeAccents` so the implicit style wins.

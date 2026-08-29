@@ -1,0 +1,426 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Style TargetType="avalondock:LayoutDocumentTabItem" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:avalondock="https://github.com/Dirkster99/AvalonDock" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:adtvst="clr-namespace:AvalonDock.Themes.VS2013.Themes;assembly=AvalonDock.Themes.VS2013">
+  <Style.Resources>
+    <ResourceDictionary />
+  </Style.Resources>
+  <Setter Property="Control.Template">
+    <Setter.Value>
+      <ControlTemplate TargetType="avalondock:LayoutDocumentTabItem">
+        <avalondock:DropDownControlArea DropDownContextMenu="{x:Null}" DropDownContextMenuDataContext="{x:Null}" Style="{DynamicResource DropDownControlArea}">
+          <Border BorderThickness="0" Padding="1,0,1,0" BorderBrush="{DynamicResource {ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=Background}}" Background="{TemplateBinding Panel.Background}" Name="Header" CornerRadius="7,7,0,0" Height="19" Margin="0,0,0,2">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border Background="#00FFFFFF" Grid.ColumnSpan="2" />
+              <ContentPresenter x:Name="TabTitle" Content="{Binding Title}" Margin="4,0,4,1" VerticalAlignment="Bottom" TextElement.Foreground="{DynamicResource TextBrush}" />
+              <Button Command="{x:Null}" Name="DocumentCloseButton" Width="15" Height="15" Margin="3,0,3,0" HorizontalAlignment="Center" VerticalAlignment="Bottom" ToolTip="Close" Visibility="Hidden" Grid.Column="1">
+                <Button.Style>
+                  <Style TargetType="Button">
+                    <Style.Resources>
+                      <ResourceDictionary />
+                    </Style.Resources>
+                    <Setter Property="Panel.Background">
+                      <Setter.Value>
+                        <SolidColorBrush>#00FFFFFF</SolidColorBrush>
+                      </Setter.Value>
+                    </Setter>
+                    <Setter Property="Border.BorderThickness">
+                      <Setter.Value>
+                        <Thickness>1,1,1,1</Thickness>
+                      </Setter.Value>
+                    </Setter>
+                    <Setter Property="Border.BorderBrush">
+                      <Setter.Value>
+                        <SolidColorBrush>#00FFFFFF</SolidColorBrush>
+                      </Setter.Value>
+                    </Setter>
+                    <Setter Property="Control.Padding">
+                      <Setter.Value>
+                        <Thickness>0,0,0,0</Thickness>
+                      </Setter.Value>
+                    </Setter>
+                    <Setter Property="Control.Template">
+                      <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                          <Border BorderThickness="{TemplateBinding Border.BorderThickness}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}">
+                            <ContentPresenter Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" />
+                          </Border>
+                        </ControlTemplate>
+                      </Setter.Value>
+                    </Setter>
+                  </Style>
+                </Button.Style>
+                <Path Data="{DynamicResource PinClose}" Stretch="Uniform" Fill="{DynamicResource {ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=ToolWindowCaptionActiveText}}" Name="PART_ImgPinClose" Width="10" Height="10" Margin="1,0,0,1" VerticalAlignment="Center" />
+              </Button>
+            </Grid>
+          </Border>
+        </avalondock:DropDownControlArea>
+        <ControlTemplate.Triggers>
+          <DataTrigger Binding="{Binding Path=IsSelected}" Value="true">
+            <Setter Property="UIElement.Visibility" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <x:Static Member="Visibility.Visible" />
+              </Setter.Value>
+            </Setter>
+          </DataTrigger>
+          <Trigger Property="UIElement.IsMouseOver">
+            <Setter Property="UIElement.Visibility" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <x:Static Member="Visibility.Visible" />
+              </Setter.Value>
+            </Setter>
+            <Trigger.Value>
+              <s:Boolean>True</s:Boolean>
+            </Trigger.Value>
+          </Trigger>
+          <DataTrigger Binding="{Binding Path=IsLastFocusedDocument}" Value="true">
+            <Setter Property="UIElement.Visibility" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <x:Static Member="Visibility.Visible" />
+              </Setter.Value>
+            </Setter>
+          </DataTrigger>
+          <DataTrigger Binding="{Binding Path=IsActive}" Value="true">
+            <Setter Property="UIElement.Visibility" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <x:Static Member="Visibility.Visible" />
+              </Setter.Value>
+            </Setter>
+          </DataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=CanClose}" Value="false" />
+              <Condition Binding="{Binding Path=CanHide}" Value="true" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="ButtonBase.Command" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <Binding Path="LayoutItem.HideCommand" RelativeSource="{RelativeSource Mode=TemplatedParent}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="ToolTipService.ToolTip" TargetName="DocumentCloseButton">
+              <Setter.Value>Hide</Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=CanClose}" Value="false" />
+              <Condition Binding="{Binding Path=CanHide}" Value="false" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="UIElement.Visibility" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <x:Static Member="Visibility.Collapsed" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsLastFocusedDocument}" Value="true" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Border.BorderThickness" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.Padding" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactiveGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsLastFocusedDocument}" Value="true" />
+              <Condition Binding="{Binding Path=IsMouseOver, ElementName=DocumentCloseButton}" Value="True" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Border.BorderThickness" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.Padding" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Panel.Background" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactiveHoveredBackground}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.BorderBrush" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactiveHoveredBorder}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactiveHoveredGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsLastFocusedDocument}" Value="true" />
+              <Condition Binding="{Binding Path=IsMouseCaptured, ElementName=DocumentCloseButton}" Value="True" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Border.BorderThickness" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.Padding" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Panel.Background" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactivePressedBackground}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.BorderBrush" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactivePressedBorder}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactivePressedGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <DataTrigger Binding="{Binding Path=IsActive}" Value="true">
+            <Setter Property="Border.BorderThickness" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.Padding" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedActiveGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </DataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsActive}" Value="true" />
+              <Condition Binding="{Binding Path=IsMouseOver, ElementName=DocumentCloseButton}" Value="True" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Border.BorderThickness" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.Padding" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Panel.Background" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedActiveHoveredBackground}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.BorderBrush" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedActiveHoveredBorder}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedActiveHoveredGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsActive}" Value="true" />
+              <Condition Binding="{Binding Path=IsMouseCaptured, ElementName=DocumentCloseButton}" Value="True" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Border.BorderThickness" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.Padding" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Panel.Background" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedActivePressedBackground}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.BorderBrush" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedActivePressedBorder}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedActivePressedGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsActive}" Value="False" />
+              <Condition Binding="{Binding Path=IsLastFocusedDocument}" Value="False" />
+              <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonUnselectedTabHoveredGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsActive}" Value="False" />
+              <Condition Binding="{Binding Path=IsLastFocusedDocument}" Value="False" />
+              <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
+              <Condition Binding="{Binding Path=IsMouseOver, ElementName=DocumentCloseButton}" Value="True" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Panel.Background" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonUnselectedTabHoveredButtonHoveredBackground}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.BorderBrush" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonUnselectedTabHoveredButtonHoveredBorder}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonUnselectedTabHoveredButtonHoveredGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsActive}" Value="False" />
+              <Condition Binding="{Binding Path=IsLastFocusedDocument}" Value="False" />
+              <Condition Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
+              <Condition Binding="{Binding Path=IsMouseCaptured, ElementName=DocumentCloseButton}" Value="True" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Panel.Background" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonUnselectedTabHoveredButtonPressedBackground}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.BorderBrush" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonUnselectedTabHoveredButtonPressedBorder}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonUnselectedTabHoveredButtonPressedGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsActive}" Value="False" />
+              <Condition Binding="{Binding Path=IsSelected}" Value="True" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Border.BorderThickness" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.Padding" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedActiveGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsActive}" Value="False" />
+              <Condition Binding="{Binding Path=IsSelected}" Value="True" />
+              <Condition Binding="{Binding Path=IsMouseOver, ElementName=DocumentCloseButton}" Value="True" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Border.BorderThickness" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.Padding" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Panel.Background" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactiveHoveredBackground}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.BorderBrush" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactiveHoveredBorder}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactiveHoveredGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+          <MultiDataTrigger>
+            <MultiDataTrigger.Conditions>
+              <Condition Binding="{Binding Path=IsActive}" Value="False" />
+              <Condition Binding="{Binding Path=IsSelected}" Value="True" />
+              <Condition Binding="{Binding Path=IsMouseCaptured, ElementName=DocumentCloseButton}" Value="True" />
+            </MultiDataTrigger.Conditions>
+            <Setter Property="Border.BorderThickness" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.Padding" TargetName="Header">
+              <Setter.Value>
+                <Thickness>0,0,0,0</Thickness>
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Panel.Background" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactivePressedBackground}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Border.BorderBrush" TargetName="DocumentCloseButton">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactivePressedBorder}" />
+              </Setter.Value>
+            </Setter>
+            <Setter Property="Shape.Fill" TargetName="PART_ImgPinClose">
+              <Setter.Value>
+                <DynamicResource ResourceKey="{ComponentResourceKey TypeInTargetAssembly=adtvst:ResourceKeys, ResourceId=DocumentWellTabButtonSelectedInactivePressedGlyph}" />
+              </Setter.Value>
+            </Setter>
+          </MultiDataTrigger>
+        <DataTrigger Binding="{Binding Path=IsSelected}" Value="true"><Setter TargetName="TabTitle" Property="TextElement.Foreground" Value="{DynamicResource SurfaceSunkenBrush}" /></DataTrigger></ControlTemplate.Triggers>
+      </ControlTemplate>
+    </Setter.Value>
+  </Setter>
+</Style>
+</ResourceDictionary>

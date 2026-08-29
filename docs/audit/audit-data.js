@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T20:15:58Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-29T20:48:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1832,6 +1832,27 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0103",
+      "shortname": "rounded-document-tabs",
+      "datetime": "2026-08-29T20:48:31Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Round the document-tab corners too.",
+      "summary": "Rounded the AvalonDock document tab tops (CornerRadius 7,7,0,0). Extracted the theme LayoutDocumentTabItem template from the assembly (real drag/close/selection bindings preserved), fixed the XamlWriter serialization artifacts (null Content -> {Binding Title}; black foreground -> palette text; selected-state dark title for contrast on the accent tab). DockRoundedTabs.xaml compiles as a Page (BAML-validated) and is merged after DockThemeAccents. Verified functionally by DockRoundedTabsTests (real bound doc: Header rounded + title renders). Also fixed a committed merge-conflict in expected-test-counts.json. Clean build 0/0; App.Tests 120; Core.Tests 563.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/DockRoundedTabs.xaml",
+        "tests/AiDe.App.Tests/DockRoundedTabsTests.cs"
+      ],
+      "tags": [
+        "facelift",
+        "avalondock"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
