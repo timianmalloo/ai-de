@@ -78,11 +78,23 @@ public sealed class PythonExtractor : IExtractor
         var assertions = new List<EvidenceAssertion>();
         var unreadable = new List<string>();
 
+        // Every module in THIS scope, so an import naming one of them can be resolved to it rather
+        // than left as a string. Collected first because an import may name a module that appears
+        // later in the walk, and resolution that depends on file order is resolution that is wrong
+        // half the time.
+        var modules = Files(directory)
+            .Select(f => ModuleName(directory, f))
+            .ToHashSet(StringComparer.Ordinal);
+
         // The gaps first, so a scope truncated later still carries what it cannot see. The same
         // ordering the C# extractor uses, and for the same reason.
+        // ImportsNotResolved is NOT here: it is now conditional and carries a count, because some
+        // imports resolve. A blanket "imports are not resolved" was true when none were and became a
+        // closed gap reported as open the moment resolution landed — the same defect as hiding one.
+        var unresolved = 0;
+
         foreach (var disclosure in new[]
         {
-            Disclosures.ImportsNotResolved,
             Disclosures.NestedDeclarationsNotAnalysed,
             Disclosures.DynamicImportsNotAnalysed,
         })
@@ -122,8 +134,30 @@ public sealed class PythonExtractor : IExtractor
             // and calling that Verified would be the exact defect DC-022 is about.
             foreach (var target in Names(ImportModule, text).Concat(Names(FromImport, text)).Distinct(StringComparer.Ordinal))
             {
-                assertions.Add(Fact(request, module, "imports", target, VerificationStatus.Inferred));
+                // A relative import (`from .models import X`) is resolved against the importing
+                // module's package; an absolute one is matched against the scope's modules as
+                // written. Anything that matches a module this scope actually contains becomes
+                // VERIFIED — the target is a file that exists and was read.
+                var resolved = Resolve(target, module, modules);
+
+                if (resolved is null) unresolved++;
+
+                assertions.Add(resolved is null
+                    // Unresolved stays INFERRED and keeps the name as written: it may be a package,
+                    // a module in another scope, or nothing. Asserting which would be the guess
+                    // DC-022 is about.
+                    ? Fact(request, module, "imports", target, VerificationStatus.Inferred)
+                    : Fact(request, module, "imports", resolved, VerificationStatus.Verified));
             }
+        }
+
+        if (unresolved > 0)
+        {
+            // Counted, because "imports are not resolved" and "31 of 330 imports point outside this
+            // scope" are different statements about how much of the graph is a guess.
+            assertions.Add(Fact(request, ScopeNode(request.ScopeId), "discloses",
+                $"{Disclosures.ImportsNotResolved} ({unresolved:N0} import(s) name something this " +
+                "scope does not contain)"));
         }
 
         if (unreadable.Count > 0)
@@ -135,6 +169,38 @@ public sealed class PythonExtractor : IExtractor
         // Complete: the disclosures are IN the snapshot rather than missing from it, so a scope that
         // read what it could is a whole answer about a narrow question.
         return Task.FromResult(new ExtractionResult(assertions, Complete: true, []));
+    }
+
+    /// <summary>
+    /// The module this import names, when the scope contains it. Null otherwise.
+    /// </summary>
+    /// <remarks>
+    /// Leading dots are Python's relative-import syntax: one dot is the importing module's own
+    /// package, each further dot climbs one level. Resolved textually against the modules actually
+    /// found, so a match means a file that exists and was read — which is what lets the edge be
+    /// Verified rather than Inferred.
+    /// </remarks>
+    internal static string? Resolve(string target, string importingModule, IReadOnlySet<string> modules)
+    {
+        if (!target.StartsWith('.'))
+        {
+            return modules.Contains(target) ? target : null;
+        }
+
+        var levels = target.TakeWhile(c => c == '.').Count();
+        var rest = target[levels..];
+
+        // The importing module's package is its name minus the module itself; each extra dot climbs.
+        var parts = importingModule.Split('.');
+        var keep = parts.Length - levels;
+        if (keep < 0) return null;
+
+        var package = string.Join('.', parts.Take(keep));
+        var candidate = string.IsNullOrEmpty(rest)
+            ? package
+            : (package.Length == 0 ? rest : package + "." + rest);
+
+        return modules.Contains(candidate) ? candidate : null;
     }
 
     private static IEnumerable<string> Names(Regex pattern, string text) =>

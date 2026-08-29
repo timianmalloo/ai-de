@@ -339,6 +339,39 @@ pointed at. Later scopes in the same run show `read 2ms`, so the 600ms figures a
 touch; the OS file cache warms during the run, and this cost is environment-dependent (a scanner on
 the temp directory would show exactly this shape).
 
+### The correction that matters: the synthetic benchmark was measuring itself
+
+Both conclusions above are **artefacts of the workload**, and the same profiler on a real repository
+says something else entirely. TheTerrace, 463 files in its main scope:
+
+```
+[timing]   enumerate 6ms, read 53ms, parse 694ms for 463 file(s)
+[timing] csharp:TheTerrace:net10.0: read 848ms, walk 1167ms, 8,336 assertion(s)
+```
+
+| | Synthetic (fresh files, trivial types) | TheTerrace (real) |
+|---|---|---|
+| read | ~500ms — "97% of extraction" | **53ms, about 3%** |
+| parse | 4ms | **694ms** |
+| walk | 6–15ms | **1,167ms — the largest single cost** |
+
+Two independent flaws in the synthetic workload, each inverting a conclusion:
+
+1. **The files were newly created.** A fresh .NET process reading them took 493ms; a *second* fresh
+   process over the same files took 6ms, and the repository's own source reads at 0.19ms/file. The
+   500ms was a one-time, system-wide, per-file first read after creation — the signature of on-access
+   scanning — and it never recurs. It is not extraction's cost at all.
+2. **The generated types were trivial.** No inheritance depth, no generics, four fields each. The
+   symbol walk had almost nothing to do, so it looked free; on real code it is the *biggest* cost.
+
+So the honest profile of extraction on real code is **walk > parse >> read**, which is the reverse of
+what was published here twice. The tree cache still earns its place — parse is 694ms and the second
+scope reused all 463 trees for 0ms — but it addresses the second-largest cost, not the largest.
+
+**The generalisation, registered as DC-028:** a benchmark built to exercise a system measures the
+benchmark unless its workload resembles the real one in the dimensions that drive cost. Both flaws
+here were invisible in the numbers and obvious in the generator.
+
 ### What the tree cache is actually worth
 
 `SyntaxTreeCache` was built on the wrong rationale and is right anyway: a cache hit skips the whole
