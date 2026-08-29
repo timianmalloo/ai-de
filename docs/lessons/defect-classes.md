@@ -304,7 +304,12 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 - **Instances:** 2026-08-26 — `al-0012` allocated in two trees during the Phase-1b work; resolved by
   discarding one and re-logging. 2026-08-26 (**recurrence, same day**) — `al-0028` allocated to a
   logged prompt in the primary checkout and to the register-repair entry in a worktree; the merge
-  refused. Both were caused by running a log-writing script in the primary checkout while the
+  refused. 2026-08-29 (**third occurrence, and the first between two AGENTS rather than two trees of
+  one agent**) — the core and design sessions each allocated `al-0071`, to entries with nothing in
+  common; the rebase reported it as a content conflict in an append-only file. Resolved the way the
+  session contract prescribes for that file: union both sides, keep the id already published on
+  `main`, re-issue the other as `al-0072`, regenerate the derived views. `verify-audit-log.py` is
+  what confirmed the result. Both were caused by running a log-writing script in the primary checkout while the
   session's real work lived in a worktree, which is the WT-discipline violation underneath the class.
 - **Control:** `tools/verify-audit-log.py`, run in CI: no id may be claimed by more than one entry in
   `audit-log.jsonl` or `change-log.jsonl`. **Observed failing 2026-08-26** against a synthetic log
