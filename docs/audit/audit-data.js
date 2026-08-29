@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T17:30:11Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-29T17:34:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1587,6 +1587,25 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0090",
+      "shortname": "test-4a-rendering",
+      "datetime": "2026-08-29T17:34:09Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "prove 4a rendering with tests",
+      "summary": "Two ContextMapSurface 4a render tests (empty-state action; dominant target surfaced); dominant chip denominator Weight->Members.Count. 117/117 green. (Re-emitted after a DC-013 audit merge collision took theirs.)",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/PaneRenderTests.cs"
+      ],
+      "tags": [
+        "test"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
