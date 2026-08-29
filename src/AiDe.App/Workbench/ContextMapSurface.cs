@@ -214,7 +214,7 @@ public sealed class ContextMapSurface : ContentControl
             // difference between "this boundary failed" and "this boundary is carrying the ORM", so it
             // reads as an emphasis chip, not muted trailing text.
             header.Children.Add(DominantChip(
-                $"{edge.DominantCount} of {edge.Weight} \u2192 {ShortName(dominant.Object)}"));
+                $"{edge.DominantCount} of {edge.Members.Count} \u2192 {ShortName(dominant.Object)}"));
         }
 
         var expander = new Expander { Header = header, Content = members, Margin = new Thickness(0, 2, 0, 0) };

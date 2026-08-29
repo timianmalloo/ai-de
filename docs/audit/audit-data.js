@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-29T17:26:45Z",
+  "generated": "2026-08-29T17:33:25Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1558,6 +1558,26 @@ window.AUDIT_DATA = {
       ],
       "tags": [
         "implement",
+        "facelift"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0074",
+      "shortname": "test-4a-rendering",
+      "datetime": "2026-08-29T17:33:25Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Continue autonomously: prove the 4a rendering with tests and tighten the dominant-chip phrasing.",
+      "summary": "Added two ContextMapSurface render tests: the not-declared empty state offers a first action, and the dominant crossing target is surfaced on the crossing without opening it. Tightened the dominant chip denominator from Weight to Members.Count to avoid overclaiming when the member list is capped. App.Tests 117/117 green.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/PaneRenderTests.cs"
+      ],
+      "tags": [
+        "test",
         "facelift"
       ],
       "outcome": "success"

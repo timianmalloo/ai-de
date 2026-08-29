@@ -199,6 +199,49 @@ public sealed class PaneRenderTests
         Assert.DoesNotContain("belongs to a context", all, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void WithNoMapDeclared_ThePaneRendersAFirstRunEmptyState_WithAFirstAction()
+    {
+        // The 4a upgrade: "no map declared" is a first-run EMPTY STATE (glyph, one line, first
+        // action), not a heading and a muted paragraph. The falsifiable half is the ACTION — a bare
+        // statement of absence leaves the user with nothing to do next.
+        var text = OnSta(() =>
+        {
+            var pane = new ContextMapSurface("Contexts")
+            {
+                Source = () => new ContextMapView([], [], 0, [], [], IsDeclared: false),
+            };
+
+            pane.Refresh();
+            return TextOf(pane);
+        });
+
+        var all = string.Join(" | ", text);
+
+        Assert.Contains("No context map is declared yet", all, StringComparison.Ordinal);
+        Assert.Contains("Add docs/bounded-contexts.yaml", all, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void TheDominantCrossingTarget_IsSurfacedOnTheCrossing_WithoutOpeningIt()
+    {
+        // The 4a upgrade: the dominant class of a crossing is promoted out of the grey trailing
+        // suffix onto the crossing header, so "which class is this boundary carrying" is readable
+        // without expanding the edge. Asserted by content: the target name and its share.
+        var text = OnSta(() =>
+        {
+            var pane = new ContextMapSurface("Contexts") { Source = TwoContexts };
+            pane.Refresh();
+            return TextOf(pane);
+        });
+
+        var all = string.Join(" | ", text);
+
+        // The arrow-plus-target only appears in the emphasis chip, never in the crossing header.
+        Assert.Contains("\u2192 AppDbContext", all, StringComparison.Ordinal);
+        Assert.Contains("1 of 1", all, StringComparison.Ordinal);
+    }
+
     // ── The joins pane ────────────────────────────────────────────────────────────────────
 
     private static JoinResult SomeJoins() => new(
