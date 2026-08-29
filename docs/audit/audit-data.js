@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-29T20:48:31Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-29T20:31:12Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1834,25 +1834,30 @@ window.AUDIT_DATA = {
       }
     },
     {
-      "id": "al-0103",
-      "shortname": "rounded-document-tabs",
-      "datetime": "2026-08-29T20:48:31Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "prompt": "Round the document-tab corners too.",
-      "summary": "Rounded the AvalonDock document tab tops (CornerRadius 7,7,0,0). Extracted the theme LayoutDocumentTabItem template from the assembly (real drag/close/selection bindings preserved), fixed the XamlWriter serialization artifacts (null Content -> {Binding Title}; black foreground -> palette text; selected-state dark title for contrast on the accent tab). DockRoundedTabs.xaml compiles as a Page (BAML-validated) and is merged after DockThemeAccents. Verified functionally by DockRoundedTabsTests (real bound doc: Header rounded + title renders). Also fixed a committed merge-conflict in expected-test-counts.json. Clean build 0/0; App.Tests 120; Core.Tests 563.",
-      "kind": "manual",
-      "skill": "implement",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.App/Workbench/DockRoundedTabs.xaml",
-        "tests/AiDe.App.Tests/DockRoundedTabsTests.cs"
-      ],
+      "id": "al-0102",
+      "shortname": "path-guard-tree-cache-merge-protocol",
+      "datetime": "2026-08-29T20:31:12Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "Four of five steps done; the fifth named as not done rather than half-landed.\n\nWhat appends the temp directories to PATH could not be found — no repository on this machine contains\nthe string, so it was not a checked-in script and cannot be stopped at source from here. The durable\nanswer available was a guard: PATH regrowth is now caught by SHAPE rather than size. Ten or more\nentries pointing at directories that do not exist is a finding, with the largest group named, so the\nnext accumulation is caught at twenty entries instead of a hundred and eighty-seven.\n\nFile-granularity incremental extraction landed, and the measurement behind it was wrong twice first.\nThe profile said the read is 98% of extraction; splitting the read produced \"parsing is 97% of it, so\ncache the trees\" — plausible, confident, and wrong, because the timer wrapped File.ReadAllText and\nParseText together and called the total \"parse\". Timed apart: read 576-690ms, parse 4-5ms. File I/O\nis roughly 97% of everything extraction does, the opposite half. Caught only because a follow-up run\nproduced a 40x speedup with ZERO cache hits and no correct model explained that. Appended to DC-009.\n\nSyntaxTreeCache was built on the wrong rationale and is right anyway, because a hit skips the whole\nfactory — disk read as well as parse. 720 of 720 trees reused on a forced re-index, 1.0s to 0.6s, and\nit covers the case the scope fingerprint cannot: one file edited in a project of a hundred and twenty.\n\nThe two render requests and a concrete merge protocol are written into the session contract rather\nthan raised in conversation. Item 4 of the protocol — main takes fast-forwards, or moves to pull\nrequests — is the one that needs a yes or a no from the design session, and it is listed as unsettled\nuntil they answer.\n\nNOT done: a second-language extractor. It is a substantial piece and the turn went into the\nmeasurement being wrong, which was worth the time.\n\nGate: 683 tests green (App 118, Core 565), six verifiers clean.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
       "tags": [
-        "facelift",
-        "avalondock"
+        "phase-3"
       ],
-      "outcome": "success"
+      "outcome": "success",
+      "goal": "Do the listed next steps: find and stop the PATH appender, file-granularity incremental extraction, record the render requests, propose a merge protocol, and a second-language extractor",
+      "done_when": "Each step landed with a control or explicitly named as not done; the measurement corrected where it was wrong; full gate green; committed, merged and published",
+      "change": "cl-0074",
+      "git": {
+        "sha": "192fb3d05894f43aac6eb4e1cc920f572bf682dc",
+        "short": "192fb3d05",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -3682,6 +3687,31 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "f5fb23aaa1ed763026de8a647956f7475824174c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0074",
+      "datetime": "2026-08-29T20:31:04Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "File I/O is 97% of extraction, not parsing — and a timer that said otherwise",
+      "prompt": null,
+      "summary": "File-granularity incremental extraction, and a measurement of mine that was wrong twice before it was\nright.\n\nThe profile said the READ phase is 98% of extraction. Splitting it further produced \"parsing is 97%\nof the read, so cache the trees\" — plausible, confident, and wrong, because the timer wrapped\nFile.ReadAllText and ParseText together and reported the total as \"parse\". Timed apart on freshly\nwritten files: read 576-690ms, parse 4-5ms. Disk I/O is ~99% of the read, which makes file I/O\nroughly 97% of everything extraction does — the opposite half from the one the bundled timer pointed\nat.\n\nIt was caught only because a follow-up run produced a 40x speedup with ZERO cache hits, and no\ncorrect model explained that. Appended as an instance to DC-009: an instrument reports what it\nmeasured, so a timer around two operations must be named for both or split.\n\nSyntaxTreeCache was built on the wrong rationale and is right anyway, because a hit skips the whole\nfactory — the disk read as well as the parse. Keyed by path, length, modification time and the parse\noptions: hashing the bytes to decide whether to read the bytes is a cache that costs what it saves.\nForced re-index in the same process, with a distinct revision so the store's already-committed\nshort-circuit could not answer for it: 720 of 720 trees reused, 0ms read, 0ms parse, and the whole\nrun 1.0s instead of 1.0s+ at 0.6s. This is the case the scope fingerprint cannot cover — one file\nedited in a project of a hundred and twenty, where the scope must be re-read and 119 files did not\nmove.\n\nPATH regrowth is now caught by SHAPE rather than by size. The oversize check only fires once PATH is\npast cmd's limit, which is to say after the damage; 187 dead build directories accumulated before\nanything noticed. Ten or more entries pointing at directories that do not exist is now a finding,\nwith the largest group named — so regrowth is caught at twenty entries rather than a hundred and\neighty-seven. A handful of dead entries stays quiet, because this is looking for accumulation rather\nthan tidiness.\n\nWhat appends those entries was NOT found: no repository on this machine contains the string, so it\nwas not a checked-in script. The guard is the durable answer available from here.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/SyntaxTreeCache.cs",
+        "src/AiDe.Core/Terminal/EnvironmentHealth.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "192fb3d05894f43aac6eb4e1cc920f572bf682dc",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
         "commits": []

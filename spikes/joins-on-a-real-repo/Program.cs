@@ -55,11 +55,15 @@ Console.WriteLine($"scopes     : {index.ScopesIndexed} of {index.ScopesFound} in
 
 // A SECOND run over the same store, to measure what the fingerprint cache is worth. Reported rather
 // than assumed: "incremental" is a claim about time, and a claim about time needs a clock.
+// FORCED, so the fingerprint cache cannot answer for the tree cache. The question is what a re-read
+// costs when the files must be read again, which is the case a user hits by editing one file.
 var second = DateTimeOffset.UtcNow;
-var again = await core.IndexCSharpAsync("spike-1", CancellationToken.None);
+// A DIFFERENT revision, or the store's "this revision is already committed" short-circuit answers
+// before any file is read and the measurement is of nothing.
+var again = await core.IndexCSharpAsync("spike-2", CancellationToken.None, force: true);
 var secondElapsed = DateTimeOffset.UtcNow - second;
 
-Console.WriteLine($"re-index   : {again.ScopesIndexed} indexed, {again.ScopesReused} reused " +
+Console.WriteLine($"re-index   : {again.ScopesIndexed} indexed (FORCED), {again.ScopesReused} reused " +
                   $"in {secondElapsed.TotalSeconds:F1}s");
 Console.WriteLine($"assertions : {index.Assertions:N0}");
 Console.WriteLine($"failed     : {index.Failed.Count}");

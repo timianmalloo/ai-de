@@ -75,11 +75,46 @@ public static class EnvironmentHealth
         return findings;
     }
 
+    /// <summary>
+    /// PATH entries that point at directories which do not exist.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Caught at twenty, not at a hundred and eighty-seven.</b> The oversize check only
+    /// fires once PATH is past cmd's limit — which is to say, after the damage. This one fires on
+    /// the SHAPE: something appended 187 throwaway build directories to a persisted PATH and never
+    /// removed them, and every one of them was already gone from disk. Regrowth looks identical and
+    /// starts small.</para>
+    ///
+    /// <para>A handful of dead entries is normal — an uninstalled tool, a moved SDK — so this stays
+    /// quiet below a threshold. It is looking for a pattern of accumulation, not for tidiness.</para>
+    /// </remarks>
+    public const int DeadEntryThreshold = 10;
+
     private static IReadOnlyList<string> InspectPath(string value)
     {
-        if (value.Length <= CmdVariableLimit) return [];
-
+        var findings = new List<string>();
         var entries = value.Split(';', StringSplitOptions.RemoveEmptyEntries);
+
+        var dead = entries.Where(DoesNotExist).ToList();
+        if (dead.Count >= DeadEntryThreshold)
+        {
+            var family = dead
+                .Select(Family)
+                .GroupBy(f => f, StringComparer.OrdinalIgnoreCase)
+                .OrderByDescending(g => g.Count())
+                .First();
+
+            findings.Add(
+                $"{dead.Count:N0} of {entries.Length:N0} PATH entries point at directories that do " +
+                "not exist. They cost only length, and length is what stops cmd.exe carrying PATH " +
+                $"at all. The largest group is {family.Count():N0} under '{family.Key}'.");
+        }
+
+        if (value.Length <= CmdVariableLimit)
+        {
+            return findings;
+        }
+
 
         // The biggest repeated shape in the list, so the message names what to remove rather than
         // leaving the user to read two hundred paths. A count alone is a number, not a lead.
@@ -102,7 +137,25 @@ public static class EnvironmentHealth
                        $"'{culprit.Key}'.";
         }
 
-        return [message];
+        findings.Add(message);
+        return findings;
+    }
+
+    /// <summary>Whether a PATH entry names a directory that is not there.</summary>
+    /// <remarks>
+    /// An unreadable or malformed entry counts as PRESENT. Reporting a path as dead because it could
+    /// not be checked would send the user deleting something that may be doing its job.
+    /// </remarks>
+    private static bool DoesNotExist(string entry)
+    {
+        try
+        {
+            return !Directory.Exists(entry);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+        {
+            return false;
+        }
     }
 
     /// <summary>

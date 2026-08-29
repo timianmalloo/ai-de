@@ -218,6 +218,15 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   the 2026-08-26 register repair, which is itself an instance of DC-001.
 - **Status:** `partially-controlled`
 
+*Instance appended 2026-08-29 — **a timer that bundled two costs**. A stopwatch wrapped
+`File.ReadAllText` and `ParseText` together and its output was labelled "parse". The number was
+real, the label was wrong, and the conclusion drawn from it — "parsing is 97% of extraction, so cache
+the trees" — was confident, plausible and pointed at the wrong half: timed apart, disk I/O is ~99% of
+the read and parsing is 4–5ms. Caught only because a follow-up measurement produced a 40x speedup
+with **zero cache hits**, which no correct model explained. The control is the same one this class
+always wants: an instrument reports what it measured, so a timer around two operations must be named
+for both or split.*
+
 ### DC-010 — A system degrades under its own accumulated history and nothing notices
 - **Signature:** a design that never deletes — append-only facts, an event log, an audit trail — meets
   its performance budget on a fresh store and drifts out of it as history accrues. Every individual

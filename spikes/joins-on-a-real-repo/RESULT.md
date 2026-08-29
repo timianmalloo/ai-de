@@ -315,9 +315,44 @@ compilation, resolve references) and the WALK phase (visit the symbols and emit 
 scope's 260ms walk is JIT, not work — reading the total without the split would have attributed it
 to the walk and sent the next optimisation at the wrong half.
 
-So incremental work belongs in *avoiding the read*, which the fingerprint cache already does at scope
-granularity, and would do better at file granularity. Making the symbol walk faster would recover
-about one percent.
+### Splitting the read — and correcting the conclusion it first produced
+
+The read was split again, and the **first split was wrong because the timer was**. It wrapped
+`File.ReadAllText` *and* `ParseText` together and reported the total as "parse":
+
+```
+[timing]   parse 446ms for 120 file(s)      <- WRONG: disk and parse bundled
+```
+
+From which the conclusion "parsing is ~97% of the read, so cache the trees" followed — plausible,
+confident, and not what the machine was doing. Timed apart, on freshly written files:
+
+```
+[timing]   read 603ms, parse 39ms for 120 file(s)     <- first scope, JIT in the parse
+[timing]   read 595ms, parse  4ms for 120 file(s)
+[timing]   read 690ms, parse  4ms for 120 file(s)
+```
+
+**Disk I/O is ~99% of the read**, and parsing is 4–5ms. Since the read is ~98% of extraction, **file
+I/O is roughly 97% of everything extraction does** — the opposite half from the one the bundled timer
+pointed at. Later scopes in the same run show `read 2ms`, so the 600ms figures are **cold** first
+touch; the OS file cache warms during the run, and this cost is environment-dependent (a scanner on
+the temp directory would show exactly this shape).
+
+### What the tree cache is actually worth
+
+`SyntaxTreeCache` was built on the wrong rationale and is right anyway: a cache hit skips the whole
+factory, which is the disk read *and* the parse. Forced re-index in the same process, so the
+fingerprint cache cannot answer:
+
+```
+[timing]   read 0ms, parse 0ms for 120 file(s) (720 reused, 720 parsed)
+re-index   : 6 indexed (FORCED), 0 reused in 0.6s      <- was 1.0s
+```
+
+720 of 720 trees reused. This is the file-granularity case the scope fingerprint cannot cover: one
+file edited in a project of a hundred and twenty, where the scope must be re-read and 119 files did
+not move.
 
 **The read is not the problem at this size; extraction is.** 185ms to page 21,066 assertions against
 13.5s to produce them says the next scale work belongs in the extractor, not the query path — and the

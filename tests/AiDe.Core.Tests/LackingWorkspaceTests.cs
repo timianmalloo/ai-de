@@ -224,8 +224,11 @@ public sealed class LackingWorkspaceTests : IDisposable
 
         var findings = AiDe.Core.Terminal.EnvironmentHealth.Inspect($@"C:\Windows\system32;{junk}");
 
-        var finding = Assert.Single(findings);
-        Assert.Contains("cmd.exe", finding, StringComparison.Ordinal);
+        // BOTH findings apply here and both are said: the entries are dead AND the total is past the
+        // limit. Reporting only the size would leave the user with a number and no lead; reporting
+        // only the dead entries would understate why it matters.
+        Assert.Equal(2, findings.Count);
+        var finding = findings.Single(f => f.Contains("characters across", StringComparison.Ordinal));
 
         // The number, so the user can see how far past the limit they are...
         Assert.Contains(AiDe.Core.Terminal.EnvironmentHealth.CmdVariableLimit.ToString("N0"),
@@ -251,6 +254,35 @@ public sealed class LackingWorkspaceTests : IDisposable
 
         Assert.Empty(AiDe.Core.Terminal.EnvironmentHealth.Inspect(justUnder));
         Assert.NotEmpty(AiDe.Core.Terminal.EnvironmentHealth.Inspect(justOver));
+    }
+
+    [Fact]
+    public void PathRegrowthIsCaughtBySHAPE_LongBeforeItReachesTheLimit()
+    {
+        // The oversize check only fires once PATH is past cmd's limit, which is to say after the
+        // damage. 187 dead build directories accumulated before anything noticed. This fires on the
+        // shape at twenty entries, while PATH is still nowhere near the limit.
+        var dead = string.Join(";", Enumerable.Range(0, 20).Select(i =>
+            $@"C:\Users\u\AppData\Local\Temp\build-{i:x8}\dotnet-home\.dotnet\tools"));
+
+        var findings = AiDe.Core.Terminal.EnvironmentHealth.Inspect($@"C:\Windows;{dead}");
+
+        var finding = Assert.Single(findings);
+        Assert.Contains("do not exist", finding, StringComparison.Ordinal);
+        Assert.Contains("20 of 21", finding, StringComparison.Ordinal);
+
+        // Well under the limit, so the SIZE finding must not also fire — one finding, not two.
+        Assert.DoesNotContain("characters across", finding, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AFewDeadEntriesAreNormalAndSayNothing()
+    {
+        // An uninstalled tool or a moved SDK leaves a dead entry. This is looking for accumulation,
+        // not for tidiness, and a warning about three stale paths is a warning nobody reads twice.
+        var dead = string.Join(";", Enumerable.Range(0, 3).Select(i => $@"C:\nope\{i}"));
+
+        Assert.Empty(AiDe.Core.Terminal.EnvironmentHealth.Inspect($@"C:\Windows;{dead}"));
     }
 
     [Fact]
