@@ -518,6 +518,24 @@ public sealed class Phase3SurfacingTests : IDisposable
             d => d.StartsWith("source-did-not-parse", StringComparison.Ordinal));
     }
 
+    [Fact]
+    public void TheWeakestStatusWinsBecauseTheEnumIsOrderedStrongestFirst()
+    {
+        // DeriveClaimCurrent folds several assertions of one triple with `g.Max(a => a.Status)` and
+        // a comment saying the WEAKEST status wins — "promoting on the strongest would manufacture
+        // confidence". That is true only because the enum is ordered strongest-first, so Max picks
+        // the numerically largest, which is the least certain. Reorder the enum and the fold
+        // silently inverts into exactly what the comment forbids, with nothing failing.
+        Assert.True(VerificationStatus.Verified < VerificationStatus.Inferred);
+        Assert.True(VerificationStatus.Inferred < VerificationStatus.Unverified);
+
+        var statuses = new[] { VerificationStatus.Verified, VerificationStatus.Inferred };
+        Assert.Equal(VerificationStatus.Inferred, statuses.Max());
+
+        var withUnverified = new[] { VerificationStatus.Verified, VerificationStatus.Unverified };
+        Assert.Equal(VerificationStatus.Unverified, withUnverified.Max());
+    }
+
     // ── Paging that cannot skip or repeat a row ───────────────────────────────────────────
 
     [Fact]

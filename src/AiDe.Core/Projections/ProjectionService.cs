@@ -25,6 +25,16 @@ public sealed record ResultBounds(
     int ReturnedEdges,
     int OmittedEdges,
     bool ByteCapped,
+    /// <summary>
+    /// <b>Always null. No projection returning <see cref="ResultBounds"/> pages.</b>
+    /// </summary>
+    /// <remarks>
+    /// Kept because the wire shape is published, and removing a field is a breaking change for a
+    /// field nobody reads. Said out loud because a caller could reasonably loop on it and never get
+    /// past the first page, with nothing failing. The one projection that DOES page —
+    /// <see cref="ProjectionService.Evidence"/> — returns <see cref="EvidencePage"/> and its own
+    /// cursor, which is populated and tested.
+    /// </remarks>
     string? NextCursor);
 
 public sealed record EdgeView(

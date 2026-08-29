@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-29T21:50:23Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-29T21:46:17Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1928,24 +1928,29 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
-      "id": "al-0108",
-      "shortname": "ui-design-elevate-visualization",
-      "datetime": "2026-08-29T21:50:23Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "prompt": "visualize the proposed facelift improvements",
-      "summary": "Authored docs/mockups/facelift-elevate.html: a self-contained visualization of the four highest-leverage elevate proposals - icon-clean menu (no goofy block), icon-activity rail with labels+active state, tabs with a type-glyph, and Wayfinder empty/loading/error states - with the review harness (state/theme/viewport/motion) and token-layer contrast readout. Craft gate: 2 Minor (side-tab = deliberate IDE active-indicator per DX3/U12; flat-type-hierarchy nit). design-lint clean.",
-      "kind": "skill",
-      "skill": "ui-design",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "docs/mockups/facelift-elevate.html"
-      ],
+      "id": "al-0107",
+      "shortname": "benchmark-artefact-python-imports-cursor-audit",
+      "datetime": "2026-08-29T21:45:33Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "The extraction profile is explained, and both earlier conclusions were artefacts of the benchmark.\n\nA fresh .NET process reading 120 newly-created files took 493ms (4.11ms/file); a SECOND fresh process\nover the same files took 6ms, and the repository's own source reads at 0.19ms/file. So the ~500ms\nwas a one-time, system-wide, per-file cost on the first read after creation — the signature of\non-access scanning — and it never recurs. It is not extraction's cost at all.\n\nRun against a real repository the profile inverts completely. TheTerrace, 463 files in its main\nscope: read 53ms, parse 694ms, walk 1,167ms. The walk is the LARGEST cost on real code and looked\nfree on the synthetic workload, because the generated types were trivial — no inheritance, no\ngenerics, four fields each.\n\nTwo independent flaws in one generator, each inverting a published conclusion. Registered as DC-028:\na synthetic benchmark measures the benchmark unless its workload resembles the real one in the\ndimensions that drive cost. The control is that the spike prints the same timings for named real\nrepositories, so the synthetic figure and the real one appear side by side.\n\nPython imports are resolved within their scope now. An import naming a module the scope contains\npoints at a file that exists and was read, so the edge is VERIFIED; anything else stays INFERRED with\nthe name as written, because it may be a package, a module in another scope, or nothing, and\nasserting which is the guess DC-022 is about. Relative imports resolve against the importing module's\npackage, one level per leading dot, and climbing above the root resolves to nothing rather than\nthrowing. On the real Python repository 82 of 330 imports now resolve, and the disclosure carries the\ncount of those that do not — a blanket \"imports are not resolved\" became a closed gap reported as\nopen the moment resolution landed.\n\nThe cursor audit found one more thing and cleared another. ResultBounds.NextCursor is ALWAYS null and\nno projection returning it pages — said out loud in the type, because a caller could loop on it and\nnever leave the first page with nothing failing. And DeriveClaimCurrent folds statuses with Max under\na comment saying the weakest wins: correct only because the enum is ordered strongest-first, so a\nreordering would silently invert it into manufacturing confidence. Pinned by a test.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
       "tags": [
-        "facelift",
-        "ui-design"
+        "phase-3"
       ],
-      "outcome": "success"
+      "outcome": "success",
+      "goal": "Do the listed next steps: explain the extractor read gap, resolve Python imports, add TypeScript, get the merge decision, and audit every cursor for uniqueness",
+      "done_when": "Each step landed, deferred with a stated reason, or named as another session's; the benchmark artefact registered as a class; full gate green; committed and merged",
+      "git": {
+        "sha": "a286b981cb8b83aaaf594921e1de5cad65377cce",
+        "short": "a286b981c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -3827,6 +3832,31 @@ window.AUDIT_DATA = {
         "after": "ccd9276972fdd91b6bb5df921979224e02ed476f",
         "branch": "session/phase3-pane-probes",
         "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0076",
+      "datetime": "2026-08-29T21:45:33Z",
+      "session": null,
+      "kind": "knowledge",
+      "skill": null,
+      "title": "DC-028: the synthetic benchmark was measuring itself",
+      "prompt": null,
+      "summary": "The extraction profile is explained, and both earlier conclusions were artefacts of the benchmark.\n\nA fresh .NET process reading 120 newly-created files took 493ms (4.11ms/file); a SECOND fresh process\nover the same files took 6ms, and the repository's own source reads at 0.19ms/file. So the ~500ms\nwas a one-time, system-wide, per-file cost on the first read after creation — the signature of\non-access scanning — and it never recurs. It is not extraction's cost at all.\n\nRun against a real repository the profile inverts completely. TheTerrace, 463 files in its main\nscope: read 53ms, parse 694ms, walk 1,167ms. The walk is the LARGEST cost on real code and looked\nfree on the synthetic workload, because the generated types were trivial — no inheritance, no\ngenerics, four fields each.\n\nTwo independent flaws in one generator, each inverting a published conclusion. Registered as DC-028:\na synthetic benchmark measures the benchmark unless its workload resembles the real one in the\ndimensions that drive cost. The control is that the spike prints the same timings for named real\nrepositories, so the synthetic figure and the real one appear side by side.\n\nPython imports are resolved within their scope now. An import naming a module the scope contains\npoints at a file that exists and was read, so the edge is VERIFIED; anything else stays INFERRED with\nthe name as written, because it may be a package, a module in another scope, or nothing, and\nasserting which is the guess DC-022 is about. Relative imports resolve against the importing module's\npackage, one level per leading dot, and climbing above the root resolves to nothing rather than\nthrowing. On the real Python repository 82 of 330 imports now resolve, and the disclosure carries the\ncount of those that do not — a blanket \"imports are not resolved\" became a closed gap reported as\nopen the moment resolution landed.\n\nThe cursor audit found one more thing and cleared another. ResultBounds.NextCursor is ALWAYS null and\nno projection returning it pages — said out loud in the type, because a caller could loop on it and\nnever leave the first page with nothing failing. And DeriveClaimCurrent folds statuses with Max under\na comment saying the weakest wins: correct only because the enum is ordered strongest-first, so a\nreordering would silently invert it into manufacturing confidence. Pinned by a test.",
+      "rationale": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "spikes/joins-on-a-real-repo/RESULT.md"
+      ],
+      "tags": [
+        "continuous-improvement"
+      ],
+      "git": {
+        "before": null,
+        "after": "a286b981cb8b83aaaf594921e1de5cad65377cce",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
         "commits": []
       }
     }

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T21:50:23Z",
+  "generated": "2026-08-29T21:50:24Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1553,7 +1553,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b2365612fa5e58a316eab3e0034ac3defe5fc7c40df32289874b715bec800d7f"
+      "sourceSha256": "6abf58a2d60a673008791376a71092b6c617b77b25a18f894ddc4d13d27e9dc2"
     },
     {
       "id": "domain-experts",
@@ -5636,7 +5636,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-facelift — Audit & Change Log",
+      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -5698,5 +5698,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "aca48e83bbff767d8e7f72417e1deb72c59574b9a6ae5d8c65cdd0a9a2dc192f"
+  "graphSha256": "5f0b0a72dea08e05511429a0b21ccd4cb51a7b76aab05b2ca3572ef823d3f09e"
 };

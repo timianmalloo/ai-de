@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 10 · partially-controlled 17 · uncontrolled 0
+**Status counts:** controlled 10 · partially-controlled 18 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -861,4 +861,36 @@ for both or split.*
 - **Residual risk:** only PATH is inspected, and only against cmd's documented limit. Any other
   oversized variable fails identically and is unchecked; the exact cut-off was never bisected, so the
   message says "may be dropped" rather than asserting a number nobody measured.
+- **Status:** `partially-controlled`
+
+### DC-028 — A synthetic benchmark measures the benchmark
+- **Signature:** a workload is generated to exercise a system, the numbers come out clean and
+  repeatable, and a conclusion is drawn about where the cost is. The generator differs from real
+  input in some dimension nobody listed — file age, type complexity, fan-out, size distribution — and
+  that dimension is the one that drives the cost. The measurement is accurate about a workload that
+  does not exist.
+- **Why it survives:** everything about it looks like rigour. There is a number, it reproduces, and
+  it beats a guess — which is exactly the standard "measure, do not infer" sets, so the measurement
+  is trusted the moment it exists. The generator is written to make the system *work*, not to
+  resemble the input, and nobody re-reads it once the numbers start coming out.
+- **Instances:** 2026-08-29 — a synthetic workspace of 20 projects × 120 trivial types produced two
+  successive conclusions about extraction cost, **both wrong**, and both acted on. First "parsing is
+  97% of the read" (from a timer that also bundled disk I/O — DC-009), then "file I/O is 97% of
+  extraction". On a real repository the profile is **walk 1,167ms > parse 694ms >> read 53ms** — the
+  reverse. Two independent flaws: the generated files were newly created, so every read paid a
+  one-time ~4ms/file antivirus scan that never recurs; and the generated types were trivial, so the
+  symbol walk had nothing to do. Neither is visible in the numbers; both are obvious in the generator.
+- **Control:** the spike runs against **named real repositories** and prints the same timings, so the
+  synthetic figure and the real one appear side by side and a divergence is visible rather than
+  theoretical. `spikes/joins-on-a-real-repo/RESULT.md` now carries both, with the synthetic ones
+  explicitly marked as artefacts and the reason each inverted.
+- **The generalisation to apply elsewhere:** before believing a synthetic measurement, **write down
+  which dimensions of the real input drive the cost, and check the generator produces them.** File
+  age, complexity, distribution and cardinality are the usual suspects. And where a real corpus
+  exists, measure THAT first and use the synthetic one only to scale it — the reverse of the order
+  taken here. A synthetic benchmark is for exploring the shape of a curve, never for locating a
+  bottleneck.
+- **Residual risk:** nothing fails when a new generator is written. The control is that the real-repo
+  numbers are printed beside the synthetic ones on every run, which makes a divergence visible to
+  whoever reads the output — and only to them.
 - **Status:** `partially-controlled`

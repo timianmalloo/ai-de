@@ -261,9 +261,61 @@ public sealed class LackingWorkspaceTests : IDisposable
 
         // And every gap is stated rather than left silent.
         var disclosed = facts.Where(a => a.Predicate == "discloses").Select(a => a.Object).ToList();
-        Assert.Contains(PythonExtractor.Disclosures.ImportsNotResolved, disclosed);
+        // Carries a COUNT now, because "imports are not resolved" and "2 imports name something this
+        // scope does not contain" are different statements about how much of the graph is a guess.
+        Assert.Contains(disclosed, d =>
+            d.StartsWith(PythonExtractor.Disclosures.ImportsNotResolved, StringComparison.Ordinal));
         Assert.Contains(PythonExtractor.Disclosures.NestedDeclarationsNotAnalysed, disclosed);
         Assert.Contains(PythonExtractor.Disclosures.DynamicImportsNotAnalysed, disclosed);
+    }
+
+    [Fact]
+    public void AnImportThatNamesAModuleInTheScopeIsVerified()
+    {
+        // 330 import edges on a real repository were all Inferred and all unresolved. An import that
+        // names a module this scope CONTAINS points at a file that exists and was read, which is
+        // what lets the edge be Verified rather than a string.
+        var modules = new HashSet<string>(StringComparer.Ordinal) { "pkg.models", "pkg.service", "top" };
+
+        // Absolute, present.
+        Assert.Equal("top", PythonExtractor.Resolve("top", "pkg.service", modules));
+
+        // Relative: one dot is the importing module's own package.
+        Assert.Equal("pkg.models", PythonExtractor.Resolve(".models", "pkg.service", modules));
+
+        // Absent stays unresolved rather than being invented — it may be a package, a module in
+        // another scope, or nothing at all, and asserting which is the guess DC-022 is about.
+        Assert.Null(PythonExtractor.Resolve("os", "pkg.service", modules));
+        Assert.Null(PythonExtractor.Resolve(".nope", "pkg.service", modules));
+
+        // Climbing above the root resolves to nothing rather than throwing.
+        Assert.Null(PythonExtractor.Resolve("....x", "pkg.service", modules));
+    }
+
+    [Fact]
+    public async Task ResolvedAndUnresolvedImportsCarryDifferentStatus()
+    {
+        var root = Make("pyimports", r =>
+        {
+            Directory.CreateDirectory(Path.Combine(r, "pkg"));
+            File.WriteAllText(Path.Combine(r, "pkg", "models.py"), "class Order:" + (char)10 + "    pass" + (char)10);
+            File.WriteAllText(Path.Combine(r, "pkg", "service.py"),
+                "import os" + (char)10 + "from .models import Order" + (char)10);
+        });
+
+        using var core = WorkspaceCore.Open("pyimp", root, Path.Combine(_dir, "pyimpdata"),
+            WorkspaceExtractors.Default());
+
+        await core.IndexCSharpAsync("rev-1", CancellationToken.None);
+
+        using var reader = core.Store.BeginRead();
+        var imports = reader.AllCurrentAssertions().Where(a => a.Predicate == "imports").ToList();
+
+        var resolved = Assert.Single(imports, i => i.Object == "models");
+        Assert.Equal(VerificationStatus.Verified, resolved.Status);
+
+        var external = Assert.Single(imports, i => i.Object == "os");
+        Assert.Equal(VerificationStatus.Inferred, external.Status);
     }
 
     [Fact]
