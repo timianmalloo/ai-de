@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T21:30:46Z",
+  "generated": "2026-08-30T21:31:11Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2698,6 +2698,32 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0144",
+      "shortname": "extractors-do-not-invent-control-comment-stripping",
+      "datetime": "2026-08-30T21:04:10Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "**The invent-direction of DC-033 now has a control, and it found four more defects on its first\nrun.** `ExtractorsDoNotInventTests` feeds every reader a corpus with no declarations and plenty of\ntext SHAPED like declarations, and asserts it produces nothing but disclosures:\n\n- the **SQL** reader read `-- CREATE TABLE Ghost` and `/* CREATE TABLE Historical */` as tables;\n- the **TypeScript** reader read `export class Removed {}` out of a block comment;\n- the **Python** reader read a class out of a **docstring** — the one place its column-zero rule\n  cannot tell documentation from declaration;\n- the **C#** reader turned *\"delete from your account to remove it\"* into `table:your`, because that\n  sentence genuinely begins with a SQL verb and last turn's shape test could not reject it.\n\n**Commented-out code is the worst possible input for a line-oriented reader**, and every repository\nis full of it — it is real syntax, because it *was* code. `SourceText` blanks comments before any\nreader believes a line, keeping newlines so provenance line numbers stay true. The C# case needed a\nsecond rule: a real table reference **ends where a clause can begin** — a keyword, punctuation, or\nthe end of the statement. In prose the next token is just another word.\n\n**Two things the fixes got wrong first, kept because they are the lesson.** Blanking string contents\nfor SQL deleted `\"main\".\"Thing\"`: in SQL a double quote is a quoted IDENTIFIER, not a string, so the\nreader lost the very names it exists to find — caught by a test in seconds, which is the cheapest\npossible way to learn that two languages disagree about a quote character. And `PRINT 'about to\ncreate table X'` names no table while `EXEC('CREATE TABLE …')` does; the reader can tell neither from\nthe other, so it reads neither and discloses the count.\n\n**Step 1 was answered by measurement and needed no change.** The Bicep and context readers were swept\non a repository they were not written against: Bicep's matchers are line-anchored on `resource`,\n`module` and `param`, and their values came back as real parameter names (`sqlServerName`,\n`identityName`) and real Azure types — nothing invented. The context map's `*` is a documented suffix\nwildcard and the real patterns end at a `.` boundary. Both pinned by the new control so they stay\nthat way.\n\n**The third reading shows the CORRECTION, which is what a third reading is for.** Verified joins:\n\n    TheTerrace                64 -> 120 -> 95\n    BioHacker                  0 ->  57 -> 55\n    meridian-finance-planner  35 ->  50 -> 46\n\nThe middle number was inflated by prose; the last is the honest one. **A single reading would have\nrecorded 120 as progress**, and two readings would have recorded it as a trend.\n\n**On `AlterColumn` — the decision, not an assumption.** It is not folded, and should not be. The\ngraph's `has_column` records that a column EXISTS; `AlterColumn` changes a type or nullability, which\nthat fact does not carry, so folding it would change nothing observable. Recording types is a\ndifferent feature — it would need a fact shape that can express them, both schema readers agreeing on\nit, and a consumer that wants it. None of those exists, so this stays where it is: named in the\nextractor's `simplify:` ceiling as the upgrade trigger, rather than half-built.\n\n848 tests green (App 139, Core 709). Eight gates clean. Zero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Sweep the Bicep and context readers for invented facts, make prose-noise a control across all extractors, decide the AlterColumn question, and take a third reading",
+      "done_when": "Every extractor is pinned against noise it did not author; the readers found inventing are fixed; AlterColumn decided with reasons; a third reading recorded; gates green; merged and published",
+      "change": "cl-0091",
+      "git": {
+        "sha": "66bfcf62cc39fad546ab14fcfe32f6bffc3e7b4d",
+        "short": "66bfcf62c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
+    },
+    {
       "id": "al-0145",
       "shortname": "graph-category-filter",
       "datetime": "2026-08-30T21:30:46Z",
@@ -4976,6 +5002,32 @@ window.AUDIT_DATA = {
         "after": "87f04b04886d1fb8a5a0c239c253565e765e81b7",
         "branch": "session/phase3-pane-probes",
         "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0091",
+      "datetime": "2026-08-30T21:03:59Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Every extractor was inventing facts out of comments, and now a control says so",
+      "prompt": null,
+      "summary": "**The invent-direction of DC-033 now has a control, and it found four more defects on its first\nrun.** `ExtractorsDoNotInventTests` feeds every reader a corpus with no declarations and plenty of\ntext SHAPED like declarations, and asserts it produces nothing but disclosures:\n\n- the **SQL** reader read `-- CREATE TABLE Ghost` and `/* CREATE TABLE Historical */` as tables;\n- the **TypeScript** reader read `export class Removed {}` out of a block comment;\n- the **Python** reader read a class out of a **docstring** — the one place its column-zero rule\n  cannot tell documentation from declaration;\n- the **C#** reader turned *\"delete from your account to remove it\"* into `table:your`, because that\n  sentence genuinely begins with a SQL verb and last turn's shape test could not reject it.\n\n**Commented-out code is the worst possible input for a line-oriented reader**, and every repository\nis full of it — it is real syntax, because it *was* code. `SourceText` blanks comments before any\nreader believes a line, keeping newlines so provenance line numbers stay true. The C# case needed a\nsecond rule: a real table reference **ends where a clause can begin** — a keyword, punctuation, or\nthe end of the statement. In prose the next token is just another word.\n\n**Two things the fixes got wrong first, kept because they are the lesson.** Blanking string contents\nfor SQL deleted `\"main\".\"Thing\"`: in SQL a double quote is a quoted IDENTIFIER, not a string, so the\nreader lost the very names it exists to find — caught by a test in seconds, which is the cheapest\npossible way to learn that two languages disagree about a quote character. And `PRINT 'about to\ncreate table X'` names no table while `EXEC('CREATE TABLE …')` does; the reader can tell neither from\nthe other, so it reads neither and discloses the count.\n\n**Step 1 was answered by measurement and needed no change.** The Bicep and context readers were swept\non a repository they were not written against: Bicep's matchers are line-anchored on `resource`,\n`module` and `param`, and their values came back as real parameter names (`sqlServerName`,\n`identityName`) and real Azure types — nothing invented. The context map's `*` is a documented suffix\nwildcard and the real patterns end at a `.` boundary. Both pinned by the new control so they stay\nthat way.\n\n**The third reading shows the CORRECTION, which is what a third reading is for.** Verified joins:\n\n    TheTerrace                64 -> 120 -> 95\n    BioHacker                  0 ->  57 -> 55\n    meridian-finance-planner  35 ->  50 -> 46\n\nThe middle number was inflated by prose; the last is the honest one. **A single reading would have\nrecorded 120 as progress**, and two readings would have recorded it as a trend.\n\n**On `AlterColumn` — the decision, not an assumption.** It is not folded, and should not be. The\ngraph's `has_column` records that a column EXISTS; `AlterColumn` changes a type or nullability, which\nthat fact does not carry, so folding it would change nothing observable. Recording types is a\ndifferent feature — it would need a fact shape that can express them, both schema readers agreeing on\nit, and a consumer that wants it. None of those exists, so this stays where it is: named in the\nextractor's `simplify:` ceiling as the upgrade trigger, rather than half-built.\n\n848 tests green (App 139, Core 709). Eight gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/SourceText.cs",
+        "tests/AiDe.Core.Tests/ExtractorsDoNotInventTests.cs",
+        "docs/measurements/repositories.jsonl"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "66bfcf62cc39fad546ab14fcfe32f6bffc3e7b4d",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
         "commits": []
       }
     }
