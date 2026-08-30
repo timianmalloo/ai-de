@@ -631,21 +631,23 @@ public sealed class ProjectionService(WorkspaceStore store)
         var limit = Clamp(query.MaxResults, 1, MaxNeighborsCeiling);
         using var reader = store.BeginRead();
 
-        // Knowledge nodes are found by predicate, which has its own index — the projection never
-        // reads the source corpus it is not interested in (P1-PERF-03).
-        var typedAssertions = reader.AssertionsWithPredicate("has_type", MaxNodesCeiling);
+        // KNOWLEDGE FIRST, then everything else. This read the first 200 `has_type` assertions and
+        // filtered THOSE to knowledge — so on any real repository the 200 were C# types in
+        // alphabetical order and the filter left nothing. MEASURED: 0 items returned on a workspace
+        // holding 468 knowledge nodes.
+        //
+        // The same defect as DC-035 one projection along: a cap applied before the filter returns
+        // the wrong slice trimmed to the right shape, and nothing in the result says so. The node
+        // class has its own index, so asking for knowledge directly is also the cheaper query.
+        var knowledge = reader.KnowledgeNodeIds(MaxNodesCeiling);
+
+        var typedAssertions = reader.AssertionsWithPredicate("has_type", MaxSearchResultsCeiling);
         var typed = typedAssertions
+            .Where(a => knowledge.Contains(a.Subject))
             .GroupBy(a => a.Subject, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
 
-        // KNOWLEDGE, not everything that has a type. This filtered on `has_type` alone, which was
-        // right when the fixture reader was the only producer of it — and by the time six extractors
-        // emitted it, the knowledge pane was returning C# classes and database tables. It looked
-        // correct for as long as knowledge was never indexed at all.
-        var knowledge = reader.KnowledgeNodeIds(MaxNodesCeiling);
-
         var ids = typed.Keys
-            .Where(knowledge.Contains)
             .Where(id => query.Term is null || id.Contains(query.Term, StringComparison.OrdinalIgnoreCase))
             .Where(id => query.Type is null || string.Equals(typed[id].Object, query.Type, StringComparison.OrdinalIgnoreCase))
             .OrderBy(id => id, StringComparer.Ordinal)

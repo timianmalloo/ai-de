@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T23:22:01Z",
+  "generated": "2026-08-30T23:40:40Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2907,6 +2907,32 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": false
       }
+    },
+    {
+      "id": "al-0161",
+      "shortname": "knowledge-pane-capped-before-filtering-and-ci-branch-gap",
+      "datetime": "2026-08-30T23:40:40Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps",
+      "summary": "**The knowledge pane was STILL returning zero, and the reason was a second, independent defect.**\nChasing the render rather than the data found it: `Knowledge()` read the first 200 `has_type`\nassertions and filtered THOSE to knowledge — so on any real repository the 200 were code types in\nalphabetical order and the filter left nothing. MEASURED: **0 items on a workspace holding 468\nknowledge nodes**; now 50, the ceiling.\n\nThat is DC-035's shape one projection along — **a cap applied before a filter returns the wrong\nslice trimmed to the right shape, and nothing in the result says so.** I fixed exactly this in\n`GraphProjection` and did not look for siblings. Pinned by a test whose fixture puts 400 code types\nalphabetically ahead of the knowledge, which is the condition that hid it.\n\n**The generation bump is now a control instead of a memory.** `ExtractorGeneration` existed and was\ncomplete; using it was a thing somebody had to remember, and a full day of extractor changes shipped\nwithout it. `verify-extractor-generation.py` fails when anything under `src/AiDe.Core/Extraction/`\nchanged since the generation last did. Deliberately conservative — a comment-only edit trips it, and\nthe remedy is a one-line bump costing one re-index, where deciding which edits \"really\" change output\nis a judgement nobody can make reliably about a compiler-driven extractor. Observed failing by\nreplaying the real baseline: it lists the exact extractors that shipped unbumped.\n\nIt uses `git log -G`, not `-S`. `-S` counts occurrences, so replacing one generation value with\nanother leaves the count unchanged and the bump looks like no change at all.\n\n**CI only ran on `push: main` and `pull_request`.** The design session pushes to a long-lived feature\nbranch with no PR, so its work met no gate until it reached main — by which point it was merged. That\nis why an unbackticked `Status:` value arrived twice and a duplicate `DC-` id six times, each caught\nby whoever merged next rather than by the branch that introduced it. **A gate that only guards the\ndestination reports problems to the wrong person.** CI now runs on every branch.\n\n**And the new gate would not have fired in CI.** `actions/checkout@v4` is shallow by default, so the\nsearch for the last generation bump would have found nothing and the gate would have passed silently\n— the defect it exists to prevent, one layer up. `fetch-depth: 0` added.\n\n**`IsKnowledge` is proven across the pipe, with an assertion that can fail.** The first version I\nwrote was `Assert.Equal(n.IsKnowledge, n.IsKnowledge)` against a fixture with no knowledge in it —\na tautology over an empty set. The daemon fixture now holds a document beside the code, and the test\nasserts a known-knowledge node arrives with the flag set and a known-code node without it.\n\n**Knowledge health is computed and unrendered**, so it is a contract request rather than Core work:\n`owner not recorded`, `type not recorded`, `orphan`, `source location not recorded` and now `review\noverdue since <date>` — 460 review dates on this repository. Findings that exist and are shown\nnowhere are \"absence of evidence stays explicit\" failing at the last step.\n\n870 tests green (App 144, Core 726). Nine gates clean, all nine run by CI, on every branch.\nZero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Carry the five next steps: verify knowledge end to end, make the generation bump a control, tell the design session, surface knowledge health, and stop format breaks reaching main",
+      "done_when": "The knowledge pane returns knowledge on a real repository; a gate fails when extraction changes without a generation bump and is proven to fire; CI runs on every branch with full history; health findings are requested; gates green; merged and published",
+      "change": "cl-0101",
+      "git": {
+        "sha": "1b61599cc8be5ad753ad2725b61a78b27def6c69",
+        "short": "1b61599cc",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -5270,6 +5296,32 @@ window.AUDIT_DATA = {
         "after": "693ce79705bd30345b23a2c93b0750de89324492",
         "branch": "session/phase3-pane-probes",
         "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0101",
+      "datetime": "2026-08-30T23:40:28Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "The knowledge pane capped before it filtered, and CI never ran on the branch that broke it",
+      "prompt": null,
+      "summary": "**The knowledge pane was STILL returning zero, and the reason was a second, independent defect.**\nChasing the render rather than the data found it: `Knowledge()` read the first 200 `has_type`\nassertions and filtered THOSE to knowledge — so on any real repository the 200 were code types in\nalphabetical order and the filter left nothing. MEASURED: **0 items on a workspace holding 468\nknowledge nodes**; now 50, the ceiling.\n\nThat is DC-035's shape one projection along — **a cap applied before a filter returns the wrong\nslice trimmed to the right shape, and nothing in the result says so.** I fixed exactly this in\n`GraphProjection` and did not look for siblings. Pinned by a test whose fixture puts 400 code types\nalphabetically ahead of the knowledge, which is the condition that hid it.\n\n**The generation bump is now a control instead of a memory.** `ExtractorGeneration` existed and was\ncomplete; using it was a thing somebody had to remember, and a full day of extractor changes shipped\nwithout it. `verify-extractor-generation.py` fails when anything under `src/AiDe.Core/Extraction/`\nchanged since the generation last did. Deliberately conservative — a comment-only edit trips it, and\nthe remedy is a one-line bump costing one re-index, where deciding which edits \"really\" change output\nis a judgement nobody can make reliably about a compiler-driven extractor. Observed failing by\nreplaying the real baseline: it lists the exact extractors that shipped unbumped.\n\nIt uses `git log -G`, not `-S`. `-S` counts occurrences, so replacing one generation value with\nanother leaves the count unchanged and the bump looks like no change at all.\n\n**CI only ran on `push: main` and `pull_request`.** The design session pushes to a long-lived feature\nbranch with no PR, so its work met no gate until it reached main — by which point it was merged. That\nis why an unbackticked `Status:` value arrived twice and a duplicate `DC-` id six times, each caught\nby whoever merged next rather than by the branch that introduced it. **A gate that only guards the\ndestination reports problems to the wrong person.** CI now runs on every branch.\n\n**And the new gate would not have fired in CI.** `actions/checkout@v4` is shallow by default, so the\nsearch for the last generation bump would have found nothing and the gate would have passed silently\n— the defect it exists to prevent, one layer up. `fetch-depth: 0` added.\n\n**`IsKnowledge` is proven across the pipe, with an assertion that can fail.** The first version I\nwrote was `Assert.Equal(n.IsKnowledge, n.IsKnowledge)` against a fixture with no knowledge in it —\na tautology over an empty set. The daemon fixture now holds a document beside the code, and the test\nasserts a known-knowledge node arrives with the flag set and a known-code node without it.\n\n**Knowledge health is computed and unrendered**, so it is a contract request rather than Core work:\n`owner not recorded`, `type not recorded`, `orphan`, `source location not recorded` and now `review\noverdue since <date>` — 460 review dates on this repository. Findings that exist and are shown\nnowhere are \"absence of evidence stays explicit\" failing at the last step.\n\n870 tests green (App 144, Core 726). Nine gates clean, all nine run by CI, on every branch.\nZero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/ProjectionService.cs",
+        "tools/verify-extractor-generation.py",
+        ".github/workflows/build.yml"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "1b61599cc8be5ad753ad2725b61a78b27def6c69",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
         "commits": []
       }
     }

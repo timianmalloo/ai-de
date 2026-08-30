@@ -1,9 +1,13 @@
 name: Build
 
+# EVERY branch, not just main. The gates ran on `push: main` and on pull requests, and the design
+# session pushes to a long-lived feature branch with no PR open — so its work met no gate until it
+# reached main, by which point it was merged. A defect-register entry arrived with an unbackticked
+# Status value twice, and a duplicate DC id six times, all caught by whoever merged next rather than
+# by the branch that introduced them. A gate that only guards the destination is a gate that reports
+# problems to the wrong person.
 on:
   push:
-    branches:
-      - main
   pull_request:
 
 permissions:
@@ -16,6 +20,12 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          # Full history. The extractor-generation gate finds the commit where the generation last
+          # changed, and checkout is SHALLOW by default — with depth 1 that search finds nothing and
+          # the gate reports "no prior change to compare against" and passes. A gate that cannot
+          # fire is the defect it was written to prevent, one layer up.
+          fetch-depth: 0
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
@@ -90,6 +100,14 @@ jobs:
       # whose NAME claims a limit must appear in a comparison, a clamp or a take.
       - name: Bounds-are-enforced gate
         run: python tools/verify-bounds-are-enforced.py
+
+      # ScopeFingerprints.ExtractorGeneration invalidates every cached extraction when the product
+      # upgrades. The mechanism was complete; bumping it was a thing somebody had to remember, and
+      # a day of extractor changes shipped without it — so existing workspaces kept serving results
+      # from the previous generation and the Knowledge chip read 0 on a repository holding 2,343
+      # knowledge nodes. Needs full history to find the last bump.
+      - name: Extractor generation gate
+        run: python tools/verify-extractor-generation.py
 
       - name: Upload test results
         if: always()

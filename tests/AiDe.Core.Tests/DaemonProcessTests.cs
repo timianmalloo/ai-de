@@ -284,6 +284,20 @@ public sealed class DaemonProcessTests
         // projection in process would have proved the half that was never broken.
         var workspace = FreshWorkspace();
         Directory.CreateDirectory(Path.Combine(workspace, "infra"));
+        Directory.CreateDirectory(Path.Combine(workspace, "docs"));
+
+        // A knowledge artifact beside the code, so the graph this test reads holds BOTH halves —
+        // which is the only way an assertion about the declared class can fail when it should.
+        await File.WriteAllTextAsync(Path.Combine(workspace, "docs", "note.md"),
+            """
+            ---
+            id: probe-note
+            type: decision-note
+            owner: "@probe"
+            ---
+
+            # A note the graph should carry as knowledge
+            """);
 
         await File.WriteAllTextAsync(Path.Combine(workspace, "infra", "main.bicep"),
             """
@@ -351,6 +365,20 @@ public sealed class DaemonProcessTests
 
             Assert.NotEmpty(byKind.Nodes);
             Assert.All(byKind.Nodes, n => Assert.Equal(kind, n.Kind));
+
+            // ---- the DECLARED class survives the pipe ----------------------------------------
+            // The Knowledge chip reads this. It read 0 on a repository holding 2,343 knowledge
+            // nodes, and one cause was that the graph carried only each node's FINE kind — which
+            // there is a name that repository invented (`knowledge-epl-fan-platform`), so no fixed
+            // list of type names could recognise it. A bool that arrives defaulted to false across
+            // the pipe reproduces the same symptom with the fix in place, so it is asserted on a
+            // node KNOWN to be knowledge and on one known not to be.
+            Assert.Contains(graph.Nodes, n => n.IsKnowledge);
+            Assert.Contains(graph.Nodes, n => !n.IsKnowledge);
+
+            var document = Assert.Single(graph.Nodes, n => n.Id == "probe-note");
+            Assert.True(document.IsKnowledge, "the document arrived across the pipe as source");
+            Assert.Equal("decision-note", document.Kind);
 
             // ---- and a ROUTE crosses the pipe ------------------------------------------------
             // A path is the one result whose shape is a list of lists, so it is the one most likely
