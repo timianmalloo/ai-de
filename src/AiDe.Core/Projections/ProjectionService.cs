@@ -173,6 +173,25 @@ public sealed class ProjectionService(WorkspaceStore store)
     public const int MaxSearchResultsCeiling = 20_000;
 
     /// <summary>
+    /// Routes returned before the answer is truncated.
+    /// </summary>
+    /// <remarks>
+    /// A reader comparing routes is choosing between them, and nobody chooses between two hundred.
+    /// The cap is small on purpose and the truncation is reported.
+    /// </remarks>
+    public const int MaxPathsCeiling = 100;
+
+    /// <summary>
+    /// The longest route worth returning, in edges.
+    /// </summary>
+    /// <remarks>
+    /// Beyond about a dozen hops "A reaches B" stops being a fact about the design and becomes a
+    /// fact about the graph being connected — in a codebase almost everything reaches almost
+    /// everything if you allow enough steps.
+    /// </remarks>
+    public const int MaxPathLengthCeiling = 12;
+
+    /// <summary>
     /// Assertions per evidence page.
     /// </summary>
     /// <remarks>
@@ -358,6 +377,33 @@ public sealed class ProjectionService(WorkspaceStore store)
         activity?.SetTag("omitted.nodes", graph.Omitted);
 
         return graph;
+    }
+
+    /// <summary>How one node reaches another, within the graph the query names.</summary>
+    /// <remarks>
+    /// Built over the same projection the graph surface uses, so a route can never contain an edge
+    /// the picture does not show — two answers to one question is the defect signature this
+    /// codebase has already paid for once.
+    /// </remarks>
+    public PathResult Paths(PathQuery query)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        using var activity = Activity.StartActivity("aide.projection.query");
+        activity?.SetTag("projection", "paths");
+
+        var graph = Graph(query.Query ?? new GraphQuery());
+
+        var result = GraphPaths.Find(graph, query with
+        {
+            MaxPaths = Clamp(query.MaxPaths, 1, MaxPathsCeiling),
+            MaxLength = Clamp(query.MaxLength, 1, MaxPathLengthCeiling),
+        });
+
+        activity?.SetTag("returned.paths", result.Paths.Count);
+        activity?.SetTag("truncated", result.Truncated);
+
+        return result;
     }
 
     public FindResult Find(string term, int maxResults)

@@ -25,11 +25,17 @@ public sealed record FindRequest(string Term, int MaxResults);
 /// <param name="Cursor">Null for the first page; otherwise the previous page's NextCursor.</param>
 public sealed record EvidenceRequest(string? Cursor, int MaxAssertions);
 
+/// <summary>Asks how one node reaches another.</summary>
+public sealed record PathsRequest(
+    string From,
+    string To,
+    int MaxPaths = 10,
+    int MaxLength = 8,
+    IReadOnlyList<string>? Kinds = null,
+    string? ScopeId = null,
+    bool IncludeExternal = true);
+
 /// <summary>Asks for the graph — all of it, or the part the filters name.</summary>
-/// <remarks>
-/// The filters carry defaults that mean "no filter", so an older caller sending only
-/// <c>MaxNodes</c> still asks the question it always asked.
-/// </remarks>
 public sealed record GraphRequest(
     int MaxNodes,
     IReadOnlyList<string>? Kinds = null,
@@ -111,6 +117,8 @@ public static class WorkspaceOperations
     public const string Knowledge = "knowledge";
     public const string Evidence = "evidence";
     public const string Graph = "graph";
+
+    public const string Paths = "paths";
     public const string DispatchBegin = "dispatch.begin";
     public const string DispatchFinalize = "dispatch.finalize";
     public const string IndexSolution = "index.solution";
@@ -139,6 +147,13 @@ public static class WorkspaceOperations
         // throws a domain refusal TODAY — the point is that if one is added that does, it is
         // refused rather than taking the daemon down for every attached shell (DC-020). A control
         // that covers only the operations that happened to need it is not a control for the shape.
+        endpoint.Register(Paths, (request, _) =>
+            Refusable(() => Handle<PathsRequest>(request, body => projections.Paths(
+                new PathQuery(
+                    body.From, body.To, body.MaxPaths, body.MaxLength,
+                    new GraphQuery(
+                        GraphProjection.DefaultMaxNodes, body.Kinds, body.ScopeId, body.IncludeExternal))))));
+
         endpoint.Register(Graph, (request, _) =>
             Refusable(() => Handle<GraphRequest>(request, body => projections.Graph(
                 new GraphQuery(body.MaxNodes, body.Kinds, body.ScopeId, body.IncludeExternal)))));

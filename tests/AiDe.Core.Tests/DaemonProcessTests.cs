@@ -351,6 +351,28 @@ public sealed class DaemonProcessTests
 
             Assert.NotEmpty(byKind.Nodes);
             Assert.All(byKind.Nodes, n => Assert.Equal(kind, n.Kind));
+
+            // ---- and a ROUTE crosses the pipe ------------------------------------------------
+            // A path is the one result whose shape is a list of lists, so it is the one most likely
+            // to arrive flattened, empty, or with its edge direction lost — none of which would look
+            // like a failure at the call site.
+            var edge = graph.Edges[0];
+
+            var route = await client.PathsAsync(
+                new PathQuery(edge.From, edge.To), CancellationToken.None);
+
+            var path = Assert.Single(route.Paths);
+            Assert.NotEmpty(path.Edges);
+            Assert.Equal(edge.From, path.Edges[0].From);
+            Assert.Equal(edge.To, path.Edges[^1].To);
+
+            // A missing endpoint must arrive as a REASON, not as an empty list that reads like
+            // "these two are unconnected".
+            var missing = await client.PathsAsync(
+                new PathQuery(edge.From, "no.such.node.anywhere"), CancellationToken.None);
+
+            Assert.Empty(missing.Paths);
+            Assert.False(string.IsNullOrWhiteSpace(missing.Reason));
         }
         finally
         {

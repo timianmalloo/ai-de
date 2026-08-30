@@ -49,6 +49,16 @@ public interface IWorkspaceQueries
     /// graph it did not want, and nothing in the result would say so.</para>
     /// </remarks>
     Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// How one node reaches another.
+    /// </summary>
+    /// <remarks>
+    /// Distinct from <see cref="ImpactAsync"/>, which answers "what does changing this touch". This
+    /// answers "through WHAT does it touch it" — the route, which is the part a reviewer needs and
+    /// the part a neighbourhood cannot show.
+    /// </remarks>
+    Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken);
 }
 
 /// <summary>The read surface answered by a <see cref="ProjectionService"/> in this process.</summary>
@@ -81,4 +91,7 @@ public sealed class LocalWorkspaceQueries(ProjectionService projections) : IWork
 
     public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken cancellationToken) =>
         Task.FromResult(projections.Graph(query));
+
+    public Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken) =>
+        Task.FromResult(projections.Paths(query));
 }

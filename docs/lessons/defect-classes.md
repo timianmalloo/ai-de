@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 14 · partially-controlled 19 · uncontrolled 0
+**Status counts:** controlled 15 · partially-controlled 19 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -334,11 +334,38 @@ for both or split.*
   carrying a planted duplicate — reported the id, the count and the fix, exit 1 — and green against
   the real logs (29 and 8 entries, 0 duplicates). The **defect register** is covered by
   `tools/verify-defect-register.py`, which enforces one entry per class id and caught the fourth
-  occurrence. **The remaining gap, stated rather than implied:** these are two allocators guarded by
-  two scripts, and the next monotonic id this repository invents will be unguarded by default. The
-  question that generalises is *"what else in here is numbered by reading the highest and adding
-  one?"* — the answer today is audit ids, change ids and defect-class ids, and only the third was
-  found by recurrence rather than by design.
+  occurrence. **The gap those two left is now closed** by `tools/verify-id-allocators.py`
+  (2026-08-30), which asks the generalising question — *"what else in here is numbered by reading
+  the highest and adding one?"* — as a check rather than as a note. It guards every declared family
+  in one place (adding one is a line, not a script) and, more importantly, **reports any UNDECLARED
+  sequence** it finds, so the next allocator is guarded on the day it is invented rather than on the
+  day it collides. Observed failing on both shapes — a planted duplicate and a planted hole — before
+  it was believed.
+
+  It found two unguarded allocators on its first run: **`adr-` (16 architecture decisions, allocated
+  by FILENAME in `docs/adr/`)** and, on inspection, `INV-` in `docs/investigations/` — which was
+  below the detection threshold at two entries and was declared on sight anyway, because "too small
+  to collide yet" is a statement with an expiry date.
+
+  **Two things the first draft got wrong, kept here because they are the interesting part.** It
+  reported eighteen *holes* in the audit log as failures — but a hole is the documented merge
+  protocol working: a contested id is resolved by RE-ISSUING the loser, which leaves the number
+  permanently unused. Verified with `git log -S`: none of the missing ids has ever existed in
+  history, so nothing was lost. A control that flags the fix as the defect is how a control teaches
+  people to ignore it, so contiguity is now opt-in per family — off for the append-only logs, on for
+  the register and the file-allocated families where a hole means something was deleted. It also
+  first read ADR ids out of `architecture.md`, which merely CITES them: **an allocator is where an id
+  is created, never where it is mentioned**, and confusing the two makes every citation look like a
+  duplicate allocation.
+
+  **Not adopted: electing a single allocator between sessions.** It was considered and rejected. The
+  sessions work in separate worktrees on purpose, and an election needs a rendezvous they do not
+  have — a session an hour into its work has not fetched, so "ask the allocator" is either stale or
+  a blocking round trip through `main`. It would also make one session wait on another to record a
+  lesson, which is a worse failure than a rename. The class is not "the wrong allocator won", it is
+  "a shared sequence with two writers": the cheaper answer is the one already proven for the JSONL
+  logs — union at merge time, re-issue the loser — plus detection wide enough that no family is
+  missed.
 - **Prevention, added 2026-08-29 after the third occurrence:** `audit-log.py` no longer allocates by
   "highest present, plus one" alone. **Every worktree of a repository shares one git common
   directory**, so a counter placed there is visible to all of them; an exclusive-create lock makes

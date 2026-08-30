@@ -151,7 +151,7 @@ foreach (var missing in storeKinds.Except(paneKinds).Take(4))
 
 // THE GRAPH the canvas would draw. Reported because the surface asked for one node and its
 // neighbours and rendered two of two thousand — the defect that produced this projection.
-var graph = await queries.GraphAsync(GraphProjection.DefaultMaxNodes, CancellationToken.None);
+var graph = await queries.GraphAsync(new GraphQuery(GraphProjection.DefaultMaxNodes), CancellationToken.None);
 
 Console.WriteLine();
 Console.WriteLine(new string('=', 100));

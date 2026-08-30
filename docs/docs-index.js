@@ -1,8 +1,8 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
-  "project": "ai-de-facelift",
-  "generated": "2026-08-30T15:46:52Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-30T15:50:58Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1122,6 +1122,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "29fd3d867b020629533f39b66ac24a4f2cab17f15302933a007d557bcb777817"
     },
     {
+      "id": "note-20260830-sub-scope-incrementality",
+      "path": "docs/notes/note-20260830-sub-scope-incrementality.md",
+      "title": "Sub-scope incrementality: a call to make before any code, with the measurement that motivates it",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Re-indexing a changed C# scope re-walks every type in it, which is measured at 590ms of an 809ms walk on a real repository. Making that incremental below the scope conflicts with the append-only per-scope snapshot model, so this note states the options and their costs and stops short of choosing — the decision changes the store's contract and is not a tidy-up.",
+      "tags": [
+        "decision-note",
+        "extraction",
+        "performance",
+        "store",
+        "incremental",
+        "measurement"
+      ],
+      "links": [
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0001-derived-evidence-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e2c64507be140629961188e31ab668c179213bf0dbe435f64213b2aa3f8c50bf"
+    },
+    {
       "id": "note-ai-native-ide-architecture-review-depth",
       "path": "docs/notes/ai-native-ide-architecture-review-depth.md",
       "title": "Decision note — AI-native IDE architecture review depth",
@@ -1583,7 +1615,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "77bd74ef025bd6a762d3f3e0147d6d63dac3079a30ab3668efb20d5ab8e82579"
+      "sourceSha256": "50bb58a5dc1320c714589d6bc430dcc63a438aabed29eae233f2988713e25966"
     },
     {
       "id": "domain-experts",
@@ -5828,7 +5860,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-facelift — Audit & Change Log",
+      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -5898,5 +5930,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8c607e991adc769fdc740ce74a2051c468c24a70a5cf58d75efac57bdbb3fc0e"
+  "graphSha256": "02bb4ded8c78ff179cd266477427c228b4f13ccb8d04eb74541ecf467450b2bd"
 };

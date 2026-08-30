@@ -119,8 +119,30 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         // has never been broken down. Enumerating the namespace tree and asking each type for its
         // members are different operations with different remedies.
         var enumerateWatch = System.Diagnostics.Stopwatch.StartNew();
-        var types = new List<INamedTypeSymbol>();
-        Walk(compiled.Compilation.Assembly.GlobalNamespace, types);
+        var discovered = new List<INamedTypeSymbol>();
+        Walk(compiled.Compilation.Assembly.GlobalNamespace, discovered);
+
+        // GENERATED types are not part of the codebase anybody can navigate or change. TheTerrace
+        // declares 1,027 types, of which roughly six hundred are EF migration model snapshots —
+        // classes written by a tool, describing the schema AS IT STOOD at a past migration. Left in,
+        // they are indistinguishable from the user's own code in the graph, they crowd the centre
+        // the way the BCL did before nodes carried IsExternal, and they cost the largest single
+        // measurement in extraction: reading every member's type is 597ms of a 809ms walk, and most
+        // of those members belong to files nobody wrote.
+        var types = new List<INamedTypeSymbol>(discovered.Count);
+        var generatedTypes = 0;
+
+        foreach (var type in discovered)
+        {
+            if (IsGeneratedType(type, cancellationToken))
+            {
+                generatedTypes++;
+                continue;
+            }
+
+            types.Add(type);
+        }
+
         enumerateWatch.Stop();
 
         var memberWatch = System.Diagnostics.Stopwatch.StartNew();
@@ -131,7 +153,9 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         // rather than nested stopwatches — a Stopwatch per type per operation would be four
         // allocations a thousand times over, measuring the measurement.
         long displayTicks = 0, provenanceTicks = 0, attributeTicks = 0, dependsTicks = 0;
+        long dependsGatherTicks = 0, dependsDedupeTicks = 0;
         var displayCalls = 0;
+        var dependsRaw = 0;
 
         foreach (var type in types)
         {
@@ -188,9 +212,21 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
 
             attributeTicks += System.Diagnostics.Stopwatch.GetTimestamp() - mark;
 
+            // Split, because "depends-on 613ms" names the call and not the cost inside it. Walking
+            // the members and de-duplicating the result are different operations with different
+            // remedies, and SymbolEqualityComparer is the untested suspect: symbol hashing is not
+            // free, and this runs it over every field, property, parameter and return type in the
+            // repository.
             mark = System.Diagnostics.Stopwatch.GetTimestamp();
-            var targets = DependsOn(type).Distinct(SymbolEqualityComparer.Default).OfType<ITypeSymbol>().ToList();
-            dependsTicks += System.Diagnostics.Stopwatch.GetTimestamp() - mark;
+            var raw = DependsOn(type).ToList();
+            var gathered = System.Diagnostics.Stopwatch.GetTimestamp() - mark;
+            dependsGatherTicks += gathered;
+            dependsRaw += raw.Count;
+
+            mark = System.Diagnostics.Stopwatch.GetTimestamp();
+            var targets = raw.Distinct(SymbolEqualityComparer.Default).OfType<ITypeSymbol>().ToList();
+            dependsDedupeTicks += System.Diagnostics.Stopwatch.GetTimestamp() - mark;
+            dependsTicks += gathered + (System.Diagnostics.Stopwatch.GetTimestamp() - mark);
 
             foreach (var target in targets)
             {
@@ -230,6 +266,18 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                 ProvenanceAt(where, projectPath, observedAt)));
         }
 
+        if (generatedTypes > 0)
+        {
+            // A count, not a silence. "This repository declares 427 types" and "this repository
+            // declares 1,027 types, 600 of them generated" are different statements about the graph,
+            // and only one of them lets a reader judge whether the picture is complete.
+            assertions.Add(Assertion(
+                request, ScopeNodeId(request.ScopeId), DisclosurePredicate,
+                $"generated-types-not-indexed ({generatedTypes:N0} type(s) declared only in " +
+                "auto-generated source)", VerificationStatus.Verified,
+                new Provenance(Path.GetFileName(projectPath), "1:1", ExtractorId, extractorVersion, observedAt)));
+        }
+
         if (generatedSkipped > 0)
         {
             // Skipped is not the same as absent. A reader who knows the mapping is written down
@@ -265,7 +313,9 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                 $"[timing]   enumerate-types {enumerateWatch.ElapsedMilliseconds}ms for {types.Count} type(s), " +
                 $"members {memberWatch.ElapsedMilliseconds}ms " +
                 $"(display {Ms(displayTicks)}ms/{displayCalls:N0} calls, provenance {Ms(provenanceTicks)}ms, " +
-                $"attributes {Ms(attributeTicks)}ms, depends-on {Ms(dependsTicks)}ms), " +
+                $"attributes {Ms(attributeTicks)}ms, depends-on {Ms(dependsTicks)}ms " +
+                $"[gather {Ms(dependsGatherTicks)}ms over {dependsRaw:N0} raw, " +
+                $"dedupe {Ms(dependsDedupeTicks)}ms]), " +
                 $"fluent-scan {fluentWatch.ElapsedMilliseconds}ms");
         }
 
@@ -533,6 +583,32 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         }
 
         counts(unresolvedCount, generatedCount);
+    }
+
+    /// <summary>
+    /// Whether every file that declares this type is generated.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>EVERY file, not any.</b> A partial class split across a generated part and a
+    /// hand-written one is real code that a person maintains — a WPF window is
+    /// <c>MainWindow.g.cs</c> plus <c>MainWindow.xaml.cs</c>, and dropping it because half of it was
+    /// generated would delete the window from the graph. The type is excluded only when there is no
+    /// hand-written declaration of it anywhere.</para>
+    ///
+    /// <para>A type with no declaring syntax at all is kept: that is a symbol from metadata, and
+    /// absence of evidence is not evidence of generation.</para>
+    /// </remarks>
+    private static bool IsGeneratedType(INamedTypeSymbol type, CancellationToken cancellationToken)
+    {
+        var references = type.DeclaringSyntaxReferences;
+        if (references.Length == 0) return false;
+
+        foreach (var reference in references)
+        {
+            if (!IsGenerated(reference.SyntaxTree, cancellationToken)) return false;
+        }
+
+        return true;
     }
 
     /// <summary>

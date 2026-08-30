@@ -103,6 +103,20 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
             WorkspaceOperations.DispatchFinalize,
             new DispatchFinalizeRequest(dispatchKey, state, errorCode), cancellationToken);
 
+    public Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        var graph = query.Query ?? new GraphQuery();
+
+        return QueryAsync<PathResult>(
+            WorkspaceOperations.Paths,
+            new PathsRequest(
+                query.From, query.To, query.MaxPaths, query.MaxLength,
+                graph.Kinds, graph.ScopeId, graph.IncludeExternal),
+            cancellationToken);
+    }
+
     public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
