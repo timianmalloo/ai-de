@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T16:42:11Z",
+  "generated": "2026-08-30T16:50:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2291,6 +2291,27 @@ window.AUDIT_DATA = {
         "docs/mockups/graph-canvas.html"
       ],
       "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0127",
+      "shortname": "fix-terminal-pane-resize",
+      "datetime": "2026-08-30T16:50:09Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do the next best actions — investigate why the terminal (lower) pane cannot be resized and fix it",
+      "summary": "WorkbenchAdapter.BuildPanel dropped SplitNode.Weights, so AvalonDock defaulted every pane to an equal 1* share — the terminal pane sat at a fixed unresizable size and split ratios were lost. Applied weights as GridLength(w, Star) on DockWidth/DockHeight; added projection regression test; registered DC-037.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs"
+      ],
+      "tags": [
+        "terminal",
+        "layout",
+        "defect-fix"
+      ],
       "outcome": "success"
     }
   ],

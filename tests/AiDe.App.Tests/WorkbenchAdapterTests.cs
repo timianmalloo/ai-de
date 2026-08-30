@@ -220,6 +220,48 @@ public sealed class WorkbenchAdapterTests
         });
     }
 
+    // Regression control: BuildPanel dropped SplitNode.Weights, so every projected pane got an equal
+    // 1* share — the terminal pane could not be resized and a restored layout lost its proportions.
+    // RED before weights are projected (every DockHeight/DockWidth is the default 1*), GREEN after.
+    [Fact]
+    public void Render_AppliesModelSplitWeights_AsProportionalDockSizing()
+    {
+        var (rootHeights, columnWidths) = WithRealizedWorkbench(a =>
+        {
+            var root = a.Manager.Layout.RootPanel;                       // vertical split-root
+            var heights = root.Children.Select(DockHeightOf).ToList();
+            var columns = (AvalonDock.Layout.LayoutPanel)root.Children[0]; // horizontal split-columns
+            var widths = columns.Children.Select(DockWidthOf).ToList();
+            return (heights, widths);
+        });
+
+        // Vertical root split [columns 0.68, terminal 0.32] projected as star heights.
+        Assert.Equal(2, rootHeights.Count);
+        Assert.All(rootHeights, h => Assert.Equal(GridUnitType.Star, h.GridUnitType));
+        Assert.Equal(0.68, rootHeights[0].Value, 3);
+        Assert.Equal(0.32, rootHeights[1].Value, 3);
+
+        // Horizontal columns split [workspace 0.38, graph 0.62] projected as star widths.
+        Assert.Equal(2, columnWidths.Count);
+        Assert.All(columnWidths, w => Assert.Equal(GridUnitType.Star, w.GridUnitType));
+        Assert.Equal(0.38, columnWidths[0].Value, 3);
+        Assert.Equal(0.62, columnWidths[1].Value, 3);
+    }
+
+    private static GridLength DockHeightOf(AvalonDock.Layout.ILayoutPanelElement e) => e switch
+    {
+        AvalonDock.Layout.LayoutPanel p => p.DockHeight,
+        AvalonDock.Layout.LayoutDocumentPane d => d.DockHeight,
+        _ => throw new InvalidOperationException("unexpected pane " + e.GetType().Name),
+    };
+
+    private static GridLength DockWidthOf(AvalonDock.Layout.ILayoutPanelElement e) => e switch
+    {
+        AvalonDock.Layout.LayoutPanel p => p.DockWidth,
+        AvalonDock.Layout.LayoutDocumentPane d => d.DockWidth,
+        _ => throw new InvalidOperationException("unexpected pane " + e.GetType().Name),
+    };
+
     private sealed class DisposableBorder(Action onDispose) : Border, IDisposable
     {
         public void Dispose() => onDispose();

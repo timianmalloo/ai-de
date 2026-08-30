@@ -281,18 +281,48 @@ public sealed class WorkbenchAdapter
                     : System.Windows.Controls.Orientation.Vertical,
             };
 
-            foreach (var child in split.Children)
+            for (var i = 0; i < split.Children.Count; i++)
             {
-                switch (child)
+                // Apply the model's proportional weight to AvalonDock's own sizing. Without this every
+                // pane defaulted to an equal 1* share and the split ratios were lost — which is why the
+                // terminal pane sat at a fixed size the user could not change, and why a resized (or
+                // restored) layout did not keep its proportions.
+                var weight = new GridLength(split.Weights[i], GridUnitType.Star);
+                var horizontal = split.Orientation == CoreOrientation.Horizontal;
+
+                switch (split.Children[i])
                 {
-                    case SplitNode:
-                        panel.Children.Add(BuildPanel(child, reuse));
+                    case SplitNode nested:
+                    {
+                        var childPanel = BuildPanel(nested, reuse);
+                        if (horizontal)
+                        {
+                            childPanel.DockWidth = weight;
+                        }
+                        else
+                        {
+                            childPanel.DockHeight = weight;
+                        }
+
+                        panel.Children.Add(childPanel);
                         break;
+                    }
+
                     case StackNode stack:
-                        panel.Children.Add(BuildPane(stack, reuse));
+                    {
+                        var pane = BuildPane(stack, reuse);
+                        if (horizontal)
+                        {
+                            pane.DockWidth = weight;
+                        }
+                        else
+                        {
+                            pane.DockHeight = weight;
+                        }
+
+                        panel.Children.Add(pane);
                         break;
-                    default:
-                        break;
+                    }
                 }
             }
 

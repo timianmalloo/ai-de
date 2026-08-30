@@ -1233,3 +1233,33 @@ for both or split.*
 - **Status:** `partially-controlled` — the review + target mockup (force layout, dots, labels-on-demand,
   zoom/pan, LOD, honest caption) are landed; the CanvasPage rebuild is the follow-on `/implement`
   (Design), and real LOD clustering needs the Core community/aggregation query (session-contracts §4c).
+
+### DC-037 — A projection drops a sizing/proportion the model carries
+
+- **Signature:** a model node holds an explicit proportion (a split weight, a column width, a flex
+  ratio) and the code that projects that model into a UI framework builds the structure faithfully but
+  **never reads the proportion** — so the framework falls back to its own default (an equal share), the
+  intended ratio is silently lost, and a user resize does not persist because there is no proportion
+  field the projection round-trips through.
+- **Why it survives:** the structure is correct (the right panes, the right nesting, the right
+  orientation), so the layout *looks* plausible and every structural test passes. The dropped
+  proportion only shows as "it opens at the wrong size" or "I can't resize that pane" — symptoms easy
+  to misattribute to the framework or to airspace, because the projection code that omitted the field
+  reads as complete.
+- **Instances:**
+  - 2026 — `WorkbenchAdapter.BuildPanel` projected the owned `SplitNode` tree into AvalonDock
+    `LayoutPanel`s with the correct orientation and children but never applied `SplitNode.Weights`, so
+    every pane defaulted to an equal `1*` share. The terminal pane (model weight 0.32) rendered at a
+    fixed, unresizable size and the workspace/graph 0.38/0.62 split was lost. Fix: map each child's
+    weight onto AvalonDock `DockWidth`/`DockHeight` as `GridLength(w, Star)`.
+- **Control:** a projection test that reads the *framework's own* sizing off the realised tree and
+  asserts it equals the model's proportions — here `Render_AppliesModelSplitWeights_AsProportionalDockSizing`
+  reads each pane's `DockHeight`/`DockWidth` and asserts the `0.68/0.32` and `0.38/0.62` star ratios.
+  It reads `1*` (RED) whenever the weight is dropped, so the class cannot return silently on a
+  framework upgrade or a projection refactor.
+- **The generalisation to apply elsewhere:** for every field the model carries that a framework can
+  also represent, the projection either maps it or explicitly records that it doesn't — and a
+  round-trip/projection test asserts the framework value equals the model value. A structural test that
+  only checks *which* panes exist cannot see a dropped *proportion*; assert the numbers, not just the
+  shape.
+- **Status:** `controlled` — the weight is applied and the projection test is landed.
