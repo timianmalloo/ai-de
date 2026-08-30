@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 16 · partially-controlled 21 · uncontrolled 0
+**Status counts:** controlled 16 · partially-controlled 22 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1301,3 +1301,50 @@ for both or split.*
   only checks *which* panes exist cannot see a dropped *proportion*; assert the numbers, not just the
   shape.
 - **Status:** `controlled` — the weight is applied and the projection test is landed.
+
+### DC-038 — A comment states a bound the code does not apply
+
+- **Shape:** a doc comment, a parameter name or a reported field asserts a limit — *"stays comfortably
+  inside X"*, *"bounded at N"*, `MaxBytes: 65536`, *"this form is excluded"* — and **no line applies
+  it**. The value is assigned, passed to a struct, or described in prose, and never compared,
+  clamped or matched against. The code is well-formed and the claim is false.
+- **Signature:** the constant appears only on the left of an assignment and inside argument lists;
+  grep it and every hit is a declaration, a comment or a field initialiser, never an `if`, a
+  `Clamp`, or a `Take`. The prose tell is a sentence that quantifies without naming the line that
+  enforces it — *"sized so"*, *"stays within"*, *"never exceeds"* — and the fastest check is to ask
+  **which line makes this true**, then find it.
+- **Why it survives:** the prose is where a reviewer looks, so the claim is what gets believed —
+  including by the person who wrote it, months later. Tests do not catch it because the documented
+  bound is usually far from the values a fixture uses, so nothing is near the limit. And the failure
+  is invisible until the input grows: a page that is 15× its documented cap works perfectly on every
+  repository small enough.
+- **Instances (all 2026-08-30, all within one session):**
+  - `ProjectionService.Evidence` documented that a page "stays comfortably inside `MaxResultBytes`
+    once serialised". MEASURED: 2,000 assertions = **1,004,397 bytes**, fifteen times that constant
+    and 95.8% of an IPC frame. One repository away from INV-0003.
+  - `ProjectionService.Find` built a `ResultBounds` reporting `MaxBytes: 65,536` and returned
+    **461,750 bytes**. The cap was handed to a struct and compared to nothing — a caller reading the
+    bounds was told a limit that could not fire (DC-016 through a different door).
+  - `TypeScriptExtractor`'s miss-counter documented that `export default someExpression` was
+    excluded as a non-declaration; the pattern excluded `{`, `*`, `=` and `type {` and never
+    excluded it. `export default` is ubiquitous, so the disclosure would have fired on nearly every
+    real TypeScript codebase and become noise. Found only by running a SECOND repository.
+  - `CanvasGraphViewModel.WholeGraphNodeCap` was declared with a doc comment calling it a ceiling
+    and had **zero usages** — found by the control below, on its first run.
+- **Control:** `tools/verify-bounds-are-enforced.py` — every constant whose NAME claims a limit
+  (`Max*Bytes`, `*Ceiling`, `*Cap`, `*Budget`) must appear in a comparison, a `Clamp`, a `Math.Min`
+  or a `Take`, searched over code with comments stripped so prose cannot count as proof. A bound
+  applied indirectly needs an entry in `APPLIED_ELSEWHERE` **with a reason naming where it fires**,
+  because "it is passed somewhere" is exactly what made `find` look safe. It found the dead
+  `WholeGraphNodeCap` immediately and one false positive that is now a justified exemption.
+- **What the control deliberately does NOT cover, said rather than implied:** it checks that a bound
+  is APPLIED, not that a sentence describing it is TRUE. The TypeScript instance — a regex whose
+  behaviour differed from its comment — is invisible to it. Half the class is mechanised; the other
+  half still needs a reader, and pretending otherwise would be this class applied to its own control.
+- **The generalisation to apply elsewhere:** when a comment quantifies anything, **find the line that
+  makes it true before believing it** — and when writing one, prefer stating the mechanism
+  (*"bounded row by row in `Evidence`"*) over the effect (*"stays inside the cap"*), because a
+  mechanism names something a reader can go and check.
+- **Residual risk:** the name-based detection misses a bound named without one of those suffixes, and
+  a limit expressed as a magic number rather than a constant is invisible to it.
+- **Status:** `partially-controlled`

@@ -85,8 +85,6 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
     /// </remarks>
     public const int OverviewNodeCap = 1_500;
 
-    /// <summary>Retained name for callers that want the projection's own ceiling.</summary>
-    public const int WholeGraphNodeCap = GraphProjection.DefaultMaxNodes;
 
     /// <summary>Every node and edge in the workspace, bounded and honest about the bound.</summary>
     /// <summary>

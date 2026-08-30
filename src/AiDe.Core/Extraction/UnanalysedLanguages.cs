@@ -32,6 +32,10 @@ public static class UnanalysedLanguages
         // disclosed by that extractor, on the scope, in its own words.
         // .ts/.tsx/.js/.jsx are NOT here: TypeScriptExtractor reads them. What it cannot see is
         // disclosed by that extractor, on the scope, in its own words.
+        // .sql is NOT here: SqlSchemaExtractor reads CREATE TABLE now. Leaving it would have said
+        // `sql-not-analysed (2 file(s))` on a workspace whose eight tables had just been read —
+        // which is the third time this list has needed the same correction, so the rule is worth
+        // stating plainly: THIS LIST IS THE LAST STEP OF ADDING AN EXTRACTOR, not an afterthought.
         (".go", "Go"),
         (".rs", "Rust"),
         (".java", "Java"),
@@ -39,7 +43,6 @@ public static class UnanalysedLanguages
         (".rb", "Ruby"),
         (".php", "PHP"),
         (".swift", "Swift"),
-        (".sql", "SQL"),
     ];
 
     private static readonly HashSet<string> Skip = new(StringComparer.OrdinalIgnoreCase)

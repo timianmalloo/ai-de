@@ -35,8 +35,21 @@ public sealed record WorkspaceOverview(
 
 /// <summary>How to summarise the workspace.</summary>
 /// <param name="Depth">
-/// Identifier segments to group by. 1 gives the coarsest picture (one group per top-level
-/// namespace or directory), and each increment is one step of zoom.
+/// Identifier segments to group by. 1 gives the coarsest picture (one group per top-level namespace
+/// or directory) and each increment is one step of zoom.
+///
+/// <para><b>The default is 3, chosen from measurement across three repositories rather than from
+/// taste.</b> Links between groups, by depth:</para>
+/// <code>
+/// TheTerrace                d1:  74 groups,  1 link    d2: 200,  6    d3: 200, 263
+/// BioHacker                 d1:   9 groups,  0 links   d2:  48,  6    d3: 200, 323
+/// meridian-finance-planner  d1:  89 groups,  6 links   d2: 156, 18    d3: 200,  93
+/// </code>
+/// <para>Depths 1 and 2 are almost linkless in ALL THREE, and for a reason that is arithmetic rather
+/// than accidental: at a coarse grain nearly every edge is internal to a group, so it is counted and
+/// not drawn. A picture of disconnected islands is correct and tells a reader nothing about
+/// structure. Structure appears at 3. The first default shipped as 2 — the useless one — and only a
+/// second and third repository made that visible as a pattern rather than a quirk.</para>
 /// </param>
 /// <param name="MaxClusters">
 /// Groups returned before the rest are counted and dropped. MEASURED on a real repository: at depth
@@ -47,7 +60,7 @@ public sealed record WorkspaceOverview(
 /// </param>
 /// <param name="Query">Which nodes to summarise — the same filter the graph surface takes.</param>
 public sealed record OverviewQuery(
-    int Depth = 2,
+    int Depth = 3,
     int MaxClusters = 60,
     GraphQuery? Query = null);
 

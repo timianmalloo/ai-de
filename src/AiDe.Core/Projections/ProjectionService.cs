@@ -233,9 +233,15 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// Assertions per evidence page.
     /// </summary>
     /// <remarks>
-    /// Sized so a page stays comfortably inside <see cref="MaxResultBytes"/> once serialised — an
-    /// assertion carries its provenance, so it is far heavier per row than a search match. The
-    /// caller pages; it does not get one enormous answer, and it does not get a silent truncation.
+    /// <para><b>A COUNT ceiling, and it does not bound the payload.</b> This used to say the page was
+    /// "sized so it stays comfortably inside <see cref="MaxResultBytes"/> once serialised". MEASURED:
+    /// 2,000 assertions serialise to 1,004,397 bytes, which is fifteen times that constant and 95.8%
+    /// of an IPC frame. The sentence was written, believed, and never checked.</para>
+    ///
+    /// <para>What actually bounds the page is <see cref="MaxResponseBytes"/>, applied row by row in
+    /// <see cref="Evidence"/>; this count is the coarser of the two limits and usually is not the one
+    /// that fires. An assertion carries its provenance, so it is far heavier per row than a search
+    /// match — which is the reason a count could never have been the bound.</para>
     /// </remarks>
     public const int MaxEvidencePageCeiling = 2_000;
 

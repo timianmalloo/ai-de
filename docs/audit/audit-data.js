@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T19:26:35Z",
+  "generated": "2026-08-30T19:28:05Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2494,6 +2494,32 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0135",
+      "shortname": "bounds-gate-sql-schemas-repeatable-measurement-depth",
+      "datetime": "2026-08-30T19:21:42Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "**The sweep found the class was live in the tree, and the class now has a control.**\n\nThree instances this session were the same shape — a comment states a bound the code does not apply.\nThe sweep found a fourth still standing: `MaxEvidencePageCeiling` documented as \"sized so a page\nstays comfortably inside `MaxResultBytes`\" when 2,000 assertions serialise to **1,004,397 bytes**,\nfifteen times that constant. Corrected to name the mechanism that actually bounds it.\n\n`tools/verify-bounds-are-enforced.py` requires every constant whose NAME claims a limit to appear in\na comparison, a clamp or a take — searched over code with comments stripped, so prose cannot count as\nproof. On its first run it found `WholeGraphNodeCap`: declared last turn as a \"retained name\",\ndocumented as a ceiling, **zero usages**. Deleted. One false positive (`OverviewNodeCap`, applied\nindirectly through `GraphQuery.MaxNodes`) became a justified exemption rather than a weaker rule,\nbecause \"it is passed somewhere\" is exactly what made `find` look safe.\n\n**The control says what it cannot do.** It checks a bound is APPLIED, not that a sentence describing\nit is TRUE — the TypeScript instance, a regex differing from its comment, is invisible to it. Half\nthe class is mechanised; claiming otherwise would be this class applied to its own control.\n\n**Measurement is repeatable now.** `tools/measure-repositories.py` runs the harness over three\ncodebases chosen for contrast and prints them side by side. It exists because every number in this\nproject came from one repository until a second was tried by hand, and the third exposed a defect in\na control that looked correct against the first.\n\n**The overview's default depth was the useless one, and three repositories showed it:**\n\n    TheTerrace                d1:  74 groups,  1 link    d2: 200,  6    d3: 200, 263\n    BioHacker                 d1:  17 groups,  0 links   d2:  56,  6    d3: 200, 323\n    meridian-finance-planner  d1:  92 groups,  6 links   d2: 159, 18    d3: 200,  93\n\nDepths 1 and 2 are almost linkless in ALL THREE, for an arithmetic reason: at a coarse grain nearly\nevery edge is internal to a group, counted and not drawn. A picture of disconnected islands is\ncorrect and says nothing about structure. Default moved 2 → 3, from evidence rather than taste.\n\n**Raw SQL schemas are read.** BioHacker declares its whole schema in one 197-line file with eight\n`CREATE TABLE`s; the tool said `sql-not-analysed (2 file(s))` and produced **zero** joins — honest,\nand blind to that repository's entire schema side. `SqlSchemaExtractor` emits the SAME node shape as\nthe EF reader (`table:Name`, `has_type table`, `has_column`), because a second spelling would be\nDC-022 with two producers of one predicate and the joins would silently see half the tables.\n\nColumn parsing matches parentheses rather than scanning to the first `)`, so `DECIMAL(9,2)` does not\ntruncate the column list; constraint lines are not claimed as columns; the schema qualifier is\nstripped so `dbo.Principal` and `Principal` are one node.\n\nBioHacker: joins **0 → 8**, 54 `has_column` facts. meridian: 30 → 33 inferred, 31 → 34 scopes.\n\nAnd `.sql` came out of `UnanalysedLanguages`. A closed gap reported as open is the same defect as\nhiding one that is not — **the third time that list has needed this correction, once per extractor\nadded**, so the rule is now written where the list is: it is the LAST STEP of adding an extractor.\n\nDC-038 registered, with its residual risk stated: name-based detection misses a bound named without\none of those suffixes, and a limit written as a magic number is invisible to it.\n\n812 tests green (App 132, Core 680). Eight gates clean, one of them new. Zero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Sweep the prose-claims-a-bound class and control it, make multi-repo measurement repeatable, read raw SQL schemas, and settle the overview's default depth",
+      "done_when": "The class has a control observed finding something; three repositories measured by script; SQL tables reach the joins; depth chosen from evidence; gates green; merged and published",
+      "change": "cl-0087",
+      "git": {
+        "sha": "4314a5efc2057dbca92d34e36b598cc74600931b",
+        "short": "4314a5efc",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
+    },
+    {
       "id": "al-0136",
       "shortname": "ui-design-knowledge-explorer-mode",
       "datetime": "2026-08-30T19:26:35Z",
@@ -4668,6 +4694,32 @@ window.AUDIT_DATA = {
         "before": "d347415",
         "after": "d3474150954e972f971ac0e3013edb5c9fa5ef1b",
         "branch": "feature/app-facelift-and-graph-surfaces",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0087",
+      "datetime": "2026-08-30T19:21:30Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "A comment that states a bound the code does not apply, and raw SQL schemas read",
+      "prompt": null,
+      "summary": "**The sweep found the class was live in the tree, and the class now has a control.**\n\nThree instances this session were the same shape — a comment states a bound the code does not apply.\nThe sweep found a fourth still standing: `MaxEvidencePageCeiling` documented as \"sized so a page\nstays comfortably inside `MaxResultBytes`\" when 2,000 assertions serialise to **1,004,397 bytes**,\nfifteen times that constant. Corrected to name the mechanism that actually bounds it.\n\n`tools/verify-bounds-are-enforced.py` requires every constant whose NAME claims a limit to appear in\na comparison, a clamp or a take — searched over code with comments stripped, so prose cannot count as\nproof. On its first run it found `WholeGraphNodeCap`: declared last turn as a \"retained name\",\ndocumented as a ceiling, **zero usages**. Deleted. One false positive (`OverviewNodeCap`, applied\nindirectly through `GraphQuery.MaxNodes`) became a justified exemption rather than a weaker rule,\nbecause \"it is passed somewhere\" is exactly what made `find` look safe.\n\n**The control says what it cannot do.** It checks a bound is APPLIED, not that a sentence describing\nit is TRUE — the TypeScript instance, a regex differing from its comment, is invisible to it. Half\nthe class is mechanised; claiming otherwise would be this class applied to its own control.\n\n**Measurement is repeatable now.** `tools/measure-repositories.py` runs the harness over three\ncodebases chosen for contrast and prints them side by side. It exists because every number in this\nproject came from one repository until a second was tried by hand, and the third exposed a defect in\na control that looked correct against the first.\n\n**The overview's default depth was the useless one, and three repositories showed it:**\n\n    TheTerrace                d1:  74 groups,  1 link    d2: 200,  6    d3: 200, 263\n    BioHacker                 d1:  17 groups,  0 links   d2:  56,  6    d3: 200, 323\n    meridian-finance-planner  d1:  92 groups,  6 links   d2: 159, 18    d3: 200,  93\n\nDepths 1 and 2 are almost linkless in ALL THREE, for an arithmetic reason: at a coarse grain nearly\nevery edge is internal to a group, counted and not drawn. A picture of disconnected islands is\ncorrect and says nothing about structure. Default moved 2 → 3, from evidence rather than taste.\n\n**Raw SQL schemas are read.** BioHacker declares its whole schema in one 197-line file with eight\n`CREATE TABLE`s; the tool said `sql-not-analysed (2 file(s))` and produced **zero** joins — honest,\nand blind to that repository's entire schema side. `SqlSchemaExtractor` emits the SAME node shape as\nthe EF reader (`table:Name`, `has_type table`, `has_column`), because a second spelling would be\nDC-022 with two producers of one predicate and the joins would silently see half the tables.\n\nColumn parsing matches parentheses rather than scanning to the first `)`, so `DECIMAL(9,2)` does not\ntruncate the column list; constraint lines are not claimed as columns; the schema qualifier is\nstripped so `dbo.Principal` and `Principal` are one node.\n\nBioHacker: joins **0 → 8**, 54 `has_column` facts. meridian: 30 → 33 inferred, 31 → 34 scopes.\n\nAnd `.sql` came out of `UnanalysedLanguages`. A closed gap reported as open is the same defect as\nhiding one that is not — **the third time that list has needed this correction, once per extractor\nadded**, so the rule is now written where the list is: it is the LAST STEP of adding an extractor.\n\nDC-038 registered, with its residual risk stated: name-based detection misses a bound named without\none of those suffixes, and a limit written as a magic number is invisible to it.\n\n812 tests green (App 132, Core 680). Eight gates clean, one of them new. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "tools/verify-bounds-are-enforced.py",
+        "src/AiDe.Core/Extraction/SqlSchemaExtractor.cs",
+        "tools/measure-repositories.py"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "4314a5efc2057dbca92d34e36b598cc74600931b",
+        "branch": "session/phase3-pane-probes",
         "pushed": true,
         "commits": []
       }

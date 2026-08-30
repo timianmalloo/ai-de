@@ -25,7 +25,8 @@ public static class WorkspaceExtractors
         bicep: new BicepExtractor(),
         schema: new EfSchemaExtractor(),
         python: new PythonExtractor(),
-        typescript: new TypeScriptExtractor());
+        typescript: new TypeScriptExtractor(),
+        sql: new SqlSchemaExtractor());
 
     /// <summary>
     /// The scope-id prefix each extractor answers for, as the router reads them.
@@ -42,5 +43,6 @@ public static class WorkspaceExtractors
             ["schema:"] = "schema",
             ["python:"] = "python",
             ["typescript:"] = "typescript",
+            ["sql:"] = "sql",
         };
 }
