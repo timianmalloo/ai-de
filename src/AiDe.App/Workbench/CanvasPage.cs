@@ -52,7 +52,14 @@ internal static class CanvasPage
           #fit { margin-left: auto; }
           #mode { margin-left: 6px; }
           #caption { color: #98A3B2; margin: 6px 0 0; }
-          #warn { color: #D8A650; margin: 4px 0 0; min-height: 1em; }
+          #warn { color: #D8A650; margin: 4px 0 0; }
+          #warn[hidden] { display: none; }
+          #warn summary { cursor: pointer; list-style: none; outline: none; }
+          #warn summary::-webkit-details-marker { display: none; }
+          #warn summary:focus-visible { outline: 2px solid #5B9DD9; outline-offset: 2px; border-radius: 4px; }
+          #warn summary::before { content: '\25B8'; display: inline-block; margin-right: 5px; font-size: 11px; transition: transform .12s ease; }
+          #warn[open] summary::before { transform: rotate(90deg); }
+          #warndetail { color: #B99A5E; font-size: 12.5px; margin: 4px 0 0 16px; line-height: 1.45; }
           #stage { position: relative; height: 440px; margin-top: 10px; border-radius: 10px;
                    background: #0D1014; overflow: hidden; }
           #stage.grab { cursor: grab; }
@@ -91,7 +98,7 @@ internal static class CanvasPage
             <button id="mode" class="chrome" title="Toggle 2D / 3D (press 2 or 3)" aria-label="Switch to 3D view">View in 3D</button>
           </header>
           <p id="caption">Waiting for the workspace&#8230;</p>
-          <p id="warn"></p>
+          <details id="warn" hidden><summary class="warnsum" id="warnsum"></summary><div id="warndetail"></div></details>
           <div id="filters" role="group" aria-label="Filter the graph by artifact category"></div>
           <div id="stage"><svg id="edges"></svg></div>
           <p class="legend" id="legend"></p>
@@ -282,6 +289,7 @@ internal static class CanvasPage
               // query or toggling a filter would also switch the view.
               var ae = document.activeElement;
               if (ae && (ae === searchInput
+                  || ae.tagName === 'SUMMARY'
                   || (ae.classList && (ae.classList.contains('fchip') || ae.classList.contains('chrome'))))) {
                 return;
               }
@@ -509,6 +517,8 @@ internal static class CanvasPage
               var svg = document.getElementById('edges');
               var caption = document.getElementById('caption');
               var warn = document.getElementById('warn');
+              var warnsum = document.getElementById('warnsum');
+              var warndetail = document.getElementById('warndetail');
 
               Array.prototype.slice.call(stage.querySelectorAll('.node')).forEach(function (n) { n.remove(); });
               svg.innerHTML = '';
@@ -650,10 +660,28 @@ internal static class CanvasPage
                   + 'to pan and scroll to zoom (Fit reframes); Backspace goes back; 2/3 toggles 2D/3D; '
                   + 'drag to rotate in 3D; Tab off either end to leave.';
 
-              var notes = [];
-              if (graph.omitted > 0) { notes.push(graph.omitted + ' edge(s) omitted by the result bound'); }
-              if ((graph.disclosures || []).length) { notes.push('not analysed: ' + graph.disclosures.join(', ')); }
-              warn.textContent = notes.join(' - ');
+              // Disclosures are load-bearing honesty (the analysis boundaries), but a five-line wall
+              // of orange buries the graph. Collapse them: a short summary is always visible, the full
+              // list expands on demand. Hidden entirely when there is nothing to disclose.
+              var omitted = graph.omitted > 0 ? graph.omitted : 0;
+              var discl = graph.disclosures || [];
+              if (omitted === 0 && discl.length === 0) {
+                warn.hidden = true;
+                warn.removeAttribute('open');
+              } else {
+                warn.hidden = false;
+                var sum = [];
+                if (omitted > 0) { sum.push(omitted + ' edge(s) omitted by the result bound'); }
+                if (discl.length) { sum.push(discl.length + ' analysis boundary note(s)'); }
+                warnsum.textContent = '\u26A0 ' + sum.join('  \u00B7  ');
+                var detail = [];
+                if (omitted > 0) {
+                  detail.push(omitted + ' edge(s) were not drawn because the result bound was reached — '
+                    + 'search or pick a node to go deeper.');
+                }
+                if (discl.length) { detail.push('Not analysed: ' + discl.join(', ') + '.'); }
+                warndetail.textContent = detail.join('  ');
+              }
 
               if (searchInput) { searchInput.value = ''; stage.classList.remove('searching'); }
 

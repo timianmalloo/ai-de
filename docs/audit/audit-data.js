@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T22:34:00Z",
+  "generated": "2026-08-30T22:37:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2861,6 +2861,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0157",
+      "shortname": "ui-graph-disclosures-collapsible",
+      "datetime": "2026-08-30T22:37:43Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "declutter the graph: the 5-line orange disclosure wall dominates the pane",
+      "summary": "Made the graph disclosures a native collapsible <details>: a short summary ('N edge(s) omitted . M analysis boundary note(s)') is always visible; the full list expands on demand; hidden entirely when nothing to disclose. Preserves the honesty (analysis boundaries) while reclaiming vertical space. Keyboard-accessible summary added to the node-shortcut guard so it doesn't fire view toggles. P2-FOCUS-03 + App.Tests 144 green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/CanvasPage.cs"
       ],
       "tags": [],
       "outcome": "success"
