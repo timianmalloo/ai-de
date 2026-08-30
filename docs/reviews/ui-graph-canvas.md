@@ -18,6 +18,8 @@ summary: >-
   force-spread, no zoom/pan, no level-of-detail, a fixed 440px stage, and a disclosure wall on top.
   Target UX (mockup): a force-directed node-link layout with dots-not-cards, labels-on-demand, zoom/pan,
   semantic-zoom clustering, search-first focus+context, and disclosures as a chip.
+review-suggested:
+  - { by: mockup-graph-canvas, on: 2026-08-30, reason: "Graph canvas implemented to the target: 2D force layout + degree-sized dots + pan/zoom/fit landed (DC-036); realizes part of US-K11 — re-check spec/implementation alignment and the still-open semantic-zoom LOD item." }
 ---
 
 # UI review — graph canvas (review / elevate mode)

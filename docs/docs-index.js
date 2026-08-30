@@ -2,8 +2,8 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T17:05:10Z",
-  "generator": "docs-graph.py derive",
+  "generated": "2026-08-30T17:05:58Z",
+  "generator": "docs-graph.py flag",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -2445,7 +2445,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-27",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "mockup-graph-canvas",
+          "on": "2026-08-30",
+          "reason": "Graph canvas implemented to the target: 2D force layout + degree-sized dots + pan/zoom/fit landed (DC-036); realizes part of US-K11 — re-check spec/implementation alignment and the still-open semantic-zoom LOD item."
+        }
+      ],
       "summary": "Review of the graph canvas on TheTerrace after the scaling fix let it load. The graph renders as an unreadable pile of overlapping opaque cards: the 2D layout is a single ring (fine for ~15 neighbours, catastrophic for 50), nodes are heavy boxes that occlude each other and the edges, there is no force-spread, no zoom/pan, no level-of-detail, a fixed 440px stage, and a disclosure wall on top. Target UX (mockup): a force-directed node-link layout with dots-not-cards, labels-on-demand, zoom/pan, semantic-zoom clustering, search-first focus+context, and disclosures as a chip.",
       "tags": [
         "ui-review",
@@ -2476,7 +2482,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e9f7e168edc02ed50b6bc57a1324ac16162ac853577e69c6e44163fe5b28182c"
+      "sourceSha256": "21b5b5f58001a9d1721a76e7382333cf457ba63f7374a618e08ad92e46ee3d23"
     },
     {
       "id": "review-ui-mockups-craft-gate",
@@ -6046,5 +6052,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "518661555189b9c1bde2035c2903190d033025be7db7d3cc55ab557e4d51deb1"
+  "graphSha256": "9c1642a6c9ce565cf70ec7d0bd3db3266fde8cf45827edc3343760e7cda38c0b"
 };
