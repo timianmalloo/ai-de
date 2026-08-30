@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!--
+  Graph canvas — /ui-design review (review/elevate) target mockup. Self-contained, dependency-free.
+  Demonstrates the fixed large-graph UX: a force-directed node-link layout (dots sized by degree,
+  coloured by kind), thin edges behind nodes, zoom/pan, hover focus+context, labels-on-demand,
+  a semantic-zoom LOD toggle (cluster super-nodes), search-first entry, and disclosures as a chip
+  instead of a wall. Replaces the current single-ring pile of opaque cards. Review chrome; never ships.
+  Vanilla-JS force sim (a few hundred iterations, then settle) — no library, no CDN, opens over file://.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Graph canvas — target UX</title>
+<style>
+  :root{
+    --sunken:#0D1014; --raised:#1A1F26; --accent:#5B9DD9; --muted:#98A3B2; --text:#E4E9EF;
+    --border:#2A313B; --warn:#D8A650;
+    --k-source:#5B9DD9; --k-knowledge:#5FB98F; --k-spec:#B08AD0; --k-arch:#D8A650; --k-external:#5A6472;
+    --dur:160ms;
+  }
+  [data-theme="contrast"]{ --sunken:#000; --raised:#101418; --text:#FFF; --border:#3A424D; --muted:#C3CBD6; }
+  [data-motion="reduce"] *{transition:none!important}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font:14px/1.5 "Segoe UI",system-ui,sans-serif;background:#05070a;color:var(--text)}
+  .harness{display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:10px 14px;background:#0f141a;border-bottom:1px solid var(--border)}
+  .harness label{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+  .harness select{background:var(--raised);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:3px 7px;font:inherit;font-size:12px}
+
+  .pane{position:relative;height:calc(100vh - 46px);background:var(--sunken);overflow:hidden}
+  /* top bar: title + disclosures chip + controls */
+  .topbar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;gap:10px;
+          padding:0 12px;z-index:6;pointer-events:none}
+  .topbar > *{pointer-events:auto}
+  .title{font-weight:600;font-size:14px}
+  .search{margin-left:8px;background:var(--raised);border:1px solid var(--border);border-radius:8px;
+          padding:5px 10px;color:var(--text);font:inherit;font-size:13px;width:220px}
+  .search::placeholder{color:var(--muted)}
+  .spacer{flex:1}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--raised);border:1px solid var(--border);
+        border-radius:999px;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer}
+  .chip.warn{border-color:#3a3320;color:var(--warn)}
+  .btn{background:var(--raised);border:1px solid var(--border);border-radius:8px;padding:5px 10px;color:var(--text);
+       font:inherit;font-size:12px;cursor:pointer}
+  .btn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+
+  svg{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab}
+  svg.grabbing{cursor:grabbing}
+  .edge{stroke:#232a33;stroke-width:1}
+  .edge.hot{stroke:var(--accent);stroke-width:1.5}
+  .node{cursor:pointer}
+  .node circle{stroke:var(--sunken);stroke-width:1.5}
+  .node.dim{opacity:.18}
+  .node.hot circle{stroke:#fff;stroke-width:2}
+  .lbl{fill:var(--text);font-size:11px;paint-order:stroke;stroke:var(--sunken);stroke-width:3px;pointer-events:none}
+  .lbl.hidden{display:none}
+
+  /* caption (US-K10 honesty) */
+  .caption{position:absolute;left:12px;bottom:10px;z-index:6;font-size:12px;color:var(--muted);
+           background:rgba(13,16,20,.7);border:1px solid var(--border);border-radius:8px;padding:5px 10px}
+  .legend{position:absolute;right:12px;bottom:10px;z-index:6;display:flex;gap:12px;font-size:11px;color:var(--muted);
+          background:rgba(13,16,20,.7);border:1px solid var(--border);border-radius:8px;padding:6px 10px}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  /* disclosures popover */
+  .disc{position:absolute;top:44px;right:12px;z-index:7;width:340px;max-height:40%;overflow:auto;display:none;
+        background:var(--raised);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted)}
+  .disc.open{display:block}
+  .disc b{color:var(--warn)}
+  .disc ul{margin:6px 0 0;padding-left:16px}
+  /* empty/loading/error states */
+  .state{position:absolute;inset:44px 0 0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--muted);text-align:center;padding:24px}
+  .state.show{display:flex}
+  .skel{width:60%;height:60%;border-radius:12px;background:linear-gradient(90deg,#12161c,#171c23,#12161c);background-size:200% 100%;animation:sh 1.2s linear infinite}
+  [data-motion="reduce"] .skel{animation:none}
+  @keyframes sh{to{background-position:-200% 0}}
+</style>
+</head>
+<body>
+<div class="harness">
+  <strong style="font-size:13px">Graph canvas · target UX</strong>
+  <label>state <select id="state"><option value="ready">Ready</option><option value="loading">Loading</option><option value="empty">Empty</option><option value="error">Error</option></select></label>
+  <label>density <select id="density"><option value="50">50 nodes (overview)</option><option value="150">150 nodes</option><option value="lod">1,500 → clustered (LOD)</option></select></label>
+  <label>theme <select id="theme"><option value="dark">Dark</option><option value="contrast">High-contrast</option></select></label>
+  <label>motion <select id="motion"><option value="full">Full</option><option value="reduce">Reduced</option></select></label>
+</div>
+
+<div class="pane" id="pane" data-theme="dark">
+  <div class="topbar">
+    <span class="title">Graph — TheTerrace</span>
+    <input class="search" id="search" placeholder="Search a node (⌘K)…" aria-label="Search the graph" />
+    <span class="spacer"></span>
+    <button class="btn" id="lodBtn" aria-pressed="false" title="Cluster / expand (semantic zoom)">Clusters</button>
+    <button class="btn" id="fit" title="Fit to view">Fit</button>
+    <span class="chip warn" id="discChip" role="button" tabindex="0">⚠ 4 disclosures</span>
+  </div>
+
+  <svg id="svg" aria-label="Code and knowledge graph, force-directed"></svg>
+
+  <div class="disc" id="disc">
+    <b>4 disclosures</b> — the graph is honest about what it could not read.
+    <ul>
+      <li>python-imports-not-resolved (95 imports across 4 scopes)</li>
+      <li>python-nested-declarations-not-analysed</li>
+      <li>schema-changed-by-raw-sql-not-read</li>
+      <li>schema-from-migrations-not-database</li>
+    </ul>
+  </div>
+
+  <div class="caption" id="caption">Showing 50 of 1,500 most-connected nodes · scroll to zoom, drag to pan, hover to focus</div>
+  <div class="legend">
+    <span><i style="background:var(--k-source)"></i>code</span>
+    <span><i style="background:var(--k-knowledge)"></i>knowledge</span>
+    <span><i style="background:var(--k-spec)"></i>spec</span>
+    <span><i style="background:var(--k-arch)"></i>architecture</span>
+    <span><i style="background:var(--k-external)"></i>external</span>
+  </div>
+
+  <div class="state" id="stateLoading"><div class="skel"></div><div>Loading the graph…</div></div>
+  <div class="state" id="stateEmpty">🗺️<div><strong>Nothing indexed yet.</strong><br/>Run “Index C# projects in this workspace” (Ctrl+K, I) to build the graph.</div></div>
+  <div class="state" id="stateError">⚠<div><strong>The graph is too large to draw at this focus.</strong><br/>Narrow your focus — search a node, or zoom in to a cluster.</div><button class="btn" onclick="location.reload()">Retry</button></div>
+</div>
+
+<script>
+const KINDS = ['source','knowledge','spec','arch','external'];
+const COLOR = {source:'#5B9DD9',knowledge:'#5FB98F',spec:'#B08AD0',arch:'#D8A650',external:'#5A6472'};
+const NAMES = ['MatchInsightStage','SportMonksProvider','ScheduledRefresh','AppDbContext','Fixture','Player','MatchService','ReceiptLedger','CapabilityScope','DigestJob','LiveScore','SyncSession','AskPlanner','FixtureImporter','StandingsView','OddsProvider','PredictionModel','SeasonRepository'];
+let W=0,H=0, view={x:0,y:0,k:1}, nodes=[], edges=[], hot=null, clustered=false;
+
+const svg = document.getElementById('svg');
+function size(){ const r=svg.getBoundingClientRect(); W=r.width; H=r.height; }
+
+function build(n){
+  nodes=[]; edges=[];
+  for(let i=0;i<n;i++){
+    const kind = i<3?'arch':KINDS[Math.floor(Math.random()*(i<10?4:5))];
+    nodes.push({id:i,kind,name:NAMES[i%NAMES.length]+(i>=NAMES.length?('·'+i):''),
+      x:W/2+(Math.random()-.5)*40,y:H/2+(Math.random()-.5)*40,vx:0,vy:0,deg:0});
+  }
+  // a sparse, hub-biased edge set
+  for(let i=1;i<n;i++){
+    const t=Math.floor(Math.random()*Math.min(i, i<20?i:20));
+    edges.push({s:i,t}); nodes[i].deg++; nodes[t].deg++;
+    if(Math.random()<.25){ const u=Math.floor(Math.random()*i); edges.push({s:i,t:u}); nodes[i].deg++; nodes[u].deg++; }
+  }
+  for(let it=0;it<260;it++) step(it<200?1:0.4);
+  fit();
+}
+function step(scale){
+  // repulsion (Barnes-Hut-free, fine for <=200 nodes)
+  for(let i=0;i<nodes.length;i++){ for(let j=i+1;j<nodes.length;j++){
+    const a=nodes[i],b=nodes[j]; let dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy||1; const f=1400/d2*scale;
+    const d=Math.sqrt(d2); dx/=d;dy/=d; a.vx+=dx*f;a.vy+=dy*f;b.vx-=dx*f;b.vy-=dy*f; }}
+  // springs
+  for(const e of edges){ const a=nodes[e.s],b=nodes[e.t]; let dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+    const f=(d-70)*0.02*scale; dx/=d;dy/=d; a.vx+=dx*f;a.vy+=dy*f;b.vx-=dx*f;b.vy-=dy*f; }
+  // gravity to centre + integrate
+  for(const nd of nodes){ nd.vx+=(W/2-nd.x)*0.002*scale; nd.vy+=(H/2-nd.y)*0.002*scale;
+    nd.x+=nd.vx; nd.y+=nd.vy; nd.vx*=0.85; nd.vy*=0.85; }
+}
+function radius(nd){ return clustered?10:Math.max(3.5, Math.min(14, 3+Math.sqrt(nd.deg)*2.2)); }
+function fit(){ let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; for(const n of nodes){x0=Math.min(x0,n.x);y0=Math.min(y0,n.y);x1=Math.max(x1,n.x);y1=Math.max(y1,n.y);}
+  const pad=60,k=Math.min((W-pad)/(x1-x0||1),(H-pad)/(y1-y0||1),2.5); view.k=k;
+  view.x=W/2-((x0+x1)/2)*k; view.y=H/2-((y0+y1)/2)*k; render(); }
+
+function render(){
+  const showLbl = view.k>1.1;
+  const parts=[`<g transform="translate(${view.x},${view.y}) scale(${view.k})">`];
+  for(const e of edges){ const a=nodes[e.s],b=nodes[e.t];
+    const on = hot!==null && (e.s===hot||e.t===hot);
+    parts.push(`<line class="edge${on?' hot':''}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`); }
+  for(const nd of nodes){
+    const on = hot===null || nd.id===hot || edges.some(e=>(e.s===hot&&e.t===nd.id)||(e.t===hot&&e.s===nd.id));
+    const cls = 'node'+(nd.id===hot?' hot':'')+(on?'':' dim');
+    parts.push(`<g class="${cls}" data-id="${nd.id}"><circle cx="${nd.x}" cy="${nd.y}" r="${radius(nd)}" fill="${COLOR[nd.kind]}"/>`);
+    const lbl = showLbl || nd.id===hot || (hot===null && nd.deg>=6);
+    if(lbl && !clustered) parts.push(`<text class="lbl" x="${nd.x+radius(nd)+3}" y="${nd.y+3}">${nd.name}</text>`);
+    if(clustered) parts.push(`<text class="lbl" x="${nd.x}" y="${nd.y-14}" text-anchor="middle">${nd.name}</text>`);
+    parts.push(`</g>`);
+  }
+  parts.push('</g>');
+  svg.innerHTML=parts.join('');
+}
+
+// interaction: zoom, pan, hover
+svg.addEventListener('wheel',e=>{e.preventDefault();const s=Math.exp(-e.deltaY*0.0015);
+  const mx=e.offsetX,my=e.offsetY; view.x=mx-(mx-view.x)*s; view.y=my-(my-view.y)*s; view.k*=s; render();},{passive:false});
+let drag=null;
+svg.addEventListener('pointerdown',e=>{drag={x:e.offsetX,y:e.offsetY};svg.classList.add('grabbing')});
+svg.addEventListener('pointermove',e=>{
+  if(drag){view.x+=e.offsetX-drag.x;view.y+=e.offsetY-drag.y;drag={x:e.offsetX,y:e.offsetY};render();return;}
+  const g=e.target.closest('.node'); const id=g?+g.dataset.id:null; if(id!==hot){hot=id;render();}
+});
+window.addEventListener('pointerup',()=>{drag=null;svg.classList.remove('grabbing')});
+document.getElementById('search').addEventListener('input',e=>{
+  const q=e.target.value.toLowerCase(); if(!q){hot=null;render();return;}
+  const m=nodes.find(n=>n.name.toLowerCase().includes(q)); if(m){hot=m.id; view.k=1.6; view.x=W/2-m.x*view.k; view.y=H/2-m.y*view.k; render();}
+});
+document.getElementById('fit').onclick=fit;
+const lodBtn=document.getElementById('lodBtn');
+lodBtn.onclick=()=>{clustered=!clustered;lodBtn.setAttribute('aria-pressed',clustered);
+  document.getElementById('caption').textContent = clustered
+    ? 'Zoomed out to 12 clusters (community/package) · click a cluster to expand'
+    : 'Showing 50 of 1,500 most-connected nodes · scroll to zoom, drag to pan, hover to focus';
+  build(clustered?12:50);};
+document.getElementById('discChip').onclick=()=>document.getElementById('disc').classList.toggle('open');
+
+// harness
+const pane=document.getElementById('pane');
+document.getElementById('theme').onchange=e=>pane.dataset.theme=e.target.value;
+document.getElementById('motion').onchange=e=>document.documentElement.dataset.motion=e.target.value==='reduce'?'reduce':'';
+document.getElementById('density').onchange=e=>{
+  const v=e.target.value;
+  if(v==='lod'){clustered=true;lodBtn.setAttribute('aria-pressed',true);build(12);
+    document.getElementById('caption').textContent='1,500 nodes → 12 clusters (semantic zoom) · click a cluster to expand';}
+  else{clustered=false;lodBtn.setAttribute('aria-pressed',false);build(+v);
+    document.getElementById('caption').textContent=`Showing ${v} of 1,500 most-connected nodes · scroll to zoom, drag to pan, hover to focus`;}
+};
+function setState(s){
+  for(const id of ['stateLoading','stateEmpty','stateError']) document.getElementById(id).classList.remove('show');
+  svg.style.display = s==='ready'?'block':'none';
+  if(s==='loading')document.getElementById('stateLoading').classList.add('show');
+  if(s==='empty')document.getElementById('stateEmpty').classList.add('show');
+  if(s==='error')document.getElementById('stateError').classList.add('show');
+}
+document.getElementById('state').onchange=e=>setState(e.target.value);
+
+size(); window.addEventListener('resize',()=>{size();render();}); build(50);
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T16:28:52Z",
+  "generated": "2026-08-30T16:42:11Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2272,6 +2272,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0126",
+      "shortname": "ui-design-graph-canvas",
+      "datetime": "2026-08-30T16:42:11Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "/ui-design review the screen shot and consult your knowledge on graph visualization; make sure the ux works for a large graph",
+      "summary": "Reviewed the graph canvas: single-ring 2D layout piles 50 opaque box-nodes into an unreadable blob; no force-spread/zoom/LOD; disclosure wall. Produced review (rubric+ranked plan), a self-contained force-directed target mockup (dots-not-cards, labels-on-demand, zoom/pan, semantic-zoom clustering, search-first, honest caption, complete states), and DC-036. Highest-leverage fix: replace the ring with a force layout + degree-sized dots. Design-owned rebuild; LOD needs Core community query.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/graph-canvas.html"
       ],
       "tags": [],
       "outcome": "success"

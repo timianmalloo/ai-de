@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T16:28:52Z",
+  "generated": "2026-08-30T16:42:10Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1615,7 +1615,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1ae52851061693eb0031e1e5f21ede377db261c321bcfb72e2c045f0936ecf9a"
+      "sourceSha256": "347dca902de5fa471e8ddf3cbd7ed0548d61e63a2350d444cdf22057d8aeb3d7"
     },
     {
       "id": "domain-experts",
@@ -1986,6 +1986,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "972566ded69ae803c0c7d0db809c589dc7e8c8dca6ce4594ccd2bbe0b3ae500b"
+    },
+    {
+      "id": "mockup-graph-canvas",
+      "path": "docs/mockups/graph-canvas.md",
+      "title": "Graph canvas — large-graph UX (mockup)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Self-contained, dependency-free mockup of the fixed graph-canvas UX: a force-directed node-link layout (degree-sized dots coloured by kind, thin edges behind), labels-on-demand, zoom/pan/fit, search-first focus+context, semantic-zoom clustering (LOD), an honest \"showing N of M\" caption, and disclosures as a chip. Replaces the current single-ring pile of opaque cards.",
+      "tags": [
+        "mockup",
+        "ui-design",
+        "graph",
+        "canvas",
+        "force-layout",
+        "lod",
+        "semantic-zoom"
+      ],
+      "links": [
+        {
+          "to": "review-ui-graph-canvas",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "70bb5a228bae7a84d5dff744cbba88ab24fb71765630436c763893aad00d1418"
     },
     {
       "id": "mockup-knowledge-explorer",
@@ -2402,6 +2435,48 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "e6fc17eb78821401cdff091a21bb0bdef37626774fcb439d93c8fb0b6b0e5249"
+    },
+    {
+      "id": "review-ui-graph-canvas",
+      "path": "docs/reviews/ui-graph-canvas.md",
+      "title": "UI review — graph canvas (large-graph UX)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Review of the graph canvas on TheTerrace after the scaling fix let it load. The graph renders as an unreadable pile of overlapping opaque cards: the 2D layout is a single ring (fine for ~15 neighbours, catastrophic for 50), nodes are heavy boxes that occlude each other and the edges, there is no force-spread, no zoom/pan, no level-of-detail, a fixed 440px stage, and a disclosure wall on top. Target UX (mockup): a force-directed node-link layout with dots-not-cards, labels-on-demand, zoom/pan, semantic-zoom clustering, search-first focus+context, and disclosures as a chip.",
+      "tags": [
+        "ui-review",
+        "ui-design",
+        "graph",
+        "canvas",
+        "force-layout",
+        "lod",
+        "wcag",
+        "elevate"
+      ],
+      "links": [
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-graph-canvas",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0003-graph-exceeds-ipc-frame-cap",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e9f7e168edc02ed50b6bc57a1324ac16162ac853577e69c6e44163fe5b28182c"
     },
     {
       "id": "review-ui-mockups-craft-gate",
@@ -5947,6 +6022,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-context-map-join"
     },
     {
+      "id": "surface-mockups-graph-canvas",
+      "path": "docs/mockups/graph-canvas.html",
+      "title": "Graph canvas — target UX",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-graph-canvas"
+    },
+    {
       "id": "surface-mockups-knowledge-explorer",
       "path": "docs/mockups/knowledge-explorer.html",
       "title": "Knowledge Explorer — graph + node introspection (mockup)",
@@ -5963,5 +6046,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "05d278ebdd4b7fa0a7e9ffe3f67f64dcc9400fb12b4f20437ca111f654741d59"
+  "graphSha256": "186d60170295c94ef354adf27bcab5ac4a98e6acbbdeb2f040d5fb3abc8ac40e"
 };

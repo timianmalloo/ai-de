@@ -1205,3 +1205,31 @@ for both or split.*
   for a graph too large to show node-by-node, and the "narrow your focus" state. Until that exists,
   a repository whose *declared* code exceeds the cap gets a truthful truncation rather than a
   designed overview.
+
+### DC-036 — A graph is drawn with a layout that does not scale to its node count
+
+- **Signature:** a node-link view uses a layout that is fine for a handful of nodes and degenerate for
+  many — a single ring, a fixed grid, a naive tree — so past a small threshold the nodes pile up and
+  overlap into an unreadable blob. Often paired with heavy node glyphs (opaque cards/boxes with borders
+  and backgrounds) that occlude each other and hide the edges, and with no zoom/pan/LOD to recover.
+- **Why it survives:** it looks fine in the demo and the tests, which use a tiny rooted neighbourhood
+  (a root + a few neighbours on the ring). The failure appears only on a real graph, and the layout
+  choice is usually justified in a comment as deliberate ("NOT a force sim") without the node-count at
+  which it breaks being stated or tested.
+- **Instances:**
+  - 2026 — the graph canvas (`CanvasPage.cs`) laid the 2D view out as a single ring (root centred,
+    all neighbours on one ring) and drew nodes as opaque padded boxes. On TheTerrace (~50 nodes shown)
+    it rendered as a pile of overlapping cards with edges hidden and labels occluded — while the
+    surface's own spec (`knowledge-exploration.md` US-K11) already called for force layout / semantic
+    zoom. Review: `docs/reviews/ui-graph-canvas.md`; target mockup `docs/mockups/graph-canvas.html`.
+- **Control:** the graph view uses a layout whose readability does not degrade with node count — a
+  force-directed spread (nodes settle apart) and/or semantic-zoom aggregation (clusters), with
+  lightweight glyphs (degree-sized dots, edges behind) and zoom/pan. State the node count the layout
+  is good to, and render an honest "showing N of M" plus a "narrow your focus" state past it.
+- **The generalisation to apply elsewhere:** any visual layout has a capacity; before shipping one,
+  name the input size it stays legible at and what happens past it. A layout with no stated capacity
+  and no degrade-to-aggregate path is a pile waiting for a real dataset. Reading is parallel only if
+  the eye can separate the marks — overlap destroys it.
+- **Status:** `partially-controlled` — the review + target mockup (force layout, dots, labels-on-demand,
+  zoom/pan, LOD, honest caption) are landed; the CanvasPage rebuild is the follow-on `/implement`
+  (Design), and real LOD clustering needs the Core community/aggregation query (session-contracts §4c).
