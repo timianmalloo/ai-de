@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T22:01:27Z",
+  "generated": "2026-08-30T22:10:31Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1495,7 +1495,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  Rail[Explore rail item] -->|Toggle| SMC[ShellModeController]\n  SMC -->|Workbench| WH[WorkbenchHost.Content = Shell.Manager]\n  SMC -->|Explorer| EX[WorkbenchHost.Content = ExplorerSurface]\n  EX --> G[CanvasSurface 'explorer-graph']\n  EX --> R[NodeReaderView]\n  G -->|NodeSelected CanvasNodeRef| R\n  R -->|activate edge -> RefreshAsync target| G\n  G -. GraphSource .-> VM[CanvasGraphViewModel over IWorkspaceQueries]"
         }
       ],
-      "sourceSha256": "0ed1ea44f15925d87cca3f52ecbc315b67a38fc963bc72c7281e8aec2da79f5e"
+      "sourceSha256": "9412b7710088ab7cdfadd54c9d9beb42f0c7d29e2020e5c0fad9fcf461415cb6"
     },
     {
       "id": "design-phase-1-walking-skeleton",
@@ -6302,5 +6302,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "42dc6645d78920e4d427304857c20db7a91de45c023d1ab82cf5750404b501b5"
+  "graphSha256": "52f317dd5a5b0b6cf34d021e902d83cf0ba80deea04880d78e3a02b8cf8dd8c2"
 };

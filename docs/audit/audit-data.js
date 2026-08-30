@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T22:01:27Z",
+  "generated": "2026-08-30T22:10:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2774,6 +2774,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/NodeReaderView.cs",
+        "src/AiDe.App/Workbench/ExplorerSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0153",
+      "shortname": "implement-explorer-responsive-stacking-us-e8",
+      "datetime": "2026-08-30T22:10:31Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do the next steps (Explorer responsive stacking US-E8)",
+      "summary": "ExplorerSurface now responsive: above StackBelowWidth (760) panes are side-by-side (columns); below it they stack graph-over-reader (rows) so both halves stay usable on a narrow single-monitor window. ApplyLayoutForWidth is a pure fn of width; recomputed on SizeChanged. 1 test; App.Tests 143->144 green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
         "src/AiDe.App/Workbench/ExplorerSurface.cs"
       ],
       "tags": [],

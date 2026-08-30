@@ -152,8 +152,11 @@ flowchart LR
   `graph.FocusTarget.TryFocus()` (guarded on ready/not-obscured). The empty reader (one stop) still
   participates: a Tab either way returns to the graph, so there is no trap in the empty state (US-E7).
   Covered by `Reader_ShiftTabAtFirstStop_LeavesBackward`, `Reader_TabAtLastStop_LeavesForward`,
-  `Reader_TabInsideReader_DoesNotLeave`, `Reader_EmptyState_LeavesEitherWay`. Responsive stacking
-  (US-E8) remains for a later pass.
+  `Reader_TabInsideReader_DoesNotLeave`, `Reader_EmptyState_LeavesEitherWay`.
+- **Responsive stacking (US-E8) — DONE.** `ExplorerSurface` recomputes its layout on size change: above
+  `StackBelowWidth` (760) the panes sit side by side (columns); below it they stack graph-over-reader
+  (rows), so both halves stay usable on a narrow single-monitor window. The rule is a pure function of
+  width (`ApplyLayoutForWidth`), tested by `Explorer_NarrowWidthStacks_WideWidthIsSideBySide`.
 
 ## Test plan (red-first; the union of the applicable Testing-Strategy triggers)
 - **T1 — `ExplorerRoundTrip_DoesNotRebuildTheWorkbench` (the key control, mode-level DC-029).** Given a

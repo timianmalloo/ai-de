@@ -272,4 +272,41 @@ public sealed class ExplorerModeTests
                 reader.BoundaryLeave(reader.FocusStops[0], shift: false));
         });
     }
+
+    // US-E8 — responsive layout: wide is side-by-side (columns), narrow stacks (rows). Pure function
+    // of width, so the rule is asserted without rendering: a narrow single-monitor window keeps both
+    // panes usable instead of squeezing the reader to its minimum.
+    [Fact]
+    public void Explorer_NarrowWidthStacks_WideWidthIsSideBySide()
+    {
+        OnSta(() =>
+        {
+            var graph = new CanvasSurface("explorer", "Explorer");
+            var reader = new NodeReaderView();
+            var surface = new ExplorerSurface(graph, reader) { StackBelowWidth = 760 };
+
+            try
+            {
+                Assert.Equal(ExplorerLayout.SideBySide, surface.Layout);   // wide default
+                Assert.Equal(3, surface.ColumnDefinitions.Count);
+                Assert.Empty(surface.RowDefinitions);
+
+                surface.ApplyLayoutForWidth(600);                          // narrow → stacked
+                Assert.Equal(ExplorerLayout.Stacked, surface.Layout);
+                Assert.Equal(3, surface.RowDefinitions.Count);
+                Assert.Empty(surface.ColumnDefinitions);
+
+                surface.ApplyLayoutForWidth(1000);                         // wide → side-by-side
+                Assert.Equal(ExplorerLayout.SideBySide, surface.Layout);
+                Assert.Equal(3, surface.ColumnDefinitions.Count);
+
+                surface.ApplyLayoutForWidth(0);                            // pre-measure → stays wide
+                Assert.Equal(ExplorerLayout.SideBySide, surface.Layout);
+            }
+            finally
+            {
+                graph.Dispose();
+            }
+        });
+    }
 }
