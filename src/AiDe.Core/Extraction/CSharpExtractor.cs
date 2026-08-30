@@ -607,6 +607,57 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         counts(unresolvedCount, generatedCount);
     }
 
+    /// <summary>The verbs a SQL statement can begin with.</summary>
+    private static readonly string[] SqlVerbs =
+        ["SELECT", "INSERT", "UPDATE", "DELETE", "MERGE", "WITH"];
+
+    /// <summary>
+    /// Whether a string literal is a SQL statement rather than a sentence that mentions one.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The gate the first version of this reader did not have.</b> Without it,
+    /// <c>UPDATE\s+(\w+)</c> matches the sentence "update the record" and emits an edge to a table
+    /// called <c>the</c>. MEASURED on a real repository: 63 prose strings would have produced a
+    /// confident wrong edge alongside the genuine ones.</para>
+    ///
+    /// <para><b>Written as a loop rather than a regex, deliberately.</b> The regex form of this test
+    /// — <c>(?:^|;)\s*(?:SELECT|INSERT\s+INTO|…)</c> — silently returned false for
+    /// <c>"INSERT INTO dbo.AssessmentJob (…)"</c>, a string that plainly begins with one of its own
+    /// alternatives, and cost more to diagnose than the check is worth. A statement begins after the
+    /// start of the string or after a semicolon; that is three lines of code that can be read and
+    /// believed.</para>
+    /// </remarks>
+    internal static bool LooksLikeSql(string text)
+    {
+        foreach (var start in Starts(text))
+        {
+            var rest = text[start..].TrimStart();
+
+            foreach (var verb in SqlVerbs)
+            {
+                if (rest.StartsWith(verb, StringComparison.OrdinalIgnoreCase)
+                    && (rest.Length == verb.Length || char.IsWhiteSpace(rest[verb.Length])))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+
+        // The start of the string, and after every statement separator in it: one literal often
+        // carries several statements, and only the first would otherwise be considered.
+        static IEnumerable<int> Starts(string text)
+        {
+            yield return 0;
+
+            for (var i = 0; i < text.Length; i++)
+            {
+                if (text[i] == ';') yield return i + 1;
+            }
+        }
+    }
+
     // The table a statement names. Only the forms whose next token IS a table: a FROM, a JOIN, an
     // INSERT INTO or an UPDATE. `SELECT x FROM (SELECT ...)` yields nothing rather than a guess.
     private static readonly Regex SqlTableReference = new(
@@ -650,7 +701,32 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
             {
                 if (!literal.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.StringLiteralExpression)) continue;
 
-                var value = literal.Token.ValueText;
+                // THE WHOLE STATEMENT, not the fragment. Real code splits SQL across concatenated
+                // literals — `"SELECT ... " + "FROM dbo.AssessmentJob;"` — and the piece holding the
+                // table does not begin with a verb. Reading fragments individually is how the first
+                // version of this reader matched the sentence "update the record" and emitted an
+                // edge to a table called `the`; reading them individually and THEN demanding a verb
+                // found nothing at all on the repository that motivated it. The concatenation is one
+                // constant, so it is read as one.
+                var expression = Outermost(literal);
+
+                // Only once per concatenation: every literal in the chain has the same outermost.
+                if (!ReferenceEquals(expression, literal)
+                    && !literal.Equals(FirstLiteralIn(expression)))
+                {
+                    continue;
+                }
+
+                // Joined from the literals themselves rather than through the semantic model. The
+                // model's constant folding needs a resolved compilation, and it returns nothing on a
+                // project whose packages are not restored — which is most projects on a fresh clone,
+                // and was every fixture in this file's own tests. A chain of string literals is a
+                // constant by inspection.
+                if (Concatenated(expression) is not { } value) continue;
+
+                // Shape first, keywords second. The other order is how prose becomes a schema.
+                if (!LooksLikeSql(value)) continue;
+
                 var matches = SqlTableReference.Matches(value);
                 if (matches.Count == 0) continue;
 
@@ -662,6 +738,9 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
 
                 if (declaration is null) continue;
 
+                // The model is needed only to name the OWNING TYPE, and only once the literal has
+                // already proved itself SQL — so it is built for a file that has some, and never for
+                // one that merely mentions the word FROM.
                 model ??= compilation.GetSemanticModel(tree);
 
                 if (model.GetDeclaredSymbol(declaration, cancellationToken) is not INamedTypeSymbol owner) continue;
@@ -680,6 +759,54 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
             }
         }
     }
+
+    /// <summary>
+    /// The text of a chain of string literals, or null when anything else is in it.
+    /// </summary>
+    /// <remarks>
+    /// A chain containing an identifier or a call cannot be read here, and is not guessed at: a name
+    /// assembled at runtime is exactly the case the literal-only rule exists to exclude. Returning
+    /// null for it means the statement is skipped whole rather than half-read into a wrong table.
+    /// </remarks>
+    private static string? Concatenated(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression)
+    {
+        if (expression is Microsoft.CodeAnalysis.CSharp.Syntax.LiteralExpressionSyntax single)
+        {
+            return single.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.StringLiteralExpression)
+                ? single.Token.ValueText
+                : null;
+        }
+
+        if (expression is not Microsoft.CodeAnalysis.CSharp.Syntax.BinaryExpressionSyntax binary
+            || !binary.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.AddExpression))
+        {
+            return null;
+        }
+
+        return Concatenated(binary.Left) is { } left && Concatenated(binary.Right) is { } right
+            ? left + right
+            : null;
+    }
+
+    /// <summary>The whole constant expression a literal belongs to, following `+` chains upward.</summary>
+    private static Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax Outermost(
+        Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression)
+    {
+        while (expression.Parent is Microsoft.CodeAnalysis.CSharp.Syntax.BinaryExpressionSyntax binary
+            && binary.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.AddExpression))
+        {
+            expression = binary;
+        }
+
+        return expression;
+    }
+
+    /// <summary>The first string literal inside an expression, so a chain is handled exactly once.</summary>
+    private static Microsoft.CodeAnalysis.CSharp.Syntax.LiteralExpressionSyntax? FirstLiteralIn(
+        Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) =>
+        expression.DescendantNodesAndSelf()
+            .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.LiteralExpressionSyntax>()
+            .FirstOrDefault(l => l.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.StringLiteralExpression));
 
     /// <summary>
     /// The bare table name, matching the spelling the schema readers emit.

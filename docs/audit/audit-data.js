@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-30T20:30:35Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-30T20:46:56Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2648,6 +2648,32 @@ window.AUDIT_DATA = {
         "defect-fix"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0142",
+      "shortname": "uses-table-in-joins-prose-defect-ef-fold-audit",
+      "datetime": "2026-08-30T20:46:24Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "**I shipped a defect last turn and this turn's sweep caught it.** The `uses_table` reader matched a\nSQL keyword followed by a word ANYWHERE in a string literal, so *\"we update the record\"* produced an\nedge to a table called `the`. MEASURED: 63 prose strings in TheTerrace, and its `uses_table` count\nfell from **150 to 56** once the reader required a statement SHAPE.\n\nUnder-matching hides real facts; over-matching invents them — and the invented ones are worse,\nbecause they arrive labelled **Verified**. Same root cause as DC-033 in the opposite direction: the\nmatcher's fit to real input had never been measured. **A matcher is not finished until you know both\nwhat it misses and what it invents.**\n\n**The naive fix broke the real case, which is exactly why both directions must be measured\ntogether.** Requiring each literal to begin with a verb found **nothing at all** on the repository\nthat motivated the feature — real code splits SQL across concatenated literals, and the fragment\nholding `FROM dbo.AssessmentJob` begins with `FROM`. The reader folds the `+` chain and reads it as\none statement; a chain containing anything non-literal is skipped whole rather than half-read.\n\nA smaller lesson: the regex form of that shape test silently returned false for\n`\"INSERT INTO dbo.AssessmentJob (…)\"` — a string plainly beginning with one of its own alternatives —\nand cost more to diagnose than the check was worth. It is explicit code now.\n\n**`uses_table` reaches the Joins pane.** A distinct kind, never folded into `maps_to`: a store class\nissuing four statements against three tables is not mapped to any of them, and counting usage as\nmapping would make the verified/inferred ratio the pane exists to show meaningless. BioHacker's pane\ngoes from **0 verified / 8 inferred to 57 / 8** — a repository that showed nothing now shows what its\ncode actually touches.\n\n**Step 2 needed no work and step 3 was answered by measurement.** The EF reader ALREADY folds\n`CreateTable`, `AddColumn`, `DropColumn`, `DropTable`, `RenameTable` and raw `Sql` — I assumed it\nmight not, without checking, which is the habit this session keeps catching. Measured against real\nusage: the operations it does not handle (`CreateIndex` 113, `AddForeignKey` 19, `AlterColumn`) do\nnot change which tables or columns EXIST. One genuine gap found and closed: `RenameColumn` was\nunhandled with no default case, so a renamed column silently kept its old name — a wrong fact. EF\nstates renames in named arguments, so unlike raw SQL it is simply readable.\n\n**Python and TypeScript do not embed SQL, so nothing was built for them.** The counts looked\npromising — 186, 61, 1,162 \"SQL literals\" — and sampling showed *\"update the\"*, *\"select more than\none option from this\"*, and **zero** files containing `insert into`. Building `uses_table` there\nwould have emitted edges from English prose. Evidence for NOT building something is worth as much as\nevidence for building it.\n\n**The measurement log earns its keep at two readings.** Verified joins across the three repositories\nmoved **64 → 120**, **0 → 57**, **35 → 50**, with assertion counts slightly DOWN as prose noise left\nthe graph. One reading is a point; two is a direction, and the drift is now in `git diff` rather than\nin my memory of last turn's numbers.\n\n840 tests green (App 137, Core 703). Eight gates clean. Zero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Surface uses_table in the joins pane, check the EF reader folds drops, sweep other extractors for the same edge, and take a second measurement reading",
+      "done_when": "The joins pane shows usage without laundering it as mapping; the EF fold is verified against real operation usage; the Python/TS sweep is decided on evidence; a second reading is recorded; gates green; merged and published",
+      "change": "cl-0090",
+      "git": {
+        "sha": "87f04b04886d1fb8a5a0c239c253565e765e81b7",
+        "short": "87f04b048",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false
+      }
     }
   ],
   "changes": [
@@ -4879,6 +4905,32 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "fd8516ff7fafe459cebb0ce2f55e68de32bc1881",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0090",
+      "datetime": "2026-08-30T20:46:13Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "A matcher that invents facts is worse than one that misses them",
+      "prompt": null,
+      "summary": "**I shipped a defect last turn and this turn's sweep caught it.** The `uses_table` reader matched a\nSQL keyword followed by a word ANYWHERE in a string literal, so *\"we update the record\"* produced an\nedge to a table called `the`. MEASURED: 63 prose strings in TheTerrace, and its `uses_table` count\nfell from **150 to 56** once the reader required a statement SHAPE.\n\nUnder-matching hides real facts; over-matching invents them — and the invented ones are worse,\nbecause they arrive labelled **Verified**. Same root cause as DC-033 in the opposite direction: the\nmatcher's fit to real input had never been measured. **A matcher is not finished until you know both\nwhat it misses and what it invents.**\n\n**The naive fix broke the real case, which is exactly why both directions must be measured\ntogether.** Requiring each literal to begin with a verb found **nothing at all** on the repository\nthat motivated the feature — real code splits SQL across concatenated literals, and the fragment\nholding `FROM dbo.AssessmentJob` begins with `FROM`. The reader folds the `+` chain and reads it as\none statement; a chain containing anything non-literal is skipped whole rather than half-read.\n\nA smaller lesson: the regex form of that shape test silently returned false for\n`\"INSERT INTO dbo.AssessmentJob (…)\"` — a string plainly beginning with one of its own alternatives —\nand cost more to diagnose than the check was worth. It is explicit code now.\n\n**`uses_table` reaches the Joins pane.** A distinct kind, never folded into `maps_to`: a store class\nissuing four statements against three tables is not mapped to any of them, and counting usage as\nmapping would make the verified/inferred ratio the pane exists to show meaningless. BioHacker's pane\ngoes from **0 verified / 8 inferred to 57 / 8** — a repository that showed nothing now shows what its\ncode actually touches.\n\n**Step 2 needed no work and step 3 was answered by measurement.** The EF reader ALREADY folds\n`CreateTable`, `AddColumn`, `DropColumn`, `DropTable`, `RenameTable` and raw `Sql` — I assumed it\nmight not, without checking, which is the habit this session keeps catching. Measured against real\nusage: the operations it does not handle (`CreateIndex` 113, `AddForeignKey` 19, `AlterColumn`) do\nnot change which tables or columns EXIST. One genuine gap found and closed: `RenameColumn` was\nunhandled with no default case, so a renamed column silently kept its old name — a wrong fact. EF\nstates renames in named arguments, so unlike raw SQL it is simply readable.\n\n**Python and TypeScript do not embed SQL, so nothing was built for them.** The counts looked\npromising — 186, 61, 1,162 \"SQL literals\" — and sampling showed *\"update the\"*, *\"select more than\none option from this\"*, and **zero** files containing `insert into`. Building `uses_table` there\nwould have emitted edges from English prose. Evidence for NOT building something is worth as much as\nevidence for building it.\n\n**The measurement log earns its keep at two readings.** Verified joins across the three repositories\nmoved **64 → 120**, **0 → 57**, **35 → 50**, with assertion counts slightly DOWN as prose noise left\nthe graph. One reading is a point; two is a direction, and the drift is now in `git diff` rather than\nin my memory of last turn's numbers.\n\n840 tests green (App 137, Core 703). Eight gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/CSharpExtractor.cs",
+        "src/AiDe.Core/Projections/JoinProjection.cs",
+        "docs/measurements/repositories.jsonl"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "87f04b04886d1fb8a5a0c239c253565e765e81b7",
         "branch": "session/phase3-pane-probes",
         "pushed": false,
         "commits": []

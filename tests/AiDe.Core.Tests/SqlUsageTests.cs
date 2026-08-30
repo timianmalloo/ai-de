@@ -107,6 +107,88 @@ public sealed class SqlUsageTests : IDisposable
     }
 
     [Fact]
+    public async Task ProseThatMENTIONSAKeywordIsNotAStatement()
+    {
+        // THE DEFECT THIS FILE SHIPPED AND THEN CAUGHT. Matching `UPDATE\s+(\w+)` anywhere in a
+        // string turns the sentence "update the record" into an edge to a table called `the`.
+        // MEASURED: 63 prose strings in one repository would have produced confident wrong edges,
+        // and removing them took that repository's uses_table count from 150 to 56.
+        //
+        // A SQL literal is a STATEMENT. English sentences do not begin with SELECT or UPDATE.
+        var facts = await ReadAsync("""
+            namespace Shop;
+
+            public class Copy
+            {
+                public string A => "Suggests a scoreline from the table, form and team news.";
+                public string B => "We update the record when a member joins.";
+                public string C => "declared in AiProviders.All but absent from the registry";
+            }
+            """);
+
+        Assert.DoesNotContain(facts, a => a.Predicate == "uses_table");
+    }
+
+    [Fact]
+    public async Task SqlSplitAcrossConcatenatedLiteralsIsReadAsOneStatement()
+    {
+        // Real code writes SQL this way, and the piece holding the table does not begin with a verb.
+        // Reading fragments individually is what let prose through; demanding a verb of each
+        // fragment found nothing at all on the repository that motivated the feature. The chain is
+        // one constant, so it is read as one.
+        var facts = await ReadAsync("""
+            namespace Shop;
+
+            public class JobStore
+            {
+                public string Sql =>
+                    "SELECT TOP 1 JobId, State " +
+                    "FROM dbo.AssessmentJob ORDER BY CreatedUtc DESC;";
+            }
+            """);
+
+        Assert.Contains(facts, a =>
+            a.Subject == "Shop.JobStore" && a.Predicate == "uses_table" && a.Object == "table:AssessmentJob");
+    }
+
+    [Fact]
+    public async Task AChainContainingSomethingBuiltAtRuntimeIsNotRead()
+    {
+        // A table name assembled at runtime is exactly what the literal-only rule excludes. Folding
+        // only the literal halves would read `"SELECT * FROM " + table` as naming no table, or
+        // worse, as naming whatever followed.
+        var facts = await ReadAsync("""
+            namespace Shop;
+
+            public class Dynamic
+            {
+                private const string Name = "Orders";
+                public string Sql => "SELECT * FROM " + Name;
+            }
+            """);
+
+        Assert.DoesNotContain(facts, a => a.Predicate == "uses_table");
+    }
+
+    [Fact]
+    public async Task ASecondStatementInTheSameLiteralIsAlsoRead()
+    {
+        // One literal often carries several statements separated by semicolons, and only the first
+        // would be considered if the shape test looked at the start of the string alone.
+        var facts = await ReadAsync("""
+            namespace Shop;
+
+            public class Cleanup
+            {
+                public string Sql => "DELETE FROM Candidate WHERE Id=@i; DELETE FROM UploadJob WHERE Id=@i;";
+            }
+            """);
+
+        Assert.Contains(facts, a => a.Predicate == "uses_table" && a.Object == "table:Candidate");
+        Assert.Contains(facts, a => a.Predicate == "uses_table" && a.Object == "table:UploadJob");
+    }
+
+    [Fact]
     public async Task ATemporaryOrVariableTableIsNotASchemaTable()
     {
         var facts = await ReadAsync("""
