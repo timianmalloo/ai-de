@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T21:31:11Z",
+  "generated": "2026-08-30T21:52:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2742,6 +2742,23 @@ window.AUDIT_DATA = {
         "filter",
         "ui-design"
       ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0150",
+      "shortname": "investigate-graph-kind-and-knowledge",
+      "datetime": "2026-08-30T21:52:28Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "why is knowledge zero; why bicep reads knowledge; are the 'not resolved' disclosures external or a gap; split infra from data; do next steps",
+      "summary": "INV-0004: Knowledge=0 is code-only extractors (docs not indexed, US-K1 Core work); bicep 'knowledge' = coarse node_kind shown where fine has_type meant (reader now prefers has_type); disclosures mostly by-design, a few extractor gaps. Filter split Infra from Data. DC-041 registered; Core handoffs recorded. App.Tests 139 green + P2-FOCUS-03.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0004-graph-kind-taxonomy-and-knowledge.md"
+      ],
+      "tags": [],
       "outcome": "success"
     }
   ],

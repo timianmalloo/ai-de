@@ -96,9 +96,22 @@ public sealed class NodeReaderView : ContentControl
     {
         var root = new StackPanel { Margin = new Thickness(16, 14, 16, 14) };
 
-        // Header: title + kind.
+        // Prefer the specific has_type (azure-resource, table, class) over the node's coarse kind
+        // (the dimensional source-vs-knowledge classification), so a bicep resource reads
+        // "azure-resource" rather than the confusing "knowledge".
+        var typeLabel = node.Kind;
+        var typeEdge = edges.FirstOrDefault(e =>
+            string.Equals(e.Predicate, "has_type", StringComparison.OrdinalIgnoreCase)
+            && (e.From == node.Id || e.To == node.Id));
+        if (typeEdge is not null)
+        {
+            var t = string.Equals(typeEdge.From, node.Id, StringComparison.Ordinal) ? typeEdge.To : typeEdge.From;
+            if (!string.IsNullOrWhiteSpace(t)) { typeLabel = t; }
+        }
+
+        // Header: title + type.
         root.Children.Add(Text(node.Label, 15, FontWeights.SemiBold));
-        root.Children.Add(Muted(node.Kind + (node.Context is { Length: > 0 } c ? "  ·  " + c : ""), 12));
+        root.Children.Add(Muted(typeLabel + (node.Context is { Length: > 0 } c ? "  ·  " + c : ""), 12));
 
         // Content placeholder — honest about what Phase 2 will add (ADR-0018).
         root.Children.Add(Divider());
@@ -109,7 +122,7 @@ public sealed class NodeReaderView : ContentControl
         // Metadata.
         root.Children.Add(Divider());
         root.Children.Add(MetaRow("id", node.Id));
-        root.Children.Add(MetaRow("kind", node.Kind));
+        root.Children.Add(MetaRow("type", typeLabel));
         root.Children.Add(MetaRow("context", node.Context ?? "—"));
 
         // Typed edges — the walk affordance (US-E4/E5).

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T21:31:11Z",
+  "generated": "2026-08-30T21:52:28Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1749,7 +1749,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "451f83eeaa89ed8bbf415dcdef844ab3c2be397d4c493bb975fff81cfce6b728"
+      "sourceSha256": "da1a3a4653e453c69bb06686d97d4e62b8ad0fb99dc947963cb61dafb6b50b56"
     },
     {
       "id": "domain-experts",
@@ -2825,7 +2825,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "577cefc93906f5c60488c7bc8548a75a50234bc1f10b4eb54eb4a62a192065a4"
+      "sourceSha256": "06a96dc18409bf615fea200046633dc4dea352d1b0bdce340d8fffbce3633fac"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -2892,6 +2892,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "87360ac96ef97fa830bbcee369a8ec3a8f5545eae3d45d82dbb9433a460e93ef"
+    },
+    {
+      "id": "inv-0004-graph-kind-taxonomy-and-knowledge",
+      "path": "docs/investigations/INV-0004-graph-kind-taxonomy-and-knowledge.md",
+      "title": "INV-0004 — Why 'Knowledge' is 0, the bicep-as-knowledge mislabel, and the 'not resolved' disclosures",
+      "type": "investigation",
+      "status": "resolved",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Three related findings from the graph on TheTerrace. (1) The category filter's Knowledge/Specs chips are 0 because the app's graph is built from CODE extractors (C#, python, typescript, EF/SQL schema, bicep/azure) — the repo's docs/knowledge artifacts (markdown specs, ADRs, designs) are not extracted into it. (2) A bicep resource reads \"kind: knowledge\" in the reader because the system has two 'kind' notions — the fine has_type (azure-resource) and a coarse node_kind (source vs knowledge, a dimensional Type-2 classification); the reader was showing node_kind. (3) The \"not resolved\" disclosures are the projection's honest analysis boundaries — mostly legitimate, a few extractor coverage gaps. Design fixes landed; the node_kind and neighbour-kind items are handed to Core.",
+      "tags": [
+        "graph",
+        "taxonomy",
+        "kind",
+        "knowledge",
+        "extractor",
+        "disclosures",
+        "investigation"
+      ],
+      "links": [
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-knowledge-explorer-mode",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "99a6c7f2d3ca7e12e5c0d8902df3508280fda1e3ce975c545d37922ff083a7dc"
     },
     {
       "id": "kb-ai-native-ide-shell",
@@ -6269,5 +6302,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "47e02fbf9034d2c5f22986325d0a319feb78e1a06c26408475aa9a2b37a5d657"
+  "graphSha256": "ea47162d9c1c339a3b869187f8eae4564d25801d436f6161dc7ef3c497d3de18"
 };

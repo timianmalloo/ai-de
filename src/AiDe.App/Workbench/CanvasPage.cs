@@ -126,18 +126,22 @@ internal static class CanvasPage
             var CATS = [
               { id: 'code', label: 'Code', color: '#5B9DD9' },
               { id: 'data', label: 'Data', color: '#5FB98F' },
+              { id: 'infra', label: 'Infra', color: '#E0955F' },
               { id: 'specs', label: 'Specs', color: '#B08AD0' },
               { id: 'knowledge', label: 'Knowledge', color: '#D8A650' }
             ];
-            var activeCats = { code: true, data: true, specs: true, knowledge: true };
+            var activeCats = { code: true, data: true, infra: true, specs: true, knowledge: true };
 
-            // Map a node's declared kind to one of the four categories. Code = C# types (and anything
-            // unrecognised); Data = database / data-model + infra (tables, columns, schema, azure);
-            // Specs and Knowledge = docs — forward-compatible, the code graph carries few of these yet.
+            // Map a node's declared has_type to one of the categories the operator prunes by. Code =
+            // program symbols (C#, python, typescript, and anything unrecognised); Data = database and
+            // data models (tables, columns, schema, SQL); Infra = deployment/infrastructure (bicep,
+            // azure); Specs and Knowledge = docs — forward-compatible, the code graph carries few of
+            // these yet (the graph is built from CODE extractors; docs/markdown are not indexed into it).
             function categoryOf(kind) {
               var k = (kind || '').toLowerCase();
+              if (k.indexOf('azure') === 0 || k.indexOf('bicep') === 0) { return 'infra'; }
               if (k === 'table' || k === 'column' || k === 'schema' || k === 'view' || k === 'index'
-                  || k.indexOf('azure') === 0 || k.indexOf('sql') === 0) { return 'data'; }
+                  || k.indexOf('sql') === 0) { return 'data'; }
               if (k === 'spec' || k === 'requirement' || k === 'acceptance') { return 'specs'; }
               if (k === 'knowledge' || k === 'doc' || k === 'adr' || k === 'design' || k === 'note'
                   || k === 'decision-note' || k === 'markdown' || k === 'html' || k === 'diagram'

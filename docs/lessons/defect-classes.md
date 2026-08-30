@@ -1452,3 +1452,11 @@ for both or split.*
   never a licence to freeze its data source.
 - **Status:** `partially-controlled` — the live-read + refresh-on-entry fix is landed; a realized-shell
   integration test (Explorer shows the graph after a workspace opens) is a follow-on.
+
+
+### DC-041 — Two "kind" fields with different granularity, and the coarse one shown where the fine was meant
+- **Signature:** a domain has both a fine type (`has_type` → `azure-resource`, `table`, `class`) and a coarse dimensional class (`node_kind` → `source` vs `knowledge`), and a reader/label displays the coarse one where a user expects the fine one — a bicep resource reads "kind: knowledge".
+- **Why it survives:** both fields are individually correct and individually tested; the overview path uses the fine one and the describe/reader path uses the coarse one, so no single test compares the two surfaces (E2E-D: component tests that can't see each other).
+- **Instances:** 2025 — Explorer reader showed `describe.Node.NodeKind` (coarse `node_kind`) so an azure-resource read "knowledge"; the overview + category filter used `has_type` and were correct — the two surfaces disagreed.
+- **Control:** when two fields name overlapping concepts at different granularity, name them distinctly (`Type` vs `Class`), and the surface that a user reads chooses the fine one unless the coarse one is explicitly what's asked. Design fix: reader prefers the `has_type` edge over the coarse `node_kind`. Root fix (Core): the extractor should not emit `knowledge` for extracted source, and neighbours should carry their real `has_type`, not a hardcoded `"source"`.
+- **Status:** partially-controlled (reader fixed in Design; extractor/neighbour labels handed to Core — INV-0004).
