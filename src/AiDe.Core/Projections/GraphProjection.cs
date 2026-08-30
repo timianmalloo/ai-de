@@ -19,7 +19,21 @@ namespace AiDe.Core.Projections;
 /// <c>string</c> alone. Ranking by raw degree therefore puts the BCL at the centre of a picture of
 /// somebody's domain, and capping by raw degree drops their code to keep it.
 /// </remarks>
-public sealed record GraphNode(string Id, string Label, string Kind, int Degree, bool IsExternal);
+/// <param name="IsKnowledge">
+/// Whether the producer declared this node as knowledge rather than source.
+/// </param>
+/// <remarks>
+/// <b>Reported by the user: the Knowledge chip read 0 on a repository holding 2,343 knowledge
+/// nodes.</b> The graph carried each node's fine <c>Kind</c> — and on that repository the knowledge
+/// kinds are <c>spec</c> and <c>knowledge-epl-fan-platform</c>, which is a name that repository
+/// invented. A chip matching a fixed list of type names cannot work across repositories, and
+/// widening the list only moves the problem to the next repository (DC-033).
+///
+/// The coarse class is a DECLARED dimension — the producer says it (<c>node_class</c>) — so a filter
+/// can ask the question directly instead of recognising spellings.
+/// </remarks>
+public sealed record GraphNode(
+    string Id, string Label, string Kind, int Degree, bool IsExternal, bool IsKnowledge = false);
 
 /// <summary>One relationship, with the status of the evidence behind it.</summary>
 public sealed record GraphEdge(string From, string To, string Predicate, VerificationStatus Status);
@@ -119,6 +133,7 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
             .ToHashSet(StringComparer.Ordinal);
 
         var kinds = new Dictionary<string, string>(StringComparer.Ordinal);
+        var knowledge = new HashSet<string>(StringComparer.Ordinal);
         var declaredIn = new Dictionary<string, string>(StringComparer.Ordinal);
         var mentioned = new HashSet<string>(StringComparer.Ordinal);
         var candidateEdges = new List<GraphEdge>();
@@ -138,6 +153,10 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
                 if (assertion.Predicate == "has_type")
                 {
                     kinds[assertion.Subject] = assertion.Object;
+                }
+                else if (assertion.Predicate == "node_class" && assertion.Object == "knowledge")
+                {
+                    knowledge.Add(assertion.Subject);
                 }
                 else if (assertion.Predicate == "declared_in")
                 {
@@ -205,7 +224,8 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
         return new WorkspaceGraph(
             [.. nodes.Select(kv => new GraphNode(
                 kv.Key, Label(kv.Key), kinds.GetValueOrDefault(kv.Key, "external"), kv.Value,
-                IsExternal: !declared.Contains(kv.Key)))],
+                IsExternal: !declared.Contains(kv.Key),
+                IsKnowledge: knowledge.Contains(kv.Key)))],
             visible,
             omitted,
             [.. disclosures.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)],

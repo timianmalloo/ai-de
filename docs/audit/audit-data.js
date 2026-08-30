@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-30T22:37:43Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-30T23:22:01Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2881,6 +2881,32 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0159",
+      "shortname": "knowledge-chip-zero-generation-and-declared-class",
+      "datetime": "2026-08-30T23:22:01Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "on #2: Its ok if docs and code are not linkable and orthogonal, they will tend to be orthogonal which is why pruning the graph on one or the other is a meaningful cut. do not infer... the graph should only be on observable links/relationships\ni did not see knowledge nodes - it still says 0 for the terrace\ndo next steps",
+      "summary": "**The Knowledge chip read 0 on a repository holding 2,343 knowledge nodes. Two causes, both Core's.**\n\n**The store was cached from a build that had no knowledge reader.** `ScopeFingerprints` already\ncarried an `ExtractorGeneration` for exactly this — a constant in every fingerprint so that upgrading\nthe product invalidates the sidecar — and nobody bumped it. So the knowledge extractor, `node_class`,\ncomment stripping in four readers, the SQL fold and `uses_table` all shipped while every existing\nworkspace kept serving results produced by the previous generation. Bumped to `2026-08-30.1`; an\nupgraded app now rebuilds rather than reusing.\n\n**And the graph carried only each node's FINE kind.** MEASURED: TheTerrace's knowledge types are\n`spec` and **`knowledge-epl-fan-platform`** — a name that repository invented. A chip matching a\nfixed list of type names cannot work across repositories, and widening the list only moves the\nproblem to the next one (DC-033). `GraphNode.IsKnowledge` carries the DECLARED coarse dimension, so a\nfilter asks the question instead of recognising spellings.\n\nVerified end to end: TheTerrace now yields **2,343 `node_class`, 639 `owned_by`, 428 `refines`, 114\n`spec`** — 24,058 assertions across 66 scopes, every response still inside the frame.\n\n**The code↔knowledge join is closed by decision, not deferred.** The user's rule: *\"It's ok if docs\nand code are not linkable and orthogonal, they will tend to be orthogonal which is why pruning the\ngraph on one or the other is a meaningful cut. Do not infer — the graph should only be on observable\nlinks/relationships.\"*\n\nRecorded as a decision note, because it is a standing principle rather than one answer: **an edge is\na claim that something in the repository says so.** Orthogonality is information — because the two\nhalves are separate, \"show the knowledge\" and \"show the code\" are exact cuts rather than blurred\nones. Inference would have made membership depend on how good the guess was that day, and this\ncodebase has paid for that twice already (`depends_on` produced 7,426 false Verified edges;\n`uses_table` turned *\"we update the record\"* into a table called `the`). What would legitimately\nunblock a join is a link written down — `- { to: TheTerrace.Features.Fixtures, rel: governs }` — which\nthe frontmatter reader would index today with no code change.\n\n**Python dynamic and nested declarations: measured, and NOT built.** Dynamic imports are unobservable\nstatically, so reading them would be inference — ruled out by the principle above. Nested\ndeclarations are observable but MEASURED at 28/31/21 against 356/457/150 top-level across three\nrepositories (~7%), and they are implementation details inside functions with no type information to\nbuild edges from: the graph would gain volume, not structure. The existing disclosures already state\nexactly this. INV-0004's fourth handoff closes as a priority call answered.\n\n**DC-013 recurred a sixth time and the gate caught it.** Both sessions allocated `DC-042`; mine was\npublished first, so theirs is re-issued as `DC-043` per the contract. Their entry also arrived with an\nunbackticked `Status:` value for the second time — and the register gate reported it as *\"declares no\nStatus line\"* when the line was there and the FORMAT was wrong. That message misdirected me twice, so\nit now names the actual problem and shows the expected form. **A control that misnames its own finding\ncosts the reader the time the control saved.**\n\n869 tests green (App 144, Core 725). Eight gates clean. Zero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Record the no-inference principle, find why the Knowledge chip still reads 0 on TheTerrace, and carry the remaining next steps",
+      "done_when": "The orthogonality decision is written down; knowledge is proven to reach TheTerrace's graph and the chip has a declared dimension to filter on; python coverage decided on measurement; repos re-measured; gates green; merged and published",
+      "change": "cl-0099",
+      "git": {
+        "sha": "693ce79705bd30345b23a2c93b0750de89324492",
+        "short": "693ce7970",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false
+      }
     }
   ],
   "changes": [
@@ -5216,6 +5242,32 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "df001100c4408da481fddf804225e7f01f8148a9",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0099",
+      "datetime": "2026-08-30T23:21:49Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Knowledge read 0 because the store was a generation behind, and the chip matched type names",
+      "prompt": null,
+      "summary": "**The Knowledge chip read 0 on a repository holding 2,343 knowledge nodes. Two causes, both Core's.**\n\n**The store was cached from a build that had no knowledge reader.** `ScopeFingerprints` already\ncarried an `ExtractorGeneration` for exactly this — a constant in every fingerprint so that upgrading\nthe product invalidates the sidecar — and nobody bumped it. So the knowledge extractor, `node_class`,\ncomment stripping in four readers, the SQL fold and `uses_table` all shipped while every existing\nworkspace kept serving results produced by the previous generation. Bumped to `2026-08-30.1`; an\nupgraded app now rebuilds rather than reusing.\n\n**And the graph carried only each node's FINE kind.** MEASURED: TheTerrace's knowledge types are\n`spec` and **`knowledge-epl-fan-platform`** — a name that repository invented. A chip matching a\nfixed list of type names cannot work across repositories, and widening the list only moves the\nproblem to the next one (DC-033). `GraphNode.IsKnowledge` carries the DECLARED coarse dimension, so a\nfilter asks the question instead of recognising spellings.\n\nVerified end to end: TheTerrace now yields **2,343 `node_class`, 639 `owned_by`, 428 `refines`, 114\n`spec`** — 24,058 assertions across 66 scopes, every response still inside the frame.\n\n**The code↔knowledge join is closed by decision, not deferred.** The user's rule: *\"It's ok if docs\nand code are not linkable and orthogonal, they will tend to be orthogonal which is why pruning the\ngraph on one or the other is a meaningful cut. Do not infer — the graph should only be on observable\nlinks/relationships.\"*\n\nRecorded as a decision note, because it is a standing principle rather than one answer: **an edge is\na claim that something in the repository says so.** Orthogonality is information — because the two\nhalves are separate, \"show the knowledge\" and \"show the code\" are exact cuts rather than blurred\nones. Inference would have made membership depend on how good the guess was that day, and this\ncodebase has paid for that twice already (`depends_on` produced 7,426 false Verified edges;\n`uses_table` turned *\"we update the record\"* into a table called `the`). What would legitimately\nunblock a join is a link written down — `- { to: TheTerrace.Features.Fixtures, rel: governs }` — which\nthe frontmatter reader would index today with no code change.\n\n**Python dynamic and nested declarations: measured, and NOT built.** Dynamic imports are unobservable\nstatically, so reading them would be inference — ruled out by the principle above. Nested\ndeclarations are observable but MEASURED at 28/31/21 against 356/457/150 top-level across three\nrepositories (~7%), and they are implementation details inside functions with no type information to\nbuild edges from: the graph would gain volume, not structure. The existing disclosures already state\nexactly this. INV-0004's fourth handoff closes as a priority call answered.\n\n**DC-013 recurred a sixth time and the gate caught it.** Both sessions allocated `DC-042`; mine was\npublished first, so theirs is re-issued as `DC-043` per the contract. Their entry also arrived with an\nunbackticked `Status:` value for the second time — and the register gate reported it as *\"declares no\nStatus line\"* when the line was there and the FORMAT was wrong. That message misdirected me twice, so\nit now names the actual problem and shows the expected form. **A control that misnames its own finding\ncosts the reader the time the control saved.**\n\n869 tests green (App 144, Core 725). Eight gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/ScopeFingerprints.cs",
+        "src/AiDe.Core/Projections/GraphProjection.cs",
+        "docs/notes/note-20260830-the-graph-carries-only-observable-links.md"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "693ce79705bd30345b23a2c93b0750de89324492",
         "branch": "session/phase3-pane-probes",
         "pushed": false,
         "commits": []

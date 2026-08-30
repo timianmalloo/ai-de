@@ -132,7 +132,9 @@ def main() -> int:
 
     for (identifier, _, title), status in zip(found, declared):
         if not status:
-            findings.append(f"{identifier} declares no **Status:** line ({title})")
+            findings.append(
+                f"{identifier} has no `**Status:** `backticked-value`` line ({title}) — "
+                f"the value must be in backticks, e.g. \"- **Status:** `partially-controlled` — why\"")
         elif status not in KNOWN_STATUSES:
             findings.append(
                 f"{identifier} declares status '{status}', which is not one of "

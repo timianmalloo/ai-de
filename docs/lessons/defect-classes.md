@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 16 · partially-controlled 26 · uncontrolled 0
+**Status counts:** controlled 17 · partially-controlled 26 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1503,9 +1503,9 @@ for both or split.*
 - **Status:** `partially-controlled`
 
 
-### DC-042 — A second construction of a view-model omits configuration the first applied
+### DC-043 — A second construction of a view-model omits configuration the first applied
 - **Signature:** the same data is shown by two surfaces built from the same view-model type, but one construction sets a configuration the other omits, so a DERIVED property (here: node colour, computed from a node's context) silently differs — one surface is right, the other is subtly wrong, and both pass their own tests.
 - **Why it survives:** the data is identical (same query, same counts, same disclosures) so a data test sees no difference; only a rendered, cross-surface comparison reveals it. Sibling of DC-040 (a retained component reading a dependency the shared one had) — the fix pattern is the same: share the configuration, or read it live in both places.
 - **Instances:** 2025 — the Explorer graph rendered all-grey while the workbench graph was coloured, because `CreateExplorerGraph` built a fresh `CanvasGraphViewModel` without wiring `ContextLookup` (colour comes from context; default lookup returns null). Workbench VM set it (WorkbenchShell:774); Explorer VM did not (WorkbenchShell:810).
 - **Control:** extract the shared configuration into one helper both constructions call (`BuildContextLookup`), read live so a workspace change is reflected. When two surfaces show the same data, assert they agree on the derived surface, not just the data (E2E-D / E12 cross-surface consistency).
-- **Status:** controlled (both paths now call `BuildContextLookup`; App.Tests + launch smoke green).
+- **Status:** `controlled` — both paths now call `BuildContextLookup`; App.Tests + launch smoke green.

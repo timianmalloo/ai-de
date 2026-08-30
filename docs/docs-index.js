@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T22:37:43Z",
+  "generated": "2026-08-30T23:22:01Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1242,6 +1242,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "2c540d97f9b2ab94ec8a6d1f9cda36b7c05813282ad30cfe75f7b3e391e48ffd"
     },
     {
+      "id": "note-20260830-the-graph-carries-only-observable-links",
+      "path": "docs/notes/note-20260830-the-graph-carries-only-observable-links.md",
+      "title": "The graph carries only observable links — docs and code are expected to be orthogonal",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Asked whether documentation should be joined to code, the answer is no: the graph carries only links that are declared somewhere observable, and docs and code being orthogonal is a useful property rather than a gap to close by inference.",
+      "tags": [
+        "decision-note",
+        "graph",
+        "knowledge",
+        "evidence",
+        "provenance"
+      ],
+      "links": [
+        {
+          "to": "adr-0001-derived-evidence-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d6713478d442ad9e2c3d05b73b52b9d99b52c7871f44297ae0bb7c5cf57d76df"
+    },
+    {
       "id": "note-ai-native-ide-architecture-review-depth",
       "path": "docs/notes/ai-native-ide-architecture-review-depth.md",
       "title": "Decision note — AI-native IDE architecture review depth",
@@ -1749,7 +1776,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9d9e5188aaa79a0fcc02f7af40bc120cd6aa12715bfd34983255b8f1a2334510"
+      "sourceSha256": "3dfa304f3a851d6c5ac61b0ccd557c2c7df6ae8266cd28be7e1d9fd5e46b8820"
     },
     {
       "id": "domain-experts",
@@ -2825,7 +2852,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "17c68fc9da9aced8c1f27a97db433b111691ee13a02ac2009723c715089b3e3b"
+      "sourceSha256": "6bbd9b12b449035afb9e1a3b22b7c70258e61c5f522e4ca04127b758f1a54fdf"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -6216,7 +6243,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-facelift — Audit & Change Log",
+      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -6302,5 +6329,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "9882586d5dc05f239834950e3f492d3ced41e472c8f47ed7ac2796139fa2a0e6"
+  "graphSha256": "07955adfa0d94db6c66b0216f464e071bb255e1d8af2a7364995468263d7c4b7"
 };

@@ -33,7 +33,12 @@ public sealed class ScopeFingerprints
     /// an extractor improvement would reach only the files a user happened to touch afterwards —
     /// and the graph would be a mix of two extractor generations with nothing saying so.
     /// </remarks>
-    public const string ExtractorGeneration = "2026-08-29.1";
+    // 2026-08-30.1 — the knowledge extractor, node_class classification, comment stripping in four
+    // readers, the SQL fold and uses_table. Every one of those changes extraction OUTPUT for input
+    // that did not change, so a store built before them is a mix of two generations. The user saw
+    // exactly that: Knowledge read 0 on a repository holding 2,343 knowledge nodes, because the
+    // scopes were cached from a build that had no knowledge reader.
+    public const string ExtractorGeneration = "2026-08-30.1";
 
     private const string FileName = "scope-fingerprints.json";
 
