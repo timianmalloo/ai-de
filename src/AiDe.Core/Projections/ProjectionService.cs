@@ -156,6 +156,35 @@ public sealed class ProjectionService(WorkspaceStore store)
     public const int MaxResultBytes = 64 * 1024;
 
     /// <summary>
+    /// The most a single response may serialise to.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Derived from the transport, with headroom.</b> One IPC frame carries 1,048,576 bytes
+    /// (<c>IpcFraming.MaxFrameBytes</c>); this leaves a quarter of it spare for the response envelope
+    /// and for the difference between an estimate and the truth. A projection that fills the frame
+    /// exactly is one repository away from INV-0003.</para>
+    ///
+    /// <para><b>Why a byte budget and not a bigger count ceiling.</b> Every ceiling in this class
+    /// counts ITEMS and the transport limit is in BYTES, and node labels, subjects and paths all come
+    /// from repository content — so a count-only cap admits an unbounded payload. That is not a
+    /// hypothetical: MEASURED on a real repository, an evidence page of 2,000 assertions serialises
+    /// to <b>1,004,397 bytes</b>, which is 95.8% of the frame and fifteen times the
+    /// <see cref="MaxResultBytes"/> its own documentation claimed it stayed "comfortably inside".</para>
+    /// </remarks>
+    public const int MaxResponseBytes = 768 * 1024;
+
+    /// <summary>
+    /// What one assertion costs in JSON beyond its own text.
+    /// </summary>
+    /// <remarks>
+    /// MEASURED, not estimated: a 2,000-assertion page whose subjects, predicates, objects and paths
+    /// total 238,002 bytes serialises to 1,004,397 — <b>383 bytes per row</b> of field names,
+    /// timestamps, enum spellings and punctuation. Rounded up for headroom, because a guard that
+    /// under-counts is a guard that lets the frame overflow.
+    /// </remarks>
+    public const int AssertionOverheadBytes = 448;
+
+    /// <summary>
     /// The ceiling on a SEARCH, which is a different question from a neighbour list.
     /// </summary>
     /// <remarks>
@@ -313,10 +342,20 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// One page of every current assertion, for a caller that wants the whole set.
     /// </summary>
     /// <remarks>
-    /// The panes want all of it and were rebuilding it node by node through <see cref="Describe"/>,
-    /// which bounds neighbours at 50 and dropped two join edges of 124 doing so. This asks the
-    /// question they were actually asking. Bounded per page rather than per call, so it can cross a
-    /// pipe without breaching the result-byte cap.
+    /// <para>The panes want all of it and were rebuilding it node by node through
+    /// <see cref="Describe"/>, which bounds neighbours at 50 and dropped two join edges of 124 doing
+    /// so. This asks the question they were actually asking.</para>
+    ///
+    /// <para><b>Bounded by BYTES as well as by count, and the byte bound is the one that matters.</b>
+    /// This method's documentation used to claim a page "can cross a pipe without breaching the
+    /// result-byte cap". It could not: MEASURED on a real repository, a 2,000-assertion page is
+    /// <b>1,004,397 bytes</b> against a 1,048,576-byte frame — 95.8% full, and over the frame
+    /// entirely on a repository with slightly longer type names. The claim was written, believed and
+    /// never checked, which is the same shape as INV-0003 one method along.</para>
+    ///
+    /// <para>Truncating a page early is LOSSLESS here, and that is why the fix belongs at this level:
+    /// the cursor continues from the last row actually returned, so a byte-bounded page costs one
+    /// extra round trip and never drops a row.</para>
     /// </remarks>
     public EvidencePage Evidence(string? cursor, int maxAssertions)
     {
@@ -329,16 +368,47 @@ public sealed class ProjectionService(WorkspaceStore store)
         var after = EvidenceCursor.Parse(cursor);
         var rows = reader.CurrentAssertionPage(after, limit);
 
-        activity?.SetTag("returned.assertions", rows.Count);
+        // The BYTE bound, applied before the count bound can pretend to be one.
+        var kept = new List<StoredAssertion>(rows.Count);
+        var bytes = 0;
+        var truncatedByBytes = false;
 
-        // A page that came back full MIGHT have more behind it; one that came back short cannot.
-        // Erring towards "there is more" costs one empty round trip and never loses a row.
-        var next = rows.Count < limit
-            ? null
-            : EvidenceCursor.Format(rows[^1].Subject, rows[^1].Predicate, rows[^1].Object, rows[^1].ScopeId);
+        foreach (var row in rows)
+        {
+            var size = Encoding.UTF8.GetByteCount(row.Subject)
+                + Encoding.UTF8.GetByteCount(row.Predicate)
+                + Encoding.UTF8.GetByteCount(row.Object)
+                + Encoding.UTF8.GetByteCount(row.ScopeId)
+                + Encoding.UTF8.GetByteCount(row.ArtifactRevision)
+                + Encoding.UTF8.GetByteCount(row.Provenance.ArtifactPathId)
+                + AssertionOverheadBytes;
+
+            // At least one row always goes back. A page that returns nothing because its first row
+            // is enormous is a caller that can never make progress, which is worse than one frame
+            // that is slightly over.
+            if (kept.Count > 0 && bytes + size > MaxResponseBytes)
+            {
+                truncatedByBytes = true;
+                break;
+            }
+
+            bytes += size;
+            kept.Add(row);
+        }
+
+        activity?.SetTag("returned.assertions", kept.Count);
+        activity?.SetTag("returned.bytes", bytes);
+        activity?.SetTag("truncated.by_bytes", truncatedByBytes);
+
+        // A page that came back full MIGHT have more behind it; one that came back short cannot —
+        // UNLESS the byte bound cut it short, in which case there is certainly more and the cursor
+        // must say so or the caller stops early believing it has everything.
+        var next = truncatedByBytes || rows.Count == limit
+            ? EvidenceCursor.Format(kept[^1].Subject, kept[^1].Predicate, kept[^1].Object, kept[^1].ScopeId)
+            : null;
 
         return new EvidencePage(
-            [.. rows.Select(r => new EvidenceAssertion(
+            [.. kept.Select(r => new EvidenceAssertion(
                 r.ScopeId, r.ArtifactRevision, r.Subject, r.Predicate, r.Object,
                 r.Origin, r.Status, r.Provenance))],
             next,
@@ -369,8 +439,26 @@ public sealed class ProjectionService(WorkspaceStore store)
                 a.Origin, a.Status, a.Provenance))
             .ToList();
 
-        var graph = new GraphProjection(assertions, reader.CurrentSourceRevision())
-            .Compute(query with { MaxNodes = Clamp(query.MaxNodes, 1, GraphProjection.DefaultMaxNodes) });
+        var projection = new GraphProjection(assertions, reader.CurrentSourceRevision());
+        var graph = projection.Compute(
+            query with { MaxNodes = Clamp(query.MaxNodes, 1, GraphProjection.DefaultMaxNodes) });
+
+        // The graph at its own COUNT ceiling still overflows the frame — MEASURED, 1,522,915 bytes
+        // for 5,000 permitted nodes on a real repository. The canvas asks for a bounded default now,
+        // but the operation is still reachable, and an operation that can never succeed is a defect
+        // whoever calls it. Shrink to fit and let Omitted say so, rather than build a response the
+        // transport will refuse.
+        var estimate = Weigh(graph);
+
+        if (estimate > MaxResponseBytes)
+        {
+            // One retry, scaled by how far over it was, with a margin for the unevenness of node
+            // sizes. Iterating to convergence would trade a bounded cost for an unbounded one.
+            var scaled = (int)(graph.Nodes.Count * (MaxResponseBytes / (double)estimate) * 0.85);
+
+            graph = projection.Compute(query with { MaxNodes = Math.Max(1, scaled) });
+            activity?.SetTag("shrunk.to_fit", true);
+        }
 
         activity?.SetTag("returned.nodes", graph.Nodes.Count);
         activity?.SetTag("returned.edges", graph.Edges.Count);
@@ -418,21 +506,49 @@ public sealed class ProjectionService(WorkspaceStore store)
         // correct shape is to scan a covering index instead of hydrating every row's provenance.
         var (candidates, totalMatched) = reader.SearchNodeIds(term, limit);
 
-        var matches = candidates
-            .Select(id =>
+        // The byte bound, ENFORCED rather than merely declared. This built the whole match list and
+        // then reported `MaxBytes: 65,536` beside it — MEASURED at 461,750 bytes returned on a real
+        // repository, and the ceiling permits 20,000 results where this repository happened to have
+        // 2,764. A caller reading the bounds was told a limit that could not fire (DC-016), and a
+        // repository with more matches would have overflowed the frame exactly like INV-0003.
+        var matches = new List<FindMatch>();
+        var bytes = 0;
+        var byteCapped = false;
+
+        foreach (var id in candidates)
+        {
+            var node = NodeOf(reader, id);
+
+            var match = new FindMatch(node.NodeId, node.NodeKind, node.DisplayLabel,
+                // Phase 1 has no agent-authored records yet; stating the origin explicitly now
+                // means the field exists on the wire before agents can write, rather than being
+                // retrofitted after the laundering path is already open.
+                AuthorshipOrigin.RepositoryArtifact);
+
+            var size = Encoding.UTF8.GetByteCount(match.NodeId)
+                + Encoding.UTF8.GetByteCount(match.NodeKind)
+                + Encoding.UTF8.GetByteCount(match.DisplayLabel)
+                + AssertionOverheadBytes;
+
+            // At least one result always comes back, for the same reason the evidence page keeps
+            // one row: a search that returns nothing because its first hit is long is worse than a
+            // response slightly over an internal budget.
+            if (matches.Count > 0 && bytes + size > MaxResponseBytes)
             {
-                var node = NodeOf(reader, id);
-                return new FindMatch(node.NodeId, node.NodeKind, node.DisplayLabel,
-                    // Phase 1 has no agent-authored records yet; stating the origin explicitly now
-                    // means the field exists on the wire before agents can write, rather than being
-                    // retrofitted after the laundering path is already open.
-                    AuthorshipOrigin.RepositoryArtifact);
-            })
-            .ToList();
+                byteCapped = true;
+                break;
+            }
+
+            bytes += size;
+            matches.Add(match);
+        }
+
+        activity?.SetTag("returned.bytes", bytes);
+        activity?.SetTag("byte.capped", byteCapped);
 
         var bounds = new ResultBounds(
-            limit, 0, MaxResultBytes, matches.Count, Math.Max(0, totalMatched - matches.Count),
-            0, 0, false, null);
+            limit, 0, MaxResponseBytes, matches.Count, Math.Max(0, totalMatched - matches.Count),
+            0, 0, byteCapped, null);
 
         return new FindResult(matches, bounds, reader.CurrentSourceRevision());
     }
@@ -566,6 +682,38 @@ public sealed class ProjectionService(WorkspaceStore store)
         }
 
         return (kept, capped);
+    }
+
+    /// <summary>
+    /// What a graph will cost on the wire, near enough to decide whether it fits.
+    /// </summary>
+    /// <remarks>
+    /// The same shape as the assertion estimate and for the same reason: ids and labels come from
+    /// repository content, so counting nodes tells you nothing about bytes. Deliberately an estimate
+    /// rather than a serialisation — serialising to find out whether to serialise costs what it
+    /// saves, and the budget already carries a quarter-frame of headroom for the difference.
+    /// </remarks>
+    private static int Weigh(WorkspaceGraph graph)
+    {
+        var bytes = 0;
+
+        foreach (var node in graph.Nodes)
+        {
+            bytes += Encoding.UTF8.GetByteCount(node.Id)
+                + Encoding.UTF8.GetByteCount(node.Label)
+                + Encoding.UTF8.GetByteCount(node.Kind)
+                + 64;
+        }
+
+        foreach (var edge in graph.Edges)
+        {
+            bytes += Encoding.UTF8.GetByteCount(edge.From)
+                + Encoding.UTF8.GetByteCount(edge.To)
+                + Encoding.UTF8.GetByteCount(edge.Predicate)
+                + 64;
+        }
+
+        return bytes;
     }
 
     private static int Clamp(int requested, int min, int max) => Math.Max(min, Math.Min(requested, max));

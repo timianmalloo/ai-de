@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T16:50:09Z",
+  "generated": "2026-08-30T16:51:19Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1126,12 +1126,12 @@ window.DOCS_INDEX = {
       "path": "docs/notes/note-20260830-sub-scope-incrementality.md",
       "title": "Sub-scope incrementality: a call to make before any code, with the measurement that motivates it",
       "type": "decision-note",
-      "status": "draft",
+      "status": "resolved",
       "owner": "@timianmalloo",
       "phase": "phase-3",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Re-indexing a changed C# scope re-walks every type in it, which is measured at 590ms of an 809ms walk on a real repository. Making that incremental below the scope conflicts with the append-only per-scope snapshot model, so this note states the options and their costs and stops short of choosing — the decision changes the store's contract and is not a tidy-up.",
+      "summary": "Re-indexing a changed C# scope re-walks every type in it, measured at 590ms of an 809ms walk on a real repository. RESOLVED 2026-08-30, and the answer is not to build it: there is no automatic re-index — no FileSystemWatcher exists — so the cost is paid deliberately by a user pressing a button, and breaking the per-scope snapshot's atomicity to shorten it is a poor trade at that trigger. The note stays for the trigger it names: re-index on save.",
       "tags": [
         "decision-note",
         "extraction",
@@ -1151,7 +1151,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e2c64507be140629961188e31ab668c179213bf0dbe435f64213b2aa3f8c50bf"
+      "sourceSha256": "2c540d97f9b2ab94ec8a6d1f9cda36b7c05813282ad30cfe75f7b3e391e48ffd"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -1615,7 +1615,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4bfd9c09002b4b0a876a366b407882d56edcead87471900b33a7df2099bfc4f6"
+      "sourceSha256": "de2cb6779e55c8682f066983605b99e663db6cbb16916c263f0a4d623ad5651b"
     },
     {
       "id": "domain-experts",
@@ -6046,5 +6046,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "2fd520f3269bacbd53b86526a76c3437fe6051b29dc8e8201bd61074092ae183"
+  "graphSha256": "b7a833200fbf88d8dfb90a3fa9c55df2b2d879cdbfcbc559560c9a7481338806"
 };

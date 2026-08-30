@@ -2,7 +2,7 @@
 id: "note-20260830-sub-scope-incrementality"
 title: "Sub-scope incrementality: a call to make before any code, with the measurement that motivates it"
 type: decision-note
-status: draft
+status: resolved
 owner: "@timianmalloo"
 phase: "phase-3"
 tags: [decision-note, extraction, performance, store, incremental, measurement]
@@ -13,10 +13,11 @@ links-suggested: []
 review-by: 2027-02-28
 review-suggested: []
 summary: >-
-  Re-indexing a changed C# scope re-walks every type in it, which is measured at 590ms of an 809ms
-  walk on a real repository. Making that incremental below the scope conflicts with the append-only
-  per-scope snapshot model, so this note states the options and their costs and stops short of
-  choosing — the decision changes the store's contract and is not a tidy-up.
+  Re-indexing a changed C# scope re-walks every type in it, measured at 590ms of an 809ms walk on a
+  real repository. RESOLVED 2026-08-30, and the answer is not to build it: there is no automatic
+  re-index — no FileSystemWatcher exists — so the cost is paid deliberately by a user pressing a
+  button, and breaking the per-scope snapshot's atomicity to shorten it is a poor trade at that
+  trigger. The note stays for the trigger it names: re-index on save.
 ---
 
 # Sub-scope incrementality
@@ -86,17 +87,44 @@ while still writing one whole new generation. *Cost:* memory for the previous ge
 re-index, and a correctness obligation to invalidate a type when anything it references changed —
 narrower than B, because the output is still one atomic generation.
 
-## Recommendation, offered rather than taken
+## The blocking question, answered 2026-08-30 — by CHECKING, not by measuring
 
-**D, and not yet.** It preserves the property the store was designed around, and it targets the
-measured cost directly. But it should not be built until there is a second measurement: how often a
-real edit-to-graph cycle actually happens, and what the user-visible latency is today. Optimising a
-1.2s cold path that runs on demand is a different value proposition from optimising one that runs on
-every keystroke, and **nobody has measured which this is** — instrumenting that is cheaper than any
-of A–D and should come first.
+This note said the decision rested on "how often a real edit-to-graph cycle happens", and proposed
+instrumenting it. The instrument was built (`RefreshMetrics`: p50/p95/max, first/last, over
+`refresh.metrics`). But the question turned out to be answerable without it, by opening the code:
 
-## What would change this recommendation
+**There is no automatic re-index. `FileSystemWatcher` does not appear anywhere in `src/`.** Indexing
+runs only from `Controller.WorkspaceIndex` and `WorkspaceReindexAll` — explicit user commands. So
+edit-to-graph is **entirely on demand**: a user presses a button, waits, and gets a graph.
 
-- Edit-to-graph latency measured above ~2s on a repository a user actually keeps open.
-- A scope appearing that is materially larger than TheTerrace's 465 files.
-- A decision to re-index on save rather than on demand, which turns a bounded cost into a per-edit one.
+That reframes the whole note. The comparison it was set up to make — "an occasional cost a user asks
+for" versus "something they wait on constantly" — has an answer already, and it is the first one. The
+percentiles would have measured how long a deliberate action takes, which is useful for a progress
+indicator and is *not* the thing that decides whether the store's atomicity should be broken.
+
+**It is worth saying how nearly this went the other way.** Three hypotheses in this area have now been
+wrong — `ToDisplayString` (3.9%, not the cost), `SymbolEqualityComparer` (0.5%), and "the index still
+walks every scope" (it does not). This would have been the fourth: building an instrument, collecting
+a distribution, and reasoning carefully about a number that answered a question nobody was asking.
+One grep for `FileSystemWatcher` was the cheaper move and it was available the whole time.
+
+## Recommendation
+
+**None of A–D. Not now.** Sub-scope incrementality optimises a cost the user pays deliberately, once,
+with a visible action, on a path where 1.2s is acceptable. Breaking the per-scope snapshot's
+atomicity to shorten it is a poor trade at today's trigger.
+
+**D remains the right shape** if the trigger changes, and the note stays for that reason rather than
+being deleted: it preserves the atomic generation and targets the measured cost (`GetMembers` binding
+at 590ms of an 809ms walk), where B looks easy and is not.
+
+## The trigger to watch for, named so it is not missed
+
+Build sub-scope incrementality when — and only when — one of these becomes true:
+
+- **Re-index on save is introduced.** This is the one that matters: it converts a bounded, deliberate
+  cost into a per-edit one, and it is the moment `RefreshMetrics` starts answering a real question.
+  Whoever adds the watcher should read this note first.
+- Edit-to-graph exceeds ~2s on a repository a user keeps open (`RefreshMetrics` p95 now reports this
+  without anyone enabling anything).
+- A scope appears materially larger than TheTerrace's 465 files.

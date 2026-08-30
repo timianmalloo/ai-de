@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T16:50:09Z",
+  "generated": "2026-08-30T16:51:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2277,6 +2277,32 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0125",
+      "shortname": "byte-bounded-responses-and-incrementality-resolved",
+      "datetime": "2026-08-30T16:40:09Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "graph loads... now we have UX layout and scaling issues which I will deal with in the other session\n----\ndo the next steps you have here",
+      "summary": "The graph was found by a user opening a repository, not by us, so every other read operation was\nmeasured at its own ceiling against the 1 MiB frame. **Two more were one repository away from\nINV-0003, and a third could never have succeeded.**\n\n| operation | before | after |\n|---|---|---|\n| evidence (2,000/page) | 1,004,397 B — **95.8% of the frame** | 659,164 B, 1,310 rows, cursor continues |\n| graph (5,000-node ceiling) | 1,522,915 B — **overflows** | 474,437 B, shrunk to fit, `Omitted` reports |\n| find (20,000 ceiling) | 461,750 B returned while **reporting a 64 KiB cap** | byte-bounded, `ByteCapped` set |\n\nThe class behind all three: **every ceiling in the read surface counts ITEMS and the transport limit\nis in BYTES**, and every item's size comes from repository content. A count-only cap admits an\nunbounded payload. `Evidence`'s own documentation claimed a page \"can cross a pipe without breaching\nthe result-byte cap\" — it was fifteen times over that cap. `Find` declared `MaxBytes: 65,536` beside\n461,750 bytes of results, a control that could not fire (DC-016).\n\nTruncating an evidence page is **lossless**, which is why the bound belongs in the projection: the\ncursor continues from the last row actually returned, so it costs a round trip and never a row. A\ntest pages a corpus to exhaustion and asserts every assertion comes back exactly once. Every response\nkeeps at least one item — a caller that receives nothing because its first row is enormous can never\nmake progress.\n\nThe byte guard uses a **measured** constant, not a guessed one: 2,000 assertions whose fields total\n238,002 bytes serialise to 1,004,397, so JSON scaffolding is **383 bytes per row**. Rounded up,\nbecause a guard that under-counts is a guard that lets the frame overflow.\n\n**The sub-scope-incrementality decision is resolved, and not by the instrument built for it.** The\nnote said the answer depended on how often edit-to-graph happens, and `RefreshMetrics` was built to\nmeasure that. One grep answered it instead: **there is no `FileSystemWatcher` anywhere in `src/`**.\nIndexing runs only from explicit commands, so the cost is paid deliberately by a user pressing a\nbutton. Breaking the per-scope snapshot's atomicity to shorten a deliberate 1.2s action is a poor\ntrade, so none of options A–D is built. The note stays, status `resolved`, naming the trigger that\nwould change it: **re-index on save**, which converts a bounded cost into a per-edit one.\n\nWorth recording because it nearly went the other way. Three hypotheses in this area have now been\nwrong — `ToDisplayString` (3.9%), `SymbolEqualityComparer` (0.5%), \"the index still walks every\nscope\" (it does not). This would have been the fourth: collecting a distribution and reasoning\ncarefully about a number that answered a question nobody was asking.\n\n**My own new gate cried wolf and is fixed.** `verify-id-allocators` reported an undeclared family\ncalled `nDC-` — it was matching the `n` of a JSON-escaped newline before a *mentioned* `DC-` id in a\nlog summary. A mention is not an allocation, which is the same distinction the first draft got wrong\nwhen it read ADR ids out of `architecture.md`. Fixed with a lookbehind, and the narrative files are\nexcluded from the candidate scan: a record of a mention must never nominate an allocator. This is the\nsecond time this script has flagged correct behaviour as a defect; a control that does that twice is\none people switch off.\n\n790 tests green (App 131, Core 645). Seven gates clean. Zero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Audit every IPC response for the INV-0003 overflow, bound them, and settle the sub-scope incrementality question",
+      "done_when": "Every operation fits the frame with tests; the decision note is resolved with its trigger named; gates green; merged and published",
+      "change": "cl-0083",
+      "git": {
+        "sha": "1c273b0b29bf76e7fc453e5f77f733ec512f19e8",
+        "short": "1c273b0b2",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
+    },
+    {
       "id": "al-0126",
       "shortname": "ui-design-graph-canvas",
       "datetime": "2026-08-30T16:42:11Z",
@@ -4370,6 +4396,31 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "bbeeb9f832efa1a06e83c1e9df15b0a9bc5cac32",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0083",
+      "datetime": "2026-08-30T16:39:59Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Every response is bounded by bytes, and the incrementality question answered by a grep",
+      "prompt": null,
+      "summary": "The graph was found by a user opening a repository, not by us, so every other read operation was\nmeasured at its own ceiling against the 1 MiB frame. **Two more were one repository away from\nINV-0003, and a third could never have succeeded.**\n\n| operation | before | after |\n|---|---|---|\n| evidence (2,000/page) | 1,004,397 B — **95.8% of the frame** | 659,164 B, 1,310 rows, cursor continues |\n| graph (5,000-node ceiling) | 1,522,915 B — **overflows** | 474,437 B, shrunk to fit, `Omitted` reports |\n| find (20,000 ceiling) | 461,750 B returned while **reporting a 64 KiB cap** | byte-bounded, `ByteCapped` set |\n\nThe class behind all three: **every ceiling in the read surface counts ITEMS and the transport limit\nis in BYTES**, and every item's size comes from repository content. A count-only cap admits an\nunbounded payload. `Evidence`'s own documentation claimed a page \"can cross a pipe without breaching\nthe result-byte cap\" — it was fifteen times over that cap. `Find` declared `MaxBytes: 65,536` beside\n461,750 bytes of results, a control that could not fire (DC-016).\n\nTruncating an evidence page is **lossless**, which is why the bound belongs in the projection: the\ncursor continues from the last row actually returned, so it costs a round trip and never a row. A\ntest pages a corpus to exhaustion and asserts every assertion comes back exactly once. Every response\nkeeps at least one item — a caller that receives nothing because its first row is enormous can never\nmake progress.\n\nThe byte guard uses a **measured** constant, not a guessed one: 2,000 assertions whose fields total\n238,002 bytes serialise to 1,004,397, so JSON scaffolding is **383 bytes per row**. Rounded up,\nbecause a guard that under-counts is a guard that lets the frame overflow.\n\n**The sub-scope-incrementality decision is resolved, and not by the instrument built for it.** The\nnote said the answer depended on how often edit-to-graph happens, and `RefreshMetrics` was built to\nmeasure that. One grep answered it instead: **there is no `FileSystemWatcher` anywhere in `src/`**.\nIndexing runs only from explicit commands, so the cost is paid deliberately by a user pressing a\nbutton. Breaking the per-scope snapshot's atomicity to shorten a deliberate 1.2s action is a poor\ntrade, so none of options A–D is built. The note stays, status `resolved`, naming the trigger that\nwould change it: **re-index on save**, which converts a bounded cost into a per-edit one.\n\nWorth recording because it nearly went the other way. Three hypotheses in this area have now been\nwrong — `ToDisplayString` (3.9%), `SymbolEqualityComparer` (0.5%), \"the index still walks every\nscope\" (it does not). This would have been the fourth: collecting a distribution and reasoning\ncarefully about a number that answered a question nobody was asking.\n\n**My own new gate cried wolf and is fixed.** `verify-id-allocators` reported an undeclared family\ncalled `nDC-` — it was matching the `n` of a JSON-escaped newline before a *mentioned* `DC-` id in a\nlog summary. A mention is not an allocation, which is the same distinction the first draft got wrong\nwhen it read ADR ids out of `architecture.md`. Fixed with a lookbehind, and the narrative files are\nexcluded from the candidate scan: a record of a mention must never nominate an allocator. This is the\nsecond time this script has flagged correct behaviour as a defect; a control that does that twice is\none people switch off.\n\n790 tests green (App 131, Core 645). Seven gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/ProjectionService.cs",
+        "docs/notes/note-20260830-sub-scope-incrementality.md"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "1c273b0b29bf76e7fc453e5f77f733ec512f19e8",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
         "commits": []

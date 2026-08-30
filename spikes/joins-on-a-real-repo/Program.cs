@@ -168,6 +168,79 @@ var overview = await queries.GraphAsync(new GraphQuery(AiDe.Core.Presentation.Ca
 var overviewWire = System.Text.Json.JsonSerializer.Serialize(overview, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web));
 Console.WriteLine($"overview   : {overviewWire.Length:N0} bytes for {overview.Nodes.Count:N0} node(s), {overview.Omitted:N0} omitted — frame cap {AiDe.Core.Ipc.IpcFraming.MaxFrameBytes:N0} → {(overviewWire.Length <= AiDe.Core.Ipc.IpcFraming.MaxFrameBytes ? "FITS" : "OVERFLOWS")}");
 
+// ---------------------------------------------------------------------------------------------
+// EVERY read operation, at ITS OWN CEILING, against the frame it must fit through.
+//
+// INV-0003 was found by a user opening a repository, not by us. The graph was one response of
+// several, and the others have ceilings nobody has ever multiplied by a byte size: Find allows
+// 20,000 results, Evidence 2,000 assertions with full provenance. "The graph was the big one" is a
+// belief, and this is the measurement that replaces it.
+// ---------------------------------------------------------------------------------------------
+Console.WriteLine();
+Console.WriteLine(new string('=', 100));
+Console.WriteLine("IPC RESPONSE SIZES, each operation at its ceiling");
+Console.WriteLine();
+
+var wireOptions = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web);
+var cap = AiDe.Core.Ipc.IpcFraming.MaxFrameBytes;
+var overflowed = new List<string>();
+
+void Measure(string operation, string ceiling, object payload, int items)
+{
+    var bytes = System.Text.Json.JsonSerializer.Serialize(payload, wireOptions).Length;
+    var verdict = bytes <= cap ? "fits" : "OVERFLOWS";
+
+    if (bytes > cap) overflowed.Add(operation);
+
+    Console.WriteLine($"  {operation,-12} {bytes,12:N0} bytes  {items,8:N0} item(s)  ceiling {ceiling,-22} {verdict}");
+}
+
+// The whole evidence set, one page at the maximum page size.
+var evidencePage = await queries.EvidenceAsync(null, ProjectionService.MaxEvidencePageCeiling, CancellationToken.None);
+Measure("evidence", $"{ProjectionService.MaxEvidencePageCeiling:N0} assertions", evidencePage, evidencePage.Assertions.Count);
+
+// The per-row SCAFFOLDING cost, so a byte guard uses a measured constant rather than a guessed one.
+var rawFieldBytes = evidencePage.Assertions.Sum(a =>
+    System.Text.Encoding.UTF8.GetByteCount(a.Subject)
+    + System.Text.Encoding.UTF8.GetByteCount(a.Predicate)
+    + System.Text.Encoding.UTF8.GetByteCount(a.Object)
+    + System.Text.Encoding.UTF8.GetByteCount(a.Provenance.ArtifactPathId));
+var serialized = System.Text.Json.JsonSerializer.Serialize(evidencePage, wireOptions).Length;
+Console.WriteLine($"    raw fields {rawFieldBytes:N0} bytes, serialized {serialized:N0} — overhead {(serialized - rawFieldBytes) / (double)evidencePage.Assertions.Count:F0} bytes/row");
+
+// Find with a term that matches as much as possible, at the ceiling.
+var find = await queries.FindAsync("e", ProjectionService.MaxSearchResultsCeiling, CancellationToken.None);
+Measure("find", $"{ProjectionService.MaxSearchResultsCeiling:N0} results", find, find.Matches.Count);
+
+// Knowledge at its ceiling.
+var knowledge = await queries.KnowledgeAsync(null, null, ProjectionService.MaxNeighborsCeiling, CancellationToken.None);
+Measure("knowledge", $"{ProjectionService.MaxNeighborsCeiling:N0} results", knowledge, knowledge.Nodes.Count);
+
+// Describe and Impact need a node; use the most connected one, which is the worst case.
+var busiest = graph.Nodes.OrderByDescending(n => n.Degree).First().Id;
+
+var describe = await queries.DescribeAsync(busiest, ProjectionService.MaxNeighborsCeiling, CancellationToken.None);
+Measure("describe", $"{ProjectionService.MaxNeighborsCeiling:N0} neighbours", describe, describe.Neighbors.Count);
+
+var impact = await queries.ImpactAsync(busiest, ProjectionService.MaxNodesCeiling, ProjectionService.MaxEdgesCeiling, CancellationToken.None);
+Measure("impact", $"{ProjectionService.MaxNodesCeiling:N0} nodes", impact, impact.Nodes.Count);
+
+// The graph at the PROJECTION's ceiling, which is what an API caller may still ask for.
+var atCeiling = await queries.GraphAsync(new GraphQuery(GraphProjection.DefaultMaxNodes), CancellationToken.None);
+Measure("graph", $"{GraphProjection.DefaultMaxNodes:N0} nodes", atCeiling, atCeiling.Nodes.Count);
+
+Measure("graph:default", $"{AiDe.Core.Presentation.CanvasGraphViewModel.OverviewNodeCap:N0} nodes", overview, overview.Nodes.Count);
+
+// A route between the two most connected nodes: the worst realistic case.
+var target = graph.Nodes.OrderByDescending(n => n.Degree).Skip(1).First().Id;
+var routes = await queries.PathsAsync(new PathQuery(busiest, target), CancellationToken.None);
+Measure("paths", "10 routes x 8 edges", routes, routes.Paths.Count);
+
+Console.WriteLine();
+Console.WriteLine(overflowed.Count == 0
+    ? $"  every operation fits the {cap:N0}-byte frame."
+    : $"  OVERFLOWS: {string.Join(", ", overflowed)} — these are INV-0003 waiting to happen.");
+
 Console.WriteLine();
 Console.WriteLine(new string('=', 100));
 Console.WriteLine("THE GRAPH PANE");
