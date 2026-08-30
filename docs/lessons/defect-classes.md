@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 16 · partially-controlled 22 · uncontrolled 0
+**Status counts:** controlled 16 · partially-controlled 23 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1127,6 +1127,25 @@ for both or split.*
   defect as the evidence page documenting a byte cap it did not apply, and as `find` reporting a
   `MaxBytes` it never enforced. Three instances in one session of **a claim in prose that the code
   does not make true**; when a comment states a bound, the next question is which line applies it.
+- **The same root cause runs in the OTHER direction, and I shipped it (2026-08-30).** The
+  `uses_table` reader matched an SQL keyword followed by a word ANYWHERE in a string literal, so the
+  sentence *"we update the record"* produced an edge to a table called `the`. MEASURED: 63 prose
+  strings in one repository, and its `uses_table` count fell from **150 to 56** once the reader
+  required a statement SHAPE — a literal beginning, after its start or a semicolon, with a SQL verb.
+  Under-matching hides real facts; over-matching invents them, and the invented ones are worse
+  because they arrive labelled **Verified**. The shared cause is that neither direction had been
+  measured against real input: **a matcher is not finished until you know both what it misses and
+  what it invents**, and both numbers come from a repository nobody used while writing it.
+- **The naive fix broke the real case, which is why both directions must be measured together.**
+  Requiring each literal to begin with a verb found **nothing at all** on the repository that
+  motivated the feature: real code splits SQL across concatenated literals, and the fragment holding
+  `FROM dbo.AssessmentJob` begins with `FROM`. The reader folds the `+` chain and reads it as one
+  statement; a chain containing anything non-literal is skipped whole rather than half-read.
+- **A smaller lesson worth keeping:** the regex form of that shape test silently returned false for
+  `"INSERT INTO dbo.AssessmentJob (…)"` — a string that plainly begins with one of its own
+  alternatives — and cost more to diagnose than the check was worth. It is explicit code now. When a
+  one-line matcher behaves impossibly, replacing it with something readable is usually cheaper than
+  proving why it does not.
 - **Residual risk:** the receiver test is a name match on `EntityTypeBuilder` /
   `OwnedNavigationBuilder`, so an EF fork or a wrapper builder is not read; `ToTable` reached through
   an interface or an extension method on a non-builder is not read. Both now fall into the counted

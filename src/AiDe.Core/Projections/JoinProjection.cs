@@ -75,6 +75,23 @@ public sealed class JoinProjection(IReadOnlyList<EvidenceAssertion> assertions)
                 $"the type declares [Table(\"{declaration.Object}\")]"));
         }
 
+        // ---------------------------------------------------------------- code → schema (used)
+        // WHAT THE CODE DEMONSTRABLY TOUCHES, for repositories with no ORM at all. Measured:
+        // BioHacker has zero DbContext files and zero [Table] attributes, so every edge it had was a
+        // name guess — while 62 of its types issue SQL naming a table outright.
+        //
+        // A DISTINCT kind, never folded into `maps_to`. A store class issuing four statements
+        // against three tables is not mapped to any of them, and the two questions have different
+        // answers: "which type IS this table" and "which code READS it". Counting usage as a mapping
+        // would also make the verified/inferred ratio — the number this pane exists to show —
+        // meaningless.
+        foreach (var usage in assertions.Where(a => a.Predicate == "uses_table"))
+        {
+            edges.Add(new JoinEdge(
+                usage.Subject, usage.Object, "uses_table", usage.Status,
+                "this type issues SQL naming the table"));
+        }
+
         // ---------------------------------------------------------------- code → schema
         // A type whose simple name matches a table name. This is EF's pluralisation convention read
         // backwards, and it is a GUESS: two unrelated types can share a table's name, and a table

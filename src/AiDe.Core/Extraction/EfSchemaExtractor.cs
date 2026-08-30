@@ -118,6 +118,29 @@ public sealed class EfSchemaExtractor(string extractorVersion = "1.0.0") : IExtr
                             break;
                         }
 
+                    case "RenameColumn":
+                        {
+                            // The one unhandled operation that changes a NAME rather than a
+                            // decoration. Without it a renamed column keeps its old name in the
+                            // graph — a wrong fact, which is worse than a missing one, and silent
+                            // because there was no default case to notice. EF states the rename in
+                            // named arguments, so unlike raw SQL (where every dialect spells it
+                            // differently and the SQL reader can only disclose it) this one is
+                            // simply readable.
+                            var table = Named(call, "table");
+                            var from = Named(call, "name");
+                            var to = Named(call, "newName");
+
+                            if (table is not null && from is not null && to is not null
+                                && tables.TryGetValue(table, out var state)
+                                && state.Columns.Remove(from))
+                            {
+                                state.Columns.Add(to);
+                            }
+
+                            break;
+                        }
+
                     case "RenameTable":
                         {
                             var from = Named(call, "name");
