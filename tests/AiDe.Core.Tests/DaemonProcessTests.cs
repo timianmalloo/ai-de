@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.Versioning;
 using AiDe.Core.Ipc;
+using AiDe.Core.Projections;
 
 namespace AiDe.Core.Tests;
 
@@ -309,7 +310,7 @@ public sealed class DaemonProcessTests
 
             await client.IndexSolutionAsync("probe-1", CancellationToken.None);
 
-            var graph = await client.GraphAsync(2_000, CancellationToken.None);
+            var graph = await client.GraphAsync(new GraphQuery(2_000), CancellationToken.None);
 
             // More than a node and its neighbour, which is what the surface used to draw.
             Assert.True(graph.Nodes.Count > 2, $"only {graph.Nodes.Count} node(s) came back");
@@ -321,6 +322,35 @@ public sealed class DaemonProcessTests
             // And the declared/external split survived serialisation, which is what keeps the
             // framework out of the centre of the picture.
             Assert.Contains(graph.Nodes, n => !n.IsExternal);
+
+            // ---- the FILTER crosses the pipe too --------------------------------------------
+            // Proven here rather than only in process, because every cross-boundary defect in this
+            // codebase so far has been right in process and wrong through the pipe. A filter that
+            // silently arrives as its default returns a correct-looking whole graph, which is the
+            // hardest kind of wrong to notice.
+            var mine = await client.GraphAsync(
+                new GraphQuery(2_000, IncludeExternal: false), CancellationToken.None);
+
+            Assert.NotEmpty(mine.Nodes);
+            Assert.All(mine.Nodes, n => Assert.False(n.IsExternal));
+
+            // Only assert that it REMOVED something when there was something to remove. This
+            // fixture's workspace is small enough to have no external nodes at all, and a test that
+            // demands a reduction there would be measuring the fixture rather than the filter.
+            if (graph.Nodes.Any(n => n.IsExternal))
+            {
+                Assert.True(mine.Nodes.Count < graph.Nodes.Count,
+                    $"the filter changed nothing: {mine.Nodes.Count} of {graph.Nodes.Count}");
+            }
+
+            // A kind filter names the values `has_type` carries.
+            var kind = graph.Nodes.First(n => !n.IsExternal && n.Kind != "external").Kind;
+
+            var byKind = await client.GraphAsync(
+                new GraphQuery(2_000, Kinds: [kind]), CancellationToken.None);
+
+            Assert.NotEmpty(byKind.Nodes);
+            Assert.All(byKind.Nodes, n => Assert.Equal(kind, n.Kind));
         }
         finally
         {

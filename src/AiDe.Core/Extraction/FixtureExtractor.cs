@@ -10,7 +10,27 @@ public static class ExtractionErrorCodes
     public const string Malformed = "AIDE-EXTRACT-MALFORMED";
 }
 
-public sealed record ExtractionRequest(string ScopeId, string RootPath, string ArtifactRevision, long DesiredGeneration);
+/// <summary>One scope's extraction, and what the rest of the workspace contains.</summary>
+/// <param name="WorkspaceModules">
+/// Every module id the workspace holds, so an import that leaves this scope can be resolved instead
+/// of disclosed.
+/// </param>
+/// <remarks>
+/// <para><b>Why a whole-workspace set rather than per-scope discovery.</b> A Python or TypeScript
+/// scope is one directory, and an import that names a sibling package resolves to a file in a
+/// DIFFERENT scope. Resolving that from inside the scope is impossible, and resolving it by
+/// extraction order would be resolution that is wrong whenever the order changes — the same trap
+/// the Python extractor already avoids within a scope by collecting modules before it reads any.</para>
+///
+/// <para>Null means "not supplied", which is not the same as empty: an extractor treats it as no
+/// cross-scope knowledge and falls back to disclosing what it could not resolve.</para>
+/// </remarks>
+public sealed record ExtractionRequest(
+    string ScopeId,
+    string RootPath,
+    string ArtifactRevision,
+    long DesiredGeneration,
+    IReadOnlySet<string>? WorkspaceModules = null);
 
 public sealed record ExtractionDiagnostic(string ErrorCode, string ArtifactPathId, string Message);
 

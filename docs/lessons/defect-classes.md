@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 11 · partially-controlled 19 · uncontrolled 1
+**Status counts:** controlled 14 · partially-controlled 19 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -320,10 +320,25 @@ for both or split.*
   `main`, re-issue the other as `al-0072`, regenerate the derived views. `verify-audit-log.py` is
   what confirmed the result. The first two were caused by running a log-writing script in the primary checkout while the
   session's real work lived in a worktree, which is the WT-discipline violation underneath the class.
+  2026-08-30 (**fourth occurrence, and the first OUTSIDE the audit logs**) — both sessions allocated
+  **`DC-032`** in `docs/lessons/defect-classes.md`, to "Reconciling reused instances makes a
+  per-render binding accumulate handlers" and to "A reader recognises one spelling of a pattern and
+  reports the rest as absent". The rebase merged the file **cleanly**, because the two entries are
+  hundreds of lines apart and neither side touched the other's text — the dangerous shape this class
+  warns about. Caught by `verify-defect-register.py`, which checks one-entry-per-class independently
+  of the audit-id rule; the later entry was renumbered `DC-033`. **The control was too narrow, not
+  ignored:** `verify-audit-log.py` was built for the two JSONL logs and this file is a third
+  monotonic allocator that nobody had classified as one.
 - **Control:** `tools/verify-audit-log.py`, run in CI: no id may be claimed by more than one entry in
   `audit-log.jsonl` or `change-log.jsonl`. **Observed failing 2026-08-26** against a synthetic log
   carrying a planted duplicate — reported the id, the count and the fix, exit 1 — and green against
-  the real logs (29 and 8 entries, 0 duplicates).
+  the real logs (29 and 8 entries, 0 duplicates). The **defect register** is covered by
+  `tools/verify-defect-register.py`, which enforces one entry per class id and caught the fourth
+  occurrence. **The remaining gap, stated rather than implied:** these are two allocators guarded by
+  two scripts, and the next monotonic id this repository invents will be unguarded by default. The
+  question that generalises is *"what else in here is numbered by reading the highest and adding
+  one?"* — the answer today is audit ids, change ids and defect-class ids, and only the third was
+  found by recurrence rather than by design.
 - **Prevention, added 2026-08-29 after the third occurrence:** `audit-log.py` no longer allocates by
   "highest present, plus one" alone. **Every worktree of a repository shares one git common
   directory**, so a counter placed there is visible to all of them; an exclusive-create lock makes
@@ -1012,3 +1027,52 @@ for both or split.*
   projection; both report what they dropped, and neither has been exercised against a repository that
   reaches them. Other surfaces have not been audited for the same shape.
 - **Status:** `partially-controlled`
+
+### DC-033 — A reader recognises one spelling of a pattern and reports the rest as absent
+
+- **Shape:** an extractor, parser or matcher is written against **the form the author had in front of
+  them** — one call chain, one file layout, one config key — and every other legal spelling of the
+  same thing falls through to the "not found" path. Nothing errors. The output is well-formed, the
+  tests pass on the one shape they were written from, and the missing facts are quietly replaced by
+  a weaker mechanism (a guess, a default, a convention) that is *designed* to be there and so raises
+  no alarm.
+- **Signature:** a **ratio** that nobody looks at. The count of facts recovered by the precise reader
+  against the count recovered by the fallback: 1 verified against 123 inferred is not a system with a
+  small gap, it is a reader that does not work. The tells in code are a **syntactic** match on a
+  shape a **semantic** question would settle (`member.Expression` walked for a generic argument
+  instead of asking what the receiver's type is), and a matcher that requires two things to appear in
+  **one expression** when the language lets a variable sit between them.
+- **Why it survives:** the fallback is doing its job. A convention-based guess produces a plausible
+  answer for exactly the cases the precise reader missed, so the surface looks populated and the
+  numbers look healthy. Coverage is green because a test fixture is written by the same person, in
+  the same style, as the reader — the fixture and the reader agree because they share an author, not
+  because either matches the world. And a disclosure cannot fire: the reader does not know it missed
+  anything, so "not declared" and "declared in a way I do not read" arrive as the same value.
+- **Instances:** 2026-08-30 — `CSharpExtractor.FluentTableMappings` matched
+  `Entity<T>()...ToTable("x")` as a single expression. TheTerrace, like most EF codebases, writes
+  `var terrace = modelBuilder.Entity<Terrace>(); terrace.ToTable("Terrace", "setup");` — so the
+  extractor recovered **1 declared mapping and guessed 123**, on a repository that states every one
+  of them in `OnModelCreating`. Found only because a timing investigation asked why 66 files were
+  being walked to produce nothing. The same reader also emitted the entity name **as written in
+  source** (`Order`) where every other assertion uses the display string (`Shop.Order`), so even its
+  successes were edges whose subject matched no node.
+- **Control:** resolve semantically, not syntactically — `model.GetTypeInfo(receiver)` answers every
+  style with one rule, because in all of them the receiver is an `EntityTypeBuilder<TEntity>`, and it
+  returns a symbol whose display string is the same name the rest of the extractor emits. Five tests
+  pin the styles (chained, local-variable, non-literal name, unrelated `ToTable`, generated source);
+  the generated-source control was **observed failing** with the skip disabled. Verified joins on the
+  real repository went **1 → 64** and inferred fell 123 → 73.
+- **The generalisation to apply elsewhere:** for any reader of someone else's notation, ask **"how
+  many legal ways are there to write this, and how many do I match?"** — then check the **ratio of
+  precise hits to fallback hits on real input**, because that ratio is the only place the answer
+  shows. Prefer the semantic question over the syntactic one wherever a compiler, schema or resolver
+  can be asked; a syntactic matcher is a bet that the author and the world share a style. The
+  siblings swept in this repository: `PythonExtractor` and `TypeScriptExtractor` are line-oriented by
+  a *declared* `simplify:` ceiling and disclose it, so they are bounded rather than blind; the Bicep
+  reader matches literal names only, and says so.
+- **Residual risk:** the receiver test is a name match on `EntityTypeBuilder` /
+  `OwnedNavigationBuilder`, so an EF fork or a wrapper builder is not read; `ToTable` reached through
+  an interface or an extension method on a non-builder is not read. Both now fall into the counted
+  `fluent-table-mappings-unresolved` disclosure rather than silence. `IEntityTypeConfiguration<T>`
+  is covered in principle by the same rule but has no real-repository evidence yet.
+- **Status:** `controlled`

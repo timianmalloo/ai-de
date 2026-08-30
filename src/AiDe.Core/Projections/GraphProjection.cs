@@ -24,6 +24,34 @@ public sealed record GraphNode(string Id, string Label, string Kind, int Degree,
 /// <summary>One relationship, with the status of the evidence behind it.</summary>
 public sealed record GraphEdge(string From, string To, string Predicate, VerificationStatus Status);
 
+/// <summary>
+/// Which part of the graph to build.
+/// </summary>
+/// <param name="MaxNodes">The cap. What it drops is counted and reported, never silent.</param>
+/// <param name="Kinds">
+/// Keep only nodes of these kinds (the values <c>has_type</c> carries — <c>class</c>,
+/// <c>python-module</c>, <c>table</c>). Null or empty means every kind.
+/// </param>
+/// <param name="ScopeId">Keep only nodes this scope declares. Null means every scope.</param>
+/// <param name="IncludeExternal">
+/// Whether to keep nodes nothing in the workspace declares — framework and package types.
+/// </param>
+/// <remarks>
+/// <para><b>Why filtering belongs HERE and not at the caller.</b> A tool that wants the domain model
+/// would otherwise fetch 2,813 nodes across a pipe and discard nine tenths of them, and — worse —
+/// the CAP would have already chosen which nodes to send, by a ranking computed over a graph the
+/// caller did not want. Filtering after a cap gives you the wrong 5,000 nodes trimmed to the right
+/// kind, and nothing in the result says so.</para>
+///
+/// <para>So the filter runs BEFORE the cap, degree is computed over what survives it, and "most
+/// connected" means most connected <em>in the graph that was asked for</em>.</para>
+/// </remarks>
+public sealed record GraphQuery(
+    int MaxNodes = GraphProjection.DefaultMaxNodes,
+    IReadOnlyList<string>? Kinds = null,
+    string? ScopeId = null,
+    bool IncludeExternal = true);
+
 /// <summary>The whole graph, and what it left out.</summary>
 /// <param name="Omitted">Nodes present in the evidence and not returned, because a cap applied.</param>
 /// <param name="Disclosures">What the extraction said it could not see, lifted out of the edges.</param>
@@ -64,8 +92,13 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
     /// </remarks>
     public const int DefaultMaxNodes = 5_000;
 
-    public WorkspaceGraph Compute(int maxNodes = DefaultMaxNodes)
+    public WorkspaceGraph Compute(int maxNodes = DefaultMaxNodes) =>
+        Compute(new GraphQuery(maxNodes));
+
+    public WorkspaceGraph Compute(GraphQuery query)
     {
+        ArgumentNullException.ThrowIfNull(query);
+
         var disclosures = new List<string>();
 
         // Declared HERE: something in this workspace says what it is or where it lives. Everything
@@ -75,10 +108,10 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
             .Select(a => a.Subject)
             .ToHashSet(StringComparer.Ordinal);
 
-        var degree = new Dictionary<string, int>(StringComparer.Ordinal);
         var kinds = new Dictionary<string, string>(StringComparer.Ordinal);
-        var labels = new Dictionary<string, string>(StringComparer.Ordinal);
-        var edges = new List<GraphEdge>();
+        var declaredIn = new Dictionary<string, string>(StringComparer.Ordinal);
+        var mentioned = new HashSet<string>(StringComparer.Ordinal);
+        var candidateEdges = new List<GraphEdge>();
 
         foreach (var assertion in assertions)
         {
@@ -96,21 +129,47 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
                 {
                     kinds[assertion.Subject] = assertion.Object;
                 }
+                else if (assertion.Predicate == "declared_in")
+                {
+                    declaredIn[assertion.Subject] = assertion.Object;
+                }
 
-                Touch(degree, assertion.Subject, 0);
+                mentioned.Add(assertion.Subject);
                 continue;
             }
 
-            Touch(degree, assertion.Subject, 1);
-            Touch(degree, assertion.Object, 1);
+            mentioned.Add(assertion.Subject);
+            mentioned.Add(assertion.Object);
 
-            edges.Add(new GraphEdge(
+            candidateEdges.Add(new GraphEdge(
                 assertion.Subject, assertion.Object, assertion.Predicate, assertion.Status));
         }
 
-        foreach (var id in degree.Keys)
+        // The FILTER, applied before the cap. Filtering afterwards would rank and trim the whole
+        // graph and only then discard, so the caller would receive the wrong nodes of the right kind.
+        var wanted = query.Kinds is { Count: > 0 }
+            ? query.Kinds.ToHashSet(StringComparer.OrdinalIgnoreCase)
+            : null;
+
+        var included = mentioned
+            .Where(id => query.IncludeExternal || declared.Contains(id))
+            .Where(id => wanted is null || wanted.Contains(kinds.GetValueOrDefault(id, "external")))
+            .Where(id => query.ScopeId is null
+                || string.Equals(declaredIn.GetValueOrDefault(id), query.ScopeId, StringComparison.Ordinal))
+            .ToHashSet(StringComparer.Ordinal);
+
+        // Degree is counted over the SURVIVING edges, so "most connected" means most connected in
+        // the graph that was asked for rather than in one the caller filtered away.
+        var edges = candidateEdges
+            .Where(e => included.Contains(e.From) && included.Contains(e.To))
+            .ToList();
+
+        var degree = included.ToDictionary(id => id, _ => 0, StringComparer.Ordinal);
+
+        foreach (var edge in edges)
         {
-            labels[id] = Label(id);
+            degree[edge.From]++;
+            degree[edge.To]++;
         }
 
         // DECLARED first, then by degree. A node this workspace declares is part of the thing being
@@ -122,7 +181,8 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
             .ThenBy(kv => kv.Key, StringComparer.Ordinal)
             .ToList();
 
-        var kept = ordered.Take(maxNodes).Select(kv => kv.Key).ToHashSet(StringComparer.Ordinal);
+        var nodes = ordered.Take(query.MaxNodes).ToList();
+        var kept = nodes.Select(kv => kv.Key).ToHashSet(StringComparer.Ordinal);
         var omitted = Math.Max(0, ordered.Count - kept.Count);
 
         // An edge whose other end was dropped is dropped with it. Drawing a half-edge into nothing
@@ -132,17 +192,14 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
             .ToList();
 
         return new WorkspaceGraph(
-            [.. ordered.Take(maxNodes).Select(kv => new GraphNode(
-                kv.Key, labels[kv.Key], kinds.GetValueOrDefault(kv.Key, "external"), kv.Value,
+            [.. nodes.Select(kv => new GraphNode(
+                kv.Key, Label(kv.Key), kinds.GetValueOrDefault(kv.Key, "external"), kv.Value,
                 IsExternal: !declared.Contains(kv.Key)))],
             visible,
             omitted,
             [.. disclosures.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)],
             sourceRevision);
     }
-
-    private static void Touch(Dictionary<string, int> degree, string id, int weight) =>
-        degree[id] = degree.GetValueOrDefault(id) + weight;
 
     /// <summary>
     /// The short name a reader recognises, keeping the scope prefix where there is one.

@@ -25,8 +25,16 @@ public sealed record FindRequest(string Term, int MaxResults);
 /// <param name="Cursor">Null for the first page; otherwise the previous page's NextCursor.</param>
 public sealed record EvidenceRequest(string? Cursor, int MaxAssertions);
 
-/// <summary>Asks for the whole graph, bounded by node count.</summary>
-public sealed record GraphRequest(int MaxNodes);
+/// <summary>Asks for the graph — all of it, or the part the filters name.</summary>
+/// <remarks>
+/// The filters carry defaults that mean "no filter", so an older caller sending only
+/// <c>MaxNodes</c> still asks the question it always asked.
+/// </remarks>
+public sealed record GraphRequest(
+    int MaxNodes,
+    IReadOnlyList<string>? Kinds = null,
+    string? ScopeId = null,
+    bool IncludeExternal = true);
 
 /// <inheritdoc cref="DescribeRequest"/>
 public sealed record KnowledgeRequest(string? Term, string? Type, int MaxResults);
@@ -132,7 +140,8 @@ public static class WorkspaceOperations
         // refused rather than taking the daemon down for every attached shell (DC-020). A control
         // that covers only the operations that happened to need it is not a control for the shape.
         endpoint.Register(Graph, (request, _) =>
-            Refusable(() => Handle<GraphRequest>(request, body => projections.Graph(body.MaxNodes))));
+            Refusable(() => Handle<GraphRequest>(request, body => projections.Graph(
+                new GraphQuery(body.MaxNodes, body.Kinds, body.ScopeId, body.IncludeExternal)))));
 
         endpoint.Register(Evidence, (request, _) =>
             Refusable(() => Handle<EvidenceRequest>(request,
