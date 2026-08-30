@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-29T21:50:24Z",
+  "generated": "2026-08-30T14:10:25Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1553,7 +1553,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6abf58a2d60a673008791376a71092b6c617b77b25a18f894ddc4d13d27e9dc2"
+      "sourceSha256": "d7c0fc8110afac95ed7d7b0607fa95a5d65423ae43c97eb8c0cf3bd538cf9708"
     },
     {
       "id": "domain-experts",
@@ -1629,6 +1629,42 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5ce843ed61cd48e6f0fa4875bbf9c221c2dd38e799ff2e96b773424f91be118c"
+    },
+    {
+      "id": "inv-0002-terminal-rebuild-kills-sessions",
+      "path": "docs/investigations/INV-0002-opening-a-terminal-kills-the-others.md",
+      "title": "INV-0002 — Opening a second terminal kills the running one",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-13",
+      "reviewSuggested": [],
+      "summary": "Opening a second terminal terminated the first one — the running Copilot session was lost. The verified cause is that WorkbenchAdapter.Render() rebuilds the entire AvalonDock layout on every mutation, constructing a brand-new TerminalSurface (and a fresh ConPTY child) for surfaces that did not change. Because each ConPTY child runs inside a kill-on-close job, disposing the replaced surface terminates the live process. Any layout mutation — not just opening a terminal — destroys every live terminal. Secondary: the only create command is \"New agent terminal\", which names the tab after the first agent on PATH (\"claude\"), so a plain terminal is mislabelled and no plain-terminal action exists. Report only — no code changed.",
+      "tags": [
+        "investigation",
+        "terminal",
+        "workbench",
+        "adapter",
+        "render",
+        "rca"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0001-agent-terminal-environment",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9e22e926fdabc542ccafb5f87d2f99f870e512bc2516d4f2656a7293a90b2033"
     },
     {
       "id": "lens-code-doc-join",
@@ -1732,6 +1768,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5bf8471b858442580beb4f227c56ae44fb370b0ff6185b66ba14d4d0da90ae07"
+    },
+    {
+      "id": "mockup-activity-rail",
+      "path": "docs/mockups/activity-rail.md",
+      "title": "Activity rail — icon-only elevate (mockup)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Self-contained mockup for the icon-only activity rail that replaces the clipped icon+label rail (\"Coordinate\" -> \"ordina\" at 56px). Renders rest/hover/focus/active states, tooltip, before/after, theme and reduced-motion via the review harness, with a token-layer contrast readout. The change is landed in src/AiDe.App/MainWindow.xaml.",
+      "tags": [
+        "mockup",
+        "ui-design",
+        "activity-rail",
+        "navigation",
+        "icons",
+        "tooltip",
+        "wcag"
+      ],
+      "links": [
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        },
+        {
+          "to": "review-ui-activity-rail",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c582c368ceb947e1c9a7582e2eafa5fbfdd58f21bb4b41a7f588701b3e18a4a9"
     },
     {
       "id": "mockup-app-facelift",
@@ -2168,6 +2237,42 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "93530824cad8aa85f88148cf8dbd63ddf813e1358e5b9417e81170e2eb95a71f"
+    },
+    {
+      "id": "review-ui-activity-rail",
+      "path": "docs/reviews/ui-activity-rail.md",
+      "title": "UI review — activity rail (elevate)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Review/elevate of the workbench activity rail. Measured defect: at a 56px column, 9px captions under the glyphs clipped (\"Coordinate\" -> \"ordina\"). Fix (landed): icon-only rail with tooltip + accessible name — the VS Code / JetBrains idiom — 44px targets, and a softened borderless active pill. Registered UX-F (a caption clipped by its own container).",
+      "tags": [
+        "ui-review",
+        "ui-design",
+        "activity-rail",
+        "navigation",
+        "wcag",
+        "elevate"
+      ],
+      "links": [
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-activity-rail",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "58b15179bba77644dd4cb94f67cd85cd56421ef9b76084742f8ed134f4dcc3f3"
     },
     {
       "id": "review-ui-facelift",
@@ -5530,6 +5635,63 @@ window.DOCS_INDEX = {
       "sourceSha256": "646404f73a065ad6bf3e2c5a172a9b7b22d4d267796317697815ca9f535a79e3"
     },
     {
+      "id": "spec-terminal-sessions",
+      "path": "docs/specs/terminal-sessions.md",
+      "title": "Multiple terminal sessions — lifecycle, rename, tab colour & colour schemes (spec)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Specifies correct behaviour for multiple concurrent terminal sessions: a first-class \"New terminal\" (plain shell) action distinct from \"New agent terminal\"; sessions that are never destroyed except by explicit user intent (the fix for INV-0002 / DC-029, where any layout mutation killed every live terminal); and per-session identity, rename, tab colour, and ANSI colour-scheme customization. The domain model makes session-identity-preservation an aggregate invariant. Core owns the lifecycle fix and the \"New terminal\" command; Design owns the rename/colour/scheme UI.",
+      "tags": [
+        "terminal",
+        "sessions",
+        "lifecycle",
+        "customization",
+        "tab-colour",
+        "colour-scheme",
+        "wpf"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-app-facelift",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0002-terminal-rebuild-kills-sessions",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  subgraph Create\n    A[User wants a terminal] --> B{Plain or agent?}\n    B -->|plain| C[New terminal] --> D[Shell session opens, titled 'Terminal']\n    B -->|agent| E[New agent terminal…] --> F{Any agent on PATH?}\n    F -->|no| G[Message: no agent CLI found + how to install]\n    F -->|yes| H[Agent session opens, titled after the agent]\n  end\n  D --> I[Both/all sessions run independently]\n  H --> I"
+        },
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  J[User right-clicks a terminal tab] --> K{Action}\n  K -->|Rename| L[Inline edit] --> M{Non-empty?}\n  M -->|yes| N[Tab shows new name; identity unchanged]\n  M -->|no| O[Rejected; prior name kept + message]\n  K -->|Tab colour| P[Pick swatch or None] --> Q[Accent applied; text still AA]\n  K -->|Colour scheme| R[Pick named preset] --> S[This session re-renders with scheme; others unaffected]\n  K -->|Close| T[Confirm if session is busy] --> U[Only this session ends]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "User flows",
+          "mermaid": "flowchart TD\n  V[Any layout mutation: open/close pane, split, restore, resize] --> W[Adapter reconciles by ContentId]\n  W --> X[Unchanged surfaces reuse their live content]\n  X --> Y[Every running session survives, identity + process intact]"
+        }
+      ],
+      "sourceSha256": "5c4a5d26f7afc3febf9e99a480650a6aadbbd2f836665ae40a3bc4941f617ce7"
+    },
+    {
       "id": "spec-uml-erm-surfaces",
       "path": "docs/specs/uml-erm-surfaces.md",
       "title": "UML & ERM Surfaces (spec)",
@@ -5636,10 +5798,18 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
+    },
+    {
+      "id": "surface-mockups-activity-rail",
+      "path": "docs/mockups/activity-rail.html",
+      "title": "Activity rail — elevate mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-activity-rail"
     },
     {
       "id": "surface-mockups-facelift-elevate",
@@ -5698,5 +5868,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5f0b0a72dea08e05511429a0b21ccd4cb51a7b76aab05b2ca3572ef823d3f09e"
+  "graphSha256": "1a7a6ba55d9d91439b3948709be243eaf587366504393eede45e3e0c38c644fe"
 };

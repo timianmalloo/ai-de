@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-29T22:04:13Z",
+  "generated": "2026-08-30T14:10:26Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1992,6 +1992,57 @@ window.AUDIT_DATA = {
         "facelift",
         "icons"
       ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0111",
+      "shortname": "investigate-terminal-kill",
+      "datetime": "2026-08-30T13:57:46Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "investigate why opening a second terminal killed the prior terminal session",
+      "summary": "Root cause: WorkbenchAdapter.Render() rebuilds all panes on every mutation, recreating each TerminalSurface; ConPTY kill-on-close job terminates the replaced live process. Any of 5 Render() sites kills every live terminal. Registered DC-029. Report at docs/investigations/INV-0002. STOP for review.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0002-opening-a-terminal-kills-the-others.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0112",
+      "shortname": "specify-terminal-sessions",
+      "datetime": "2026-08-30T14:02:41Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "specify proper multi-terminal behavior including rename, tab color, terminal customization and the fix for the kill defect",
+      "summary": "Wrote docs/specs/terminal-sessions.md (3 layers): domain model with session-identity aggregate invariant (fix for DC-029), New terminal vs New agent terminal, rename/tab-colour/colour-scheme; Core owns lifecycle fix+command, Design owns customization UI.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/terminal-sessions.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0113",
+      "shortname": "ui-design-activity-rail",
+      "datetime": "2026-08-30T14:10:26Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "the menus and icons on the side are great but the text under the icons are cut off, maybe we need to just have the icons and tooltips? do another round of ui-design elevate to further refine the UI",
+      "summary": "Activity rail elevated to icon-only (VS Code/JetBrains idiom): removed clipped 9px captions, kept tooltip + AutomationProperties.Name, 44px targets, softened borderless active pill. Landed in MainWindow.xaml (BAML recompiles). Mockup+review+DC-030.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/activity-rail.html"
+      ],
+      "tags": [],
       "outcome": "success"
     }
   ],

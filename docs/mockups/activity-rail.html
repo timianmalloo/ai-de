@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<!--
+  Activity rail — /ui-design elevate mockup (self-contained, dependency-free).
+  Renders the icon-only navigation rail that replaces the clipped icon+label rail.
+  Review harness: before/after · state (default/hover/focus/active/muted) · theme · reduced-motion.
+  Tokens are the shipped App.xaml values; icon geometries are the shipped Lucide-style paths.
+  This file is review chrome and never ships.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Activity rail — elevate mockup</title>
+<style>
+  :root{
+    --sunken:#0D1014; --raised:#1A1F26; --accent:#5B9DD9; --muted:#98A3B2;
+    --text:#E4E9EF; --border:#2A313B; --radius:6px; --focus:#5B9DD9;
+    --dur:120ms;
+  }
+  [data-theme="contrast"]{
+    --sunken:#000000; --raised:#101418; --accent:#8FC0EA; --muted:#C3CBD6;
+    --text:#FFFFFF; --border:#3A424D; --focus:#8FC0EA;
+  }
+  [data-motion="reduce"] *{ transition:none !important; animation:none !important; }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.5 "Segoe UI",system-ui,sans-serif;background:#05070a;color:var(--text)}
+  .harness{display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding:12px 16px;background:#0f141a;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:2}
+  .harness label{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+  .harness select,.harness button{background:#1A1F26;color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font:inherit;font-size:12px}
+  .stage{display:flex;gap:40px;padding:40px;align-items:flex-start;flex-wrap:wrap}
+  .frame{background:var(--sunken);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+  .cap{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:0 0 8px 2px}
+
+  /* the rail, at the real 56px column width */
+  .rail{width:56px;background:var(--sunken);padding:8px 0;display:flex;flex-direction:column;gap:8px;align-items:center}
+  .btn{position:relative;width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+       border-radius:var(--radius);cursor:pointer;color:var(--muted);
+       background:transparent;border:1px solid transparent;transition:background var(--dur) ease,color var(--dur) ease}
+  .btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+  .btn:hover{background:#141a21;color:var(--text)}
+  .btn.active{background:var(--raised);color:var(--accent)}
+  .btn:focus-visible,.btn.focus{outline:none;box-shadow:0 0 0 2px var(--focus)}
+  /* tooltip */
+  .btn[data-tip]:hover::after,.btn.showtip::after{content:attr(data-tip);position:absolute;left:52px;top:50%;transform:translateY(-50%);
+       background:var(--raised);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;white-space:nowrap;z-index:5;
+       box-shadow:0 4px 14px rgba(0,0,0,.4)}
+
+  /* the BEFORE rail: icon + clipped caption */
+  .rail.before .btn{flex-direction:column;height:46px;gap:0}
+  .rail.before .cap9{font-size:9px;margin-top:2px;max-width:44px;overflow:hidden;text-overflow:clip;white-space:nowrap;display:block;color:inherit}
+
+  .notes{padding:0 40px 40px;max-width:760px}
+  .notes h2{font-size:14px;margin:24px 0 8px}
+  .notes ul{margin:0;padding-left:18px;color:#c7cfda}
+  .swatch{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:middle;margin-right:6px;border:1px solid var(--border)}
+  table{border-collapse:collapse;font-size:12px;margin-top:8px}
+  td,th{border:1px solid var(--border);padding:5px 9px;text-align:left}
+  .pass{color:#84D2AC}
+</style>
+</head>
+<body>
+<div class="harness">
+  <strong style="font-size:13px">Activity rail · elevate</strong>
+  <label>view
+    <select id="view"><option value="after">After (icon-only)</option><option value="before">Before (clipped labels)</option></select>
+  </label>
+  <label>state
+    <select id="state"><option value="rest">rest</option><option value="hover">hover (tooltip)</option><option value="focus">focus ring</option></select>
+  </label>
+  <label>theme
+    <select id="theme"><option value="dark">Dark</option><option value="contrast">High-contrast</option></select>
+  </label>
+  <label>motion
+    <select id="motion"><option value="full">Full motion</option><option value="reduce">Reduced motion</option></select>
+  </label>
+</div>
+
+<div class="stage">
+  <div>
+    <p class="cap" id="cap-a">After — icon-only, tooltip + accessible name</p>
+    <div class="frame">
+      <div class="rail after" id="rail" role="toolbar" aria-label="Activity rail" aria-orientation="vertical"></div>
+    </div>
+  </div>
+  <div>
+    <p class="cap">Tooltip on hover (Coordinate)</p>
+    <div class="frame">
+      <div class="rail after">
+        <div class="btn active" data-tip="Explore" aria-label="Explore">%%EXPLORE%%</div>
+        <div class="btn showtip" data-tip="Coordinate" aria-label="Coordinate">%%COORD%%</div>
+        <div class="btn" data-tip="Compose" aria-label="Compose">%%COMPOSE%%</div>
+        <div class="btn" data-tip="Audit" aria-label="Audit">%%AUDIT%%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="notes">
+  <h2>What changed</h2>
+  <ul>
+    <li><strong>Labels removed.</strong> At the real <strong>56&nbsp;px</strong> column width a 9&nbsp;px caption under a 20&nbsp;px glyph clipped: "Coordinate"&nbsp;→&nbsp;"ordina", "Explore"&nbsp;→&nbsp;"xplor". The rail is now <strong>icon-only</strong> — the VS Code / JetBrains activity-bar idiom (Jakob's Law).</li>
+    <li><strong>No meaning lost.</strong> Discoverability moves to the <strong>tooltip</strong>; the accessible name stays on <code>AutomationProperties.Name</code>, so a screen reader still announces "Explore", "Coordinate", "Compose", "Audit".</li>
+    <li><strong>Softer active state.</strong> The active item is an accent glyph on a raised rounded pill with <strong>no hard border</strong> (the border read as a clunky box); inactive items are muted on transparent.</li>
+    <li><strong>Comfortable targets.</strong> 44&nbsp;× 44&nbsp;px (WCAG&nbsp;2.5.8), icon 20&nbsp;→&nbsp;22&nbsp;px for presence now that it carries the button alone.</li>
+  </ul>
+  <h2>Token-layer contrast (graphic ≥ 3:1, WCAG 1.4.11)</h2>
+  <table>
+    <tr><th>Element</th><th>Fore</th><th>Ground</th><th>Ratio</th><th>AA</th></tr>
+    <tr><td>Active icon</td><td><span class="swatch" style="background:#5B9DD9"></span>#5B9DD9</td><td>#1A1F26</td><td>~5.1:1</td><td class="pass">pass</td></tr>
+    <tr><td>Muted icon</td><td><span class="swatch" style="background:#98A3B2"></span>#98A3B2</td><td>#0D1014</td><td>~7.6:1</td><td class="pass">pass</td></tr>
+    <tr><td>Focus ring</td><td><span class="swatch" style="background:#5B9DD9"></span>#5B9DD9</td><td>#0D1014</td><td>~6.7:1</td><td class="pass">pass</td></tr>
+    <tr><td>Tooltip text</td><td>#E4E9EF</td><td>#1A1F26</td><td>~13:1</td><td class="pass">pass</td></tr>
+  </table>
+  <p style="color:var(--muted);font-size:12px;margin-top:20px">Colour is a <em>secondary</em> cue: the active item is carried by the accent glyph <strong>and</strong> the raised pill, never colour alone.</p>
+</div>
+
+<script>
+  const ICONS = {
+    Explore:'M3 6.5a1.5 1.5 0 0 1 1.5-1.5h3.5l1.5 1.5h7a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5h-13a1.5 1.5 0 0 1-1.5-1.5z',
+    Coordinate:'M6 4a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zM17 15a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zM6 7.6v4.4a3 3 0 0 0 3 3h6',
+    Compose:'M4 20h4l9.5-9.5a2 2 0 0 0-3-3L5 16.5zM14 6.5l3 3',
+    Audit:'M4.5 12a7.5 7.5 0 1 0 2.7-5.8M4 4v4h4M12 8.5v4l3 1.8'
+  };
+  const svg = p => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${p}"/></svg>`;
+  // fill the inline demo rail icons
+  document.body.innerHTML = document.body.innerHTML
+    .replace('%%EXPLORE%%',svg(ICONS.Explore)).replace('%%COORD%%',svg(ICONS.Coordinate))
+    .replace('%%COMPOSE%%',svg(ICONS.Compose)).replace('%%AUDIT%%',svg(ICONS.Audit));
+
+  const order=['Explore','Coordinate','Compose','Audit'];
+  function build(){
+    const view=document.getElementById('view').value;
+    const state=document.getElementById('state').value;
+    const rail=document.getElementById('rail');
+    rail.className='rail '+view;
+    document.getElementById('cap-a').textContent = view==='after'
+      ? 'After — icon-only, tooltip + accessible name'
+      : 'Before — 9px caption clips in the 56px rail';
+    rail.innerHTML='';
+    order.forEach((name,i)=>{
+      const b=document.createElement('div');
+      b.className='btn'+(i===0?' active':'')+(state==='hover'&&i===1?' showtip':'')+(state==='focus'&&i===2?' focus':'');
+      b.setAttribute('data-tip',name); b.setAttribute('role','button'); b.setAttribute('aria-label',name); b.tabIndex=0;
+      b.innerHTML = svg(ICONS[name]) + (view==='before'?`<span class="cap9">${name}</span>`:'');
+      rail.appendChild(b);
+    });
+  }
+  document.getElementById('theme').onchange=e=>document.documentElement.dataset.theme=e.target.value;
+  document.getElementById('motion').onchange=e=>document.documentElement.dataset.motion=e.target.value==='reduce'?'reduce':'';
+  ['view','state'].forEach(id=>document.getElementById(id).onchange=build);
+  build();
+</script>
+</body>
+</html>

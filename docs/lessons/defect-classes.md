@@ -894,3 +894,58 @@ for both or split.*
   numbers are printed beside the synthetic ones on every run, which makes a divergence visible to
   whoever reads the output — and only to them.
 - **Status:** `partially-controlled`
+
+### DC-029 — A full-tree re-render rebuilds live children from a factory instead of reconciling by key
+
+- **Signature:** a UI/layout adapter renders by discarding the whole realized tree and rebuilding it
+  from the model on every mutation, invoking a content factory for **every** child — including
+  children that did not change. Where a child owns live state (a process, a session, a socket, a
+  media handle), the correct-looking replacement silently destroys that state. The loss is of
+  *state*, not of *shape*, so the rebuilt child looks identical to the one it replaced and nothing
+  visible signals the loss.
+- **Why it survives:** every in-session visual check passes — the pane is present, titled, and
+  drawing. The factory faithfully produces a valid replacement, so screenshots, layout assertions,
+  and accessibility-name checks all pass over the rebuilt tree. Only a test that pins a child's
+  *identity or process* across a mutation — or a user who had something running — reveals it.
+- **Instances:**
+  - 2026 — `WorkbenchAdapter.Render()` replaced `Manager.Layout` wholesale and rebuilt every pane via
+    the content factory (`WorkbenchAdapter.cs:50,184`); each new `TerminalSurface` started a ConPTY
+    child in a kill-on-close job, so opening a second terminal — indeed **any** layout mutation
+    (5 `Render()` sites) — terminated every live terminal, including a running Copilot session
+    (INV-0002).
+- **Control:** a test that opens a terminal, records its session/process identity, applies a second
+  unrelated layout mutation, and asserts the first session's identity is **unchanged**. **Observed
+  failing** against the pre-fix code (the `TerminalSurface` instance is replaced and its process
+  killed). The fix is to reconcile by `ContentId`: reuse the existing content element for an
+  unchanged surface, create only for new surfaces, dispose only for removed ones.
+- **The generalisation to apply elsewhere:** any adapter that projects a model onto a realized view
+  must **reconcile by a stable key**, not rebuild — reuse unchanged nodes, add new ones, remove gone
+  ones. Treat "rebuild the whole view on mutation" as a defect wherever a child can own state. The
+  next likely victim here is the unwrapped windowed canvas/WebView2 surface.
+- **Status:** `uncontrolled` (control specified, fix pending human approval — INV-0002 Phase 1)
+
+### DC-030 — A caption is clipped by the very container that is too narrow to hold it
+
+- **Signature:** a control places a text label inside a fixed-size container that cannot fit it —
+  a caption under a glyph in a narrow icon rail, a name in a fixed-width tab — so the string renders
+  truncated ("Coordinate" -> "ordina") with no ellipsis and no overflow affordance. The label is
+  usually a **redundant** second channel: the same meaning is already carried by an icon, a tooltip,
+  and the accessible name, so nothing is lost by removing it and everything is lost by keeping it.
+- **Why it survives:** the token linter passes (the colour, font and size are all on-system — the
+  fault is width-vs-content, not an off-token value), the accessible name is intact (so screen-reader
+  checks pass), and a populated screenshot at the design width looks fine. Only a render at the real
+  constrained width, with the real longest label, shows the clip. This is the pack UX-A/UX family
+  ("archetype/label mis-applied at a width the task cannot hold") seen at the widget scale.
+- **Instances:**
+  - 2026 — the workbench activity rail rendered a 9px caption under a 20px glyph in a 56px column;
+    "Explore/Coordinate/Compose" clipped. Fixed by going icon-only with tooltip + `AutomationProperties.Name`
+    (the VS Code / JetBrains idiom). INV/review: `docs/reviews/ui-activity-rail.md`.
+- **Control:** render every fixed-width text-bearing control at its **real** container width with its
+  **longest real** label and assert it is not clipped (no truncation, or an intentional ellipsis with
+  the full text reachable by tooltip/name). Where the label is redundant with an icon+tooltip+name,
+  prefer removing it (the higher rung: make the clip impossible) over shrinking the font.
+- **The generalisation to apply elsewhere:** a label inside a fixed small container is a latent clip;
+  before adding one, ask whether the icon + tooltip + accessible name already carry the meaning, and
+  if so, do not add the caption. Test overflow with the longest real content, never the demo content.
+- **Status:** `controlled` (fix landed; the icon+tooltip+name pattern makes the clip structurally
+  impossible for the rail)
