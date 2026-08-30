@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T19:58:18Z",
+  "generated": "2026-08-30T19:59:17Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2581,6 +2581,32 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0139",
+      "shortname": "sql-fold-uses-table-gates-into-ci-marker-audit",
+      "datetime": "2026-08-30T19:49:46Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "**SQL scripts are folded, not just read.** MEASURED: one repository carries **125 `ALTER TABLE … ADD`**\nstatements, so reading `CREATE` alone showed its schema as it stood at the first migration and called\nthat current. Adds, `DROP COLUMN` and `DROP TABLE` are now applied in file order — drops especially,\nbecause a column that no longer exists is a **wrong** fact rather than a missing one. Renames are\ncounted and disclosed rather than guessed: every dialect spells them differently, and guessing\nproduces a confidently wrong column name.\n\n**Three gates I wrote this session were not in CI.** `verify-id-allocators`,\n`verify-project-coverage` and `verify-bounds-are-enforced` sat in `tools/` for several commits with\nno workflow line — they ran only when I remembered. A gate nobody invokes is the \"lesson recorded as\nprose\" failure wearing an executable's clothes: it looks like a control in every review and fires\nnever. All three wired, and `verify-project-coverage` now asks the same question about gates that it\nasks about projects — **what exists to be run, and is not run.** Observed failing with a gate removed\nfrom the workflow.\n\n**The `simplify:` marker audit found one triggered and one premise already false.** `IpcFraming`'s\ntrigger fired during INV-0003 — and the answer was **none of the two exits the marker listed**.\nNeither a bigger frame nor a data lane: the operation did not legitimately need to carry more. A\n2,815-node hairball was never a useful answer and the spec had always said so, so every response was\nbounded below the cap instead. Recorded, because a marker naming two exits invites you to take one.\n\nIts stated premise — *\"a control lane carries envelopes, not payloads: the largest legitimate message\nis a command with a small JSON body\"* — was **already false when audited**: ordinary responses are an\nevidence page at 659,164 bytes, a graph at 475,223, an overview at 345,507. That sentence had not\nbeen re-read since it was true. The other twelve markers were reviewed with no evidence of firing.\n\n**\"Verified joins for non-EF repositories\" turned out to be the wrong question, and the finding is\nbetter than the feature.** BioHacker has zero `DbContext` files, zero `[Table]` attributes and 191\nSQL literals naming tables from inside store classes. There is **no declaration of a code→schema\nmapping to verify** — and there should not be one invented. A store class issuing four statements\nagainst three tables is not *mapped* to any of them.\n\nWhat the source does declare is **usage**, so that is what is emitted: `uses_table`, Verified because\nthe literal is in the type. **62 edges on BioHacker**, structure it simply did not have. Deliberately\nnot `maps_to` — reusing the mapping predicate would launder usage into a mapping exactly where a\nreader trusts it (DC-022's shape). Joins there remain 0 verified / 8 inferred, which is the honest\nanswer.\n\n**Deduplication moved into one place on its third copy.** Python and TypeScript each grew the same\nsix lines after the same raw `UNIQUE constraint failed` from mid-index; `uses_table` hit it a third\ntime immediately, because one store names the same table in four statements. `ExtractionFacts.Distinct`\nnow owns it, so the fourth extractor inherits it. The store's key stays strict — silencing it would\ntrade a loud correct failure for a quiet wrong graph.\n\n**And \"make the measurement a CI nightly\" was wrong, stated rather than quietly dropped.** The\nrepositories are sibling checkouts on one machine; a hosted runner has none of them, so the job would\nfail or skip every night — a gate that cannot fire, dressed as diligence. `--record` is the\nachievable half: readings append to `docs/measurements/repositories.jsonl`, so drift shows up in\n`git diff` rather than in somebody's memory. First reading committed.\n\n831 tests green (App 132, Core 699). Eight gates clean, all eight now actually run by CI. Zero\ndesign-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Fold ALTER into the SQL reader, get the measurement recorded, find what a non-EF repo actually declares, and audit the simplify markers",
+      "done_when": "Scripts fold in order with drops applied; every gate runs in CI; the marker audit records what triggered; non-EF repos gain real edges without a false Verified; gates green; merged and published",
+      "change": "cl-0089",
+      "git": {
+        "sha": "fd8516ff7fafe459cebb0ce2f55e68de32bc1881",
+        "short": "fd8516ff7",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false
+      }
+    },
+    {
       "id": "al-0140",
       "shortname": "implement-explorer-mode-p1",
       "datetime": "2026-08-30T19:58:18Z",
@@ -4807,6 +4833,32 @@ window.AUDIT_DATA = {
         "after": "ceb2389e829e25c991f5e0a916f68c7863796399",
         "branch": "feature/app-facelift-and-graph-surfaces",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0089",
+      "datetime": "2026-08-30T19:49:35Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "SQL folded, usage not mapping, and three gates that CI had never run",
+      "prompt": null,
+      "summary": "**SQL scripts are folded, not just read.** MEASURED: one repository carries **125 `ALTER TABLE … ADD`**\nstatements, so reading `CREATE` alone showed its schema as it stood at the first migration and called\nthat current. Adds, `DROP COLUMN` and `DROP TABLE` are now applied in file order — drops especially,\nbecause a column that no longer exists is a **wrong** fact rather than a missing one. Renames are\ncounted and disclosed rather than guessed: every dialect spells them differently, and guessing\nproduces a confidently wrong column name.\n\n**Three gates I wrote this session were not in CI.** `verify-id-allocators`,\n`verify-project-coverage` and `verify-bounds-are-enforced` sat in `tools/` for several commits with\nno workflow line — they ran only when I remembered. A gate nobody invokes is the \"lesson recorded as\nprose\" failure wearing an executable's clothes: it looks like a control in every review and fires\nnever. All three wired, and `verify-project-coverage` now asks the same question about gates that it\nasks about projects — **what exists to be run, and is not run.** Observed failing with a gate removed\nfrom the workflow.\n\n**The `simplify:` marker audit found one triggered and one premise already false.** `IpcFraming`'s\ntrigger fired during INV-0003 — and the answer was **none of the two exits the marker listed**.\nNeither a bigger frame nor a data lane: the operation did not legitimately need to carry more. A\n2,815-node hairball was never a useful answer and the spec had always said so, so every response was\nbounded below the cap instead. Recorded, because a marker naming two exits invites you to take one.\n\nIts stated premise — *\"a control lane carries envelopes, not payloads: the largest legitimate message\nis a command with a small JSON body\"* — was **already false when audited**: ordinary responses are an\nevidence page at 659,164 bytes, a graph at 475,223, an overview at 345,507. That sentence had not\nbeen re-read since it was true. The other twelve markers were reviewed with no evidence of firing.\n\n**\"Verified joins for non-EF repositories\" turned out to be the wrong question, and the finding is\nbetter than the feature.** BioHacker has zero `DbContext` files, zero `[Table]` attributes and 191\nSQL literals naming tables from inside store classes. There is **no declaration of a code→schema\nmapping to verify** — and there should not be one invented. A store class issuing four statements\nagainst three tables is not *mapped* to any of them.\n\nWhat the source does declare is **usage**, so that is what is emitted: `uses_table`, Verified because\nthe literal is in the type. **62 edges on BioHacker**, structure it simply did not have. Deliberately\nnot `maps_to` — reusing the mapping predicate would launder usage into a mapping exactly where a\nreader trusts it (DC-022's shape). Joins there remain 0 verified / 8 inferred, which is the honest\nanswer.\n\n**Deduplication moved into one place on its third copy.** Python and TypeScript each grew the same\nsix lines after the same raw `UNIQUE constraint failed` from mid-index; `uses_table` hit it a third\ntime immediately, because one store names the same table in four statements. `ExtractionFacts.Distinct`\nnow owns it, so the fourth extractor inherits it. The store's key stays strict — silencing it would\ntrade a loud correct failure for a quiet wrong graph.\n\n**And \"make the measurement a CI nightly\" was wrong, stated rather than quietly dropped.** The\nrepositories are sibling checkouts on one machine; a hosted runner has none of them, so the job would\nfail or skip every night — a gate that cannot fire, dressed as diligence. `--record` is the\nachievable half: readings append to `docs/measurements/repositories.jsonl`, so drift shows up in\n`git diff` rather than in somebody's memory. First reading committed.\n\n831 tests green (App 132, Core 699). Eight gates clean, all eight now actually run by CI. Zero\ndesign-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/SqlSchemaExtractor.cs",
+        "src/AiDe.Core/Extraction/CSharpExtractor.cs",
+        ".github/workflows/build.yml"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "fd8516ff7fafe459cebb0ce2f55e68de32bc1881",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
         "commits": []
       }
     }

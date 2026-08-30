@@ -18,9 +18,15 @@ namespace AiDe.Core.Extraction;
 /// already reads that vocabulary — a second spelling for the same thing would be DC-022 with two
 /// producers of one predicate, and the joins would silently see half the tables.</para>
 ///
-/// <para><c>simplify: line-oriented recognition of CREATE TABLE and its column lines, not a SQL
-/// grammar; ceiling is table names and column names from a plain DDL file; upgrade trigger = a
-/// consumer needs types, constraints, indexes, or schema changes expressed as ALTER.</c></para>
+/// <para><b>The scripts are FOLDED, not just read.</b> A schema is the sum of its statements in
+/// order. MEASURED: one repository carries 125 <c>ALTER TABLE … ADD</c> statements, so reading
+/// <c>CREATE</c> alone would have shown its schema as it stood at the first migration and presented
+/// that as current — the same defect the EF reader avoids by folding migrations. Drops are applied
+/// too, because a column that no longer exists is a WRONG fact rather than a missing one.</para>
+///
+/// <para><c>simplify: line-oriented recognition of CREATE TABLE, ALTER TABLE ADD/DROP COLUMN and
+/// DROP TABLE, not a SQL grammar; ceiling is table and column NAMES; upgrade trigger = a consumer
+/// needs column types, constraints, indexes, or renames followed.</c></para>
 /// </remarks>
 public sealed class SqlSchemaExtractor : IExtractor
 {
@@ -32,8 +38,8 @@ public sealed class SqlSchemaExtractor : IExtractor
     /// <summary>Gaps this reader always has, stated on every scope it produces.</summary>
     public static class Disclosures
     {
-        /// <summary>Only CREATE TABLE is read; ALTER, DROP and RENAME are not folded.</summary>
-        public const string AltersNotFolded = "sql-alter-statements-not-folded";
+        /// <summary>A rename is not followed, so the table or column keeps its earlier name.</summary>
+        public const string RenamesNotFollowed = "sql-renames-not-followed";
 
         /// <summary>Column types, constraints and indexes are not read.</summary>
         public const string ColumnDetailNotRead = "sql-column-detail-not-read";
@@ -47,6 +53,35 @@ public sealed class SqlSchemaExtractor : IExtractor
     private static readonly Regex CreateTable = new(
         @"CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?<name>(?:\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*)"
         + @"(?:\s*\.\s*(?:\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*))*)",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    // `ALTER TABLE X ADD [Col] type` — MEASURED: one real repository carries 125 of these and zero
+    // CREATE-only tables, so reading CREATE alone would have shown its schema as it was at the first
+    // migration and called that current.
+    private static readonly Regex AlterAdd = new(
+        @"ALTER\s+TABLE\s+(?<table>(?:\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*)"
+        + @"(?:\s*\.\s*(?:\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*))*)"
+        + @"\s+ADD\s+(?!CONSTRAINT|PRIMARY|FOREIGN|UNIQUE|CHECK|INDEX)"
+        + @"(?<column>\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*)\s+[A-Za-z]",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    // A dropped column that stays in the graph is a WRONG fact, which is worse than a missing one.
+    private static readonly Regex AlterDrop = new(
+        @"ALTER\s+TABLE\s+(?<table>(?:\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*)"
+        + @"(?:\s*\.\s*(?:\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*))*)"
+        + @"\s+DROP\s+COLUMN\s+(?<column>\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*)",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    private static readonly Regex DropTable = new(
+        @"DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?<table>(?:\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*)"
+        + @"(?:\s*\.\s*(?:\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*))*)",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    // Renames are DISCLOSED rather than half-read: every dialect spells them differently
+    // (`sp_rename` on SQL Server, `RENAME COLUMN` elsewhere), and guessing one produces a confidently
+    // wrong column name rather than an absent one.
+    private static readonly Regex Rename = new(
+        @"(?:ALTER\s+TABLE\s+\S+\s+RENAME|EXEC(?:UTE)?\s+sp_rename)",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     // A column line inside the parentheses: a name, then a type word. Constraint lines start with a
@@ -80,9 +115,12 @@ public sealed class SqlSchemaExtractor : IExtractor
         var scopeProvenance = new Provenance(
             Path.GetFileName(directory), "1:1", ExtractorId, ExtractorVersion, observedAt);
 
+        // RenamesNotFollowed is NOT here: it is conditional and carries a count, because a blanket
+        // "renames are not followed" says the same thing whether there are none or thirty. The
+        // Python reader learned this the other way round — a blanket disclosure that stayed true
+        // after the gap it described had closed.
         foreach (var disclosure in new[]
         {
-            Disclosures.AltersNotFolded,
             Disclosures.ColumnDetailNotRead,
             Disclosures.NotTheDatabase,
         })
@@ -91,6 +129,14 @@ public sealed class SqlSchemaExtractor : IExtractor
         }
 
         var unreadable = 0;
+        var renames = 0;
+
+        // The FOLD. A schema is the sum of its scripts in order, not the first one: MEASURED, a real
+        // repository has 125 `ALTER TABLE … ADD` statements, so reading CREATE alone would show its
+        // schema as it stood at the first migration and present that as current. Files are taken in
+        // name order because migration scripts are named to sort chronologically — the same
+        // assumption the EF reader makes, and the reason the ordering is stated rather than implied.
+        var tables = new Dictionary<string, TableState>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var file in Files(directory).OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
         {
@@ -105,20 +151,68 @@ public sealed class SqlSchemaExtractor : IExtractor
             }
 
             var relative = Path.GetRelativePath(directory, file).Replace((char)92, '/');
+            renames += Rename.Matches(text).Count;
 
             foreach (var (table, columns, line) in Tables(text))
             {
-                var node = $"table:{table}";
-                var provenance = new Provenance(relative, $"{line}:1", ExtractorId, ExtractorVersion, observedAt);
-
-                assertions.Add(Fact(request, node, "has_type", "table", provenance));
-                assertions.Add(Fact(request, node, "declared_in", request.ScopeId, provenance));
-
-                foreach (var column in columns)
+                if (!tables.TryGetValue(table, out var state))
                 {
-                    assertions.Add(Fact(request, node, "has_column", column, provenance));
+                    tables[table] = state = new TableState(relative, line);
+                }
+
+                foreach (var column in columns) state.Columns.Add(column);
+            }
+
+            foreach (Match match in AlterAdd.Matches(text))
+            {
+                var table = Unquote(match.Groups["table"].Value);
+
+                // An ALTER against a table this scope never creates is still evidence the table
+                // exists — the CREATE may live in a script nobody put in the repository.
+                if (!tables.TryGetValue(table, out var state))
+                {
+                    tables[table] = state = new TableState(relative, LineOf(text, match.Index));
+                }
+
+                state.Columns.Add(Unquote(match.Groups["column"].Value));
+            }
+
+            foreach (Match match in AlterDrop.Matches(text))
+            {
+                if (tables.TryGetValue(Unquote(match.Groups["table"].Value), out var state))
+                {
+                    state.Columns.Remove(Unquote(match.Groups["column"].Value));
                 }
             }
+
+            foreach (Match match in DropTable.Matches(text))
+            {
+                tables.Remove(Unquote(match.Groups["table"].Value));
+            }
+        }
+
+        foreach (var (table, state) in tables)
+        {
+            var node = $"table:{table}";
+            var provenance = new Provenance(
+                state.Path, $"{state.Line}:1", ExtractorId, ExtractorVersion, observedAt);
+
+            assertions.Add(Fact(request, node, "has_type", "table", provenance));
+            assertions.Add(Fact(request, node, "declared_in", request.ScopeId, provenance));
+
+            foreach (var column in state.Columns)
+            {
+                assertions.Add(Fact(request, node, "has_column", column, provenance));
+            }
+        }
+
+        if (renames > 0)
+        {
+            // Counted, because "renames are not followed" and "3 renames were not followed" are
+            // different statements about how wrong a name in this graph might be.
+            assertions.Add(Fact(request, scopeNode, CSharpExtractor.DisclosurePredicate,
+                $"{Disclosures.RenamesNotFollowed} ({renames:N0} rename(s); the earlier name is what "
+                + "this graph shows)", scopeProvenance));
         }
 
         if (unreadable > 0)
@@ -129,13 +223,27 @@ public sealed class SqlSchemaExtractor : IExtractor
 
         // Identical facts are ONE fact: the same table can be created in two scripts (a baseline and
         // a rebuild), and the store's natural key rejects the duplicate rather than absorbing it.
-        var deduplicated = assertions
-            .GroupBy(a => (a.Subject, a.Predicate, a.Object))
-            .Select(g => g.First())
-            .ToList();
+        var deduplicated = ExtractionFacts.Distinct(assertions);
 
         return Task.FromResult(new ExtractionResult(deduplicated, Complete: true, []));
     }
+
+    /// <summary>A table as the scripts have left it so far.</summary>
+    /// <remarks>
+    /// Columns are an ORDERED set: order is the declaration order a reader expects, and set
+    /// semantics mean re-adding a column two scripts later is not a duplicate fact.
+    /// </remarks>
+    private sealed class TableState(string path, int line)
+    {
+        public string Path { get; } = path;
+
+        public int Line { get; } = line;
+
+        public HashSet<string> Columns { get; } = new(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static int LineOf(string text, int index) =>
+        text.Take(index).Count(c => c == '\n') + 1;
 
     /// <summary>Every table a script creates, with the columns declared inside its parentheses.</summary>
     /// <remarks>

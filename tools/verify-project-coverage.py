@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Every tracked project is compiled by something, so none can rot unnoticed.
+"""Every tracked project is compiled by something, and every gate is actually run.
 
 WHAT HAPPENED. `spikes/joins-on-a-real-repo` is the harness that measures extraction against a
 real repository — the source of nearly every performance and join number in the change log. It is
@@ -90,6 +90,32 @@ def build(root: Path, project: str) -> tuple[bool, str]:
     return False, (lines[0] if lines else f"exit {result.returncode}")
 
 
+def ungated_scripts(root: Path) -> list[str]:
+    """Every verify-*.py that CI never runs.
+
+    Found by hand, which is the point: three gates written in one session
+    (`verify-id-allocators`, `verify-project-coverage`, `verify-bounds-are-enforced`) sat in `tools/`
+    for several commits without a workflow line, so they ran only when somebody remembered. A gate
+    nobody invokes is the "lesson recorded as prose" failure wearing an executable's clothes — it
+    looks like a control in every review and fires never.
+    """
+    workflows = root / ".github" / "workflows"
+    if not workflows.is_dir():
+        return []
+
+    invoked = set()
+
+    for workflow in workflows.glob("*.yml"):
+        text = workflow.read_text(encoding="utf-8", errors="replace")
+        invoked.update(re.findall(r"tools/(verify-[\w-]+)\.py", text))
+
+    on_disk = {
+        path.stem for path in (root / "tools").glob("verify-*.py")
+    }
+
+    return sorted(on_disk - invoked)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -114,6 +140,12 @@ def main() -> int:
     # machine. Reported, because it is the same class of surprise in the other direction.
     for project in unknown:
         problems.append(f"{SOLUTION} references '{project}', which git does not track")
+
+    # Same question about a different artifact: what exists to be run, and is not run.
+    for script in ungated_scripts(root):
+        problems.append(
+            f"tools/{script}.py is a gate that no workflow invokes — it runs only when somebody "
+            f"remembers, which is not a control")
 
     print(
         f"verify-project-coverage: {len(tracked)} tracked project(s) — "

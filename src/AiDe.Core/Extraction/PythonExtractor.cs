@@ -184,10 +184,7 @@ public sealed class PythonExtractor : IExtractor
         // rejects that (P1-STORE-05, deliberately), which surfaced as a raw SQLite constraint error
         // from the middle of an index on a real repository. Deduplicating here is the honest fix:
         // the duplicate carries no information, and silencing the key would weaken a real control.
-        var deduplicated = assertions
-            .GroupBy(a => (a.Subject, a.Predicate, a.Object))
-            .Select(g => g.First())
-            .ToList();
+        var deduplicated = ExtractionFacts.Distinct(assertions);
 
         return Task.FromResult(new ExtractionResult(deduplicated, Complete: true, []));
     }
