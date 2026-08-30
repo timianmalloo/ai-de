@@ -166,6 +166,56 @@ public sealed class ExtractorsDoNotInventTests : IDisposable
     }
 
     [Fact]
+    public async Task BlankingCommentsKeepsProvenanceLineNumbersTrue()
+    {
+        // The reason comments are BLANKED rather than deleted, asserted rather than assumed. A
+        // reader that reports the wrong line is one nobody can follow back to the source, and the
+        // whole point of provenance is that a claim can be opened and checked.
+        Write("schema.sql", """
+            -- a comment
+            /* a
+               multi-line
+               comment */
+            CREATE TABLE OnLineSix (Id INT);
+            """);
+
+        var result = await new SqlSchemaExtractor().ExtractAsync(
+            new ExtractionRequest("sql:schema", _dir, "rev-1", 1), CancellationToken.None);
+
+        var table = Assert.Single(result.Assertions,
+            a => a.Subject == "table:OnLineSix" && a.Predicate == "has_type");
+
+        Assert.Equal("5:1", table.Provenance.SourceLocation);
+    }
+
+    [Fact]
+    public async Task TheBicepReaderIgnoresACommentedOutResourceToo()
+    {
+        // The last line-oriented reader still parsing raw text. It passed this control before the
+        // stripping was added; this keeps it passing for the reason rather than by luck.
+        Write("infra/main.bicep", """
+            // resource ghost 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+            //   name: 'ghostAccount'
+            // }
+            /* resource alsoGhost 'Microsoft.KeyVault/vaults@2023-01-01' = {
+                 name: 'ghostVault'
+               } */
+            param realParam string
+            """);
+
+        var result = await new BicepExtractor().ExtractAsync(
+            new ExtractionRequest("bicep:main", Path.Combine(_dir, "infra", "main.bicep"), "rev-1", 1),
+            CancellationToken.None);
+
+        Assert.DoesNotContain(result.Assertions,
+            a => a.Predicate == "has_type" && a.Object == "azure-resource");
+
+        // And the real declaration beside them is still read.
+        Assert.Contains(result.Assertions,
+            a => a.Predicate == "has_type" && a.Object == "azure-parameter");
+    }
+
+    [Fact]
     public async Task AnEmptyWorkspaceProducesNoClaimsAtAll()
     {
         // The floor. A reader that finds something in nothing has no lower bound on what it will

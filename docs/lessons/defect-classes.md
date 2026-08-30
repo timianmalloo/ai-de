@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 16 · partially-controlled 24 · uncontrolled 0
+**Status counts:** controlled 16 · partially-controlled 26 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1459,4 +1459,45 @@ for both or split.*
 - **Why it survives:** both fields are individually correct and individually tested; the overview path uses the fine one and the describe/reader path uses the coarse one, so no single test compares the two surfaces (E2E-D: component tests that can't see each other).
 - **Instances:** 2025 — Explorer reader showed `describe.Node.NodeKind` (coarse `node_kind`) so an azure-resource read "knowledge"; the overview + category filter used `has_type` and were correct — the two surfaces disagreed.
 - **Control:** when two fields name overlapping concepts at different granularity, name them distinctly (`Type` vs `Class`), and the surface that a user reads chooses the fine one unless the coarse one is explicitly what's asked. Design fix: reader prefers the `has_type` edge over the coarse `node_kind`. Root fix (Core): the extractor should not emit `knowledge` for extracted source, and neighbours should carry their real `has_type`, not a hardcoded `"source"`.
-- **Status:** partially-controlled (reader fixed in Design; extractor/neighbour labels handed to Core — INV-0004).
+- **Status:** `partially-controlled` — reader fixed in Design; extractor/neighbour labels handed to Core (INV-0004).
+
+### DC-042 — A capability is complete, tested, and nothing ever routes work to it
+
+- **Shape:** a producer is written, unit-tested and wired into a composition — and the thing that
+  DISCOVERS work for it was never taught to. Every test passes, because tests hand it input directly.
+  On real input it is unreachable, and the surface that reports its output shows a legitimate-looking
+  **zero**.
+- **Signature:** a count that is exactly zero on every real repository while a sibling count is large.
+  The tell in code is a router keyed on something — a scope prefix, a file kind, a MIME type — whose
+  keys are produced by a DIFFERENT component, and nobody has compared the two lists. Ask: *what
+  produces the keys this router matches on, and does it produce this one?*
+- **Why it survives:** it passes the strongest evidence a team usually has. Unit tests construct the
+  input, so the producer is proven correct. Integration tests use fixtures that name the scope
+  explicitly, so routing is proven correct. Only DISCOVERY is untested against reality, and its gap
+  is invisible from either side — the producer is not broken and the router is not broken. And the
+  zero is worse than an error: an error gets investigated, a zero gets believed.
+- **Instances:** 2026-08-30 — reported by the user: *"the graph was showing knowledge as zero count
+  and code as a large count."* `FixtureExtractor` had read knowledge frontmatter since Phase 1 with
+  tests; `CompositeExtractor` had a fallback route; and `CSharpScopeDiscovery` produced six scope
+  kinds — `csharp`, `bicep`, `schema`, `python`, `typescript`, `sql` — and no knowledge scope. The
+  reader was correct, tested, and unreachable on every real repository for the entire life of the
+  project. MEASURED after wiring discovery: on this repo, 466 `owned_by`, 346 `refines`, 287
+  `implements`, 272 `relates-to`, 66 `depends-on`; scopes across three repositories went 28→66,
+  34→48, 34→56.
+- **The sharpest part of it:** this happened on a repository whose stated premise is that *docs hold
+  intent, code holds reality, and the expensive defects live in the gap*. Half of that sentence was
+  never being read, and the product said so with a zero.
+- **Control:** `WorkspaceExtractors.RoutedKinds` is asserted against what discovery emits, so a route
+  with no producer — or a producer with no route — fails a test rather than reporting nothing.
+  `KnowledgeExtractorTests` covers the reader on real-shaped documents, and the multi-repository
+  harness records scope counts per kind so a kind that silently stops being discovered shows up as a
+  drop in `git diff`.
+- **The generalisation to apply elsewhere:** for every consumer keyed on a producer's vocabulary,
+  **compare the two lists in a test rather than in your head**. And treat a zero on a real
+  repository as a question, never as an answer: the useful form of the question is *"is this zero
+  because there is none, or because nobody looked?"* — which is the same question this product asks
+  about evidence, turned on the product itself.
+- **Residual risk:** the same shape exists wherever a router matches on strings someone else emits.
+  The IPC operation names, the join projection's predicates and the canvas's node kinds are all
+  keyed this way; only extraction routing is asserted so far.
+- **Status:** `partially-controlled`

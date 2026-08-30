@@ -118,7 +118,97 @@ public static class CSharpScopeDiscovery
             scopes.Add(new ScopeDescriptor($"sql:{relative}", directory, "sql"));
         }
 
+        // KNOWLEDGE. Reported by the user: the graph showed knowledge as zero and code as a large
+        // count. The reader had existed since Phase 1, with tests, and no scope ever routed to it —
+        // so the answer to "how much knowledge is in this repository" was computed over nothing.
+        // A zero that means "nobody looked" reads as "there is none".
+        foreach (var directory in KnowledgeDirectories(rootPath).OrderBy(p => p, StringComparer.OrdinalIgnoreCase))
+        {
+            var relative = Path.GetRelativePath(rootPath, directory).Replace(Path.DirectorySeparatorChar, '/');
+            scopes.Add(new ScopeDescriptor($"knowledge:{relative}", directory, "knowledge"));
+        }
+
         return scopes;
+    }
+
+    /// <summary>
+    /// Directories holding markdown that DECLARES itself part of the graph.
+    /// </summary>
+    /// <remarks>
+    /// A directory qualifies only if some file in it opens with frontmatter carrying an <c>id:</c>.
+    /// Every repository is full of README and CHANGELOG files that are not nodes, and a scope per
+    /// directory of ordinary prose would fill the graph with empty scopes and slow every index for
+    /// nothing.
+    /// </remarks>
+    private static IEnumerable<string> KnowledgeDirectories(string root)
+    {
+        var skip = new HashSet<string>(Skip, StringComparer.OrdinalIgnoreCase)
+        {
+            ".vs", "dist", "build", "out", "__pycache__", ".venv", "venv", "packages", "artifacts",
+        };
+
+        var pending = new Stack<string>();
+        pending.Push(root);
+
+        while (pending.Count > 0)
+        {
+            var current = pending.Pop();
+
+            string[] files;
+            try { files = Directory.GetFiles(current, "*.md"); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            if (files.Where(f => !IsTemplate(f)).Any(DeclaresAnId)) yield return current;
+
+            IEnumerable<string> children;
+            try { children = Directory.EnumerateDirectories(current); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            foreach (var child in children)
+            {
+                if (!skip.Contains(Path.GetFileName(child))) pending.Push(child);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Whether a file is a TEMPLATE rather than an artifact.
+    /// </summary>
+    /// <remarks>
+    /// A template carries frontmatter in exactly the shape a real document does, with placeholders
+    /// where the values go. Indexing one puts a node in the graph that describes the shape of a
+    /// document rather than anything in this repository — measured on this repo, seven of them.
+    /// </remarks>
+    private static bool IsTemplate(string file) =>
+        Path.GetFileName(file).Contains(".template.", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Whether a markdown file opens with frontmatter that names an id.</summary>
+    /// <remarks>
+    /// Reads the first few lines rather than the file: this runs over every markdown file in a
+    /// repository, and the answer is decided in the first handful of them or not at all.
+    /// </remarks>
+    private static bool DeclaresAnId(string file)
+    {
+        try
+        {
+            using var reader = new StreamReader(file);
+
+            if (reader.ReadLine()?.Trim() != "---") return false;
+
+            for (var i = 0; i < 40; i++)
+            {
+                var line = reader.ReadLine();
+
+                if (line is null || line.Trim() == "---") return false;
+                if (line.TrimStart().StartsWith("id:", StringComparison.Ordinal)) return true;
+            }
+
+            return false;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
     }
 
     /// <summary>Directories holding SQL directly, excluding build output and vendored trees.</summary>
@@ -325,7 +415,8 @@ public sealed class CompositeExtractor(
     IExtractor? schema = null,
     IExtractor? python = null,
     IExtractor? typescript = null,
-    IExtractor? sql = null) : IExtractor
+    IExtractor? sql = null,
+    IExtractor? knowledge = null) : IExtractor
 {
     public string ScopeKind => "composite";
 
@@ -338,6 +429,7 @@ public sealed class CompositeExtractor(
         ["python:"] = python ?? new PythonExtractor(),
         ["typescript:"] = typescript ?? new TypeScriptExtractor(),
         ["sql:"] = sql ?? new SqlSchemaExtractor(),
+        ["knowledge:"] = knowledge ?? new KnowledgeExtractor(),
     };
 
     /// <summary>Which extractor a scope id resolves to. Exposed so routing can be ASSERTED.</summary>
@@ -362,4 +454,5 @@ public sealed class CompositeExtractor(
 
     public Task<ExtractionResult> ExtractAsync(ExtractionRequest request, CancellationToken cancellationToken) =>
         RouteFor(request.ScopeId).ExtractAsync(request, cancellationToken);
+
 }

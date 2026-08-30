@@ -78,6 +78,15 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
                 [new ExtractionDiagnostic("AIDE-BICEP-UNREADABLE", request.ScopeId, ex.Message)]));
         }
 
+        // Commentary is removed before anything is believed. This reader PASSED the shared
+        // invent-rate control — its matchers are line-anchored on `resource`, `module` and `param`,
+        // and a sweep of a repository it was not written against produced only real parameter names
+        // and real Azure types. It is stripped anyway: it was the last line-oriented reader still
+        // parsing raw text, and all three readers caught inventing were caught reading commented-out
+        // code, which is real syntax precisely because it WAS code. Newlines survive the blanking,
+        // so provenance line numbers stay true.
+        text = SourceText.WithoutCComments(text);
+
         var assertions = new List<EvidenceAssertion>();
         var observedAt = DateTimeOffset.UtcNow;
         var fileName = Path.GetFileName(path);
