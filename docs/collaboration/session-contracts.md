@@ -186,22 +186,26 @@ whole one. That property is tested and is not up for negotiation; only the contr
 
 ---
 
-## 4c. Open requests from Design to Core
+## 4c. Design → Core: the graph-scaling finding (resolved by Core, convergently)
 
-Found while investigating a user-reported failure (INV-0003). **The Design session implemented the
-two unblocking fixes** (no active Core claims, and Core had moved past this area) — they are landed.
-The remaining item is the larger aggregated/streamed query, still Core's.
+Found by the Design session while investigating a user-reported failure (**INV-0003**): opening
+TheTerrace showed `ipc.transport_closed` because the default view loaded the *whole* graph and the
+response overflowed the 1 MiB IPC frame, which the daemon did not survive. The Design session wrote
+up the root cause, the scaling model (`knowledge-exploration.md` **US-K10–K12**), and the class
+(**DC-035**), and handed the Core-owned fix here.
+
+**The Core session independently landed the same two fixes** (convergent — strong validation):
 
 | Item | Status | Where |
 |---|---|---|
-| **Default graph view no longer loads the whole graph** | **DONE (Design landed)** — `CanvasGraphViewModel.WholeGraphNodeCap` is now a bounded overview (750) instead of the 5,000 projection ceiling. The projection already ranks by degree (external/least-connected dropped first, counted), so this is US-K10's ranked-important overview with an honest "showing N of M", and it fits the IPC frame for a project of any size. | `CanvasGraphViewModel.cs:70` |
-| **Daemon returns a legible error instead of closing on an oversized frame** | **DONE (Design landed)** — `IpcServer.SerializeWithinBudget` replaces an over-budget response with `IpcErrorCodes.PayloadTooLarge` (new) rather than letting the write throw and drop the pipe. Tested (`GraphScalingTests`). | `IpcServer.cs`, `IpcContract.cs` |
-| **A bounded/aggregated "graph overview" query + semantic-zoom/LOD source** | **REMAINING (Core)** — the interim fix ranks-and-caps; the full US-K11 experience (community/package super-nodes, expand-on-demand, streamed neighbourhoods per US-K12) needs a server-side aggregation the projection does not yet expose. The graphify/community-detection primitives are the natural source. Design will render the LOD once the query exists. | `GraphProjection`; a new overview/aggregate query on `IWorkspaceQueries` |
+| **Default graph view no longer loads the whole graph** | **DONE (Core)** — a dedicated `OverviewNodeCap = 1_500` with `IncludeExternal: false`, so the default overview is this workspace's *own* declared code, ranked, bounded, and honest about what it omits (US-K10). `WholeGraphNodeCap` is retained for callers that want the projection ceiling. | `CanvasGraphViewModel.OverviewNodeCap` |
+| **Daemon returns a legible error instead of closing on an oversized frame** | **DONE (Core)** — `IpcErrorCodes.PayloadTooLarge`; `IpcServer.Respond` measures the payload and returns the error (with the byte counts) rather than letting the write throw and drop the pipe (US-K12). Tested in `OversizedResponseTests`. | `IpcServer.Respond`, `IpcContract` |
+| **A bounded/aggregated overview query + semantic-zoom/LOD source** | **REMAINING (Core + Design)** — the interim caps-and-ranks; the full US-K11 experience (community/package super-nodes, expand-on-demand, streamed neighbourhoods) needs a server-side aggregation the projection does not yet expose. Design renders the LOD once the query exists. | `GraphProjection`; a new overview/aggregate query on `IWorkspaceQueries` |
 
-The interim cap means TheTerrace (and larger repos) now render a bounded, ranked overview instead of
-failing with `ipc.transport_closed`. If Core prefers a different bound or a measured byte budget, it
-is a one-line change; the direction (never load the whole graph) is the spec (US-K10) and is not
-optional at the transport.
+Lesson for both sessions: this is exactly the file-overlap the ownership split exists to prevent —
+both sessions edited `IpcServer.cs` / `CanvasGraphViewModel.cs` in the same window. It converged
+cleanly this time; next time, a claim + a glance at §4 before touching Core-owned graph/IPC code
+avoids the double work.
 
 ---
 

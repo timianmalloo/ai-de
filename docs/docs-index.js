@@ -1,8 +1,8 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T16:24:23Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-30T16:28:52Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1615,7 +1615,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c9854fa9a44fd75cba911c60600348a76d21b5f7a1c0556ee93a109537905daa"
+      "sourceSha256": "1ae52851061693eb0031e1e5f21ede377db261c321bcfb72e2c045f0936ecf9a"
     },
     {
       "id": "domain-experts",
@@ -2578,7 +2578,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "517109486b66c8c8a4d6d345d2b037f1107581487a0267a9109521ee1e375410"
+      "sourceSha256": "9334801ed3894aedf75a9ed7701d5169235b917d23fdd6bb2aa20e1315a45eda"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -5893,7 +5893,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -5963,5 +5963,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a508062f88769ce5c529d16222fb790f2fdf3819681cc4cdbc23c330332aa662"
+  "graphSha256": "05d278ebdd4b7fa0a7e9ffe3f67f64dcc9400fb12b4f20437ca111f654741d59"
 };

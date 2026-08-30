@@ -153,6 +153,21 @@ foreach (var missing in storeKinds.Except(paneKinds).Take(4))
 // neighbours and rendered two of two thousand — the defect that produced this projection.
 var graph = await queries.GraphAsync(new GraphQuery(GraphProjection.DefaultMaxNodes), CancellationToken.None);
 
+// WIRE SIZE, measured. INV-0003: the whole-graph response overflows the 1 MiB IPC frame, and a cap
+// picked by guessing bytes-per-node is the same mistake in a different place.
+var wire = System.Text.Json.JsonSerializer.Serialize(graph, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web));
+Console.WriteLine($"wire       : {wire.Length:N0} bytes for {graph.Nodes.Count:N0} node(s) + {graph.Edges.Count:N0} edge(s)");
+Console.WriteLine($"per node   : {(double)wire.Length / Math.Max(1, graph.Nodes.Count):F0} bytes incl. its share of edges");
+
+var declaredOnly = await queries.GraphAsync(new GraphQuery(GraphProjection.DefaultMaxNodes, IncludeExternal: false), CancellationToken.None);
+var declaredWire = System.Text.Json.JsonSerializer.Serialize(declaredOnly, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web));
+Console.WriteLine($"declared   : {declaredWire.Length:N0} bytes for {declaredOnly.Nodes.Count:N0} node(s) + {declaredOnly.Edges.Count:N0} edge(s)");
+
+// The DEFAULT the canvas now asks for, against the frame it must fit through (INV-0003).
+var overview = await queries.GraphAsync(new GraphQuery(AiDe.Core.Presentation.CanvasGraphViewModel.OverviewNodeCap, IncludeExternal: false), CancellationToken.None);
+var overviewWire = System.Text.Json.JsonSerializer.Serialize(overview, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web));
+Console.WriteLine($"overview   : {overviewWire.Length:N0} bytes for {overview.Nodes.Count:N0} node(s), {overview.Omitted:N0} omitted — frame cap {AiDe.Core.Ipc.IpcFraming.MaxFrameBytes:N0} → {(overviewWire.Length <= AiDe.Core.Ipc.IpcFraming.MaxFrameBytes ? "FITS" : "OVERFLOWS")}");
+
 Console.WriteLine();
 Console.WriteLine(new string('=', 100));
 Console.WriteLine("THE GRAPH PANE");

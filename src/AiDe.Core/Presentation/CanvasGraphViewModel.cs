@@ -58,28 +58,63 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 {
     /// <summary>The graph around <paramref name="rootId"/>, or around whatever Find offers first.</summary>
     /// <summary>
-    /// How many nodes the canvas asks for when nothing is focused — a BOUNDED, ranked overview.
+    /// How many nodes the canvas asks for when nothing is focused.
     /// </summary>
     /// <remarks>
-    /// This used to be the projection's own ceiling (5,000), on the reasoning that "how much to draw
-    /// is a rendering decision" — but that reasoning missed the transport: the whole-graph response
-    /// for TheTerrace (~2,813 nodes / 8,602 edges) exceeded the 1 MiB IPC frame and the daemon closed
-    /// the connection, so nothing rendered at all (INV-0003). A whole-graph load also does not scale —
-    /// TheTerrace is small — and the surface's own spec forbids it (knowledge-exploration US-K2/US-K10:
-    /// the default is a bounded overview, never the whole graph). The projection ranks by degree and
-    /// drops external/least-connected first with a reported count, so this cap yields the MOST
-    /// CONNECTED nodes as a ranked overview and an honest "showing N of M". Semantic zoom / LOD to
-    /// reveal more (US-K11) is the renderer's job; the transport-fitting bound is not optional.
-    /// simplify: a fixed node cap rather than a measured byte budget; ceiling is one frame; the
-    /// PayloadTooLarge guard (IpcServer) backstops a pathologically dense slice; upgrade trigger =
-    /// an aggregated/streamed overview query (US-K11/US-K12) lands in Core.
+    /// The projection's own ceiling, so the canvas asks for everything the read surface will give.
+    /// A lower number here omitted 813 of TheTerrace's 2,813 nodes — a limit the SURFACE imposed on
+    /// itself while the store and the projection were both willing. How much of it to draw at once
+    /// is a rendering decision and belongs with the renderer; withholding it here would make that
+    /// decision on the renderer's behalf and hide the rest.
     /// </remarks>
-    public const int WholeGraphNodeCap = 750;
+    /// <summary>
+    /// Nodes in the default overview, before it says what it left out.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Derived from a measurement, and from the spec.</b> MEASURED on a real repository: the
+    /// whole graph serialises to <b>1,522,284 bytes</b> against a 1 MiB frame — so the previous
+    /// default could not be delivered at all (INV-0003), and the user saw "the daemon closed the
+    /// connection". Declared-only nodes are ~294 bytes each including their edges, so a frame holds
+    /// roughly 3,500 of them; this cap keeps real headroom under that.</para>
+    ///
+    /// <para><b>But the size is the smaller reason.</b> <c>docs/specs/knowledge-exploration.md</c>
+    /// US-K2 says the whole graph is never rendered at once, and a 2,815-node hairball is unreadable
+    /// even when it fits. The fix for "one arbitrary alphabetical node" was a bounded overview of
+    /// MEANINGFUL nodes; loading everything over-corrected past it. What is dropped is counted and
+    /// reported, which is the part that makes a bounded view honest rather than a smaller lie.</para>
+    /// </remarks>
+    public const int OverviewNodeCap = 1_500;
+
+    /// <summary>Retained name for callers that want the projection's own ceiling.</summary>
+    public const int WholeGraphNodeCap = GraphProjection.DefaultMaxNodes;
 
     /// <summary>Every node and edge in the workspace, bounded and honest about the bound.</summary>
+    /// <summary>
+    /// The default overview: this workspace's own code, bounded and honest about the bound.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Bounded, not whole — corrected by INV-0003.</b> This asked for the whole graph, which
+    /// on a real repository is 1,522,284 bytes against a 1 MiB frame, so it could not be delivered:
+    /// the user saw "the daemon closed the connection without responding". The transport failure
+    /// exposed the deeper error, which is that the spec never asked for a whole graph
+    /// (<c>knowledge-exploration.md</c> US-K2 — "the whole graph is never rendered at once").</para>
+    ///
+    /// <para><b>Both defaults were wrong in opposite directions.</b> Before, this drew one
+    /// alphabetically-first node and its neighbours; the fix for that loaded everything. The answer
+    /// to "one arbitrary node" was a bounded overview of MEANINGFUL nodes — declared here, ranked by
+    /// degree, capped, with what it dropped counted and said out loud.</para>
+    ///
+    /// <para><b>External nodes are excluded from the DEFAULT, not from the product.</b> Measured: the
+    /// six most-connected nodes of a real repository were <c>string</c>, <c>int</c>,
+    /// <c>Task&lt;T&gt;</c>, <c>DateTimeOffset</c>, <c>IReadOnlyList&lt;T&gt;</c> and <c>Guid</c>.
+    /// A first view centred on the BCL is not a picture of anybody's domain. Callers who want them
+    /// pass their own <see cref="GraphQuery"/>.</para>
+    /// </remarks>
     private async Task<CanvasGraph> WholeGraphAsync(CancellationToken cancellationToken)
     {
-        var graph = await queries!.GraphAsync(new GraphQuery(WholeGraphNodeCap), cancellationToken).ConfigureAwait(false);
+        var graph = await queries!
+            .GraphAsync(new GraphQuery(OverviewNodeCap, IncludeExternal: false), cancellationToken)
+            .ConfigureAwait(false);
 
         if (graph.Nodes.Count == 0)
         {
@@ -94,10 +129,12 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
         var visible = kept.Select(n => n.Id).ToHashSet(StringComparer.Ordinal);
         var filtered = graph.Nodes.Count - kept.Count;
 
+        // The caption states the bound rather than implying completeness. "1,500 node(s)" and
+        // "1,500 of 2,118" are different claims, and only one of them is true here.
         var message = graph.Omitted > 0
-            ? $"{kept.Count:N0} of {graph.Nodes.Count + graph.Omitted:N0} node(s). " +
-              $"{graph.Omitted:N0} not drawn (external and least-connected first)."
-            : $"{kept.Count:N0} node(s), {graph.Edges.Count:N0} edge(s).";
+            ? $"{kept.Count:N0} of {graph.Nodes.Count + graph.Omitted:N0} node(s) declared here, " +
+              $"most connected first. {graph.Omitted:N0} not drawn — search or pick a node to go deeper."
+            : $"{kept.Count:N0} node(s) declared here, {graph.Edges.Count:N0} edge(s).";
 
         if (ContextFilter is not null)
         {
