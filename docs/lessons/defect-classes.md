@@ -1230,9 +1230,15 @@ for both or split.*
   name the input size it stays legible at and what happens past it. A layout with no stated capacity
   and no degrade-to-aggregate path is a pile waiting for a real dataset. Reading is parallel only if
   the eye can separate the marks — overlap destroys it.
-- **Status:** `partially-controlled` — the review + target mockup (force layout, dots, labels-on-demand,
-  zoom/pan, LOD, honest caption) are landed; the CanvasPage rebuild is the follow-on `/implement`
-  (Design), and real LOD clustering needs the Core community/aggregation query (session-contracts §4c).
+- **Status:** `partially-controlled` — the CanvasPage **2D rebuild is landed**: single-ring →
+  phyllotaxis initial spread + a bounded Fruchterman-Reingold settle (iterations shrink as the graph
+  grows, so cost stays roughly constant and a huge graph degrades to its phyllotaxis spread rather
+  than freezing); opaque cards → **degree-sized dots with labels-on-demand** (hover/focus, always for
+  root); edges render behind. Verified by the P2-FOCUS-03 keyboard-trap probe (real out-of-process
+  WebView2) and App.Tests 132/132 — the a11y contract (focusable `.node` spans, document-level Tab
+  trap, boundary `focus.leave`) is unchanged. Remaining: zoom/pan/fit and real semantic-zoom LOD
+  clustering, the latter blocked on the Core community/aggregation query (session-contracts §4c).
+  Review `docs/reviews/ui-graph-canvas.md`; target mockup `docs/mockups/graph-canvas.html`.
 
 ### DC-037 — A projection drops a sizing/proportion the model carries
 

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T16:51:18Z",
+  "generated": "2026-08-30T17:00:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2337,6 +2337,27 @@ window.AUDIT_DATA = {
         "terminal",
         "layout",
         "defect-fix"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0128",
+      "shortname": "implement-graph-canvas-force-layout",
+      "datetime": "2026-08-30T17:00:18Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do the next best actions — rebuild the graph canvas 2D layout per the landed review/mockup (DC-036)",
+      "summary": "Rebuilt CanvasPage 2D: single-ring -> phyllotaxis + bounded force settle; degree-sized dots with labels-on-demand; edges behind. Preserved ADR-0015 a11y (focusable .node spans, Tab trap, focus.leave) verified by P2-FOCUS-03 probe. App.Tests 132/132.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/CanvasPage.cs"
+      ],
+      "tags": [
+        "graph",
+        "ui-design",
+        "DC-036"
       ],
       "outcome": "success"
     }

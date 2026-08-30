@@ -44,13 +44,26 @@ internal static class CanvasPage
           #stage.grab { cursor: grab; }
           #stage.grabbing { cursor: grabbing; }
           svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-          .node { position: absolute; transform: translate(-50%, -50%); padding: 6px 10px;
-                  border: 1px solid #2A313B; border-radius: 8px; background: #1A1F26; cursor: pointer;
-                  white-space: nowrap; max-width: 210px; overflow: hidden; text-overflow: ellipsis; }
-          .node.root { border-color: #5B9DD9; background: #21303f; font-weight: 600; }
+          .node { position: absolute; transform: translate(-50%, -50%); cursor: pointer;
+                  width: var(--r, 12px); height: var(--r, 12px); }
+          /* The glyph is a degree-sized dot, not an opaque card: cards occlude each other and hide
+             the edges behind them (DC-036). */
+          .node::before { content: ''; display: block; width: 100%; height: 100%; border-radius: 50%;
+                  box-sizing: border-box; background: var(--dot, #47566B); border: 1px solid var(--dotb, #63748C); }
+          .node.root::before { background: #21303f; border-color: #5B9DD9; }
+          /* The label rides under the dot and appears on demand — a dense graph stays readable, and a
+             focused or hovered node still tells you what it is. The root is always labelled. */
+          .node > .lbl { position: absolute; left: 50%; top: 100%; transform: translateX(-50%);
+                  margin-top: 3px; padding: 1px 6px; border-radius: 6px; background: rgba(20,25,32,.92);
+                  border: 1px solid #2A313B; color: #E4E9EF; font-size: 12px; white-space: nowrap;
+                  max-width: 200px; overflow: hidden; text-overflow: ellipsis; opacity: 0;
+                  pointer-events: none; transition: opacity .12s ease; }
+          .node:hover > .lbl, .node:focus > .lbl, .node.root > .lbl { opacity: 1; }
+          .node:focus { outline: none; }
+          .node:focus::before { outline: 2px solid #5B9DD9; outline-offset: 2px; }
+          @media (prefers-reduced-motion: reduce) { .node > .lbl { transition: none; } }
           .legend { color: #98A3B2; font-size: 12px; margin-top: 8px; }
           .legend b { color: #E4E9EF; font-weight: 600; }
-          .node:focus { outline: 2px solid #5B9DD9; outline-offset: 2px; }
         </style></head>
         <body>
           <header>
@@ -191,6 +204,64 @@ internal static class CanvasPage
               };
             }
 
+            // A bounded Fruchterman-Reingold settle for the 2D view. The root stays pinned at the
+            // centre; the rest are nudged apart (repulsion) and pulled along their edges (springs)
+            // for a number of passes that SHRINKS as the graph grows, so the cost stays roughly
+            // constant and a huge graph falls back to its phyllotaxis spread rather than freezing the
+            // UI. It runs once per render and then stops — a layout that keeps moving while you read
+            // it is hard to point at.
+            function layout2d(recs, edges, width, height) {
+              var n = recs.length;
+              if (n <= 1) { return; }
+              var margin = 40;
+              var cx = width / 2, cy = height / 2;
+
+              var index = {};
+              recs.forEach(function (r, i) { index[r.id] = i; });
+              var springs = [];
+              (edges || []).forEach(function (e) {
+                var a = index[e.from], b = index[e.to];
+                if (a != null && b != null && a !== b) { springs.push([a, b]); }
+              });
+
+              var iters = Math.max(1, Math.min(300, Math.floor(4000000 / (n * n))));
+              var k = Math.sqrt(Math.max(1, (width - 2 * margin) * (height - 2 * margin)) / n) * 0.8;
+
+              for (var it = 0; it < iters; it++) {
+                var dx = new Float64Array(n), dy = new Float64Array(n);
+
+                for (var a = 0; a < n; a++) {
+                  for (var b = a + 1; b < n; b++) {
+                    var rx = recs[a].p2.x - recs[b].p2.x, ry = recs[a].p2.y - recs[b].p2.y;
+                    var dist = Math.sqrt(rx * rx + ry * ry) || 0.01;
+                    var rep = (k * k) / dist, ux = rx / dist, uy = ry / dist;
+                    dx[a] += ux * rep; dy[a] += uy * rep;
+                    dx[b] -= ux * rep; dy[b] -= uy * rep;
+                  }
+                }
+
+                springs.forEach(function (s) {
+                  var pa = recs[s[0]].p2, pb = recs[s[1]].p2;
+                  var sx = pa.x - pb.x, sy = pa.y - pb.y;
+                  var dist = Math.sqrt(sx * sx + sy * sy) || 0.01;
+                  var att = (dist * dist) / k, ux = sx / dist, uy = sy / dist;
+                  dx[s[0]] -= ux * att; dy[s[0]] -= uy * att;
+                  dx[s[1]] += ux * att; dy[s[1]] += uy * att;
+                });
+
+                var temp = Math.max(2, (1 - it / iters) * (Math.min(width, height) / 8));
+                for (var c = 0; c < n; c++) {
+                  if (recs[c].isRoot) { recs[c].p2.x = cx; recs[c].p2.y = cy; continue; }
+                  var d = Math.sqrt(dx[c] * dx[c] + dy[c] * dy[c]) || 0.01;
+                  var step = Math.min(d, temp);
+                  recs[c].p2.x += (dx[c] / d) * step + (cx - recs[c].p2.x) * 0.01;
+                  recs[c].p2.y += (dy[c] / d) * step + (cy - recs[c].p2.y) * 0.01;
+                  recs[c].p2.x = Math.max(margin, Math.min(width - margin, recs[c].p2.x));
+                  recs[c].p2.y = Math.max(margin, Math.min(height - margin, recs[c].p2.y));
+                }
+              }
+            }
+
             function place() {
               var width = stage.clientWidth || 800, height = stage.clientHeight || 420;
               var cx = width / 2, cy = height / 2;
@@ -248,6 +319,13 @@ internal static class CanvasPage
               var radius = Math.max(80, Math.min(cx, cy) - 70);
               var n3 = others.length;
 
+              // Undirected degree per node, from the edge list, so a hub can be drawn larger.
+              var degree = {};
+              (graph.edges || []).forEach(function (e) {
+                degree[e.from] = (degree[e.from] || 0) + 1;
+                degree[e.to] = (degree[e.to] || 0) + 1;
+              });
+
               // Root centred, neighbours on a ring (2D) AND on a sphere (3D). Deliberately NOT a
               // force simulation in either mode: a layout that keeps moving while you read it makes a
               // node hard to point at, and position carries no meaning here beyond "attached to the
@@ -256,17 +334,29 @@ internal static class CanvasPage
                 var el = document.createElement('span');
                 el.className = 'node' + (n.isRoot ? ' root' : '');
                 el.tabIndex = 0;
-                el.textContent = n.label;
+                var lbl = document.createElement('span');
+                lbl.className = 'lbl';
+                lbl.textContent = n.label;   // the accessible name, and the on-demand visible label
+                el.appendChild(lbl);
                 el.title = n.id;
                 el.setAttribute('data-id', n.id);
+
+                // Degree-sized dot: a hub reads as bigger, so the eye finds the load-bearing nodes.
+                var deg = degree[n.id] || 0;
+                el.style.setProperty('--r', (n.isRoot ? 18 : Math.min(26, 9 + deg * 3)) + 'px');
 
                 var x = cx, y = cy;
                 var p3 = { x: 0, y: 0, z: 0 };
                 if (!n.isRoot) {
                   var i = others.indexOf(n);
-                  var angle = (i / Math.max(1, others.length)) * Math.PI * 2 - Math.PI / 2;
-                  x = cx + Math.cos(angle) * radius;
-                  y = cy + Math.sin(angle) * radius;
+                  // Phyllotaxis (sunflower) spread for the initial 2D placement: neighbours fan out
+                  // across the plane instead of piling onto a single ring, so even a large graph — or
+                  // one the force pass barely settles — is not a single overlapping blob (DC-036).
+                  var t = (i + 1) / Math.max(1, others.length);
+                  var rr = radius * Math.sqrt(t);
+                  var aa = (i + 1) * Math.PI * (3 - Math.sqrt(5));
+                  x = cx + Math.cos(aa) * rr;
+                  y = cy + Math.sin(aa) * rr;
 
                   var k = i + 0.5;
                   var phi = Math.acos(1 - 2 * k / Math.max(1, n3));
@@ -281,9 +371,10 @@ internal static class CanvasPage
                 if (n.context) {
                   var hue = 0, i2 = 0;
                   for (i2 = 0; i2 < n.context.length; i2++) { hue = (hue * 31 + n.context.charCodeAt(i2)) % 360; }
-                  el.style.borderColor = 'hsl(' + hue + ', 55%, 55%)';
+                  el.style.setProperty('--dot', 'hsl(' + hue + ', 50%, 45%)');
+                  el.style.setProperty('--dotb', 'hsl(' + hue + ', 55%, 62%)');
                   el.title = n.id + '  [' + n.context + ']';
-                  contexts[n.context] = 'hsl(' + hue + ', 55%, 55%)';
+                  contexts[n.context] = 'hsl(' + hue + ', 55%, 62%)';
                 } else if (!n.isRoot) {
                   uncovered++;
                 }
@@ -314,6 +405,7 @@ internal static class CanvasPage
                 edgeRecs.push({ from: edge.from, to: edge.to, line: line });
               });
 
+              layout2d(records, graph.edges, stage.clientWidth || 800, stage.clientHeight || 420);
               place();
 
               var legend = document.getElementById('legend');
@@ -336,8 +428,8 @@ internal static class CanvasPage
               caption.textContent = graph.message
                 ? graph.message
                 : nodes.length + ' node(s), ' + (graph.edges || []).length + ' edge(s). '
-                  + 'Enter or click focuses a node; Backspace goes back; 2/3 toggles 2D/3D; '
-                  + 'drag to rotate in 3D; Tab off either end to leave.';
+                  + 'Tab or hover a dot to see its label; Enter or click focuses it; Backspace goes '
+                  + 'back; 2/3 toggles 2D/3D; drag to rotate in 3D; Tab off either end to leave.';
 
               var notes = [];
               if (graph.omitted > 0) { notes.push(graph.omitted + ' edge(s) omitted by the result bound'); }
