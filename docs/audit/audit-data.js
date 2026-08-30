@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T17:21:47Z",
+  "generated": "2026-08-30T17:26:11Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2424,6 +2424,26 @@ window.AUDIT_DATA = {
       "tags": [
         "graph",
         "ui-design"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0132",
+      "shortname": "handoff-lod-unblocked",
+      "datetime": "2026-08-30T17:26:11Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "assess LOD after merging Core's GraphOverview; record handoff",
+      "summary": "Core shipped OverviewAsync/WorkspaceOverview + public GraphOverview.GroupFor; semantic-zoom LOD is now Design's remaining half (render group super-nodes + expand). Needs a small CanvasNode count-field contract touch so NodeCount reaches the renderer; recommend a /design first. Updated session-contracts §4c and tracked bk-graph-lod-render.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [
+        "graph",
+        "handoff"
       ],
       "outcome": "success"
     }
