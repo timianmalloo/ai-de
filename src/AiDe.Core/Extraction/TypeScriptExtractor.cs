@@ -141,6 +141,10 @@ public sealed class TypeScriptExtractor : IExtractor
             try { text = File.ReadAllText(file); }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
 
+            // A block comment's lines begin at column zero, which is exactly what this reader looks
+            // for and exactly what a file of removed code looks like.
+            text = SourceText.WithoutCComments(text);
+
             var module = ModuleNaming.Qualify(prefix, ModuleName(directory, file));
             assertions.Add(Fact(request, module, "has_type", "typescript-module"));
 

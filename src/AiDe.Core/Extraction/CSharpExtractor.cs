@@ -754,6 +754,13 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                     // An alias, a table variable or a CTE is not a table in the schema graph.
                     if (table.Length == 0 || table.StartsWith('@') || table.StartsWith('#')) continue;
 
+                    // A real table reference ENDS somewhere a clause can begin. "delete from your
+                    // account to remove it" begins with a verb, so the statement-shape test passes
+                    // it, and `your` became a table — found by the shared invent-rate control. In
+                    // SQL the token after a table is a clause keyword, a punctuation mark, or
+                    // nothing; in prose it is another ordinary word.
+                    if (!EndsLikeATableReference(value, match.Index + match.Length)) continue;
+
                     yield return (subject, table, literal.GetLocation());
                 }
             }
@@ -786,6 +793,44 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         return Concatenated(binary.Left) is { } left && Concatenated(binary.Right) is { } right
             ? left + right
             : null;
+    }
+
+    /// <summary>What may legitimately follow a table name in a statement.</summary>
+    private static readonly string[] ClauseKeywords =
+    [
+        "WHERE", "SET", "VALUES", "ORDER", "GROUP", "HAVING", "JOIN", "ON", "INNER", "LEFT",
+        "RIGHT", "OUTER", "CROSS", "UNION", "AS", "SELECT", "OPTION", "OUTPUT", "OFFSET", "OOOO",
+    ];
+
+    /// <summary>
+    /// Whether what follows a matched table name looks like SQL rather than the next word of a
+    /// sentence.
+    /// </summary>
+    /// <remarks>
+    /// The second half of the prose gate. Beginning with a verb is not enough — <c>"delete from your
+    /// account to remove it"</c> does. But a table name is the end of a phrase: what follows is a
+    /// clause keyword, punctuation, or the end of the statement. Another bare word is prose.
+    /// </remarks>
+    private static bool EndsLikeATableReference(string text, int after)
+    {
+        var rest = text[Math.Min(after, text.Length)..].TrimStart();
+
+        if (rest.Length == 0) return true;
+
+        // Punctuation ends the reference: `;`, `(`, `)`, `,` — and an alias-free statement often
+        // ends at one of them.
+        if (!char.IsLetter(rest[0])) return true;
+
+        foreach (var keyword in ClauseKeywords)
+        {
+            if (rest.StartsWith(keyword, StringComparison.OrdinalIgnoreCase)
+                && (rest.Length == keyword.Length || !char.IsLetterOrDigit(rest[keyword.Length])))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>The whole constant expression a literal belongs to, following `+` chains upward.</summary>

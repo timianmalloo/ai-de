@@ -120,6 +120,10 @@ public sealed class PythonExtractor : IExtractor
                 continue;
             }
 
+            // A docstring holds example code at column zero — the one place this reader's
+            // column-zero rule cannot tell documentation from declaration.
+            text = SourceText.WithoutPythonComments(text);
+
             var module = ModuleNaming.Qualify(prefix, ModuleName(directory, file));
             assertions.Add(Fact(request, module, "has_type", "python-module"));
 

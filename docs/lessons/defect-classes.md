@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 16 · partially-controlled 23 · uncontrolled 0
+**Status counts:** controlled 16 · partially-controlled 24 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1146,6 +1146,29 @@ for both or split.*
   alternatives — and cost more to diagnose than the check was worth. It is explicit code now. When a
   one-line matcher behaves impossibly, replacing it with something readable is usually cheaper than
   proving why it does not.
+- **The invent-direction now has a CONTROL, and it found four more on its first run.**
+  `ExtractorsDoNotInventTests` feeds every reader a corpus with no declarations and plenty of text
+  SHAPED like declarations, and asserts it produces nothing but disclosures. On the first run:
+  - the **SQL** reader read `-- CREATE TABLE Ghost` and `/* CREATE TABLE Historical */` as tables;
+  - the **TypeScript** reader read `export class Removed {}` out of a block comment;
+  - the **Python** reader read a class out of a **docstring** — the one place its column-zero rule
+    cannot tell documentation from declaration;
+  - the **C#** `uses_table` reader turned *"delete from your account to remove it"* into
+    `table:your`, because that sentence genuinely begins with a SQL verb and the shape test alone
+    could not reject it.
+- **Commented-out code is the worst possible input for a line-oriented reader**, and every repository
+  is full of it — it is real syntax, because it *was* code. `SourceText` blanks comments (keeping
+  newlines, so provenance line numbers stay true) before any of the three readers believes a line.
+  The C# case needed a second rule: a real table reference **ends where a clause can begin** — a
+  keyword, punctuation, or the end of the statement. In prose the next token is just another word.
+- **Two things the fixes got wrong first, kept because they are the lesson.** Blanking string
+  contents for SQL deleted `"main"."Thing"` — in SQL a double quote is a quoted IDENTIFIER, not a
+  string, so the reader lost the very names it exists to find. And a `PRINT 'about to create table X'`
+  names no table while `EXEC('CREATE TABLE …')` does: the reader can tell neither from the other, so
+  it reads neither and discloses the count.
+- **The measurement shows the correction, which is what a third reading is for.** Verified joins on
+  the three repositories went `64 → 120 → 95`, `0 → 57 → 55`, `35 → 50 → 46`. The middle number was
+  inflated by prose; the last is the honest one. A single reading would have recorded 120 as progress.
 - **Residual risk:** the receiver test is a name match on `EntityTypeBuilder` /
   `OwnedNavigationBuilder`, so an EF fork or a wrapper builder is not read; `ToTable` reached through
   an interface or an extension method on a non-builder is not read. Both now fall into the counted

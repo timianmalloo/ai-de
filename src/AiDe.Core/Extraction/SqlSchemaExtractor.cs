@@ -41,6 +41,9 @@ public sealed class SqlSchemaExtractor : IExtractor
         /// <summary>A rename is not followed, so the table or column keeps its earlier name.</summary>
         public const string RenamesNotFollowed = "sql-renames-not-followed";
 
+        /// <summary>DDL inside a string literal — a message, or dynamic SQL nobody evaluated.</summary>
+        public const string DynamicDdlNotEvaluated = "sql-dynamic-ddl-not-evaluated";
+
         /// <summary>Column types, constraints and indexes are not read.</summary>
         public const string ColumnDetailNotRead = "sql-column-detail-not-read";
 
@@ -75,6 +78,13 @@ public sealed class SqlSchemaExtractor : IExtractor
     private static readonly Regex DropTable = new(
         @"DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?<table>(?:\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*)"
         + @"(?:\s*\.\s*(?:\[[^\]]+\]|""[^""]+""|`[^`]+`|[A-Za-z_][\w$]*))*)",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    // DDL keywords inside a quoted string, counted only so the gap can be stated. Strings are
+    // blanked before matching, so `PRINT 'about to create table X'` names no table — and neither
+    // does dynamic SQL, which this reader has no way to evaluate.
+    private static readonly Regex DdlInAString = new(
+        @"'[^']*\b(?:CREATE|ALTER|DROP)\s+TABLE\b[^']*'",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     // Renames are DISCLOSED rather than half-read: every dialect spells them differently
@@ -130,6 +140,7 @@ public sealed class SqlSchemaExtractor : IExtractor
 
         var unreadable = 0;
         var renames = 0;
+        var dynamicDdl = 0;
 
         // The FOLD. A schema is the sum of its scripts in order, not the first one: MEASURED, a real
         // repository has 125 `ALTER TABLE … ADD` statements, so reading CREATE alone would show its
@@ -149,6 +160,17 @@ public sealed class SqlSchemaExtractor : IExtractor
                 unreadable++;
                 continue;
             }
+
+            // Commentary is removed before anything is believed. A commented-out CREATE TABLE is a
+            // table that does not exist, and every repository is full of them — the shared
+            // invent-rate control found `table:Ghost` and `table:Planned` here on its first run.
+            // DDL inside a STRING is either a message or dynamic SQL, and this reader can tell
+            // neither from a declaration: `PRINT 'about to create table Something'` names no table.
+            // So strings are blanked with the comments, and what that hides is counted.
+            dynamicDdl += DdlInAString.Matches(text).Count;
+
+            text = SourceText.WithoutCComments(
+                text, doubleDashLineComments: true, blankStrings: true, singleQuotedStringsOnly: true);
 
             var relative = Path.GetRelativePath(directory, file).Replace((char)92, '/');
             renames += Rename.Matches(text).Count;
@@ -204,6 +226,13 @@ public sealed class SqlSchemaExtractor : IExtractor
             {
                 assertions.Add(Fact(request, node, "has_column", column, provenance));
             }
+        }
+
+        if (dynamicDdl > 0)
+        {
+            assertions.Add(Fact(request, scopeNode, CSharpExtractor.DisclosurePredicate,
+                $"{Disclosures.DynamicDdlNotEvaluated} ({dynamicDdl:N0} string(s) contain DDL that "
+                + "was not read; it may be a message or it may build a table)", scopeProvenance));
         }
 
         if (renames > 0)
