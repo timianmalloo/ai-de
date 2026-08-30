@@ -50,6 +50,12 @@ public sealed class CanvasGraphViewModelTests
         public Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
             Task.FromResult(new EvidencePage([], null, "rev-1"));
 
+
+        public WorkspaceGraph Graph { get; set; } = new([], [], 0, [], "rev-1");
+
+        public Task<WorkspaceGraph> GraphAsync(int maxNodes, CancellationToken ct) =>
+            Throw is not null ? Task.FromException<WorkspaceGraph>(Throw) : Task.FromResult(Graph);
+
     }
 
     private static EdgeView Edge(string subject, string predicate, string obj) =>
@@ -77,7 +83,7 @@ public sealed class CanvasGraphViewModelTests
     }
 
     [Fact]
-    public async Task ItRendersTheNeighbourhoodOfTheFirstFoundNode()
+    public async Task ItRendersTheNeighbourhoodOfACHOSENNode()
     {
         var queries = new StubQueries();
         queries.Matches.Add(new FindMatch("Shop.Order", "source", "Order", AuthorshipOrigin.RepositoryArtifact));
@@ -86,7 +92,10 @@ public sealed class CanvasGraphViewModelTests
             [Edge("Shop.Order", "depends_on", "Shop.Customer"), Edge("Shop.Ledger", "depends_on", "Shop.Order")],
             StubQueries.Bounds(0), "rev-1");
 
-        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+        // A ROOT is now required for the neighbourhood view. Without one this returns the whole
+        // graph, which is what the surface should have been showing all along — it asked for one
+        // node and drew two of two thousand.
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync("Shop.Order");
 
         Assert.Equal("Shop.Order", graph.RootId);
         Assert.Equal(3, graph.Nodes.Count);
@@ -96,6 +105,41 @@ public sealed class CanvasGraphViewModelTests
         // would hide every caller.
         Assert.Contains(graph.Nodes, n => n.Id == "Shop.Ledger");
         Assert.Single(graph.Nodes, n => n.IsRoot);
+    }
+
+    [Fact]
+    public async Task WithNoRootItLoadsTheWHOLEGraph()
+    {
+        // The reported defect, as an assertion. It asked FindAsync for ONE node and drew that node's
+        // neighbours, so a workspace of 2,164 nodes rendered as two — the alphabetically first
+        // symbol and its single neighbour. A root is a drill-down; the default is the graph.
+        var queries = new StubQueries
+        {
+            Graph = new WorkspaceGraph(
+                [
+                    new GraphNode("Shop.Order", "Order", "class", 2, IsExternal: false),
+                    new GraphNode("Shop.Customer", "Customer", "class", 1, IsExternal: false),
+                    new GraphNode("string", "string", "external", 1, IsExternal: true),
+                ],
+                [
+                    new GraphEdge("Shop.Order", "Shop.Customer", "depends_on", VerificationStatus.Verified),
+                    new GraphEdge("Shop.Order", "string", "depends_on", VerificationStatus.Verified),
+                ],
+                Omitted: 5,
+                ["packages-not-restored"],
+                "rev-1"),
+        };
+
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+
+        Assert.Equal(3, graph.Nodes.Count);
+        Assert.Equal(2, graph.Edges.Count);
+        Assert.Null(graph.RootId);
+
+        // A bounded graph must not read as a complete small one.
+        Assert.Equal(5, graph.Omitted);
+        Assert.Contains("not drawn", graph.Message!, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("packages-not-restored", graph.Disclosures);
     }
 
     [Fact]
@@ -113,7 +157,7 @@ public sealed class CanvasGraphViewModelTests
             ],
             StubQueries.Bounds(0), "rev-1");
 
-        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync("scope:csharp:A:net10.0");
 
         Assert.Empty(graph.Edges);
         Assert.Equal(["generated-code-not-analysed", "packages-not-restored"], graph.Disclosures);
@@ -130,7 +174,7 @@ public sealed class CanvasGraphViewModelTests
             [Edge("Shop.Order", "depends_on", "Shop.Customer")],
             StubQueries.Bounds(omittedEdges: 37), "rev-1");
 
-        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync("Shop.Order");
 
         // Without this a bounded graph is indistinguishable from a small one.
         Assert.Equal(37, graph.Omitted);
@@ -142,7 +186,7 @@ public sealed class CanvasGraphViewModelTests
         var queries = new StubQueries();
         queries.Matches.Add(new FindMatch("Shop.Loner", "source", "Loner", AuthorshipOrigin.RepositoryArtifact));
 
-        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync("Shop.Loner");
 
         Assert.Single(graph.Nodes);
         Assert.Contains("no recorded relationships", graph.Message, StringComparison.OrdinalIgnoreCase);
@@ -155,7 +199,7 @@ public sealed class CanvasGraphViewModelTests
         // an empty graph would read as "there is nothing here".
         var queries = new StubQueries { Throw = new InvalidOperationException("pipe closed") };
 
-        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync("Shop.Order");
 
         Assert.Empty(graph.Nodes);
         Assert.Contains("could not be loaded", graph.Message, StringComparison.OrdinalIgnoreCase);

@@ -115,8 +115,15 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
             diagnostics.Add(new ExtractionDiagnostic("AIDE-EXT-NOTE", request.ScopeId, note));
         }
 
+        // The walk is the largest real cost — 1,167ms of a 2s scope on a real repository — and it
+        // has never been broken down. Enumerating the namespace tree and asking each type for its
+        // members are different operations with different remedies.
+        var enumerateWatch = System.Diagnostics.Stopwatch.StartNew();
         var types = new List<INamedTypeSymbol>();
         Walk(compiled.Compilation.Assembly.GlobalNamespace, types);
+        enumerateWatch.Stop();
+
+        var memberWatch = System.Diagnostics.Stopwatch.StartNew();
 
         foreach (var type in types)
         {
@@ -172,6 +179,15 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         // Complete means "this is the whole snapshot for this scope", which it is: the disclosures
         // are IN the snapshot rather than missing from it. Marking it incomplete would quarantine
         // every unrestored project, which is most of them on a fresh clone.
+        memberWatch.Stop();
+
+        if (Environment.GetEnvironmentVariable("AIDE_EXTRACTION_TIMING") is not null)
+        {
+            Console.Error.WriteLine(
+                $"[timing]   enumerate-types {enumerateWatch.ElapsedMilliseconds}ms for {types.Count} type(s), " +
+                $"members {memberWatch.ElapsedMilliseconds}ms");
+        }
+
         // Emitted on the NORMAL path, no flag to remember: an operator asking "why is indexing slow"
         // gets the split rather than a total they have to guess at.
         Activity.Current?.SetTag("extraction.read_ms", readMs);

@@ -103,6 +103,10 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
             WorkspaceOperations.DispatchFinalize,
             new DispatchFinalizeRequest(dispatchKey, state, errorCode), cancellationToken);
 
+    public Task<WorkspaceGraph> GraphAsync(int maxNodes, CancellationToken cancellationToken) =>
+        QueryAsync<WorkspaceGraph>(
+            WorkspaceOperations.Graph, new GraphRequest(maxNodes), cancellationToken);
+
     public Task<EvidencePage> EvidenceAsync(
         string? cursor, int maxAssertions, CancellationToken cancellationToken) =>
         QueryAsync<EvidencePage>(

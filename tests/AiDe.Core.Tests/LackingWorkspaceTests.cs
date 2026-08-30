@@ -83,18 +83,22 @@ public sealed class LackingWorkspaceTests : IDisposable
     {
         // Measured on a real repository: 63 Python files produced zero scopes, zero assertions and
         // an EMPTY disclosure list — indistinguishable from an empty directory.
+        // Go and Rust, because Python and TypeScript are READ now. A language that gains an
+        // extractor leaves this list on the same day — a closed gap reported as open is the same
+        // defect as an open one hidden — so this fixture has to move as coverage grows.
         var root = Make("polyglot", r =>
         {
             File.WriteAllText(Path.Combine(r, "main.py"), "print('hi')");
-            File.WriteAllText(Path.Combine(r, "app.ts"), "export const a = 1;");
+            File.WriteAllText(Path.Combine(r, "main.go"), "package main");
+            File.WriteAllText(Path.Combine(r, "lib.rs"), "pub fn go() {}");
         });
 
         var result = await IndexAsync(root);
 
-        // Python is EXTRACTED now, so it must not also be disclosed as unread — a closed gap
-        // reported as open is the same defect as an open one hidden.
         Assert.DoesNotContain(result.Disclosures, d => d.StartsWith("python-not-analysed", StringComparison.Ordinal));
-        Assert.Contains(result.Disclosures, d => d.StartsWith("typescript-not-analysed", StringComparison.Ordinal));
+        Assert.DoesNotContain(result.Disclosures, d => d.StartsWith("typescript-not-analysed", StringComparison.Ordinal));
+        Assert.Contains(result.Disclosures, d => d.StartsWith("go-not-analysed", StringComparison.Ordinal));
+        Assert.Contains(result.Disclosures, d => d.StartsWith("rust-not-analysed", StringComparison.Ordinal));
     }
 
     // ── Lacking: source that parses ───────────────────────────────────────────────────────
@@ -316,6 +320,90 @@ public sealed class LackingWorkspaceTests : IDisposable
 
         var external = Assert.Single(imports, i => i.Object == "os");
         Assert.Equal(VerificationStatus.Inferred, external.Status);
+    }
+
+    [Fact]
+    public void TypeScriptSpecifiersResolveOnlyWhenTheScopeContainsThem()
+    {
+        var modules = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "src/app", "src/models", "src/util/index",
+        };
+
+        // Relative, present, with and without an extension.
+        Assert.Equal("src/models", TypeScriptExtractor.Resolve("./models", "src/app", modules));
+        Assert.Equal("src/models", TypeScriptExtractor.Resolve("./models.ts", "src/app", modules));
+
+        // A directory specifier means its index file.
+        Assert.Equal("src/util/index", TypeScriptExtractor.Resolve("./util", "src/app", modules));
+
+        // A BARE specifier is a package or a path alias, and resolving it needs configuration this
+        // extractor deliberately does not read — so it is left alone rather than guessed at.
+        Assert.Null(TypeScriptExtractor.Resolve("react", "src/app", modules));
+        Assert.Null(TypeScriptExtractor.Resolve("@scope/thing", "src/app", modules));
+
+        // Absent, and climbing above the root, both resolve to nothing rather than throwing.
+        Assert.Null(TypeScriptExtractor.Resolve("./nope", "src/app", modules));
+        Assert.Null(TypeScriptExtractor.Resolve("../../../x", "src/app", modules));
+    }
+
+    [Fact]
+    public async Task TypeScriptIsExtracted_WithItsGapsDeclared()
+    {
+        var root = Make("ts", r =>
+        {
+            Directory.CreateDirectory(Path.Combine(r, "src"));
+            File.WriteAllText(Path.Combine(r, "src", "models.ts"),
+                "export interface Order { id: string; }" + (char)10);
+            File.WriteAllText(Path.Combine(r, "src", "app.ts"),
+                "import { Order } from './models';" + (char)10 +
+                "import React from 'react';" + (char)10 +
+                "export class App { run() {} }" + (char)10 +
+                "function hidden() {}" + (char)10);
+
+            // A declaration file re-states types defined elsewhere; indexing it would put every
+            // symbol in the graph twice, once with nothing behind it.
+            File.WriteAllText(Path.Combine(r, "src", "globals.d.ts"), "declare const X: number;" + (char)10);
+        });
+
+        using var core = WorkspaceCore.Open("ts", root, Path.Combine(_dir, "tsdata"),
+            WorkspaceExtractors.Default());
+
+        var result = await core.IndexCSharpAsync("rev-1", CancellationToken.None);
+        Assert.Empty(result.Failed);
+
+        using var reader = core.Store.BeginRead();
+        var facts = reader.AllCurrentAssertions();
+
+        Assert.Contains(facts, a => a.Predicate == "has_type" && a.Object == "typescript-class"
+            && a.Subject.EndsWith(".App", StringComparison.Ordinal));
+        Assert.Contains(facts, a => a.Predicate == "has_type" && a.Object == "typescript-interface"
+            && a.Subject.EndsWith(".Order", StringComparison.Ordinal));
+
+        // Not exported, so not claimed.
+        Assert.DoesNotContain(facts, a => a.Subject.EndsWith(".hidden", StringComparison.Ordinal));
+
+        // Nor is the declaration file.
+        Assert.DoesNotContain(facts, a => a.Subject.Contains("globals", StringComparison.Ordinal));
+
+        // The scope root IS the src directory, so modules are named relative to it: `models`, not
+        // `src/models`. The scope id carries the location; the module name carries the rest.
+        var relative = Assert.Single(facts, a => a.Predicate == "imports" && a.Object == "models");
+        Assert.Equal(VerificationStatus.Verified, relative.Status);
+
+        var package = Assert.Single(facts, a => a.Predicate == "imports" && a.Object == "react");
+        Assert.Equal(VerificationStatus.Inferred, package.Status);
+
+        // And TypeScript must no longer be reported as unread.
+        Assert.DoesNotContain(result.Disclosures,
+            d => d.StartsWith("typescript-not-analysed", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void TheCompositionRoutesTypeScriptToTheTypeScriptExtractor()
+    {
+        var composite = Assert.IsType<CompositeExtractor>(WorkspaceExtractors.Default());
+        Assert.Equal("typescript", composite.RouteFor("typescript:src").ScopeKind);
     }
 
     [Fact]

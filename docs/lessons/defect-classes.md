@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 10 · partially-controlled 18 · uncontrolled 0
+**Status counts:** controlled 11 · partially-controlled 19 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -949,3 +949,43 @@ for both or split.*
   if so, do not add the caption. Test overflow with the longest real content, never the demo content.
 - **Status:** `controlled` (fix landed; the icon+tooltip+name pattern makes the clip structurally
   impossible for the rail)
+
+### DC-031 — A surface asks a narrower question than the one it exists to answer
+- **Signature:** a view is built to show a whole thing — a graph, a corpus, a history — and its data
+  call fetches a *slice*: one root and its neighbours, the first page, a single match. The slice
+  renders correctly, so nothing looks broken; there is no error, no empty state, no truncation
+  notice. The view simply shows a small, plausible, complete-looking answer to a question nobody
+  asked, and it does so from the day it is written.
+- **Why it survives:** the slice call is the natural one to reach for, because it is the API that
+  already exists — "describe this node" is right there and "give me the graph" is not, so the surface
+  is written against what is available rather than what it needs. Every test then encodes the slice
+  as the contract: the neighbourhood tests here asserted a root, its neighbours, and an omitted
+  count, and all of them passed while the pane showed two nodes of two thousand. And the store is
+  full, so every measurement of extraction, coverage and joins looks healthy — the defect lives
+  entirely between a correct store and a correct renderer.
+- **Instances:** 2026-08-30 — reported by the user, comparing TheTerrace in this tool against the
+  same repository in Obsidian: **two nodes versus a full graph**. The canvas called
+  `FindAsync(term: "", maxResults: 1)` to pick a root and then `DescribeAsync(root, 40)`. The store
+  held 12,100 assertions across 2,164 nodes. Nothing had ever shown a graph, and four unit tests
+  described that behaviour approvingly.
+- **Control:** `GraphProjection` answers the question the surface exists for — every node and edge,
+  bounded by a node cap that is *reported*, with attributes folded onto nodes rather than drawn as
+  edges. `CanvasGraphViewModel.LoadAsync()` with no root now means the WHOLE graph and a root means
+  drill-down. The tests that encoded the slice were given explicit roots and a new one asserts the
+  default. Proven across the daemon too, because every cross-boundary defect so far has been "right
+  in process, wrong through the pipe".
+- **A second finding inside the first:** with the whole graph finally visible, its six most-connected
+  nodes were `string`, `int`, `Task<TResult>`, `DateTimeOffset`, `IReadOnlyList<T>` and `Guid` — 773
+  edges to `string` alone. A graph whose centre is the BCL is not a picture of anybody's domain, and
+  a cap ordered by raw degree drops the user's own types to keep framework primitives. Nodes now
+  carry `IsExternal` (nothing in the workspace declares them) and declared nodes are kept first. The
+  same repository's centre became `AppDbContext`, `Fixture`, `SportMonksProvider`.
+- **The generalisation to apply elsewhere:** for any view of a whole, ask **"what is the cardinality
+  of what this is showing, and what is the cardinality of what it fetched?"** A one-line answer to a
+  two-thousand-line question is the signature, and it is invisible from inside the view. The related
+  tell is a test suite that describes the slice fluently — passing tests are evidence about the code
+  that exists, never about the code that should.
+- **Residual risk:** the whole-graph path is capped at 2,000 nodes for the canvas and 5,000 in the
+  projection; both report what they dropped, and neither has been exercised against a repository that
+  reaches them. Other surfaces have not been audited for the same shape.
+- **Status:** `partially-controlled`

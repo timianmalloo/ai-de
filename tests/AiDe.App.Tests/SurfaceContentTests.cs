@@ -81,6 +81,10 @@ public sealed class SurfaceContentTests
         public Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
             Task.FromResult(new EvidencePage([], null, "rev-1"));
 
+
+        public Task<WorkspaceGraph> GraphAsync(int maxNodes, CancellationToken ct) =>
+            Task.FromResult(new WorkspaceGraph([], [], 0, [], "rev-1"));
+
     }
 
     /// <summary>What a built surface ended up showing.</summary>
@@ -218,6 +222,10 @@ public sealed class SurfaceContentTests
             throw new InvalidOperationException("the daemon is not reachable");
 
         public Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
+            throw new InvalidOperationException("the daemon is not reachable");
+
+
+        public Task<WorkspaceGraph> GraphAsync(int maxNodes, CancellationToken ct) =>
             throw new InvalidOperationException("the daemon is not reachable");
 
     }

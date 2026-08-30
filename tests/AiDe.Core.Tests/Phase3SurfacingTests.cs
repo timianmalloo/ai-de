@@ -392,7 +392,7 @@ public sealed class Phase3SurfacingTests : IDisposable
 
         File.WriteAllText(Path.Combine(root, "app", "main.py"), "print('hi')");
         File.WriteAllText(Path.Combine(root, "app", "util.py"), "x = 1");
-        File.WriteAllText(Path.Combine(root, "app", "index.ts"), "export const a = 1;");
+        File.WriteAllText(Path.Combine(root, "app", "main.go"), "package main");
 
         // Vendored code is somebody else's; counting it would make the disclosure a number about
         // node_modules rather than about this repository.
@@ -400,11 +400,11 @@ public sealed class Phase3SurfacingTests : IDisposable
 
         var disclosures = UnanalysedLanguages.Survey(root);
 
-        // Python moved OFF this list when PythonExtractor started reading it. TypeScript is still
+        // Python and TypeScript moved OFF this list when their extractors landed. Go is still
         // unread and is still named — the survey reports what is genuinely not analysed, and a
-        // language that gained an extractor must leave the list on the same day.
+        // language that gains an extractor must leave the list on the same day.
         Assert.DoesNotContain(disclosures, d => d.StartsWith("python-not-analysed", StringComparison.Ordinal));
-        Assert.Contains(disclosures, d => d.StartsWith("typescript-not-analysed", StringComparison.Ordinal));
+        Assert.Contains(disclosures, d => d.StartsWith("go-not-analysed", StringComparison.Ordinal));
         Assert.DoesNotContain(disclosures, d => d.StartsWith("javascript", StringComparison.Ordinal));
     }
 

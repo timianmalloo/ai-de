@@ -276,6 +276,58 @@ public sealed class DaemonProcessTests
         }
     }
 
+    [Fact]
+    public async Task TheDaemon_ReturnsTheWholeGraph_AcrossThePipe()
+    {
+        // The user's report was about the graph SURFACE, which reads through the daemon. Proving the
+        // projection in process would have proved the half that was never broken.
+        var workspace = FreshWorkspace();
+        Directory.CreateDirectory(Path.Combine(workspace, "infra"));
+
+        await File.WriteAllTextAsync(Path.Combine(workspace, "infra", "main.bicep"),
+            """
+            param region string = 'westus'
+
+            resource site 'Microsoft.Web/sites@2023-01-01' = {
+              name: 'aide-probe'
+              location: region
+            }
+
+            resource plan 'Microsoft.Web/serverfarms@2023-01-01' = {
+              name: 'aide-plan'
+              location: region
+              dependsOn: [ site ]
+            }
+            """);
+
+        var (daemon, pipeName) = await StartDaemonAsync(workspace, "--startup-seconds", "60");
+
+        try
+        {
+            await using var client = await WorkspaceClient.ConnectAsync(
+                pipeName, TimeSpan.FromSeconds(20), CancellationToken.None);
+
+            await client.IndexSolutionAsync("probe-1", CancellationToken.None);
+
+            var graph = await client.GraphAsync(2_000, CancellationToken.None);
+
+            // More than a node and its neighbour, which is what the surface used to draw.
+            Assert.True(graph.Nodes.Count > 2, $"only {graph.Nodes.Count} node(s) came back");
+            Assert.NotEmpty(graph.Edges);
+
+            // The node's kind rode across intact — an attribute, not an edge.
+            Assert.Contains(graph.Nodes, n => n.Kind != "external" && n.Kind.Length > 0);
+
+            // And the declared/external split survived serialisation, which is what keeps the
+            // framework out of the centre of the picture.
+            Assert.Contains(graph.Nodes, n => !n.IsExternal);
+        }
+        finally
+        {
+            Stop(daemon);
+        }
+    }
+
     // ---- P2-IPC-06: one daemon per workspace, across processes ---------------
 
     [Fact]
