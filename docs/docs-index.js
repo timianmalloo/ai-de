@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T19:28:05Z",
+  "generated": "2026-08-30T19:33:53Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -869,6 +869,94 @@ window.DOCS_INDEX = {
       "sourceSha256": "1981ce647e3374d9e9985742d0b503122434c27855aff21b480b4a4bc0f188cc"
     },
     {
+      "id": "adr-0017-primary-view-mode",
+      "path": "docs/adr/0017-primary-view-mode.md",
+      "title": "ADR-0017 — Full-window surfaces are a primary view mode (body-content swap), not a dock pane or a modal overlay",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "A surface that needs the whole body (the Knowledge Explorer's graph+reader) is presented as a primary VIEW MODE the shell holds — Workbench | Explorer — realised as a body-content swap of the region the docking host occupies, with the activity rail as the mode selector. Rejects making it a dock pane (it would compete for space — the defect being fixed) and a modal overlay (the rail must persist and it is not dismiss-only). The non-active mode's state is retained, never rebuilt.",
+      "tags": [
+        "architecture",
+        "ui-shell",
+        "view-mode",
+        "explorer",
+        "docking",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0008-shell-host",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0013-layout-persistence-envelope",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "33fa8d47c7ff1d0044252c2961c4a9d81b97eabdb6728dfe1e4f3c23104b20dc"
+    },
+    {
+      "id": "adr-0018-node-content-reader-contract",
+      "path": "docs/adr/0018-node-content-reader-contract.md",
+      "title": "ADR-0018 — The reader fetches node content on demand via a bounded Core query, not on the graph payload",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The Explorer's reader needs a selected node's CONTENT (source/markdown/html) and metadata, which the graph payload deliberately does not carry. It is fetched on demand for the one selected node via a new bounded Core query (a sibling of GraphOverview), not by fattening CanvasNode — because content on every node would blow the IPC transport bound (US-K12) for a value only the selected node needs.",
+      "tags": [
+        "architecture",
+        "reader",
+        "explorer",
+        "ipc",
+        "contract",
+        "transport-bound"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4717e8bf67ad30e341ea64f1e512187f2db334114e5f265f75b422b664f69fc2"
+    },
+    {
       "id": "architecture",
       "path": "docs/architecture.md",
       "title": "AI-DE Architecture",
@@ -982,7 +1070,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
         }
       ],
-      "sourceSha256": "1bcbc703fc47da2f24c24d07ae93b0c3c3709704678f996ac51610c5db0a8dda"
+      "sourceSha256": "931ebb681e1562e431f42ad350174d29618c3341a7e60293e87361e244196c80"
     },
     {
       "id": "note-20260826-council-review-ai-ide-arch",
@@ -2691,7 +2779,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "acbb087ebecc581379758360b80c2f52be402c92e72f72bfb5fa32793a045d68"
+      "sourceSha256": "577cefc93906f5c60488c7bc8548a75a50234bc1f10b4eb54eb4a62a192065a4"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -6135,5 +6223,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3f2ceb3007ca4cbb633e235259bd9e3445431b028667e45d506f3380f6151bb2"
+  "graphSha256": "b01adeea922afdf3f64a687a95f6f758abc395caf5301a266a8137d41867ec9a"
 };

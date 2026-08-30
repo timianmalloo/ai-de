@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T19:28:05Z",
+  "generated": "2026-08-30T19:34:25Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2538,6 +2538,27 @@ window.AUDIT_DATA = {
         "explorer"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0137",
+      "shortname": "define-architecture-explorer-mode",
+      "datetime": "2026-08-30T19:34:24Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "BTW/backlog: /define-architecture the full-window Explorer mode as it may be a material UI-architecture change",
+      "summary": "Assessed: material but additive. ADR-0017 — a full-window surface is a primary VIEW MODE (Workbench|Explorer) via a body-content swap of the docking-host region (rail = mode selector), NOT a dock pane (competes) and NOT a modal overlay (rail must persist); retain-not-rebuild invariant (mode-level DC-029); per-mode persistence slot (amends ADR-0013); graph<->reader keyboard-cycle (amends ADR-0015). ADR-0018 — the reader fetches node content on demand via a bounded Core query NodeContentAsync (sibling of OverviewAsync), not by fattening CanvasNode (blows the frame) or App-side file reading (two authorities); RenderKind from the authority; transport-bounded Shortfall. Linked both from architecture.md; recorded the NodeContentAsync Design->Core request in session-contracts §4c. 3-phase vertical delivery (skeleton w/ mocked reader seam -> real content query -> keyboard-cycle+responsive).",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0017-primary-view-mode.md",
+        "docs/adr/0018-node-content-reader-contract.md"
+      ],
+      "tags": [
+        "architecture",
+        "explorer"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -4720,6 +4741,30 @@ window.AUDIT_DATA = {
         "before": null,
         "after": "4314a5efc2057dbca92d34e36b598cc74600931b",
         "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0088",
+      "datetime": "2026-08-30T19:34:24Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Full-window surfaces are a primary view mode (body-content swap); the Explorer reader fetches node content via a bounded Core query",
+      "prompt": "/define-architecture the full-window Explorer mode",
+      "summary": "ADR-0017 (primary view mode via body-content swap, retain-not-rebuild) + ADR-0018 (on-demand bounded NodeContentAsync reader contract). Additive to the workbench/docking model; amends ADR-0013 (per-mode persistence) and ADR-0015 (graph<->reader keyboard cycle).",
+      "rationale": "A full-window graph+reader must not compete as a dock pane nor be a dismiss-only modal; a body-content swap keyed by a shell view-mode is the smallest correct mechanism and generalises to future full-window surfaces. Content on the graph payload would overflow the IPC frame, so the reader fetches per-node on demand.",
+      "artifacts": [
+        "docs/adr/0017-primary-view-mode.md",
+        "docs/adr/0018-node-content-reader-contract.md",
+        "docs/architecture.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "ceb2389",
+        "after": "ceb2389e829e25c991f5e0a916f68c7863796399",
+        "branch": "feature/app-facelift-and-graph-surfaces",
         "pushed": true,
         "commits": []
       }

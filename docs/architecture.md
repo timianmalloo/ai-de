@@ -476,6 +476,15 @@ description/schema edit — not only protocol conformance.
 - [ADR-0013](adr/0013-layout-persistence-envelope.md): **the workbench layout is persisted inside our
   own versioned envelope**, outside the workspace fact store, and degrades to the default arrangement
   rather than to a broken window.
+- [ADR-0017](adr/0017-primary-view-mode.md): **a full-window surface is a primary *view mode*** the
+  shell holds (Workbench | Explorer), realised as a **body-content swap** of the docking-host region
+  with the rail as the mode selector — not a dock pane and not a modal overlay; the non-active mode's
+  state is retained, never rebuilt. *(Amends ADR-0013 with a per-mode persistence slot and ADR-0015
+  with the graph↔reader keyboard-cycle contract.)*
+- [ADR-0018](adr/0018-node-content-reader-contract.md): **the Explorer reader fetches a node's content
+  on demand via a bounded Core query** (a sibling of `OverviewAsync`), not by fattening the graph
+  payload — content is paid for only for the selected node and is transport-bounded like every other
+  query.
 
 ## Delivery phasing — vertical slices
 
