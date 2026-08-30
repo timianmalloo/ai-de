@@ -279,21 +279,24 @@ public sealed class LackingWorkspaceTests : IDisposable
         // 330 import edges on a real repository were all Inferred and all unresolved. An import that
         // names a module this scope CONTAINS points at a file that exists and was read, which is
         // what lets the edge be Verified rather than a string.
-        var modules = new HashSet<string>(StringComparer.Ordinal) { "pkg.models", "pkg.service", "top" };
+        // Module IDS are repository-relative PATHS; import TARGETS are dotted names. An absolute
+        // import is read from the repository root, which is what a path id is measured from.
+        var modules = new HashSet<string>(StringComparer.Ordinal) { "pkg/models", "pkg/service", "top" };
 
         // Absolute, present.
-        Assert.Equal("top", PythonExtractor.Resolve("top", "pkg.service", modules));
+        Assert.Equal("top", PythonExtractor.Resolve("top", "pkg/service", modules));
+        Assert.Equal("pkg/models", PythonExtractor.Resolve("pkg.models", "pkg/service", modules));
 
         // Relative: one dot is the importing module's own package.
-        Assert.Equal("pkg.models", PythonExtractor.Resolve(".models", "pkg.service", modules));
+        Assert.Equal("pkg/models", PythonExtractor.Resolve(".models", "pkg/service", modules));
 
         // Absent stays unresolved rather than being invented — it may be a package, a module in
         // another scope, or nothing at all, and asserting which is the guess DC-022 is about.
-        Assert.Null(PythonExtractor.Resolve("os", "pkg.service", modules));
-        Assert.Null(PythonExtractor.Resolve(".nope", "pkg.service", modules));
+        Assert.Null(PythonExtractor.Resolve("os", "pkg/service", modules));
+        Assert.Null(PythonExtractor.Resolve(".nope", "pkg/service", modules));
 
         // Climbing above the root resolves to nothing rather than throwing.
-        Assert.Null(PythonExtractor.Resolve("....x", "pkg.service", modules));
+        Assert.Null(PythonExtractor.Resolve("....x", "pkg/service", modules));
     }
 
     [Fact]
@@ -315,7 +318,7 @@ public sealed class LackingWorkspaceTests : IDisposable
         using var reader = core.Store.BeginRead();
         var imports = reader.AllCurrentAssertions().Where(a => a.Predicate == "imports").ToList();
 
-        var resolved = Assert.Single(imports, i => i.Object == "models");
+        var resolved = Assert.Single(imports, i => i.Object == "pkg/models");
         Assert.Equal(VerificationStatus.Verified, resolved.Status);
 
         var external = Assert.Single(imports, i => i.Object == "os");
@@ -386,9 +389,12 @@ public sealed class LackingWorkspaceTests : IDisposable
         // Nor is the declaration file.
         Assert.DoesNotContain(facts, a => a.Subject.Contains("globals", StringComparison.Ordinal));
 
-        // The scope root IS the src directory, so modules are named relative to it: `models`, not
-        // `src/models`. The scope id carries the location; the module name carries the rest.
-        var relative = Assert.Single(facts, a => a.Predicate == "imports" && a.Object == "models");
+        // Modules are named by their REPOSITORY-relative path, not their scope-relative one. The
+        // scope-relative rule this replaces is what let two scopes name one node: every Python
+        // package has an `__init__.py` and every TypeScript directory an `index.ts`, so a repository
+        // with five packages produced five scopes each declaring `__init__` — one node in the graph
+        // carrying the merged edges of five unrelated files.
+        var relative = Assert.Single(facts, a => a.Predicate == "imports" && a.Object == "src/models");
         Assert.Equal(VerificationStatus.Verified, relative.Status);
 
         var package = Assert.Single(facts, a => a.Predicate == "imports" && a.Object == "react");

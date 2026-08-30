@@ -176,14 +176,24 @@ That is a pattern worth removing rather than managing:
    content, so nothing can be dropped, and it prints "0 dropped" — which is checkable, unlike care.
 3. **Regenerate the derived files; never merge them.** `docs/docs-index.js` and `docs/audit/audit-data.js`
    are outputs. A hand-merged generated file is a conflict resolved into a lie.
-4. **`main` takes fast-forwards from session branches.** No merge commits, so the history reads as one
-   sequence and a bisect means something. Either session may propose moving to pull requests; until
-   then this is what both are doing anyway.
+4. **Each session lands the way that suits its branch — SETTLED, by observation rather than by
+   reply.** This was proposed as "`main` takes fast-forwards only, no merge commits". It has been
+   answered in practice: `main` carries six `Merge remote-tracking branch 'origin/main' into
+   feature/app-facelift-and-graph-surfaces` commits, 120 commits against 109 on the first-parent
+   path. The design session keeps a long-lived feature branch current by merging `main` into it; the
+   core session rebases and fast-forwards. **Both are fine and the proposal is withdrawn**, for two
+   reasons: the stated rationale was weaker than claimed — `git bisect` handles merge commits, so
+   nothing was actually at risk — and a policy that one session has already declined by doing the
+   opposite six times is not a policy, it is a request being ignored politely. What *does* matter is
+   item 3, which is not about topology at all.
+
+   The one rule that replaces it: **`git log --first-parent main` must read as a sequence of landed
+   work.** Merge commits are fine; a merge that hides a conflict resolution in a derived file is not.
 5. **Land small and often.** Every one of the four conflicts was proportional to how long the branch
    had been open, and none was proportional to what the branch changed.
 
-**Design session: item 4 is the one that needs a yes or a no.** The rest describe what is already
-happening; that one is a policy choice, and it is listed in §6 as unsettled until you say.
+**Nothing in §4b is now waiting on a reply.** Items 1–3 and 5 describe what both sessions already do;
+item 4 is settled above.
 
 ---
 
@@ -204,8 +214,10 @@ happening; that one is a policy choice, and it is listed in §6 as unsettled unt
 
 ## 6. What this document does not settle
 
-- Whether `main` keeps taking fast-forwards from session branches, or moves to pull requests. **A
-  concrete proposal is now in §4b item 4** — it needs a yes or a no rather than more description.
+- ~~Whether `main` keeps taking fast-forwards from session branches, or moves to pull requests.~~
+  **Settled 2026-08-30 in §4b item 4**, by reading what `main` actually looks like rather than by
+  waiting for an answer: both topologies are in use, both are accepted, and the proposal to forbid
+  merge commits is withdrawn. Moving to pull requests remains open to either session to propose.
 - Whether the design session wants the view-model records to carry presentation hints (a severity, an
   ordering weight) or to compute those itself from the data.
 - Where visual regression evidence lives, and whether it belongs in the same gate run as the unit

@@ -53,7 +53,7 @@ public sealed class CanvasGraphViewModelTests
 
         public WorkspaceGraph Graph { get; set; } = new([], [], 0, [], "rev-1");
 
-        public Task<WorkspaceGraph> GraphAsync(int maxNodes, CancellationToken ct) =>
+        public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct) =>
             Throw is not null ? Task.FromException<WorkspaceGraph>(Throw) : Task.FromResult(Graph);
 
     }

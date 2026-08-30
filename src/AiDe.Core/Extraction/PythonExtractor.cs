@@ -82,9 +82,15 @@ public sealed class PythonExtractor : IExtractor
         // than left as a string. Collected first because an import may name a module that appears
         // later in the walk, and resolution that depends on file order is resolution that is wrong
         // half the time.
+        var prefix = ModuleNaming.ScopePrefix(request.ScopeId);
+
         var modules = Files(directory)
-            .Select(f => ModuleName(directory, f))
+            .Select(f => ModuleNaming.Qualify(prefix, ModuleName(directory, f)))
             .ToHashSet(StringComparer.Ordinal);
+
+        // The rest of the workspace, when the caller supplied it. Kept separate from this scope's
+        // own modules so the two can be distinguished in the edge that results.
+        var elsewhere = request.WorkspaceModules ?? new HashSet<string>(StringComparer.Ordinal);
 
         // The gaps first, so a scope truncated later still carries what it cannot see. The same
         // ordering the C# extractor uses, and for the same reason.
@@ -114,7 +120,7 @@ public sealed class PythonExtractor : IExtractor
                 continue;
             }
 
-            var module = ModuleName(directory, file);
+            var module = ModuleNaming.Qualify(prefix, ModuleName(directory, file));
             assertions.Add(Fact(request, module, "has_type", "python-module"));
 
             foreach (var name in Names(TopLevelClass, text))
@@ -138,7 +144,10 @@ public sealed class PythonExtractor : IExtractor
                 // module's package; an absolute one is matched against the scope's modules as
                 // written. Anything that matches a module this scope actually contains becomes
                 // VERIFIED — the target is a file that exists and was read.
-                var resolved = Resolve(target, module, modules);
+                // This scope first, then the workspace. A module in THIS directory is what the
+                // import means when both could match, because that is what Python itself does with
+                // the package directory ahead of the wider path.
+                var resolved = Resolve(target, module, modules) ?? Resolve(target, module, elsewhere);
 
                 if (resolved is null) unresolved++;
 
@@ -194,25 +203,37 @@ public sealed class PythonExtractor : IExtractor
     /// </remarks>
     internal static string? Resolve(string target, string importingModule, IReadOnlySet<string> modules)
     {
+        // Module IDS are repository-relative PATHS; import TARGETS are dotted names. An absolute
+        // import is read from the repository root, which is exactly what a path id is measured from,
+        // so `a.b.c` is the module `a/b/c`.
         if (!target.StartsWith('.'))
         {
-            return modules.Contains(target) ? target : null;
+            var absolute = target.Replace('.', '/');
+
+            if (modules.Contains(absolute)) return absolute;
+
+            // A package import names the directory; its module is the __init__ inside it.
+            var package = absolute + "/__init__";
+            return modules.Contains(package) ? package : null;
         }
 
         var levels = target.TakeWhile(c => c == '.').Count();
-        var rest = target[levels..];
+        var rest = target[levels..].Replace('.', '/');
 
-        // The importing module's package is its name minus the module itself; each extra dot climbs.
-        var parts = importingModule.Split('.');
+        // The importing module's package is its path minus the file; each extra dot climbs one more.
+        var parts = importingModule.Split('/');
         var keep = parts.Length - levels;
         if (keep < 0) return null;
 
-        var package = string.Join('.', parts.Take(keep));
+        var directory = string.Join('/', parts.Take(keep));
         var candidate = string.IsNullOrEmpty(rest)
-            ? package
-            : (package.Length == 0 ? rest : package + "." + rest);
+            ? directory
+            : (directory.Length == 0 ? rest : directory + "/" + rest);
 
-        return modules.Contains(candidate) ? candidate : null;
+        if (modules.Contains(candidate)) return candidate;
+
+        var relativePackage = candidate.Length == 0 ? "__init__" : candidate + "/__init__";
+        return modules.Contains(relativePackage) ? relativePackage : null;
     }
 
     private static IEnumerable<string> Names(Regex pattern, string text) =>
@@ -225,8 +246,8 @@ public sealed class PythonExtractor : IExtractor
         var withoutExtension = relative[..^Path.GetExtension(relative).Length];
 
         return withoutExtension
-            .Replace(Path.DirectorySeparatorChar, '.')
-            .Replace(Path.AltDirectorySeparatorChar, '.');
+            .Replace(Path.DirectorySeparatorChar, '/')
+            .Replace(Path.AltDirectorySeparatorChar, '/');
     }
 
     private static string ScopeNode(string scopeId) => scopeId;

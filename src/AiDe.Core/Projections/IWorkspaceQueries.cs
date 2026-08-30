@@ -38,13 +38,17 @@ public interface IWorkspaceQueries
     Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken cancellationToken);
 
     /// <summary>
-    /// The whole workspace as a graph, bounded by node count.
+    /// The workspace as a graph — all of it, or the part the query names.
     /// </summary>
     /// <remarks>
-    /// Distinct from <see cref="DescribeAsync"/>, which answers "what is around THIS node". The
-    /// graph surface asked the neighbourhood question and rendered two nodes of two thousand.
+    /// <para>Distinct from <see cref="DescribeAsync"/>, which answers "what is around THIS node".
+    /// The graph surface asked the neighbourhood question and rendered two nodes of two thousand.</para>
+    ///
+    /// <para>The query carries the filter because filtering has to happen before the CAP. A caller
+    /// that fetches everything and then keeps the classes has already let the cap rank and trim a
+    /// graph it did not want, and nothing in the result would say so.</para>
     /// </remarks>
-    Task<WorkspaceGraph> GraphAsync(int maxNodes, CancellationToken cancellationToken);
+    Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken cancellationToken);
 }
 
 /// <summary>The read surface answered by a <see cref="ProjectionService"/> in this process.</summary>
@@ -75,6 +79,6 @@ public sealed class LocalWorkspaceQueries(ProjectionService projections) : IWork
         string? cursor, int maxAssertions, CancellationToken cancellationToken) =>
         Task.FromResult(projections.Evidence(cursor, maxAssertions));
 
-    public Task<WorkspaceGraph> GraphAsync(int maxNodes, CancellationToken cancellationToken) =>
-        Task.FromResult(projections.Graph(maxNodes));
+    public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken cancellationToken) =>
+        Task.FromResult(projections.Graph(query));
 }

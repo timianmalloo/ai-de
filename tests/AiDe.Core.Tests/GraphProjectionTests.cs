@@ -131,6 +131,110 @@ public sealed class GraphProjectionTests
         Assert.Equal(1, graph.Omitted);
     }
 
+    // ---- the filtered subgraph ---------------------------------------------
+
+    [Fact]
+    public void AKindFilterKeepsOnlyThatKind_AndDropsTheEdgesThatLeaveIt()
+    {
+        var graph = new GraphProjection(
+        [
+            Say("Shop.Order", "has_type", "class"),
+            Say("Shop.IRepo", "has_type", "interface"),
+            Say("Shop.Order", "depends_on", "Shop.IRepo"),
+        ], "rev-1").Compute(new GraphQuery(Kinds: ["class"]));
+
+        var node = Assert.Single(graph.Nodes);
+        Assert.Equal("Shop.Order", node.Id);
+
+        // The edge led out of the requested graph, so it is not drawn into a node that is not there.
+        Assert.Empty(graph.Edges);
+    }
+
+    [Fact]
+    public void ExcludingExternalsLeavesOnlyWhatTheWorkspaceDeclares()
+    {
+        var graph = new GraphProjection(
+        [
+            Say("Shop.Order", "has_type", "class"),
+            Say("Shop.Order", "depends_on", "string"),
+        ], "rev-1").Compute(new GraphQuery(IncludeExternal: false));
+
+        Assert.Single(graph.Nodes);
+        Assert.All(graph.Nodes, n => Assert.False(n.IsExternal));
+    }
+
+    [Fact]
+    public void AScopeFilterKeepsOnlyWhatThatScopeDeclares()
+    {
+        var graph = new GraphProjection(
+        [
+            Say("Shop.Order", "has_type", "class"),
+            Say("Shop.Order", "declared_in", "csharp:Shop:net10.0"),
+            Say("Web.Page", "has_type", "class"),
+            Say("Web.Page", "declared_in", "csharp:Web:net10.0"),
+        ], "rev-1").Compute(new GraphQuery(ScopeId: "csharp:Shop:net10.0"));
+
+        var node = Assert.Single(graph.Nodes);
+        Assert.Equal("Shop.Order", node.Id);
+    }
+
+    [Fact]
+    public void DegreeIsCountedOverTheFilteredGraph_NotTheWholeOne()
+    {
+        // The judgement that makes the filter worth having. `string` is referenced by everything, so
+        // ranking by whole-graph degree would order the user's own types by how much framework they
+        // touch — and at a cap, keep the wrong ones. Filter first, THEN rank.
+        var assertions = new List<EvidenceAssertion>
+        {
+            Say("Shop.Hub", "has_type", "class"),
+            Say("Shop.Leaf", "has_type", "class"),
+            Say("Shop.Other", "has_type", "class"),
+
+            // Leaf touches a lot of framework; Hub is connected to its own code.
+            Say("Shop.Leaf", "depends_on", "string"),
+            Say("Shop.Leaf", "depends_on", "int"),
+            Say("Shop.Leaf", "depends_on", "Guid"),
+            Say("Shop.Hub", "depends_on", "Shop.Leaf"),
+            Say("Shop.Hub", "depends_on", "Shop.Other"),
+        };
+
+        // Three framework edges plus the one from Hub.
+        var whole = new GraphProjection(assertions, "rev-1").Compute();
+        Assert.Equal(4, whole.Nodes.Single(n => n.Id == "Shop.Leaf").Degree);
+
+        var mine = new GraphProjection(assertions, "rev-1")
+            .Compute(new GraphQuery(IncludeExternal: false));
+
+        // Leaf's three framework edges are gone; only the one to Hub remains.
+        Assert.Equal(1, mine.Nodes.Single(n => n.Id == "Shop.Leaf").Degree);
+        Assert.Equal("Shop.Hub", mine.Nodes[0].Id);
+    }
+
+    [Fact]
+    public void TheCapAppliesAfterTheFilter_SoTheCallerGetsTheRightNodesTrimmed()
+    {
+        // Filtering AFTER a cap would rank and trim the whole graph and only then discard, so a
+        // caller asking for two classes could receive none — and nothing in the result would say so.
+        var assertions = new List<EvidenceAssertion>
+        {
+            Say("Shop.Order", "has_type", "class"),
+            Say("Shop.Customer", "has_type", "class"),
+        };
+
+        // Fifty framework nodes that would otherwise fill any small cap.
+        for (var i = 0; i < 50; i++)
+        {
+            assertions.Add(Say($"Shop.Order", "depends_on", $"Framework{i}"));
+        }
+
+        var graph = new GraphProjection(assertions, "rev-1")
+            .Compute(new GraphQuery(MaxNodes: 2, IncludeExternal: false));
+
+        Assert.Equal(2, graph.Nodes.Count);
+        Assert.All(graph.Nodes, n => Assert.False(n.IsExternal));
+        Assert.Equal(0, graph.Omitted);
+    }
+
     [Fact]
     public void AnEdgeKeepsTheStatusOfTheEvidenceBehindIt()
     {

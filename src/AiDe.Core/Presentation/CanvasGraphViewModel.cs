@@ -71,7 +71,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
     /// <summary>Every node and edge in the workspace, bounded and honest about the bound.</summary>
     private async Task<CanvasGraph> WholeGraphAsync(CancellationToken cancellationToken)
     {
-        var graph = await queries!.GraphAsync(WholeGraphNodeCap, cancellationToken).ConfigureAwait(false);
+        var graph = await queries!.GraphAsync(new GraphQuery(WholeGraphNodeCap), cancellationToken).ConfigureAwait(false);
 
         if (graph.Nodes.Count == 0)
         {

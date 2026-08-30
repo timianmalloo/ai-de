@@ -131,7 +131,9 @@ public sealed class WorkspaceCore : IDisposable
 
         var result = await _extractor
             .ExtractAsync(
-                new ExtractionRequest(scopeId, rootPathOverride ?? RootPath, artifactRevision, generation),
+                new ExtractionRequest(
+                    scopeId, rootPathOverride ?? RootPath, artifactRevision, generation,
+                    WorkspaceModules(artifactRevision)),
                 cancellationToken)
             .ConfigureAwait(false);
 
@@ -441,4 +443,95 @@ public sealed class WorkspaceCore : IDisposable
     public string DatabasePath => Path.Combine(DataDirectory, "workspace.db");
 
     public void Dispose() => Store.Dispose();
+    private readonly System.Threading.Lock _modulesGate = new();
+    private string? _modulesRevision;
+    private IReadOnlySet<string>? _modules;
+
+    /// <summary>
+    /// Every module id in the workspace, so an import that leaves its scope can be resolved.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Read from the FILESYSTEM, not from the store.</b> Resolving against what has already
+    /// been extracted would make an edge depend on the order the scopes happened to run in — the
+    /// trap the Python extractor already avoids within a scope by collecting modules before reading
+    /// any of them. The same rule, one level up.</para>
+    ///
+    /// <para>Computed once per revision and cached, because indexing a repository with thirty scopes
+    /// would otherwise walk the whole tree thirty times. The revision is the key: a new revision is
+    /// exactly the event that can add or remove a file.</para>
+    /// </remarks>
+    private IReadOnlySet<string> WorkspaceModules(string artifactRevision)
+    {
+        lock (_modulesGate)
+        {
+            if (_modules is not null && _modulesRevision == artifactRevision) return _modules;
+
+            var modules = new HashSet<string>(StringComparer.Ordinal);
+
+            if (Directory.Exists(RootPath))
+            {
+                foreach (var file in ModuleFiles(RootPath))
+                {
+                    var relative = Path.GetRelativePath(RootPath, file);
+                    var withoutExtension = relative[..^Path.GetExtension(relative).Length];
+
+                    modules.Add(withoutExtension
+                        .Replace(Path.DirectorySeparatorChar, '/')
+                        .Replace(Path.AltDirectorySeparatorChar, '/'));
+                }
+            }
+
+            _modules = modules;
+            _modulesRevision = artifactRevision;
+            return modules;
+        }
+    }
+
+    /// <summary>Python, TypeScript and JavaScript files anywhere in the workspace.</summary>
+    private static IEnumerable<string> ModuleFiles(string root)
+    {
+        // The union of what the two module-shaped extractors read, and the same vendored-tree
+        // exclusions they use. A node_modules walk would dwarf the repository it sits in.
+        var extensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".py", ".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs",
+        };
+
+        var skip = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "node_modules", "dist", "build", "out", ".next", "coverage", ".git",
+            "__pycache__", ".venv", "venv", ".tox", "bin", "obj",
+        };
+
+        var pending = new Stack<string>();
+        pending.Push(root);
+
+        while (pending.Count > 0)
+        {
+            var current = pending.Pop();
+
+            string[] files;
+            try { files = Directory.GetFiles(current); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            foreach (var file in files)
+            {
+                // A declaration file re-states types defined elsewhere, so it is not a module a
+                // reader navigates to — the same exclusion the TypeScript extractor makes.
+                if (file.EndsWith(".d.ts", StringComparison.OrdinalIgnoreCase)) continue;
+
+                if (extensions.Contains(Path.GetExtension(file))) yield return file;
+            }
+
+            IEnumerable<string> children;
+            try { children = Directory.EnumerateDirectories(current); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            foreach (var child in children)
+            {
+                if (!skip.Contains(Path.GetFileName(child))) pending.Push(child);
+            }
+        }
+    }
+
 }

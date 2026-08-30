@@ -72,8 +72,17 @@ public sealed class TypeScriptExtractor : IExtractor
                     $"the scope's directory does not exist: {directory}")]));
         }
 
+        var prefix = ModuleNaming.ScopePrefix(request.ScopeId);
         var files = Files(directory).ToList();
-        var modules = files.Select(f => ModuleName(directory, f)).ToHashSet(StringComparer.Ordinal);
+
+        var modules = files
+            .Select(f => ModuleNaming.Qualify(prefix, ModuleName(directory, f)))
+            .ToHashSet(StringComparer.Ordinal);
+
+        // The rest of the workspace, so `../shared/thing` reaching out of this directory resolves
+        // rather than being disclosed as unresolvable.
+        var everywhere = new HashSet<string>(modules, StringComparer.Ordinal);
+        if (request.WorkspaceModules is { } supplied) everywhere.UnionWith(supplied);
 
         var assertions = new List<EvidenceAssertion>();
         var unresolved = 0;
@@ -96,7 +105,7 @@ public sealed class TypeScriptExtractor : IExtractor
             try { text = File.ReadAllText(file); }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
 
-            var module = ModuleName(directory, file);
+            var module = ModuleNaming.Qualify(prefix, ModuleName(directory, file));
             assertions.Add(Fact(request, module, "has_type", "typescript-module"));
 
             foreach (Match match in Declaration.Matches(text))
@@ -114,7 +123,7 @@ public sealed class TypeScriptExtractor : IExtractor
 
             foreach (var specifier in specifiers)
             {
-                var resolved = Resolve(specifier, module, modules);
+                var resolved = Resolve(specifier, module, everywhere);
                 if (resolved is null) unresolved++;
 
                 // Resolved means a file this scope contains and read. Anything else — a package, a

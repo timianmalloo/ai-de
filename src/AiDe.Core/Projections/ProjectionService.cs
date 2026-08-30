@@ -334,7 +334,10 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// neighbours, so a workspace of 12,100 assertions rendered as two nodes — reported against the
     /// same repository viewed in Obsidian.
     /// </remarks>
-    public WorkspaceGraph Graph(int maxNodes)
+    public WorkspaceGraph Graph(int maxNodes) => Graph(new GraphQuery(maxNodes));
+
+    /// <summary>The graph the query asks for — filtered before the cap applies.</summary>
+    public WorkspaceGraph Graph(GraphQuery query)
     {
         using var activity = Activity.StartActivity("aide.projection.query");
         activity?.SetTag("projection", "graph");
@@ -348,7 +351,7 @@ public sealed class ProjectionService(WorkspaceStore store)
             .ToList();
 
         var graph = new GraphProjection(assertions, reader.CurrentSourceRevision())
-            .Compute(Clamp(maxNodes, 1, GraphProjection.DefaultMaxNodes));
+            .Compute(query with { MaxNodes = Clamp(query.MaxNodes, 1, GraphProjection.DefaultMaxNodes) });
 
         activity?.SetTag("returned.nodes", graph.Nodes.Count);
         activity?.SetTag("returned.edges", graph.Edges.Count);

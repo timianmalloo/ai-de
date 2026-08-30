@@ -204,25 +204,67 @@ public sealed class Phase3ProjectionTests : IDisposable
         Assert.Equal(0, join.InferredCount);
     }
 
-    [Fact]
-    public async Task AFluentToTableCallIsReadAsADeclaration()
+    /// <summary>
+    /// EF's builder shapes, declared in the fixture's own source.
+    /// </summary>
+    /// <remarks>
+    /// <para>The extractor resolves the entity from the RECEIVER's type, so these tests need the
+    /// receiver to actually bind. The package is not restored in a test fixture — every one of these
+    /// projects discloses <c>packages-not-restored</c> — so the shapes are declared here instead.
+    /// This is mimicking a third-party library's surface, not restating our own logic: what is
+    /// duplicated is EF's contract, which is the thing under test.</para>
+    /// </remarks>
+    private const string EntityFrameworkShapes = """
+        namespace Microsoft.EntityFrameworkCore.Metadata.Builders
+        {
+            public class EntityTypeBuilder<TEntity> where TEntity : class
+            {
+                public EntityTypeBuilder<TEntity> ToTable(string name) => this;
+                public EntityTypeBuilder<TEntity> ToTable(string name, string schema) => this;
+            }
+        }
+
+        namespace Microsoft.EntityFrameworkCore
+        {
+            using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+            public class ModelBuilder
+            {
+                public EntityTypeBuilder<TEntity> Entity<TEntity>() where TEntity : class => new();
+                public object Entity(string name) => new object();
+            }
+        }
+        """;
+
+    private string WriteEfProject(string name)
     {
-        // The MORE common style than the attribute. Without it, the commonest way of stating the
-        // mapping fell back to a name-matching guess.
-        var project = Write("Fluent/Fluent.csproj", """
+        var project = Write($"{name}/{name}.csproj", """
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
             </Project>
             """);
 
+        Write($"{name}/Ef.cs", EntityFrameworkShapes);
+        return project;
+    }
+
+    [Fact]
+    public async Task AFluentToTableCallIsReadAsADeclaration()
+    {
+        // The MORE common style than the attribute. Without it, the commonest way of stating the
+        // mapping falls back to a name-matching guess.
+        var project = WriteEfProject("Fluent");
+
         Write("Fluent/Context.cs", """
+            using Microsoft.EntityFrameworkCore;
+
             namespace Shop;
 
             public class Order { }
 
             public class AppContext
             {
-                public void OnModelCreating(dynamic modelBuilder)
+                public void OnModelCreating(ModelBuilder modelBuilder)
                 {
                     modelBuilder.Entity<Order>().ToTable("orders");
                 }
@@ -232,22 +274,96 @@ public sealed class Phase3ProjectionTests : IDisposable
         var result = await new CSharpExtractor().ExtractAsync(
             new ExtractionRequest("csharp:Fluent:net10.0", project, "rev-1", 1), CancellationToken.None);
 
+        // FULLY QUALIFIED. The syntax-based reader this replaced took the type argument as written
+        // and emitted `Order`, while every other assertion about that type says `Shop.Order` — an
+        // edge whose subject matches no node in the graph, drawn with a Verified badge.
         Assert.Contains(
             result.Assertions,
-            a => a.Predicate == "declares_table" && a.Object == "orders");
+            a => a.Predicate == "declares_table" && a.Subject == "Shop.Order" && a.Object == "orders");
+    }
+
+    [Fact]
+    public async Task AToTableOnABuilderHeldInALocalIsRead()
+    {
+        // THE DEFECT, as found on a real repository: 1 verified join against 123 inferred, on a
+        // codebase whose OnModelCreating states every one of them. The reader matched
+        // `Entity<T>()...ToTable("x")` as a single expression, so binding the builder to a local
+        // first — which is how the API is most often used — made the declaration invisible and the
+        // join fell back to a name guess.
+        var project = WriteEfProject("Local");
+
+        Write("Local/Context.cs", """
+            using Microsoft.EntityFrameworkCore;
+
+            namespace Shop;
+
+            public class Order { }
+
+            public class AppContext
+            {
+                public void OnModelCreating(ModelBuilder modelBuilder)
+                {
+                    var order = modelBuilder.Entity<Order>();
+                    order.ToTable("orders", "sales");
+                }
+            }
+            """);
+
+        var result = await new CSharpExtractor().ExtractAsync(
+            new ExtractionRequest("csharp:Local:net10.0", project, "rev-1", 1), CancellationToken.None);
+
+        // The first literal is the table in every overload; the second is a schema.
+        Assert.Contains(
+            result.Assertions,
+            a => a.Predicate == "declares_table" && a.Subject == "Shop.Order" && a.Object == "orders");
+    }
+
+    [Fact]
+    public async Task AToTableInGeneratedCodeIsNotReadAsCurrentFact()
+    {
+        // EF writes a model snapshot per migration, each calling ToTable for every entity AS IT
+        // STOOD THEN. Reading them asserts a table renamed three migrations ago as current fact,
+        // with the same Verified badge as the live mapping. On a real repository 63 of the 66 files
+        // mentioning ToTable were these snapshots.
+        var project = WriteEfProject("Generated");
+
+        Write("Generated/Snapshot.Designer.cs", """
+            // <auto-generated />
+            using Microsoft.EntityFrameworkCore;
+
+            namespace Shop;
+
+            public class Order { }
+
+            public class Snapshot
+            {
+                public void BuildModel(ModelBuilder modelBuilder)
+                {
+                    modelBuilder.Entity<Order>().ToTable("orders_as_they_were_in_2019");
+                }
+            }
+            """);
+
+        var result = await new CSharpExtractor().ExtractAsync(
+            new ExtractionRequest("csharp:Generated:net10.0", project, "rev-1", 1), CancellationToken.None);
+
+        Assert.DoesNotContain(result.Assertions, a => a.Predicate == "declares_table");
+
+        // Skipped is not the same as absent: the scope says so.
+        Assert.Contains(
+            result.Assertions,
+            a => a.Predicate == "discloses" && a.Object.StartsWith("generated-source-not-read-for-mappings"));
     }
 
     [Fact]
     public async Task ATableNameThatIsNotALiteralIsNotRead()
     {
         // Same rule the Bicep reader follows: a guessed name produces a confident wrong join.
-        var project = Write("Var/Var.csproj", """
-            <Project Sdk="Microsoft.NET.Sdk">
-              <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
-            </Project>
-            """);
+        var project = WriteEfProject("Var");
 
         Write("Var/Context.cs", """
+            using Microsoft.EntityFrameworkCore;
+
             namespace Shop;
 
             public class Order { }
@@ -255,7 +371,7 @@ public sealed class Phase3ProjectionTests : IDisposable
             public class AppContext
             {
                 private const string Name = "orders";
-                public void OnModelCreating(dynamic modelBuilder)
+                public void OnModelCreating(ModelBuilder modelBuilder)
                 {
                     modelBuilder.Entity<Order>().ToTable(Name);
                 }
@@ -264,6 +380,35 @@ public sealed class Phase3ProjectionTests : IDisposable
 
         var result = await new CSharpExtractor().ExtractAsync(
             new ExtractionRequest("csharp:Var:net10.0", project, "rev-1", 1), CancellationToken.None);
+
+        Assert.DoesNotContain(result.Assertions, a => a.Predicate == "declares_table");
+    }
+
+    [Fact]
+    public async Task AToTableOnSomethingThatIsNotAnEntityBuilderIsIgnored()
+    {
+        // `ToTable` is not a reserved word. A report formatter or a DataTable helper carrying the
+        // same method name is not a statement about persistence, and reading one would put a table
+        // in the schema graph that no database has.
+        var project = WriteEfProject("Unrelated");
+
+        Write("Unrelated/Report.cs", """
+            namespace Shop;
+
+            public class Report
+            {
+                public string ToTable(string caption) => caption;
+
+                public void Render()
+                {
+                    var report = new Report();
+                    report.ToTable("not_a_database_table");
+                }
+            }
+            """);
+
+        var result = await new CSharpExtractor().ExtractAsync(
+            new ExtractionRequest("csharp:Unrelated:net10.0", project, "rev-1", 1), CancellationToken.None);
 
         Assert.DoesNotContain(result.Assertions, a => a.Predicate == "declares_table");
     }

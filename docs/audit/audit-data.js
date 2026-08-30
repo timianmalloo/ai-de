@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T15:33:24Z",
+  "generated": "2026-08-30T15:34:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2106,6 +2106,32 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0117",
+      "shortname": "walk-profile-fluent-reader-module-ids-graph-query",
+      "datetime": "2026-08-30T15:22:20Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "The hypothesis that `ToDisplayString` dominated the symbol walk was **wrong**, and measuring it found\na much larger defect than the one it was looking for.\n\nSplitting the walk by operation: display 46ms across 7,312 calls — **3.9%**. The real costs were\ndepends-on 613ms (51%) and attributes 403ms (34%). The attribute cost was one call:\n`FluentTableMappings` ran `DescendantNodes()` over all 1,026 type declarations, hunting an EF\n`ToTable` call. Hoisting it to the compilation with a source-text prefilter cut it to 1ms of\nprefilter across 465 files and 217ms of walking the 66 that survived.\n\nThen the 66 files were the finding. Most were EF migration `*.Designer.cs` snapshots — and the three\nthat were not revealed that the reader **did not work**. It matched `Entity<T>()...ToTable(\"x\")` as a\nsingle expression. TheTerrace, like most EF codebases, writes:\n\n    var terrace = modelBuilder.Entity<Terrace>();\n    terrace.ToTable(\"Terrace\", \"setup\");\n\nSo the extractor recovered **1 declared mapping and guessed 123**, on a repository that states every\none of them outright. Every one of those 123 inferred `maps_to` edges was a name-matching guess\nstanding where a declaration already existed. The same reader also emitted the entity name as\nwritten in source (`Order`) where every other assertion uses the display string (`Shop.Order`) — so\neven its successes were edges whose subject matched no node.\n\nResolved semantically now: ask the model for the RECEIVER's type. One rule answers every style —\nchained, local-variable, lambda-configuration, `IEntityTypeConfiguration<T>` — because in all of them\nthe receiver is an `EntityTypeBuilder<TEntity>`, and the symbol's display string is the name the rest\nof the extractor emits. **Verified joins 1 → 64, inferred 123 → 73, `declares_table` facts 63.**\n\nGenerated files are skipped, on correctness grounds before performance ones: EF writes a model\nsnapshot per migration, each calling `ToTable` for every entity *as it stood then*, so reading them\nasserts a table renamed three migrations ago as current fact wearing the same Verified badge. 63 of\nthe 66 files were these. `fluent-scan` fell 1,418ms → 60ms warm as a side effect, not as the goal.\nThe skip is disclosed with a count, because skipped is not absent.\n\nDC-032 registered: **a reader recognises one spelling of a pattern and reports the rest as absent.**\nThe signature is a ratio nobody looks at — precise hits against fallback hits on real input — and it\nsurvives because the fallback is doing its job, so the surface looks populated and coverage stays\ngreen. The control was observed failing with the skip disabled.\n\n**Module ids were colliding, certainly rather than theoretically.** Both module-shaped extractors\nnamed a module by its path relative to its OWN SCOPE, and a scope is one directory. Every Python\npackage has an `__init__.py`, so a repository with five packages produced five scopes each declaring\na module called `__init__` — one node in the graph carrying the merged edges of five unrelated files.\nThe same for `index.ts`, `main`, `setup`, `conftest`. Ids are now the repository-relative path:\nunique by construction, readable, and the string a person would type to open the file.\n\nThat made cross-scope resolution possible, which was the actual next step. An import naming a sibling\npackage resolves to a file in a different scope, so it could never resolve from inside the one doing\nthe importing. `ExtractionRequest` now carries the workspace's module set, computed once per revision\nfrom the FILESYSTEM — not from the store, because resolving against what has already been extracted\nwould make an edge depend on the order the scopes happened to run in, the trap the Python extractor\nalready avoids one level down. Null means \"not supplied\", which is not \"there is nothing there\": the\nedge stays Inferred and the disclosure fires.\n\nA test comment had encoded the defective rule approvingly — *\"modules are named relative to it:\n`models`, not `src/models`\"* — which is DC-031's tell in its own words.\n\n**The graph surface is now queryable, not just fetchable.** `GraphQuery` filters by kind, by scope,\nand by whether to include nodes nothing declares. The filter runs BEFORE the cap and degree is\ncounted over what survives it: filtering afterwards would rank and trim the whole graph and only then\ndiscard, so a caller asking for the domain model would receive the wrong 5,000 nodes trimmed to the\nright kind, with nothing in the result saying so. Proven across the daemon as well as in process,\nbecause every cross-boundary defect here so far has been right in process and wrong through the pipe.\n\n**A next step I listed last turn was wrong and is withdrawn.** \"The index still walks every scope\" —\nit does not. `ScopeFingerprints` already skips an unchanged scope and counts it as *reused* rather\nthan *indexed*, deliberately, so \"28 of 28 indexed\" cannot be a true sentence about a run that read\nnothing. I asserted its absence without opening the file. The residual — incrementality BELOW the\nscope, so a one-file edit does not re-walk 1,026 types — is real, but it conflicts with the\nappend-only per-scope snapshot model and is a design decision, not a tidy-up.\n\n717 tests green (App 121, Core 596). Six gates clean. Zero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Carry the five listed next steps: profile the walk, resolve Python imports across scopes, give the graph a query surface, assess incremental re-index, settle merge-protocol item 4",
+      "done_when": "Each step is done or its premise disproved in writing; full gate green; committed, merged, published",
+      "change": "cl-0079",
+      "git": {
+        "sha": "acce3698269f5a36ad113b845875f5f19a051cac",
+        "short": "acce36982",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
+    },
+    {
       "id": "al-0118",
       "shortname": "fix-terminal-tab-close-and-menu",
       "datetime": "2026-08-30T15:33:24Z",
@@ -4077,6 +4103,32 @@ window.AUDIT_DATA = {
         "after": "fb43ecd5fb72deffe4471525ef8eac483487b9a7",
         "branch": "session/phase3-pane-probes",
         "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0079",
+      "datetime": "2026-08-30T15:22:12Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "The join reader recognised one spelling of EF, and module ids collided",
+      "prompt": null,
+      "summary": "The hypothesis that `ToDisplayString` dominated the symbol walk was **wrong**, and measuring it found\na much larger defect than the one it was looking for.\n\nSplitting the walk by operation: display 46ms across 7,312 calls — **3.9%**. The real costs were\ndepends-on 613ms (51%) and attributes 403ms (34%). The attribute cost was one call:\n`FluentTableMappings` ran `DescendantNodes()` over all 1,026 type declarations, hunting an EF\n`ToTable` call. Hoisting it to the compilation with a source-text prefilter cut it to 1ms of\nprefilter across 465 files and 217ms of walking the 66 that survived.\n\nThen the 66 files were the finding. Most were EF migration `*.Designer.cs` snapshots — and the three\nthat were not revealed that the reader **did not work**. It matched `Entity<T>()...ToTable(\"x\")` as a\nsingle expression. TheTerrace, like most EF codebases, writes:\n\n    var terrace = modelBuilder.Entity<Terrace>();\n    terrace.ToTable(\"Terrace\", \"setup\");\n\nSo the extractor recovered **1 declared mapping and guessed 123**, on a repository that states every\none of them outright. Every one of those 123 inferred `maps_to` edges was a name-matching guess\nstanding where a declaration already existed. The same reader also emitted the entity name as\nwritten in source (`Order`) where every other assertion uses the display string (`Shop.Order`) — so\neven its successes were edges whose subject matched no node.\n\nResolved semantically now: ask the model for the RECEIVER's type. One rule answers every style —\nchained, local-variable, lambda-configuration, `IEntityTypeConfiguration<T>` — because in all of them\nthe receiver is an `EntityTypeBuilder<TEntity>`, and the symbol's display string is the name the rest\nof the extractor emits. **Verified joins 1 → 64, inferred 123 → 73, `declares_table` facts 63.**\n\nGenerated files are skipped, on correctness grounds before performance ones: EF writes a model\nsnapshot per migration, each calling `ToTable` for every entity *as it stood then*, so reading them\nasserts a table renamed three migrations ago as current fact wearing the same Verified badge. 63 of\nthe 66 files were these. `fluent-scan` fell 1,418ms → 60ms warm as a side effect, not as the goal.\nThe skip is disclosed with a count, because skipped is not absent.\n\nDC-032 registered: **a reader recognises one spelling of a pattern and reports the rest as absent.**\nThe signature is a ratio nobody looks at — precise hits against fallback hits on real input — and it\nsurvives because the fallback is doing its job, so the surface looks populated and coverage stays\ngreen. The control was observed failing with the skip disabled.\n\n**Module ids were colliding, certainly rather than theoretically.** Both module-shaped extractors\nnamed a module by its path relative to its OWN SCOPE, and a scope is one directory. Every Python\npackage has an `__init__.py`, so a repository with five packages produced five scopes each declaring\na module called `__init__` — one node in the graph carrying the merged edges of five unrelated files.\nThe same for `index.ts`, `main`, `setup`, `conftest`. Ids are now the repository-relative path:\nunique by construction, readable, and the string a person would type to open the file.\n\nThat made cross-scope resolution possible, which was the actual next step. An import naming a sibling\npackage resolves to a file in a different scope, so it could never resolve from inside the one doing\nthe importing. `ExtractionRequest` now carries the workspace's module set, computed once per revision\nfrom the FILESYSTEM — not from the store, because resolving against what has already been extracted\nwould make an edge depend on the order the scopes happened to run in, the trap the Python extractor\nalready avoids one level down. Null means \"not supplied\", which is not \"there is nothing there\": the\nedge stays Inferred and the disclosure fires.\n\nA test comment had encoded the defective rule approvingly — *\"modules are named relative to it:\n`models`, not `src/models`\"* — which is DC-031's tell in its own words.\n\n**The graph surface is now queryable, not just fetchable.** `GraphQuery` filters by kind, by scope,\nand by whether to include nodes nothing declares. The filter runs BEFORE the cap and degree is\ncounted over what survives it: filtering afterwards would rank and trim the whole graph and only then\ndiscard, so a caller asking for the domain model would receive the wrong 5,000 nodes trimmed to the\nright kind, with nothing in the result saying so. Proven across the daemon as well as in process,\nbecause every cross-boundary defect here so far has been right in process and wrong through the pipe.\n\n**A next step I listed last turn was wrong and is withdrawn.** \"The index still walks every scope\" —\nit does not. `ScopeFingerprints` already skips an unchanged scope and counts it as *reused* rather\nthan *indexed*, deliberately, so \"28 of 28 indexed\" cannot be a true sentence about a run that read\nnothing. I asserted its absence without opening the file. The residual — incrementality BELOW the\nscope, so a one-file edit does not re-walk 1,026 types — is real, but it conflicts with the\nappend-only per-scope snapshot model and is a design decision, not a tidy-up.\n\n717 tests green (App 121, Core 596). Six gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/CSharpExtractor.cs",
+        "src/AiDe.Core/Extraction/ModuleNaming.cs",
+        "src/AiDe.Core/Projections/GraphProjection.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "acce3698269f5a36ad113b845875f5f19a051cac",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
         "commits": []
       }
     }

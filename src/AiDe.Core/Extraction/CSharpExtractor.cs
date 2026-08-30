@@ -125,32 +125,57 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
 
         var memberWatch = System.Diagnostics.Stopwatch.StartNew();
 
+        // The walk's interior, split by OPERATION rather than by type. `members 1,074ms` named the
+        // loop, not the cost inside it, and the loop does four different things: name a symbol, find
+        // where it was written, read its attributes, and traverse its members. Accumulated ticks
+        // rather than nested stopwatches — a Stopwatch per type per operation would be four
+        // allocations a thousand times over, measuring the measurement.
+        long displayTicks = 0, provenanceTicks = 0, attributeTicks = 0, dependsTicks = 0;
+        var displayCalls = 0;
+
         foreach (var type in types)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            var mark = System.Diagnostics.Stopwatch.GetTimestamp();
             var subject = type.ToDisplayString();
+            displayTicks += System.Diagnostics.Stopwatch.GetTimestamp() - mark;
+            displayCalls++;
+
+            mark = System.Diagnostics.Stopwatch.GetTimestamp();
             var provenance = ProvenanceFor(type, projectPath, observedAt);
+            provenanceTicks += System.Diagnostics.Stopwatch.GetTimestamp() - mark;
 
             assertions.Add(Assertion(request, subject, "has_type", KindOf(type), VerificationStatus.Verified, provenance));
             assertions.Add(Assertion(request, subject, "declared_in", request.ScopeId, VerificationStatus.Verified, provenance));
 
             if (type.BaseType is { SpecialType: not SpecialType.System_Object } baseType && Resolved(baseType))
             {
+                mark = System.Diagnostics.Stopwatch.GetTimestamp();
+                var baseName = baseType.ToDisplayString();
+                displayTicks += System.Diagnostics.Stopwatch.GetTimestamp() - mark;
+                displayCalls++;
+
                 assertions.Add(Assertion(
-                    request, subject, "inherits", baseType.ToDisplayString(), VerificationStatus.Verified, provenance));
+                    request, subject, "inherits", baseName, VerificationStatus.Verified, provenance));
             }
 
             foreach (var contract in type.Interfaces.Where(Resolved))
             {
+                mark = System.Diagnostics.Stopwatch.GetTimestamp();
+                var contractName = contract.ToDisplayString();
+                displayTicks += System.Diagnostics.Stopwatch.GetTimestamp() - mark;
+                displayCalls++;
+
                 assertions.Add(Assertion(
-                    request, subject, "implements", contract.ToDisplayString(), VerificationStatus.Verified, provenance));
+                    request, subject, "implements", contractName, VerificationStatus.Verified, provenance));
             }
 
             // A [Table("orders")] attribute is a DECLARATION, so the code-to-schema join it produces
             // is Verified rather than a naming-convention guess. This is the one join in the phase
             // that a repository states outright, and it is worth reading precisely because every
             // other one is inferred.
+            mark = System.Diagnostics.Stopwatch.GetTimestamp();
             var declaredTable = type.GetAttributes()
                 .FirstOrDefault(a => a.AttributeClass?.Name is "TableAttribute" or "Table")
                 ?.ConstructorArguments.FirstOrDefault().Value as string;
@@ -161,31 +186,87 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                     request, subject, "declares_table", declaredTable, VerificationStatus.Verified, provenance));
             }
 
-            foreach (var (entity, table) in FluentTableMappings(type))
-            {
-                // A Fluent `builder.Entity<Order>().ToTable("orders")` is as much a declaration as
-                // the attribute, and it is the MORE common style — without it the commonest way of
-                // stating the mapping fell back to a name-matching guess.
-                assertions.Add(Assertion(request, entity, "declares_table", table, VerificationStatus.Verified, provenance));
-            }
+            attributeTicks += System.Diagnostics.Stopwatch.GetTimestamp() - mark;
 
-            foreach (var target in DependsOn(type).Distinct(SymbolEqualityComparer.Default).OfType<ITypeSymbol>())
+            mark = System.Diagnostics.Stopwatch.GetTimestamp();
+            var targets = DependsOn(type).Distinct(SymbolEqualityComparer.Default).OfType<ITypeSymbol>().ToList();
+            dependsTicks += System.Diagnostics.Stopwatch.GetTimestamp() - mark;
+
+            foreach (var target in targets)
             {
+                mark = System.Diagnostics.Stopwatch.GetTimestamp();
+                var targetName = target.ToDisplayString();
+                displayTicks += System.Diagnostics.Stopwatch.GetTimestamp() - mark;
+                displayCalls++;
+
                 assertions.Add(Assertion(
-                    request, subject, "depends_on", target.ToDisplayString(), VerificationStatus.Verified, provenance));
+                    request, subject, "depends_on", targetName, VerificationStatus.Verified, provenance));
             }
         }
+
+        memberWatch.Stop();
+
+        // A Fluent `builder.Entity<Order>().ToTable("orders")` is as much a declaration as the
+        // attribute, and it is the MORE common style — without it the commonest way of stating the
+        // mapping fell back to a name-matching guess. Scanned once over the compilation's trees
+        // rather than once per type; provenance is now the CALL SITE, which is where a reader
+        // looking for the mapping actually needs to go.
+        var fluentWatch = System.Diagnostics.Stopwatch.StartNew();
+
+        var unresolvedMappings = 0;
+        var generatedSkipped = 0;
+
+        foreach (var (entity, table, where) in FluentTableMappings(
+            compiled.Compilation,
+            (unresolvedCount, generatedCount) =>
+            {
+                unresolvedMappings = unresolvedCount;
+                generatedSkipped = generatedCount;
+            },
+            cancellationToken))
+        {
+            assertions.Add(Assertion(
+                request, entity, "declares_table", table, VerificationStatus.Verified,
+                ProvenanceAt(where, projectPath, observedAt)));
+        }
+
+        if (generatedSkipped > 0)
+        {
+            // Skipped is not the same as absent. A reader who knows the mapping is written down
+            // somewhere needs to be told that this is where it was declined, and why.
+            assertions.Add(Assertion(
+                request, ScopeNodeId(request.ScopeId), DisclosurePredicate,
+                $"generated-source-not-read-for-mappings ({generatedSkipped:N0} auto-generated " +
+                "file(s) mention ToTable; their mappings describe a past migration, not the model)",
+                VerificationStatus.Verified,
+                new Provenance(Path.GetFileName(projectPath), "1:1", ExtractorId, extractorVersion, observedAt)));
+        }
+
+        if (unresolvedMappings > 0)
+        {
+            // Counted, because "some mappings were not read" and "17 of 60 were not read" are
+            // different statements about how much of the code-to-schema join is still a guess.
+            assertions.Add(Assertion(
+                request, ScopeNodeId(request.ScopeId), DisclosurePredicate,
+                $"fluent-table-mappings-unresolved ({unresolvedMappings:N0} ToTable call(s) whose " +
+                "entity type did not resolve)", VerificationStatus.Verified,
+                new Provenance(Path.GetFileName(projectPath), "1:1", ExtractorId, extractorVersion, observedAt)));
+        }
+
+        fluentWatch.Stop();
 
         // Complete means "this is the whole snapshot for this scope", which it is: the disclosures
         // are IN the snapshot rather than missing from it. Marking it incomplete would quarantine
         // every unrestored project, which is most of them on a fresh clone.
-        memberWatch.Stop();
 
         if (Environment.GetEnvironmentVariable("AIDE_EXTRACTION_TIMING") is not null)
         {
             Console.Error.WriteLine(
                 $"[timing]   enumerate-types {enumerateWatch.ElapsedMilliseconds}ms for {types.Count} type(s), " +
-                $"members {memberWatch.ElapsedMilliseconds}ms");
+                $"members {memberWatch.ElapsedMilliseconds}ms " +
+                $"(display {Ms(displayTicks)}ms/{displayCalls:N0} calls, provenance {Ms(provenanceTicks)}ms, " +
+                $"attributes {Ms(attributeTicks)}ms, depends-on {Ms(dependsTicks)}ms), " +
+                $"fluent-scan {fluentWatch.ElapsedMilliseconds}ms");
         }
 
         // Emitted on the NORMAL path, no flag to remember: an operator asking "why is indexing slow"
@@ -204,6 +285,9 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         return Task.FromResult(new ExtractionResult(assertions, Complete: true, diagnostics));
     }
 
+    /// <summary>Accumulated stopwatch ticks as milliseconds.</summary>
+    private static long Ms(long ticks) => ticks * 1000 / System.Diagnostics.Stopwatch.Frequency;
+
     /// <summary>The node a scope's own facts hang off.</summary>
     public static string ScopeNodeId(string scopeId) => $"scope:{scopeId}";
 
@@ -213,10 +297,13 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         new(request.ScopeId, request.ArtifactRevision, subject, predicate, @object,
             EvidenceOrigin.Static, status, provenance);
 
-    private Provenance ProvenanceFor(ISymbol symbol, string projectPath, DateTimeOffset observedAt)
+    private Provenance ProvenanceFor(ISymbol symbol, string projectPath, DateTimeOffset observedAt) =>
+        ProvenanceAt(symbol.Locations.FirstOrDefault(l => l.IsInSource), projectPath, observedAt);
+
+    /// <summary>Where a fact was written, or the project file when that is not in source.</summary>
+    private Provenance ProvenanceAt(Location? location, string projectPath, DateTimeOffset observedAt)
     {
-        var location = symbol.Locations.FirstOrDefault(l => l.IsInSource);
-        if (location is null || location.SourceTree is null)
+        if (location is null || !location.IsInSource || location.SourceTree is null)
         {
             return new Provenance(Path.GetFileName(projectPath), "1:1", ExtractorId, extractorVersion, observedAt);
         }
@@ -336,30 +423,81 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         string.IsNullOrEmpty(type.Name);
 
     /// <summary>
-    /// Entity-to-table mappings stated with the Fluent API inside this type.
+    /// Entity-to-table mappings stated with the Fluent API, across the whole compilation.
     /// </summary>
     /// <remarks>
-    /// <para>Matches <c>Entity&lt;T&gt;()...ToTable("name")</c> anywhere in the type's own source —
-    /// a <c>DbContext.OnModelCreating</c> or an <c>IEntityTypeConfiguration&lt;T&gt;</c>. The entity
-    /// comes from the generic argument and the table from a string literal, so both sides are
-    /// declared and the join they produce is <see cref="VerificationStatus.Verified"/>.</para>
+    /// <para><b>Resolved SEMANTICALLY, because the syntax chain only ever saw one of the styles.</b>
+    /// The previous reader matched <c>Entity&lt;T&gt;()...ToTable("x")</c> as a single expression, so
+    /// it found nothing whenever the builder was bound to a local first — which is the commonest way
+    /// the API is actually used:</para>
+    /// <code>
+    /// var terrace = modelBuilder.Entity&lt;Terrace&gt;();
+    /// terrace.ToTable("Terrace", "setup");
+    /// </code>
+    /// <para>MEASURED on a real repository: <b>1 verified join against 123 inferred</b>, on a
+    /// codebase that declares its mappings outright. Every one of those guesses had a stated answer
+    /// sitting in <c>OnModelCreating</c>. Asking the semantic model for the RECEIVER's type answers
+    /// all the styles with one rule — chained, local-variable, lambda-configuration, and
+    /// <c>IEntityTypeConfiguration&lt;T&gt;</c> — because in every one of them the receiver is an
+    /// <c>EntityTypeBuilder&lt;TEntity&gt;</c>.</para>
+    ///
+    /// <para><b>It also fixes the name the edge is keyed on.</b> The syntax path took the type
+    /// argument AS WRITTEN, so it produced <c>Order</c> where every other assertion about that type
+    /// says <c>Shop.Order</c> — an edge whose subject matches no node in the graph. A symbol's
+    /// display string is the same name the rest of this extractor emits.</para>
+    ///
+    /// <para><b>And it excludes the migration snapshots for free.</b> EF's generated
+    /// <c>*.Designer.cs</c> files call <c>ToTable</c> through the NON-generic builder
+    /// (<c>modelBuilder.Entity("Some.Type.Name")</c>), so there is no type argument to resolve and
+    /// they yield nothing — correct twice over, because they are historical snapshots and a table
+    /// renamed three migrations ago would otherwise be asserted as current fact.</para>
     ///
     /// <para><b>Only literal names.</b> A table name built from a variable or a constant is not
     /// resolved — the same rule the Bicep reader follows, and for the same reason: a guessed name
     /// produces a confident wrong join between a class and a table.</para>
     /// </remarks>
-    private static IEnumerable<(string Entity, string Table)> FluentTableMappings(INamedTypeSymbol type)
+    private static IEnumerable<(string Entity, string Table, Location Where)> FluentTableMappings(
+        Compilation compilation, Action<int, int> counts, CancellationToken cancellationToken)
     {
-        foreach (var reference in type.DeclaringSyntaxReferences)
-        {
-            var root = reference.GetSyntax();
+        var unresolvedCount = 0;
+        var generatedCount = 0;
 
-            foreach (var call in root.DescendantNodes()
+        foreach (var tree in compilation.SyntaxTrees)
+        {
+            // The prefilter, and the reason this is affordable. A `ToTable` invocation cannot exist
+            // in a file whose text does not contain "ToTable", so a substring scan over source
+            // already in memory rules out every file that has none — MEASURED at 1ms across 465
+            // files, against 217ms to walk the 66 that survive. A false positive (the word in a
+            // comment) falls through to the walk below and finds nothing, so the prefilter can cost
+            // time but never correctness.
+            if (!tree.GetText().ToString().Contains("ToTable", StringComparison.Ordinal)) continue;
+
+            // GENERATED files are skipped, on correctness grounds before performance ones. EF writes
+            // a `*.Designer.cs` model snapshot per migration, and each one calls ToTable for every
+            // entity AS IT STOOD AT THAT MIGRATION. Reading them asserts a table renamed three
+            // migrations ago as current fact, with the same Verified badge as the live mapping — the
+            // shape of DC-022, two producers of one predicate where one of them is describing the
+            // past. MEASURED on a real repository: 63 of the 66 files that mention ToTable are
+            // generated snapshots, they hold ~125,000 of the lines, and binding them cost 1.2s to
+            // produce nothing that should be believed.
+            if (IsGenerated(tree, cancellationToken))
+            {
+                generatedCount++;
+                continue;
+            }
+
+            // Built lazily and once per tree: a semantic model is expensive to create and useless on
+            // a file whose ToTable turns out to be a comment.
+            SemanticModel? model = null;
+
+            foreach (var call in tree.GetRoot().DescendantNodes()
                 .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax>())
             {
                 if (call.Expression is not Microsoft.CodeAnalysis.CSharp.Syntax.MemberAccessExpressionSyntax member) continue;
                 if (member.Name.Identifier.ValueText != "ToTable") continue;
 
+                // The first string literal is the table name in every overload — ToTable(name),
+                // ToTable(name, schema), ToTable(name, buildAction), ToTable(name, schema, action).
                 var table = call.ArgumentList.Arguments
                     .Select(a => a.Expression)
                     .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.LiteralExpressionSyntax>()
@@ -368,16 +506,77 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
 
                 if (string.IsNullOrEmpty(table)) continue;
 
-                // Walk back down the fluent chain for the Entity<T>() that owns this ToTable.
-                var entity = member.Expression.DescendantNodesAndSelf()
-                    .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.GenericNameSyntax>()
-                    .FirstOrDefault(g => g.Identifier.ValueText == "Entity")
-                    ?.TypeArgumentList.Arguments.FirstOrDefault()?.ToString();
+                model ??= compilation.GetSemanticModel(tree);
 
-                if (!string.IsNullOrEmpty(entity)) yield return (entity, table);
+                if (model.GetTypeInfo(member.Expression).Type is not INamedTypeSymbol receiver
+                    || receiver.TypeKind == TypeKind.Error)
+                {
+                    // Packages not restored, most often. Counted and disclosed rather than guessed
+                    // at from the syntax: a mapping recovered without the type is keyed on a name
+                    // that matches no node, which is a dangling edge wearing a Verified badge.
+                    unresolvedCount++;
+                    continue;
+                }
+
+                if (!IsEntityBuilder(receiver)) continue;
+
+                // EntityTypeBuilder<TEntity> has one argument; OwnedNavigationBuilder<TOwner,
+                // TDependent> has two and the table belongs to the DEPENDENT. Last covers both.
+                if (receiver.TypeArguments.LastOrDefault() is not { } entity || !Resolved(entity))
+                {
+                    unresolvedCount++;
+                    continue;
+                }
+
+                yield return (entity.ToDisplayString(), table, call.GetLocation());
             }
         }
+
+        counts(unresolvedCount, generatedCount);
     }
+
+    /// <summary>
+    /// Whether a file declares itself generated, by the standard .NET convention.
+    /// </summary>
+    /// <remarks>
+    /// The rule Roslyn's own analyzers use: an <c>&lt;auto-generated&gt;</c> marker in the file's
+    /// FIRST comment block. Deliberately not an EF-specific test — a designer file, a protobuf stub
+    /// and a source-generator output are all code nobody wrote and nobody can fix, and a fact read
+    /// out of one describes the generator rather than the codebase.
+    /// </remarks>
+    private static bool IsGenerated(SyntaxTree tree, CancellationToken cancellationToken)
+    {
+        foreach (var trivia in tree.GetRoot(cancellationToken).GetLeadingTrivia())
+        {
+            if (!trivia.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.SingleLineCommentTrivia)
+                && !trivia.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.MultiLineCommentTrivia))
+            {
+                continue;
+            }
+
+            var text = trivia.ToString();
+
+            if (text.Contains("<auto-generated", StringComparison.OrdinalIgnoreCase)) return true;
+
+            // Only the leading comment block counts. A file that MENTIONS auto-generation further
+            // down — a comment about a generator, this very rule quoted in a test — is not itself
+            // generated, and treating it as such would silently drop real declarations.
+            return false;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Whether a receiver is one of EF's entity builders.
+    /// </summary>
+    /// <remarks>
+    /// Named explicitly rather than accepting any generic type carrying a <c>ToTable</c> member:
+    /// this reads a specific library's declaration, and an unrelated <c>ToTable</c> — a DataTable
+    /// helper, a report formatter — is not a statement about persistence.
+    /// </remarks>
+    private static bool IsEntityBuilder(INamedTypeSymbol type) =>
+        type.IsGenericType && type.Name is "EntityTypeBuilder" or "OwnedNavigationBuilder";
 
     private static void Walk(INamespaceSymbol ns, List<INamedTypeSymbol> into)
     {
