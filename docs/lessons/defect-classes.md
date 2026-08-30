@@ -1012,3 +1012,26 @@ for both or split.*
   projection; both report what they dropped, and neither has been exercised against a repository that
   reaches them. Other surfaces have not been audited for the same shape.
 - **Status:** `partially-controlled`
+
+### DC-033 — A control's affordance is present but wired to nothing
+
+- **Signature:** a button, menu item, or gesture is visible and looks live (a tab's ✕, a toolbar
+  icon) but its command is bound to `{x:Null}` / a no-op, so clicking it does nothing. A customized
+  control template that replaced the stock command binding is the usual cause — the visual survived,
+  the behaviour did not.
+- **Why it survives:** the control renders, hover states work, and nothing errors; only *using* it
+  reveals the dead wire. Unit tests that assert the model operation (close) pass, because the model
+  path is fine — it is the view→model connection that was severed.
+- **Instances:**
+  - 2026 — the rounded-tab template (`DockRoundedTabs.xaml`) set the tab close button's
+    `Command="{x:Null}"`, so the ✕ on every tab did nothing; closing a terminal was impossible from
+    the tab. Fixed by wiring the button (and AvalonDock's `DocumentClosing`) through the layout
+    model's `CloseSurface`, plus a "Close" item on the tab context menu.
+- **Control:** when a custom control template replaces a stock one, verify every interactive element
+  it carries still performs its action — click it, or assert its `Command`/handler is non-null. A
+  visible affordance with no behaviour is a defect even though nothing throws.
+- **The generalisation to apply elsewhere:** replacing a template inherits the obligation to
+  re-wire every command the stock template provided. Grep a customized template for `{x:Null}` on a
+  `Command` and treat each as a dead affordance until proven otherwise.
+- **Status:** `controlled` (close routed through the model via the button, the context menu, and
+  DocumentClosing; app launches and the model-close path is covered by the reconcile dispose test)

@@ -40,8 +40,25 @@ public sealed class WorkbenchAdapter
 
         // The naming pass must re-run whenever the layout changes: tabs are realized and recycled as
         // panes are docked, floated and collapsed, so a one-off startup hook would name the first
-        // arrangement and silently lose every one after it.
-        Manager.LayoutUpdated += (_, _) => ApplyAccessibleNames();
+        // arrangement and silently lose every one after it. Tab decoration (context menu + a working
+        // close button) rides the same signal for the same reason.
+        Manager.LayoutUpdated += (_, _) =>
+        {
+            ApplyAccessibleNames();
+            DecorateTabs(Manager);
+        };
+
+        // Route AvalonDock's own close (whichever tab button or gesture triggers it) through the
+        // model, so the layout stays the source of truth rather than AvalonDock silently removing a
+        // document the model still has (which a later Render would then re-add).
+        Manager.DocumentClosing += (_, e) =>
+        {
+            if (e.Document?.ContentId is { } id)
+            {
+                e.Cancel = true;
+                CloseSurface(id);
+            }
+        };
     }
 
     public DockingManager Manager { get; }
@@ -118,6 +135,83 @@ public sealed class WorkbenchAdapter
         }
 
         return named;
+    }
+
+    // ── Tab decoration: a working close button and a customization context menu ─────────────────
+
+    /// <summary>
+    /// Gives every realized tab a context menu (Rename / Colour scheme / Tab colour for terminals,
+    /// and Close for all) and a working close button. The rounded-tab template wires the close
+    /// button's command to <c>{x:Null}</c>, so without this the tab's ✕ does nothing; routing it
+    /// through <see cref="ILayoutService"/> keeps the model the source of truth.
+    /// </summary>
+    private void DecorateTabs(DependencyObject root)
+    {
+        var count = VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < count; i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            if (child is TabItem tab
+                && tab.DataContext is LayoutContent { ContentId: { } id, Content: FrameworkElement content })
+            {
+                // Decorate once per (tab, content) binding. Tabs are recycled, so re-check the id.
+                if (!string.Equals(tab.Tag as string, id, StringComparison.Ordinal))
+                {
+                    tab.Tag = id;
+                    tab.ContextMenu = BuildTabMenu(content, id);
+                }
+
+                var closeButton = FindDescendant<Button>(tab, "DocumentCloseButton");
+                if (closeButton is not null && closeButton.Command is null)
+                {
+                    closeButton.Command = new RelayCommand(() => CloseSurface(id));
+                }
+            }
+
+            DecorateTabs(child);
+        }
+    }
+
+    private ContextMenu BuildTabMenu(FrameworkElement content, string surfaceId)
+    {
+        var menu = content is TerminalSurface terminal ? terminal.CreateContextMenu() : new ContextMenu();
+
+        if (menu.Items.Count > 0)
+        {
+            menu.Items.Add(new Separator());
+        }
+
+        var close = new MenuItem { Header = "Close" };
+        close.Click += (_, _) => CloseSurface(surfaceId);
+        menu.Items.Add(close);
+        return menu;
+    }
+
+    private void CloseSurface(string surfaceId)
+    {
+        _service.Apply(new LayoutOperation.CloseSurface(surfaceId));
+        Render();
+    }
+
+    private static T? FindDescendant<T>(DependencyObject root, string name) where T : FrameworkElement
+    {
+        var count = VisualTreeHelper.GetChildrenCount(root);
+        for (var i = 0; i < count; i++)
+        {
+            var child = VisualTreeHelper.GetChild(root, i);
+            if (child is T typed && typed.Name == name)
+            {
+                return typed;
+            }
+
+            var found = FindDescendant<T>(child, name);
+            if (found is not null)
+            {
+                return found;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>

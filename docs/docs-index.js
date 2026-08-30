@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T14:55:07Z",
+  "generated": "2026-08-30T15:33:24Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1583,7 +1583,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "39c10ec481bd484bc8aaebcddfcbad5748b672d81bb01d6cf8fed7db491e4607"
+      "sourceSha256": "395e07e962f6713320aa1c8dd19553fad0de5da6f8f4b3c9ba56800d93741f5d"
     },
     {
       "id": "domain-experts",
@@ -5898,5 +5898,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "34639207ca40f612efa9ee57964dcd5b31336fda79e6ae7973a77cbf00e03e7a"
+  "graphSha256": "8d841b1146098ba56e1a41a98a7d5440efdbd8e9ddf697721a46942a6a4989e3"
 };

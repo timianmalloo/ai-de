@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T14:55:07Z",
+  "generated": "2026-08-30T15:33:24Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2101,6 +2101,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/TerminalSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0118",
+      "shortname": "fix-terminal-tab-close-and-menu",
+      "datetime": "2026-08-30T15:33:24Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "user testing: cant change name/colour of a terminal tab; closing a terminal (X) does nothing; new agent terminal seems redundant; prompt dispatch needs a prompt editor and target terminal",
+      "summary": "Fixed dead tab-close (DC-033: DockRoundedTabs close button was Command={x:Null}) by routing through the model via a RelayCommand on the button, AvalonDock DocumentClosing, and a Close context-menu item. Made rename/colour/scheme reachable from the TAB (adapter DecorateTabs attaches TerminalSurface.CreateContextMenu). Added 5 customization tests (App 128). Confirmed PromptBar dispatch exists (Ctrl+K,P -> focused terminal).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs"
       ],
       "tags": [],
       "outcome": "success"

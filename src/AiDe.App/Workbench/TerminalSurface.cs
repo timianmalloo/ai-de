@@ -103,6 +103,17 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
 
     private void BuildContextMenu()
     {
+        ContextMenu = CreateContextMenu();
+    }
+
+    /// <summary>
+    /// Builds a fresh customization menu (Rename / Colour scheme / Tab colour). Fresh because a
+    /// <see cref="ContextMenu"/> has one parent — the surface owns one for right-click in the body,
+    /// and the tab owns another (where users look first). An optional Close item is appended by the
+    /// caller that knows how to close a surface (the adapter, via the layout model).
+    /// </summary>
+    public ContextMenu CreateContextMenu()
+    {
         var menu = new ContextMenu();
 
         var rename = new MenuItem { Header = "Rename…" };
@@ -131,10 +142,11 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
 
         menu.Items.Add(tabColour);
 
-        ContextMenu = menu;
+        return menu;
     }
 
-    private void PromptRename()
+    /// <summary>Opens the rename prompt for this terminal.</summary>
+    public void PromptRename()
     {
         var current = _displayName
             ?? AutomationProperties.GetName(this)
