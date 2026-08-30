@@ -1126,3 +1126,34 @@ for both or split.*
   `Command` and treat each as a dead affordance until proven otherwise.
 - **Status:** `controlled` (close routed through the model via the button, the context menu, and
   DocumentClosing; app launches and the model-close path is covered by the reconcile dispose test)
+
+### DC-035 — A default view loads the whole dataset instead of a bounded slice
+
+- **Signature:** a surface whose spec says "always show a bounded slice" is implemented to fetch the
+  *entire* dataset when there is no explicit focus — "no root means the whole graph", "no filter
+  means every row". It works on small inputs and fails only at scale: an oversized response overflows
+  a transport frame, a layout melts into a hairball, or a render stalls. The failure looks like an
+  infrastructure limit (a 1 MiB IPC cap) but the limit is a symptom — the design asked for everything.
+- **Why it survives:** every small/medium repo loads fine, and the whole-graph default was often
+  introduced to fix the *opposite* bug (too little shown — "only 2 nodes"), so it reads as a
+  correction rather than an over-correction. The spec that forbids it (a bounded-neighbourhood /
+  paginated requirement) is not re-read at the moment the default is chosen.
+- **Instances:**
+  - 2026 — `CanvasGraphViewModel` with no focus called `WholeGraphAsync` (5,000-node cap); on
+    TheTerrace (~2,813 nodes / 8,602 edges) the serialized response exceeded `IpcFraming.MaxFrameBytes`
+    (1 MiB), the daemon's uncaught write exception closed the connection, and the graph view showed
+    `ipc.transport_closed`. It violated the surface's own spec (US-K2: "the whole graph is never
+    rendered at once"). INV-0003.
+- **Control:** the default (no-focus) view returns a **bounded** entry by construction — an aggregated
+  overview or a ranked-important slice, sized to the transport regardless of dataset size — and a
+  test asserts the no-focus response node/byte count is bounded and does not grow with the corpus. A
+  request that would exceed the bound returns a labelled "narrow your focus" state, never an opaque
+  transport failure.
+- **The generalisation to apply elsewhere:** raising the transport/frame/timeout limit to make a
+  whole-dataset load fit only moves the wall to the next-larger input. When a "load everything"
+  default hits a limit, the fix is almost always to **make the default bounded** (focus+context,
+  pagination, level-of-detail, server-side aggregation), not to enlarge the limit. Re-read the
+  surface's spec: it usually already forbade the dump.
+- **Status:** `uncontrolled` (INV-0003; spec updated US-K10–K12; fix is cross-session — Core owns the
+  bounded/aggregated query API + legible PayloadTooLarge error, Design owns the aggregated-overview
+  default view + LOD rendering)

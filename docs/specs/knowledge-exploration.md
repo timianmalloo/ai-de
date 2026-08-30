@@ -75,8 +75,13 @@ claim carries ≥1 attributable assertion).
 - **US-K7 — UML/ERM-grounded views.** `Given a set of nodes, When the operator picks a structural view, Then relationships are shown in standard UML (class/component) or ERM (crow's-foot) notation, valid per the uml-erm-modelling-expert's clears-when.`
 - **US-K8 — Layout stability.** `Given a neighbourhood, When one node is added/removed, Then existing node positions are preserved (pinned by stable id) so the reader's mental map survives.`
 - **US-K9 — Empty/degraded states.** `Given a node with no neighbours, Then the graph shows an explicit empty neighbourhood ("no linked artifacts"), not a blank success; Given a graph too large to lay out at the requested depth, Then a bounded, labelled "showing N of M" state renders.`
+- **US-K10 — Aggregated overview is the default; the whole raw graph is never loaded.** `Given no focus node (the explorer just opened), When the graph renders, Then it shows a BOUNDED entry — either the most important nodes (ranked by degree/betweenness, domain nodes preferred over framework primitives, dropped nodes counted) OR an aggregated view (communities / packages / namespaces as super-nodes) — never the raw whole graph, And the omitted count is reported ("showing N of M"), And the client never issues a "give me the whole graph" request. (This supersedes the current no-root = whole-graph behaviour, which violates US-K2 and does not scale — INV-0003.)`
+- **US-K11 — Semantic zoom / level-of-detail.** `Given a large graph, When zoomed out, Then nodes are aggregated into cluster/super-nodes (community, package, namespace) with bundled edges; When zoomed in or a cluster is expanded, Then its members are fetched on demand and rendered. Detail scales with zoom and focus, not with project size, so a 10^4–10^6-node project stays responsive.`
+- **US-K12 — Every query is bounded to the transport by construction.** `Given any graph request, Then its response is sized to fit one IPC frame or is streamed across frames, so no request can overflow the transport and close the connection; Given a request that would exceed the bound, Then a labelled "too large — narrow your focus / zoom in" state renders, never an opaque transport failure (INV-0003 defect B).`
 
-**ISO 25010 NFR.** Performance — neighbourhood render p95 <1s at N≤2 on the approved corpus; 2D uses a WebGL/
+**ISO 25010 NFR.** Performance — neighbourhood render p95 <1s at N≤2 on the approved corpus; **overview
+and every request are bounded to a size that fits the IPC transport regardless of project size (US-K12), so
+render/transfer cost scales with the viewport, not the repository**; 2D uses a WebGL/
 Canvas renderer sized to the graph (Sigma.js/Cytoscape.js), 3D uses 3d-force-graph; both bounded. Usability —
 the node-walk is the core. Accessibility — WCAG 2.2 AA; the graph has a keyboard-navigable node list alternative
 and screen-reader node/edge summaries (a canvas is not operable by pointer alone). Reliability — a failed
@@ -167,6 +172,17 @@ Threat model — minimal (read-only local); a WebView2 pane is a trust boundary 
 - The node-count at which the 2D/3D pane stops being usable is **unmeasured** (spike — `kb-graph...` open-question).
 - Whether md/html/code render *inside* the WebView2 graph pane or in a separate WPF panel is a `/design` decision
   (airspace + one-environment trade — `kb-editor-and-content-rendering-surfaces`).
+- **Implementation currently violates US-K2/US-K10 (INV-0003).** `CanvasGraphViewModel` with no focus loads
+  the *whole* graph (`WholeGraphAsync`, 5,000-node cap), which overflowed the 1 MiB IPC frame on TheTerrace
+  (~2,813 nodes / 8,602 edges) and closed the connection (`ipc.transport_closed`). Fixing it is a cross-session
+  change: **Core owns** the bounded/aggregated query API (a "graph overview" that returns ranked-important or
+  community-aggregated nodes, and neighbourhood queries bounded/streamed to the transport — US-K12) and the
+  daemon returning a legible `PayloadTooLarge` error instead of closing; **Design owns** the default-view UX
+  (aggregated overview instead of a whole-graph load, US-K10) and the semantic-zoom / LOD rendering (US-K11).
+- **Aggregation source (flagged):** community/package/namespace super-nodes (US-K11) need a server-side
+  aggregation the projection does not yet expose; the graphify/community-detection primitives (kb bases) are the
+  natural source — a `/design` + Core decision.
 
 ## Gate record
 `GATE spec-knowledge-exploration · 2026-08-29 · Product Strategist + kg-visualization-ux-expert + uml-erm-modelling-expert + UX Researcher/IA (peers) / Simplifier + Test Architect + kg-visualization-ux-expert + UX & Accessibility (adversaries) · exit: bounded-neighbourhood, provenance-shown, natural-render, 2D-default all criteria; empty/too-large states specified · verdict: PASS-WITH-CONDITIONS (node-count knee flagged) · vetoes: none unresolved`
+`GATE spec-knowledge-exploration/scaling · 2026-08-30 · kg-visualization-ux-expert (peer) / Simplifier + Test Architect (adversaries) · added US-K10 (aggregated overview default, never whole-graph), US-K11 (semantic zoom/LOD), US-K12 (every query bounded to transport) after INV-0003 · verdict: PASS-WITH-CONDITIONS (Core-owned query API + aggregation source flagged) · vetoes: none unresolved`

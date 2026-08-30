@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T15:50:58Z",
+  "generated": "2026-08-30T16:02:39Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1615,7 +1615,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "50bb58a5dc1320c714589d6bc430dcc63a438aabed29eae233f2988713e25966"
+      "sourceSha256": "0a8a49dee44e64fed3856bed8718a873f753857312f2ad1c74383d3b8d27572c"
     },
     {
       "id": "domain-experts",
@@ -1727,6 +1727,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "9e22e926fdabc542ccafb5f87d2f99f870e512bc2516d4f2656a7293a90b2033"
+    },
+    {
+      "id": "inv-0003-graph-exceeds-ipc-frame-cap",
+      "path": "docs/investigations/INV-0003-graph-exceeds-ipc-frame-cap.md",
+      "title": "INV-0003 — Graph load fails with ipc.transport_closed on a large repo",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-13",
+      "reviewSuggested": [],
+      "summary": "Opening TheTerrace as a workspace shows \"The graph could not be loaded: ipc.transport_closed: the daemon closed the connection without responding.\" Verified cause: the whole-graph response for a real repo (~2,813 nodes / 8,602 edges) exceeds the IPC frame cap (IpcFraming.MaxFrameBytes = 1 MiB), so IpcFraming.WriteAsync throws ArgumentException in the daemon's response path; the serve loop catches IOException and OperationCanceledException but NOT that ArgumentException, so it propagates, the connection closes without a response, and the client reports transport_closed. This is the IpcFraming `simplify:` marker's upgrade trigger firing. Core-owned (IPC / daemon / graph projection). Report only — handed off to the Core session.",
+      "tags": [
+        "investigation",
+        "graph",
+        "ipc",
+        "daemon",
+        "transport",
+        "rca",
+        "core"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9639568f02c25923e0a708cf46869fa2d1a2a68b844949f035afa761f5f79498"
     },
     {
       "id": "lens-code-doc-join",
@@ -2545,7 +2578,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "41873f61a07b50de1806d799a1dd02458a4500d17b03269768b90b2a9186a9bc"
+      "sourceSha256": "7cd8dd39dab7b4ee7542cffd1f3bf51856c85f7c3c07c2dda59d568c08648003"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -5694,7 +5727,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[Open explorer] --> B[Search or pick a start node]\n  B --> C[Bounded neighbourhood renders in 2D]\n  C --> D{Select a node}\n  D --> E[Introspection panel routes by type]\n  E -->|code| F[Syntax-highlighted read-only editor]\n  E -->|knowledge/md| G[Rendered markdown]\n  E -->|html| H[Rendered html]\n  E -->|diagram| I[Diagram pane]\n  E --> J[List typed edges with provenance]\n  J -->|select edge| K[Focus moves to target - the node-walk] --> C\n  C --> L{Toggle 3D?}\n  L -->|yes| M[3D force layout, selection preserved] --> C\n  C --> N{Structural view?}\n  N -->|UML/ERM| O[Standard-notation view over the neighbourhood]\n  D -->|no neighbours| P[Explicit empty neighbourhood state]\n  C -->|too large| Q[Bounded 'showing N of M' + expand]\n  M -->|occlusion/lost| R[Return to 2D preserves node] --> C"
         }
       ],
-      "sourceSha256": "646404f73a065ad6bf3e2c5a172a9b7b22d4d267796317697815ca9f535a79e3"
+      "sourceSha256": "bf499178f876e20f5778e96d3f18fdd04c36cb873b31c79fb41bd5d84f4dbabc"
     },
     {
       "id": "spec-terminal-sessions",
@@ -5930,5 +5963,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "02bb4ded8c78ff179cd266477427c228b4f13ccb8d04eb74541ecf467450b2bd"
+  "graphSha256": "e868b011197e78c36a39f61be5accb7db4b4041e5c73656455b1aa4863c81179"
 };

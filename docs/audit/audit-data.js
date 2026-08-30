@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T15:47:54Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-30T16:02:39Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2190,6 +2190,23 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0121",
+      "shortname": "investigate-graph-ipc-scaling",
+      "datetime": "2026-08-30T16:02:39Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "graph view error on TheTerrace: ipc.transport_closed the daemon closed the connection without responding; think through scaling at the UX side given extremely large projects",
+      "summary": "Root cause: whole-graph response exceeds the 1 MiB IPC frame cap; daemon's ServeAsync doesn't catch the oversized-write ArgumentException so it closes the connection. Deeper finding: the whole-graph default violates the spec's US-K2 (never render whole graph) and does not scale. Added US-K10-12 (aggregated overview default, semantic zoom/LOD, transport-bounded queries). DC-035. Core-owned fix handed off (4c). INV-0003. STOP.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0003-graph-exceeds-ipc-frame-cap.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
