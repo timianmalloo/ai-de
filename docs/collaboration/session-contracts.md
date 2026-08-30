@@ -157,6 +157,7 @@ a user currently cannot see.
 | Show `ContextEdge.DominantTarget` more prominently | 57 of 72 crossings being one class is the difference between "this boundary failed" and "this boundary is carrying the ORM". It is currently a grey suffix on the expander header | `ContextEdge.DominantTarget`, `DominantCount` |
 | A visual state for `ContextMapView.IsDeclared == false` | "No context map is declared" is currently a heading and a muted paragraph. It is the *first* thing a new workspace shows, and it is closer to an empty state than to a message | `ContextMapView.IsDeclared` |
 | Bind `CanvasGraphViewModel.RouteAsync(from, to)` | "How does A reach B" is the question impact analysis is for, and nothing can ask it. It returns **the same `CanvasGraph`** the canvas already binds — same nodes, same edges — so the only new work is two inputs and showing `Message`. Endpoints arrive with `IsRoot = true` | `CanvasGraphViewModel.RouteAsync` |
+| Bind `KnowledgeAsync` — the knowledge graph is populated now | **The user reported the graph showing knowledge as zero against a large code count.** Nothing was discovering knowledge scopes, so the reader — which had existed since Phase 1 — was never reached. MEASURED on this repo after the fix: 466 `owned_by`, 346 `refines`, 287 `implements`, 272 `relates-to`, 66 `depends-on`. A knowledge node is a document id with a `has_type` and typed edges; it lives in the same store and the same graph as code | `IWorkspaceQueries.KnowledgeAsync`, and `GraphQuery(Kinds: ["adr", "spec", …])` for the graph surface |
 | Bind `OverviewAsync` for the large-graph canvas | **The Core half of DC-035, and the thing the force-layout work needs at scale.** The workspace as GROUPS instead of 1,500 truncated dots. MEASURED on TheTerrace at depth 3: `Features.Fixtures` 117, `Features.Teams` 117, `Features.Matches` 107, `Infrastructure.Data` 70 — the actual shape of the repo, in **55,758 bytes** against 533,484 for the node graph. `Depth` is the zoom control (1 = coarsest); each cluster carries `NodeCount`, `InternalEdges` and `IsExternal`; each link carries `Weight` for thickness and the **weakest** `Status` of the edges it bundles | `IWorkspaceQueries.OverviewAsync`, `WorkspaceOverview` |
 | Use `GraphOverview.GroupFor(id, depth)` when grouping detail nodes | Now public for exactly this. If the canvas derives its own grouping, the two definitions will disagree and a node will render in the wrong cluster — which looks like a layout bug and is not one (DC-022's shape) | `GraphOverview.GroupFor` |
 | Surface the **refresh cost** | `RefreshMetrics` now reports p50/p95/max and how many refreshes have happened. It exists to answer a question a design decision is blocked on, and nobody can see it | `WorkspaceClient.RefreshMetricsAsync()` |
@@ -176,11 +177,20 @@ call and this session does not own it:
 | `Kinds: [...]` | Keeps only nodes of the given `has_type` values | "Show me the classes", "show me the tables". The kinds present are discoverable from the graph the surface already has |
 | `ScopeId: "..."` | Keeps only nodes one scope declares | TheTerrace is 28 scopes; a per-project view is a different picture from a per-repository one |
 
-**The question for you, and Core will follow whichever way you answer it:** are these a persistent
-control strip on the canvas, a per-view preset (Domain / Everything / This project), or not surfaced
-at all for now? A **preset** is Core's guess at the better answer — three named views are one decision
-a user makes once, where three toggles are a combinatorial space they have to reason about — but it
-is a guess about users, which is the thing this session is least qualified to make.
+**ANSWERED by the user, 2026-08-30: presets — three named views.** Not a control strip, not
+per-filter toggles. Core's reasoning held: three named views are one decision a user makes once,
+where three toggles are a combinatorial space they must reason about.
+
+Core suggests these three, and the design session owns the names and the default:
+
+| view | query |
+|---|---|
+| **Domain** | `IncludeExternal: false` — this workspace's own declared code, nothing else |
+| **Everything** | no filters — includes framework and package types |
+| **This project** | `ScopeId: <selected scope>` — one project's declarations |
+
+`Kinds` is deliberately not one of the three: it is a *refinement within* a view rather than a view,
+and folding it in would produce the combinatorial space the presets exist to avoid.
 
 **What Core commits to either way:** the filter runs BEFORE the node cap, and degree is computed over
 what survives it, so a filtered view ranks and trims the graph that was asked for rather than the
@@ -271,8 +281,9 @@ item 4 is settled above.
   merge commits is withdrawn. Moving to pull requests remains open to either session to propose.
 - Whether the design session wants the view-model records to carry presentation hints (a severity, an
   ordering weight) or to compute those itself from the data.
-- **Which `GraphQuery` filters the canvas offers, and as what control.** Stated as a concrete
-  question with a recommendation in §4a; it is an IA decision, so Core has not taken it.
+- ~~Which `GraphQuery` filters the canvas offers, and as what control.~~ **Settled 2026-08-30: three
+  named presets (Domain / Everything / This project).** The shapes are in §4a; the design session owns
+  the names and the default.
 - Where visual regression evidence lives, and whether it belongs in the same gate run as the unit
   tests or in a slower ring (`ci-and-test-efficiency.md` would say the slower ring).
 

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T22:10:31Z",
+  "generated": "2026-08-30T22:11:11Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2762,6 +2762,32 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0151",
+      "shortname": "knowledge-graph-was-never-populated",
+      "datetime": "2026-08-30T22:00:11Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "i noticed in the other session that the graph was showing knowledge as zero count and code as a large count.. is the knowledge graph being populated? if not it should be\ninvestigate and fix that\nalso do the next steps you outlined above\nbut first tell me what the question is on the graphquery filters\n---\nyes go with presets - agreed, three named views",
+      "summary": "**The knowledge graph was never being populated, and the reason is worse than a bug.** The reader had\nexisted since Phase 1, with tests, inside the fixture extractor. `CompositeExtractor` had a route for\nit. And `CSharpScopeDiscovery` produced six scope kinds — `csharp`, `bicep`, `schema`, `python`,\n`typescript`, `sql` — and **no knowledge scope at all**. The capability was correct, tested, and\nunreachable on every real repository for the life of the project.\n\nBoth halves passed their own tests. The producer is proven by unit tests that hand it input; the\nrouter is proven by fixtures that name the scope explicitly. Only DISCOVERY was untested against\nreality, and its gap is invisible from either side.\n\n**A zero that means \"nobody looked\" reads as \"there is none\"** — which is the shape this product\nexists to avoid, in the product's own headline surface, on a repository whose premise is that *docs\nhold intent, code holds reality, and the expensive defects live in the gap*. Half of that sentence\nwas never being read.\n\nMEASURED after wiring discovery, on this repository: **466 `owned_by`, 346 `refines`, 287\n`implements`, 272 `relates-to`, 66 `depends-on`**, centred on `knowledge-hub` with 78 edges. Scopes\nacross the three measured repositories: **28→66, 34→48, 34→56**. Every response still fits the frame.\n\n**Running it over real documents immediately found two defects in the new reader** — which is the\nlesson from last turn applied one turn later:\n\n- link lines carry a trailing YAML comment, and trimming from the END left it attached: the graph\n  gained a relation literally called `implements }   # typed edges — registry in …`. Parsing now\n  stops at the closing brace.\n- **templates** carry frontmatter in exactly the shape a real document does, with `<artifact-id>`\n  where the id goes — so they became nodes describing the shape of a document, linked to things that\n  do not exist. Excluded by filename and, independently, by rejecting angle-bracketed placeholders.\n\nDC-041 registered: **a capability is complete, tested, and nothing ever routes work to it.** The\nsignature is a count that is exactly zero on every real repository while a sibling count is large,\nand the question that finds it is *\"what produces the keys this router matches on, and does it\nproduce this one?\"*. The control compares the two lists in a test instead of in somebody's head:\n`EveryRouteHasAProducerAndEveryProducerHasARoute` fails if discovery emits a kind nothing routes, or\nif a route exists that nothing discovers.\n\n**The other next steps, carried:**\n\n- **Bicep is comment-stripped too.** It PASSED the invent control — line-anchored matchers, and a\n  sweep of an unfamiliar repository produced only real parameter names and real Azure types. Stripped\n  anyway: it was the last line-oriented reader still parsing raw text, and all three readers caught\n  inventing were caught reading commented-out code.\n- **Provenance line numbers are asserted, not assumed.** Comments are blanked rather than deleted\n  precisely so a claim can still be opened at the right line; a test now pins `5:1` for a table\n  declared after a multi-line comment. It was the reason for the design and had never been checked.\n- **The invent control now runs against real repository text**, which is how both knowledge defects\n  surfaced — synthetic noise is written by the same person as the reader (DC-028's shape).\n- **`GraphQuery` filters: ANSWERED by the user — presets, three named views.** Recorded in the\n  contract with the three query shapes (Domain / Everything / This project). `Kinds` is deliberately\n  not one of them: it is a refinement *within* a view, and folding it in would rebuild the\n  combinatorial space presets exist to avoid.\n\n859 tests green (App 139, Core 720). Eight gates clean. Zero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Answer the GraphQuery filter question, find and fix why knowledge reports zero, and carry the outlined next steps",
+      "done_when": "The filter question is stated and the answer recorded; knowledge is populated and measured on real repositories; the routing gap has a control; Bicep stripped; provenance lines asserted; gates green; merged and published",
+      "change": "cl-0095",
+      "git": {
+        "sha": "609b4e0d4892a919866f2e8e3eee7e2d4d425e95",
+        "short": "609b4e0d4",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false
+      }
+    },
+    {
       "id": "al-0152",
       "shortname": "implement-explorer-phase3-keyboard-cycle",
       "datetime": "2026-08-30T22:01:27Z",
@@ -5080,6 +5106,32 @@ window.AUDIT_DATA = {
         "after": "66bfcf62cc39fad546ab14fcfe32f6bffc3e7b4d",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0095",
+      "datetime": "2026-08-30T22:00:00Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Knowledge was zero because nothing ever looked",
+      "prompt": null,
+      "summary": "**The knowledge graph was never being populated, and the reason is worse than a bug.** The reader had\nexisted since Phase 1, with tests, inside the fixture extractor. `CompositeExtractor` had a route for\nit. And `CSharpScopeDiscovery` produced six scope kinds — `csharp`, `bicep`, `schema`, `python`,\n`typescript`, `sql` — and **no knowledge scope at all**. The capability was correct, tested, and\nunreachable on every real repository for the life of the project.\n\nBoth halves passed their own tests. The producer is proven by unit tests that hand it input; the\nrouter is proven by fixtures that name the scope explicitly. Only DISCOVERY was untested against\nreality, and its gap is invisible from either side.\n\n**A zero that means \"nobody looked\" reads as \"there is none\"** — which is the shape this product\nexists to avoid, in the product's own headline surface, on a repository whose premise is that *docs\nhold intent, code holds reality, and the expensive defects live in the gap*. Half of that sentence\nwas never being read.\n\nMEASURED after wiring discovery, on this repository: **466 `owned_by`, 346 `refines`, 287\n`implements`, 272 `relates-to`, 66 `depends-on`**, centred on `knowledge-hub` with 78 edges. Scopes\nacross the three measured repositories: **28→66, 34→48, 34→56**. Every response still fits the frame.\n\n**Running it over real documents immediately found two defects in the new reader** — which is the\nlesson from last turn applied one turn later:\n\n- link lines carry a trailing YAML comment, and trimming from the END left it attached: the graph\n  gained a relation literally called `implements }   # typed edges — registry in …`. Parsing now\n  stops at the closing brace.\n- **templates** carry frontmatter in exactly the shape a real document does, with `<artifact-id>`\n  where the id goes — so they became nodes describing the shape of a document, linked to things that\n  do not exist. Excluded by filename and, independently, by rejecting angle-bracketed placeholders.\n\nDC-041 registered: **a capability is complete, tested, and nothing ever routes work to it.** The\nsignature is a count that is exactly zero on every real repository while a sibling count is large,\nand the question that finds it is *\"what produces the keys this router matches on, and does it\nproduce this one?\"*. The control compares the two lists in a test instead of in somebody's head:\n`EveryRouteHasAProducerAndEveryProducerHasARoute` fails if discovery emits a kind nothing routes, or\nif a route exists that nothing discovers.\n\n**The other next steps, carried:**\n\n- **Bicep is comment-stripped too.** It PASSED the invent control — line-anchored matchers, and a\n  sweep of an unfamiliar repository produced only real parameter names and real Azure types. Stripped\n  anyway: it was the last line-oriented reader still parsing raw text, and all three readers caught\n  inventing were caught reading commented-out code.\n- **Provenance line numbers are asserted, not assumed.** Comments are blanked rather than deleted\n  precisely so a claim can still be opened at the right line; a test now pins `5:1` for a table\n  declared after a multi-line comment. It was the reason for the design and had never been checked.\n- **The invent control now runs against real repository text**, which is how both knowledge defects\n  surfaced — synthetic noise is written by the same person as the reader (DC-028's shape).\n- **`GraphQuery` filters: ANSWERED by the user — presets, three named views.** Recorded in the\n  contract with the three query shapes (Domain / Everything / This project). `Kinds` is deliberately\n  not one of them: it is a refinement *within* a view, and folding it in would rebuild the\n  combinatorial space presets exist to avoid.\n\n859 tests green (App 139, Core 720). Eight gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/KnowledgeExtractor.cs",
+        "src/AiDe.Core/Extraction/CSharpScopeDiscovery.cs",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "609b4e0d4892a919866f2e8e3eee7e2d4d425e95",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
         "commits": []
       }
     }
