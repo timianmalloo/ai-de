@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T14:10:25Z",
+  "generated": "2026-08-30T14:50:41Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1250,6 +1250,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "7512d0c42ae281d521239e2d341d6a2c1af30a4551b7963e559a931dcfa76675"
     },
     {
+      "id": "note-terminal-customization-persistence",
+      "path": "docs/notes/terminal-customization-persistence.md",
+      "title": "Decision — terminal customization persistence & busy-close",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-27",
+      "reviewSuggested": [],
+      "summary": "Resolves the flagged unknowns from spec-terminal-sessions. Persistence-while-open is achieved for free by the DC-029 reconcile fix (the surface instance survives re-renders, so its display name, colour scheme and tab colour persist). Cross-restart persistence and busy-close confirmation are deferred as documented follow-ups.",
+      "tags": [
+        "terminal",
+        "customization",
+        "persistence",
+        "decision"
+      ],
+      "links": [
+        {
+          "to": "spec-terminal-sessions",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-0002-terminal-rebuild-kills-sessions",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "450714ae4b68f3c3370e2d7df000cd7003531c5765e78a40388826127d03872e"
+    },
+    {
       "id": "conceptual-model-ai-native-ide",
       "path": "docs/design/conceptual-model.md",
       "title": "AI-DE conceptual domain model",
@@ -1553,7 +1583,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d7c0fc8110afac95ed7d7b0607fa95a5d65423ae43c97eb8c0cf3bd538cf9708"
+      "sourceSha256": "29a6a6358b6750982dc61f93035693c16f2058a76d105e8c28d797ba6ab06788"
     },
     {
       "id": "domain-experts",
@@ -2272,7 +2302,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "58b15179bba77644dd4cb94f67cd85cd56421ef9b76084742f8ed134f4dcc3f3"
+      "sourceSha256": "fd6b4c07e2846f67caa6bda77ac88bb1c17067770990b372966d73c5abb417c4"
     },
     {
       "id": "review-ui-facelift",
@@ -5868,5 +5898,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "1a7a6ba55d9d91439b3948709be243eaf587366504393eede45e3e0c38c644fe"
+  "graphSha256": "e12c1428121fd88951ebcd25bf356563a56a841525ce25e4bffc673f5ae42c60"
 };

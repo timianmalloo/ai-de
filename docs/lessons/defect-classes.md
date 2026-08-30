@@ -922,7 +922,30 @@ for both or split.*
   must **reconcile by a stable key**, not rebuild — reuse unchanged nodes, add new ones, remove gone
   ones. Treat "rebuild the whole view on mutation" as a defect wherever a child can own state. The
   next likely victim here is the unwrapped windowed canvas/WebView2 surface.
-- **Status:** `uncontrolled` (control specified, fix pending human approval — INV-0002 Phase 1)
+- **Status:** `controlled` (fix landed: `WorkbenchAdapter.Render()` reconciles by `ContentId`; the
+  control test `Render_ReusesExistingContent_WhenLayoutMutates_SoLiveSurfacesSurvive` was observed
+  failing against the rebuild and passes against the reconcile — INV-0002 Phase 1)
+
+### DC-031 — Reconciling reused instances makes a per-render binding accumulate handlers
+
+- **Signature:** code that previously rebuilt a view on every change subscribed to events with a bare
+  `+=` and got away with it because each render produced a fresh instance. The moment the render is
+  changed to **reconcile** (reuse the same instance), that `+=` runs again on the same object every
+  render, so handlers pile up and one user action fires N times.
+- **Why it survives:** the reconcile change is made to fix a *different* defect (a rebuild killing
+  live state), the code compiles, and the accumulation is invisible until a handler's side effect
+  (an announcement, a refresh, a navigation) is observed happening two, three, four times.
+- **Instances:**
+  - 2026 — moving `WorkbenchAdapter.Render()` to reconcile (DC-029) made `WorkbenchShell.BindCanvas`'s
+    `canvas.FocusLeaveRequested += (lambda)` accumulate. Fixed with a bind-once guard (`_focusBoundCanvas`);
+    the four sibling subscriptions were already idempotent (`-=` then `+=`).
+- **Control:** every re-runnable binder either uses `-=` before `+=` (named handlers) or guards a
+  lambda subscription so it runs once per instance. When changing a rebuild to a reuse, audit every
+  `+=` in the code that runs per render.
+- **The generalisation to apply elsewhere:** "reuse instead of rebuild" changes the lifetime
+  assumption every per-render side effect was written against — sweep subscriptions, one-time setup,
+  and anything that assumed a fresh object each pass.
+- **Status:** `controlled` (bind-once guard landed; siblings verified idempotent)
 
 ### DC-030 — A caption is clipped by the very container that is too narrow to hold it
 

@@ -64,20 +64,29 @@
 
             <StackPanel Grid.Column="0"
                         Background="{StaticResource SurfaceSunkenBrush}"
-                        KeyboardNavigation.TabNavigation="Once">
+                        KeyboardNavigation.TabNavigation="Once"
+                        KeyboardNavigation.DirectionalNavigation="Cycle">
+                <!--  Roving tab-stop: Tab lands on the rail once; Up/Down arrows move between its
+                      buttons (DirectionalNavigation=Cycle), the standard toolbar/activity-bar idiom.  -->
                 <!--  Icon-only vertical navigation rail (VS Code / JetBrains idiom): the 56px column
                       cannot hold a legible text label under a 20px glyph, so labels were clipped
                       ("Coordinate" -> "ordina"). Discoverability is carried by the tooltip and the
                       accessibility by AutomationProperties.Name, so no meaning is lost by dropping the
                       caption. Targets are 44x44 (WCAG 2.5.8 comfortable). The active item is an accent
                       glyph on a soft raised pill with NO hard border, to match the rounded facelift.  -->
-                <Button Margin="6,8,6,4" Height="44" Style="{StaticResource RoundedButton}"
-                        AutomationProperties.Name="Explore" Background="{StaticResource SurfaceRaisedBrush}"
-                        BorderThickness="0" Foreground="{StaticResource AccentBrush}" ToolTip="Explore">
-                    <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconExplore}"
-                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                          StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
-                </Button>
+                <!--  Active item: a 3px left accent bar (the VS Code cue) beside the raised pill, so
+                      the current mode reads at a glance and by more than colour alone.  -->
+                <Grid Margin="0,8,0,4">
+                    <Border Width="3" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"
+                            CornerRadius="0,2,2,0" Background="{StaticResource AccentBrush}" />
+                    <Button Margin="6,0,6,0" Height="44" Style="{StaticResource RoundedButton}"
+                            AutomationProperties.Name="Explore" Background="{StaticResource SurfaceRaisedBrush}"
+                            BorderThickness="0" Foreground="{StaticResource AccentBrush}" ToolTip="Explore">
+                        <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconExplore}"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
+                    </Button>
+                </Grid>
                 <Button Margin="6,4" Height="44" Style="{StaticResource RoundedButton}"
                         AutomationProperties.Name="Coordinate" Background="Transparent" BorderThickness="0"
                         Foreground="{StaticResource TextMutedBrush}" ToolTip="Coordinate">

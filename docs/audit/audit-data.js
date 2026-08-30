@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T14:39:03Z",
+  "generated": "2026-08-30T14:50:41Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2058,6 +2058,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchAdapter.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0116",
+      "shortname": "implement-terminal-customization-rail",
+      "datetime": "2026-08-30T14:50:41Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do all of these next steps, dont defer the rail polish",
+      "summary": "Implemented terminal rename (context menu + DisplayName via IHasDisplayName + shell re-render), per-session colour schemes (TerminalColorScheme presets -> swappable TerminalView palette), per-tab colour accent (TabColour DP bound in rounded-tab template), and rail polish (active left accent bar + roving-tabindex Up/Down nav). Registered DC-031 (reconcile idempotency). App 123/123, Core 571/571, app launches.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/TerminalSurface.cs"
       ],
       "tags": [],
       "outcome": "success"

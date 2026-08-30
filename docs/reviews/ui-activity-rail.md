@@ -68,10 +68,10 @@ verdict.
 - **Must fix (done):** remove the four captions → icon-only rail with tooltip + accessible name;
   44px targets. *This is the single highest-leverage change and it is landed.*
 - **Should fix next (done):** soften the active state — borderless raised pill, accent glyph, 22px icon.
-- **Worth doing (deferred):** a 2px left accent bar on the active item (the literal VS Code cue) —
-  optional polish, deferred to avoid per-button template complexity; the raised pill already reads.
-- **Worth doing (deferred):** a keyboard roving-tabindex arrow-key traversal of the rail (currently
-  Tab-once) — a separate a11y enhancement, not required by this defect.
+- **Worth doing (done):** a 3px left accent bar on the active item (the literal VS Code cue), landed
+  beside the raised pill so the active mode reads by more than colour alone.
+- **Worth doing (done):** keyboard roving-tabindex traversal of the rail — `TabNavigation=Once` +
+  `DirectionalNavigation=Cycle`, so Tab lands on the rail once and Up/Down move between its buttons.
 
 ## Outcome
 

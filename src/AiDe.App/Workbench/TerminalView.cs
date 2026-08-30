@@ -33,7 +33,15 @@ namespace AiDe.App.Workbench;
 /// </remarks>
 public sealed class TerminalView : FrameworkElement
 {
-    private readonly TerminalPalette _palette = new();
+    private TerminalPalette _palette = new();
+
+    /// <summary>Swaps the colour scheme this view draws with and repaints. Per-session (DC-029 keeps
+    /// the same view instance alive), so schemes do not leak between terminals.</summary>
+    public void ApplyPalette(TerminalPalette palette)
+    {
+        _palette = palette;
+        InvalidateVisual();
+    }
     private readonly GlyphTypeface _typeface;
     private readonly double _emSize;
 

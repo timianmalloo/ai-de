@@ -13,6 +13,9 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
               </Grid.ColumnDefinitions>
+              <!--  Per-session tab accent (terminals set Content.TabColour); null for other tabs.  -->
+              <Border Grid.ColumnSpan="2" Height="3" VerticalAlignment="Top" CornerRadius="7,7,0,0"
+                      Background="{Binding Content.TabColour, FallbackValue={x:Null}, TargetNullValue={x:Null}}" />
               <Border Background="#00FFFFFF" Grid.ColumnSpan="2" />
               <ContentPresenter x:Name="TabTitle" Content="{Binding Title}" Margin="4,0,4,1" VerticalAlignment="Bottom" TextElement.Foreground="{DynamicResource TextBrush}" />
               <Button Command="{x:Null}" Name="DocumentCloseButton" Width="15" Height="15" Margin="3,0,3,0" HorizontalAlignment="Center" VerticalAlignment="Bottom" ToolTip="Close" Visibility="Hidden" Grid.Column="1">

@@ -55,6 +55,25 @@ public sealed class TerminalPalette
         Cursor = Resource("TerminalCursor", Color.FromRgb(0x5B, 0x9D, 0xD9));
     }
 
+    /// <summary>
+    /// A palette from an explicit per-session <see cref="TerminalColorScheme"/> rather than the global
+    /// resources, so two terminals can render with different schemes at once.
+    /// </summary>
+    public TerminalPalette(TerminalColorScheme scheme)
+    {
+        for (var i = 0; i < 16; i++)
+        {
+            _palette[i] = scheme.Ansi16[i];
+        }
+
+        BuildCube();
+        BuildGreyRamp();
+
+        Background = scheme.Background;
+        Foreground = scheme.Foreground;
+        Cursor = scheme.Cursor;
+    }
+
     public Color Background { get; }
 
     public Color Foreground { get; }

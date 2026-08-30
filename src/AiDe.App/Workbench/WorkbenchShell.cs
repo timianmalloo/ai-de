@@ -560,8 +560,15 @@ public sealed class WorkbenchShell : IDisposable
         {
             terminal.AttentionRequired -= OnTerminalAttentionRequired;
             terminal.AttentionRequired += OnTerminalAttentionRequired;
+            terminal.DisplayNameChanged -= OnTerminalRenamed;
+            terminal.DisplayNameChanged += OnTerminalRenamed;
         }
     }
+
+    // A rename lives on the surface (reconcile keeps it alive); re-render so the tab caption, which
+    // BuildPane reads from the surface's DisplayName, reflects it. Reconcile makes this cheap and
+    // leaves every live session untouched.
+    private void OnTerminalRenamed(object? sender, EventArgs e) => Adapter.Render();
 
     private void OnTerminalAttentionRequired(object? sender, string message) =>
         Announcer.Announce(message);

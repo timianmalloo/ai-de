@@ -2,6 +2,7 @@ using System.Runtime.Versioning;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 using AiDe.Core.Dispatch;
 using AiDe.Core.Facts;
@@ -28,7 +29,7 @@ namespace AiDe.App.Workbench;
 /// indistinguishable from a broken feature).</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
-public sealed class TerminalSurface : ContentControl, IDisposable
+public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayName
 {
     private readonly TerminalScreen _screen;
     private readonly VtParser _parser;
@@ -47,9 +48,117 @@ public sealed class TerminalSurface : ContentControl, IDisposable
 
         AutomationProperties.SetName(this, title);
         Content = BuildView();
+        BuildContextMenu();
 
         _ = StartAsync(sessionId, columns, rows);
     }
+
+    // ── Per-session customization (Design-owned view state) ───────────────────────────────────
+    // These live on the surface, not the Core layout model. Reconcile (DC-029) keeps this instance
+    // alive across re-renders, so a rename / colour / scheme persists while the session is open
+    // without a model change. Cross-restart persistence is a separate Core LayoutStore decision.
+
+    private string? _displayName;
+    private TerminalColorScheme _scheme = TerminalColorScheme.Default;
+
+    /// <summary>The user-chosen tab caption, or null to use the model title. See <see cref="IHasDisplayName"/>.</summary>
+    public string? DisplayName => _displayName;
+
+    /// <summary>Raised when the user renames this terminal, so the shell can refresh the tab caption.</summary>
+    public event EventHandler? DisplayNameChanged;
+
+    /// <summary>The scheme this session renders with.</summary>
+    public TerminalColorScheme Scheme => _scheme;
+
+    /// <summary>An optional accent shown on this session's tab, bound by the tab template.</summary>
+    public static readonly DependencyProperty TabColourProperty = DependencyProperty.Register(
+        nameof(TabColour), typeof(Brush), typeof(TerminalSurface), new PropertyMetadata(null));
+
+    public Brush? TabColour
+    {
+        get => (Brush?)GetValue(TabColourProperty);
+        set => SetValue(TabColourProperty, value);
+    }
+
+    /// <summary>Renames the terminal. An empty name is rejected so a tab is never nameless (US-4).</summary>
+    public void Rename(string? name)
+    {
+        var trimmed = name?.Trim();
+        if (string.IsNullOrEmpty(trimmed))
+        {
+            return;
+        }
+
+        _displayName = trimmed;
+        AutomationProperties.SetName(this, trimmed);
+        DisplayNameChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>Applies a per-session colour scheme to the live view.</summary>
+    public void ApplyScheme(TerminalColorScheme scheme)
+    {
+        _scheme = scheme;
+        _view?.ApplyPalette(new TerminalPalette(scheme));
+    }
+
+    private void BuildContextMenu()
+    {
+        var menu = new ContextMenu();
+
+        var rename = new MenuItem { Header = "Rename…" };
+        rename.Click += (_, _) => PromptRename();
+        menu.Items.Add(rename);
+
+        var scheme = new MenuItem { Header = "Colour scheme" };
+        foreach (var preset in TerminalColorScheme.Presets)
+        {
+            var captured = preset;
+            var item = new MenuItem { Header = preset.Name };
+            item.Click += (_, _) => ApplyScheme(captured);
+            scheme.Items.Add(item);
+        }
+
+        menu.Items.Add(scheme);
+
+        var tabColour = new MenuItem { Header = "Tab colour" };
+        foreach (var (label, brush) in TabColourChoices)
+        {
+            var captured = brush;
+            var item = new MenuItem { Header = label };
+            item.Click += (_, _) => TabColour = captured;
+            tabColour.Items.Add(item);
+        }
+
+        menu.Items.Add(tabColour);
+
+        ContextMenu = menu;
+    }
+
+    private void PromptRename()
+    {
+        var current = _displayName
+            ?? AutomationProperties.GetName(this)
+            ?? "Terminal";
+
+        var chosen = TextPromptDialog.Show("Rename terminal", current, Window.GetWindow(this));
+        if (chosen is not null)
+        {
+            Rename(chosen);
+        }
+    }
+
+    // A small set of tab accents plus "None". Drawn from the terminal ANSI vocabulary so they sit in
+    // the product's palette rather than being arbitrary.
+    private static IReadOnlyList<(string Label, Brush? Brush)> TabColourChoices { get; } =
+    [
+        ("None", null),
+        ("Blue", new SolidColorBrush(Color.FromRgb(0x5B, 0x9D, 0xD9))),
+        ("Green", new SolidColorBrush(Color.FromRgb(0x5F, 0xB9, 0x8F))),
+        ("Amber", new SolidColorBrush(Color.FromRgb(0xD8, 0xA6, 0x50))),
+        ("Purple", new SolidColorBrush(Color.FromRgb(0xB0, 0x8A, 0xD0))),
+        ("Red", new SolidColorBrush(Color.FromRgb(0xE0, 0x7A, 0x6F))),
+        ("Teal", new SolidColorBrush(Color.FromRgb(0x5F, 0xB2, 0xB9))),
+    ];
 
     /// <summary>What the session is doing, as the runtime understands it.</summary>
     public SessionActivity Activity => _session?.Activity ?? SessionActivity.Starting;
