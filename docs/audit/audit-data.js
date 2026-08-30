@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T22:11:11Z",
+  "generated": "2026-08-30T22:33:32Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2818,6 +2818,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/ExplorerSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0156",
+      "shortname": "fix-explorer-graph-monochrome-context-colour",
+      "datetime": "2026-08-30T22:33:32Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "fresh screenshots: Explorer graph is grey while workbench graph is coloured; do unblocked next steps",
+      "summary": "Fixed the Explorer graph rendering all-grey: CreateExplorerGraph built a fresh CanvasGraphViewModel without wiring ContextLookup (node colour comes from context; default lookup returns null). Extracted BuildContextLookup() and applied it to both the workbench and Explorer graph sources so they colour identically, read live so a workspace change is reflected. DC-042 registered. Also diagnosed the dead docked 'Explore' tab (Core handoff: refresh view panes on attach / decide the redundant surface's fate). App.Tests 144 green + launch smoke.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
       ],
       "tags": [],
       "outcome": "success"

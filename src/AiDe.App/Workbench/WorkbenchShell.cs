@@ -764,17 +764,7 @@ public sealed class WorkbenchShell : IDisposable
         // Nodes carry their declared context so the canvas can colour by it. Loaded once per bind
         // rather than per node: the map is a file, and re-reading it for every node in a graph would
         // make navigation cost scale with the map.
-        if (!string.IsNullOrEmpty(_workspaceRoot))
-        {
-            var contexts = BoundedContextReader.Load(
-                Path.Combine(_workspaceRoot, BoundedContextReader.DefaultRelativePath), []);
-
-            if (contexts.Contexts.Count > 0)
-            {
-                graph.ContextLookup = id => contexts.Contexts
-                    .FirstOrDefault(c => c.Includes.Any(p => BoundedContextReader.Matches(p, id)))?.Name;
-            }
-        }
+        graph.ContextLookup = BuildContextLookup();
 
         canvas.GraphSource = (rootId, ct) => graph.LoadAsync(rootId, cancellationToken: ct);
 
@@ -804,13 +794,34 @@ public sealed class WorkbenchShell : IDisposable
     {
         var canvas = new CanvasSurface("explorer-graph", "Graph");
 
-        // Read _queries LIVE at load time, not captured once: the Explorer surface is created lazily
-        // and then retained (US-E6), so a canvas built before the workspace attached would otherwise
-        // stay bound to a null queries forever and show "No workspace is open" even after one opens.
+        // Read _queries AND the context map LIVE at load time, not captured once: the Explorer
+        // surface is created lazily and then retained (US-E6), so a canvas built before the workspace
+        // attached would otherwise stay bound to a null queries forever (DC-040) — and, symmetrically,
+        // a VM built without the context lookup renders every node grey because colour comes from
+        // context (the Explorer-graph-monochrome defect). Wiring ContextLookup here makes the Explorer
+        // graph colour-consistent with the workbench graph.
         canvas.GraphSource = (rootId, ct) =>
-            new CanvasGraphViewModel(_queries).LoadAsync(rootId, cancellationToken: ct);
+            new CanvasGraphViewModel(_queries) { ContextLookup = BuildContextLookup() }
+                .LoadAsync(rootId, cancellationToken: ct);
 
         return canvas;
+    }
+
+    /// <summary>
+    /// Builds the context lookup that colours graph nodes, from the current workspace's declared
+    /// bounded-context map. Returns a lookup that yields null (no colour) when there is no workspace
+    /// or no map. Shared by the workbench canvas and the Explorer canvas so the two colour identically.
+    /// </summary>
+    private Func<string, string?> BuildContextLookup()
+    {
+        if (string.IsNullOrEmpty(_workspaceRoot)) { return _ => null; }
+
+        var contexts = BoundedContextReader.Load(
+            Path.Combine(_workspaceRoot, BoundedContextReader.DefaultRelativePath), []);
+        if (contexts.Contexts.Count == 0) { return _ => null; }
+
+        return id => contexts.Contexts
+            .FirstOrDefault(c => c.Includes.Any(p => BoundedContextReader.Matches(p, id)))?.Name;
     }
 
     /// <summary>The terminal pane the user is working in, or null when none is focused.</summary>
