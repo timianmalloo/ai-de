@@ -140,15 +140,20 @@ flowchart LR
 - **Mode:** entering with no workspace open is valid (both empty states); exiting always restores the
   prior workbench (D1).
 
-## Accessibility (Phase 1 minimal; full cycle deferred to Phase 3)
+## Accessibility (Phase 1 minimal; full cycle **landed in Phase 3**)
 - The rail toggle is keyboard-activable, named, active-by-more-than-colour (existing pattern, D5).
 - Entering Explorer lands focus in the graph; Escape exits when unclaimed.
 - The reader's edge list is keyboard-navigable and edges are keyboard-activable (walk).
-- **Deferred to Phase 3 (ADR-0017):** routing the canvas boundary `focus.leave` **into the reader** so
-  the two panes form one keyboard cycle. Phase 1's interim: `FocusLeaveRequested('forward')` from the
-  Explorer canvas focuses the reader region's first control (a small, safe wiring **included in Phase 1**
-  if the T-focus control below is green; otherwise deferred). This keeps a keyboard user from being
-  ejected from the app while in Explorer.
+- **Phase 3 (DONE):** the graph↔reader **keyboard cycle** is closed. Graph→reader routes the canvas
+  boundary `focus.leave` INTO the reader (Forward → reader's first stop; Backward → its last stop).
+  Reader→graph returns focus to the canvas when a Tab crosses the reader's boundary — Tab off the last
+  stop (Forward) or Shift+Tab off the first stop (Backward) — via `NodeReaderView.HandleTabKey` /
+  `BoundaryLeave` (pure, tested) raising `FocusLeaveRequested`, which `ExplorerSurface` routes to
+  `graph.FocusTarget.TryFocus()` (guarded on ready/not-obscured). The empty reader (one stop) still
+  participates: a Tab either way returns to the graph, so there is no trap in the empty state (US-E7).
+  Covered by `Reader_ShiftTabAtFirstStop_LeavesBackward`, `Reader_TabAtLastStop_LeavesForward`,
+  `Reader_TabInsideReader_DoesNotLeave`, `Reader_EmptyState_LeavesEitherWay`. Responsive stacking
+  (US-E8) remains for a later pass.
 
 ## Test plan (red-first; the union of the applicable Testing-Strategy triggers)
 - **T1 — `ExplorerRoundTrip_DoesNotRebuildTheWorkbench` (the key control, mode-level DC-029).** Given a

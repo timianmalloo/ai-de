@@ -181,4 +181,95 @@ public sealed class ExplorerModeTests
             }
         });
     }
+
+    // Phase 3 — the reader's edge case of the graph↔reader cycle. Shift+Tab off the FIRST stop (the
+    // region itself) leaves Backward, so focus returns to the graph rather than being trapped. RED if
+    // the boundary is not detected.
+    [Fact]
+    public void Reader_ShiftTabAtFirstStop_LeavesBackward()
+    {
+        OnSta(() =>
+        {
+            var reader = new NodeReaderView();
+            reader.Show(new CanvasNode("A", "A", "code", true, "X"),
+                new List<CanvasEdge> { new("A", "B", "calls", "Verified") });
+
+            AiDe.Core.Workbench.CanvasFocusDirection? seen = null;
+            reader.FocusLeaveRequested += (_, d) => seen = d;
+
+            var handled = reader.HandleTabKey(reader.FocusStops[0], shift: true);
+
+            Assert.True(handled);
+            Assert.Equal(AiDe.Core.Workbench.CanvasFocusDirection.Backward, seen);
+        });
+    }
+
+    // Phase 3 — Tab off the LAST stop (the last edge button) leaves Forward, completing the loop back
+    // to the graph. The reader is never a dead end.
+    [Fact]
+    public void Reader_TabAtLastStop_LeavesForward()
+    {
+        OnSta(() =>
+        {
+            var reader = new NodeReaderView();
+            reader.Show(new CanvasNode("A", "A", "code", true, "X"),
+                new List<CanvasEdge>
+                {
+                    new("A", "B", "calls", "Verified"),
+                    new("A", "C", "documents", "Inferred"),
+                });
+
+            AiDe.Core.Workbench.CanvasFocusDirection? seen = null;
+            reader.FocusLeaveRequested += (_, d) => seen = d;
+
+            var handled = reader.HandleTabKey(reader.FocusStops[^1], shift: false);
+
+            Assert.True(handled);
+            Assert.Equal(AiDe.Core.Workbench.CanvasFocusDirection.Forward, seen);
+        });
+    }
+
+    // Phase 3 — a Tab that stays INSIDE the reader (forward off the first stop, back off the last)
+    // does not leave: the cycle only crosses at the true boundaries, so internal traversal is WPF's.
+    [Fact]
+    public void Reader_TabInsideReader_DoesNotLeave()
+    {
+        OnSta(() =>
+        {
+            var reader = new NodeReaderView();
+            reader.Show(new CanvasNode("A", "A", "code", true, "X"),
+                new List<CanvasEdge>
+                {
+                    new("A", "B", "calls", "Verified"),
+                    new("A", "C", "documents", "Inferred"),
+                });
+
+            var fired = 0;
+            reader.FocusLeaveRequested += (_, _) => fired++;
+
+            Assert.False(reader.HandleTabKey(reader.FocusStops[0], shift: false)); // forward off first → inward
+            Assert.False(reader.HandleTabKey(reader.FocusStops[^1], shift: true)); // back off last → inward
+            Assert.Equal(0, fired);
+        });
+    }
+
+    // Phase 3 — an EMPTY reader (one stop: the region) still participates in the cycle: a Tab either
+    // way returns to the graph, since there is nowhere else inside it to go. No trap in the empty
+    // state (US-E7).
+    [Fact]
+    public void Reader_EmptyState_LeavesEitherWay()
+    {
+        OnSta(() =>
+        {
+            var reader = new NodeReaderView();  // empty: FocusStops == [reader]
+            Assert.Single(reader.FocusStops);
+
+            Assert.Equal(
+                AiDe.Core.Workbench.CanvasFocusDirection.Backward,
+                reader.BoundaryLeave(reader.FocusStops[0], shift: true));
+            Assert.Equal(
+                AiDe.Core.Workbench.CanvasFocusDirection.Forward,
+                reader.BoundaryLeave(reader.FocusStops[0], shift: false));
+        });
+    }
 }

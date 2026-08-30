@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T21:52:28Z",
+  "generated": "2026-08-30T22:01:27Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2757,6 +2757,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/investigations/INV-0004-graph-kind-taxonomy-and-knowledge.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0152",
+      "shortname": "implement-explorer-phase3-keyboard-cycle",
+      "datetime": "2026-08-30T22:01:27Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do the next best action (Explorer Phase 3: full graph<->reader keyboard cycle)",
+      "summary": "Closed the graph<->reader keyboard cycle (US-E7/E8): reader detects its boundary (Shift+Tab off first stop / Tab off last) via BoundaryLeave/HandleTabKey and raises FocusLeaveRequested; ExplorerSurface routes graph->reader by direction (Forward=first stop, Backward=last) and reader->graph via guarded FocusTarget.TryFocus. Empty reader still leaves either way (no trap). 4 tests; App.Tests 139->143 green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/NodeReaderView.cs",
+        "src/AiDe.App/Workbench/ExplorerSurface.cs"
       ],
       "tags": [],
       "outcome": "success"

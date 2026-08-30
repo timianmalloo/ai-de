@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using AiDe.Core.Presentation;
+using AiDe.Core.Workbench;
 
 namespace AiDe.App.Workbench;
 
@@ -17,6 +18,7 @@ namespace AiDe.App.Workbench;
 public sealed class NodeReaderView : ContentControl
 {
     private Action<string>? _onWalk;
+    private readonly List<UIElement> _focusStops = new();
 
     public NodeReaderView()
     {
@@ -26,6 +28,15 @@ public sealed class NodeReaderView : ContentControl
         // canvas is a keyboard trap (ADR-0015) and the reader is its escape while Explorer is active.
         Focusable = true;
         IsTabStop = false;
+        // Phase 3: close the graph↔reader cycle. Tab off the reader's last stop and Shift+Tab off its
+        // first stop hand focus back to the graph, so the two panes form one keyboard loop with no
+        // trap and no ejection (spec US-E7/E8 a11y contract).
+        PreviewKeyDown += (_, e) =>
+        {
+            if (e.Key != Key.Tab) { return; }
+            var shift = (Keyboard.Modifiers & ModifierKeys.Shift) != 0;
+            if (HandleTabKey(Keyboard.FocusedElement, shift)) { e.Handled = true; }
+        };
         Clear();
     }
 
@@ -39,6 +50,48 @@ public sealed class NodeReaderView : ContentControl
 
     /// <summary>Registers the walk handler; called with the target id when an edge is activated.</summary>
     public void OnWalk(Action<string> walk) => _onWalk = walk;
+
+    /// <summary>
+    /// Raised when keyboard focus should leave the reader and return to the graph, so the Explorer
+    /// can complete the graph↔reader cycle (spec US-E7/E8). The direction says which boundary was
+    /// crossed (Forward = Tab off the last stop; Backward = Shift+Tab off the first stop).
+    /// </summary>
+    public event EventHandler<CanvasFocusDirection>? FocusLeaveRequested;
+
+    /// <summary>
+    /// The reader's ordered focus stops: the region itself (the entry) followed by its walkable
+    /// edge buttons. Exposed so the cycle boundary is testable without a rendered visual tree.
+    /// </summary>
+    public IReadOnlyList<UIElement> FocusStops => _focusStops;
+
+    /// <summary>
+    /// Given the focused element and whether Shift is held, returns the direction focus should leave
+    /// the reader — or null when the Tab stays inside the reader. Shift+Tab at the first stop leaves
+    /// Backward; Tab at the last stop leaves Forward. A single-stop reader (empty state) leaves either
+    /// way, since there is nowhere else inside it to go.
+    /// </summary>
+    public CanvasFocusDirection? BoundaryLeave(object? focused, bool shift)
+    {
+        if (_focusStops.Count == 0) { return null; }
+        var first = _focusStops[0];
+        var last = _focusStops[^1];
+        if (shift && ReferenceEquals(focused, first)) { return CanvasFocusDirection.Backward; }
+        if (!shift && ReferenceEquals(focused, last)) { return CanvasFocusDirection.Forward; }
+        return null;
+    }
+
+    /// <summary>
+    /// Handles a Tab keypress at the reader boundary: raises <see cref="FocusLeaveRequested"/> and
+    /// returns true (the caller marks the event handled) when the Tab crosses a boundary; false when
+    /// it stays inside the reader.
+    /// </summary>
+    public bool HandleTabKey(object? focused, bool shift)
+    {
+        var dir = BoundaryLeave(focused, shift);
+        if (dir is null) { return false; }
+        FocusLeaveRequested?.Invoke(this, dir.Value);
+        return true;
+    }
 
     /// <summary>
     /// Moves keyboard focus into the reader region so a Tab off the graph canvas lands here rather
@@ -57,10 +110,27 @@ public sealed class NodeReaderView : ContentControl
         return Focus();
     }
 
+    /// <summary>
+    /// Moves keyboard focus to the reader's LAST stop — used when the graph is left Backward
+    /// (Shift+Tab off the graph's first node), so the cycle lands the user on the reader's end rather
+    /// than its start (spec US-E7/E8 cycle).
+    /// </summary>
+    public bool FocusReaderLast()
+    {
+        if (_focusStops.Count > 0 && _focusStops[^1].Focus())
+        {
+            return true;
+        }
+
+        return Focus();
+    }
+
     public void Clear()
     {
         SelectedNodeId = null;
         WalkableEdgeCount = 0;
+        _focusStops.Clear();
+        _focusStops.Add(this);
         Content = EmptyState();
     }
 
@@ -75,6 +145,10 @@ public sealed class NodeReaderView : ContentControl
         SelectedNodeId = node.Id;
         var visible = edges ?? [];
         WalkableEdgeCount = visible.Count(e => e.From == node.Id || e.To == node.Id);
+        // Rebuild the cycle's focus stops: the region itself (entry), then each walkable edge button
+        // in order. Build appends the buttons.
+        _focusStops.Clear();
+        _focusStops.Add(this);
         Content = Build(node, visible);
     }
 
@@ -141,7 +215,9 @@ public sealed class NodeReaderView : ContentControl
                 var outgoing = edge.From == node.Id;
                 var target = outgoing ? edge.To : edge.From;
                 var rel = (outgoing ? "" : "← ") + edge.Predicate;
-                root.Children.Add(EdgeRow(rel, target, edge.Status));
+                var button = EdgeRow(rel, target, edge.Status);
+                _focusStops.Add(button);
+                root.Children.Add(button);
             }
         }
 
