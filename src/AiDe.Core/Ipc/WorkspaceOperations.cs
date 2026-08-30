@@ -25,6 +25,14 @@ public sealed record FindRequest(string Term, int MaxResults);
 /// <param name="Cursor">Null for the first page; otherwise the previous page's NextCursor.</param>
 public sealed record EvidenceRequest(string? Cursor, int MaxAssertions);
 
+/// <summary>Asks for the workspace as groups rather than nodes.</summary>
+public sealed record OverviewRequest(
+    int Depth = 2,
+    int MaxClusters = 60,
+    IReadOnlyList<string>? Kinds = null,
+    string? ScopeId = null,
+    bool IncludeExternal = false);
+
 /// <summary>Asks how one node reaches another.</summary>
 public sealed record PathsRequest(
     string From,
@@ -119,6 +127,8 @@ public static class WorkspaceOperations
     public const string Graph = "graph";
 
     public const string Paths = "paths";
+
+    public const string Overview = "overview";
     public const string DispatchBegin = "dispatch.begin";
     public const string DispatchFinalize = "dispatch.finalize";
     public const string IndexSolution = "index.solution";
@@ -147,6 +157,13 @@ public static class WorkspaceOperations
         // throws a domain refusal TODAY — the point is that if one is added that does, it is
         // refused rather than taking the daemon down for every attached shell (DC-020). A control
         // that covers only the operations that happened to need it is not a control for the shape.
+        endpoint.Register(Overview, (request, _) =>
+            Refusable(() => Handle<OverviewRequest>(request, body => projections.Overview(
+                new OverviewQuery(
+                    body.Depth, body.MaxClusters,
+                    new GraphQuery(
+                        GraphProjection.DefaultMaxNodes, body.Kinds, body.ScopeId, body.IncludeExternal))))));
+
         endpoint.Register(Paths, (request, _) =>
             Refusable(() => Handle<PathsRequest>(request, body => projections.Paths(
                 new PathQuery(

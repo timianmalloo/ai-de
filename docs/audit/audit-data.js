@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T17:20:50Z",
+  "generated": "2026-08-30T17:21:47Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2382,6 +2382,32 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0130",
+      "shortname": "aggregated-overview-and-reflective-frame-gate",
+      "datetime": "2026-08-30T17:14:22Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "**The aggregated overview closes Core's half of DC-035.** The bounded default fixed the transport\nfailure by drawing 1,500 of 2,118 declared nodes and saying so — honest, and still a truncation. A\nuser opening a repository wants its SHAPE, and 1,500 dots is not a shape.\n\n`GraphOverview` returns the workspace as GROUPS, grouped by the ids' own hierarchy — a C# symbol is\n`TheTerrace.Features.Competitions.Season`, a module is `src/app/models`, so the first `Depth`\nsegments name what a developer would call \"where that lives\", and Depth is the zoom control.\n\nMEASURED on TheTerrace at depth 3: `Features.Fixtures` 117, `Features.Teams` 117, `Features.Matches`\n107, `Infrastructure.Data` 70, `Features.Identity` 47, `Features.Competitions` 44 — the actual shape\nof that repository, in **55,758 bytes** against 533,484 for the node graph.\n\n**No community-detection algorithm, deliberately.** Its output is unstable under small changes to the\ngraph, so the same repository would regroup between two indexes and the picture would move for\nreasons the user cannot see. Prefix grouping is stable by construction.\n\nEach group carries `NodeCount` — a dot standing for 240 types is only honest while the 240 is on it,\nwhich is the whole difference between an overview and a smaller lie. Each link carries `Weight` for\nthickness and the **weakest** status of the edges it bundles, because drawing a bundle as Verified\nbecause most of its members were would launder guesses into facts at a grain where the user can no\nlonger see the members. Edges inside a group are counted, not drawn.\n\n**My own first default was the failure the overview exists to prevent.** `MaxClusters` shipped at 200,\nand TheTerrace has 689 groups at depth 3 — returning 200 of them is a hairball at a coarser grain,\nwhich my own doc comment named as the thing to avoid. Measured and lowered to 60.\n\n**The frame-fit control is reflective, because hand-auditing found the last three and would not find\nthe next.** `EveryOperationFitsTheFrameTests` derives the operation list from `IWorkspaceQueries`\nitself and fails when a method is added with no size check — observed failing with an entry removed,\nnaming the method. Writing the list by hand would restate the product's own list (DC-021) and go\nstale in exactly the case that matters.\n\n**The write side was audited and needs nothing.** An `IndexSummary` for 28 scopes is **1,724 bytes** —\nthree orders of magnitude below the frame. Recorded rather than guarded: a control whose failure\nnobody can name is one to drop.\n\n**Degree on the wire was already done, by the other session.** They shipped force-directed layout with\ndegree-sized dots (DC-036), so that next step was stale when I wrote it. What layout still could not\ndo is cluster, which is what the overview provides. `GraphOverview.GroupFor` is public now so the\ncanvas groups detail nodes the SAME way the overview does — two definitions of one grouping is\nDC-022's shape, and the divergence would render a node in the wrong cluster and look like a layout\nbug.\n\n**A shared test double replaces four hand-written stubs.** Every method added to `IWorkspaceQueries`\nhas broken the same four stubs across two projects — four rounds of identical churn, which is a\nmeasured recurrence rather than a predicted one. `FakeWorkspaceQueries` throws rather than returning\nempty: a stub that quietly answers a question the test did not intend to ask turns a wrong call site\ninto a passing test.\n\n791 tests green (App 132, Core 659). Seven gates clean. Zero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Build the server-side aggregated overview, gate every operation against the frame, and audit the write side",
+      "done_when": "The overview is measured on a real repository and on the wire; a reflective gate catches an unweighed operation; the write side measured; gates green; merged and published",
+      "change": "cl-0084",
+      "git": {
+        "sha": "13a488b5028bc352171f202df353915e0f791ac2",
+        "short": "13a488b50",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false
+      }
+    },
+    {
       "id": "al-0131",
       "shortname": "graph-canvas-search-to-focus",
       "datetime": "2026-08-30T17:20:50Z",
@@ -4484,6 +4510,31 @@ window.AUDIT_DATA = {
         "after": "1c273b0b29bf76e7fc453e5f77f733ec512f19e8",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0084",
+      "datetime": "2026-08-30T17:14:13Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "The workspace as groups: the aggregated overview, and a reflective frame-fit gate",
+      "prompt": null,
+      "summary": "**The aggregated overview closes Core's half of DC-035.** The bounded default fixed the transport\nfailure by drawing 1,500 of 2,118 declared nodes and saying so — honest, and still a truncation. A\nuser opening a repository wants its SHAPE, and 1,500 dots is not a shape.\n\n`GraphOverview` returns the workspace as GROUPS, grouped by the ids' own hierarchy — a C# symbol is\n`TheTerrace.Features.Competitions.Season`, a module is `src/app/models`, so the first `Depth`\nsegments name what a developer would call \"where that lives\", and Depth is the zoom control.\n\nMEASURED on TheTerrace at depth 3: `Features.Fixtures` 117, `Features.Teams` 117, `Features.Matches`\n107, `Infrastructure.Data` 70, `Features.Identity` 47, `Features.Competitions` 44 — the actual shape\nof that repository, in **55,758 bytes** against 533,484 for the node graph.\n\n**No community-detection algorithm, deliberately.** Its output is unstable under small changes to the\ngraph, so the same repository would regroup between two indexes and the picture would move for\nreasons the user cannot see. Prefix grouping is stable by construction.\n\nEach group carries `NodeCount` — a dot standing for 240 types is only honest while the 240 is on it,\nwhich is the whole difference between an overview and a smaller lie. Each link carries `Weight` for\nthickness and the **weakest** status of the edges it bundles, because drawing a bundle as Verified\nbecause most of its members were would launder guesses into facts at a grain where the user can no\nlonger see the members. Edges inside a group are counted, not drawn.\n\n**My own first default was the failure the overview exists to prevent.** `MaxClusters` shipped at 200,\nand TheTerrace has 689 groups at depth 3 — returning 200 of them is a hairball at a coarser grain,\nwhich my own doc comment named as the thing to avoid. Measured and lowered to 60.\n\n**The frame-fit control is reflective, because hand-auditing found the last three and would not find\nthe next.** `EveryOperationFitsTheFrameTests` derives the operation list from `IWorkspaceQueries`\nitself and fails when a method is added with no size check — observed failing with an entry removed,\nnaming the method. Writing the list by hand would restate the product's own list (DC-021) and go\nstale in exactly the case that matters.\n\n**The write side was audited and needs nothing.** An `IndexSummary` for 28 scopes is **1,724 bytes** —\nthree orders of magnitude below the frame. Recorded rather than guarded: a control whose failure\nnobody can name is one to drop.\n\n**Degree on the wire was already done, by the other session.** They shipped force-directed layout with\ndegree-sized dots (DC-036), so that next step was stale when I wrote it. What layout still could not\ndo is cluster, which is what the overview provides. `GraphOverview.GroupFor` is public now so the\ncanvas groups detail nodes the SAME way the overview does — two definitions of one grouping is\nDC-022's shape, and the divergence would render a node in the wrong cluster and look like a layout\nbug.\n\n**A shared test double replaces four hand-written stubs.** Every method added to `IWorkspaceQueries`\nhas broken the same four stubs across two projects — four rounds of identical churn, which is a\nmeasured recurrence rather than a predicted one. `FakeWorkspaceQueries` throws rather than returning\nempty: a stub that quietly answers a question the test did not intend to ask turns a wrong call site\ninto a passing test.\n\n791 tests green (App 132, Core 659). Seven gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/GraphOverview.cs",
+        "tests/AiDe.Core.Tests/EveryOperationFitsTheFrameTests.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "13a488b5028bc352171f202df353915e0f791ac2",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
         "commits": []
       }
     }

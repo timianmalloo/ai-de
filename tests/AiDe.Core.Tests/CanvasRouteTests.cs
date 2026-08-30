@@ -15,33 +15,21 @@ namespace AiDe.Core.Tests;
 /// </remarks>
 public sealed class CanvasRouteTests
 {
-    private sealed class StubQueries(PathResult result) : IWorkspaceQueries
+    private sealed class StubQueries(PathResult result) : FakeWorkspaceQueries
     {
         public PathQuery? Asked { get; private set; }
 
-        public Task<PathResult> PathsAsync(PathQuery query, CancellationToken ct)
+        public override Task<PathResult> PathsAsync(PathQuery query, CancellationToken ct)
         {
             Asked = query;
             return Task.FromResult(result);
         }
 
-        public Task<DescribeResult> DescribeAsync(string nodeId, int maxNeighbors, CancellationToken ct) =>
-            throw new NotSupportedException();
 
-        public Task<ImpactResult> ImpactAsync(string nodeId, int maxNodes, int maxEdges, CancellationToken ct) =>
-            throw new NotSupportedException();
 
-        public Task<FindResult> FindAsync(string term, int maxResults, CancellationToken ct) =>
-            throw new NotSupportedException();
 
-        public Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
-            throw new NotSupportedException();
 
-        public Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
-            throw new NotSupportedException();
 
-        public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct) =>
-            throw new NotSupportedException();
     }
 
     private static GraphEdge Edge(string from, string to, VerificationStatus status) =>

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 15 · partially-controlled 21 · uncontrolled 0
+**Status counts:** controlled 16 · partially-controlled 21 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1199,12 +1199,31 @@ for both or split.*
   The pairing is worth keeping: **DC-031 and DC-035 are the same axis overshot in opposite
   directions**, and a fix for one lands on the other unless the spec is re-read at the moment the new
   default is chosen.
-- **Status:** `partially-controlled` — Core's half is landed and tested (bounded default, legible
-  `PayloadTooLarge`, byte measurements pinned in a test so raising the frame cap without revisiting
-  the default fails there first). **Design's half is open:** the aggregated / level-of-detail overview
-  for a graph too large to show node-by-node, and the "narrow your focus" state. Until that exists,
-  a repository whose *declared* code exceeds the cap gets a truthful truncation rather than a
-  designed overview.
+- **The aggregated overview landed 2026-08-30, completing Core's side.** `GraphOverview` returns the
+  workspace as GROUPS rather than truncated nodes, grouped by the ids' own hierarchy (a C# symbol is
+  `TheTerrace.Features.Competitions.Season`; a module is `src/app/models`), with `Depth` as the zoom
+  control. No community-detection algorithm, deliberately: its output is unstable under small graph
+  changes, so the same repository would regroup between two indexes and the picture would move for
+  reasons the user cannot see. MEASURED on TheTerrace at depth 3 — `Features.Fixtures` 117,
+  `Features.Teams` 117, `Features.Matches` 107, `Infrastructure.Data` 70, in **55,758 bytes** against
+  533,484 for the node graph. Each group carries its `NodeCount` (a dot standing for 240 types is
+  only honest while the 240 is on it), each link its `Weight` and the **weakest** status of the edges
+  it bundles.
+- **The audit that followed it found the class was wider than the graph.** Every read operation was
+  measured at its ceiling: `evidence` was at **95.8%** of the frame and `find` returned 461,750 bytes
+  while REPORTING a 64 KiB cap it never applied. The generalisation is not "the graph was too big" —
+  it is that **every ceiling in the read surface counts ITEMS while the transport limit is in
+  BYTES**, and item size comes from repository content. All three are byte-bounded now.
+- **The control is reflective, because hand-auditing found these once and would not find the next.**
+  `EveryOperationFitsTheFrameTests` derives the operation list from `IWorkspaceQueries` itself and
+  fails when a method is added with no frame-size check — observed failing with an entry removed.
+  Writing the list out would have been a fixture restating the product's list (DC-021) and would go
+  stale in exactly the case that matters: a new method nobody weighed.
+- **Status:** `partially-controlled` — Core's side is complete and tested (bounded default, legible
+  `PayloadTooLarge`, byte bounds on every read operation, the aggregated overview, and a reflective
+  gate that catches the next operation). **Design's half is open:** rendering the overview and the
+  "narrow your focus" state. The write side was measured too and needs nothing: an `IndexSummary` for
+  28 scopes is **1,724 bytes**, three orders of magnitude below the frame.
 
 ### DC-036 — A graph is drawn with a layout that does not scale to its node count
 

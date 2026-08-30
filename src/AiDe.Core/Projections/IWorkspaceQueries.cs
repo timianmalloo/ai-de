@@ -59,6 +59,16 @@ public interface IWorkspaceQueries
     /// the part a neighbourhood cannot show.
     /// </remarks>
     Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// The workspace as groups rather than nodes.
+    /// </summary>
+    /// <remarks>
+    /// The entry point for a repository too large to draw node by node. <see cref="GraphAsync"/>
+    /// bounded the payload by truncating and saying so, which is honest and is still a truncation;
+    /// this answers "what shape is this repository" instead of "here are 1,500 of its 2,118 dots".
+    /// </remarks>
+    Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken cancellationToken);
 }
 
 /// <summary>The read surface answered by a <see cref="ProjectionService"/> in this process.</summary>
@@ -94,4 +104,7 @@ public sealed class LocalWorkspaceQueries(ProjectionService projections) : IWork
 
     public Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken) =>
         Task.FromResult(projections.Paths(query));
+
+    public Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken cancellationToken) =>
+        Task.FromResult(projections.Overview(query));
 }

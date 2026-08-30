@@ -85,6 +85,9 @@ public sealed class SurfaceContentTests
         public Task<PathResult> PathsAsync(PathQuery query, CancellationToken ct) =>
             Task.FromResult(new PathResult([], false, null, "rev-1"));
 
+        public Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken ct) =>
+            throw new NotSupportedException();
+
         public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct) =>
             Task.FromResult(new WorkspaceGraph([], [], 0, [], "rev-1"));
 
@@ -230,6 +233,9 @@ public sealed class SurfaceContentTests
 
         public Task<PathResult> PathsAsync(PathQuery query, CancellationToken ct) =>
             Task.FromResult(new PathResult([], false, null, "rev-1"));
+
+        public Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken ct) =>
+            throw new NotSupportedException();
 
         public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct) =>
             throw new InvalidOperationException("the daemon is not reachable");

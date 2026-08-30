@@ -60,6 +60,15 @@ Console.WriteLine($"scopes     : {index.ScopesIndexed} of {index.ScopesFound} in
 var second = DateTimeOffset.UtcNow;
 // A DIFFERENT revision, or the store's "this revision is already committed" short-circuit answers
 // before any file is read and the measurement is of nothing.
+// The WRITE side, which the read audit did not cover. IndexSummary carries a Failed list and a
+// Disclosures list, both of which grow with the number of scopes — a count nobody has multiplied by
+// a byte size, which is exactly the shape that produced INV-0003.
+{
+    var summaryBytes = System.Text.Json.JsonSerializer.Serialize(index,
+        new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)).Length;
+    Console.WriteLine($"index summary: {summaryBytes:N0} bytes ({index.Disclosures.Count} disclosure(s), {index.Failed.Count} failed) — frame cap {AiDe.Core.Ipc.IpcFraming.MaxFrameBytes:N0}");
+}
+
 var again = await core.IndexCSharpAsync("spike-2", CancellationToken.None, force: true);
 var secondElapsed = DateTimeOffset.UtcNow - second;
 
@@ -176,6 +185,24 @@ Console.WriteLine($"overview   : {overviewWire.Length:N0} bytes for {overview.No
 // 20,000 results, Evidence 2,000 assertions with full provenance. "The graph was the big one" is a
 // belief, and this is the measurement that replaces it.
 // ---------------------------------------------------------------------------------------------
+Console.WriteLine();
+Console.WriteLine(new string('=', 100));
+Console.WriteLine("THE OVERVIEW — the workspace as groups, at three depths");
+
+foreach (var depth in new[] { 1, 2, 3 })
+{
+    var summary = await queries.OverviewAsync(new OverviewQuery(depth, 200), CancellationToken.None);
+    var size = System.Text.Json.JsonSerializer.Serialize(summary, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)).Length;
+
+    Console.WriteLine();
+    Console.WriteLine($"  depth {depth}: {summary.Clusters.Count} group(s), {summary.Edges.Count} link(s), {summary.OmittedClusters} omitted, {size:N0} bytes for {summary.TotalNodes:N0} node(s)");
+
+    foreach (var cluster in summary.Clusters.Take(8))
+    {
+        Console.WriteLine($"      {cluster.NodeCount,5} {cluster.Label,-42} {cluster.InternalEdges,5} internal");
+    }
+}
+
 Console.WriteLine();
 Console.WriteLine(new string('=', 100));
 Console.WriteLine("IPC RESPONSE SIZES, each operation at its ceiling");

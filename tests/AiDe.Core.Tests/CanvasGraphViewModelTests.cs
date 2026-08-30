@@ -56,6 +56,9 @@ public sealed class CanvasGraphViewModelTests
         public Task<PathResult> PathsAsync(PathQuery query, CancellationToken ct) =>
             Task.FromResult(new PathResult([], false, null, "rev-1"));
 
+        public Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken ct) =>
+            throw new NotSupportedException();
+
         public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct) =>
             Throw is not null ? Task.FromException<WorkspaceGraph>(Throw) : Task.FromResult(Graph);
 

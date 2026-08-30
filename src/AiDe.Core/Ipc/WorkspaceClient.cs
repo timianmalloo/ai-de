@@ -112,6 +112,19 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
         QueryAsync<RefreshMetrics>(
             ScopeRefreshService.Operations.RefreshMetrics, new RefreshMetricsRequest(), cancellationToken);
 
+    public Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        var graph = query.Query ?? new GraphQuery(IncludeExternal: false);
+
+        return QueryAsync<WorkspaceOverview>(
+            WorkspaceOperations.Overview,
+            new OverviewRequest(
+                query.Depth, query.MaxClusters, graph.Kinds, graph.ScopeId, graph.IncludeExternal),
+            cancellationToken);
+    }
+
     public Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
