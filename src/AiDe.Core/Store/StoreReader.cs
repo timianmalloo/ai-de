@@ -122,6 +122,29 @@ public sealed class StoreReader : IDisposable
     }
 
     /// <summary>Assertions with a given predicate — the knowledge projection's entry point.</summary>
+    /// <summary>
+    /// The ids currently classified as knowledge.
+    /// </summary>
+    /// <remarks>
+    /// <c>node_kind</c> is the dimension that separates knowledge from source — the one thing that
+    /// knows, now that <c>has_type</c> is emitted by six extractors and says nothing about which
+    /// half of the graph a node belongs to (INV-0004).
+    /// </remarks>
+    public IReadOnlySet<string> KnowledgeNodeIds(int limit)
+    {
+        using var command = Command(
+            "SELECT node_id FROM node_dim WHERE node_kind = 'knowledge' AND valid_to_seq IS NULL "
+            + "ORDER BY node_id LIMIT $limit;",
+            ("$limit", limit));
+
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+
+        using var reader = command.ExecuteReader();
+        while (reader.Read()) ids.Add(reader.GetString(0));
+
+        return ids;
+    }
+
     public IReadOnlyList<StoredAssertion> AssertionsWithPredicate(string predicate, int limit)
     {
         using var command = Command($"""

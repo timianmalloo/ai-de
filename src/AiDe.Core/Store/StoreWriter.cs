@@ -181,8 +181,32 @@ public sealed class StoreWriter : IDisposable
             ("$name", displayName), ("$seq", seq));
     }
 
+    /// <summary>
+    /// Records a node's kind and label, closing the previous row when either changes.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Unchanged is a NO-OP, deliberately.</b> This is a Type-2 dimension: every call used
+    /// to close the current row and open a new one, so re-indexing a workspace rewrote the history
+    /// of every node that had not changed. History whose every row is an artefact of re-running the
+    /// indexer cannot answer the question it exists for — "when did this change?" — because the
+    /// answer is always "just now".</para>
+    ///
+    /// <para>It also removed a flip-flop: while a node's kind was computed per scope, a node
+    /// declared by one scope and referenced by another alternated between rows on every index.</para>
+    /// </remarks>
     public void UpsertNode(string nodeId, string nodeKind, string displayLabel)
     {
+        // One scalar rather than a reader: both fields are compared as a pair, so the cheapest
+        // question is simply whether the CURRENT row already says exactly this.
+        var unchanged = WorkspaceStore.ExecuteScalar(
+            _connection,
+            "SELECT 1 FROM node_dim WHERE node_id = $id AND valid_to_seq IS NULL "
+            + "AND node_kind = $kind AND display_label = $label;",
+            _transaction,
+            ("$id", nodeId), ("$kind", nodeKind), ("$label", displayLabel));
+
+        if (unchanged is not null) return;
+
         var seq = NextIngressSequence();
         Exec("UPDATE node_dim SET valid_to_seq = $seq WHERE node_id = $id AND valid_to_seq IS NULL;",
             ("$seq", seq), ("$id", nodeId));

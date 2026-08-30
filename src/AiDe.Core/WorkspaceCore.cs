@@ -165,10 +165,28 @@ public sealed class WorkspaceCore : IDisposable
                 .Concat(result.Assertions.Where(a => !AiDe.Core.Facts.EvidencePredicates.Attributes.Contains(a.Predicate)).Select(a => a.Object))
                 .Distinct(StringComparer.Ordinal);
 
+            // A node is KNOWLEDGE because a knowledge scope declared it — not because it has a type.
+            //
+            // This read `Any(a => a.Subject == nodeId && a.Predicate == "has_type")`, which was true
+            // in Phase 1 when the fixture reader was the only producer of `has_type` and the only
+            // reader of knowledge markdown. Six extractors later every declared C# class, table,
+            // bicep resource and python module carries `has_type` too, so almost everything in the
+            // graph was classified `knowledge` — and INV-0004 found it the way these are always
+            // found, as a bicep resource reading "kind: knowledge" in the reader.
+            //
+            // DC-022 exactly: a predicate gained producers and a consumer kept its assumption about
+            // who emits it. The scope id is the thing that actually knows.
+            // The PRODUCER declares it. Scope ids were the first attempt and were nearly right —
+            // but the fixture reader emits knowledge from a scope that is not named for it, so the
+            // id cannot be the authority either. A fact can be.
+            var knowledge = result.Assertions
+                .Where(a => a.Predicate == "node_class" && a.Object == "knowledge")
+                .Select(a => a.Subject)
+                .ToHashSet(StringComparer.Ordinal);
+
             foreach (var nodeId in nodeIds)
             {
-                var isKnowledge = result.Assertions.Any(a => a.Subject == nodeId && a.Predicate == "has_type");
-                writer.UpsertNode(nodeId, isKnowledge ? "knowledge" : "source", nodeId);
+                writer.UpsertNode(nodeId, knowledge.Contains(nodeId) ? "knowledge" : "source", nodeId);
             }
 
             writer.Commit();

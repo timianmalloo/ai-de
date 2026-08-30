@@ -4,12 +4,14 @@ namespace AiDe.Core.Extraction;
 /// <param name="Id">The node's identity. Without one there is nothing to attach facts to.</param>
 /// <param name="Type">Its declared kind — adr, spec, decision-note. Null when absent.</param>
 /// <param name="Owner">Who answers for it. A person, so it stays workspace-local.</param>
+/// <param name="ReviewBy">When it should next be re-read, if it says.</param>
 /// <param name="Links">Typed edges to other knowledge, as <c>(to, rel)</c>.</param>
 public sealed record KnowledgeRecord(
     string Id,
     string? Type,
     string? Owner,
-    IReadOnlyList<(string To, string Rel)> Links);
+    IReadOnlyList<(string To, string Rel)> Links,
+    string? ReviewBy = null);
 
 /// <summary>
 /// Reading the YAML-ish frontmatter that makes a markdown file a node in the knowledge graph.
@@ -50,6 +52,7 @@ public static class KnowledgeFrontmatter
         string? id = null;
         string? type = null;
         string? owner = null;
+        string? reviewBy = null;
         var links = new List<(string To, string Rel)>();
 
         for (var i = 1; i < lines.Count; i++)
@@ -69,6 +72,10 @@ public static class KnowledgeFrontmatter
             else if (trimmed.StartsWith("owner:", StringComparison.Ordinal))
             {
                 owner = Value(trimmed[6..]);
+            }
+            else if (trimmed.StartsWith("review-by:", StringComparison.Ordinal))
+            {
+                reviewBy = Value(trimmed[10..]);
             }
             else if (trimmed.StartsWith("- { to:", StringComparison.Ordinal))
             {
@@ -91,13 +98,19 @@ public static class KnowledgeFrontmatter
         }
 
         // A placeholder is not an id, and a document that only demonstrates the format is not a node.
+        //
+        // `missingId` fires only when the frontmatter is GRAPH frontmatter — it carries a type, an
+        // owner, links or a review date — and still has no id. YAML is a general format: this
+        // repository's own INSTALL.md opens with `doc:`, `bundle_version:` and `changes:`, which is
+        // a pack manifest and was never meant to be a node. Reporting it as a broken artifact is the
+        // same mistake as reading prose into a schema, one field along.
         if (IsPlaceholder(id))
         {
-            missingId = true;
+            missingId = type is not null || owner is not null || reviewBy is not null || links.Count > 0;
             return null;
         }
 
-        return new KnowledgeRecord(id, type, owner, links);
+        return new KnowledgeRecord(id, type, owner, links, IsPlaceholder(reviewBy) ? null : reviewBy);
     }
 
     private static string Value(string raw) => raw.Trim().Trim('"').Trim('\'').Trim();

@@ -48,11 +48,22 @@ public sealed record EdgeView(
 
 public sealed record NodeView(string NodeId, string NodeKind, string DisplayLabel);
 
+/// <param name="NeighborKinds">
+/// Each neighbouring node's own <c>has_type</c>, keyed by node id.
+/// </param>
+/// <remarks>
+/// <b>INV-0004.</b> The canvas hardcoded <c>"source"</c> as every neighbour's kind because the
+/// describe result did not carry one — so a drill-down showed a table, a bicep resource and a class
+/// as the same thing, and the filter could not tell them apart. The kind is a property of the
+/// NEIGHBOUR, and only the projection can read it; a renderer inventing a default is a renderer
+/// stating a fact it does not have.
+/// </remarks>
 public sealed record DescribeResult(
     NodeView Node,
     IReadOnlyList<EdgeView> Neighbors,
     ResultBounds Bounds,
-    string SourceRevision);
+    string SourceRevision,
+    IReadOnlyDictionary<string, string>? NeighborKinds = null);
 
 public sealed record ImpactResult(
     string RootNodeId,
@@ -271,7 +282,15 @@ public sealed class ProjectionService(WorkspaceStore store)
         activity?.SetTag("returned.edges", edges.Count);
         activity?.SetTag("omitted.edges", bounds.OmittedEdges);
 
-        return new DescribeResult(NodeOf(reader, nodeId), edges, bounds, revision);
+        // The kinds of the nodes on the other end. Read here because the projection is the only
+        // thing that can: the canvas has ids and nothing else.
+        var kinds = edges
+            .SelectMany(e => new[] { e.Subject, e.Object })
+            .Where(id => !string.Equals(id, nodeId, StringComparison.Ordinal))
+            .Distinct(StringComparer.Ordinal)
+            .ToDictionary(id => id, id => NodeOf(reader, id).NodeKind, StringComparer.Ordinal);
+
+        return new DescribeResult(NodeOf(reader, nodeId), edges, bounds, revision, kinds);
     }
 
     /// <summary>
@@ -619,7 +638,14 @@ public sealed class ProjectionService(WorkspaceStore store)
             .GroupBy(a => a.Subject, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
 
+        // KNOWLEDGE, not everything that has a type. This filtered on `has_type` alone, which was
+        // right when the fixture reader was the only producer of it — and by the time six extractors
+        // emitted it, the knowledge pane was returning C# classes and database tables. It looked
+        // correct for as long as knowledge was never indexed at all.
+        var knowledge = reader.KnowledgeNodeIds(MaxNodesCeiling);
+
         var ids = typed.Keys
+            .Where(knowledge.Contains)
             .Where(id => query.Term is null || id.Contains(query.Term, StringComparison.OrdinalIgnoreCase))
             .Where(id => query.Type is null || string.Equals(typed[id].Object, query.Type, StringComparison.OrdinalIgnoreCase))
             .OrderBy(id => id, StringComparer.Ordinal)
@@ -631,8 +657,13 @@ public sealed class ProjectionService(WorkspaceStore store)
             var typeAssertion = typed[id];
             var touching = reader.AssertionsTouching(id, MaxEdgesCeiling);
             var owner = touching.FirstOrDefault(a => a.Subject == id && a.Predicate == "owned_by");
-            var links = touching.Where(a => a.Subject == id && a.Predicate is not ("has_type" or "owned_by")).ToList();
-            var backlinks = touching.Where(a => a.Object == id && a.Predicate is not ("has_type" or "owned_by")).ToList();
+            // `review_by` and `declared_in` describe the document; they are not links to other
+            // knowledge, and drawing them as such puts a date in the graph as a thing to navigate to.
+            var links = touching.Where(a => a.Subject == id
+                && a.Predicate is not ("has_type" or "owned_by" or "review_by" or "declared_in" or "node_class")).ToList();
+
+            var backlinks = touching.Where(a => a.Object == id
+                && a.Predicate is not ("has_type" or "owned_by" or "review_by" or "declared_in" or "node_class")).ToList();
 
             // Missing evidence is surfaced as a health finding rather than rendered as a clean node —
             // the spec's "absence of evidence stays explicit".
@@ -655,6 +686,18 @@ public sealed class ProjectionService(WorkspaceStore store)
             if (typeAssertion.Provenance.SourceLocation is null)
             {
                 findings.Add("source location not recorded");
+            }
+
+            // A review date that has passed is the one health finding that arrives on its own: the
+            // document has not changed, the calendar has. Read from the frontmatter the pack already
+            // writes, so a stale artifact says so rather than waiting to be noticed.
+            var reviewBy = touching.FirstOrDefault(a => a.Subject == id && a.Predicate == "review_by");
+
+            if (reviewBy is not null
+                && DateOnly.TryParse(reviewBy.Object, System.Globalization.CultureInfo.InvariantCulture, out var due)
+                && due < DateOnly.FromDateTime(DateTime.UtcNow))
+            {
+                findings.Add($"review overdue since {due:yyyy-MM-dd}");
             }
 
             nodes.Add(new KnowledgeNodeView(
