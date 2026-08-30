@@ -108,7 +108,46 @@ public static class CSharpScopeDiscovery
             scopes.Add(new ScopeDescriptor($"typescript:{relative}", directory, "typescript"));
         }
 
+        // One scope per directory holding .sql DIRECTLY. Found by measuring a second repository:
+        // BioHacker declares its whole schema in one 197-line file with eight CREATE TABLEs, the
+        // tool said `sql-not-analysed (2 file(s))` and produced zero joins, and every measurement
+        // before it came from a codebase that happened to use EF migrations.
+        foreach (var directory in SqlDirectories(rootPath).OrderBy(p => p, StringComparer.OrdinalIgnoreCase))
+        {
+            var relative = Path.GetRelativePath(rootPath, directory).Replace(Path.DirectorySeparatorChar, '/');
+            scopes.Add(new ScopeDescriptor($"sql:{relative}", directory, "sql"));
+        }
+
         return scopes;
+    }
+
+    /// <summary>Directories holding SQL directly, excluding build output and vendored trees.</summary>
+    private static IEnumerable<string> SqlDirectories(string root)
+    {
+        var skip = new HashSet<string>(Skip, StringComparer.OrdinalIgnoreCase) { "packages" };
+
+        var pending = new Stack<string>();
+        pending.Push(root);
+
+        while (pending.Count > 0)
+        {
+            var current = pending.Pop();
+
+            string[] files;
+            try { files = Directory.GetFiles(current, "*.sql"); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            if (files.Length > 0) yield return current;
+
+            IEnumerable<string> children;
+            try { children = Directory.EnumerateDirectories(current); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            foreach (var child in children)
+            {
+                if (!skip.Contains(Path.GetFileName(child))) pending.Push(child);
+            }
+        }
     }
 
     /// <summary>Directories holding TypeScript or JavaScript directly, excluding vendored trees.</summary>
@@ -285,7 +324,8 @@ public sealed class CompositeExtractor(
     IExtractor? bicep = null,
     IExtractor? schema = null,
     IExtractor? python = null,
-    IExtractor? typescript = null) : IExtractor
+    IExtractor? typescript = null,
+    IExtractor? sql = null) : IExtractor
 {
     public string ScopeKind => "composite";
 
@@ -297,6 +337,7 @@ public sealed class CompositeExtractor(
         ["schema:"] = schema ?? new EfSchemaExtractor(),
         ["python:"] = python ?? new PythonExtractor(),
         ["typescript:"] = typescript ?? new TypeScriptExtractor(),
+        ["sql:"] = sql ?? new SqlSchemaExtractor(),
     };
 
     /// <summary>Which extractor a scope id resolves to. Exposed so routing can be ASSERTED.</summary>

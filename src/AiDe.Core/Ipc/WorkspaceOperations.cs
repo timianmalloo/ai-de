@@ -27,7 +27,7 @@ public sealed record EvidenceRequest(string? Cursor, int MaxAssertions);
 
 /// <summary>Asks for the workspace as groups rather than nodes.</summary>
 public sealed record OverviewRequest(
-    int Depth = 2,
+    int Depth = 3,
     int MaxClusters = 60,
     IReadOnlyList<string>? Kinds = null,
     string? ScopeId = null,
