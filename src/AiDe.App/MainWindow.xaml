@@ -77,11 +77,11 @@
                 <!--  Active item: a 3px left accent bar (the VS Code cue) beside the raised pill, so
                       the current mode reads at a glance and by more than colour alone.  -->
                 <Grid Margin="0,8,0,4">
-                    <Border Width="3" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"
-                            CornerRadius="0,2,2,0" Background="{StaticResource AccentBrush}" />
-                    <Button Margin="6,0,6,0" Height="44" Style="{StaticResource RoundedButton}"
-                            AutomationProperties.Name="Explore" Background="{StaticResource SurfaceRaisedBrush}"
-                            BorderThickness="0" Foreground="{StaticResource AccentBrush}" ToolTip="Explore">
+                    <Border x:Name="ExploreAccentBar" Width="3" Height="26" HorizontalAlignment="Left" VerticalAlignment="Center"
+                            CornerRadius="0,2,2,0" Background="{StaticResource AccentBrush}" Visibility="Collapsed" />
+                    <Button x:Name="ExploreRailButton" Click="OnToggleExplorer" Margin="6,0,6,0" Height="44" Style="{StaticResource RoundedButton}"
+                            AutomationProperties.Name="Explorer mode" Background="Transparent"
+                            BorderThickness="0" Foreground="{StaticResource TextMutedBrush}" ToolTip="Explorer — graph &amp; reader">
                         <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconExplore}"
                               Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                               StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />

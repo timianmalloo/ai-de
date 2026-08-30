@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Automation;
@@ -7,6 +8,9 @@ using AiDe.Core.Workbench;
 using Microsoft.Web.WebView2.Wpf;
 
 namespace AiDe.App.Workbench;
+
+/// <summary>The node the canvas has re-rooted on, and the edges in view — for a reader to follow.</summary>
+public sealed record CanvasNodeSelection(CanvasNode Node, IReadOnlyList<CanvasEdge> Edges);
 
 /// <summary>
 /// The graph canvas: a windowed WebView2 pane, with focus routed explicitly in both directions.
@@ -65,6 +69,13 @@ public sealed class CanvasSurface : ContentControl, IDisposable
     /// </summary>
     public Func<string?, CancellationToken, Task<CanvasGraph>>? GraphSource { get; set; }
 
+    /// <summary>
+    /// Raised when the canvas re-roots on a specific node (a user activation), so a host — the
+    /// Explorer reader (design D3) — can show that node without the graph and the reader keeping two
+    /// definitions of "what is selected". Not raised for the initial unfocused overview.
+    /// </summary>
+    public event EventHandler<CanvasNodeSelection>? NodeSelected;
+
     /// <summary>Loads the graph around <paramref name="rootId"/> and pushes it to the page.</summary>
     public async Task RefreshAsync(string? rootId = null, CancellationToken cancellationToken = default)
     {
@@ -78,6 +89,19 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         // way survives the other.
         _view.CoreWebView2?.PostWebMessageAsJson(JsonSerializer.Serialize(
             new { kind = "graph", graph }, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+
+        // Reader-follows (design D3): a specific node was requested, so name the now-selected node.
+        // The graph is rooted on it, so its own record and the neighbourhood edges are already here —
+        // no second query, and the reader cannot disagree with the graph about the selection.
+        if (rootId is not null)
+        {
+            var node = graph.Nodes.FirstOrDefault(n => string.Equals(n.Id, rootId, StringComparison.Ordinal))
+                ?? graph.Nodes.FirstOrDefault(n => n.IsRoot);
+            if (node is not null)
+            {
+                NodeSelected?.Invoke(this, new CanvasNodeSelection(node, graph.Edges));
+            }
+        }
     }
 
     /// <summary>

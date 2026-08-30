@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T19:43:16Z",
+  "generated": "2026-08-30T19:58:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2577,6 +2577,27 @@ window.AUDIT_DATA = {
       "tags": [
         "explorer",
         "design"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0140",
+      "shortname": "implement-explorer-mode-p1",
+      "datetime": "2026-08-30T19:58:18Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do the next best actions — /implement the Explorer mode Phase-1 walking skeleton",
+      "summary": "Built the full Phase-1 walking skeleton per docs/design/knowledge-explorer-mode.md: ShellModeController (WorkbenchHost.Content swap, retain-not-rebuild D1); rail Explore item toggles Explorer mode + active state (D5); ExplorerSurface = graph|reader split + GridSplitter, graph is a dedicated query-bound CanvasSurface via new WorkbenchShell.CreateExplorerGraph (D2); NodeReaderView (header+metadata+walkable edges+empty state D4); new CanvasSurface.NodeSelected seam so the reader follows selection and a reader edge walks the graph (D3). Tests T1 (retain-not-rebuild, same workbench instance across round-trip), T-retain (Explorer built once), T5 (toggle), T4 (reader empty), T3 (reader records selection) — App.Tests 137/137. Launched: app starts clean, no crash from the mode wiring. Deferred to Phase 3: full graph<->reader keyboard cycle. Phase 2 wires ADR-0018 NodeContentAsync behind the D3 seam.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/ShellModeController.cs",
+        "src/AiDe.App/Workbench/ExplorerSurface.cs"
+      ],
+      "tags": [
+        "explorer",
+        "implement"
       ],
       "outcome": "success"
     }

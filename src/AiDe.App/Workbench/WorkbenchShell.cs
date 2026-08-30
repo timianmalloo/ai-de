@@ -794,6 +794,20 @@ public sealed class WorkbenchShell : IDisposable
         Controller.DragStateChanged += canvas.SetObscured;
     }
 
+    /// <summary>
+    /// Builds a graph canvas for the full-window Explorer surface (design D2), bound to the SAME
+    /// workspace queries the workbench canvas reads — two graph-shaped APIs would be two answers that
+    /// can disagree. A dedicated instance: the workbench's canvas is a pane in the docking tree and is
+    /// never reparented across visual trees (the WebView2 airspace trap).
+    /// </summary>
+    public CanvasSurface CreateExplorerGraph()
+    {
+        var canvas = new CanvasSurface("explorer-graph", "Graph");
+        var graph = new CanvasGraphViewModel(_queries);
+        canvas.GraphSource = (rootId, ct) => graph.LoadAsync(rootId, cancellationToken: ct);
+        return canvas;
+    }
+
     /// <summary>The terminal pane the user is working in, or null when none is focused.</summary>
     /// <remarks>
     /// Derived from the controller's focused surface rather than from a remembered handle: dispatch
