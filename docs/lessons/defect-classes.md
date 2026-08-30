@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 15 · partially-controlled 19 · uncontrolled 1
+**Status counts:** controlled 15 · partially-controlled 20 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1173,6 +1173,35 @@ for both or split.*
   default hits a limit, the fix is almost always to **make the default bounded** (focus+context,
   pagination, level-of-detail, server-side aggregation), not to enlarge the limit. Re-read the
   surface's spec: it usually already forbade the dump.
-- **Status:** `uncontrolled` (INV-0003; spec updated US-K10–K12; fix is cross-session — Core owns the
-  bounded/aggregated query API + legible PayloadTooLarge error, Design owns the aggregated-overview
-  default view + LOD rendering)
+- **Core's half of the control, landed 2026-08-30.** Both defects the investigation named are fixed,
+  and both were MEASURED rather than reasoned about:
+  - **The transport no longer closes silently.** `IpcServer.Respond` checks the encoded size *before*
+    writing and returns `IpcErrorCodes.PayloadTooLarge` with the actual and permitted byte counts.
+    Checked before rather than caught after on purpose: a partially written frame leaves the peer
+    reading a length prefix whose body never arrives, which is a hang rather than an error. The
+    writer's own throw is correct and stays.
+  - **The default view is bounded by construction.** No-focus now asks for
+    `GraphQuery(OverviewNodeCap: 1500, IncludeExternal: false)` — this workspace's own declared code,
+    ranked by degree, with what it dropped counted and named in the caption. Measured on TheTerrace:
+    the whole graph is **1,522,284 bytes** against a 1,048,576-byte frame (it could never have been
+    delivered); the new default is **533,495 bytes for 1,500 nodes, 618 omitted — fits**. A test grows
+    a synthetic corpus past the cap and asserts the response does not grow with it.
+  - **Excluding externals is part of the fix, not a separate tidy-up.** The whole-graph default was
+    also *unreadable*: measured, the six most-connected nodes of a real repository were `string`,
+    `int`, `Task<T>`, `DateTimeOffset`, `IReadOnlyList<T>` and `Guid`. A first view centred on the BCL
+    is not a picture of anybody's domain, so bounding by size and bounding by meaning turned out to be
+    the same change.
+- **The part of this class that is mine to own, stated plainly.** The whole-graph default was
+  introduced by the Core session as the fix for DC-031 ("a surface asks a narrower question than the
+  one it exists to answer") — the graph pane rendering two nodes of two thousand. That fix
+  **over-corrected past the spec it was restoring**: the answer to "one arbitrary alphabetical node"
+  was a bounded overview of meaningful nodes, and `knowledge-exploration.md` US-K2 already said so.
+  The pairing is worth keeping: **DC-031 and DC-035 are the same axis overshot in opposite
+  directions**, and a fix for one lands on the other unless the spec is re-read at the moment the new
+  default is chosen.
+- **Status:** `partially-controlled` — Core's half is landed and tested (bounded default, legible
+  `PayloadTooLarge`, byte measurements pinned in a test so raising the frame cap without revisiting
+  the default fails there first). **Design's half is open:** the aggregated / level-of-detail overview
+  for a graph too large to show node-by-node, and the "narrow your focus" state. Until that exists,
+  a repository whose *declared* code exceeds the cap gets a truthful truncation rather than a
+  designed overview.

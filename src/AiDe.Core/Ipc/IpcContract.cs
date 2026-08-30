@@ -31,6 +31,18 @@ public static class IpcErrorCodes
     public const string TransportClosed = "ipc.transport_closed";
 
     /// <summary>
+    /// The response is larger than one frame can carry.
+    /// </summary>
+    /// <remarks>
+    /// INV-0003. Without this code an oversized response threw out of the write path, the serve loop
+    /// did not catch that exception type, and the connection closed with no reply — which the client
+    /// can only report as <see cref="TransportClosed"/>. "The daemon vanished" and "the answer is too
+    /// big to send" need different things from a user, and rendering the second as the first sends
+    /// them to look at the daemon.
+    /// </remarks>
+    public const string PayloadTooLarge = "ipc.payload_too_large";
+
+    /// <summary>
     /// This daemon has no record of the command being asked about.
     /// </summary>
     /// <remarks>

@@ -329,8 +329,38 @@ public sealed class IpcServer
         };
     }
 
-    private static Task Respond(Stream pipe, IpcResponse response, CancellationToken cancellationToken) =>
-        IpcFraming.WriteAsync(pipe, JsonSerializer.Serialize(response, Wire), cancellationToken);
+    /// <summary>
+    /// Writes a response, or — when it will not fit a frame — writes an error that says so.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>INV-0003.</b> The whole-graph response for a real repository serialises to
+    /// <b>1,522,284 bytes</b> against a 1 MiB frame. <see cref="IpcFraming.WriteAsync"/> throws for
+    /// that, the serve loop caught <see cref="IOException"/> and
+    /// <see cref="OperationCanceledException"/> but not this, so the exception escaped, the
+    /// connection closed with no reply, and the user was told the daemon had gone away.</para>
+    ///
+    /// <para>The size is checked BEFORE writing rather than caught after, because a partially
+    /// written frame is not recoverable — the peer would be left reading a length prefix whose body
+    /// never arrives, which is a hang rather than an error.</para>
+    /// </remarks>
+    private static Task Respond(Stream pipe, IpcResponse response, CancellationToken cancellationToken)
+    {
+        var payload = JsonSerializer.Serialize(response, Wire);
+
+        if (System.Text.Encoding.UTF8.GetByteCount(payload) <= IpcFraming.MaxFrameBytes)
+        {
+            return IpcFraming.WriteAsync(pipe, payload, cancellationToken);
+        }
+
+        var refusal = JsonSerializer.Serialize(
+            IpcResponse.Error(
+                IpcErrorCodes.PayloadTooLarge,
+                $"the response is {System.Text.Encoding.UTF8.GetByteCount(payload):N0} bytes and one " +
+                $"message carries at most {IpcFraming.MaxFrameBytes:N0}; ask for less of it"),
+            Wire);
+
+        return IpcFraming.WriteAsync(pipe, refusal, cancellationToken);
+    }
 
     /// <summary>Writes a response, giving up if the peer is not draining its end.</summary>
     private async Task RespondWithinTimeout(

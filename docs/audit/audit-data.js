@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T16:06:11Z",
+  "generated": "2026-08-30T16:18:29Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2233,6 +2233,31 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0123",
+      "shortname": "inv-0003-bounded-default-and-payload-too-large",
+      "datetime": "2026-08-30T16:18:29Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "The graph pane has been broken on TheTerrace since the whole-graph change, and it is my defect. The\ndesign session investigated it (INV-0003), verified the cause and handed it to Core.\n\nMEASURED: the whole-graph response is 1,522,284 bytes against a 1,048,576-byte IPC frame. It could\nnever have been delivered. `IpcFraming.WriteAsync` threw, the serve loop caught `IOException` and\n`OperationCanceledException` but not that, the exception escaped, the connection closed with no\nreply — so \"the answer is too big to send\" reached the user as \"the daemon closed the connection\nwithout responding\", which sends them to look at the daemon.\n\nTwo fixes, both Core's:\n\n**The transport no longer closes silently.** `IpcServer.Respond` checks the encoded size BEFORE\nwriting and returns a new `ipc.payload_too_large` carrying the actual and permitted byte counts.\nChecked before rather than caught after on purpose: a partially written frame leaves the peer reading\na length prefix whose body never arrives, which is a hang rather than an error. The writer's own throw\nis correct and stays.\n\n**The default view is bounded by construction.** No focus now asks for 1,500 declared nodes ranked by\ndegree rather than the whole graph — 533,495 bytes, fits, 618 omitted and named in the caption.\n\nThe transport failure exposed the larger error, and the design session is right about it: the fix for\nDC-031 over-corrected. The graph pane rendering two nodes of two thousand was a real defect; loading\nEVERYTHING overshot the spec that was being restored — `knowledge-exploration.md` US-K2 already said\nthe whole graph is never rendered at once. The answer to \"one arbitrary alphabetical node\" was a\nbounded overview of MEANINGFUL nodes. DC-031 and DC-035 are the same axis overshot in opposite\ndirections, and a fix for one lands on the other unless the spec is re-read when the new default is\nchosen. That is recorded on DC-035 as mine.\n\nBounding by size and bounding by meaning turned out to be the same change: measured, the six\nmost-connected nodes of a real repository were `string`, `int`, `Task<T>`, `DateTimeOffset`,\n`IReadOnlyList<T>` and `Guid`, so a first view centred on the BCL was unreadable as well as\nundeliverable.\n\nDC-035 moves from `uncontrolled` to `partially-controlled`. Core's half is landed and tested,\nincluding the byte measurements pinned as an assertion so that raising the frame cap without\nrevisiting the default fails there first. **Design's half is open and named:** the aggregated /\nlevel-of-detail overview for a graph too large to show node-by-node, and the \"narrow your focus\"\nstate. Until that exists a repository whose declared code exceeds the cap gets a truthful truncation\nrather than a designed overview.\n\n775 tests green (App 131, Core 639). Seven gates clean. Zero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Fix INV-0003, the graph regression my own whole-graph change caused",
+      "done_when": "The transport returns a legible error, the default view is bounded and proven to fit, DC-035 updated, gates green, merged and published",
+      "git": {
+        "sha": "bbeeb9f832efa1a06e83c1e9df15b0a9bc5cac32",
+        "short": "bbeeb9f83",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -4265,6 +4290,31 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "1885098af60677e9d066a5f234d55baa9719bc9b",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0082",
+      "datetime": "2026-08-30T16:18:29Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "INV-0003: the graph could not fit through the pipe, and the default should never have asked",
+      "prompt": null,
+      "summary": "The graph pane has been broken on TheTerrace since the whole-graph change, and it is my defect. The\ndesign session investigated it (INV-0003), verified the cause and handed it to Core.\n\nMEASURED: the whole-graph response is 1,522,284 bytes against a 1,048,576-byte IPC frame. It could\nnever have been delivered. `IpcFraming.WriteAsync` threw, the serve loop caught `IOException` and\n`OperationCanceledException` but not that, the exception escaped, the connection closed with no\nreply — so \"the answer is too big to send\" reached the user as \"the daemon closed the connection\nwithout responding\", which sends them to look at the daemon.\n\nTwo fixes, both Core's:\n\n**The transport no longer closes silently.** `IpcServer.Respond` checks the encoded size BEFORE\nwriting and returns a new `ipc.payload_too_large` carrying the actual and permitted byte counts.\nChecked before rather than caught after on purpose: a partially written frame leaves the peer reading\na length prefix whose body never arrives, which is a hang rather than an error. The writer's own throw\nis correct and stays.\n\n**The default view is bounded by construction.** No focus now asks for 1,500 declared nodes ranked by\ndegree rather than the whole graph — 533,495 bytes, fits, 618 omitted and named in the caption.\n\nThe transport failure exposed the larger error, and the design session is right about it: the fix for\nDC-031 over-corrected. The graph pane rendering two nodes of two thousand was a real defect; loading\nEVERYTHING overshot the spec that was being restored — `knowledge-exploration.md` US-K2 already said\nthe whole graph is never rendered at once. The answer to \"one arbitrary alphabetical node\" was a\nbounded overview of MEANINGFUL nodes. DC-031 and DC-035 are the same axis overshot in opposite\ndirections, and a fix for one lands on the other unless the spec is re-read when the new default is\nchosen. That is recorded on DC-035 as mine.\n\nBounding by size and bounding by meaning turned out to be the same change: measured, the six\nmost-connected nodes of a real repository were `string`, `int`, `Task<T>`, `DateTimeOffset`,\n`IReadOnlyList<T>` and `Guid`, so a first view centred on the BCL was unreadable as well as\nundeliverable.\n\nDC-035 moves from `uncontrolled` to `partially-controlled`. Core's half is landed and tested,\nincluding the byte measurements pinned as an assertion so that raising the frame cap without\nrevisiting the default fails there first. **Design's half is open and named:** the aggregated /\nlevel-of-detail overview for a graph too large to show node-by-node, and the \"narrow your focus\"\nstate. Until that exists a repository whose declared code exceeds the cap gets a truthful truncation\nrather than a designed overview.\n\n775 tests green (App 131, Core 639). Seven gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/IpcServer.cs",
+        "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "bbeeb9f832efa1a06e83c1e9df15b0a9bc5cac32",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
         "commits": []
