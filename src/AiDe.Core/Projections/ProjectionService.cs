@@ -208,6 +208,15 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// A reader comparing routes is choosing between them, and nobody chooses between two hundred.
     /// The cap is small on purpose and the truncation is reported.
     /// </remarks>
+    /// <summary>
+    /// Groups returned before the rest are counted and dropped.
+    /// </summary>
+    /// <remarks>
+    /// An overview a person can read has tens of groups, not thousands; past a few hundred it is a
+    /// hairball again at a coarser grain, which is the failure it exists to prevent.
+    /// </remarks>
+    public const int MaxClustersCeiling = 500;
+
     public const int MaxPathsCeiling = 100;
 
     /// <summary>
@@ -465,6 +474,38 @@ public sealed class ProjectionService(WorkspaceStore store)
         activity?.SetTag("omitted.nodes", graph.Omitted);
 
         return graph;
+    }
+
+    /// <summary>
+    /// The workspace at a distance: groups rather than nodes, for a graph too large to draw.
+    /// </summary>
+    /// <remarks>
+    /// Built over the same <see cref="Graph"/> projection the canvas uses, so an overview can never
+    /// summarise a node the detailed view would not show. Two answers to one question is the defect
+    /// signature this codebase has already paid for.
+    /// </remarks>
+    public WorkspaceOverview Overview(OverviewQuery query)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        using var activity = Activity.StartActivity("aide.projection.query");
+        activity?.SetTag("projection", "overview");
+
+        // The node graph underneath is asked for at the PROJECTION ceiling rather than the canvas
+        // default: an overview summarises, so it should summarise as much as it can see, and the
+        // result is groups whose count is bounded regardless.
+        var graph = Graph(query.Query ?? new GraphQuery(GraphProjection.DefaultMaxNodes, IncludeExternal: false));
+
+        var overview = GraphOverview.Summarise(graph, query with
+        {
+            MaxClusters = Clamp(query.MaxClusters, 1, MaxClustersCeiling),
+        });
+
+        activity?.SetTag("returned.clusters", overview.Clusters.Count);
+        activity?.SetTag("returned.cluster_edges", overview.Edges.Count);
+        activity?.SetTag("omitted.clusters", overview.OmittedClusters);
+
+        return overview;
     }
 
     /// <summary>How one node reaches another, within the graph the query names.</summary>

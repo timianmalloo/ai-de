@@ -109,32 +109,20 @@ public sealed class OversizedResponseTests
         Assert.Equal("Shop.Order", canvas.Nodes[0].Id);
     }
 
-    private sealed class StubGraphQueries(GraphProjection projection) : IWorkspaceQueries
+    private sealed class StubGraphQueries(GraphProjection projection) : FakeWorkspaceQueries
     {
         public GraphQuery? Asked { get; private set; }
 
-        public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct)
+        public override Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct)
         {
             Asked = query;
             return Task.FromResult(projection.Compute(query));
         }
 
-        public Task<DescribeResult> DescribeAsync(string nodeId, int maxNeighbors, CancellationToken ct) =>
-            throw new NotSupportedException();
 
-        public Task<ImpactResult> ImpactAsync(string nodeId, int maxNodes, int maxEdges, CancellationToken ct) =>
-            throw new NotSupportedException();
 
-        public Task<FindResult> FindAsync(string term, int maxResults, CancellationToken ct) =>
-            throw new NotSupportedException();
 
-        public Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
-            throw new NotSupportedException();
 
-        public Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
-            throw new NotSupportedException();
 
-        public Task<PathResult> PathsAsync(PathQuery query, CancellationToken ct) =>
-            throw new NotSupportedException();
     }
 }
