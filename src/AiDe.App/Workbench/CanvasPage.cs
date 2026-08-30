@@ -36,6 +36,10 @@ internal static class CanvasPage
           button.chrome { font: inherit; background: #1A1F26; color: #E4E9EF; border: 1px solid #2A313B;
                   border-radius: 8px; padding: 2px 10px; cursor: pointer; }
           button.chrome[disabled] { opacity: .4; cursor: default; }
+          input.search { font: inherit; font-size: 13px; background: #0D1014; color: #E4E9EF;
+                  border: 1px solid #2A313B; border-radius: 8px; padding: 3px 9px; width: 190px; }
+          input.search::placeholder { color: #98A3B2; }
+          input.search:focus { outline: 2px solid #5B9DD9; outline-offset: 1px; }
           #fit { margin-left: auto; }
           #mode { margin-left: 6px; }
           #caption { color: #98A3B2; margin: 6px 0 0; }
@@ -62,6 +66,9 @@ internal static class CanvasPage
           .node:hover > .lbl, .node:focus > .lbl, .node.root > .lbl { opacity: 1; }
           .node:focus { outline: none; }
           .node:focus::before { outline: 2px solid #5B9DD9; outline-offset: 2px; }
+          .node.match::before { box-shadow: 0 0 0 2px #5B9DD9, 0 0 9px #5B9DD9; }
+          .node.match > .lbl { opacity: 1; }
+          #stage.searching .node:not(.match) { opacity: .3; }
           @media (prefers-reduced-motion: reduce) { .node > .lbl { transition: none; } }
           .legend { color: #98A3B2; font-size: 12px; margin-top: 8px; }
           .legend b { color: #E4E9EF; font-weight: 600; }
@@ -69,6 +76,7 @@ internal static class CanvasPage
         <body>
           <header>
             <h1>Graph canvas</h1>
+            <input id="search" class="search" type="text" placeholder="Search a node (press /)" aria-label="Search the graph" />
             <button id="back" class="chrome" disabled>&#8592; Back</button>
             <button id="fit" class="chrome" title="Fit the graph to the view (2D)">Fit</button>
             <button id="mode" class="chrome" title="Toggle 2D / 3D (press 2 or 3)" aria-label="Switch to 3D view">View in 3D</button>
@@ -86,6 +94,7 @@ internal static class CanvasPage
             var backButton = document.getElementById('back');
             var modeButton = document.getElementById('mode');
             var fitButton = document.getElementById('fit');
+            var searchInput = document.getElementById('search');
             var stage = document.getElementById('stage');
             stage.classList.add('grab');   // 2D pans, 3D rotates — both are grab gestures
 
@@ -129,6 +138,52 @@ internal static class CanvasPage
               place();
             });
 
+            // Search-to-focus: the first node whose label or id matches is highlighted; other nodes
+            // dim, and in 2D the view pans/zooms to bring the match to the centre. Enter lands keyboard
+            // focus on the match — back inside the trap — so a search can be driven entirely by keyboard.
+            function applySearch(q) {
+              q = (q || '').trim().toLowerCase();
+              records.forEach(function (r) { r.el.classList.remove('match'); });
+              if (!q) { stage.classList.remove('searching'); place(); return null; }
+
+              var m = null;
+              for (var i = 0; i < records.length; i++) {
+                var r = records[i];
+                if ((r.el.textContent || '').toLowerCase().indexOf(q) !== -1
+                    || r.id.toLowerCase().indexOf(q) !== -1) { m = r; break; }
+              }
+
+              stage.classList.add('searching');
+              if (m) {
+                m.el.classList.add('match');
+                if (mode === '2d') {
+                  var width = stage.clientWidth || 800, height = stage.clientHeight || 420;
+                  view2d.scale = 1.6;
+                  view2d.tx = width / 2 - m.p2.x * view2d.scale;
+                  view2d.ty = height / 2 - m.p2.y * view2d.scale;
+                }
+              }
+              place();
+              return m;
+            }
+
+            searchInput.addEventListener('input', function () { applySearch(searchInput.value); });
+            searchInput.addEventListener('keydown', function (e) {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                var m = applySearch(searchInput.value);
+                if (m) { m.el.focus(); }   // land on the match, back inside the keyboard trap
+              } else if (e.key === 'Escape') {
+                e.preventDefault();
+                searchInput.value = '';
+                applySearch('');
+                var nodes = focusable();
+                if (nodes.length) { nodes[0].focus(); } else { leave('restore'); }
+              }
+              // Every other key (Tab included) keeps its default behaviour, so Tab moves out of the
+              // box to the first node and typing digits does not toggle the view mode.
+            });
+
             function focusable() { return Array.prototype.slice.call(document.querySelectorAll('.node')); }
 
             function claimFocus() {
@@ -139,6 +194,21 @@ internal static class CanvasPage
             window.addEventListener('focus', claimFocus);
 
             document.addEventListener('keydown', function (e) {
+              // While the search box has focus its own handlers own the keys — the node shortcuts
+              // (2/3, /, Enter, Escape) must not fire, or typing a query would toggle the view.
+              if (e.target === searchInput || document.activeElement === searchInput) { return; }
+
+              // Jump to search from anywhere in the graph, and reset the 2D view with 0.
+              if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                e.preventDefault(); searchInput.focus(); searchInput.select(); return;
+              }
+              if ((e.ctrlKey || e.metaKey) && (e.key === 'f' || e.key === 'F')) {
+                e.preventDefault(); searchInput.focus(); searchInput.select(); return;
+              }
+              if (e.key === '0') {
+                e.preventDefault(); if (mode !== '2d') { setMode('2d'); } fit(); place(); return;
+              }
+
               if (e.key === 'Escape') { e.preventDefault(); leave('restore'); return; }
 
               // Mode switch. Digit keys are free (Enter/Space activate, Tab traverses) and only act
@@ -481,14 +551,16 @@ internal static class CanvasPage
               caption.textContent = graph.message
                 ? graph.message
                 : nodes.length + ' node(s), ' + (graph.edges || []).length + ' edge(s). '
-                  + 'Tab or hover a dot to see its label; Enter or click focuses it; drag to pan and '
-                  + 'scroll to zoom (Fit reframes); Backspace goes back; 2/3 toggles 2D/3D; drag to '
-                  + 'rotate in 3D; Tab off either end to leave.';
+                  + 'Tab or hover a dot to see its label; / searches; Enter or click focuses it; drag '
+                  + 'to pan and scroll to zoom (Fit reframes); Backspace goes back; 2/3 toggles 2D/3D; '
+                  + 'drag to rotate in 3D; Tab off either end to leave.';
 
               var notes = [];
               if (graph.omitted > 0) { notes.push(graph.omitted + ' edge(s) omitted by the result bound'); }
               if ((graph.disclosures || []).length) { notes.push('not analysed: ' + graph.disclosures.join(', ')); }
               warn.textContent = notes.join(' - ');
+
+              if (searchInput) { searchInput.value = ''; stage.classList.remove('searching'); }
 
               claimFocus();
             }
