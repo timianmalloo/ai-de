@@ -27,12 +27,28 @@ public static class IpcFraming
     /// The largest frame either side will send or accept.
     /// </summary>
     /// <remarks>
-    /// A control lane carries envelopes, not payloads: the largest legitimate message is a command
-    /// with a small JSON body. A cap in the hundreds of megabytes would satisfy every round-trip
-    /// test and defend against nothing, so this is deliberately close to what real traffic needs.
-    /// simplify: one flat cap rather than per-operation limits; ceiling 1 MiB; upgrade trigger = an
-    /// operation legitimately needs to carry more, at which point it needs a data lane, not a bigger
-    /// control frame.
+    /// <para>A cap in the hundreds of megabytes would satisfy every round-trip test and defend
+    /// against nothing, so this is deliberately close to what real traffic needs.</para>
+    ///
+    /// <para><b>The upgrade trigger FIRED, and the answer was none of the options this marker
+    /// listed.</b> INV-0003: the whole-graph response for a real repository was 1,522,284 bytes, the
+    /// write threw, and the connection closed with no reply. The marker offered two ways out — a
+    /// bigger frame, or a data lane — and the correct one was a third: the operation did not
+    /// legitimately need to carry more. A 2,815-node hairball was never a useful answer, the surface
+    /// spec had always said so (US-K2), and the resolution was to bound every response BELOW this
+    /// cap and add an aggregated overview. Recorded because a marker that names two exits invites
+    /// you to take one of them.</para>
+    ///
+    /// <para><b>And its original premise was already false when audited.</b> It said "a control lane
+    /// carries envelopes, not payloads: the largest legitimate message is a command with a small
+    /// JSON body". MEASURED on real repositories, ordinary responses are an evidence page at 659,164
+    /// bytes, a graph at 475,223 and an overview at 345,507. This lane has carried payloads for some
+    /// time; the sentence describing it had not been re-read since it was true.</para>
+    ///
+    /// <para><c>simplify: one flat cap rather than per-operation limits; ceiling 1 MiB; upgrade
+    /// trigger = a response that is BOUNDED, USEFUL and still over the cap — which is the case the
+    /// bounded projections have not produced yet, and the only one that would justify a data
+    /// lane.</c></para>
     /// </remarks>
     public const int MaxFrameBytes = 1024 * 1024;
 

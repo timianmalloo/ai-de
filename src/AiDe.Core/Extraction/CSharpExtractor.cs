@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.Diagnostics;
 using AiDe.Core.Facts;
 using Microsoft.CodeAnalysis;
@@ -303,6 +304,22 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
 
         fluentWatch.Stop();
 
+        // WHICH TYPE TALKS TO WHICH TABLE, for repositories with no ORM at all. Measured: BioHacker
+        // has zero DbContext files, zero [Table] attributes and 191 SQL literals naming tables from
+        // inside store classes, so every join it had was a NAME GUESS. This is the declaration it
+        // actually makes.
+        //
+        // Deliberately `uses_table` and NOT `maps_to`. A store class that issues four statements
+        // against three tables is not MAPPED to any of them, and reusing the mapping predicate would
+        // put a confident wrong answer where an honest one belongs — the same laundering the
+        // `depends_on` join once did (DC-022).
+        foreach (var (type, table, where) in SqlTableUsage(compiled.Compilation, cancellationToken))
+        {
+            assertions.Add(Assertion(
+                request, type, "uses_table", $"table:{table}", VerificationStatus.Verified,
+                ProvenanceAt(where, projectPath, observedAt)));
+        }
+
         // Complete means "this is the whole snapshot for this scope", which it is: the disclosures
         // are IN the snapshot rather than missing from it. Marking it incomplete would quarantine
         // every unrestored project, which is most of them on a fresh clone.
@@ -332,7 +349,12 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                 $"{assertions.Count:N0} assertion(s)");
         }
 
-        return Task.FromResult(new ExtractionResult(assertions, Complete: true, diagnostics));
+        // Identical facts are ONE fact. A store class naming the same table in four statements
+        // emits the same `uses_table` triple four times, and the store's natural key rejects that —
+        // correctly, and as a raw SQLite error from the middle of an index. Third extractor to need
+        // this, which is why the rule now lives in one place.
+        return Task.FromResult(new ExtractionResult(
+            ExtractionFacts.Distinct(assertions), Complete: true, diagnostics));
     }
 
     /// <summary>Accumulated stopwatch ticks as milliseconds.</summary>
@@ -584,6 +606,91 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
 
         counts(unresolvedCount, generatedCount);
     }
+
+    // The table a statement names. Only the forms whose next token IS a table: a FROM, a JOIN, an
+    // INSERT INTO or an UPDATE. `SELECT x FROM (SELECT ...)` yields nothing rather than a guess.
+    private static readonly Regex SqlTableReference = new(
+        @"\b(?:FROM|JOIN|INSERT\s+INTO|UPDATE|DELETE\s+FROM)\s+"
+        + @"(?<table>(?:\[[^\]]+\]|[A-Za-z_][\w$]*)(?:\s*\.\s*(?:\[[^\]]+\]|[A-Za-z_][\w$]*))*)",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    /// <summary>
+    /// Types that issue SQL naming a table, and which table.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Usage, not mapping.</b> This answers "which code talks to this table", which is the
+    /// question a reader of an ORM-free repository actually has and the only one its source
+    /// declares. It is <c>uses_table</c> rather than <c>maps_to</c> on purpose: a store class
+    /// issuing four statements against three tables is mapped to none of them.</para>
+    ///
+    /// <para><b>Literals only, and the same prefilter as the fluent scan.</b> A table name built at
+    /// runtime is not resolved, because a guessed name produces a confident wrong edge; a file whose
+    /// text contains none of the SQL keywords is skipped without materialising its syntax.</para>
+    /// </remarks>
+    private static IEnumerable<(string Type, string Table, Location Where)> SqlTableUsage(
+        Compilation compilation, CancellationToken cancellationToken)
+    {
+        foreach (var tree in compilation.SyntaxTrees)
+        {
+            var text = tree.GetText().ToString();
+
+            if (text.IndexOf("FROM", StringComparison.OrdinalIgnoreCase) < 0
+                && text.IndexOf("INSERT", StringComparison.OrdinalIgnoreCase) < 0
+                && text.IndexOf("UPDATE", StringComparison.OrdinalIgnoreCase) < 0)
+            {
+                continue;
+            }
+
+            if (IsGenerated(tree, cancellationToken)) continue;
+
+            SemanticModel? model = null;
+
+            foreach (var literal in tree.GetRoot(cancellationToken).DescendantNodes()
+                .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.LiteralExpressionSyntax>())
+            {
+                if (!literal.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.StringLiteralExpression)) continue;
+
+                var value = literal.Token.ValueText;
+                var matches = SqlTableReference.Matches(value);
+                if (matches.Count == 0) continue;
+
+                // The type this literal is written inside. A statement outside any type — a
+                // top-level program — has nothing to attribute the usage to and is skipped.
+                var declaration = literal.Ancestors()
+                    .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.TypeDeclarationSyntax>()
+                    .FirstOrDefault();
+
+                if (declaration is null) continue;
+
+                model ??= compilation.GetSemanticModel(tree);
+
+                if (model.GetDeclaredSymbol(declaration, cancellationToken) is not INamedTypeSymbol owner) continue;
+
+                var subject = owner.ToDisplayString();
+
+                foreach (Match match in matches)
+                {
+                    var table = TableName(match.Groups["table"].Value);
+
+                    // An alias, a table variable or a CTE is not a table in the schema graph.
+                    if (table.Length == 0 || table.StartsWith('@') || table.StartsWith('#')) continue;
+
+                    yield return (subject, table, literal.GetLocation());
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// The bare table name, matching the spelling the schema readers emit.
+    /// </summary>
+    /// <remarks>
+    /// The schema qualifier is dropped so <c>dbo.Workspace</c> and <c>Workspace</c> are one node —
+    /// the EF and SQL readers both emit unqualified names, and a third spelling would leave these
+    /// edges pointing at nodes that do not exist while looking perfectly correct.
+    /// </remarks>
+    private static string TableName(string raw) =>
+        raw.Split('.')[^1].Trim().Trim('[', ']', ' ');
 
     /// <summary>
     /// Whether every file that declares this type is generated.

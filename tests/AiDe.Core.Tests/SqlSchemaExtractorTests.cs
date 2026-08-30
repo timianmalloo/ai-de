@@ -111,14 +111,118 @@ public sealed class SqlSchemaExtractorTests : IDisposable
         Assert.Contains(facts, a => a.Subject == "table:B" && a.Predicate == "has_type");
     }
 
+    /// <summary>Writes one script and folds the scope, so ordering can be exercised.</summary>
+    private async Task<IReadOnlyList<AiDe.Core.Facts.EvidenceAssertion>> FoldAsync(
+        params (string Name, string Sql)[] scripts)
+    {
+        foreach (var (name, sql) in scripts)
+        {
+            File.WriteAllText(Path.Combine(_dir, name), sql);
+        }
+
+        var result = await new SqlSchemaExtractor().ExtractAsync(
+            new ExtractionRequest("sql:schema", _dir, "rev-1", 1), CancellationToken.None);
+
+        return result.Assertions;
+    }
+
+    [Fact]
+    public async Task ScriptsAreFoldedInOrder_SoTheSchemaIsTheSumAndNotTheFirstScript()
+    {
+        // MEASURED: one real repository carries 125 `ALTER TABLE ... ADD` statements. Reading CREATE
+        // alone shows its schema as it stood at the first migration and calls that current.
+        var facts = await FoldAsync(
+            ("001-create.sql", "CREATE TABLE Members (Id INT);"),
+            ("002-add.sql", "ALTER TABLE [Members] ADD [AnnualEquityAward] decimal(18,2) NULL;"));
+
+        var columns = facts
+            .Where(a => a.Subject == "table:Members" && a.Predicate == "has_column")
+            .Select(a => a.Object)
+            .Order(StringComparer.Ordinal)
+            .ToList();
+
+        Assert.Equal(["AnnualEquityAward", "Id"], columns);
+    }
+
+    [Fact]
+    public async Task ADroppedColumnLeavesTheGraph()
+    {
+        // A column that no longer exists is a WRONG fact, worse than a missing one: a reader would
+        // join to it, search for it, and find code that does not use it.
+        var facts = await FoldAsync(
+            ("001-create.sql", "CREATE TABLE T (Id INT, Legacy INT);"),
+            ("002-drop.sql", "ALTER TABLE T DROP COLUMN Legacy;"));
+
+        Assert.Contains(facts, a => a.Predicate == "has_column" && a.Object == "Id");
+        Assert.DoesNotContain(facts, a => a.Predicate == "has_column" && a.Object == "Legacy");
+    }
+
+    [Fact]
+    public async Task ADroppedTableLeavesTheGraphEntirely()
+    {
+        var facts = await FoldAsync(
+            ("001-create.sql", "CREATE TABLE Gone (Id INT);"),
+            ("002-drop.sql", "DROP TABLE Gone;"));
+
+        Assert.DoesNotContain(facts, a => a.Subject == "table:Gone");
+    }
+
+    [Fact]
+    public async Task AConstraintAddedByAlterIsNotClaimedAsAColumn()
+    {
+        var facts = await FoldAsync(
+            ("001.sql", "CREATE TABLE T (Id INT); ALTER TABLE T ADD CONSTRAINT PK_T PRIMARY KEY (Id);"));
+
+        var columns = facts.Where(a => a.Predicate == "has_column").Select(a => a.Object).ToList();
+
+        Assert.Equal(["Id"], columns);
+    }
+
+    [Fact]
+    public async Task AnAlterAgainstATableNoScriptCreatesStillEvidencesTheTable()
+    {
+        // The CREATE may live in a script nobody put in the repository. Ignoring the ALTER would
+        // hide a table the code demonstrably uses.
+        var facts = await FoldAsync(
+            ("001.sql", "ALTER TABLE Elsewhere ADD [Note] nvarchar(10);"));
+
+        Assert.Contains(facts, a => a.Subject == "table:Elsewhere" && a.Predicate == "has_type");
+        Assert.Contains(facts, a => a.Predicate == "has_column" && a.Object == "Note");
+    }
+
+    [Fact]
+    public async Task ARenameIsCountedAndDisclosed_NotGuessedAt()
+    {
+        // Every dialect spells a rename differently (sp_rename on SQL Server, RENAME COLUMN
+        // elsewhere). Guessing one produces a confidently WRONG column name rather than an absent
+        // one, so the count is disclosed and the earlier name is what the graph shows.
+        var facts = await FoldAsync(
+            ("001.sql", "CREATE TABLE T (Id INT); EXEC sp_rename 'T.Id', 'Identifier', 'COLUMN';"));
+
+        var disclosure = Assert.Single(facts,
+            a => a.Object.StartsWith(SqlSchemaExtractor.Disclosures.RenamesNotFollowed, StringComparison.Ordinal));
+
+        Assert.Contains("1 rename", disclosure.Object);
+    }
+
+    [Fact]
+    public async Task NoRenamesMeansNoRenameDisclosure()
+    {
+        // A blanket disclosure says the same thing whether there are none or thirty, which is how a
+        // closed gap ends up reported as open.
+        var facts = await FoldAsync(("001.sql", "CREATE TABLE T (Id INT);"));
+
+        Assert.DoesNotContain(facts,
+            a => a.Object.StartsWith(SqlSchemaExtractor.Disclosures.RenamesNotFollowed, StringComparison.Ordinal));
+    }
+
     [Fact]
     public async Task WhatItCannotSeeIsDisclosedRatherThanSilent()
     {
-        // ALTER, types, constraints and indexes are all unread. A schema that looks complete and is
+        // Column types, constraints and indexes are all unread. A schema that looks complete and is
         // not is worse than one that says which half it is.
-        var facts = await ReadAsync("CREATE TABLE Thing (Id INT);\n");
+        var facts = await ReadAsync("CREATE TABLE Thing (Id INT);");
 
-        Assert.Contains(facts, a => a.Object == SqlSchemaExtractor.Disclosures.AltersNotFolded);
         Assert.Contains(facts, a => a.Object == SqlSchemaExtractor.Disclosures.ColumnDetailNotRead);
         Assert.Contains(facts, a => a.Object == SqlSchemaExtractor.Disclosures.NotTheDatabase);
     }

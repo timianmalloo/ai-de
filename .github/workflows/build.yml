@@ -69,6 +69,28 @@ jobs:
       - name: Audit-log id uniqueness gate
         run: python tools/verify-audit-log.py
 
+      # verify-audit-log covers two JSONL logs. DC-013 recurred a fourth time in a THIRD allocator
+      # nobody had classified as one — the defect register, where the file merged cleanly with two
+      # entries under DC-032. This asks the generalising question instead: what else here is numbered
+      # by reading the highest and adding one? It also reports an UNDECLARED sequence, so the next
+      # allocator is guarded on the day it is invented rather than the day it collides.
+      - name: Monotonic id allocator gate
+        run: python tools/verify-id-allocators.py
+
+      # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
+      # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the
+      # twist that the gate was not stale but NARROW). Builds every tracked project the solution does
+      # not contain: 19 of them, measured at 16 seconds, which is why this is here and not nightly.
+      - name: Project compilation coverage gate
+        run: python tools/verify-project-coverage.py
+
+      # Three times in one session a comment stated a bound the code did not apply: an evidence page
+      # documented as fitting a cap it exceeded fifteenfold, a search reporting MaxBytes 65,536 while
+      # returning 461,750, and a regex whose exclusion existed only in prose (DC-038). Every constant
+      # whose NAME claims a limit must appear in a comparison, a clamp or a take.
+      - name: Bounds-are-enforced gate
+        run: python tools/verify-bounds-are-enforced.py
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
