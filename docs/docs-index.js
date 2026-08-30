@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T22:24:54Z",
+  "generated": "2026-08-30T22:40:09Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -869,6 +869,157 @@ window.DOCS_INDEX = {
       "sourceSha256": "1981ce647e3374d9e9985742d0b503122434c27855aff21b480b4a4bc0f188cc"
     },
     {
+      "id": "adr-0017-watcher-observation-projection",
+      "path": "docs/adr/0017-watcher-observation-projection.md",
+      "title": "ADR-0017 — Loomkeeper observes as a projection over the shared fact store, not a second database",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Loomkeeper adds harness/model dimensions and watcher facts (span, board message, work episode, evidence, scorecard, daydream observation) to the existing ADR-0002 SQLite fact store and computes liveness, Weave, and the leaderboard as ADR-0001 derived views, rather than owning a second store.",
+      "tags": [
+        "architecture",
+        "loomkeeper",
+        "facts",
+        "dimensions",
+        "projection",
+        "observability"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0001-derived-evidence-views",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "324e75068c16ec719d8a2d162d0c687cd567c925c4d88c0d8031f662af2ac4c0"
+    },
+    {
+      "id": "adr-0018-credential-backed-grading-egress",
+      "path": "docs/adr/0018-credential-backed-grading-egress.md",
+      "title": "ADR-0018 — Credentials are DPAPI local secrets and off-device grading is an opt-in egress path",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Loomkeeper credentials are sealed with DPAPI CurrentUser and never logged or emitted; outbound network is denied by default; credential-backed off-device grading is an ADR-0011 ExternalProcessing egress path that stays blocked until an explicit, revocable, per-path opt-in reclassifies it.",
+      "tags": [
+        "architecture",
+        "loomkeeper",
+        "security",
+        "privacy",
+        "egress",
+        "credentials",
+        "dpapi"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0011-session-processing-class-egress",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "967858353b15a2c3f5c665c8b42043f852ad8d856de56ade35105dc23d80cad7"
+    },
+    {
+      "id": "adr-0019-advisory-evaluator-calibration",
+      "path": "docs/adr/0019-advisory-evaluator-calibration.md",
+      "title": "ADR-0019 — Advisory dimensions and the leaderboard require calibrated, held-out-validated evaluators",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "A model-graded dimension contributes score points only after its evaluator version passes stability (>=95% same 0-4 band over 20 runs) and human agreement (quadratic weighted kappa >=0.75) on separate versioned corpora; leaderboard ranks are scoped to one calibrated task class and score schema, and anti-Goodhart counter-metrics gate whether a score rise counts as improvement.",
+      "tags": [
+        "architecture",
+        "loomkeeper",
+        "scoring",
+        "evaluation",
+        "calibration",
+        "leaderboard",
+        "ai-systems"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5abb6588cbfeb19126e3e8cc9b885fc86599a0bd076d572827cf92a11abae1a3"
+    },
+    {
+      "id": "adr-0020-trusted-registrar-harness-model-identity",
+      "path": "docs/adr/0020-trusted-registrar-harness-model-identity.md",
+      "title": "ADR-0020 — A trusted registrar binds harness/model identity and issues a per-session capability",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Registration binds repository/worktree/terminal/agent/harness/model/session-generation and issues a per-session capability verified on every event; asserted identity is labelled and cannot clear a floor; non-AI-Forward sessions get an injected coordination contract while AI-Forward sessions reuse the coord-core records rather than a second ledger.",
+      "tags": [
+        "architecture",
+        "loomkeeper",
+        "identity",
+        "registration",
+        "capability",
+        "harness",
+        "model"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0007-agent-session-adapter",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fc184c3983c4eacb54336a4b7e13680da7ca551c7664768f7866a48a3f52df97"
+    },
+    {
       "id": "architecture",
       "path": "docs/architecture.md",
       "title": "AI-DE Architecture",
@@ -983,6 +1134,83 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1bcbc703fc47da2f24c24d07ae93b0c3c3709704678f996ac51610c5db0a8dda"
+    },
+    {
+      "id": "architecture-loomkeeper",
+      "path": "docs/architecture/loomkeeper.md",
+      "title": "Loomkeeper Watcher Substrate - Architecture",
+      "type": "architecture",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Top-level architecture for Loomkeeper, the local agentic watcher subsystem. It observes many terminal-agent sessions across repositories by composing the existing AI-DE fact store, derived views, delivery semantics, session adapter, and egress governance, and adds a trusted registrar, harness/model attribution, a calibrated advisory evaluator, a leaderboard, per-turn standing feedback, and a human-gated Daydream learning loop - local-only by default.",
+      "tags": [
+        "loomkeeper",
+        "agent-observability",
+        "architecture",
+        "scoring",
+        "leaderboard",
+        "daydream",
+        "watcher"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0001-derived-evidence-views",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0006-terminal-delivery-semantics",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0007-agent-session-adapter",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0011-session-processing-class-egress",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0016-bounded-context-declaration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-watcher-observation-projection",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0019-advisory-evaluator-calibration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6c61ff31a5e56c22b9165b075b48c2658ed6a74adcfe00105d6cb3c860d8bfce"
     },
     {
       "id": "note-20260826-council-review-ai-ide-arch",
@@ -6539,5 +6767,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f785f4c59d2fc3895fbbe799cb1a8c5db7413d7369af8f972c96d74a649a07e4"
+  "graphSha256": "67473a96ef36c2de3e8d431713ed8e4d0d9a55d08f1c6621e5aae549d166707c"
 };

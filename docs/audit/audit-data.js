@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-30T22:26:01Z",
+  "generated": "2026-08-30T22:40:54Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2653,6 +2653,32 @@ window.AUDIT_DATA = {
         "scoring"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0158",
+      "shortname": "define-architecture-loomkeeper",
+      "datetime": "2026-08-30T22:40:54Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Run /define-architecture on Loomkeeper, starting with the credential/egress security model and task-class calibration (the two riskiest new surfaces).",
+      "summary": "Authored docs/architecture/loomkeeper.md (G Continuous Sentinel + D + H; projection-not-second-store; vertical phasing with a walking skeleton) composing existing ADR-0001/0002/0006/0007/0011/0016, and four new ADRs: 0017 observation projection, 0018 credential/DPAPI + egress-deny opt-in (extends 0011), 0019 advisory-evaluator calibration gates, 0020 trusted registrar + harness/model identity (extends 0007). Spikes S1-S4 named not fabricated. Gates green.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/architecture/loomkeeper.md",
+        "docs/adr/0018-credential-backed-grading-egress.md",
+        "docs/adr/0019-advisory-evaluator-calibration.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "architecture",
+        "egress",
+        "calibration"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-30T22:32:00Z",
+      "duration_seconds": 534.0
     }
   ],
   "changes": [
@@ -4928,6 +4954,32 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "b326c18e75e6047944c7e650c0424ebaa843a995",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0098",
+      "datetime": "2026-08-30T22:40:54Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Loomkeeper architecture: a projection over the existing fact store, with a DPAPI/egress-opt-in credential model and calibrated advisory evaluators",
+      "prompt": "Define Loomkeeper's architecture, leading with the credential/egress model and evaluator calibration.",
+      "summary": "Loomkeeper is a projection layer composed into the AI-DE local authority core (reuses ADR-0001/0002/0006/0007/0011); adds ADR-0017 (watcher facts + harness/model dimensions, derived leaderboard/weave/liveness), ADR-0018 (DPAPI local-secret credentials, outbound-denied-by-default, per-path egress opt-in), ADR-0019 (evaluator qualification: stability + QWK>=0.75 + injection-invariance + anti-Goodhart, scoped comparability), ADR-0020 (trusted registrar + per-session capability + harness/model identity). Delivery phased vertically with a Phase-1 walking skeleton; spikes S1-S4 named as preconditions.",
+      "rationale": "Composing existing accepted ADRs keeps the watcher a single source of truth and makes the AI-Forward symbiosis structural; the two riskiest surfaces (S3 outbound denial, Phase-4 calibration) are isolated and provisional pending PoC.",
+      "artifacts": [
+        "docs/architecture/loomkeeper.md",
+        "docs/adr/0017-watcher-observation-projection.md",
+        "docs/adr/0018-credential-backed-grading-egress.md",
+        "docs/adr/0019-advisory-evaluator-calibration.md",
+        "docs/adr/0020-trusted-registrar-harness-model-identity.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "3314ead45d033d0e567263c7719f683609205fd7",
+        "after": "3314ead45d033d0e567263c7719f683609205fd7",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []
