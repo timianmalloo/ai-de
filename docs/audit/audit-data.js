@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-30T22:40:54Z",
+  "generated": "2026-08-30T23:38:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2679,6 +2679,29 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-30T22:32:00Z",
       "duration_seconds": 534.0
+    },
+    {
+      "id": "al-0160",
+      "shortname": "design-implement-watcher-phase1",
+      "datetime": "2026-08-30T23:38:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Run /design on the Phase-1 walking-skeleton components, then /implement it.",
+      "summary": "Designed docs/design/watcher-phase1-skeleton.md (data model, contracts, patterns, failure modes, STRIDE, LINDDUN no-PII, telemetry, test plan) and implemented the deterministic core in src/AiDe.Core/Watcher/ (identity+capability, TrustedRegistrar, idempotent content-addressed span ingest, monotonic liveness projection, default-deny egress gate, IWatcherObservationStore seam + in-memory impl). 30 xUnit tests green (full suite 710/0); forgery + dedup oracles mutation-verified red. Proof Pack committed; DC-039 registered.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/design/watcher-phase1-skeleton.md",
+        "src/AiDe.Core/Watcher/TrustedRegistrar.cs",
+        "docs/proof/watcher-phase1-skeleton.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "phase-1"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -4980,6 +5003,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "3314ead45d033d0e567263c7719f683609205fd7",
         "after": "3314ead45d033d0e567263c7719f683609205fd7",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0100",
+      "datetime": "2026-08-30T23:38:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper Phase-1 deterministic core: capability-verified identity, content-addressed idempotent ingest, monotonic liveness, default-deny egress",
+      "prompt": "Design and implement the Phase-1 walking skeleton.",
+      "summary": "src/AiDe.Core/Watcher/ implements the T0 observation core over an IWatcherObservationStore seam (in-memory now, SQLite later): per-session capability (constant-time) with harness/model identity (ADR-0020), SHA256 content-addressed ObservedSpan with idempotent dedup (ADR-0006/0017), monotonic LivenessProjection resisting clock skew (US-2), and a default-deny EgressGate (ADR-0018). 30 tests, mutation-verified oracles.",
+      "rationale": "Reuses the codebase's sealed-record fact + SHA256 identity idiom (EvidenceAssertion) and the Facts/Projections/Store structure; smallest correct seam so the SQLite store and WPF row substitute later without redesign.",
+      "artifacts": [
+        "docs/design/watcher-phase1-skeleton.md",
+        "docs/proof/watcher-phase1-skeleton.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "d4b1727d3b4270d0a60383f4413e7a79c436e1bc",
+        "after": "d4b1727d3b4270d0a60383f4413e7a79c436e1bc",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

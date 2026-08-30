@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T22:40:09Z",
+  "generated": "2026-08-30T23:36:23Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1831,6 +1831,60 @@ window.DOCS_INDEX = {
       "sourceSha256": "4fc0b16537275ee9743dcadefb508ce94a027e92d70521b041d15616aa6cdeb4"
     },
     {
+      "id": "design-watcher-phase1-skeleton",
+      "path": "docs/design/watcher-phase1-skeleton.md",
+      "title": "Loomkeeper Phase-1 Walking Skeleton - Deterministic Observation Core",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Detailed design for the Loomkeeper Phase-1 walking skeleton: the deterministic T0 observation core - identity value objects with harness/model, a Trusted Registrar issuing per-session capabilities, content-addressed idempotent span ingest, monotonic liveness projection, and a default-deny egress gate - over an IWatcherObservationStore seam with an in-memory implementation. No personal data, no model, no network.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "identity",
+        "ingest",
+        "liveness",
+        "egress",
+        "walking-skeleton"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-watcher-observation-projection",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0006-terminal-delivery-semantics",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fa7512b0444cd6d217e111df2f2d6f12484151f792ea559b740b2cc2f01238f7"
+    },
+    {
       "id": "audit-log",
       "path": "docs/audit/audit-log.md",
       "title": "Audit & Change Log",
@@ -1878,7 +1932,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "495341b9e57bb43d3fdc06ac85129c02f0db65ede4bcea0a482e065ee4000534"
+      "sourceSha256": "424e40184a4c35b4b8d2217ae6f51e738c731b89e6373c790cc2628f6a0ca51b"
     },
     {
       "id": "domain-experts",
@@ -6218,6 +6272,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
+      "id": "proof-watcher-phase1-skeleton",
+      "path": "docs/proof/watcher-phase1-skeleton.md",
+      "title": "Proof Pack - Loomkeeper Phase-1 Walking Skeleton",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper Phase-1 deterministic core (identity + Trusted Registrar, idempotent span ingest, monotonic liveness, default-deny egress) meets its design contracts: 30 xUnit tests green, with red observed on the forgery and dedup oracles by mutation.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c256b9a98db24837c8199277f110f650dff5aa5e979f683bc41bc3d9624899b1"
+    },
+    {
       "id": "spec-agentic-watcher-substrate",
       "path": "docs/specs/agentic-watcher-substrate.md",
       "title": "Loomkeeper - Agentic Watcher Substrate and Observatory",
@@ -6767,5 +6851,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "67473a96ef36c2de3e8d431713ed8e4d0d9a55d08f1c6621e5aae549d166707c"
+  "graphSha256": "6e99370da18fcc95daf07f4c59a6a62f29cc5dec2349f67b88ea50ac52608c55"
 };

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 16 · partially-controlled 22 · uncontrolled 0
+**Status counts:** controlled 16 · partially-controlled 23 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1356,4 +1356,26 @@ for both or split.*
   mechanism names something a reader can go and check.
 - **Residual risk:** the name-based detection misses a bound named without one of those suffixes, and
   a limit expressed as a magic number rather than a constant is invisible to it.
+- **Status:** `partially-controlled`
+
+### DC-039 — A deterministic test double produces colliding output across instances
+
+- **Signature:** two independent instances of a "deterministic" fake (a capability, id, or token
+  factory seeded from a counter) emit identical values, so a negative test that forges a value from a
+  second instance accidentally matches the real one — the test then passes or fails for the wrong
+  reason rather than for the behaviour under test.
+- **Why it survives:** each factory is individually correct (unique *within its own sequence*); the
+  collision appears only when two instances are compared, which most tests never do. The suite is
+  green until a cross-instance negative test is written — and then it fails confusingly, looking like
+  a production bug rather than a test-double bug.
+- **Instances:** 2026-08-30 — `SequentialCapabilityFactory` in the Loomkeeper Phase-1 tests:
+  `Ingest_ForgedCapability_Rejected_AndNothingStored` forged a capability from a second factory whose
+  counter also started at 1, so `CryptographicOperations.FixedTimeEquals` matched and the forgery
+  test failed. Found on the first test run; the fix hardened the double and made the forgery explicit.
+- **Control:** the fake carries a per-instance salt (a `Guid`) so two instances cannot collide, and
+  the forgery is expressed as an explicit never-issued token (`WatcherFixtures.ForgedCapability`)
+  rather than a second instance's output. The generalisation: a negative test proves *rejection* only
+  if the rejected value is one nothing legitimate could have produced.
+- **Residual risk:** the salt makes the immediate collision impossible by construction, but no gate
+  prevents a future non-salted deterministic double from reintroducing the shape.
 - **Status:** `partially-controlled`
