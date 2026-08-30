@@ -330,7 +330,28 @@ public sealed class IpcServer
     }
 
     private static Task Respond(Stream pipe, IpcResponse response, CancellationToken cancellationToken) =>
-        IpcFraming.WriteAsync(pipe, JsonSerializer.Serialize(response, Wire), cancellationToken);
+        IpcFraming.WriteAsync(pipe, SerializeWithinBudget(response), cancellationToken);
+
+    /// <summary>
+    /// Serializes a response, but if it would overflow the frame it returns a small
+    /// <see cref="IpcErrorCodes.PayloadTooLarge"/> instead — so an oversized response is a legible
+    /// error the caller can act on, never an uncaught write that drops the connection and reads to
+    /// the caller as an opaque transport close (INV-0003, DC-035).
+    /// </summary>
+    internal static string SerializeWithinBudget(IpcResponse response)
+    {
+        var json = JsonSerializer.Serialize(response, Wire);
+        if (System.Text.Encoding.UTF8.GetByteCount(json) <= IpcFraming.MaxFrameBytes)
+        {
+            return json;
+        }
+
+        return JsonSerializer.Serialize(
+            IpcResponse.Error(
+                IpcErrorCodes.PayloadTooLarge,
+                "the response is too large to send in one message; narrow the query — a smaller node cap or a focused neighbourhood"),
+            Wire);
+    }
 
     /// <summary>Writes a response, giving up if the peer is not draining its end.</summary>
     private async Task RespondWithinTimeout(

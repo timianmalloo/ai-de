@@ -1173,6 +1173,8 @@ for both or split.*
   default hits a limit, the fix is almost always to **make the default bounded** (focus+context,
   pagination, level-of-detail, server-side aggregation), not to enlarge the limit. Re-read the
   surface's spec: it usually already forbade the dump.
-- **Status:** `uncontrolled` (INV-0003; spec updated US-K10–K12; fix is cross-session — Core owns the
-  bounded/aggregated query API + legible PayloadTooLarge error, Design owns the aggregated-overview
-  default view + LOD rendering)
+- **Status:** `partially-controlled` — the interim fix landed: the default view requests a bounded
+  ranked overview (`WholeGraphNodeCap = 750`, not the whole graph), and the daemon returns a legible
+  `PayloadTooLarge` instead of closing on an oversized frame (`IpcServer.SerializeWithinBudget`),
+  both covered by `GraphScalingTests`. The full US-K11 aggregated/streamed overview remains Core work
+  (INV-0003; session-contracts §4c).

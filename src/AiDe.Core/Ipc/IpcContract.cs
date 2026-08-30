@@ -38,6 +38,13 @@ public static class IpcErrorCodes
     /// it" is information a caller acts on differently from "it ran and did not work".
     /// </remarks>
     public const string CommandUnknown = "ipc.command_unknown";
+
+    /// <summary>
+    /// The response was too large to send in one frame. Returned instead of letting an oversized
+    /// write throw and drop the connection (which a caller can only see as an opaque transport close).
+    /// The caller narrows the query — a smaller cap or a focused neighbourhood (INV-0003, DC-035).
+    /// </summary>
+    public const string PayloadTooLarge = "ipc.payload_too_large";
 }
 
 /// <summary>

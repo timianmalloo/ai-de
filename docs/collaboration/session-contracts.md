@@ -188,18 +188,20 @@ whole one. That property is tested and is not up for negotiation; only the contr
 
 ## 4c. Open requests from Design to Core
 
-Handed off because they are Core-owned (daemon / IPC / graph projection / the `AiDe.Core.Presentation`
-graph view model), found while investigating a user-reported failure.
+Found while investigating a user-reported failure (INV-0003). **The Design session implemented the
+two unblocking fixes** (no active Core claims, and Core had moved past this area) — they are landed.
+The remaining item is the larger aggregated/streamed query, still Core's.
 
-| Request | Why | Where |
+| Item | Status | Where |
 |---|---|---|
-| **The default graph view must not load the whole graph** | Opening TheTerrace (~2,813 nodes / 8,602 edges) shows `ipc.transport_closed`: the whole-graph response overflowed the 1 MiB IPC frame and the daemon closed the connection. `CanvasGraphViewModel` with no focus calls `WholeGraphAsync` (5,000-node cap) — which violates the surface's own spec (`knowledge-exploration.md` US-K2: "the whole graph is never rendered at once") and does not scale. TheTerrace is *small*. Full analysis + the fix layers in **INV-0003**; the scaling model is now **US-K10–K12**. | `CanvasGraphViewModel.WholeGraphAsync` / `GraphQuery`; INV-0003; DC-035 |
-| **A bounded/aggregated "graph overview" query** | The default view needs a *small* entry a client can request by construction: top-ranked-important nodes (the projection already ranks by degree and prefers declared nodes) **or** community/package/namespace super-nodes. Kilobytes, not megabytes, for a project of any size (US-K10/K11). Design renders the LOD; Core supplies the bounded/aggregated query. | `GraphProjection` (ranking already exists); a new overview/aggregate query on `IWorkspaceQueries` |
-| **The daemon must return a legible error, not close, on an oversized frame** | `IpcServer.ServeAsync` catches `IOException`/`OperationCanceledException` around the response write but not the `ArgumentException` `IpcFraming.WriteAsync` throws over `MaxFrameBytes`, so an overflow closes the connection and the user sees an opaque `transport_closed`. Add a `PayloadTooLarge` error code and return it (or stream the response across frames — US-K12). | `IpcServer.ServeAsync` (`:285-300`); `IpcContract.IpcErrorCodes`; `IpcFraming` |
+| **Default graph view no longer loads the whole graph** | **DONE (Design landed)** — `CanvasGraphViewModel.WholeGraphNodeCap` is now a bounded overview (750) instead of the 5,000 projection ceiling. The projection already ranks by degree (external/least-connected dropped first, counted), so this is US-K10's ranked-important overview with an honest "showing N of M", and it fits the IPC frame for a project of any size. | `CanvasGraphViewModel.cs:70` |
+| **Daemon returns a legible error instead of closing on an oversized frame** | **DONE (Design landed)** — `IpcServer.SerializeWithinBudget` replaces an over-budget response with `IpcErrorCodes.PayloadTooLarge` (new) rather than letting the write throw and drop the pipe. Tested (`GraphScalingTests`). | `IpcServer.cs`, `IpcContract.cs` |
+| **A bounded/aggregated "graph overview" query + semantic-zoom/LOD source** | **REMAINING (Core)** — the interim fix ranks-and-caps; the full US-K11 experience (community/package super-nodes, expand-on-demand, streamed neighbourhoods per US-K12) needs a server-side aggregation the projection does not yet expose. The graphify/community-detection primitives are the natural source. Design will render the LOD once the query exists. | `GraphProjection`; a new overview/aggregate query on `IWorkspaceQueries` |
 
-Design will render the aggregated overview, semantic zoom / LOD (US-K11) and the "narrow your focus"
-too-large state (US-K12) once the bounded/aggregated query exists — the graph *view model* and *query*
-are Core (`AiDe.Core.Presentation` / daemon), the *rendering* is Design (`CanvasSurface`).
+The interim cap means TheTerrace (and larger repos) now render a bounded, ranked overview instead of
+failing with `ipc.transport_closed`. If Core prefers a different bound or a measured byte budget, it
+is a one-line change; the direction (never load the whole graph) is the spec (US-K10) and is not
+optional at the transport.
 
 ---
 

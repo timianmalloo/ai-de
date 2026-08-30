@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T16:06:11Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-30T16:24:23Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2233,6 +2233,23 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0124",
+      "shortname": "implement-graph-scaling-interim",
+      "datetime": "2026-08-30T16:24:23Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do all of these next steps",
+      "summary": "Implemented the two unblocking graph-scaling fixes (INV-0003, no active Core claims): default view requests a bounded ranked overview (WholeGraphNodeCap 5000->750, US-K10) instead of the whole graph; daemon returns IpcErrorCodes.PayloadTooLarge via IpcServer.SerializeWithinBudget instead of closing on an oversized frame (US-K12). +3 GraphScalingTests. Core 637, App 131. Aggregated/LOD overview remains Core.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [

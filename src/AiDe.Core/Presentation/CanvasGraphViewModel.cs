@@ -58,16 +58,23 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 {
     /// <summary>The graph around <paramref name="rootId"/>, or around whatever Find offers first.</summary>
     /// <summary>
-    /// How many nodes the canvas asks for when nothing is focused.
+    /// How many nodes the canvas asks for when nothing is focused — a BOUNDED, ranked overview.
     /// </summary>
     /// <remarks>
-    /// The projection's own ceiling, so the canvas asks for everything the read surface will give.
-    /// A lower number here omitted 813 of TheTerrace's 2,813 nodes — a limit the SURFACE imposed on
-    /// itself while the store and the projection were both willing. How much of it to draw at once
-    /// is a rendering decision and belongs with the renderer; withholding it here would make that
-    /// decision on the renderer's behalf and hide the rest.
+    /// This used to be the projection's own ceiling (5,000), on the reasoning that "how much to draw
+    /// is a rendering decision" — but that reasoning missed the transport: the whole-graph response
+    /// for TheTerrace (~2,813 nodes / 8,602 edges) exceeded the 1 MiB IPC frame and the daemon closed
+    /// the connection, so nothing rendered at all (INV-0003). A whole-graph load also does not scale —
+    /// TheTerrace is small — and the surface's own spec forbids it (knowledge-exploration US-K2/US-K10:
+    /// the default is a bounded overview, never the whole graph). The projection ranks by degree and
+    /// drops external/least-connected first with a reported count, so this cap yields the MOST
+    /// CONNECTED nodes as a ranked overview and an honest "showing N of M". Semantic zoom / LOD to
+    /// reveal more (US-K11) is the renderer's job; the transport-fitting bound is not optional.
+    /// simplify: a fixed node cap rather than a measured byte budget; ceiling is one frame; the
+    /// PayloadTooLarge guard (IpcServer) backstops a pathologically dense slice; upgrade trigger =
+    /// an aggregated/streamed overview query (US-K11/US-K12) lands in Core.
     /// </remarks>
-    public const int WholeGraphNodeCap = GraphProjection.DefaultMaxNodes;
+    public const int WholeGraphNodeCap = 750;
 
     /// <summary>Every node and edge in the workspace, bounded and honest about the bound.</summary>
     private async Task<CanvasGraph> WholeGraphAsync(CancellationToken cancellationToken)
