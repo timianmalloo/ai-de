@@ -48,7 +48,8 @@ public sealed record GraphRequest(
     int MaxNodes,
     IReadOnlyList<string>? Kinds = null,
     string? ScopeId = null,
-    bool IncludeExternal = true);
+    bool IncludeExternal = true,
+    string? GroupId = null);
 
 /// <inheritdoc cref="DescribeRequest"/>
 public sealed record KnowledgeRequest(string? Term, string? Type, int MaxResults);
@@ -173,7 +174,8 @@ public static class WorkspaceOperations
 
         endpoint.Register(Graph, (request, _) =>
             Refusable(() => Handle<GraphRequest>(request, body => projections.Graph(
-                new GraphQuery(body.MaxNodes, body.Kinds, body.ScopeId, body.IncludeExternal)))));
+                new GraphQuery(
+                    body.MaxNodes, body.Kinds, body.ScopeId, body.IncludeExternal, body.GroupId)))));
 
         endpoint.Register(Evidence, (request, _) =>
             Refusable(() => Handle<EvidenceRequest>(request,

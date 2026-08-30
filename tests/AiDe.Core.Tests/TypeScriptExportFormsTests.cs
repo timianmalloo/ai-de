@@ -94,6 +94,38 @@ public sealed class TypeScriptExportFormsTests : IDisposable
     }
 
     [Fact]
+    public async Task ExportingAnExpressionByDefaultIsNotCountedAsAMissedDeclaration()
+    {
+        // FOUND ON A SECOND REPOSITORY, which is the only reason it surfaced. `export default
+        // defineConfig({...})` and `export default test;` declare nothing new — the value is either
+        // anonymous or already declared above — so counting them made the miss rate fire on nearly
+        // every real TypeScript codebase, where `export default` is ubiquitous. A disclosure that
+        // always fires is noise.
+        //
+        // The exclusion had been WRITTEN IN THE DOC COMMENT before it was implemented, which is the
+        // same defect shape as the evidence page documenting a byte cap it did not apply.
+        var disclosure = await DisclosureAsync("""
+            import { defineConfig } from 'x';
+            const test = 1;
+            export default defineConfig({ a: 1 });
+            """);
+
+        Assert.Null(disclosure);
+    }
+
+    [Fact]
+    public async Task ExportingADeclarationByDefaultIsStillRead()
+    {
+        // The exclusion must not swallow the real thing: `export default class Foo {}` declares Foo.
+        const string source = "export default class Foo {}\n";
+
+        var subjects = await SubjectsAsync(source);
+        Assert.Contains(subjects, s => s.EndsWith(".Foo", StringComparison.Ordinal));
+
+        Assert.Null(await DisclosureAsync(source));
+    }
+
+    [Fact]
     public async Task AnExportSpellingTheReaderDoesNotKnowIsCountedAndDisclosed()
     {
         // THE CONTROL. A form nobody has thought of must announce itself on the scope rather than

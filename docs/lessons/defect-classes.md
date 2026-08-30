@@ -1114,6 +1114,19 @@ for both or split.*
   tests pin the fourteen known spellings, the exclusion, and the alarm itself.
   **The generalisation for other readers: make the reader publish its miss rate, because a ratio
   nobody looks at is exactly what this class hides behind.**
+- **The control was itself miscalibrated, and only a SECOND repository showed it (2026-08-30).** The
+  miss-counter's doc comment said `export default someExpression` was excluded as a non-declaration;
+  the pattern excluded `{`, `*`, `=` and `type {` and never excluded it. So `export default
+  defineConfig({…})` and `export default test;` counted as misses — and `export default` is
+  ubiquitous, so the disclosure would have fired on nearly every real TypeScript codebase and become
+  noise. Every measurement in this area had been taken from ONE repository, where the form did not
+  appear. **A control's false-positive rate is only observable on input it was not written against**,
+  which is the reason to run a new reader over a repository nobody used while building it. Fixed, and
+  a 165-file TypeScript repository now reports zero misses.
+  Note the shape: the exclusion was WRITTEN IN THE COMMENT before it was implemented — the same
+  defect as the evidence page documenting a byte cap it did not apply, and as `find` reporting a
+  `MaxBytes` it never enforced. Three instances in one session of **a claim in prose that the code
+  does not make true**; when a comment states a bound, the next question is which line applies it.
 - **Residual risk:** the receiver test is a name match on `EntityTypeBuilder` /
   `OwnedNavigationBuilder`, so an EF fork or a wrapper builder is not read; `ToTable` reached through
   an interface or an extension method on a non-builder is not read. Both now fall into the counted

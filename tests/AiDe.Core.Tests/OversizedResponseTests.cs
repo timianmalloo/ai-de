@@ -1,3 +1,4 @@
+using AiDe.Testing;
 using AiDe.Core.Ipc;
 using AiDe.Core.Presentation;
 using AiDe.Core.Projections;

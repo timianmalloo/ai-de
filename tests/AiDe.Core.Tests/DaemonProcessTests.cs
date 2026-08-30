@@ -373,6 +373,25 @@ public sealed class DaemonProcessTests
 
             Assert.Empty(missing.Paths);
             Assert.False(string.IsNullOrWhiteSpace(missing.Reason));
+
+            // ---- the OVERVIEW, and the drill-down back out of it ------------------------------
+            // The overview is nested — clusters and weighted links — so it is the response most
+            // likely to arrive with an inner list flattened or a count defaulted to zero. And a
+            // cluster's count is a CLAIM: if drilling in returns a different number, the two answers
+            // disagree and a user who noticed would be right to stop believing both.
+            var overview = await client.OverviewAsync(new OverviewQuery(Depth: 1), CancellationToken.None);
+
+            Assert.NotEmpty(overview.Clusters);
+            Assert.All(overview.Clusters, c => Assert.True(c.NodeCount > 0,
+                $"cluster '{c.Id}' crossed the pipe claiming {c.NodeCount} nodes"));
+            Assert.Equal(1, overview.Depth);
+
+            var group = overview.Clusters.OrderByDescending(c => c.NodeCount).First();
+
+            var inside = await client.GraphAsync(
+                new GraphQuery(2_000, GroupId: group.Id), CancellationToken.None);
+
+            Assert.Equal(group.NodeCount, inside.Nodes.Count);
         }
         finally
         {

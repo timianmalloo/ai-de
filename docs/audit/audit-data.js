@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-30T17:26:11Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-30T17:31:49Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2446,6 +2446,32 @@ window.AUDIT_DATA = {
         "handoff"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0133",
+      "shortname": "drill-down-daemon-proof-shared-double-second-repo",
+      "datetime": "2026-08-30T17:31:26Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "**Drill-down closes the loop the overview opened.** `GraphQuery.GroupId` returns the nodes inside one\ncluster, and the depth is read back out of the group id rather than passed alongside it — a separate\ndepth parameter would let a caller ask for `TheTerrace.Features` at depth 3 and receive nothing, with\nno error and no way to tell that from an empty group.\n\nThe property that makes the overview trustworthy is asserted, not assumed: **every cluster's\n`NodeCount` equals what drilling into it returns**, and every cluster's `InternalEdges` equals what\ndrilling in draws. For every group, not a sampled one — the interesting failure is the group whose\nnaming rule differs, and that is never the group a test author picks by hand. Both paths compute\nmembership from one definition (`GraphOverview.GroupFor`), which is why the round trip holds.\n\n**Proven across the pipe.** The overview is nested — clusters and weighted links — so it is the\nresponse most likely to arrive with an inner list flattened or a count defaulted to zero, and a\ncluster's count is a claim a user can check. The daemon test now drills from the largest cluster back\nto its nodes and asserts the counts agree.\n\n**Three repositories now, not one — and the third one found a defect in my own control.** Every\nmeasurement in this project had come from TheTerrace. Running BioHacker (32 scopes, no `DbContext` at\nall, so 0 joins is correct rather than a failure) and meridian-finance-planner (31 scopes, 9,165\nassertions, 165 TypeScript files) confirmed every operation fits the frame on all three.\n\nBioHacker reported `typescript-exports-not-recognised (1)` — the DC-033 control firing on the first\nnew repository it saw, which is what it is for. But the miss was **mine**: `export default\ndefineConfig({…})` and `export default test;` declare nothing new, and the miss-counter's own doc\ncomment said `export default someExpression` was excluded while the pattern never excluded it.\n`export default` is ubiquitous, so the disclosure would have fired on nearly every real TypeScript\ncodebase and become noise. Fixed; the 165-file repository now reports zero.\n\n**The shape is worth naming because it is the third instance this session.** The exclusion was written\nin the comment before it was implemented — exactly like the evidence page documenting a byte cap it\ndid not apply, and `find` reporting a `MaxBytes` it never enforced. **A claim in prose that the code\ndoes not make true.** When a comment states a bound, the next question is which line applies it.\n\nAnd the meta-lesson, recorded on DC-033: **a control's false-positive rate is only observable on input\nit was not written against.** Validating on one repository validates against one repository.\n\n**The shared test double now covers both projects.** `FakeWorkspaceQueries` moved to `tests/Shared`\nunder a neutral namespace and is linked into both test csproj files — linked source rather than a new\nassembly, because a project for forty lines is more machinery than the churn it removes. The two\nApp-project stubs that hand-implemented the whole seam now override only what they answer.\n\n800 tests green (App 132, Core 668). Seven gates clean. Zero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Add the overview drill-down, prove it across the pipe, share the test double, and measure a second repository",
+      "done_when": "The overview round trip holds for every group and across the daemon; both test projects share one double; a second and third repository measured; gates green; merged and published",
+      "change": "cl-0085",
+      "git": {
+        "sha": "431cb97ebb26f9a9bab19d2f484a833dc78cdd9a",
+        "short": "431cb97eb",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -4555,6 +4581,32 @@ window.AUDIT_DATA = {
         "after": "13a488b5028bc352171f202df353915e0f791ac2",
         "branch": "session/phase3-pane-probes",
         "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0085",
+      "datetime": "2026-08-30T17:31:16Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Drill-down closes the overview loop, and a third repository found a defect in my own control",
+      "prompt": null,
+      "summary": "**Drill-down closes the loop the overview opened.** `GraphQuery.GroupId` returns the nodes inside one\ncluster, and the depth is read back out of the group id rather than passed alongside it — a separate\ndepth parameter would let a caller ask for `TheTerrace.Features` at depth 3 and receive nothing, with\nno error and no way to tell that from an empty group.\n\nThe property that makes the overview trustworthy is asserted, not assumed: **every cluster's\n`NodeCount` equals what drilling into it returns**, and every cluster's `InternalEdges` equals what\ndrilling in draws. For every group, not a sampled one — the interesting failure is the group whose\nnaming rule differs, and that is never the group a test author picks by hand. Both paths compute\nmembership from one definition (`GraphOverview.GroupFor`), which is why the round trip holds.\n\n**Proven across the pipe.** The overview is nested — clusters and weighted links — so it is the\nresponse most likely to arrive with an inner list flattened or a count defaulted to zero, and a\ncluster's count is a claim a user can check. The daemon test now drills from the largest cluster back\nto its nodes and asserts the counts agree.\n\n**Three repositories now, not one — and the third one found a defect in my own control.** Every\nmeasurement in this project had come from TheTerrace. Running BioHacker (32 scopes, no `DbContext` at\nall, so 0 joins is correct rather than a failure) and meridian-finance-planner (31 scopes, 9,165\nassertions, 165 TypeScript files) confirmed every operation fits the frame on all three.\n\nBioHacker reported `typescript-exports-not-recognised (1)` — the DC-033 control firing on the first\nnew repository it saw, which is what it is for. But the miss was **mine**: `export default\ndefineConfig({…})` and `export default test;` declare nothing new, and the miss-counter's own doc\ncomment said `export default someExpression` was excluded while the pattern never excluded it.\n`export default` is ubiquitous, so the disclosure would have fired on nearly every real TypeScript\ncodebase and become noise. Fixed; the 165-file repository now reports zero.\n\n**The shape is worth naming because it is the third instance this session.** The exclusion was written\nin the comment before it was implemented — exactly like the evidence page documenting a byte cap it\ndid not apply, and `find` reporting a `MaxBytes` it never enforced. **A claim in prose that the code\ndoes not make true.** When a comment states a bound, the next question is which line applies it.\n\nAnd the meta-lesson, recorded on DC-033: **a control's false-positive rate is only observable on input\nit was not written against.** Validating on one repository validates against one repository.\n\n**The shared test double now covers both projects.** `FakeWorkspaceQueries` moved to `tests/Shared`\nunder a neutral namespace and is linked into both test csproj files — linked source rather than a new\nassembly, because a project for forty lines is more machinery than the churn it removes. The two\nApp-project stubs that hand-implemented the whole seam now override only what they answer.\n\n800 tests green (App 132, Core 668). Seven gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/GraphProjection.cs",
+        "src/AiDe.Core/Extraction/TypeScriptExtractor.cs",
+        "tests/Shared/FakeWorkspaceQueries.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "431cb97ebb26f9a9bab19d2f484a833dc78cdd9a",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
         "commits": []
       }
     }

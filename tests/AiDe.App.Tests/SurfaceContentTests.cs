@@ -1,3 +1,4 @@
+using AiDe.Testing;
 using System.Windows;
 using System.Windows.Controls;
 using AiDe.App.Workbench;
@@ -57,38 +58,35 @@ public sealed class SurfaceContentTests
         content is System.Windows.Controls.Border { Child: FrameworkElement inner } ? inner : content;
 
     /// <summary>A read surface that answers immediately with one known match.</summary>
-    private sealed class StubQueries : IWorkspaceQueries
+    private sealed class StubQueries : FakeWorkspaceQueries
     {
-        public Task<DescribeResult> DescribeAsync(string nodeId, int maxNeighbors, CancellationToken ct) =>
+        public override Task<DescribeResult> DescribeAsync(string nodeId, int maxNeighbors, CancellationToken ct) =>
             Task.FromResult(new DescribeResult(
                 new NodeView(nodeId, "kind", nodeId), [],
                 new ResultBounds(1, 1, 1024, 1, 0, 0, 0, false, null), "rev-1"));
 
-        public Task<ImpactResult> ImpactAsync(string nodeId, int maxNodes, int maxEdges, CancellationToken ct) =>
+        public override Task<ImpactResult> ImpactAsync(string nodeId, int maxNodes, int maxEdges, CancellationToken ct) =>
             Task.FromResult(new ImpactResult(
                 nodeId, [], [], new ResultBounds(1, 1, 1024, 0, 0, 0, 0, false, null), "rev-1"));
 
-        public Task<FindResult> FindAsync(string term, int maxResults, CancellationToken ct) =>
+        public override Task<FindResult> FindAsync(string term, int maxResults, CancellationToken ct) =>
             Task.FromResult(new FindResult(
                 [new FindMatch("Service.Orders", "csharp.type", "Service.Orders", AuthorshipOrigin.RepositoryArtifact)],
                 new ResultBounds(1, 1, 1024, 1, 0, 0, 0, false, null),
                 "rev-1"));
 
-        public Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
+        public override Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
             Task.FromResult(new KnowledgeResult(
                 [], new ResultBounds(1, 1, 1024, 0, 0, 0, 0, false, null), "rev-1"));
 
-        public Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
+        public override Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
             Task.FromResult(new EvidencePage([], null, "rev-1"));
 
 
-        public Task<PathResult> PathsAsync(PathQuery query, CancellationToken ct) =>
+        public override Task<PathResult> PathsAsync(PathQuery query, CancellationToken ct) =>
             Task.FromResult(new PathResult([], false, null, "rev-1"));
 
-        public Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken ct) =>
-            throw new NotSupportedException();
-
-        public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct) =>
+        public override Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct) =>
             Task.FromResult(new WorkspaceGraph([], [], 0, [], "rev-1"));
 
     }
@@ -213,31 +211,28 @@ public sealed class SurfaceContentTests
     }
 
     /// <summary>A read surface that fails, standing in for a daemon that cannot be reached.</summary>
-    private sealed class ThrowingQueries : IWorkspaceQueries
+    private sealed class ThrowingQueries : FakeWorkspaceQueries
     {
-        public Task<DescribeResult> DescribeAsync(string nodeId, int maxNeighbors, CancellationToken ct) =>
+        public override Task<DescribeResult> DescribeAsync(string nodeId, int maxNeighbors, CancellationToken ct) =>
             throw new InvalidOperationException("the daemon is not reachable");
 
-        public Task<ImpactResult> ImpactAsync(string nodeId, int maxNodes, int maxEdges, CancellationToken ct) =>
+        public override Task<ImpactResult> ImpactAsync(string nodeId, int maxNodes, int maxEdges, CancellationToken ct) =>
             throw new InvalidOperationException("the daemon is not reachable");
 
-        public Task<FindResult> FindAsync(string term, int maxResults, CancellationToken ct) =>
+        public override Task<FindResult> FindAsync(string term, int maxResults, CancellationToken ct) =>
             throw new InvalidOperationException("the daemon is not reachable");
 
-        public Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
+        public override Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
             throw new InvalidOperationException("the daemon is not reachable");
 
-        public Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
+        public override Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken ct) =>
             throw new InvalidOperationException("the daemon is not reachable");
 
 
-        public Task<PathResult> PathsAsync(PathQuery query, CancellationToken ct) =>
+        public override Task<PathResult> PathsAsync(PathQuery query, CancellationToken ct) =>
             Task.FromResult(new PathResult([], false, null, "rev-1"));
 
-        public Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken ct) =>
-            throw new NotSupportedException();
-
-        public Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct) =>
+        public override Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken ct) =>
             throw new InvalidOperationException("the daemon is not reachable");
 
     }
