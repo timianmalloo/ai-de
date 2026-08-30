@@ -53,9 +53,8 @@
   .node{padding:14px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);text-align:center}
   .arrow{text-align:center;color:var(--muted);font-family:var(--mono)}
   .score{display:grid;grid-template-columns:280px 1fr;gap:28px;margin-top:34px}
-  .dial{display:grid;place-items:center;aspect-ratio:1;border-radius:50%;background:
-    radial-gradient(circle,var(--surface) 0 55%,transparent 56%),
-    conic-gradient(var(--green) 0 73%,var(--line) 73% 100%);border:1px solid var(--line)}
+  .dial{display:grid;place-content:center;padding:30px;text-align:center;border-radius:var(--r);
+    background:var(--surface);border:1px solid var(--line)}
   .dial strong{font:700 62px/1 var(--mono)}.dial span{display:block;text-align:center;color:var(--muted)}
   .bars{display:grid;gap:15px;align-content:center}
   .bar label{display:flex;justify-content:space-between;margin-bottom:5px}
@@ -148,17 +147,19 @@
       <p class="eyebrow">Agent evaluation</p>
       <h2>A score you can disagree with.</h2>
       <p class="section-lede">The Weave Score summarizes six versioned dimensions, while Evidence
-        Coverage shows how much Loomkeeper could actually establish. A hard floor cannot be averaged away.</p>
+        Coverage shows how much Loomkeeper could actually establish. Every score is attributed to its
+        harness and model and ranked on a leaderboard by harness, model, and harness-model. A hard
+        floor cannot be averaged away.</p>
       <div class="score">
-        <div class="dial"><div><strong>73</strong><span>Weave Score<br>84% evidence coverage</span></div></div>
+        <div class="dial"><div><strong>61</strong><span>Weave Score / 100<br>84% evidence coverage</span></div></div>
         <div class="bars">
-          <div class="bar"><label><span>Outcome integrity</span><b>82 / 30%</b></label><div class="track"><div class="fill" style="width:82%"></div></div></div>
-          <div class="bar"><label><span>Focus & termination</span><b>61 / 15%</b></label><div class="track"><div class="fill" style="width:61%"></div></div></div>
-          <div class="bar"><label><span>Evidence discipline</span><b>76 / 15%</b></label><div class="track"><div class="fill" style="width:76%"></div></div></div>
-          <div class="bar"><label><span>Guidance adherence</span><b>89 / 15%</b></label><div class="track"><div class="fill" style="width:89%"></div></div></div>
-          <div class="bar"><label><span>Solution economy</span><b>58 / 15%</b></label><div class="track"><div class="fill" style="width:58%"></div></div></div>
-          <div class="bar"><label><span>Coordination & learning</span><b>74 / 10%</b></label><div class="track"><div class="fill" style="width:74%"></div></div></div>
-          <div class="gate"><strong>Correctness floor:</strong> a failed required test changes the verdict to Blocked. The 73 cannot hide it.</div>
+          <div class="bar"><label><span>Outcome integrity</span><b>82 · weight 30</b></label><div class="track"><div class="fill" style="width:82%"></div></div></div>
+          <div class="bar"><label><span>Focus &amp; termination</span><b>61 · weight 15</b></label><div class="track"><div class="fill" style="width:61%"></div></div></div>
+          <div class="bar"><label><span>Evidence discipline</span><b>76 · weight 15</b></label><div class="track"><div class="fill" style="width:76%"></div></div></div>
+          <div class="bar"><label><span>Guidance adherence</span><b>89 · weight 15</b></label><div class="track"><div class="fill" style="width:89%"></div></div></div>
+          <div class="bar"><label><span>Solution economy</span><b>58 · weight 15 · advisory</b></label><div class="track"><div class="fill" style="width:58%"></div></div></div>
+          <div class="bar"><label><span>Coordination &amp; learning</span><b>74 · weight 10</b></label><div class="track"><div class="fill" style="width:74%"></div></div></div>
+          <div class="gate"><strong>Correctness floor:</strong> a failed required test changes the verdict to Blocked and suppresses the numeric summary. A floor is never averaged away.</div>
         </div>
       </div>
     </section>
@@ -193,8 +194,8 @@
       <p class="eyebrow">The Observatory</p>
       <h2>Watch the watcher, not just the agents.</h2>
       <p class="section-lede">The UI is an expert multi-panel data terminal inside AI-DE: Sessions,
-        Message Board, Scorecards, Daydreams, and Privacy & Capture. Every status opens to its
-        evidence, trust, policy, and version.</p>
+        Message Board, Leaderboard, Scorecards, Daydreams, Configuration, Privacy &amp; Capture, and
+        Watcher Health. Every status opens to its evidence, trust, policy, and version.</p>
       <div class="grid">
         <article class="card wide"><h3>What needs attention now?</h3><p>Cross-repository sessions, liveness, blind spots, blocked floors, unanswered messages, and stale evidence.</p></article>
         <article class="card wide"><h3>Why did Loomkeeper score it that way?</h3><p>Dimension evidence, coverage, deterministic floors, advisory judgments, disputes, and version history.</p></article>

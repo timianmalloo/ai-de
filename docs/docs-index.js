@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T21:45:01Z",
+  "generated": "2026-08-30T22:24:54Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -5999,12 +5999,13 @@ window.DOCS_INDEX = {
       "phase": "discovery",
       "reviewBy": "2027-02-26",
       "reviewSuggested": [],
-      "summary": "Specifies Loomkeeper, a local agentic watcher that registers terminal-agent sessions across repositories, exposes repo-scoped collaboration, produces evidence-backed agent scorecards, and turns repeated patterns into reviewable daydream learning through the Observatory UI.",
+      "summary": "Specifies Loomkeeper, a local agentic watcher that registers terminal-agent sessions across repositories, exposes repo-scoped collaboration, produces evidence-backed agent scorecards attributed by harness and model, ranks harness/model performance on a leaderboard, is user-configured with local credentials, and turns repeated patterns into reviewable daydream learning through the Observatory UI.",
       "tags": [
         "loomkeeper",
         "agent-observability",
         "coordination",
         "scoring",
+        "leaderboard",
         "daydream",
         "watcher"
       ],
@@ -6026,7 +6027,7 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "Registration and blind spots",
-          "mermaid": "flowchart TD\n  A([Open Watch]) --> B{Any watched repository?}\n  B -->|no| C[First run: local-only notice + Watch a repository]\n  C --> D{Repository identity valid?}\n  D -->|no| E[Show invalid/duplicate repository and retry] --> C\n  D -->|yes| F\n  B -->|yes| F([Terminal or agent session starts])\n  F --> G{Registration available?}\n  G -->|native or injected contract| H[Bind repository, worktree, terminal, agent, model, generation]\n  G -->|unsupported| I[Blind Spot: Partially Observed or Not Watched]\n  H --> J{Identity authority valid?}\n  J -->|verified capability| K[Registered: heartbeat and observation begin]\n  J -->|asserted only| L[Registered with Asserted trust label]\n  J -->|duplicate or forged| M[Reject, record attempt, open identity investigation]\n  M --> N{Disposition}\n  N -->|new process generation| H\n  N -->|dismiss false detection| I\n  I --> O{Operator action}\n  O -->|install adapter or register| H\n  O -->|accept gap| P([Remain Not Recorded and unscored])\n  K --> Q{Heartbeat fresh?}\n  L --> Q\n  Q -->|yes| R([Alive])\n  Q -->|expired| S[Stale; scores marked stale]\n  S --> T{Process resumes?}\n  T -->|yes| U[New registration/generation; old authority rejected]\n  T -->|no| V([Ended or unknown])"
+          "mermaid": "flowchart TD\n  A([Open Watch]) --> B{Any watched repository?}\n  B -->|no| C[First run: local-only notice + Watch a repository]\n  C --> D{Repository identity valid?}\n  D -->|no| E[Show invalid/duplicate repository and retry] --> C\n  D -->|yes| F\n  B -->|yes| F([Terminal or agent session starts])\n  F --> G{Registration available?}\n  G -->|native or injected contract| H[Bind repository, worktree, terminal, agent, harness, model, generation]\n  G -->|unsupported| I[Blind Spot: Partially Observed or Not Watched]\n  H --> J{Identity authority valid?}\n  J -->|verified capability| K[Registered: heartbeat and observation begin]\n  J -->|asserted only| L[Registered with Asserted trust label]\n  J -->|duplicate or forged| M[Reject, record attempt, open identity investigation]\n  M --> N{Disposition}\n  N -->|new process generation| H\n  N -->|dismiss false detection| I\n  I --> O{Operator action}\n  O -->|install adapter or register| H\n  O -->|accept gap| P([Remain Not Recorded and unscored])\n  K --> Q{Heartbeat fresh?}\n  L --> Q\n  Q -->|yes| R([Alive])\n  Q -->|expired| S[Stale; scores marked stale]\n  S --> T{Process resumes?}\n  T -->|yes| U[New registration/generation; old authority rejected]\n  T -->|no| V([Ended or unknown])"
         },
         {
           "kind": "flowchart",
@@ -6051,10 +6052,20 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "Privacy, retention, and deletion",
-          "mermaid": "flowchart TD\n  A([First repository capture]) --> B[Notice: purpose, data classes, retention, deletion, non-personnel boundary]\n  B --> C{Operator acknowledges?}\n  C -->|no| D[Capture registration/health only; no work content]\n  C -->|yes| E[Set per-repo opt-in content capture and redaction]\n  E --> F([Local-only capture])\n  F --> G{Request}\n  G -->|external export or hosted judge| H[Blocked in v1 with policy reason]\n  G -->|rank a person| I[Refused]\n  G -->|delete| J[Preview source + derived scores/learning affected]\n  J --> K{Confirm deletion?}\n  K -->|no| F\n  K -->|yes| L[Run resumable deletion/retraction process]\n  L --> M{All required effects complete?}\n  M -->|yes| N[Issue Complete receipt]\n  M -->|partial or failed| O[Issue Partial receipt with failed effects]\n  O --> P[Retry incomplete effects] --> L"
+          "mermaid": "flowchart TD\n  A([First repository capture]) --> B[Notice: purpose, data classes, retention, deletion, non-personnel boundary]\n  B --> C{Operator acknowledges?}\n  C -->|no| D[Capture registration/health only; no work content]\n  C -->|yes| E[Set per-repo opt-in content capture and redaction]\n  E --> F([Local-only capture])\n  F --> G{Request}\n  G -->|external export or hosted judge| H[Export blocked in v1; hosted judge only via explicit egress opt-in]\n  G -->|rank a person| I[Refused]\n  G -->|delete| J[Preview source + derived scores/learning affected]\n  J --> K{Confirm deletion?}\n  K -->|no| F\n  K -->|yes| L[Run resumable deletion/retraction process]\n  L --> M{All required effects complete?}\n  M -->|yes| N[Issue Complete receipt]\n  M -->|partial or failed| O[Issue Partial receipt with failed effects]\n  O --> P[Retry incomplete effects] --> L"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Configuration and credentials",
+          "mermaid": "flowchart TD\n  A([Open Configuration]) --> B[Choose watched harnesses, models, and repositories]\n  B --> C{Credential needed for a watched harness?}\n  C -->|no| D([Watch selected scope, local-only])\n  C -->|yes| E[Enter credential]\n  E --> F[Store as local secret; never logged or emitted]\n  F --> G{Grader/Daydream must call a model off-device?}\n  G -->|no| D\n  G -->|yes| H[Egress opt-in notice: purpose, endpoint, data classes]\n  H --> I{Operator opts in?}\n  I -->|no| J([Stay local-only; that path disabled; Egress blocked])\n  I -->|yes| K[Enable that egress path only]\n  K --> L{Later revoke or credential removed?}\n  L -->|yes| M[Revoke: disable path, drop secret, keep no derived copy]\n  L -->|no| N([Watching with opted-in egress])\n  D --> O{Harness or model unreported?}\n  O -->|yes| P[Attribution Not Recorded; episode still scored]\n  O -->|no| Q([Attributed to harness and model])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Leaderboard",
+          "mermaid": "flowchart TD\n  A([Open Leaderboard]) --> B{Task class and score schema selected?}\n  B -->|no| C[Require task class + score schema version] --> B\n  B -->|yes| D[Gather comparable episodes in that class + version]\n  D --> E{Cohort >= minimum and not a single-human proxy?}\n  E -->|no| F[Show Not Comparable with reason; no rank]\n  E -->|yes| G[Rank by harness, model, and harness-model]\n  G --> H[Show rank, cohort size, Evidence Coverage, and trend per cell]\n  H --> I{Open a cell?}\n  I -->|yes| J[Open the episodes and Scorecards behind the rank]\n  I -->|no| K([Return to Leaderboard])\n  H --> L{Rubric/schema/model version changed?}\n  L -->|yes| M[Segment versions; do not trend incompatible results into one rank]\n  L -->|no| K"
         }
       ],
-      "sourceSha256": "452c533a530c91e96f134fcee42b4f6ba3addc799994d31e5655c391025eee03"
+      "sourceSha256": "835df96d89a3ed0442dd6cb4df83b9c1dfeac8c5aa182aa62eebb0715b243c2f"
     },
     {
       "id": "spec-ai-native-ide",
@@ -6528,5 +6539,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cd26c723d596ebc890c915d5380c9a9b11f3229aa170acb6917e22d762ff56f4"
+  "graphSha256": "f785f4c59d2fc3895fbbe799cb1a8c5db7413d7369af8f972c96d74a649a07e4"
 };

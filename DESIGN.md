@@ -324,7 +324,19 @@ The focal point is the **session needing attention**, not the aggregate score. T
 2. **Sessions treegrid** - repository/worktree grouping and the selected session.
 3. **Session detail** - Activity, Trace, and Weave Scorecard for the selected Work Episode.
 4. **Inspector** - evidence, trust, policy, and version for the selected item.
-5. **Peer surfaces** - Message Board, Daydreams, Privacy & Capture, Watcher Health.
+5. **Peer surfaces** - Message Board, Leaderboard, Daydreams, Configuration, Privacy & Capture, Watcher Health.
+
+**Leaderboard and standing.** The Leaderboard ranks harness, model, and harness-model within one
+task class and score schema version; every cell carries cohort size and Evidence Coverage, and a
+below-minimum or single-human cell renders **Not Comparable**, never a rank. Ranks, cohorts, trends,
+and coverage use `{typography.mono}` tabular numerals. Each watched agent's per-turn standing shows
+rank, trend, and one evidence-backed reason per dimension, never a single optimizable target.
+
+**Configuration and credentials.** Configuration sets watched harnesses, models, and repositories,
+and the credentials the watcher uses. Credentials render only as masked references, never as plain
+values, and never appear in logs, board, scores, or learning. The watcher is local-only by default;
+a credential-backed egress path stays off until an explicit opt-in notice is accepted, and `Egress
+blocked` is the default state.
 
 **Why Trace remains separate from Activity.** Activity is a chronological, human-readable trajectory;
 Trace is a causal parent/child span tree used to diagnose which tool or subagent produced an outcome.

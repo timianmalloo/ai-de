@@ -5,7 +5,7 @@ type: spec
 status: draft
 owner: "@timianmalloo"
 phase: "discovery"
-tags: [loomkeeper, agent-observability, coordination, scoring, daydream, watcher]
+tags: [loomkeeper, agent-observability, coordination, scoring, leaderboard, daydream, watcher]
 links:
   - { to: kb-agentic-session-observability, rel: implements }
   - { to: spec-ai-native-ide, rel: refines }
@@ -14,8 +14,10 @@ review-by: 2027-02-26
 review-suggested: []
 summary: >-
   Specifies Loomkeeper, a local agentic watcher that registers terminal-agent sessions across
-  repositories, exposes repo-scoped collaboration, produces evidence-backed agent scorecards, and
-  turns repeated patterns into reviewable daydream learning through the Observatory UI.
+  repositories, exposes repo-scoped collaboration, produces evidence-backed agent scorecards
+  attributed by harness and model, ranks harness/model performance on a leaderboard, is
+  user-configured with local credentials, and turns repeated patterns into reviewable daydream
+  learning through the Observatory UI.
 ---
 
 # Spec: Loomkeeper - Agentic Watcher Substrate and Observatory
@@ -142,6 +144,13 @@ Recorded**.
     and retraction.
 11. Per-repository capture, retention, redaction, deletion, and scoring policies.
 12. The Observatory desktop surface inside the AI-DE workbench.
+13. Attribution of every Work Episode and Scorecard to its harness and model, with versions.
+14. A leaderboard ranking historical scoring by harness, model, and harness-model within a
+    calibrated task class and score schema version.
+15. User configuration of watched harnesses, models, and repositories, and of the credentials the
+    watcher uses, with a local-only default and an explicit egress opt-in.
+16. Per-turn delivery to each watched agent of its current standing and the evidence behind each
+    dimension.
 
 ## Explicit non-goals
 
@@ -159,6 +168,10 @@ Recorded**.
 - Replacing Git, the existing `.agents` coordination record, the audit/change logs, or Dream.
 - Replacing the AI-DE terminal, workbench, editor, or code-knowledge graph.
 - Claiming scores are comparable across task classes until a task-class baseline is calibrated.
+- Ranking harnesses or models across incomparable task classes, or presenting a leaderboard cell
+  that resolves to a single identifiable human.
+- Silently sending work content, credentials, or grading off the device; credential-backed egress
+  is an explicit, noticed opt-in, never a default.
 
 ## Conceptual domain model
 
@@ -166,11 +179,11 @@ Recorded**.
 
 | Bounded context | Owns | Authority boundary |
 |---|---|---|
-| **Session Observability** | Repository Identity, Worktree Identity, Terminal Identity, Agent Identity, Agent Session, Registration, Heartbeat, Turn, Span, Trace, Trajectory, Blind Spot | Observes identity and liveness; never becomes repository truth. |
+| **Session Observability** | Repository Identity, Worktree Identity, Terminal Identity, Agent Identity, Harness Identity, Model Identity, Agent Session, Registration, Heartbeat, Turn, Span, Trace, Trajectory, Blind Spot | Observes identity and liveness; never becomes repository truth. |
 | **Repo Coordination** | Repo Message Board, Message, Reply, Acknowledgement, coordination claim | Owns append-only communication and advisory coordination records for one repository. |
 | **Work Evaluation** | Work Episode, Evidence Record, Scorecard, Dimension Assessment, Weave Score, Coverage, Dispute | Evaluates one bounded goal episode; separates deterministic facts from advisory judgments. |
 | **Reflective Learning** | Daydream Observation, Candidate Lesson, Disconfirming Evidence, Promoted Learning, Retraction | Owns the observation-to-reviewed-learning lifecycle. |
-| **Capture and Scoring Governance** | Capture Policy, Scoring Policy, Declared Purpose, Notice, Redaction, Retention, Deletion Request | Gates what may be observed, scored, retained, exported, or derived. |
+| **Capture and Scoring Governance** | Capture Policy, Scoring Policy, Declared Purpose, Notice, Redaction, Retention, Deletion Request, Watcher Configuration, Credential Reference, Egress Opt-In | Gates what may be observed, scored, retained, exported, or derived, and how the watcher is configured and credentialed. |
 
 ### Entities and value objects
 
@@ -178,11 +191,12 @@ Recorded**.
   Scorecard, Daydream Observation, Candidate Lesson, Promoted Learning, Capture Policy, Scoring
   Policy, Deletion Request.
 - **Value objects:** Repository Identity, Worktree Identity, Terminal Identity, Agent Identity,
-  Session Generation, Goal, Done Condition, Heartbeat, Confidence, Provenance, Trust Classification,
+  Harness Identity, Model Identity, Session Generation, Goal, Done Condition, Heartbeat, Confidence, Provenance, Trust Classification,
   Score Dimension, Weave Score, Evidence Coverage, Rubric Version, Retention Rule,
-  Redaction Rule, Deletion Receipt, Not Recorded.
+  Redaction Rule, Deletion Receipt, Not Recorded, Credential Reference, Egress Opt-In.
 - **Derived views, not stored authorities:** current live roster, Trace, Trajectory, Weave Score
-  summary, score trends, recurrence counts, and "current learning in force."
+  summary, score trends, recurrence counts, the harness/model/harness-model leaderboard, each
+  agent's current standing, and "current learning in force."
 - **Aggregate membership:** Registration is an immutable event inside the Agent Session aggregate,
   not a separate root. One Agent Session can own zero or more sequential Work Episodes by identity;
   Goal and Done Condition live only on Work Episode.
@@ -191,7 +205,7 @@ Recorded**.
 
 | Aggregate root | One protected invariant |
 |---|---|
-| **Agent Session** | One live session generation binds exactly one repository, worktree, terminal, agent, model, and registration authority. |
+| **Agent Session** | One live session generation binds exactly one repository, worktree, terminal, agent, harness, model, and registration authority. |
 | **Observed Span** | One span belongs to exactly one trace and session and is immutable and idempotent under duplicate delivery. |
 | **Board Message** | Its envelope, order, and thread references are append-only; corrections append, while policy deletion may irreversibly redact the content payload and retain a tombstone. |
 | **Work Episode** | One episode fixes one stated goal and done condition for one bounded session interval; changing the goal starts a new episode. |
@@ -201,8 +215,9 @@ Recorded**.
 | **Candidate Lesson** | A candidate cannot become Promoted Learning without counter-evidence review, a disconfirming check, and a human gate. |
 | **Promoted Learning** | At most one version per learning key is in force; later versions supersede it and source correction can issue a retraction. |
 | **Capture Policy** | No work content is captured without an active per-repository purpose, data-class, redaction, retention, and notice rule. |
-| **Scoring Policy** | Scores evaluate agent/model/task behavior for the operator's benefit and cannot be aggregated by identifiable human. |
+| **Scoring Policy** | Scores evaluate agent/harness/model/task behavior for the operator's benefit, are aggregated only by harness, model, harness-model, repository, and task class, and cannot be aggregated by identifiable human. |
 | **Deletion Request** | One request names its target and remains incomplete until a receipt records every required local effect as completed, failed, or not applicable. |
+| **Watcher Configuration** | The watched scope (harnesses, models, repositories) and any credential are operator-set; a credential is a local secret and every egress path stays off until an explicit opt-in enables it. |
 
 **Cross-context deletion and retraction process:** deletion is a resumable domain process, not one
 cross-aggregate transaction. It tracks board payload redaction, span/evidence removal, score
@@ -268,20 +283,15 @@ of truth. The Scorecard and Evidence Coverage are always displayed with it.
    adjudicated human-labeled validation corpus, quadratic weighted kappa is at least 0.75. Otherwise
    it remains visible but excluded as Advisory/Not Scored.
 10. Comparisons are permitted only within the same calibrated task class and score schema version.
-11. Cross-episode aggregates require a cohort of at least five independent episodes and must not
-    identify or single out a human through repository/task-class combinations.
+11. Cross-episode aggregates require a cohort of at least five independent episodes, are computed
+    per harness, model, harness-model, repository, and task class, and must not identify or single
+    out a human through those combinations.
 12. A dispute appends a superseding evaluation record; prior scores are not overwritten.
 13. Calibration and held-out validation corpora are separate, versioned contract artifacts. Any
     evaluator model, prompt, rubric, schema, or corpus change must re-pass stability, human agreement,
     prompt-injection invariance, and held-out outcome checks before it can contribute points.
 14. A visible score improvement is not accepted as agent improvement unless held-out outcome
     integrity, regression rate, rework, and dispute-overturn rate remain no worse.
-
-**Scope rationale retained against the Simplifier:** non-AI-Forward injection is explicitly required
-by the user because some watched sessions will originate in repositories without the pack. The
-per-session capability is required by the Security veto because local events influence provenance,
-scores, feedback, and learning. The five-episode cohort is a privacy suppression floor, not a
-statistical quality claim.
 
 ## User stories and acceptance criteria
 
@@ -495,6 +505,59 @@ statistical quality claim.
 - **Given** a blind spot, **When** it appears, **Then** the Observatory offers the smallest available
   remediation or an explicit "accept gap" path.
 
+### US-13 - Score by harness and model
+
+> As a lead, I want every episode and score attributed to its harness and model so I can compare
+> tools and models, never people.
+
+- **Given** a registered session, **When** its episode is scored, **Then** the Scorecard records the
+  harness and the model with their versions.
+- **Given** the harness or model is unknown, **When** the episode is scored, **Then** that
+  attribution renders **Not Recorded** and the episode is still scored on available evidence.
+- **Given** two episodes in different task classes or score schema versions, **When** they are
+  compared, **Then** the comparison is refused or labeled **Not Comparable**.
+
+### US-14 - Rank harnesses and models on a leaderboard
+
+> As a lead, I want a leaderboard of historical scoring by harness, model, and harness-model so I
+> can see which performs best on a given kind of work.
+
+- **Given** at least the cohort minimum of comparable episodes, **When** the leaderboard renders,
+  **Then** it ranks by harness, model, and harness-model within one task class and score schema
+  version, with Evidence Coverage shown per cell.
+- **Given** a cell below the cohort minimum or one that resolves to a single human, **When** the
+  leaderboard renders, **Then** that cell is suppressed as **Not Comparable**, never shown as a rank.
+- **Given** a rubric, schema, or model-version change, **When** historical results are shown,
+  **Then** results from incompatible versions are not silently trended into one ranking.
+
+### US-15 - Configure the watcher and its credentials
+
+> As a lead, I want to choose which harnesses, models, and repositories Loomkeeper watches and supply
+> the credentials it uses, without silently sending my work off the device.
+
+- **Given** configuration, **When** I select harnesses, models, and repositories, **Then** only the
+  selected scope is observed and the rest remain **Not Watched**.
+- **Given** a credential such as my Claude Code or GitHub Copilot login, **When** I supply it,
+  **Then** it is stored as a local secret, never written to logs, telemetry, board, score, or
+  learning, and is revocable.
+- **Given** the grader or Daydream would call a model that leaves the device, **When** that path is
+  configured, **Then** it is disabled by default and requires an explicit egress opt-in with notice;
+  without it the watcher stays local-only.
+
+### US-16 - Show each agent its standing every turn
+
+> As an agent, I want to see how my harness and model are scoring and why, each turn, so I can tell
+> whether I am improving or regressing.
+
+- **Given** a turn boundary, **When** the agent is watched, **Then** it receives its current standing
+  (its harness-model rank and recent trend within the task class) and one evidence-backed reason per
+  dimension.
+- **Given** the standing is delivered, **When** it is composed, **Then** it never exposes the
+  complete held-out scoring target and offers no single scalar to optimize.
+- **Given** a visible score rise, **When** improvement is asserted to the agent, **Then** it is
+  affirmed only if held-out outcome integrity, regression rate, rework, and dispute-overturn are no
+  worse.
+
 ## Non-functional requirements
 
 | ISO/IEC 25010 attribute | Requirement |
@@ -502,8 +565,8 @@ statistical quality claim.
 | Functional suitability | Every displayed evaluation or learning claim has evidence/confidence, or renders Not Recorded. |
 | Reliability | Accepted registrations, board messages, observations, and scorecards survive watcher restart; gaps and stale state remain explicit. |
 | Performance efficiency | On the reference corpus of 5 repositories, 20 worktrees, 50 registered sessions (10 active), 100,000 spans, 10,000 board messages, and 5,000 Daydream observations: fleet/health changes become visible p95 <= 1 second; session selection p95 <= 100 ms; scorecard filter/update p95 <= 250 ms. |
-| Security | Trusted registration issues a per-session capability verified for every event; forged spans are quarantined; bounded ingest limits size/cardinality/depth; untrusted content cannot instruct a grader; redaction happens before persistence and fails closed; watcher processes and dependencies have outbound network denied in v1. |
-| Privacy | Local-only v1; per-repo opt-in work-content capture; no personnel aggregation; notice, retention, deletion, and derived-learning retraction. |
+| Security | Trusted registration issues a per-session capability verified for every event; forged spans are quarantined; bounded ingest limits size/cardinality/depth; untrusted content cannot instruct a grader; redaction happens before persistence and fails closed; configured credentials are stored as local secrets and never logged or emitted; watcher processes have outbound network denied by default, and any credential-backed egress path stays off until an explicit, noticed opt-in enables it for that path only. |
+| Privacy | Local-only by default; per-repo opt-in work-content capture; credential-backed external processing is off unless explicitly opted in with notice; no personnel aggregation; notice, retention, deletion, and derived-learning retraction. |
 | Usability | A blind spot, failed floor, disputed score, or unpromoted lesson is discoverable from the Sessions view within one interaction; evidence from a score dimension within two. |
 | Compatibility | Extends current `.agents`, audit/change, defect-class, and Dream records; supports opaque sessions through adapters without claiming unsupported telemetry. |
 | Maintainability | Event, scoring, rubric, and injected-contract schemas are versioned; derived views are rebuildable; model output is typed and advisory. |
@@ -527,21 +590,24 @@ statistical quality claim.
 - Capture disabled, watcher offline, deletion requested, or egress attempted.
 - A task class with no calibrated comparison baseline.
 - A repository/task-class aggregation cell that is a proxy for one human.
+- Harness or model unreported, mixed, or changed within a session.
+- A leaderboard cell below the cohort minimum or comparing incompatible score schema versions.
+- A configured credential, or a grader/Daydream egress path enabled by opt-in.
 - Secret/personal-data fixture in capture, self-telemetry, grader input, feedback, or learning.
 
 ## Applicable governance lenses
 
 | Lens | Applies | Specification answer |
 |---|---|---|
-| Requirements traceability | Yes | US-1..12 -> downstream tests/evals/Proof Pack. |
+| Requirements traceability | Yes | US-1..16 -> downstream tests/evals/Proof Pack. |
 | Quality attributes | Yes | NFR table and boundary set above. |
-| Threat model (STRIDE) | Yes | Registration spoofing, telemetry/board tampering, repudiation, work-data disclosure, resource exhaustion, grader elevation. Full model required before implementation. |
+| Threat model (STRIDE) | Yes | Registration spoofing, telemetry/board tampering, repudiation, work-data disclosure, resource exhaustion, grader elevation, credential theft/leakage, and unauthorized egress. Full model required before implementation. |
 | Privacy and data governance | Yes | Local-only, purpose/notice, per-repo capture, no personnel scoring, deletion/retraction. |
 | Accessibility | Yes | Part C WCAG 2.2 AA and keyboard-first Observatory. |
 | Performance | Yes | Explicit p95 budgets and measured corpus requirement. |
 | Release/rollback/migration | Yes | Score and learning schema changes are versioned; promotion/retraction is reversible. |
 | Observability | Yes | Loomkeeper must instrument its own ingest lag, event gaps, score coverage, grader cost, failure rate, and learning outcomes. |
-| Supply chain | Yes | OTel collectors, local models, and adapters require pinned versions, license/provenance, and no hidden egress. |
+| Supply chain | Yes | OTel collectors, local models, harness/model adapters, and any opted-in egress endpoint require pinned versions, license/provenance, and no hidden egress. |
 | Incident readiness | Yes | Watcher outage, forged telemetry, score drift, and poisoned learning must be diagnosable from local records. |
 
 ## AI-integrated allocation
@@ -550,7 +616,8 @@ statistical quality claim.
   evidence-grounded advisory evaluation and **H - Long-Horizon Agent** only for persisted Daydream
   memory. Loomkeeper observes continuously; it does not execute repository side effects.
 - **T0 deterministic:** identity, registration, event folding, liveness, trace/trajectory projection,
-  metrics, correctness floors, score composition, versioning, policy, deletion, and gates.
+  metrics, correctness floors, score composition, harness/model attribution, leaderboard composition,
+  configuration and credential policy, versioning, policy, deletion, and gates.
 - **T1/T2 specialist/local model:** bounded semantic classification of trajectory signals and
   feedback phrasing when deterministic evidence already exists.
 - **T2 local rubric grader:** advisory qualitative dimensions and Candidate Lesson proposals, with a
@@ -584,10 +651,12 @@ Watch
     │       ├── Trace
     │       └── Weave Scorecard
     ├── Message Board
+    ├── Leaderboard
     ├── Daydreams
     │   ├── Observations
     │   ├── Candidates
     │   └── Promoted
+    ├── Configuration
     ├── Privacy & Capture
     └── Watcher Health
 ```
@@ -602,15 +671,18 @@ is the home of observed agent state. The fleet surface is never labeled "board."
 ## Primary navigation and joins
 
 - Activity rail: Watch.
-- Observatory tabs/panes: Sessions, Message Board, Daydreams, Privacy & Capture.
-- From a session: open its terminal, board messages, Scorecard, Daydream observations, and source
-  work item.
+- Observatory tabs/panes: Sessions, Message Board, Leaderboard, Daydreams, Configuration, Privacy & Capture, Watcher Health.
+- From a session: open its terminal, board messages, Scorecard, harness-model leaderboard standing,
+  Daydream observations, and source work item.
 - From a message, dimension, or lesson: return to its session and source evidence.
-- Command palette: watch repository, find session, open scorecard, post message, dispute dimension,
-  review candidate, retract learning, set capture policy, delete captured data.
+- From a leaderboard cell: open the episodes and Scorecards behind the rank.
+- Command palette: watch repository, find session, open scorecard, open leaderboard, post message,
+  dispute dimension, review candidate, retract learning, configure watcher, set credentials, enable
+  egress, set capture policy, delete captured data.
 - Search scopes: Sessions, Board Messages, Daydreams; never an unlabeled mixed result.
 - When the global scope is **All repositories**, Message Board and Privacy & Capture require a
-  repository picker. Selecting a session supplies that repository context automatically.
+  repository picker. Selecting a session supplies that repository context automatically. Leaderboard
+  requires a task class and score schema version before it ranks.
 - The persistent Watcher status opens **Watcher Health**, which exposes ingest lag, blind spots,
   event gaps, score coverage, grader cost, failure rate, and learning outcomes.
 
@@ -627,7 +699,7 @@ flowchart TD
   D -->|yes| F
   B -->|yes| F([Terminal or agent session starts])
   F --> G{Registration available?}
-  G -->|native or injected contract| H[Bind repository, worktree, terminal, agent, model, generation]
+  G -->|native or injected contract| H[Bind repository, worktree, terminal, agent, harness, model, generation]
   G -->|unsupported| I[Blind Spot: Partially Observed or Not Watched]
   H --> J{Identity authority valid?}
   J -->|verified capability| K[Registered: heartbeat and observation begin]
@@ -752,7 +824,7 @@ flowchart TD
   C -->|yes| E[Set per-repo opt-in content capture and redaction]
   E --> F([Local-only capture])
   F --> G{Request}
-  G -->|external export or hosted judge| H[Blocked in v1 with policy reason]
+  G -->|external export or hosted judge| H[Export blocked in v1; hosted judge only via explicit egress opt-in]
   G -->|rank a person| I[Refused]
   G -->|delete| J[Preview source + derived scores/learning affected]
   J --> K{Confirm deletion?}
@@ -764,6 +836,48 @@ flowchart TD
   O --> P[Retry incomplete effects] --> L
 ```
 
+### Configuration and credentials
+
+```mermaid
+flowchart TD
+  A([Open Configuration]) --> B[Choose watched harnesses, models, and repositories]
+  B --> C{Credential needed for a watched harness?}
+  C -->|no| D([Watch selected scope, local-only])
+  C -->|yes| E[Enter credential]
+  E --> F[Store as local secret; never logged or emitted]
+  F --> G{Grader/Daydream must call a model off-device?}
+  G -->|no| D
+  G -->|yes| H[Egress opt-in notice: purpose, endpoint, data classes]
+  H --> I{Operator opts in?}
+  I -->|no| J([Stay local-only; that path disabled; Egress blocked])
+  I -->|yes| K[Enable that egress path only]
+  K --> L{Later revoke or credential removed?}
+  L -->|yes| M[Revoke: disable path, drop secret, keep no derived copy]
+  L -->|no| N([Watching with opted-in egress])
+  D --> O{Harness or model unreported?}
+  O -->|yes| P[Attribution Not Recorded; episode still scored]
+  O -->|no| Q([Attributed to harness and model])
+```
+
+### Leaderboard
+
+```mermaid
+flowchart TD
+  A([Open Leaderboard]) --> B{Task class and score schema selected?}
+  B -->|no| C[Require task class + score schema version] --> B
+  B -->|yes| D[Gather comparable episodes in that class + version]
+  D --> E{Cohort >= minimum and not a single-human proxy?}
+  E -->|no| F[Show Not Comparable with reason; no rank]
+  E -->|yes| G[Rank by harness, model, and harness-model]
+  G --> H[Show rank, cohort size, Evidence Coverage, and trend per cell]
+  H --> I{Open a cell?}
+  I -->|yes| J[Open the episodes and Scorecards behind the rank]
+  I -->|no| K([Return to Leaderboard])
+  H --> L{Rubric/schema/model version changed?}
+  L -->|yes| M[Segment versions; do not trend incompatible results into one rank]
+  L -->|no| K
+```
+
 ## Wireframe-level structure
 
 ### Observatory shell
@@ -771,7 +885,7 @@ flowchart TD
 ```
 ┌ Watch / Observatory ──────────────────────────────────────────────────────────────┐
 │ Scope: All repositories  Search  Watcher health  Blind spots  Command palette    │
-├ Sessions / Message Board / Daydreams / Privacy & Capture ────────────────────────┤
+├ Sessions / Board / Leaderboard / Daydreams / Config / Privacy / Health ──────────┤
 │ Primary pane: fleet, thread list, learning queue, or policy                       │
 │ Detail pane: selected session, evidence, message thread, candidate, or policy     │
 │ Inspector: provenance, trust, versions, source links, residual uncertainty        │
@@ -782,8 +896,8 @@ flowchart TD
 
 Rows group by Repository and Worktree. The interaction pattern is an ARIA treegrid: one roving tab
 stop, Left/Right collapse or expand, Up/Down move rows, Home/End move to boundaries, and type-ahead
-finds an identity. Columns: Terminal/Agent, Goal, Liveness, Current phase, Weave summary, Evidence
-Coverage, coordination state, last activity. Plain shells render **Not Scored**, not poorly scored.
+finds an identity. Columns: Terminal/Agent, Harness/Model, Goal, Liveness, Current phase, Weave
+summary, Evidence Coverage, coordination state, last activity. Plain shells render **Not Scored**, not poorly scored.
 Blind spots appear in the list rather than in a separate hidden report. Virtualization preserves the
 focused identity and exposes correct row-count and row-position semantics.
 
@@ -806,6 +920,21 @@ Three stages: Observations, Candidates, Promoted. A Candidate places the claim, 
 counter-evidence, disconfirming check, expected effect, and action gate in one reading path.
 Promotion is disabled until its prerequisites are visible.
 
+### Leaderboard
+
+Ranks harness, model, and harness-model within one selected task class and score schema version.
+Columns: rank, harness/model, episodes (cohort), median Weave, Evidence Coverage, and trend. A cell
+below the cohort minimum or one that proxies a single human renders **Not Comparable**, never a rank.
+Opening a cell reveals the episodes and Scorecards behind it. Incompatible score schema/rubric
+versions are segmented, never trended into one ranking.
+
+### Configuration
+
+Sets the watched harnesses, models, and repositories, and the credentials the watcher uses.
+Credentials are entered as local secrets and shown only as masked references. The watcher is
+local-only by default; a credential-backed egress path stays off until an explicit opt-in notice is
+accepted, and each path and credential can be revoked.
+
 ### Privacy & Capture
 
 Persistent local-only notice; per-repository capture switches default off for prompts/code/tool
@@ -827,9 +956,17 @@ Scorecards and learning.
    are present.
 8. Every Promoted Learning has Retract/Supersede and source-provenance actions.
 9. No surface groups/ranks scores by identifiable human.
-10. Watcher Offline, Not Recorded, Advisory, Stale, Disputed, Unanswered, Unpromoted, Retracted,
-    Capture Off, Egress Blocked, Recomputing, Deletion Partial, and Retraction Failed are explicit
-    states.
+10. Watcher Offline, Not Recorded, Not Watched, Not Comparable, Advisory, Stale, Disputed,
+    Unanswered, Unpromoted, Retracted, Capture Off, Egress Blocked, Recomputing, Deletion Partial,
+    and Retraction Failed are explicit states.
+11. Harness and model are visible on each session row and Scorecard; unknown attribution renders
+    Not Recorded.
+12. Every leaderboard cell shows task class, score schema version, cohort size, and Evidence
+    Coverage; a cell below the cohort minimum or proxying one human renders Not Comparable, not a rank.
+13. Configuration keeps the watcher local-only by default; enabling credential-backed egress needs an
+    explicit opt-in with notice, and credentials never appear in logs, board, scores, or learning.
+14. Each watched agent's per-turn standing shows its harness-model rank, trend, and one
+    evidence-backed reason per dimension, and never exposes a single optimizable target.
 
 ---
 
@@ -882,7 +1019,10 @@ word + color.
 | Weave Scorecard | scoring, scored, Not Scored, Blocked floor, Advisory, Disputed, stale version, stale-input/recomputing, marginal stability, low coverage |
 | Dimension row | pass/fail/advisory/not recorded, expanded evidence, missing evidence, conflict |
 | Message Board | empty, thread, unanswered, acknowledged, failed write, stale read, quarantined |
-| Daydream item | observation, candidate, needs disconfirm, promotable, promoted, deferred, rejected, retracted |
+| Leaderboard | empty/no comparable cohort, ranked, not comparable, version-segmented, low coverage, filtering, error |
+| Configuration | scope unset, watched scope set, credential entry, credential set (masked), credential invalid/revoked, egress off, egress opt-in notice, egress enabled |
+| Agent standing (per-turn) | delivered, improving, regressing, insufficient cohort, target suppressed |
+| Daydream item | observation, candidate, needs disconfirm, disconfirmed, promotable, promoted, deferred, rejected, retracted |
 | Privacy policy | not acknowledged, capture off, capture on, redaction failure, egress blocked, deletion preview, deletion in progress, partial/failed deletion, deleted |
 | Command palette / search | default, loading/slow, no results, error, results |
 | Watcher Health | healthy, ingest lag, event gap, degraded adapter, grader unavailable, storage pressure, offline |
@@ -894,6 +1034,8 @@ word + color.
 - The Weave Score is not shown as a gauge that implies unsupported precision.
 - Score distributions or trends show uncertainty and task-class boundaries; no stochastic/advisory
   result appears as an unexplained point estimate.
+- Leaderboard ranks use tabular numerals, show cohort size and Evidence Coverage, mark task-class and
+  score schema-version boundaries, and never rank a below-minimum or single-human cell.
 - Any heatmap uses a perceptually uniform, colorblind-safe scale with a legend; never rainbow/jet.
 - Large session/trace lists virtualize and remain responsive at the reference scale.
 - Trace provenance and score versions are always inspectable.
@@ -931,6 +1073,13 @@ word + color.
 - `Deletion is incomplete - 2 derived records remain. Retry the unfinished steps.`
 - `Retraction failed - the prior guidance remains in force. Review the failed projection.`
 - `Egress blocked - Loomkeeper is local-only in this version.`
+- `Opus 4.8 on Claude Code leads refactor tasks - 12 episodes, 84% coverage`
+- `Not comparable - fewer than 5 comparable episodes in this task class and score version`
+- `Not watched - this harness, model, or repository is not in your configuration`
+- `Egress opt-in - hosted grading would send episode evidence off this device. Off by default.`
+- `Credential stored locally - it never appears in logs, boards, scores, or learning.`
+- `Your standing - Opus 4.8 / Claude Code, rank 2 of 4 on refactor tasks, trend +3 over 5 episodes`
+- `Improvement is not confirmed - outcome integrity and regression rate must hold, not just the number.`
 
 ## AI-UX requirements
 
@@ -945,10 +1094,14 @@ Applicable HAX guidelines:
 
 Shape-of-AI patterns:
 
-- **Wayfinder:** first-run "Watch a repository" and adapter setup.
-- **Tuners:** repository, task-class, score version, and evidence filters.
-- **Governors:** promotion prerequisites, disputes, deletion preview, feedback review.
-- **Trust builders:** local-only notice, evidence coverage, provenance, confidence, rubric versions.
+- **Wayfinder:** first-run "Watch a repository", adapter setup, and Configuration of watched
+  harnesses/models and credentials.
+- **Tuners:** repository, harness, model, task-class, score version, and evidence filters, including
+  the leaderboard axes.
+- **Governors:** promotion prerequisites, disputes, deletion preview, feedback review, credential
+  revocation, and the egress opt-in.
+- **Trust builders:** local-only notice, evidence coverage, provenance, confidence, rubric versions,
+  and per-turn standing that shows evidence and trend rather than a single target.
 - **Identifiers:** Loomkeeper name and thread/loom language without anthropomorphic authority.
 
 Wrong-answer and uncertainty states are first-class: Not Recorded, Advisory, Disputed, Blocked,
@@ -975,12 +1128,24 @@ Quarantined, Stale, and Retracted.
     in-progress, partial-failure, recovery, and final-result copy.
 11. Score/rubric/guidance changes use a static dismissible notice announced once; they never create a
     second animated focal point.
+12. A leaderboard never shows a rank without its cohort size and Evidence Coverage; below-minimum or
+    single-human cells render Not Comparable, and incompatible score versions are segmented.
+13. Credentials appear only as masked references and are never rendered into logs, board, score, or
+    learning surfaces; the egress opt-in is a static, explicit confirmation, not a default.
+14. Per-turn standing renders rank, trend, and one evidence-backed reason per dimension, and exposes
+    no single optimizable scalar.
 
 ## Flagged risks and residual unknowns
 
 - The exact registration/authentication contract per terminal agent requires spikes.
 - Cross-repository identity has no stable external telemetry standard.
 - Task-class calibration and qualitative rubric agreement are unproven.
+- Leaderboard comparability depends on task-class calibration; cross-harness/model ranks are only
+  meaningful within a calibrated task class and score schema version.
+- The credential and egress-opt-in security model (local secret storage, revocation, per-path
+  egress) requires a spike and a full threat model before any credential-backed call.
+- Per-turn standing feedback must not become a gameable target; it exposes evidence and trend, never
+  the complete held-out scoring implementation.
 - Advisory evaluator qualification must use separate calibration and held-out validation corpora,
   human agreement, prompt-injection invariance, and anti-Goodhart outcome counter-metrics.
 - Access to observable rationale varies by agent tool; hidden chain-of-thought is excluded.
@@ -1008,7 +1173,7 @@ Quarantined, Stale, and Retracted.
 
 ## Gate record
 
-`GATE specify · 2026-08-30 · reviewers: Test Architect, Data & Persistence Architect, UX Researcher/IA, UX & Accessibility, Security & Identity, Privacy & Data Governance, AI Systems Engineer, Simplifier · exit criteria: three layers present; conceptual model precedes UX/UI; 12 falsifiable stories; score/floor/coverage oracles defined; recovery flows drawn; privacy/security boundaries dispositioned · verdict: PASS-WITH-CONDITIONS · vetoes: hard vetoes cleared; native WPF/AT proof, full threat/privacy models, evaluator corpus, dependency provenance, and implementation Proof Pack remain next-phase conditions`
+`GATE specify · 2026-08-30 · reviewers: Test Architect, Data & Persistence Architect, UX Researcher/IA, UX & Accessibility, Security & Identity, Privacy & Data Governance, AI Systems Engineer, Simplifier · exit criteria: three layers present; conceptual model precedes UX/UI; 16 falsifiable stories; score/floor/coverage oracles defined; recovery flows drawn; privacy/security boundaries dispositioned · verdict: PASS-WITH-CONDITIONS · vetoes: hard vetoes cleared; native WPF/AT proof, full threat/privacy models, evaluator corpus, dependency provenance, and implementation Proof Pack remain next-phase conditions; harness/model attribution, the leaderboard, and the credential/egress-opt-in model were added on user request and inherit the same conditions plus a credential and egress threat/privacy review`
 
 ---
 

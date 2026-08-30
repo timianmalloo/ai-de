@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-30T21:44:42Z",
+  "generated": "2026-08-30T22:26:01Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2631,6 +2631,28 @@ window.AUDIT_DATA = {
         "branch": "feature/agent-watcher-substrate",
         "pushed": null
       }
+    },
+    {
+      "id": "al-0154",
+      "shortname": "watcher-tighten-and-extend",
+      "datetime": "2026-08-30T22:25:45Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Review/tighten the Loomkeeper watcher spec, proposal HTML and mockups (gpt walkabout); then add harness+model scoring axes, a harness/model/harness-model leaderboard, user credential/config, and per-turn agent-visible standing with per-score why.",
+      "summary": "Cut spec process residue; fixed Watcher Health nav + Daydream state gaps; replaced the false-precision score gauge in the proposal with an honest chip (61, no conic); added harness/model identity+aggregation, US-13..16, Leaderboard + Configuration surfaces (spec Part B/C, DESIGN.md), a Leaderboard and Configuration view + per-turn Standing block in the mockup; all gates green.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/agentic-watcher-substrate.md",
+        "docs/mockups/watcher-observatory.html"
+      ],
+      "tags": [
+        "loomkeeper",
+        "leaderboard",
+        "scoring"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -4886,6 +4908,26 @@ window.AUDIT_DATA = {
       "git": {
         "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
         "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0096",
+      "datetime": "2026-08-30T22:26:01Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "spec",
+      "skill": "ui-design",
+      "title": "Loomkeeper scoring gains harness/model axes, a leaderboard, user credentials, and per-turn standing",
+      "prompt": "Add: harness+model as scoring/aggregation axes; a leaderboard by harness/model/harness-model; user-configurable watcher credentials (Claude Code / Copilot); leaderboard + why visible to the agent each turn.",
+      "summary": "Extended the watcher spec (US-13..16, domain model, NFR/governance), DESIGN.md, and the Observatory mockup with harness/model attribution, a task-class-calibrated non-personnel Leaderboard, a Configuration surface with local-secret credentials and an explicit egress opt-in, and a per-turn agent Standing view; also tightened prior gpt over-production (removed process residue, fixed nav/state gaps, replaced the false-precision score gauge).",
+      "rationale": "User requested the four capabilities; kept them inside the settled local-only/non-personnel/advisory floors.",
+      "artifacts": [],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "b326c18e75e6047944c7e650c0424ebaa843a995",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

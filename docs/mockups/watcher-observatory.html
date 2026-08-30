@@ -257,11 +257,20 @@
   .metric span{color:var(--muted);font-size:var(--fs-2)}
   .source-row{display:grid;grid-template-columns:1fr 90px 100px;gap:var(--sp-4);align-items:center;padding:var(--sp-4) 0;
     border-bottom:1px solid var(--border)}
+  .leaderboard-grid,.config-grid{display:grid;grid-template-columns:1.6fr .9fr;gap:var(--sp-5)}
+  .lb-row{display:grid;grid-template-columns:30px 1.4fr 64px 80px 78px 60px;gap:var(--sp-3);align-items:center;
+    padding:var(--sp-3) 0;border-bottom:1px solid var(--border);font-size:var(--fs-2)}
+  .lb-row.head{color:var(--muted);font-size:var(--fs-1)}
+  .lb-row .num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;text-align:right}
+  .standing{margin-top:var(--sp-4);padding:var(--sp-4);border:1px solid var(--border);border-radius:var(--radius-md);
+    background:var(--raised)}
+  .standing .trend{color:var(--verified);font-family:var(--font-mono)}
 
   /* View switch */
   .view{display:none}
   [data-view="sessions"] .view-sessions,[data-view="board"] .view-board,[data-view="daydreams"] .view-daydreams,
-  [data-view="privacy"] .view-privacy,[data-view="health"] .view-health{display:block}
+  [data-view="privacy"] .view-privacy,[data-view="health"] .view-health,
+  [data-view="leaderboard"] .view-leaderboard,[data-view="config"] .view-config{display:block}
   [data-persona="agent"] .operator-only,[data-persona="agent"] .curator-only,[data-persona="agent"] .privacy-only{display:none}
   [data-persona="curator"] .privacy-only{display:none}
   [data-persona="privacy"] .curator-only{display:none}
@@ -278,7 +287,8 @@
     justify-content:center;padding:var(--sp-2)}
   [data-viewport="mobile"] .main{grid-column:1;grid-row:3}
   [data-viewport="mobile"] .sessions-grid,[data-viewport="mobile"] .board-grid,[data-viewport="mobile"] .daydream-grid,
-  [data-viewport="mobile"] .privacy-grid,[data-viewport="mobile"] .health-grid{grid-template-columns:1fr}
+  [data-viewport="mobile"] .privacy-grid,[data-viewport="mobile"] .health-grid,
+  [data-viewport="mobile"] .leaderboard-grid,[data-viewport="mobile"] .config-grid{grid-template-columns:1fr}
   [data-viewport="mobile"] .topbar .scope,[data-viewport="mobile"] .policy-pill{display:none}
   [data-viewport="mobile"] .tabs{overflow:auto}
 
@@ -296,7 +306,8 @@
   <label>View
     <select id="h-view">
       <option value="sessions">Sessions</option><option value="board">Message Board</option>
-      <option value="daydreams">Daydreams</option><option value="privacy">Privacy & Capture</option>
+      <option value="leaderboard">Leaderboard</option>
+      <option value="daydreams">Daydreams</option><option value="config">Configuration</option><option value="privacy">Privacy & Capture</option>
       <option value="health">Watcher Health</option>
     </select>
   </label>
@@ -368,7 +379,9 @@
     <nav class="tabs" aria-label="Observatory surfaces">
       <button class="tab active" data-view-tab="sessions">Sessions</button>
       <button class="tab" data-view-tab="board">Message Board</button>
+      <button class="tab" data-view-tab="leaderboard">Leaderboard</button>
       <button class="tab" data-view-tab="daydreams">Daydreams</button>
+      <button class="tab operator-only" data-view-tab="config">Configuration</button>
       <button class="tab privacy-only" data-view-tab="privacy">Privacy & Capture</button>
       <button class="tab" data-view-tab="health">Watcher Health</button>
     </nav>
@@ -432,12 +445,12 @@
                   <span role="gridcell" class="muted">—</span><span role="gridcell" class="mono">100%</span><span role="gridcell">—</span>
                 </div>
                 <div class="session-row" role="row" aria-rowindex="4" aria-level="3" aria-selected="false" tabindex="-1" data-session="watcher">
-                  <div class="identity" role="gridcell" style="padding-left:var(--sp-7)"><span class="twisty"></span><span class="agent-icon">C</span><span class="identity-text"><b class="short-name">copilot-watcher-design</b><b class="long-name">copilot-watcher-design-e3c8ed7d-9bf0-42eb-ac6d-92f829998c48</b><span>goal: specify + mock Observatory</span></span></div>
+                  <div class="identity" role="gridcell" style="padding-left:var(--sp-7)"><span class="twisty"></span><span class="agent-icon">C</span><span class="identity-text"><b class="short-name">copilot-watcher-design</b><b class="long-name">copilot-watcher-design-e3c8ed7d-9bf0-42eb-ac6d-92f829998c48</b><span class="mono" style="font-size:var(--fs-1)">GitHub Copilot · Opus 4.8</span><span>goal: specify + mock Observatory</span></span></div>
                   <span role="gridcell"><span class="badge live"><span class="glyph">●</span> Alive</span></span>
                   <span role="gridcell" class="mono">84%</span><span role="gridcell" class="score-mini">73</span>
                 </div>
                 <div class="session-row" role="row" aria-rowindex="5" aria-level="3" aria-selected="false" tabindex="-1" data-session="facelift">
-                  <div class="identity" role="gridcell" style="padding-left:var(--sp-7)"><span class="twisty"></span><span class="agent-icon">C</span><span class="identity-text"><b>copilot-design-4d24</b><span>goal: app facelift + graph surfaces</span></span></div>
+                  <div class="identity" role="gridcell" style="padding-left:var(--sp-7)"><span class="twisty"></span><span class="agent-icon">C</span><span class="identity-text"><b>copilot-design-4d24</b><span class="mono" style="font-size:var(--fs-1)">GitHub Copilot · GPT-5.6 Terra</span><span>goal: app facelift + graph surfaces</span></span></div>
                   <span role="gridcell"><span class="badge live"><span class="glyph">●</span> Alive</span></span>
                   <span role="gridcell" class="mono">96%</span><span role="gridcell" class="score-mini">88</span>
                 </div>
@@ -446,7 +459,7 @@
                   <span role="gridcell" class="muted">—</span><span role="gridcell" class="mono">71%</span><span role="gridcell">—</span>
                 </div>
                 <div class="session-row" role="row" aria-rowindex="7" aria-level="3" aria-selected="true" tabindex="0" data-session="probe">
-                  <div class="identity" role="gridcell" style="padding-left:var(--sp-7)"><span class="twisty"></span><span class="agent-icon">A</span><span class="identity-text"><b>pane-probe agent</b><span>goal: verify layout contracts</span></span></div>
+                  <div class="identity" role="gridcell" style="padding-left:var(--sp-7)"><span class="twisty"></span><span class="agent-icon">A</span><span class="identity-text"><b>pane-probe agent</b><span class="mono" style="font-size:var(--fs-1)">Claude Code · Opus 4.8</span><span>goal: verify layout contracts</span></span></div>
                   <span role="gridcell"><span class="badge stale"><span class="glyph">◷</span> Stale</span></span>
                   <span role="gridcell" class="mono">58%</span><span role="gridcell" class="score-mini">N/R</span>
                 </div>
@@ -515,6 +528,11 @@
                   <div class="dimension"><div><b>Guidance adherence</b><small>Triggered repo guidance and required gates</small><div class="dim-bar"><i style="width:89%"></i></div></div><span class="dim-score">89</span><button class="evidence-btn">Evidence 16</button></div>
                   <div class="dimension solution"><div><b>Solution economy</b><small>Smallest complete solution · <span class="badge advisory"><span class="glyph">~</span> Advisory</span></small><div class="dim-bar"><i style="width:58%"></i></div></div><span class="dim-score advisory-value">58</span><span class="dim-score model-missing">N/R</span><button class="evidence-btn">Evidence + dispute</button></div>
                   <div class="dimension"><div><b>Coordination & learning</b><small>Registration, messages, claims, reusable insight</small><div class="dim-bar"><i style="width:74%"></i></div></div><span class="dim-score">74</span><button class="evidence-btn">Evidence 8</button></div>
+                </div>
+                <div class="standing" aria-label="Standing delivered to this agent each turn">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-2)"><span class="section-title">Standing sent to agent</span><span class="badge advisory"><span class="glyph">~</span> per turn</span></div>
+                  <p class="muted" style="margin:0 0 var(--sp-2)">Claude Code &middot; Opus 4.8 &middot; rank 1 of 4 on refactor tasks &middot; <span class="trend">trend +3 over 5 episodes</span></p>
+                  <p class="muted" style="margin:0">Why: Outcome integrity strong (7 evidence records); Solution economy is the weakest dimension &mdash; prefer the smallest complete change. Improvement is affirmed only if outcome integrity and regression rate hold; no single target is exposed.</p>
                 </div>
                 </section>
                 </div>
@@ -675,6 +693,59 @@ Next turn: define the oracle and the failure branch before adding surface detail
               <div class="kv"><span>Impact</span><b>2 sessions · 4 dimensions</b></div>
               <div class="kv"><span>First seen</span><span class="mono">12:41:08</span></div>
               <div class="kv"><span>Action</span><button class="btn">Configure adapter</button></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view view-leaderboard">
+          <div class="toolbar"><h1>Leaderboard</h1>
+            <label class="scope-label muted" style="font-size:var(--fs-2)">Task class
+              <select class="scope" aria-label="Leaderboard task class"><option>Refactor</option><option>Investigate</option><option>Implement feature</option></select></label>
+            <label class="scope-label muted" style="font-size:var(--fs-2)">Score schema
+              <select class="scope" aria-label="Score schema version"><option>v1</option></select></label>
+            <span class="top-spacer"></span><span class="badge unknown">ranks tools and models, never people</span>
+          </div>
+          <div class="notice" style="display:flex"><span><strong>Comparable within one task class and score schema version only.</strong> Cells below 5 episodes, or that resolve to one person, show Not Comparable.</span></div>
+          <div class="leaderboard-grid">
+            <section class="island">
+              <div class="lb-row head"><span>#</span><span>Harness / model</span><span class="num">Median</span><span class="num">Episodes</span><span class="num">Coverage</span><span class="num">Trend</span></div>
+              <div class="lb-row"><span class="num">1</span><b>Claude Code · Opus 4.8</b><span class="num">68</span><span class="num">12</span><span class="num">84%</span><span class="num" style="color:var(--verified)">+3</span></div>
+              <div class="lb-row"><span class="num">2</span><b>Copilot · GPT-5.6 Terra</b><span class="num">64</span><span class="num">9</span><span class="num">79%</span><span class="num" style="color:var(--verified)">+1</span></div>
+              <div class="lb-row"><span class="num">3</span><b>Copilot · Opus 4.8</b><span class="num">61</span><span class="num">7</span><span class="num">82%</span><span class="num" style="color:var(--danger)">-2</span></div>
+              <div class="lb-row"><span class="num">4</span><b>Claude Code · Sonnet 4.6</b><span class="num">58</span><span class="num">6</span><span class="num">77%</span><span class="num" style="color:var(--verified)">+2</span></div>
+              <div class="lb-row"><span class="num">-</span><b>Claude Code · GPT-5.6 <span class="badge unknown">Not comparable</span></b><span class="num">N/R</span><span class="num">3</span><span class="num">N/R</span><span class="num">N/R</span></div>
+            </section>
+            <aside class="island">
+              <span class="section-title">Selected cell</span>
+              <h2 style="font-size:var(--fs-5)">Claude Code · Opus 4.8</h2>
+              <div class="kv"><span>Task class</span><b>Refactor</b></div>
+              <div class="kv"><span>Score schema</span><span class="mono">v1</span></div>
+              <div class="kv"><span>Cohort</span><span class="mono">12 episodes</span></div>
+              <div class="kv"><span>Median Weave</span><span class="mono">68 · 84% coverage</span></div>
+              <p class="muted">Strongest on Outcome integrity and Guidance adherence; Solution economy is the recurring weak dimension across the cohort.</p>
+              <button class="btn">Open the 12 episodes</button>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view view-config">
+          <div class="toolbar"><h1>Configuration</h1><span class="badge live"><span class="glyph">⌂</span> Local-only</span><span class="top-spacer"></span><button class="btn">Watch a repository</button></div>
+          <div class="config-grid">
+            <section class="island">
+              <div class="pane-head" style="margin:calc(-1 * var(--sp-6));margin-bottom:var(--sp-4)"><span class="section-title">Watched scope</span><span class="muted mono">harnesses · models · repositories</span></div>
+              <div class="setting"><div><b>Claude Code</b><p>Native OTLP registration and coordination log.</p></div><button class="switch" aria-label="Watch Claude Code enabled" aria-pressed="true"></button></div>
+              <div class="setting"><div><b>GitHub Copilot</b><p>Terminal adapter; injected coordination contract.</p></div><button class="switch" aria-label="Watch Copilot enabled" aria-pressed="true"></button></div>
+              <div class="setting"><div><b>Codex CLI</b><p>No adapter installed. Sessions render Not Watched.</p></div><button class="switch" aria-label="Watch Codex disabled" aria-pressed="false"></button></div>
+              <div class="setting"><div><b>Repositories</b><p>ai-de and TheTerrace watched; agent-coordination not watched.</p></div><button class="btn">Edit repositories</button></div>
+            </section>
+            <aside class="island">
+              <span class="section-title">Credentials and egress</span>
+              <div class="kv"><span>Claude Code</span><span class="mono">cc-oauth · &bull;&bull;&bull;&bull;</span></div>
+              <div class="kv"><span>GitHub Copilot</span><span class="badge unknown">Not set</span></div>
+              <p class="muted">Credentials are stored as local secrets and never appear in logs, board, scores, or learning. Each is revocable.</p>
+              <div class="setting"><div><b>Credential-backed off-device grading</b><p>Would send episode evidence to a hosted model. Off by default.</p></div><button class="switch" aria-label="Off-device grading disabled" aria-pressed="false"></button></div>
+              <div class="kv"><span>Egress</span><button class="btn" disabled>Egress blocked</button></div>
+              <div style="display:flex;gap:var(--sp-3);margin-top:var(--sp-4)"><button class="btn">Revoke credential</button><button class="btn">Egress opt-in notice</button></div>
             </aside>
           </div>
         </section>
