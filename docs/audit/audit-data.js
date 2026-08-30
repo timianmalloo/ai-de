@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T21:02:35Z",
+  "generated": "2026-08-30T21:30:46Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2694,6 +2694,27 @@ window.AUDIT_DATA = {
         "explorer",
         "regression",
         "defect-fix"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0145",
+      "shortname": "graph-category-filter",
+      "datetime": "2026-08-30T21:30:46Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "the graph is so big — let me prune it by knowledge / specs / code / data; ui-design and implement in the graph and explorer",
+      "summary": "Added a client-side category filter to CanvasPage (so it works in BOTH the workbench graph pane and the Explorer — one page). Design: four toggle chips (Code/Data/Specs/Knowledge) matching the existing chrome, each with a colour dot + live per-category count, in a filter bar below the caption; toggling hides that category's nodes and any edge touching a hidden node, and the caption reports 'N of M shown — filtered by category'. categoryOf(kind) maps has_type values -> category: Data = table/column/schema/azure/sql; Code = C# types + unrecognised; Specs/Knowledge = docs (forward-compatible, ~0 in the code graph today). Keyboard shortcuts guarded so keys on a chip don't switch the view; P2-FOCUS-03 keyboard trap still green. Future: server-side GraphQuery.Kinds to pull MORE relevant nodes within the cap. App.Tests 139/139.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/CanvasPage.cs"
+      ],
+      "tags": [
+        "graph",
+        "filter",
+        "ui-design"
       ],
       "outcome": "success"
     }

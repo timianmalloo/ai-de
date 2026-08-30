@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T21:02:36Z",
+  "generated": "2026-08-30T21:30:46Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [

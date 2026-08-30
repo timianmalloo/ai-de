@@ -40,6 +40,15 @@ internal static class CanvasPage
                   border: 1px solid #2A313B; border-radius: 8px; padding: 3px 9px; width: 190px; }
           input.search::placeholder { color: #98A3B2; }
           input.search:focus { outline: 2px solid #5B9DD9; outline-offset: 1px; }
+          #filters { display: flex; gap: 6px; margin: 8px 0 0; flex-wrap: wrap; align-items: center; }
+          #filters .flabel { color: #98A3B2; font-size: 12px; margin-right: 2px; }
+          .fchip { font: inherit; font-size: 12px; background: #1A1F26; color: #E4E9EF;
+                  border: 1px solid #2A313B; border-radius: 999px; padding: 2px 10px; cursor: pointer; }
+          .fchip .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+                  margin-right: 5px; vertical-align: middle; }
+          .fchip[aria-pressed="false"] { color: #98A3B2; opacity: .55; }
+          .fchip[aria-pressed="false"] .dot { opacity: .4; }
+          .fchip:focus { outline: 2px solid #5B9DD9; outline-offset: 1px; }
           #fit { margin-left: auto; }
           #mode { margin-left: 6px; }
           #caption { color: #98A3B2; margin: 6px 0 0; }
@@ -83,6 +92,7 @@ internal static class CanvasPage
           </header>
           <p id="caption">Waiting for the workspace&#8230;</p>
           <p id="warn"></p>
+          <div id="filters" role="group" aria-label="Filter the graph by artifact category"></div>
           <div id="stage"><svg id="edges"></svg></div>
           <p class="legend" id="legend"></p>
           <script>
@@ -108,8 +118,77 @@ internal static class CanvasPage
             var mode = '2d';
             var rotX = -0.35, rotY = 0.6;   // a gentle default 3D framing
             var lastGraph = null;
-            var records = [];   // { id, isRoot, el, p2:{x,y}, p3:{x,y,z} }
+            var records = [];   // { id, isRoot, el, p2:{x,y}, p3:{x,y,z}, cat }
             var edgeRecs = [];  // { from, to, line }
+
+            // ---- category filter: prune the graph to the artifact categories the operator wants ----
+            var filtersEl = document.getElementById('filters');
+            var CATS = [
+              { id: 'code', label: 'Code', color: '#5B9DD9' },
+              { id: 'data', label: 'Data', color: '#5FB98F' },
+              { id: 'specs', label: 'Specs', color: '#B08AD0' },
+              { id: 'knowledge', label: 'Knowledge', color: '#D8A650' }
+            ];
+            var activeCats = { code: true, data: true, specs: true, knowledge: true };
+
+            // Map a node's declared kind to one of the four categories. Code = C# types (and anything
+            // unrecognised); Data = database / data-model + infra (tables, columns, schema, azure);
+            // Specs and Knowledge = docs — forward-compatible, the code graph carries few of these yet.
+            function categoryOf(kind) {
+              var k = (kind || '').toLowerCase();
+              if (k === 'table' || k === 'column' || k === 'schema' || k === 'view' || k === 'index'
+                  || k.indexOf('azure') === 0 || k.indexOf('sql') === 0) { return 'data'; }
+              if (k === 'spec' || k === 'requirement' || k === 'acceptance') { return 'specs'; }
+              if (k === 'knowledge' || k === 'doc' || k === 'adr' || k === 'design' || k === 'note'
+                  || k === 'decision-note' || k === 'markdown' || k === 'html' || k === 'diagram'
+                  || k === 'proof') { return 'knowledge'; }
+              return 'code';
+            }
+
+            function buildFilters(counts) {
+              filtersEl.innerHTML = '';
+              var lab = document.createElement('span');
+              lab.className = 'flabel';
+              lab.textContent = 'Show:';
+              filtersEl.appendChild(lab);
+              CATS.forEach(function (c) {
+                var n = counts[c.id] || 0;
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'fchip';
+                function label() {
+                  return c.label + ', ' + n + ' node(s), ' + (activeCats[c.id] ? 'shown' : 'hidden');
+                }
+                b.setAttribute('aria-pressed', activeCats[c.id] ? 'true' : 'false');
+                b.innerHTML = '<span class="dot" style="background:' + c.color + '"></span>'
+                  + c.label + ' ' + n;
+                b.setAttribute('aria-label', label());
+                b.addEventListener('click', function () {
+                  activeCats[c.id] = !activeCats[c.id];
+                  b.setAttribute('aria-pressed', activeCats[c.id] ? 'true' : 'false');
+                  b.setAttribute('aria-label', label());
+                  applyFilter();
+                });
+                filtersEl.appendChild(b);
+              });
+            }
+
+            function applyFilter() {
+              var visible = {};
+              var shown = 0;
+              records.forEach(function (r) {
+                var on = activeCats[r.cat] !== false;
+                r.el.style.display = on ? '' : 'none';
+                if (on) { visible[r.id] = 1; shown++; }
+              });
+              edgeRecs.forEach(function (er) {
+                er.line.style.display = (visible[er.from] && visible[er.to]) ? '' : 'none';
+              });
+              if (CATS.some(function (c) { return !activeCats[c.id]; }) && lastGraph) {
+                document.getElementById('caption').textContent =
+                  shown + ' of ' + (lastGraph.nodes || []).length + ' node(s) shown — filtered by category.';
+              }
+            }
 
             function activate(nodeId) {
               if (!nodeId || nodeId === current) { return; }
@@ -194,9 +273,14 @@ internal static class CanvasPage
             window.addEventListener('focus', claimFocus);
 
             document.addEventListener('keydown', function (e) {
-              // While the search box has focus its own handlers own the keys — the node shortcuts
-              // (2/3, /, Enter, Escape) must not fire, or typing a query would toggle the view.
-              if (e.target === searchInput || document.activeElement === searchInput) { return; }
+              // While a chrome control (search box, filter chip, or a header button) has focus, its
+              // own handlers own the keys — the node shortcuts (2/3/0, /) must not fire, or typing a
+              // query or toggling a filter would also switch the view.
+              var ae = document.activeElement;
+              if (ae && (ae === searchInput
+                  || (ae.classList && (ae.classList.contains('fchip') || ae.classList.contains('chrome'))))) {
+                return;
+              }
 
               // Jump to search from anywhere in the graph, and reset the 2D view with 0.
               if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
@@ -503,7 +587,8 @@ internal static class CanvasPage
 
                 el.addEventListener('click', function () { activate(n.id); });
                 stage.appendChild(el);
-                records.push({ id: n.id, isRoot: !!n.isRoot, el: el, p2: { x: x, y: y }, p3: p3 });
+                records.push({ id: n.id, isRoot: !!n.isRoot, el: el, p2: { x: x, y: y }, p3: p3,
+                  cat: categoryOf(n.kind) });
               });
 
               var joins = 0, inferred = 0;
@@ -530,6 +615,12 @@ internal static class CanvasPage
               layout2d(records, graph.edges, stage.clientWidth || 800, stage.clientHeight || 420);
               fit();
               place();
+
+              // Category filter chips, with a live per-category count, then apply the current filter.
+              var catCounts = {};
+              records.forEach(function (r) { catCounts[r.cat] = (catCounts[r.cat] || 0) + 1; });
+              buildFilters(catCounts);
+              applyFilter();
 
               var legend = document.getElementById('legend');
               var contextNames = Object.keys(contexts);
