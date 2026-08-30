@@ -40,6 +40,9 @@ public sealed class WorkbenchShell : IDisposable
     // the same CanvasSurface across re-renders, so BindCanvas can run repeatedly on one instance; the
     // FocusLeaveRequested handler is a lambda (cannot be -='d), so it is subscribed once per instance.
     private CanvasSurface? _focusBoundCanvas;
+    // Cross-restart terminal customization, keyed by the stable SurfaceId (off the Core layout model).
+    private TerminalCustomizationStore? _customizationStore;
+    private readonly HashSet<string> _customizationInitialized = new(StringComparer.Ordinal);
     private CanvasGraphViewModel? _canvasGraph;
 
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
@@ -146,6 +149,9 @@ public sealed class WorkbenchShell : IDisposable
             Persistence = new LayoutPersistence(
                 Service, Path.Combine(workspaceDataDirectory, "layout.json"), surfaces,
                 restorableKinds: SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal));
+
+            _customizationStore = new TerminalCustomizationStore(
+                Path.Combine(workspaceDataDirectory, "terminal-customization.json"));
 
             var restored = Persistence.Restore();
             if (restored.ErrorCode is not null || restored.WasDefaulted)
@@ -402,6 +408,9 @@ public sealed class WorkbenchShell : IDisposable
                 Service, Path.Combine(dataDirectory, "layout.json"), surfaces,
                 restorableKinds: SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal));
 
+            _customizationStore = new TerminalCustomizationStore(
+                Path.Combine(dataDirectory, "terminal-customization.json"));
+
             var restored = Persistence.Restore();
             if (restored.ErrorCode is not null || restored.WasDefaulted)
             {
@@ -553,15 +562,46 @@ public sealed class WorkbenchShell : IDisposable
     /// </remarks>
     internal void BindTerminalAttention()
     {
-        foreach (var terminal in Service.Current.AllStacks()
+        // Materialised before iterating: applying a saved rename triggers a re-render, and enumerating
+        // lazily while the view rebuilds is asking for trouble.
+        var terminals = Service.Current.AllStacks()
             .SelectMany(stack => stack.Surfaces)
             .Select(surface => Adapter.ContentFor(surface.SurfaceId))
-            .OfType<TerminalSurface>())
+            .OfType<TerminalSurface>()
+            .ToList();
+
+        foreach (var terminal in terminals)
         {
             terminal.AttentionRequired -= OnTerminalAttentionRequired;
             terminal.AttentionRequired += OnTerminalAttentionRequired;
             terminal.DisplayNameChanged -= OnTerminalRenamed;
             terminal.DisplayNameChanged += OnTerminalRenamed;
+            terminal.CustomizationChanged -= OnTerminalCustomizationChanged;
+            terminal.CustomizationChanged += OnTerminalCustomizationChanged;
+
+            // Apply saved customization once per surface (reconcile reuses the instance, so this must
+            // not re-apply every render). The SurfaceId round-trips through the layout store, so a
+            // renamed/recoloured terminal comes back the same after a restart.
+            if (_customizationStore is not null
+                && _customizationInitialized.Add(terminal.SurfaceId)
+                && _customizationStore.TryGet(terminal.SurfaceId, out var saved)
+                && saved is not null)
+            {
+                if (!string.IsNullOrEmpty(saved.Name))
+                {
+                    terminal.Rename(saved.Name);
+                }
+
+                if (!string.IsNullOrEmpty(saved.Scheme))
+                {
+                    terminal.ApplyScheme(TerminalColorScheme.ByName(saved.Scheme));
+                }
+
+                if (!string.IsNullOrEmpty(saved.TabColour))
+                {
+                    terminal.TabColour = HexToBrush(saved.TabColour);
+                }
+            }
         }
     }
 
@@ -569,6 +609,35 @@ public sealed class WorkbenchShell : IDisposable
     // BuildPane reads from the surface's DisplayName, reflects it. Reconcile makes this cheap and
     // leaves every live session untouched.
     private void OnTerminalRenamed(object? sender, EventArgs e) => Adapter.Render();
+
+    // Persist any customization change (name, scheme, tab colour) keyed by the surface id, so it
+    // survives a restart. Best-effort inside the store; a write failure never reaches here.
+    private void OnTerminalCustomizationChanged(object? sender, EventArgs e)
+    {
+        if (sender is TerminalSurface terminal && _customizationStore is not null)
+        {
+            _customizationStore.Save(terminal.SurfaceId, new TerminalCustomization(
+                terminal.DisplayName,
+                terminal.Scheme.Name,
+                BrushToHex(terminal.TabColour)));
+        }
+    }
+
+    private static string? BrushToHex(System.Windows.Media.Brush? brush) =>
+        brush is System.Windows.Media.SolidColorBrush solid ? solid.Color.ToString() : null;
+
+    private static System.Windows.Media.Brush? HexToBrush(string hex)
+    {
+        try
+        {
+            return new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(hex));
+        }
+        catch
+        {
+            return null;
+        }
+    }
 
     private void OnTerminalAttentionRequired(object? sender, string message) =>
         Announcer.Announce(message);

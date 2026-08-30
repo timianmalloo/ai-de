@@ -100,6 +100,60 @@ public sealed class TerminalCustomizationTests
         });
     }
 
+    [Fact]
+    public void CustomizationStore_RoundTripsCustomization_BySurfaceId()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"aide-term-{Guid.NewGuid():N}.json");
+        try
+        {
+            new TerminalCustomizationStore(path)
+                .Save("terminal#abc", new TerminalCustomization("Build shell", "Warm", "#FF5B9DD9"));
+
+            // A fresh store on the same path is the restart: the customization comes back.
+            Assert.True(new TerminalCustomizationStore(path).TryGet("terminal#abc", out var got));
+            Assert.Equal("Build shell", got!.Name);
+            Assert.Equal("Warm", got.Scheme);
+            Assert.Equal("#FF5B9DD9", got.TabColour);
+        }
+        finally
+        {
+            if (File.Exists(path)) { File.Delete(path); }
+        }
+    }
+
+    [Fact]
+    public void CustomizationStore_DropsAnEntryResetToDefault()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"aide-term-{Guid.NewGuid():N}.json");
+        try
+        {
+            var store = new TerminalCustomizationStore(path);
+            store.Save("t1", new TerminalCustomization("Named", "Cool", "#FF000000"));
+            store.Save("t1", new TerminalCustomization(null, "Default", null));
+
+            Assert.False(new TerminalCustomizationStore(path).TryGet("t1", out _));
+        }
+        finally
+        {
+            if (File.Exists(path)) { File.Delete(path); }
+        }
+    }
+
+    [Fact]
+    public void CustomizationStore_StartsClean_WhenTheFileIsCorrupt()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"aide-term-{Guid.NewGuid():N}.json");
+        try
+        {
+            File.WriteAllText(path, "{ this is not valid json ");
+            Assert.False(new TerminalCustomizationStore(path).TryGet("anything", out _));
+        }
+        finally
+        {
+            if (File.Exists(path)) { File.Delete(path); }
+        }
+    }
+
     private sealed class NamedControl(string? name) : Border, IHasDisplayName
     {
         public string? DisplayName { get; } = name;

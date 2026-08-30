@@ -65,4 +65,8 @@ public sealed record TerminalColorScheme(
     /// <summary>The presets offered in the colour-scheme menu, in order.</summary>
     public static IReadOnlyList<TerminalColorScheme> Presets { get; } =
         [Default, Warm, Cool, HighContrast];
+
+    /// <summary>The preset with this name, or <see cref="Default"/> if none matches.</summary>
+    public static TerminalColorScheme ByName(string? name) =>
+        Presets.FirstOrDefault(s => string.Equals(s.Name, name, StringComparison.Ordinal)) ?? Default;
 }

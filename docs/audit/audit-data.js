@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T15:34:31Z",
+  "generated": "2026-08-30T15:46:52Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2144,6 +2144,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchAdapter.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0119",
+      "shortname": "terminal-persistence-and-busy-close",
+      "datetime": "2026-08-30T15:46:52Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do all of these next steps, dont defer the rail polish",
+      "summary": "Cross-restart persistence: TerminalCustomizationStore JSON sidecar keyed by stable SurfaceId; TerminalSurface exposes SurfaceId + CustomizationChanged; shell loads/applies once per surface and saves on change. Busy-close confirmation: closing a Busy terminal prompts first. +3 store tests (App 131).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/TerminalCustomizationStore.cs"
       ],
       "tags": [],
       "outcome": "success"

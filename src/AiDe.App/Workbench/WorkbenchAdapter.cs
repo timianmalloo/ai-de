@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
+using AiDe.Core.Dispatch;
 using AiDe.Core.Workbench;
 using AvalonDock;
 using AvalonDock.Layout;
@@ -189,6 +190,23 @@ public sealed class WorkbenchAdapter
 
     private void CloseSurface(string surfaceId)
     {
+        // A running terminal is a live session the user set up; confirm before ending it so a stray
+        // click on the tab's ✕ cannot lose it. Idle/ready terminals close instantly.
+        if (ContentFor(surfaceId) is TerminalSurface { Activity: SessionActivity.Busy })
+        {
+            var proceed = MessageBox.Show(
+                Window.GetWindow(Manager),
+                "This terminal is running something. Close it and end the session?",
+                "Close terminal",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (proceed != MessageBoxResult.Yes)
+            {
+                return;
+            }
+        }
+
         _service.Apply(new LayoutOperation.CloseSurface(surfaceId));
         Render();
     }

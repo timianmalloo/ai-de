@@ -45,6 +45,7 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
         _screen = new TerminalScreen(columns, rows);
         _parser = new VtParser(_screen);
         _dispatcher = Dispatcher;
+        SurfaceId = sessionId;
 
         AutomationProperties.SetName(this, title);
         Content = BuildView();
@@ -55,17 +56,25 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
 
     // ── Per-session customization (Design-owned view state) ───────────────────────────────────
     // These live on the surface, not the Core layout model. Reconcile (DC-029) keeps this instance
-    // alive across re-renders, so a rename / colour / scheme persists while the session is open
-    // without a model change. Cross-restart persistence is a separate Core LayoutStore decision.
+    // alive across re-renders, so a rename / colour / scheme persists while the session is open; the
+    // shell persists them across restart by SurfaceId (TerminalCustomizationStore), still without a
+    // Core model change, because the layout store round-trips the surface id.
 
     private string? _displayName;
     private TerminalColorScheme _scheme = TerminalColorScheme.Default;
+
+    /// <summary>The layout surface id this pane renders — stable across restart, so it keys the
+    /// customization store.</summary>
+    public string SurfaceId { get; }
 
     /// <summary>The user-chosen tab caption, or null to use the model title. See <see cref="IHasDisplayName"/>.</summary>
     public string? DisplayName => _displayName;
 
     /// <summary>Raised when the user renames this terminal, so the shell can refresh the tab caption.</summary>
     public event EventHandler? DisplayNameChanged;
+
+    /// <summary>Raised on any customization change (name, scheme, tab colour), so it can be persisted.</summary>
+    public event EventHandler? CustomizationChanged;
 
     /// <summary>The scheme this session renders with.</summary>
     public TerminalColorScheme Scheme => _scheme;
@@ -77,7 +86,11 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
     public Brush? TabColour
     {
         get => (Brush?)GetValue(TabColourProperty);
-        set => SetValue(TabColourProperty, value);
+        set
+        {
+            SetValue(TabColourProperty, value);
+            CustomizationChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     /// <summary>Renames the terminal. An empty name is rejected so a tab is never nameless (US-4).</summary>
@@ -92,6 +105,7 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
         _displayName = trimmed;
         AutomationProperties.SetName(this, trimmed);
         DisplayNameChanged?.Invoke(this, EventArgs.Empty);
+        CustomizationChanged?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>Applies a per-session colour scheme to the live view.</summary>
@@ -99,6 +113,7 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
     {
         _scheme = scheme;
         _view?.ApplyPalette(new TerminalPalette(scheme));
+        CustomizationChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void BuildContextMenu()
