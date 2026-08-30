@@ -107,7 +107,12 @@ FAMILIES = [
 ]
 
 # A token that looks like a monotonic id: a short prefix, a dash, a zero-padded number.
-CANDIDATE = re.compile(r"\b([A-Za-z]{2,5})-(\d{3,5})\b")
+# The lookbehind matters more than it looks. Without it a JSON-escaped newline before a
+# MENTIONED id — "...\nDC-035 moves from..." inside a log summary — parses as a family
+# called "nDC", and the gate reports an undeclared allocator that does not exist. This
+# script had already cried wolf once (see the contiguity note in FAMILIES); a control that
+# does it twice is one people switch off.
+CANDIDATE = re.compile(r"(?<![\\A-Za-z0-9_])([A-Za-z]{2,5})-(\d{3,5})\b")
 
 # Enough sightings to be a sequence rather than a version number or a date fragment.
 CANDIDATE_THRESHOLD = 8
@@ -116,6 +121,15 @@ CANDIDATE_THRESHOLD = 8
 NOT_ALLOCATORS = {
     "docs/audit/audit-data.js",      # derived view of the two logs
     "docs/docs-index.js",            # derived view of the docs graph
+
+    # These are prose ABOUT ids. They allocate `al-`, `cl-` and `DC-`, which are declared families
+    # and are checked directly; letting their narrative text nominate NEW families means every id
+    # anybody has ever written a sentence about becomes a candidate allocator. A mention is not an
+    # allocation — the same distinction that made the first draft read ADR ids out of
+    # architecture.md.
+    "docs/audit/audit-log.jsonl",
+    "docs/audit/change-log.jsonl",
+    "docs/lessons/defect-classes.md",
 }
 
 # Prefixes that are references to somebody else's sequence, not ours.

@@ -1,8 +1,8 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
-  "project": "ai-de-facelift",
-  "generated": "2026-08-30T16:42:10Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-30T16:45:16Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1126,12 +1126,12 @@ window.DOCS_INDEX = {
       "path": "docs/notes/note-20260830-sub-scope-incrementality.md",
       "title": "Sub-scope incrementality: a call to make before any code, with the measurement that motivates it",
       "type": "decision-note",
-      "status": "draft",
+      "status": "resolved",
       "owner": "@timianmalloo",
       "phase": "phase-3",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Re-indexing a changed C# scope re-walks every type in it, which is measured at 590ms of an 809ms walk on a real repository. Making that incremental below the scope conflicts with the append-only per-scope snapshot model, so this note states the options and their costs and stops short of choosing — the decision changes the store's contract and is not a tidy-up.",
+      "summary": "Re-indexing a changed C# scope re-walks every type in it, measured at 590ms of an 809ms walk on a real repository. RESOLVED 2026-08-30, and the answer is not to build it: there is no automatic re-index — no FileSystemWatcher exists — so the cost is paid deliberately by a user pressing a button, and breaking the per-scope snapshot's atomicity to shorten it is a poor trade at that trigger. The note stays for the trigger it names: re-index on save.",
       "tags": [
         "decision-note",
         "extraction",
@@ -1151,7 +1151,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e2c64507be140629961188e31ab668c179213bf0dbe435f64213b2aa3f8c50bf"
+      "sourceSha256": "2c540d97f9b2ab94ec8a6d1f9cda36b7c05813282ad30cfe75f7b3e391e48ffd"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -1615,7 +1615,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "347dca902de5fa471e8ddf3cbd7ed0548d61e63a2350d444cdf22057d8aeb3d7"
+      "sourceSha256": "29cd0bcb145dbdf3fda210e4a529965be884208be6834e266022f33df9bbfaf7"
     },
     {
       "id": "domain-experts",
@@ -5968,7 +5968,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-facelift — Audit & Change Log",
+      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -6046,5 +6046,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "186d60170295c94ef354adf27bcab5ac4a98e6acbbdeb2f040d5fb3abc8ac40e"
+  "graphSha256": "3f1f2943ad9635ab94e52070e337fd5a49f73ba784beeff468328f1fff455394"
 };
