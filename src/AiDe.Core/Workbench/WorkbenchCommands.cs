@@ -123,6 +123,13 @@ public static class WorkbenchCommandCatalog
             "Re-reads every scope even when its files have not changed. Slower, and the answer when the graph disagrees with the code.",
             Menu: "_File"),
 
+        // A plain shell terminal — the common case. Distinct from "New agent terminal" so a user who
+        // wants a shell is not handed the first agent on PATH (and a tab mislabelled with its name).
+        new("terminal.new", "New terminal", "Ctrl+K, T",
+            nameof(LayoutOperation.AddSurface),
+            "Opens a plain shell terminal beside the others. Never launches an agent.",
+            Menu: "_Terminal"),
+
         // The command that makes agent dispatch reachable at all. An agent session gets a readiness
         // watcher instead of shell integration, so it can be dispatched to rather than only refused.
         new("terminal.newAgent", "New agent terminal…", "Ctrl+K, A",

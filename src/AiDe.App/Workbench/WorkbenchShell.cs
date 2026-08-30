@@ -36,6 +36,10 @@ public sealed class WorkbenchShell : IDisposable
     private SurfaceContentFactory _factory;
     private IWorkspaceQueries? _queries;
     private string? _workspaceRoot;
+    // Which canvas instance already has its FocusLeaveRequested wired. Reconcile (DC-029) now keeps
+    // the same CanvasSurface across re-renders, so BindCanvas can run repeatedly on one instance; the
+    // FocusLeaveRequested handler is a lambda (cannot be -='d), so it is subscribed once per instance.
+    private CanvasSurface? _focusBoundCanvas;
     private CanvasGraphViewModel? _canvasGraph;
 
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
@@ -91,6 +95,29 @@ public sealed class WorkbenchShell : IDisposable
             return result.Applied
                 ? $"{agent} terminal opened. Dispatch is refused until it reaches its prompt."
                 : result.Announcement;
+        };
+        Controller.NewTerminalRequested = () =>
+        {
+            var terminalStack = Service.Current.AllStacks()
+                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"));
+
+            if (terminalStack is null) return "There is no terminal pane to open it beside.";
+
+            // A non-"agent:" id makes the content factory launch a plain shell (Executable = null),
+            // and the title is "Terminal" — never an agent name. The guid keeps ids unique so a new
+            // terminal is ADDED to the collection, never replacing an existing session.
+            var id = $"terminal#{Guid.NewGuid().ToString("N")[..6]}";
+            var result = Service.Apply(new LayoutOperation.AddSurface(
+                terminalStack.Id, new Surface(id, "terminal", "Terminal")));
+
+            Adapter.Render();
+            BindCanvas();
+            BindContexts();
+            BindJoins();
+            BindTerminalAttention();
+            AnnounceEnvironmentHealth();
+
+            return result.Applied ? "Terminal opened." : result.Announcement;
         };
         Controller.PromptBarOpen = Prompt.Open;
 
@@ -675,8 +702,14 @@ public sealed class WorkbenchShell : IDisposable
 
         canvas.GraphSource = (rootId, ct) => graph.LoadAsync(rootId, cancellationToken: ct);
 
-        canvas.FocusLeaveRequested += (_, direction) =>
-            Announcer.Announce(router.Leave(direction).Announcement);
+        // Subscribed once per canvas instance: reconcile reuses the surface across renders, and a
+        // lambda handler cannot be removed, so an unguarded += would accumulate on every mutation.
+        if (!ReferenceEquals(_focusBoundCanvas, canvas))
+        {
+            _focusBoundCanvas = canvas;
+            canvas.FocusLeaveRequested += (_, direction) =>
+                Announcer.Announce(router.Leave(direction).Announcement);
+        }
 
         // ADR-0015's snapshot swap, driven by the real drag rather than left as a method nothing
         // calls. While it is set the canvas also REFUSES focus and says why (P2-FOCUS-04), so the

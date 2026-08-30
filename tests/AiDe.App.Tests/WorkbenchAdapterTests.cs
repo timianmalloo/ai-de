@@ -135,4 +135,93 @@ public sealed class WorkbenchAdapterTests
         Assert.Contains("terminal-1", ids);
         Assert.DoesNotContain("Explore", ids);   // the title, not the id
     }
+
+    // DC-029 control. Opening a second terminal — any layout mutation — must NOT rebuild the panes
+    // that did not change: a rebuilt terminal is a fresh ConPTY process and the running one is lost.
+    // RED before the reconcile fix (the factory was invoked again for terminal-1 and ContentFor
+    // returned a new instance); GREEN after.
+    [Fact]
+    public void Render_ReusesExistingContent_WhenLayoutMutates_SoLiveSurfacesSurvive()
+    {
+        OnStaThread<object?>(() =>
+        {
+            var service = new LayoutService();
+            var created = new Dictionary<string, int>(StringComparer.Ordinal);
+            FrameworkElement Factory(Surface s)
+            {
+                created[s.SurfaceId] = created.TryGetValue(s.SurfaceId, out var n) ? n + 1 : 1;
+                return new Border();
+            }
+
+            var manager = new DockingManager();
+            var adapter = new WorkbenchAdapter(manager, service, Factory);
+            var window = new Window
+            {
+                Content = manager, Width = 900, Height = 600,
+                WindowStartupLocation = WindowStartupLocation.Manual, Left = -10000, Top = -10000,
+                ShowInTaskbar = false, ShowActivated = false,
+            };
+            window.Show();
+            adapter.Render();
+
+            var terminalBefore = adapter.ContentFor("terminal-1");
+            Assert.NotNull(terminalBefore);
+
+            // The reported trigger: open a second terminal beside the first.
+            var terminalStack = service.Current.AllStacks()
+                .First(s => s.Surfaces.Any(su => su.Kind == "terminal"));
+            service.Apply(new LayoutOperation.AddSurface(
+                terminalStack.Id, new Surface("terminal-2", "terminal", "Terminal 2")));
+            adapter.Render();
+
+            // Same instance: the pre-existing terminal was reused, not rebuilt, so a live session on
+            // it would still be alive.
+            Assert.Same(terminalBefore, adapter.ContentFor("terminal-1"));
+            // Built exactly once — twice would mean it was reconstructed (the kill).
+            Assert.Equal(1, created["terminal-1"]);
+            // The genuinely new surface was built.
+            Assert.Equal(1, created["terminal-2"]);
+
+            window.Close();
+            return null;
+        });
+    }
+
+    // A surface that was CLOSED must have its content disposed deterministically, so a closed
+    // terminal's process ends now rather than lingering until a finalizer runs.
+    [Fact]
+    public void Render_DisposesContent_OfSurfacesThatWereClosed()
+    {
+        OnStaThread<object?>(() =>
+        {
+            var service = new LayoutService();
+            var disposed = new List<string>();
+            FrameworkElement Factory(Surface s) => new DisposableBorder(() => disposed.Add(s.SurfaceId));
+
+            var manager = new DockingManager();
+            var adapter = new WorkbenchAdapter(manager, service, Factory);
+            var window = new Window
+            {
+                Content = manager, Width = 900, Height = 600,
+                WindowStartupLocation = WindowStartupLocation.Manual, Left = -10000, Top = -10000,
+                ShowInTaskbar = false, ShowActivated = false,
+            };
+            window.Show();
+            adapter.Render();
+
+            service.Apply(new LayoutOperation.CloseSurface("provenance"));
+            adapter.Render();
+
+            Assert.Contains("provenance", disposed);      // the closed one ended
+            Assert.DoesNotContain("explore", disposed);   // a surviving one did not
+
+            window.Close();
+            return null;
+        });
+    }
+
+    private sealed class DisposableBorder(Action onDispose) : Border, IDisposable
+    {
+        public void Dispose() => onDispose();
+    }
 }

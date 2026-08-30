@@ -73,6 +73,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "terminal.newAgent":
                 return NewAgentTerminal();
 
+            case "terminal.new":
+                return NewTerminal();
+
             case "workbench.focusCanvas":
                 return FocusCanvas();
 
@@ -377,11 +380,23 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// <summary>Opens a terminal running an agent CLI. Set by the shell that can create surfaces.</summary>
     public Func<string>? NewAgentTerminalRequested { get; set; }
 
+    /// <summary>Opens a plain shell terminal (never an agent). Set by the shell that can create surfaces.</summary>
+    public Func<string>? NewTerminalRequested { get; set; }
+
     private bool NewAgentTerminal()
     {
         announcer.Announce(NewAgentTerminalRequested is null
             ? "Agent terminals are not available in this build."
             : NewAgentTerminalRequested());
+
+        return true;
+    }
+
+    private bool NewTerminal()
+    {
+        announcer.Announce(NewTerminalRequested is null
+            ? "Terminals are not available in this build."
+            : NewTerminalRequested());
 
         return true;
     }

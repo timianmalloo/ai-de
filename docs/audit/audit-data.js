@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T14:10:26Z",
+  "generated": "2026-08-30T14:39:03Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2041,6 +2041,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/mockups/activity-rail.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0115",
+      "shortname": "implement-terminal-lifecycle-fix",
+      "datetime": "2026-08-30T14:39:03Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do all of these next steps, dont defer the rail polish",
+      "summary": "Fixed DC-029: WorkbenchAdapter.Render() now reconciles by ContentId (reuse kept surfaces, dispose closed ones) so a layout mutation no longer kills live terminals; guarded canvas FocusLeaveRequested against duplicate handlers under reuse; added terminal.new 'New terminal' plain-shell command. App.Tests 123/123, Core.Tests 571/571.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs"
       ],
       "tags": [],
       "outcome": "success"

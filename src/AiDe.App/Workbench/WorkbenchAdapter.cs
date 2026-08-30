@@ -49,7 +49,42 @@ public sealed class WorkbenchAdapter
     /// <summary>Projects the current model into AvalonDock and names everything for assistive tech.</summary>
     public void Render()
     {
-        var panel = BuildPanel(_service.Current.Root);
+        // Reconcile, do not rebuild (DC-029). Reuse the content element already realized for each
+        // surface that still exists, so a mutation to ONE pane (opening a terminal, splitting,
+        // restoring a layout) does not reconstruct — and thereby destroy the live state of — every
+        // OTHER pane. A rebuilt terminal looks identical to the one it replaced but its process is
+        // gone: each ConPTY child runs in a kill-on-close job, so orphaning its surface kills it.
+        var keep = _service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId)
+            .ToHashSet(StringComparer.Ordinal);
+
+        var reuse = new Dictionary<string, FrameworkElement>(StringComparer.Ordinal);
+        if (Manager.Layout is { } current)
+        {
+            foreach (var doc in current.Descendents().OfType<LayoutDocument>())
+            {
+                if (doc.ContentId is not { } id || doc.Content is not FrameworkElement fe)
+                {
+                    continue;
+                }
+
+                if (keep.Contains(id) && !reuse.ContainsKey(id))
+                {
+                    // Free the element so it can re-parent into the new tree without a "already has a
+                    // parent" fault when the layout is replaced below.
+                    doc.Content = null;
+                    reuse[id] = fe;
+                }
+                else if (!keep.Contains(id) && fe is IDisposable disposable)
+                {
+                    // A surface that was closed: end it NOW rather than at a finalizer, so a closed
+                    // terminal's process stops deterministically instead of lingering until GC.
+                    disposable.Dispose();
+                }
+            }
+        }
+
+        var panel = BuildPanel(_service.Current.Root, reuse);
         Manager.Layout = new LayoutRoot { RootPanel = panel };
         ApplyAccessibleNames();
     }
@@ -123,7 +158,7 @@ public sealed class WorkbenchAdapter
 
     // ── model → AvalonDock projection ─────────────────────────────────────────────────────
 
-    private LayoutPanel BuildPanel(LayoutNode node)
+    private LayoutPanel BuildPanel(LayoutNode node, IReadOnlyDictionary<string, FrameworkElement> reuse)
     {
         if (node is SplitNode split)
         {
@@ -139,10 +174,10 @@ public sealed class WorkbenchAdapter
                 switch (child)
                 {
                     case SplitNode:
-                        panel.Children.Add(BuildPanel(child));
+                        panel.Children.Add(BuildPanel(child, reuse));
                         break;
                     case StackNode stack:
-                        panel.Children.Add(BuildPane(stack));
+                        panel.Children.Add(BuildPane(stack, reuse));
                         break;
                     default:
                         break;
@@ -153,7 +188,7 @@ public sealed class WorkbenchAdapter
         }
 
         var single = new LayoutPanel();
-        single.Children.Add(BuildPane((StackNode)node));
+        single.Children.Add(BuildPane((StackNode)node, reuse));
         return single;
     }
 
@@ -170,18 +205,27 @@ public sealed class WorkbenchAdapter
             .FirstOrDefault(d => string.Equals(d.ContentId, surfaceId, StringComparison.Ordinal))
             ?.Content as FrameworkElement;
 
-    private LayoutDocumentPane BuildPane(StackNode stack)
+    private LayoutDocumentPane BuildPane(StackNode stack, IReadOnlyDictionary<string, FrameworkElement> reuse)
     {
         var pane = new LayoutDocumentPane();
         foreach (var surface in stack.Surfaces)
         {
+            var content = reuse.TryGetValue(surface.SurfaceId, out var kept)
+                ? kept
+                : _contentFactory?.Invoke(surface) ?? new ContentControl();
+
             pane.Children.Add(new LayoutDocument
             {
                 // ContentId is the key AvalonDock uses to reunite a restored layout with its content,
                 // so it must be the surface's stable identity, not its display title.
                 ContentId = surface.SurfaceId,
-                Title = surface.Title,
-                Content = _contentFactory?.Invoke(surface) ?? new ContentControl(),
+                // A renamed surface carries its display name on the content itself (Design-owned
+                // session state). Reconcile keeps that content instance alive across re-renders, so a
+                // rename persists without a Core model change; the model title is the fallback.
+                Title = (content as IHasDisplayName)?.DisplayName is { Length: > 0 } displayName
+                    ? displayName
+                    : surface.Title,
+                Content = content,
             });
         }
 
