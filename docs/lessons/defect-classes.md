@@ -811,6 +811,11 @@ for both or split.*
     finds less — indistinguishable from a smaller file. This is the state a developer is in most
     often. Fixed with `ExtractionDisclosures.SourceDidNotParse`, which names the files and their
     count while still contributing what did parse.
+  - 2026-08-30 — the first Loomkeeper Observatory partial-observation state lowered the Evidence
+    Coverage bar but left a complete `73 / 100` Weave Score on screen. Missing evidence was rendered
+    as a complete score. Fixed by rendering `earned / observed weight` (for example `58 / 70
+    observed`) and never rescaling the missing weight to 100; the AI Systems and accessibility
+    reviews now check the partial state explicitly.
 - **Control:** each fix carries the same shape — **a field that distinguishes "none" from "not
   looked at"**, and a test for BOTH directions, because a disclosure that fires on every workspace is
   noise and one that never fires is decoration. `spikes/joins-on-a-real-repo` runs the panes over a
@@ -1150,6 +1155,10 @@ for both or split.*
     `Command="{x:Null}"`, so the ✕ on every tab did nothing; closing a terminal was impossible from
     the tab. Fixed by wiring the button (and AvalonDock's `DocumentClosing`) through the layout
     model's `CloseSurface`, plus a "Close" item on the tab context menu.
+  - 2026-08-30 — the first Loomkeeper treegrid moved keyboard focus with arrow keys but selected a
+    session only from the pointer `click` handler. The row looked keyboard-operable and did nothing
+    on Enter/Space. Fixed by routing click and keyboard activation through one `selectRow` path; the
+    accessibility re-review confirmed the primary drill flow is no longer pointer-only.
 - **Control:** when a custom control template replaces a stock one, verify every interactive element
   it carries still performs its action — click it, or assert its `Command`/handler is non-null. A
   visible affordance with no behaviour is a defect even though nothing throws.

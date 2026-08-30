@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T19:22:09Z",
+  "project": "ai-de-feature-agent-watcher-substrate",
+  "generated": "2026-08-30T21:44:42Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2518,6 +2518,119 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0146",
+      "shortname": "collectknowledge-agentic-session-observability",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Established a sourced knowledge base for multi-session observability, coordination, trajectory scoring, Daydream learning, and the distributed-systems/privacy limits.",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/knowledge/agentic-session-observability/index.md"
+      ],
+      "tags": [
+        "watcher",
+        "scoring"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "started_at": "2026-08-30T19:47:28Z",
+      "duration_seconds": 6988.0,
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0147",
+      "shortname": "optimize-graph-agentic-watcher",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Executed an eight-node bounded graph with width four, early hard gates, and measured correction loops.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/plans/agentic-watcher-substrate.md"
+      ],
+      "tags": [
+        "execution-graph"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0148",
+      "shortname": "specify-loomkeeper",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Specified Loomkeeper, the Weave Score, repo Message Board, Daydream lifecycle, local-only policies, and the three-layer Observatory experience.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/specs/agentic-watcher-substrate.md",
+        "docs/specs/agentic-watcher-substrate.html"
+      ],
+      "tags": [
+        "specification"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0149",
+      "shortname": "ui-design-watcher-observatory",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Created the G6 Loomkeeper Observatory design language, hard-state interactive mockup, rendered audits, and adversarial UI review.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/mockups/watcher-observatory.html",
+        "docs/reviews/ui-watcher-observatory.md"
+      ],
+      "tags": [
+        "ui-design"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
     }
   ],
   "changes": [
@@ -4701,6 +4814,80 @@ window.AUDIT_DATA = {
         "after": "4314a5efc2057dbca92d34e36b598cc74600931b",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0092",
+      "datetime": "2026-08-30T21:44:42Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Establish agentic session observability and scoring evidence",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Established that Loomkeeper should join session-scoped traces, append-only coordination, multidimensional evaluation, and review-gated context evolution while remaining local-only and non-personnel.",
+      "rationale": "The watcher concept depends on contracts spanning observability, distributed coordination, evaluation validity, Goodhart risk, and memory safety.",
+      "artifacts": [
+        "docs/knowledge/agentic-session-observability/index.md"
+      ],
+      "tags": [
+        "watcher"
+      ],
+      "git": {
+        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0093",
+      "datetime": "2026-08-30T21:44:42Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "spec",
+      "skill": "specify",
+      "title": "Specify Loomkeeper and the Weave Score authority split",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Named Loomkeeper, defined the repo/worktree/terminal/session map, Message Board, six-dimension Weave Scorecard, Daydream promotion/retraction, and local-only privacy/security floors.",
+      "rationale": "Deterministic facts, advisory model judgments, and human-gated learning need separate authority so scoring cannot hide failed correctness or become surveillance.",
+      "artifacts": [
+        "docs/specs/agentic-watcher-substrate.md"
+      ],
+      "tags": [
+        "loomkeeper"
+      ],
+      "git": {
+        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0094",
+      "datetime": "2026-08-30T21:44:42Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "ui-design",
+      "title": "Adopt the evidence-led G6 Observatory direction",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Selected a specialized G6 Multi-Panel Data Terminal and produced an attention-first Observatory with Sessions, Scorecard, Message Board, Daydreams, Privacy, and Watcher Health.",
+      "rationale": "The operator reads many concurrent threads in parallel and needs causal drill-down; a generic dashboard or chat surface would hide identity and evidence.",
+      "artifacts": [
+        "docs/mockups/watcher-observatory.html",
+        "DESIGN.md"
+      ],
+      "tags": [
+        "ui",
+        "observatory"
+      ],
+      "git": {
+        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
         "commits": []
       }
     }

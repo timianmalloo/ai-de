@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T19:22:09Z",
+  "generated": "2026-08-30T21:45:01Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1312,6 +1312,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "450714ae4b68f3c3370e2d7df000cd7003531c5765e78a40388826127d03872e"
     },
     {
+      "id": "note-watcher-substrate-framing",
+      "path": "docs/notes/watcher-substrate-framing.md",
+      "title": "Loomkeeper framing, score authority, and Observatory archetype",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Records the decision to name the watcher Loomkeeper, keep deterministic facts authoritative over advisory model judgments, human-gate Daydream promotion, and use a G6 evidence-led Observatory inside the existing AI-DE workbench.",
+      "tags": [
+        "decision-note",
+        "loomkeeper",
+        "scoring",
+        "ui-archetype",
+        "privacy"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-watcher-observatory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c20b395a9957338b90358af9b8af08d35c4cb32863c8b29e530c097d41878c78"
+    },
+    {
       "id": "conceptual-model-ai-native-ide",
       "path": "docs/design/conceptual-model.md",
       "title": "AI-DE conceptual domain model",
@@ -1615,7 +1650,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c600df455034c22a8659638dc438fdcca6ab3ce707242dab785d5ef5b06f5cac"
+      "sourceSha256": "495341b9e57bb43d3fdc06ac85129c02f0db65ede4bcea0a482e065ee4000534"
     },
     {
       "id": "domain-experts",
@@ -2076,6 +2111,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "9207edfaa5dc6f86fc08966edc223d6689c8107ad9edbb9e7c10882d5b187550"
     },
     {
+      "id": "mockup-watcher-observatory",
+      "path": "docs/mockups/watcher-observatory.md",
+      "title": "Loomkeeper Observatory - Interactive UI Mockup",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Self-contained interactive mockup for watching cross-repository agent sessions, score evidence, repository messages, Daydream learning, privacy controls, and Loomkeeper's own health through a review harness covering personas, viewports, hard states, themes, density, and reduced motion.",
+      "tags": [
+        "loomkeeper",
+        "ui-mockup",
+        "observability",
+        "agent-scoring",
+        "daydream"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "ui-review-watcher-observatory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "59c7e099db8b64f212ed8e42a2bac1efce7588f295e66dacf9389e240c602b64"
+    },
+    {
       "id": "mockup-workbench",
       "path": "docs/mockups/workbench.md",
       "title": "AI-DE workbench — reviewable mockup",
@@ -2149,6 +2215,47 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "db224bf7106c094b4c7a3e4f54182436c18f5f3f712a52021fde24f07fc3dcef"
+    },
+    {
+      "id": "plan-agentic-watcher-substrate",
+      "path": "docs/plans/agentic-watcher-substrate.md",
+      "title": "Execution Graph - Loomkeeper Knowledge, Specification, and UI",
+      "type": "doc",
+      "status": "resolved",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "The bounded execution graph used to ground the repository, coordinate with active worktrees, research the domain, specify Loomkeeper, create the Observatory, and pass independent evidence, model, security, privacy, UX, accessibility, AI, and simplification gates.",
+      "tags": [
+        "execution-graph",
+        "loomkeeper",
+        "collectknowledge",
+        "specify",
+        "ui-design"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-watcher-observatory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Optimized graph",
+          "mermaid": "flowchart LR\n  G[Ground repository] --> W[Worktree + coordination]\n  W --> K[Knowledge base]\n  K --> S[Specification]\n  S --> D[Design language]\n  D --> M[Observatory mockup]\n  M --> R[Mechanical + adversarial review]\n  K --> C[Discoverability + audit]\n  S --> C\n  R --> C"
+        }
+      ],
+      "sourceSha256": "0208d50d6a1acd8e31f9ffc5b1c2ca4a34b7f67411b522222f1e5db56d859000"
     },
     {
       "id": "plan-ai-native-ide-architecture",
@@ -2726,6 +2833,249 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "87360ac96ef97fa830bbcee369a8ec3a8f5545eae3d45d82dbb9433a460e93ef"
+    },
+    {
+      "id": "ui-review-watcher-observatory",
+      "path": "docs/reviews/ui-watcher-observatory.md",
+      "title": "UI Review - Loomkeeper Observatory",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Create-mode review of the Loomkeeper Observatory mockup. The evidence-first G6 structure, hard states, score honesty, keyboard treegrid, token discipline, and model-governance controls pass; native WPF UI Automation, platform keyboard conventions, system contrast, and multi-monitor DPI remain implementation conditions.",
+      "tags": [
+        "ui-review",
+        "loomkeeper",
+        "accessibility",
+        "agent-observability"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-watcher-observatory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4cd3f297ac37a5b81be47a3404f3e2ba027a5321ccc6ae58ea9d287e24fbe6f8"
+    },
+    {
+      "id": "kb-agentic-session-observability-glossary",
+      "path": "docs/knowledge/agentic-session-observability/glossary.md",
+      "title": "Agentic Session Observability - Glossary",
+      "type": "glossary",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Ubiquitous language for the watcher domain, separating identities, observations, evaluations, coordination records, and promoted learning.",
+      "tags": [
+        "glossary",
+        "ubiquitous-language",
+        "watcher"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "855af815674245851df9fc51855e1117fe59ddff3127449ee9da7583c0c75f07"
+    },
+    {
+      "id": "kb-agentic-session-observability",
+      "path": "docs/knowledge/agentic-session-observability/index.md",
+      "title": "Agentic Session Observability, Coordination, Learning, and Scoring",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Evidence base for a local watcher that registers terminal-agent sessions across repositories, observes their traces and coordination, supports shared knowledge, evaluates agent effectiveness, and turns repeated failure patterns into reviewable daydream learnings.",
+      "tags": [
+        "agent-observability",
+        "coordination",
+        "evaluation",
+        "continuous-learning",
+        "terminal-sessions"
+      ],
+      "links": [
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "28b8980906af6e24c2800a47de876b2bc1a027f7acedcaeefefe91156cf50ef7"
+    },
+    {
+      "id": "kb-agentic-session-observability-comparables",
+      "path": "docs/knowledge/agentic-session-observability/comparables.md",
+      "title": "Agentic Session Observability - Comparables",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Comparable observability platforms, agent runtimes, coordination services, benchmarks, and learning systems, with the specific capability each contributes and the gap it leaves.",
+      "tags": [
+        "comparables",
+        "observability",
+        "coordination",
+        "evaluation"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d5c1b090e869d383c7ac0b65f84673f1665b5cf6565a3df44d1622b1dbfca889"
+    },
+    {
+      "id": "kb-agentic-session-observability-data",
+      "path": "docs/knowledge/agentic-session-observability/data-and-constants.md",
+      "title": "Agentic Session Observability - Data and Constants",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Measured findings, system invariants, candidate score dimensions, and boundary conditions that should constrain later specification and architecture work.",
+      "tags": [
+        "metrics",
+        "benchmarks",
+        "invariants",
+        "scoring"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a94476b3054b28929a5520607f1cb9ba79c8a06f06c98139d690949457c9e1bf"
+    },
+    {
+      "id": "kb-agentic-session-observability-open",
+      "path": "docs/knowledge/agentic-session-observability/open-questions.md",
+      "title": "Agentic Session Observability - Open Questions",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Unsettled contracts, known domain failure modes, and the strongest arguments against a watcher that scores and continuously teaches active coding agents.",
+      "tags": [
+        "open-questions",
+        "risks",
+        "disconfirmation"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9204f159ffef151fcf799756c7a23b66070adba876f86a0d60ce6cb51b726a70"
+    },
+    {
+      "id": "kb-agentic-session-observability-references",
+      "path": "docs/knowledge/agentic-session-observability/references.md",
+      "title": "Agentic Session Observability - References",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Standards, official documentation, benchmark papers, and learning-safety research that establish the watcher domain's contracts and known limitations.",
+      "tags": [
+        "references",
+        "standards",
+        "papers"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b5336422ebacdb56e46d9da074cef0ecf380dcba836dad11baf71fe1c19fbcb7"
+    },
+    {
+      "id": "kb-agentic-session-observability-sota",
+      "path": "docs/knowledge/agentic-session-observability/state-of-the-art.md",
+      "title": "Agentic Session Observability - State of the Art",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Current techniques for observing agent sessions, evaluating trajectories, coordinating live processes, and evolving agent context, including the limitations that prevent any one technique from serving as the whole watcher.",
+      "tags": [
+        "state-of-the-art",
+        "opentelemetry",
+        "agent-evaluation",
+        "memory"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "452d920b9c06d806e7b1f685a7d5c87433e45be5ee62982ec87200c24113aee0"
+    },
+    {
+      "id": "kb-agentic-session-observability-sources",
+      "path": "docs/knowledge/agentic-session-observability/sources.md",
+      "title": "Agentic Session Observability - Sources",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Full external and repository source list for the agentic watcher evidence base, with access dates and the claims each source supports.",
+      "tags": [
+        "sources",
+        "citations",
+        "provenance"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4ef09f61c84e341e3fcdf547fa1da6d95c60de55fca16cab435125167948359f"
     },
     {
       "id": "kb-ai-native-ide-shell",
@@ -5640,6 +5990,73 @@ window.DOCS_INDEX = {
       "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
+      "id": "spec-agentic-watcher-substrate",
+      "path": "docs/specs/agentic-watcher-substrate.md",
+      "title": "Loomkeeper - Agentic Watcher Substrate and Observatory",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Specifies Loomkeeper, a local agentic watcher that registers terminal-agent sessions across repositories, exposes repo-scoped collaboration, produces evidence-backed agent scorecards, and turns repeated patterns into reviewable daydream learning through the Observatory UI.",
+      "tags": [
+        "loomkeeper",
+        "agent-observability",
+        "coordination",
+        "scoring",
+        "daydream",
+        "watcher"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Registration and blind spots",
+          "mermaid": "flowchart TD\n  A([Open Watch]) --> B{Any watched repository?}\n  B -->|no| C[First run: local-only notice + Watch a repository]\n  C --> D{Repository identity valid?}\n  D -->|no| E[Show invalid/duplicate repository and retry] --> C\n  D -->|yes| F\n  B -->|yes| F([Terminal or agent session starts])\n  F --> G{Registration available?}\n  G -->|native or injected contract| H[Bind repository, worktree, terminal, agent, model, generation]\n  G -->|unsupported| I[Blind Spot: Partially Observed or Not Watched]\n  H --> J{Identity authority valid?}\n  J -->|verified capability| K[Registered: heartbeat and observation begin]\n  J -->|asserted only| L[Registered with Asserted trust label]\n  J -->|duplicate or forged| M[Reject, record attempt, open identity investigation]\n  M --> N{Disposition}\n  N -->|new process generation| H\n  N -->|dismiss false detection| I\n  I --> O{Operator action}\n  O -->|install adapter or register| H\n  O -->|accept gap| P([Remain Not Recorded and unscored])\n  K --> Q{Heartbeat fresh?}\n  L --> Q\n  Q -->|yes| R([Alive])\n  Q -->|expired| S[Stale; scores marked stale]\n  S --> T{Process resumes?}\n  T -->|yes| U[New registration/generation; old authority rejected]\n  T -->|no| V([Ended or unknown])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Work Episode lifecycle",
+          "mermaid": "flowchart TD\n  A([Registered Agent Session]) --> B{Goal and done condition declared?}\n  B -->|no| C[No Work Episode; Not Scored]\n  B -->|yes| D[Open immutable Work Episode]\n  D --> E[Observe actions, evidence, messages, and outputs]\n  E --> F{Goal changes?}\n  F -->|yes| G[Close prior episode as superseded goal] --> H[Open new Work Episode] --> E\n  F -->|no| I{Done condition reached or session ends?}\n  I -->|no| E\n  I -->|yes| J[Close episode]\n  J --> K{Minimum verification present?}\n  K -->|yes| L([Scoreable])\n  K -->|no| M([Not Scored with missing verification])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Watching and evidence adjudication",
+          "mermaid": "flowchart TD\n  A([Open Watch / Sessions]) --> B[Choose repository, worktree, terminal, or session]\n  B --> C[Open Session Detail]\n  C --> D{Goal and verification available?}\n  D -->|no| E[Not Scored with named missing evidence]\n  D -->|yes| F[Open Weave Scorecard]\n  F --> G{Hard floor failed?}\n  G -->|yes| H[Blocked verdict; failing floor pinned]\n  G -->|no| I[Show score + Evidence Coverage + dimensions]\n  H --> J[Open dimension evidence]\n  I --> J\n  J --> K{Accept judgment?}\n  K -->|yes| L([Return to Sessions])\n  K -->|dispute| M[Append dispute with reason and evidence]\n  M --> N[Deterministic/human disposition wins; prior version retained]\n  N --> F\n  K -->|send feedback| O[One behavior + one consequence + one next-turn correction]\n  O --> O1{Trustworthy evidence exists?}\n  O1 -->|no| O2[Decline feedback with reason]\n  O1 -->|yes| P{Leaks held-out grader?}\n  P -->|yes| Q[Block or redact]\n  P -->|no| R([Feedback delivered])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Repo Message Board",
+          "mermaid": "flowchart TD\n  A([Open Message Board]) --> A1{Repository context selected?}\n  A1 -->|no / All repositories| A2[Require repository picker] --> A1\n  A1 -->|yes| B{Post, reply, acknowledge, search}\n  B -->|post| C[Choose Question, Decision, Breadcrumb, or Knowledge Candidate]\n  C --> D[Attempt append with provenance and trust]\n  D --> D1{Append succeeds?}\n  D1 -->|no| D2[Show failed write; preserve draft; retry]\n  D1 -->|yes| I\n  B -->|reply| E{Parent exists?}\n  E -->|yes| F[Append reply linked to parent]\n  E -->|no| G[Reject orphan reply with reason]\n  B -->|acknowledge| H[Append acknowledgement; unanswered state clears]\n  B -->|search| H1[Show repository-scoped results and return to thread]\n  H --> K\n  F --> I{Instruction-like or poisoned content?}\n  I -->|yes| J[Quarantine as untrusted; no grader/promotion authority]\n  I -->|no| K([Visible in thread])\n  B -->|read failure or stale| L[Show failed/stale state and retry]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Daydream review and learning",
+          "mermaid": "flowchart TD\n  A([Observe behavior or outcome]) --> B[Daydream Observation with evidence and confidence]\n  B --> C{Repeated or deterministically reproduced?}\n  C -->|no| D([Remain Observation])\n  C -->|yes| E[Propose Candidate Lesson]\n  E --> F[Show sources, counter-evidence, expected effect, and disconfirming check]\n  F --> G{Disconfirming check complete?}\n  G -->|no| H[Promotion disabled]\n  H --> H1[Run or attach disconfirming check] --> G\n  G -->|yes, candidate refuted| H2[Mark Disconfirmed; promotion blocked]\n  G -->|yes, survives| I{Human decision}\n  I -->|promote| J[Versioned Promoted Learning aligned to Dream/defect class]\n  I -->|defer| K([Remain Candidate])\n  I -->|reject| L([Archive with reason])\n  J --> M{Source corrected/deleted or later contradiction?}\n  M -->|yes| N[Retract or supersede learning and projections]\n  M -->|no| O[Measure recurrence/effect]\n  J --> P{Operator retracts or supersedes?}\n  P -->|yes, with reason| N\n  P -->|no| O"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Privacy, retention, and deletion",
+          "mermaid": "flowchart TD\n  A([First repository capture]) --> B[Notice: purpose, data classes, retention, deletion, non-personnel boundary]\n  B --> C{Operator acknowledges?}\n  C -->|no| D[Capture registration/health only; no work content]\n  C -->|yes| E[Set per-repo opt-in content capture and redaction]\n  E --> F([Local-only capture])\n  F --> G{Request}\n  G -->|external export or hosted judge| H[Blocked in v1 with policy reason]\n  G -->|rank a person| I[Refused]\n  G -->|delete| J[Preview source + derived scores/learning affected]\n  J --> K{Confirm deletion?}\n  K -->|no| F\n  K -->|yes| L[Run resumable deletion/retraction process]\n  L --> M{All required effects complete?}\n  M -->|yes| N[Issue Complete receipt]\n  M -->|partial or failed| O[Issue Partial receipt with failed effects]\n  O --> P[Retry incomplete effects] --> L"
+        }
+      ],
+      "sourceSha256": "452c533a530c91e96f134fcee42b4f6ba3addc799994d31e5655c391025eee03"
+    },
+    {
       "id": "spec-ai-native-ide",
       "path": "docs/specs/ai-native-ide.md",
       "title": "AI-native IDE — Product specification",
@@ -6017,7 +6434,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-feature-agent-watcher-substrate — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -6087,6 +6504,22 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-knowledge-explorer"
     },
     {
+      "id": "surface-specs-agentic-watcher-substrate",
+      "path": "docs/specs/agentic-watcher-substrate.html",
+      "title": "Loomkeeper - Agentic watcher proposal",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "spec-agentic-watcher-substrate"
+    },
+    {
+      "id": "surface-mockups-watcher-observatory",
+      "path": "docs/mockups/watcher-observatory.html",
+      "title": "Loomkeeper Observatory - review mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-watcher-observatory"
+    },
+    {
       "id": "surface-mockups-uml-erm-surfaces",
       "path": "docs/mockups/uml-erm-surfaces.html",
       "title": "UML & ERM Surfaces — derived views (mockup)",
@@ -6095,5 +6528,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "cc17d05f4660271067947444df4b8849612aea35cc0954c27ed19e589779ddd7"
+  "graphSha256": "cd26c723d596ebc890c915d5380c9a9b11f3229aa170acb6917e22d762ff56f4"
 };

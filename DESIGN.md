@@ -261,3 +261,166 @@ state, not a sentence.
 bound and one that is exact must be **distinguishable at a glance**. `20,000 results` and `≥ 20,000
 results (capped)` are different claims; rendering them identically is the surface inventing the
 completeness the read could not establish — the same failure class as provenance laundering.
+
+---
+
+## Loomkeeper Observatory
+
+### Direction brief
+
+**User and state.** A multi-agent technical lead arrives with several repositories and terminals in
+motion. They are time-constrained, skeptical of inferred claims, and looking for the one session or
+learning decision that needs intervention.
+
+**Job-to-be-done.** See which agent threads are healthy, what they share, how each served its stated
+goal, what Loomkeeper could not observe, and which repeated patterns deserve review.
+
+**Archetype.** G6 Multi-Panel Data Terminal, specialized to the existing AI-DE workbench:
+
+`LoomkeeperObservatory { Type:DSS; Arch:SPA; Layout:MultiPanelWorkstation; Density:Compact; Nav:CommandPalette+Sidebar; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer; Color:DarkAdaptive; Type:MonospaceTechnical; Depth:SoftShadow; Sync:LocalFirst; Persistence:LocalDevice; Feedback:Instant+Confirmed; Motion:Micro; Pacing:Freeform; Transition:HardCut; A11y:WCAG_2.2_AA+HighLegibility; }`
+
+**Defining qualities.**
+
+- **Vigilant, not alarmist.** Attention comes from evidence-backed exceptions, never animated noise.
+- **Forensic, not punitive.** Scores open into evidence and disputes; the surface never ranks people.
+- **Dense, not cramped.** Linked panels expose many sessions while spacing still expresses groups.
+
+**References.**
+
+- Bloomberg/TradingView: linked multi-panel monitoring and tabular numerical scanning; not their
+  financial color semantics.
+- Linear: keyboard economy, quiet hierarchy, and fast focus movement; not its visual identity.
+- Datadog: monitor-to-drill workflow and persistent system health; not equal-weight bento cards.
+- AI-DE workbench: the existing activity rail, soft islands, confidence language, and local-first
+  evidence contract.
+
+**Anti-goals.** No leaderboard, gamified grade, crypto dashboard, equal KPI tiles, rainbow heatmap,
+chat-first navigation, pulsing status wall, opaque "AI says" judgment, or happy-path-only mock data.
+
+**Personality decisions.**
+
+- **Type:** `{typography.ui}` for reading and `{typography.mono}` for paths, identities, timestamps,
+  score points, versions, and units. The UI font keeps density legible; mono marks inspectable facts.
+- **Color:** `{colors.accent}` is reserved for focus and selected context; `{colors.verified}`,
+  `{colors.inferred}`, `{colors.unverified}`, and `{colors.danger}` retain their evidence meanings.
+  Status always carries a glyph and word, so color never decides meaning.
+- **Space:** compact `{spacing.scale}` rhythm: tight within a session/evidence group, wider between
+  groups and panels. Borders are secondary to spacing and surface shifts.
+
+### Trigger map
+
+| Trigger | Applies | Consequence |
+|---|---|---|
+| UI-T1 expert quantitative | Yes | Tabular numerals, explicit units, uncertainty, provenance, virtualized large lists, no rainbow/jet. |
+| UI-T2 generated assets | No | No generated imagery, personas, or motion are needed. |
+| UI-T3 model-facing | Yes | Not Recorded, Advisory, Disputed, Quarantined, Blocked, and Retracted are first-class; evidence and oversight precede feedback/promotion. |
+| UI-T4 native desktop | Yes | Windows/Fluent keyboard, focus, treegrid, pane, high-contrast, and reduced-motion conventions govern. |
+
+### Surface hierarchy
+
+The focal point is the **session needing attention**, not the aggregate score. The default composition:
+
+1. **Scope and watcher posture** - repository selector, local-only policy, Watcher Health.
+2. **Sessions treegrid** - repository/worktree grouping and the selected session.
+3. **Session detail** - Activity, Trace, and Weave Scorecard for the selected Work Episode.
+4. **Inspector** - evidence, trust, policy, and version for the selected item.
+5. **Peer surfaces** - Message Board, Daydreams, Privacy & Capture, Watcher Health.
+
+**Why Trace remains separate from Activity.** Activity is a chronological, human-readable trajectory;
+Trace is a causal parent/child span tree used to diagnose which tool or subagent produced an outcome.
+They share source events and answer different questions. The separate tab earns its place by
+preserving causality that a flat timeline hides.
+
+**Why the review harness includes constrained viewports.** The production archetype remains
+`Viewport:DesktopBound`. Mobile/tablet modes are review instruments that stress pane reflow, focus,
+and overflow inside a constrained window; they are not a commitment to ship a mobile layout.
+
+**Why a promoted-learning example appears beside a candidate.** The review artifact must expose both
+the pre-promotion gate and the post-promotion Retract/Supersede path in one selectable Daydream state.
+Production selection shows one detail at a time.
+
+### Status language
+
+| State | Glyph + word | Token role | Meaning |
+|---|---|---|---|
+| Verified / Alive | check / `Verified`, solid dot / `Alive` | `{colors.verified}` | Observed evidence or fresh liveness. |
+| Advisory | tilde / `Advisory` | `{colors.accent}` | Qualitative assessment; never a correctness fact. |
+| Inferred | tilde / `Inferred` | `{colors.inferred}` | Reasoned from evidence, not directly observed. |
+| Stale | clock / `Stale` | `{colors.stale}` | Was observed, but the time boundary expired. |
+| Not Recorded | question / `Not recorded` | `{colors.unverified}` | Evidence is absent or untrustworthy. |
+| Disputed | split arrows / `Disputed` | `{colors.focus}` | A superseding adjudication is open or recorded. |
+| Blocked | stop / `Blocked` | `{colors.danger}` | A hard floor failed; no numeric headline. |
+| Quarantined | shield / `Quarantined` | `{colors.inferred}` | Untrusted or forged content cannot influence authority. |
+
+Shared hue never carries the distinction: Inferred and Stale use different glyphs, words, and row
+semantics even when both use amber.
+
+### Sessions treegrid
+
+One roving tab stop. Up/Down changes row; Left/Right collapses or expands repository/worktree groups;
+Home/End moves to boundaries; type-ahead selects a matching identity. Virtualization preserves the
+focused session identity and reports set size/position. Selection updates the detail pane without
+moving focus.
+
+### Scorecard
+
+The hard-floor strip is first. A complete score reads `73 / 100`; incomplete evidence reads
+`58 / 70 observed` and is never rescaled. **Evidence Coverage** is adjacent and independently
+labelled. Every dimension row exposes source evidence within two actions. Advisory stability,
+rubric/model/schema versions, task class, and residual uncertainty remain visible.
+
+The headline has no pass threshold. `Blocked`, `Not scored`, and `Partial` are states, not low numbers.
+
+### Component state matrix
+
+| Component | Complete states |
+|---|---|
+| Observatory shell | loading, first-run, ready, watcher offline, partial ingest, error, overflow |
+| Sessions treegrid | alive, idle, stale, ended, asserted, conflict, blind spot, shell/not scored, focused virtual row |
+| Activity / trace | loading, empty, ready, truncated, quarantined, error |
+| Scorecard | scoring, complete, partial, Not Scored, Blocked, Advisory, Disputed, stale-input/recomputing, stale-version |
+| Message Board | empty, unanswered, acknowledged, quarantined, failed write/draft preserved, stale read, overflow |
+| Daydreams | observation, candidate, needs disconfirm, disconfirmed, promotable, promoted, deferred, rejected, retracted, retraction failed |
+| Privacy & Capture | notice, capture off/on, redaction failed/drop confirmed, egress blocked, deletion preview/in-progress/partial/complete |
+| Watcher Health | healthy, ingest lag, event gap, adapter degraded, grader unavailable, storage pressure, learning-effect counter-metric, offline |
+| Command palette / search | default, loading/slow, no results, error, results |
+
+Every empty state uses the `state.not-declared` shape: one symbol, one true sentence, one first action.
+
+### Motion and status announcements
+
+| Moment | Duration | Purpose |
+|---|---|---|
+| Row selection/focus | `{motion.fast}` | Confirms context without moving layout. |
+| Pane/tab switch | 0ms | Operational navigation should not wait. |
+| Score recompute completion | `{motion.fast}` color/weight change only | Shows new evidence without counting-up theater. |
+| Watcher-wide failure/recovery | 0ms visual state + polite announcement | The state matters; animation does not. |
+| Score/rubric/guidance update notice | 0ms static dismissible notice | Prevents a second animated focal point. |
+
+Watcher-wide failures and completed consequential actions announce once through a polite atomic live
+region. Heartbeat ticks and routine row updates never announce individually; they are coalesced.
+Reduced motion collapses all transitions to zero while preserving the announcement.
+
+### Required copy
+
+- `Watcher offline - sessions continue, observations are paused.`
+- `Not recorded - this session did not publish a goal.`
+- `Blocked - the correctness floor failed. Open the evidence before continuing.`
+- `Advisory - qualitative assessment from rubric v3.`
+- `Evidence coverage 78% - 2 required signals were unavailable.`
+- `This score evaluates agent behavior for your improvement. It is not a personnel rating.`
+- `Local-only - no work content leaves this device.`
+- `Registration rejected - another process claimed this session identity. Review the source or start a new session generation.`
+- `Message not posted - the repository board could not be written. Your draft is preserved.`
+- `Redaction failed - the captured content was dropped before it was stored.`
+- `Promotion needs a disconfirming check and your approval.`
+- `Deletion is incomplete - 2 derived records remain. Retry the unfinished steps.`
+- `Retraction failed - the prior guidance remains in force. Review the failed projection.`
+
+### Performance and accessibility
+
+The reference corpus and p95 budgets are in `spec-agentic-watcher-substrate`. Lists virtualize without
+focus loss; state changes cause no layout shift. WCAG 2.2 AA applies to the Observatory, including
+target size, focus not obscured, non-drag alternatives, correct treegrid roles/values, high-contrast
+mode, and a table/list equivalent for any graph. All values in aligned columns use tabular figures
+and explicit units.
