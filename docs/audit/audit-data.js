@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T19:19:19Z",
+  "generated": "2026-08-30T19:26:35Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2490,6 +2490,26 @@ window.AUDIT_DATA = {
       "tags": [
         "knowledge-graph",
         "spec"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0136",
+      "shortname": "ui-design-knowledge-explorer-mode",
+      "datetime": "2026-08-30T19:26:35Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "BTW/backlog: /ui-design the full-window dual-pane graph+reader Explorer mode",
+      "summary": "Created docs/mockups/knowledge-explorer-mode.html (+hub): self-contained dependency-free mockup of the full-window mode — rail(active)+body-wide graph|reader split with draggable splitter, narrow-viewport stacks (US-E8); reader by kind (Palenight code/markdown/html) with metadata + walkable typed edges (US-K3/K4); ALL hard states (reader empty/loading/error/unsupported/overflow + graph loading/empty/too-large); review harness (state/viewport/theme/reduced-motion) + in-artifact contrast audit. DESIGN.md tokens; design-lint clean; token contrast worst 6.26:1 (>AA). Impeccable detector unavailable here (no node) — recorded, deferred to CI; verified by the inward linter + mechanical contrast audit + manual tells check. Minor tell: emoji state glyphs -> real icons in prod. Graph<->reader keyboard-cycle flagged for /design.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/knowledge-explorer-mode.html"
+      ],
+      "tags": [
+        "ui-design",
+        "explorer"
       ],
       "outcome": "success"
     }

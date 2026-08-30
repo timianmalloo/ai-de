@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T19:19:19Z",
+  "generated": "2026-08-30T19:27:18Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2046,6 +2046,38 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "2ba356a6b77d2ed153dcf4f491c25b1bf8595ddfc2f0bcd2cba0459438ad9e36"
+    },
+    {
+      "id": "mockup-knowledge-explorer-mode",
+      "path": "docs/mockups/knowledge-explorer-mode.md",
+      "title": "Knowledge Explorer mode — mockup",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Self-contained, dependency-free review mockup of the full-window dual-pane Knowledge Explorer mode (spec-knowledge-explorer-mode): the activity rail + a body-wide graph|reader split, with the reader's hard states (code/markdown/html/empty/loading/error/unsupported-kind/overflow) and the graph's loading/empty/too-large states, a review harness (state · viewport · theme · reduced-motion) and an in-artifact contrast/target audit. Tokens are the project DESIGN.md (chrome + the separate syntax palette + provenance). Open `knowledge-explorer-mode.html` over file://.",
+      "tags": [
+        "knowledge-graph",
+        "explorer",
+        "reader",
+        "dual-pane",
+        "mockup",
+        "wpf"
+      ],
+      "links": [
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-graph-canvas",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "51f511c81ba5ea794b33af699ec2ddb303aa746dd40e8ddcae87a16d92668420"
     },
     {
       "id": "mockup-uml-erm-surfaces",
@@ -6079,6 +6111,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-graph-canvas"
     },
     {
+      "id": "surface-mockups-knowledge-explorer-mode",
+      "path": "docs/mockups/knowledge-explorer-mode.html",
+      "title": "Knowledge Explorer mode — mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-knowledge-explorer-mode"
+    },
+    {
       "id": "surface-mockups-knowledge-explorer",
       "path": "docs/mockups/knowledge-explorer.html",
       "title": "Knowledge Explorer — graph + node introspection (mockup)",
@@ -6095,5 +6135,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c4a3d9b7220276af4f8521414d809dce36e0946c109c8739a2dbb7eb1f1dc543"
+  "graphSha256": "10016cfc2a1eaf1715fc7f760f289784b5ef82a19a52be43907379fc01b81c0d"
 };
