@@ -803,8 +803,13 @@ public sealed class WorkbenchShell : IDisposable
     public CanvasSurface CreateExplorerGraph()
     {
         var canvas = new CanvasSurface("explorer-graph", "Graph");
-        var graph = new CanvasGraphViewModel(_queries);
-        canvas.GraphSource = (rootId, ct) => graph.LoadAsync(rootId, cancellationToken: ct);
+
+        // Read _queries LIVE at load time, not captured once: the Explorer surface is created lazily
+        // and then retained (US-E6), so a canvas built before the workspace attached would otherwise
+        // stay bound to a null queries forever and show "No workspace is open" even after one opens.
+        canvas.GraphSource = (rootId, ct) =>
+            new CanvasGraphViewModel(_queries).LoadAsync(rootId, cancellationToken: ct);
+
         return canvas;
     }
 

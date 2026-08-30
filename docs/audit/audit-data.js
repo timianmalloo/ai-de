@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T20:30:35Z",
+  "generated": "2026-08-30T21:02:01Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2645,6 +2645,28 @@ window.AUDIT_DATA = {
       "tags": [
         "explorer",
         "accessibility",
+        "defect-fix"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0143",
+      "shortname": "fix-explorer-empty-graph",
+      "datetime": "2026-08-30T21:02:01Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "regression: the Explorer graph shows 'No workspace is open' even though TheTerrace is open",
+      "summary": "DC-040: CreateExplorerGraph captured _queries once into a CanvasGraphViewModel; the Explorer surface is retained (US-E6), so a surface first created before the workspace attached stayed bound to null and showed 'No workspace is open' forever, while the workbench graph (rebound via BindCanvas) worked. Fix: read _queries LIVE in the GraphSource lambda (fresh VM per load), and refresh the Explorer graph on each mode entry. App.Tests 139/139.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/MainWindow.xaml.cs"
+      ],
+      "tags": [
+        "explorer",
+        "regression",
         "defect-fix"
       ],
       "outcome": "success"

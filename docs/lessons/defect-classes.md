@@ -1379,3 +1379,34 @@ for both or split.*
   data wiring and not the focus wiring is this class.
 - **Status:** `partially-controlled` — the escape is wired and its landing target is tested; the
   full real-WebView2 boundary-Tab integration test is a follow-on.
+
+### DC-040 — A retained component captures a dependency that arrives (or changes) later
+
+- **Shape:** a lazily-created, then RETAINED, component captures a dependency (a query interface, a
+  service, config) **by value at creation**. On the original host that dependency is set/updated later
+  (a workspace attaches, a connection opens), and the original host rebinds — but the retained copy
+  captured the old value (often null) and never rebinds, so it shows an empty or stale state forever
+  while the original works.
+- **Signature:** a factory reads a mutable field into a `new SomeViewModel(field)` and hands the result
+  to a long-lived, reused surface; elsewhere a separate "attach/bind" path updates that field and
+  re-creates the *original* consumer but not the retained one. The retained surface and the live one
+  disagree, and only the retained one is wrong.
+- **Why it survives:** the happy demo opens the dependency BEFORE creating the retained surface, so the
+  captured value is good and it works; the bug only appears when creation and attachment race the other
+  way, or when the dependency changes after creation. The original consumer works, which misdirects the
+  investigation away from the retained copy.
+- **Instances:**
+  - 2026-08-30 — `WorkbenchShell.CreateExplorerGraph` built the Explorer graph's `CanvasGraphViewModel`
+    from a captured `_queries`; the Explorer surface is retained (US-E6), so a surface first created
+    before the workspace attached stayed bound to null and showed "No workspace is open" even with a
+    workspace open — while the workbench graph (rebound via `BindCanvas`) worked. Fixed: read `_queries`
+    LIVE in the `GraphSource` lambda, and refresh the Explorer graph on each mode entry.
+- **Control:** a retained component reads a mutable dependency **live at use time** (capture the host,
+  not the value), and/or **refreshes on re-activation**. A test that attaches the dependency AFTER
+  creating the retained component and asserts it then works catches the capture.
+- **The generalisation to apply elsewhere:** when a reused/retained surface depends on something that
+  can arrive or change after the surface exists, do not snapshot it at construction — resolve it each
+  time, or re-resolve when the surface is shown. Retention (US-E6 "don't rebuild") is about the VIEW,
+  never a licence to freeze its data source.
+- **Status:** `partially-controlled` — the live-read + refresh-on-entry fix is landed; a realized-shell
+  integration test (Explorer shows the graph after a workspace opens) is a follow-on.

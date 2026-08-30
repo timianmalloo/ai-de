@@ -52,7 +52,19 @@ public partial class MainWindow : Window
             WorkbenchHost,
             Shell.Manager,
             () => new ExplorerSurface(Shell.CreateExplorerGraph(), new NodeReaderView()));
-        _mode.ModeChanged += (_, mode) => ReflectMode(mode);
+        _mode.ModeChanged += (_, mode) =>
+        {
+            ReflectMode(mode);
+
+            // Reload the Explorer graph with the CURRENT workspace when entering. The surface is
+            // retained (US-E6), so without this a surface first created before a workspace opened
+            // would keep showing "No workspace is open" on every later entry. No-ops on the very
+            // first entry (the canvas is not Ready yet); its own NavigationCompleted does that load.
+            if (mode == ShellViewMode.Explorer && _mode.ExplorerSurface is ExplorerSurface explorer)
+            {
+                _ = explorer.Graph.RefreshAsync();
+            }
+        };
         ReflectMode(ShellViewMode.Workbench);
 
         // The most common moment to lose an arrangement is rearranging and immediately closing, so
