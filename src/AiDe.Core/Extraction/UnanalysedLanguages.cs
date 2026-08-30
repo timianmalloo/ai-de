@@ -30,10 +30,8 @@ public static class UnanalysedLanguages
         // .py is NOT here: PythonExtractor reads it now, and disclosing a gap that has been closed
         // is the same defect as hiding one that has not. What Python extraction cannot see is
         // disclosed by that extractor, on the scope, in its own words.
-        (".ts", "TypeScript"),
-        (".tsx", "TypeScript"),
-        (".js", "JavaScript"),
-        (".jsx", "JavaScript"),
+        // .ts/.tsx/.js/.jsx are NOT here: TypeScriptExtractor reads them. What it cannot see is
+        // disclosed by that extractor, on the scope, in its own words.
         (".go", "Go"),
         (".rs", "Rust"),
         (".java", "Java"),

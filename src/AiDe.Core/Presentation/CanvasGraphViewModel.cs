@@ -56,6 +56,57 @@ public sealed record CanvasGraph(
 public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 {
     /// <summary>The graph around <paramref name="rootId"/>, or around whatever Find offers first.</summary>
+    /// <summary>
+    /// How many nodes the canvas asks for when nothing is focused.
+    /// </summary>
+    /// <remarks>
+    /// The projection's own ceiling, so the canvas asks for everything the read surface will give.
+    /// A lower number here omitted 813 of TheTerrace's 2,813 nodes — a limit the SURFACE imposed on
+    /// itself while the store and the projection were both willing. How much of it to draw at once
+    /// is a rendering decision and belongs with the renderer; withholding it here would make that
+    /// decision on the renderer's behalf and hide the rest.
+    /// </remarks>
+    public const int WholeGraphNodeCap = GraphProjection.DefaultMaxNodes;
+
+    /// <summary>Every node and edge in the workspace, bounded and honest about the bound.</summary>
+    private async Task<CanvasGraph> WholeGraphAsync(CancellationToken cancellationToken)
+    {
+        var graph = await queries!.GraphAsync(WholeGraphNodeCap, cancellationToken).ConfigureAwait(false);
+
+        if (graph.Nodes.Count == 0)
+        {
+            return Empty("Nothing indexed yet. Run \"Index C# projects in this workspace\".");
+        }
+
+        var kept = graph.Nodes
+            .Where(n => ContextFilter is null
+                || string.Equals(ContextOf(n.Id), ContextFilter, StringComparison.Ordinal))
+            .ToList();
+
+        var visible = kept.Select(n => n.Id).ToHashSet(StringComparer.Ordinal);
+        var filtered = graph.Nodes.Count - kept.Count;
+
+        var message = graph.Omitted > 0
+            ? $"{kept.Count:N0} of {graph.Nodes.Count + graph.Omitted:N0} node(s). " +
+              $"{graph.Omitted:N0} not drawn (external and least-connected first)."
+            : $"{kept.Count:N0} node(s), {graph.Edges.Count:N0} edge(s).";
+
+        if (ContextFilter is not null)
+        {
+            message += $" Showing only {ContextFilter}. {filtered:N0} node(s) in other contexts hidden.";
+        }
+
+        return new CanvasGraph(
+            [.. kept.Select(n => new CanvasNode(n.Id, n.Label, n.Kind, IsRoot: false, ContextOf(n.Id)))],
+            [.. graph.Edges
+                .Where(e => visible.Contains(e.From) && visible.Contains(e.To))
+                .Select(e => new CanvasEdge(e.From, e.To, e.Predicate, e.Status.ToString()))],
+            RootId: null,
+            graph.Omitted,
+            graph.Disclosures,
+            message);
+    }
+
     public async Task<CanvasGraph> LoadAsync(
         string? rootId = null, int maxNeighbors = 40, CancellationToken cancellationToken = default)
     {
@@ -66,15 +117,13 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
         try
         {
+            // NO ROOT means the WHOLE GRAPH, not one arbitrary node's neighbourhood. This used to
+            // ask for a single node (FindAsync with a limit of 1) and then draw its neighbours, so a
+            // workspace of 12,100 assertions across 2,164 nodes rendered as TWO — the alphabetically
+            // first symbol and its one neighbour. A root is a drill-down, not the default.
             if (string.IsNullOrWhiteSpace(rootId))
             {
-                var candidates = await queries.FindAsync(string.Empty, 1, cancellationToken).ConfigureAwait(false);
-                rootId = candidates.Matches.FirstOrDefault()?.NodeId;
-
-                if (string.IsNullOrWhiteSpace(rootId))
-                {
-                    return Empty("Nothing indexed yet. Run \"Index C# projects in this workspace\".");
-                }
+                return await WholeGraphAsync(cancellationToken).ConfigureAwait(false);
             }
 
             var describe = await queries.DescribeAsync(rootId, maxNeighbors, cancellationToken).ConfigureAwait(false);

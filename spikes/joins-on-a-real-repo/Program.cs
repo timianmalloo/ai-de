@@ -149,6 +149,31 @@ foreach (var missing in storeKinds.Except(paneKinds).Take(4))
     Console.WriteLine($"      store-only: {missing}");
 }
 
+// THE GRAPH the canvas would draw. Reported because the surface asked for one node and its
+// neighbours and rendered two of two thousand — the defect that produced this projection.
+var graph = await queries.GraphAsync(GraphProjection.DefaultMaxNodes, CancellationToken.None);
+
+Console.WriteLine();
+Console.WriteLine(new string('=', 100));
+Console.WriteLine("THE GRAPH PANE");
+Console.WriteLine(new string('=', 100));
+Console.WriteLine($"nodes      : {graph.Nodes.Count:N0} drawn ({graph.Nodes.Count(n => !n.IsExternal):N0} " +
+                  $"declared here, {graph.Nodes.Count(n => n.IsExternal):N0} external), {graph.Omitted:N0} omitted");
+Console.WriteLine($"edges      : {graph.Edges.Count:N0}");
+Console.WriteLine($"revision   : {graph.SourceRevision}");
+Console.WriteLine("most connected:");
+foreach (var node in graph.Nodes.Take(6))
+{
+    Console.WriteLine($"    {node.Degree,6:N0}  {node.Label}  [{node.Kind}]" +
+                      (node.IsExternal ? "  (external)" : string.Empty));
+}
+
+Console.WriteLine("edge kinds:");
+foreach (var kind in graph.Edges.GroupBy(e => e.Predicate).OrderByDescending(g => g.Count()).Take(6))
+{
+    Console.WriteLine($"    {kind.Count(),6:N0}  {kind.Key}");
+}
+
 Console.WriteLine();
 Console.WriteLine(new string('=', 100));
 Console.WriteLine("THE JOINS PANE");

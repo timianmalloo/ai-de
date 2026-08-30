@@ -101,7 +101,52 @@ public static class CSharpScopeDiscovery
             scopes.Add(new ScopeDescriptor($"python:{relative}", directory, "python"));
         }
 
+        // One scope per directory holding TypeScript or JavaScript directly, mirroring Python.
+        foreach (var directory in TypeScriptDirectories(rootPath).OrderBy(p => p, StringComparer.OrdinalIgnoreCase))
+        {
+            var relative = Path.GetRelativePath(rootPath, directory).Replace(Path.DirectorySeparatorChar, '/');
+            scopes.Add(new ScopeDescriptor($"typescript:{relative}", directory, "typescript"));
+        }
+
         return scopes;
+    }
+
+    /// <summary>Directories holding TypeScript or JavaScript directly, excluding vendored trees.</summary>
+    private static IEnumerable<string> TypeScriptDirectories(string root)
+    {
+        var skip = new HashSet<string>(Skip, StringComparer.OrdinalIgnoreCase)
+        {
+            "node_modules", "dist", "build", "out", ".next", "coverage",
+        };
+
+        string[] wanted = [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"];
+
+        var pending = new Stack<string>();
+        pending.Push(root);
+
+        while (pending.Count > 0)
+        {
+            var current = pending.Pop();
+
+            string[] files;
+            try { files = Directory.GetFiles(current); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            if (files.Any(f => !f.EndsWith(".d.ts", StringComparison.OrdinalIgnoreCase)
+                    && wanted.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase)))
+            {
+                yield return current;
+            }
+
+            IEnumerable<string> children;
+            try { children = Directory.EnumerateDirectories(current); }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { continue; }
+
+            foreach (var child in children)
+            {
+                if (!skip.Contains(Path.GetFileName(child))) pending.Push(child);
+            }
+        }
     }
 
     /// <summary>Directories holding Python directly, excluding vendored and generated trees.</summary>
@@ -239,7 +284,8 @@ public sealed class CompositeExtractor(
     IExtractor fallback,
     IExtractor? bicep = null,
     IExtractor? schema = null,
-    IExtractor? python = null) : IExtractor
+    IExtractor? python = null,
+    IExtractor? typescript = null) : IExtractor
 {
     public string ScopeKind => "composite";
 
@@ -250,6 +296,7 @@ public sealed class CompositeExtractor(
         ["bicep:"] = bicep ?? new BicepExtractor(),
         ["schema:"] = schema ?? new EfSchemaExtractor(),
         ["python:"] = python ?? new PythonExtractor(),
+        ["typescript:"] = typescript ?? new TypeScriptExtractor(),
     };
 
     /// <summary>Which extractor a scope id resolves to. Exposed so routing can be ASSERTED.</summary>

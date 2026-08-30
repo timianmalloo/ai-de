@@ -168,7 +168,19 @@ public sealed class PythonExtractor : IExtractor
 
         // Complete: the disclosures are IN the snapshot rather than missing from it, so a scope that
         // read what it could is a whole answer about a narrow question.
-        return Task.FromResult(new ExtractionResult(assertions, Complete: true, []));
+        
+        // Identical facts are ONE fact. Two files can share a module name — `app.ts` beside a
+        // compiled `app.js` is the common case, and an import specifier resolves to one module
+        // regardless — so the same triple can be asserted twice in a scope. The store's natural key
+        // rejects that (P1-STORE-05, deliberately), which surfaced as a raw SQLite constraint error
+        // from the middle of an index on a real repository. Deduplicating here is the honest fix:
+        // the duplicate carries no information, and silencing the key would weaken a real control.
+        var deduplicated = assertions
+            .GroupBy(a => (a.Subject, a.Predicate, a.Object))
+            .Select(g => g.First())
+            .ToList();
+
+        return Task.FromResult(new ExtractionResult(deduplicated, Complete: true, []));
     }
 
     /// <summary>

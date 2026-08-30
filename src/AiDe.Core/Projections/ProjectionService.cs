@@ -326,6 +326,37 @@ public sealed class ProjectionService(WorkspaceStore store)
             reader.CurrentSourceRevision());
     }
 
+    /// <summary>
+    /// The whole workspace as a graph.
+    /// </summary>
+    /// <remarks>
+    /// The question the graph surface was never asking. It requested one node and that node's
+    /// neighbours, so a workspace of 12,100 assertions rendered as two nodes — reported against the
+    /// same repository viewed in Obsidian.
+    /// </remarks>
+    public WorkspaceGraph Graph(int maxNodes)
+    {
+        using var activity = Activity.StartActivity("aide.projection.query");
+        activity?.SetTag("projection", "graph");
+
+        using var reader = store.BeginRead();
+
+        var assertions = reader.AllCurrentAssertions()
+            .Select(a => new EvidenceAssertion(
+                a.ScopeId, a.ArtifactRevision, a.Subject, a.Predicate, a.Object,
+                a.Origin, a.Status, a.Provenance))
+            .ToList();
+
+        var graph = new GraphProjection(assertions, reader.CurrentSourceRevision())
+            .Compute(Clamp(maxNodes, 1, GraphProjection.DefaultMaxNodes));
+
+        activity?.SetTag("returned.nodes", graph.Nodes.Count);
+        activity?.SetTag("returned.edges", graph.Edges.Count);
+        activity?.SetTag("omitted.nodes", graph.Omitted);
+
+        return graph;
+    }
+
     public FindResult Find(string term, int maxResults)
     {
         using var activity = Activity.StartActivity("aide.projection.query");

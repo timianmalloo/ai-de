@@ -24,7 +24,8 @@ public static class WorkspaceExtractors
         fallback: new FixtureExtractor(),
         bicep: new BicepExtractor(),
         schema: new EfSchemaExtractor(),
-        python: new PythonExtractor());
+        python: new PythonExtractor(),
+        typescript: new TypeScriptExtractor());
 
     /// <summary>
     /// The scope-id prefix each extractor answers for, as the router reads them.
@@ -40,5 +41,6 @@ public static class WorkspaceExtractors
             ["bicep:"] = "bicep",
             ["schema:"] = "schema",
             ["python:"] = "python",
+            ["typescript:"] = "typescript",
         };
 }

@@ -36,6 +36,15 @@ public interface IWorkspaceQueries
     /// doing it — and which asks the store for a graph walk when what is wanted is a table scan.
     /// </remarks>
     Task<EvidencePage> EvidenceAsync(string? cursor, int maxAssertions, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// The whole workspace as a graph, bounded by node count.
+    /// </summary>
+    /// <remarks>
+    /// Distinct from <see cref="DescribeAsync"/>, which answers "what is around THIS node". The
+    /// graph surface asked the neighbourhood question and rendered two nodes of two thousand.
+    /// </remarks>
+    Task<WorkspaceGraph> GraphAsync(int maxNodes, CancellationToken cancellationToken);
 }
 
 /// <summary>The read surface answered by a <see cref="ProjectionService"/> in this process.</summary>
@@ -65,4 +74,7 @@ public sealed class LocalWorkspaceQueries(ProjectionService projections) : IWork
     public Task<EvidencePage> EvidenceAsync(
         string? cursor, int maxAssertions, CancellationToken cancellationToken) =>
         Task.FromResult(projections.Evidence(cursor, maxAssertions));
+
+    public Task<WorkspaceGraph> GraphAsync(int maxNodes, CancellationToken cancellationToken) =>
+        Task.FromResult(projections.Graph(maxNodes));
 }
