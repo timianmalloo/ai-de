@@ -207,7 +207,15 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
                 if (seen.Add(other))
                 {
-                    nodes.Add(new CanvasNode(other, Shorten(other), "source", IsRoot: false, Context: otherContext));
+                    // The NEIGHBOUR's own kind, not a hardcoded default (INV-0004). A drill-down
+                    // that labels a table, a bicep resource and a class all "source" has told the
+                    // user nothing and told the filter something false.
+                    var otherKind = describe.NeighborKinds is { } kinds
+                        && kinds.TryGetValue(other, out var known)
+                            ? known
+                            : "unknown";
+
+                    nodes.Add(new CanvasNode(other, Shorten(other), otherKind, IsRoot: false, Context: otherContext));
                 }
 
                 edges.Add(new CanvasEdge(edge.Subject, edge.Object, edge.Predicate, edge.Status.ToString()));

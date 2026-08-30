@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-30T22:11:11Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-30T22:26:25Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2821,6 +2821,32 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0155",
+      "shortname": "inv-0004-node-class-knowledge-health-vocabulary-control",
+      "datetime": "2026-08-30T22:26:25Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do these next steps now",
+      "summary": "**INV-0004's root cause was a Phase-1 assumption that six extractors later made false.** Node\nclassification read:\n\n    var isKnowledge = result.Assertions.Any(a => a.Subject == nodeId && a.Predicate == \"has_type\");\n\n*Anything with a type is knowledge* — true when the fixture reader was the only producer of\n`has_type`, and false the moment a second extractor emitted it. By now every C# class, table, bicep\nresource and python module carried one, so almost the entire graph was classified `knowledge`, and it\nsurfaced exactly as the design session saw it: a bicep resource reading **\"kind: knowledge\"**. DC-022\nprecisely — a predicate gained producers and a consumer kept its assumption about who emits it.\n\n**Fixed by having the PRODUCER declare it.** Scope-id prefixes were the first attempt and were nearly\nright, but the fixture reader emits knowledge from a scope not named for it, so the id could not be\nthe authority either. A fact can be: both knowledge-reading paths now emit `node_class = knowledge`,\nand the core classifies from that. Nothing infers a node's half of the graph from a type name again.\n\n**Neighbours carry their real kind.** `DescribeResult` gained `NeighborKinds`; the canvas hardcoded\n`\"source\"` for every neighbour because the projection did not carry one, so a drill-down showed a\ntable, a bicep resource and a class as the same thing and the filter could not tell them apart. A\nrenderer inventing a default is a renderer stating a fact it does not have.\n\n**`UpsertNode` is a no-op when nothing changed.** It is a Type-2 dimension and every call closed the\ncurrent row and opened a new one, so re-indexing rewrote the history of every unchanged node. History\nwhose every row is an artefact of re-running the indexer cannot answer the question it exists for.\n\n**The knowledge pane was returning code.** It filtered on `has_type` alone — the same stale\nassumption, one projection along — so now that knowledge is finally indexed it would have shown C#\nclasses beside ADRs. It filters on `node_class` now, which is the dimension that knows.\n\n**`review-by` is read and overdue reviews are a health finding.** 460 review dates on this repository.\n`owned_by` and `review_by` joined the attribute set: a person and a date are not things to navigate\nto, and drawing them would have put \"@someone\" and \"2027-02-28\" in the graph as peers of the\ndocuments that carry them.\n\n**The one \"document with no id\" was a false positive of mine.** `INSTALL.md` opens with `doc:`,\n`bundle_version:` and `changes:` — a pack manifest that happens to use YAML, never a graph node. The\ncomplaint now fires only when the frontmatter is GRAPH frontmatter (a type, owner, links or review\ndate) and still has no id. Same mistake as reading prose into a schema, one field along.\n\n**The code↔knowledge join is NOT buildable today, and that is the finding.** Measured: **no knowledge\nlink in this repository targets a code symbol** — every `to:` names another document id. There is no\ndeclared relationship to read, and inferring one from titles or namespaces is exactly the guessing\nthis codebase refuses. What would unblock it is a change to how docs are WRITTEN, not to the reader:\na link such as `- { to: TheTerrace.Features.Fixtures, rel: governs }`. Recorded rather than invented.\n\n**DC-042's residual is now checkable.** `ConsumersReadWhatProducersEmitTests` reads the join\nprojection's predicate list FROM ITS SOURCE and asserts every name is one some extractor actually\nemits — so a renamed predicate fails a test instead of quietly returning fewer edges. Its first run\nreported `is_secret` and `resource_name_expression` as orphaned; they are emitted on real\nrepositories, and the gap was in the fixture I had written. A control validated against input its\nauthor wrote is a control that measures the author — so the fixture now exercises the whole bicep\nvocabulary.\n\n867 tests green (App 144, Core 723). Eight gates clean. Zero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Carry INV-0004's Core handoffs, make the knowledge pane return knowledge, add review-by health, check the id-less document, and sweep the remaining routers for DC-042",
+      "done_when": "node_kind is declared by producers not inferred; neighbours carry real kinds; the knowledge pane filters on node_class; review-by read and overdue disclosed; the id-less document explained; the code-knowledge join decided on evidence; a vocabulary control lands; gates green; merged and published",
+      "change": "cl-0097",
+      "git": {
+        "sha": "df001100c4408da481fddf804225e7f01f8148a9",
+        "short": "df001100c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false
+      }
     }
   ],
   "changes": [
@@ -5130,6 +5156,32 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "609b4e0d4892a919866f2e8e3eee7e2d4d425e95",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0097",
+      "datetime": "2026-08-30T22:26:13Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "INV-0004: everything was knowledge because everything has a type",
+      "prompt": null,
+      "summary": "**INV-0004's root cause was a Phase-1 assumption that six extractors later made false.** Node\nclassification read:\n\n    var isKnowledge = result.Assertions.Any(a => a.Subject == nodeId && a.Predicate == \"has_type\");\n\n*Anything with a type is knowledge* — true when the fixture reader was the only producer of\n`has_type`, and false the moment a second extractor emitted it. By now every C# class, table, bicep\nresource and python module carried one, so almost the entire graph was classified `knowledge`, and it\nsurfaced exactly as the design session saw it: a bicep resource reading **\"kind: knowledge\"**. DC-022\nprecisely — a predicate gained producers and a consumer kept its assumption about who emits it.\n\n**Fixed by having the PRODUCER declare it.** Scope-id prefixes were the first attempt and were nearly\nright, but the fixture reader emits knowledge from a scope not named for it, so the id could not be\nthe authority either. A fact can be: both knowledge-reading paths now emit `node_class = knowledge`,\nand the core classifies from that. Nothing infers a node's half of the graph from a type name again.\n\n**Neighbours carry their real kind.** `DescribeResult` gained `NeighborKinds`; the canvas hardcoded\n`\"source\"` for every neighbour because the projection did not carry one, so a drill-down showed a\ntable, a bicep resource and a class as the same thing and the filter could not tell them apart. A\nrenderer inventing a default is a renderer stating a fact it does not have.\n\n**`UpsertNode` is a no-op when nothing changed.** It is a Type-2 dimension and every call closed the\ncurrent row and opened a new one, so re-indexing rewrote the history of every unchanged node. History\nwhose every row is an artefact of re-running the indexer cannot answer the question it exists for.\n\n**The knowledge pane was returning code.** It filtered on `has_type` alone — the same stale\nassumption, one projection along — so now that knowledge is finally indexed it would have shown C#\nclasses beside ADRs. It filters on `node_class` now, which is the dimension that knows.\n\n**`review-by` is read and overdue reviews are a health finding.** 460 review dates on this repository.\n`owned_by` and `review_by` joined the attribute set: a person and a date are not things to navigate\nto, and drawing them would have put \"@someone\" and \"2027-02-28\" in the graph as peers of the\ndocuments that carry them.\n\n**The one \"document with no id\" was a false positive of mine.** `INSTALL.md` opens with `doc:`,\n`bundle_version:` and `changes:` — a pack manifest that happens to use YAML, never a graph node. The\ncomplaint now fires only when the frontmatter is GRAPH frontmatter (a type, owner, links or review\ndate) and still has no id. Same mistake as reading prose into a schema, one field along.\n\n**The code↔knowledge join is NOT buildable today, and that is the finding.** Measured: **no knowledge\nlink in this repository targets a code symbol** — every `to:` names another document id. There is no\ndeclared relationship to read, and inferring one from titles or namespaces is exactly the guessing\nthis codebase refuses. What would unblock it is a change to how docs are WRITTEN, not to the reader:\na link such as `- { to: TheTerrace.Features.Fixtures, rel: governs }`. Recorded rather than invented.\n\n**DC-042's residual is now checkable.** `ConsumersReadWhatProducersEmitTests` reads the join\nprojection's predicate list FROM ITS SOURCE and asserts every name is one some extractor actually\nemits — so a renamed predicate fails a test instead of quietly returning fewer edges. Its first run\nreported `is_secret` and `resource_name_expression` as orphaned; they are emitted on real\nrepositories, and the gap was in the fixture I had written. A control validated against input its\nauthor wrote is a control that measures the author — so the fixture now exercises the whole bicep\nvocabulary.\n\n867 tests green (App 144, Core 723). Eight gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/WorkspaceCore.cs",
+        "src/AiDe.Core/Projections/ProjectionService.cs",
+        "tests/AiDe.Core.Tests/ConsumersReadWhatProducersEmitTests.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "df001100c4408da481fddf804225e7f01f8148a9",
         "branch": "session/phase3-pane-probes",
         "pushed": false,
         "commits": []

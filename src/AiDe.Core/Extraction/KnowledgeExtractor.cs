@@ -96,11 +96,25 @@ public sealed class KnowledgeExtractor : IExtractor
             assertions.Add(Fact(
                 request, record.Id, "declared_in", request.ScopeId, VerificationStatus.Verified, Where(2)));
 
+            // The PRODUCER says this is knowledge. Nothing downstream should have to infer it from a
+            // type name or a scope id: `has_type` is emitted by six extractors and says nothing about
+            // which half of the graph a node is in, and inferring it was INV-0004's root cause.
+            assertions.Add(Fact(
+                request, record.Id, "node_class", "knowledge", VerificationStatus.Verified, Where(2)));
+
             // Owner names a person, so it stays workspace-local and never reaches telemetry.
             if (!string.IsNullOrEmpty(record.Owner))
             {
                 assertions.Add(Fact(
                     request, record.Id, "owned_by", record.Owner, VerificationStatus.Verified, Where(3)));
+            }
+
+            // A review date is a FACT ABOUT the document, so it is an attribute rather than an edge:
+            // drawing it would put a date in the graph as a thing to navigate to.
+            if (!string.IsNullOrEmpty(record.ReviewBy))
+            {
+                assertions.Add(Fact(
+                    request, record.Id, "review_by", record.ReviewBy, VerificationStatus.Verified, Where(3)));
             }
 
             foreach (var (to, rel) in record.Links)

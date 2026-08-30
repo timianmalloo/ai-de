@@ -31,6 +31,11 @@ public static class EvidencePredicates
         "has_column", "introduced_by",
         "is_existing_reference", "is_loop", "is_conditional",
         "declares_table",
+
+        // Knowledge attributes. `owned_by` names a PERSON and `review_by` a DATE — neither is a
+        // thing to navigate to, and drawing them would put "@someone" and "2027-02-28" in the graph
+        // as peers of the documents that carry them.
+        "owned_by", "review_by", "node_class",
     };
 
     /// <summary>The SQL literal list for an <c>IN</c> clause. Built from the same set.</summary>

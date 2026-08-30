@@ -224,6 +224,12 @@ public sealed class FixtureExtractor(string extractorVersion = "1.0.0") : IExtra
             EvidenceOrigin.Static, type is null ? VerificationStatus.Unverified : VerificationStatus.Verified,
             Where(2)));
 
+        // Declared, not inferred — the same statement KnowledgeExtractor makes. This reader produces
+        // both knowledge nodes and fixture facts, so its scope id cannot say which a node is.
+        assertions.Add(new EvidenceAssertion(
+            request.ScopeId, request.ArtifactRevision, id, "node_class", "knowledge",
+            EvidenceOrigin.Static, VerificationStatus.Verified, Where(2)));
+
         // Owner is recorded so US-4's "missing source/owner is a health finding" can be answered.
         // It names a person, so it stays workspace-local and never reaches telemetry.
         if (!string.IsNullOrEmpty(owner))
