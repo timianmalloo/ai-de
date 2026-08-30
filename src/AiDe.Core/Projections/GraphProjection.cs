@@ -33,6 +33,9 @@ public sealed record GraphEdge(string From, string To, string Predicate, Verific
 /// <c>python-module</c>, <c>table</c>). Null or empty means every kind.
 /// </param>
 /// <param name="ScopeId">Keep only nodes this scope declares. Null means every scope.</param>
+/// <param name="GroupId">
+/// Keep only the nodes inside one overview group — the drill-down from a cluster to its contents.
+/// </param>
 /// <param name="IncludeExternal">
 /// Whether to keep nodes nothing in the workspace declares — framework and package types.
 /// </param>
@@ -45,12 +48,19 @@ public sealed record GraphEdge(string From, string To, string Predicate, Verific
 ///
 /// <para>So the filter runs BEFORE the cap, degree is computed over what survives it, and "most
 /// connected" means most connected <em>in the graph that was asked for</em>.</para>
+///
+/// <para><b>The group filter takes no depth, on purpose.</b> A group id already states its own depth
+/// — <c>TheTerrace.Features</c> is two segments and <c>src/app</c> is two — so the depth is read back
+/// out of the id rather than passed alongside it. A separate parameter would let a caller ask for
+/// <c>TheTerrace.Features</c> at depth 3 and receive nothing, with no error and no way to tell that
+/// from an empty group.</para>
 /// </remarks>
 public sealed record GraphQuery(
     int MaxNodes = GraphProjection.DefaultMaxNodes,
     IReadOnlyList<string>? Kinds = null,
     string? ScopeId = null,
-    bool IncludeExternal = true);
+    bool IncludeExternal = true,
+    string? GroupId = null);
 
 /// <summary>The whole graph, and what it left out.</summary>
 /// <param name="Omitted">Nodes present in the evidence and not returned, because a cap applied.</param>
@@ -156,6 +166,7 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
             .Where(id => wanted is null || wanted.Contains(kinds.GetValueOrDefault(id, "external")))
             .Where(id => query.ScopeId is null
                 || string.Equals(declaredIn.GetValueOrDefault(id), query.ScopeId, StringComparison.Ordinal))
+            .Where(id => query.GroupId is null || InGroup(id, query.GroupId))
             .ToHashSet(StringComparer.Ordinal);
 
         // Degree is counted over the SURVIVING edges, so "most connected" means most connected in
@@ -199,6 +210,25 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
             omitted,
             [.. disclosures.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)],
             sourceRevision);
+    }
+
+    /// <summary>
+    /// Whether a node belongs to the overview group with this id.
+    /// </summary>
+    /// <remarks>
+    /// The depth comes from the GROUP's own shape, so a drill-down cannot ask the wrong question:
+    /// grouping <paramref name="id"/> to the same number of segments the group id has must produce
+    /// the group id itself. Delegating to <see cref="GraphOverview.GroupFor"/> keeps one definition
+    /// of "which group is this in" — two would put a node in a cluster the overview does not have.
+    /// </remarks>
+    private static bool InGroup(string id, string groupId)
+    {
+        var separator = groupId.Contains('/', StringComparison.Ordinal) ? '/' : '.';
+        var depth = groupId.Contains('#', StringComparison.Ordinal)
+            ? 1
+            : groupId.Split(separator).Length;
+
+        return string.Equals(GraphOverview.GroupFor(id, depth), groupId, StringComparison.Ordinal);
     }
 
     /// <summary>

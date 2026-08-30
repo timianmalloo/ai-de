@@ -47,4 +47,11 @@
                       ReferenceOutputAssembly="false" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Shared by both test projects: every method added to IWorkspaceQueries used to break four
+         hand-written stubs across two assemblies. Linked rather than packaged, because a project
+         for forty lines is more machinery than the churn it removes. -->
+    <Compile Include="..\Shared\FakeWorkspaceQueries.cs" Link="FakeWorkspaceQueries.cs" />
+  </ItemGroup>
+
 </Project>

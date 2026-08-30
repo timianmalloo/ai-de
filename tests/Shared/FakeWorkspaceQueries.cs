@@ -1,6 +1,6 @@
 using AiDe.Core.Projections;
 
-namespace AiDe.Core.Tests;
+namespace AiDe.Testing;
 
 /// <summary>
 /// A read surface that refuses everything, so a test can implement only what it exercises.
@@ -11,6 +11,11 @@ namespace AiDe.Core.Tests;
 /// <c>PathsAsync</c>, <c>OverviewAsync</c> — broke four hand-written stubs across two test projects,
 /// each needing the same one-line addition. That is a measured recurrence rather than a predicted
 /// one, which is what makes the abstraction earned here and speculative before.</para>
+///
+/// <para><b>Shared as LINKED SOURCE, not as a project.</b> Two test projects need it and a whole
+/// assembly for forty lines is more machinery than the problem. The link is visible in both
+/// <c>.csproj</c> files, which is the trade: slightly surprising to find the same file compiled
+/// twice, against a project nobody would otherwise have.</para>
 ///
 /// <para><b>It throws rather than returning empty.</b> A stub that quietly answers a question the
 /// test did not intend to ask turns a wrong call site into a passing test — the shape of every

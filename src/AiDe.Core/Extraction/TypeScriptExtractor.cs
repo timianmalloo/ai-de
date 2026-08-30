@@ -72,9 +72,18 @@ public sealed class TypeScriptExtractor : IExtractor
     /// Re-export forms are excluded deliberately — `export { A }`, `export * from`, `export =` and
     /// `export default someExpression` are not declarations, so counting them would produce a miss
     /// rate that never reaches zero and therefore says nothing.
+    ///
+    /// <b>That last exclusion was documented before it was implemented.</b> The first version of this
+    /// pattern excluded braces, stars, `=` and `type {`, and did NOT exclude `export default` of an
+    /// expression — so `export default defineConfig({…})` and `export default test;` counted as
+    /// misses. Found by running the extractor over a SECOND repository, which is the only reason it
+    /// surfaced: `export default` is ubiquitous, so the disclosure would have fired on nearly every
+    /// real TypeScript codebase and become noise. A `default` followed by a declaration keyword is
+    /// still a declaration and is still counted.
     /// </remarks>
     private static readonly Regex ExportLine =
-        new(@"^export\s+(?!\{|\*|=|type\s*\{)\S+", RegexOptions.Compiled | RegexOptions.Multiline);
+        new(@"^export\s+(?!\{|\*|=|type\s*\{|default\s+(?!class|interface|type|enum|function|const|let|var|namespace|module|abstract|async|declare))\S+",
+        RegexOptions.Compiled | RegexOptions.Multiline);
 
     // `from '…'` covers import and re-export; the bare form imports a module for its side effects.
     private static readonly Regex FromSpecifier =
