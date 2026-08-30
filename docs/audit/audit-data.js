@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T17:00:18Z",
+  "generated": "2026-08-30T17:05:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2358,6 +2358,26 @@ window.AUDIT_DATA = {
         "graph",
         "ui-design",
         "DC-036"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0129",
+      "shortname": "graph-canvas-pan-zoom-fit",
+      "datetime": "2026-08-30T17:05:09Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do the next best actions — add 2D pan/zoom/fit to the graph canvas (review ranked plan, US-K11)",
+      "summary": "Added 2D drag-to-pan, wheel-zoom (cursor-anchored), and a Fit-to-view control that frames the settled layout on load. 3D drag-to-rotate unchanged; keyboard a11y untouched (P2-FOCUS-03 green). App.Tests 132/132.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/CanvasPage.cs"
+      ],
+      "tags": [
+        "graph",
+        "ui-design"
       ],
       "outcome": "success"
     }

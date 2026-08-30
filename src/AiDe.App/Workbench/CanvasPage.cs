@@ -36,7 +36,8 @@ internal static class CanvasPage
           button.chrome { font: inherit; background: #1A1F26; color: #E4E9EF; border: 1px solid #2A313B;
                   border-radius: 8px; padding: 2px 10px; cursor: pointer; }
           button.chrome[disabled] { opacity: .4; cursor: default; }
-          #mode { margin-left: auto; }
+          #fit { margin-left: auto; }
+          #mode { margin-left: 6px; }
           #caption { color: #98A3B2; margin: 6px 0 0; }
           #warn { color: #D8A650; margin: 4px 0 0; min-height: 1em; }
           #stage { position: relative; height: 440px; margin-top: 10px; border-radius: 10px;
@@ -69,6 +70,7 @@ internal static class CanvasPage
           <header>
             <h1>Graph canvas</h1>
             <button id="back" class="chrome" disabled>&#8592; Back</button>
+            <button id="fit" class="chrome" title="Fit the graph to the view (2D)">Fit</button>
             <button id="mode" class="chrome" title="Toggle 2D / 3D (press 2 or 3)" aria-label="Switch to 3D view">View in 3D</button>
           </header>
           <p id="caption">Waiting for the workspace&#8230;</p>
@@ -83,7 +85,14 @@ internal static class CanvasPage
             var current = null;
             var backButton = document.getElementById('back');
             var modeButton = document.getElementById('mode');
+            var fitButton = document.getElementById('fit');
             var stage = document.getElementById('stage');
+            stage.classList.add('grab');   // 2D pans, 3D rotates — both are grab gestures
+
+            // 2D pan/zoom. The dots carry no absolute meaning beyond "attached to the root", so panning
+            // and zooming the settled layout is the natural way to read a spread-out graph. 3D keeps
+            // its own drag-to-rotate; this view transform applies only in 2D (place() ignores it in 3D).
+            var view2d = { scale: 1, tx: 0, ty: 0 };
 
             // Two projections of one node list. '2d' is the default so the focus probe (which runs
             // in 2D) and its tests are unaffected by 3D.
@@ -111,10 +120,14 @@ internal static class CanvasPage
               mode = next;
               modeButton.textContent = mode === '3d' ? 'View in 2D' : 'View in 3D';
               modeButton.setAttribute('aria-label', mode === '3d' ? 'Switch to 2D view' : 'Switch to 3D view');
-              stage.classList.toggle('grab', mode === '3d');
               place();
             }
             modeButton.addEventListener('click', function () { setMode(mode === '3d' ? '2d' : '3d'); });
+            fitButton.addEventListener('click', function () {
+              if (mode !== '2d') { setMode('2d'); }   // Fit frames the 2D layout
+              fit();
+              place();
+            });
 
             function focusable() { return Array.prototype.slice.call(document.querySelectorAll('.node')); }
 
@@ -159,11 +172,10 @@ internal static class CanvasPage
               }
             });
 
-            // Drag-to-rotate, 3D only, and only when the drag starts on empty stage (not on a node),
-            // so a node's click-to-activate is never stolen by a rotation gesture.
+            // Drag on empty stage: pan in 2D, rotate in 3D. A drag that starts on a node is left
+            // alone so its click-to-activate is never stolen by the gesture.
             var dragging = false, dragX = 0, dragY = 0;
             stage.addEventListener('pointerdown', function (e) {
-              if (mode !== '3d') { return; }
               if (e.target.classList && e.target.classList.contains('node')) { return; }
               dragging = true; dragX = e.clientX; dragY = e.clientY;
               stage.classList.add('grabbing');
@@ -171,15 +183,33 @@ internal static class CanvasPage
             });
             stage.addEventListener('pointermove', function (e) {
               if (!dragging) { return; }
-              rotY += (e.clientX - dragX) * 0.01;
-              rotX += (e.clientY - dragY) * 0.01;
-              rotX = Math.max(-1.4, Math.min(1.4, rotX));
+              if (mode === '3d') {
+                rotY += (e.clientX - dragX) * 0.01;
+                rotX += (e.clientY - dragY) * 0.01;
+                rotX = Math.max(-1.4, Math.min(1.4, rotX));
+              } else {
+                view2d.tx += (e.clientX - dragX);
+                view2d.ty += (e.clientY - dragY);
+              }
               dragX = e.clientX; dragY = e.clientY;
               place();
             });
             function endDrag() { dragging = false; stage.classList.remove('grabbing'); }
             stage.addEventListener('pointerup', endDrag);
             stage.addEventListener('pointercancel', endDrag);
+
+            // Wheel zoom in 2D, keeping the point under the cursor stationary.
+            stage.addEventListener('wheel', function (e) {
+              if (mode !== '2d') { return; }
+              e.preventDefault();
+              var rect = stage.getBoundingClientRect();
+              var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+              var next = Math.max(0.2, Math.min(3, view2d.scale * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
+              view2d.tx = mx - (mx - view2d.tx) * (next / view2d.scale);
+              view2d.ty = my - (my - view2d.ty) * (next / view2d.scale);
+              view2d.scale = next;
+              place();
+            }, { passive: false });
 
             function project(p) {
               // Rotate around Y then X, then perspective-project. Root is at the origin, so it stays
@@ -262,6 +292,26 @@ internal static class CanvasPage
               }
             }
 
+            // Frame the settled 2D layout: centre its bounding box and scale it to fill the stage.
+            function fit() {
+              var width = stage.clientWidth || 800, height = stage.clientHeight || 420;
+              var margin = 50;
+              if (!records.length) { view2d = { scale: 1, tx: 0, ty: 0 }; return; }
+              var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+              records.forEach(function (r) {
+                if (r.p2.x < minX) { minX = r.p2.x; }
+                if (r.p2.x > maxX) { maxX = r.p2.x; }
+                if (r.p2.y < minY) { minY = r.p2.y; }
+                if (r.p2.y > maxY) { maxY = r.p2.y; }
+              });
+              var gw = Math.max(1, maxX - minX), gh = Math.max(1, maxY - minY);
+              var scale = Math.max(0.2, Math.min(2.5,
+                Math.min((width - 2 * margin) / gw, (height - 2 * margin) / gh)));
+              view2d.scale = scale;
+              view2d.tx = width / 2 - ((minX + maxX) / 2) * scale;
+              view2d.ty = height / 2 - ((minY + maxY) / 2) * scale;
+            }
+
             function place() {
               var width = stage.clientWidth || 800, height = stage.clientHeight || 420;
               var cx = width / 2, cy = height / 2;
@@ -277,12 +327,14 @@ internal static class CanvasPage
                   r.el.style.zIndex = String(1000 + Math.round(pr.depth * 500));
                   centres[r.id] = { x: pr.x, y: pr.y };
                 } else {
-                  r.el.style.left = r.p2.x + 'px';
-                  r.el.style.top = r.p2.y + 'px';
+                  var sx = view2d.tx + r.p2.x * view2d.scale;
+                  var sy = view2d.ty + r.p2.y * view2d.scale;
+                  r.el.style.left = sx + 'px';
+                  r.el.style.top = sy + 'px';
                   r.el.style.transform = 'translate(-50%, -50%)';
                   r.el.style.opacity = '1';
                   r.el.style.zIndex = '';
-                  centres[r.id] = { x: r.p2.x, y: r.p2.y };
+                  centres[r.id] = { x: sx, y: sy };
                 }
               });
 
@@ -406,6 +458,7 @@ internal static class CanvasPage
               });
 
               layout2d(records, graph.edges, stage.clientWidth || 800, stage.clientHeight || 420);
+              fit();
               place();
 
               var legend = document.getElementById('legend');
@@ -428,8 +481,9 @@ internal static class CanvasPage
               caption.textContent = graph.message
                 ? graph.message
                 : nodes.length + ' node(s), ' + (graph.edges || []).length + ' edge(s). '
-                  + 'Tab or hover a dot to see its label; Enter or click focuses it; Backspace goes '
-                  + 'back; 2/3 toggles 2D/3D; drag to rotate in 3D; Tab off either end to leave.';
+                  + 'Tab or hover a dot to see its label; Enter or click focuses it; drag to pan and '
+                  + 'scroll to zoom (Fit reframes); Backspace goes back; 2/3 toggles 2D/3D; drag to '
+                  + 'rotate in 3D; Tab off either end to leave.';
 
               var notes = [];
               if (graph.omitted > 0) { notes.push(graph.omitted + ' edge(s) omitted by the result bound'); }
