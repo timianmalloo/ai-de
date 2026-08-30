@@ -1348,3 +1348,34 @@ for both or split.*
 - **Residual risk:** the name-based detection misses a bound named without one of those suffixes, and
   a limit expressed as a magic number rather than a constant is invisible to it.
 - **Status:** `partially-controlled`
+
+### DC-039 — A focus-trapped surface reused in a new host without re-wiring its escape
+
+- **Shape:** a control that deliberately traps keyboard focus and posts a "leave" signal at its
+  boundary (so a host can route focus out) is reused in a NEW host that binds the graph/content but
+  forgets to subscribe to the leave signal. The trap still fires; nothing consumes it; the keyboard
+  user is stuck inside the surface with no way out — a WCAG 2.1.2 (No Keyboard Trap) failure.
+- **Signature:** the surface exposes an escape event (here `CanvasSurface.FocusLeaveRequested`, the
+  ADR-0015 contract) that the ORIGINAL host wires (`WorkbenchShell.BindCanvas`), and a second
+  construction path (`CreateExplorerGraph`) sets the data source but not the escape handler. Grep the
+  escape event: it is raised in one place and subscribed in fewer places than there are hosts.
+- **Why it survives:** the surface works — it renders, it navigates, the mouse is fine — and the trap
+  only bites a keyboard-only user who tabs to the boundary, which no populated-fixture test and no
+  mouse-driven demo exercises. The focus contract lived in the first host's binding, so a new host
+  that copies the *data* wiring silently drops the *focus* wiring.
+- **Instances:**
+  - 2026-08-30 — the Phase-1 Explorer mode built its graph via `CreateExplorerGraph`, which set
+    `GraphSource` but never subscribed `FocusLeaveRequested`. In Explorer mode the graph canvas
+    trapped keyboard focus with nothing routing out. Fixed: `ExplorerSurface` routes the leave into
+    the reader region (`NodeReaderView.FocusReader`), so a Tab off the graph lands in the reader.
+- **Control:** a surface that owns a focus contract carries its escape wiring with its construction,
+  not in one host's binding — or every construction path is asserted to wire it. Here
+  `Reader_FocusReader_LandsFocusInTheReader` proves the escape has a landing target; the real
+  boundary-Tab→reader integration is the P2-FOCUS analogue at the Explorer level (a CanvasProbe
+  follow-on).
+- **The generalisation to apply elsewhere:** when a control with a keyboard contract (a trap, a
+  roving tab-stop, a boundary handler) is instantiated a second way, the contract is part of the
+  control's construction, not the first caller's setup. A second construction path that copies the
+  data wiring and not the focus wiring is this class.
+- **Status:** `partially-controlled` — the escape is wired and its landing target is tested; the
+  full real-WebView2 boundary-Tab integration test is a follow-on.

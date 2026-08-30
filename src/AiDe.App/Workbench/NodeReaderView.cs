@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using AiDe.Core.Presentation;
 
@@ -21,6 +22,10 @@ public sealed class NodeReaderView : ContentControl
     {
         SetResourceReference(BackgroundProperty, "SurfaceBrush");
         AutomationProperties.SetName(this, "Node reader");
+        // Focusable so a Tab off the graph canvas can land here even when the reader is empty — the
+        // canvas is a keyboard trap (ADR-0015) and the reader is its escape while Explorer is active.
+        Focusable = true;
+        IsTabStop = false;
         Clear();
     }
 
@@ -29,12 +34,33 @@ public sealed class NodeReaderView : ContentControl
 
     public bool IsEmpty => SelectedNodeId is null;
 
+    /// <summary>How many typed edges (walk targets) the reader is currently offering.</summary>
+    public int WalkableEdgeCount { get; private set; }
+
     /// <summary>Registers the walk handler; called with the target id when an edge is activated.</summary>
     public void OnWalk(Action<string> walk) => _onWalk = walk;
+
+    /// <summary>
+    /// Moves keyboard focus into the reader region so a Tab off the graph canvas lands here rather
+    /// than being swallowed by the canvas's keyboard trap (design D3/Phase-3 interim). From the reader
+    /// — a normal WPF region — Tab then traverses onward as usual, so the graph is no longer a trap.
+    /// </summary>
+    public bool FocusReader()
+    {
+        if (MoveFocus(new TraversalRequest(FocusNavigationDirection.First)))
+        {
+            return true;
+        }
+
+        // Empty reader (no edge to focus): focus the region itself so the user is still out of the
+        // canvas trap and can Tab onward.
+        return Focus();
+    }
 
     public void Clear()
     {
         SelectedNodeId = null;
+        WalkableEdgeCount = 0;
         Content = EmptyState();
     }
 
@@ -47,7 +73,9 @@ public sealed class NodeReaderView : ContentControl
         }
 
         SelectedNodeId = node.Id;
-        Content = Build(node, edges ?? []);
+        var visible = edges ?? [];
+        WalkableEdgeCount = visible.Count(e => e.From == node.Id || e.To == node.Id);
+        Content = Build(node, visible);
     }
 
     private static UIElement EmptyState()

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T19:59:17Z",
+  "generated": "2026-08-30T20:30:35Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2624,6 +2624,28 @@ window.AUDIT_DATA = {
       "tags": [
         "explorer",
         "implement"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0141",
+      "shortname": "fix-explorer-keyboard-trap",
+      "datetime": "2026-08-30T20:30:35Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do the next best actions — found and fixed the Explorer keyboard trap in shipped Phase-1 code",
+      "summary": "DC-039: the Phase-1 Explorer graph canvas trapped keyboard focus — CreateExplorerGraph set GraphSource but never subscribed CanvasSurface.FocusLeaveRequested (unlike the workbench's BindCanvas), so tabbing off the graph boundary had nothing routing focus out (WCAG 2.1.2 fail). Fix: ExplorerSurface routes the leave into the reader (NodeReaderView.FocusReader), which moves focus to the first walkable edge or the region itself. Added FocusReader + WalkableEdgeCount; tests for edge-count and focus-lands-in-reader. Registered DC-039. App.Tests 139/139.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/ExplorerSurface.cs",
+        "src/AiDe.App/Workbench/NodeReaderView.cs"
+      ],
+      "tags": [
+        "explorer",
+        "accessibility",
+        "defect-fix"
       ],
       "outcome": "success"
     }

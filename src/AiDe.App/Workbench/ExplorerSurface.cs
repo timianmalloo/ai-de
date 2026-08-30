@@ -57,6 +57,12 @@ public sealed class ExplorerSurface : Grid
         // two views, wired through the canvas seam so they cannot disagree (design D3).
         graph.NodeSelected += (_, selection) => reader.Show(selection.Node, selection.Edges);
         reader.OnWalk(targetId => _ = graph.RefreshAsync(targetId));
+
+        // Escape the canvas keyboard trap: the graph page traps Tab and posts focus.leave at either
+        // boundary (ADR-0015). In the workbench a router consumes that; here the Explorer routes it
+        // INTO the reader, so a keyboard user tabbing off the graph lands in the reader instead of
+        // being trapped in the canvas or ejected from the app (DC-039; the Phase-3 interim bridge).
+        graph.FocusLeaveRequested += (_, _) => reader.FocusReader();
     }
 
     public CanvasSurface Graph { get; }

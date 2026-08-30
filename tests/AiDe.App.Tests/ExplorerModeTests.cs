@@ -123,4 +123,62 @@ public sealed class ExplorerModeTests
             Assert.False(reader.IsEmpty);
         });
     }
+
+    // The reader exposes only the edges that TOUCH the node as walk targets — the focus the DC-039
+    // bridge lands on when a Tab leaves the graph canvas.
+    [Fact]
+    public void Reader_Show_CountsOnlyEdgesTouchingTheNode()
+    {
+        OnSta(() =>
+        {
+            var reader = new NodeReaderView();
+            var edges = new List<CanvasEdge>
+            {
+                new("A", "B", "calls", "Verified"),        // touches A
+                new("C", "A", "documents", "Inferred"),    // touches A
+                new("D", "E", "unrelated", "Verified"),    // does not
+            };
+
+            reader.Show(new CanvasNode("A", "A", "code", true, "X"), edges);
+            Assert.Equal(2, reader.WalkableEdgeCount);
+
+            reader.Clear();
+            Assert.Equal(0, reader.WalkableEdgeCount);
+        });
+    }
+
+    // DC-039 — a Tab off the graph canvas must escape the keyboard trap. The reader can receive focus,
+    // so the Explorer's focus-leave bridge has somewhere to land.
+    [Fact]
+    public void Reader_FocusReader_LandsFocusInTheReader()
+    {
+        OnSta(() =>
+        {
+            var reader = new NodeReaderView();
+            var window = new System.Windows.Window
+            {
+                Content = reader,
+                Width = 400,
+                Height = 300,
+                WindowStartupLocation = System.Windows.WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            window.Show();
+            reader.Show(new CanvasNode("A", "A", "code", true, "X"),
+                new List<CanvasEdge> { new("A", "B", "calls", "Verified") });
+            window.UpdateLayout();
+
+            try
+            {
+                Assert.True(reader.FocusReader(), "focus did not land in the reader");
+            }
+            finally
+            {
+                window.Close();
+            }
+        });
+    }
 }
