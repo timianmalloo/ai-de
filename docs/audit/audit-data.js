@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T19:34:25Z",
+  "generated": "2026-08-30T19:43:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2557,6 +2557,26 @@ window.AUDIT_DATA = {
       "tags": [
         "architecture",
         "explorer"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0138",
+      "shortname": "design-knowledge-explorer-mode",
+      "datetime": "2026-08-30T19:43:16Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do the next best actions — /design the Explorer mode component to unblock a safe /implement",
+      "summary": "Wrote docs/design/knowledge-explorer-mode.md (Phase-1 walking skeleton). Resolves the ADR-deferred mechanism: D1 mode swap = WorkbenchHost.Content toggle with Shell held (HwndHost/WebView2 hide-not-destroy) — PROVEN by T1 not trusted, fallback collapse-in-place if red; D2 Explorer hosts its OWN CanvasSurface (no reparenting), second-canvas cost accepted; D3 new CanvasSurface.NodeSelected seam the reader follows (ADR-0018 sits behind it); D4 NodeReaderView stub (header+metadata+walkable edges, content placeholder); D5 rail toggle. Red-first test plan T1-T5 (+T-focus). Makes /implement mechanical.",
+      "kind": "skill",
+      "skill": "design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/design/knowledge-explorer-mode.md"
+      ],
+      "tags": [
+        "explorer",
+        "design"
       ],
       "outcome": "success"
     }

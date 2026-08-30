@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T19:33:53Z",
+  "generated": "2026-08-30T19:43:16Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1450,6 +1450,52 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "97d517658252e65e6cf51a7392d73986c9eb96aa4d78d91569aaeeead093e21e"
+    },
+    {
+      "id": "design-knowledge-explorer-mode",
+      "path": "docs/design/knowledge-explorer-mode.md",
+      "title": "Knowledge Explorer mode — component design (Phase 1 walking skeleton)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Component design for the Phase-1 walking skeleton of the full-window Explorer mode: the ShellViewMode swap (WorkbenchHost.Content toggles Manager↔ExplorerSurface, Shell held so the workbench and its live ConPTY/WebView2 children hide-not-destroy), a dedicated CanvasSurface in Explorer (not reparented), a new CanvasSurface.NodeSelected seam the reader follows, and a NodeReaderView stub (metadata + walkable edges; content deferred to ADR-0018 Phase 2). Resolves the mechanism the ADRs deferred, with a red-first test plan whose key control is \"a live terminal survives an Explorer round-trip\".",
+      "tags": [
+        "explorer",
+        "view-mode",
+        "reader",
+        "wpf",
+        "design",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-knowledge-explorer-mode",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Component & data flow",
+          "mermaid": "flowchart LR\n  Rail[Explore rail item] -->|Toggle| SMC[ShellModeController]\n  SMC -->|Workbench| WH[WorkbenchHost.Content = Shell.Manager]\n  SMC -->|Explorer| EX[WorkbenchHost.Content = ExplorerSurface]\n  EX --> G[CanvasSurface 'explorer-graph']\n  EX --> R[NodeReaderView]\n  G -->|NodeSelected CanvasNodeRef| R\n  R -->|activate edge -> RefreshAsync target| G\n  G -. GraphSource .-> VM[CanvasGraphViewModel over IWorkspaceQueries]"
+        }
+      ],
+      "sourceSha256": "3062e5e5fb2e9cf22694fb55e8a48acad69099b888ea7de04b6800cc45f82359"
     },
     {
       "id": "design-phase-1-walking-skeleton",
@@ -6223,5 +6269,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b01adeea922afdf3f64a687a95f6f758abc395caf5301a266a8137d41867ec9a"
+  "graphSha256": "4c8d977099a265e970b13ea8c284af4f80b05ea7cad4cd24996d757d8ceff439"
 };
