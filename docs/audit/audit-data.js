@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-30T16:02:39Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-30T16:06:11Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2207,6 +2207,32 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0122",
+      "shortname": "refresh-metrics-project-coverage-dc033-sweep-routes",
+      "datetime": "2026-08-30T16:05:38Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
+      "summary": "**The measurement the sub-scope decision was blocked on now exists.** A refresh had a span but its\nSTATUS carried no duration, so the only thing a caller could read was how many assertions came back.\n`ScopeRefreshStatus` now carries `QueuedMilliseconds` and `DurationMilliseconds` — kept separate\nbecause waiting is a concurrency problem and running is a cost problem, and one number hides which\none a user is feeling. `RefreshMetrics` adds p50/p95/max over a bounded window plus first/last\nobserved, exposed over IPC as `refresh.metrics` with no request body and no failure mode: an operator\nasking what re-indexing costs should never be told it depends on what they enable first.\n\nDeliberately **no rate is computed**. \"Refreshes per hour\" from two samples is a number with no error\nbar that gets quoted as if it had one; the raw facts let a reader compute it when there is enough of\nit to mean something and notice when there is not. Failed refreshes are timed too — a run that takes\ntwenty seconds and then throws is the one an operator most wants to see, and excluding failures is\nhow a percentile ends up describing only the easy cases. With nothing measured everything reports\nzero and null rather than an interpolation of nothing.\n\n**No tracked project escapes compilation now.** `spikes/joins-on-a-real-repo` — the harness behind\nnearly every performance and join number in this log — is not in `AiDe.sln`, so a change to\n`GraphAsync` broke it while the solution build stayed green, and the next measurement silently ran a\nSTALE BINARY. Caught only because an expected timing field did not appear. Had the change not added a\nfield, the numbers would have looked fine and been wrong. That is DC-023 with a twist: the gate was\nnot stale, it was NARROW.\n\n`tools/verify-project-coverage.py` builds every tracked project the solution does not contain. A\ngate rather than solution membership, because `AiDe.sln` answers \"what ships\" and these are evidence\nartifacts. **The cost claim in its own header was wrong and is corrected in place:** it was written\nexpecting to belong in the slow at-readiness ring and measures **16 seconds for 19 projects**, which\nputs it on every push. It prints its wall time on every run so that stays a measured decision.\nObserved failing against a deliberately broken spike.\n\n**DC-033 swept, and it found a second instance.** The class says its signature is a ratio on real\ninput, so the sweep measured. `TypeScriptExtractor` knew `class|interface|type|enum|function|const`\nand did not know `async`, the generator star, `namespace`, `let` or `var`. TheTerrace declares 124\n`export interface`, 26 `export type`, 16 `export const` and **4 `export namespace`** — four\ndeclarations reported as absent rather than unread. `PythonExtractor` is clean; the Bicep and schema\nreaders are narrow by *declared* ceiling and disclose it.\n\nThe important half is not the wider pattern, which will be wrong again for the next spelling. **The\nreader now counts its own misses and discloses them** — `typescript-exports-not-recognised (N)` — so\nthe next unanticipated form announces itself on the scope. Re-exports are excluded deliberately:\ncounting them gives a miss rate that never reaches zero and therefore says nothing.\n\n**Routes reach a surface.** `CanvasGraphViewModel.RouteAsync(from, to)` returns the **same\n`CanvasGraph`** the canvas already binds, because a route IS a subgraph and giving it its own shape\nwould mean a second renderer and a second place for the two sessions to disagree about what a node\nlooks like. Endpoints arrive with `IsRoot = true`; the caption names the count, the shortest length\nand **the weakest link**, because a route drawn without that looks like a fact about the code when\none inferred edge makes the whole claim inferred. Every empty case says which one it is, and the\nprojection's own reason survives to the caption — \"not in this graph\" and \"no route within 8 edges\"\nsend a user to different places.\n\n**The `GraphQuery` filter question is put to the design session as a decision, not a request.** All\nthree filters are on the wire and proven across the daemon; which of them belong in the UI, and as\nwhat control, is an information-architecture call this session does not own. §4a states the three\nwith what each is worth, recommends a **preset** over toggles (three named views are one decision a\nuser makes once; three toggles are a combinatorial space they must reason about) and says plainly\nthat this is a guess about users. What Core commits to either way is the tested property: the filter\nruns before the cap and degree is computed over what survives it.\n\n765 tests green (App 131, Core 634). Seven gates clean, one of them new.\nZero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Carry the five listed next steps: measure edit-to-graph, close the uncompiled-project gap, expose routes on a surface, sweep extractors for DC-033, put the GraphQuery filter question to the design session",
+      "done_when": "Each step done or its premise disproved in writing; full gate green; committed, merged, published",
+      "change": "cl-0081",
+      "git": {
+        "sha": "1885098af60677e9d066a5f234d55baa9719bc9b",
+        "short": "1885098af",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
     }
   ],
   "changes": [
@@ -4213,6 +4239,32 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "2f80b0b780a0e37a246006b072b851e98e2c33b2",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0081",
+      "datetime": "2026-08-30T16:05:29Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Refresh cost measured, no project uncompiled, DC-033 swept, routes on a surface",
+      "prompt": null,
+      "summary": "**The measurement the sub-scope decision was blocked on now exists.** A refresh had a span but its\nSTATUS carried no duration, so the only thing a caller could read was how many assertions came back.\n`ScopeRefreshStatus` now carries `QueuedMilliseconds` and `DurationMilliseconds` — kept separate\nbecause waiting is a concurrency problem and running is a cost problem, and one number hides which\none a user is feeling. `RefreshMetrics` adds p50/p95/max over a bounded window plus first/last\nobserved, exposed over IPC as `refresh.metrics` with no request body and no failure mode: an operator\nasking what re-indexing costs should never be told it depends on what they enable first.\n\nDeliberately **no rate is computed**. \"Refreshes per hour\" from two samples is a number with no error\nbar that gets quoted as if it had one; the raw facts let a reader compute it when there is enough of\nit to mean something and notice when there is not. Failed refreshes are timed too — a run that takes\ntwenty seconds and then throws is the one an operator most wants to see, and excluding failures is\nhow a percentile ends up describing only the easy cases. With nothing measured everything reports\nzero and null rather than an interpolation of nothing.\n\n**No tracked project escapes compilation now.** `spikes/joins-on-a-real-repo` — the harness behind\nnearly every performance and join number in this log — is not in `AiDe.sln`, so a change to\n`GraphAsync` broke it while the solution build stayed green, and the next measurement silently ran a\nSTALE BINARY. Caught only because an expected timing field did not appear. Had the change not added a\nfield, the numbers would have looked fine and been wrong. That is DC-023 with a twist: the gate was\nnot stale, it was NARROW.\n\n`tools/verify-project-coverage.py` builds every tracked project the solution does not contain. A\ngate rather than solution membership, because `AiDe.sln` answers \"what ships\" and these are evidence\nartifacts. **The cost claim in its own header was wrong and is corrected in place:** it was written\nexpecting to belong in the slow at-readiness ring and measures **16 seconds for 19 projects**, which\nputs it on every push. It prints its wall time on every run so that stays a measured decision.\nObserved failing against a deliberately broken spike.\n\n**DC-033 swept, and it found a second instance.** The class says its signature is a ratio on real\ninput, so the sweep measured. `TypeScriptExtractor` knew `class|interface|type|enum|function|const`\nand did not know `async`, the generator star, `namespace`, `let` or `var`. TheTerrace declares 124\n`export interface`, 26 `export type`, 16 `export const` and **4 `export namespace`** — four\ndeclarations reported as absent rather than unread. `PythonExtractor` is clean; the Bicep and schema\nreaders are narrow by *declared* ceiling and disclose it.\n\nThe important half is not the wider pattern, which will be wrong again for the next spelling. **The\nreader now counts its own misses and discloses them** — `typescript-exports-not-recognised (N)` — so\nthe next unanticipated form announces itself on the scope. Re-exports are excluded deliberately:\ncounting them gives a miss rate that never reaches zero and therefore says nothing.\n\n**Routes reach a surface.** `CanvasGraphViewModel.RouteAsync(from, to)` returns the **same\n`CanvasGraph`** the canvas already binds, because a route IS a subgraph and giving it its own shape\nwould mean a second renderer and a second place for the two sessions to disagree about what a node\nlooks like. Endpoints arrive with `IsRoot = true`; the caption names the count, the shortest length\nand **the weakest link**, because a route drawn without that looks like a fact about the code when\none inferred edge makes the whole claim inferred. Every empty case says which one it is, and the\nprojection's own reason survives to the caption — \"not in this graph\" and \"no route within 8 edges\"\nsend a user to different places.\n\n**The `GraphQuery` filter question is put to the design session as a decision, not a request.** All\nthree filters are on the wire and proven across the daemon; which of them belong in the UI, and as\nwhat control, is an information-architecture call this session does not own. §4a states the three\nwith what each is worth, recommends a **preset** over toggles (three named views are one decision a\nuser makes once; three toggles are a combinatorial space they must reason about) and says plainly\nthat this is a guess about users. What Core commits to either way is the tested property: the filter\nruns before the cap and degree is computed over what survives it.\n\n765 tests green (App 131, Core 634). Seven gates clean, one of them new.\nZero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/ScopeRefreshService.cs",
+        "tools/verify-project-coverage.py",
+        "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "1885098af60677e9d066a5f234d55baa9719bc9b",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
         "commits": []

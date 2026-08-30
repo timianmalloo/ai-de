@@ -1,3 +1,4 @@
+using AiDe.Core.Facts;
 using AiDe.Core.Projections;
 
 namespace AiDe.Core.Presentation;
@@ -201,6 +202,102 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
     /// unimportant, and colouring it as though it belonged somewhere would be the inference
     /// ADR-0016 refuses.
     /// </remarks>
+    /// <summary>
+    /// How one node reaches another, rendered as the same graph the canvas already draws.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Deliberately returns <see cref="CanvasGraph"/> rather than a route type.</b> A route
+    /// IS a subgraph, and giving it its own shape would mean a second renderer, a second set of
+    /// bindings and a second place for the two sessions to disagree about what a node looks like.
+    /// The design session binds what it already binds; only the caption changes.</para>
+    ///
+    /// <para><b>The caption carries the weakest link.</b> A route drawn without it looks like a fact
+    /// about the code, when one inferred edge anywhere along it makes the whole claim inferred.</para>
+    ///
+    /// <para><b>Every empty case says which one it is.</b> "No workspace", "that node is not in the
+    /// graph" and "there is no route within eight edges" are three different situations with three
+    /// different next actions (DC-011).</para>
+    /// </remarks>
+    public async Task<CanvasGraph> RouteAsync(
+        string fromId, string toId, CancellationToken cancellationToken = default)
+    {
+        if (queries is null)
+        {
+            return new CanvasGraph([], [], null, 0, [], "No workspace is open.");
+        }
+
+        if (string.IsNullOrWhiteSpace(fromId) || string.IsNullOrWhiteSpace(toId))
+        {
+            return new CanvasGraph([], [], null, 0, [], "Pick a start and an end.");
+        }
+
+        var result = await queries
+            .PathsAsync(new PathQuery(fromId, toId), cancellationToken)
+            .ConfigureAwait(false);
+
+        if (result.Paths.Count == 0)
+        {
+            // The projection's reason is the useful half — "not in this graph" and "no route within
+            // 8 edge(s)" send a user to different places — so it is passed through rather than
+            // replaced with a house style.
+            return new CanvasGraph(
+                [], [], fromId, 0, [],
+                result.Reason is null
+                    ? $"No route from {Shorten(fromId)} to {Shorten(toId)}."
+                    : $"No route: {result.Reason}.");
+        }
+
+        var nodes = new List<CanvasNode>();
+        var edges = new List<CanvasEdge>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+
+        void Add(string id, bool isEndpoint)
+        {
+            if (seen.Add(id))
+            {
+                nodes.Add(new CanvasNode(
+                    id, Shorten(id), "source", IsRoot: isEndpoint, Context: ContextOf(id)));
+            }
+        }
+
+        Add(fromId, isEndpoint: true);
+        Add(toId, isEndpoint: true);
+
+        foreach (var path in result.Paths)
+        {
+            foreach (var edge in path.Edges)
+            {
+                Add(edge.From, isEndpoint: false);
+                Add(edge.To, isEndpoint: false);
+
+                edges.Add(new CanvasEdge(edge.From, edge.To, edge.Predicate, edge.Status.ToString()));
+            }
+        }
+
+        // The same pair can appear on two routes of equal length; drawing it twice would render a
+        // thicker line that means nothing.
+        var distinct = edges
+            .GroupBy(e => (e.From, e.To, e.Predicate))
+            .Select(g => g.First())
+            .ToList();
+
+        var shortest = result.Paths.Min(p => p.Edges.Count);
+        var weakest = result.Paths.Min(p => p.Status);
+
+        var route = result.Paths.Count == 1 ? "1 route" : $"{result.Paths.Count} routes";
+        var hops = shortest == 1 ? "1 edge" : $"{shortest} edges";
+
+        var confidence = weakest == VerificationStatus.Verified
+            ? "every edge is verified"
+            : $"the weakest link is {weakest}";
+
+        var truncation = result.Truncated ? " More routes of the same length exist." : string.Empty;
+
+        return new CanvasGraph(
+            nodes, distinct, fromId, 0, [],
+            $"{route} from {Shorten(fromId)} to {Shorten(toId)}, shortest {hops}; {confidence}.{truncation}");
+    }
+
     public Func<string, string?> ContextLookup { get; set; } = _ => null;
 
     /// <summary>

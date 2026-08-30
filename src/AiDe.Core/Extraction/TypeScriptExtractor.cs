@@ -44,11 +44,37 @@ public sealed class TypeScriptExtractor : IExtractor
 
         /// <summary>Nothing dynamic is followed — import(), require with a variable, re-export globs.</summary>
         public const string DynamicImportsNotAnalysed = "typescript-dynamic-imports-not-analysed";
+
+        /// <summary>An export whose spelling this reader does not know (DC-033's own alarm).</summary>
+        public const string ExportsNotRecognised = "typescript-exports-not-recognised";
     }
 
+    // MEASURED against a real repository, not assumed. The previous form omitted `async`, the
+    // generator star, `namespace`, `let` and `var` — and TheTerrace declares four
+    // `export namespace`, every one of which was reported as absent rather than as unread. That is
+    // DC-033 in this file: a reader that knows one spelling and reports the rest as nothing.
     private static readonly Regex Declaration = new(
-        @"^export\s+(?:default\s+)?(?:declare\s+)?(?:abstract\s+)?(class|interface|type|enum|function|const)\s+([A-Za-z_$][A-Za-z0-9_$]*)",
+        @"^export\s+(?:default\s+)?(?:declare\s+)?(?:abstract\s+)?(?:async\s+)?" +
+        @"(class|interface|type|enum|function|const|let|var|namespace|module)\s*\*?\s+" +
+        @"([A-Za-z_$][A-Za-z0-9_$]*)",
         RegexOptions.Compiled | RegexOptions.Multiline);
+
+    /// <summary>
+    /// A line that exports something this reader did not recognise.
+    /// </summary>
+    /// <remarks>
+    /// The CONTROL for DC-033, and the reason it is here rather than in a comment. That class says a
+    /// reader recognises one spelling of a pattern and reports the rest as absent, and that its
+    /// signature is a ratio nobody looks at. So this reader counts its own misses and discloses
+    /// them: the next spelling it does not know announces itself on the scope instead of waiting to
+    /// be noticed by somebody grepping a repository by hand.
+    ///
+    /// Re-export forms are excluded deliberately — `export { A }`, `export * from`, `export =` and
+    /// `export default someExpression` are not declarations, so counting them would produce a miss
+    /// rate that never reaches zero and therefore says nothing.
+    /// </remarks>
+    private static readonly Regex ExportLine =
+        new(@"^export\s+(?!\{|\*|=|type\s*\{)\S+", RegexOptions.Compiled | RegexOptions.Multiline);
 
     // `from '…'` covers import and re-export; the bare form imports a module for its side effects.
     private static readonly Regex FromSpecifier =
@@ -86,6 +112,7 @@ public sealed class TypeScriptExtractor : IExtractor
 
         var assertions = new List<EvidenceAssertion>();
         var unresolved = 0;
+        var unrecognisedExports = 0;
 
         foreach (var disclosure in new[]
         {
@@ -108,7 +135,15 @@ public sealed class TypeScriptExtractor : IExtractor
             var module = ModuleNaming.Qualify(prefix, ModuleName(directory, file));
             assertions.Add(Fact(request, module, "has_type", "typescript-module"));
 
-            foreach (Match match in Declaration.Matches(text))
+            var declarations = Declaration.Matches(text);
+
+            // The miss rate, counted per file. `export default` of an expression and re-exports are
+            // already excluded by ExportLine, so what remains is genuinely a declaration form this
+            // reader failed to read.
+            var exportLines = ExportLine.Matches(text).Count;
+            if (exportLines > declarations.Count) unrecognisedExports += exportLines - declarations.Count;
+
+            foreach (Match match in declarations)
             {
                 var kind = match.Groups[1].Value;
                 var name = match.Groups[2].Value;
@@ -133,6 +168,15 @@ public sealed class TypeScriptExtractor : IExtractor
                     ? Fact(request, module, "imports", specifier, VerificationStatus.Inferred)
                     : Fact(request, module, "imports", resolved, VerificationStatus.Verified));
             }
+        }
+
+        if (unrecognisedExports > 0)
+        {
+            // Not "some exports were missed" but "31 of them were". A count is what turns a known
+            // limitation into something somebody can decide about.
+            assertions.Add(Fact(request, request.ScopeId, "discloses",
+                $"{Disclosures.ExportsNotRecognised} ({unrecognisedExports:N0} export(s) whose " +
+                "declaration form this reader does not recognise)"));
         }
 
         if (unresolved > 0)

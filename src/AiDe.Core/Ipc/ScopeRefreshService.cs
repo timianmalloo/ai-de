@@ -24,12 +24,54 @@ public enum ScopeRefreshState
 /// is now stale — which is the "clean empty success over rotting evidence" this product exists to
 /// avoid.
 /// </remarks>
+/// <param name="QueuedMilliseconds">
+/// How long the refresh waited before it began. Separate from <paramref name="DurationMilliseconds"/>
+/// because they have different remedies: waiting is a concurrency problem, running is a cost problem,
+/// and a single "how long did it take" hides which one a user is feeling.
+/// </param>
+/// <param name="DurationMilliseconds">How long the refresh itself took, once it started.</param>
 public sealed record ScopeRefreshStatus(
     string CommandId,
     string ScopeId,
     ScopeRefreshState State,
     int AssertionCount,
-    string? Failure);
+    string? Failure,
+    long QueuedMilliseconds = 0,
+    long DurationMilliseconds = 0);
+
+/// <summary>
+/// What every refresh so far has cost, and how often they happen.
+/// </summary>
+/// <param name="Completed">Refreshes that finished.</param>
+/// <param name="Failed">Refreshes that did not.</param>
+/// <param name="P50Milliseconds">The median refresh. What a user feels most of the time.</param>
+/// <param name="P95Milliseconds">The slow tail. What a user complains about.</param>
+/// <param name="MaxMilliseconds">The worst one seen.</param>
+/// <param name="FirstAt">When the first refresh was observed, or null if none has been.</param>
+/// <param name="LastAt">When the most recent one was observed.</param>
+/// <remarks>
+/// <para><b>This exists to answer a question a design decision is blocked on.</b>
+/// <c>docs/notes/note-20260830-sub-scope-incrementality.md</c> weighs four ways to make re-indexing
+/// incremental below the scope, and refuses to pick one, because the thing that decides it has never
+/// been measured: whether re-indexing is an occasional on-demand cost or something a user waits on
+/// constantly. Optimising a 1.2s operation that runs when asked is a different proposition from
+/// optimising one that runs on every save.</para>
+///
+/// <para><b>No rate is computed here.</b> "Refreshes per hour" from two samples is a number with no
+/// error bar that will be quoted as if it had one. The raw facts — how many, first, last — let a
+/// reader compute it when there is enough of it to mean something, and notice when there is not.</para>
+/// </remarks>
+public sealed record RefreshMetrics(
+    int Completed,
+    int Failed,
+    long P50Milliseconds,
+    long P95Milliseconds,
+    long MaxMilliseconds,
+    DateTimeOffset? FirstAt,
+    DateTimeOffset? LastAt);
+
+/// <summary>Asking the daemon what refreshing has cost so far.</summary>
+public sealed record RefreshMetricsRequest();
 
 /// <summary>Asking the daemon to re-index a scope.</summary>
 public sealed record RefreshRequest(string ScopeId, string ArtifactRevision);
@@ -71,7 +113,23 @@ public sealed class ScopeRefreshService
     /// </remarks>
     private const int RetainedJobs = 256;
 
+    /// <summary>
+    /// Durations kept for the percentile summary.
+    /// </summary>
+    /// <remarks>
+    /// Bounded, because a daemon that runs for a week must not accumulate a sample per refresh
+    /// forever. The oldest are dropped, so the summary describes recent behaviour — which is the
+    /// behaviour anybody is asking about.
+    /// </remarks>
+    private const int RetainedSamples = 512;
+
     private readonly ConcurrentDictionary<string, ScopeRefreshStatus> _jobs = new(StringComparer.Ordinal);
+    private readonly System.Threading.Lock _samplesGate = new();
+    private readonly Queue<long> _samples = new();
+    private int _completed;
+    private int _failed;
+    private DateTimeOffset? _firstAt;
+    private DateTimeOffset? _lastAt;
     private readonly ConcurrentQueue<string> _order = new();
     private readonly Func<string, string, CancellationToken, Task<int>> _refresh;
 
@@ -113,7 +171,9 @@ public sealed class ScopeRefreshService
         _order.Enqueue(commandId);
         Evict();
 
-        _ = RunAsync(commandId, scopeId, artifactRevision);
+        // The queue clock starts HERE, not inside RunAsync: the wait this measures is the gap
+        // between accepting the work and beginning it, which is invisible from inside the work.
+        _ = RunAsync(commandId, scopeId, artifactRevision, System.Diagnostics.Stopwatch.GetTimestamp());
         return started;
     }
 
@@ -126,20 +186,78 @@ public sealed class ScopeRefreshService
     public ScopeRefreshStatus? Status(string commandId) =>
         _jobs.TryGetValue(commandId, out var status) ? status : null;
 
-    private async Task RunAsync(string commandId, string scopeId, string artifactRevision)
+    /// <summary>What refreshing has cost so far, on the normal path with no flag to remember.</summary>
+    public RefreshMetrics Metrics()
+    {
+        lock (_samplesGate)
+        {
+            var ordered = _samples.Order().ToList();
+
+            return new RefreshMetrics(
+                _completed, _failed,
+                Percentile(ordered, 0.50),
+                Percentile(ordered, 0.95),
+                ordered.Count == 0 ? 0 : ordered[^1],
+                _firstAt, _lastAt);
+        }
+    }
+
+    /// <summary>
+    /// The value at a percentile, or zero when nothing has been measured.
+    /// </summary>
+    /// <remarks>
+    /// Nearest-rank, on a list that is already sorted. Zero for "no samples" rather than a
+    /// plausible-looking interpolation of nothing — every measurement path here degrades to "not
+    /// recorded", never to a number somebody might believe.
+    /// </remarks>
+    private static long Percentile(IReadOnlyList<long> sorted, double fraction)
+    {
+        if (sorted.Count == 0) return 0;
+
+        var rank = (int)Math.Ceiling(fraction * sorted.Count) - 1;
+        return sorted[Math.Clamp(rank, 0, sorted.Count - 1)];
+    }
+
+    private void Record(long durationMs, bool succeeded, DateTimeOffset at)
+    {
+        lock (_samplesGate)
+        {
+            if (succeeded) _completed++; else _failed++;
+
+            _samples.Enqueue(durationMs);
+            while (_samples.Count > RetainedSamples) _samples.Dequeue();
+
+            _firstAt ??= at;
+            _lastAt = at;
+        }
+    }
+
+    private async Task RunAsync(
+        string commandId, string scopeId, string artifactRevision, long queuedAtTicks)
     {
         using var span = Telemetry.StartActivity("ipc.scope_refresh");
         span?.SetTag("scope.id", scopeId);
         span?.SetTag("command.id", commandId);
+
+        var queuedMs = Elapsed(queuedAtTicks);
+        var startedAtTicks = System.Diagnostics.Stopwatch.GetTimestamp();
+
+        span?.SetTag("refresh.queued_ms", queuedMs);
 
         try
         {
             var count = await _refresh(scopeId, artifactRevision, CancellationToken.None)
                 .ConfigureAwait(false);
 
+            var durationMs = Elapsed(startedAtTicks);
+
             _jobs[commandId] = new ScopeRefreshStatus(
-                commandId, scopeId, ScopeRefreshState.Completed, count, null);
+                commandId, scopeId, ScopeRefreshState.Completed, count, null, queuedMs, durationMs);
+
             span?.SetTag("assertion.count", count);
+            span?.SetTag("refresh.duration_ms", durationMs);
+
+            Record(durationMs, succeeded: true, DateTimeOffset.UtcNow);
         }
         catch (Exception ex)
         {
@@ -147,11 +265,24 @@ public sealed class ScopeRefreshService
             // request that started it, so an escaping exception would take down the daemon on behalf
             // of a caller who is no longer listening. The failure belongs in the status the caller
             // WILL ask for.
+            var durationMs = Elapsed(startedAtTicks);
+
             _jobs[commandId] = new ScopeRefreshStatus(
-                commandId, scopeId, ScopeRefreshState.Failed, 0, ex.Message);
+                commandId, scopeId, ScopeRefreshState.Failed, 0, ex.Message, queuedMs, durationMs);
+
             span?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            span?.SetTag("refresh.duration_ms", durationMs);
+
+            // A FAILED refresh is timed too. A run that takes twenty seconds and then throws is the
+            // one an operator most wants to see, and excluding failures from the summary is how a
+            // percentile ends up describing only the easy cases.
+            Record(durationMs, succeeded: false, DateTimeOffset.UtcNow);
         }
     }
+
+    private static long Elapsed(long sinceTicks) =>
+        (System.Diagnostics.Stopwatch.GetTimestamp() - sinceTicks)
+        * 1000 / System.Diagnostics.Stopwatch.Frequency;
 
     private void Evict()
     {
@@ -199,6 +330,11 @@ public sealed class ScopeRefreshService
                     $"this daemon has no record of command '{body.CommandId}'")
                 : IpcResponse.Success(JsonSerializer.Serialize(status, WorkspaceOperations.Wire));
         });
+
+        // No request body and no failure mode: an operator asking "what has re-indexing cost"
+        // should never be told it depends on what they enable first.
+        endpoint.Register(Operations.RefreshMetrics, (_, _) =>
+            IpcResponse.Success(JsonSerializer.Serialize(Metrics(), WorkspaceOperations.Wire)));
     }
 
     private static T? Decode<T>(IpcRequest request)
@@ -223,5 +359,7 @@ public sealed class ScopeRefreshService
     {
         public const string Refresh = "refresh";
         public const string RefreshStatus = "refresh.status";
+
+        public const string RefreshMetrics = "refresh.metrics";
     }
 }

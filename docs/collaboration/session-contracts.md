@@ -156,9 +156,33 @@ a user currently cannot see.
 | Render the **evidence shortfall** | Every number both panes show is computed from a bounded read: 20,000 search results, 4,000 nodes described, 60 neighbours each. When a cap bites, the counts become lower bounds and look identical to complete ones. Core announces it today, which reaches assistive technology and nothing else | `EvidenceRead.Shortfall` — Core will add it to `ContextMapView` and `JoinResult` on request, additively |
 | Show `ContextEdge.DominantTarget` more prominently | 57 of 72 crossings being one class is the difference between "this boundary failed" and "this boundary is carrying the ORM". It is currently a grey suffix on the expander header | `ContextEdge.DominantTarget`, `DominantCount` |
 | A visual state for `ContextMapView.IsDeclared == false` | "No context map is declared" is currently a heading and a muted paragraph. It is the *first* thing a new workspace shows, and it is closer to an empty state than to a message | `ContextMapView.IsDeclared` |
+| Bind `CanvasGraphViewModel.RouteAsync(from, to)` | "How does A reach B" is the question impact analysis is for, and nothing can ask it. It returns **the same `CanvasGraph`** the canvas already binds — same nodes, same edges — so the only new work is two inputs and showing `Message`. Endpoints arrive with `IsRoot = true` | `CanvasGraphViewModel.RouteAsync` |
+| Surface the **refresh cost** | `RefreshMetrics` now reports p50/p95/max and how many refreshes have happened. It exists to answer a question a design decision is blocked on, and nobody can see it | `WorkspaceClient.RefreshMetricsAsync()` |
 
 Core will not implement these; they are rendering. They are listed because a request made in
 conversation is a request the next session cannot read.
+
+### The one that needs a decision rather than a render: which `GraphQuery` filters the canvas offers
+
+`GraphQuery` is on the wire and proven across the daemon. It takes three filters, and **Core has
+deliberately not chosen which of them belong in the UI**, because that is an information-architecture
+call and this session does not own it:
+
+| Filter | What it does | Why it might matter to a user |
+|---|---|---|
+| `IncludeExternal: false` | Drops nodes nothing in the workspace declares | Measured: the six most-connected nodes of a real repository were `string`, `int`, `Task<T>`, `DateTimeOffset`, `IReadOnlyList<T>`, `Guid` — 773 edges to `string` alone. This is the difference between a picture of the user's domain and a picture of the BCL |
+| `Kinds: [...]` | Keeps only nodes of the given `has_type` values | "Show me the classes", "show me the tables". The kinds present are discoverable from the graph the surface already has |
+| `ScopeId: "..."` | Keeps only nodes one scope declares | TheTerrace is 28 scopes; a per-project view is a different picture from a per-repository one |
+
+**The question for you, and Core will follow whichever way you answer it:** are these a persistent
+control strip on the canvas, a per-view preset (Domain / Everything / This project), or not surfaced
+at all for now? A **preset** is Core's guess at the better answer — three named views are one decision
+a user makes once, where three toggles are a combinatorial space they have to reason about — but it
+is a guess about users, which is the thing this session is least qualified to make.
+
+**What Core commits to either way:** the filter runs BEFORE the node cap, and degree is computed over
+what survives it, so a filtered view ranks and trims the graph that was asked for rather than the
+whole one. That property is tested and is not up for negotiation; only the control is.
 
 ---
 
@@ -237,6 +261,8 @@ item 4 is settled above.
   merge commits is withdrawn. Moving to pull requests remains open to either session to propose.
 - Whether the design session wants the view-model records to carry presentation hints (a severity, an
   ordering weight) or to compute those itself from the data.
+- **Which `GraphQuery` filters the canvas offers, and as what control.** Stated as a concrete
+  question with a recommendation in §4a; it is an IA decision, so Core has not taken it.
 - Where visual regression evidence lives, and whether it belongs in the same gate run as the unit
   tests or in a slower ring (`ci-and-test-efficiency.md` would say the slower ring).
 

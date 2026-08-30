@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 15 · partially-controlled 19 · uncontrolled 0
+**Status counts:** controlled 15 · partially-controlled 19 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1097,11 +1097,30 @@ for both or split.*
   siblings swept in this repository: `PythonExtractor` and `TypeScriptExtractor` are line-oriented by
   a *declared* `simplify:` ceiling and disclose it, so they are bounded rather than blind; the Bicep
   reader matches literal names only, and says so.
+- **The sweep, run 2026-08-30, with what it found.** The class says the signature is a ratio on real
+  input, so the sweep measured rather than read. **`TypeScriptExtractor` was a second instance:** its
+  export pattern knew `class|interface|type|enum|function|const` and did not know `async`, the
+  generator star, `namespace`, `let` or `var`. TheTerrace declares **124 `export interface`, 26
+  `export type`, 16 `export const` and 4 `export namespace`** — so four declarations were reported as
+  absent rather than as unread. `PythonExtractor` was checked and is clean (`^(?:async\s+)?def` already
+  covers the coroutine form). The Bicep reader and the schema reader are bounded by a *declared*
+  `simplify:` ceiling and disclose it, so they are narrow by agreement rather than blind.
+- **The control that generalises, and the reason it is the important half.** Widening a pattern fixes
+  today's spelling and will be wrong again for tomorrow's. **The reader now counts its own misses and
+  discloses them** — `typescript-exports-not-recognised (N)` — so the next form nobody anticipated
+  announces itself on the scope instead of waiting to be found by a person grepping a repository.
+  Re-export forms (`export { A }`, `export * from`, `export type { C }`) are excluded deliberately:
+  counting them would give a miss rate that never reaches zero and therefore says nothing. Sixteen
+  tests pin the fourteen known spellings, the exclusion, and the alarm itself.
+  **The generalisation for other readers: make the reader publish its miss rate, because a ratio
+  nobody looks at is exactly what this class hides behind.**
 - **Residual risk:** the receiver test is a name match on `EntityTypeBuilder` /
   `OwnedNavigationBuilder`, so an EF fork or a wrapper builder is not read; `ToTable` reached through
   an interface or an extension method on a non-builder is not read. Both now fall into the counted
   `fluent-table-mappings-unresolved` disclosure rather than silence. `IEntityTypeConfiguration<T>`
-  is covered in principle by the same rule but has no real-repository evidence yet.
+  is covered in principle by the same rule but has no real-repository evidence yet. The TypeScript
+  miss-counter is line-oriented, so a declaration split across lines is invisible to both the reader
+  and its own alarm.
 - **Status:** `controlled`
 
 ### DC-034 — A control's affordance is present but wired to nothing

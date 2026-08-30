@@ -103,6 +103,15 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
             WorkspaceOperations.DispatchFinalize,
             new DispatchFinalizeRequest(dispatchKey, state, errorCode), cancellationToken);
 
+    /// <summary>What re-indexing has cost in this daemon so far.</summary>
+    /// <remarks>
+    /// The measurement the sub-scope-incrementality decision is blocked on: whether a re-index is an
+    /// occasional cost a user asks for, or something they wait on constantly.
+    /// </remarks>
+    public Task<RefreshMetrics> RefreshMetricsAsync(CancellationToken cancellationToken) =>
+        QueryAsync<RefreshMetrics>(
+            ScopeRefreshService.Operations.RefreshMetrics, new RefreshMetricsRequest(), cancellationToken);
+
     public Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
