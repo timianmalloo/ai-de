@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T17:26:11Z",
+  "generated": "2026-08-30T19:18:26Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2446,6 +2446,26 @@ window.AUDIT_DATA = {
         "handoff"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0134",
+      "shortname": "specify-knowledge-explorer-mode",
+      "datetime": "2026-08-30T19:18:26Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "BTW/backlog: reconsider the graph view as a full-window dual-pane surface (graph+search | node reader), entered from a rail icon; /specify it",
+      "summary": "Wrote docs/specs/knowledge-explorer-mode.md refining spec-knowledge-exploration: the graph+reader master-detail becomes a dedicated full-window MODE entered from the activity rail (not a dock pane). Three layers (A: US-E1-E8 + one view-state concept 'primary view mode' + no-rebuild invariant; B: IA/flows/wireframe; C: C1xB2 archetype at body scale, U1-U20, the graph<->reader keyboard-cycle a11y contract). Reuses US-K3 reader + US-K4 node-walk. Flagged: canvas-trap<->reader focus routing and reader content-fetch contract for /design.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/knowledge-explorer-mode.md"
+      ],
+      "tags": [
+        "knowledge-graph",
+        "spec"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -4555,6 +4575,28 @@ window.AUDIT_DATA = {
         "after": "13a488b5028bc352171f202df353915e0f791ac2",
         "branch": "session/phase3-pane-probes",
         "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0086",
+      "datetime": "2026-08-30T19:18:26Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "design",
+      "skill": "specify",
+      "title": "Knowledge exploration becomes a full-window Explorer mode (dual-pane graph+reader), not a dock pane",
+      "prompt": "reconsider the graph view as a full-window dual-pane surface entered from a rail icon",
+      "summary": "Specified a distinct 'primary view mode' (Workbench | Explorer): a rail icon slides the exploration open body-wide with graph+search | reader, reusing the existing reader (US-K3) and node-walk (US-K4). Additive and toggleable; docked graph pane can remain during rollout.",
+      "rationale": "On a single monitor the docked graph pane competes with reading a node's contents; a dedicated full-window dual-pane mode is the requested remedy and matches the VS Code/JetBrains/Obsidian idiom.",
+      "artifacts": [
+        "docs/specs/knowledge-explorer-mode.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "d347415",
+        "after": "d3474150954e972f971ac0e3013edb5c9fa5ef1b",
+        "branch": "feature/app-facelift-and-graph-surfaces",
+        "pushed": true,
         "commits": []
       }
     }

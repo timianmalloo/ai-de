@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-08-30T17:26:11Z",
+  "generated": "2026-08-30T19:17:50Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -5811,6 +5811,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "bf499178f876e20f5778e96d3f18fdd04c36cb873b31c79fb41bd5d84f4dbabc"
     },
     {
+      "id": "spec-knowledge-explorer-mode",
+      "path": "docs/specs/knowledge-explorer-mode.md",
+      "title": "Knowledge Explorer — full-window dual-pane mode (spec)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Refines the Knowledge Exploration Surface into a distinct full-window \"mode\": a rail icon slides the exploration open as a body-wide dual-pane surface (graph + search on one side, a per-kind node reader on the other) instead of a docked pane, so exploration and reading a node's contents fit comfortably on one screen. The graph, reader, per-kind rendering and node-walk are inherited from spec-knowledge-exploration; this spec adds only the presentation mode and the two-pane composition.",
+      "tags": [
+        "knowledge-graph",
+        "exploration",
+        "reader",
+        "dual-pane",
+        "view-mode",
+        "node-walk",
+        "wpf"
+      ],
+      "links": [
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-graph-canvas",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Part B — UX specification (how it works)",
+          "mermaid": "flowchart TD\n  W[Workbench mode] -->|activate Graph rail item| EOpen{Graph already loaded?}\n  EOpen -->|yes, live| E[Explorer: restore split + last node]\n  EOpen -->|no| EL[Explorer: graph loading state + reader empty state]\n  EL -->|overview arrives| E\n  E -->|select node in graph| R{Render node by kind}\n  R -->|md/html/code/text ok| RR[Reader shows content + metadata + typed edges]\n  R -->|missing / unknown kind / oversized| RE[Reader error/fallback + recovery: pick another node / open source]\n  RR -->|activate a typed edge| WALK[Graph re-focuses target within transport bound]\n  WALK --> R\n  RE -->|select a different node| R\n  RR -->|drag split| RS[Split ratio persists]\n  E -->|activate Graph rail item OR Escape unclaimed| W\n  E -->|narrow window| NAR[Stacked split / reader drawer US-E8]"
+        }
+      ],
+      "sourceSha256": "99617318b85e83c23b47fba0c33a5162f08f3fdfe91172827972242fe1740025"
+    },
+    {
       "id": "spec-terminal-sessions",
       "path": "docs/specs/terminal-sessions.md",
       "title": "Multiple terminal sessions — lifecycle, rename, tab colour & colour schemes (spec)",
@@ -6052,5 +6095,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "49edd8fd2508edb30242c1d84491d273a639aeb33d63d09c77a791f047f730d6"
+  "graphSha256": "2b5eec2286ae5036dacd6c26dba95191004c0d4abc946293de3f8622d609ffdd"
 };
