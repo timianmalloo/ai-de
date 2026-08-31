@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-31T03:31:58Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-31T03:37:44Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3078,6 +3078,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs",
         "src/AiDe.App/Workbench/PromptDraftStore.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0172",
+      "shortname": "graph-payload-too-large",
+      "datetime": "2026-08-31T03:37:10Z",
+      "session": "phase3-pane-probes",
+      "prompt": "before re-index i get this message when opening theterrace workspace: The graph could not be loaded: ipc.payload_too_large: the response is 1,176,341 bytes and one message carries at most 1,048,576; ask for less of it",
+      "summary": "DC-047: the byte budget was checked on the inner payload and enforced on the framed one. IpcResponse.Payload is a string, so the projection's JSON is escaped into the envelope — measured inflation 1.56-1.57x on every payload. A 727,244-byte graph inside its 768 KiB budget reached 1,137,104 bytes and was refused; reproduced exactly. The graph now measures FramedCost (serialised, escaped, enveloped) and shrinks until that fits with 64 KiB headroom; the row-wise budget dropped to 480 KiB with a test asserting budget*2 <= frame so the assumed worst case cannot drift. Also fixed: the shrink applied one proportional correction and returned without re-checking. Three fixtures failed to reproduce before one did — the discriminating window was found by measuring, not by picking big numbers.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
