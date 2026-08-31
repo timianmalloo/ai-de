@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T14:59:42Z",
+  "generated": "2026-08-31T15:00:26Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5210,6 +5210,23 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0274",
+      "shortname": "compaction-decided-python-boundary-extractor-roadmap",
+      "datetime": "2026-08-31T14:57:37Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do the next steps you listed above. also lets prioritize all extractors moving forward as well",
+      "summary": "Compaction decided on evidence: nothing in the product reads a superseded generation (every read composes with the latest filter; the one by-generation reader is handed the latest), every committed snapshot is complete so the newest always renders, and measurement showed 53.3 MB of which 27.9 MB was dead at just 2 generations — under the old threshold of 8, which was tuned for latency while the symptom is size. Threshold 1, retain 1, run at daemon startup before the store opens: 1.09s to halve a real store, 1-34ms to decide there is nothing to do. DC-050: the Python disclosure conflated a boundary with a gap — 246 'unresolved' imports were all standard library, and I had ranked it the top coverage gap on the number alone; after separating them, 2 genuine unknowns. The standard library is now counted rather than drawn, matching what the C# extractor already did for the BCL. The generated stdlib set initially dropped __future__ (26 false unknowns), caught by re-measuring. docs/plans/extractor-roadmap.md now holds every extractor, its measured coverage, what is not built, and the priority order.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/extractor-roadmap.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0275",
       "shortname": "graph-lod-grouped-view",
       "datetime": "2026-08-31T14:59:42Z",
@@ -7778,6 +7795,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "1345cb811e502ba96fd4e02adcd3fa6634708195",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0117",
+      "datetime": "2026-08-31T14:57:38Z",
+      "session": "phase3-pane-probes",
+      "kind": "architecture",
+      "skill": "implement",
+      "title": "Compaction runs at startup, retaining only what renders",
+      "prompt": "decide the compaction threshold",
+      "summary": "DefaultThreshold 8 to 1 and DefaultRetain 2 to 1. The old threshold came from the P1-PERF latency curve and answered when growth starts to hurt; it never answered how big the store gets, which is what a user sees, and it never fired on real usage. The retained second generation was kept for investigation and nothing could investigate it — every read composes with the latest-generation filter — so it was residue, not history, and the audit log is where this project records what happened. Safe at one because a failed extraction returns before committing, so the newest snapshot always renders. The daemon compacts before opening the store: the deliberate maintenance moment the design asks for.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Store/StoreCompactor.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "8865ad0418c7980c0db26e98f7ff8a077f55e573",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
         "commits": []

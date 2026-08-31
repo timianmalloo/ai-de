@@ -49,7 +49,7 @@ public sealed class ScopeFingerprints
     // be located" for everything — which is the shape a stale generation always takes.
     // 2026-08-31.2 — has_member. Types now carry their own members, formatted for a UML
     // compartment, which is the Phase-2 unlock for the class diagram (ADR-0020).
-    public const string ExtractorGeneration = "2026-08-31.3";
+    public const string ExtractorGeneration = "2026-08-31.4";
 
     private const string FileName = "scope-fingerprints.json";
 

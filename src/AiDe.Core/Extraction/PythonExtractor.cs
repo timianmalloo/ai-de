@@ -38,6 +38,9 @@ public sealed class PythonExtractor : IExtractor
         /// <summary>No name resolution: an import names a module path, not a symbol.</summary>
         public const string ImportsNotResolved = "python-imports-not-resolved";
 
+        /// <summary>Imports naming the standard library — a boundary of the product, not a gap in it.</summary>
+        public const string StandardLibraryNotIndexed = "python-standard-library-not-indexed";
+
         /// <summary>Only column-zero declarations are seen; nested ones are invisible.</summary>
         public const string NestedDeclarationsNotAnalysed = "python-nested-declarations-not-analysed";
 
@@ -98,6 +101,7 @@ public sealed class PythonExtractor : IExtractor
         // imports resolve. A blanket "imports are not resolved" was true when none were and became a
         // closed gap reported as open the moment resolution landed — the same defect as hiding one.
         var unresolved = 0;
+        var standardLibrary = 0;
 
         foreach (var disclosure in new[]
         {
@@ -153,6 +157,25 @@ public sealed class PythonExtractor : IExtractor
                 // the package directory ahead of the wider path.
                 var resolved = Resolve(target, module, modules) ?? Resolve(target, module, elsewhere);
 
+                // The standard library is not a gap. Counting `import sys` as something this scope
+                // "does not contain" was arithmetically true and read as a coverage hole — MEASURED
+                // on a real workspace, all 246 unresolved imports across all 32 distinct names were
+                // stdlib. The C# extractor already declines to draw the BCL for the same reason.
+                // The standard library is COUNTED, not drawn.
+                //
+                // Counting `import sys` as something this scope "does not contain" was arithmetically
+                // true and read as a coverage hole — MEASURED on a real workspace, all 246 unresolved
+                // imports across all 32 distinct names were stdlib. Drawing them is the same mistake
+                // one layer along: 226 edges to `sys`, `os`, `json` and `re` put the standard library
+                // among the most connected nodes in the graph, and the C# extractor already declines
+                // to draw the BCL because "a first view centred on the BCL is not a picture of
+                // anybody's domain".
+                if (resolved is null && PythonStandardLibrary.Contains(target))
+                {
+                    standardLibrary++;
+                    continue;
+                }
+
                 if (resolved is null) unresolved++;
 
                 assertions.Add(resolved is null
@@ -171,6 +194,16 @@ public sealed class PythonExtractor : IExtractor
             assertions.Add(Fact(request, ScopeNode(request.ScopeId), "discloses",
                 $"{Disclosures.ImportsNotResolved} ({unresolved:N0} import(s) name something this " +
                 "scope does not contain)"));
+        }
+
+        if (standardLibrary > 0)
+        {
+            // Said plainly, and separately from the unknowns. "The standard library is not indexed"
+            // is a boundary of this product; "31 imports name something nobody can identify" is a
+            // gap in it. Reporting them as one number made the second invisible inside the first.
+            assertions.Add(Fact(request, ScopeNode(request.ScopeId), "discloses",
+                $"{Disclosures.StandardLibraryNotIndexed} ({standardLibrary:N0} import(s) name the " +
+                "Python standard library, which this product does not index)"));
         }
 
         if (unreadable.Count > 0)

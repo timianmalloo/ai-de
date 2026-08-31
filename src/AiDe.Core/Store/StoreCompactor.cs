@@ -37,16 +37,35 @@ public sealed record CompactionResult(
 /// </remarks>
 public sealed class StoreCompactor(string databasePath)
 {
-    /// <summary>Generations per scope beyond which compaction is worth its cost.</summary>
+    /// <summary>Generations per scope beyond which compaction runs.</summary>
     /// <remarks>
-    /// Set from the P1-PERF curve: refresh is comfortably inside budget at five prior generations
-    /// and over it by ten. Compacting at eight keeps the workspace inside budget without compacting
-    /// so often that the rebuild itself becomes the cost.
+    /// <para><b>One, because the rebuild turned out to be cheap and the waste turned out not to be.</b>
+    /// The original eight came from the P1-PERF latency curve — refresh is inside budget at five
+    /// prior generations and over it by ten — and it answered the question "when does this start to
+    /// hurt?". It never answered "how big does the store get?", and that is the one a user sees.</para>
+    ///
+    /// <para>MEASURED on a real workspace: at just <b>two</b> generations per scope — far under the
+    /// old threshold, so nothing ever fired — the store was <b>53.3 MB of which 27.9 MB was
+    /// superseded</b>. Compacting took <b>1.09 seconds</b> and halved it. Deciding there was nothing
+    /// to do takes <b>1–34 ms</b>. A threshold that never fires on real usage is not a threshold, it
+    /// is an opinion.</para>
     /// </remarks>
-    public const int DefaultThreshold = 8;
+    public const int DefaultThreshold = 1;
 
-    /// <summary>Generations kept per scope after a compaction — the current one plus a little history.</summary>
-    public const int DefaultRetain = 2;
+    /// <summary>
+    /// Generations kept per scope after a compaction — the one that renders.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Two was speculative and it was costing double.</b> The extra generation was kept "for
+    /// investigation", and nothing could investigate it: every read in this codebase composes with
+    /// the latest-generation filter, and the one reader that takes a generation explicitly is handed
+    /// the latest. History no query can reach is not history, it is residue — and the audit log, the
+    /// change log and the incident sidecar are where this project actually records what happened.</para>
+    ///
+    /// <para>Safe at one because every committed snapshot is complete: a failed extraction returns
+    /// before committing anything, so the newest snapshot is always the one that renders.</para>
+    /// </remarks>
+    public const int DefaultRetain = 1;
 
     /// <summary>Scopes whose generation count has passed the threshold.</summary>
     public static IReadOnlyList<(string ScopeId, int Generations)> ScopesNeedingCompaction(
