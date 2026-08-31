@@ -376,6 +376,23 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         }
     }
 
+    public IReadOnlyList<BoardMessage> AllBoardMessages()
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = BoardSelect + " ORDER BY repository_key, seq;";
+            using var reader = command.ExecuteReader();
+            var messages = new List<BoardMessage>();
+            while (reader.Read())
+            {
+                messages.Add(ReadBoardMessage(reader));
+            }
+
+            return messages;
+        }
+    }
+
     public BoardMessage? FindBoardMessage(string messageId)
     {
         lock (_gate)

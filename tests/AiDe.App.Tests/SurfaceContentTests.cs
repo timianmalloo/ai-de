@@ -269,10 +269,87 @@ public sealed class SurfaceContentTests
             s => s.Kind == "sessions");
     }
 
+    [Fact]
+    public void TheBoardSurface_ShowsAPost_AndIsInTheDefaultLayout()
+    {
+        // The Message Board surface (US-4) renders honestly and synchronously - one post reaches the
+        // ListBox, and the status is not a Loading message (the load is a local fold).
+        var view = OnStaThread(() =>
+        {
+            var query = new StubBoardQuery(new BoardMessage(
+                "m1", "ai-de", BoardMessageKind.Breadcrumb, "s1", TrustClassification.Verified,
+                null, "watch the daemon lock ordering", false, false, false, DateTimeOffset.UnixEpoch, 1));
+
+            var content = new SurfaceContentFactory(null, null, query).Create(new Surface("board", "board", "Board"));
+            var stack = Assert.IsType<StackPanel>(Unwrap(content));
+            var list = stack.Children.OfType<ListBox>().Single();
+            var status = stack.Children.OfType<TextBlock>().Single();
+            return new SurfaceView(list.ItemsSource?.Cast<object>().Count() ?? 0, status.Text);
+        });
+
+        Assert.Equal(1, view.ItemCount);
+        Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces), s => s.Kind == "board");
+    }
+
+    [Fact]
+    public void TheBoardSurface_WithNoWatcherStore_SaysUnavailable_NotBlank()
+    {
+        var status = OnStaThread(() =>
+        {
+            var content = new SurfaceContentFactory(null).Create(new Surface("board", "board", "Board"));
+            var stack = Assert.IsType<StackPanel>(Unwrap(content));
+            return stack.Children.OfType<TextBlock>().Single().Text;
+        });
+
+        Assert.Contains("not available", status, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Loading", status, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void TheLeaderboardSurface_ShowsACell_AndIsInTheDefaultLayout()
+    {
+        // The Leaderboard surface (US-14) renders honestly and synchronously - a comparable cohort
+        // reaches the ListBox as at least one cell, and the status is not a Loading message.
+        var view = OnStaThread(() =>
+        {
+            var episodes = Enumerable.Range(0, 5).Select(i =>
+            {
+                var card = new Scorecard($"ep-{i}", "weave/1", WeaveVerdict.Partial,
+                    [new DimensionAssessment(ScoreDimension.OutcomeIntegrity, 30, 4, 80 + i, AssessmentPosture.Deterministic, "r")],
+                    [], new EvidenceCoverage(9, 10), $"Partial: {80 + i} / 30 observed", DateTimeOffset.UnixEpoch);
+                return new ScoredEpisode($"ep-{i}", "Claude Code", "Opus 4.8", i % 2 == 0 ? "op1" : "op2", "refactor", "weave/1", card);
+            }).ToArray();
+            var query = new StubLeaderboardQuery(episodes);
+
+            var content = new SurfaceContentFactory(null, null, null, query).Create(new Surface("leaderboard", "leaderboard", "Leaderboard"));
+            var stack = Assert.IsType<StackPanel>(Unwrap(content));
+            var list = stack.Children.OfType<ListBox>().Single();
+            var status = stack.Children.OfType<TextBlock>().Single();
+            return new SurfaceView(list.ItemsSource?.Cast<object>().Count() ?? 0, status.Text);
+        });
+
+        Assert.True(view.ItemCount >= 1);
+        Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces), s => s.Kind == "leaderboard");
+    }
+
     /// <summary>A watcher read that answers immediately with a fixed set of sessions.</summary>
     private sealed class StubSessionsQuery(params WatcherSessionSnapshot[] sessions) : IWatcherSessionsQuery
     {
         public IReadOnlyList<WatcherSessionSnapshot> GetSessions() => sessions;
+    }
+
+    /// <summary>A watcher read that answers immediately with a fixed set of board posts.</summary>
+    private sealed class StubBoardQuery(params BoardMessage[] messages) : IWatcherBoardQuery
+    {
+        public IReadOnlyList<BoardMessage> GetMessages() => messages;
+    }
+
+    /// <summary>A watcher read that answers immediately with a fixed set of scored episodes.</summary>
+    private sealed class StubLeaderboardQuery(params ScoredEpisode[] episodes) : IWatcherLeaderboardQuery
+    {
+        public IReadOnlyList<ScoredEpisode> GetScoredEpisodes() => episodes;
     }
 
     /// <summary>A read surface that fails, standing in for a daemon that cannot be reached.</summary>

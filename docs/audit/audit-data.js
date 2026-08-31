@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T16:59:56Z",
+  "generated": "2026-08-31T17:24:23Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2988,6 +2988,28 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T16:46:52Z",
       "duration_seconds": 784.0
+    },
+    {
+      "id": "al-0285",
+      "shortname": "implement-watcher-board-leaderboard-surfaces",
+      "datetime": "2026-08-31T17:24:23Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 2: Board (US-4) + Leaderboard (US-14) WPF surfaces mirroring slice-3 Sessions; AllBoardMessages reader; factory board/leaderboard kinds + shared ListPane; default-layout seeding + v2->v3 migration (reachable, E10); WorkbenchShell opens the per-workspace watcher SQLite store and wires all three read queries so panes are live. 15 Core + 3 App + 1 migration test; Core 913/0, App 138/0; migration oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/WatcherBoardPaneViewModel.cs",
+        "src/AiDe.Core/Presentation/WatcherLeaderboardPaneViewModel.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-board-leaderboard-surfaces.md",
+        "docs/proof/watcher-board-leaderboard-surfaces.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -5539,6 +5561,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "67586a8bbc7132395d13be04c3da7017ee5e7703",
         "after": "67586a8bbc7132395d13be04c3da7017ee5e7703",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0120",
+      "datetime": "2026-08-31T17:24:23Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice conn-2: Board + Leaderboard surfaces; watcher store wired into the running app",
+      "prompt": "do all of these next steps so i can smoke test the ux",
+      "summary": "WorkbenchShell opens <dataDir>/watcher.db and passes Sessions/Board/Leaderboard queries to the factory; panes render live and degrade to 'not available'; v2->v3 layout migration makes them reachable.",
+      "rationale": "Until the shell opened the store and passed the queries, even Sessions showed 'not available' - the read surfaces existed but nothing wired them to data.",
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "8ca0574d22fe4a3b47f5c8b9341ff7abb51fb691",
+        "after": "8ca0574d22fe4a3b47f5c8b9341ff7abb51fb691",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

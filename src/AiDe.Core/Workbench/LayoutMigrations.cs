@@ -30,6 +30,15 @@ public static class LayoutMigrations
         // and the feature is invisible to everyone who has ever arranged their workbench — the
         // people most likely to have opinions about it.
         new(1, dto => AddSurfaceBeside(dto, "contexts", new SurfaceDto("joins", "joins", "Joins"))),
+
+        // v2 → v3: the Loomkeeper Board and Leaderboard panes were added beside Sessions. A saved
+        // layout arranged before Loomkeeper shipped otherwise never shows them, so the watcher UX is
+        // invisible to exactly the operators who arranged their workbench first.
+        new(2, dto =>
+            AddSurfaceBeside(
+                AddSurfaceBeside(dto, "sessions", new SurfaceDto("board", "board", "Board")),
+                "sessions",
+                new SurfaceDto("leaderboard", "leaderboard", "Leaderboard"))),
     ];
 
     /// <summary>

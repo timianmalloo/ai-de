@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T16:59:39Z",
+  "generated": "2026-08-31T17:23:56Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1876,6 +1876,57 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "9b7c531d475e24574be847f70c0c5b79ec52c466c83d7afed07118ffb1669318"
+    },
+    {
+      "id": "design-watcher-board-leaderboard-surfaces",
+      "path": "docs/design/watcher-board-leaderboard-surfaces.md",
+      "title": "Loomkeeper - Board & Leaderboard WPF Surfaces (connective 2)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Two new WPF read surfaces - Message Board (US-4) and Leaderboard (US-14) - built exactly like the slice-3 Sessions pane: a synchronous store-fold view model in AiDe.Core.Presentation behind a null-safe query seam, rendered by SurfaceContentFactory, seeded into the default layout and added to existing layouts by a v2->v3 migration so they are reachable (E10). WorkbenchShell now opens the per-workspace watcher SQLite store and wires all three read queries, so the panes render live when the ingest host has written data and degrade to an honest \"not available\" when the store is absent.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "wpf",
+        "surface",
+        "board",
+        "leaderboard",
+        "standing",
+        "ui",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "refines"
+        },
+        {
+          "to": "design-watcher-score-persistence",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-message-board",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-advisory-grader",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2ea59168999401ccd1495966b00711bce1cfc874ed38b5d8b326a7000ad05feb"
     },
     {
       "id": "design-watcher-coordination-contract",
@@ -6761,6 +6812,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "ddfd8d51c3ee1bc76913c7228b1062ab4686f4327cbae48b015e0a5d65e24a46"
     },
     {
+      "id": "proof-watcher-board-leaderboard-surfaces",
+      "path": "docs/proof/watcher-board-leaderboard-surfaces.md",
+      "title": "Proof Pack - Loomkeeper Board & Leaderboard WPF Surfaces (connective 2)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Board (US-4) and Leaderboard (US-14) WPF surfaces render honestly and are reachable: the pane view models fold the store synchronously and degrade to explicit states (never Loading-forever, DC-011); untrusted board content is shown-but-flagged and a redaction is a tombstone; the leaderboard segments by (task class, schema) and shows Not Comparable for a below-cohort or single-operator cell (US-10); both surfaces render a populated ListBox through SurfaceContentFactory and are in the default layout; a v2->v3 migration adds them to existing layouts (E10); and WorkbenchShell opens the per-workspace watcher store and wires all three queries. 15 Core + 3 App render + 1 migration test; Core suite 913/0, App suite 138/0; the migration oracle mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "wpf",
+        "surface",
+        "board",
+        "leaderboard",
+        "ui",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-board-leaderboard-surfaces",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fae984158d8e5013b350f258459eef3bfaa02972e7709bfba5465c56804601b4"
+    },
+    {
       "id": "proof-watcher-coordination-contract",
       "path": "docs/proof/watcher-coordination-contract.md",
       "title": "Proof Pack - Loomkeeper Injected Coordination Contract (slice 2)",
@@ -7666,5 +7752,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b3f2c26b7950e1bc3f69aee6618c5b84eae56238077ddd70f003f6900cda9e47"
+  "graphSha256": "fec2acbf6513aee0965117e7b655c83d7843b80e70b3a527743f6d833abda5fd"
 };

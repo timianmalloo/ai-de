@@ -11,6 +11,7 @@ using AiDe.Core.Upgrade;
 using AiDe.Core.Extraction;
 using AiDe.Core.Presentation;
 using AiDe.Core.Terminal;
+using AiDe.Core.Watcher;
 using AiDe.Core.Workbench;
 using AvalonDock;
 using AiDe.Core.Dispatch;
@@ -45,6 +46,10 @@ public sealed class WorkbenchShell : IDisposable
     private readonly HashSet<string> _customizationInitialized = new(StringComparer.Ordinal);
     private CanvasGraphViewModel? _canvasGraph;
 
+    // The per-workspace Loomkeeper observation store the read panes fold. Null when no workspace data
+    // directory was supplied or the store could not be opened; the panes then show "not available".
+    private readonly SqliteWatcherObservationStore? _watcherStore;
+
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
         Service = new LayoutService();
@@ -54,7 +59,44 @@ public sealed class WorkbenchShell : IDisposable
         Announcer = new WorkbenchAnnouncer(LiveRegion);
 
         _queries = queries;
-        _factory = new SurfaceContentFactory(queries);
+
+        // Loomkeeper read surfaces (Sessions/Board/Leaderboard) read a per-workspace watcher store -
+        // the same SQLite file the ingest host writes agent observations into. Opened here so the
+        // panes render live when data is present and degrade to an honest "not available" when the
+        // store is absent (the walking-skeleton default). Owned by the shell; disposed with it.
+        //
+        // Cross-process caveat: liveness compares monotonic ticks, which are process-relative, so a
+        // heartbeat written by a separate ingest process is not comparable to this process's clock -
+        // in-process ingest is exact, and the cross-process liveness projection is a wiring follow-on.
+        IWatcherSessionsQuery? sessionsQuery = null;
+        IWatcherBoardQuery? boardQuery = null;
+        IWatcherLeaderboardQuery? leaderboardQuery = null;
+        if (!string.IsNullOrEmpty(workspaceDataDirectory))
+        {
+            try
+            {
+                Directory.CreateDirectory(workspaceDataDirectory);
+                _watcherStore = SqliteWatcherObservationStore.Open(
+                    Path.Combine(workspaceDataDirectory, "watcher.db"));
+                var liveness = new LivenessProjection(
+                    _watcherStore, new SystemMonotonicClock(), TimeSpan.FromSeconds(30));
+                sessionsQuery = new WatcherSessionsQuery(_watcherStore, liveness);
+                boardQuery = new WatcherBoardQuery(_watcherStore);
+                leaderboardQuery = new WatcherLeaderboardQuery(_watcherStore);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                // A watcher store that cannot be opened must not stop the workbench from opening: the
+                // panes degrade to their honest "not available" state (a null query), which is the
+                // same code path as the walking-skeleton default. Any open failure (I/O, permission,
+                // a corrupt/locked SQLite file) degrades identically - the workbench is never blocked
+                // by an unreadable observation store.
+                _watcherStore?.Dispose();
+                _watcherStore = null;
+            }
+        }
+
+        _factory = new SurfaceContentFactory(queries, sessionsQuery, boardQuery, leaderboardQuery);
         Manager = new DockingManager();
         AutomationProperties.SetName(Manager, "Workbench");
 
@@ -813,7 +855,11 @@ public sealed class WorkbenchShell : IDisposable
             adapter.ContentFor(surfaceId) as TerminalSurface;
     }
 
-    public void Dispose() => Persistence?.Dispose();
+    public void Dispose()
+    {
+        Persistence?.Dispose();
+        _watcherStore?.Dispose();
+    }
 
     /// <summary>The command palette's rows: every keyboard-reachable layout command.</summary>
     public static IReadOnlyList<WorkbenchCommand> PaletteCommands(string search) =>

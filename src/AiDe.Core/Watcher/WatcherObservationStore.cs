@@ -56,6 +56,12 @@ public interface IWatcherObservationStore
     /// <summary>A repository's board messages in append (seq) order - repository-scoped (US-4).</summary>
     IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey);
 
+    /// <summary>
+    /// Every board message across all repositories, in append (seq) order - the cross-repo compute
+    /// reader for the Board surface (US-4). The pane groups these by repository key.
+    /// </summary>
+    IReadOnlyList<BoardMessage> AllBoardMessages();
+
     /// <summary>A board message by id, or null if unknown.</summary>
     BoardMessage? FindBoardMessage(string messageId);
 
@@ -247,6 +253,14 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
             return [.. _boardMessages.Values
                 .Where(m => string.Equals(m.RepositoryKey, repositoryKey, StringComparison.Ordinal))
                 .OrderBy(m => m.Seq)];
+        }
+    }
+
+    public IReadOnlyList<BoardMessage> AllBoardMessages()
+    {
+        lock (_gate)
+        {
+            return [.. _boardMessages.Values.OrderBy(m => m.RepositoryKey, StringComparer.Ordinal).ThenBy(m => m.Seq)];
         }
     }
 
