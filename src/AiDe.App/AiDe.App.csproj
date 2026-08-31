@@ -18,6 +18,11 @@
       pane is floated (spike webview2-airspace).
     -->
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3485.44" />
+    <!--
+      ADR-0019: native AvalonEdit (MIT) for the read-only code viewer — a pure WPF Control, so no
+      HwndHost/WebView2 airspace (unlike Monaco), confirmed by the spikes/avalonedit-viewer PoC.
+    -->
+    <PackageReference Include="AvalonEdit" Version="6.*" />
   </ItemGroup>
 
   <ItemGroup>

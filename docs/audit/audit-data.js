@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T04:27:07Z",
+  "generated": "2026-08-31T04:33:35Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3147,6 +3147,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0179",
+      "shortname": "implement-code-viewer-component",
+      "datetime": "2026-08-31T04:33:35Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "overnight: build the read-only code viewer (ADR-0018/0019)",
+      "summary": "Built the read-only code viewer component + client content seam (ADR-0018/0019). Added AvalonEdit (MIT, ADR-0019-sanctioned) to the App. CodeViewerView: native read-only TextEditor, highlight-by-language (C#/py/js/sql built-in, unknown degrades to plain per US-ED2), shortfall banner, no-content fallback. INodeContentSource seam mirrors ADR-0018's NodeContentAsync; MockNodeContentSource stands in (labelled sample, no file reads per DC-022) until Core ships the real query. 6 tests. App.Tests 164->170, launch smoke green. Component is tested + staged; live wiring is a one-line substitution when Core ships NodeContentAsync.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/CodeViewerView.cs",
+        "src/AiDe.App/Workbench/NodeContentSource.cs"
       ],
       "tags": [],
       "outcome": "success"
