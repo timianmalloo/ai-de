@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T23:07:53Z",
+  "generated": "2026-08-31T23:18:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3223,6 +3223,29 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0308",
+      "shortname": "implement-watcher-episode-capture",
+      "datetime": "2026-08-31T23:18:43Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (unblock conn-10 via episode-lifecycle capture)",
+      "summary": "ep-capture core: AuditLogEpisodeSource parses AI-Forward audit entries with goal+done_when+session (AL5b) into imported closed WorkEpisodes (honest outcome mapping - only success is Completed; no goal-state -> not an episode); WatcherHost.ImportEpisodesFromAuditLog records them (upsert). 6 tests, outcome-mapping mutation-verified. Core 985/0. Shell auto-import + conn-10 scoring are the next increments.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AuditLogEpisodeSource.cs",
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "tests/AiDe.Core.Tests/Watcher/AuditLogEpisodeSourceTests.cs",
+        "docs/design/watcher-episode-capture.md",
+        "docs/proof/watcher-episode-capture.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Unblock scoring by supplying a real episode source",
+      "done_when": "Goal-state audit entries import as closed Work Episodes into the store, tested"
     }
   ],
   "changes": [

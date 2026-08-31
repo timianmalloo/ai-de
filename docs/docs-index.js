@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T23:07:40Z",
+  "generated": "2026-08-31T23:18:25Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2094,6 +2094,53 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "fbb52b9329b1f4c843ce6366b425da52a31da18240774100a941b2f500709d41"
+    },
+    {
+      "id": "design-watcher-episode-capture",
+      "path": "docs/design/watcher-episode-capture.md",
+      "title": "Loomkeeper Episode-Lifecycle Capture from the Audit Log (ep-capture)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The episode source that unblocks scoring: imported closed Work Episodes are read from a repo's AI-Forward audit log (the goal + done_when + session goal-state entries, AL5b) via a pure AuditLogEpisodeSource and recorded directly into the store (historical facts, not live capability-verified operations). Only an explicit success maps to Completed; an entry without a declared goal-state is not an episode (no fabrication, spec L127 / NG1).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "episode",
+        "capture",
+        "audit-log",
+        "done-when",
+        "ep-capture",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-work-episode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-conn-10-11-episode-source-blocker",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9a58cfd121f9b667b946a6c808ee4898c78fb50876ee04f706c65a591c03f416"
     },
     {
       "id": "design-watcher-host",
@@ -7375,6 +7422,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "f87ced28267f64ac14f8f93bb64033a1f1c6f631de453d1ebb0f3545e5f147a3"
     },
     {
+      "id": "proof-watcher-episode-capture",
+      "path": "docs/proof/watcher-episode-capture.md",
+      "title": "Proof Pack - Episode-Lifecycle Capture (ep-capture)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for ep-capture: AuditLogEpisodeSource parses goal-state audit entries into imported closed Work Episodes and WatcherHost.ImportEpisodesFromAuditLog records them (upsert). Honest outcome mapping mutation-verified. 6 tests; Core 985/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "episode",
+        "capture",
+        "ep-capture",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-episode-capture",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5634574bb240391ec6f74fa083588b14dba730bd4a98e331a40e03cfd36e99f2"
+    },
+    {
       "id": "proof-watcher-host",
       "path": "docs/proof/watcher-host.md",
       "title": "Proof Pack - Loomkeeper In-Process Watcher Host (connective 5)",
@@ -8446,5 +8526,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a048bc74a73b490395fce4f0e658a183f2df4646af587560421b501c454ed9f9"
+  "graphSha256": "258d7ea9d645fdf821bddf175a30c05483506f21e1b545d20f1522366e56e2fa"
 };

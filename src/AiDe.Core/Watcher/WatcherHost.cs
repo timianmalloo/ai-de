@@ -83,6 +83,24 @@ public sealed class WatcherHost : IDisposable
     public SessionCoordinationEmitter CreateEmitter() =>
         new(new CoordContractWriter(_coordLogDirectory, _time));
 
+    /// <summary>
+    /// Imports the closed Work Episodes declared in a repo's AI-Forward audit log (the goal-state entries,
+    /// AL5b) into the store, so real episodes exist to observe and score. Idempotent by episode id (a
+    /// re-import of the same entry replaces its row, not duplicates it - <see cref="IWatcherObservationStore.RecordEpisode"/>
+    /// is an upsert). Returns the number of episodes imported. A missing file imports nothing.
+    /// </summary>
+    public int ImportEpisodesFromAuditLog(string auditLogPath)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(auditLogPath);
+        var episodes = AuditLogEpisodeSource.ReadFile(auditLogPath);
+        foreach (var episode in episodes)
+        {
+            _store.RecordEpisode(episode);
+        }
+
+        return episodes.Count;
+    }
+
     /// <summary>The observation store, for the read surfaces (the app builds its queries from this).</summary>
     public IWatcherObservationStore Store => _store;
 
