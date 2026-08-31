@@ -178,6 +178,15 @@ public sealed class PromptDraftSurface : ContentControl
             _text.IsReadOnly = true;
             _text.Opacity = 0.5;
             _confirm.Text = $"Transferred to {target} — recorded as an audit prompt. The session owns it now.";
+            _confirm.SetResourceReference(ForegroundProperty, "VerifiedBrush");
+            _confirm.Visibility = Visibility.Visible;
+        }
+        else
+        {
+            // A rejected dispatch (the session was not ready / did not accept the write) is not silent —
+            // the draft stays editable and transferable so the user can retry (US-ED6, no silent no-op).
+            _confirm.Text = $"The transfer to {target} did not go through — the session may not be ready. The draft is unchanged; try again.";
+            _confirm.SetResourceReference(ForegroundProperty, "TextMutedBrush");
             _confirm.Visibility = Visibility.Visible;
         }
         Reflect();

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T13:10:57Z",
+  "generated": "2026-08-31T13:12:56Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3285,6 +3285,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0187",
+      "shortname": "prompt-draft-transfer-failure-feedback",
+      "datetime": "2026-08-31T13:12:56Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do whatever steps you are not gated on",
+      "summary": "Prompt editor: a rejected transfer (session not ready / write not accepted) now shows an explicit 'did not go through — try again' message instead of silently doing nothing (U9, no silent no-op); the draft stays editable/transferable. VM retry behaviour already tested.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/PromptDraftSurface.cs"
       ],
       "tags": [],
       "outcome": "success"
