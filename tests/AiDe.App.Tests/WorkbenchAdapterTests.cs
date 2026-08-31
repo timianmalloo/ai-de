@@ -262,6 +262,55 @@ public sealed class WorkbenchAdapterTests
         _ => throw new InvalidOperationException("unexpected pane " + e.GetType().Name),
     };
 
+    // The regression for the empty class diagram: SurfaceChrome.WrapAsIsland frames a non-windowed
+    // pane's content in a Border, so ContentFor(id) returns the Border — and a bind that did
+    // ContentFor(id).OfType<ClassDiagramSurface>() found nothing and never populated the pane, which
+    // sat on its construction-time empty state over a fully indexed workspace. SurfaceContent<T> must
+    // look THROUGH the island. Fails RED without the unwrap branch.
+    [Fact]
+    public void SurfaceContent_LooksThroughIslandChrome_WhileContentForReturnsTheWrapper()
+    {
+        var (throughHelper, viaContentFor) = OnStaThread(() =>
+        {
+            var service = new LayoutService();
+            var stackId = service.Current.AllStacks().First().Id;
+            const string id = "classdiagram#test01";
+            service.Apply(new LayoutOperation.AddSurface(
+                stackId, new Surface(id, "classdiagram", "Class diagram")));
+
+            var manager = new DockingManager();
+            var adapter = new WorkbenchAdapter(manager, service,
+                surface => surface.Kind == "classdiagram"
+                    ? SurfaceChrome.WrapAsIsland(new ClassDiagramSurface(surface.Title))
+                    : new ContentControl());
+
+            var window = new Window
+            {
+                Content = manager,
+                Width = 900,
+                Height = 600,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            window.Show();
+            adapter.Render();
+            window.UpdateLayout();
+            manager.UpdateLayout();
+
+            try
+            {
+                return (adapter.SurfaceContent<ClassDiagramSurface>(id), adapter.ContentFor(id));
+            }
+            finally { window.Close(); }
+        });
+
+        Assert.NotNull(throughHelper);          // the helper unwraps the island and finds the surface
+        Assert.IsType<Border>(viaContentFor);   // documents WHY: the raw content is the framing Border
+    }
+
     private sealed class DisposableBorder(Action onDispose) : Border, IDisposable
     {
         public void Dispose() => onDispose();

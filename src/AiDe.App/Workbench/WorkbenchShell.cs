@@ -178,6 +178,29 @@ public sealed class WorkbenchShell : IDisposable
             return result.Applied ? "Class diagram opened." : result.Announcement;
         };
 
+        Controller.NewCodeViewerRequested = () =>
+        {
+            var stack = Service.Current.AllStacks()
+                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "canvas"))
+                ?? Service.Current.AllStacks().FirstOrDefault();
+
+            if (stack is null) return "There is no pane to open a code viewer in.";
+
+            var id = $"codeviewer#{Guid.NewGuid().ToString("N")[..6]}";
+            var result = Service.Apply(new LayoutOperation.AddSurface(
+                stack.Id, new Surface(id, "codeviewer", "Source")));
+
+            Adapter.Render();
+            BindCanvas();
+            BindContexts();
+            BindJoins();
+            BindClassDiagrams();
+            BindCodeViewers();
+            BindTerminalAttention();
+
+            return result.Applied ? "Code viewer opened." : result.Announcement;
+        };
+
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
         // open there is nothing to persist against, so first-run simply starts from the default.
         //
@@ -471,7 +494,7 @@ public sealed class WorkbenchShell : IDisposable
     {
         var pane = Service.Current.AllStacks()
             .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .Select(surface => Adapter.SurfaceContent<ContextMapSurface>(surface.SurfaceId))
             .OfType<ContextMapSurface>()
             .FirstOrDefault();
 
@@ -643,6 +666,9 @@ public sealed class WorkbenchShell : IDisposable
 
         // Class diagrams derive from the graph; (re)populate any that are open (early-returns when none).
         BindClassDiagrams();
+
+        // Code viewers show node source (a labelled sample until Core's content query ships).
+        BindCodeViewers();
     }
 
     // A rename lives on the surface (reconcile keeps it alive); re-render so the tab caption, which
@@ -708,7 +734,7 @@ public sealed class WorkbenchShell : IDisposable
     {
         var pane = Service.Current.AllStacks()
             .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .Select(surface => Adapter.SurfaceContent<JoinSurface>(surface.SurfaceId))
             .OfType<JoinSurface>()
             .FirstOrDefault();
 
@@ -1013,7 +1039,7 @@ public sealed class WorkbenchShell : IDisposable
         {
             foreach (var surface in stack.Surfaces.Where(s => s.Kind == "prompt"))
             {
-                if (Adapter.ContentFor(surface.SurfaceId) is not PromptDraftSurface draft) { continue; }
+                if (Adapter.SurfaceContent<PromptDraftSurface>(surface.SurfaceId) is not { } draft) { continue; }
 
                 var id = surface.SurfaceId;
                 draft.Configure(
@@ -1035,7 +1061,7 @@ public sealed class WorkbenchShell : IDisposable
         var surfaces = Service.Current.AllStacks()
             .SelectMany(s => s.Surfaces)
             .Where(s => s.Kind == "classdiagram")
-            .Select(s => Adapter.ContentFor(s.SurfaceId))
+            .Select(s => Adapter.SurfaceContent<ClassDiagramSurface>(s.SurfaceId))
             .OfType<ClassDiagramSurface>()
             .Where(s => s.IsEmpty)   // first load only — avoids reloading (and flickering) on every render
             .ToList();
@@ -1061,6 +1087,42 @@ public sealed class WorkbenchShell : IDisposable
         {
             // An explicit error state, never a misleading empty "no classes" (U9).
             foreach (var surface in surfaces) { surface.ShowError(ex.Message); }
+        }
+    }
+
+    // The code viewer's content source. A mock until Core ships NodeContentAsync (ADR-0018); swapping
+    // this field for the Core-backed source is the whole live-wiring change.
+    private INodeContentSource _nodeContentSource = new MockNodeContentSource();
+
+    /// <summary>
+    /// Feeds each open code-viewer surface content (ADR-0018/0019). Until Core's NodeContentAsync ships,
+    /// this shows a labelled SAMPLE so the read-only highlighted viewer is visible and reachable; the
+    /// real per-node source (following graph selection) drops in when the source is swapped.
+    /// </summary>
+    internal void BindCodeViewers()
+    {
+        var surfaces = Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => s.Kind == "codeviewer")
+            .Select(s => Adapter.SurfaceContent<CodeViewerView>(s.SurfaceId))
+            .OfType<CodeViewerView>()
+            .Where(v => v.NodeId is null)   // first load only
+            .ToList();
+        if (surfaces.Count == 0) { return; }
+
+        _ = PopulateCodeViewersAsync(surfaces);
+    }
+
+    private async Task PopulateCodeViewersAsync(IReadOnlyList<CodeViewerView> viewers)
+    {
+        try
+        {
+            var content = await _nodeContentSource.GetAsync("(sample)", CancellationToken.None);
+            foreach (var v in viewers) { v.Show(content); }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // Leaves the viewer in its fallback state rather than crashing.
         }
     }
 

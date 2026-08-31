@@ -103,6 +103,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workbench.newClassDiagram":
                 return NewClassDiagram();
 
+            case "workbench.newCodeViewer":
+                return NewCodeViewer();
+
             case "workbench.toggleLock":
                 service.IsLocked = !service.IsLocked;
                 announcer.Announce(service.IsLocked
@@ -410,6 +413,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// <summary>Opens a class-diagram surface. Set by the shell that can create surfaces.</summary>
     public Func<string>? NewClassDiagramRequested { get; set; }
 
+    /// <summary>Opens a read-only code-viewer surface. Set by the shell that can create surfaces.</summary>
+    public Func<string>? NewCodeViewerRequested { get; set; }
+
     private bool NewAgentTerminal()
     {
         announcer.Announce(NewAgentTerminalRequested is null
@@ -433,6 +439,15 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         announcer.Announce(NewClassDiagramRequested is null
             ? "Class diagrams are not available in this build."
             : NewClassDiagramRequested());
+
+        return true;
+    }
+
+    private bool NewCodeViewer()
+    {
+        announcer.Announce(NewCodeViewerRequested is null
+            ? "The code viewer is not available in this build."
+            : NewCodeViewerRequested());
 
         return true;
     }

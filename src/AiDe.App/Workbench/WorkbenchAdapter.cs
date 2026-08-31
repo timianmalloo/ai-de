@@ -347,6 +347,28 @@ public sealed class WorkbenchAdapter
             .FirstOrDefault(d => string.Equals(d.ContentId, surfaceId, StringComparison.Ordinal))
             ?.Content as FrameworkElement;
 
+    /// <summary>
+    /// The inner surface content of type <typeparamref name="T"/> for <paramref name="surfaceId"/>,
+    /// looking THROUGH the island chrome (<see cref="SurfaceChrome.WrapAsIsland"/>) that non-windowed
+    /// panes are wrapped in.
+    /// </summary>
+    /// <remarks>
+    /// A wrapped pane's <see cref="ContentFor"/> returns the framing <see cref="Border"/>, not the
+    /// surface, so <c>ContentFor(id).OfType&lt;ClassDiagramSurface&gt;()</c> silently finds nothing and
+    /// the pane never populates — the exact defect that left the class diagram (and every other wrapped
+    /// surface bound by type) empty over a fully indexed workspace. Canvas and terminal are returned
+    /// UNWRAPPED (airspace), so the direct-cast branch finds them; everything else is a
+    /// <see cref="Border"/> whose <see cref="Border.Child"/> is the real surface. Both are handled here
+    /// so no caller has to know which, and so a future wrapped kind cannot reintroduce the same silence.
+    /// </remarks>
+    public T? SurfaceContent<T>(string surfaceId) where T : class =>
+        ContentFor(surfaceId) switch
+        {
+            T direct => direct,
+            Border { Child: T wrapped } => wrapped,
+            _ => null,
+        };
+
     private LayoutDocumentPane BuildPane(StackNode stack, IReadOnlyDictionary<string, FrameworkElement> reuse)
     {
         var pane = new LayoutDocumentPane();

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T13:12:56Z",
+  "generated": "2026-08-31T13:41:24Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3304,6 +3304,28 @@ window.AUDIT_DATA = {
         "src/AiDe.App/Workbench/PromptDraftSurface.cs"
       ],
       "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0192",
+      "shortname": "investigate-empty-class-diagram",
+      "datetime": "2026-08-31T13:41:24Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "class diagram shows empty 'No classes or interfaces in view' while the graph is fully populated with TheTerrace open",
+      "summary": "Root cause: SurfaceChrome.WrapAsIsland frames non-windowed panes in a Border, so ContentFor(id).OfType<ClassDiagramSurface>() found the wrapper not the surface and the pane never populated. Class-level defect affecting all wrapped surfaces bound by type (contexts, joins, prompt, classdiagram, codeviewer). Fix: unwrap-aware WorkbenchAdapter.SurfaceContent<T>; routed all five binds through it; added STA regression test. Also landed on-demand code-viewer wiring (View/Ctrl+K,U).",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [
+        "class-diagram",
+        "surface-chrome",
+        "regression"
+      ],
       "outcome": "success"
     }
   ],

@@ -154,6 +154,11 @@ public static class WorkbenchCommandCatalog
             "Opens a class-diagram pane: the type hierarchy (classes/interfaces and their inheritance) of the open workspace.",
             Menu: "_View"),
 
+        new("workbench.newCodeViewer", "New code viewer", "Ctrl+K, U",
+            nameof(LayoutOperation.AddSurface),
+            "Opens a read-only source viewer. Renders a node's source with syntax highlighting (a labelled sample until the content query ships).",
+            Menu: "_View"),
+
         new("workbench.focusCanvas", "Focus graph canvas", "Ctrl+K, G",
             string.Empty,
             "Moves focus into the graph. Tab off either end or press Escape to come back.",
