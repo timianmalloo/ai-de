@@ -53,6 +53,12 @@ public sealed class WorkbenchShell : IDisposable
     private SessionCoordinationEmitter? _watcherEmitter;
     private CancellationTokenSource? _watcherPump;
 
+    /// <summary>The stateless watcher read-pane kinds - rebuilt on refresh; never a terminal (DC-029).</summary>
+    private static readonly HashSet<string> WatcherPaneKinds = new(StringComparer.Ordinal) { "sessions", "board", "leaderboard" };
+
+    /// <summary>The last observed watcher-store fingerprint; the loop only re-renders the panes when it changes (conn-9).</summary>
+    private string? _watcherFingerprint;
+
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
         Service = new LayoutService();
@@ -332,7 +338,7 @@ public sealed class WorkbenchShell : IDisposable
         // The watcher read panes may already have been realized (at construction) against a factory with
         // no watcher queries - showing "not available". Mark them to rebuild on the next Render so they
         // pick up the now-wired factory. Only the stateless watcher kinds - never a terminal (DC-029).
-        var watcherKinds = new HashSet<string>(StringComparer.Ordinal) { "sessions", "board", "leaderboard" };
+        var watcherKinds = WatcherPaneKinds;
         Adapter.Invalidate(Service.Current.AllStacks()
             .SelectMany(s => s.Surfaces)
             .Where(s => watcherKinds.Contains(s.Kind))
@@ -923,10 +929,24 @@ public sealed class WorkbenchShell : IDisposable
                 var ids = new HashSet<string>(terminals.Select(t => t.Id), StringComparer.Ordinal);
                 emitter.Reconcile(ids, id => IdentityFor(id, terminals));
                 host.PumpOnce();
+
+                // conn-9: re-render the open watcher panes only when the store actually changed, so a
+                // session registering/ending, a board post, or a new score shows up live without a manual
+                // reopen - and an idle watcher never gratuitously rebuilds a pane (no scroll reset/flicker).
+                var fingerprint = WatcherFingerprint(host);
+                if (!string.Equals(fingerprint, _watcherFingerprint, StringComparison.Ordinal))
+                {
+                    _watcherFingerprint = fingerprint;
+                    var dispatcher = Application.Current?.Dispatcher;
+                    if (dispatcher is not null && !token.IsCancellationRequested)
+                    {
+                        _ = dispatcher.BeginInvoke(RefreshWatcherPanesOnUi);
+                    }
+                }
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                // A reconcile/pump hiccup must never take down the workbench; skip this tick.
+                // A reconcile/pump/refresh hiccup must never take down the workbench; skip this tick.
             }
 
             try { await Task.Delay(interval, token).ConfigureAwait(false); }
@@ -976,6 +996,48 @@ public sealed class WorkbenchShell : IDisposable
             WorktreePath: repoPath,
             TerminalId: surfaceId,
             AgentName: agent);
+    }
+
+    /// <summary>
+    /// A cheap fingerprint over what the watcher panes show - session count and each session's liveness
+    /// state (so a session going Stale/Ended is caught, not just a count change), plus episode, board and
+    /// scorecard counts. The loop re-renders the panes only when this changes (conn-9). Read on the loop
+    /// thread only; the panes are read on the UI thread when rendered.
+    /// </summary>
+    internal static string WatcherFingerprint(WatcherHost host)
+    {
+        var sessions = host.Store.AllSessions();
+        var builder = new System.Text.StringBuilder();
+        builder.Append(sessions.Count).Append('|');
+        foreach (var session in sessions)
+        {
+            builder.Append(session.SessionId).Append('=')
+                   .Append((int)host.Liveness.Evaluate(session.SessionId)).Append(';');
+        }
+
+        builder.Append('|').Append(host.Store.AllEpisodes().Count)
+               .Append('|').Append(host.Store.AllBoardMessages().Count)
+               .Append('|').Append(host.Store.AllScoredEpisodes().Count);
+        return builder.ToString();
+    }
+
+    /// <summary>
+    /// Marks the open watcher read panes to rebuild and renders. Runs on the UI thread (marshalled from
+    /// the loop). Only the stateless watcher kinds are invalidated - a terminal is reconciled, never
+    /// rebuilt (DC-029). A no-op if the host was reset since the tick was queued.
+    /// </summary>
+    private void RefreshWatcherPanesOnUi()
+    {
+        if (_watcherHost is null)
+        {
+            return;
+        }
+
+        Adapter.Invalidate(Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => WatcherPaneKinds.Contains(s.Kind))
+            .Select(s => s.SurfaceId));
+        Adapter.Render();
     }
 
     public void Dispose()

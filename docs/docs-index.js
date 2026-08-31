@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T22:51:14Z",
+  "generated": "2026-08-31T23:01:43Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2192,6 +2192,48 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "019d9cfedee12d87e29eb6c749715ff3d1dbf27ff6789aeb74fa4e909597e989"
+    },
+    {
+      "id": "design-watcher-live-refresh",
+      "path": "docs/design/watcher-live-refresh.md",
+      "title": "Loomkeeper Live Pane Auto-Refresh (conn-9)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The watcher read panes (sessions/board/leaderboard) re-render live when the observation store changes - a session registering/ending, a board post, or a new score shows up without a manual reopen - gated by a cheap store fingerprint so an idle watcher never gratuitously rebuilds a pane (no scroll reset/flicker).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "refresh",
+        "liveness",
+        "ux",
+        "conn-9",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-session-emitter",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9db103e3332bf32e809ad63d5a14aa319ca20ec17a09203226e14a54e801f9c6"
     },
     {
       "id": "design-watcher-message-board",
@@ -7393,6 +7435,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "07dc272b05d9b7465d19962793780c6cbf508420fa0528abbaa6b26635178edc"
     },
     {
+      "id": "proof-watcher-live-refresh",
+      "path": "docs/proof/watcher-live-refresh.md",
+      "title": "Proof Pack - Live Pane Auto-Refresh (conn-9)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for conn-9: the watcher panes re-render on a store change, gated by a fingerprint whose liveness-state term catches an Ended transition with an unchanged session count. App 140/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "refresh",
+        "conn-9",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-live-refresh",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8f52e88382a3c4eb755bef88d2cb1432aa8b6539bbce88d1f7f36be78f6c7563"
+    },
+    {
       "id": "proof-watcher-message-board",
       "path": "docs/proof/watcher-message-board.md",
       "title": "Proof Pack - Loomkeeper Message Board + Fleet (slice 6)",
@@ -8334,5 +8408,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "66c6926b4ae69fcc6a6b9bf909ed107c437697a60e16f968c7f05b2dc8e72eea"
+  "graphSha256": "4af1808e55f660dd340601d7a56f47e223bfde17b1d7aa481801ea1b13220c7a"
 };

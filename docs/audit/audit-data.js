@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T22:52:10Z",
+  "generated": "2026-08-31T23:01:56Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3186,6 +3186,26 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T22:33:15Z",
       "duration_seconds": 1120.0
+    },
+    {
+      "id": "al-0304",
+      "shortname": "implement-watcher-live-refresh",
+      "datetime": "2026-08-31T23:01:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (conn-9: live pane auto-refresh)",
+      "summary": "WorkbenchShell watcher loop re-renders the sessions/board/leaderboard panes when a store fingerprint changes; the fingerprint's per-session liveness term catches an Ended transition with an unchanged count. 1 App test, mutation-verified. App 140/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tests/AiDe.App.Tests/WorkbenchWatcherRefreshTests.cs",
+        "docs/design/watcher-live-refresh.md",
+        "docs/proof/watcher-live-refresh.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
