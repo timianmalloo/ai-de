@@ -69,12 +69,31 @@ public sealed record GraphEdge(string From, string To, string Predicate, Verific
 /// <c>TheTerrace.Features</c> at depth 3 and receive nothing, with no error and no way to tell that
 /// from an empty group.</para>
 /// </remarks>
+/// <param name="ExcludeEdges">
+/// Edge predicates to leave out entirely. Null keeps every kind.
+/// </param>
+/// <remarks>
+/// <para><b>Why excluding rather than selecting.</b> MEASURED on TheTerrace: the canvas's own default
+/// spends <b>702,425 of 852,680 bytes on edges</b> — 82% — and two predicates are 74% of them
+/// (<c>depends_on</c> 2,155, <c>calls</c> 1,272). Edges, not nodes, are what fills the frame, so the
+/// only lever that buys a bigger picture is dropping a kind.</para>
+///
+/// <para>An <i>include</i> list would be a caller restating the extractors' vocabulary, and would go
+/// stale silently the first time a reader emitted a predicate nobody had added to it — the shape this
+/// codebase has paid for repeatedly (DC-042, DC-022). Excluding means a new predicate appears in
+/// every view by default, which is the safe direction: a caller sees something unexpected rather than
+/// silently missing something.</para>
+///
+/// <para>Applied BEFORE the cap, like every other filter here. An excluded edge frees its bytes for
+/// nodes rather than being trimmed after the ranking has already been paid for (DC-035).</para>
+/// </remarks>
 public sealed record GraphQuery(
     int MaxNodes = GraphProjection.DefaultMaxNodes,
     IReadOnlyList<string>? Kinds = null,
     string? ScopeId = null,
     bool IncludeExternal = true,
-    string? GroupId = null);
+    string? GroupId = null,
+    IReadOnlyList<string>? ExcludeEdges = null);
 
 /// <summary>The whole graph, and what it left out.</summary>
 /// <param name="Omitted">Nodes present in the evidence and not returned, because a cap applied.</param>
@@ -125,6 +144,10 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
 
         var disclosures = new List<string>();
 
+        var excluded = query.ExcludeEdges is { Count: > 0 }
+            ? query.ExcludeEdges.ToHashSet(StringComparer.Ordinal)
+            : null;
+
         // Declared HERE: something in this workspace says what it is or where it lives. Everything
         // else is a name this code refers to and does not contain.
         var declared = assertions
@@ -143,6 +166,15 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
             if (assertion.Predicate == "discloses")
             {
                 disclosures.Add(assertion.Object);
+                continue;
+            }
+
+            // An edge kind the caller does not want costs nothing: not an edge, and not a reason to
+            // draw the node at its far end. A node this workspace DECLARES still survives, because
+            // its own `has_type` mentions it — so excluding `calls` hides call relationships without
+            // hiding the types that make them.
+            if (excluded is not null && excluded.Contains(assertion.Predicate))
+            {
                 continue;
             }
 

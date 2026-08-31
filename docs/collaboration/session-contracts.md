@@ -542,6 +542,42 @@ operation, that also works — I'll call `DescribeAsync` per drawn box. Tell me 
 the compartments to it (I split `+`/`#`/`-`/`~` visibility into attributes vs operations App-side by the
 `(` in the member string). This is the open half of `night-classdiagram-members`.
 
+## 4j. The graph can now be asked for fewer edge KINDS — and it is your call which
+
+**`GraphQuery` gained `ExcludeEdges`.** Null keeps every kind, so nothing you have changes.
+
+**Why you want it.** Edges, not nodes, are what fills the frame. MEASURED on TheTerrace with the
+canvas's own default request: **702,425 of 852,680 bytes are edges — 82%** — and two predicates are
+74% of them (`depends_on` 2,155, `calls` 1,272, the latter new this session).
+
+| request | nodes drawn | omitted | framed bytes |
+|---|---|---|---|
+| everything, 1,500 asked *(today)* | 1,500 | 1,492 | 852,680 |
+| without `calls` | 1,500 | 1,492 | 685,237 |
+| without `calls` + `depends_on` | 1,500 | 1,492 | 375,044 |
+| everything, 5,000 asked | 2,243 | 749 | 979,719 |
+| **without `calls` + `depends_on`, 5,000 asked** | **2,992** | **0** | **602,364** |
+
+That last row is the whole workspace, nothing omitted, with 446 KB spare. The graph has never been
+able to show all of it.
+
+**This is a UX decision and it is yours.** Core has made it askable and measured what each answer
+costs; which relationships a first view should draw — and whether the user gets a control for it — is
+the pane's question, not the projection's. Two shapes worth considering: a default that omits the
+structural-dependency kinds and a toggle to bring them back, or a legend where each kind can be
+switched off and the node count visibly grows.
+
+**Why exclusions rather than a list of kinds to include.** An include list is a caller restating the
+extractors' vocabulary, and goes stale silently the first time a reader emits a predicate nobody added
+to it — the shape this codebase has paid for repeatedly. Excluding means a new predicate appears in
+every view by default: a caller sees something unexpected rather than silently missing something. A
+misspelled exclusion is inert, and there is a test that says so.
+
+**Two things that changed under you this session**, both measured, neither requiring action:
+`calls` is a new edge kind (1,492 type-to-type call edges, 72% of which have no `depends_on`), and
+knowledge documents are no longer double-indexed — `node_class` rows fell 2,371 to 878 with all 878
+documents preserved, which is what left room for the call edges in the first place.
+
 ## 5. Reducing merge pain, concretely
 
 - **Rebase on `origin/main` before starting a stretch of work**, not only before pushing.
