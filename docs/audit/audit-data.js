@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T00:19:52Z",
+  "generated": "2026-08-31T00:34:04Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2991,6 +2991,24 @@ window.AUDIT_DATA = {
       "artifacts": [
         "docs/mockups/editor-surfaces.html",
         "docs/mockups/editor-surfaces.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0166",
+      "shortname": "implement-prompt-draft-foundation",
+      "datetime": "2026-08-31T00:34:04Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do these next steps: design + build the prompt-editor",
+      "summary": "Built + tested the prompt-draft foundation (spec-editor-surfaces US-ED5-ED7): PromptDraftViewModel (staged body, live ready-target gating, one-way named-target TransferAsync) with 7 headless tests; PromptDraftSurface UI (staged badge, textarea, target picker, Transfer with blocked reason, transferred confirmation) exposing a Configure wiring seam; factory kind 'prompt'. App.Tests 144->151. Decision note note-2026-08-30-prompt-draft-wiring captures the remaining shell wiring (ReadyPromptTargets, DispatchToAsync generalizing the focused dispatch, BindPromptDrafts, PromptDraftStore, newPromptDraft command) as a self-contained next increment.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/PromptDraftViewModel.cs",
+        "src/AiDe.App/Workbench/PromptDraftSurface.cs"
       ],
       "tags": [],
       "outcome": "success"

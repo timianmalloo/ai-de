@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T00:19:26Z",
+  "generated": "2026-08-31T00:34:04Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1071,6 +1071,37 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "931ebb681e1562e431f42ad350174d29618c3341a7e60293e87361e244196c80"
+    },
+    {
+      "id": "note-2026-08-30-prompt-draft-wiring",
+      "path": "docs/notes/note-2026-08-30-prompt-draft-wiring.md",
+      "title": "Prompt-draft surface — built foundation & the shell-wiring plan",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "What landed for the prompt-draft surface (spec-editor-surfaces US-ED5–ED7) and the precise shell wiring that finishes it. Built + tested this increment: the testable transfer core (PromptDraftViewModel, 7 tests), the surface UI (PromptDraftSurface), and the factory kind \"prompt\". The remaining wiring is a self-contained next increment on the central WorkbenchShell dispatch choreography, deliberately split out so that change is its own verified step.",
+      "tags": [
+        "prompt-draft",
+        "editor-surfaces",
+        "dispatch",
+        "wiring",
+        "phasing"
+      ],
+      "links": [
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-editor-surfaces",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f04aba5b96efac9356ac72136dfee444b7d440b7b4082052cd82d58baefede62"
     },
     {
       "id": "note-20260826-council-review-ai-ide-arch",
@@ -6416,5 +6447,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5e910620793f7d10109b7ebfcb080cd3306cf11e528266dc35203657b94b04d8"
+  "graphSha256": "9ec6de2d21bcad58f4e7929386dcf860ff84bd9f91499c726e6ef7d4e5568b86"
 };
