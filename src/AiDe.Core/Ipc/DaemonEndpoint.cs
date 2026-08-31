@@ -81,7 +81,7 @@ public sealed class DaemonEndpoint
         // The epoch travels with it because a freshly connected shell cannot ask for it: asking is a
         // command, and every command is judged against the epoch it claims.
         return IpcResponse.Success(
-            System.Text.Json.JsonSerializer.Serialize(new IpcOpenResult(capability.Token, epoch)));
+            new IpcOpenResult(capability.Token, epoch), WorkspaceOperations.Wire);
     }
 
     /// <summary>Handles a command: every gate, in order, before any operation runs.</summary>

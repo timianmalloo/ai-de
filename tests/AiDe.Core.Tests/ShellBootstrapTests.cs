@@ -29,17 +29,55 @@ public sealed class ShellBootstrapTests : IDisposable
         return path;
     }
 
+    /// <summary>
+    /// The daemon built alongside THESE tests.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The configuration comes from this assembly's own path</b>, not from whichever
+    /// configuration directory happens to exist. It used to prefer Release when a Release directory
+    /// was present — so a single <c>dotnet publish -c Release</c>, run for something else entirely,
+    /// left these Debug tests launching a Release daemon built hours earlier. When the IPC protocol
+    /// changed, three tests failed with <c>ipc.unsupported_version</c>, which is the protocol
+    /// working correctly and the harness pointing at the wrong binary (DC-023: a gate running a
+    /// stale build).</para>
+    ///
+    /// <para>The staleness check is the half that matters. Picking the right directory does not help
+    /// if what is in it was built before the change under test, and "the daemon is old" is otherwise
+    /// indistinguishable from "the daemon is broken".</para>
+    /// </remarks>
     private static string DaemonPath()
     {
+        var here = new DirectoryInfo(AppContext.BaseDirectory);
+        var configuration =
+            here.FullName.Contains($"{Path.DirectorySeparatorChar}Release{Path.DirectorySeparatorChar}",
+                StringComparison.OrdinalIgnoreCase) ? "Release" : "Debug";
+
         var root = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "AiDe.Daemon", "bin"));
-        var configuration = Directory.Exists(Path.Combine(root, "Release")) ? "Release" : "Debug";
         var candidate = Path.Combine(root, configuration, "net10.0-windows", "AiDe.Daemon.exe");
 
         Assert.True(
             File.Exists(candidate),
-            $"the daemon was not built. Expected it at:\n  {candidate}\n"
+            $"the daemon was not built in {configuration}. Expected it at:\n  {candidate}\n"
             + "Build the solution rather than the test project alone.");
+
+        // Not timestamps: a daemon that did not need rebuilding is OLDER than the tests and
+        // perfectly current, so a time comparison reports staleness on every incremental build.
+        // What actually matters is whether it carries the same AiDe.Core — the protocol, the
+        // envelope and the operations all live there — and .NET builds deterministically, so equal
+        // source gives equal bytes.
+        var mine = Path.Combine(AppContext.BaseDirectory, "AiDe.Core.dll");
+        var theirs = Path.Combine(Path.GetDirectoryName(candidate)!, "AiDe.Core.dll");
+
+        if (File.Exists(mine) && File.Exists(theirs))
+        {
+            Assert.True(
+                File.ReadAllBytes(mine).AsSpan().SequenceEqual(File.ReadAllBytes(theirs)),
+                $"the {configuration} daemon at\n  {candidate}\n"
+                + "was built against a different AiDe.Core than these tests. Launching it would test "
+                + "a build that is not the one under test — which is how an IPC protocol change "
+                + "looked like three broken tests (DC-023). Build the solution.");
+        }
 
         return candidate;
     }

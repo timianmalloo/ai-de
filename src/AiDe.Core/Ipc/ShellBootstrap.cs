@@ -148,5 +148,20 @@ public static class ShellBootstrap
             throw new DaemonUnavailableException(
                 "a pipe with this workspace's name exists but is owned by another user");
         }
+        catch (IpcRequestException ex) when (ex.Code == IpcErrorCodes.UnsupportedVersion)
+        {
+            // A daemon from an EARLIER BUILD is still serving this workspace. It holds the pipe, and
+            // one daemon per workspace is the store's single-writer invariant — so a second cannot
+            // be started beside it.
+            //
+            // Version negotiation did its job here: the mismatch was refused at the boundary instead
+            // of becoming a parse failure further in. What was missing was saying so in terms of the
+            // thing a person can act on — "ipc.unsupported_version" names the protocol; this names
+            // the process that has to go.
+            throw new DaemonUnavailableException(
+                "a daemon from an earlier build is still running for this workspace and speaks an "
+                + "older protocol. It exits on its own once idle; to reopen immediately, end the "
+                + $"AiDe.Daemon process serving this workspace ({ex.Message})");
+        }
     }
 }

@@ -124,7 +124,7 @@ public sealed class DaemonProcessTests
                 "ping", "cmd-1", pipeName, 1, null, CancellationToken.None);
 
             Assert.True(pong.Ok, pong.Reason);
-            Assert.Equal("pong", pong.Payload);
+            Assert.Equal("pong", pong.Payload.AsText());
 
             // The peer really is another process — the whole point of the phase.
             Assert.NotEqual(Environment.ProcessId, daemon.Id);

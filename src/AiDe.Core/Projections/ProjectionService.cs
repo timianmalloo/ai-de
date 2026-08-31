@@ -182,24 +182,20 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// to <b>1,004,397 bytes</b>, which is 95.8% of the frame and fifteen times the
     /// <see cref="MaxResultBytes"/> its own documentation claimed it stayed "comfortably inside".</para>
     ///
-    /// <para><b>Why it is not three quarters of the frame, which is what it looks like.</b> A
-    /// response is serialised to JSON, and that JSON is then carried as a <b>string field</b> inside
-    /// the IPC envelope — so every quote in it is escaped again. MEASURED on a real workspace: a
-    /// 727,244-byte graph, comfortably inside a 768 KiB budget, reached <b>1,137,104 bytes</b> on the
-    /// wire and the transport refused it. The inflation was 1.56–1.57x across every payload measured.
-    /// The budget had been checked on the inner bytes and enforced on the outer ones.</para>
+    /// <para><b>Why the headroom is the size it is.</b> A response is its payload plus an envelope,
+    /// and from IPC version 3 that is all it is: the payload is carried as JSON rather than as a
+    /// string holding JSON text, so nothing is escaped twice. Through version 2 it was, at a measured
+    /// <b>1.56–1.57x</b> — which is how a 727,244-byte graph inside a 768 KiB budget reached
+    /// 1,137,104 bytes on the wire and was refused (DC-047). The budget had been checked on the inner
+    /// bytes and enforced on the outer ones, and its tests counted the inner bytes too, so the guard
+    /// and its proof were wrong together.</para>
     ///
-    /// <para>Half a frame, so the assumed worst case is 2x — comfortably above the 1.57x measured,
-    /// because a guard that under-counts lets the frame overflow and the user is told only that the
-    /// graph could not be loaded. <c>TheBudgetFitsTheFrameTests</c> asserts the arithmetic, so the
-    /// two constants cannot drift apart.</para>
-    ///
-    /// <para><c>simplify: a factor against a measured inflation rather than the exact framed size;
-    /// ceiling is that row-wise bounds (evidence, find) cannot afford to serialise per row; upgrade
-    /// trigger = the envelope carries the payload as raw JSON instead of an escaped string, at which
-    /// point the two sizes agree and the factor disappears.</c></para>
+    /// <para>128 KiB below the frame, which is the envelope with room to spare.
+    /// <c>ThePayloadIsNotEncodedTwice</c> holds up the premise this rests on — that payload and frame
+    /// are within a few percent — and <c>TheBudgetCannotDriftPastWhatAFrameHolds</c> holds up the
+    /// arithmetic. Neither is optional: this number is only safe while both pass.</para>
     /// </remarks>
-    public const int MaxResponseBytes = 480 * 1024;
+    public const int MaxResponseBytes = 896 * 1024;
 
     /// <summary>The transport's own limit, restated here only so the budget can be checked against it.</summary>
     public const int FrameBytes = Ipc.IpcFraming.MaxFrameBytes;
@@ -235,6 +231,29 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// terminate; the guaranteed reduction does that.
     /// </remarks>
     public const int MaxShrinkAttempts = 12;
+
+    /// <summary>
+    /// How many times a shrunk graph may probe upward for the size it overshot.
+    /// </summary>
+    /// <remarks>
+    /// Each probe halves the remaining gap. MEASURED on the calibrated fixture: none returns 868
+    /// nodes where 1,281 fit, two returns 1,193, four returns 1,274, and six returns 1,274 again —
+    /// by then <see cref="MinRecoveryGap"/> stops it. Four is where the curve flattens, and every
+    /// probe is a full recompute of the graph, which is the expensive half.
+    /// </remarks>
+    public const int MaxRecoveryProbes = 4;
+
+    /// <summary>
+    /// Below this, the nodes still recoverable are not worth a recompute to find.
+    /// </summary>
+    /// <remarks>
+    /// It is also the precision of the monotonicity this class offers: a larger request can return
+    /// up to this many fewer nodes than a smaller one, because recovery approximates the largest
+    /// fitting size rather than finding it. Exact monotonicity needs the node ORDERING computed once
+    /// and candidate sizes evaluated against it — the ordering is identical for every size, so today
+    /// each probe redoes work that does not change. That is the upgrade, and it is not free.
+    /// </remarks>
+    public const int MinRecoveryGap = 50;
 
     /// <summary>
     /// The ceiling on a SEARCH, which is a different question from a neighbour list.
@@ -536,8 +555,13 @@ public sealed class ProjectionService(WorkspaceStore store)
         var weight = FramedCost(graph);
         var attempts = 0;
 
+        // The smallest node count KNOWN not to fit, so the recovery below has something to aim at.
+        var tooMany = int.MaxValue;
+
         while (weight > MaxFramedGraphBytes && graph.Nodes.Count > 1 && attempts < MaxShrinkAttempts)
         {
+            tooMany = graph.Nodes.Count;
+
             var proportional = (int)(graph.Nodes.Count * (MaxFramedGraphBytes / (double)weight) * 0.85);
 
             // A third off every round at minimum, so this terminates even on a graph whose bytes
@@ -551,7 +575,40 @@ public sealed class ProjectionService(WorkspaceStore store)
             attempts++;
         }
 
+        // Take back what the shrink overshot.
+        //
+        // Every round above cuts by AT LEAST a third, which is what makes it terminate — and it means
+        // the first size that fits can be far below the largest that would have. MEASURED before this:
+        // asking for 5,000 nodes returned 706 while asking for 1,500 returned 1,000, so a caller who
+        // asked for MORE was served LESS. That is not a shortfall in fidelity, it is a surface whose
+        // answer depends on a number in a way nobody could predict or explain.
+        //
+        // Two probes at the midpoint of (fits, does-not-fit) recover most of it for a bounded cost.
+        // Only ever accepted when the probe fits, so this can widen the answer and never break it.
+        var recoveries = 0;
+
+        while (attempts > 0 && recoveries < MaxRecoveryProbes
+            && tooMany - graph.Nodes.Count > MinRecoveryGap)
+        {
+            var midpoint = graph.Nodes.Count + ((tooMany - graph.Nodes.Count) / 2);
+            var candidate = projection.Compute(query with { MaxNodes = midpoint });
+            var candidateWeight = FramedCost(candidate);
+
+            if (candidateWeight <= MaxFramedGraphBytes)
+            {
+                graph = candidate;
+                weight = candidateWeight;
+            }
+            else
+            {
+                tooMany = candidate.Nodes.Count;
+            }
+
+            recoveries++;
+        }
+
         activity?.SetTag("shrunk.attempts", attempts);
+        activity?.SetTag("recovery.probes", recoveries);
         activity?.SetTag("returned.bytes", weight);
 
         activity?.SetTag("returned.nodes", graph.Nodes.Count);
@@ -868,7 +925,7 @@ public sealed class ProjectionService(WorkspaceStore store)
         if (estimate * 3 <= FrameBytes) return estimate;
 
         return Encoding.UTF8.GetByteCount(System.Text.Json.JsonSerializer.Serialize(
-            Ipc.IpcResponse.Success(System.Text.Json.JsonSerializer.Serialize(graph, Wire)), Wire));
+            Ipc.IpcResponse.Success(graph, Wire), Wire));
     }
 
     private static int Weigh(WorkspaceGraph graph)

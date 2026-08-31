@@ -89,13 +89,12 @@ public static class DaemonOperations
         ArgumentNullException.ThrowIfNull(endpoint);
         ArgumentNullException.ThrowIfNull(epoch);
 
-        endpoint.Register(Ping, (_, _) => IpcResponse.Success("pong"));
+        endpoint.Register(Ping, (_, _) => IpcResponse.Success("pong", WorkspaceOperations.Wire));
 
         // Read at call time, not captured once: the epoch advances when the core is replaced, and a
         // snapshot taken at registration would hand every later caller a fence value that has since
         // stopped being true.
-        endpoint.Register(Epoch, (_, _) => IpcResponse.Success(epoch().ToString(
-            System.Globalization.CultureInfo.InvariantCulture)));
+        endpoint.Register(Epoch, (_, _) => IpcResponse.Success(epoch(), WorkspaceOperations.Wire));
     }
 }
 
@@ -274,9 +273,7 @@ public static class WorkspaceOperations
 
         try
         {
-            body = request.Payload is null
-                ? default
-                : JsonSerializer.Deserialize<TRequest>(request.Payload, Wire);
+            body = IpcPayload.Read<TRequest>(request.Payload, Wire);
         }
         catch (JsonException)
         {
@@ -290,6 +287,6 @@ public static class WorkspaceOperations
                 IpcErrorCodes.MalformedEnvelope, $"'{request.Operation}' requires a payload");
         }
 
-        return IpcResponse.Success(JsonSerializer.Serialize(project(body), Wire));
+        return IpcResponse.Success(project(body), Wire);
     }
 }

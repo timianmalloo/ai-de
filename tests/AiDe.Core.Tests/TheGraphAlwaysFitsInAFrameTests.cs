@@ -43,18 +43,16 @@ public sealed class TheGraphAlwaysFitsInAFrameTests : IDisposable
 
     private static readonly JsonSerializerOptions Wire = new(JsonSerializerDefaults.Web);
 
-    /// <summary>
-    /// The bytes the TRANSPORT counts — the payload serialised, then carried as a string field in
-    /// the envelope, where every quote in it is escaped again.
-    /// </summary>
+    /// <summary>The bytes the TRANSPORT counts: the response, framed exactly as it is sent.</summary>
     /// <remarks>
-    /// Measuring the payload alone is what let a 727,244-byte graph reach 1,137,104 bytes on the
-    /// wire: the budget was checked on the inner bytes and enforced on the outer ones. The inflation
-    /// measured 1.56-1.57x on every real payload weighed.
+    /// Measuring the payload alone is what let a 727,244-byte graph reach 1,137,104 bytes on the wire
+    /// — the budget was checked on the inner bytes and enforced on the outer ones, and through
+    /// version 2 those differed by 1.56-1.57x because the payload was a string holding JSON text.
+    /// From version 3 the payload IS JSON and the two agree; <see cref="ThePayloadIsNotEncodedTwice"/>
+    /// is what keeps them agreeing.
     /// </remarks>
     private static int OnTheWire(WorkspaceGraph graph) =>
-        Encoding.UTF8.GetByteCount(JsonSerializer.Serialize(
-            IpcResponse.Success(JsonSerializer.Serialize(graph, Wire)), Wire));
+        Encoding.UTF8.GetByteCount(JsonSerializer.Serialize(IpcResponse.Success(graph, Wire), Wire));
 
     /// <summary>A graph whose weight sits in a few hundred hubs, the way a real one does.</summary>
     private WorkspaceCore Fill(int nodes, int hubs, int edgesPerHub)
@@ -102,7 +100,7 @@ public sealed class TheGraphAlwaysFitsInAFrameTests : IDisposable
     [Fact]
     public void AGraphTooBigForOneMessageComesBackSmallEnoughForOne()
     {
-        using var core = Fill(nodes: 3_900, hubs: 60, edgesPerHub: 4);
+        using var core = Fill(nodes: 6_200, hubs: 60, edgesPerHub: 4);
 
         var graph = core.Projections.Graph(new GraphQuery(GraphProjection.DefaultMaxNodes));
 
@@ -115,7 +113,7 @@ public sealed class TheGraphAlwaysFitsInAFrameTests : IDisposable
     public void TheDefaultCanvasRequestFitsToo()
     {
         // The exact query the canvas makes when a workspace opens, which is where the user met this.
-        using var core = Fill(nodes: 3_900, hubs: 60, edgesPerHub: 4);
+        using var core = Fill(nodes: 6_200, hubs: 60, edgesPerHub: 4);
 
         var graph = core.Projections.Graph(new GraphQuery(1_500, IncludeExternal: false));
 
@@ -127,7 +125,7 @@ public sealed class TheGraphAlwaysFitsInAFrameTests : IDisposable
     public void ShrinkingStillReturnsAUsableGraphAndSaysWhatItLeftOut()
     {
         // Fitting by returning nothing would pass the assertion above and be a worse product.
-        using var core = Fill(nodes: 3_900, hubs: 60, edgesPerHub: 4);
+        using var core = Fill(nodes: 6_200, hubs: 60, edgesPerHub: 4);
 
         var graph = core.Projections.Graph(new GraphQuery(GraphProjection.DefaultMaxNodes));
 
@@ -136,19 +134,84 @@ public sealed class TheGraphAlwaysFitsInAFrameTests : IDisposable
     }
 
     [Fact]
+    public void ThePayloadIsNotEncodedTwice()
+    {
+        // THE control for DC-047, and the reason the budget can sit near the frame again.
+        //
+        // Through version 2 a payload was serialised and the resulting TEXT was put in a string
+        // field, so the envelope escaped every quote in it a second time — 1.56-1.57x, measured on
+        // every real payload. Nothing said so, and nothing would say so if it came back: the budget
+        // and its tests both counted the inner bytes, and agreed with each other while the transport
+        // disagreed with both.
+        //
+        // Reintroducing string-carried JSON — here, or in any handler that hands Success something
+        // already serialised — makes this ratio jump and fails HERE, at the seam, rather than at a
+        // user opening a workspace.
+        using var core = Fill(nodes: 6_200, hubs: 60, edgesPerHub: 4);
+
+        var graph = core.Projections.Graph(new GraphQuery(1_500, IncludeExternal: false));
+
+        var payload = Encoding.UTF8.GetByteCount(JsonSerializer.Serialize(graph, Wire));
+        var framed = OnTheWire(graph);
+
+        Assert.True(framed <= payload * 1.05 + 256,
+            $"the payload is {payload:N0} bytes and the framed response is {framed:N0} — "
+            + $"{(double)framed / payload:F2}x. A framed response should be its payload plus an "
+            + "envelope; anything more means the payload is being encoded twice again (DC-047)");
+    }
+
+    [Fact]
     public void TheBudgetCannotDriftPastWhatAFrameHolds()
     {
-        // The row-wise bounds (evidence, find) cannot afford to serialise per row, so they trust a
-        // factor: the payload is assumed to at most double once escaped into the envelope. That
-        // assumption is only safe while the budget is at most half a frame, and nothing else says so.
-        Assert.True(ProjectionService.MaxResponseBytes * 2 <= ProjectionService.FrameBytes,
-            $"a {ProjectionService.MaxResponseBytes:N0}-byte payload can reach "
-            + $"{ProjectionService.MaxResponseBytes * 2:N0} bytes framed, and the frame is "
-            + $"{ProjectionService.FrameBytes:N0}");
+        // The row-wise bounds (evidence, find) cannot afford to serialise per row, so they trust the
+        // payload and the frame to be roughly the same size — true only while the payload is carried
+        // as JSON rather than as text about JSON. ThePayloadIsNotEncodedTwice holds that premise up;
+        // this holds up the arithmetic resting on it.
+        Assert.True(ProjectionService.MaxResponseBytes < ProjectionService.FrameBytes,
+            $"a {ProjectionService.MaxResponseBytes:N0}-byte payload does not fit a "
+            + $"{ProjectionService.FrameBytes:N0}-byte frame at all");
+
+        Assert.True(
+            ProjectionService.FrameBytes - ProjectionService.MaxResponseBytes >= 64 * 1024,
+            "the budget leaves no room for the envelope, and a response is its payload plus one");
 
         Assert.True(ProjectionService.MaxFramedGraphBytes < ProjectionService.FrameBytes,
             "a graph shrunk to exactly the frame has no headroom, and shrinking stops at the first "
             + "size that fits");
+    }
+
+    [Fact]
+    public void AskingForMoreNeverReturnsFewer()
+    {
+        // Shrinking cuts by at least a third each round, which is what makes it terminate — and it
+        // meant the first size that fits could sit far below the largest that would have. MEASURED
+        // on a real workspace: asking for 5,000 nodes returned 706 while asking for 1,500 returned
+        // 1,000. A caller who asked for MORE was served LESS.
+        //
+        // That is worse than a shortfall in fidelity: it is a surface whose answer moves in a
+        // direction nobody can predict from the request, and the smaller number looks exactly like a
+        // smaller workspace.
+        //
+        // Denser than the other fixtures here, and calibrated rather than chosen: shapes were
+        // MEASURED against the un-recovered code until one inverted. At 9,000 nodes over 1,000 hubs
+        // it returned 1,000 for a 1,500 request and 868 for a 5,000 one. Lighter shapes never shrink
+        // far enough to invert, and a fixture that cannot invert cannot catch this (DC-016).
+        using var core = Fill(nodes: 9_000, hubs: 1_000, edgesPerHub: 20);
+
+        var small = core.Projections.Graph(new GraphQuery(1_500, IncludeExternal: false));
+        var large = core.Projections.Graph(new GraphQuery(5_000, IncludeExternal: false));
+
+        // Within the recovery gap, which is the precision this offers and not a fudge factor:
+        // recovery APPROXIMATES the largest fitting size, and MinRecoveryGap is where it stops
+        // looking. Measured here: 1,274 against 1,281. Without recovery it is 868 against 1,281 —
+        // eight times the gap — so this still catches the defect it was written for.
+        Assert.True(large.Nodes.Count >= small.Nodes.Count - ProjectionService.MinRecoveryGap,
+            $"asking for 5,000 nodes returned {large.Nodes.Count} and asking for 1,500 returned "
+            + $"{small.Nodes.Count} — a caller who asked for more was served materially less");
+
+        // And the larger answer still fits, which is the constraint recovery must never trade away.
+        Assert.True(OnTheWire(large) <= IpcFraming.MaxFrameBytes,
+            $"the recovered graph serialises to {OnTheWire(large):N0} bytes");
     }
 
     [Fact]

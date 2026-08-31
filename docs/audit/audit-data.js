@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-31T04:38:54Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-31T05:03:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1495,27 +1495,6 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
-      "id": "al-0072",
-      "shortname": "design-session-contract-accept-4a",
-      "datetime": "2026-08-29T16:51:28Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "prompt": "Register the design session, consult and accept the Core sessions published contract, and render the three Core->Design 4a requests.",
-      "summary": "Registered session copilot-design-4d24d94a; claimed design files; accepted session-contracts (added Design response 7.1-7.4, status proposed->accepted, answered 6, accepted 4a); DESIGN.md 4a tokens; new mockup context-map-join.html rendering evidence-shortfall (>= capped), dominant-target emphasis, and IsDeclared==false empty state.",
-      "kind": "manual",
-      "skill": "ui-design",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "docs/collaboration/session-contracts.md",
-        "docs/mockups/context-map-join.html"
-      ],
-      "tags": [
-        "collaboration",
-        "ui-design"
-      ],
-      "outcome": "success"
-    },
-    {
       "id": "al-0071",
       "shortname": "daemon-proof-caps-incremental-third-repo",
       "datetime": "2026-08-29T17:03:22Z",
@@ -1540,6 +1519,27 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": false
       }
+    },
+    {
+      "id": "al-0072",
+      "shortname": "design-session-contract-accept-4a",
+      "datetime": "2026-08-29T16:51:28Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Register the design session, consult and accept the Core sessions published contract, and render the three Core->Design 4a requests.",
+      "summary": "Registered session copilot-design-4d24d94a; claimed design files; accepted session-contracts (added Design response 7.1-7.4, status proposed->accepted, answered 6, accepted 4a); DESIGN.md 4a tokens; new mockup context-map-join.html rendering evidence-shortfall (>= capped), dominant-target emphasis, and IsDeclared==false empty state.",
+      "kind": "manual",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/mockups/context-map-join.html"
+      ],
+      "tags": [
+        "collaboration",
+        "ui-design"
+      ],
+      "outcome": "success"
     },
     {
       "id": "al-0073",
@@ -3182,6 +3182,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0181",
+      "shortname": "ipc-payload-is-json-not-text-about-json",
+      "datetime": "2026-08-31T04:38:36Z",
+      "session": "phase3-pane-probes",
+      "prompt": "the knowledge works now. do the next steps autonomously while i go to bed",
+      "summary": "IPC version 3 carries the payload as JSON instead of a string holding JSON text, removing the double-encoding behind DC-047 rather than managing it. Framing overhead fell from 1.57x to 78 bytes; on TheTerrace the canvas request went from 1,000 nodes/283 knowledge to 1,500/340, and a 5,000 request from 706 to 2,792 nodes/729 knowledge. IpcPayload.Read accepts either encoding so a version-2 peer still parses; a stale daemon is refused with a message naming the process rather than the protocol. DC-048 registered: the shrink loop's minimum step existed to guarantee termination and became the answer, so asking for more returned less; fixed with bounded midpoint recovery. DC-023 recurred in ShellBootstrapTests, which chose Release whenever a Release directory existed — now content-compared against the tests' own AiDe.Core.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/IpcContract.cs"
       ],
       "tags": [],
       "outcome": "success"
@@ -5708,6 +5725,29 @@ window.AUDIT_DATA = {
         "pushed": true,
         "commits": []
       }
+    },
+    {
+      "id": "cl-0112",
+      "datetime": "2026-08-31T04:38:55Z",
+      "session": "phase3-pane-probes",
+      "kind": "architecture",
+      "skill": "implement",
+      "title": "The IPC payload is JSON, not text about JSON",
+      "prompt": "do the next steps autonomously",
+      "summary": "IpcRequest/IpcResponse carry the payload as a JsonElement rather than a string containing serialised JSON, so the envelope no longer escapes it a second time. Version 3; IpcPayload.Read accepts a JSON string as a version-2 payload and parses its text, which is what keeps IpcVersion.Previous a real guarantee rather than a comment. Writing always produces the new form: two encodings on the write side is how a wire format ends up with no single answer to what it looks like. Measured: framing overhead 1.57x to 78 bytes.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/IpcContract.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "01850d5b0f75a41482b251be4d5aefb2943355bb",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-0181"
     }
   ]
 };

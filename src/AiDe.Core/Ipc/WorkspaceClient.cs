@@ -219,7 +219,7 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
             .ConfigureAwait(false);
 
         Throw(response);
-        _epoch = long.Parse(response.Payload!);
+        _epoch = IpcPayload.Read<long>(response.Payload, WorkspaceOperations.Wire);
         return _epoch;
     }
 
@@ -231,12 +231,12 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
             commandId ?? Guid.NewGuid().ToString("N"),
             _workspaceId,
             _epoch,
-            JsonSerializer.Serialize(payload, WorkspaceOperations.Wire),
+            IpcPayload.From(payload, WorkspaceOperations.Wire),
             cancellationToken).ConfigureAwait(false);
 
         Throw(response);
 
-        return JsonSerializer.Deserialize<TResult>(response.Payload!, WorkspaceOperations.Wire)
+        return IpcPayload.Read<TResult>(response.Payload, WorkspaceOperations.Wire)
             ?? throw new IpcRequestException(
                 IpcErrorCodes.MalformedEnvelope, $"the daemon returned no result for '{operation}'");
     }

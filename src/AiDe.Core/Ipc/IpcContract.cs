@@ -66,14 +66,62 @@ public static class IpcErrorCodes
 /// </remarks>
 public static class IpcVersion
 {
-    public const int Current = 2;
+    /// <remarks>
+    /// <b>3 carries the payload as JSON, not as a string containing JSON.</b> Through 2 a payload was
+    /// serialised and the resulting TEXT was placed in a string field, so the transport re-escaped
+    /// every quote in it — MEASURED at 1.56-1.57x, which is how a 727,244-byte graph became 1,137,104
+    /// bytes on the wire and was refused (DC-047). A peer speaking 2 is still understood, because
+    /// <see cref="IpcPayload"/> reads either form.
+    /// </remarks>
+    public const int Current = 3;
 
     /// <summary>The one previous major still accepted, so an upgrade need not be simultaneous.</summary>
-    public const int Previous = 1;
+    public const int Previous = 2;
 
     public static bool IsSupported(int major) => major == Current || major == Previous;
 
     public static IReadOnlyList<int> Supported => [Current, Previous];
+}
+
+/// <summary>
+/// Reading a payload, in either encoding a peer might have sent.
+/// </summary>
+/// <remarks>
+/// <para>From version 3 a payload IS JSON: the envelope carries the value itself, so nothing is
+/// escaped twice and the bytes measured are the bytes sent. Through version 2 the payload was a
+/// string holding JSON text, which the envelope then re-escaped — the encoding that made a graph
+/// inside its byte budget too large for the frame it was budgeted against (DC-047).</para>
+///
+/// <para><b>Read tolerantly, write one way.</b> A JSON string where a value is expected is a version-2
+/// peer, and its text is parsed rather than rejected — that is what keeps <see cref="IpcVersion.Previous"/>
+/// a real guarantee instead of a comment. Writing only ever produces the new form: two encodings on
+/// the write side is how a wire format ends up with no single answer to "what does this look like".</para>
+/// </remarks>
+public static class IpcPayload
+{
+    /// <summary>The payload as <typeparamref name="T"/>, or default when there is none.</summary>
+    /// <exception cref="System.Text.Json.JsonException">The payload is not valid JSON for T.</exception>
+    public static T? Read<T>(System.Text.Json.JsonElement? payload, System.Text.Json.JsonSerializerOptions options)
+    {
+        if (payload is not { } element) return default;
+
+        // A version-2 peer sent JSON *text*. Deserialising it as T would bind the string to T and
+        // fail with a message about the type rather than about the version.
+        if (element.ValueKind == System.Text.Json.JsonValueKind.String && typeof(T) != typeof(string))
+        {
+            var text = element.GetString();
+
+            return string.IsNullOrEmpty(text)
+                ? default
+                : System.Text.Json.JsonSerializer.Deserialize<T>(text, options);
+        }
+
+        return System.Text.Json.JsonSerializer.Deserialize<T>(element, options);
+    }
+
+    /// <summary>A value as a payload. Always the current encoding.</summary>
+    public static System.Text.Json.JsonElement From<T>(T value, System.Text.Json.JsonSerializerOptions options) =>
+        System.Text.Json.JsonSerializer.SerializeToElement(value, options);
 }
 
 /// <summary>One request across the boundary.</summary>
@@ -89,17 +137,22 @@ public sealed record IpcRequest(
     string WorkspaceId,
     long WorkspaceEpoch,
     string? Capability,
-    string? Payload);
+    System.Text.Json.JsonElement? Payload);
 
 /// <summary>One reply. Either <paramref name="Ok"/> with a payload, or an error code and reason.</summary>
 public sealed record IpcResponse(
     bool Ok,
-    string? Payload,
+    System.Text.Json.JsonElement? Payload,
     string? ErrorCode,
     string? Reason,
     IReadOnlyList<int>? SupportedVersions = null)
 {
-    public static IpcResponse Success(string? payload = null) => new(true, payload, null, null);
+    public static IpcResponse Success(System.Text.Json.JsonElement? payload = null) =>
+        new(true, payload, null, null);
+
+    /// <summary>The common case: a result object, carried as JSON rather than as text about JSON.</summary>
+    public static IpcResponse Success<T>(T result, System.Text.Json.JsonSerializerOptions options) =>
+        new(true, System.Text.Json.JsonSerializer.SerializeToElement(result, options), null, null);
 
     public static IpcResponse Error(string code, string reason) => new(false, null, code, reason);
 

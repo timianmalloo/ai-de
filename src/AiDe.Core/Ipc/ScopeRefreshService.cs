@@ -310,9 +310,9 @@ public sealed class ScopeRefreshService
             var body = Decode<RefreshRequest>(request);
             return body is null
                 ? IpcResponse.Error(IpcErrorCodes.MalformedEnvelope, "refresh requires a scope and a revision")
-                : IpcResponse.Success(JsonSerializer.Serialize(
+                : IpcResponse.Success(
                     Start(request.CommandId, body.ScopeId, body.ArtifactRevision),
-                    WorkspaceOperations.Wire));
+                    WorkspaceOperations.Wire);
         });
 
         endpoint.Register(Operations.RefreshStatus, (request, _) =>
@@ -328,25 +328,20 @@ public sealed class ScopeRefreshService
                 ? IpcResponse.Error(
                     IpcErrorCodes.CommandUnknown,
                     $"this daemon has no record of command '{body.CommandId}'")
-                : IpcResponse.Success(JsonSerializer.Serialize(status, WorkspaceOperations.Wire));
+                : IpcResponse.Success(status, WorkspaceOperations.Wire);
         });
 
         // No request body and no failure mode: an operator asking "what has re-indexing cost"
         // should never be told it depends on what they enable first.
         endpoint.Register(Operations.RefreshMetrics, (_, _) =>
-            IpcResponse.Success(JsonSerializer.Serialize(Metrics(), WorkspaceOperations.Wire)));
+            IpcResponse.Success(Metrics(), WorkspaceOperations.Wire));
     }
 
     private static T? Decode<T>(IpcRequest request)
     {
-        if (request.Payload is null)
-        {
-            return default;
-        }
-
         try
         {
-            return JsonSerializer.Deserialize<T>(request.Payload, WorkspaceOperations.Wire);
+            return IpcPayload.Read<T>(request.Payload, WorkspaceOperations.Wire);
         }
         catch (JsonException)
         {

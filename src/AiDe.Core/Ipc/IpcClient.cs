@@ -79,7 +79,7 @@ public sealed class IpcClient : IAsyncDisposable
             return response;
         }
 
-        var opened = JsonSerializer.Deserialize<IpcOpenResult>(response.Payload!, Wire);
+        var opened = IpcPayload.Read<IpcOpenResult>(response.Payload, Wire);
         if (opened is null)
         {
             return IpcResponse.Error(
@@ -98,7 +98,7 @@ public sealed class IpcClient : IAsyncDisposable
         string commandId,
         string workspaceId,
         long epoch,
-        string? payload,
+        JsonElement? payload,
         CancellationToken cancellationToken) =>
         ExchangeAsync(
             new IpcMessage(
