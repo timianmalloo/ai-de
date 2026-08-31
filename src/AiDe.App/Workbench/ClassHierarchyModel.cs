@@ -10,6 +10,9 @@ public enum ClassRelationKind
 
     /// <summary>`implements` — a class to an interface (UML realization, dashed hollow triangle).</summary>
     Realization,
+
+    /// <summary>`depends_on` — a using dependency (UML dependency, dashed line, open arrowhead).</summary>
+    Dependency,
 }
 
 /// <summary>A type in the class diagram — a class or interface. Members are not available yet (ADR-0020).</summary>
@@ -27,9 +30,14 @@ public sealed record ClassRelation(string From, string To, ClassRelationKind Kin
 public sealed record ClassHierarchy(
     IReadOnlyList<ClassTypeNode> Types,
     IReadOnlyList<ClassRelation> Relations,
-    int ExternalRelations)
+    int ExternalRelations,
+    IReadOnlyList<ClassRelation>? Dependencies = null)
 {
     public bool IsEmpty => Types.Count == 0;
+
+    /// <summary>UML dependency edges (`depends_on`), kept separate from the inheritance relations so
+    /// they never affect the generalization ranking/layout; drawn only when the user asks.</summary>
+    public IReadOnlyList<ClassRelation> Deps => Dependencies ?? [];
 }
 
 /// <summary>Builds a <see cref="ClassHierarchy"/> from graph nodes and edges (ADR-0020 Phase 1).</summary>
@@ -73,8 +81,25 @@ public static class ClassHierarchyModel
         var seen = new HashSet<(string, string, ClassRelationKind)>();
         var external = 0;
 
+        var deps = new List<ClassRelation>();
+        var depSeen = new HashSet<(string, string)>();
+
         foreach (var e in edges)
         {
+            // Dependencies (`depends_on`) are collected separately — they are NOT part of the
+            // generalization hierarchy and must never affect ranking/layout. Both endpoints must be
+            // drawn types; self-edges are dropped; deduped.
+            if (e.Predicate == "depends_on")
+            {
+                if (e.From != e.To
+                    && ids.Contains(e.From) && ids.Contains(e.To)
+                    && depSeen.Add((e.From, e.To)))
+                {
+                    deps.Add(new ClassRelation(e.From, e.To, ClassRelationKind.Dependency));
+                }
+                continue;
+            }
+
             var kind = e.Predicate switch
             {
                 "inherits" => ClassRelationKind.Generalization,
@@ -96,7 +121,11 @@ public static class ClassHierarchyModel
             }
         }
 
-        return new ClassHierarchy(types, relations, external);
+        // A dependency that duplicates an inheritance/realization edge is redundant noise — drop it.
+        var related = relations.Select(r => (r.From, r.To)).ToHashSet();
+        deps = deps.Where(d => !related.Contains((d.From, d.To))).ToList();
+
+        return new ClassHierarchy(types, relations, external, deps);
     }
 
     /// <summary>
@@ -125,6 +154,10 @@ public static class ClassHierarchyModel
             relations.Add(r);
         }
 
-        return new ClassHierarchy(kept, relations, external);
+        var deps = hierarchy.Deps
+            .Where(d => ids.Contains(d.From) && ids.Contains(d.To))
+            .ToList();
+
+        return new ClassHierarchy(kept, relations, external, deps);
     }
 }

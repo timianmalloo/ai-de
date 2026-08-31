@@ -25,6 +25,7 @@ public sealed class ClassDiagramSurface : ContentControl
     private readonly TextBox _search;
     private readonly ToggleButton _diagramToggle;
     private readonly ToggleButton _hideInterfaces;
+    private readonly ToggleButton _showDeps;
     private ClassHierarchy _full = new([], [], 0);
 
     // Above this many drawn types a node-and-arrow diagram is an unreadable tangle, so the list stays.
@@ -45,6 +46,7 @@ public sealed class ClassDiagramSurface : ContentControl
     // synchronously (before the first await) so a test can observe it right after ShowGraph returns.
     private int _membersRequested;
     public int MembersRequestedCount => _membersRequested;
+    private int _drawnDeps;
 
     // Member data per type id (attributes, operations, real declared count), fetched once per graph and
     // reused across re-renders (toggles). Variable-height boxes need members BEFORE layout, so we render
@@ -84,11 +86,25 @@ public sealed class ClassDiagramSurface : ContentControl
         _hideInterfaces.Checked += (_, _) => RenderCurrent();
         _hideInterfaces.Unchecked += (_, _) => RenderCurrent();
 
+        _showDeps = new ToggleButton
+        {
+            Content = "Dependencies",
+            Padding = new Thickness(9, 2, 9, 2),
+            Margin = new Thickness(0, 0, 6, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+            ToolTip = "Also draw 'depends_on' as UML dependency arrows (dashed, open arrowhead) — off by default because they are dense",
+        };
+        AutomationProperties.SetName(_showDeps, "Show dependencies");
+        _showDeps.Checked += (_, _) => RenderCurrent();
+        _showDeps.Unchecked += (_, _) => RenderCurrent();
+
         var headerRow = new DockPanel { LastChildFill = true };
         DockPanel.SetDock(_diagramToggle, Dock.Right);
         DockPanel.SetDock(_hideInterfaces, Dock.Right);
+        DockPanel.SetDock(_showDeps, Dock.Right);
         headerRow.Children.Add(_diagramToggle);
         headerRow.Children.Add(_hideInterfaces);
+        headerRow.Children.Add(_showDeps);
         headerRow.Children.Add(_header);
         DockPanel.SetDock(headerRow, Dock.Top);
         root.Children.Add(headerRow);
@@ -151,6 +167,9 @@ public sealed class ClassDiagramSurface : ContentControl
 
     /// <summary>For tests: hide/show interface types (as the header toggle does).</summary>
     internal void SetHideInterfaces(bool on) => _hideInterfaces.IsChecked = on;
+    internal void SetShowDependencies(bool on) => _showDeps.IsChecked = on;
+    /// <summary>The number of UML dependency arrows drawn by the last render (for tests).</summary>
+    internal int DrawnDependencyCount => _drawnDeps;
 
     /// <summary>Builds the hierarchy from a graph and renders it (ADR-0020).</summary>
     public void ShowGraph(IReadOnlyList<CanvasNode>? nodes, IReadOnlyList<CanvasEdge>? edges) =>
@@ -357,6 +376,22 @@ public sealed class ClassDiagramSurface : ContentControl
             }
         }
 
+        // UML dependency arrows (opt-in) — dashed, open arrowhead, drawn edge-to-edge so they read
+        // as dependencies and never occlude a box. Kept off the ranking, so they add no layout weight.
+        _drawnDeps = 0;
+        if (_showDeps.IsChecked == true)
+        {
+            foreach (var d in hierarchy.Deps)
+            {
+                if (drawnIds.Contains(d.From) && drawnIds.Contains(d.To)
+                    && rects.TryGetValue(d.From, out var from) && rects.TryGetValue(d.To, out var to))
+                {
+                    AddDependencyConnector(canvas, from, to);
+                    _drawnDeps++;
+                }
+            }
+        }
+
         foreach (var t in drawn)
         {
             var box = boxes[t.Id];
@@ -435,7 +470,8 @@ public sealed class ClassDiagramSurface : ContentControl
             else if (ids.Contains(r.From)) { external++; }
         }
 
-        return new ClassHierarchy(types, relations, external);
+        return new ClassHierarchy(types, relations, external,
+            h.Deps.Where(d => ids.Contains(d.From) && ids.Contains(d.To)).ToList());
     }
 
     private static void AddConnector(Canvas canvas, Rect from, Rect to, ClassRelationKind kind)
@@ -470,6 +506,55 @@ public sealed class ClassDiagramSurface : ContentControl
         head.SetResourceReference(Shape.StrokeProperty, "BorderBrush");
         head.SetResourceReference(Shape.FillProperty, "SurfaceBrush");   // hollow: filled with the background
         canvas.Children.Add(head);
+    }
+
+    // A UML dependency: a dashed line with an OPEN (stick) arrowhead at the target, drawn from box edge
+    // to box edge so it reads as a dependency and never vanishes under a box.
+    private static void AddDependencyConnector(Canvas canvas, Rect from, Rect to)
+    {
+        var fromCentre = new Point(from.X + from.Width / 2, from.Y + from.Height / 2);
+        var toCentre = new Point(to.X + to.Width / 2, to.Y + to.Height / 2);
+        var start = EdgePoint(from, toCentre);
+        var end = EdgePoint(to, fromCentre);
+
+        var line = new Line
+        {
+            X1 = start.X, Y1 = start.Y, X2 = end.X, Y2 = end.Y,
+            StrokeThickness = 1.1,
+            StrokeDashArray = [4, 3],
+        };
+        line.SetResourceReference(Shape.StrokeProperty, "TextMutedBrush");
+        canvas.Children.Add(line);
+
+        // Open arrowhead — two short strokes forming a V at the target end (UML dependency is an open arrow).
+        var angle = Math.Atan2(end.Y - start.Y, end.X - start.X);
+        const double size = 9;
+        foreach (var spread in new[] { angle - 0.5, angle + 0.5 })
+        {
+            var barb = new Line
+            {
+                X1 = end.X, Y1 = end.Y,
+                X2 = end.X - size * Math.Cos(spread),
+                Y2 = end.Y - size * Math.Sin(spread),
+                StrokeThickness = 1.1,
+            };
+            barb.SetResourceReference(Shape.StrokeProperty, "TextMutedBrush");
+            canvas.Children.Add(barb);
+        }
+    }
+
+    // The point on a box's boundary in the direction of <paramref name="toward"/> from its centre.
+    private static Point EdgePoint(Rect box, Point toward)
+    {
+        var cx = box.X + box.Width / 2;
+        var cy = box.Y + box.Height / 2;
+        var dx = toward.X - cx;
+        var dy = toward.Y - cy;
+        if (Math.Abs(dx) < 1e-6 && Math.Abs(dy) < 1e-6) { return new Point(cx, cy); }
+        var scale = Math.Min(
+            box.Width / 2 / Math.Max(Math.Abs(dx), 1e-6),
+            box.Height / 2 / Math.Max(Math.Abs(dy), 1e-6));
+        return new Point(cx + dx * scale, cy + dy * scale);
     }
 
     private const int MaxPerCompartment = 15;

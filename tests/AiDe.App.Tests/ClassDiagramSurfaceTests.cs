@@ -184,4 +184,25 @@ public sealed class ClassDiagramSurfaceTests
                 $"expected a member-rich box to be taller; heights were [{string.Join(", ", heights)}]");
         });
     }
+
+    [Fact]
+    public void ShowDependencies_DrawsDashedDependencyArrows_OnlyWhenToggledOn()
+    {
+        OnSta(() =>
+        {
+            var s = new ClassDiagramSurface();
+            s.ShowGraph(
+                new[] { N("A", "class"), N("B", "class"), N("C", "class") },
+                new[] { Edge("A", "B", "inherits"), Edge("A", "C", "depends_on") });
+
+            Assert.True(s.ShowingDiagram);
+            Assert.Equal(0, s.DrawnDependencyCount);   // dependencies are off by default (too dense)
+
+            s.SetShowDependencies(true);
+            Assert.Equal(1, s.DrawnDependencyCount);   // the A -> C dependency is now drawn
+
+            s.SetShowDependencies(false);
+            Assert.Equal(0, s.DrawnDependencyCount);
+        });
+    }
 }

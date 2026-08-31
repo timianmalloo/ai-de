@@ -140,4 +140,47 @@ public sealed class ClassHierarchyTests
         var h = ClassHierarchyModel.Build(null, null);
         Assert.True(h.IsEmpty);
     }
+
+    [Fact]
+    public void Build_CollectsDependencies_SeparatelyFromInheritance_ExcludingSelfAndRedundantEdges()
+    {
+        var nodes = new[] { N("A", "class"), N("B", "class"), N("C", "class") };
+        var edges = new[]
+        {
+            E("A", "B", "inherits"),      // an inheritance edge…
+            E("A", "B", "depends_on"),    // …makes this dependency redundant — dropped
+            E("A", "C", "depends_on"),    // a real dependency — kept
+            E("A", "C", "depends_on"),    // duplicate — deduped
+            E("B", "B", "depends_on"),    // self-edge — dropped
+            E("C", "External", "depends_on"), // endpoint not drawn — dropped
+        };
+
+        var h = ClassHierarchyModel.Build(nodes, edges);
+
+        // Inheritance is unaffected by dependencies.
+        Assert.Single(h.Relations);
+        Assert.Equal(ClassRelationKind.Generalization, h.Relations[0].Kind);
+
+        // Exactly one dependency survives: A -> C.
+        var dep = Assert.Single(h.Deps);
+        Assert.Equal(("A", "C"), (dep.From, dep.To));
+        Assert.Equal(ClassRelationKind.Dependency, dep.Kind);
+    }
+
+    [Fact]
+    public void Filter_KeepsOnlyDependenciesWhoseEndpointsSurvive()
+    {
+        var nodes = new[] { N("Shop.Order", "class"), N("Shop.Cart", "class"), N("Other.Thing", "class") };
+        var edges = new[]
+        {
+            E("Shop.Order", "Shop.Cart", "depends_on"),   // both survive "Shop"
+            E("Shop.Order", "Other.Thing", "depends_on"), // target filtered out
+        };
+
+        var filtered = ClassHierarchyModel.Filter(ClassHierarchyModel.Build(nodes, edges), "Shop");
+
+        Assert.Equal(2, filtered.Types.Count);
+        var dep = Assert.Single(filtered.Deps);
+        Assert.Equal(("Shop.Order", "Shop.Cart"), (dep.From, dep.To));
+    }
 }
