@@ -99,15 +99,25 @@ terminates the process.** The model may legitimately hold an off-grid caret; the
 model, must be robust. Registered in `docs/lessons/defect-classes.md` as **DC-041**, controlled by the
 mutation-verified regression test.
 
-## 6. Separate finding (not the crash): the watcher UX is inert at runtime
+## 6. Second defect found and fixed (not the crash): the watcher UX was inert at runtime (DC-042)
 
-While tracing the crash I found that the Loomkeeper read surfaces are **not wired into the running app**.
-`MainWindow` builds the shell with `new WorkbenchShell(null)` (no data directory), and the real
-runtime path, `WorkbenchShell.AttachWorkspace(...)`, rebuilds the factory as
-`new SurfaceContentFactory(queries)` - **dropping the watcher queries and never opening the WatcherHost**.
-The watcher wiring lives in the *constructor* (conn-2/conn-5), which only ever receives `null` at
-runtime, so Sessions/Board/Leaderboard always render "not available" and no ingest runs. This is a
-distinct defect (E2E-C / green-suite-broken-surface: the App tests exercise the factory directly, never
-through `AttachWorkspace`). It is not the crash, but it must be fixed for the watcher smoke test to show
-anything - tracked as the immediate next step. (This crash fix is committed first, as the urgent
-stability fix.)
+While tracing the crash I found the Loomkeeper read surfaces were **not wired into the running app**.
+`MainWindow` builds the shell with `new WorkbenchShell(null)` (no data directory), and the real runtime
+path, `WorkbenchShell.AttachWorkspace(...)`, rebuilt the factory as `new SurfaceContentFactory(queries)`
+- **dropping the watcher queries and never opening the WatcherHost**. The watcher wiring lived in the
+*constructor* (conn-2/conn-5), which only ever receives `null` at runtime, so Sessions/Board/Leaderboard
+always rendered "not available" and no ingest ran. Pure E2E-C: the App tests exercised the factory
+directly, never through `AttachWorkspace`.
+
+**Fixed** the same day (registered as **DC-042**): a `StartWatcher(dataDirectory)` helper opens the host
+(off the UI thread) and returns the read queries, called from **both** the constructor and
+`AttachWorkspace`; because panes already realized against the un-wired factory are *reused* not rebuilt
+(DC-029), the shell then `Adapter.Invalidate(...)`s the stateless watcher surfaces so the next `Render`
+reconstructs them against the wired factory (never a terminal). Proven by an **E11 test through the real
+composition root** (`AttachWorkspace_WiresTheWatcher_SoTheSessionsPaneIsLive_NotUnavailable`): after
+attach, the Sessions pane shows its live empty state ("No sessions observed"), not "not available". The
+crash fix (DC-041) was committed first as the urgent stability fix; this wiring fix followed.
+
+Remaining for a *populated* watcher smoke test: a session must write a coordination-contract log under
+`<dataDir>/loomkeeper-coord` (or emit OTLP) to appear - an auto-emitting session wrapper is the next
+step. The panes are now live and honest (empty until a session registers), and the app no longer crashes.

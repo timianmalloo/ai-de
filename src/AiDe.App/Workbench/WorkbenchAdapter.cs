@@ -31,6 +31,12 @@ public sealed class WorkbenchAdapter
     private readonly ILayoutService _service;
     private readonly Func<Surface, FrameworkElement>? _contentFactory;
 
+    // Surface ids to REBUILD (not reuse) on the next Render - used when a workspace-dependent read pane
+    // (the watcher surfaces) must be reconstructed against a factory that gained its queries after the
+    // pane was first realized. Never contains a terminal id (rebuilding a terminal kills its process,
+    // DC-029); the shell only ever marks the stateless watcher read surfaces.
+    private readonly HashSet<string> _pendingRebuild = new(StringComparer.Ordinal);
+
     public WorkbenchAdapter(
         DockingManager manager, ILayoutService service,
         Func<Surface, FrameworkElement>? contentFactory = null)
@@ -65,6 +71,24 @@ public sealed class WorkbenchAdapter
     public DockingManager Manager { get; }
 
     /// <summary>Projects the current model into AvalonDock and names everything for assistive tech.</summary>
+    /// <summary>
+    /// Marks surfaces to be REBUILT (not reused) on the next <see cref="Render"/>. Used by the shell
+    /// when a workspace attaches and the watcher read panes - realized earlier against a factory with no
+    /// watcher queries - must be reconstructed against the now-wired factory. Only stateless read
+    /// surfaces are ever passed; a terminal is never rebuilt (DC-029).
+    /// </summary>
+    public void Invalidate(IEnumerable<string> surfaceIds)
+    {
+        ArgumentNullException.ThrowIfNull(surfaceIds);
+        foreach (var id in surfaceIds)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                _pendingRebuild.Add(id);
+            }
+        }
+    }
+
     public void Render()
     {
         // Reconcile, do not rebuild (DC-029). Reuse the content element already realized for each
@@ -86,21 +110,29 @@ public sealed class WorkbenchAdapter
                     continue;
                 }
 
-                if (keep.Contains(id) && !reuse.ContainsKey(id))
+                if (keep.Contains(id) && !_pendingRebuild.Contains(id))
                 {
-                    // Free the element so it can re-parent into the new tree without a "already has a
-                    // parent" fault when the layout is replaced below.
-                    doc.Content = null;
-                    reuse[id] = fe;
+                    if (!reuse.ContainsKey(id))
+                    {
+                        // Free the element so it can re-parent into the new tree without a "already has a
+                        // parent" fault when the layout is replaced below.
+                        doc.Content = null;
+                        reuse[id] = fe;
+                    }
                 }
-                else if (!keep.Contains(id) && fe is IDisposable disposable)
+                else if (fe is IDisposable disposable)
                 {
-                    // A surface that was closed: end it NOW rather than at a finalizer, so a closed
-                    // terminal's process stops deterministically instead of lingering until GC.
+                    // A surface that was closed - or one explicitly marked for rebuild (a workspace-
+                    // dependent read pane after the workspace attached) - is ended NOW rather than at a
+                    // finalizer, so a closed terminal's process stops deterministically. A rebuilt pane
+                    // that owns no resource (the watcher read surfaces) simply drops here and BuildPane
+                    // reconstructs it against the new content factory.
                     disposable.Dispose();
                 }
             }
         }
+
+        _pendingRebuild.Clear();
 
         var panel = BuildPanel(_service.Current.Root, reuse);
         Manager.Layout = new LayoutRoot { RootPanel = panel };

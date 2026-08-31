@@ -47,10 +47,10 @@ public sealed class WorkbenchShell : IDisposable
     private CanvasGraphViewModel? _canvasGraph;
 
     // The per-workspace Loomkeeper host: it owns the observation store AND runs the ingest (the
-    // coordination-contract log pump, in-process, so liveness is exact). Null when no workspace data
-    // directory was supplied or it could not be opened; the panes then show "not available".
-    private readonly WatcherHost? _watcherHost;
-    private readonly CancellationTokenSource? _watcherPump;
+    // coordination-contract log pump, in-process, so liveness is exact). Null until a workspace with a
+    // data directory is attached; reset on each attach. The panes then show "not available".
+    private WatcherHost? _watcherHost;
+    private CancellationTokenSource? _watcherPump;
 
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
@@ -62,45 +62,15 @@ public sealed class WorkbenchShell : IDisposable
 
         _queries = queries;
 
-        // Loomkeeper read surfaces (Sessions/Board/Leaderboard) read a per-workspace watcher store that
-        // the in-process host also WRITES: the host runs the coordination-contract log pump, so a
-        // session that opts in by writing a register/heartbeat log under the coord directory appears
-        // live. Hosting the ingest in this process makes liveness exact (the registrar and the liveness
-        // projection share one monotonic clock) - the cross-process caveat does not arise here.
-        IWatcherSessionsQuery? sessionsQuery = null;
-        IWatcherBoardQuery? boardQuery = null;
-        IWatcherLeaderboardQuery? leaderboardQuery = null;
-        IWatcherDisputeQuery? disputeQuery = null;
-        if (!string.IsNullOrEmpty(workspaceDataDirectory))
-        {
-            try
-            {
-                _watcherHost = WatcherHost.Open(
-                    workspaceDataDirectory,
-                    Path.Combine(workspaceDataDirectory, "loomkeeper-coord"));
-                sessionsQuery = new WatcherSessionsQuery(_watcherHost.Store, _watcherHost.Liveness);
-                boardQuery = new WatcherBoardQuery(_watcherHost.Store);
-                leaderboardQuery = new WatcherLeaderboardQuery(_watcherHost.Store);
-                disputeQuery = new WatcherDisputeQuery(_watcherHost.Store);
+        // Loomkeeper read surfaces (Sessions/Board/Leaderboard) read a per-workspace watcher store the
+        // in-process host also WRITES (the coordination-contract log pump). Wired both here (for a data
+        // directory supplied at construction) AND in AttachWorkspace (the real runtime path, where the
+        // directory arrives after the daemon resolves) - the shell is built with a null workspace and
+        // the workspace attaches later, so wiring only the constructor would leave the surfaces inert.
+        var watcher = StartWatcher(workspaceDataDirectory);
 
-                // Drain the coordination log into the store every couple of seconds so the surfaces
-                // reflect new/updated sessions without a restart. Fire-and-forget; cancelled on Dispose.
-                _watcherPump = new CancellationTokenSource();
-                _ = _watcherHost.RunAsync(TimeSpan.FromSeconds(2), _watcherPump.Token);
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                // A watcher host that cannot be opened must not stop the workbench from opening: the
-                // panes degrade to their honest "not available" state (a null query), the same code
-                // path as the walking-skeleton default. Any open failure degrades identically.
-                _watcherPump?.Cancel();
-                _watcherHost?.Dispose();
-                _watcherHost = null;
-                _watcherPump = null;
-            }
-        }
-
-        _factory = new SurfaceContentFactory(queries, sessionsQuery, boardQuery, leaderboardQuery, disputeQuery);
+        _factory = new SurfaceContentFactory(
+            queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes);
         Manager = new DockingManager();
         AutomationProperties.SetName(Manager, "Workbench");
 
@@ -349,7 +319,23 @@ public sealed class WorkbenchShell : IDisposable
         ArgumentNullException.ThrowIfNull(queries);
 
         _queries = queries;
-        _factory = new SurfaceContentFactory(queries);
+
+        // Wire the Loomkeeper watcher for THIS workspace's data directory (the real runtime path - the
+        // constructor was built with a null workspace). Without this the read surfaces would be inert:
+        // AttachWorkspace rebuilding the factory without the watcher queries is what left them showing
+        // "not available" even after a workspace opened.
+        var watcher = StartWatcher(dataDirectory);
+        _factory = new SurfaceContentFactory(
+            queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes);
+
+        // The watcher read panes may already have been realized (at construction) against a factory with
+        // no watcher queries - showing "not available". Mark them to rebuild on the next Render so they
+        // pick up the now-wired factory. Only the stateless watcher kinds - never a terminal (DC-029).
+        var watcherKinds = new HashSet<string>(StringComparer.Ordinal) { "sessions", "board", "leaderboard" };
+        Adapter.Invalidate(Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => watcherKinds.Contains(s.Kind))
+            .Select(s => s.SurfaceId));
 
         // The palette's re-index command is inert until a workspace exists to re-index. Wiring it
         // here rather than at construction is what makes it act on THIS workspace.
@@ -857,6 +843,60 @@ public sealed class WorkbenchShell : IDisposable
 
         static TerminalSurface? FindTerminal(WorkbenchAdapter adapter, string surfaceId) =>
             adapter.ContentFor(surfaceId) as TerminalSurface;
+    }
+
+    /// <summary>
+    /// Opens (or re-opens) the per-workspace Loomkeeper host for a data directory and returns the read
+    /// queries the factory wires into the watcher surfaces. Called from the constructor AND from
+    /// <see cref="AttachWorkspace"/> - the latter is the real runtime path, where the data directory
+    /// arrives after the shell is built with a null workspace.
+    /// </summary>
+    /// <remarks>
+    /// The pump loop is started with <see cref="Task.Run(System.Action)"/> so that even its synchronous
+    /// first pump (a directory read + a SQLite fold) never runs on the UI thread during attach. A host
+    /// that cannot open degrades to null queries - the panes show "not available" and the workbench is
+    /// never blocked. A re-attach disposes the previous host first.
+    /// </remarks>
+    private (IWatcherSessionsQuery? Sessions, IWatcherBoardQuery? Board,
+             IWatcherLeaderboardQuery? Leaderboard, IWatcherDisputeQuery? Disputes) StartWatcher(string? dataDirectory)
+    {
+        // A re-attach (opening a different workspace) resets the host.
+        _watcherPump?.Cancel();
+        _watcherPump?.Dispose();
+        _watcherHost?.Dispose();
+        _watcherPump = null;
+        _watcherHost = null;
+
+        if (string.IsNullOrEmpty(dataDirectory))
+        {
+            return (null, null, null, null);
+        }
+
+        try
+        {
+            var host = WatcherHost.Open(dataDirectory, Path.Combine(dataDirectory, "loomkeeper-coord"));
+            _watcherHost = host;
+            _watcherPump = new CancellationTokenSource();
+            var token = _watcherPump.Token;
+
+            // Off the UI thread: RunAsync's synchronous prefix (the first PumpOnce) must not run on the
+            // caller's thread during construction/attach.
+            _ = Task.Run(() => host.RunAsync(TimeSpan.FromSeconds(2), token), token);
+
+            return (
+                new WatcherSessionsQuery(host.Store, host.Liveness),
+                new WatcherBoardQuery(host.Store),
+                new WatcherLeaderboardQuery(host.Store),
+                new WatcherDisputeQuery(host.Store));
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _watcherPump?.Cancel();
+            _watcherHost?.Dispose();
+            _watcherHost = null;
+            _watcherPump = null;
+            return (null, null, null, null);
+        }
     }
 
     public void Dispose()

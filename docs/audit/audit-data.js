@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T21:46:55Z",
+  "generated": "2026-08-31T21:59:04Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3141,6 +3141,26 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T21:31:48Z",
       "duration_seconds": 907.0
+    },
+    {
+      "id": "al-0300",
+      "shortname": "fix-watcher-runtime-wiring",
+      "datetime": "2026-08-31T21:59:04Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "the application died with two sessions grounding in the repo",
+      "summary": "Second defect found while investigating the crash (DC-042): the watcher UX was inert at runtime - wired in the shell constructor (built with a null workspace) while AttachWorkspace rebuilt the factory without the watcher queries. Fixed: StartWatcher helper used by both the ctor and AttachWorkspace (pump off the UI thread via Task.Run), and Adapter.Invalidate rebuilds the already-realized watcher panes against the wired factory (never a terminal, DC-029). E11 test through the real composition root; App 139/0, Core 970/0.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "tests/AiDe.App.Tests/WorkbenchShellTests.cs",
+        "docs/proof/watcher-runtime-wiring.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [

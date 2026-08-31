@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 18 · partially-controlled 23 · uncontrolled 0
+**Status counts:** controlled 19 · partially-controlled 23 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1455,4 +1455,40 @@ for both or split.*
   the screen by a cursor/derived position must use `CellUnderCursor()` or a bounded loop. A broader
   belt (a guarded `OnRender` that logs-and-skips a frame rather than crashing) was deliberately NOT
   added, to avoid masking future render bugs now that the root cause and its sibling are swept.
+- **Status:** `controlled`
+
+### DC-042 — A workspace-dependent feature wired only in the constructor is dropped by the real composition root
+
+- **Signature:** a feature is wired into a shell/host in its **constructor**, but the object is built
+  before the thing it depends on exists (here: `MainWindow` builds `new WorkbenchShell(null)` before the
+  workspace resolves), and the **real runtime path** that supplies the dependency — an `AttachWorkspace`
+  / late-init method — **rebuilds the composition without the feature's wiring**. The feature is
+  therefore inert at runtime while every test passes, because the tests exercise the inner component
+  (the factory/pane) **directly**, never **through** the composition root that drops it.
+- **Why it survives:** it is a pure green-suite-broken-surface (E2E-C): the component's own tests are
+  correct and green, the constructor path even works when a dependency is passed directly (as a fixture
+  does), so nothing points at the one production path — the late attach — where the wiring is silently
+  discarded. A second reuse/reconcile layer can compound it: even after the composition root is fixed to
+  wire the feature, panes **already realized** against the un-wired factory are **reused, not rebuilt**
+  (DC-029), so the feature stays inert until the realized surfaces are explicitly invalidated.
+- **Instances:** 2026-08-31 — the Loomkeeper watcher read surfaces (Sessions/Board/Leaderboard) were
+  wired in `WorkbenchShell`'s constructor (conn-2/conn-5), but `MainWindow` builds the shell with a null
+  workspace and the real path, `WorkbenchShell.AttachWorkspace`, rebuilt the factory as
+  `new SurfaceContentFactory(queries)` — dropping the watcher queries and never opening the
+  `WatcherHost`. Every App test passed (they build the factory directly). Found while investigating the
+  DC-041 crash. **Fixed** the same day: a `StartWatcher(dataDirectory)` helper opens the host and returns
+  the queries, called from **both** the constructor and `AttachWorkspace`; the shell then
+  `Adapter.Invalidate(...)`s the stateless watcher surfaces so the next `Render` rebuilds them against
+  the wired factory (never a terminal — DC-029).
+- **Control:** an **E11 test through the real composition root** —
+  `WorkbenchShellTests.AttachWorkspace_WiresTheWatcher_SoTheSessionsPaneIsLive_NotUnavailable` — attaches
+  a workspace with a real data directory and asserts the Sessions pane the Adapter builds shows its live
+  empty state ("No sessions observed"), **not** "not available". Generalisation: **wire a
+  workspace/late-dependency feature in the method that receives the dependency, and prove it through the
+  composition root, not only the component** — a component tested in isolation says nothing about whether
+  the root that assembles it keeps the wiring (E11).
+- **Residual risk:** the panes still fold once on (re)build; live auto-refresh as new sessions register
+  is a separate follow-on (the pump keeps the store current; reopening a pane re-folds it). A session
+  only appears if it writes a coordination-contract log under `<dataDir>/loomkeeper-coord` — the
+  auto-emitting session wrapper is future work.
 - **Status:** `controlled`

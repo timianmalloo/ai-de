@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T21:46:17Z",
+  "generated": "2026-08-31T21:58:27Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2656,7 +2656,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d0763e660342f880a11505c2ed39fd2772d06bdba7a4691cef7aa0cc4bd33962"
+      "sourceSha256": "848b59683c6e8f389c4dfe15a0e7eae50cb1be5682a052a31b4a4f57870edea9"
     },
     {
       "id": "domain-experts",
@@ -3927,7 +3927,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3f7eab3ae8ffcaf793988040d06976b2b17feb57f1432ac1b22df762f099ff11"
+      "sourceSha256": "24bcafb9ba39c42119263437bfa8fb3fde7c73f21cdee5bac15317d9400194d6"
     },
     {
       "id": "kb-agentic-session-observability",
@@ -7451,6 +7451,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "88db95fbfe34817d03c84ba141127c2ef29ac097928899e06b8d4f455a376a88"
     },
     {
+      "id": "proof-watcher-runtime-wiring",
+      "path": "docs/proof/watcher-runtime-wiring.md",
+      "title": "Proof Pack - Loomkeeper watcher wired into the running app (DC-042)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper watcher read surfaces are now wired into the running app. The wiring moved from the shell constructor (which the app builds with a null workspace) into AttachWorkspace (the real runtime path, which previously rebuilt the factory without the watcher queries and never opened the host), and the already-realized watcher panes are invalidated so they rebuild against the wired factory (never a terminal, DC-029). Proven by an E11 test through the real composition root: after attach the Sessions pane shows its live empty state, not \"not available\". App 139/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "wiring",
+        "composition-root",
+        "e2e-c",
+        "dc-042",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "investigation-terminal-cursor-render-crash",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-host",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-board-leaderboard-surfaces",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1c2452d14bbe52fe4b78cf8d8041e46d4b32f413a0609056e007cd0c12f44cfe"
+    },
+    {
       "id": "proof-watcher-score-dispute",
       "path": "docs/proof/watcher-score-dispute.md",
       "title": "Proof Pack - Loomkeeper Operator Dispute Path (connective 4)",
@@ -8217,5 +8254,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5a9641fcc3333a072cefd6dbd25b57d97786b7ddaa1d40d4e625bbe596c8fedf"
+  "graphSha256": "5ca852c059d2a4e62ffdd8efbbfa0b55a01ea0e09b706300cd75c461156b3f05"
 };
