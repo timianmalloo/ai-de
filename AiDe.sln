@@ -37,6 +37,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "watcher-otlp-ingest", "watc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatcherOtlpIngestSpike", "spikes\watcher-otlp-ingest\WatcherOtlpIngestSpike.csproj", "{AF49B8C9-557F-47B1-9F45-523E7D8F8DFD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "watcher-otlp-receive", "watcher-otlp-receive", "{0CB74B06-551C-AF56-B039-5D05C5073966}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatcherOtlpReceiveSpike", "spikes\watcher-otlp-receive\WatcherOtlpReceiveSpike.csproj", "{39463057-BFB2-4C48-B828-E9000CCE0460}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -179,6 +183,18 @@ Global
 		{AF49B8C9-557F-47B1-9F45-523E7D8F8DFD}.Release|x64.Build.0 = Release|Any CPU
 		{AF49B8C9-557F-47B1-9F45-523E7D8F8DFD}.Release|x86.ActiveCfg = Release|Any CPU
 		{AF49B8C9-557F-47B1-9F45-523E7D8F8DFD}.Release|x86.Build.0 = Release|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Debug|x64.Build.0 = Debug|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Debug|x86.Build.0 = Debug|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Release|x64.ActiveCfg = Release|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Release|x64.Build.0 = Release|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Release|x86.ActiveCfg = Release|Any CPU
+		{39463057-BFB2-4C48-B828-E9000CCE0460}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -197,5 +213,7 @@ Global
 		{9DD753CB-3597-4901-A5C3-541D1C178245} = {3B8AFA31-6614-2AFF-A7AD-F57C0A034982}
 		{89DBCF22-2893-317F-D4A3-F7537ED46839} = {674B3D0D-B3C1-BDFD-64ED-056E74CE37B3}
 		{AF49B8C9-557F-47B1-9F45-523E7D8F8DFD} = {89DBCF22-2893-317F-D4A3-F7537ED46839}
+		{0CB74B06-551C-AF56-B039-5D05C5073966} = {674B3D0D-B3C1-BDFD-64ED-056E74CE37B3}
+		{39463057-BFB2-4C48-B828-E9000CCE0460} = {0CB74B06-551C-AF56-B039-5D05C5073966}
 	EndGlobalSection
 EndGlobal

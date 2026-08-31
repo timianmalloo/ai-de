@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T03:39:58Z",
+  "generated": "2026-08-31T03:58:37Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1919,6 +1919,47 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "019d9cfedee12d87e29eb6c749715ff3d1dbf27ff6789aeb74fa4e909597e989"
+    },
+    {
+      "id": "design-watcher-otlp-receiver",
+      "path": "docs/design/watcher-otlp-receiver.md",
+      "title": "Loomkeeper OTLP Receiver - Transport Adapter",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper OTLP receiver (slice 1b): a loopback HttpListener that accepts OTLP/JSON trace exports at /v1/traces, resolves a per-session bearer token to the session's capability, parses spans with stdlib System.Text.Json (no protobuf dependency), and enqueues them into the ingest host. Split into a pure OtlpJsonParser and thin OtlpHttpReceiver glue. Contract established by the slice-1b spike.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "otlp",
+        "receiver",
+        "transport",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-ingest-host",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cd1fd8022e65e8c70e7d0d628e243ad8cc0ddd47b4fb34a54c964319deda8f19"
     },
     {
       "id": "design-watcher-phase1-skeleton",
@@ -6426,6 +6467,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "07dc272b05d9b7465d19962793780c6cbf508420fa0528abbaa6b26635178edc"
     },
     {
+      "id": "proof-watcher-otlp-receiver",
+      "path": "docs/proof/watcher-otlp-receiver.md",
+      "title": "Proof Pack - Loomkeeper OTLP Receiver (slice 1b)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper OTLP/HTTP receiver meets its design: it accepts OTLP/JSON exports at /v1/traces with stdlib System.Text.Json (no protobuf dependency), resolves a per-session bearer token to a capability (the capability never travels the wire), parses and enqueues spans onto the ingest host, caps the body, and answers 200 even when it drops a bad/unauthenticated export - proven by 13 tests including two real-loopback HTTP integration tests, with the auth oracle compile-enforced.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "ingest",
+        "otlp",
+        "receiver",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-otlp-receiver",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-ingest-host",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e80bf48108977ae23e7440abfcd75d65651e94b5be26cbbaffe4aa2a46fd9bfb"
+    },
+    {
       "id": "proof-watcher-phase1-skeleton",
       "path": "docs/proof/watcher-phase1-skeleton.md",
       "title": "Proof Pack - Loomkeeper Phase-1 Walking Skeleton",
@@ -7005,5 +7083,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "21a3ac9d683ebee049bc09955c506b15648608b4ade8a6491d3deb9df1687eec"
+  "graphSha256": "7605be4d65a183208ff0d16549d7c71cf386d765334cfcf3839ff27bb243708c"
 };
