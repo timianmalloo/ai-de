@@ -38,7 +38,7 @@ One responsibility: **turn raw session events into a trustworthy, deterministic 
 
 **What crosses the boundary:** a registration binding and per-event capability in; `RegisteredSession`, `LivenessState`, `IngestOutcome`, and `EgressDecision` out. **The trust boundary is the event-ingest seam** — where a process claims a session identity and emits events (§6 STRIDE).
 
-**Placement in phasing.** This is Phase 1's deterministic core. Its one mock-substitutable seam is **`IWatcherObservationStore`** — implemented in-memory now; the SQLite implementation (extending the existing `Store/`, ADR-0002) is the remaining Phase-1 task and requires spike **S1** (harness OTLP/injected-contract ingest). The seam is a contract, so replacing the in-memory store with SQLite later is a substitution, not a redesign. The WPF Sessions-treegrid row that renders this state is the other remaining Phase-1 slice.
+**Placement in phasing.** This is Phase 1's deterministic core. Its one mock-substitutable seam is **`IWatcherObservationStore`**, with **two implementations now in place**: an in-memory store for fast unit composition, and a **SQLite store** (`SqliteWatcherObservationStore`, reusing the ADR-0002 idiom — WAL, append-only facts enforced by triggers, single writer) that persists observations across a restart. Both satisfy the same contract tests. The **daemon ingest wire** (requires spike **S1** — harness OTLP/injected-contract ingest) and the **WPF Sessions-treegrid row** are the remaining Phase-1 slices.
 
 ## 2. Data model (settled first)
 
@@ -210,9 +210,10 @@ public interface IMonotonicClock { long Ticks { get; } long TicksPerSecond { get
 | Monotonic liveness resists clock skew | `Stopwatch.GetTimestamp` is monotonic (established) | Verified |
 | Capability compare is timing-safe | `CryptographicOperations.FixedTimeEquals` (stdlib) | Verified |
 | In-memory store is the right seam for the skeleton | Architecture §4 (mocked seams are contracts) | Inferred |
-| SQLite store + daemon wire + UI row complete Phase 1 | not built this slice | **Flagged — remaining Phase-1 tasks; S1 spike** |
+| SQLite store persists observations with the append-only invariant enforced | `SqliteWatcherObservationStoreTests` (11 tests, real engine, reopen + trigger) | Verified |
+| Daemon ingest wire + UI row complete Phase 1 | not built this slice | **Flagged — remaining Phase-1 tasks; S1 spike** |
 
-**Residual risk:** the in-memory store is unbounded (accepted, `simplify:`); the SQLite persistence, daemon ingest wire, and WPF treegrid row are the remaining Phase-1 slice and are not built here.
+**Residual risk:** the in-memory store is unbounded (accepted, `simplify:`); the **daemon ingest wire** and the **WPF treegrid row** are the remaining Phase-1 slices and are not built here. The SQLite store persists but is not yet wired into the daemon.
 
 ## 12. Gate record
 

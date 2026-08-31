@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-30T23:38:31Z",
+  "generated": "2026-08-31T00:20:11Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2702,6 +2702,30 @@ window.AUDIT_DATA = {
         "phase-1"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0165",
+      "shortname": "implement-watcher-sqlite-store",
+      "datetime": "2026-08-31T00:20:11Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Do the next action: /implement the SQLite observation store behind the IWatcherObservationStore seam.",
+      "summary": "Implemented SqliteWatcherObservationStore (src/AiDe.Core/Watcher/) reusing the ADR-0002 idiom: WAL, single writer, append-only observed_span_fact enforced by BEFORE UPDATE/DELETE triggers, content-addressed PK dedup via INSERT OR IGNORE, session/heartbeat/ended current-state tables mapping 1:1 to the in-memory maps. 11 new D4 real-engine tests (persistence across reopen, append-only rejection, contract fidelity); append-only trigger mutation-verified red. Full suite 721/0; build 0/0. Design + Proof Pack updated.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "tests/AiDe.Core.Tests/Watcher/SqliteWatcherObservationStoreTests.cs",
+        "docs/proof/watcher-phase1-skeleton.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "sqlite",
+        "phase-1"
+      ],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -5026,6 +5050,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "d4b1727d3b4270d0a60383f4413e7a79c436e1bc",
         "after": "d4b1727d3b4270d0a60383f4413e7a79c436e1bc",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0103",
+      "datetime": "2026-08-31T00:20:11Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper durable observation store: SQLite behind the IWatcherObservationStore seam, append-only enforced by triggers",
+      "prompt": "Implement the SQLite observation store behind the seam.",
+      "summary": "SqliteWatcherObservationStore substitutes the in-memory store on the same contract: reuses the ADR-0002 fact-store idiom (WAL, single writer, append-only via BEFORE UPDATE/DELETE triggers), content-addressed PK dedup (INSERT OR IGNORE never fires the update trigger), and current-state session/heartbeat/ended tables. Persistence proven across a real reopen; append-only invariant proven by a forbidden-update test and mutation-verified.",
+      "rationale": "Reuses the codebase's proven SQLite idiom rather than a new persistence pattern; INSERT OR IGNORE preserves append-only where INSERT OR REPLACE would bypass it; the seam contract is unchanged so both stores share tests (D7 fidelity).",
+      "artifacts": [
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "docs/proof/watcher-phase1-skeleton.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "896b3befb2cdb9dc59b100e19d2caee9183ad5dd",
+        "after": "896b3befb2cdb9dc59b100e19d2caee9183ad5dd",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

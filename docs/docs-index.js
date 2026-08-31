@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T23:36:23Z",
+  "generated": "2026-08-31T00:19:37Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1882,7 +1882,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fa7512b0444cd6d217e111df2f2d6f12484151f792ea559b740b2cc2f01238f7"
+      "sourceSha256": "807705a3a65c94b27ae9d0b1385fec92878071c1eb7a3a6d8d0e4bde10249762"
     },
     {
       "id": "audit-log",
@@ -6281,7 +6281,7 @@ window.DOCS_INDEX = {
       "phase": "1",
       "reviewBy": "2027-02-26",
       "reviewSuggested": [],
-      "summary": "Evidence that the Loomkeeper Phase-1 deterministic core (identity + Trusted Registrar, idempotent span ingest, monotonic liveness, default-deny egress) meets its design contracts: 30 xUnit tests green, with red observed on the forgery and dedup oracles by mutation.",
+      "summary": "Evidence that the Loomkeeper Phase-1 deterministic core (identity + Trusted Registrar, idempotent span ingest, monotonic liveness, default-deny egress) and its durable SQLite store meet their design contracts: 41 xUnit tests green (30 core + 11 SQLite), with red observed on the forgery, dedup, and append-only oracles by mutation.",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -6299,7 +6299,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c256b9a98db24837c8199277f110f650dff5aa5e979f683bc41bc3d9624899b1"
+      "sourceSha256": "88db95fbfe34817d03c84ba141127c2ef29ac097928899e06b8d4f455a376a88"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -6851,5 +6851,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6e99370da18fcc95daf07f4c59a6a62f29cc5dec2349f67b88ea50ac52608c55"
+  "graphSha256": "c5e4f0bc63fcad280b15ecbd223bb7cf5ca705daded7d845969947e48de81bd7"
 };
