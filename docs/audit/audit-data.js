@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T20:59:20Z",
+  "generated": "2026-08-31T20:59:21Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5436,6 +5436,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/ClassDiagramSurface.cs",
         "docs/notes/uml-diagram-fidelity-roadmap.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0293",
+      "shortname": "graph-edge-filter-wt13-raw-sql-counted",
+      "datetime": "2026-08-31T20:59:01Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do the next steps you listed above",
+      "summary": "Four of five next steps done. GraphQuery gained ExcludeEdges after measuring that edges are 82% of the canvas payload: excluding calls and depends_on returns the entire 2,992-node workspace with nothing omitted where the default omits 1,492. WT13 added to the pack's worktree discipline — a worktree isolates the working tree and index, not the repository, and refs/stash is one stack. Raw SQL investigated and deliberately NOT built: the disclosure now counts DDL-carrying statements separately (4 of 23 on TheTerrace) and measurement showed the one raw column add is followed by a raw drop of the same column, so the graph's schema is correct today — a fold would have been built for a measured zero. My own scan of that tree said 8 of 30 and was wrong: it counted Down methods, which the reader correctly ignores. C# extraction time not attempted: the walk is already lazily modelled and symbol-cached, the remaining cost is inherent to binding method bodies, and parallelising it is a concurrency change I declined to rush at the end of a long session.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/extractor-roadmap.md"
       ],
       "tags": [],
       "outcome": "success"
