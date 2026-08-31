@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T04:17:43Z",
+  "generated": "2026-08-31T04:38:54Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1149,6 +1149,46 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "93bc32b87ab1da76b8b9fc5ad8d9e8c4c2b2480c36cc75580facd5289c2ca1e0"
+    },
+    {
+      "id": "note-2026-08-30-overnight-surfaces",
+      "path": "docs/notes/note-2026-08-30-overnight-surfaces.md",
+      "title": "Overnight run — three-surfaces progress & morning next-steps",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-30",
+      "reviewSuggested": [],
+      "summary": "What the autonomous overnight run of 2026-08-30 delivered on the three requested new surfaces (class diagram, read-only code viewer, prompt editor) and what remains — mostly Core-gated. All increments landed green (App.Tests 171, Core.Tests 735, launch smoke); each is a clean vertical slice or a ready-to-substitute component behind a defined seam.",
+      "tags": [
+        "overnight",
+        "class-diagram",
+        "code-viewer",
+        "prompt-editor",
+        "editor-surfaces",
+        "status"
+      ],
+      "links": [
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0020-class-diagram-architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0019-code-viewer-renderer",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "38cfdca171bb12ffb3e7a99fe22d35bb438908a03dcdc2bdfbbbe16ebc8a3db3"
     },
     {
       "id": "note-2026-08-30-prompt-draft-wiring",
@@ -6535,5 +6575,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "39be4bd10b17469a4290b0f37b4d1aa04b2c7a5989a7367a7e2e1396e9240ec8"
+  "graphSha256": "75302b9b59183e313154466944166cd57b763122a05586c34a2311868cc7dca3"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T04:37:00Z",
+  "generated": "2026-08-31T04:38:54Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3182,6 +3182,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0182",
+      "shortname": "overnight-surfaces-note",
+      "datetime": "2026-08-31T04:38:54Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "overnight: record progress + morning next-steps",
+      "summary": "Decision note note-2026-08-30-overnight-surfaces summarizing the overnight three-surfaces run (class diagram Phase 1 shipped reachable; prompt editor shipped; code viewer component+seam staged, Core-gated on NodeContentAsync) + morning next-steps + the two Core-catalog command touches.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-2026-08-30-overnight-surfaces.md"
       ],
       "tags": [],
       "outcome": "success"
