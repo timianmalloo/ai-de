@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 24 · partially-controlled 29 · uncontrolled 0
+**Status counts:** controlled 25 · partially-controlled 29 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1695,3 +1695,14 @@ for both or split.*
   (`aide.workbench` ActivitySource + a JSON layout log) so a future placement report is traceable —
   the workbench previously had no instrumentation at all.
 - **Status:** controlled
+
+### DC-054 — Every warning is correct and the wall of them hides the one that matters
+- **Signature:** a component reports what it could not do, per unit of work, conditionally, with a count — every rule a good disclosure is supposed to follow. Then the unit of work multiplies. Thirty-nine scopes each raise the same two boundaries with their own numbers, so nothing deduplicates them, and a surface that concatenates the list shows sixty near-identical sentences. Each one is true. The reader stops reading, and the single line that was a real finding is somewhere in the middle of them.
+- **Why it survives:** every control passes and every rule was followed. This codebase has spent real effort making disclosures fire — conditional, counted, never blanket, asserted in both directions — and **none of that effort was about what a reader does with sixty of them**. The failure is not in any disclosure; it is in the absence of anyone owning the aggregate. It also grows silently: each new extractor and each new scope adds lines to a list nobody re-reads.
+- **Instance:** 2026-08-31. A real index of TheTerrace produced **178 disclosure strings, 108 distinct, for 28 actual classes**. `knowledge-headings-not-analysed` and `knowledge-inline-code-not-resolved` appeared **39 times each** — once per knowledge scope, each with a different count, so `Distinct()` merged none. The user's screenshot shows the result: the disclosure text occupies roughly four fifths of the window and the graph is a strip along the top. Buried in it, in the same typeface as everything else, is `knowledge-prose-link-target-missing (107 …)` — 109 rotted cross-references, the most actionable thing the product had ever told anybody.
+- **The numbers were also less useful than they looked.** "914 headings in this scope" answers nothing a person asks; "4,471 headings across the workspace" answers "how much of this repository is unread". Folding produced facts that had never been stated, from data that had been there all along.
+- **The fix nearly shipped with a worse defect.** Summing the leading count and keeping the rest of one scope's sentence rendered `knowledge-headings-not-analysed (4,471 heading(s) in 10 document(s))` — a true workspace total beside one scope's document count, reading as though somebody had counted both. **A stale number inside a corrected one is worse than either alone.** Everything from the second number onward is now cut, and the dangling preposition that leaves is trimmed.
+- **Control:** `DisclosureSummary.Fold`, used by every surface that renders disclosures (the graph projection, the canvas view-model, the index summary). `DisclosureSummaryTests` pins the total, the cut, the dangling word, the single-scope case that must keep its exact sentence, and that two different classes never merge — that last one because folding a boundary and a gap together is DC-050 arriving from a new direction.
+- **The generalisation to apply elsewhere:** **a rule about one item is not a rule about the list.** Whenever something is emitted per unit — a warning, a log line, a health finding — ask what it looks like at a hundred units, and give the aggregate an owner. The signal-to-noise ratio of a diagnostic is a property of the collection, not of any member of it.
+- **Residual risk:** folding is textual. It assumes every scope emits the same sentence template for a class, which is true today and is not enforced anywhere; a reader that varied its wording per scope would fold into a total wearing one arbitrary explanation.
+- **Status:** `controlled`

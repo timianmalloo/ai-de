@@ -269,7 +269,11 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
                 IsKnowledge: knowledge.Contains(kv.Key)))],
             visible,
             omitted,
-            [.. disclosures.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)],
+            // Folded by class, not deduplicated. 39 knowledge scopes each disclose their own
+            // heading count, so `Distinct` merges nothing and the caller receives 108 lines for 28
+            // classes — measured on a real workspace, where it filled the window and buried the one
+            // finding that mattered.
+            [.. AiDe.Core.Facts.DisclosureSummary.Fold(disclosures)],
             sourceRevision);
     }
 
