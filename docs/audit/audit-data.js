@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T13:19:02Z",
+  "generated": "2026-08-31T13:26:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2842,6 +2842,24 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T13:06:31Z",
       "duration_seconds": 751.0
+    },
+    {
+      "id": "al-0189",
+      "shortname": "implement-coord-contract-log",
+      "datetime": "2026-08-31T13:26:18Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all next steps listed above (slice-2 residual: session-side writer + log watcher)",
+      "summary": "Slice-2 residual closed: CoordContractWriter (atomic append + LOG-A + seq) + CoordContractLog.ReadDirectory + CoordContractLogPump feed InjectedContractIngest.ApplyAll (idempotent). 7 D4 real-filesystem tests; LOG-A anti-fusion mutation-verified. Full suite 787/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/CoordinationContractLog.cs",
+        "tests/AiDe.Core.Tests/Watcher/CoordinationContractLogTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
