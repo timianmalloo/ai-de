@@ -31,6 +31,21 @@ public sealed class ClassDiagramSurface : ContentControl
     // The search narrows a large hierarchy into this range, where the diagram earns its place.
     private const int DiagramMax = 40;
 
+    /// <summary>
+    /// Fetches a type's declared members (attributes + operations) for its UML compartment — the shell
+    /// wires this to the workspace's <c>DescribeAsync</c>. Null leaves the compartment as a pending marker.
+    /// </summary>
+    public Func<string, Task<(IReadOnlyList<string> Members, int Declared)>>? MembersSource { get; set; }
+
+    // Bumped on every diagram render; an async member fill checks it before touching the tree so a fill
+    // from a superseded render (a search keystroke, a toggle) cannot write into the current one.
+    private int _renderGen;
+
+    // Test hook: how many member-compartment fills were dispatched by the last render. Incremented
+    // synchronously (before the first await) so a test can observe it right after ShowGraph returns.
+    private int _membersRequested;
+    public int MembersRequestedCount => _membersRequested;
+
     public ClassDiagramSurface(string title = "Class diagram")
     {
         AutomationProperties.SetName(this, title);
@@ -220,6 +235,8 @@ public sealed class ClassDiagramSurface : ContentControl
     // search narrows a large hierarchy into a readable one.
     private void RenderDiagram(ClassHierarchy hierarchy, List<string> notes)
     {
+        var gen = ++_renderGen;   // supersedes any in-flight member fills from an earlier render
+        _membersRequested = 0;    // per-render count of dispatched member fills (test hook)
         var degree = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var r in hierarchy.Relations)
         {
@@ -271,7 +288,7 @@ public sealed class ClassDiagramSurface : ContentControl
 
         foreach (var t in drawn) { Rank(t.Id, []); }
 
-        const double boxW = 176, boxH = 58, gapX = 26, gapY = 66, pad = 14;
+        const double boxW = 188, boxH = 150, gapX = 28, gapY = 74, pad = 14;
         var rows = drawn.GroupBy(t => rank[t.Id]).OrderBy(g => g.Key).ToList();
         var pos = new Dictionary<string, Point>(StringComparer.Ordinal);
         var maxCols = 1;
@@ -301,15 +318,99 @@ public sealed class ClassDiagramSurface : ContentControl
             }
         }
 
+        var fills = new List<(string Id, Panel Panel)>();
         foreach (var t in drawn)
         {
-            var box = DiagramBox(t, boxW, boxH);
+            var box = DiagramBox(t, boxW, boxH, out var memberPanel);
             Canvas.SetLeft(box, pos[t.Id].X);
             Canvas.SetTop(box, pos[t.Id].Y);
             canvas.Children.Add(box);
+            fills.Add((t.Id, memberPanel));
         }
 
         _scroller.Content = canvas;
+
+        // Members arrive after the boxes: one DescribeAsync per drawn type, each filling its own
+        // compartment when it returns, guarded by the render generation so a stale fetch is dropped.
+        foreach (var (id, panel) in fills)
+        {
+            _ = FillMembersAsync(gen, id, panel);
+        }
+    }
+
+    private async Task FillMembersAsync(int gen, string typeId, Panel panel)
+    {
+        if (MembersSource is null)
+        {
+            panel.Children.Clear();
+            panel.Children.Add(Muted("members pending", 10));
+            return;
+        }
+
+        _membersRequested++;   // a genuine fill dispatch (source present); observed before the first await
+
+        IReadOnlyList<string> members;
+        int declared;
+        try
+        {
+            (members, declared) = await MembersSource(typeId);
+        }
+        catch
+        {
+            return;   // a failed member fetch leaves the box as-is; the diagram is still valid
+        }
+
+        if (gen != _renderGen) { return; }   // a newer render has superseded this fill
+
+        panel.Children.Clear();
+        if (members.Count == 0)
+        {
+            panel.Children.Add(Muted("no members", 10));
+            return;
+        }
+
+        // A field/property has no parameter list; a method has "(" — the UML attribute / operation split.
+        var attributes = members.Where(m => !m.Contains('(', StringComparison.Ordinal)).ToList();
+        var operations = members.Where(m => m.Contains('(', StringComparison.Ordinal)).ToList();
+
+        const int perGroup = 3;
+        AddMemberLines(panel, attributes, perGroup);
+        if (attributes.Count > 0 && operations.Count > 0)
+        {
+            var rule = new Border
+            {
+                BorderThickness = new Thickness(0, 1, 0, 0),
+                Height = 1,
+                Margin = new Thickness(0, 2, 0, 2),
+            };
+            rule.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
+            panel.Children.Add(rule);
+        }
+
+        AddMemberLines(panel, operations, perGroup);
+    }
+
+    private static void AddMemberLines(Panel panel, List<string> items, int cap)
+    {
+        for (var i = 0; i < items.Count; i++)
+        {
+            if (i == cap)
+            {
+                panel.Children.Add(Muted($"…+{items.Count - cap} more", 10));
+                return;
+            }
+
+            var line = new TextBlock
+            {
+                Text = items[i],
+                FontSize = 10.5,
+                TextWrapping = TextWrapping.NoWrap,
+                TextTrimming = TextTrimming.CharacterEllipsis,
+                ToolTip = items[i],
+            };
+            line.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
+            panel.Children.Add(line);
+        }
     }
 
     // Hides interface types and any relationship touching one — a class implementing many interfaces
@@ -364,10 +465,10 @@ public sealed class ClassDiagramSurface : ContentControl
         canvas.Children.Add(head);
     }
 
-    // A UML class box: a name compartment (with the «interface» stereotype) over a member compartment,
-    // separated by a rule. The member compartment is empty until Core exposes has_member through a query
-    // (session-contracts) — an empty compartment is valid UML (members not shown) rather than a fiction.
-    private static Border DiagramBox(ClassTypeNode type, double w, double h)
+    // A UML class box: a name compartment (with the «interface» stereotype) over a member compartment
+    // (attributes then operations), separated by a rule. The member compartment is filled asynchronously
+    // from has_member — <paramref name="memberPanel"/> is where <see cref="FillMembersAsync"/> writes.
+    private static Border DiagramBox(ClassTypeNode type, double w, double h, out StackPanel memberPanel)
     {
         var stack = new DockPanel { LastChildFill = true };
 
@@ -391,18 +492,9 @@ public sealed class ClassDiagramSurface : ContentControl
         DockPanel.SetDock(rule, Dock.Top);
         stack.Children.Add(rule);
 
-        // Member compartment (attributes + operations). Empty for now; a muted marker keeps the
-        // compartment visible so the box is legibly a class box awaiting its members.
-        var members = new TextBlock
-        {
-            Text = "…",
-            FontSize = 11,
-            TextAlignment = TextAlignment.Center,
-            Margin = new Thickness(6, 2, 6, 2),
-            VerticalAlignment = VerticalAlignment.Center,
-        };
-        members.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
-        stack.Children.Add(members);
+        memberPanel = new StackPanel { Margin = new Thickness(6, 3, 6, 3) };
+        memberPanel.Children.Add(Muted("…", 10.5));   // pending until the member fetch returns
+        stack.Children.Add(memberPanel);
 
         var box = new Border
         {
@@ -411,6 +503,7 @@ public sealed class ClassDiagramSurface : ContentControl
             Child = stack,
             CornerRadius = new CornerRadius(4),
             BorderThickness = new Thickness(1),
+            ClipToBounds = true,   // a member-rich type must not spill past its box
         };
         box.SetResourceReference(BackgroundProperty, "RaisedBrush");
         box.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");

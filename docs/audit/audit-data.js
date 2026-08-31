@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T17:03:15Z",
+  "generated": "2026-08-31T17:27:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5351,6 +5351,24 @@ window.AUDIT_DATA = {
         "uml",
         "collapse"
       ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0286",
+      "shortname": "classdiagram-uml-members",
+      "datetime": "2026-08-31T17:27:09Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "the class diagram renders BUT study UML class diagrams, this seems to render relationships as opposed to building a UML class diagram which is what i am looking for",
+      "summary": "Class diagram now renders true UML three-compartment boxes with attribute/operation members: enriched DescribeResult with Members/MembersDeclared (read via OutgoingAssertions, has_member/members_truncated), ClassDiagramSurface fills each box compartment via DescribeAsync per drawn type (render-gen guarded, attr/op split). +3 Core tests (823), +2 App tests (186).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/ProjectionService.cs",
+        "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
+      ],
+      "tags": [],
       "outcome": "success"
     }
   ],

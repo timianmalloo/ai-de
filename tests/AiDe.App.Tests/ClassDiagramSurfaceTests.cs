@@ -120,4 +120,40 @@ public sealed class ClassDiagramSurfaceTests
             Assert.Equal(3, s.TypeCount);
         });
     }
+
+    [Fact]
+    public void ShowGraph_WithAMembersSource_DispatchesAMemberFillPerDrawnBox()
+    {
+        OnSta(() =>
+        {
+            var s = new ClassDiagramSurface
+            {
+                // deterministic stub standing in for the DescribeAsync round-trip
+                MembersSource = id => Task.FromResult(
+                    ((IReadOnlyList<string>)new[] { "+ Id : int", "# Save() : void" }, 2)),
+            };
+
+            s.ShowGraph(
+                new[] { N("A", "class"), N("B", "class"), N("C", "class") },
+                new[] { Edge("A", "B", "inherits") });
+
+            Assert.True(s.ShowingDiagram);
+            Assert.Equal(3, s.DrawnBoxCount);
+            // Every drawn box asks its source to fill the UML member compartment.
+            Assert.Equal(3, s.MembersRequestedCount);
+        });
+    }
+
+    [Fact]
+    public void ShowGraph_WithoutAMembersSource_StillRendersBoxes_AndRequestsNoFills()
+    {
+        OnSta(() =>
+        {
+            var s = new ClassDiagramSurface();   // no MembersSource wired
+            s.ShowGraph(new[] { N("A", "class"), N("B", "class") }, new[] { Edge("A", "B", "inherits") });
+
+            Assert.Equal(2, s.DrawnBoxCount);       // the diagram is still valid without members
+            Assert.Equal(0, s.MembersRequestedCount);
+        });
+    }
 }

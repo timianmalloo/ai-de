@@ -1127,6 +1127,7 @@ public sealed class WorkbenchShell : IDisposable
             var graph = await vm.LoadAsync(null, cancellationToken: CancellationToken.None);
             foreach (var surface in surfaces)
             {
+                surface.MembersSource = MembersForTypeAsync;   // fills each box's UML member compartment
                 surface.ShowGraph(graph.Nodes, graph.Edges);
             }
         }
@@ -1135,6 +1136,16 @@ public sealed class WorkbenchShell : IDisposable
             // An explicit error state, never a misleading empty "no classes" (U9).
             foreach (var surface in surfaces) { surface.ShowError(ex.Message); }
         }
+    }
+
+    // A type's declared members for the class-diagram compartment, read through the workspace's Describe
+    // query (ADR-0020 Phase 2). maxNeighbors is 1 because members ride on the node itself, not its edges.
+    private async Task<(IReadOnlyList<string> Members, int Declared)> MembersForTypeAsync(string typeId)
+    {
+        if (_queries is null) { return ([], 0); }
+
+        var described = await _queries.DescribeAsync(typeId, 1, CancellationToken.None);
+        return (described.Members ?? [], described.MembersDeclared);
     }
 
     // The code viewer's content source. A mock until Core ships NodeContentAsync (ADR-0018); swapping

@@ -492,6 +492,27 @@ inventing imports from prose and minified JavaScript rather than merely missing 
 
 ## 4j. Design → Core: the class diagram needs a MEMBERS query to become real UML
 
+> **RESOLVED (Design self-implemented, 2026 — commit pending).** The members query was built
+> Design-side by **enriching the existing `DescribeResult`** rather than adding a new IPC operation
+> (lowest-risk path — `System.Text.Json` makes added record fields backward-compatible, so no daemon
+> contract break). `ProjectionService.Describe` now reads `OutgoingAssertions(nodeId, MaxMembersRead=80)`,
+> filters `has_member` → `DescribeResult.Members` and `members_truncated` → `MembersDeclared`.
+> `ClassDiagramSurface` fills each drawn box's compartment via `MembersSource = DescribeAsync(typeId, 1)`
+> (≤40 boxes, parallel fire-and-forget, render-gen guarded). Tests: `ClassMemberProjectionTests` (Core,
+> in-process extraction) + `Describe_AgreesWithTheInProcessProjection` now asserts `Members`/
+> `MembersDeclared` survive the wire + `ClassDiagramSurfaceTests` (App, one fill dispatched per box).
+> **No Core action needed for the members feature.**
+>
+> **Core finding (attribute predicates leak into `Describe.Neighbors`).** While wiring this I found
+> `Describe` builds `Neighbors` from `AssertionsTouching` **without excluding attribute predicates**, so
+> `has_member`, `has_type`, and `members_truncated` appear as neighbour *edges* (objects like
+> `"+ Id : int"` or `"class"`). That is harmless for the class diagram (it reads `Members`, not
+> `Neighbors`) but pollutes the evidence/describe neighbour list — and, if the canvas graph builds nodes
+> from these edges anywhere, would render member-string / `"class"` pseudo-nodes. Recommend Core exclude
+> the attribute-predicate set (`has_type`, `has_member`, `members_truncated`, and siblings) from the
+> `edges` projection in `Describe` (and confirm the canvas graph filters them too). Design left this
+> alone as it is Core's projection-semantics domain.
+
 The class diagram now renders as an actual UML diagram — three-compartment boxes (name / member
 compartment), generalization (solid) and realization (dashed) connectors with a hollow triangle, a
 layered layout, a **Hide interfaces** collapse, and a Diagram/List toggle. But the **member compartment

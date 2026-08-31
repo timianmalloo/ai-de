@@ -63,7 +63,9 @@ public sealed record DescribeResult(
     IReadOnlyList<EdgeView> Neighbors,
     ResultBounds Bounds,
     string SourceRevision,
-    IReadOnlyDictionary<string, string>? NeighborKinds = null);
+    IReadOnlyDictionary<string, string>? NeighborKinds = null,
+    IReadOnlyList<string>? Members = null,
+    int MembersDeclared = 0);
 
 public sealed record ImpactResult(
     string RootNodeId,
@@ -162,6 +164,9 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
     private static readonly ActivitySource Activity = new("aide.projection.query");
 
     public const int MaxNeighborsCeiling = 50;
+    // A type's declared members are capped by the extractor at 40; 80 gives headroom for that plus the
+    // members_truncated marker without letting a pathological node return an unbounded compartment.
+    public const int MaxMembersRead = 80;
     public const int MaxEdgesCeiling = 500;
     public const int MaxNodesCeiling = 200;
     public const int MaxResultBytes = 64 * 1024;
@@ -350,7 +355,20 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
             .Distinct(StringComparer.Ordinal)
             .ToDictionary(id => id, id => NodeOf(reader, id).NodeKind, StringComparer.Ordinal);
 
-        return new DescribeResult(NodeOf(reader, nodeId), edges, bounds, revision, kinds);
+        // The type's OWN members (has_member) — the class-diagram compartment (ADR-0020 Phase 2). Read
+        // directly by subject so the neighbour cap cannot starve them; `members_truncated` carries the
+        // real declared count when the extractor capped the listing. Empty for a non-type node.
+        var ownRows = reader.OutgoingAssertions(nodeId, MaxMembersRead);
+        var members = ownRows.Where(a => a.Predicate == "has_member").Select(a => a.Object).ToList();
+        var declared = members.Count;
+        var truncated = ownRows.FirstOrDefault(a => a.Predicate == "members_truncated");
+        if (truncated is not null
+            && int.TryParse(truncated.Object, System.Globalization.CultureInfo.InvariantCulture, out var d))
+        {
+            declared = d;
+        }
+
+        return new DescribeResult(NodeOf(reader, nodeId), edges, bounds, revision, kinds, members, declared);
     }
 
     /// <summary>

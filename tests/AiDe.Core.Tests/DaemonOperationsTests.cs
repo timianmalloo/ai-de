@@ -90,6 +90,8 @@ public sealed class DaemonOperationsTests : IDisposable
             Assert.Equal(expected.Bounds, actual.Bounds);
             Assert.Equal(expected.SourceRevision, actual.SourceRevision);
             Assert.Equal(expected.Neighbors, actual.Neighbors);
+            Assert.Equal(expected.Members, actual.Members); // enriched fields survive the wire (class-diagram compartments)
+            Assert.Equal(expected.MembersDeclared, actual.MembersDeclared);
         });
     }
 
