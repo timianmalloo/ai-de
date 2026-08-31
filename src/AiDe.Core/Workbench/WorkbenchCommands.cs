@@ -159,6 +159,11 @@ public static class WorkbenchCommandCatalog
             "Opens a read-only source viewer. Renders a node's source with syntax highlighting (a labelled sample until the content query ships).",
             Menu: "_View"),
 
+        new("workbench.newDiagnostics", "Diagnostics", "Ctrl+K, D",
+            nameof(LayoutOperation.AddSurface),
+            "Opens the workspace diagnostics pane: the last re-index's analysis coverage (what was not analysed, grouped by category) and the daemon state.",
+            Menu: "_View"),
+
         new("workbench.focusCanvas", "Focus graph canvas", "Ctrl+K, G",
             string.Empty,
             "Moves focus into the graph. Tab off either end or press Escape to come back.",

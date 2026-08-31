@@ -51,6 +51,10 @@ public sealed class WorkbenchShell : IDisposable
     // named-session path (DispatchToAsync, for the prompt-draft surface) share one choreography.
     private IWorkspaceDispatch? _dispatch;
     private string? _dispatchScopeId;
+    // The last re-index's summary + the daemon diagnostics VM, for the Diagnostics pane. The pane is
+    // opened on demand and shows the most recent index's coverage rather than re-indexing itself.
+    private AiDe.Core.Ipc.IndexSummary? _lastIndex;
+    private AiDe.Core.Presentation.WorkspaceDiagnosticsViewModel? _diagnosticsVm;
     // Cross-restart prompt drafts, keyed by the stable SurfaceId (off the Core layout model).
     private PromptDraftStore? _promptDraftStore;
 
@@ -178,6 +182,12 @@ public sealed class WorkbenchShell : IDisposable
                 new Surface($"codeviewer#{Guid.NewGuid().ToString("N")[..6]}", "codeviewer", "Source"),
                 "Code viewer opened.",
                 "There is no pane to open a code viewer in.");
+
+        Controller.NewDiagnosticsRequested = () =>
+            OpenReferenceDocument(
+                new Surface($"diagnostics#{Guid.NewGuid().ToString("N")[..6]}", "diagnostics", "Diagnostics"),
+                "Diagnostics opened.",
+                "There is no pane to open diagnostics in.");
 
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
         // open there is nothing to persist against, so first-run simply starts from the default.
@@ -392,13 +402,13 @@ public sealed class WorkbenchShell : IDisposable
 
         // Diagnostics needs no daemon connection: the installation layout is on disk and the
         // incident sidecar is a local file, so the state is readable even when the daemon is not.
-        var diagnostics = new WorkspaceDiagnosticsViewModel(
+        _diagnosticsVm = new WorkspaceDiagnosticsViewModel(
             string.IsNullOrEmpty(dataDirectory) ? null : new DaemonInstallation(dataDirectory),
             string.IsNullOrEmpty(dataDirectory)
                 ? null
                 : new HealthIncidentSidecar(Path.Combine(dataDirectory, "health-incidents.jsonl")));
 
-        Controller.WorkspaceDiagnostics = () => diagnostics.Read().Describe();
+        Controller.WorkspaceDiagnostics = () => _diagnosticsVm.Read().Describe();
 
         // Indexing changes what every data-backed pane is showing. Subscribed once here rather than
         // per pane: panes come and go, and RereadDataSurfaces asks the layout what is open now.
@@ -409,10 +419,10 @@ public sealed class WorkbenchShell : IDisposable
         if (commands is not null)
         {
             Controller.WorkspaceIndex = async () =>
-                (await commands.IndexSolutionAsync(artifactRevision, CancellationToken.None)).Describe();
+                CaptureIndex(await commands.IndexSolutionAsync(artifactRevision, CancellationToken.None)).Describe();
 
             Controller.WorkspaceReindexAll = async () =>
-                (await commands.IndexSolutionAsync(artifactRevision, CancellationToken.None, force: true))
+                CaptureIndex(await commands.IndexSolutionAsync(artifactRevision, CancellationToken.None, force: true))
                     .Describe();
         }
 
@@ -1085,6 +1095,7 @@ public sealed class WorkbenchShell : IDisposable
         BindJoins();
         BindClassDiagrams();
         BindCodeViewers();
+        BindDiagnostics();
         BindTerminalAttention();
 
         return result.Applied ? okMessage : result.Announcement;
@@ -1191,6 +1202,54 @@ public sealed class WorkbenchShell : IDisposable
         {
             // Leaves the viewer in its fallback state rather than crashing.
         }
+    }
+
+    // Captures a completed re-index so the Diagnostics pane can show its coverage, and refreshes any
+    // open pane. Called from the re-index handlers, which complete on a background thread — the pane
+    // update touches WPF, so it is marshalled to the UI dispatcher.
+    private AiDe.Core.Ipc.IndexSummary CaptureIndex(AiDe.Core.Ipc.IndexSummary result)
+    {
+        _lastIndex = result;
+        _ = _dispatcher.InvokeAsync(BindDiagnostics);
+        return result;
+    }
+
+    internal void BindDiagnostics()
+    {
+        var surfaces = Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => s.Kind == "diagnostics")
+            .Select(s => Adapter.SurfaceContent<DiagnosticsSurface>(s.SurfaceId))
+            .OfType<DiagnosticsSurface>()
+            .ToList();
+        if (surfaces.Count == 0) { return; }
+
+        var report = BuildDiagnosticsReport();
+        foreach (var surface in surfaces) { surface.Show(report); }
+    }
+
+    private DiagnosticsReport BuildDiagnosticsReport()
+    {
+        string? summary = null;
+        IReadOnlyList<string> disclosures = [];
+        var failed = 0;
+        if (_lastIndex is { } idx)
+        {
+            summary = ConciseIndexSummary(idx);
+            disclosures = AiDe.Core.Facts.DisclosureSummary.Fold(idx.Disclosures);
+            failed = idx.Failed.Count;
+        }
+
+        var daemon = _diagnosticsVm?.Read().Describe();
+        return new DiagnosticsReport(summary, disclosures, failed, daemon);
+    }
+
+    private static string ConciseIndexSummary(AiDe.Core.Ipc.IndexSummary idx)
+    {
+        var text = $"Indexed {idx.ScopesIndexed} of {idx.ScopesFound} scope(s) · {idx.Assertions:N0} assertion(s)";
+        if (idx.ScopesReused > 0) { text += $" · {idx.ScopesReused} reused"; }
+        if (!string.IsNullOrWhiteSpace(idx.Contexts)) { text += $" · {idx.Contexts}"; }
+        return text;
     }
 
 

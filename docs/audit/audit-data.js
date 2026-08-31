@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T23:05:14Z",
+  "generated": "2026-08-31T23:49:49Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5559,6 +5559,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs",
         "docs/notes/workspace-open-layout-restore.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0312",
+      "shortname": "diagnostics-panel",
+      "datetime": "2026-08-31T23:49:49Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do the dedicated diagnostics panel enhancement",
+      "summary": "Added a dedicated Diagnostics pane (View menu / Ctrl+K,D): renders the last re-index's coverage as folded disclosures (DisclosureSummary.Fold) grouped by category with summed counts, plus daemon state, in a scrollable panel with empty/loading/error states -- the browsable home for what was a 200-line status-strip wall. Shell captures the last IndexSummary (CaptureIndex) and refreshes open panes (BindDiagnostics). +5 App tests (204); Core menu-count test updated (873). New Core command workbench.newDiagnostics.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/DiagnosticsSurface.cs"
       ],
       "tags": [],
       "outcome": "success"

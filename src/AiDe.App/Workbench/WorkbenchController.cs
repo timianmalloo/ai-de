@@ -106,6 +106,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workbench.newCodeViewer":
                 return NewCodeViewer();
 
+            case "workbench.newDiagnostics":
+                return NewDiagnostics();
+
             case "workbench.toggleLock":
                 service.IsLocked = !service.IsLocked;
                 announcer.Announce(service.IsLocked
@@ -416,6 +419,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// <summary>Opens a read-only code-viewer surface. Set by the shell that can create surfaces.</summary>
     public Func<string>? NewCodeViewerRequested { get; set; }
 
+    /// <summary>Opens the workspace diagnostics surface. Set by the shell that can create surfaces.</summary>
+    public Func<string>? NewDiagnosticsRequested { get; set; }
+
     private bool NewAgentTerminal()
     {
         announcer.Announce(NewAgentTerminalRequested is null
@@ -448,6 +454,15 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         announcer.Announce(NewCodeViewerRequested is null
             ? "The code viewer is not available in this build."
             : NewCodeViewerRequested());
+
+        return true;
+    }
+
+    private bool NewDiagnostics()
+    {
+        announcer.Announce(NewDiagnosticsRequested is null
+            ? "Diagnostics are not available in this build."
+            : NewDiagnosticsRequested());
 
         return true;
     }
