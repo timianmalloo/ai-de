@@ -46,6 +46,12 @@ public sealed class ClassDiagramSurface : ContentControl
     private int _membersRequested;
     public int MembersRequestedCount => _membersRequested;
 
+    // Member data per type id (attributes, operations, real declared count), fetched once per graph and
+    // reused across re-renders (toggles). Variable-height boxes need members BEFORE layout, so we render
+    // from this cache and re-render when a prefetch fills it. Cleared when a new graph is shown.
+    private readonly Dictionary<string, (IReadOnlyList<string> Attributes, IReadOnlyList<string> Operations, int Declared)> _memberCache
+        = new(StringComparer.Ordinal);
+
     public ClassDiagramSurface(string title = "Class diagram")
     {
         AutomationProperties.SetName(this, title);
@@ -128,6 +134,18 @@ public sealed class ClassDiagramSurface : ContentControl
     /// <summary>For tests: the number of type boxes drawn in the visual diagram.</summary>
     internal int DrawnBoxCount => _scroller.Content is Canvas c ? c.Children.OfType<Border>().Count() : 0;
 
+    /// <summary>Test hook: the measured heights of the drawn boxes — variable, sized to each type's members.</summary>
+    internal IReadOnlyList<double> DrawnBoxHeights =>
+        _scroller.Content is Canvas c
+            ? c.Children.OfType<Border>()
+                .Select(b =>
+                {
+                    b.Measure(new Size(b.Width, double.PositiveInfinity));
+                    return b.DesiredSize.Height;
+                })
+                .ToList()
+            : [];
+
     /// <summary>For tests: force diagram or list mode (as the header toggle does).</summary>
     internal void SetDiagramMode(bool on) => _diagramToggle.IsChecked = on;
 
@@ -142,6 +160,8 @@ public sealed class ClassDiagramSurface : ContentControl
     public void Show(ClassHierarchy hierarchy)
     {
         _full = hierarchy;
+        _memberCache.Clear();   // a new graph: member data from the previous type set is stale
+        _membersRequested = 0;  // reset the per-graph member-request tally (test hook)
         _search.Visibility = hierarchy.Types.Count > 12 ? Visibility.Visible : Visibility.Collapsed;
         Render(string.IsNullOrWhiteSpace(_search.Text) ? hierarchy : ClassHierarchyModel.Filter(hierarchy, _search.Text));
     }
@@ -236,7 +256,6 @@ public sealed class ClassDiagramSurface : ContentControl
     private void RenderDiagram(ClassHierarchy hierarchy, List<string> notes)
     {
         var gen = ++_renderGen;   // supersedes any in-flight member fills from an earlier render
-        _membersRequested = 0;    // per-render count of dispatched member fills (test hook)
         var degree = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var r in hierarchy.Relations)
         {
@@ -288,129 +307,117 @@ public sealed class ClassDiagramSurface : ContentControl
 
         foreach (var t in drawn) { Rank(t.Id, []); }
 
-        const double boxW = 188, boxH = 150, gapX = 28, gapY = 74, pad = 14;
+        // Boxes are a fixed width but a VARIABLE height — each sized to its own members, which is what
+        // makes this a real UML class diagram rather than uniform nodes. Members must therefore be known
+        // before layout: build each box from the cache, measure it, then place rows by measured height.
+        const double boxW = 224, gapX = 30, gapY = 76, pad = 14;
+
+        var boxes = new Dictionary<string, Border>(StringComparer.Ordinal);
+        var heights = new Dictionary<string, double>(StringComparer.Ordinal);
+        foreach (var t in drawn)
+        {
+            _memberCache.TryGetValue(t.Id, out var m);
+            var loading = MembersSource is not null && !_memberCache.ContainsKey(t.Id);
+            var box = DiagramBox(t, boxW, m.Attributes, m.Operations, m.Declared, loading);
+            box.Measure(new Size(boxW, double.PositiveInfinity));
+            boxes[t.Id] = box;
+            heights[t.Id] = Math.Max(56, box.DesiredSize.Height);
+        }
+
         var rows = drawn.GroupBy(t => rank[t.Id]).OrderBy(g => g.Key).ToList();
-        var pos = new Dictionary<string, Point>(StringComparer.Ordinal);
+        var rects = new Dictionary<string, Rect>(StringComparer.Ordinal);
         var maxCols = 1;
+        var y = (double)pad;
         foreach (var row in rows)
         {
             var items = row.OrderBy(t => t.Label, StringComparer.OrdinalIgnoreCase).ToList();
             maxCols = Math.Max(maxCols, items.Count);
+            var rowH = items.Max(t => heights[t.Id]);
             for (var i = 0; i < items.Count; i++)
             {
-                pos[items[i].Id] = new Point(pad + i * (boxW + gapX), pad + row.Key * (boxH + gapY));
+                var id = items[i].Id;
+                rects[id] = new Rect(pad + i * (boxW + gapX), y, boxW, heights[id]);
             }
+            y += rowH + gapY;
         }
 
         var canvas = new Canvas
         {
             Width = pad * 2 + maxCols * (boxW + gapX) - gapX,
-            Height = pad * 2 + Math.Max(1, rows.Count) * (boxH + gapY) - gapY,
+            Height = Math.Max(pad * 2, y - gapY + pad),
             Background = Brushes.Transparent,
         };
 
-        // Connectors under the boxes.
+        // Connectors first, so the boxes paint over their endpoints.
         foreach (var e in edges)
         {
-            if (pos.TryGetValue(e.From, out var from) && pos.TryGetValue(e.To, out var to))
+            if (rects.TryGetValue(e.From, out var from) && rects.TryGetValue(e.To, out var to))
             {
-                AddConnector(canvas, from, to, boxW, boxH, e.Kind);
+                AddConnector(canvas, from, to, e.Kind);
             }
         }
 
-        var fills = new List<(string Id, Panel Panel)>();
         foreach (var t in drawn)
         {
-            var box = DiagramBox(t, boxW, boxH, out var memberPanel);
-            Canvas.SetLeft(box, pos[t.Id].X);
-            Canvas.SetTop(box, pos[t.Id].Y);
+            var box = boxes[t.Id];
+            var r = rects[t.Id];
+            Canvas.SetLeft(box, r.X);
+            Canvas.SetTop(box, r.Y);
             canvas.Children.Add(box);
-            fills.Add((t.Id, memberPanel));
         }
 
         _scroller.Content = canvas;
 
-        // Members arrive after the boxes: one DescribeAsync per drawn type, each filling its own
-        // compartment when it returns, guarded by the render generation so a stale fetch is dropped.
-        foreach (var (id, panel) in fills)
+        // Fill the member cache for any type we don't have yet, then re-render at the true heights. One
+        // DescribeAsync per uncached drawn type; the render generation drops a stale prefetch (toggle/search).
+        var uncached = MembersSource is null
+            ? new List<string>()
+            : drawn.Select(t => t.Id).Where(id => !_memberCache.ContainsKey(id)).ToList();
+        _membersRequested += uncached.Count;   // cumulative per Show; observed synchronously by tests
+        if (uncached.Count > 0)
         {
-            _ = FillMembersAsync(gen, id, panel);
+            _ = PrefetchMembersAsync(gen, uncached, hierarchy, notes);
         }
     }
 
-    private async Task FillMembersAsync(int gen, string typeId, Panel panel)
+    // Fetches members for the given types into the cache, then re-renders so the boxes take their true
+    // height. Guarded by the render generation so a superseded render (toggle/search) drops silently.
+    private async Task PrefetchMembersAsync(int gen, List<string> ids, ClassHierarchy hierarchy, List<string> notes)
     {
-        if (MembersSource is null)
+        if (MembersSource is null) { return; }
+
+        var fetched = new List<(string Id, IReadOnlyList<string> Attributes, IReadOnlyList<string> Operations, int Declared)>();
+        foreach (var id in ids)
         {
-            panel.Children.Clear();
-            panel.Children.Add(Muted("members pending", 10));
-            return;
+            try
+            {
+                var (members, declared) = await MembersSource(id);
+                var (attrs, ops) = SplitMembers(members);
+                fetched.Add((id, attrs, ops, declared));
+            }
+            catch
+            {
+                fetched.Add((id, [], [], 0));   // a failed fetch caches "no members"; the diagram stays valid
+            }
         }
 
-        _membersRequested++;   // a genuine fill dispatch (source present); observed before the first await
+        if (gen != _renderGen) { return; }   // a newer render superseded this prefetch
 
-        IReadOnlyList<string> members;
-        int declared;
-        try
+        foreach (var f in fetched)
         {
-            (members, declared) = await MembersSource(typeId);
-        }
-        catch
-        {
-            return;   // a failed member fetch leaves the box as-is; the diagram is still valid
+            _memberCache[f.Id] = (f.Attributes, f.Operations, f.Declared);
         }
 
-        if (gen != _renderGen) { return; }   // a newer render has superseded this fill
+        RenderDiagram(hierarchy, notes);   // cache is now warm → boxes get their real heights, no re-prefetch
+    }
 
-        panel.Children.Clear();
-        if (members.Count == 0)
-        {
-            panel.Children.Add(Muted("no members", 10));
-            return;
-        }
-
-        // A field/property has no parameter list; a method has "(" — the UML attribute / operation split.
+    // The UML attribute / operation split: a field/property has no parameter list; an operation has "(".
+    private static (IReadOnlyList<string> Attributes, IReadOnlyList<string> Operations) SplitMembers(
+        IReadOnlyList<string> members)
+    {
         var attributes = members.Where(m => !m.Contains('(', StringComparison.Ordinal)).ToList();
         var operations = members.Where(m => m.Contains('(', StringComparison.Ordinal)).ToList();
-
-        const int perGroup = 3;
-        AddMemberLines(panel, attributes, perGroup);
-        if (attributes.Count > 0 && operations.Count > 0)
-        {
-            var rule = new Border
-            {
-                BorderThickness = new Thickness(0, 1, 0, 0),
-                Height = 1,
-                Margin = new Thickness(0, 2, 0, 2),
-            };
-            rule.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
-            panel.Children.Add(rule);
-        }
-
-        AddMemberLines(panel, operations, perGroup);
-    }
-
-    private static void AddMemberLines(Panel panel, List<string> items, int cap)
-    {
-        for (var i = 0; i < items.Count; i++)
-        {
-            if (i == cap)
-            {
-                panel.Children.Add(Muted($"…+{items.Count - cap} more", 10));
-                return;
-            }
-
-            var line = new TextBlock
-            {
-                Text = items[i],
-                FontSize = 10.5,
-                TextWrapping = TextWrapping.NoWrap,
-                TextTrimming = TextTrimming.CharacterEllipsis,
-                ToolTip = items[i],
-            };
-            line.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
-            panel.Children.Add(line);
-        }
+        return (attributes, operations);
     }
 
     // Hides interface types and any relationship touching one — a class implementing many interfaces
@@ -431,12 +438,12 @@ public sealed class ClassDiagramSurface : ContentControl
         return new ClassHierarchy(types, relations, external);
     }
 
-    private static void AddConnector(Canvas canvas, Point from, Point to, double boxW, double boxH, ClassRelationKind kind)
+    private static void AddConnector(Canvas canvas, Rect from, Rect to, ClassRelationKind kind)
     {
-        var x1 = from.X + boxW / 2;   // top-centre of the derived type
+        var x1 = from.X + from.Width / 2;   // top-centre of the derived type
         var y1 = from.Y;
-        var x2 = to.X + boxW / 2;     // bottom-centre of the base type
-        var y2 = to.Y + boxH;
+        var x2 = to.X + to.Width / 2;       // bottom-centre of the base type
+        var y2 = to.Y + to.Height;
 
         var line = new Line { X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, StrokeThickness = 1.3 };
         line.SetResourceReference(Shape.StrokeProperty, "BorderBrush");
@@ -465,14 +472,23 @@ public sealed class ClassDiagramSurface : ContentControl
         canvas.Children.Add(head);
     }
 
-    // A UML class box: a name compartment (with the «interface» stereotype) over a member compartment
-    // (attributes then operations), separated by a rule. The member compartment is filled asynchronously
-    // from has_member — <paramref name="memberPanel"/> is where <see cref="FillMembersAsync"/> writes.
-    private static Border DiagramBox(ClassTypeNode type, double w, double h, out StackPanel memberPanel)
-    {
-        var stack = new DockPanel { LastChildFill = true };
+    private const int MaxPerCompartment = 15;
 
-        var nameArea = new StackPanel { Margin = new Thickness(6, 4, 6, 4) };
+    // A UML class box: three stacked compartments — the name (with an «interface» stereotype and an
+    // italic name for interfaces), the attributes, then the operations — each separated by a rule and
+    // each SIZED TO ITS CONTENT, so the box height reflects the type. This is the UML classifier shape.
+    private static Border DiagramBox(
+        ClassTypeNode type,
+        double w,
+        IReadOnlyList<string>? attributes,
+        IReadOnlyList<string>? operations,
+        int declared,
+        bool loading)
+    {
+        var stack = new StackPanel();
+
+        // Name compartment.
+        var nameArea = new StackPanel { Margin = new Thickness(6, 5, 6, 5) };
         if (type.IsInterface)
         {
             nameArea.Children.Add(Muted("«interface»", 10, center: true));
@@ -482,33 +498,91 @@ public sealed class ClassDiagramSurface : ContentControl
         name.TextAlignment = TextAlignment.Center;
         name.TextWrapping = TextWrapping.NoWrap;
         name.TextTrimming = TextTrimming.CharacterEllipsis;
+        name.ToolTip = type.Id;
+        if (type.IsInterface) { name.FontStyle = FontStyles.Italic; }   // UML: interface/abstract names are italic
         nameArea.Children.Add(name);
-        DockPanel.SetDock(nameArea, Dock.Top);
         stack.Children.Add(nameArea);
 
-        // The compartment rule — what makes the box read as a UML class rather than a plain node.
-        var rule = new Border { BorderThickness = new Thickness(0, 1, 0, 0), Height = 1 };
-        rule.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
-        DockPanel.SetDock(rule, Dock.Top);
-        stack.Children.Add(rule);
+        stack.Children.Add(CompartmentRule());
 
-        memberPanel = new StackPanel { Margin = new Thickness(6, 3, 6, 3) };
-        memberPanel.Children.Add(Muted("…", 10.5));   // pending until the member fetch returns
-        stack.Children.Add(memberPanel);
+        var attrs = attributes ?? [];
+        var ops = operations ?? [];
+        var listed = attrs.Count + ops.Count;
+
+        // Attributes compartment, then operations compartment — always present (UML keeps the three
+        // compartments even when a member list is empty), separated by a rule.
+        stack.Children.Add(Compartment(attrs, loading, footer: null));
+        stack.Children.Add(CompartmentRule());
+        var undeclared = declared > listed ? declared - listed : 0;
+        var footer = undeclared > 0 && !loading ? $"(+{undeclared} more not listed)" : null;
+        stack.Children.Add(Compartment(ops, loading, footer));
 
         var box = new Border
         {
             Width = w,
-            Height = h,
             Child = stack,
             CornerRadius = new CornerRadius(4),
             BorderThickness = new Thickness(1),
-            ClipToBounds = true,   // a member-rich type must not spill past its box
         };
         box.SetResourceReference(BackgroundProperty, "RaisedBrush");
         box.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
         AutomationProperties.SetName(box, (type.IsInterface ? "interface " : "class ") + type.Label);
         return box;
+    }
+
+    private static Border CompartmentRule()
+    {
+        var rule = new Border { BorderThickness = new Thickness(0, 1, 0, 0), Height = 1 };
+        rule.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
+        return rule;
+    }
+
+    // One UML member compartment: the member lines (capped, with a "…+N more"), a "…" while loading, or a
+    // minimal empty band when the type declares none of that member kind.
+    private static Border Compartment(IReadOnlyList<string> items, bool loading, string? footer)
+    {
+        var panel = new StackPanel { Margin = new Thickness(6, 3, 6, 3) };
+
+        if (loading)
+        {
+            panel.Children.Add(Muted("…", 10.5));
+        }
+        else if (items.Count == 0 && footer is null)
+        {
+            panel.Children.Add(new Border { Height = 4, Background = Brushes.Transparent });   // empty compartment band
+        }
+        else
+        {
+            for (var i = 0; i < items.Count && i < MaxPerCompartment; i++)
+            {
+                panel.Children.Add(MemberLine(items[i]));
+            }
+            if (items.Count > MaxPerCompartment)
+            {
+                panel.Children.Add(Muted($"…+{items.Count - MaxPerCompartment} more", 10));
+            }
+            if (footer is not null)
+            {
+                panel.Children.Add(Muted(footer, 10));
+            }
+        }
+
+        return new Border { Child = panel };
+    }
+
+    private static TextBlock MemberLine(string text)
+    {
+        var line = new TextBlock
+        {
+            Text = text,
+            FontSize = 10.5,
+            FontFamily = new FontFamily("Consolas, Cascadia Mono, Menlo, monospace"),
+            TextWrapping = TextWrapping.NoWrap,
+            TextTrimming = TextTrimming.CharacterEllipsis,
+            ToolTip = text,
+        };
+        line.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
+        return line;
     }
 
     private static TextBlock GroupHeader(string context, int count)

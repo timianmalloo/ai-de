@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T16:49:39Z",
+  "generated": "2026-08-31T20:54:30Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1603,6 +1603,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "450714ae4b68f3c3370e2d7df000cd7003531c5765e78a40388826127d03872e"
     },
     {
+      "id": "note-uml-diagram-fidelity-roadmap",
+      "path": "docs/notes/uml-diagram-fidelity-roadmap.md",
+      "title": "Decision note — full-fidelity UML class & sequence diagrams",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The class diagram now renders variable-height, three-compartment UML classifier boxes (name / attributes / operations) sized to each type's members, with «interface» stereotypes, italic interface names, monospace member lines, and correct generalization/realization arrowheads. This note records the remaining UML class-diagram fidelity gaps and the design + Core data contract for a UML sequence-diagram surface.",
+      "tags": [
+        "uml",
+        "class-diagram",
+        "sequence-diagram",
+        "visualization",
+        "class-diagram-surface"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1019c9d98b854b04b2fc784cada4bdea68e34249dba7f30ffe4979e750f397b4"
+    },
+    {
       "id": "conceptual-model-ai-native-ide",
       "path": "docs/design/conceptual-model.md",
       "title": "AI-DE conceptual domain model",
@@ -3092,7 +3119,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3ab3eb384979b3b8ca425550fddfd8b5995c55744770e34784acdbe5a7b21b70"
+      "sourceSha256": "978685b3823770b9f4d84899d2b8ba562201abffc645e4c45747643f8295748a"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -6539,7 +6566,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -6633,5 +6660,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d77ba60a8f1a416cb3f16fc803738fc750dca55dbe3bff29b7a8da0c719d4ff4"
+  "graphSha256": "52f71531643764827c56cb73eaea63302704d046879595490466f05606cdf3fe"
 };

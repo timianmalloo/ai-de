@@ -701,3 +701,22 @@ Delivered, all Design-owned ("if it changes how a pane looks, Design owns it"):
 - Touched the Core-listed `SurfaceContentFactory.cs` for the **visual wrap only** (one return
   statement); no kind mapping or behaviour changed. Full solution green: 680 tests, App.Tests 118
   (baseline bumped), Core.Tests 562. **Still square: document-tab corners** (needs retemplating).
+
+## 4k. Design → Core: sequence diagrams need ORDERED CALL data (2026-08-31)
+
+The class diagram is now real UML (variable-height three-compartment classifier boxes, stereotypes,
+generalization/realization arrowheads, members). Next UML surface: **sequence diagrams**. A UML
+sequence diagram renders an *ordered* interaction — lifelines, activation bars, and messages
+(synchronous filled-arrow, asynchronous open-arrow, dashed return) top-to-bottom in call order.
+
+**The blocker: there is no ordered-call data in the store.** There is no `calls` predicate, and
+nothing carries a call **sequence ordinal**. `depends_on` (7585) is unordered and type-level, not a
+call sequence.
+
+**The ask.** Emit a `calls` assertion per call site: subject = the calling method/type, object = the
+called method/type, plus metadata carrying (a) a **sequence ordinal** within the caller (so the
+messages can be ordered) and (b) a **call kind** (`sync` | `async` | `return`). A first, sufficient
+slice: one method's outgoing call chain (a single activation). Design will build
+`SequenceDiagramSurface` against a **stubbed interaction model** in the meantime (mocked-seam
+pattern), so wiring the real `calls` query later is a substitution, not a redesign. Full rationale +
+the UML symbol set in `docs/notes/uml-diagram-fidelity-roadmap.md`.

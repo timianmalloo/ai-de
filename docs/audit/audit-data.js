@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T17:27:09Z",
+  "generated": "2026-08-31T20:54:55Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5367,6 +5367,24 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.Core/Projections/ProjectionService.cs",
         "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0291",
+      "shortname": "classdiagram-variable-height-uml",
+      "datetime": "2026-08-31T20:54:55Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "yes the fill worked, i think variable height sizing IS worth the layout rework. I think you still need to really understand UML symbols and styles for class diagrams and sequence diagrams as this is an initial start but i want full fidelity UML diagram",
+      "summary": "Class diagram reworked to full UML classifier boxes: variable box height (each measured and sized to its members), three real compartments (name/attributes/operations) separated by rules, interface stereotype + italic interface name, monospace member lines, up to 15/compartment + overflow footer. Member cache + prefetch-then-rerender replaces per-box async fill. +1 App test (187) proving member-rich boxes are taller. Roadmap note + Core ask for ordered-call data (sequence diagrams) filed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/ClassDiagramSurface.cs",
+        "docs/notes/uml-diagram-fidelity-roadmap.md"
       ],
       "tags": [],
       "outcome": "success"

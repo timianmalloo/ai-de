@@ -156,4 +156,32 @@ public sealed class ClassDiagramSurfaceTests
             Assert.Equal(0, s.MembersRequestedCount);
         });
     }
+
+    [Fact]
+    public void ShowGraph_SizesEachBoxToItsMembers_SoMemberRichTypesAreTaller()
+    {
+        OnSta(() =>
+        {
+            // "A" declares many members; "B" declares none. A completed-task source with no
+            // SynchronizationContext resolves synchronously, so the boxes are sized by the time ShowGraph returns.
+            var many = Enumerable.Range(0, 8).Select(i => $"+ Field{i} : int").ToArray();
+            var s = new ClassDiagramSurface
+            {
+                MembersSource = id => Task.FromResult(
+                    id == "A"
+                        ? ((IReadOnlyList<string>)many, many.Length)
+                        : ((IReadOnlyList<string>)System.Array.Empty<string>(), 0)),
+            };
+
+            s.ShowGraph(
+                new[] { N("A", "class"), N("B", "class") },
+                new[] { Edge("A", "B", "inherits") });
+
+            var heights = s.DrawnBoxHeights;
+            Assert.Equal(2, heights.Count);
+            // Variable height: the member-rich box is meaningfully taller than the member-less one.
+            Assert.True(heights.Max() > heights.Min() + 40,
+                $"expected a member-rich box to be taller; heights were [{string.Join(", ", heights)}]");
+        });
+    }
 }
