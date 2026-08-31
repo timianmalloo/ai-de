@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T04:29:54Z",
+  "generated": "2026-08-31T13:18:34Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2055,6 +2055,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "807705a3a65c94b27ae9d0b1385fec92878071c1eb7a3a6d8d0e4bde10249762"
+    },
+    {
+      "id": "design-watcher-sessions-surface",
+      "path": "docs/design/watcher-sessions-surface.md",
+      "title": "Loomkeeper Sessions Surface - WPF Treegrid Row",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper Sessions surface (slice 3): the compute reader that closes the Phase-1 change-surface. A synchronous, deterministic projection folds the observation store + liveness into honest session rows (Not Recorded for an unproven harness/model, a no-colour-alone liveness badge), exposed by a testable WatcherSessionsPaneViewModel (in AiDe.Core/Presentation, mirroring EvidencePaneViewModel) with the full state set, and rendered by a \"sessions\" surface kind in the WPF workbench (G6 Multi-Panel Data Terminal), in the default layout so it is actually visible.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "ui",
+        "sessions",
+        "wpf",
+        "liveness",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "mockup-watcher-observatory",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0017-watcher-observation-projection",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9e2f4a197ea31e0fbbc0cfd7e9d19602e8e53a9132b267a21c5ffad894676d57"
     },
     {
       "id": "audit-log",
@@ -6612,6 +6658,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "88db95fbfe34817d03c84ba141127c2ef29ac097928899e06b8d4f455a376a88"
     },
     {
+      "id": "proof-watcher-sessions-surface",
+      "path": "docs/proof/watcher-sessions-surface.md",
+      "title": "Proof Pack - Loomkeeper Sessions Surface (slice 3)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper Sessions surface meets its design: a synchronous, deterministic projection folds the observation store + liveness into honest session rows (Not Recorded for an unproven harness/model, a no-colour-alone liveness badge), the pane VM carries the full state set and never strands on Loading nor renders an unreadable store as blank success (DC-011), and the WPF \"sessions\" surface shows an observed row and is in the default layout - proven by 10 Core tests + 3 STA render tests, with the Not-Recorded honesty oracle mutation-verified. Core 780/0, App 135/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "ui",
+        "sessions",
+        "wpf",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f972a904bfe3c6f5f256263ee6bb296c6cbd106cddfd078b6ca72553a663d04b"
+    },
+    {
       "id": "spec-agentic-watcher-substrate",
       "path": "docs/specs/agentic-watcher-substrate.md",
       "title": "Loomkeeper - Agentic Watcher Substrate and Observatory",
@@ -7161,5 +7244,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "32b054cdbb5ee7de61568c890b520e7a2fdb8b3335aafa1cd8c08de961bd77a4"
+  "graphSha256": "02cb07b64a184496ca105195427d8ac8c0ebf0b2ce8aa6f0681e3c0cfa0b323e"
 };

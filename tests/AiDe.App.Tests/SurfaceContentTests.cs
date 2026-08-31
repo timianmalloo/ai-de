@@ -2,7 +2,9 @@ using AiDe.Testing;
 using System.Windows;
 using System.Windows.Controls;
 using AiDe.App.Workbench;
+using AiDe.Core.Presentation;
 using AiDe.Core.Projections;
+using AiDe.Core.Watcher;
 using AiDe.Core.Workbench;
 
 namespace AiDe.App.Tests;
@@ -208,6 +210,69 @@ public sealed class SurfaceContentTests
         Assert.IsType<JoinSurface>(Unwrap(content));
         Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces),
             s => s.Kind == "joins");
+    }
+
+    [Fact]
+    public void TheSessionsSurface_ShowsAnObservedSessionRow()
+    {
+        // The Loomkeeper Sessions surface renders honestly and synchronously - one observed session
+        // reaches the ListBox, and the status is not a Loading message (the load is a local fold).
+        var view = OnStaThread(() =>
+        {
+            var query = new StubSessionsQuery(new WatcherSessionSnapshot(
+                "s1",
+                new SessionBinding(
+                    new RepositoryIdentity("C:/repos/ai-de", "ai-de"),
+                    new WorktreeIdentity(new RepositoryIdentity("C:/repos/ai-de", "ai-de"), "main", "C:/repos/ai-de"),
+                    new TerminalIdentity("term-1"),
+                    new AgentIdentity("agent-1"),
+                    new HarnessIdentity("Claude Code", "1.0"),
+                    new ModelIdentity("Opus 4.8", "2026-08"),
+                    TrustClassification.Verified),
+                LivenessState.Alive,
+                3));
+
+            var content = new SurfaceContentFactory(null, query).Create(new Surface("sessions", "sessions", "Sessions"));
+            var stack = Assert.IsType<StackPanel>(Unwrap(content));
+            var list = stack.Children.OfType<ListBox>().Single();
+            var status = stack.Children.OfType<TextBlock>().Single();
+            return new SurfaceView(
+                list.ItemsSource?.Cast<object>().Count() ?? 0,
+                status.Text);
+        });
+
+        Assert.Equal(1, view.ItemCount);
+        Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void TheSessionsSurface_WithNoWatcherStore_SaysObservationIsUnavailable_NotBlank()
+    {
+        var view = OnStaThread(() =>
+        {
+            var content = new SurfaceContentFactory(null).Create(new Surface("sessions", "sessions", "Sessions"));
+            var stack = Assert.IsType<StackPanel>(Unwrap(content));
+            var status = stack.Children.OfType<TextBlock>().Single();
+            return status.Text;
+        });
+
+        Assert.Contains("not available", view, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Loading", view, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void TheSessionsSurface_IsInTheDefaultLayout()
+    {
+        // The same visibility lesson as Joins: a surface not in the default layout is a control
+        // nobody can see. Sessions is the point of the watcher UI.
+        Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces),
+            s => s.Kind == "sessions");
+    }
+
+    /// <summary>A watcher read that answers immediately with a fixed set of sessions.</summary>
+    private sealed class StubSessionsQuery(params WatcherSessionSnapshot[] sessions) : IWatcherSessionsQuery
+    {
+        public IReadOnlyList<WatcherSessionSnapshot> GetSessions() => sessions;
     }
 
     /// <summary>A read surface that fails, standing in for a daemon that cannot be reached.</summary>

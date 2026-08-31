@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T04:30:34Z",
+  "generated": "2026-08-31T13:19:02Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2820,6 +2820,28 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T04:09:56Z",
       "duration_seconds": 1238.0
+    },
+    {
+      "id": "al-0188",
+      "shortname": "implement-watcher-sessions-surface",
+      "datetime": "2026-08-31T13:19:02Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all next steps listed above (slice 3 WPF Sessions treegrid row)",
+      "summary": "Slice 3: sessions read model - store.AllSessions() + WatcherSessionsQuery fold + WatcherSessionsPaneViewModel (honest Not Recorded, no-colour-alone liveness badge, full state set, synchronous load avoids DC-011) + WPF 'sessions' surface kind in default layout. 10 Core tests + 3 STA render tests; Not-Recorded oracle mutation-verified. Core 780/0, App 135/0. Proof docs/proof/watcher-sessions-surface.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/WatcherSessionsPaneViewModel.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "tests/AiDe.Core.Tests/Watcher/WatcherSessionsPaneViewModelTests.cs",
+        "docs/proof/watcher-sessions-surface.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T13:06:31Z",
+      "duration_seconds": 751.0
     }
   ],
   "changes": [
@@ -5260,6 +5282,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
         "after": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0113",
+      "datetime": "2026-08-31T13:19:02Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 3: WPF Sessions surface closes the Phase-1 change-surface (compute reader)",
+      "prompt": "run /design then /implement on the WPF Sessions treegrid row to complete slice 3",
+      "summary": "A synchronous deterministic projection (store.AllSessions + liveness fold) feeds a testable WatcherSessionsPaneViewModel that renders sessions honestly (Not Recorded, no-colour-alone liveness badge, full state set), rendered by a 'sessions' surface kind in the default layout. Decision: synchronous local fold (not async) so the pane can never strand on Loading (DC-011); pane VM in AiDe.Core/Presentation for full unit-testability without WPF.",
+      "rationale": "closes the Phase-1 walking-skeleton compute reader (E7); honest Not Recorded (US-13) and no-colour-alone liveness (WCAG); a control in the default layout so it can actually fire (JoinSurface lesson)",
+      "artifacts": [
+        "docs/design/watcher-sessions-surface.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "76422e861aa5b3a44a25fb84263cf2d5c1569070",
+        "after": "76422e861aa5b3a44a25fb84263cf2d5c1569070",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

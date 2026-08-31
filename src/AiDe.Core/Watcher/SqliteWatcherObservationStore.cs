@@ -183,6 +183,37 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         }
     }
 
+    public IReadOnlyList<SessionRecord> AllSessions()
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText =
+                """
+                SELECT session_id, generation, repo_path, repo_display, worktree_branch, worktree_path,
+                       terminal_id, agent_name, harness_name, harness_version, model_name, model_version, trust
+                FROM agent_session_dim ORDER BY repo_display, worktree_branch, session_id;
+                """;
+            using var reader = command.ExecuteReader();
+            var sessions = new List<SessionRecord>();
+            while (reader.Read())
+            {
+                var repo = new RepositoryIdentity(reader.GetString(2), reader.GetString(3));
+                var binding = new SessionBinding(
+                    repo,
+                    new WorktreeIdentity(repo, reader.GetString(4), reader.GetString(5)),
+                    new TerminalIdentity(reader.GetString(6)),
+                    new AgentIdentity(reader.GetString(7)),
+                    reader.IsDBNull(8) ? null : new HarnessIdentity(reader.GetString(8), reader.GetString(9)),
+                    reader.IsDBNull(10) ? null : new ModelIdentity(reader.GetString(10), reader.GetString(11)),
+                    Enum.Parse<TrustClassification>(reader.GetString(12)));
+                sessions.Add(new SessionRecord(reader.GetString(0), new SessionGeneration(reader.GetInt64(1)), binding));
+            }
+
+            return sessions;
+        }
+    }
+
     public void MarkEnded(string sessionId)
     {
         lock (_gate)

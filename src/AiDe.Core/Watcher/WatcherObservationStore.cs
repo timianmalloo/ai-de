@@ -29,6 +29,9 @@ public interface IWatcherObservationStore
     /// <summary>The current session metadata for an id, or null if unknown.</summary>
     SessionRecord? FindSession(string sessionId);
 
+    /// <summary>Every recorded session, for the read projection (the compute reader, slice 3).</summary>
+    IReadOnlyList<SessionRecord> AllSessions();
+
     /// <summary>Marks a session ended (terminal closed or superseded generation).</summary>
     void MarkEnded(string sessionId);
 
@@ -109,6 +112,14 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         lock (_gate)
         {
             return _sessions.TryGetValue(sessionId, out var record) ? record : null;
+        }
+    }
+
+    public IReadOnlyList<SessionRecord> AllSessions()
+    {
+        lock (_gate)
+        {
+            return [.. _sessions.Values];
         }
     }
 

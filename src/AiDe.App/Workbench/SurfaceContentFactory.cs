@@ -15,10 +15,10 @@ namespace AiDe.App.Workbench;
 /// content are independent of where it is docked (US-9). This factory is the single place that
 /// mapping lives, so adding a surface kind never means touching the layout model.
 /// </remarks>
-public sealed class SurfaceContentFactory(IWorkspaceQueries? queries)
+public sealed class SurfaceContentFactory(IWorkspaceQueries? queries, IWatcherSessionsQuery? watcherSessions = null)
 {
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
-    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins"];
+    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions"];
 
     public FrameworkElement Create(Surface surface)
     {
@@ -29,6 +29,7 @@ public sealed class SurfaceContentFactory(IWorkspaceQueries? queries)
             "canvas" => new CanvasSurface(surface.SurfaceId, surface.Title),
             "contexts" => new ContextMapSurface(surface.Title),
             "joins" => new JoinSurface(surface.Title),
+            "sessions" => Sessions(surface),
             _ => Unavailable(surface),
         };
 
@@ -136,6 +137,40 @@ public sealed class SurfaceContentFactory(IWorkspaceQueries? queries)
                 ? surface.SurfaceId["agent:".Length..].Split('#')[0]
                 : null,
         };
+
+    /// <summary>
+    /// The Loomkeeper Sessions surface: observed sessions with honest liveness and Not Recorded for
+    /// anything unproven. Its read model loads <b>synchronously</b> (a local store fold, no IPC), so -
+    /// unlike the evidence pane - there is no async construction-time binding to strand it on
+    /// "Loading…" (DC-011): the rows are present before the control is shown.
+    /// </summary>
+    private FrameworkElement Sessions(Surface surface)
+    {
+        var pane = new WatcherSessionsPaneViewModel(watcherSessions);
+        pane.Load();
+
+        var list = new ListBox
+        {
+            DisplayMemberPath = nameof(WatcherSessionRow.DisplayLabel),
+            ItemsSource = pane.Rows,
+            BorderThickness = new Thickness(0),
+            Background = null,
+        };
+        AutomationProperties.SetName(list, $"{surface.Title} sessions");
+
+        var status = new TextBlock
+        {
+            Text = pane.StatusMessage,
+            Margin = new Thickness(0, 8, 0, 0),
+            TextWrapping = TextWrapping.Wrap,
+        };
+        status.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+
+        var stack = new StackPanel { Margin = new Thickness(12) };
+        stack.Children.Add(list);
+        stack.Children.Add(status);
+        return stack;
+    }
 
     private static FrameworkElement Unavailable(Surface surface)
     {
