@@ -53,4 +53,37 @@ internal static class WatcherFixtures
             model,
             trust);
     }
+
+    /// <summary>A registration event (attribute bag) for the ingest host / mapper.</summary>
+    public static HarnessRegistration HarnessRegistration(
+        string? harnessName = null, string? modelName = null)
+    {
+        var attrs = new Dictionary<string, string?>(StringComparer.Ordinal)
+        {
+            [OtelAttributes.RepoPath] = "C:/repos/ai-de",
+            [OtelAttributes.RepoDisplay] = "ai-de",
+            [OtelAttributes.WorktreeBranch] = "main",
+            [OtelAttributes.WorktreePath] = "C:/repos/ai-de",
+            [OtelAttributes.TerminalId] = "term-1",
+            [OtelAttributes.AgentName] = "agent-1",
+        };
+        if (harnessName is not null)
+        {
+            attrs[OtelAttributes.ServiceName] = harnessName;
+            attrs[OtelAttributes.ServiceVersion] = "1.0.0";
+        }
+        if (modelName is not null)
+        {
+            attrs[OtelAttributes.GenAiModel] = modelName;
+            attrs[OtelAttributes.GenAiModelVersion] = "2026-08";
+        }
+
+        return new HarnessRegistration(attrs);
+    }
+}
+
+/// <summary>A fixed wall clock, so a span's RecordedAt is deterministic in tests (D0).</summary>
+internal sealed class FixedTimeProvider(DateTimeOffset now) : TimeProvider
+{
+    public override DateTimeOffset GetUtcNow() => now;
 }

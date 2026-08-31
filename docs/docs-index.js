@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T00:37:41Z",
+  "generated": "2026-08-31T03:39:58Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1829,6 +1829,51 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4fc0b16537275ee9743dcadefb508ce94a027e92d70521b041d15616aa6cdeb4"
+    },
+    {
+      "id": "design-watcher-ingest-host",
+      "path": "docs/design/watcher-ingest-host.md",
+      "title": "Loomkeeper Ingest Host - Bounded Queue and Drain Loop",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper ingest host (slice 1): synchronous registration/heartbeat plus an async, bounded span queue (Channel.CreateBounded + DropOldest backpressure) drained into OtelSpanMapper -> TrustedRegistrar/SpanIngest, with forged spans rejected, malformed events quarantined, and counters exposing the operator questions. Transport is a substitutable IHarnessEventSource port; the OTLP network receiver is a follow-on adapter (slice 1b).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "ingest",
+        "host",
+        "backpressure",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-ingest-wire",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2a6e6fed3056569095f9808007d5dfc1c55e747a4a5a8c7df6e5ddeed6a2b62d"
     },
     {
       "id": "design-watcher-ingest-wire",
@@ -6317,6 +6362,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
+      "id": "proof-watcher-ingest-host",
+      "path": "docs/proof/watcher-ingest-host.md",
+      "title": "Proof Pack - Loomkeeper Ingest Host (slice 1a)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper ingest host meets its design: registration/heartbeat are synchronous, the bounded span queue absorbs a flood with drop-oldest (every drop counted), forged spans are rejected, malformed ones are quarantined without killing the drain, and the counters reconcile - proven by 9 tests with the backpressure counter compile-enforced.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "ingest",
+        "host",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-ingest-host",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7f2257bbec97ef54f25287ab10a6d4693272478071d5ba10838f50ae4bda75b1"
+    },
+    {
       "id": "proof-watcher-ingest-wire",
       "path": "docs/proof/watcher-ingest-wire.md",
       "title": "Proof Pack - Loomkeeper Ingest Wire (OtelSpanMapper)",
@@ -6928,5 +7005,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "152b8c19a78322b8ce0ef8fa3da019e303466e68ce651d8419b1fdc7277568fa"
+  "graphSha256": "21a3ac9d683ebee049bc09955c506b15648608b4ade8a6491d3deb9df1687eec"
 };

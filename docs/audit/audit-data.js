@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T00:38:20Z",
+  "generated": "2026-08-31T03:40:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2754,6 +2754,32 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T00:26:11Z",
       "duration_seconds": 729.0
+    },
+    {
+      "id": "al-0174",
+      "shortname": "design-implement-ingest-host",
+      "datetime": "2026-08-31T03:40:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Execute the /design -> /implement loop until slice 1 (OTLP transport receiver + daemon host) is fully implemented.",
+      "summary": "Slice 1a: designed docs/design/watcher-ingest-host.md (sync register/heartbeat + async bounded span queue with DropOldest backpressure; forged->rejected, malformed->quarantined; counters answer the operator questions) and implemented IngestHost (src/AiDe.Core/Watcher/) reusing the repo Channel.CreateBounded idiom + TimeProvider. 9 tests incl. flood-drops-counted (compile-enforced counter), malformed-survives, concurrency reconcile. Full suite 741/0; build 0/0. Remaining slice 1b: OTLP network receiver adapter (needs encoding/transport spike).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/design/watcher-ingest-host.md",
+        "src/AiDe.Core/Watcher/IngestHost.cs",
+        "docs/proof/watcher-ingest-host.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "ingest",
+        "phase-1"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-31T03:28:46Z",
+      "duration_seconds": 701.0
     }
   ],
   "changes": [
@@ -5125,6 +5151,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "860cb6c4357b8008fbf2eb59db53f26290a809f9",
         "after": "860cb6c4357b8008fbf2eb59db53f26290a809f9",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0108",
+      "datetime": "2026-08-31T03:40:28Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper ingest host: sync control + async bounded span stream with drop-oldest backpressure",
+      "prompt": "Design and implement slice 1's ingest host.",
+      "summary": "Split registration/heartbeat (synchronous control) from the span stream (async, bounded Channel with DropOldest); the host drains to OtelSpanMapper+SpanIngest, rejecting forged spans and quarantining malformed ones without killing the loop, with IngestStats counters exposing every disposition. Transport is a substitutable IHarnessEventSource port; the OTLP network receiver is slice 1b.",
+      "rationale": "Registration must return a capability immediately while high-volume spans need bounded backpressure; reuse the repo Channel.CreateBounded+DropOldest idiom; keep the capability as the trust anchor and the transport behind a port so the receiver substitutes without redesign.",
+      "artifacts": [
+        "docs/design/watcher-ingest-host.md",
+        "src/AiDe.Core/Watcher/IngestHost.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "7c4755b88dcba32db809bc0a04fc9a2be7f80b0c",
+        "after": "7c4755b88dcba32db809bc0a04fc9a2be7f80b0c",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []
