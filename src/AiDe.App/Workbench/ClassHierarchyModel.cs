@@ -98,4 +98,33 @@ public static class ClassHierarchyModel
 
         return new ClassHierarchy(types, relations, external);
     }
+
+    /// <summary>
+    /// Filters a hierarchy to types whose label contains <paramref name="term"/> (case-insensitive),
+    /// keeping only relations whose BOTH endpoints survive; relations to a filtered-out (or external)
+    /// target are recounted as external. An empty/whitespace term returns the hierarchy unchanged.
+    /// Pure, so the filter is verifiable headlessly.
+    /// </summary>
+    public static ClassHierarchy Filter(ClassHierarchy hierarchy, string? term)
+    {
+        if (string.IsNullOrWhiteSpace(term)) { return hierarchy; }
+
+        var t = term.Trim();
+        var kept = hierarchy.Types
+            .Where(x => x.Label.Contains(t, StringComparison.OrdinalIgnoreCase)
+                || x.Id.Contains(t, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        var ids = new HashSet<string>(kept.Select(x => x.Id), StringComparer.Ordinal);
+
+        var relations = new List<ClassRelation>();
+        var external = 0;
+        foreach (var r in hierarchy.Relations)
+        {
+            if (!ids.Contains(r.From)) { continue; }         // source filtered out — the relation goes with it
+            if (!ids.Contains(r.To)) { external++; continue; } // target filtered out — disclosed, not drawn
+            relations.Add(r);
+        }
+
+        return new ClassHierarchy(kept, relations, external);
+    }
 }

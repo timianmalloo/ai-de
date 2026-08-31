@@ -19,6 +19,8 @@ public sealed class ClassDiagramSurface : ContentControl
     private readonly StackPanel _list;
     private readonly TextBlock _header;
     private readonly TextBlock _disclosure;
+    private readonly TextBox _search;
+    private ClassHierarchy _full = new([], [], 0);
 
     public ClassDiagramSurface(string title = "Class diagram")
     {
@@ -31,8 +33,16 @@ public sealed class ClassDiagramSurface : ContentControl
         DockPanel.SetDock(_header, Dock.Top);
         root.Children.Add(_header);
 
+        _search = new TextBox { Margin = new Thickness(0, 6, 0, 0), Padding = new Thickness(6, 3, 6, 3) };
+        AutomationProperties.SetName(_search, "Filter types by name");
+        _search.SetResourceReference(BackgroundProperty, "SunkenBrush");
+        _search.SetResourceReference(ForegroundProperty, "TextBrush");
+        _search.TextChanged += (_, _) => Render(ClassHierarchyModel.Filter(_full, _search.Text));
+        DockPanel.SetDock(_search, Dock.Top);
+        root.Children.Add(_search);
+
         _disclosure = Muted("", 11.5);
-        _disclosure.Margin = new Thickness(0, 2, 0, 8);
+        _disclosure.Margin = new Thickness(0, 6, 0, 8);
         _disclosure.TextWrapping = TextWrapping.Wrap;
         DockPanel.SetDock(_disclosure, Dock.Top);
         root.Children.Add(_disclosure);
@@ -60,8 +70,15 @@ public sealed class ClassDiagramSurface : ContentControl
     public void ShowGraph(IReadOnlyList<CanvasNode>? nodes, IReadOnlyList<CanvasEdge>? edges) =>
         Show(ClassHierarchyModel.Build(nodes, edges));
 
-    /// <summary>Renders a prebuilt hierarchy.</summary>
+    /// <summary>Stores and renders a prebuilt hierarchy (search re-renders a filtered view of it).</summary>
     public void Show(ClassHierarchy hierarchy)
+    {
+        _full = hierarchy;
+        _search.Visibility = hierarchy.Types.Count > 12 ? Visibility.Visible : Visibility.Collapsed;
+        Render(string.IsNullOrWhiteSpace(_search.Text) ? hierarchy : ClassHierarchyModel.Filter(hierarchy, _search.Text));
+    }
+
+    private void Render(ClassHierarchy hierarchy)
     {
         _list.Children.Clear();
         TypeCount = hierarchy.Types.Count;
@@ -69,13 +86,18 @@ public sealed class ClassDiagramSurface : ContentControl
 
         if (hierarchy.IsEmpty)
         {
-            _header.Text = "Class hierarchy";
+            _header.Text = string.IsNullOrWhiteSpace(_search.Text) || _full.IsEmpty
+                ? "Class hierarchy"
+                : $"Class hierarchy — no type matches \u201c{_search.Text}\u201d";
             _disclosure.Text = "";
             _list.Children.Add(EmptyState());
             return;
         }
 
-        _header.Text = $"Class hierarchy — {hierarchy.Types.Count} type(s), {hierarchy.Relations.Count} relationship(s)";
+        var filtered = !string.IsNullOrWhiteSpace(_search.Text) && _full.Types.Count != hierarchy.Types.Count;
+        _header.Text = filtered
+            ? $"Class hierarchy — {hierarchy.Types.Count} of {_full.Types.Count} type(s) match \u201c{_search.Text}\u201d"
+            : $"Class hierarchy — {hierarchy.Types.Count} type(s), {hierarchy.Relations.Count} relationship(s)";
         var notes = new List<string> { "Members are not extracted yet, so types show relationships only (ADR-0020 Phase 1)." };
         if (hierarchy.ExternalRelations > 0)
         {
@@ -126,11 +148,13 @@ public sealed class ClassDiagramSurface : ContentControl
 
     public void Clear()
     {
+        _full = new ClassHierarchy([], [], 0);
         _list.Children.Clear();
         TypeCount = 0;
         RelationCount = 0;
         _header.Text = "Class hierarchy";
         _disclosure.Text = "";
+        _search.Visibility = Visibility.Collapsed;
         _list.Children.Add(EmptyState());
     }
 

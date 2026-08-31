@@ -105,6 +105,36 @@ public sealed class ClassHierarchyTests
     }
 
     [Fact]
+    public void Filter_KeepsMatchingTypes_AndDropsRelationsToFilteredTargets()
+    {
+        var full = ClassHierarchyModel.Build(
+            new[] { N("Shop.Order", "class"), N("Shop.OrderLine", "class"), N("Shop.Customer", "class") },
+            new[] { E("Shop.OrderLine", "Shop.Order", "inherits"), E("Shop.Order", "Shop.Customer", "implements") });
+
+        var f = ClassHierarchyModel.Filter(full, "Order");
+
+        Assert.Equal(2, f.Types.Count);                                   // Order, OrderLine
+        Assert.DoesNotContain(f.Types, t => t.Id == "Shop.Customer");
+        Assert.Single(f.Relations);                                      // OrderLine->Order survives
+        Assert.Equal(1, f.ExternalRelations);                            // Order->Customer target filtered out
+    }
+
+    [Fact]
+    public void Filter_EmptyTerm_ReturnsUnchanged()
+    {
+        var full = ClassHierarchyModel.Build(new[] { N("A", "class") }, []);
+        Assert.Same(full, ClassHierarchyModel.Filter(full, "  "));
+        Assert.Same(full, ClassHierarchyModel.Filter(full, null));
+    }
+
+    [Fact]
+    public void Filter_IsCaseInsensitive()
+    {
+        var full = ClassHierarchyModel.Build(new[] { N("Shop.Invoice", "class") }, []);
+        Assert.Single(ClassHierarchyModel.Filter(full, "invoice").Types);
+    }
+
+    [Fact]
     public void Build_HandlesNulls()
     {
         var h = ClassHierarchyModel.Build(null, null);

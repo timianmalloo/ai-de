@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T05:03:45Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-31T13:07:21Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3250,6 +3250,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tests/AiDe.Core.Tests/KnowledgeSearchSeesEveryDocumentTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0185",
+      "shortname": "class-diagram-search-filter",
+      "datetime": "2026-08-31T13:07:21Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do whatever steps you are not gated on",
+      "summary": "Added a search/filter to the class diagram: a header search box (shown when >12 types) filters the type cards by name/id case-insensitively via a pure ClassHierarchyModel.Filter (relations recomputed, filtered-out targets disclosed as external); header shows 'X of Y match'. 3 filter tests. App.Tests 171->174, launch smoke green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/ClassHierarchyModel.cs",
+        "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
       ],
       "tags": [],
       "outcome": "success"
