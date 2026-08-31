@@ -1,4 +1,5 @@
 using System.Globalization;
+using AiDe.Core.Extraction;
 using AiDe.Core.Facts;
 using Microsoft.Data.Sqlite;
 
@@ -244,7 +245,9 @@ public sealed class StoreReader : IDisposable
             SELECT artifact_revision FROM scope_snapshot_committed_fact
             WHERE complete = 1 ORDER BY generation DESC, scope_id LIMIT 1;
             """);
-        return command.ExecuteScalar() as string ?? "none";
+        // Base, not stamped. What is stored carries the extractor generation that produced it
+        // (SourceRevision); what a person is shown is the revision they named.
+        return SourceRevision.Base(command.ExecuteScalar() as string ?? "none");
     }
 
     /// <summary>
@@ -433,7 +436,7 @@ public sealed class StoreReader : IDisposable
         while (reader.Read())
         {
             results.Add(new StoredAssertion(
-                reader.GetString(0), reader.GetString(1), reader.GetString(2),
+                reader.GetString(0), reader.GetString(1), SourceRevision.Base(reader.GetString(2)),
                 reader.GetString(3), reader.GetString(4), reader.GetString(5),
                 Enum.Parse<EvidenceOrigin>(reader.GetString(6)),
                 Enum.Parse<VerificationStatus>(reader.GetString(7)),

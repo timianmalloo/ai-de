@@ -39,6 +39,13 @@ public sealed class TelemetryTests : IDisposable
         var ingestion = Assert.Single(_captured, a => a.OperationName == "aide.ingestion.scope");
         Assert.Equal("fixture", ingestion.GetTagItem("scope.id"));
         Assert.Equal("rev-1", ingestion.GetTagItem("artifact.revision"));
+
+        // The reader that produced the facts is its own axis, not a suffix on the revision. Without
+        // it an operator cannot tell a graph built by this build from one built by the last, which
+        // is the question behind "why is the Knowledge count still 0".
+        Assert.Equal(
+            AiDe.Core.Extraction.ScopeFingerprints.ExtractorGeneration,
+            ingestion.GetTagItem("extractor.generation"));
         Assert.Equal("committed", ingestion.GetTagItem("outcome"));
 
         Assert.Contains(_captured, a => a.OperationName == "aide.projection.query");

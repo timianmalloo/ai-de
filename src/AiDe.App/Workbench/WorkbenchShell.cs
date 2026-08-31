@@ -33,6 +33,9 @@ namespace AiDe.App.Workbench;
 /// </remarks>
 public sealed class WorkbenchShell : IDisposable
 {
+    /// <summary>The UI thread, captured where the shell is wired — indexing completes on a worker.</summary>
+    private System.Windows.Threading.Dispatcher _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+
     private SurfaceContentFactory _factory;
     private IWorkspaceQueries? _queries;
     private string? _workspaceRoot;
@@ -378,6 +381,12 @@ public sealed class WorkbenchShell : IDisposable
 
         Controller.WorkspaceDiagnostics = () => diagnostics.Read().Describe();
 
+        // Indexing changes what every data-backed pane is showing. Subscribed once here rather than
+        // per pane: panes come and go, and RereadDataSurfaces asks the layout what is open now.
+        _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+        Controller.WorkspaceDataChanged -= OnWorkspaceDataChanged;
+        Controller.WorkspaceDataChanged += OnWorkspaceDataChanged;
+
         if (commands is not null)
         {
             Controller.WorkspaceIndex = async () =>
@@ -689,6 +698,47 @@ public sealed class WorkbenchShell : IDisposable
         pane.NodeSelected += OnJoinNodeSelected;
 
         pane.Refresh();
+    }
+
+    /// <summary>Re-reads every pane whose content came from the store.</summary>
+    /// <remarks>
+    /// <para>Raised off the UI thread — indexing runs on a worker — so the work is marshalled before
+    /// any of these touch a WPF element.</para>
+    ///
+    /// <para>The layout is asked what is open rather than a list being kept: a pane can be closed,
+    /// reopened or moved between stacks while an index runs, and a remembered reference would either
+    /// refresh a pane that is gone or miss one that arrived.</para>
+    /// </remarks>
+    private void OnWorkspaceDataChanged() => _ = _dispatcher.InvokeAsync(RereadDataSurfaces);
+
+    internal void RereadDataSurfaces()
+    {
+        var contents = Service.Current.AllStacks()
+            .SelectMany(stack => stack.Surfaces)
+            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .ToList();
+
+        foreach (var content in contents)
+        {
+            switch (content)
+            {
+                // The canvas re-queries from its current root, so a user who has navigated into a
+                // node stays where they are and sees that node's new neighbours.
+                case CanvasSurface canvas:
+                    _ = canvas.RefreshAsync();
+                    break;
+
+                // These two pull through a Source delegate that reads the store on every call, so
+                // Refresh IS the re-read.
+                case ContextMapSurface contexts:
+                    contexts.Refresh();
+                    break;
+
+                case JoinSurface joins:
+                    joins.Refresh();
+                    break;
+            }
+        }
     }
 
     /// <summary>Centres the graph on a join's endpoint.</summary>

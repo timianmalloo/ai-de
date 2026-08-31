@@ -289,6 +289,40 @@ it to be noisy the first time. Two are worth knowing about in advance:
 
 Neither is a new rule — both were always enforced, just not where you could see them.
 
+## 4e. New: a pane is now TOLD when the store changes (`WorkspaceDataChanged`)
+
+**Why this exists.** A re-index of TheTerrace wrote 10,242 assertions — the whole knowledge half of
+the repository — and every open pane went on rendering the projection it had fetched when it loaded.
+The user re-indexed, read a message saying it had worked, and looked at a Knowledge chip reading
+**0** taken from a graph twenty-six seconds out of date. The store was right and the screen was
+wrong, which is the worse of the two failures. Registered as **DC-045**.
+
+**What changed.** `WorkbenchController` now raises `WorkspaceDataChanged` after a command that
+actually changed the store — index, re-index-all, refresh — and **not** after one that failed.
+`WorkbenchShell.RereadDataSurfaces` handles it, asking the layout what is open right now and
+re-reading each pane:
+
+| pane | how it re-reads |
+|---|---|
+| `CanvasSurface` (graph) | `RefreshAsync()` from its current root, so a user who has navigated into a node stays there |
+| `ContextMapSurface` | `Refresh()` — its `Source` delegate reads the store on every call |
+| `JoinSurface` | `Refresh()` — same |
+
+**What this asks of you: one line per new surface kind.** If you add a data-backed pane, add its
+case to `RereadDataSurfaces`. A pane that is not in that switch is not broken and not obviously
+wrong — it just quietly shows yesterday's answer after an index, which is exactly the failure above.
+
+**What it does not do.** The signal comes from the *controller*, so a write reaching the store by
+another route (the daemon indexing on its own, a second client) does not raise it. Panes are told
+about writes this shell commanded, not about the store changing. Say so if you need the stronger
+guarantee — it is a daemon-side change and Core owns it.
+
+**Also worth knowing:** a stored artifact revision now carries the extractor generation that produced
+it (`SourceRevision`). Anything that shows a revision to a person must call `SourceRevision.Base`
+first — the three read paths that exist today already do, and `CurrentSourceRevision()` returns the
+base, so you will not normally meet this. It matters if you render a revision from an assertion you
+read yourself.
+
 ## 5. Reducing merge pain, concretely
 
 - **Rebase on `origin/main` before starting a stretch of work**, not only before pushing.

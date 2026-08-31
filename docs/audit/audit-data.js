@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-31T00:37:34Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-31T00:50:53Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1495,27 +1495,6 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
-      "id": "al-0072",
-      "shortname": "design-session-contract-accept-4a",
-      "datetime": "2026-08-29T16:51:28Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "prompt": "Register the design session, consult and accept the Core sessions published contract, and render the three Core->Design 4a requests.",
-      "summary": "Registered session copilot-design-4d24d94a; claimed design files; accepted session-contracts (added Design response 7.1-7.4, status proposed->accepted, answered 6, accepted 4a); DESIGN.md 4a tokens; new mockup context-map-join.html rendering evidence-shortfall (>= capped), dominant-target emphasis, and IsDeclared==false empty state.",
-      "kind": "manual",
-      "skill": "ui-design",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "docs/collaboration/session-contracts.md",
-        "docs/mockups/context-map-join.html"
-      ],
-      "tags": [
-        "collaboration",
-        "ui-design"
-      ],
-      "outcome": "success"
-    },
-    {
       "id": "al-0071",
       "shortname": "daemon-proof-caps-incremental-third-repo",
       "datetime": "2026-08-29T17:03:22Z",
@@ -1540,6 +1519,27 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": false
       }
+    },
+    {
+      "id": "al-0072",
+      "shortname": "design-session-contract-accept-4a",
+      "datetime": "2026-08-29T16:51:28Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Register the design session, consult and accept the Core sessions published contract, and render the three Core->Design 4a requests.",
+      "summary": "Registered session copilot-design-4d24d94a; claimed design files; accepted session-contracts (added Design response 7.1-7.4, status proposed->accepted, answered 6, accepted 4a); DESIGN.md 4a tokens; new mockup context-map-join.html rendering evidence-shortfall (>= capped), dominant-target emphasis, and IsDeclared==false empty state.",
+      "kind": "manual",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/mockups/context-map-join.html"
+      ],
+      "tags": [
+        "collaboration",
+        "ui-design"
+      ],
+      "outcome": "success"
     },
     {
       "id": "al-0073",
@@ -3026,6 +3026,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/adr/0019-code-viewer-renderer.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0169",
+      "shortname": "investigate-knowledge-chip-zero",
+      "datetime": "2026-08-31T00:49:51Z",
+      "session": "phase3-pane-probes",
+      "prompt": "this is what i see with your latest build: as far as I see knowledge still shows as 0 and this is post re-index (still 0). not sure if that answers your q. also do the next steps now",
+      "summary": "Two defects, both proven from the user's own store. DC-044: RefreshScopeAsync's reuse check matched on the unchanged artifact revision and defeated the extractor-generation bump, so 66 scopes were visited and none re-read ('0 assertion(s)'); the deeper cause was the natural key, which could not represent the same bytes read by a better reader. Fixed by SourceRevision, which makes the reader part of a fact's identity. DC-045: the knowledge WAS written at 17:20:24 and the screenshot at 17:20:50 still read 0 because indexing told no surface it had happened; fixed by WorkspaceDataChanged. Both controls observed failing on the un-fixed code. Verified end-to-end on a copy of the user's real store: 66 of 66 re-extracted (0 reused), 23,672 to 24,124 assertions, graph returns 234 knowledge nodes.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
@@ -5468,6 +5485,29 @@ window.AUDIT_DATA = {
         "pushed": true,
         "commits": []
       }
+    },
+    {
+      "id": "cl-0106",
+      "datetime": "2026-08-31T00:50:10Z",
+      "session": "phase3-pane-probes",
+      "kind": "decision",
+      "skill": "investigate",
+      "title": "A fact's identity includes the reader that produced it",
+      "prompt": "knowledge still shows as 0 post re-index",
+      "summary": "The store's natural key said 'one revision, one answer' — true only while the extractor was fixed. A stored revision now carries the extractor generation that produced it (SourceRevision), so the same bytes read by a better reader are a different observation the key can represent. Applied inside RefreshScopeAsync so every entry point gets one answer instead of three; stripped at the read boundary so a surface still shows the revision the user named. Second decision: a command that changes the store raises WorkspaceDataChanged and the shell re-reads whatever panes are open — the last mile of a write is the screen.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/SourceRevision.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "d7ba31fdfa443b51fefa42c155320d906abb0b21",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      },
+      "audit_ref": "al-0169"
     }
   ]
 };

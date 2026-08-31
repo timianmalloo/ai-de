@@ -36,6 +36,21 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     public Func<Task<string>>? WorkspaceRefresh { get; set; }
 
     /// <summary>
+    /// Raised after a command that CHANGED what the store holds has finished.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Indexing used to end at the announcement.</b> A re-index wrote 10,242 new assertions
+    /// — the whole knowledge half of a real repository — and every open pane went on rendering the
+    /// projection it had fetched when it loaded. The user re-indexed, watched the message say it had
+    /// worked, and read a Knowledge count of 0 taken from a graph twenty-six seconds out of date.
+    /// The store was right and the screen was wrong, which is the worst of the two.</para>
+    ///
+    /// <para>An event rather than a call into the panes: the controller dispatches commands and owns
+    /// no surface. Who listens, and what re-reading costs them, belongs to whoever holds the pane.</para>
+    /// </remarks>
+    public event Action? WorkspaceDataChanged;
+
+    /// <summary>
     /// Routes focus across the canvas boundary. Set when a graph canvas surface attaches.
     /// </summary>
     /// <remarks>
@@ -463,7 +478,12 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     {
         try
         {
-            announcer.Announce(await work());
+            var outcome = await work();
+
+            // Before the message, not after: the panes start re-reading while the user is still
+            // reading what happened, so the number they look at next is the new one.
+            WorkspaceDataChanged?.Invoke();
+            announcer.Announce(outcome);
         }
         catch (Exception ex)
         {
@@ -518,8 +538,11 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 outcome = $"Re-indexing failed: {ex.Message}";
+                announcer.Announce(outcome);
+                return;
             }
 
+            WorkspaceDataChanged?.Invoke();
             announcer.Announce(outcome);
         });
 

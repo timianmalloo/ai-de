@@ -98,9 +98,19 @@ public sealed class WorkspaceCore : IDisposable
         string scopeId, string artifactRevision, CancellationToken cancellationToken = default,
         string? rootPathOverride = null)
     {
+        // A fact's identity includes the reader that produced it, so the revision is stamped with
+        // the extractor generation before anything is compared or written. Stamping HERE rather than
+        // at each call site is the point: the shell, the daemon's refresh op and a test all reach
+        // this method, and the previous version let each of them ask a different question.
+        artifactRevision = SourceRevision.Stamp(artifactRevision);
+
         using var activity = Activity.StartActivity("aide.ingestion.scope");
         activity?.SetTag("scope.id", scopeId);
-        activity?.SetTag("artifact.revision", artifactRevision);
+        // The revision the CALLER named, plus the generation as its own axis. Putting the stamp in
+        // the revision tag would make the same repository state look like a different revision on
+        // every upgrade, and an operator grouping by revision would see churn that is not there.
+        activity?.SetTag("artifact.revision", SourceRevision.Base(artifactRevision));
+        activity?.SetTag("extractor.generation", ScopeFingerprints.ExtractorGeneration);
 
         // Re-extracting a revision the store already holds is a NO-OP, decided here rather than
         // absorbed by the database.
@@ -285,6 +295,10 @@ public sealed class WorkspaceCore : IDisposable
         string artifactRevision, CancellationToken cancellationToken = default,
         TimeSpan? perScopeBudget = null, bool force = false)
     {
+        // Stamped once here so every revision this method compares or writes — the per-scope
+        // refresh, a retraction, the stale-scope disclosure — is the same string.
+        artifactRevision = SourceRevision.Stamp(artifactRevision);
+
         var scopes = CSharpScopeDiscovery.DiscoverAll(RootPath);
         var budget = perScopeBudget ?? TimeSpan.FromSeconds(60);
 

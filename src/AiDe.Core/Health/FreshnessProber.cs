@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using AiDe.Core.Extraction;
 using AiDe.Core.Store;
 
 namespace AiDe.Core.Health;
@@ -40,7 +41,11 @@ public sealed class FreshnessProber(
         foreach (var scopeId in scopeIds)
         {
             var observed = probe.ObservedRevision(scopeId);
-            var indexed = reader.LatestCommittedSnapshot(scopeId)?.ArtifactRevision;
+            // Base, not stamped. The stored revision also carries the extractor generation that
+            // produced it (SourceRevision); comparing that against a repository revision would
+            // report permanent drift on every workspace, which is a prober that means nothing.
+            var indexed = SourceRevision.Base(reader.LatestCommittedSnapshot(scopeId)?.ArtifactRevision ?? string.Empty);
+            if (indexed.Length == 0) indexed = null;
 
             if (string.Equals(observed, indexed, StringComparison.Ordinal))
             {

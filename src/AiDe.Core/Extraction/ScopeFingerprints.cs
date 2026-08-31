@@ -38,7 +38,11 @@ public sealed class ScopeFingerprints
     // that did not change, so a store built before them is a mix of two generations. The user saw
     // exactly that: Knowledge read 0 on a repository holding 2,343 knowledge nodes, because the
     // scopes were cached from a build that had no knowledge reader.
-    public const string ExtractorGeneration = "2026-08-30.1";
+    // 2026-08-30.2 — SourceRevision. The .1 bump was correct and reached nothing: a second reuse
+    // check inside RefreshScopeAsync matched on the unchanged artifact revision and returned an empty
+    // result, so 66 scopes were visited and none re-read (DC-044). This bump is the first one that
+    // can actually take effect.
+    public const string ExtractorGeneration = "2026-08-30.2";
 
     private const string FileName = "scope-fingerprints.json";
 
