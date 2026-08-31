@@ -1,8 +1,8 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T22:50:50Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-31T22:53:01Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "35e90221e482fe438a185b30c7c04fd75ea063be287d1cbffc24e20ed9d76078"
+      "sourceSha256": "d5611adafaa0de82e2b035edb588624bf168506d2f9a639d5f927c2a5ca53835"
     },
     {
       "id": "domain-experts",
@@ -6686,5 +6686,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "61ccb109e0d384ad0bb71d051b017b651b6045df21d329d2e9d547cb92cdd5fc"
+  "graphSha256": "ea7155f559fabb4d276584536b3286673e22d74c7edf0fb1ac61d8282e896cc4"
 };

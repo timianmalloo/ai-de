@@ -246,7 +246,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
             return new CanvasGraph(
                 nodes, edges, describe.Node.NodeId, describe.Bounds.OmittedEdges,
-                disclosures.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToList(), message);
+                AiDe.Core.Facts.DisclosureSummary.Fold(disclosures), message);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {

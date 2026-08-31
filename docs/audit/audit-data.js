@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T22:51:30Z",
+  "generated": "2026-08-31T22:53:01Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5506,6 +5506,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/ClassHierarchyModel.cs",
         "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0301",
+      "shortname": "disclosures-folded-by-class",
+      "datetime": "2026-08-31T22:33:15Z",
+      "session": "phase3-pane-probes",
+      "prompt": "re-indexed [screenshot]. do next steps",
+      "summary": "The user's re-index worked — 64 scopes, 29,314 assertions, matching my measurement exactly — and the screenshot showed a defect I helped create: the disclosure list filled four fifths of the window. MEASURED on their store: 178 disclosure strings, 108 distinct, for 28 actual classes, because knowledge-headings-not-analysed and knowledge-inline-code-not-resolved are emitted once per knowledge scope with their own counts and Distinct merges none of them. Buried in it was the one actionable finding, 109 rotted cross-references. DisclosureSummary.Fold now folds by class and sums the counts, used by the graph projection, the canvas view-model and the index summary: 108 lines to 28, and totals that had never been stated (4,471 headings, 26,970 inline code spans, 23,870 calls outside the repository). The fix nearly shipped with a worse defect — summing the leading count while keeping one scope's sentence rendered a true total beside a stale document count — so everything from the second number on is cut. Registered as DC-054: a rule about one item is not a rule about the list.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Facts/DisclosureSummary.cs"
       ],
       "tags": [],
       "outcome": "success"

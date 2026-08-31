@@ -52,7 +52,7 @@ public sealed record IndexSummary(
             // of Python reported "no projects found" and said nothing about the Python.
             var nothing = "No C# projects, Bicep templates or EF migrations found in this workspace.";
             return Disclosures.Count > 0
-                ? nothing + " Not analysed: " + string.Join(", ", Disclosures) + "."
+                ? nothing + " Not analysed: " + string.Join(", ", Facts.DisclosureSummary.Fold(Disclosures)) + "."
                 : nothing;
         }
 
@@ -70,7 +70,7 @@ public sealed record IndexSummary(
 
         // Disclosures are part of the result, not a footnote: a graph that silently omits package
         // types looks complete, and the user has no way to know it is not.
-        if (Disclosures.Count > 0) text += " Not analysed: " + string.Join(", ", Disclosures) + ".";
+        if (Disclosures.Count > 0) text += " Not analysed: " + string.Join(", ", Facts.DisclosureSummary.Fold(Disclosures)) + ".";
 
         // Coverage is reported alongside the count, so "we have contexts" cannot quietly mean
         // "we have contexts for a fraction of the code" (ADR-0016).
