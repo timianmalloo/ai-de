@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T21:57:22Z",
+  "generated": "2026-08-31T21:57:46Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5471,6 +5471,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/DocumentPlacement.cs",
         "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0298",
+      "shortname": "call-walk-parallelised-and-a-flaky-control-fixed",
+      "datetime": "2026-08-31T21:51:18Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do the next steps you listed above (i have done re-index multiple times)",
+      "summary": "The user's store was at generation 2026-08-31.4 while the current build is 2026-09-01.3 — their re-indexes ran against an older binary, so calls, links_to, is_exported were all 0 and knowledge was still double-indexed. Verified the published build end-to-end against a copy of their real store through the published daemon: 64 scopes, 29,314 assertions, 1,500 nodes, 283 knowledge, 1,272 call edges. C# extraction time closed: measured 5.8s without the call walk and 15.5s with, so 9.7s is binding method bodies and no honest prefilter avoids it; overlapped instead of reduced, one tree per thread with per-thread counters folded afterwards and the call site chosen by a deterministic smallest-location rule rather than by whichever thread arrived first. 15.5s to 8.0s, output identical at 29,314 assertions across two runs. Also fixed my own daemon-isolation control, which snapshotted a machine-global directory and so failed when the App and Core assemblies ran concurrently; it now asserts about the one directory the daemon it launched would have created.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/CSharpExtractor.cs"
       ],
       "tags": [],
       "outcome": "success"

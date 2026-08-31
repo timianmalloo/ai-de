@@ -833,6 +833,31 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         /// Every one is guarded on its own count. A disclosure that fires when nothing was hidden is
         /// how a reader learns to skip the disclosure list, which costs the honest ones too.
         /// </remarks>
+        /// <summary>Folds another census into this one.</summary>
+        /// <remarks>
+        /// The walk runs one tree at a time on several threads, each counting into its own census —
+        /// incrementing shared counters from several threads would lose counts silently, and a
+        /// disclosure that under-reports is worse than none. Summing at the end is exact and needs
+        /// no lock.
+        /// </remarks>
+        public void Add(CallCensus other)
+        {
+            ArgumentNullException.ThrowIfNull(other);
+
+            Sites += other.Sites;
+            GeneratedFiles += other.GeneratedFiles;
+            OutsideThisRepository += other.OutsideThisRepository;
+            NotResolved += other.NotResolved;
+            DynamicallyBound += other.DynamicallyBound;
+            ThroughADelegate += other.ThroughADelegate;
+            ThroughReflection += other.ThroughReflection;
+            OutsideAnyType += other.OutsideAnyType;
+            InThisRepository += other.InThisRepository;
+            DispatchedAtRuntime += other.DispatchedAtRuntime;
+            WithinOneType += other.WithinOneType;
+            Edges += other.Edges;
+        }
+
         public IEnumerable<string> Disclosures()
         {
             // THE BOUNDARY, named as one. The C# reader has always declined to draw the runtime, and
@@ -962,19 +987,90 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
     private static IEnumerable<(string Caller, string Callee, Location Where)> TypeCalls(
         Compilation compilation, CallCensus census, CancellationToken cancellationToken)
     {
+        // ONE TREE AT A TIME, ON SEVERAL THREADS.
+        //
+        // MEASURED on TheTerrace: indexing takes 5.8s with this walk removed and 15.5s with it, so
+        // 9.7s is binding method bodies — the compiler doing the only work that can answer "what
+        // calls this". There is no prefilter that avoids it honestly: skipping by name would fold
+        // the boundary (calls into the runtime) into the gap (calls that did not bind), which is the
+        // one distinction the disclosures exist to keep (DC-050).
+        //
+        // So the work is not reduced, it is overlapped. `Compilation.GetSemanticModel` is safe to
+        // call from several threads and each model is then used by exactly one; the shared state
+        // (the census counters, the emitted set) becomes per-thread and is folded afterwards.
+        //
+        // Determinism is the thing to be careful about, not correctness. The edges are a SET, so the
+        // membership is identical however the trees are ordered — but the PROVENANCE is "the first
+        // call site", and "first" in a parallel walk is whichever thread arrived first. So the merge
+        // picks the smallest location by file path and then position, which is the same answer every
+        // run and, on a single-threaded walk, the same answer as before.
+        var perTree = new (CallCensus Census, List<(string Caller, string Callee, Location Where)> Found)[
+            compilation.SyntaxTrees.Count()];
+
+        var trees = compilation.SyntaxTrees.ToArray();
+
+        Parallel.For(0, trees.Length, new ParallelOptions { CancellationToken = cancellationToken }, i =>
+        {
+            var local = new CallCensus();
+            var found = new List<(string, string, Location)>();
+            perTree[i] = (local, found);
+
+            WalkOneTree(compilation, trees[i], local, found, cancellationToken);
+        });
+
+        foreach (var (local, _) in perTree) census.Add(local);
+
         // Deduplicated HERE rather than by ExtractionFacts.Distinct at the end, because the raw
         // population is 10,451 call sites for 1,492 edges: building seven times more assertions than
         // survive is measurable waste in the hot path of the largest scope.
-        var emitted = new HashSet<(string, string)>();
+        //
+        // `Edges` is re-derived from the merged set rather than summed: two trees can each be the
+        // first to see the same pair, and summing would count that edge twice in a disclosure.
+        var emitted = new Dictionary<(string, string), Location>();
 
-        foreach (var tree in compilation.SyntaxTrees)
+        foreach (var (caller, callee, where) in perTree.SelectMany(t => t.Found))
+        {
+            if (!emitted.TryGetValue((caller, callee), out var existing) || Earlier(where, existing))
+            {
+                emitted[(caller, callee)] = where;
+            }
+        }
+
+        census.Edges = emitted.Count;
+
+        return emitted
+            .OrderBy(e => e.Key.Item1, StringComparer.Ordinal)
+            .ThenBy(e => e.Key.Item2, StringComparer.Ordinal)
+            .Select(e => (e.Key.Item1, e.Key.Item2, e.Value));
+    }
+
+    /// <summary>Which of two call sites a reader should be sent to — the same one on every run.</summary>
+    private static bool Earlier(Location candidate, Location incumbent)
+    {
+        var byFile = string.CompareOrdinal(
+            candidate.SourceTree?.FilePath ?? string.Empty,
+            incumbent.SourceTree?.FilePath ?? string.Empty);
+
+        return byFile != 0
+            ? byFile < 0
+            : candidate.SourceSpan.Start < incumbent.SourceSpan.Start;
+    }
+
+    /// <summary>The call sites in one file, counted and collected into this thread's own state.</summary>
+    private static void WalkOneTree(
+        Compilation compilation,
+        SyntaxTree tree,
+        CallCensus census,
+        List<(string Caller, string Callee, Location Where)> found,
+        CancellationToken cancellationToken)
+    {
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             if (IsGenerated(tree, cancellationToken))
             {
                 census.GeneratedFiles++;
-                continue;
+                return;
             }
 
             // Built lazily: a file with no invocation at all never needs a semantic model, and
@@ -1086,13 +1182,9 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                     continue;
                 }
 
-                if (!emitted.Add((caller, callee))) continue;
-
-                census.Edges++;
-
-                // The FIRST call site, which is the location `ExtractionFacts.Distinct` would have
-                // kept anyway, and the one a reader following the edge wants to open.
-                yield return (caller, callee, call.GetLocation());
+                // Collected, not yet deduplicated: which pair a thread sees first is a property of
+                // the scheduler, so the choice of call site is made once, afterwards, in the merge.
+                found.Add((caller, callee, call.GetLocation()));
             }
         }
     }

@@ -69,10 +69,9 @@ Ranked by *what a user cannot currently ask*, not by what is missing in the abst
 | # | Work | Why it is where it is | Size |
 |---|---|---|---|
 | **1** | **The graph pane's payload budget** | This is now the binding constraint on every extractor, and it moved from theory to arithmetic today. Call edges alone left `graph:default` with **18,496 bytes** of a 1 MiB frame; only because knowledge de-duplication landed in the same change did the combined result come back to **195,896**. Two more edge families and the surface starts dropping nodes to carry them — MEASURED once already, 2,630 drawn nodes falling to 1,471. The graph needs a bounded view (the overview/LOD path exists and is unbound to the canvas) or a way to ask for edges by kind, **before** anything else is added to it. | Medium |
-| **2** | **C# extraction time** | Binding every method body took the index from **5.9s to 15.5s** on TheTerrace — inside the 60-second per-scope budget, and a 2.6x regression that will grow with the repository. The honest prefilter (skip invocations whose name matches nothing declared in source) was rejected during the work because it folds the boundary into the gap (DC-050); a better one needs finding rather than assuming. | Medium |
+| **2** | **Python nested declarations** | Column-zero only, so a class inside a function is invisible. Bounded and rarely load-bearing, and now the largest unexamined coverage gap in a built extractor. | Small |
 | **3** | **Schema changed by raw SQL** | *Investigated 2026-08-31 and NOT built.* The EF reader cannot fold `migrationBuilder.Sql`, and the disclosure now says how much that costs: **4 of 23** raw statements in `Up` methods carry DDL. Measured further — the one raw statement that adds a column is followed by a raw statement dropping the same one, so the net effect on TheTerrace's graph is **zero and the schema shown is correct**. Worth building when a repository is found where raw SQL adds a column and keeps it; building it now would be a fold for a measured zero. | Medium, unproven |
-| **5** | **Python nested declarations** | Column-zero only, so a class inside a function is invisible. Bounded and rarely load-bearing. | Small |
-| **6** | **Bicep expression evaluation** | Resource names built from expressions stay unevaluated; `count` is indeterminate. Correctly disclosed, and evaluating it means writing an interpreter. | Large, low value |
+| **4** | **Bicep expression evaluation** | Resource names built from expressions stay unevaluated; `count` is indeterminate. Correctly disclosed, and evaluating it means writing an interpreter. | Large, low value |
 
 **Four extractor items have shipped in two days** — knowledge body analysis, TypeScript precision,
 knowledge de-duplication, and C# call edges. What sits at the top now is not an extractor at all, and
@@ -82,7 +81,15 @@ them made it smaller.
 
 The pattern worth keeping: each item was ranked by a number, and three of the four changed rank once
 the number was measured. Python's "largest gap" was 99% boundary; TypeScript's was 83% invention;
-method-level call edges were ruled out by a payload arithmetic done before any code was written.
+method-level call edges were ruled out by a payload arithmetic done before any code was written; and
+raw SQL, ranked here as a correctness risk, turned out to net to zero on the only repository that
+could be measured.
+
+**C# extraction time was item 2 and is closed.** MEASURED: 5.8s without the call walk, 15.5s with, so
+9.7s was binding method bodies — work no honest prefilter avoids, because skipping by name folds the
+boundary into the gap. The work was overlapped rather than reduced: one syntax tree per thread, with
+per-thread counters folded afterwards and the call site chosen by a deterministic rule rather than by
+whichever thread arrived first. **15.5s → 8.0s**, output identical at 29,314 assertions.
 
 **3 is a correctness risk rather than a coverage one** — a schema that is quietly wrong beats one that
 is honestly incomplete. The rest are boundaries, already disclosed.

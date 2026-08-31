@@ -212,11 +212,16 @@ public sealed class ShellBootstrapTests : IDisposable
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "AiDe", "workspaces");
 
-        var before = Directory.Exists(machineWide)
-            ? Directory.GetDirectories(machineWide).ToHashSet(StringComparer.OrdinalIgnoreCase)
-            : [];
-
         var workspace = FreshWorkspace();
+
+        // THIS daemon's directory, by name, rather than a snapshot of the whole folder.
+        //
+        // The first version compared the directory before and after. That is a machine-global
+        // location, so anything else creating a workspace during the test failed it — and something
+        // does: `dotnet test AiDe.sln` runs the App and Core assemblies concurrently, and the suite
+        // is not alone on the machine. It failed once in a solution run and passed alone, which is
+        // the signature of a control asserting about shared state rather than about its subject.
+        var mine = Path.Combine(machineWide, IpcPipeName.ForWorkspace(workspace));
 
         await using (await ShellBootstrap.ConnectOrLaunchAsync(
             workspace, DaemonPath(), CancellationToken.None, DataFor(workspace)))
@@ -225,15 +230,9 @@ public sealed class ShellBootstrapTests : IDisposable
                 $"the daemon was told to keep its state in {DataFor(workspace)} and did not");
         }
 
-        var after = Directory.Exists(machineWide)
-            ? Directory.GetDirectories(machineWide).ToHashSet(StringComparer.OrdinalIgnoreCase)
-            : [];
-
-        after.ExceptWith(before);
-
-        Assert.True(after.Count == 0,
-            $"launching a daemon with an explicit state directory still created {after.Count} "
-            + $"director(ies) under {machineWide}: {string.Join(", ", after.Select(Path.GetFileName))}");
+        Assert.False(Directory.Exists(mine),
+            $"launching a daemon with an explicit state directory still created {mine} — the daemon "
+            + "wrote into the user's profile despite being told where to put its state");
     }
 
     public void Dispose()
