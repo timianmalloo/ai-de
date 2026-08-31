@@ -158,6 +158,50 @@ public sealed class ClassDiagramSurface : ContentControl
         _list.Children.Add(EmptyState());
     }
 
+    /// <summary>Shows a loading state while the graph is fetched (U9 state completeness).</summary>
+    public void ShowLoading()
+    {
+        _list.Children.Clear();
+        _search.Visibility = Visibility.Collapsed;
+        _header.Text = "Class hierarchy";
+        _disclosure.Text = "";
+        _list.Children.Add(Centered("Loading the type hierarchy\u2026"));
+    }
+
+    /// <summary>Shows an explicit error state — never a misleading empty state — when the graph load fails.</summary>
+    public void ShowError(string message)
+    {
+        _list.Children.Clear();
+        _search.Visibility = Visibility.Collapsed;
+        TypeCount = 0;
+        RelationCount = 0;
+        _header.Text = "Class hierarchy";
+        _disclosure.Text = "";
+        var panel = new StackPanel
+        {
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(24),
+        };
+        panel.Children.Add(Muted("The type hierarchy could not be loaded.", 13, FontWeights.SemiBold, center: true));
+        panel.Children.Add(Muted(message, 12, center: true));
+        _list.Children.Add(panel);
+    }
+
+    private static UIElement Centered(string text)
+    {
+        var t = new TextBlock
+        {
+            Text = text,
+            FontSize = 13,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(24),
+        };
+        t.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        return t;
+    }
+
     private Border Card(ClassTypeNode type, IReadOnlyList<ClassRelation> relations, IReadOnlyDictionary<string, string> labelOf)
     {
         var panel = new StackPanel { Margin = new Thickness(10, 8, 10, 8) };

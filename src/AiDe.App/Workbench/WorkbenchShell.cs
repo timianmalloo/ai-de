@@ -1037,6 +1037,7 @@ public sealed class WorkbenchShell : IDisposable
             .Where(s => s.Kind == "classdiagram")
             .Select(s => Adapter.ContentFor(s.SurfaceId))
             .OfType<ClassDiagramSurface>()
+            .Where(s => s.IsEmpty)   // first load only — avoids reloading (and flickering) on every render
             .ToList();
         if (surfaces.Count == 0) { return; }
 
@@ -1045,6 +1046,8 @@ public sealed class WorkbenchShell : IDisposable
 
     private async Task PopulateClassDiagramsAsync(IReadOnlyList<ClassDiagramSurface> surfaces)
     {
+        foreach (var surface in surfaces) { surface.ShowLoading(); }
+
         try
         {
             var vm = new CanvasGraphViewModel(_queries) { ContextLookup = BuildContextLookup() };
@@ -1056,7 +1059,8 @@ public sealed class WorkbenchShell : IDisposable
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {
-            // A class diagram that cannot load its graph stays in its empty state rather than crashing.
+            // An explicit error state, never a misleading empty "no classes" (U9).
+            foreach (var surface in surfaces) { surface.ShowError(ex.Message); }
         }
     }
 

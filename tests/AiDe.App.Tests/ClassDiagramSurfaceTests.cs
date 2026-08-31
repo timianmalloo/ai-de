@@ -59,4 +59,21 @@ public sealed class ClassDiagramSurfaceTests
             Assert.Equal(0, s.RelationCount);
         });
     }
+
+    [Fact]
+    public void ShowError_AfterPopulated_ClearsTypes_NotAMisleadingEmpty()
+    {
+        OnSta(() =>
+        {
+            var s = new ClassDiagramSurface();
+            s.ShowGraph(new[] { N("A", "class"), N("B", "class") }, new[] { Edge("A", "B", "inherits") });
+            Assert.False(s.IsEmpty);
+
+            s.ShowError("daemon closed the connection");
+            Assert.True(s.IsEmpty);            // no types claimed after a failed load
+            Assert.Equal(0, s.RelationCount);
+
+            s.ShowLoading();                   // does not throw
+        });
+    }
 }

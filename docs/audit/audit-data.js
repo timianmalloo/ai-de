@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T13:07:21Z",
+  "generated": "2026-08-31T13:10:57Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3267,6 +3267,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/ClassHierarchyModel.cs",
+        "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0186",
+      "shortname": "class-diagram-loading-error-states",
+      "datetime": "2026-08-31T13:10:57Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do whatever steps you are not gated on",
+      "summary": "Class diagram gains loading + error states (U9): PopulateClassDiagramsAsync shows Loading before the graph fetch and an explicit error (never a misleading empty 'no classes') on failure; BindClassDiagrams now first-load-only to avoid reload flicker on every render. +1 test. App.Tests 174->175.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
         "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
       ],
       "tags": [],
