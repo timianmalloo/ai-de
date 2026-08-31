@@ -47,8 +47,10 @@ public sealed class ScopeFingerprints
     // and no fact said where the scope was, so a node could not be resolved to a file at all. A store
     // written before this cannot answer a content query, and the reader would show "source could not
     // be located" for everything — which is the shape a stale generation always takes.
-    // 2026-09-01.3 — the raw-SQL disclosure now carries two counts instead of one sentence.
-    public const string ExtractorGeneration = "2026-09-01.3";
+    // 2026-09-01.4 — the call walk runs one tree per thread. Output is identical by construction
+    // (a set, merged with a deterministic provenance rule) and this bump exists so a store cannot
+    // be half-written by two generations if anything about that claim turns out to be wrong.
+    public const string ExtractorGeneration = "2026-09-01.4";
 
     private const string FileName = "scope-fingerprints.json";
 
