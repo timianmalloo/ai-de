@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T04:18:19Z",
+  "generated": "2026-08-31T04:27:07Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3130,6 +3130,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "docs/adr/0020-class-diagram-architecture.md",
         "src/AiDe.App/Workbench/ClassHierarchyModel.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0177",
+      "shortname": "implement-class-diagram-surface",
+      "datetime": "2026-08-31T04:27:07Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "overnight: build the class diagram (ADR-0020 Phase 1)",
+      "summary": "Built + wired the class-diagram surface end-to-end (ADR-0020 Phase 1): ClassDiagramSurface (native WPF, no WebView2) renders the type hierarchy as styled cards (class/«interface», inherits/implements relations, member-less disclosure, external-relation count); ShowGraph builds it via ClassHierarchyModel. Wired: factory kind 'classdiagram', workbench.newClassDiagram command (View menu / Ctrl+K,M), controller callback, shell NewClassDiagramRequested + BindClassDiagrams (loads the graph live). 2 surface tests. App.Tests 162->164, Core.Tests 735, launch smoke green. Second Design command in the Core catalog (bumped _View tripwire 4->5).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
       ],
       "tags": [],
       "outcome": "success"

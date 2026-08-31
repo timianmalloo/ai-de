@@ -149,6 +149,11 @@ public static class WorkbenchCommandCatalog
             "Opens a staged prompt-draft pane. Compose a prompt and transfer it to a ready terminal session.",
             Menu: "_Terminal"),
 
+        new("workbench.newClassDiagram", "New class diagram", "Ctrl+K, M",
+            nameof(LayoutOperation.AddSurface),
+            "Opens a class-diagram pane: the type hierarchy (classes/interfaces and their inheritance) of the open workspace.",
+            Menu: "_View"),
+
         new("workbench.focusCanvas", "Focus graph canvas", "Ctrl+K, G",
             string.Empty,
             "Moves focus into the graph. Tab off either end or press Escape to come back.",

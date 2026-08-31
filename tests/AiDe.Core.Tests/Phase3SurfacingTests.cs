@@ -457,7 +457,7 @@ public sealed class Phase3SurfacingTests : IDisposable
 
         Assert.Equal(4, declared["_File"]);
         Assert.Equal(2, declared["_Edit"]);
-        Assert.Equal(4, declared["_View"]);
+        Assert.Equal(5, declared["_View"]);
         Assert.Equal(6, declared["_Window"]);
         Assert.Equal(4, declared["_Terminal"]);
         Assert.Equal(1, declared["_Help"]);

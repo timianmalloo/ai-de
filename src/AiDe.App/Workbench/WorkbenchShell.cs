@@ -156,6 +156,28 @@ public sealed class WorkbenchShell : IDisposable
             return result.Applied ? "Prompt draft opened." : result.Announcement;
         };
 
+        Controller.NewClassDiagramRequested = () =>
+        {
+            var stack = Service.Current.AllStacks()
+                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "canvas"))
+                ?? Service.Current.AllStacks().FirstOrDefault();
+
+            if (stack is null) return "There is no pane to open a class diagram in.";
+
+            var id = $"classdiagram#{Guid.NewGuid().ToString("N")[..6]}";
+            var result = Service.Apply(new LayoutOperation.AddSurface(
+                stack.Id, new Surface(id, "classdiagram", "Class diagram")));
+
+            Adapter.Render();
+            BindCanvas();
+            BindContexts();
+            BindJoins();
+            BindClassDiagrams();
+            BindTerminalAttention();
+
+            return result.Applied ? "Class diagram opened." : result.Announcement;
+        };
+
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
         // open there is nothing to persist against, so first-run simply starts from the default.
         //
@@ -618,6 +640,9 @@ public sealed class WorkbenchShell : IDisposable
         // Prompt-draft targets are terminal-derived, so refresh them whenever the terminal set is
         // (re)bound — a session becoming ready or a pane closing changes what a draft can transfer to.
         BindPromptDrafts();
+
+        // Class diagrams derive from the graph; (re)populate any that are open (early-returns when none).
+        BindClassDiagrams();
     }
 
     // A rename lives on the surface (reconcile keeps it alive); re-render so the tab caption, which
@@ -997,6 +1022,41 @@ public sealed class WorkbenchShell : IDisposable
                     _promptDraftStore.TryGet(id, out var body) ? body : null,
                     text => _promptDraftStore.Save(id, text));
             }
+        }
+    }
+
+    /// <summary>
+    /// Feeds every class-diagram surface the current graph, from which it derives the type hierarchy
+    /// (ADR-0020). Reads `_queries` live and wires the same context lookup the canvas uses, so a class
+    /// diagram opened before or after the workspace attaches still populates.
+    /// </summary>
+    internal void BindClassDiagrams()
+    {
+        var surfaces = Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => s.Kind == "classdiagram")
+            .Select(s => Adapter.ContentFor(s.SurfaceId))
+            .OfType<ClassDiagramSurface>()
+            .ToList();
+        if (surfaces.Count == 0) { return; }
+
+        _ = PopulateClassDiagramsAsync(surfaces);
+    }
+
+    private async Task PopulateClassDiagramsAsync(IReadOnlyList<ClassDiagramSurface> surfaces)
+    {
+        try
+        {
+            var vm = new CanvasGraphViewModel(_queries) { ContextLookup = BuildContextLookup() };
+            var graph = await vm.LoadAsync(null, cancellationToken: CancellationToken.None);
+            foreach (var surface in surfaces)
+            {
+                surface.ShowGraph(graph.Nodes, graph.Edges);
+            }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // A class diagram that cannot load its graph stays in its empty state rather than crashing.
         }
     }
 

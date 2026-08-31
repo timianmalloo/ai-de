@@ -18,7 +18,7 @@ namespace AiDe.App.Workbench;
 public sealed class SurfaceContentFactory(IWorkspaceQueries? queries)
 {
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
-    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "prompt"];
+    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "prompt", "classdiagram"];
 
     public FrameworkElement Create(Surface surface)
     {
@@ -30,6 +30,7 @@ public sealed class SurfaceContentFactory(IWorkspaceQueries? queries)
             "contexts" => new ContextMapSurface(surface.Title),
             "joins" => new JoinSurface(surface.Title),
             "prompt" => new PromptDraftSurface(surface.SurfaceId, surface.Title),
+            "classdiagram" => new ClassDiagramSurface(surface.Title),
             _ => Unavailable(surface),
         };
 
