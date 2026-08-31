@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 21 · partially-controlled 27 · uncontrolled 0
+**Status counts:** controlled 22 · partially-controlled 27 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1583,3 +1583,14 @@ for both or split.*
 - **The generalisation to apply elsewhere:** when a loop's step size exists to guarantee progress, **do not let the value it lands on be the value you return.** Bracket, then search the bracket. And state the property the constraint does not: not only "the answer is legal" but "the answer is the best legal one", because only the first is checked by fitting.
 - **Residual risk:** monotonicity here is an approximation with a named precision, not a guarantee. It is exact only if the largest fitting size is *found* rather than approached, and that is affordable only once the node ORDERING is computed once and candidate sizes evaluated against it — today every probe redoes work that cannot change. Recorded on `MinRecoveryGap`.
 - **Status:** `partially-controlled`
+
+### DC-049 — A launched process decides where to write, so a caller cannot stop it
+- **Signature:** a component derives its own state location from a machine-wide place — an app-data folder, a home directory, a registry key — and exposes no way for a caller to say otherwise. Everything that starts it therefore writes into the user's real profile, including tests, which believe they are isolated because *their own* files are in a temp directory. Nothing fails. The residue is invisible until somebody counts it.
+- **Why it survives:** every test passes, and each one is individually reasonable — a temp workspace, a real daemon, a clean-up of the temp workspace afterwards. The leak is in a path no test names, created by a process no test looks inside. Test isolation is normally verified by *what a test asserts*, and nothing asserts about a directory the test never mentions.
+- **Instance:** 2026-08-30. `AiDe.Daemon` computed `LocalAppData/AiDe/workspaces/<id>` for itself. MEASURED: **12** directories per run of the Core suite, and **2,695** accumulated over four days — all but one an empty or fixture-sized store from a test that had finished long before, 468 MB in total. The one real workspace was the user's. Found while investigating "why are there 2,399 of these", not by any check.
+- **It also removed a duplicated derivation.** The shell computed exactly the same path independently, so two expressions produced one value and agreed only for as long as nobody edited one of them (DC-022). The shell now passes the directory it already has.
+- **Control:** the daemon takes `--data`, and `ShellBootstrap.ConnectOrLaunchAsync` passes it through. `ADaemonToldWhereToKeepItsState_WritesNowhereElse` snapshots the machine-wide directory, launches a daemon with an explicit one, and asserts nothing new appeared — an assertion about the directory that must stay untouched, because an assertion about the one that must be written would have passed all along. Observed failing with the option removed. MEASURED after: **0** leaked per full-suite run, down from 12.
+- **A second lesson, from building the cleanup tool.** `list-workspace-stores.py` opened each store read-only to count its facts, and SQLite created a `-wal` and a `-shm` beside every one: **5,390 files, two per store.** On its second run those files were the difference — 1,495 directories that had held nothing but a store now held three, and the tool reported every one of them as in use. **A read that writes is not a read**, and a measurement whose own footprint changes the next measurement will always converge on a wrong answer. It now opens `immutable=1` where there is no write-ahead log to miss, and counts a store's sidecars as part of the store.
+- **The generalisation to apply elsewhere:** any component that writes outside the directory it was pointed at should take that directory as an argument. And when a suite launches a real process, assert about **where it wrote**, not only about what it answered.
+- **Residual risk:** the 2,695 directories already written are still there. The tool reports them and removes only the provably empty ones, because an id is a one-way hash of a path — "not in the recent list" is not proof a workspace is gone, only that nothing can name it.
+- **Status:** `controlled`

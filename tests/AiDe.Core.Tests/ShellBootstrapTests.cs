@@ -30,6 +30,21 @@ public sealed class ShellBootstrapTests : IDisposable
     }
 
     /// <summary>
+    /// Where a daemon launched by these tests keeps its state: beside the temp workspace.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Not the machine-wide default, which is what these tests used to leave behind.</b> The
+    /// daemon derived its own directory under LocalAppData, so every run wrote into the user's real
+    /// profile. MEASURED: one run of this suite left <b>12</b> workspace directories there, and 2,674
+    /// had built up over four days — all but one an empty store from a test.</para>
+    ///
+    /// <para>A test that writes outside its own temp directory is not isolated, however green it is.
+    /// The cleanup below removes the workspace and its state together, which was impossible while the
+    /// state lived somewhere the test never named.</para>
+    /// </remarks>
+    private static string DataFor(string workspace) => Path.Combine(workspace, ".aide-data");
+
+    /// <summary>
     /// The daemon built alongside THESE tests.
     /// </summary>
     /// <remarks>
@@ -93,7 +108,7 @@ public sealed class ShellBootstrapTests : IDisposable
         var workspace = FreshWorkspace();
 
         await using var client = await ShellBootstrap.ConnectOrLaunchAsync(
-            workspace, DaemonPath(), CancellationToken.None);
+            workspace, DaemonPath(), CancellationToken.None, DataFor(workspace));
 
         // A connected client is not enough — it must answer, which means the daemon opened its
         // store and registered its operations, not merely accepted a pipe.
@@ -113,12 +128,12 @@ public sealed class ShellBootstrapTests : IDisposable
         var workspace = FreshWorkspace();
 
         await using var first = await ShellBootstrap.ConnectOrLaunchAsync(
-            workspace, DaemonPath(), CancellationToken.None);
+            workspace, DaemonPath(), CancellationToken.None, DataFor(workspace));
 
         var before = DaemonsRunning();
 
         await using var second = await ShellBootstrap.ConnectOrLaunchAsync(
-            workspace, DaemonPath(), CancellationToken.None);
+            workspace, DaemonPath(), CancellationToken.None, DataFor(workspace));
 
         Assert.Equal(first.Epoch, second.Epoch);
         Assert.True(
@@ -131,10 +146,13 @@ public sealed class ShellBootstrapTests : IDisposable
     {
         // The lock and the pipe name are both per workspace; sharing a daemon across two would put
         // two stores behind one epoch.
+        var one = FreshWorkspace();
+        var two = FreshWorkspace();
+
         await using var alpha = await ShellBootstrap.ConnectOrLaunchAsync(
-            FreshWorkspace(), DaemonPath(), CancellationToken.None);
+            one, DaemonPath(), CancellationToken.None, DataFor(one));
         await using var beta = await ShellBootstrap.ConnectOrLaunchAsync(
-            FreshWorkspace(), DaemonPath(), CancellationToken.None);
+            two, DaemonPath(), CancellationToken.None, DataFor(two));
 
         var alphaResult = await alpha.FindAsync("", 5, CancellationToken.None);
         var betaResult = await beta.FindAsync("", 5, CancellationToken.None);
@@ -172,8 +190,50 @@ public sealed class ShellBootstrapTests : IDisposable
         await cancellation.CancelAsync();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => ShellBootstrap.ConnectOrLaunchAsync(
-                FreshWorkspace(), DaemonPath(), cancellation.Token));
+            () =>
+            {
+                var workspace = FreshWorkspace();
+                return ShellBootstrap.ConnectOrLaunchAsync(
+                    workspace, DaemonPath(), cancellation.Token, DataFor(workspace));
+            });
+    }
+
+    [Fact]
+    public async Task ADaemonToldWhereToKeepItsState_WritesNowhereElse()
+    {
+        // The control for DC-049. Before the daemon accepted `--data` it derived its own directory
+        // under the user's LocalAppData and no caller could say otherwise, so every test that
+        // launched one wrote into the real profile: 12 directories per run of this suite, 2,674
+        // accumulated over four days, all but one an empty store belonging to a finished test.
+        //
+        // Nothing failed then and nothing would fail now — which is why the assertion has to be
+        // about the directory that must stay untouched, not about the one that must be written.
+        var machineWide = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "AiDe", "workspaces");
+
+        var before = Directory.Exists(machineWide)
+            ? Directory.GetDirectories(machineWide).ToHashSet(StringComparer.OrdinalIgnoreCase)
+            : [];
+
+        var workspace = FreshWorkspace();
+
+        await using (await ShellBootstrap.ConnectOrLaunchAsync(
+            workspace, DaemonPath(), CancellationToken.None, DataFor(workspace)))
+        {
+            Assert.True(File.Exists(Path.Combine(DataFor(workspace), "workspace.db")),
+                $"the daemon was told to keep its state in {DataFor(workspace)} and did not");
+        }
+
+        var after = Directory.Exists(machineWide)
+            ? Directory.GetDirectories(machineWide).ToHashSet(StringComparer.OrdinalIgnoreCase)
+            : [];
+
+        after.ExceptWith(before);
+
+        Assert.True(after.Count == 0,
+            $"launching a daemon with an explicit state directory still created {after.Count} "
+            + $"director(ies) under {machineWide}: {string.Join(", ", after.Select(Path.GetFileName))}");
     }
 
     public void Dispose()

@@ -70,6 +70,14 @@ public sealed class DaemonProcessTests
         };
 
         start.ArgumentList.Add(workspace);
+
+        // Beside the workspace, so the state dies with it. Without this the daemon writes into the
+        // user's real LocalAppData and the directory outlives the test by months.
+        foreach (var argument in DaemonStateDirectory.ArgumentsFor(workspace))
+        {
+            start.ArgumentList.Add(argument);
+        }
+
         foreach (var argument in extra)
         {
             start.ArgumentList.Add(argument);
@@ -448,6 +456,14 @@ public sealed class DaemonProcessTests
                 CreateNoWindow = true,
             };
             start.ArgumentList.Add(workspace);
+
+            // The same state directory as the first: this is the SAME workspace, and pointing the
+            // second daemon elsewhere would test two workspaces refusing to share a lock, which
+            // they never would.
+            foreach (var argument in DaemonStateDirectory.ArgumentsFor(workspace))
+            {
+                start.ArgumentList.Add(argument);
+            }
 
             using var second = Process.Start(start)!;
             var error = await second.StandardError.ReadToEndAsync();

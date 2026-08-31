@@ -246,8 +246,11 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
 
         try
         {
+            // The shell passes the directory it already computed rather than letting the daemon
+            // derive the same path a second time. Two expressions producing one value agree only for
+            // as long as nobody edits one of them (DC-022).
             var client = await ShellBootstrap
-                .ConnectOrLaunchAsync(root, DaemonPath(), cancellationToken)
+                .ConnectOrLaunchAsync(root, DaemonPath(), cancellationToken, dataDirectory)
                 .ConfigureAwait(true);
 
             // Displayed by folder name, not by the derived id. The id is a hash precisely so the

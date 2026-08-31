@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T05:03:36Z",
+  "generated": "2026-08-31T05:03:44Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3216,6 +3216,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/notes/note-2026-08-30-overnight-surfaces.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0183",
+      "shortname": "daemon-state-leaked-into-localappdata",
+      "datetime": "2026-08-31T04:54:35Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do the next steps autonomously while i go to bed",
+      "summary": "DC-049: the daemon derived its state directory from LocalAppData with no way for a caller to say otherwise, so every test that launched one wrote into the user's real profile — 12 per Core run, 2,695 over four days, 468 MB, all but one an empty or fixture-sized store. The daemon now takes --data and the shell passes the directory it already computed (removing a second derivation of one value). Measured after: 0 leaked per full-suite run. Also: the cleanup tool's own read-only opens created 5,390 sqlite sidecar files and changed its second run's answer — a read that writes is not a read; it now opens immutable where there is no WAL to miss.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/list-workspace-stores.py"
       ],
       "tags": [],
       "outcome": "success"

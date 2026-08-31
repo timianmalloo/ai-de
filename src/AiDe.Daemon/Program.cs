@@ -42,7 +42,8 @@ internal static class Program
         if (args.Length < 1 || string.IsNullOrWhiteSpace(args[0]))
         {
             await Console.Error.WriteLineAsync(
-                "usage: AiDe.Daemon <workspace-path> [--idle-seconds N] [--startup-seconds N]");
+                "usage: AiDe.Daemon <workspace-path> [--data <directory>] "
+                + "[--idle-seconds N] [--startup-seconds N]");
             return ExitBadUsage;
         }
 
@@ -69,7 +70,7 @@ internal static class Program
 
                 // Opened AFTER the lock and before the pipe. A daemon that published an endpoint and
                 // then failed to open its store would be reachable while unable to answer anything.
-                var (endpoint, opened) = OpenWorkspace(workspacePath);
+                var (endpoint, opened) = OpenWorkspace(workspacePath, Option(args, "--data"));
                 core = opened;
 
                 var server = new IpcServer(pipeName, endpoint, options);
@@ -117,13 +118,30 @@ internal static class Program
     /// request and appears in operator output, and the pipe name was already computed precisely so
     /// the path does not have to.</para>
     /// </remarks>
-    private static (DaemonEndpoint Endpoint, WorkspaceCore Core) OpenWorkspace(string workspacePath)
+    /// <param name="dataDirectoryOverride">
+    /// Where to keep this workspace's state. Absent means the machine-wide default.
+    /// </param>
+    /// <remarks>
+    /// <para><b>Why an override exists at all.</b> Without one the daemon decides for itself, from a
+    /// machine-wide folder, and a caller cannot say otherwise — so anything that launches a daemon
+    /// writes into the user's real profile whether it meant to or not. MEASURED: one run of the Core
+    /// test suite left <b>12</b> workspace directories under LocalAppData, and 2,674 had accumulated
+    /// there over four days, all but one of them an empty store from a test.</para>
+    ///
+    /// <para>It also removes a second derivation of the same value: the shell already computes this
+    /// path and can now pass the one it computed, rather than the two of them agreeing by
+    /// coincidence for as long as both copies of the expression stay identical (DC-022).</para>
+    /// </remarks>
+    private static (DaemonEndpoint Endpoint, WorkspaceCore Core) OpenWorkspace(
+        string workspacePath, string? dataDirectoryOverride)
     {
         var workspaceId = IpcPipeName.ForWorkspace(workspacePath);
 
-        var dataDirectory = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "AiDe", "workspaces", workspaceId);
+        var dataDirectory = string.IsNullOrWhiteSpace(dataDirectoryOverride)
+            ? Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AiDe", "workspaces", workspaceId)
+            : Path.GetFullPath(dataDirectoryOverride);
 
         // BEFORE the store is opened. A migration interrupted by a power loss leaves a store that
         // may be anything, and the only thing known to be good is its snapshot — so the next start
@@ -192,6 +210,13 @@ internal static class Program
     /// A daemon that refused to start over an unparseable tuning flag would turn a typo in a
     /// supervisor's command line into an unopenable workspace. The defaults are safe.
     /// </remarks>
+    /// <summary>The value after a flag, or null when the flag is absent or last.</summary>
+    private static string? Option(string[] args, string flag)
+    {
+        var index = Array.IndexOf(args, flag);
+        return index >= 0 && index + 1 < args.Length ? args[index + 1] : null;
+    }
+
     private static TimeSpan? Seconds(string[] args, string flag)
     {
         var index = Array.IndexOf(args, flag);

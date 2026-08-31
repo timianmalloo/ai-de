@@ -42,8 +42,14 @@ public static class ShellBootstrap
     /// <summary>Connects to the workspace's daemon, starting one if none answers.</summary>
     /// <param name="workspacePath">The workspace root. Determines the pipe name and the lock.</param>
     /// <param name="daemonExecutable">The daemon build to launch if none is running.</param>
+    /// <param name="dataDirectory">
+    /// Where a launched daemon should keep this workspace's state. Null leaves it to the daemon's
+    /// machine-wide default — which is right for the shell and wrong for anything that must not
+    /// write into the user's profile, such as a test.
+    /// </param>
     public static async Task<WorkspaceClient> ConnectOrLaunchAsync(
-        string workspacePath, string daemonExecutable, CancellationToken cancellationToken)
+        string workspacePath, string daemonExecutable, CancellationToken cancellationToken,
+        string? dataDirectory = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workspacePath);
         ArgumentException.ThrowIfNullOrWhiteSpace(daemonExecutable);
@@ -68,7 +74,7 @@ public static class ShellBootstrap
                 $"no daemon is running for this workspace and none is installed at '{daemonExecutable}'");
         }
 
-        Launch(daemonExecutable, workspacePath);
+        Launch(daemonExecutable, workspacePath, dataDirectory);
 
         var deadline = DateTimeOffset.UtcNow + LaunchDeadline;
 
@@ -102,7 +108,7 @@ public static class ShellBootstrap
     /// <para>The process handle is disposed immediately: we are not its supervisor, the workspace
     /// lock decides who serves, and the idle grace decides when it stops.</para>
     /// </remarks>
-    private static void Launch(string daemonExecutable, string workspacePath)
+    private static void Launch(string daemonExecutable, string workspacePath, string? dataDirectory)
     {
         var start = new ProcessStartInfo(daemonExecutable)
         {
@@ -112,6 +118,12 @@ public static class ShellBootstrap
         };
 
         start.ArgumentList.Add(workspacePath);
+
+        if (!string.IsNullOrWhiteSpace(dataDirectory))
+        {
+            start.ArgumentList.Add("--data");
+            start.ArgumentList.Add(dataDirectory);
+        }
 
         try
         {
