@@ -71,6 +71,21 @@ open and unforced.
 - Reading prose for identifiers that look like code.
 - Any "probably relates to" edge, however it is labelled.
 
+## Applied once already: `review-by` on code
+
+The knowledge reader records a document's `review-by` date and raises a health finding when it has
+passed — 460 of them on this repository. The obvious symmetry is to do the same for code, so a stale
+class or a long-untouched namespace announces itself.
+
+**No**, on this rule. Nothing in a C# file, a Bicep template or a SQL script *declares* when it
+should next be re-read. A date could only be manufactured — from last-modified time, from churn, from
+a heuristic about age — and the result would render identically to the dates documents actually
+declare. A reader could not tell the two apart, which is precisely the failure this note exists to
+prevent.
+
+A code artifact gets a review date the moment something in the repository writes one down. Until
+then, the absence is accurate.
+
 ## The general rule this states
 
 **An edge in this graph is a claim that something in the repository says so.** Where nothing says so,

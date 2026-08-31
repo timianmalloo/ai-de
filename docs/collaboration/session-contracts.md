@@ -261,6 +261,34 @@ item 4 is settled above.
 
 ---
 
+## 4d. CI now runs on YOUR branch, and will flag things it never used to
+
+Until 2026-08-30 the workflow triggered on `push` to `main` and on `pull_request` only. The design
+session works on a long-lived feature branch with no PR open, so **its commits met no gate until they
+reached `main`** — by which point they were merged and the finding landed on whoever merged next.
+
+That is not a hypothetical: an entry arrived in the defect register with an unbackticked `Status:`
+value **twice**, and a `DC-` id was allocated twice across the two sessions **six times**. Every one
+was caught at a merge rather than at the push that introduced it. A gate that only guards the
+destination reports problems to the wrong person.
+
+`on: push:` now has no branch filter, so **the next push to your branch runs all nine gates**. Expect
+it to be noisy the first time. Two are worth knowing about in advance:
+
+- **`verify-defect-register`** wants the status VALUE in backticks. Its message used to say
+  "declares no **Status:** line" when the line was there and only the format was wrong; it now names
+  the actual problem and shows the expected form:
+
+  ```
+  - **Status:** `partially-controlled` — why            <- accepted
+  - **Status:** partially-controlled (why)              <- rejected
+  ```
+- **`verify-id-allocators`** fails on a duplicate `DC-`/`al-`/`cl-`/`adr-`/`INV-` id. If it fires,
+  the protocol is §4b item 2: keep the id already on `main`, re-issue yours, regenerate the derived
+  views.
+
+Neither is a new rule — both were always enforced, just not where you could see them.
+
 ## 5. Reducing merge pain, concretely
 
 - **Rebase on `origin/main` before starting a stretch of work**, not only before pushing.
