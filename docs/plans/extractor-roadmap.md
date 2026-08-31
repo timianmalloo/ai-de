@@ -42,8 +42,8 @@ was not a bad sentence — it was a wrong plan.
 
 | Extractor | Reads | Emits | Measured coverage |
 |---|---|---|---|
-| **C#** (Roslyn, no MSBuild) | `.cs` via a `CSharpCompilation` per project/TFM | `has_type`, `declared_in`, `depends_on`, `inherits`, `implements`, `has_member`, `declares_table`, `uses_table` | 4 scopes, 21,298 facts; 1,428 types; 9,854 members |
-| **Knowledge** (frontmatter + prose links) | `.md` with graph frontmatter | `has_type`, `node_class`, `declared_in`, `owned_by`, `review_by`, typed links, `links_to` | 39 scopes, 10,508 facts; **877 distinct documents**; 42 prose-link edges |
+| **C#** (Roslyn, no MSBuild) | `.cs` via a `CSharpCompilation` per project/TFM | `has_type`, `declared_in`, `depends_on`, `inherits`, `implements`, `has_member`, **`calls`**, `declares_table`, `uses_table` | 4 scopes; 1,428 types; 9,854 members; **1,492 call edges** |
+| **Knowledge** (frontmatter + prose links) | `.md` with graph frontmatter | `has_type`, `node_class`, `declared_in`, `owned_by`, `review_by`, typed links, `links_to` | 39 scopes; **878 documents, each extracted exactly once**; 42 prose-link edges resolved workspace-wide |
 | **Python** (line-oriented) | `.py` top-level declarations + imports | `has_type`, `declared_in`, `imports` | 5 scopes, 1,286 facts; 2 unknown imports |
 | **EF schema** (migrations) | `Migrations/*.cs` folded in order | `has_type`, `declared_in`, `has_column`, `introduced_by` | 1 scope, 761 facts; 64 tables |
 | **Bicep** | `.bicep` templates | `has_type`, `declared_in`, `depends_on`, `resource_type`, `api_version`, `parameter_type`, `is_secret`, `is_loop`, `is_conditional` | 2 scopes, 209 facts |
@@ -68,16 +68,21 @@ Ranked by *what a user cannot currently ask*, not by what is missing in the abst
 
 | # | Work | Why it is where it is | Size |
 |---|---|---|---|
-| **1** | **De-duplicate knowledge scopes, and resolve prose links workspace-wide** | Knowledge scopes NEST: `knowledge:docs` reads everything under it and `knowledge:docs/adr` reads it again, so every knowledge fact is stored ~2.7 times — MEASURED, 2,368 `node_class` rows for **877** distinct documents. Reading each directory's own files fixes it (877 documents preserved, knowledge facts 10,508 → 4,326) **but costs 30 of the 42 prose-link edges**, because a link across directories only resolves for a scope that read both. The two must be done together: resolve against the whole workspace, emit per scope. Attempted and reverted 2026-08-31 rather than ship the regression. | Medium |
-| **2** | **C# call edges** | `depends_on` is type-level. "What calls this" is the question a code graph is expected to answer and cannot. | Medium |
+| **1** | **The graph pane's payload budget** | This is now the binding constraint on every extractor, and it moved from theory to arithmetic today. Call edges alone left `graph:default` with **18,496 bytes** of a 1 MiB frame; only because knowledge de-duplication landed in the same change did the combined result come back to **195,896**. Two more edge families and the surface starts dropping nodes to carry them — MEASURED once already, 2,630 drawn nodes falling to 1,471. The graph needs a bounded view (the overview/LOD path exists and is unbound to the canvas) or a way to ask for edges by kind, **before** anything else is added to it. | Medium |
+| **2** | **C# extraction time** | Binding every method body took the index from **5.9s to 15.5s** on TheTerrace — inside the 60-second per-scope budget, and a 2.6x regression that will grow with the repository. The honest prefilter (skip invocations whose name matches nothing declared in source) was rejected during the work because it folds the boundary into the gap (DC-050); a better one needs finding rather than assuming. | Medium |
 | **3** | **Schema changed by raw SQL** | The EF reader folds migrations; `ExecuteSqlRaw` changes the schema and is not read, so the schema can be quietly wrong rather than incomplete. | Medium |
-| **4** | **`Describe`'s ordering** | Not an extractor, but it caps a node's facts at 50 ordered `subject, predicate, object` — **alphabetically, not by importance**. 12 of 877 knowledge documents were already over it before any of today's work, so a node's type and owner can fall outside the window while its links fill it. Found by simulating headings against the real store. | Small |
 | **5** | **Python nested declarations** | Column-zero only, so a class inside a function is invisible. Bounded and rarely load-bearing. | Small |
 | **6** | **Bicep expression evaluation** | Resource names built from expressions stay unevaluated; `count` is indeterminate. Correctly disclosed, and evaluating it means writing an interpreter. | Large, low value |
 
-**Knowledge body analysis and TypeScript were items 1 and 2 and both shipped on 2026-08-31.** What
-replaced them at the top is what those two uncovered: the nesting duplication, and the fact that
-TypeScript's "gap" was 83% invented facts rather than missing ones.
+**Four extractor items have shipped in two days** — knowledge body analysis, TypeScript precision,
+knowledge de-duplication, and C# call edges. What sits at the top now is not an extractor at all, and
+that is the finding: **the constraint has moved from what can be read to what can be carried.** Every
+one of those four made the graph payload larger, and the last two were only compatible because one of
+them made it smaller.
+
+The pattern worth keeping: each item was ranked by a number, and three of the four changed rank once
+the number was measured. Python's "largest gap" was 99% boundary; TypeScript's was 83% invention;
+method-level call edges were ruled out by a payload arithmetic done before any code was written.
 
 **3 is a correctness risk rather than a coverage one** — a schema that is quietly wrong beats one that
 is honestly incomplete. The rest are boundaries, already disclosed.

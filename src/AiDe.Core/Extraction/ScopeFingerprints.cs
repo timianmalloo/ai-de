@@ -47,10 +47,10 @@ public sealed class ScopeFingerprints
     // and no fact said where the scope was, so a node could not be resolved to a file at all. A store
     // written before this cannot answer a content query, and the reader would show "source could not
     // be located" for everything — which is the shape a stale generation always takes.
-    // 2026-09-01.1 — knowledge prose links (`links_to`), TypeScript import precision and
-    // declaration coverage, and the build-output/generated-file exclusions that came with them.
-    // Every one changes extraction OUTPUT for input that has not changed.
-    public const string ExtractorGeneration = "2026-09-01.1";
+    // 2026-09-01.2 — knowledge scopes stopped overlapping (each document extracted once, resolved
+    // workspace-wide) and C# gained type-level `calls` edges. Both change extraction OUTPUT for
+    // input that has not changed.
+    public const string ExtractorGeneration = "2026-09-01.2";
 
     private const string FileName = "scope-fingerprints.json";
 

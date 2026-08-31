@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T17:30:11Z",
+  "generated": "2026-08-31T17:30:12Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5384,6 +5384,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.Core/Projections/ProjectionService.cs",
         "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0287",
+      "shortname": "knowledge-dedup-and-csharp-call-edges",
+      "datetime": "2026-08-31T17:29:38Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do the next steps you listed above. tackle both Roadmap #1 and Roadmap #2 in parallel",
+      "summary": "Both roadmap items shipped in parallel worktrees and integrated. Knowledge: read widely, emit narrowly — a workspace-wide document map built once per revision and cached (the same shape as WorkspaceModules) lets each document be extracted by exactly one scope while a prose link resolves anywhere; 878 documents preserved, node_class rows 2,371 to 878, links_to held at 42, index time slightly faster. The outside-scope boundary was MOVED to outside-workspace rather than deleted, with a mirror test so 'moved' cannot be confused with 'removed'. C#: measured 10,451 candidate call edges before designing, ruled out method-level on payload arithmetic (5,054 new nodes against a frame with 8% headroom), shipped 1,492 type-level edges of which 72% are not already depends_on. Combined, the two are better than either alone: dedup freed the budget calls consume, so the canvas draws 1,500 nodes with 195,896 bytes of headroom where calls alone left 18,496. DC-053 registered: git stash is repository-global, so a worktree does not isolate it — the two agents collided on the stash stack and both preserved rather than discarded what they did not recognise.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/extractor-roadmap.md"
       ],
       "tags": [],
       "outcome": "success"

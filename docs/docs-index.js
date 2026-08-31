@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T17:30:11Z",
+  "generated": "2026-08-31T17:30:12Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1952,7 +1952,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8cd35d0bd497d22cb70fe235d1f3ab99fe64cec195072e1c536ad6cebcf46bb1"
+      "sourceSha256": "12ad305dac534293ce074e888061c82c25f559656d3381b3f3f7d63318b6dec7"
     },
     {
       "id": "domain-experts",
@@ -2658,7 +2658,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fc0f3a3eedd25e42b46fce0da8b30fa6c38a47a741deb0623f3d47065efdb4cd"
+      "sourceSha256": "d8627086a234845dc0175236c8447f0755814b39356aea84cba1e5dbae626d90"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -6633,5 +6633,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d90055d4928656aef7ab3e40cd176afb6c330487312f68980197f9d041db7f5b"
+  "graphSha256": "fc71a1ccf41a3d944001f9b305875026027c033ae2629d57c0ef1b3e0f9170a0"
 };
