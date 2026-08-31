@@ -71,6 +71,7 @@ public sealed class WorkbenchShell : IDisposable
         IWatcherSessionsQuery? sessionsQuery = null;
         IWatcherBoardQuery? boardQuery = null;
         IWatcherLeaderboardQuery? leaderboardQuery = null;
+        IWatcherDisputeQuery? disputeQuery = null;
         if (!string.IsNullOrEmpty(workspaceDataDirectory))
         {
             try
@@ -83,6 +84,7 @@ public sealed class WorkbenchShell : IDisposable
                 sessionsQuery = new WatcherSessionsQuery(_watcherStore, liveness);
                 boardQuery = new WatcherBoardQuery(_watcherStore);
                 leaderboardQuery = new WatcherLeaderboardQuery(_watcherStore);
+                disputeQuery = new WatcherDisputeQuery(_watcherStore);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
@@ -96,7 +98,7 @@ public sealed class WorkbenchShell : IDisposable
             }
         }
 
-        _factory = new SurfaceContentFactory(queries, sessionsQuery, boardQuery, leaderboardQuery);
+        _factory = new SurfaceContentFactory(queries, sessionsQuery, boardQuery, leaderboardQuery, disputeQuery);
         Manager = new DockingManager();
         AutomationProperties.SetName(Manager, "Workbench");
 

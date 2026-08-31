@@ -19,7 +19,8 @@ public sealed class SurfaceContentFactory(
     IWorkspaceQueries? queries,
     IWatcherSessionsQuery? watcherSessions = null,
     IWatcherBoardQuery? watcherBoard = null,
-    IWatcherLeaderboardQuery? watcherLeaderboard = null)
+    IWatcherLeaderboardQuery? watcherLeaderboard = null,
+    IWatcherDisputeQuery? watcherDisputes = null)
 {
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
     public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard"];
@@ -198,7 +199,7 @@ public sealed class SurfaceContentFactory(
     /// </summary>
     private FrameworkElement Leaderboard(Surface surface)
     {
-        var pane = new WatcherLeaderboardPaneViewModel(watcherLeaderboard);
+        var pane = new WatcherLeaderboardPaneViewModel(watcherLeaderboard, watcherDisputes);
         pane.Load();
         return ListPane(surface, pane.Rows, nameof(WatcherLeaderboardRow.DisplayLabel), pane.StatusMessage, "cells");
     }

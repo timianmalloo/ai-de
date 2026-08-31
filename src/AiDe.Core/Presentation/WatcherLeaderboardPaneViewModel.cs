@@ -66,6 +66,20 @@ public sealed class WatcherLeaderboardQuery(IWatcherObservationStore store) : IW
     public IReadOnlyList<ScoredEpisode> GetScoredEpisodes() => _store.AllScoredEpisodes();
 }
 
+/// <summary>The read seam for the derived Disputed state (US-16). A null query means disputes are not shown.</summary>
+public interface IWatcherDisputeQuery
+{
+    IReadOnlySet<string> DisputedEpisodeIds();
+}
+
+/// <summary>Folds the store's append-only disputes into the disputed-episode set (US-16 / rule 12).</summary>
+public sealed class WatcherDisputeQuery(IWatcherObservationStore store) : IWatcherDisputeQuery
+{
+    private readonly DisputeProjection _projection = new(store ?? throw new ArgumentNullException(nameof(store)));
+
+    public IReadOnlySet<string> DisputedEpisodeIds() => _projection.DisputedEpisodeIds();
+}
+
 /// <summary>
 /// The Loomkeeper Leaderboard surface view model - the comparative view of agent effectiveness
 /// (US-14). It discovers the distinct (task class, score schema) segments present in the scored
@@ -74,7 +88,7 @@ public sealed class WatcherLeaderboardQuery(IWatcherObservationStore store) : IW
 /// comparable, "Not Comparable" with a reason where the cohort is too small or single-operator
 /// (US-10). Synchronous load; degrades to an explicit state (DC-011).
 /// </summary>
-public sealed class WatcherLeaderboardPaneViewModel(IWatcherLeaderboardQuery? query)
+public sealed class WatcherLeaderboardPaneViewModel(IWatcherLeaderboardQuery? query, IWatcherDisputeQuery? disputes = null)
 {
     private readonly LeaderboardComposer _composer = new();
 
@@ -125,7 +139,10 @@ public sealed class WatcherLeaderboardPaneViewModel(IWatcherLeaderboardQuery? qu
             {
                 State = PaneState.Ready;
                 var comparable = Rows.Count(r => r.Comparable);
-                StatusMessage = $"{Rows.Count} cell(s) · {comparable} comparable";
+                var disputed = CountDisputedScoredEpisodes(episodes);
+                StatusMessage = disputed == 0
+                    ? $"{Rows.Count} cell(s) · {comparable} comparable"
+                    : $"{Rows.Count} cell(s) · {comparable} comparable · {disputed} disputed episode(s)";
             }
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
@@ -136,5 +153,21 @@ public sealed class WatcherLeaderboardPaneViewModel(IWatcherLeaderboardQuery? qu
         }
 
         LiveAnnouncement = StatusMessage;
+    }
+
+    /// <summary>
+    /// How many of the scored episodes carry at least one dispute (US-16 - Disputed is discoverable
+    /// from the surface). Derived from the append-only dispute facts, never a stored flag (DM7). Zero
+    /// when no dispute query is wired.
+    /// </summary>
+    private int CountDisputedScoredEpisodes(IReadOnlyList<ScoredEpisode> episodes)
+    {
+        if (disputes is null)
+        {
+            return 0;
+        }
+
+        var disputed = disputes.DisputedEpisodeIds();
+        return episodes.Count(e => disputed.Contains(e.EpisodeId));
     }
 }

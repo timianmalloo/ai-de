@@ -648,6 +648,71 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         return list;
     }
 
+    public void AppendScoreDispute(ScoreDispute dispute)
+    {
+        ArgumentNullException.ThrowIfNull(dispute);
+        lock (_gate)
+        {
+            // INSERT OR IGNORE: a redelivered dispute id is a no-op, and - unlike INSERT OR REPLACE -
+            // it never fires the BEFORE UPDATE trigger, so append-only holds (rule 12).
+            ExecuteNonQuery(
+                _connection,
+                """
+                INSERT OR IGNORE INTO score_dispute_fact
+                    (dispute_id, episode_id, operator_id, disputed_dimension, reason, raised_at)
+                VALUES ($id, $episode, $op, $dim, $reason, $raised);
+                """,
+                ("$id", dispute.DisputeId),
+                ("$episode", dispute.EpisodeId),
+                ("$op", dispute.OperatorId),
+                ("$dim", dispute.DisputedDimension?.ToString()),
+                ("$reason", dispute.Reason),
+                ("$raised", dispute.RaisedAt.ToUniversalTime().ToString("O")));
+        }
+    }
+
+    public IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = DisputeSelect + " WHERE episode_id = $episode ORDER BY raised_at;";
+            command.Parameters.AddWithValue("$episode", episodeId);
+            return ReadDisputes(command);
+        }
+    }
+
+    public IReadOnlyList<ScoreDispute> AllDisputes()
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = DisputeSelect + " ORDER BY raised_at;";
+            return ReadDisputes(command);
+        }
+    }
+
+    private const string DisputeSelect =
+        "SELECT dispute_id, episode_id, operator_id, disputed_dimension, reason, raised_at FROM score_dispute_fact";
+
+    private static IReadOnlyList<ScoreDispute> ReadDisputes(SqliteCommand command)
+    {
+        using var reader = command.ExecuteReader();
+        var list = new List<ScoreDispute>();
+        while (reader.Read())
+        {
+            list.Add(new ScoreDispute(
+                reader.GetString(0),
+                reader.GetString(1),
+                reader.GetString(2),
+                reader.IsDBNull(3) ? null : Enum.Parse<ScoreDimension>(reader.GetString(3)),
+                reader.GetString(4),
+                DateTimeOffset.Parse(reader.GetString(5), null, System.Globalization.DateTimeStyles.RoundtripKind)));
+        }
+
+        return list;
+    }
+
     public void Dispose()
     {
         if (_disposed)
@@ -806,6 +871,24 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             floor      TEXT NOT NULL,
             PRIMARY KEY (episode_id, floor)
         );
+
+        -- Append-only operator dispute of a scored episode (US-16 / rule 12): raising a dispute never
+        -- overwrites the Scorecard. The Disputed state is DERIVED from the presence of these rows
+        -- (DM7), never a stored flag on the score. disputed_dimension NULL means the whole score.
+        CREATE TABLE score_dispute_fact (
+            dispute_id        TEXT NOT NULL PRIMARY KEY,
+            episode_id        TEXT NOT NULL,
+            operator_id       TEXT NOT NULL,
+            disputed_dimension TEXT NULL,
+            reason            TEXT NOT NULL,
+            raised_at         TEXT NOT NULL
+        );
+        CREATE INDEX ix_score_dispute_episode ON score_dispute_fact (episode_id);
+
+        CREATE TRIGGER score_dispute_fact_no_update BEFORE UPDATE ON score_dispute_fact
+        BEGIN SELECT RAISE(ABORT, 'score_dispute_fact is append-only'); END;
+        CREATE TRIGGER score_dispute_fact_no_delete BEFORE DELETE ON score_dispute_fact
+        BEGIN SELECT RAISE(ABORT, 'score_dispute_fact is append-only'); END;
         """;
 
     private static void Execute(SqliteConnection connection, string sql)

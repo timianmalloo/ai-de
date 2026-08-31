@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T17:34:00Z",
+  "generated": "2026-08-31T17:45:06Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3030,6 +3030,29 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0289",
+      "shortname": "implement-watcher-score-dispute",
+      "datetime": "2026-08-31T17:45:06Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 4: operator dispute path (US-16/rule 12). ScoreDispute append-only fact (own table, append-only triggers, idempotent id) that never overwrites the Scorecard; DisputeProjection derives the Disputed state (DM7); Leaderboard surfaces disputed-episode count. 11 tests, suite 939/0, App 138/0; append-only/idempotent oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/ScoreDispute.cs",
+        "src/AiDe.Core/Watcher/WatcherObservationStore.cs",
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "src/AiDe.Core/Presentation/WatcherLeaderboardPaneViewModel.cs",
+        "docs/design/watcher-score-dispute.md",
+        "docs/proof/watcher-score-dispute.md",
+        "tests/AiDe.Core.Tests/Watcher/ScoreDisputeTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -5603,6 +5626,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "8ca0574d22fe4a3b47f5c8b9341ff7abb51fb691",
         "after": "8ca0574d22fe4a3b47f5c8b9341ff7abb51fb691",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0121",
+      "datetime": "2026-08-31T17:45:06Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper conn-4: dispute is an append-only fact, Disputed is derived, never overwrites the score (rule 12)",
+      "prompt": "operator dispute path",
+      "summary": "ScoreDispute in its own append-only table; a dispute writes a fact and touches no score, so prior scores are preserved (rule 12); Disputed is derived from the facts (DM7), never stored; Leaderboard surfaces the disputed count.",
+      "rationale": "Rule 12 forbids overwriting a disputed score; a separate append-only fact + a derived state is the only shape that keeps the prior score and the dissent both immutable.",
+      "artifacts": [
+        "src/AiDe.Core/Watcher/ScoreDispute.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "09c7dfee6a1c909dd8934ed142ca9a1b58b97923",
+        "after": "09c7dfee6a1c909dd8934ed142ca9a1b58b97923",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

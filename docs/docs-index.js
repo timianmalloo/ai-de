@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T17:33:27Z",
+  "generated": "2026-08-31T17:44:41Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2241,6 +2241,51 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "807705a3a65c94b27ae9d0b1385fec92878071c1eb7a3a6d8d0e4bde10249762"
+    },
+    {
+      "id": "design-watcher-score-dispute",
+      "path": "docs/design/watcher-score-dispute.md",
+      "title": "Loomkeeper - Operator Dispute Path (connective 4)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The operator dispute path (US-16 / spec rule 12): an operator records a ScoreDispute against a scored episode - an append-only fact that NEVER overwrites the Scorecard - and the episode's Disputed state is DERIVED from the presence of dispute facts (DM7), never a stored flag. Persisted in both stores (append-only trigger + idempotent id), read by a DisputeProjection, and surfaced as a disputed-episode count on the Leaderboard so a disputed score is discoverable from the surface (US-16).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "dispute",
+        "fairness",
+        "append-only",
+        "us-16",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-score-persistence",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-board-leaderboard-surfaces",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b48c6eb4f0bab2ac1e528f39a4bb57a209f33e4cdd98f7d22c85587902adbf59"
     },
     {
       "id": "design-watcher-score-persistence",
@@ -7134,6 +7179,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "88db95fbfe34817d03c84ba141127c2ef29ac097928899e06b8d4f455a376a88"
     },
     {
+      "id": "proof-watcher-score-dispute",
+      "path": "docs/proof/watcher-score-dispute.md",
+      "title": "Proof Pack - Loomkeeper Operator Dispute Path (connective 4)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the operator dispute path meets US-16 / rule 12: a ScoreDispute is an append-only fact that never overwrites the Scorecard (prior score preserved); it round-trips whole-score and per-dimension on both stores and persists across a reopen; the SQLite fact rejects UPDATE/DELETE (DM11) and ignores a duplicate id idempotently; the Disputed state is derived from the facts (DM7); and the Leaderboard surfaces the disputed-episode count so a disputed score is discoverable (US-16). 11 tests, full suite 939/0, App 138/0; the append-only/idempotent oracle mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "dispute",
+        "fairness",
+        "append-only",
+        "us-16",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-score-dispute",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c8869ba6128799e705fde59370dfb21277e7aec8b568b5846b7cc02aa46a390c"
+    },
+    {
       "id": "proof-watcher-score-persistence",
       "path": "docs/proof/watcher-score-persistence.md",
       "title": "Proof Pack - Loomkeeper Scorecard & Leaderboard Persistence (connective 1)",
@@ -7833,5 +7912,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "69bd3ce57da7586b09ac4564e98e01888c86edc6cbbe637760b82a4405ca0f5b"
+  "graphSha256": "85cb38350131f5e2554c4a8a8db017985b70f80fe0d98462b5ca5aa234e33965"
 };

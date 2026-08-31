@@ -86,6 +86,18 @@ public interface IWatcherObservationStore
     /// </summary>
     IReadOnlyList<ScoredEpisode> AllScoredEpisodes();
 
+    /// <summary>
+    /// Appends an operator's dispute of a scored episode (US-16 / rule 12). Append-only: raising a
+    /// dispute never overwrites the Scorecard. A duplicate dispute id is ignored idempotently.
+    /// </summary>
+    void AppendScoreDispute(ScoreDispute dispute);
+
+    /// <summary>An episode's disputes in raise order - the audit trail of why a score was contested.</summary>
+    IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId);
+
+    /// <summary>Every recorded dispute - the compute reader for the derived Disputed state (spec §10).</summary>
+    IReadOnlyList<ScoreDispute> AllDisputes();
+
     /// <summary>Marks a session ended (terminal closed or superseded generation).</summary>
     void MarkEnded(string sessionId);
 
@@ -113,6 +125,7 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
     private readonly Dictionary<string, WorkEpisode> _episodes = new();
     private readonly Dictionary<string, BoardMessage> _boardMessages = new();
     private readonly Dictionary<string, ScoredEpisode> _scored = new();
+    private readonly Dictionary<string, ScoreDispute> _disputes = new();
     private readonly HashSet<string> _ended = new();
 
     public bool TryAppendSpan(ObservedSpan span)
@@ -316,6 +329,35 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         lock (_gate)
         {
             return [.. _scored.Values];
+        }
+    }
+
+    public void AppendScoreDispute(ScoreDispute dispute)
+    {
+        ArgumentNullException.ThrowIfNull(dispute);
+        lock (_gate)
+        {
+            // TryAdd: a redelivered dispute id is ignored idempotently; existing disputes are never
+            // mutated (append-only, rule 12).
+            _disputes.TryAdd(dispute.DisputeId, dispute);
+        }
+    }
+
+    public IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)
+    {
+        lock (_gate)
+        {
+            return [.. _disputes.Values
+                .Where(d => string.Equals(d.EpisodeId, episodeId, StringComparison.Ordinal))
+                .OrderBy(d => d.RaisedAt)];
+        }
+    }
+
+    public IReadOnlyList<ScoreDispute> AllDisputes()
+    {
+        lock (_gate)
+        {
+            return [.. _disputes.Values.OrderBy(d => d.RaisedAt)];
         }
     }
 
