@@ -29,6 +29,12 @@ public static class EvidencePredicates
         "api_version", "resource_type", "resource_name", "resource_name_expression",
         "module_path", "parameter_type", "is_secret",
         "has_column", "introduced_by",
+
+        // A type's members, for UML member compartments (ADR-0020). An ATTRIBUTE for the same reason
+        // has_column is one: `Id : int` is a property OF a class, not a peer of it, and drawing one
+        // would put every method and field in the graph as a thing to navigate to. MEASURED on a real
+        // repository, that would have been tens of thousands of new nodes to serve a card layout.
+        "has_member", "members_truncated",
         "is_existing_reference", "is_loop", "is_conditional",
         "declares_table",
 

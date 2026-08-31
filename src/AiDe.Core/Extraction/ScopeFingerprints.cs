@@ -47,7 +47,9 @@ public sealed class ScopeFingerprints
     // and no fact said where the scope was, so a node could not be resolved to a file at all. A store
     // written before this cannot answer a content query, and the reader would show "source could not
     // be located" for everything — which is the shape a stale generation always takes.
-    public const string ExtractorGeneration = "2026-08-31.1";
+    // 2026-08-31.2 — has_member. Types now carry their own members, formatted for a UML
+    // compartment, which is the Phase-2 unlock for the class diagram (ADR-0020).
+    public const string ExtractorGeneration = "2026-08-31.3";
 
     private const string FileName = "scope-fingerprints.json";
 

@@ -73,6 +73,17 @@ internal static class Program
                 var (endpoint, opened) = OpenWorkspace(workspacePath, Option(args, "--data"));
                 core = opened;
 
+                // ASKED, at last. The check existed, was tested, and nothing had ever called it —
+                // so a workspace could slow down past its budget with the diagnosis sitting in a
+                // method nobody invoked (DC-042). Startup is where it belongs: the store is open,
+                // no session is in progress, and a daemon that has just started is the one moment
+                // an operator is looking.
+                foreach (var (scopeId, generations) in core.CheckCompactionNeeded())
+                {
+                    Console.WriteLine(
+                        $"compaction due: {scopeId} has {generations} committed generation(s)");
+                }
+
                 var server = new IpcServer(pipeName, endpoint, options);
 
                 // stdout, so a supervisor can confirm which pipe to reach without guessing. The
