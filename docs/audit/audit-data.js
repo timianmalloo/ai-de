@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T23:01:56Z",
+  "generated": "2026-08-31T23:07:53Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3203,6 +3203,23 @@ window.AUDIT_DATA = {
         "tests/AiDe.App.Tests/WorkbenchWatcherRefreshTests.cs",
         "docs/design/watcher-live-refresh.md",
         "docs/proof/watcher-live-refresh.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0306",
+      "shortname": "investigate-conn-10-11-blocker",
+      "datetime": "2026-08-31T23:07:53Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (conn-10 auto-score, conn-11 dispute)",
+      "summary": "Grounded in the scorer + spec and established that conn-10/conn-11 are blocked on a Work Episode lifecycle source (declared goal/done-when) + a verification-path telemetry convention that do not exist for terminal sessions; a signals deriver could only honestly return HasVerificationPath=false -> Not-Scored (spec L127). Recorded a decision note, deferred both behind an episode-capture slice rather than fabricating signals (NG1).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/conn-10-11-episode-source-blocker.md"
       ],
       "tags": [],
       "outcome": "success"

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T23:01:43Z",
+  "generated": "2026-08-31T23:07:40Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1508,6 +1508,44 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "7512d0c42ae281d521239e2d341d6a2c1af30a4551b7963e559a931dcfa76675"
+    },
+    {
+      "id": "note-conn-10-11-episode-source-blocker",
+      "path": "docs/notes/conn-10-11-episode-source-blocker.md",
+      "title": "conn-10/conn-11 are blocked on an episode-lifecycle source + verification telemetry",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "conn-10 (auto-score-on-close) and conn-11 (raise-dispute + cloud judge) cannot ship honestly yet: no terminal session opens a goal/done-when Work Episode, and there is no telemetry convention for observing a verification path - so a deterministic signals deriver could only ever return HasVerificationPath=false, which the scorer correctly renders Not-Scored, and disputes have no scored episode to target. Deferring both behind an episode-lifecycle capture slice rather than fabricating signals (spec L127; no-guessing).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "scoring",
+        "dispute",
+        "blocker",
+        "conn-10",
+        "conn-11",
+        "decision-note"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-session-emitter",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "298403503f40f940c45953096e643b6c7e4ed02fb37be09cdaf441b107d7a1d1"
     },
     {
       "id": "note-terminal-customization-persistence",
@@ -8408,5 +8446,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "4af1808e55f660dd340601d7a56f47e223bfde17b1d7aa481801ea1b13220c7a"
+  "graphSha256": "a048bc74a73b490395fce4f0e658a183f2df4646af587560421b501c454ed9f9"
 };
