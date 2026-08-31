@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T16:21:03Z",
+  "generated": "2026-08-31T16:43:42Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2942,6 +2942,29 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T16:07:58Z",
       "duration_seconds": 785.0
+    },
+    {
+      "id": "al-0279",
+      "shortname": "implement-watcher-advisory-grader",
+      "datetime": "2026-08-31T16:43:26Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 7 implemented",
+      "summary": "Slice 7 (final): advisory grader + calibration + leaderboard + standing. QWK/stability/anti-Goodhart gates (ADR-0019), gated advisory fold that never overrides a floor (rule 8), leaderboard cohort>=5 + single-operator privacy suppression (rules 10-11, US-10) segmented by task/schema, AgentStanding with no single optimizable scalar (US-16). 27 new tests, full suite 889/0, cohort-minimum oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AdvisoryScoring.cs",
+        "src/AiDe.Core/Watcher/Leaderboard.cs",
+        "src/AiDe.Core/Watcher/WeaveScore.cs",
+        "docs/design/watcher-advisory-grader.md",
+        "docs/proof/watcher-advisory-grader.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T16:28:44Z",
+      "duration_seconds": 882.0
     }
   ],
   "changes": [
@@ -5470,6 +5493,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "4ddd278aba69220e95d4a2ea92eca3aa6ab0b1b2",
         "after": "4ddd278aba69220e95d4a2ea92eca3aa6ab0b1b2",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0119",
+      "datetime": "2026-08-31T16:43:42Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 7: advisory grader gated on ADR-0019 calibration; leaderboard cohort/privacy guards; no-scalar standing",
+      "prompt": "do the next steps and lets get all of slice 7 implemented",
+      "summary": "Advisory dimensions enter Weave points only after stability + QWK>=0.75 + anti-Goodhart gates pass; the fold never rescues a Blocked/NotScored verdict (rule 8); leaderboard is Not Comparable below cohort 5 or single-operator (rules 10-11, US-10), segmented by task/schema; AgentStanding carries rank+trend+per-dimension reasons but no single optimizable scalar (US-16), enforced by a reflection guard.",
+      "rationale": "A model-judged (probabilistic) dimension must not affect a score until calibrated against humans, and a public standing must not become a gameable target.",
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AdvisoryScoring.cs",
+        "src/AiDe.Core/Watcher/Leaderboard.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "67586a8bbc7132395d13be04c3da7017ee5e7703",
+        "after": "67586a8bbc7132395d13be04c3da7017ee5e7703",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

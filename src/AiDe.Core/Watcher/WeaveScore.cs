@@ -142,16 +142,28 @@ public sealed class WeaveScorer
         }
 
         // 6. Verdict + headline (rule 2): no rescale to 0-100 when partial.
+        return ComposeScoredCard(episode.EpisodeId, schema.Version, assessments, coverage, at, schema.TotalWeight);
+    }
+
+    /// <summary>
+    /// Composes the verdict + headline from the (possibly advisory-folded) assessments. Shared by the
+    /// deterministic scorer and the advisory fold so the no-rescale headline rule (rule 2) lives once.
+    /// Assumes gating and floors were already resolved (this path is only reached for a scoreable card).
+    /// </summary>
+    internal static Scorecard ComposeScoredCard(
+        string episodeId, string schemaVersion, IReadOnlyList<DimensionAssessment> assessments,
+        EvidenceCoverage? coverage, DateTimeOffset at, int totalWeight)
+    {
         var scored = assessments.Where(a => a.EarnedPoints is not null).ToList();
         var earned = scored.Sum(a => a.EarnedPoints!.Value);
         var observedWeight = scored.Sum(a => a.Weight);
-        var allScored = scored.Count == schema.Dimensions.Count;
+        var allScored = scored.Count == assessments.Count;
 
         var (verdict, headline) = allScored
-            ? (WeaveVerdict.Scored, $"{Format(earned)} / {schema.TotalWeight}")
+            ? (WeaveVerdict.Scored, $"{Format(earned)} / {totalWeight}")
             : (WeaveVerdict.Partial, $"Partial: {Format(earned)} / {observedWeight} observed");
 
-        return new Scorecard(episode.EpisodeId, schema.Version, verdict, assessments, [], coverage, headline, at);
+        return new Scorecard(episodeId, schemaVersion, verdict, assessments, [], coverage, headline, at);
     }
 
     private static string? NotScoredReason(WorkEpisode episode, DeterministicEpisodeSignals signals)

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T16:20:32Z",
+  "generated": "2026-08-31T16:42:47Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1829,6 +1829,53 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4fc0b16537275ee9743dcadefb508ce94a027e92d70521b041d15616aa6cdeb4"
+    },
+    {
+      "id": "design-watcher-advisory-grader",
+      "path": "docs/design/watcher-advisory-grader.md",
+      "title": "Loomkeeper Advisory Grader - Calibration Gates, Leaderboard, Standing",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper advisory grader (slice 7, final). The deterministic cores: the ADR-0019 calibration gates (stability >=95% band consistency with spread <=1, quadratic weighted kappa >=0.75 vs human labels, and anti-Goodhart counter-metrics that must not worsen) that decide whether an advisory evaluator version may contribute points; the gated fold of a qualified advisory dimension into the Weave (never overriding a deterministic dimension); the leaderboard (cohort >=5 or Not Comparable, segmented by task class + score schema version, per harness/model/harness-model, non-identifying); and per-turn agent standing (rank + trend + one evidence reason per dimension, no single optimizable scalar). The model judge itself sits behind an IAdvisoryEvaluator seam.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "advisory",
+        "calibration",
+        "kappa",
+        "leaderboard",
+        "standing",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0019-advisory-evaluator-calibration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9b7c531d475e24574be847f70c0c5b79ec52c466c83d7afed07118ffb1669318"
     },
     {
       "id": "design-watcher-coordination-contract",
@@ -6624,6 +6671,50 @@ window.DOCS_INDEX = {
       "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
+      "id": "proof-watcher-advisory-grader",
+      "path": "docs/proof/watcher-advisory-grader.md",
+      "title": "Proof Pack - Loomkeeper Advisory Grader, Calibration, Leaderboard & Standing (slice 7)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper advisory grader meets its design: the two advisory dimensions (Evidence discipline, Solution economy) enter Weave points ONLY after the ADR-0019 calibration gates pass - evaluator stability (>=95% modal band, spread <=1 over 20 repeats), quadratic-weighted-kappa >=0.75 against human labels, and an anti-Goodhart held-out counter-metric check; the advisory fold never raises a Blocked or Not Scored verdict (rule 8) and only folds a dimension whose (evaluatorVersion, taskClass, schemaVersion) triple is qualified in the registry; the leaderboard is Not Comparable below a cohort of 5 (rule 10) or with a single operator (US-10 privacy suppression), and is segmented by (task class, schema version) (rule 11); and the AgentStanding exposes rank, trend and one reason per dimension but NO single optimizable scalar (US-16 anti-Goodhart) - proven by 27 tests incl. a reflection guard on the no-scalar contract and a mutation-verified cohort-minimum oracle. Full suite 889/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "advisory",
+        "calibration",
+        "qwk",
+        "leaderboard",
+        "standing",
+        "anti-goodhart",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-advisory-grader",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0019-advisory-evaluator-calibration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ddfd8d51c3ee1bc76913c7228b1062ab4686f4327cbae48b015e0a5d65e24a46"
+    },
+    {
       "id": "proof-watcher-coordination-contract",
       "path": "docs/proof/watcher-coordination-contract.md",
       "title": "Proof Pack - Loomkeeper Injected Coordination Contract (slice 2)",
@@ -7491,5 +7582,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "82c754a64b1e510ccf0bfe14038e3608a22a73794ed1d2c38af7809bf1a67481"
+  "graphSha256": "00316149758f83f49b35b34b413710718efad14a26addfa89cd567eac95aa141"
 };
