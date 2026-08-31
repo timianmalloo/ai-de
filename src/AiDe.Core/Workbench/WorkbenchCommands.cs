@@ -86,6 +86,13 @@ public static class WorkbenchCommandCatalog
             "Returns to the default arrangement.",
             Menu: "_Window"),
 
+        // A status message has no natural end, and the longest one is usually the last one. This is
+        // how a reader puts it away; what it said is still in the diagnostics.
+        new("workbench.clearStatus", "Clear the status message", "Ctrl+K, Ctrl+C",
+            nameof(LayoutOperation.ResetToDefault),
+            "Empties the status line. What it said is still available under Diagnostics.",
+            Menu: "_View"),
+
         // Not a layout operation, so it carries no OperationKind: SC 2.5.7's conformance test asks
         // that every DRAGGABLE operation has a keyboard path, and focusing the canvas is not one.
         // It is here because WPF traversal cannot reach the canvas at all (spike S4), so without an

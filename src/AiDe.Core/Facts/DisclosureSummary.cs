@@ -78,6 +78,31 @@ public static class DisclosureSummary
         ];
     }
 
+    /// <summary>
+    /// The count a folded disclosure carries, or zero when it names no number.
+    /// </summary>
+    /// <remarks>
+    /// Exposed so a caller choosing WHICH disclosure to show does not re-parse the sentence this
+    /// class just built — two readers of one format is how the two halves of a rule drift apart.
+    /// </remarks>
+    public static long CountIn(string folded)
+    {
+        ArgumentNullException.ThrowIfNull(folded);
+
+        var open = folded.IndexOf(" (", StringComparison.Ordinal);
+
+        if (open < 0) return 0;
+
+        var match = LeadingCount.Match(folded[(open + 1)..]);
+
+        return match.Success
+            && long.TryParse(
+                match.Groups["count"].Value, NumberStyles.AllowThousands, CultureInfo.InvariantCulture,
+                out var parsed)
+                ? parsed
+                : 0;
+    }
+
     private static readonly char[] Digits = ['0','1','2','3','4','5','6','7','8','9'];
 
     private static string Render(string name, long total, bool counted, string first, int lines)

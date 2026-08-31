@@ -1,8 +1,8 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
-  "project": "ai-de-facelift",
-  "generated": "2026-08-31T22:53:01Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-31T23:41:10Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1653,7 +1653,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7abbbb2ab130dba33cfd4c7866c6155e0a45783ee22a8168131d797850a3dab0"
+      "sourceSha256": "0bea1f643446253c62355f55fb690fcedf1e92b84bbfd32c0ecb54b903f34932"
     },
     {
       "id": "conceptual-model-ai-native-ide",
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d5611adafaa0de82e2b035edb588624bf168506d2f9a639d5f927c2a5ca53835"
+      "sourceSha256": "caaab3c5a388fe073b9e9296145b48415ee6111de245954b8adfbb34a788968a"
     },
     {
       "id": "domain-experts",
@@ -3145,7 +3145,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5e7f4ff97eb80a03c2fd2e940482fe210a97ec5929e6b6f76f98b10eb8b4a7a2"
+      "sourceSha256": "e1e4e1093e434f0adfe820815319c770930d5566c5c2f38439449a6e3d963a89"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -6592,7 +6592,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-facelift — Audit & Change Log",
+      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -6686,5 +6686,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ea7155f559fabb4d276584536b3286673e22d74c7edf0fb1ac61d8282e896cc4"
+  "graphSha256": "45a642caa5acbb1474933ae3edba353f16a591e2f87b312642ff9d6c3e39341e"
 };

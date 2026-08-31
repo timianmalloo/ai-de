@@ -75,7 +75,7 @@ internal static class MainMenuBuilder
         ("_Edit", ["workbench.moveSurface", "workbench.resizePane"]),
         ("_View", ["workbench.focusCanvas", "workbench.nextSurface", "workbench.previousSurface",
                    "workbench.reorderSurface", "workbench.newClassDiagram", "workbench.newCodeViewer",
-                   "workbench.newDiagnostics"]),
+                   "workbench.newDiagnostics", "workbench.clearStatus"]),
         ("_Window", ["workbench.floatPane", "workbench.collapsePane", "workbench.maximizePane",
                      "workbench.closeSurface", "workbench.toggleLock", "workbench.resetLayout"]),
         ("_Terminal", ["terminal.new", "terminal.newAgent", "workbench.dispatchPrompt", "workbench.newPromptDraft"]),

@@ -79,6 +79,21 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workspace.indexSolution":
                 return IndexSolution();
 
+            case "workbench.clearStatus":
+                // Cleared, then a SHORT confirmation — not silence.
+                //
+                // Silence was the first attempt, on the grounds that announcing into a line the user
+                // just cleared is absurd. `EveryCatalogCommand_Announces` refused it, and that
+                // control is right: a command that does its work without saying so is
+                // indistinguishable from a dead key (DC-011), and for a screen-reader user it IS a
+                // dead key — SC 4.1.3 exists for exactly this.
+                //
+                // The user's complaint was never that the line exists; it was that it had grown to
+                // fill the window. Four words is not real estate.
+                announcer.Clear();
+                announcer.Announce("Status cleared.");
+                return true;
+
             case "workspace.diagnostics":
                 return ShowDiagnostics();
 
