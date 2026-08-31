@@ -39,4 +39,20 @@ public sealed class DisputeProjection(IWatcherObservationStore store)
     /// <summary>The distinct episode ids that carry at least one dispute.</summary>
     public IReadOnlySet<string> DisputedEpisodeIds() =>
         _store.AllDisputes().Select(d => d.EpisodeId).ToHashSet(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Whether a session has any disputed episode - the session's derived Disputed state for the Sessions
+    /// surface (US-16 "discoverable from the Sessions view"). A session is disputed iff any of its
+    /// episodes carries a dispute fact (DM7 - derived, never stored on the session).
+    /// </summary>
+    public bool IsSessionDisputed(string sessionId)
+    {
+        var disputed = DisputedEpisodeIds();
+        if (disputed.Count == 0)
+        {
+            return false;
+        }
+
+        return _store.EpisodesForSession(sessionId).Any(e => disputed.Contains(e.EpisodeId));
+    }
 }

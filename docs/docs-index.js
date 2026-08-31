@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T21:04:58Z",
+  "generated": "2026-08-31T21:13:49Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2010,6 +2010,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c59220a166cbe3df078f1f9b9e55c38180b6ba522703271153e0ad47e00643ce"
+    },
+    {
+      "id": "design-watcher-dispute-service",
+      "path": "docs/design/watcher-dispute-service.md",
+      "title": "Loomkeeper - Raise-Dispute API, Sessions Badge & Cloud-Judge Scaffold (connective 7)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Close the US-16 fairness loop and make the model-judge seam concrete. DisputeService.RaiseDispute is the operator API that mints the dispute id + timestamp and appends the append-only fact (requiring a reason). A session is Disputed iff any of its episodes carries a dispute (DM7), surfaced as a no-colour-alone badge on the Sessions row and computed by the sessions query. DelegatingAdvisoryEvaluator is the cloud-judge scaffold: an IAdvisoryEvaluator that delegates the 0-4 rubric to an injected model call and is placed inside the EgressGuardedAdvisoryEvaluator, so the network call only happens after the ADR-0018 egress opt-in + credential check pass.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "dispute",
+        "sessions",
+        "badge",
+        "cloud-judge",
+        "adr-0018",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-score-dispute",
+          "rel": "refines"
+        },
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "refines"
+        },
+        {
+          "to": "design-watcher-advisory-evaluator",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fbb52b9329b1f4c843ce6366b425da52a31da18240774100a941b2f500709d41"
     },
     {
       "id": "design-watcher-host",
@@ -7105,6 +7151,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "2405d978d3a1793648d5a0958730254c159ccbde6fee4612a0b07bc7d902b664"
     },
     {
+      "id": "proof-watcher-dispute-service",
+      "path": "docs/proof/watcher-dispute-service.md",
+      "title": "Proof Pack - Loomkeeper Raise-Dispute API, Sessions Badge & Cloud-Judge Scaffold (connective 7)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the US-16 fairness loop closes and the model-judge seam is concrete: RaiseDispute mints the id + timestamp and appends the fact (requiring a trimmed reason); a session is Disputed iff any of its episodes carries a dispute (DM7), shown as a no-colour-alone Sessions badge and computed by the query; and the DelegatingAdvisoryEvaluator clamps + delegates the rubric and, behind the ADR-0018 egress guard, does not judge until opted-in and credentialed. 12 tests, Core 967/0, App 138/0; the per-session derivation mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "dispute",
+        "sessions",
+        "cloud-judge",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-dispute-service",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f87ced28267f64ac14f8f93bb64033a1f1c6f631de453d1ebb0f3545e5f147a3"
+    },
+    {
       "id": "proof-watcher-host",
       "path": "docs/proof/watcher-host.md",
       "title": "Proof Pack - Loomkeeper In-Process Watcher Host (connective 5)",
@@ -8074,5 +8153,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "88bc0ebaea7f5ba14eb903b216fa278a325b43a01243f8f91f690a193f071da8"
+  "graphSha256": "e6fe6f00945e76183e9962b9093f94e2c76a5ab00f93edb230420ae5bf5a0a50"
 };

@@ -40,17 +40,23 @@ public sealed record WatcherSessionRow(
     string Model,
     LivenessBadge Liveness,
     string Trust,
-    int SpanCount)
+    int SpanCount,
+    bool Disputed = false)
 {
+    /// <summary>The prefix a session with a disputed episode carries (US-16 discoverability, no colour-alone).</summary>
+    public const string DisputedText = "⚠ Disputed";
+
     /// <summary>The dense one-line label (G6 Multi-Panel Data Terminal density).</summary>
     public string DisplayLabel =>
         $"{Repository}/{Worktree} · {Agent} · {Harness} · {Model} · " +
-        $"{Liveness.Glyph} {Liveness.Text} · {SpanCount} span(s) · {Trust}";
+        $"{Liveness.Glyph} {Liveness.Text} · {SpanCount} span(s) · {Trust}" +
+        (Disputed ? $" · {DisputedText}" : string.Empty);
 
     /// <summary>The full row a screen reader announces (WCAG 2.2 AA).</summary>
     public string AccessibleName =>
         $"Agent {Agent} in {Repository}/{Worktree}, harness {Harness}, model {Model}, " +
-        $"{Liveness.Text}, {SpanCount} span(s), trust {Trust}.";
+        $"{Liveness.Text}, {SpanCount} span(s), trust {Trust}" +
+        (Disputed ? ", has a disputed score." : ".");
 
     /// <summary>Builds an honest row from a snapshot: null harness/model become Not Recorded.</summary>
     public static WatcherSessionRow From(WatcherSessionSnapshot snapshot)
@@ -65,13 +71,14 @@ public sealed record WatcherSessionRow(
             b.Model?.Name ?? WatcherSessionText.NotRecorded,
             LivenessBadge.For(snapshot.Liveness),
             b.Trust.ToString(),
-            snapshot.SpanCount);
+            snapshot.SpanCount,
+            snapshot.Disputed);
     }
 }
 
-/// <summary>A point-in-time read of one session: its binding, computed liveness, and span count.</summary>
+/// <summary>A point-in-time read of one session: its binding, computed liveness, span count, and Disputed state.</summary>
 public sealed record WatcherSessionSnapshot(
-    string SessionId, SessionBinding Binding, LivenessState Liveness, int SpanCount);
+    string SessionId, SessionBinding Binding, LivenessState Liveness, int SpanCount, bool Disputed = false);
 
 /// <summary>The read seam the Sessions pane consumes. A null pane query means no watcher store is wired.</summary>
 public interface IWatcherSessionsQuery
@@ -89,10 +96,12 @@ public sealed class WatcherSessionsQuery(IWatcherObservationStore store, Livenes
 {
     private readonly IWatcherObservationStore _store = store ?? throw new ArgumentNullException(nameof(store));
     private readonly LivenessProjection _liveness = liveness ?? throw new ArgumentNullException(nameof(liveness));
+    private readonly DisputeProjection _disputes = new(store ?? throw new ArgumentNullException(nameof(store)));
 
     public IReadOnlyList<WatcherSessionSnapshot> GetSessions() =>
         [.. _store.AllSessions().Select(s => new WatcherSessionSnapshot(
-            s.SessionId, s.Binding, _liveness.Evaluate(s.SessionId), _store.SpanCount(s.SessionId)))];
+            s.SessionId, s.Binding, _liveness.Evaluate(s.SessionId), _store.SpanCount(s.SessionId),
+            _disputes.IsSessionDisputed(s.SessionId)))];
 }
 
 /// <summary>

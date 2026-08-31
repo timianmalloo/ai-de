@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T21:05:28Z",
+  "generated": "2026-08-31T21:14:27Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3093,6 +3093,28 @@ window.AUDIT_DATA = {
         "docs/design/watcher-scoring-service.md",
         "docs/proof/watcher-scoring-service.md",
         "tests/AiDe.Core.Tests/Watcher/ScoringServiceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0295",
+      "shortname": "implement-watcher-dispute-service",
+      "datetime": "2026-08-31T21:14:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps",
+      "summary": "Connective 7: DisputeService.RaiseDispute (mints id+timestamp, appends fact, requires trimmed reason); per-session Disputed state (DM7) + Sessions-row no-colour-alone badge + query computation; DelegatingAdvisoryEvaluator cloud-judge scaffold that delegates the rubric and sits behind the ADR-0018 egress guard. 12 tests, Core 967/0, App 138/0; per-session derivation mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DisputeService.cs",
+        "src/AiDe.Core/Watcher/ScoreDispute.cs",
+        "src/AiDe.Core/Presentation/WatcherSessionsPaneViewModel.cs",
+        "docs/design/watcher-dispute-service.md",
+        "docs/proof/watcher-dispute-service.md",
+        "tests/AiDe.Core.Tests/Watcher/DisputeServiceTests.cs"
       ],
       "tags": [],
       "outcome": "success"
