@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-31T17:27:09Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-31T17:30:11Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5329,6 +5329,23 @@ window.AUDIT_DATA = {
         "uml",
         "ux"
       ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0283",
+      "shortname": "bounded-describe-keeps-identity",
+      "datetime": "2026-08-31T17:01:53Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do the next steps you listed above",
+      "summary": "DC-052: a bounded read ordered for determinism rather than importance. AssertionsTouching capped at 50 ordered subject/predicate/object, so a node with more facts than the cap lost its own has_type, node_class, owned_by and review_by to its own links, in alphabetical order — which facts survived depended on how the node was named. Measured: 12 of 877 knowledge documents were already over the ceiling, and it is why the knowledge reader correctly declined to emit headings, working around a defect one layer down. Its sibling was the node-content reader filtering the same capped list, which made AppDbContext report no source. Fixed with EvidencePredicates.Identity sorting first, then the node's own facts, then inbound, alphabetical within each band so determinism and the omission count are untouched. Control observed failing with the exact message it describes.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Store/StoreReader.cs"
+      ],
+      "tags": [],
       "outcome": "success"
     },
     {

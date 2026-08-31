@@ -188,11 +188,18 @@ public sealed class NodeContentTests : IDisposable
                 $"the hub has {touching} touching assertion(s) and the cap is "
                 + $"{ProjectionService.MaxNeighborsCeiling} — this fixture cannot reproduce the defect");
 
+            // The window no longer hides the declaration, and that is a SECOND fix rather than this
+            // one becoming unnecessary. `AssertionsTouching` used to order alphabetically, so a hub
+            // whose callers sorted before it lost its own `has_type`; it now returns identity facts
+            // first. Two independent guards hold this up: the dedicated `DeclaringAssertion` query,
+            // which does not depend on ordering luck, and the ordering itself.
+            //
+            // The precondition kept here is the one that still discriminates: the hub genuinely has
+            // more touching facts than the cap, so a reader that pages through them can still get
+            // this wrong.
             var window = reader.AssertionsTouching("Shop.ZzzHub", ProjectionService.MaxNeighborsCeiling);
 
-            Assert.DoesNotContain(window, a =>
-                string.Equals(a.Subject, "Shop.ZzzHub", StringComparison.Ordinal)
-                && a.Provenance.ArtifactPathId.Length > 0);
+            Assert.Equal(ProjectionService.MaxNeighborsCeiling, window.Count);
         }
 
         var content = core.Projections.NodeContent("Shop.ZzzHub");
