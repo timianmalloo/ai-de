@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Spike S1 (Loomkeeper architecture §11): establish the harness OTLP ingest contract before the
+    daemon ingest wire is designed/built. It is PURE (no live harness, no network): it drives the
+    real OpenTelemetry span primitive - System.Diagnostics.Activity, exactly what an OTLP exporter
+    serialises - and proves the two mappings the wire depends on:
+
+      1. an OTel span  -> ObservedSpan
+      2. a registration event (Claude Code session-start / injected contract) -> SessionBinding
+
+    Committed and re-runnable (like the other spikes) because it is the evidence the wire is coded
+    against. The OTel GenAI attribute names it consumes are marked *Development* upstream, so the
+    findings pin a snapshot (see FINDINGS.md).
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>WatcherOtlpIngestSpike</AssemblyName>
+    <RootNamespace>WatcherOtlpIngestSpike</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AiDe.Core\AiDe.Core.csproj" />
+  </ItemGroup>
+
+</Project>

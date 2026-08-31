@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T00:19:37Z",
+  "generated": "2026-08-31T00:37:41Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1829,6 +1829,51 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4fc0b16537275ee9743dcadefb508ce94a027e92d70521b041d15616aa6cdeb4"
+    },
+    {
+      "id": "design-watcher-ingest-wire",
+      "path": "docs/design/watcher-ingest-wire.md",
+      "title": "Loomkeeper Ingest Wire - Harness Telemetry to Observation",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper ingest wire: a dual-path adapter that turns harness telemetry - native OTel spans and a registration/session-start event - into TrustedRegistrar registrations and capability-verified SpanIngest calls. Its deterministic core is a pure OtelSpanMapper (built now); the OTLP transport receiver and daemon host remain. Contract established by spike S1.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "ingest",
+        "otlp",
+        "adapter",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-watcher-observation-projection",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "019d9cfedee12d87e29eb6c749715ff3d1dbf27ff6789aeb74fa4e909597e989"
     },
     {
       "id": "design-watcher-phase1-skeleton",
@@ -6272,6 +6317,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
+      "id": "proof-watcher-ingest-wire",
+      "path": "docs/proof/watcher-ingest-wire.md",
+      "title": "Proof Pack - Loomkeeper Ingest Wire (OtelSpanMapper)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper ingest wire's deterministic core (OtelSpanMapper) meets the contract spike S1 established: OTel span and registration events map to ObservedSpan/SessionBinding, unknown harness/model degrade to Not Recorded, malformed events raise LK-0004, and the Development-status GenAI schema is pinned behind a mutation-verified regression gate.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "ingest",
+        "otlp",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-ingest-wire",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "07dc272b05d9b7465d19962793780c6cbf508420fa0528abbaa6b26635178edc"
+    },
+    {
       "id": "proof-watcher-phase1-skeleton",
       "path": "docs/proof/watcher-phase1-skeleton.md",
       "title": "Proof Pack - Loomkeeper Phase-1 Walking Skeleton",
@@ -6851,5 +6928,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c5e4f0bc63fcad280b15ecbd223bb7cf5ca705daded7d845969947e48de81bd7"
+  "graphSha256": "152b8c19a78322b8ce0ef8fa3da019e303466e68ce651d8419b1fdc7277568fa"
 };

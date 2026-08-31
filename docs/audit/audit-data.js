@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T00:20:11Z",
+  "generated": "2026-08-31T00:38:20Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2726,6 +2726,34 @@ window.AUDIT_DATA = {
         "phase-1"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0168",
+      "shortname": "spike-s1-and-ingest-wire",
+      "datetime": "2026-08-31T00:38:20Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Do the next best actions: run spike S1 (harness OTLP ingest shape), then /design the daemon ingest wire (and implement its deterministic core).",
+      "summary": "Ran spike S1 (spikes/watcher-otlp-ingest, PASS) establishing the OTel-span and registration mappings against the real Activity primitive, with GenAI attributes flagged Development-status and pinned. Designed docs/design/watcher-ingest-wire.md (dual-path adapter/ACL feeding TrustedRegistrar+SpanIngest; new ingest-boundary STRIDE; LINDDUN no-PII; pinned-schema A6 gate). Implemented the deterministic OtelSpanMapper (src/AiDe.Core/Watcher/) + LK-0004 MalformedEvent; 11 tests incl. the A6 pinned-schema gate (mutation-verified red). Full suite 732/0; build 0/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "spikes/watcher-otlp-ingest/FINDINGS.md",
+        "docs/design/watcher-ingest-wire.md",
+        "src/AiDe.Core/Watcher/OtelSpanMapper.cs",
+        "docs/proof/watcher-ingest-wire.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "otlp",
+        "ingest",
+        "phase-1"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-31T00:26:11Z",
+      "duration_seconds": 729.0
     }
   ],
   "changes": [
@@ -5073,6 +5101,30 @@ window.AUDIT_DATA = {
       "git": {
         "before": "896b3befb2cdb9dc59b100e19d2caee9183ad5dd",
         "after": "896b3befb2cdb9dc59b100e19d2caee9183ad5dd",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0105",
+      "datetime": "2026-08-31T00:38:20Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper ingest wire: a dual-path anti-corruption mapper turns harness OTLP + registration events into observation",
+      "prompt": "Spike the harness OTLP ingest shape and design/implement the ingest wire.",
+      "summary": "Spike S1 established the contract (OTel span -> ObservedSpan; registration -> SessionBinding; service.name->harness, gen_ai.request.model->model; session.id is a claim, not authority). The ingest wire is an Adapter/ACL feeding the built TrustedRegistrar+SpanIngest; its deterministic core, OtelSpanMapper, is implemented and tested (11 tests). GenAI vocabulary is Development-status, pinned in OtelAttributes behind a mutation-verified A6 regression gate; malformed events raise LK-0004; unknown harness/model degrade to Not Recorded/Asserted.",
+      "rationale": "Isolate the preview OTel/GenAI vocabulary behind one ACL so upstream churn changes only the mapper + its gate; reuse the built registrar/ingest as the trust anchor rather than trusting a span's session.id; transport hosting deferred as OTLP/HTTP is stable.",
+      "artifacts": [
+        "spikes/watcher-otlp-ingest/FINDINGS.md",
+        "docs/design/watcher-ingest-wire.md",
+        "src/AiDe.Core/Watcher/OtelSpanMapper.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "860cb6c4357b8008fbf2eb59db53f26290a809f9",
+        "after": "860cb6c4357b8008fbf2eb59db53f26290a809f9",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

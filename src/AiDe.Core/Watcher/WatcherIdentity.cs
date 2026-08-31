@@ -14,6 +14,9 @@ public static class WatcherErrorCodes
 
     /// <summary>An egress path was denied because no explicit opt-in enabled it.</summary>
     public const string EgressDenied = "LK-0003";
+
+    /// <summary>A harness event could not be mapped to the domain (missing session or identity attribute).</summary>
+    public const string MalformedEvent = "LK-0004";
 }
 
 /// <summary>How well a session's identity is established. Asserted identity cannot clear a floor.</summary>
