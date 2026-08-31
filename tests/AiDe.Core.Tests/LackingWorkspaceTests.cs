@@ -398,8 +398,21 @@ public sealed class LackingWorkspaceTests : IDisposable
         Assert.Contains(facts, a => a.Predicate == "has_type" && a.Object == "typescript-interface"
             && a.Subject.EndsWith(".Order", StringComparison.Ordinal));
 
-        // Not exported, so not claimed.
-        Assert.DoesNotContain(facts, a => a.Subject.EndsWith(".hidden", StringComparison.Ordinal));
+        // POLICY CHANGED, and this assertion changed with it rather than being deleted. It read "not
+        // exported, so not claimed" — which is why 13 TypeScript scopes on TheTerrace produced no
+        // class, function, interface or type at all while every one of them disclosed
+        // `typescript-non-exported-not-analysed`. A function at column zero is a thing that exists;
+        // the export keyword says who may REACH it, so it is now an attribute of the declaration
+        // rather than a condition on seeing it. The limit that remains is column zero, which is what
+        // `typescript-nested-declarations-not-analysed` discloses.
+        Assert.Contains(facts, a => a.Predicate == "has_type" && a.Object == "typescript-function"
+            && a.Subject.EndsWith(".hidden", StringComparison.Ordinal));
+
+        Assert.Contains(facts, a => a.Predicate == "is_exported" && a.Object == "false"
+            && a.Subject.EndsWith(".hidden", StringComparison.Ordinal));
+
+        Assert.Contains(facts, a => a.Predicate == "is_exported" && a.Object == "true"
+            && a.Subject.EndsWith(".App", StringComparison.Ordinal));
 
         // Nor is the declaration file.
         Assert.DoesNotContain(facts, a => a.Subject.Contains("globals", StringComparison.Ordinal));

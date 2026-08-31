@@ -38,6 +38,14 @@ public static class EvidencePredicates
         "is_existing_reference", "is_loop", "is_conditional",
         "declares_table",
 
+        // Whether a TypeScript declaration is exported. An ATTRIBUTE for the same reason `is_secret`
+        // is one: `true` and `false` are not things to navigate to, and drawing them would put two
+        // nodes in the graph that every declaration in the repository points at. It exists because
+        // the reader now sees non-exported declarations, so the export keyword — which used to be
+        // the condition on a declaration being seen at all — is what still says which of them is the
+        // module's public surface.
+        "is_exported",
+
         // Knowledge attributes. `owned_by` names a PERSON and `review_by` a DATE — neither is a
         // thing to navigate to, and drawing them would put "@someone" and "2027-02-28" in the graph
         // as peers of the documents that carry them.

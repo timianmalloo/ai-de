@@ -249,14 +249,16 @@ public static class CSharpScopeDiscovery
     /// <summary>Directories holding TypeScript or JavaScript directly, excluding vendored trees.</summary>
     private static IEnumerable<string> TypeScriptDirectories(string root)
     {
-        var skip = new HashSet<string>(Skip, StringComparer.OrdinalIgnoreCase)
-        {
-            "node_modules", "dist", "build", "out", ".next", "coverage",
-
-            // Published web output. `_framework` is Blazor's, and a `publish` folder is the result of
-            // a build rather than anything anybody wrote.
-            "publish", "_framework",
-        };
+        // ONE list, defined on the reader that uses it. This set and the extractor's own directory
+        // walk were two lists deciding the same question and they disagreed: discovery skipped
+        // `bin`, `obj` and `artifacts`, the extractor did not, so a scope rooted at `tests/` was
+        // created correctly and then indexed `tests/X/bin/Debug/net10.0/.playwright/package/` — a
+        // vendored browser driver, twice, once per build configuration. That is DC-022's shape, and
+        // the same divergence the note above `Skip` already records about `artifacts`.
+        // Published web output stays here: `_framework` is Blazor's and a `publish` folder is the
+        // result of a build rather than anything anybody wrote.
+        var skip = new HashSet<string>(Skip, StringComparer.OrdinalIgnoreCase);
+        skip.UnionWith(TypeScriptExtractor.SkippedDirectories);
 
         string[] wanted = [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"];
 
