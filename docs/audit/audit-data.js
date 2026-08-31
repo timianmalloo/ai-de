@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T13:57:31Z",
+  "generated": "2026-08-31T14:51:25Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2899,6 +2899,27 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T13:41:28Z",
       "duration_seconds": 963.0
+    },
+    {
+      "id": "al-0273",
+      "shortname": "implement-watcher-weave-score",
+      "datetime": "2026-08-31T14:51:25Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 5 implemented",
+      "summary": "Slice 5: deterministic Weave. WeaveScorer scores a closed Work Episode on the 4 deterministic dimensions (observed weight 70; 2 advisory dims excluded, not faked); hard floors (correctness/security/privacy/data-integrity/evaluator-integrity) trip Blocked + suppress the numeric headline; missing goal/done/verification or open episode -> Not Scored; Partial headline uses observed-weight denominator, never rescales to 0-100; Coverage separate from points. done_when made measurable (Focus drift + Outcome honest-completion = PACK-O faces). 27 tests incl. E11; no-rescale oracle mutation-verified. Full suite 834/0. Proof docs/proof/watcher-weave-score.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WeaveScore.cs",
+        "tests/AiDe.Core.Tests/Watcher/WeaveScorerTests.cs",
+        "docs/proof/watcher-weave-score.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T14:40:21Z",
+      "duration_seconds": 664.0
     }
   ],
   "changes": [
@@ -5383,6 +5404,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "57c1e5eab0cb9d2283389c15609df2ef3c8e7c04",
         "after": "57c1e5eab0cb9d2283389c15609df2ef3c8e7c04",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0116",
+      "datetime": "2026-08-31T14:51:25Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 5: deterministic Weave scores done_when (drift + honest completion), advisory excluded until calibrated",
+      "prompt": "implement slice 5: five deterministic dimensions, hard floors, Evidence Coverage, honest Scorecard",
+      "summary": "A pure WeaveScorer turns a closed episode's deterministic evidence into an honest Scorecard. Decision: the deterministic observed weight is 70 (Outcome 30, Focus 15, Guidance 15, Coordination 10); the two advisory dimensions (Evidence discipline, Solution economy = 30) are declared and EXCLUDED from points until the grader passes calibration + QWK (ADR-0019, slice 7) - matching the spec's own '58 / 70 observed' example. Floors trip Blocked and suppress the numeric; missing goal/done/verification -> Not Scored; Partial never rescales to 0-100; Coverage is separate from points. This is where the AI-Forward done_when becomes measured: Focus counts work-after-done (drift) and Outcome checks the honest completion claim - the PACK-O faces.",
+      "rationale": "separate deterministic facts from advisory judgment (spec Work Evaluation); advisory cannot raise a deterministic fail nor enter points before calibration (rules 8-9); honest Partial/Blocked/Not-Scored",
+      "artifacts": [
+        "docs/design/watcher-weave-score.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "2b75785294b530e434e1af09a8844fa523f7aa14",
+        "after": "2b75785294b530e434e1af09a8844fa523f7aa14",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

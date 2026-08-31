@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T13:56:59Z",
+  "generated": "2026-08-31T14:50:53Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2101,6 +2101,48 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "9e2f4a197ea31e0fbbc0cfd7e9d19602e8e53a9132b267a21c5ffad894676d57"
+    },
+    {
+      "id": "design-watcher-weave-score",
+      "path": "docs/design/watcher-weave-score.md",
+      "title": "Loomkeeper Deterministic Weave - Score, Floors, Coverage",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper deterministic Weave (slice 5): a pure scoring engine that evaluates a CLOSED Work Episode on the four deterministic dimensions (Outcome integrity 30, Focus & termination 15, Guidance adherence 15, Coordination & learning 10 = observed weight 70), leaving the two advisory dimensions (Evidence discipline, Solution economy = 30) excluded until the grader passes its calibration gates (slice 7). Hard floors (correctness, security, privacy, data integrity, evaluator integrity) trip a Blocked verdict and suppress the numeric headline; a missing goal/done/verification path is Not Scored; the headline is honest \"Partial: earned / observed weight\" with no rescale to 0-100. Evidence Coverage is separate from points. This is where done_when becomes measured.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "weave",
+        "scoring",
+        "floors",
+        "coverage",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-work-episode",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0019-advisory-evaluator-calibration",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1313ec1c4e7eb40c7a48ff546eb8d35d9191c0a749e2634e71464531e735bfce"
     },
     {
       "id": "design-watcher-work-episode",
@@ -6741,6 +6783,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "f972a904bfe3c6f5f256263ee6bb296c6cbd106cddfd078b6ca72553a663d04b"
     },
     {
+      "id": "proof-watcher-weave-score",
+      "path": "docs/proof/watcher-weave-score.md",
+      "title": "Proof Pack - Loomkeeper Deterministic Weave (slice 5)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper deterministic Weave meets its design: a closed Work Episode is scored on the four deterministic dimensions (observed weight 70) with the two advisory dimensions excluded (not faked); a hard floor (correctness / security / privacy / data integrity / evaluator integrity) trips a Blocked verdict and suppresses the numeric headline; a missing goal / done-condition / verification path or an open episode is Not Scored; the Partial headline uses the observed-weight denominator and never rescales to 0-100; and Evidence Coverage is separate from points - proven by 27 tests incl. an E11 composition, with the no-rescale oracle mutation-verified. Full suite 834/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "weave",
+        "scoring",
+        "floors",
+        "coverage",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-work-episode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "69ffea8b77a21e25742f2fc4f309e2fd185c26445fcde439dc228cc92a335345"
+    },
+    {
       "id": "proof-watcher-work-episode",
       "path": "docs/proof/watcher-work-episode.md",
       "title": "Proof Pack - Loomkeeper Work Episode (slice 4)",
@@ -7327,5 +7407,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "4647103ab2f976120f4d3f9d3dc14c846f269e536e725e32e6fafa2563c364cf"
+  "graphSha256": "6470da1af40d622d1e2f18f74e82ff84c95c5c31e3319a89e702df1922dade66"
 };
