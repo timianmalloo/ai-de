@@ -75,15 +75,25 @@ WebView2 for the viewer.
 - **Reuse over rebuild:** rich content reuses the existing canvas WebView2 rather than adding another
   (the-Simplifier; BoK adopt-or-not).
 
-## Confidence & residual (the spike that precedes the build)
+## Confidence & residual — the spike was run (residual cleared)
 
-- **Verified:** the WebView2 airspace + float-crash cost (ADR-0015, this repo's own spike S4); both
-  libraries' licences and hosting model (`kb-content-rendering-comparables`).
-- **Inferred (the residual):** that AvalonEdit's read-only highlighting is *sufficient* for our five
-  languages at the quality bar. **Before the Phase-1 viewer build**, run the Spike Protocol PoC: host
-  AvalonEdit read-only in a docked pane, render a real `Order.cs` with C# highlighting, **float the
-  pane**, and confirm no airspace artefact and no crash (the ADR-0015 failure mode) — and eyeball
-  python/bicep/sql highlighting. If highlighting is inadequate for C#, fall back to RoslynPad *for C#
-  nodes* behind the same viewer seam; if inadequate broadly, reopen this ADR. The `NodeContentAsync`
-  `RenderKind`/`Language` contract (ADR-0018) already carries what the viewer needs to pick the mode,
-  so the renderer is swappable behind that seam.
+- **Verified (structural):** the WebView2 airspace + float-crash cost (ADR-0015, this repo's own spike
+  S4); both libraries' licences and hosting model (`kb-content-rendering-comparables`).
+- **Verified (the residual PoC, run 2026-08-30):** the `spikes/avalonedit-viewer` Spike-Protocol PoC
+  (AvalonEdit `6.*` on net10.0-windows) confirmed a read-only, syntax-highlighted viewer over a real
+  88-line source file: `IsReadOnly=True` (blocks *user* editing — the US-ED1 requirement; it does not
+  block the programmatic `Document` API, which is how the viewer *sets* content), `ShowLineNumbers`,
+  `SyntaxHighlighting` applied. Decisively, **`TextEditor`'s base type is `Control`** — a pure WPF
+  control, **not** an `HwndHost`/WebView2 — so the ADR-0015 airspace/float-crash failure mode is
+  **absent by construction**, not merely mitigated.
+- **Language coverage (Verified by the PoC):** AvalonEdit ships **21 built-in highlightings**; by
+  extension `.cs→C#`, `.py→Python`, `.js→JavaScript`, `.sql→TSQL` are covered — our C#, python, and
+  sql, plus JS (TS's near neighbour). **`.ts` and `.bicep` have no built-in definition** and therefore
+  **degrade to plain monospaced text** — which is exactly US-ED2's accepted fallback ("an unknown
+  language degrades to plain text, never an error"). If TS/bicep highlighting is later wanted, a custom
+  `.xshd` definition can be registered with `HighlightingManager` (or TS reuses the JS definition)
+  behind the same viewer seam — a follow-up, not a blocker.
+- **Cleared:** the RoslynPad-fallback-for-C# contingency is not needed — AvalonEdit's built-in C#
+  highlighting is present and sufficient for a viewer. The `NodeContentAsync` `RenderKind`/`Language`
+  contract (ADR-0018) still carries what the viewer needs to pick the mode, so the renderer remains
+  swappable behind that seam if a future diff/merge surface reopens the Monaco question.

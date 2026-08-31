@@ -2,8 +2,8 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T03:31:58Z",
-  "generator": "docs-graph.py derive",
+  "generated": "2026-08-31T03:38:45Z",
+  "generator": "docs-graph.py flag",
   "rootId": "architecture",
   "artifactTypes": [
     "knowledge",
@@ -996,7 +996,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f7d23e354bf8ba6be32447d916034d401ad8d64a97ae6b829b594c7f9861c891"
+      "sourceSha256": "32125e82283ff33fc2c9d8084f3aed992fbcec914560d33b9e5f0d5b06c5861f"
     },
     {
       "id": "architecture",
@@ -6104,7 +6104,13 @@ window.DOCS_INDEX = {
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
+      "reviewSuggested": [
+        {
+          "by": "adr-0019-code-viewer-renderer",
+          "on": "2026-08-30",
+          "reason": "residual cleared: AvalonEdit read-only highlighting PoC passed (C#/py/js/sql covered, ts/bicep degrade to plain, pure-WPF no airspace)"
+        }
+      ],
       "summary": "Specifies two content surfaces the workbench still lacks: a READ-ONLY code viewer (syntax-highlighted source for a selected node/file, never an editor of record) and a PROMPT-DRAFT editor (rich-text prompts staged until an explicit transfer to a ready terminal session). Both are read/compose surfaces, not a general-purpose code editor (explicitly out of scope in spec-ai-native-ide). The code viewer is the render side of the ADR-0018 NodeContentAsync seam; the prompt draft composes with the terminal-sessions surface. Grounds the reuse decision (Monaco MIT via WebView2, AvalonEdit MIT native, Markdig BSD-2) and names the Design/Core ownership lanes so the surfaces can be built in parallel against defined contracts.",
       "tags": [
         "editor",
@@ -6143,7 +6149,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3b1d9a95ec96eff4ec20ba71c9bf8361f8aa42ee2411b4384a66b8a39c469a15"
+      "sourceSha256": "948b97adb9009257f71a1df014adc2c271f8ab18df213148ecf6d9b3f4bde21c"
     },
     {
       "id": "spec-knowledge-exploration",
@@ -6399,7 +6405,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -6493,5 +6499,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "e4467ded7c7bb7f3f9ff5400aa3215abf888896cc62cefdc9997c98c0606f7db"
+  "graphSha256": "097901bf742fecc0bf1fabc0f73c85b8a6150086941afdf91d28ea3f09b312ad"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T03:31:58Z",
+  "generated": "2026-08-31T03:39:19Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3081,6 +3081,23 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0173",
+      "shortname": "spike-avalonedit-read-only-viewer",
+      "datetime": "2026-08-31T03:39:19Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do these next steps (AvalonEdit read-only highlighting PoC, ADR-0019 residual)",
+      "summary": "Ran the ADR-0019 residual spike (spikes/avalonedit-viewer, AvalonEdit 6.* on net10.0-windows, now disposed): read-only viewer works (IsReadOnly blocks user edits, line numbers, highlighting, real 88-line file); base type Control = pure WPF, no HwndHost/airspace (the ADR-0015 failure mode absent by construction); 21 built-in highlightings cover .cs/.py/.js/.sql, .ts/.bicep degrade to plain (US-ED2 accepted). Residual cleared; RoslynPad fallback not needed. Updated ADR-0019. Also backlogged: adopt Central Package Management (coordinated, touches Core .csproj).",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0019-code-viewer-renderer.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -5543,6 +5560,28 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-0169"
+    },
+    {
+      "id": "cl-0107",
+      "datetime": "2026-08-31T03:39:19Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "AvalonEdit confirmed for the read-only code viewer (ADR-0019 residual cleared by PoC)",
+      "prompt": "AvalonEdit read-only highlighting PoC",
+      "summary": "PoC passed: read-only + highlighting + no airspace (pure WPF Control); C#/py/js/sql covered, ts/bicep degrade to plain",
+      "rationale": "Confirms ADR-0019's Inferred residual by execution, so the read-only viewer is ready to build once Core ships NodeContentAsync",
+      "artifacts": [
+        "docs/adr/0019-code-viewer-renderer.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "bf83370d7bf8d301024d21382f3724e6df4ed55e",
+        "after": "bf83370d7bf8d301024d21382f3724e6df4ed55e",
+        "branch": "feature/app-facelift-and-graph-surfaces",
+        "pushed": true,
+        "commits": []
+      }
     }
   ]
 };
