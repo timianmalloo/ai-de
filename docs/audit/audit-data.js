@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T03:40:28Z",
+  "generated": "2026-08-31T04:30:34Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2780,6 +2780,46 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T03:28:46Z",
       "duration_seconds": 701.0
+    },
+    {
+      "id": "al-0175",
+      "shortname": "implement-watcher-otlp-receiver",
+      "datetime": "2026-08-31T03:59:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "execute autonomously using our skills, the /design -> /implement loop until slice 1 is fully implemented",
+      "summary": "Slice 1b: OtlpHttpReceiver (OTLP/JSON, stdlib System.Text.Json, per-session token->capability, body cap, loopback). 13 tests incl. 2 real-loopback D4; suite 754/0. Completes Loomkeeper slice 1 (ingest). Proof docs/proof/watcher-otlp-receiver.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/OtlpReceiver.cs",
+        "tests/AiDe.Core.Tests/Watcher/OtlpReceiverTests.cs",
+        "docs/proof/watcher-otlp-receiver.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0178",
+      "shortname": "implement-watcher-coordination-contract",
+      "datetime": "2026-08-31T04:30:34Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do these next steps to complete slice 2 autonomously over night",
+      "summary": "Slice 2: injected coordination contract - CoordContractParser (tolerant coord-core JSONL read, version pin, sort by at/seq) + InjectedContractIngest adapter (mints+holds capability, feeds same registrar/host; register+heartbeat for non-AI-Forward sessions, one ledger projected). Spike S4 PASS. 16 tests incl. E11 end-to-end; suite 770/0. Proof docs/proof/watcher-coordination-contract.md. Registered DC-040 (pre-existing daemon-reuse flake, observed not introduced).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/CoordinationContract.cs",
+        "tests/AiDe.Core.Tests/Watcher/CoordinationContractTests.cs",
+        "docs/proof/watcher-coordination-contract.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T04:09:56Z",
+      "duration_seconds": 1238.0
     }
   ],
   "changes": [
@@ -5174,6 +5214,52 @@ window.AUDIT_DATA = {
       "git": {
         "before": "7c4755b88dcba32db809bc0a04fc9a2be7f80b0c",
         "after": "7c4755b88dcba32db809bc0a04fc9a2be7f80b0c",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0109",
+      "datetime": "2026-08-31T03:59:43Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 1 ingest complete: OTLP/JSON receiver on stdlib, no protobuf dependency",
+      "prompt": "run /design then /implement on the OTLP receiver to complete slice 1",
+      "summary": "Receiver accepts OTLP/JSON at /v1/traces, resolves a per-session bearer token to the capability server-side (capability never on the wire), parses with System.Text.Json, enqueues onto the slice-1a host; loopback-only, body-capped, 200-on-drop. Decision: OTLP/JSON over protobuf removes the dependency; token-in-header binds spans to the registration capability.",
+      "rationale": "stdlib JSON keeps AiDe.Core dependency-free and the token seam aligns with ADR-0020 capability binding",
+      "artifacts": [
+        "docs/design/watcher-otlp-receiver.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "0929bda564595d8defa7f24673ceea656ac54b44",
+        "after": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": [
+          "5ed1dfa feat(watcher): OTLP/JSON receiver completes Loomkeeper slice 1 (ingest)"
+        ]
+      }
+    },
+    {
+      "id": "cl-0111",
+      "datetime": "2026-08-31T04:30:34Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 2: injected coordination contract over coord-core append (one ledger, projected)",
+      "prompt": "run /design then /implement on the injected coordination-contract adapter to complete slice 2",
+      "summary": "A versioned (loomkeeper/1) injected contract lets a non-AI-Forward session register+heartbeat over the existing coord-core append log; a pure CoordContractParser reads it tolerantly and an InjectedContractIngest adapter mints/holds the per-session capability (never on the forgeable file) and feeds the same TrustedRegistrar/IngestHost. Decision: reuse coord-core append + stdlib JSON, no second ledger, no new dependency; capability lives in the adapter (symmetric with the OTLP token).",
+      "rationale": "one ledger projected not duplicated (US-5); ADR-0020 capability binding holds for a file transport by keeping the capability adapter-side",
+      "artifacts": [
+        "docs/design/watcher-coordination-contract.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
+        "after": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T03:58:37Z",
+  "generated": "2026-08-31T04:29:54Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1831,6 +1831,47 @@ window.DOCS_INDEX = {
       "sourceSha256": "4fc0b16537275ee9743dcadefb508ce94a027e92d70521b041d15616aa6cdeb4"
     },
     {
+      "id": "design-watcher-coordination-contract",
+      "path": "docs/design/watcher-coordination-contract.md",
+      "title": "Loomkeeper Injected Coordination Contract - Non-Pack Ingest Adapter",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper injected coordination contract (slice 2): a versioned, coord-core-append schema that lets a session from a repository WITHOUT the AI-Forward pack register and heartbeat over the same append-only ledger (one ledger, projected, not duplicated). A pure CoordContractParser reads the JSONL tolerantly (LOG-A leading newline, CRLF, blank/malformed skip, version pin, sort by at/seq), and an InjectedContractIngest adapter mints the capability at register, holds external-id->capability, and feeds the same TrustedRegistrar/IngestHost as the OTLP path. Contract established by spike S4.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "coordination",
+        "injected-contract",
+        "coord-core",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-ingest-host",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1571728b1e424cbf96f5ad2028ff86899deeee105f84d12ad78fe2b90aeead45"
+    },
+    {
       "id": "design-watcher-ingest-host",
       "path": "docs/design/watcher-ingest-host.md",
       "title": "Loomkeeper Ingest Host - Bounded Queue and Drain Loop",
@@ -2063,7 +2104,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "424e40184a4c35b4b8d2217ae6f51e738c731b89e6373c790cc2628f6a0ca51b"
+      "sourceSha256": "2b9e1735ed32618ed2f402329c1234c7bc3d2243de25a317c8b5f78457b049ae"
     },
     {
       "id": "domain-experts",
@@ -6403,6 +6444,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
+      "id": "proof-watcher-coordination-contract",
+      "path": "docs/proof/watcher-coordination-contract.md",
+      "title": "Proof Pack - Loomkeeper Injected Coordination Contract (slice 2)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper injected coordination contract meets its design: a non-AI-Forward session registers and heartbeats over the coord-core append log and appears identically in the fact store (one ledger, projected); the parser tolerantly reads the real writer shape (LOG-A leading newline, CRLF, blank/malformed skip, version pin, sort by at/seq); and the capability lives in the adapter, so a heartbeat for a session never registered here is dropped - proven by 16 tests incl. an end-to-end parse->adapter->real-registrar->liveness composition, with the version-pin oracle mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "coordination",
+        "injected-contract",
+        "coord-core",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-ingest-host",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2405d978d3a1793648d5a0958730254c159ccbde6fee4612a0b07bc7d902b664"
+    },
+    {
       "id": "proof-watcher-ingest-host",
       "path": "docs/proof/watcher-ingest-host.md",
       "title": "Proof Pack - Loomkeeper Ingest Host (slice 1a)",
@@ -7083,5 +7161,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7605be4d65a183208ff0d16549d7c71cf386d765334cfcf3839ff27bb243708c"
+  "graphSha256": "32b054cdbb5ee7de61568c890b520e7a2fdb8b3335aafa1cd8c08de961bd77a4"
 };

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 16 · partially-controlled 23 · uncontrolled 0
+**Status counts:** controlled 16 · partially-controlled 23 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1379,3 +1379,33 @@ for both or split.*
 - **Residual risk:** the salt makes the immediate collision impossible by construction, but no gate
   prevents a future non-salted deterministic double from reintroducing the shape.
 - **Status:** `partially-controlled`
+
+### DC-040 — A real-process daemon-reuse test is timing-fragile under full-suite load
+
+- **Signature:** a test that starts a real out-of-process daemon (or reuses one over a named pipe /
+  workspace mutex) passes when run in isolation but **intermittently fails when the whole suite runs**,
+  even with test parallelism disabled — the failure is a startup/teardown *race*, not a logic error,
+  so re-running it green hides it.
+- **Why it survives:** parallelism is already disabled (DC-008's control), so the shape looks
+  impossible — but the contention is **sequential residue**, not concurrency: a daemon, named pipe, or
+  mutex from an *earlier* real-process test in the same run has not fully released when the reuse test
+  starts its own daemon, or the readiness poll is CPU-load-sensitive under a busy suite. In isolation
+  there is no prior daemon to contend with, so it is always green — which is exactly what makes it read
+  as a flake rather than a real teardown-ordering defect.
+- **Instances:** 2026-08-31 — `ShellBootstrapTests.ASecondShell_ReusesTheRunningDaemon_RatherThanStartingAnother`
+  failed once in the full `AiDe.Core.Tests` run (770 tests) during Loomkeeper slice 2, then passed in
+  isolation and on the next full run. Observed, **not introduced** by slice 2 — the slice's code
+  (`CoordinationContract.cs`) is pure in-process logic that touches no daemon, pipe, or process; the
+  slice added no daemon test. Recorded here so the shape is registered before it is chased as a
+  slice-2 regression.
+- **Control:** `NONE YET` — the durable fix is a **deterministic readiness/teardown barrier**: before
+  a daemon-reuse test starts, poll for *daemon-down* (or give each real-process test a **unique** pipe
+  / mutex name so no prior test's residue can be reused), and gate readiness on an observed state, not
+  a fixed delay (the pack's CI-ENV / RES-LEAK discipline — supply the environment, read the state
+  back). Root-causing the specific race is deferred (pre-existing, outside slice 2). Until then a
+  full-suite red on *only* this test, green in isolation, is the recognised signature — re-run and
+  investigate the teardown ordering, do not treat the green retry as proof.
+- **Residual risk:** with no control, a busy CI runner can surface this as a spurious red on an
+  unrelated change; the counter-discipline is this entry (recognise the signature) plus the pack's
+  rule that a green retry of a flaky real-process test is not evidence the race is gone.
+- **Status:** `uncontrolled`
