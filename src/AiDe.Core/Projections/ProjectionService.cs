@@ -181,8 +181,39 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// hypothetical: MEASURED on a real repository, an evidence page of 2,000 assertions serialises
     /// to <b>1,004,397 bytes</b>, which is 95.8% of the frame and fifteen times the
     /// <see cref="MaxResultBytes"/> its own documentation claimed it stayed "comfortably inside".</para>
+    ///
+    /// <para><b>Why it is not three quarters of the frame, which is what it looks like.</b> A
+    /// response is serialised to JSON, and that JSON is then carried as a <b>string field</b> inside
+    /// the IPC envelope — so every quote in it is escaped again. MEASURED on a real workspace: a
+    /// 727,244-byte graph, comfortably inside a 768 KiB budget, reached <b>1,137,104 bytes</b> on the
+    /// wire and the transport refused it. The inflation was 1.56–1.57x across every payload measured.
+    /// The budget had been checked on the inner bytes and enforced on the outer ones.</para>
+    ///
+    /// <para>Half a frame, so the assumed worst case is 2x — comfortably above the 1.57x measured,
+    /// because a guard that under-counts lets the frame overflow and the user is told only that the
+    /// graph could not be loaded. <c>TheBudgetFitsTheFrameTests</c> asserts the arithmetic, so the
+    /// two constants cannot drift apart.</para>
+    ///
+    /// <para><c>simplify: a factor against a measured inflation rather than the exact framed size;
+    /// ceiling is that row-wise bounds (evidence, find) cannot afford to serialise per row; upgrade
+    /// trigger = the envelope carries the payload as raw JSON instead of an escaped string, at which
+    /// point the two sizes agree and the factor disappears.</c></para>
     /// </remarks>
-    public const int MaxResponseBytes = 768 * 1024;
+    public const int MaxResponseBytes = 480 * 1024;
+
+    /// <summary>The transport's own limit, restated here only so the budget can be checked against it.</summary>
+    public const int FrameBytes = Ipc.IpcFraming.MaxFrameBytes;
+
+    /// <summary>
+    /// What a shrunk graph must fit inside — the frame, less real headroom.
+    /// </summary>
+    /// <remarks>
+    /// Shrinking stops at the FIRST size that fits, so a target equal to the frame leaves whatever
+    /// margin the last step happened to produce. MEASURED with no headroom: 1,044,916 bytes against
+    /// a 1,048,576 frame — 3,660 bytes, which is one longer type name away from failing. A limit met
+    /// exactly is not a limit respected.
+    /// </remarks>
+    public const int MaxFramedGraphBytes = FrameBytes - (64 * 1024);
 
     /// <summary>
     /// What one assertion costs in JSON beyond its own text.
@@ -194,6 +225,16 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// under-counts is a guard that lets the frame overflow.
     /// </remarks>
     public const int AssertionOverheadBytes = 448;
+
+    /// <summary>
+    /// How many times a graph may be shrunk before it must already fit.
+    /// </summary>
+    /// <remarks>
+    /// Each round takes at least a third off, so twelve rounds reduce five thousand nodes to fewer
+    /// than five — far past any real graph. It is a cost bound, not the thing that makes the loop
+    /// terminate; the guaranteed reduction does that.
+    /// </remarks>
+    public const int MaxShrinkAttempts = 12;
 
     /// <summary>
     /// The ceiling on a SEARCH, which is a different question from a neighbour list.
@@ -482,17 +523,36 @@ public sealed class ProjectionService(WorkspaceStore store)
         // but the operation is still reachable, and an operation that can never succeed is a defect
         // whoever calls it. Shrink to fit and let Omitted say so, rather than build a response the
         // transport will refuse.
-        var estimate = Weigh(graph);
+        // Shrink until it FITS, and check that it did.
+        //
+        // The previous version applied ONE proportional correction and returned whatever came back.
+        // That assumes bytes fall in proportion to node count, and they do not: nodes are kept in
+        // degree order, so the ones that survive a cut are the most connected ones, and the edges
+        // they carry dominate the payload. Cutting 15% of the nodes can cut 2% of the bytes.
+        //
+        // MEASURED on a real workspace: the response reached 1,176,341 bytes against a 1,048,576
+        // frame, and the only thing the user saw was "The graph could not be loaded" on opening the
+        // workspace — a shrink that had run, reported success by returning, and not worked.
+        var weight = FramedCost(graph);
+        var attempts = 0;
 
-        if (estimate > MaxResponseBytes)
+        while (weight > MaxFramedGraphBytes && graph.Nodes.Count > 1 && attempts < MaxShrinkAttempts)
         {
-            // One retry, scaled by how far over it was, with a margin for the unevenness of node
-            // sizes. Iterating to convergence would trade a bounded cost for an unbounded one.
-            var scaled = (int)(graph.Nodes.Count * (MaxResponseBytes / (double)estimate) * 0.85);
+            var proportional = (int)(graph.Nodes.Count * (MaxFramedGraphBytes / (double)weight) * 0.85);
 
-            graph = projection.Compute(query with { MaxNodes = Math.Max(1, scaled) });
-            activity?.SetTag("shrunk.to_fit", true);
+            // A third off every round at minimum, so this terminates even on a graph whose bytes
+            // barely move when its node count does. Without it the loop ends only at the attempt
+            // cap — and the cap firing would mean returning a response the transport refuses, which
+            // is a circuit breaker used as a termination argument (GO12).
+            var next = Math.Clamp(proportional, 1, graph.Nodes.Count * 2 / 3);
+
+            graph = projection.Compute(query with { MaxNodes = next });
+            weight = FramedCost(graph);
+            attempts++;
         }
+
+        activity?.SetTag("shrunk.attempts", attempts);
+        activity?.SetTag("returned.bytes", weight);
 
         activity?.SetTag("returned.nodes", graph.Nodes.Count);
         activity?.SetTag("returned.edges", graph.Edges.Count);
@@ -785,6 +845,32 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// rather than a serialisation — serialising to find out whether to serialise costs what it
     /// saves, and the budget already carries a quarter-frame of headroom for the difference.
     /// </remarks>
+    private static readonly System.Text.Json.JsonSerializerOptions Wire =
+        new(System.Text.Json.JsonSerializerDefaults.Web);
+
+    /// <summary>
+    /// What a graph costs ON THE WIRE, framed exactly as the transport frames it.
+    /// </summary>
+    /// <remarks>
+    /// <para>The graph is one object, so — unlike a row-wise bound — it can simply be measured, and
+    /// the thing measured is the thing the transport counts: the payload serialised, escaped, and
+    /// wrapped in the envelope. <see cref="Weigh"/> counts the payload only, which is the estimate
+    /// that let a 727,244-byte graph reach 1,137,104 bytes on the wire and be refused.</para>
+    ///
+    /// <para>Serialising twice is not free, so it is only paid where it could matter: a graph under a
+    /// third of a frame cannot reach it at any inflation observed (1.57x), and returns the estimate,
+    /// which is under budget by the same arithmetic.</para>
+    /// </remarks>
+    private static int FramedCost(WorkspaceGraph graph)
+    {
+        var estimate = Weigh(graph);
+
+        if (estimate * 3 <= FrameBytes) return estimate;
+
+        return Encoding.UTF8.GetByteCount(System.Text.Json.JsonSerializer.Serialize(
+            Ipc.IpcResponse.Success(System.Text.Json.JsonSerializer.Serialize(graph, Wire)), Wire));
+    }
+
     private static int Weigh(WorkspaceGraph graph)
     {
         var bytes = 0;

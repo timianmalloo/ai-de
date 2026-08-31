@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T03:39:19Z",
+  "generated": "2026-08-31T03:39:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -1495,6 +1495,27 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0072",
+      "shortname": "design-session-contract-accept-4a",
+      "datetime": "2026-08-29T16:51:28Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Register the design session, consult and accept the Core sessions published contract, and render the three Core->Design 4a requests.",
+      "summary": "Registered session copilot-design-4d24d94a; claimed design files; accepted session-contracts (added Design response 7.1-7.4, status proposed->accepted, answered 6, accepted 4a); DESIGN.md 4a tokens; new mockup context-map-join.html rendering evidence-shortfall (>= capped), dominant-target emphasis, and IsDeclared==false empty state.",
+      "kind": "manual",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md",
+        "docs/mockups/context-map-join.html"
+      ],
+      "tags": [
+        "collaboration",
+        "ui-design"
+      ],
+      "outcome": "success"
+    },
+    {
       "id": "al-0071",
       "shortname": "daemon-proof-caps-incremental-third-repo",
       "datetime": "2026-08-29T17:03:22Z",
@@ -1519,27 +1540,6 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": false
       }
-    },
-    {
-      "id": "al-0072",
-      "shortname": "design-session-contract-accept-4a",
-      "datetime": "2026-08-29T16:51:28Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "prompt": "Register the design session, consult and accept the Core sessions published contract, and render the three Core->Design 4a requests.",
-      "summary": "Registered session copilot-design-4d24d94a; claimed design files; accepted session-contracts (added Design response 7.1-7.4, status proposed->accepted, answered 6, accepted 4a); DESIGN.md 4a tokens; new mockup context-map-join.html rendering evidence-shortfall (>= capped), dominant-target emphasis, and IsDeclared==false empty state.",
-      "kind": "manual",
-      "skill": "ui-design",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "docs/collaboration/session-contracts.md",
-        "docs/mockups/context-map-join.html"
-      ],
-      "tags": [
-        "collaboration",
-        "ui-design"
-      ],
-      "outcome": "success"
     },
     {
       "id": "al-0073",
@@ -3078,6 +3078,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs",
         "src/AiDe.App/Workbench/PromptDraftStore.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0172",
+      "shortname": "graph-payload-too-large",
+      "datetime": "2026-08-31T03:37:10Z",
+      "session": "phase3-pane-probes",
+      "prompt": "before re-index i get this message when opening theterrace workspace: The graph could not be loaded: ipc.payload_too_large: the response is 1,176,341 bytes and one message carries at most 1,048,576; ask for less of it",
+      "summary": "DC-047: the byte budget was checked on the inner payload and enforced on the framed one. IpcResponse.Payload is a string, so the projection's JSON is escaped into the envelope — measured inflation 1.56-1.57x on every payload. A 727,244-byte graph inside its 768 KiB budget reached 1,137,104 bytes and was refused; reproduced exactly. The graph now measures FramedCost (serialised, escaped, enveloped) and shrinks until that fits with 64 KiB headroom; the row-wise budget dropped to 480 KiB with a test asserting budget*2 <= frame so the assumed worst case cannot drift. Also fixed: the shrink applied one proportional correction and returned without re-checking. Three fixtures failed to reproduce before one did — the discriminating window was found by measuring, not by picking big numbers.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
