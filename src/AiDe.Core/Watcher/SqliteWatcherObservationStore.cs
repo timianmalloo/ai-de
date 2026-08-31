@@ -330,6 +330,97 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         reader.IsDBNull(7) ? null : DateTimeOffset.Parse(reader.GetString(7), null, System.Globalization.DateTimeStyles.RoundtripKind),
         reader.IsDBNull(8) ? null : Enum.Parse<EpisodeOutcome>(reader.GetString(8)));
 
+    public void AppendBoardMessage(BoardMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+        lock (_gate)
+        {
+            ExecuteNonQuery(
+                _connection,
+                """
+                INSERT INTO board_message_fact
+                    (message_id, repository_key, kind, author_session_id, author_trust, parent_message_id,
+                     content, quarantined, injection_flagged, tombstoned, recorded_at, seq)
+                VALUES ($id, $repo, $kind, $author, $trust, $parent, $content, $quar, $inj, $tomb, $recorded, $seq);
+                """,
+                ("$id", message.MessageId),
+                ("$repo", message.RepositoryKey),
+                ("$kind", message.Kind.ToString()),
+                ("$author", message.AuthorSessionId),
+                ("$trust", message.AuthorTrust.ToString()),
+                ("$parent", (object?)message.ParentMessageId ?? DBNull.Value),
+                ("$content", (object?)message.Content ?? DBNull.Value),
+                ("$quar", message.Quarantined ? 1 : 0),
+                ("$inj", message.InjectionFlagged ? 1 : 0),
+                ("$tomb", message.Tombstoned ? 1 : 0),
+                ("$recorded", message.RecordedAt.ToUniversalTime().ToString("O")),
+                ("$seq", message.Seq));
+        }
+    }
+
+    public IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = BoardSelect + " WHERE repository_key = $repo ORDER BY seq;";
+            command.Parameters.AddWithValue("$repo", repositoryKey);
+            using var reader = command.ExecuteReader();
+            var messages = new List<BoardMessage>();
+            while (reader.Read())
+            {
+                messages.Add(ReadBoardMessage(reader));
+            }
+
+            return messages;
+        }
+    }
+
+    public BoardMessage? FindBoardMessage(string messageId)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = BoardSelect + " WHERE message_id = $id;";
+            command.Parameters.AddWithValue("$id", messageId);
+            using var reader = command.ExecuteReader();
+            return reader.Read() ? ReadBoardMessage(reader) : null;
+        }
+    }
+
+    public void RedactBoardMessage(string messageId)
+    {
+        lock (_gate)
+        {
+            // The one allowed content mutation: null the payload, keep the envelope as a tombstone.
+            ExecuteNonQuery(
+                _connection,
+                "UPDATE board_message_fact SET content = NULL, tombstoned = 1 WHERE message_id = $id;",
+                ("$id", messageId));
+        }
+    }
+
+    private const string BoardSelect =
+        """
+        SELECT message_id, repository_key, kind, author_session_id, author_trust, parent_message_id,
+               content, quarantined, injection_flagged, tombstoned, recorded_at, seq
+        FROM board_message_fact
+        """;
+
+    private static BoardMessage ReadBoardMessage(SqliteDataReader reader) => new(
+        reader.GetString(0),
+        reader.GetString(1),
+        Enum.Parse<BoardMessageKind>(reader.GetString(2)),
+        reader.GetString(3),
+        Enum.Parse<TrustClassification>(reader.GetString(4)),
+        reader.IsDBNull(5) ? null : reader.GetString(5),
+        reader.IsDBNull(6) ? null : reader.GetString(6),
+        reader.GetInt64(7) != 0,
+        reader.GetInt64(8) != 0,
+        reader.GetInt64(9) != 0,
+        DateTimeOffset.Parse(reader.GetString(10), null, System.Globalization.DateTimeStyles.RoundtripKind),
+        (int)reader.GetInt64(11));
+
     public void MarkEnded(string sessionId)
     {
         lock (_gate)
@@ -465,6 +556,25 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             outcome      TEXT    NULL
         );
         CREATE INDEX ix_work_episode_session ON work_episode_dim (session_id);
+
+        -- Append-only per-repository Message Board (slice 6). The envelope, order, and thread
+        -- references are append-only; only a policy redaction may null the content payload and set
+        -- tombstoned, leaving the immutable envelope (spec line 210). Repository-scoped by key.
+        CREATE TABLE board_message_fact (
+            message_id        TEXT    NOT NULL PRIMARY KEY,
+            repository_key    TEXT    NOT NULL,
+            kind              TEXT    NOT NULL,
+            author_session_id TEXT    NOT NULL,
+            author_trust      TEXT    NOT NULL,
+            parent_message_id TEXT    NULL,
+            content           TEXT    NULL,
+            quarantined       INTEGER NOT NULL,
+            injection_flagged INTEGER NOT NULL,
+            tombstoned        INTEGER NOT NULL,
+            recorded_at       TEXT    NOT NULL,
+            seq               INTEGER NOT NULL
+        );
+        CREATE INDEX ix_board_message_repo ON board_message_fact (repository_key);
         """;
 
     private static void Execute(SqliteConnection connection, string sql)

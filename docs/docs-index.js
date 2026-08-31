@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T14:50:53Z",
+  "generated": "2026-08-31T16:20:32Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1960,6 +1960,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "019d9cfedee12d87e29eb6c749715ff3d1dbf27ff6789aeb74fa4e909597e989"
+    },
+    {
+      "id": "design-watcher-message-board",
+      "path": "docs/design/watcher-message-board.md",
+      "title": "Loomkeeper Message Board + Fleet Aggregator",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper Message Board + Fleet aggregator (slice 6). The board is a per-repository, append-only communication surface (Question / Decision / Breadcrumb / Knowledge Candidate + Reply / Acknowledgement) with author/session/time/trust provenance; a reply/ack must reference an existing parent (no orphan thread); all content is quarantined untrusted data that cannot instruct a grader, and grader-injection shapes (score 100 / ignore the rubric / promote this lesson) are flagged; policy deletion redacts the payload but keeps the immutable envelope as a tombstone. The Fleet aggregator builds the repo->session map across >=2 stores. Rides the coord-core append semantics.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "message-board",
+        "fleet",
+        "cross-repo",
+        "quarantine",
+        "phase-3"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6fdf4b28bfea48ee8af4d2e88e47db4c5f38ef4a01921e529e1254f6155e3a58"
     },
     {
       "id": "design-watcher-otlp-receiver",
@@ -6679,6 +6725,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "07dc272b05d9b7465d19962793780c6cbf508420fa0528abbaa6b26635178edc"
     },
     {
+      "id": "proof-watcher-message-board",
+      "path": "docs/proof/watcher-message-board.md",
+      "title": "Proof Pack - Loomkeeper Message Board + Fleet (slice 6)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper Message Board + Fleet aggregator meet their design: a per-repository, append-only board with author/session/time/trust provenance; a reply/ack must reference an existing parent in the same repo (no orphan, no cross-repo thread); a forged capability is rejected; content is quarantined untrusted data and grader-injection shapes are flagged; a policy redaction tombstones the payload while the envelope remains and the thread stays anchored; and the fleet builds the repo->session map across >=2 sources - proven by 28 tests incl. D4 SQLite + an E11 composition, with the orphan-rejection oracle mutation-verified. Full suite 862/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "message-board",
+        "fleet",
+        "cross-repo",
+        "quarantine",
+        "phase-3"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-message-board",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "82001dba2186495be6196426e3f4fe2300e8b9ebde8bca51fae637cf6c7119d5"
+    },
+    {
       "id": "proof-watcher-otlp-receiver",
       "path": "docs/proof/watcher-otlp-receiver.md",
       "title": "Proof Pack - Loomkeeper OTLP Receiver (slice 1b)",
@@ -7407,5 +7491,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6470da1af40d622d1e2f18f74e82ff84c95c5c31e3319a89e702df1922dade66"
+  "graphSha256": "82c754a64b1e510ccf0bfe14038e3608a22a73794ed1d2c38af7809bf1a67481"
 };

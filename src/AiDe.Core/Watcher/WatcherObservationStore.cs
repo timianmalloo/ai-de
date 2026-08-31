@@ -50,6 +50,21 @@ public interface IWatcherObservationStore
     /// </summary>
     int SpanCountInInterval(string sessionId, DateTimeOffset from, DateTimeOffset toInclusive);
 
+    /// <summary>Appends a board message. The envelope/order/thread are append-only (slice 6).</summary>
+    void AppendBoardMessage(BoardMessage message);
+
+    /// <summary>A repository's board messages in append (seq) order - repository-scoped (US-4).</summary>
+    IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey);
+
+    /// <summary>A board message by id, or null if unknown.</summary>
+    BoardMessage? FindBoardMessage(string messageId);
+
+    /// <summary>
+    /// Policy redaction: irreversibly nulls the content payload and marks the message a tombstone,
+    /// while the immutable envelope remains (spec line 210). The one allowed content mutation.
+    /// </summary>
+    void RedactBoardMessage(string messageId);
+
     /// <summary>Marks a session ended (terminal closed or superseded generation).</summary>
     void MarkEnded(string sessionId);
 
@@ -75,6 +90,7 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
     private readonly Dictionary<string, long> _heartbeats = new();
     private readonly Dictionary<string, SessionRecord> _sessions = new();
     private readonly Dictionary<string, WorkEpisode> _episodes = new();
+    private readonly Dictionary<string, BoardMessage> _boardMessages = new();
     private readonly HashSet<string> _ended = new();
 
     public bool TryAppendSpan(ObservedSpan span)
@@ -196,6 +212,45 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         lock (_gate)
         {
             return [.. _episodes.Values];
+        }
+    }
+
+    public void AppendBoardMessage(BoardMessage message)
+    {
+        ArgumentNullException.ThrowIfNull(message);
+        lock (_gate)
+        {
+            _boardMessages[message.MessageId] = message;
+        }
+    }
+
+    public IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)
+    {
+        lock (_gate)
+        {
+            return [.. _boardMessages.Values
+                .Where(m => string.Equals(m.RepositoryKey, repositoryKey, StringComparison.Ordinal))
+                .OrderBy(m => m.Seq)];
+        }
+    }
+
+    public BoardMessage? FindBoardMessage(string messageId)
+    {
+        lock (_gate)
+        {
+            return _boardMessages.TryGetValue(messageId, out var message) ? message : null;
+        }
+    }
+
+    public void RedactBoardMessage(string messageId)
+    {
+        lock (_gate)
+        {
+            // The one allowed content mutation: null the payload, keep the envelope as a tombstone.
+            if (_boardMessages.TryGetValue(messageId, out var message))
+            {
+                _boardMessages[messageId] = message with { Content = null, Tombstoned = true };
+            }
         }
     }
 

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T14:51:25Z",
+  "generated": "2026-08-31T16:21:03Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2920,6 +2920,28 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T14:40:21Z",
       "duration_seconds": 664.0
+    },
+    {
+      "id": "al-0277",
+      "shortname": "implement-watcher-message-board",
+      "datetime": "2026-08-31T16:21:03Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 6 implemented",
+      "summary": "Slice 6: per-repo Message Board + cross-repo Fleet aggregator. Board (Question/Decision/Breadcrumb/KnowledgeCandidate + Reply/Acknowledgement) append-only, repo-scoped, provenance = session trust; reply/ack must reference an existing parent in the same repo (no orphan, no cross-repo); capability-verified; content quarantined untrusted data + grader-injection flagged (Confused Deputy); policy redaction tombstones payload keeps envelope. FleetAggregator builds repo->session map across >=2 sources. Store board table (both impls). 28 tests incl. D4 SQLite + E11; orphan-rejection oracle mutation-verified. Full suite 862/0. Proof docs/proof/watcher-message-board.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/MessageBoard.cs",
+        "src/AiDe.Core/Watcher/FleetAggregator.cs",
+        "tests/AiDe.Core.Tests/Watcher/MessageBoardTests.cs",
+        "docs/proof/watcher-message-board.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T16:07:58Z",
+      "duration_seconds": 785.0
     }
   ],
   "changes": [
@@ -5426,6 +5448,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "2b75785294b530e434e1af09a8844fa523f7aa14",
         "after": "2b75785294b530e434e1af09a8844fa523f7aa14",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0118",
+      "datetime": "2026-08-31T16:21:03Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 6: per-repo Message Board (quarantined, no-orphan) + cross-repo Fleet map",
+      "prompt": "implement slice 6: per-repo append-only board + cross-repo repo->session map",
+      "summary": "The Message Board is an append-only, per-repository communication surface with author/session/time/trust provenance; a reply/ack references an existing parent in the same repo (no orphan). Decision: board content is untrusted by construction and stored QUARANTINED - no API feeds it to a grader as instructions (Confused Deputy mitigation) and injection shapes are flagged; the injection-invariance guarantee comes from the scorer's typed-signal design (slice 5), not from detection. A policy redaction is the one allowed content mutation (tombstone; envelope append-only). The Fleet aggregator builds the repo->session map across >=2 per-workspace stores, grouped by the session's own repository identity.",
+      "rationale": "align with coord-core one-file-per-session append semantics; untrusted content cannot instruct a grader (spec security NFR); envelope append-only with redactable payload (spec line 210)",
+      "artifacts": [
+        "docs/design/watcher-message-board.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4ddd278aba69220e95d4a2ea92eca3aa6ab0b1b2",
+        "after": "4ddd278aba69220e95d4a2ea92eca3aa6ab0b1b2",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []
