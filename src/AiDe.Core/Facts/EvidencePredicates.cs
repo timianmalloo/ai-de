@@ -36,6 +36,11 @@ public static class EvidencePredicates
         // thing to navigate to, and drawing them would put "@someone" and "2027-02-28" in the graph
         // as peers of the documents that carry them.
         "owned_by", "review_by", "node_class",
+
+        // Where a SCOPE's files are. Its object is a directory path, which is not a thing to
+        // navigate to, and its subject is a scope — which this graph has never treated as a node
+        // (`declared_in` points at scope ids precisely as an attribute, so they are not drawn).
+        "declared_at",
     };
 
     /// <summary>The SQL literal list for an <c>IN</c> clause. Built from the same set.</summary>

@@ -66,6 +66,16 @@ def known_ids(root: Path) -> dict[str, str]:
 
 SIDECARS = ("-wal", "-shm", "-journal")
 
+# What separates a leaked test store from somebody's workspace, stated as a number rather than a
+# feeling. MEASURED on this machine after the empties were cleared: 435 unnamed stores remained, and
+# every one of them held 8, 14, 16 or 19 assertions across a scope set of `bicep:main` — one Bicep
+# template, sometimes with a docs folder — which is the fixture the daemon tests build. The one real
+# workspace held 47,809 across 67 scopes. There is no ambiguity between those two populations, and
+# the gap is three orders of magnitude wide.
+#
+# Anything above this is reported and left alone, whatever else is true of it.
+FIXTURE_CEILING = 100
+
 
 def assertion_count(database: Path) -> int | None:
     """How many facts a store holds, or None when it cannot be read as one.
@@ -83,11 +93,21 @@ def assertion_count(database: Path) -> int | None:
     """
     parameters = "immutable=1" if not database.with_name(database.name + "-wal").exists() else "mode=ro"
 
+    # `with sqlite3.connect(...)` commits or rolls back; it does NOT close. The first version relied
+    # on it and left 31 stores locked at the moment it tried to delete them — "used by another
+    # process", where the other process was this one. A handle held open is a handle held open
+    # whether or not the block that opened it has ended.
     try:
-        with sqlite3.connect(f"file:{database}?{parameters}", uri=True) as connection:
-            return connection.execute("SELECT count(*) FROM evidence_assertion_fact").fetchone()[0]
+        connection = sqlite3.connect(f"file:{database}?{parameters}", uri=True)
     except sqlite3.Error:
         return None
+
+    try:
+        return connection.execute("SELECT count(*) FROM evidence_assertion_fact").fetchone()[0]
+    except sqlite3.Error:
+        return None
+    finally:
+        connection.close()
 
 
 def describe(directory: Path) -> tuple[str, int, int]:
@@ -122,6 +142,10 @@ def main() -> int:
     parser.add_argument(
         "--remove", action="store_true",
         help="delete the directories reported as empty. Everything else is left alone.")
+    parser.add_argument(
+        "--remove-fixtures", action="store_true",
+        help=f"also delete unnamed stores holding fewer than {FIXTURE_CEILING} assertions. "
+             "Reports every scope shape it is about to remove first.")
     args = parser.parse_args()
 
     root = store_root()
@@ -166,22 +190,48 @@ def main() -> int:
     print("      Reported, not removed. An id is a one-way hash of a path, so 'not in the recent")
     print("      list' is not proof the workspace is gone — only that this tool cannot name it.")
 
-    if not args.remove:
+    fixtures = [(d, facts) for d, facts, _ in unidentified if facts < FIXTURE_CEILING]
+    substantial = [(d, facts) for d, facts, _ in unidentified if facts >= FIXTURE_CEILING]
+
+    if fixtures:
+        print()
+        print(f"  of those, {len(fixtures)} hold fewer than {FIXTURE_CEILING} assertions "
+              "— the size of a test fixture, not a workspace:")
+
+        shapes: dict[int, int] = {}
+        for _, facts in fixtures:
+            shapes[facts] = shapes.get(facts, 0) + 1
+
+        for facts, count in sorted(shapes.items()):
+            print(f"      {count:5} store(s) of {facts} assertion(s)")
+
+        if substantial:
+            print(f"  and {len(substantial)} hold {FIXTURE_CEILING}+ — reported, never removed:")
+            for directory, facts in sorted(substantial, key=lambda k: -k[1])[:10]:
+                print(f"      {directory.name}  {facts:,} assertion(s)")
+
+    if not args.remove and not args.remove_fixtures:
         if empty:
             print()
             print("  Re-run with --remove to delete the empty ones. Nothing else is touched.")
+        if fixtures:
+            print(f"  Add --remove-fixtures to delete the {len(fixtures)} fixture-sized ones too.")
         return 0
 
     failed = 0
+    doomed = list(empty) if args.remove else []
 
-    for directory in empty:
+    if args.remove_fixtures:
+        doomed.extend(directory for directory, _ in fixtures)
+
+    for directory in doomed:
         try:
             shutil.rmtree(directory)
         except OSError as error:
             print(f"  could not remove {directory.name}: {error}")
             failed += 1
 
-    print(f"  removed {len(empty) - failed} empty store(s)"
+    print(f"  removed {len(doomed) - failed} store(s)"
           + (f", {failed} could not be removed" if failed else ""))
 
     return 1 if failed else 0

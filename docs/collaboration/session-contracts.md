@@ -352,6 +352,65 @@ On TheTerrace the canvas's own opening request went from 1,000 nodes and 283 kno
 340**; a 5,000-node request from 706 nodes to **2,792, with 729 knowledge**. If any of your layout or
 density work was tuned against the smaller graph, it is now getting a bigger one.
 
+## 4g. `NodeContentAsync` has shipped — the code viewer is unblocked
+
+**Status: DONE (Core).** ADR-0018's query is on `IWorkspaceQueries` and on the IPC seam. Your
+`INodeContentSource` swap is the one line you staged it to be.
+
+```csharp
+// AiDe.App/Workbench/NodeContentSource.cs — beside MockNodeContentSource
+public sealed class CoreNodeContentSource(IWorkspaceQueries queries) : INodeContentSource
+{
+    public async Task<NodeContent> GetAsync(string nodeId, CancellationToken cancellationToken = default)
+    {
+        var content = await queries.NodeContentAsync(nodeId, cancellationToken).ConfigureAwait(false);
+
+        return new NodeContent(
+            content.NodeId,
+            content.RenderKind switch
+            {
+                AiDe.Core.Projections.NodeContentKind.Code => NodeContentKind.Code,
+                AiDe.Core.Projections.NodeContentKind.Text => NodeContentKind.Text,
+                _ => NodeContentKind.None,
+            },
+            content.Language,
+            content.Content,
+            content.Shortfall);
+    }
+}
+```
+
+Your `NodeContentKind` and Core's carry the same three cases in the same order, so the mapping above
+is exhaustive today and will stay so — if Core ever adds a case, that `_` sends it to `None` and the
+reader shows metadata and edges rather than mis-rendering.
+
+**What it returns, measured on TheTerrace** (1,500 drawn nodes): **1,158 Code, 340 Text, 2 None.**
+The two are TypeScript modules under `bin/Debug/.playwright/` whose recorded path is their scope id —
+a TypeScript-extractor quirk in build output, not a reader problem.
+
+| you will see | when |
+|---|---|
+| `RenderKind = Code`, `Language = "csharp"` etc. | a source file — highlight by `Language` |
+| `RenderKind = Text`, `Language = "markdown"` | prose — a document's body, frontmatter included |
+| `RenderKind = None`, `Content` empty, `Shortfall` set | no recorded source, an unreadable file, or a kind not rendered inline — show metadata + edges (US-E7) |
+| `Shortfall` set with content present | truncated at 256 KB: *"first 256 KB of 389 KB — open the source for the rest"* |
+
+**Two things worth knowing.**
+
+**It needs a re-index.** Nothing previously recorded *where a scope's files are* — an assertion's
+provenance path is relative to its scope, and no fact said where the scope was, so a node could not be
+resolved to a file at all. Scopes now emit `declared_at`, and `ExtractorGeneration` moved to
+`2026-08-31.1`, so the first index after pulling re-reads everything. A store written before that
+answers `None` with *"the source for this node could not be located"* — which is correct and is what a
+stale store should say.
+
+**Scopes did not become nodes.** `declared_at` is an attribute and the graph skips it explicitly, so
+your node counts are unchanged. If you ever see a directory-shaped node, that is a regression and I
+want to know.
+
+**Still Core-gated, unchanged:** `has_member` for class-diagram Phase 2, and the `CanvasNode` count
+field for the LOD render. Both are next.
+
 ## 5. Reducing merge pain, concretely
 
 - **Rebase on `origin/main` before starting a stretch of work**, not only before pushing.

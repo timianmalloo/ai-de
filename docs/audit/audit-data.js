@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-31T13:12:56Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-31T13:27:06Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3305,6 +3305,23 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0190",
+      "shortname": "node-content-query-unblocks-the-code-viewer",
+      "datetime": "2026-08-31T13:26:30Z",
+      "session": "phase3-pane-probes",
+      "prompt": "the ui sessions is blocked on work from this session we should prioritize that work",
+      "summary": "ADR-0018's NodeContentAsync shipped, unblocking the design session's code viewer (their priority 1). The gap underneath: nothing recorded WHERE a scope's files are — provenance paths are scope-relative and no fact said where the scope was — so scopes now emit declared_at and the generation moved to 2026-08-31.1. The projection resolves scope location plus provenance path, confines the result under the workspace root, bounds the read at 256 KB with an honest shortfall, and names the render kind so the reader does not guess. Measured on TheTerrace: 1,158 Code, 340 Text, 2 None of 1,500 drawn nodes. DC-035 recurred a fourth time in this very code — the resolver filtered a CAPPED neighbour list, so the most connected type in the workspace reported no source while small types worked; fixed with StoreReader.DeclaringAssertion. The control could not reproduce it twice and now asserts its own preconditions.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/NodeContent.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -5834,6 +5851,28 @@ window.AUDIT_DATA = {
         "commits": []
       },
       "audit_ref": "al-0181"
+    },
+    {
+      "id": "cl-0114",
+      "datetime": "2026-08-31T13:26:30Z",
+      "session": "phase3-pane-probes",
+      "kind": "architecture",
+      "skill": "implement",
+      "title": "A scope records where its files are",
+      "prompt": "unblock the design session",
+      "summary": "Provenance carries a path relative to a scope; nothing carried the scope's own location, so no node could be resolved to a file. Scopes now emit declared_at — an attribute, so scopes do not become graph nodes — and the content reader composes it with the provenance path, confined under the workspace root. This is what makes ADR-0018 buildable at all; the alternative was deriving directories from scope ids, which works for knowledge:docs/adr and fails for bicep:main.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/WorkspaceCore.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "1345cb811e502ba96fd4e02adcd3fa6634708195",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
     }
   ]
 };
