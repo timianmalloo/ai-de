@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T00:12:48Z",
+  "generated": "2026-08-31T00:13:36Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1266,7 +1266,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d6713478d442ad9e2c3d05b73b52b9d99b52c7871f44297ae0bb7c5cf57d76df"
+      "sourceSha256": "811f039b5fae32ce5c08de88b915d4bfcc9d4689b9f7ab69989ca00f53bacf58"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -1776,7 +1776,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3dfa304f3a851d6c5ac61b0ccd557c2c7df6ae8266cd28be7e1d9fd5e46b8820"
+      "sourceSha256": "75f58801096db28d5e41bdad25c13de468a98f7482a0b5fd72d410ce5ab75e49"
     },
     {
       "id": "domain-experts",
@@ -2852,7 +2852,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c4655f4640ee522145961bcb948a13388925f5531229b410e15607b63b636d1f"
+      "sourceSha256": "81952764a0e32a7f32d2afea55d0e123ece8a6b0d7641ffcfa5266a83a96cec5"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -6289,7 +6289,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -6375,5 +6375,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "e4cf91f8a45e483b5a8041495ee5b7285b4a1eea248de4ca24a58256a746cfb0"
+  "graphSha256": "591bd18990a746eb23594a97e96df7819cd2a18d095ca1f004db5ce26cc0578f"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T00:13:18Z",
+  "generated": "2026-08-31T00:13:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2935,6 +2935,32 @@ window.AUDIT_DATA = {
       }
     },
     {
+      "id": "al-0162",
+      "shortname": "cap-before-filter-sweep-and-branch-ci-notice",
+      "datetime": "2026-08-31T00:12:19Z",
+      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
+      "prompt": "do the next steps",
+      "summary": "**The cap-before-filter sweep, run properly this time.** Every bounded read in the projection service\nwas checked rather than spot-sampled: `Find` filters inside `SearchNodeIds`, `Describe` inside\n`AssertionsTouching`, `Impact` inside `OutgoingAssertions`, `Evidence` inside the cursor page — all\nfour apply the cap to rows the query has ALREADY filtered, which is the correct order and also the\ncheaper one, because the filter uses an index. `Knowledge` was the only place the order was inverted,\nand it was inverted for a reason worth naming: **its filter lived in C# rather than in the query.**\n\nThat gives the class a signature you can recognise without reading every projection: **a bounded read\nwhose `.Where(...)` is applied to the RESULT of the read rather than expressed in it.** If the filter\nis in the query the cap cannot be wrong; if it is in the caller, the cap chose the rows before anyone\nasked what was wanted. Recorded on DC-035 along with the one residual — `Knowledge` still reads each\nnode's touching assertions at 500 and splits them afterwards, so a document with ~495+ real links\nwould get an arbitrary 500 with no omission count. No repository measured comes close.\n\n**Measurements re-recorded after the knowledge work.** TheTerrace 24,058 assertions across 66 scopes,\nBioHacker 4,420 / 48, meridian 12,613 / 56 — every response still inside the frame.\n\n**The design session is told what changed under them, in their own file.** A new §4d says CI now runs\non every branch, that the next push to their branch will run all nine gates, and — because it will be\nnoisy the first time — names the two that will fire and how to satisfy them, with a worked example of\nthe accepted and rejected `Status:` forms. Neither is a new rule; both were always enforced, just not\nanywhere they could see them.\n\n**`review-by` on code: decided no, on the user's own rule.** The symmetry is tempting — 460 review\ndates on documents, so why not flag a stale class? Because nothing in a C# file, a Bicep template or\na SQL script DECLARES when it should next be read. A date could only be manufactured from\nlast-modified time or churn, and it would render identically to the dates documents actually declare.\nA reader could not tell the two apart, which is exactly the failure the no-inference note exists to\nprevent. A code artifact gets a review date the moment something writes one down; until then the\nabsence is accurate.\n\n**Still only verifiable by you:** whether the Knowledge chip lights up in the running app. Both known\ncauses are fixed and proven at every layer I can reach — the extractor, the store, the projection, and\nacross the daemon pipe — but I have not watched it render. It needs one re-index in the new build,\nbecause the generation bump makes that a rebuild rather than a reuse.\n\n870 tests green (App 144, Core 726). Nine gates clean, all nine run by CI, on every branch.\nZero design-owned files.",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "phase-3"
+      ],
+      "outcome": "success",
+      "goal": "Sweep every projection for cap-before-filter, re-measure, tell the design session CI now gates their branch, and decide review-by for code",
+      "done_when": "Every bounded read is checked and the result recorded with its signature; measurements re-recorded; the contract explains the CI change and the two gates that will fire; review-by on code decided with reasons; gates green; merged and published",
+      "change": "cl-0102",
+      "git": {
+        "sha": "aec47955ceaddd0f6c598c27952696dfe4a36e87",
+        "short": "aec47955c",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true
+      }
+    },
+    {
       "id": "al-0163",
       "shortname": "specify-editor-surfaces",
       "datetime": "2026-08-31T00:13:18Z",
@@ -5337,6 +5363,32 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "1b61599cc8be5ad753ad2725b61a78b27def6c69",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0102",
+      "datetime": "2026-08-31T00:12:08Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "The cap-before-filter sweep, and telling the other session what changed under them",
+      "prompt": null,
+      "summary": "**The cap-before-filter sweep, run properly this time.** Every bounded read in the projection service\nwas checked rather than spot-sampled: `Find` filters inside `SearchNodeIds`, `Describe` inside\n`AssertionsTouching`, `Impact` inside `OutgoingAssertions`, `Evidence` inside the cursor page — all\nfour apply the cap to rows the query has ALREADY filtered, which is the correct order and also the\ncheaper one, because the filter uses an index. `Knowledge` was the only place the order was inverted,\nand it was inverted for a reason worth naming: **its filter lived in C# rather than in the query.**\n\nThat gives the class a signature you can recognise without reading every projection: **a bounded read\nwhose `.Where(...)` is applied to the RESULT of the read rather than expressed in it.** If the filter\nis in the query the cap cannot be wrong; if it is in the caller, the cap chose the rows before anyone\nasked what was wanted. Recorded on DC-035 along with the one residual — `Knowledge` still reads each\nnode's touching assertions at 500 and splits them afterwards, so a document with ~495+ real links\nwould get an arbitrary 500 with no omission count. No repository measured comes close.\n\n**Measurements re-recorded after the knowledge work.** TheTerrace 24,058 assertions across 66 scopes,\nBioHacker 4,420 / 48, meridian 12,613 / 56 — every response still inside the frame.\n\n**The design session is told what changed under them, in their own file.** A new §4d says CI now runs\non every branch, that the next push to their branch will run all nine gates, and — because it will be\nnoisy the first time — names the two that will fire and how to satisfy them, with a worked example of\nthe accepted and rejected `Status:` forms. Neither is a new rule; both were always enforced, just not\nanywhere they could see them.\n\n**`review-by` on code: decided no, on the user's own rule.** The symmetry is tempting — 460 review\ndates on documents, so why not flag a stale class? Because nothing in a C# file, a Bicep template or\na SQL script DECLARES when it should next be read. A date could only be manufactured from\nlast-modified time or churn, and it would render identically to the dates documents actually declare.\nA reader could not tell the two apart, which is exactly the failure the no-inference note exists to\nprevent. A code artifact gets a review date the moment something writes one down; until then the\nabsence is accurate.\n\n**Still only verifiable by you:** whether the Knowledge chip lights up in the running app. Both known\ncauses are fixed and proven at every layer I can reach — the extractor, the store, the projection, and\nacross the daemon pipe — but I have not watched it render. It needs one re-index in the new build,\nbecause the generation bump makes that a rebuild rather than a reuse.\n\n870 tests green (App 144, Core 726). Nine gates clean, all nine run by CI, on every branch.\nZero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "docs/collaboration/session-contracts.md",
+        "docs/measurements/repositories.jsonl"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "aec47955ceaddd0f6c598c27952696dfe4a36e87",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
         "commits": []

@@ -1274,6 +1274,26 @@ for both or split.*
   fails when a method is added with no frame-size check — observed failing with an entry removed.
   Writing the list out would have been a fixture restating the product's list (DC-021) and would go
   stale in exactly the case that matters: a new method nobody weighed.
+- **A SECOND instance, and the sweep that should have followed the first (2026-08-30).**
+  `ProjectionService.Knowledge` read the first 200 `has_type` assertions and filtered THOSE to
+  knowledge — so on any real repository the 200 were code types in alphabetical order and the filter
+  left nothing. MEASURED: **0 items returned on a workspace holding 468 knowledge nodes**, which the
+  user reported as "knowledge still says 0". The first instance was fixed in `GraphProjection` and no
+  sibling sweep followed; this is what that costs.
+- **The sweep, run properly this time.** Every bounded read in the projection service was checked:
+  `Find` filters inside `SearchNodeIds`, `Describe` inside `AssertionsTouching`, `Impact` inside
+  `OutgoingAssertions`, `Evidence` inside the cursor page — all four apply the cap to rows the query
+  has ALREADY filtered, which is the correct order and also the cheaper one, because the filter uses
+  an index. `Knowledge` was the only place the order was inverted, and it was inverted because the
+  filter lived in C# rather than in the query.
+- **The signature, stated so it is recognisable without reading every projection:** a bounded read
+  whose `.Where(...)` is applied to the RESULT of the read rather than expressed in it. If the filter
+  is in the query the cap cannot be wrong; if it is in the caller, the cap chose the rows before
+  anyone asked what was wanted.
+- **Residual, named rather than implied:** `Knowledge` still reads each node's touching assertions at
+  `MaxEdgesCeiling` (500) and splits them into links and backlinks afterwards. A document with more
+  than ~495 real links would get an arbitrary 500 and no omission count. No repository measured comes
+  close, and the fix is the same shape if one ever does.
 - **Status:** `partially-controlled` — Core's side is complete and tested (bounded default, legible
   `PayloadTooLarge`, byte bounds on every read operation, the aggregated overview, and a reflective
   gate that catches the next operation). **Design's half is open:** rendering the overview and the
