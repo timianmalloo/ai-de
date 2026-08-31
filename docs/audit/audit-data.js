@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T00:57:37Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-31T03:31:58Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3060,6 +3060,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tools/verify-published-layout.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0171",
+      "shortname": "implement-prompt-draft-wiring",
+      "datetime": "2026-08-31T03:31:58Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do the next steps (finish the prompt-editor shell wiring)",
+      "summary": "Wired the prompt-draft surface end-to-end: WorkbenchShell.ReadyPromptTargets (live ready terminals), DispatchToAsync (named-session dispatch via a shared DispatchToSurfaceAsync refactored out of the focused-terminal path; success = PtyWriteAccepted), BindPromptDrafts (Configure each surface post-render, called from BindTerminalAttention), PromptDraftStore (cross-restart body persistence), and a workbench.newPromptDraft command (catalog+menu+controller). App.Tests 151->155, Core.Tests 730 green, launch smoke green. The prompt-editor is now reachable (Terminal menu / Ctrl+K,D) and functional.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/PromptDraftStore.cs"
       ],
       "tags": [],
       "outcome": "success"

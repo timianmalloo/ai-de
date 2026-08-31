@@ -144,6 +144,11 @@ public static class WorkbenchCommandCatalog
             "Type a prompt and press Enter. The recorded delivery receipt is announced, including when delivery is unknown.",
             Menu: "_Terminal"),
 
+        new("workbench.newPromptDraft", "New prompt draft", "Ctrl+K, D",
+            nameof(LayoutOperation.AddSurface),
+            "Opens a staged prompt-draft pane. Compose a prompt and transfer it to a ready terminal session.",
+            Menu: "_Terminal"),
+
         new("workbench.focusCanvas", "Focus graph canvas", "Ctrl+K, G",
             string.Empty,
             "Moves focus into the graph. Tab off either end or press Escape to come back.",

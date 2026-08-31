@@ -97,6 +97,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workbench.dispatchPrompt":
                 return OpenPromptBar();
 
+            case "workbench.newPromptDraft":
+                return NewPromptDraft();
+
             case "workbench.toggleLock":
                 service.IsLocked = !service.IsLocked;
                 announcer.Announce(service.IsLocked
@@ -398,11 +401,23 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// <summary>Opens a plain shell terminal (never an agent). Set by the shell that can create surfaces.</summary>
     public Func<string>? NewTerminalRequested { get; set; }
 
+    /// <summary>Opens a prompt-draft surface. Set by the shell that can create surfaces.</summary>
+    public Func<string>? NewPromptDraftRequested { get; set; }
+
     private bool NewAgentTerminal()
     {
         announcer.Announce(NewAgentTerminalRequested is null
             ? "Agent terminals are not available in this build."
             : NewAgentTerminalRequested());
+
+        return true;
+    }
+
+    private bool NewPromptDraft()
+    {
+        announcer.Announce(NewPromptDraftRequested is null
+            ? "Prompt drafts are not available in this build."
+            : NewPromptDraftRequested());
 
         return true;
     }

@@ -77,7 +77,7 @@ internal static class MainMenuBuilder
                    "workbench.reorderSurface"]),
         ("_Window", ["workbench.floatPane", "workbench.collapsePane", "workbench.maximizePane",
                      "workbench.closeSurface", "workbench.toggleLock", "workbench.resetLayout"]),
-        ("_Terminal", ["terminal.new", "terminal.newAgent", "workbench.dispatchPrompt"]),
+        ("_Terminal", ["terminal.new", "terminal.newAgent", "workbench.dispatchPrompt", "workbench.newPromptDraft"]),
         ("_Help", ["workspace.diagnostics"]),
     ];
 

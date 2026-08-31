@@ -47,6 +47,12 @@ public sealed class WorkbenchShell : IDisposable
     private TerminalCustomizationStore? _customizationStore;
     private readonly HashSet<string> _customizationInitialized = new(StringComparer.Ordinal);
     private CanvasGraphViewModel? _canvasGraph;
+    // Prompt dispatch context, stored so both the focused-terminal path (Prompt.Dispatch) and the
+    // named-session path (DispatchToAsync, for the prompt-draft surface) share one choreography.
+    private IWorkspaceDispatch? _dispatch;
+    private string? _dispatchScopeId;
+    // Cross-restart prompt drafts, keyed by the stable SurfaceId (off the Core layout model).
+    private PromptDraftStore? _promptDraftStore;
 
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
@@ -126,6 +132,29 @@ public sealed class WorkbenchShell : IDisposable
             return result.Applied ? "Terminal opened." : result.Announcement;
         };
         Controller.PromptBarOpen = Prompt.Open;
+
+        Controller.NewPromptDraftRequested = () =>
+        {
+            // Open the draft beside a terminal (its transfer target) when there is one, else in any
+            // stack — a draft is useful even before a session exists (it just cannot transfer yet).
+            var stack = Service.Current.AllStacks()
+                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"))
+                ?? Service.Current.AllStacks().FirstOrDefault();
+
+            if (stack is null) return "There is no pane to open a prompt draft in.";
+
+            var id = $"prompt#{Guid.NewGuid().ToString("N")[..6]}";
+            var result = Service.Apply(new LayoutOperation.AddSurface(
+                stack.Id, new Surface(id, "prompt", "Prompt draft")));
+
+            Adapter.Render();
+            BindCanvas();
+            BindContexts();
+            BindJoins();
+            BindTerminalAttention();
+
+            return result.Applied ? "Prompt draft opened." : result.Announcement;
+        };
 
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
         // open there is nothing to persist against, so first-run simply starts from the default.
@@ -329,45 +358,18 @@ public sealed class WorkbenchShell : IDisposable
 
         // Prompt dispatch: the shell owns the terminal, the daemon owns the receipt (D1), so the
         // choreography runs here with the two durable phases supplied by whoever holds the store.
+        // Stored on fields so the focused-terminal path (here) and the named-session path
+        // (DispatchToAsync, for the prompt-draft surface) share ONE choreography (DispatchToSurfaceAsync).
         if (commands is IWorkspaceDispatch dispatch)
         {
-            Prompt.Dispatch = async body =>
+            _dispatch = dispatch;
+            _dispatchScopeId = scopeId;
+
+            Prompt.Dispatch = body =>
             {
                 var surface = FocusedTerminal()
                     ?? throw new InvalidOperationException("focus a terminal pane before dispatching");
-
-                var session = surface.Session
-                    ?? throw new InvalidOperationException("the terminal has not started yet");
-
-                var command = new DispatchCommand(
-                    WorkspaceId: scopeId,
-                    WorkspaceEpoch: await dispatch.EpochAsync(CancellationToken.None),
-                    Caller: new CallerPrincipal(Environment.UserName, CallerKind.Shell),
-                    CommandId: Guid.NewGuid().ToString("N"),
-                    DraftId: $"draft-{session.SessionId}",
-                    RevisionNo: 1,
-                    Body: body,
-                    SessionId: session.SessionId,
-                    SessionGeneration: session.Generation);
-
-                // Readiness decides whether this is attempted at all. A session that cannot report
-                // when it is waiting for input may be showing a sign-in or a confirmation, and a
-                // prompt sent into one of those is consumed by it.
-                // The surface knows how ITS session reports readiness — OSC 133 for a shell, an
-                // observed prompt marker for an agent, nothing otherwise — and an agent that has
-                // not yet reached its prompt is refused rather than written into.
-                var evidence = surface.ReadinessEvidence;
-                var ready = evidence == ReadinessEvidence.ObservedPattern
-                    ? surface.AgentReadiness?.IsReady == true
-                    : session.Activity == SessionActivity.Ready;
-
-                var readiness = evidence == ReadinessEvidence.None
-                    ? SessionReadiness.Unknown
-                    : ready ? SessionReadiness.Ready : SessionReadiness.NotReady;
-
-                return await BoundaryDispatcher.BeginAndWriteAsync(
-                    command, session, dispatch.DispatchBeginAsync, dispatch.DispatchFinalizeAsync,
-                    CancellationToken.None, readiness);
+                return DispatchToSurfaceAsync(surface, body);
             };
         }
 
@@ -612,6 +614,10 @@ public sealed class WorkbenchShell : IDisposable
                 }
             }
         }
+
+        // Prompt-draft targets are terminal-derived, so refresh them whenever the terminal set is
+        // (re)bound — a session becoming ready or a pane closing changes what a draft can transfer to.
+        BindPromptDrafts();
     }
 
     // A rename lives on the surface (reconcile keeps it alive); re-render so the tab caption, which
@@ -873,6 +879,127 @@ public sealed class WorkbenchShell : IDisposable
         return id => contexts.Contexts
             .FirstOrDefault(c => c.Includes.Any(p => BoundedContextReader.Matches(p, id)))?.Name;
     }
+
+    /// <summary>
+    /// The prompt-dispatch choreography for one terminal surface — shared by the focused-terminal path
+    /// (Prompt.Dispatch) and the named-session path (DispatchToAsync). The shell owns the terminal, the
+    /// daemon owns the receipt (D1); readiness decides whether the write is attempted at all so a
+    /// prompt is never fed into a sign-in or confirmation the session is showing.
+    /// </summary>
+    private async Task<DispatchReceipt> DispatchToSurfaceAsync(TerminalSurface surface, string body)
+    {
+        if (_dispatch is null) { throw new InvalidOperationException("prompt dispatch is not available"); }
+
+        var session = surface.Session
+            ?? throw new InvalidOperationException("the terminal has not started yet");
+
+        var command = new DispatchCommand(
+            WorkspaceId: _dispatchScopeId ?? "workspace",
+            WorkspaceEpoch: await _dispatch.EpochAsync(CancellationToken.None),
+            Caller: new CallerPrincipal(Environment.UserName, CallerKind.Shell),
+            CommandId: Guid.NewGuid().ToString("N"),
+            DraftId: $"draft-{session.SessionId}",
+            RevisionNo: 1,
+            Body: body,
+            SessionId: session.SessionId,
+            SessionGeneration: session.Generation);
+
+        var readiness = ReadinessOf(surface, session);
+
+        return await BoundaryDispatcher.BeginAndWriteAsync(
+            command, session, _dispatch.DispatchBeginAsync, _dispatch.DispatchFinalizeAsync,
+            CancellationToken.None, readiness);
+    }
+
+    /// <summary>How a terminal reports readiness — OSC 133 for a shell, an observed marker for an agent,
+    /// nothing otherwise (an agent not yet at its prompt is refused rather than written into).</summary>
+    private static SessionReadiness ReadinessOf(TerminalSurface surface, ITerminalSession session)
+    {
+        var evidence = surface.ReadinessEvidence;
+        var ready = evidence == ReadinessEvidence.ObservedPattern
+            ? surface.AgentReadiness?.IsReady == true
+            : session.Activity == SessionActivity.Ready;
+
+        return evidence == ReadinessEvidence.None
+            ? SessionReadiness.Unknown
+            : ready ? SessionReadiness.Ready : SessionReadiness.NotReady;
+    }
+
+    /// <summary>
+    /// Transfers a prompt-draft body to a NAMED ready session (spec-editor-surfaces US-ED6), by its
+    /// session id, through the same choreography as the focused path. Returns whether the terminal
+    /// accepted the write (PtyWriteAccepted); anything else leaves the draft retryable.
+    /// </summary>
+    public async Task<bool> DispatchToAsync(string sessionId, string body)
+    {
+        if (_dispatch is null) { return false; }
+
+        var surface = TerminalSurfaces()
+            .FirstOrDefault(s => string.Equals(s.Session?.SessionId, sessionId, StringComparison.Ordinal));
+        if (surface is null) { return false; }
+
+        try
+        {
+            var receipt = await DispatchToSurfaceAsync(surface, body);
+            return receipt.State == DispatchState.PtyWriteAccepted;
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>The ready terminal sessions a prompt draft may transfer to (US-ED6), live.</summary>
+    public IReadOnlyList<PromptTarget> ReadyPromptTargets()
+    {
+        var targets = new List<PromptTarget>();
+        foreach (var surface in TerminalSurfaces())
+        {
+            var session = surface.Session;
+            if (session is null) { continue; }
+            if (ReadinessOf(surface, session) != SessionReadiness.Ready) { continue; }
+            targets.Add(new PromptTarget(session.SessionId, surface.DisplayName ?? surface.SurfaceId));
+        }
+
+        return targets;
+    }
+
+    /// <summary>Every live terminal surface in the current layout.</summary>
+    private IEnumerable<TerminalSurface> TerminalSurfaces() =>
+        Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => s.Kind == "terminal")
+            .Select(s => Adapter.ContentFor(s.SurfaceId))
+            .OfType<TerminalSurface>();
+
+    /// <summary>
+    /// Wires every prompt-draft surface to the shell after a render (US-ED5/ED6): the live ready
+    /// targets, the named-session dispatch, the persisted body, and the save callback. Idempotent —
+    /// reconcile reuses surfaces, and Configure re-reads targets each time.
+    /// </summary>
+    internal void BindPromptDrafts()
+    {
+        _promptDraftStore ??= new PromptDraftStore(
+            string.IsNullOrEmpty(_workspaceRoot)
+                ? Path.Combine(Path.GetTempPath(), "aide-prompt-drafts.json")
+                : Path.Combine(_workspaceRoot, ".aide", "prompt-drafts.json"));
+
+        foreach (var stack in Service.Current.AllStacks())
+        {
+            foreach (var surface in stack.Surfaces.Where(s => s.Kind == "prompt"))
+            {
+                if (Adapter.ContentFor(surface.SurfaceId) is not PromptDraftSurface draft) { continue; }
+
+                var id = surface.SurfaceId;
+                draft.Configure(
+                    ReadyPromptTargets,
+                    DispatchToAsync,
+                    _promptDraftStore.TryGet(id, out var body) ? body : null,
+                    text => _promptDraftStore.Save(id, text));
+            }
+        }
+    }
+
 
     /// <summary>The terminal pane the user is working in, or null when none is focused.</summary>
     /// <remarks>
