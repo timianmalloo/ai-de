@@ -216,6 +216,56 @@ public sealed class ExtractorsDoNotInventTests : IDisposable
     }
 
     [Fact]
+    public async Task TheKnowledgeReaderDoesNotTurnProseIntoLinks()
+    {
+        // The reader that reads DOCUMENTS, on the corpus most likely to fool it: documents about
+        // links. The `uses_table` reader turned "we update the record" into a table called `the`;
+        // the same shape here is a document that quotes a link, names another document in prose, or
+        // spells an id in backticks — and every one of those is a real sentence in this repository.
+        //
+        // MEASURED before the reader was written: 372 backticked spans across TheTerrace's documents
+        // exactly match another document's id, and `architecture` — an id here — names an MCP tool
+        // in 4 of its 5 occurrences. A name collides (DC-022), so none of them is read.
+        Write("docs/guide.md", """
+            ---
+            id: doc-guide
+            type: doc
+            ---
+
+            # Writing a cross-reference
+
+            The target document is `spec-workspace`, and its file is at specs/workspace.md.
+            Never write the id and the path and expect a link: see spec-workspace, or the
+            architecture, or `AppDbContext`, and nothing here is an edge.
+
+            Spell it like this:
+
+            ```markdown
+            [the workspace spec](specs/workspace.md)
+            ```
+            """);
+
+        Write("docs/specs/workspace.md", """
+            ---
+            id: spec-workspace
+            type: spec
+            ---
+
+            # Workspace
+            """);
+
+        var result = await new KnowledgeExtractor().ExtractAsync(
+            new ExtractionRequest("knowledge:docs", Path.Combine(_dir, "docs"), "rev-1", 1),
+            CancellationToken.None);
+
+        var invented = Claims(result)
+            .Where(a => a.Predicate == "links_to")
+            .ToList();
+
+        Assert.True(invented.Count == 0, $"the knowledge reader invented: {Describe(invented)}");
+    }
+
+    [Fact]
     public async Task AnEmptyWorkspaceProducesNoClaimsAtAll()
     {
         // The floor. A reader that finds something in nothing has no lower bound on what it will
@@ -227,6 +277,7 @@ public sealed class ExtractorsDoNotInventTests : IDisposable
             (new SqlSchemaExtractor(), "sql:."),
             (new PythonExtractor(), "python:."),
             (new TypeScriptExtractor(), "typescript:."),
+            (new KnowledgeExtractor(), "knowledge:."),
         })
         {
             var result = await extractor.ExtractAsync(

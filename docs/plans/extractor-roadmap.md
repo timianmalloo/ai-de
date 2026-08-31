@@ -43,11 +43,11 @@ was not a bad sentence — it was a wrong plan.
 | Extractor | Reads | Emits | Measured coverage |
 |---|---|---|---|
 | **C#** (Roslyn, no MSBuild) | `.cs` via a `CSharpCompilation` per project/TFM | `has_type`, `declared_in`, `depends_on`, `inherits`, `implements`, `has_member`, `declares_table`, `uses_table` | 4 scopes, 21,298 facts; 1,428 types; 9,854 members |
-| **Knowledge** (markdown frontmatter) | `.md` with graph frontmatter | `has_type`, `node_class`, `declared_in`, `owned_by`, `review_by`, typed links | 39 scopes, 10,350 facts; 2,359 documents |
+| **Knowledge** (frontmatter + prose links) | `.md` with graph frontmatter | `has_type`, `node_class`, `declared_in`, `owned_by`, `review_by`, typed links, `links_to` | 39 scopes, 10,508 facts; **877 distinct documents**; 42 prose-link edges |
 | **Python** (line-oriented) | `.py` top-level declarations + imports | `has_type`, `declared_in`, `imports` | 5 scopes, 1,286 facts; 2 unknown imports |
 | **EF schema** (migrations) | `Migrations/*.cs` folded in order | `has_type`, `declared_in`, `has_column`, `introduced_by` | 1 scope, 761 facts; 64 tables |
 | **Bicep** | `.bicep` templates | `has_type`, `declared_in`, `depends_on`, `resource_type`, `api_version`, `parameter_type`, `is_secret`, `is_loop`, `is_conditional` | 2 scopes, 209 facts |
-| **TypeScript / JS** (line-oriented) | `.ts .tsx .js .jsx .mjs .cjs` exports + imports | `has_type`, `declared_in`, `imports` | 13 scopes, 194 facts |
+| **TypeScript / JS** (line-oriented) | `.ts .tsx .js .jsx .mjs .cjs`, hand-written only | `has_type`, `declared_in`, `imports`, `is_exported` | 13 scopes, 140 facts; 22 functions, 2 classes, 7 modules; **0 unknown imports** |
 | **SQL schema** | `CREATE TABLE` / `ALTER TABLE` folded in file order | `declares_table`, `has_column` | 0 scopes here; exercised on other repositories |
 
 ## Not built
@@ -68,16 +68,19 @@ Ranked by *what a user cannot currently ask*, not by what is missing in the abst
 
 | # | Work | Why it is where it is | Size |
 |---|---|---|---|
-| **1** | **Knowledge body analysis** | 2,359 documents in the graph and **not one fact from their prose** — only frontmatter. The product's premise is that docs hold intent; today it holds their metadata. Headings, terms and code references in the body are the largest unread surface in the repository. | Large |
-| **2** | **TypeScript symbol resolution** | 13 scopes produce 194 facts — thinner than Python's 5 scopes producing 1,286. Non-exported symbols are invisible and types are not checked, so a TypeScript-heavy repository gets a graph that understates it. | Large |
-| **3** | **C# call edges** | `depends_on` is type-level. "What calls this" is the question a code graph is expected to answer and cannot. | Medium |
-| **4** | **Schema changed by raw SQL** | The EF reader folds migrations; `ExecuteSqlRaw` changes the schema and is not read, so the schema can be quietly wrong rather than incomplete. | Medium |
+| **1** | **De-duplicate knowledge scopes, and resolve prose links workspace-wide** | Knowledge scopes NEST: `knowledge:docs` reads everything under it and `knowledge:docs/adr` reads it again, so every knowledge fact is stored ~2.7 times — MEASURED, 2,368 `node_class` rows for **877** distinct documents. Reading each directory's own files fixes it (877 documents preserved, knowledge facts 10,508 → 4,326) **but costs 30 of the 42 prose-link edges**, because a link across directories only resolves for a scope that read both. The two must be done together: resolve against the whole workspace, emit per scope. Attempted and reverted 2026-08-31 rather than ship the regression. | Medium |
+| **2** | **C# call edges** | `depends_on` is type-level. "What calls this" is the question a code graph is expected to answer and cannot. | Medium |
+| **3** | **Schema changed by raw SQL** | The EF reader folds migrations; `ExecuteSqlRaw` changes the schema and is not read, so the schema can be quietly wrong rather than incomplete. | Medium |
+| **4** | **`Describe`'s ordering** | Not an extractor, but it caps a node's facts at 50 ordered `subject, predicate, object` — **alphabetically, not by importance**. 12 of 877 knowledge documents were already over it before any of today's work, so a node's type and owner can fall outside the window while its links fill it. Found by simulating headings against the real store. | Small |
 | **5** | **Python nested declarations** | Column-zero only, so a class inside a function is invisible. Bounded and rarely load-bearing. | Small |
 | **6** | **Bicep expression evaluation** | Resource names built from expressions stay unevaluated; `count` is indeterminate. Correctly disclosed, and evaluating it means writing an interpreter. | Large, low value |
 
-**1 and 2 are the ones that change what the product can answer.** 3 changes what it can answer about
-code specifically. 4 is a correctness risk rather than a coverage one — the others are honest
-boundaries that are already disclosed.
+**Knowledge body analysis and TypeScript were items 1 and 2 and both shipped on 2026-08-31.** What
+replaced them at the top is what those two uncovered: the nesting duplication, and the fact that
+TypeScript's "gap" was 83% invented facts rather than missing ones.
+
+**3 is a correctness risk rather than a coverage one** — a schema that is quietly wrong beats one that
+is honestly incomplete. The rest are boundaries, already disclosed.
 
 ## Standing rules for anyone adding one
 

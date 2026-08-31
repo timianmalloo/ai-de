@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 23 · partially-controlled 27 · uncontrolled 0
+**Status counts:** controlled 23 · partially-controlled 28 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1131,6 +1131,30 @@ for both or split.*
   defect as the evidence page documenting a byte cap it did not apply, and as `find` reporting a
   `MaxBytes` it never enforced. Three instances in one session of **a claim in prose that the code
   does not make true**; when a comment states a bound, the next question is which line applies it.
+- **A THIRD reader, 2026-08-31 — and this one had no statement anchor at all.** The TypeScript
+  extractor matched `from\s+['"]([^'"]+)['"]` **anywhere in a file**. The word "from" in prose, in a
+  template literal, or at the end of one string literal with the *next* literal supplying the closing
+  quote, all began an import. MEASURED on TheTerrace: of 14 import edges, **12 were invented and 0
+  described a dependency between two things in the repository** — including
+  `the product must include full fantasy management,` (prose in a generated data file), `${url}`, and
+  ` + quoteFileNameIfNeeded(((_c = patch.oldFileName) !== null && _c !== void 0 ? _c : ` (two adjacent
+  literals in compiled JavaScript).
+- **The sharpest instance looked completely legitimate.** `@playwright/test` was assumed real — by me,
+  in the brief I wrote — and is a line of Playwright's own **code-generation template**:
+  `import { test, expect… } from '@playwright/test';`, the text it emits when scaffolding a test.
+  Nothing about the specifier looks wrong. Only opening the file says otherwise, which is the whole
+  lesson: **a plausible-looking fact is the one you have to go and read the source for.**
+- **Both directions measured, as the class demands.** Old matcher 19 occurrences / 13 distinct; new
+  statement-anchored matcher 15 / 12. Every one of the 10 dropped was opened by hand: all inside a
+  string literal or a JSDoc example, **0 real specifiers lost**. The new matcher also finds 9 the old
+  one missed (`from"./x"` with no space). Tightening without measuring the other direction is how the
+  first `uses_table` fix matched nothing at all.
+- **The same reader hid a coverage gap behind the invention.** `export` was a CONDITION on seeing a
+  declaration, so 13 scopes produced zero classes, functions and interfaces while all 13 disclosed
+  `typescript-non-exported-not-analysed` — the disclosure was true and the cause was a gate nobody
+  had questioned. Removing it: 22 functions and 2 classes appear, with `is_exported` recorded as an
+  attribute instead. Verified by hand — `grep -cE "^(async )?(function|class)"` over the six
+  hand-written files gives exactly the 24 emitted.
 - **The same root cause runs in the OTHER direction, and I shipped it (2026-08-30).** The
   `uses_table` reader matched an SQL keyword followed by a word ANYWHERE in a string literal, so the
   sentence *"we update the record"* produced an edge to a table called `the`. MEASURED: 63 prose
@@ -1616,5 +1640,17 @@ for both or split.*
 - **And the fix's own filter was wrong.** The standard-library set was generated from `sys.stdlib_module_names` — correct — and filtered to drop "private names", which dropped `__future__`: the one module in the set that looks private and is imported constantly. 26 false unknowns, caught by measuring again after the fix rather than by assuming a generated list must be right.
 - **Control:** `PythonStandardLibrary`, generated from the interpreter rather than remembered, and `PythonImportBoundaryTests` pinning all three outcomes — resolved in-repo, standard library, genuinely unknown — plus that the standard library is counted and not drawn. The rule is written into `docs/plans/extractor-roadmap.md` as a standing rule for any extractor added later.
 - **The generalisation to apply elsewhere:** **a disclosure is a planning input, so it has to distinguish "will not" from "cannot".** Before acting on any count of unknowns, look at the unknowns — the query is cheap and the alternative is a session spent on a hole that is not there. And when a reader records a principle in its own comments, ask which other readers should be holding it.
-- **Residual risk:** TypeScript discloses 11 unresolved specifiers and has had no equivalent look. They are probably npm packages — probably, which is exactly the word this class is about.
+- **The residual was measured the next day, and it was wrong.** This entry said TypeScript's unresolved specifiers "are probably npm packages — probably, which is exactly the word this class is about". It was: **2 of the 12 were anything at all, and both were Node builtins**. The other 10 were invented (see DC-033). So the TypeScript import gap was **83% invention, 17% boundary, 0% coverage hole** — a register entry hedging correctly about its uncertainty and still landing on the wrong shape. **A `probably` in a register entry is a task, not a caveat**; this one sat for a day and would have sent the next session looking for packages that were not there.
+- **The same fix applied, from the runtime's own answer.** `NodeBuiltinModules` is generated from `require('module').builtinModules` on Node v24.18.0, mirroring `PythonStandardLibrary`. It distinguishes the 42 bare-importable builtins from the three reachable only behind `node:` (`test`, `sqlite`, `sea`) — so a bare `test` is correctly an npm package, not Node's test runner. Builtins and packages are counted, never drawn. After: TheTerrace has 2 builtins, 0 packages, **0 genuine unknowns**.
+- **Residual risk:** `react` on this repository is reported as a genuine unknown and is almost certainly npm. `package.json` `dependencies` would settle it without guessing; neither repository has one outside build output. Named as the upgrade trigger in the code rather than guessed at here.
 - **Status:** `controlled`
+
+### DC-051 — A fix for real duplication silently pays for it in resolution
+- **Signature:** two scopes overlap, so the same input is processed twice and every derived fact is stored more than once. The obvious fix is to stop the overlap — give each scope only its own inputs. It works, and it quietly removes the *context* the wider scope was providing: anything that resolved a reference by looking across the overlap can no longer see the other side. The duplication metric improves, a different capability degrades, and nothing connects the two numbers.
+- **Why it survives:** the fix is measured, and measured against the thing it set out to fix. Storage falls, counts become correct, no inputs are lost — every check the author thought to run passes. The regression is in a feature the author was not looking at, and it is only visible if the *outputs* are compared rather than the inputs.
+- **Instance:** 2026-08-31. Knowledge scopes nest — `knowledge:docs` walks everything beneath it and `knowledge:docs/adr` walks it again — so every knowledge fact was stored **~2.7 times**: 2,368 `node_class` rows for **877** distinct documents. The roadmap's own "2,359 documents" was that inflated number, repeated as a document count. Making the walk non-recursive fixed it exactly: **877 documents preserved**, knowledge facts 10,508 → 4,326.
+- **And it cost 30 of 42 prose-link edges**, delivered hours earlier. A markdown link from one directory to another only resolves for a scope that read both, and the recursive parent had been the only thing reading both. The de-duplication metric was perfect and a feature lost 71% of its output.
+- **Caught by comparing outputs, not inputs.** The document count was the safety check and it passed. `links_to` was checked only because it was new enough to still be in mind. **The rule that generalises: when a change is justified by one number, name the number that would get worse if the change were wrong, and read it too.**
+- **Resolution: reverted, not shipped.** The compensating fix — resolve link targets against the whole workspace while emitting facts only for the scope's own files — contradicts a deliberate design decision in the reader (`a link above the scope is its own boundary`) and the tests written for it. That is a redesign, not an integration, and shipping a 71% regression to reach it would have been the worse trade. Both halves are now item 1 on the extractor roadmap, together, with the measurement attached.
+- **The generalisation to apply elsewhere:** deduplication and resolution pull in opposite directions wherever scopes overlap. Before removing an overlap, ask what was using it — and prefer splitting the two jobs (read widely, emit narrowly) over choosing between them.
+- **Status:** `partially-controlled` — the trade-off is measured and recorded; neither half is fixed.
