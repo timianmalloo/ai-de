@@ -1736,7 +1736,7 @@ for both or split.*
   `LayoutRestoreGuard` keeps the current graph-bearing layout when the restore would drop the graph.
   The broader per-workspace-vs-global fork is recorded in docs/notes/workspace-open-layout-restore.md.
 - **Control:** `LayoutRestoreGuardTests`; `WorkbenchDiagnostics` records which restore path was taken.
-- **Status:** partially-controlled (guard ships; the product fork is open)
+- **Status:** controlled (RESOLVED — workspace-open no longer restores a per-workspace layout; the arrangement is kept. No restore = no degenerate restore. See docs/notes/workspace-open-layout-restore.md)
 
 ### DC-058 — Every warning is correct and the wall of them hides the one that matters
 - **Signature:** a component reports what it could not do, per unit of work, conditionally, with a count — every rule a good disclosure is supposed to follow. Then the unit of work multiplies. Thirty-nine scopes each raise the same two boundaries with their own numbers, so nothing deduplicates them, and a surface that concatenates the list shows sixty near-identical sentences. Each one is true. The reader stops reading, and the single line that was a real finding is somewhere in the middle of them.

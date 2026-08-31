@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T22:53:01Z",
+  "generated": "2026-08-31T23:05:14Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5541,6 +5541,24 @@ window.AUDIT_DATA = {
       "artifacts": [
         "docs/reviews/ui-status-strip.md",
         "src/AiDe.App/Workbench/LayoutRestoreGuard.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0305",
+      "shortname": "keep-layout-on-workspace-open",
+      "datetime": "2026-08-31T23:05:14Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "keep the default arrangement when opening a workspace",
+      "summary": "Product decision applied: opening a workspace KEEPS the current/default arrangement instead of restoring a per-workspace saved layout (supersedes US-9 restore-on-open). WorkbenchShell no longer calls Persistence.Restore() on open (KeepArrangementOnWorkspaceOpen keeps Service.Current + traces it); Persistence still saves. Removed the now-dead LayoutRestoreGuard + its tests. App 199 green; smoke clean. DC-057 resolved.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/notes/workspace-open-layout-restore.md"
       ],
       "tags": [],
       "outcome": "success"

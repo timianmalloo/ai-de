@@ -32,27 +32,23 @@ TheTerrace's actual saved `layout.json` had **no `canvas`/graph surface at all**
 (explore/…/classdiagram and terminal/claude/classdiagram). So the restore faithfully brought back a
 degenerate, graph-less layout. The canvas *is* closable, so blindly re-injecting it is not safe.
 
-## The product fork (open — for the user to settle)
+## The product fork — RESOLVED (2026-08-31, product owner)
 
-- **A — per-workspace layouts (current, US-9):** each workspace remembers its own arrangement; opening
-  restores it. Matches "reopen the workspace, my arrangement returns."
-- **B — global layout:** the arrangement is a property of the app, not the workspace; opening a
-  workspace keeps the current arrangement.
+The user chose **keep the current/default arrangement when opening a workspace**: opening a workspace
+must not restore a per-workspace saved layout. This supersedes US-9's restore-on-open.
 
-The user's complaint leans toward B, but A is the implemented, tested feature. This is a genuine product
-decision; it is **not** silently changed here.
+- **A — per-workspace layouts (was current, US-9):** ~~each workspace remembers its own arrangement; opening restores it.~~ **Not chosen.**
+- **B — keep-current-on-open (chosen):** the arrangement is kept when a workspace is opened; opening never rearranges the panes.
 
-## Shipped this turn (conservative, model-agnostic guard)
+## Shipped
 
-`LayoutRestoreGuard.ShouldKeepPrevious(before, restored)` — when the restore would **drop the graph that
-the current layout has**, keep the current layout instead of applying the degenerate saved one, and
-announce it. This fixes the exact screenshot (graph-less restore) under *either* product model, changes
-behaviour **only** for degenerate restores, and never overrides a valid saved layout. Verified by
-`LayoutRestoreGuardTests`; the path taken is recorded via `WorkbenchDiagnostics`.
+`WorkbenchShell` no longer calls `Persistence.Restore()` on workspace-open — `KeepArrangementOnWorkspaceOpen()`
+keeps `Service.Current` and records the event via `WorkbenchDiagnostics`. Persistence still *saves* the
+arrangement per workspace (the data is kept and a setting could re-enable restore later), but it is not
+auto-applied on open. The earlier degenerate-restore guard (`LayoutRestoreGuard`) is removed — with no
+restore-on-open, there is no restore to guard. Verified: App suite green; smoke-clean.
 
-## Follow-on (needs the user's call on the fork)
+## Superseded design (kept for the record)
 
-If the user wants **B**, the change is: on workspace-open, do not restore-over-current at all (or only
-restore when there is no meaningful current arrangement). If the user wants **A** kept, add a
-"degenerate saved layout" repair (offer Reset, or drop the graph-less save) so a corrupted save cannot
-persist. Deferred to an explicit decision rather than guessed.
+The original per-workspace restore + the interim `LayoutRestoreGuard` (keep-current-when-restore-drops-graph)
+are superseded by "never restore on open." The root cause below is why the interim guard existed.

@@ -208,7 +208,7 @@ public sealed class WorkbenchShell : IDisposable
             _customizationStore = new TerminalCustomizationStore(
                 Path.Combine(workspaceDataDirectory, "terminal-customization.json"));
 
-            RestoreWithGraphGuard();
+            KeepArrangementOnWorkspaceOpen();
         }
 
         Adapter.Render();
@@ -439,7 +439,7 @@ public sealed class WorkbenchShell : IDisposable
             _customizationStore = new TerminalCustomizationStore(
                 Path.Combine(dataDirectory, "terminal-customization.json"));
 
-            RestoreWithGraphGuard();
+            KeepArrangementOnWorkspaceOpen();
         }
 
         Adapter.Render();
@@ -1102,33 +1102,14 @@ public sealed class WorkbenchShell : IDisposable
         }
     }
 
-    // Restores the workspace's saved layout, but rejects a DEGENERATE restore: a saved arrangement
-    // that lost the primary graph pane restores to a scattered, graph-less workbench (the user's
-    // "opening the workspace reset my panes and lost the graph"). When the restore would drop the
-    // graph that the current layout has, keep the current layout instead. WorkbenchDiagnostics
-    // records which path was taken, so a future report is traceable.
-    private void RestoreWithGraphGuard()
+    // The product decision: opening a workspace KEEPS the current arrangement rather than restoring a
+    // per-workspace saved layout. Restoring on open reset/scattered the user's panes (and could bring
+    // back a degenerate, graph-less saved layout), so we deliberately do NOT call Persistence.Restore()
+    // on open. Persistence still SAVES the arrangement, so the data is kept and a setting could re-enable
+    // restore later. (Supersedes US-9 restore-on-open, per the product owner.)
+    private void KeepArrangementOnWorkspaceOpen()
     {
-        if (Persistence is null) { return; }
-
-        var before = Service.Current;
-        var restored = Persistence.Restore();
-
-        if (LayoutRestoreGuard.ShouldKeepPrevious(before, Service.Current))
-        {
-            Service.Restore(before);
-            WorkbenchDiagnostics.LayoutMutation("restore-rejected-graphless", "keep-current", "graph", null, Service.Current);
-            Announcer.Announce("Kept the current layout — the saved arrangement had lost the graph pane.");
-            return;
-        }
-
-        WorkbenchDiagnostics.LayoutMutation("restore", restored.WasDefaulted ? "defaulted" : "saved", "layout", null, Service.Current);
-        if (restored.ErrorCode is not null || restored.WasDefaulted)
-        {
-            // A partial or failed restore must be told to the user, not silently absorbed: they are
-            // about to look at an arrangement that is not the one they left.
-            Announcer.Announce(restored.Announcement);
-        }
+        WorkbenchDiagnostics.LayoutMutation("workspace-open", "keep-current", "layout", null, Service.Current);
     }
 
     internal void BindClassDiagrams()
