@@ -101,6 +101,32 @@ public sealed class WatcherHost : IDisposable
         return episodes.Count;
     }
 
+    /// <summary>
+    /// Imports the workspace's declared-goal episodes (ep-capture) AND auto-scores each one (conn-10):
+    /// derives its <see cref="DeterministicEpisodeSignals"/> from the observable audit evidence and records
+    /// the deterministic Weave (no advisory evaluator - the safe default). An episode with a committed Proof
+    /// Pack scores an honest Partial; one without renders Not-Scored. Idempotent: episode and scorecard are
+    /// upserts, so a re-run re-scores rather than duplicates. Returns the number of episodes imported.
+    /// operatorId is the session id (the honest grouping key, never a human identity); taskClass marks the
+    /// row as imported. A missing file imports nothing.
+    /// </summary>
+    public int ImportAndScoreEpisodesFromAuditLog(string auditLogPath, string taskClass = "audit-import")
+    {
+        ArgumentException.ThrowIfNullOrEmpty(auditLogPath);
+        ArgumentException.ThrowIfNullOrEmpty(taskClass);
+
+        var imported = AuditLogEpisodeSource.ReadFileWithEvidence(auditLogPath);
+        var scoring = new ScoringService(_store, _time);
+        foreach (var (episode, evidence) in imported)
+        {
+            _store.RecordEpisode(episode);
+            var signals = DeterministicSignalsDeriver.Derive(episode, evidence, _store);
+            scoring.ScoreAndRecord(episode, signals, operatorId: episode.SessionId, taskClass: taskClass);
+        }
+
+        return imported.Count;
+    }
+
     /// <summary>The observation store, for the read surfaces (the app builds its queries from this).</summary>
     public IWatcherObservationStore Store => _store;
 

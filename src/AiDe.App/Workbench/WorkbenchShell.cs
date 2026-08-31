@@ -937,7 +937,7 @@ public sealed class WorkbenchShell : IDisposable
                 {
                     _episodesImported = true;
                     var auditLog = Path.Combine(_workspaceRoot, "docs", "audit", "audit-log.jsonl");
-                    host.ImportEpisodesFromAuditLog(auditLog);
+                    host.ImportAndScoreEpisodesFromAuditLog(auditLog);
                 }
 
                 var terminals = TerminalSnapshot();

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T23:18:25Z",
+  "generated": "2026-08-31T23:43:56Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2693,6 +2693,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "9e2f4a197ea31e0fbbc0cfd7e9d19602e8e53a9132b267a21c5ffad894676d57"
+    },
+    {
+      "id": "design-watcher-signals-derivation",
+      "path": "docs/design/watcher-signals-derivation.md",
+      "title": "Loomkeeper Deterministic Signals Derivation + Auto-Score (conn-10)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Derives DeterministicEpisodeSignals for an imported closed episode from what is honestly observable - a committed Proof Pack artifact sets HasVerificationPath/RequiredVerificationExecuted; acceptance stays null (unknown); the rest are honest defaults - then auto-scores on import via ScoringService. An episode with a proof pack scores an honest Partial (Focus only, coverage Not-Recorded); one without is Not-Scored. No signal is fabricated (spec L127, NG1).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "signals",
+        "scoring",
+        "auto-score",
+        "conn-10",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-episode-capture",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-conn-10-11-episode-source-blocker",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9894d65811cae15e06497c09a50e1cce0019420042ef46f3c2828a87632eab85"
     },
     {
       "id": "design-watcher-weave-score",
@@ -7902,6 +7948,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "f972a904bfe3c6f5f256263ee6bb296c6cbd106cddfd078b6ca72553a663d04b"
     },
     {
+      "id": "proof-watcher-signals-derivation",
+      "path": "docs/proof/watcher-signals-derivation.md",
+      "title": "Proof Pack - Deterministic Signals Derivation + Auto-Score (conn-10)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for conn-10: DeterministicSignalsDeriver derives honest signals (proof pack -> verification path; acceptance null) and WatcherHost auto-scores imported episodes - a proof-pack episode scores an honest Partial, one without is Not-Scored. HasVerificationPath mutation-verified. Core 990/0, App 140/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "signals",
+        "scoring",
+        "conn-10",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-signals-derivation",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b7673d4a415c606529db40ed4637ad4bbc155eee6a180f3700c12bb2eb885bd8"
+    },
+    {
       "id": "proof-watcher-weave-score",
       "path": "docs/proof/watcher-weave-score.md",
       "title": "Proof Pack - Loomkeeper Deterministic Weave (slice 5)",
@@ -8526,5 +8605,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "258d7ea9d645fdf821bddf175a30c05483506f21e1b545d20f1522366e56e2fa"
+  "graphSha256": "b526f6a67d8415699f62a9201d00540ccbd1d0aaf02a81052f972f6917c2face"
 };

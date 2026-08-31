@@ -18,10 +18,21 @@ public static class AuditLogEpisodeSource
 {
     /// <summary>Parses JSONL audit-log lines into imported closed episodes; malformed lines are skipped.</summary>
     public static IReadOnlyList<WorkEpisode> Parse(IEnumerable<string> jsonlLines)
+        => [.. ParseWithEvidence(jsonlLines).Select(i => i.Episode)];
+
+    /// <summary>Reads a repo's <c>audit-log.jsonl</c> into imported episodes; a missing file yields none.</summary>
+    public static IReadOnlyList<WorkEpisode> ReadFile(string path)
+        => [.. ReadFileWithEvidence(path).Select(i => i.Episode)];
+
+    /// <summary>
+    /// Parses lines into imported episodes paired with the observable audit evidence a signal derivation
+    /// needs (conn-10) - currently whether the entry shipped a committed Proof Pack artifact.
+    /// </summary>
+    public static IReadOnlyList<ImportedEpisode> ParseWithEvidence(IEnumerable<string> jsonlLines)
     {
         ArgumentNullException.ThrowIfNull(jsonlLines);
 
-        var episodes = new List<WorkEpisode>();
+        var imported = new List<ImportedEpisode>();
         foreach (var line in jsonlLines)
         {
             if (string.IsNullOrWhiteSpace(line))
@@ -29,33 +40,33 @@ public static class AuditLogEpisodeSource
                 continue;
             }
 
-            WorkEpisode? episode;
+            ImportedEpisode? one;
             try
             {
-                episode = FromLine(line);
+                one = FromLine(line);
             }
             catch (JsonException)
             {
                 continue; // a corrupt line is skipped, never a wrong episode (IO8)
             }
 
-            if (episode is not null)
+            if (one is not null)
             {
-                episodes.Add(episode);
+                imported.Add(one);
             }
         }
 
-        return episodes;
+        return imported;
     }
 
-    /// <summary>Reads a repo's <c>audit-log.jsonl</c> into imported episodes; a missing file yields none.</summary>
-    public static IReadOnlyList<WorkEpisode> ReadFile(string path)
+    /// <summary>Reads a repo's <c>audit-log.jsonl</c> into imported episodes + evidence; missing file → none.</summary>
+    public static IReadOnlyList<ImportedEpisode> ReadFileWithEvidence(string path)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
-        return File.Exists(path) ? Parse(File.ReadLines(path)) : [];
+        return File.Exists(path) ? ParseWithEvidence(File.ReadLines(path)) : [];
     }
 
-    private static WorkEpisode? FromLine(string line)
+    private static ImportedEpisode? FromLine(string line)
     {
         using var doc = JsonDocument.Parse(line);
         var root = doc.RootElement;
@@ -78,7 +89,7 @@ public static class AuditLogEpisodeSource
         var openedAt = startedAt ?? datetime ?? DateTimeOffset.UnixEpoch;
         var closedAt = datetime ?? openedAt;
 
-        return new WorkEpisode(
+        var episode = new WorkEpisode(
             EpisodeId: episodeId,
             SessionId: session!,
             Generation: new EpisodeGeneration(1),
@@ -88,6 +99,29 @@ public static class AuditLogEpisodeSource
             OpenedAt: openedAt,
             ClosedAt: closedAt,
             Outcome: MapOutcome(ReadString(root, "outcome")));
+
+        return new ImportedEpisode(episode, new EpisodeEvidence(HasProofPack: HasProofPackArtifact(root)));
+    }
+
+    /// <summary>True when the entry lists a committed Proof Pack artifact (a <c>docs/proof/</c> path).</summary>
+    private static bool HasProofPackArtifact(JsonElement root)
+    {
+        if (!root.TryGetProperty("artifacts", out var artifacts) || artifacts.ValueKind != JsonValueKind.Array)
+        {
+            return false;
+        }
+
+        foreach (var artifact in artifacts.EnumerateArray())
+        {
+            if (artifact.ValueKind == JsonValueKind.String
+                && artifact.GetString() is { } path
+                && path.Replace('\\', '/').Contains("docs/proof/", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>

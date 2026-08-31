@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T23:20:37Z",
+  "generated": "2026-08-31T23:44:26Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3263,6 +3263,30 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0311",
+      "shortname": "implement-watcher-signals-derivation",
+      "datetime": "2026-08-31T23:44:25Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "/design -> /implement conn-10 (DeterministicSignalsDeriver deriving HasVerificationPath from committed Proof Pack artifacts; auto-score on import)",
+      "summary": "conn-10: DeterministicSignalsDeriver derives honest signals (proof-pack artifact -> HasVerificationPath/RequiredVerificationExecuted; acceptance null; rest conservative defaults); AuditLogEpisodeSource.ParseWithEvidence carries EpisodeEvidence; WatcherHost.ImportAndScoreEpisodesFromAuditLog records+scores (operatorId=session id, never a human; upsert); shell wires it. Proof-pack episode -> Partial, no-proof -> Not-Scored. 5 tests, HasVerificationPath mutation-verified. Core 990/0, App 140/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DeterministicSignalsDeriver.cs",
+        "src/AiDe.Core/Watcher/AuditLogEpisodeSource.cs",
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-signals-derivation.md",
+        "docs/proof/watcher-signals-derivation.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Auto-score imported episodes honestly",
+      "done_when": "A proof-pack episode scores Partial and a no-proof episode Not-Scored, no fabricated signal, wired into the shell"
     }
   ],
   "changes": [
@@ -5903,6 +5927,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "77f25c3d37317881e27e4e158c421c8e70aef7c4",
         "after": "77f25c3d37317881e27e4e158c421c8e70aef7c4",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0124",
+      "datetime": "2026-08-31T23:44:25Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "conn-10: auto-score imported episodes honestly; a committed Proof Pack is the one verification signal",
+      "prompt": "/design -> /implement conn-10",
+      "summary": "Derive DeterministicEpisodeSignals from observable audit evidence: a docs/proof artifact sets HasVerificationPath (honest, non-fuzzy); acceptance stays null (unknown, no floor trip); guidance/coordination 0 (Not-Recorded). Proof-pack -> Partial (Focus only); no proof -> Not-Scored. operatorId = session id.",
+      "rationale": "The spec forbids fabricating a missing signal (L127); the only honest verification signal in an audit entry is a committed Proof Pack, so scores are honestly Partial/Not-Scored until richer telemetry.",
+      "artifacts": [
+        "docs/design/watcher-signals-derivation.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "93c4eee87a21401981365a8dbee3c22925666972",
+        "after": "93c4eee87a21401981365a8dbee3c22925666972",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []
