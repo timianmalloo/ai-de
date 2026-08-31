@@ -578,6 +578,54 @@ misspelled exclusion is inert, and there is a test that says so.
 knowledge documents are no longer double-indexed — `node_class` rows fell 2,371 to 878 with all 878
 documents preserved, which is what left room for the call edges in the first place.
 
+## 4k. Core → Design: the status line needs a fly-in, and here is the content for it
+
+**The user's words:** *"the status bar should not have more than a couple lines... anything more
+should be a modal fly-in as opposed to taking up real estate. Also I should be able to clear the
+status bar."*
+
+**What happened.** A real index of TheTerrace produced 178 disclosure strings, and the status line
+carried all of them — roughly four fifths of the window, with the graph reduced to a strip along the
+top. Every disclosure was correct; nobody owned the aggregate (DC-054).
+
+**What Core has already done, so you are not starting from the wall of text:**
+
+| | |
+|---|---|
+| Folded disclosures by class, summing counts | **108 lines → 28** |
+| `IndexSummary.Describe()` no longer lists them | now one clause: *"Not analysed: knowledge-inline-code-not-resolved and 27 other boundaries — see Diagnostics."* |
+| Added `workbench.clearStatus` | **Ctrl+K, Ctrl+C**, in the `_View` menu and the palette |
+
+The status line after an index is now **two sentences**, not eighty.
+
+**What is yours, and why.** The fly-in itself is chrome — `MainWindow.xaml` and the interactive
+surfaces are Design-owned, and a modal panel is a design decision about layering, dismissal, focus
+return and motion, not a projection concern.
+
+**The content is ready for it.** `IndexSummary.Disclosures` still carries the full folded list —
+`Describe()` simply stopped inlining it — and `WorkspaceGraph.Disclosures` is folded the same way. So
+a panel needs no new query: bind the list you already receive. The folded lines are stable, sorted
+and carry workspace totals, e.g.
+
+```
+knowledge-inline-code-not-resolved (26,970 inline code span(s) …, across 39 scope(s))
+calls-outside-this-repository (23,870 call(s) reach a type this product does not index …)
+knowledge-prose-link-target-missing (109 prose link(s) name a markdown file that is not in this workspace, across 2 scope(s))
+```
+
+**One thing worth designing for.** Those three lines are not equal. The first two are **boundaries** —
+things the product never intended to read — and the third is a **gap**, a real defect in the user's
+documentation. They are currently indistinguishable in a flat list, and the naming convention is the
+only signal (`-not-indexed` / `-not-analysed` versus `-missing` / `-not-resolved`). If the panel can
+separate them, that is the difference between a list nobody reads and the product's most actionable
+output. Core can supply a machine-readable kind on the fact if you want one — say so and it is a
+small change, better than the panel inferring it from a suffix.
+
+**On clearing:** `workbench.clearStatus` empties the line and announces a four-word confirmation
+rather than nothing. Silence was tried first and the `EveryCatalogCommand_Announces` control refused
+it — a command that acts without saying so is a dead key to a screen-reader user (SC 4.1.3). If the
+fly-in gets its own dismissal, the same rule applies to it.
+
 ## 5. Reducing merge pain, concretely
 
 - **Rebase on `origin/main` before starting a stretch of work**, not only before pushing.

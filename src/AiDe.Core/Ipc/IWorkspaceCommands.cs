@@ -51,9 +51,7 @@ public sealed record IndexSummary(
             // Even with nothing to index, what was NOT read is the whole answer. A repository full
             // of Python reported "no projects found" and said nothing about the Python.
             var nothing = "No C# projects, Bicep templates or EF migrations found in this workspace.";
-            return Disclosures.Count > 0
-                ? nothing + " Not analysed: " + string.Join(", ", Facts.DisclosureSummary.Fold(Disclosures)) + "."
-                : nothing;
+            return Disclosures.Count > 0 ? nothing + " " + NotAnalysed() : nothing;
         }
 
         var text = $"Indexed {ScopesIndexed} of {ScopesFound} scope(s): {Assertions:N0} assertion(s).";
@@ -68,14 +66,49 @@ public sealed record IndexSummary(
         }
         if (Failed.Count > 0) text += $" {Failed.Count} scope(s) failed and were quarantined.";
 
-        // Disclosures are part of the result, not a footnote: a graph that silently omits package
-        // types looks complete, and the user has no way to know it is not.
-        if (Disclosures.Count > 0) text += " Not analysed: " + string.Join(", ", Facts.DisclosureSummary.Fold(Disclosures)) + ".";
+        // Disclosures are part of the result, not a footnote — but the STATUS LINE is not where they
+        // belong. See NotAnalysed.
+        if (Disclosures.Count > 0) text += " " + NotAnalysed();
 
         // Coverage is reported alongside the count, so "we have contexts" cannot quietly mean
         // "we have contexts for a fraction of the code" (ADR-0016).
         if (!string.IsNullOrWhiteSpace(Contexts)) text += " " + Contexts;
         return text;
+    }
+
+    /// <summary>
+    /// What was not analysed, as ONE clause — a count and the sharpest example, never the list.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The status line is a line.</b> This clause used to be every disclosure joined with
+    /// commas. Folding them by class took it from 108 to 28, which is a better list and still not a
+    /// status message: on a real index it filled roughly four fifths of the window and pushed the
+    /// graph into a strip along the top.</para>
+    ///
+    /// <para><b>Which one to name is the whole design.</b> A count alone ("28 boundaries") tells a
+    /// reader nothing about whether to care. So the clause names the disclosure with the largest
+    /// count, which is where the most unread repository is — and, because gaps sort before
+    /// boundaries when counts tie, prefers a thing the product MEANT to read and could not over a
+    /// thing it never intended to read (DC-050).</para>
+    ///
+    /// <para>The full list is still in the result, unchanged, for a surface that can hold it.</para>
+    /// </remarks>
+    public string NotAnalysed()
+    {
+        var folded = Facts.DisclosureSummary.Fold(Disclosures);
+
+        if (folded.Count == 0) return string.Empty;
+
+        var headline = folded
+            .OrderByDescending(Facts.DisclosureSummary.CountIn)
+            .ThenBy(d => d, StringComparer.Ordinal)
+            .First();
+
+        var name = headline.Split(' ')[0];
+
+        return folded.Count == 1
+            ? $"Not analysed: {name}."
+            : $"Not analysed: {name} and {folded.Count - 1} other boundar{(folded.Count == 2 ? "y" : "ies")} — see Diagnostics.";
     }
 }
 

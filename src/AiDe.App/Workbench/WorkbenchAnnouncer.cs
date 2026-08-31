@@ -12,6 +12,17 @@ public interface IWorkbenchAnnouncer
     string Last { get; }
 
     void Announce(string message);
+
+    /// <summary>
+    /// Empties the status line.
+    /// </summary>
+    /// <remarks>
+    /// A status message has no natural end — it sits there until something else happens, and the
+    /// last thing that happened is often the longest thing that happened. A reader needs to be able
+    /// to put it away. Clearing is not the same as announcing an empty string: `Announce`
+    /// deliberately ignores blank input, so a caller cannot wipe the line by accident.
+    /// </remarks>
+    void Clear();
 }
 
 /// <summary>
@@ -45,6 +56,20 @@ public sealed class WorkbenchAnnouncer : IWorkbenchAnnouncer
     }
 
     public string Last { get; private set; } = string.Empty;
+
+    public void Clear()
+    {
+        if (!_liveRegion.Dispatcher.CheckAccess())
+        {
+            _liveRegion.Dispatcher.InvokeAsync(Clear);
+            return;
+        }
+
+        // `Last` is emptied too: it is what a test reads back, and a cleared line that still reports
+        // its old text is a surface disagreeing with itself.
+        Last = string.Empty;
+        _liveRegion.Text = string.Empty;
+    }
 
     public void Announce(string message)
     {
@@ -125,6 +150,14 @@ public sealed class RecordingAnnouncer : IWorkbenchAnnouncer
             {
                 return _messages.Count == 0 ? string.Empty : _messages[^1];
             }
+        }
+    }
+
+    public void Clear()
+    {
+        lock (_gate)
+        {
+            _messages.Clear();
         }
     }
 
