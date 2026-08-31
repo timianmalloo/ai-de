@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 25 · partially-controlled 29 · uncontrolled 0
+**Status counts:** controlled 26 · partially-controlled 29 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1694,8 +1694,9 @@ for both or split.*
   asserts the graph and the diagram end in DIFFERENT stacks. Plus `WorkbenchDiagnostics`
   (`aide.workbench` ActivitySource + a JSON layout log) so a future placement report is traceable —
   the workbench previously had no instrumentation at all.
-- **Status:** controlled
+- **Status:** `controlled`
 
+<<<<<<< HEAD
 ### DC-055 — A one-line status region has no cap, so a long message eats the layout
 
 - **Signature:** a status strip / live region is a wrapping TextBlock in an Auto-height row with no
@@ -1739,6 +1740,9 @@ for both or split.*
 - **Status:** controlled (RESOLVED — workspace-open no longer restores a per-workspace layout; the arrangement is kept. No restore = no degenerate restore. See docs/notes/workspace-open-layout-restore.md)
 
 ### DC-058 — Every warning is correct and the wall of them hides the one that matters
+=======
+### DC-055 — Every warning is correct and the wall of them hides the one that matters
+>>>>>>> 7f7f028 (docs: renumber the disclosure-folding class to DC-055)
 - **Signature:** a component reports what it could not do, per unit of work, conditionally, with a count — every rule a good disclosure is supposed to follow. Then the unit of work multiplies. Thirty-nine scopes each raise the same two boundaries with their own numbers, so nothing deduplicates them, and a surface that concatenates the list shows sixty near-identical sentences. Each one is true. The reader stops reading, and the single line that was a real finding is somewhere in the middle of them.
 - **Why it survives:** every control passes and every rule was followed. This codebase has spent real effort making disclosures fire — conditional, counted, never blanket, asserted in both directions — and **none of that effort was about what a reader does with sixty of them**. The failure is not in any disclosure; it is in the absence of anyone owning the aggregate. It also grows silently: each new extractor and each new scope adds lines to a list nobody re-reads.
 - **Instance:** 2026-08-31. A real index of TheTerrace produced **178 disclosure strings, 108 distinct, for 28 actual classes**. `knowledge-headings-not-analysed` and `knowledge-inline-code-not-resolved` appeared **39 times each** — once per knowledge scope, each with a different count, so `Distinct()` merged none. The user's screenshot shows the result: the disclosure text occupies roughly four fifths of the window and the graph is a strip along the top. Buried in it, in the same typeface as everything else, is `knowledge-prose-link-target-missing (107 …)` — 109 rotted cross-references, the most actionable thing the product had ever told anybody.
