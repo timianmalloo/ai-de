@@ -15,6 +15,13 @@ public static class ExtractionErrorCodes
 /// Every module id the workspace holds, so an import that leaves this scope can be resolved instead
 /// of disclosed.
 /// </param>
+/// <param name="WorkspaceKnowledge">
+/// Every markdown file the workspace holds and the node id it declares, so a prose link that leaves
+/// this scope's directory can be resolved instead of disclosed. The knowledge reader's counterpart
+/// to <paramref name="WorkspaceModules"/>, and it exists for a sharper reason: knowledge scopes
+/// NEST, so each document is now emitted by exactly one scope and there is no wider scope left to
+/// resolve a cross-directory link (DC-051).
+/// </param>
 /// <remarks>
 /// <para><b>Why a whole-workspace set rather than per-scope discovery.</b> A Python or TypeScript
 /// scope is one directory, and an import that names a sibling package resolves to a file in a
@@ -30,7 +37,8 @@ public sealed record ExtractionRequest(
     string RootPath,
     string ArtifactRevision,
     long DesiredGeneration,
-    IReadOnlySet<string>? WorkspaceModules = null);
+    IReadOnlySet<string>? WorkspaceModules = null,
+    WorkspaceKnowledge? WorkspaceKnowledge = null);
 
 public sealed record ExtractionDiagnostic(string ErrorCode, string ArtifactPathId, string Message);
 
