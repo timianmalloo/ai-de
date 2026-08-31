@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T00:34:04Z",
+  "generated": "2026-08-31T00:37:34Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3012,6 +3012,23 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0167",
+      "shortname": "define-architecture-code-viewer-renderer",
+      "datetime": "2026-08-31T00:37:34Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do these next steps: /define-architecture the viewer renderer choice (Monaco vs AvalonEdit spike)",
+      "summary": "ADR-0019: read-only code viewer renders with native AvalonEdit (MIT), not Monaco-in-WebView2, decided by the repo's own documented WebView2 airspace/float-crash cost (ADR-0015) — a read-only viewer needs no VS-Code parity. Markdown via Markdig; rich content reuses the one existing canvas WebView2. Residual: a confirming AvalonEdit-read-only-highlighting PoC (float the pane, render Order.cs) before Phase-1 build; RoslynPad fallback for C# behind the same seam.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0019-code-viewer-renderer.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -5426,6 +5443,28 @@ window.AUDIT_DATA = {
         "before": null,
         "after": "aec47955ceaddd0f6c598c27952696dfe4a36e87",
         "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0104",
+      "datetime": "2026-08-31T00:37:34Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Read-only code viewer renders with native AvalonEdit, not Monaco-in-WebView2",
+      "prompt": "define-architecture the viewer renderer choice",
+      "summary": "ADR-0019 chose native AvalonEdit (MIT) over Monaco-in-WebView2 for the read-only code viewer",
+      "rationale": "The repo's documented WebView2 airspace + float-crash cost (ADR-0015) outweighs Monaco's VS-Code parity, which a read-only viewer does not need; native avoids a second WebView2",
+      "artifacts": [
+        "docs/adr/0019-code-viewer-renderer.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "425c514a8721ac19192961c5fa5e22f89b8935e7",
+        "after": "425c514a8721ac19192961c5fa5e22f89b8935e7",
+        "branch": "feature/app-facelift-and-graph-surfaces",
         "pushed": true,
         "commits": []
       }

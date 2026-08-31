@@ -12,6 +12,7 @@ links:
   - { to: spec-terminal-sessions, rel: relates-to }
   - { to: kb-editor-and-content-rendering-surfaces, rel: implements }
   - { to: adr-0018-node-content-reader-contract, rel: depends-on }
+  - { to: adr-0019-code-viewer-renderer, rel: depends-on }
 review-by: 2027-02-28
 review-suggested: []
 summary: >-

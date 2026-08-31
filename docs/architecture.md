@@ -485,6 +485,11 @@ description/schema edit — not only protocol conformance.
   on demand via a bounded Core query** (a sibling of `OverviewAsync`), not by fattening the graph
   payload — content is paid for only for the selected node and is transport-bounded like every other
   query.
+- [ADR-0019](adr/0019-code-viewer-renderer.md): **the read-only code viewer renders with native
+  AvalonEdit (MIT), not Monaco-in-WebView2** — the deciding factor is the repo's own documented
+  WebView2 airspace/float-crash cost (ADR-0015); a read-only viewer does not need Monaco's VS-Code
+  parity, so it should not pay a second WebView2's cost. Markdown via Markdig; rich content reuses the
+  one existing canvas WebView2.
 
 ## Delivery phasing — vertical slices
 

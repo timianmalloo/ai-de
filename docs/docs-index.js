@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T00:34:04Z",
+  "generated": "2026-08-31T00:36:59Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -957,6 +957,48 @@ window.DOCS_INDEX = {
       "sourceSha256": "4717e8bf67ad30e341ea64f1e512187f2db334114e5f265f75b422b664f69fc2"
     },
     {
+      "id": "adr-0019-code-viewer-renderer",
+      "path": "docs/adr/0019-code-viewer-renderer.md",
+      "title": "ADR-0019 — Render the read-only code viewer with native AvalonEdit, not Monaco-in-WebView2",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "For the read-only code viewer (spec-editor-surfaces US-ED1–ED4), use native AvalonEdit (MIT) rather than Monaco-in-WebView2 (MIT). The deciding factor is the repo's own documented WebView2 airspace pain (ADR-0015: the windowed control cannot be drawn over and the composition alternative crashes on float) — a read-only viewer does not need Monaco's VS-Code parity, so it should not pay a second WebView2's airspace and process-risk cost. Markdown content renders via Markdig (BSD-2); rich content (Mermaid/charts) reuses the ONE existing canvas WebView2 rather than adding another.",
+      "tags": [
+        "architecture",
+        "editor",
+        "avalonedit",
+        "monaco",
+        "webview2",
+        "airspace",
+        "read-only",
+        "viewer"
+      ],
+      "links": [
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-content-rendering-comparables",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f7d23e354bf8ba6be32447d916034d401ad8d64a97ae6b829b594c7f9861c891"
+    },
+    {
       "id": "architecture",
       "path": "docs/architecture.md",
       "title": "AI-DE Architecture",
@@ -1070,7 +1112,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
         }
       ],
-      "sourceSha256": "931ebb681e1562e431f42ad350174d29618c3341a7e60293e87361e244196c80"
+      "sourceSha256": "33dbef8080d112870aa22b22f4798b931cc3ae56ad856e8221c5beae3c78989f"
     },
     {
       "id": "note-2026-08-30-prompt-draft-wiring",
@@ -6094,10 +6136,14 @@ window.DOCS_INDEX = {
         {
           "to": "adr-0018-node-content-reader-contract",
           "rel": "depends-on"
+        },
+        {
+          "to": "adr-0019-code-viewer-renderer",
+          "rel": "depends-on"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "daeb9ed546584ce78a5b5d15be2cf47329e4504a4f61b3161bbc0049f0e1e417"
+      "sourceSha256": "3b1d9a95ec96eff4ec20ba71c9bf8361f8aa42ee2411b4384a66b8a39c469a15"
     },
     {
       "id": "spec-knowledge-exploration",
@@ -6447,5 +6493,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "9ec6de2d21bcad58f4e7929386dcf860ff84bd9f91499c726e6ef7d4e5568b86"
+  "graphSha256": "00bf5d1f68d2d669dc03a17382328533126d990f68b4b0e7cd87ab22ba201ffa"
 };
