@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T13:42:22Z",
+  "generated": "2026-08-31T13:51:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3342,6 +3342,28 @@ window.AUDIT_DATA = {
         "class-diagram",
         "surface-chrome",
         "regression"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0270",
+      "shortname": "canvas-overview-affordance",
+      "datetime": "2026-08-31T13:51:31Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "when deep in the graph there is no way to zoom back up to the whole graph",
+      "summary": "Added an Overview affordance to the graph canvas: a header button + Home key that reload the whole-graph overview (rootId null), clearing the drill-down history; disabled at the overview. Back climbed history one node at a time with no single gesture to the top. New node.overview host message -> RefreshAsync(null). 2 structural tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/CanvasPage.cs",
+        "src/AiDe.App/Workbench/CanvasSurface.cs"
+      ],
+      "tags": [
+        "canvas",
+        "navigation",
+        "ux"
       ],
       "outcome": "success"
     }

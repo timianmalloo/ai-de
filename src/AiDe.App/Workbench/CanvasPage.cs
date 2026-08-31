@@ -94,6 +94,7 @@ internal static class CanvasPage
             <h1>Graph canvas</h1>
             <input id="search" class="search" type="text" placeholder="Search a node (press /)" aria-label="Search the graph" />
             <button id="back" class="chrome" disabled>&#8592; Back</button>
+            <button id="home" class="chrome" title="Back to the whole graph (press Home)" aria-label="Show the whole graph" disabled>&#8962; Overview</button>
             <button id="fit" class="chrome" title="Fit the graph to the view (2D)">Fit</button>
             <button id="mode" class="chrome" title="Toggle 2D / 3D (press 2 or 3)" aria-label="Switch to 3D view">View in 3D</button>
           </header>
@@ -109,6 +110,7 @@ internal static class CanvasPage
             var history = [];
             var current = null;
             var backButton = document.getElementById('back');
+            var homeButton = document.getElementById('home');
             var modeButton = document.getElementById('mode');
             var fitButton = document.getElementById('fit');
             var searchInput = document.getElementById('search');
@@ -212,6 +214,17 @@ internal static class CanvasPage
               var previous = history.pop();
               current = null;
               post({ kind: 'node.activate', nodeId: previous });
+            });
+
+            // Overview jumps straight back to the whole graph. Back climbs the drill-down history one
+            // node at a time, and that history can be many hops deep; there was no single gesture to
+            // return to the top. Clearing the history means the next Back after an Overview is disabled,
+            // which is correct — the whole graph IS the top.
+            homeButton.addEventListener('click', function () {
+              if (!current) { return; }
+              history = [];
+              current = null;
+              post({ kind: 'node.overview' });
             });
 
             function setMode(next) {
@@ -323,6 +336,10 @@ internal static class CanvasPage
 
               if ((e.key === 'Backspace' || (e.key === 'ArrowLeft' && e.altKey)) && history.length) {
                 e.preventDefault(); backButton.click(); return;
+              }
+
+              if (e.key === 'Home' && current) {
+                e.preventDefault(); homeButton.click(); return;
               }
 
               if (e.key !== 'Tab') { return; }
@@ -527,6 +544,7 @@ internal static class CanvasPage
 
               current = graph.rootId;
               backButton.disabled = history.length === 0;
+              homeButton.disabled = !current;
 
               var nodes = graph.nodes || [];
               var width = stage.clientWidth || 800;

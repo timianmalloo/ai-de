@@ -150,6 +150,14 @@ public sealed class CanvasSurface : ContentControl, IDisposable
 
         if (message is null) return;
 
+        if (string.Equals(message.Kind, "node.overview", StringComparison.Ordinal))
+        {
+            // Back to the whole-graph overview (rootId null -> the bounded overview projection). A READ,
+            // like re-rooting: the page is asking for the same default view it gets on first load.
+            _ = RefreshAsync(null);
+            return;
+        }
+
         if (string.Equals(message.Kind, "node.activate", StringComparison.Ordinal))
         {
             // Re-rooting is a READ. The page names a node and the host asks the projection about it;
