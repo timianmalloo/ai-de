@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T00:13:36Z",
+  "generated": "2026-08-31T00:19:26Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2115,6 +2115,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "019b6dfead9d172ec258bf9ada3019edcd311fc3601c556dc544132abe0ca999"
+    },
+    {
+      "id": "mockup-editor-surfaces",
+      "path": "docs/mockups/editor-surfaces.md",
+      "title": "Editor & content surfaces — mockup",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Self-contained, dependency-free review mockup of the two editor & content surfaces (spec-editor-surfaces): a READ-ONLY code viewer (syntax-highlighted, read-only badge, shortfall banner, walkable typed-edge footer, with hard states code/markdown/overflow/loading/empty/error/ unsupported-kind) and a PROMPT-DRAFT editor (staged badge, saved-with-layout note, a one-way Transfer to a NAMED ready session with the no-ready-session disabled state and the transferred confirmation). Review harness (surface · viewer-state · draft-state · theme · reduced-motion) and an in-artifact contrast audit (AA). Tokens are the project DESIGN.md chrome + Material Palenight syntax palette. Open `editor-surfaces.html` over file://.",
+      "tags": [
+        "editor",
+        "code-viewer",
+        "prompt-draft",
+        "read-only",
+        "monaco",
+        "mockup",
+        "wpf"
+      ],
+      "links": [
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-knowledge-explorer-mode",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c571f814ec5e7af24935f32fb241ea3f06992a1822094380b1613043b37b438b"
     },
     {
       "id": "mockup-facelift-elevate",
@@ -6343,6 +6376,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-context-map-join"
     },
     {
+      "id": "surface-mockups-editor-surfaces",
+      "path": "docs/mockups/editor-surfaces.html",
+      "title": "Editor & content surfaces — mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-editor-surfaces"
+    },
+    {
       "id": "surface-mockups-graph-canvas",
       "path": "docs/mockups/graph-canvas.html",
       "title": "Graph canvas — target UX",
@@ -6375,5 +6416,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "591bd18990a746eb23594a97e96df7819cd2a18d095ca1f004db5ce26cc0578f"
+  "graphSha256": "5e910620793f7d10109b7ebfcb080cd3306cf11e528266dc35203657b94b04d8"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T00:13:36Z",
+  "generated": "2026-08-31T00:19:52Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2973,6 +2973,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/specs/editor-surfaces.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0164",
+      "shortname": "ui-design-editor-surfaces",
+      "datetime": "2026-08-31T00:19:52Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "ui-design the editor surfaces (read-only code viewer + prompt-draft editor)",
+      "summary": "Self-contained dependency-free mockup docs/mockups/editor-surfaces.html for spec-editor-surfaces: read-only code viewer (read-only badge, Palenight highlighting, shortfall banner, walkable edge footer; hard states code/markdown/overflow/loading/empty/error/unsupported) + prompt-draft editor (staged, saved-with-layout, one-way audited Transfer to a named ready session, no-session disabled state, transferred confirmation). Review harness (surface/state/theme/reduced-motion) + in-artifact contrast audit (AA). Rubric critique names the renderer-choice spike as the highest-leverage next decision.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/editor-surfaces.html",
+        "docs/mockups/editor-surfaces.md"
       ],
       "tags": [],
       "outcome": "success"
