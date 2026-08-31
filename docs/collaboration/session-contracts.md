@@ -467,6 +467,29 @@ rebuild-from-model on every add reverts it. `LayoutOperation.MoveSurface` is alr
 (`Float`/`JoinStack`/`Split*`), so this is App-only — I'm deferring it to a supervised piece because it
 touches the keyboard/drag-identical invariant, feeds persistence, and is untestable headlessly.
 
+## 4i. What the graph can tell you — `docs/plans/extractor-roadmap.md`
+
+**A standing answer to "why is X not in the graph?"**, so you do not have to ask Core and wait.
+
+It lists every extractor, what each reads and emits, its coverage **measured on TheTerrace** rather
+than estimated, what is not built at all, and the order the remaining work is worth doing in. When a
+surface shows less than you expected, that file will usually say whether it is a boundary of the
+product, a disclosed gap, or a defect.
+
+**The distinction it turns on, because it will affect how you read disclosures.** A *boundary* is
+something the product does not intend to read — the .NET base class library, the Python standard
+library. A *gap* is something it means to read and cannot. Conflating them cost this session a
+misplaced priority: Python disclosed *"246 import(s) name something this scope does not contain"*,
+which read as the largest coverage hole in any extractor and was ranked as one — and all 246 turned
+out to be `sys`, `json`, `pathlib` and friends. The real number was **2**. Registered as DC-050.
+
+So when a disclosure names a count, it now tells you which kind it is. If one still reads ambiguously
+on a surface you are building, that is worth reporting rather than working around.
+
+**Currently in flight (Core):** knowledge body analysis — 2,359 documents are in the graph and not one
+fact comes from their prose — and TypeScript precision, where measurement found the extractor
+inventing imports from prose and minified JavaScript rather than merely missing symbols.
+
 ## 5. Reducing merge pain, concretely
 
 - **Rebase on `origin/main` before starting a stretch of work**, not only before pushing.
