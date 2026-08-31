@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T03:39:36Z",
+  "generated": "2026-08-31T04:17:43Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -999,6 +999,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "32125e82283ff33fc2c9d8084f3aed992fbcec914560d33b9e5f0d5b06c5861f"
     },
     {
+      "id": "adr-0020-class-diagram-architecture",
+      "path": "docs/adr/0020-class-diagram-architecture.md",
+      "title": "ADR-0020 — Class diagram: an App-side type-hierarchy view from the existing graph, dependency-free; members & Mermaid deferred",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The class-diagram surface (spec-uml-erm-surfaces US-U*) renders a UML type hierarchy — classes and interfaces as the nodes, `inherits` → generalization and `implements` → realization as the edges — built App-side from the EXISTING graph projection (C# already extracts these edges), so Phase 1 needs no new Core query and no vendored diagram library. Members are NOT extracted today, so the Phase-1 view is member-less by construction; a full member-bearing, notation-valid Mermaid `classDiagram` render is deferred to Phase 2, gated on a Core `has_member` extractor enhancement — because a Mermaid classDiagram with empty compartments is not worth vendoring ~3 MB of mermaid.js for.",
+      "tags": [
+        "architecture",
+        "class-diagram",
+        "uml",
+        "mermaid",
+        "graph",
+        "derived-view"
+      ],
+      "links": [
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0019-code-viewer-renderer",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c4969f43c03d38620516205ffc4efd9e8a45f99e77010e28630843b4ffbc3eaa"
+    },
+    {
       "id": "architecture",
       "path": "docs/architecture.md",
       "title": "AI-DE Architecture",
@@ -1112,7 +1148,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
         }
       ],
-      "sourceSha256": "33dbef8080d112870aa22b22f4798b931cc3ae56ad856e8221c5beae3c78989f"
+      "sourceSha256": "93bc32b87ab1da76b8b9fc5ad8d9e8c4c2b2480c36cc75580facd5289c2ca1e0"
     },
     {
       "id": "note-2026-08-30-prompt-draft-wiring",
@@ -2958,7 +2994,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4d191f8e5ac9b093aa677ae70f53e1fb21e7f8e052bc5cd158c62f0833fe243a"
+      "sourceSha256": "e75bfa6acb8f3a98044771a476a38e5f3d6ca130481bf6f4651719dd78b9799e"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -6499,5 +6535,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d47246b6f7cfbf8b927875a36dc05556c9088de306f2e6ff9f054aa6623af263"
+  "graphSha256": "39be4bd10b17469a4290b0f37b4d1aa04b2c7a5989a7367a7e2e1396e9240ec8"
 };

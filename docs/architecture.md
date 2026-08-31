@@ -490,6 +490,12 @@ description/schema edit — not only protocol conformance.
   WebView2 airspace/float-crash cost (ADR-0015); a read-only viewer does not need Monaco's VS-Code
   parity, so it should not pay a second WebView2's cost. Markdown via Markdig; rich content reuses the
   one existing canvas WebView2.
+- [ADR-0020](adr/0020-class-diagram-architecture.md): **the class diagram is an App-side type-hierarchy
+  view derived from the existing graph** (classes/interfaces + `inherits`→generalization,
+  `implements`→realization), dependency-free and Core-ungated for Phase 1; **members and a
+  notation-valid Mermaid `classDiagram` render defer to Phase 2**, gated on a Core `has_member`
+  extractor enhancement (a Mermaid classDiagram with empty compartments is not worth vendoring ~3 MB
+  of mermaid.js).
 
 ## Delivery phasing — vertical slices
 

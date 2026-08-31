@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T03:39:36Z",
+  "generated": "2026-08-31T04:18:19Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3115,6 +3115,24 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0176",
+      "shortname": "define-architecture-class-diagram",
+      "datetime": "2026-08-31T04:18:19Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do these next steps autonomously overnight (class-diagram architecture + build)",
+      "summary": "ADR-0020: class diagram is an App-side type-hierarchy view derived from the existing graph (class/interface nodes + inherits->generalization, implements->realization), dependency-free and Core-ungated for Phase 1; members + notation-valid Mermaid deferred to Phase 2 gated on a Core has_member enhancement (handed off). Built the tested ClassHierarchyModel (pure projection, 7 tests). App.Tests 155->162.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0020-class-diagram-architecture.md",
+        "src/AiDe.App/Workbench/ClassHierarchyModel.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -5595,6 +5613,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "bf83370d7bf8d301024d21382f3724e6df4ed55e",
         "after": "bf83370d7bf8d301024d21382f3724e6df4ed55e",
+        "branch": "feature/app-facelift-and-graph-surfaces",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0110",
+      "datetime": "2026-08-31T04:18:19Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Class diagram: App-side type-hierarchy from the existing graph, dependency-free; members/Mermaid deferred (ADR-0020)",
+      "prompt": "class-diagram define-architecture",
+      "summary": "ADR-0020 chose an App-side derived type-hierarchy view (inherits/implements) over vendoring Mermaid now; members via a Core has_member handoff",
+      "rationale": "The data already has inherits/implements as graph edges but no members; a Mermaid classDiagram with empty compartments is not worth ~3MB vendored, so defer it until has_member exists",
+      "artifacts": [
+        "docs/adr/0020-class-diagram-architecture.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "140a9a5bd49b2cce968b4489178ea97de2007bab",
+        "after": "140a9a5bd49b2cce968b4489178ea97de2007bab",
         "branch": "feature/app-facelift-and-graph-surfaces",
         "pushed": true,
         "commits": []
