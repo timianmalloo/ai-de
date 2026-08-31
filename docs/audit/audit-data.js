@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T17:24:23Z",
+  "generated": "2026-08-31T17:34:00Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3007,6 +3007,26 @@ window.AUDIT_DATA = {
         "src/AiDe.App/Workbench/WorkbenchShell.cs",
         "docs/design/watcher-board-leaderboard-surfaces.md",
         "docs/proof/watcher-board-leaderboard-surfaces.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0288",
+      "shortname": "implement-watcher-advisory-evaluator",
+      "datetime": "2026-08-31T17:34:00Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 3: LocalHeuristicAdvisoryEvaluator (deterministic, no egress, conservative defaults, refuses deterministic dims) + EgressGuardedAdvisoryEvaluator enforcing default-deny egress (LK-0003) then credential presence (LK-0002) before any cloud judge, inner never called on denial. 15 tests, suite 928/0, egress-first ordering mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AdvisoryEvaluators.cs",
+        "docs/design/watcher-advisory-evaluator.md",
+        "docs/proof/watcher-advisory-evaluator.md",
+        "tests/AiDe.Core.Tests/Watcher/AdvisoryEvaluatorsTests.cs"
       ],
       "tags": [],
       "outcome": "success"

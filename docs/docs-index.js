@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T17:23:56Z",
+  "generated": "2026-08-31T17:33:27Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1829,6 +1829,48 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4fc0b16537275ee9743dcadefb508ce94a027e92d70521b041d15616aa6cdeb4"
+    },
+    {
+      "id": "design-watcher-advisory-evaluator",
+      "path": "docs/design/watcher-advisory-evaluator.md",
+      "title": "Loomkeeper - Local Advisory Evaluator & Egress Guard (connective 3)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Implement the IAdvisoryEvaluator seam two ways: a deterministic LOCAL heuristic evaluator that scores the two advisory dimensions from a quarantined evidence token list with a conservative default (needs no model, credential, or egress - the safe smoke-test default), and an EgressGuardedAdvisoryEvaluator that enforces default-deny egress (LK-0003) THEN a present credential (LK-0002) before any egressing cloud judge can run (ADR-0018), never calling the inner evaluator when either check fails. The real cloud model call stays a seam behind the guard - a local smoke test uses the local evaluator.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "advisory",
+        "evaluator",
+        "egress",
+        "credential",
+        "adr-0018",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-advisory-grader",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "be3bcdad905ba7bf7fea9404ea36391fb9630f26237435f961121ff6e6c829dd"
     },
     {
       "id": "design-watcher-advisory-grader",
@@ -6768,6 +6810,45 @@ window.DOCS_INDEX = {
       "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
+      "id": "proof-watcher-advisory-evaluator",
+      "path": "docs/proof/watcher-advisory-evaluator.md",
+      "title": "Proof Pack - Loomkeeper Local Advisory Evaluator & Egress Guard (connective 3)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the advisory seam has a safe local implementation and an enforced egress boundary: the local heuristic scores the two advisory dimensions deterministically from a quarantined evidence token list, defaults conservatively for absent tokens (a missing signal can only lower a score), refuses a deterministic dimension (rule 8), and is stable over 20 repeats; and the egress guard denies a non-opted-in path (LK-0003) and a missing credential (LK-0002) - egress checked first - never calling the inner cloud evaluator when either fails, and delegating only when both hold. 15 tests, full suite 928/0, the egress-first ordering mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "advisory",
+        "evaluator",
+        "egress",
+        "credential",
+        "adr-0018",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-advisory-evaluator",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "22650db2ba58b4eb65f125c289eb910dffb703e6fd9bdafb5fbad0d3aa578891"
+    },
+    {
       "id": "proof-watcher-advisory-grader",
       "path": "docs/proof/watcher-advisory-grader.md",
       "title": "Proof Pack - Loomkeeper Advisory Grader, Calibration, Leaderboard & Standing (slice 7)",
@@ -7752,5 +7833,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "fec2acbf6513aee0965117e7b655c83d7843b80e70b3a527743f6d833abda5fd"
+  "graphSha256": "69bd3ce57da7586b09ac4564e98e01888c86edc6cbbe637760b82a4405ca0f5b"
 };
