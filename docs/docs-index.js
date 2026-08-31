@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T16:42:47Z",
+  "generated": "2026-08-31T16:59:39Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2148,6 +2148,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "807705a3a65c94b27ae9d0b1385fec92878071c1eb7a3a6d8d0e4bde10249762"
+    },
+    {
+      "id": "design-watcher-score-persistence",
+      "path": "docs/design/watcher-score-persistence.md",
+      "title": "Loomkeeper - Scorecard & Leaderboard Persistence (connective 1)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Persist a scored episode (ScoredEpisode + its Scorecard) as a MATERIALIZED DERIVED CACHE behind the existing IWatcherObservationStore seam, so the WPF Leaderboard/Standing surfaces read scored data without recomputing. The cache is a current-state cell (upsert, not append-only) because a recomputation must replace the prior card; it is rebuildable from (episode + signals) via WeaveScorer (DM7), and a round-trip test asserts persisted == in-memory == the value the scorer produced.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "persistence",
+        "scorecard",
+        "leaderboard",
+        "materialized-cache",
+        "sqlite",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-advisory-grader",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3285197bb91bd7151d61d1d1e0e0323be851d728de01776acbaaeda1ba6982a9"
     },
     {
       "id": "design-watcher-sessions-surface",
@@ -6921,6 +6967,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "88db95fbfe34817d03c84ba141127c2ef29ac097928899e06b8d4f455a376a88"
     },
     {
+      "id": "proof-watcher-score-persistence",
+      "path": "docs/proof/watcher-score-persistence.md",
+      "title": "Proof Pack - Loomkeeper Scorecard & Leaderboard Persistence (connective 1)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that a scored episode persists as a materialized derived cache (DM7) behind IWatcherObservationStore: the in-memory and real SQLite stores return an equal card; the persisted card equals the value WeaveScorer produced (persisted == in-memory == derived); a recompute upserts and leaves no stale dimension/floor child rows; null Coverage round-trips as null not zero; and AllScoredEpisodes() feeds LeaderboardComposer through to a comparable cell. 9 tests, full suite 897/0, the child-cleanup oracle mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "persistence",
+        "scorecard",
+        "leaderboard",
+        "materialized-cache",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-score-persistence",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cd337f7f5d2c37cacf7b72808676c74bbe24fbf8a9282d2cad9d0f2fbc0f98d3"
+    },
+    {
       "id": "proof-watcher-sessions-surface",
       "path": "docs/proof/watcher-sessions-surface.md",
       "title": "Proof Pack - Loomkeeper Sessions Surface (slice 3)",
@@ -7582,5 +7666,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "00316149758f83f49b35b34b413710718efad14a26addfa89cd567eac95aa141"
+  "graphSha256": "b3f2c26b7950e1bc3f69aee6618c5b84eae56238077ddd70f003f6900cda9e47"
 };

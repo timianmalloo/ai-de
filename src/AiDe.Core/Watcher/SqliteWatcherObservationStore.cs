@@ -455,6 +455,182 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         }
     }
 
+    public void RecordScorecard(ScoredEpisode scored)
+    {
+        ArgumentNullException.ThrowIfNull(scored);
+        var card = scored.Scorecard;
+        lock (_gate)
+        {
+            // One transaction: upsert the parent cell, then replace all child rows. Delete-then-insert
+            // the children so a recompute never leaves a stale dimension or floor behind (DM7 cache
+            // refresh). NOT append-only: a derived value is replaced, not historised.
+            using var tx = _connection.BeginTransaction();
+
+            ExecuteNonQuery(
+                _connection,
+                """
+                INSERT INTO scored_episode_cell
+                    (episode_id, harness, model, operator_id, task_class, schema_version,
+                     verdict, headline, coverage_observed, coverage_required, evaluated_at)
+                VALUES ($id, $harness, $model, $op, $task, $schema, $verdict, $headline, $covObs, $covReq, $at)
+                ON CONFLICT(episode_id) DO UPDATE SET
+                    harness = $harness, model = $model, operator_id = $op, task_class = $task,
+                    schema_version = $schema, verdict = $verdict, headline = $headline,
+                    coverage_observed = $covObs, coverage_required = $covReq, evaluated_at = $at;
+                """,
+                tx,
+                ("$id", scored.EpisodeId),
+                ("$harness", scored.Harness),
+                ("$model", scored.Model),
+                ("$op", scored.OperatorId),
+                ("$task", scored.TaskClass),
+                ("$schema", scored.SchemaVersion),
+                ("$verdict", card.Verdict.ToString()),
+                ("$headline", card.Headline),
+                ("$covObs", card.Coverage is { } c1 ? c1.Observed : (object?)null),
+                ("$covReq", card.Coverage is { } c2 ? c2.Required : (object?)null),
+                ("$at", card.EvaluatedAt.ToUniversalTime().ToString("O")));
+
+            ExecuteNonQuery(_connection, "DELETE FROM score_dimension_cell WHERE episode_id = $id;", tx, ("$id", scored.EpisodeId));
+            ExecuteNonQuery(_connection, "DELETE FROM score_tripped_floor_cell WHERE episode_id = $id;", tx, ("$id", scored.EpisodeId));
+
+            foreach (var a in card.Assessments)
+            {
+                ExecuteNonQuery(
+                    _connection,
+                    """
+                    INSERT INTO score_dimension_cell
+                        (episode_id, dimension, weight, rubric, earned_points, posture, rationale)
+                    VALUES ($id, $dim, $weight, $rubric, $earned, $posture, $rationale);
+                    """,
+                    tx,
+                    ("$id", scored.EpisodeId),
+                    ("$dim", a.Dimension.ToString()),
+                    ("$weight", a.Weight),
+                    ("$rubric", a.Rubric0to4 is { } r ? r : (object?)null),
+                    ("$earned", a.EarnedPoints is { } e ? e : (object?)null),
+                    ("$posture", a.Posture.ToString()),
+                    ("$rationale", a.Rationale));
+            }
+
+            foreach (var floor in card.TrippedFloors)
+            {
+                ExecuteNonQuery(
+                    _connection,
+                    "INSERT OR IGNORE INTO score_tripped_floor_cell (episode_id, floor) VALUES ($id, $floor);",
+                    tx,
+                    ("$id", scored.EpisodeId),
+                    ("$floor", floor.ToString()));
+            }
+
+            tx.Commit();
+        }
+    }
+
+    public ScoredEpisode? FindScoredEpisode(string episodeId)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = ScoredEpisodeSelect + " WHERE episode_id = $id;";
+            command.Parameters.AddWithValue("$id", episodeId);
+            var episodes = ReadScoredEpisodes(command);
+            return episodes.Count == 0 ? null : episodes[0];
+        }
+    }
+
+    public IReadOnlyList<ScoredEpisode> AllScoredEpisodes()
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = ScoredEpisodeSelect + ";";
+            return ReadScoredEpisodes(command);
+        }
+    }
+
+    private const string ScoredEpisodeSelect =
+        """
+        SELECT episode_id, harness, model, operator_id, task_class, schema_version,
+               verdict, headline, coverage_observed, coverage_required, evaluated_at
+        FROM scored_episode_cell
+        """;
+
+    private IReadOnlyList<ScoredEpisode> ReadScoredEpisodes(SqliteCommand command)
+    {
+        var rows = new List<(string Id, string? Harness, string? Model, string Op, string Task, string Schema,
+            WeaveVerdict Verdict, string Headline, EvidenceCoverage? Coverage, DateTimeOffset At)>();
+
+        using (var reader = command.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                EvidenceCoverage? coverage = reader.IsDBNull(8) || reader.IsDBNull(9)
+                    ? null
+                    : new EvidenceCoverage(reader.GetInt32(8), reader.GetInt32(9));
+                rows.Add((
+                    reader.GetString(0),
+                    reader.IsDBNull(1) ? null : reader.GetString(1),
+                    reader.IsDBNull(2) ? null : reader.GetString(2),
+                    reader.GetString(3),
+                    reader.GetString(4),
+                    reader.GetString(5),
+                    Enum.Parse<WeaveVerdict>(reader.GetString(6)),
+                    reader.GetString(7),
+                    coverage,
+                    DateTimeOffset.Parse(reader.GetString(10), null, System.Globalization.DateTimeStyles.RoundtripKind)));
+            }
+        }
+
+        var result = new List<ScoredEpisode>(rows.Count);
+        foreach (var row in rows)
+        {
+            var assessments = ReadDimensions(row.Id);
+            var floors = ReadTrippedFloors(row.Id);
+            var card = new Scorecard(row.Id, row.Schema, row.Verdict, assessments, floors, row.Coverage, row.Headline, row.At);
+            result.Add(new ScoredEpisode(row.Id, row.Harness, row.Model, row.Op, row.Task, row.Schema, card));
+        }
+
+        return result;
+    }
+
+    private IReadOnlyList<DimensionAssessment> ReadDimensions(string episodeId)
+    {
+        using var command = _connection.CreateCommand();
+        command.CommandText =
+            "SELECT dimension, weight, rubric, earned_points, posture, rationale FROM score_dimension_cell WHERE episode_id = $id;";
+        command.Parameters.AddWithValue("$id", episodeId);
+        using var reader = command.ExecuteReader();
+        var list = new List<DimensionAssessment>();
+        while (reader.Read())
+        {
+            list.Add(new DimensionAssessment(
+                Enum.Parse<ScoreDimension>(reader.GetString(0)),
+                reader.GetInt32(1),
+                reader.IsDBNull(2) ? null : reader.GetInt32(2),
+                reader.IsDBNull(3) ? null : reader.GetDouble(3),
+                Enum.Parse<AssessmentPosture>(reader.GetString(4)),
+                reader.GetString(5)));
+        }
+
+        return list;
+    }
+
+    private IReadOnlyList<FloorDomain> ReadTrippedFloors(string episodeId)
+    {
+        using var command = _connection.CreateCommand();
+        command.CommandText = "SELECT floor FROM score_tripped_floor_cell WHERE episode_id = $id;";
+        command.Parameters.AddWithValue("$id", episodeId);
+        using var reader = command.ExecuteReader();
+        var list = new List<FloorDomain>();
+        while (reader.Read())
+        {
+            list.Add(Enum.Parse<FloorDomain>(reader.GetString(0)));
+        }
+
+        return list;
+    }
+
     public void Dispose()
     {
         if (_disposed)
@@ -575,6 +751,44 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             seq               INTEGER NOT NULL
         );
         CREATE INDEX ix_board_message_repo ON board_message_fact (repository_key);
+
+        -- Materialized scored-episode cache (DM7): a derived value stored so the leaderboard/standing
+        -- surfaces read without recomputing. Current-state cell - a recompute UPSERTs and replaces the
+        -- child rows; NOT an append-only fact, so it carries no append-only trigger. Rebuildable from
+        -- (work_episode_dim + signals) via WeaveScorer; round-trip and rebuildability are tested.
+        CREATE TABLE scored_episode_cell (
+            episode_id        TEXT    NOT NULL PRIMARY KEY,
+            harness           TEXT    NULL,
+            model             TEXT    NULL,
+            operator_id       TEXT    NOT NULL,
+            task_class        TEXT    NOT NULL,
+            schema_version    TEXT    NOT NULL,
+            verdict           TEXT    NOT NULL,
+            headline          TEXT    NOT NULL,
+            coverage_observed INTEGER NULL,
+            coverage_required INTEGER NULL,
+            evaluated_at      TEXT    NOT NULL
+        );
+        CREATE INDEX ix_scored_episode_task ON scored_episode_cell (task_class, schema_version);
+
+        -- Per-dimension child cells, composed back into the Scorecard on read.
+        CREATE TABLE score_dimension_cell (
+            episode_id    TEXT    NOT NULL,
+            dimension     TEXT    NOT NULL,
+            weight        INTEGER NOT NULL,
+            rubric        INTEGER NULL,
+            earned_points REAL    NULL,
+            posture       TEXT    NOT NULL,
+            rationale     TEXT    NOT NULL,
+            PRIMARY KEY (episode_id, dimension)
+        );
+
+        -- Tripped-floor child cells.
+        CREATE TABLE score_tripped_floor_cell (
+            episode_id TEXT NOT NULL,
+            floor      TEXT NOT NULL,
+            PRIMARY KEY (episode_id, floor)
+        );
         """;
 
     private static void Execute(SqliteConnection connection, string sql)

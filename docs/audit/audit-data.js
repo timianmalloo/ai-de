@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T16:43:42Z",
+  "generated": "2026-08-31T16:59:56Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2965,6 +2965,29 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T16:28:44Z",
       "duration_seconds": 882.0
+    },
+    {
+      "id": "al-0282",
+      "shortname": "implement-watcher-score-persistence",
+      "datetime": "2026-08-31T16:59:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 1: persist ScoredEpisode+Scorecard as a materialized derived cache (DM7) behind IWatcherObservationStore, in-memory + SQLite (scored_episode_cell + dimension/floor child cells, transactional upsert). AllScoredEpisodes feeds LeaderboardComposer. 9 tests, full suite 897/0, child-cleanup oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WatcherObservationStore.cs",
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "docs/design/watcher-score-persistence.md",
+        "docs/proof/watcher-score-persistence.md",
+        "tests/AiDe.Core.Tests/Watcher/ScorePersistenceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T16:46:52Z",
+      "duration_seconds": 784.0
     }
   ],
   "changes": [

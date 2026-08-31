@@ -65,6 +65,21 @@ public interface IWatcherObservationStore
     /// </summary>
     void RedactBoardMessage(string messageId);
 
+    /// <summary>
+    /// Records (upserts) a scored episode as a materialized derived cache (DM7): a recomputation
+    /// replaces the prior card. Never an append-only fact - the score is derived, not observed.
+    /// </summary>
+    void RecordScorecard(ScoredEpisode scored);
+
+    /// <summary>The materialized scored episode for an id, or null if none has been computed.</summary>
+    ScoredEpisode? FindScoredEpisode(string episodeId);
+
+    /// <summary>
+    /// Every materialized scored episode - the compute reader for the leaderboard and standing
+    /// (US-14/US-16), consumed by <c>LeaderboardComposer</c>/<c>StandingComposer</c>.
+    /// </summary>
+    IReadOnlyList<ScoredEpisode> AllScoredEpisodes();
+
     /// <summary>Marks a session ended (terminal closed or superseded generation).</summary>
     void MarkEnded(string sessionId);
 
@@ -91,6 +106,7 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
     private readonly Dictionary<string, SessionRecord> _sessions = new();
     private readonly Dictionary<string, WorkEpisode> _episodes = new();
     private readonly Dictionary<string, BoardMessage> _boardMessages = new();
+    private readonly Dictionary<string, ScoredEpisode> _scored = new();
     private readonly HashSet<string> _ended = new();
 
     public bool TryAppendSpan(ObservedSpan span)
@@ -259,6 +275,33 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         lock (_gate)
         {
             _ended.Add(sessionId);
+        }
+    }
+
+    public void RecordScorecard(ScoredEpisode scored)
+    {
+        ArgumentNullException.ThrowIfNull(scored);
+        lock (_gate)
+        {
+            // Upsert: a recomputation replaces the prior card (a cache refresh, DM7). Records are
+            // immutable so the whole ScoredEpisode is stored by value - no stale child state possible.
+            _scored[scored.EpisodeId] = scored;
+        }
+    }
+
+    public ScoredEpisode? FindScoredEpisode(string episodeId)
+    {
+        lock (_gate)
+        {
+            return _scored.TryGetValue(episodeId, out var scored) ? scored : null;
+        }
+    }
+
+    public IReadOnlyList<ScoredEpisode> AllScoredEpisodes()
+    {
+        lock (_gate)
+        {
+            return [.. _scored.Values];
         }
     }
 
