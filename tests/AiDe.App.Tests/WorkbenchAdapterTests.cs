@@ -311,6 +311,70 @@ public sealed class WorkbenchAdapterTests
         Assert.IsType<Border>(viaContentFor);   // documents WHY: the raw content is the framing Border
     }
 
+    // The reverse mapper that makes native pane drags survive a rebuild: rendering a model then reading
+    // it back must reproduce the same stacks with the same surfaces. If forward-then-reverse were not the
+    // identity, reconciling before an add would silently rearrange the user's panes. Compares the
+    // surface-grouping (which surfaces share a stack), ignoring stack order and freshly-minted node ids.
+    [Fact]
+    public void ReadLayoutFromView_RoundTripsTheRenderedModel_PreservingStacksAndSurfaces()
+    {
+        var (before, after) = OnStaThread(() =>
+        {
+            var service = new LayoutService();   // Layout.Default(): workspace / graph+domain / console
+            var manager = new DockingManager();
+            var adapter = new WorkbenchAdapter(manager, service, _ => new ContentControl());
+
+            var window = new Window
+            {
+                Content = manager,
+                Width = 1000,
+                Height = 700,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            window.Show();
+            adapter.Render();
+            window.UpdateLayout();
+            manager.UpdateLayout();
+
+            try
+            {
+                var input = Groupings(service.Current);
+                var roundTripped = adapter.ReadLayoutFromView();
+                return (input, roundTripped is null ? null : Groupings(roundTripped));
+            }
+            finally { window.Close(); }
+        });
+
+        Assert.NotNull(after);
+        Assert.Equal(before, after);
+    }
+
+    // Fail-safe: with nothing rendered there is no arrangement to read, so the reconcile REFUSES (null)
+    // rather than inventing an empty layout that a Render would then apply, dropping every pane.
+    [Fact]
+    public void ReadLayoutFromView_RefusesWhenTheViewDoesNotHoldTheModelsSurfaces()
+    {
+        var result = OnStaThread(() =>
+        {
+            var manager = new DockingManager();   // never rendered — its layout does not hold the surfaces
+            var adapter = new WorkbenchAdapter(manager, new LayoutService());
+            return adapter.ReadLayoutFromView();
+        });
+
+        Assert.Null(result);
+    }
+
+    private static List<string> Groupings(AiDe.Core.Workbench.Layout layout) =>
+        layout.AllStacks()
+            .Select(s => string.Join(
+                ",", s.Surfaces.Select(x => x.SurfaceId).OrderBy(x => x, StringComparer.Ordinal)))
+            .OrderBy(x => x, StringComparer.Ordinal)
+            .ToList();
+
     private sealed class DisposableBorder(Action onDispose) : Border, IDisposable
     {
         public void Dispose() => onDispose();

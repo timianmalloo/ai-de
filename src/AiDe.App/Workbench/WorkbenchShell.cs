@@ -79,6 +79,7 @@ public sealed class WorkbenchShell : IDisposable
 
         Controller.NewAgentTerminalRequested = () =>
         {
+            ReconcileViewIntoModel();
             var agent = TerminalSurface.AvailableAgents.FirstOrDefault();
             if (agent is null)
             {
@@ -110,6 +111,7 @@ public sealed class WorkbenchShell : IDisposable
         };
         Controller.NewTerminalRequested = () =>
         {
+            ReconcileViewIntoModel();
             var terminalStack = Service.Current.AllStacks()
                 .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"));
 
@@ -135,6 +137,7 @@ public sealed class WorkbenchShell : IDisposable
 
         Controller.NewPromptDraftRequested = () =>
         {
+            ReconcileViewIntoModel();
             // Open the draft beside a terminal (its transfer target) when there is one, else in any
             // stack — a draft is useful even before a session exists (it just cannot transfer yet).
             var stack = Service.Current.AllStacks()
@@ -158,6 +161,7 @@ public sealed class WorkbenchShell : IDisposable
 
         Controller.NewClassDiagramRequested = () =>
         {
+            ReconcileViewIntoModel();
             var stack = Service.Current.AllStacks()
                 .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "canvas"))
                 ?? Service.Current.AllStacks().FirstOrDefault();
@@ -180,6 +184,7 @@ public sealed class WorkbenchShell : IDisposable
 
         Controller.NewCodeViewerRequested = () =>
         {
+            ReconcileViewIntoModel();
             var stack = Service.Current.AllStacks()
                 .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "canvas"))
                 ?? Service.Current.AllStacks().FirstOrDefault();
@@ -1076,6 +1081,18 @@ public sealed class WorkbenchShell : IDisposable
     /// (ADR-0020). Reads `_queries` live and wires the same context lookup the canvas uses, so a class
     /// diagram opened before or after the workspace attaches still populates.
     /// </summary>
+    // Before a layout mutation that will trigger a full Render, fold any native pane drag or splitter
+    // resize the user performed back into the model, so the rebuild preserves their arrangement instead
+    // of reverting it. Fail-safe: ReadLayoutFromView returns null on any shape it cannot map losslessly,
+    // and this is then a no-op — the pre-existing revert stands, never a corrupted layout.
+    private void ReconcileViewIntoModel()
+    {
+        if (Adapter.ReadLayoutFromView() is { } reconciled)
+        {
+            Service.Restore(reconciled);
+        }
+    }
+
     internal void BindClassDiagrams()
     {
         var surfaces = Service.Current.AllStacks()
