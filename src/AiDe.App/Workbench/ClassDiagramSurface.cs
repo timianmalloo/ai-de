@@ -1,7 +1,9 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using AiDe.Core.Presentation;
 
 namespace AiDe.App.Workbench;
@@ -17,10 +19,16 @@ namespace AiDe.App.Workbench;
 public sealed class ClassDiagramSurface : ContentControl
 {
     private readonly StackPanel _list;
+    private readonly ScrollViewer _scroller;
     private readonly TextBlock _header;
     private readonly TextBlock _disclosure;
     private readonly TextBox _search;
+    private readonly ToggleButton _diagramToggle;
     private ClassHierarchy _full = new([], [], 0);
+
+    // Above this many drawn types a node-and-arrow diagram is an unreadable tangle, so the list stays.
+    // The search narrows a large hierarchy into this range, where the diagram earns its place.
+    private const int DiagramMax = 40;
 
     public ClassDiagramSurface(string title = "Class diagram")
     {
@@ -30,8 +38,24 @@ public sealed class ClassDiagramSurface : ContentControl
         var root = new DockPanel { LastChildFill = true, Margin = new Thickness(14, 12, 14, 12) };
 
         _header = Text("Class hierarchy", 14, FontWeights.SemiBold);
-        DockPanel.SetDock(_header, Dock.Top);
-        root.Children.Add(_header);
+        _diagramToggle = new ToggleButton
+        {
+            Content = "Diagram",
+            IsChecked = true,   // the surface is a "class diagram" — show one by default
+            Padding = new Thickness(9, 2, 9, 2),
+            VerticalAlignment = VerticalAlignment.Center,
+            ToolTip = "Show the types as a connected diagram (boxes + inheritance arrows), or as a list",
+        };
+        AutomationProperties.SetName(_diagramToggle, "Show as a diagram");
+        _diagramToggle.Checked += (_, _) => RenderCurrent();
+        _diagramToggle.Unchecked += (_, _) => RenderCurrent();
+
+        var headerRow = new DockPanel { LastChildFill = true };
+        DockPanel.SetDock(_diagramToggle, Dock.Right);
+        headerRow.Children.Add(_diagramToggle);
+        headerRow.Children.Add(_header);
+        DockPanel.SetDock(headerRow, Dock.Top);
+        root.Children.Add(headerRow);
 
         _search = new TextBox { Margin = new Thickness(0, 6, 0, 0), Padding = new Thickness(6, 3, 6, 3) };
         AutomationProperties.SetName(_search, "Filter types by name");
@@ -48,11 +72,13 @@ public sealed class ClassDiagramSurface : ContentControl
         root.Children.Add(_disclosure);
 
         _list = new StackPanel();
-        root.Children.Add(new ScrollViewer
+        _scroller = new ScrollViewer
         {
             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
             Content = _list,
-        });
+        };
+        root.Children.Add(_scroller);
 
         Content = root;
         Clear();
@@ -66,6 +92,15 @@ public sealed class ClassDiagramSurface : ContentControl
 
     public bool IsEmpty => TypeCount == 0;
 
+    /// <summary>For tests: whether the current render is the visual diagram (a Canvas) rather than the list.</summary>
+    internal bool ShowingDiagram => _scroller.Content is Canvas;
+
+    /// <summary>For tests: the number of type boxes drawn in the visual diagram.</summary>
+    internal int DrawnBoxCount => _scroller.Content is Canvas c ? c.Children.OfType<Border>().Count() : 0;
+
+    /// <summary>For tests: force diagram or list mode (as the header toggle does).</summary>
+    internal void SetDiagramMode(bool on) => _diagramToggle.IsChecked = on;
+
     /// <summary>Builds the hierarchy from a graph and renders it (ADR-0020).</summary>
     public void ShowGraph(IReadOnlyList<CanvasNode>? nodes, IReadOnlyList<CanvasEdge>? edges) =>
         Show(ClassHierarchyModel.Build(nodes, edges));
@@ -78,14 +113,18 @@ public sealed class ClassDiagramSurface : ContentControl
         Render(string.IsNullOrWhiteSpace(_search.Text) ? hierarchy : ClassHierarchyModel.Filter(hierarchy, _search.Text));
     }
 
+    private void RenderCurrent() =>
+        Render(string.IsNullOrWhiteSpace(_search.Text) ? _full : ClassHierarchyModel.Filter(_full, _search.Text));
+
     private void Render(ClassHierarchy hierarchy)
     {
-        _list.Children.Clear();
         TypeCount = hierarchy.Types.Count;
         RelationCount = hierarchy.Relations.Count;
 
         if (hierarchy.IsEmpty)
         {
+            _scroller.Content = _list;
+            _list.Children.Clear();
             _header.Text = string.IsNullOrWhiteSpace(_search.Text) || _full.IsEmpty
                 ? "Class hierarchy"
                 : $"Class hierarchy — no type matches \u201c{_search.Text}\u201d";
@@ -98,11 +137,30 @@ public sealed class ClassDiagramSurface : ContentControl
         _header.Text = filtered
             ? $"Class hierarchy — {hierarchy.Types.Count} of {_full.Types.Count} type(s) match \u201c{_search.Text}\u201d"
             : $"Class hierarchy — {hierarchy.Types.Count} type(s), {hierarchy.Relations.Count} relationship(s)";
-        var notes = new List<string> { "Members are not extracted yet, so types show relationships only (ADR-0020 Phase 1)." };
+
+        var notes = new List<string>
+        {
+            "Members are not extracted yet, so types show relationships only (ADR-0020 Phase 1).",
+        };
         if (hierarchy.ExternalRelations > 0)
         {
             notes.Add($"{hierarchy.ExternalRelations} relationship(s) to base types/interfaces outside the analysed scope are not drawn.");
         }
+
+        if (_diagramToggle.IsChecked == true)
+        {
+            RenderDiagram(hierarchy, notes);
+        }
+        else
+        {
+            RenderList(hierarchy, notes);
+        }
+    }
+
+    private void RenderList(ClassHierarchy hierarchy, List<string> notes)
+    {
+        _scroller.Content = _list;
+        _list.Children.Clear();
         _disclosure.Text = string.Join("  ", notes);
 
         // Group relations by their source type for a scannable per-type card.
@@ -133,6 +191,166 @@ public sealed class ClassDiagramSurface : ContentControl
         }
     }
 
+    // The visual diagram (ADR-0020): types as boxes, generalization/realization as UML connectors with a
+    // hollow triangle at the base end, laid out in inheritance ranks (bases on top, derived below, arrows
+    // pointing up). Capped to the most-connected DiagramMax types — a diagram of hundreds is a tangle, and
+    // search narrows a large hierarchy into a readable one.
+    private void RenderDiagram(ClassHierarchy hierarchy, List<string> notes)
+    {
+        var degree = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (var r in hierarchy.Relations)
+        {
+            degree[r.From] = degree.GetValueOrDefault(r.From) + 1;
+            degree[r.To] = degree.GetValueOrDefault(r.To) + 1;
+        }
+
+        var drawn = hierarchy.Types
+            .OrderByDescending(t => degree.GetValueOrDefault(t.Id))
+            .ThenBy(t => t.Label, StringComparer.OrdinalIgnoreCase)
+            .Take(DiagramMax)
+            .ToList();
+        var drawnIds = drawn.Select(t => t.Id).ToHashSet(StringComparer.Ordinal);
+
+        if (hierarchy.Types.Count > drawn.Count)
+        {
+            notes.Insert(
+                0, $"Showing the {drawn.Count} most-connected of {hierarchy.Types.Count} types — search to focus, or switch to List.");
+        }
+        _disclosure.Text = string.Join("  ", notes);
+
+        var edges = hierarchy.Relations
+            .Where(r => drawnIds.Contains(r.From) && drawnIds.Contains(r.To))
+            .ToList();
+
+        // Rank by inheritance depth: a base (no drawn outgoing edge) is rank 0 at the top; a type deriving
+        // from a rank-r type is r+1, drawn below it, so its generalization arrow points UP to the base.
+        var outByFrom = edges
+            .GroupBy(e => e.From, StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.Select(x => x.To).ToList(), StringComparer.Ordinal);
+        var rank = new Dictionary<string, int>(StringComparer.Ordinal);
+
+        int Rank(string id, HashSet<string> visiting)
+        {
+            if (rank.TryGetValue(id, out var cached)) { return cached; }
+            if (!visiting.Add(id)) { return 0; }   // cycle guard — inheritance should not cycle, but never loop
+            var r = 0;
+            if (outByFrom.TryGetValue(id, out var tos))
+            {
+                foreach (var to in tos)
+                {
+                    if (drawnIds.Contains(to)) { r = Math.Max(r, 1 + Rank(to, visiting)); }
+                }
+            }
+            visiting.Remove(id);
+            rank[id] = r;
+            return r;
+        }
+
+        foreach (var t in drawn) { Rank(t.Id, []); }
+
+        const double boxW = 168, boxH = 46, gapX = 26, gapY = 62, pad = 14;
+        var rows = drawn.GroupBy(t => rank[t.Id]).OrderBy(g => g.Key).ToList();
+        var pos = new Dictionary<string, Point>(StringComparer.Ordinal);
+        var maxCols = 1;
+        foreach (var row in rows)
+        {
+            var items = row.OrderBy(t => t.Label, StringComparer.OrdinalIgnoreCase).ToList();
+            maxCols = Math.Max(maxCols, items.Count);
+            for (var i = 0; i < items.Count; i++)
+            {
+                pos[items[i].Id] = new Point(pad + i * (boxW + gapX), pad + row.Key * (boxH + gapY));
+            }
+        }
+
+        var canvas = new Canvas
+        {
+            Width = pad * 2 + maxCols * (boxW + gapX) - gapX,
+            Height = pad * 2 + Math.Max(1, rows.Count) * (boxH + gapY) - gapY,
+            Background = Brushes.Transparent,
+        };
+
+        // Connectors under the boxes.
+        foreach (var e in edges)
+        {
+            if (pos.TryGetValue(e.From, out var from) && pos.TryGetValue(e.To, out var to))
+            {
+                AddConnector(canvas, from, to, boxW, boxH, e.Kind);
+            }
+        }
+
+        foreach (var t in drawn)
+        {
+            var box = DiagramBox(t, boxW, boxH);
+            Canvas.SetLeft(box, pos[t.Id].X);
+            Canvas.SetTop(box, pos[t.Id].Y);
+            canvas.Children.Add(box);
+        }
+
+        _scroller.Content = canvas;
+    }
+
+    private static void AddConnector(Canvas canvas, Point from, Point to, double boxW, double boxH, ClassRelationKind kind)
+    {
+        var x1 = from.X + boxW / 2;   // top-centre of the derived type
+        var y1 = from.Y;
+        var x2 = to.X + boxW / 2;     // bottom-centre of the base type
+        var y2 = to.Y + boxH;
+
+        var line = new Line { X1 = x1, Y1 = y1, X2 = x2, Y2 = y2, StrokeThickness = 1.3 };
+        line.SetResourceReference(Shape.StrokeProperty, "BorderBrush");
+        if (kind == ClassRelationKind.Realization)
+        {
+            line.StrokeDashArray = [3, 3];   // realization is a dashed line in UML
+        }
+
+        canvas.Children.Add(line);
+
+        // Hollow triangle at the base end — the UML generalization/realization arrowhead.
+        var angle = Math.Atan2(y2 - y1, x2 - x1);
+        const double size = 10;
+        var head = new Polygon
+        {
+            Points =
+            [
+                new Point(x2, y2),
+                new Point(x2 - size * Math.Cos(angle - 0.5), y2 - size * Math.Sin(angle - 0.5)),
+                new Point(x2 - size * Math.Cos(angle + 0.5), y2 - size * Math.Sin(angle + 0.5)),
+            ],
+            StrokeThickness = 1.3,
+        };
+        head.SetResourceReference(Shape.StrokeProperty, "BorderBrush");
+        head.SetResourceReference(Shape.FillProperty, "SurfaceBrush");   // hollow: filled with the background
+        canvas.Children.Add(head);
+    }
+
+    private static Border DiagramBox(ClassTypeNode type, double w, double h)
+    {
+        var panel = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 3, 8, 3) };
+        if (type.IsInterface)
+        {
+            panel.Children.Add(Muted("«interface»", 10.5, center: true));
+        }
+
+        var name = Text(type.Label, 12.5, FontWeights.SemiBold);
+        name.TextAlignment = TextAlignment.Center;
+        name.TextWrapping = TextWrapping.NoWrap;
+        name.TextTrimming = TextTrimming.CharacterEllipsis;
+        panel.Children.Add(name);
+
+        var box = new Border
+        {
+            Width = w,
+            Height = h,
+            Child = panel,
+            CornerRadius = new CornerRadius(6),
+            BorderThickness = new Thickness(1),
+        };
+        box.SetResourceReference(BackgroundProperty, "RaisedBrush");
+        box.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
+        AutomationProperties.SetName(box, (type.IsInterface ? "interface " : "class ") + type.Label);
+        return box;
+    }
+
     private static TextBlock GroupHeader(string context, int count)
     {
         var t = new TextBlock
@@ -149,6 +367,7 @@ public sealed class ClassDiagramSurface : ContentControl
     public void Clear()
     {
         _full = new ClassHierarchy([], [], 0);
+        _scroller.Content = _list;
         _list.Children.Clear();
         TypeCount = 0;
         RelationCount = 0;
@@ -161,6 +380,7 @@ public sealed class ClassDiagramSurface : ContentControl
     /// <summary>Shows a loading state while the graph is fetched (U9 state completeness).</summary>
     public void ShowLoading()
     {
+        _scroller.Content = _list;
         _list.Children.Clear();
         _search.Visibility = Visibility.Collapsed;
         _header.Text = "Class hierarchy";
@@ -171,6 +391,7 @@ public sealed class ClassDiagramSurface : ContentControl
     /// <summary>Shows an explicit error state — never a misleading empty state — when the graph load fails.</summary>
     public void ShowError(string message)
     {
+        _scroller.Content = _list;
         _list.Children.Clear();
         _search.Visibility = Visibility.Collapsed;
         TypeCount = 0;

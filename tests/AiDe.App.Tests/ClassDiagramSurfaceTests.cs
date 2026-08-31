@@ -76,4 +76,26 @@ public sealed class ClassDiagramSurfaceTests
             s.ShowLoading();                   // does not throw
         });
     }
+
+    [Fact]
+    public void ShowGraph_DefaultsToTheVisualDiagram_WithABoxPerType_AndListModeSwitchesBack()
+    {
+        OnSta(() =>
+        {
+            var s = new ClassDiagramSurface();
+            s.ShowGraph(
+                new[] { N("A", "class"), N("B", "class"), N("C", "class") },
+                new[] { Edge("A", "B", "inherits"), Edge("C", "B", "inherits") });
+
+            // A "class diagram" shows a diagram by default — boxes and connectors, not a list.
+            Assert.True(s.ShowingDiagram);
+            Assert.Equal(3, s.DrawnBoxCount);
+
+            s.SetDiagramMode(false);
+            Assert.False(s.ShowingDiagram);   // the toggle falls back to the scannable list
+
+            s.SetDiagramMode(true);
+            Assert.True(s.ShowingDiagram);
+        });
+    }
 }
