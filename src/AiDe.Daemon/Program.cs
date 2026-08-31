@@ -70,19 +70,21 @@ internal static class Program
 
                 // Opened AFTER the lock and before the pipe. A daemon that published an endpoint and
                 // then failed to open its store would be reachable while unable to answer anything.
+                // BEFORE the store is opened, because compaction rebuilds and swaps the file.
+                //
+                // This is the deliberate maintenance moment the design asks for: no session is in
+                // progress, no pane is rendering, and a daemon that has just started is the one
+                // moment an operator is watching. Reporting alone was the previous answer and it
+                // was worse than useless — the check existed, was tested, and nothing called it, so
+                // a workspace grew without limit while its diagnosis sat in an uninvoked method
+                // (DC-042).
+                //
+                // MEASURED: 1.09s to halve a 53 MB store, 1-34ms to decide there is nothing to do.
+                // Cheap enough to simply always ask.
+                Compact(workspacePath, Option(args, "--data"));
+
                 var (endpoint, opened) = OpenWorkspace(workspacePath, Option(args, "--data"));
                 core = opened;
-
-                // ASKED, at last. The check existed, was tested, and nothing had ever called it —
-                // so a workspace could slow down past its budget with the diagnosis sitting in a
-                // method nobody invoked (DC-042). Startup is where it belongs: the store is open,
-                // no session is in progress, and a daemon that has just started is the one moment
-                // an operator is looking.
-                foreach (var (scopeId, generations) in core.CheckCompactionNeeded())
-                {
-                    Console.WriteLine(
-                        $"compaction due: {scopeId} has {generations} committed generation(s)");
-                }
 
                 var server = new IpcServer(pipeName, endpoint, options);
 
@@ -148,11 +150,7 @@ internal static class Program
     {
         var workspaceId = IpcPipeName.ForWorkspace(workspacePath);
 
-        var dataDirectory = string.IsNullOrWhiteSpace(dataDirectoryOverride)
-            ? Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "AiDe", "workspaces", workspaceId)
-            : Path.GetFullPath(dataDirectoryOverride);
+        var dataDirectory = DataDirectoryFor(workspacePath, dataDirectoryOverride);
 
         // BEFORE the store is opened. A migration interrupted by a power loss leaves a store that
         // may be anything, and the only thing known to be good is its snapshot — so the next start
@@ -221,6 +219,45 @@ internal static class Program
     /// A daemon that refused to start over an unparseable tuning flag would turn a typo in a
     /// supervisor's command line into an unopenable workspace. The defaults are safe.
     /// </remarks>
+    /// <summary>
+    /// Where this workspace's state lives — one derivation, used by everything that needs it.
+    /// </summary>
+    /// <remarks>
+    /// Extracted because compaction needs the same answer as opening does, and a second copy of this
+    /// expression would agree with the first only until somebody edited one of them (DC-022).
+    /// </remarks>
+    private static string DataDirectoryFor(string workspacePath, string? dataDirectoryOverride) =>
+        string.IsNullOrWhiteSpace(dataDirectoryOverride)
+            ? Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AiDe", "workspaces", IpcPipeName.ForWorkspace(workspacePath))
+            : Path.GetFullPath(dataDirectoryOverride);
+
+    /// <summary>Reclaims superseded generations, if there are any, before anything opens the store.</summary>
+    private static void Compact(string workspacePath, string? dataDirectoryOverride)
+    {
+        var database = Path.Combine(DataDirectoryFor(workspacePath, dataDirectoryOverride), "workspace.db");
+
+        if (!File.Exists(database)) return;
+
+        try
+        {
+            var result = new AiDe.Core.Store.StoreCompactor(database).Compact();
+
+            if (result.Ran)
+            {
+                Console.WriteLine(result.Summary);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or AiDe.Core.Store.WorkspaceStoreException)
+        {
+            // A workspace that cannot be compacted is a workspace that starts anyway, larger than it
+            // needs to be. Refusing to serve because housekeeping failed would trade a disk cost for
+            // an outage.
+            Console.Error.WriteLine($"compaction skipped: {ex.Message}");
+        }
+    }
+
     /// <summary>The value after a flag, or null when the flag is absent or last.</summary>
     private static string? Option(string[] args, string flag)
     {

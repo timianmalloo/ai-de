@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T14:01:27Z",
+  "generated": "2026-08-31T14:58:07Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1952,7 +1952,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b94bef5336f25c7fcde3ab27ce1a75d226717760c8ee15c47a547b00cc75980c"
+      "sourceSha256": "4521312551770747ed3a67d57ff83f9c6db5dc93dd622d9eecb8ee3dacb6b444"
     },
     {
       "id": "domain-experts",
@@ -2628,6 +2628,37 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
+    },
+    {
+      "id": "plan-extractor-roadmap",
+      "path": "docs/plans/extractor-roadmap.md",
+      "title": "Extractor roadmap — what reads the repository, and in what order",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Every extractor this product has, every one it does not, and the order the remaining work is worth doing in — with the coverage of each measured on a real repository rather than estimated.",
+      "tags": [
+        "plan",
+        "extractors",
+        "coverage",
+        "graph",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "plan-ai-native-ide-architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "30b21e40bfd813d8410323078d41839d81345e9b6e40c015b1514c8ec558368f"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -6602,5 +6633,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "2fb42756264b722b5b154b99d8f5fa921a9bc45f3273acb1e68ceb7188ee7b44"
+  "graphSha256": "482ff12bf2d9f0b1afd3170fdd6f0f2724ddf238b50671083dc096e24071ba22"
 };

@@ -30,8 +30,12 @@ public sealed class StoreCompactionTests
     [Fact]
     public void ScopesUnderTheThreshold_AreNotCompacted()
     {
+        // ONE generation is the whole store: there is nothing superseded to reclaim. The threshold
+        // used to be eight, from the latency curve, and this fixture used to hold three — under it.
+        // It moved to one when measurement showed a real workspace sitting at TWO generations, well
+        // under the old trigger and already half superseded (53.3 MB of which 27.9 MB was dead).
         using var workspace = TestWorkspace.Create();
-        CommitGenerations(workspace, "fixture", 3);
+        CommitGenerations(workspace, "fixture", 1);
 
         using (var reader = workspace.Store.BeginRead())
         {
@@ -150,24 +154,57 @@ public sealed class StoreCompactionTests
     }
 
     [Fact]
+    public void WhatSurvivesCompactionIsExactlyWhatRenders()
+    {
+        // The safety argument for retaining ONE generation, made checkable: every committed snapshot
+        // is complete (a failed extraction returns before committing), so the newest is always the
+        // one the graph draws. If that ever stops being true, retaining one would delete the
+        // rendering snapshot — so this asserts the property the default rests on.
+        using var workspace = TestWorkspace.Create();
+        CommitGenerations(workspace, "fixture", 5);
+
+        IReadOnlyList<string> Rendered()
+        {
+            using var reader = workspace.Store.BeginRead();
+            return [.. reader.AllCurrentAssertions().Select(a => $"{a.Subject}|{a.Predicate}|{a.Object}").Order(StringComparer.Ordinal)];
+        }
+
+        var before = Rendered();
+        workspace.Store.Dispose();
+
+        var result = new StoreCompactor(workspace.DatabasePath).Compact();
+        Assert.True(result.Ran);
+
+        workspace.Reopen();
+
+        Assert.Equal(before, Rendered());
+    }
+
+    [Fact]
     public void Compaction_HandlesSeveralScopesIndependently()
     {
         using var workspace = TestWorkspace.Create();
         CommitGenerations(workspace, "busy", 12);
         CommitGenerations(workspace, "quiet", 2);
+        CommitGenerations(workspace, "untouched", 1);
         workspace.Store.Dispose();
 
         var result = new StoreCompactor(workspace.DatabasePath).Compact();
 
-        // Only the scope that needed it is touched; a quiet scope keeps its history.
-        Assert.Equal(1, result.ScopesCompacted);
+        // Every scope holding something superseded is reclaimed; a scope at one generation holds
+        // nothing superseded and is left alone. Under the old defaults "quiet" was spared because
+        // two generations was under the threshold — which was precisely the case that let a real
+        // workspace double in size without ever tripping.
+        Assert.Equal(2, result.ScopesCompacted);
 
         workspace.Reopen();
         using var reader = workspace.Store.BeginRead();
         var counts = StoreCompactor.ScopesNeedingCompaction(reader, threshold: 0)
             .ToDictionary(x => x.ScopeId, x => x.Generations);
-        Assert.Equal(2, counts["busy"]);
-        Assert.Equal(2, counts["quiet"]);
+
+        Assert.Equal(1, counts["busy"]);
+        Assert.Equal(1, counts["quiet"]);
+        Assert.Equal(1, counts["untouched"]);
     }
 }
 
