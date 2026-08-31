@@ -317,9 +317,14 @@ public sealed class Phase3ExtractorTests : IDisposable
         var result = await new EfSchemaExtractor()
             .ExtractAsync(Request("schema:App", Path.Combine(_root, "Migrations")), CancellationToken.None);
 
+        // The disclosure now carries two counts — how many raw statements there were, and how many
+        // of them could actually change a column list. "4 of 23" and "raw SQL was not read" are
+        // different statements about how wrong this schema might be (DC-050), so the assertion is on
+        // the prefix rather than on an exact sentence.
         Assert.Contains(
             Where(result, CSharpExtractor.DisclosurePredicate),
-            a => a.Object == ExtractionDisclosures.SchemaChangedByRawSqlNotRead);
+            a => a.Object.StartsWith(
+                ExtractionDisclosures.SchemaChangedByRawSqlNotRead, StringComparison.Ordinal));
     }
 
     [Fact]

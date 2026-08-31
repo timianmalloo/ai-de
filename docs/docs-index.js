@@ -1,8 +1,8 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
-  "project": "ai-de-facelift",
-  "generated": "2026-08-31T20:55:25Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-31T20:59:21Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1979,7 +1979,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "12ad305dac534293ce074e888061c82c25f559656d3381b3f3f7d63318b6dec7"
+      "sourceSha256": "6a439af27f03eebdec3797ef00cc39e3d82170b09bab823a77c8d4a1ddbe0391"
     },
     {
       "id": "domain-experts",
@@ -2685,7 +2685,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d8627086a234845dc0175236c8447f0755814b39356aea84cba1e5dbae626d90"
+      "sourceSha256": "3ca50a4cd6247a2f9519c13e3a45a5d2af078c48c7f487a273106e2bca6f07cc"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -3119,7 +3119,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "978685b3823770b9f4d84899d2b8ba562201abffc645e4c45747643f8295748a"
+      "sourceSha256": "5e7f4ff97eb80a03c2fd2e940482fe210a97ec5929e6b6f76f98b10eb8b4a7a2"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -6566,7 +6566,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-facelift — Audit & Change Log",
+      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -6660,5 +6660,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "bb9604685462071420ac1baa0d4d772780200f1477fa381ee9a5e8e90ed66009"
+  "graphSha256": "a2ba5616004dbeb289c384d77ef9bbe991aaf9139868bdbd358b515d55022ca1"
 };
