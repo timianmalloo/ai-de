@@ -59,6 +59,9 @@ public sealed class WorkbenchShell : IDisposable
     /// <summary>The last observed watcher-store fingerprint; the loop only re-renders the panes when it changes (conn-9).</summary>
     private string? _watcherFingerprint;
 
+    /// <summary>Guards the one-shot import of the workspace's declared-goal episodes from its audit log (ep-capture).</summary>
+    private bool _episodesImported;
+
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
         Service = new LayoutService();
@@ -874,6 +877,8 @@ public sealed class WorkbenchShell : IDisposable
         _watcherPump = null;
         _watcherHost = null;
         _watcherEmitter = null;
+        _episodesImported = false;
+        _watcherFingerprint = null;
 
         if (string.IsNullOrEmpty(dataDirectory))
         {
@@ -925,6 +930,16 @@ public sealed class WorkbenchShell : IDisposable
         {
             try
             {
+                // One-shot: import the workspace's declared-goal episodes from its audit log so real Work
+                // Episodes exist to observe (ep-capture). Off the UI thread, guarded so it runs once per
+                // attach; a missing log imports nothing.
+                if (!_episodesImported && !string.IsNullOrEmpty(_workspaceRoot))
+                {
+                    _episodesImported = true;
+                    var auditLog = Path.Combine(_workspaceRoot, "docs", "audit", "audit-log.jsonl");
+                    host.ImportEpisodesFromAuditLog(auditLog);
+                }
+
                 var terminals = TerminalSnapshot();
                 var ids = new HashSet<string>(terminals.Select(t => t.Id), StringComparer.Ordinal);
                 emitter.Reconcile(ids, id => IdentityFor(id, terminals));

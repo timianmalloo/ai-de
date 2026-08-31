@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T23:18:43Z",
+  "generated": "2026-08-31T23:20:37Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3246,6 +3246,23 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Unblock scoring by supplying a real episode source",
       "done_when": "Goal-state audit entries import as closed Work Episodes into the store, tested"
+    },
+    {
+      "id": "al-0309",
+      "shortname": "implement-ep-capture-shell-import",
+      "datetime": "2026-08-31T23:20:37Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (wire ep-capture live)",
+      "summary": "Shell one-shot import: the watcher loop imports the workspace's docs/audit/audit-log.jsonl declared-goal episodes once per attach (off the UI thread, guarded); the conn-9 fingerprint includes episode count so imported episodes trigger a live pane refresh. App 140/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
