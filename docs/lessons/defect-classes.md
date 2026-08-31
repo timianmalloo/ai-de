@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 26 · partially-controlled 29 · uncontrolled 0
+**Status counts:** controlled 27 · partially-controlled 29 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1696,7 +1696,6 @@ for both or split.*
   the workbench previously had no instrumentation at all.
 - **Status:** `controlled`
 
-<<<<<<< HEAD
 ### DC-055 — A one-line status region has no cap, so a long message eats the layout
 
 - **Signature:** a status strip / live region is a wrapping TextBlock in an Auto-height row with no
@@ -1739,10 +1738,16 @@ for both or split.*
 - **Control:** `LayoutRestoreGuardTests`; `WorkbenchDiagnostics` records which restore path was taken.
 - **Status:** controlled (RESOLVED — workspace-open no longer restores a per-workspace layout; the arrangement is kept. No restore = no degenerate restore. See docs/notes/workspace-open-layout-restore.md)
 
+### DC-059 — An automated conflict resolution stages the markers
+- **Signature:** a rebase or merge is scripted — resolve the known-conflicting files, `git add -A`, `--continue`, loop — because the same two append-only logs conflict on every integration and resolving them by hand each time is waste. Then a file conflicts that the script does not know about. `git add -A` stages it exactly as git left it, `--continue` commits it, and the conflict markers are now content. Nothing errors: the working tree is clean, the rebase finished, and the commit looks like every other one.
+- **Why it survives:** the script is correct for the case it was written for, which is the case that occurs almost every time. This session integrated a dozen times with an append-only log merge tool and it worked; the thirteenth had a third file in conflict and the blanket `add -A` swallowed it. The build does not catch it — markers in a markdown file compile fine — and the tests do not either. It was caught only because a gate happened to parse that file for structure and reported a symptom two steps removed: *"DC-054 has no Status line"*.
+- **Instance:** 2026-08-31. `docs/lessons/defect-classes.md` was committed with `<<<<<<< HEAD`, `=======` and `>>>>>>>` in it, and a duplicated heading, after a scripted rebase whose loop resolved the two audit logs and staged everything else untouched. The register gate flagged a structural oddity, not the markers themselves; the markers were found by looking.
+- **The blast radius is the point.** Markdown, JSON, YAML and config files take conflict markers silently. Source does not, which is why this is a documentation-and-configuration defect and why a green build proves nothing about it.
+- **Control:** grep the tree for `^<<<<<<< `, `^=======$` and `^>>>>>>> ` after any scripted resolution, before committing — one command, and it found this in a second. The scripted loop keeps its value; what it needed was a check that the only files it staged blind were the ones it knew how to resolve.
+- **The generalisation to apply elsewhere:** **`git add -A` after an automated resolution is a claim that every conflict was handled, and a script can only handle the ones it was told about.** Any automation that resolves conflicts should verify the result contains no markers rather than assume its own completeness — the same shape as trusting an exit code instead of reading the state.
+- **Status:** `controlled`
+
 ### DC-058 — Every warning is correct and the wall of them hides the one that matters
-=======
-### DC-055 — Every warning is correct and the wall of them hides the one that matters
->>>>>>> 7f7f028 (docs: renumber the disclosure-folding class to DC-055)
 - **Signature:** a component reports what it could not do, per unit of work, conditionally, with a count — every rule a good disclosure is supposed to follow. Then the unit of work multiplies. Thirty-nine scopes each raise the same two boundaries with their own numbers, so nothing deduplicates them, and a surface that concatenates the list shows sixty near-identical sentences. Each one is true. The reader stops reading, and the single line that was a real finding is somewhere in the middle of them.
 - **Why it survives:** every control passes and every rule was followed. This codebase has spent real effort making disclosures fire — conditional, counted, never blanket, asserted in both directions — and **none of that effort was about what a reader does with sixty of them**. The failure is not in any disclosure; it is in the absence of anyone owning the aggregate. It also grows silently: each new extractor and each new scope adds lines to a list nobody re-reads.
 - **Instance:** 2026-08-31. A real index of TheTerrace produced **178 disclosure strings, 108 distinct, for 28 actual classes**. `knowledge-headings-not-analysed` and `knowledge-inline-code-not-resolved` appeared **39 times each** — once per knowledge scope, each with a different count, so `Distinct()` merged none. The user's screenshot shows the result: the disclosure text occupies roughly four fifths of the window and the graph is a strip along the top. Buried in it, in the same typeface as everything else, is `knowledge-prose-link-target-missing (107 …)` — 109 rotted cross-references, the most actionable thing the product had ever told anybody.
