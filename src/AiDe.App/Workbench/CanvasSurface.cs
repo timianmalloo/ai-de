@@ -77,6 +77,14 @@ public sealed class CanvasSurface : ContentControl, IDisposable
     public event EventHandler<CanvasNodeSelection>? NodeSelected;
 
     /// <summary>Loads the graph around <paramref name="rootId"/> and pushes it to the page.</summary>
+    // Sentinel roots the page uses to ask, through the ONE GraphSource seam, for a view that is not a
+    // node neighbourhood: the grouped semantic-zoom overview, or one group's contents. The shell
+    // recognises these and routes them to OverviewAsync / GroupAsync; a real node id never begins with
+    // U+0001 (a control character), so there is no collision with a described node.
+    internal const string GroupedOverviewRoot = "\u0001grouped";
+    internal const string GroupRootPrefix = "\u0001group:";
+    internal static string GroupRoot(string groupId) => GroupRootPrefix + groupId;
+
     public async Task RefreshAsync(string? rootId = null, CancellationToken cancellationToken = default)
     {
         if (!Ready) return;
@@ -155,6 +163,26 @@ public sealed class CanvasSurface : ContentControl, IDisposable
             // Back to the whole-graph overview (rootId null -> the bounded overview projection). A READ,
             // like re-rooting: the page is asking for the same default view it gets on first load.
             _ = RefreshAsync(null);
+            return;
+        }
+
+        if (string.Equals(message.Kind, "graph.grouped", StringComparison.Ordinal))
+        {
+            // Semantic-zoom top level: the workspace as groups, not nodes. A READ, routed through the
+            // same GraphSource by a sentinel root the shell recognises (GroupedOverviewRoot).
+            _ = RefreshAsync(GroupedOverviewRoot);
+            return;
+        }
+
+        if (string.Equals(message.Kind, "group.open", StringComparison.Ordinal))
+        {
+            // Drill from a group super-node to its members. The sentinel carries the group id to the
+            // shell, which asks the projection for exactly that group's contents (GraphQuery.GroupId).
+            if (!string.IsNullOrWhiteSpace(message.NodeId))
+            {
+                _ = RefreshAsync(GroupRoot(message.NodeId));
+            }
+
             return;
         }
 

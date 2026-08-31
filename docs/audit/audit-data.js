@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T14:01:38Z",
+  "generated": "2026-08-31T14:59:42Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5206,6 +5206,29 @@ window.AUDIT_DATA = {
         "layout",
         "search",
         "handoff"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0275",
+      "shortname": "graph-lod-grouped-view",
+      "datetime": "2026-08-31T14:59:42Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "graph is so big; do the next steps (LOD semantic-zoom render)",
+      "summary": "Implemented the graph semantic-zoom LOD as an additive Group toggle. Core: added CanvasGraphViewModel.GroupAsync(groupId) drilling a cluster to its members via GraphQuery.GroupId (shared membership with the overview, avoids DC-022). App: Group button + group super-node rendering (sized/labelled by Count) + group.open/graph.grouped messages routed through one GraphSource seam by sentinel roots (LoadRouted -> OverviewAsync/GroupAsync/LoadAsync); group-aware Back/Overview history. Flat overview unchanged as default. Core+2, App+1 tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs",
+        "src/AiDe.App/Workbench/CanvasPage.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [
+        "graph",
+        "lod",
+        "semantic-zoom"
       ],
       "outcome": "success"
     }

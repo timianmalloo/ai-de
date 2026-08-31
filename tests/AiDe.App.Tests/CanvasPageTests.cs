@@ -27,4 +27,16 @@ public sealed class CanvasPageTests
     {
         Assert.Contains("e.key === 'Home'", CanvasPage.Html, StringComparison.Ordinal);
     }
+
+    // The semantic-zoom "Group" affordance: a toggle that requests the grouped overview, group
+    // super-nodes that open their members, and Back that returns to the group (not a node describe).
+    // Fails RED if any half of the group contract is dropped.
+    [Fact]
+    public void Page_HasAGroupAffordance_WithGroupOpenDrillDown()
+    {
+        Assert.Contains("id=\"group\"", CanvasPage.Html, StringComparison.Ordinal);
+        Assert.Contains("graph.grouped", CanvasPage.Html, StringComparison.Ordinal);
+        Assert.Contains("group.open", CanvasPage.Html, StringComparison.Ordinal);
+        Assert.Contains("function openGroup(", CanvasPage.Html, StringComparison.Ordinal);
+    }
 }

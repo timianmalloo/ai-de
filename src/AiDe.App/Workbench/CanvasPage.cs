@@ -36,6 +36,8 @@ internal static class CanvasPage
           button.chrome { font: inherit; background: #1A1F26; color: #E4E9EF; border: 1px solid #2A313B;
                   border-radius: 8px; padding: 2px 10px; cursor: pointer; }
           button.chrome[disabled] { opacity: .4; cursor: default; }
+          button.chrome[aria-pressed="true"] { background: #21303f; border-color: #5B9DD9; color: #CDE3FF; }
+          .node.group::before { border-radius: 24%; }
           input.search { font: inherit; font-size: 13px; background: #0D1014; color: #E4E9EF;
                   border: 1px solid #2A313B; border-radius: 8px; padding: 3px 9px; width: 190px; }
           input.search::placeholder { color: #98A3B2; }
@@ -97,6 +99,7 @@ internal static class CanvasPage
             <button id="home" class="chrome" title="Back to the whole graph (press Home)" aria-label="Show the whole graph" disabled>&#8962; Overview</button>
             <button id="fit" class="chrome" title="Fit the graph to the view (2D)">Fit</button>
             <button id="mode" class="chrome" title="Toggle 2D / 3D (press 2 or 3)" aria-label="Switch to 3D view">View in 3D</button>
+            <button id="group" class="chrome" title="Show the workspace as groups (semantic zoom)" aria-label="Show the workspace as groups" aria-pressed="false">Group</button>
           </header>
           <p id="caption">Waiting for the workspace&#8230;</p>
           <details id="warn" hidden><summary class="warnsum" id="warnsum"></summary><div id="warndetail"></div></details>
@@ -111,6 +114,10 @@ internal static class CanvasPage
             var current = null;
             var backButton = document.getElementById('back');
             var homeButton = document.getElementById('home');
+            var groupButton = document.getElementById('group');
+            var grouped = false;          // top level: flat nodes vs grouped semantic-zoom
+            var currentIsGroup = false;   // is `current` a group id (opened via group.open)?
+            var pendingGroup = false;     // will the next render's root be a group?
             var modeButton = document.getElementById('mode');
             var fitButton = document.getElementById('fit');
             var searchInput = document.getElementById('search');
@@ -205,15 +212,28 @@ internal static class CanvasPage
 
             function activate(nodeId) {
               if (!nodeId || nodeId === current) { return; }
-              if (current) { history.push(current); }
+              if (current) { history.push({ id: current, group: currentIsGroup }); }
+              pendingGroup = false;
               post({ kind: 'node.activate', nodeId: nodeId });
+            }
+
+            // Drill from a group super-node to the real nodes it stands for. Distinct from activate:
+            // a group is not a described node, so the host routes it to the group-contents query.
+            function openGroup(groupId) {
+              if (!groupId) { return; }
+              if (current) { history.push({ id: current, group: currentIsGroup }); }
+              pendingGroup = true;
+              post({ kind: 'group.open', nodeId: groupId });
             }
 
             backButton.addEventListener('click', function () {
               if (!history.length) { return; }
               var previous = history.pop();
               current = null;
-              post({ kind: 'node.activate', nodeId: previous });
+              pendingGroup = !!previous.group;
+              post(previous.group
+                ? { kind: 'group.open', nodeId: previous.id }
+                : { kind: 'node.activate', nodeId: previous.id });
             });
 
             // Overview jumps straight back to the whole graph. Back climbs the drill-down history one
@@ -224,7 +244,19 @@ internal static class CanvasPage
               if (!current) { return; }
               history = [];
               current = null;
-              post({ kind: 'node.overview' });
+              pendingGroup = false;
+              post(grouped ? { kind: 'graph.grouped' } : { kind: 'node.overview' });
+            });
+
+            // Group toggles the top level between the flat node overview and the grouped semantic-zoom
+            // view. Clearing history is correct: each is a top, and Back climbs within a top, not across.
+            groupButton.addEventListener('click', function () {
+              grouped = !grouped;
+              groupButton.setAttribute('aria-pressed', grouped ? 'true' : 'false');
+              history = [];
+              current = null;
+              pendingGroup = false;
+              post(grouped ? { kind: 'graph.grouped' } : { kind: 'node.overview' });
             });
 
             function setMode(next) {
@@ -543,6 +575,7 @@ internal static class CanvasPage
               edgeRecs = [];
 
               current = graph.rootId;
+              currentIsGroup = pendingGroup;
               backButton.disabled = history.length === 0;
               homeButton.disabled = !current;
 
@@ -570,18 +603,21 @@ internal static class CanvasPage
               // root". The sphere uses a Fibonacci lattice so neighbours spread evenly.
               nodes.forEach(function (n) {
                 var el = document.createElement('span');
-                el.className = 'node' + (n.isRoot ? ' root' : '');
+                var isGroup = (n.kind || '').indexOf('group') === 0;
+                el.className = 'node' + (n.isRoot ? ' root' : '') + (isGroup ? ' group' : '');
                 el.tabIndex = 0;
                 var lbl = document.createElement('span');
                 lbl.className = 'lbl';
-                lbl.textContent = n.label;   // the accessible name, and the on-demand visible label
+                lbl.textContent = isGroup && n.count > 1 ? n.label + ' \u00b7 ' + n.count : n.label;   // group super-nodes carry their size
                 el.appendChild(lbl);
                 el.title = n.id;
                 el.setAttribute('data-id', n.id);
 
                 // Degree-sized dot: a hub reads as bigger, so the eye finds the load-bearing nodes.
                 var deg = degree[n.id] || 0;
-                el.style.setProperty('--r', (n.isRoot ? 18 : Math.min(26, 9 + deg * 3)) + 'px');
+                el.style.setProperty('--r', isGroup
+                  ? Math.max(14, Math.min(44, 10 + Math.log((n.count || 1) + 1) * 5)) + 'px'
+                  : (n.isRoot ? 18 : Math.min(26, 9 + deg * 3)) + 'px');
 
                 var x = cx, y = cy;
                 var p3 = { x: 0, y: 0, z: 0 };
@@ -617,7 +653,9 @@ internal static class CanvasPage
                   uncovered++;
                 }
 
-                el.addEventListener('click', function () { activate(n.id); });
+                el.addEventListener('click', function () {
+                  if (isGroup) { openGroup(n.id); } else { activate(n.id); }
+                });
                 stage.appendChild(el);
                 records.push({ id: n.id, isRoot: !!n.isRoot, el: el, p2: { x: x, y: y }, p3: p3,
                   cat: categoryOf(n.kind) });

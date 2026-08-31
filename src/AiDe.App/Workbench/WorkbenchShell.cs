@@ -873,7 +873,7 @@ public sealed class WorkbenchShell : IDisposable
         // make navigation cost scale with the map.
         graph.ContextLookup = BuildContextLookup();
 
-        canvas.GraphSource = (rootId, ct) => graph.LoadAsync(rootId, cancellationToken: ct);
+        canvas.GraphSource = (rootId, ct) => LoadRouted(graph, rootId, ct);
 
         // Subscribed once per canvas instance: reconcile reuses the surface across renders, and a
         // lambda handler cannot be removed, so an unguarded += would accumulate on every mutation.
@@ -908,10 +908,30 @@ public sealed class WorkbenchShell : IDisposable
         // context (the Explorer-graph-monochrome defect). Wiring ContextLookup here makes the Explorer
         // graph colour-consistent with the workbench graph.
         canvas.GraphSource = (rootId, ct) =>
-            new CanvasGraphViewModel(_queries) { ContextLookup = BuildContextLookup() }
-                .LoadAsync(rootId, cancellationToken: ct);
+            LoadRouted(
+                new CanvasGraphViewModel(_queries) { ContextLookup = BuildContextLookup() }, rootId, ct);
 
         return canvas;
+    }
+
+    // The canvas asks for three kinds of view through one GraphSource seam: a described node (a real
+    // id), the grouped semantic-zoom overview (GroupedOverviewRoot), or one group's contents
+    // (GroupRootPrefix + id). Routed here so both canvas wirings agree on what a sentinel means, and so
+    // the flat default (a null/real root) is unchanged.
+    private static Task<CanvasGraph> LoadRouted(
+        CanvasGraphViewModel vm, string? rootId, CancellationToken ct)
+    {
+        if (string.Equals(rootId, CanvasSurface.GroupedOverviewRoot, StringComparison.Ordinal))
+        {
+            return vm.OverviewAsync(cancellationToken: ct);
+        }
+
+        if (rootId is { } r && r.StartsWith(CanvasSurface.GroupRootPrefix, StringComparison.Ordinal))
+        {
+            return vm.GroupAsync(r[CanvasSurface.GroupRootPrefix.Length..], ct);
+        }
+
+        return vm.LoadAsync(rootId, cancellationToken: ct);
     }
 
     /// <summary>

@@ -327,6 +327,73 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
     }
 
     /// <summary>
+    /// The member nodes of one overview group — the drill-down from a cluster (semantic zoom) to the
+    /// real nodes it stands for.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Membership is the projection's, via <c>GraphQuery.GroupId</c>.</b> The group whose
+    /// super-node the canvas drew carried its id; asked to open it, this hands that id straight back to
+    /// <see cref="IWorkspaceQueries.GraphAsync"/>, which keeps only the nodes <c>GraphOverview.GroupFor</c>
+    /// assigns to it. So "which nodes are in this group" has one definition, shared by the overview that
+    /// drew the group and the drill-down that opens it (the DC-022 trap this avoids).</para>
+    ///
+    /// <para><b>RootId is the group id.</b> The result is a rooted view, so the canvas keeps Back and
+    /// Overview live — a group opened with no way back is the keyboard trap the canvas exists to avoid.</para>
+    /// </remarks>
+    public async Task<CanvasGraph> GroupAsync(string groupId, CancellationToken cancellationToken = default)
+    {
+        if (queries is null)
+        {
+            return Empty("No workspace is open.");
+        }
+
+        if (string.IsNullOrWhiteSpace(groupId))
+        {
+            return await WholeGraphAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        try
+        {
+            var graph = await queries
+                .GraphAsync(
+                    new GraphQuery(OverviewNodeCap, IncludeExternal: false, GroupId: groupId),
+                    cancellationToken)
+                .ConfigureAwait(false);
+
+            if (graph.Nodes.Count == 0)
+            {
+                return new CanvasGraph([], [], groupId, 0, graph.Disclosures, $"{groupId} has no members in view.");
+            }
+
+            var kept = graph.Nodes
+                .Where(n => ContextFilter is null
+                    || string.Equals(ContextOf(n.Id), ContextFilter, StringComparison.Ordinal))
+                .ToList();
+
+            var visible = kept.Select(n => n.Id).ToHashSet(StringComparer.Ordinal);
+
+            var message = graph.Omitted > 0
+                ? $"{kept.Count:N0} of {kept.Count + graph.Omitted:N0} member(s) of {groupId}. " +
+                  $"{graph.Omitted:N0} not drawn — pick a node to go deeper."
+                : $"{kept.Count:N0} member(s) of {groupId}.";
+
+            return new CanvasGraph(
+                [.. kept.Select(n => new CanvasNode(n.Id, n.Label, n.Kind, IsRoot: false, ContextOf(n.Id)))],
+                [.. graph.Edges
+                    .Where(e => visible.Contains(e.From) && visible.Contains(e.To))
+                    .Select(e => new CanvasEdge(e.From, e.To, e.Predicate, e.Status.ToString()))],
+                RootId: groupId,
+                graph.Omitted,
+                graph.Disclosures,
+                message);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Empty($"The group could not be loaded: {ex.Message}");
+        }
+    }
+
+    /// <summary>
     /// The declared context a node belongs to, or null.
     /// </summary>
     /// <remarks>
