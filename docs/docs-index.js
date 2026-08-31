@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T23:40:40Z",
+  "generated": "2026-08-31T00:12:48Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -5990,6 +5990,52 @@ window.DOCS_INDEX = {
       "sourceSha256": "b9c49e5aaf87e7290f150837b4cdad32506f2b3d7ae9846832d74fd67e7b11a4"
     },
     {
+      "id": "spec-editor-surfaces",
+      "path": "docs/specs/editor-surfaces.md",
+      "title": "Editor & Content Surfaces — read-only code viewer & prompt drafts (spec)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Specifies two content surfaces the workbench still lacks: a READ-ONLY code viewer (syntax-highlighted source for a selected node/file, never an editor of record) and a PROMPT-DRAFT editor (rich-text prompts staged until an explicit transfer to a ready terminal session). Both are read/compose surfaces, not a general-purpose code editor (explicitly out of scope in spec-ai-native-ide). The code viewer is the render side of the ADR-0018 NodeContentAsync seam; the prompt draft composes with the terminal-sessions surface. Grounds the reuse decision (Monaco MIT via WebView2, AvalonEdit MIT native, Markdig BSD-2) and names the Design/Core ownership lanes so the surfaces can be built in parallel against defined contracts.",
+      "tags": [
+        "editor",
+        "monaco",
+        "avalonedit",
+        "markdig",
+        "code-viewer",
+        "prompt-draft",
+        "content-rendering",
+        "read-only"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-terminal-sessions",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "daeb9ed546584ce78a5b5d15be2cf47329e4504a4f61b3161bbc0049f0e1e417"
+    },
+    {
       "id": "spec-knowledge-exploration",
       "path": "docs/specs/knowledge-exploration.md",
       "title": "Knowledge Exploration Surface (spec)",
@@ -6329,5 +6375,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3aa8edc9b4caca6d09b75981dd8f470f67b0a0bf29803703d411f30202a8c55a"
+  "graphSha256": "e4cf91f8a45e483b5a8041495ee5b7285b4a1eea248de4ca24a58256a746cfb0"
 };

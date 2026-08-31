@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-30T23:40:40Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-31T00:13:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2933,6 +2933,23 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": true
       }
+    },
+    {
+      "id": "al-0163",
+      "shortname": "specify-editor-surfaces",
+      "datetime": "2026-08-31T00:13:18Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "we need the other surfaces: class diagram, code editor (read-only), prompt-editor; should I create parallel sessions or too much contention risk",
+      "summary": "Specced editor-surfaces.md: read-only code viewer (render side of ADR-0018 NodeContentAsync, RenderKind=code; Monaco MIT / AvalonEdit MIT, read-only invariant, shortfall, walk) + prompt-draft editor (staged, persisted-with-layout, explicit one-way audited transfer to a named ready terminal session). Class diagram already specced (uml-erm-surfaces). Defined Design/Core ownership lanes so surfaces build against contracts not races — feeds the parallelization decision.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/editor-surfaces.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
