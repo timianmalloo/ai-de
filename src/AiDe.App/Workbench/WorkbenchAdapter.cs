@@ -370,6 +370,16 @@ public sealed class WorkbenchAdapter
         };
 
     /// <summary>
+    /// The surface id of the document the user is currently focused in, or null. Read from AvalonDock's
+    /// own active-content tracking so a "new pane" command can open where the user is looking rather than
+    /// in a fixed corner of the layout.
+    /// </summary>
+    public string? ActiveSurfaceId =>
+        Manager.Layout?.ActiveContent?.ContentId
+            ?? Manager.Layout?.Descendents().OfType<LayoutDocument>()
+                .FirstOrDefault(d => d.IsSelected)?.ContentId;
+
+    /// <summary>
     /// Reads the CURRENT AvalonDock arrangement back into the owned model, so a native pane drag or a
     /// splitter resize the user performed is captured before the next <see cref="Render"/> would rebuild
     /// from a stale model and revert it. Returns null when the view cannot be mapped confidently.

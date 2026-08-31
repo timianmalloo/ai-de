@@ -368,6 +368,44 @@ public sealed class WorkbenchAdapterTests
         Assert.Null(result);
     }
 
+    // Focus-aware placement reads AvalonDock's active document, so a new pane can open where the user is
+    // looking. After a render the active content is one of the model's surfaces, never a stale id.
+    [Fact]
+    public void ActiveSurfaceId_AfterRender_IsOneOfTheModelsSurfaces()
+    {
+        var (active, known) = OnStaThread(() =>
+        {
+            var service = new LayoutService();
+            var manager = new DockingManager();
+            var adapter = new WorkbenchAdapter(manager, service, _ => new ContentControl());
+            var window = new Window
+            {
+                Content = manager,
+                Width = 900,
+                Height = 600,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            window.Show();
+            adapter.Render();
+            window.UpdateLayout();
+            manager.UpdateLayout();
+            try
+            {
+                var ids = service.Current.AllStacks()
+                    .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
+                return (adapter.ActiveSurfaceId, ids);
+            }
+            finally { window.Close(); }
+        });
+
+        // Null is acceptable (nothing active); a non-null id must be a real surface, never invented.
+        if (active is not null) { Assert.Contains(active, known); }
+    }
+
     private static List<string> Groupings(AiDe.Core.Workbench.Layout layout) =>
         layout.AllStacks()
             .Select(s => string.Join(

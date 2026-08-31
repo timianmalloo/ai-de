@@ -162,9 +162,7 @@ public sealed class WorkbenchShell : IDisposable
         Controller.NewClassDiagramRequested = () =>
         {
             ReconcileViewIntoModel();
-            var stack = Service.Current.AllStacks()
-                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "canvas"))
-                ?? Service.Current.AllStacks().FirstOrDefault();
+            var stack = TargetStackForNewView();
 
             if (stack is null) return "There is no pane to open a class diagram in.";
 
@@ -185,9 +183,7 @@ public sealed class WorkbenchShell : IDisposable
         Controller.NewCodeViewerRequested = () =>
         {
             ReconcileViewIntoModel();
-            var stack = Service.Current.AllStacks()
-                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "canvas"))
-                ?? Service.Current.AllStacks().FirstOrDefault();
+            var stack = TargetStackForNewView();
 
             if (stack is null) return "There is no pane to open a code viewer in.";
 
@@ -1081,6 +1077,20 @@ public sealed class WorkbenchShell : IDisposable
     /// (ADR-0020). Reads `_queries` live and wires the same context lookup the canvas uses, so a class
     /// diagram opened before or after the workspace attaches still populates.
     /// </summary>
+    // The stack a new view should open in: the one the user is focused in, else the graph/canvas stack,
+    // else any. Opening "where I am" is the least surprising placement; the canvas fallback preserves the
+    // prior behaviour when nothing is focused. Read after ReconcileViewIntoModel, which only touches the
+    // model (no render), so AvalonDock's active-content tracking is still valid.
+    private AiDe.Core.Workbench.StackNode? TargetStackForNewView()
+    {
+        var active = Adapter.ActiveSurfaceId;
+        return (active is not null
+                ? Service.Current.AllStacks().FirstOrDefault(s => s.Surfaces.Any(su => su.SurfaceId == active))
+                : null)
+            ?? Service.Current.AllStacks().FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "canvas"))
+            ?? Service.Current.AllStacks().FirstOrDefault();
+    }
+
     // Before a layout mutation that will trigger a full Render, fold any native pane drag or splitter
     // resize the user performed back into the model, so the rebuild preserves their arrangement instead
     // of reverting it. Fail-safe: ReadLayoutFromView returns null on any shape it cannot map losslessly,

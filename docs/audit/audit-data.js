@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T16:16:41Z",
+  "generated": "2026-08-31T16:37:25Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5268,6 +5268,28 @@ window.AUDIT_DATA = {
         "layout",
         "avalondock",
         "reconcile"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0278",
+      "shortname": "new-view-opens-in-focused-stack",
+      "datetime": "2026-08-31T16:37:25Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "I was focused in the right window but new class diagram opened in the left; expected it where I had focus",
+      "summary": "New class-diagram/code-viewer panes now open in the FOCUSED stack. Added WorkbenchAdapter.ActiveSurfaceId (AvalonDock active/selected document ContentId); shell TargetStackForNewView() prefers the stack holding the active surface, falling back to the canvas stack then any. Test: ActiveSurfaceId after render is a real model surface or null. App+1.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [
+        "layout",
+        "focus",
+        "ux"
       ],
       "outcome": "success"
     }
