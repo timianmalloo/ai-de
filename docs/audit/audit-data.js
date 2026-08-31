@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T21:14:27Z",
+  "generated": "2026-08-31T21:46:55Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3118,6 +3118,29 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0296",
+      "shortname": "investigate-terminal-cursor-crash",
+      "datetime": "2026-08-31T21:46:55Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "the application died with two sessions grounding in the repo",
+      "summary": "Root-caused (from Windows event log, reproduced deterministically) an unhandled IndexOutOfRangeException in TerminalView.DrawCursor: it read the char-under-cursor via the raw TerminalScreen indexer, but the cursor sits at the pending-wrap column (==Columns) after writing the last column; at the bottom row that is one past the cell array -> crash on the WPF UI thread. Fixed with a bounds-safe CellUnderCursor() the renderer uses. DC-041 registered; 3 tests, Core 970/0, App 138/0; guard mutation-verified to reproduce the exact crash. Also found: the watcher UX is inert at runtime (wired in the ctor, but AttachWorkspace drops it) - next step.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/TerminalScreen.cs",
+        "src/AiDe.App/Workbench/TerminalView.cs",
+        "tests/AiDe.Core.Tests/TerminalScreenTests.cs",
+        "docs/investigations/terminal-cursor-render-crash.md",
+        "docs/proof/terminal-cursor-render-crash.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T21:31:48Z",
+      "duration_seconds": 907.0
     }
   ],
   "changes": [

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 17 · partially-controlled 23 · uncontrolled 0
+**Status counts:** controlled 18 · partially-controlled 23 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1418,4 +1418,41 @@ for both or split.*
   launcher remains environment-sensitive (a cold start still has a 30s deadline); the epoch oracle is
   robust to that because lock-resolution makes epoch equality hold regardless of a transient redundant
   launch.
+- **Status:** `controlled`
+
+### DC-041 — Untrusted terminal content drives the render cursor out of the grid and an unguarded index in OnRender crashes the whole app
+
+- **Signature:** a WPF/`OnRender` draw path indexes a data model at a **cursor/caret position that the
+  model legitimately allows to sit off the grid** — for a terminal, the *pending-wrap* column
+  (`CursorColumn == Columns`, held after writing the last column until the next write wraps). At the
+  bottom row that index is exactly `cells.Length` (one past the end), so `IndexOutOfRangeException` is
+  thrown **on the UI thread inside `OnRender`**, which WPF does not catch — the process is terminated.
+- **Why it survives:** every unit test of the model passes (the pending-wrap cursor is *correct*
+  behaviour, not a bug), and the render tests pass because the cursor draw is **focus-gated**
+  (`if (!IsKeyboardFocused) return;`) — an unfocused view never runs the crashing branch, so no
+  automated render test exercises it. The crash only happens on a **focused** terminal whose producer
+  filled the last column of the bottom row — which is exactly what agent CLIs do continuously (a
+  full-width status/progress/spinner line pinned to the bottom). So it is invisible to the suite and
+  reliably reproducible in real use.
+- **Instances:** 2026-08-31 — `AiDe.App.exe` terminated (`0xe0434352`, unhandled
+  `System.IndexOutOfRangeException`) with two agent CLIs (copilot + claude) grounding in a repo. Stack:
+  `TerminalScreen.get_Item` → `TerminalView.DrawCursor` (`_screen[CursorRow, CursorColumn]`) →
+  `OnRender` → WPF `Arrange`. Root-caused from the Windows Application event log and reproduced
+  deterministically at the screen level (fill the bottom row → cursor at `(Rows-1, Columns)` →
+  the raw index throws).
+- **Control:** `TerminalScreen.CellUnderCursor()` returns the cell **or null** when the cursor is not
+  on a real cell (pending-wrap or any off-grid position), bounds-checking both row and column;
+  `DrawCursor` reads the character-under-cursor through it (never the raw indexer) and clamps the drawn
+  rect to the last cell, so the pending-wrap cursor shows on the last column and **no out-of-bounds
+  index can fault `OnRender`**. Proven by `CellUnderCursor_AtPendingWrapOnTheBottomRow_IsNull_NotThrowing`
+  (mutation-verified: removing the bounds check reproduces the exact `IndexOutOfRangeException`), with a
+  companion `Resize_Shrink_ClampsTheCursor...` characterising the already-safe sibling. Generalisation:
+  **a render/`OnRender` path over untrusted, unbounded content must read every position through a
+  bounds-safe accessor — never a raw indexer — because an exception there is unhandled on the UI thread
+  and terminates the process**; the model may legitimately hold an off-grid caret, so the *renderer*,
+  not the model, must be robust.
+- **Residual risk:** the fix is at the two render read sites; other future `OnRender` code that indexes
+  the screen by a cursor/derived position must use `CellUnderCursor()` or a bounded loop. A broader
+  belt (a guarded `OnRender` that logs-and-skips a frame rather than crashing) was deliberately NOT
+  added, to avoid masking future render bugs now that the root cause and its sibling are swept.
 - **Status:** `controlled`

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T21:13:49Z",
+  "generated": "2026-08-31T21:46:17Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2656,7 +2656,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "57ef04099f0e0136ad389cee56a28f9b520eedafbb3f463ec7f32486660aef13"
+      "sourceSha256": "d0763e660342f880a11505c2ed39fd2772d06bdba7a4691cef7aa0cc4bd33962"
     },
     {
       "id": "domain-experts",
@@ -3894,6 +3894,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "855af815674245851df9fc51855e1117fe59ddff3127449ee9da7583c0c75f07"
+    },
+    {
+      "id": "investigation-terminal-cursor-render-crash",
+      "path": "docs/investigations/terminal-cursor-render-crash.md",
+      "title": "Investigation - AiDe.App crash: terminal cursor render IndexOutOfRange (DC-041)",
+      "type": "investigation",
+      "status": "resolved",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "AiDe.App terminated with an unhandled IndexOutOfRangeException while two agent CLIs (copilot + claude) were grounding in a repo. Verified root cause (from the Windows Application event log, reproduced deterministically): TerminalView.DrawCursor read the character under the cursor through the raw TerminalScreen indexer, but the cursor legitimately sits at the pending-wrap column (CursorColumn == Columns) after writing the last column; at the bottom row that indexes one past the end of the cell array, and the exception is unhandled on the WPF UI thread inside OnRender, which terminates the process. Fixed with a bounds-safe CellUnderCursor() the renderer uses. Registered as DC-041. (A separate finding: the watcher UX is not wired into the running app - see below.)",
+      "tags": [
+        "loomkeeper",
+        "terminal",
+        "crash",
+        "render",
+        "cursor",
+        "defect",
+        "dc-041",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-host",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3f7eab3ae8ffcaf793988040d06976b2b17feb57f1432ac1b22df762f099ff11"
     },
     {
       "id": "kb-agentic-session-observability",
@@ -6996,6 +7030,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
+      "id": "proof-terminal-cursor-render-crash",
+      "path": "docs/proof/terminal-cursor-render-crash.md",
+      "title": "Proof Pack - Terminal cursor render crash fix (DC-041)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the terminal cursor render crash (DC-041) is fixed: CellUnderCursor() returns null at the pending-wrap cursor position (the exact index that was one past the end of the cell array), the renderer reads through it instead of the raw indexer, and the guard is mutation-verified to reproduce the original IndexOutOfRangeException when removed. 3 new tests, full Core 970/0, App 138/0.",
+      "tags": [
+        "loomkeeper",
+        "terminal",
+        "crash",
+        "render",
+        "cursor",
+        "proof-pack",
+        "dc-041",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "investigation-terminal-cursor-render-crash",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "889f7a7e998fa13c59b9b8b7cfbed2d2d06d070f8c444d969a4a3ec5fd9b55a4"
+    },
+    {
       "id": "proof-watcher-advisory-evaluator",
       "path": "docs/proof/watcher-advisory-evaluator.md",
       "title": "Proof Pack - Loomkeeper Local Advisory Evaluator & Egress Guard (connective 3)",
@@ -8153,5 +8217,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "e6fe6f00945e76183e9962b9093f94e2c76a5ab00f93edb230420ae5bf5a0a50"
+  "graphSha256": "5a9641fcc3333a072cefd6dbd25b57d97786b7ddaa1d40d4e625bbe596c8fedf"
 };
