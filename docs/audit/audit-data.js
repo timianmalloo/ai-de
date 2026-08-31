@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T20:56:56Z",
+  "generated": "2026-08-31T21:05:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3076,6 +3076,26 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "started_at": "2026-08-31T20:41:27Z",
       "duration_seconds": 928.0
+    },
+    {
+      "id": "al-0294",
+      "shortname": "implement-watcher-scoring-service",
+      "datetime": "2026-08-31T21:05:28Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps",
+      "summary": "Connective 6: EvidenceComposer (signals->tokens, conservative omission NG1) + ScoringService (deterministic Weave + gated advisory fold, persists ScoredEpisode so the leaderboard populates). 9 tests, suite 955/0; composer->evaluator mapping mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/ScoringService.cs",
+        "docs/design/watcher-scoring-service.md",
+        "docs/proof/watcher-scoring-service.md",
+        "tests/AiDe.Core.Tests/Watcher/ScoringServiceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [

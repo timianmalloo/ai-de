@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T20:56:15Z",
+  "generated": "2026-08-31T21:04:58Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2378,6 +2378,55 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "3285197bb91bd7151d61d1d1e0e0323be851d728de01776acbaaeda1ba6982a9"
+    },
+    {
+      "id": "design-watcher-scoring-service",
+      "path": "docs/design/watcher-scoring-service.md",
+      "title": "Loomkeeper - Evidence Composer & Scoring Service (connective 6)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Compose a closed episode's DeterministicEpisodeSignals into the local evaluator's evidence token string (EvidenceComposer), and turn (episode + signals + classification) into a persisted ScoredEpisode (ScoringService) so scored episodes reach the Leaderboard/Standing surfaces. The four deterministic dimensions are always scored; the two advisory dimensions fold only when the evaluator's (version, taskClass, schemaVersion) is qualified in the calibration registry (ADR-0019, rule 8); with no evaluator, only the deterministic Weave is recorded (the safe default).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "scoring",
+        "evidence",
+        "calibration",
+        "advisory",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-advisory-grader",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-advisory-evaluator",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-score-persistence",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "001a6ae7f964e4116e8f95fe6e29656ca37ff25f7ff1ac113808deb52eeb9da3"
     },
     {
       "id": "design-watcher-sessions-surface",
@@ -7331,6 +7380,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "cd337f7f5d2c37cacf7b72808676c74bbe24fbf8a9282d2cad9d0f2fbc0f98d3"
     },
     {
+      "id": "proof-watcher-scoring-service",
+      "path": "docs/proof/watcher-scoring-service.md",
+      "title": "Proof Pack - Loomkeeper Evidence Composer & Scoring Service (connective 6)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the scoring path is wired: EvidenceComposer maps deterministic signals to the local evaluator's token vocabulary (omitting unobserved tokens so they default conservatively) and round-trips through the evaluator; ScoringService scores an episode and persists a ScoredEpisode that feeds the Leaderboard; the two advisory dimensions fold only when the evaluator is qualified in the registry (ADR-0019, rule 8) and stay excluded otherwise; and a recompute replaces the prior card. 9 tests, full suite 955/0, the composer->evaluator mapping mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "scoring",
+        "evidence",
+        "calibration",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-scoring-service",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fc94abce1c6bc7c116b719101dc8f7efca6de7c2c375304ee89692043aec4afe"
+    },
+    {
       "id": "proof-watcher-sessions-surface",
       "path": "docs/proof/watcher-sessions-surface.md",
       "title": "Proof Pack - Loomkeeper Sessions Surface (slice 3)",
@@ -7992,5 +8074,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "eb2a112d5aa4667f8e55cbddcfdc9cacdf1f9afd556ec0e8b5634ce86351bd98"
+  "graphSha256": "88bc0ebaea7f5ba14eb903b216fa278a325b43a01243f8f91f690a193f071da8"
 };
