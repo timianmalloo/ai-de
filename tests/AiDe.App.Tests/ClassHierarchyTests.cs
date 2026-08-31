@@ -90,6 +90,21 @@ public sealed class ClassHierarchyTests
     }
 
     [Fact]
+    public void Build_CarriesContextForGrouping()
+    {
+        var nodes = new[]
+        {
+            new CanvasNode("Shop.Order", "Order", "class", false, "Shop"),
+            new CanvasNode("Billing.Invoice", "Invoice", "class", false, "Billing"),
+        };
+
+        var h = ClassHierarchyModel.Build(nodes, []);
+
+        Assert.Equal("Shop", h.Types.Single(t => t.Id == "Shop.Order").Context);
+        Assert.Equal("Billing", h.Types.Single(t => t.Id == "Billing.Invoice").Context);
+    }
+
+    [Fact]
     public void Build_HandlesNulls()
     {
         var h = ClassHierarchyModel.Build(null, null);

@@ -13,7 +13,7 @@ public enum ClassRelationKind
 }
 
 /// <summary>A type in the class diagram — a class or interface. Members are not available yet (ADR-0020).</summary>
-public sealed record ClassTypeNode(string Id, string Label, bool IsInterface);
+public sealed record ClassTypeNode(string Id, string Label, bool IsInterface, string? Context);
 
 /// <summary>One generalization/realization edge between two types in the diagram.</summary>
 public sealed record ClassRelation(string From, string To, ClassRelationKind Kind);
@@ -64,7 +64,7 @@ public static class ClassHierarchyModel
             .Where(n => IsType(n.Kind))
             .GroupBy(n => n.Id, StringComparer.Ordinal)
             .Select(g => g.First())
-            .Select(n => new ClassTypeNode(n.Id, n.Label, IsInterface(n.Kind)))
+            .Select(n => new ClassTypeNode(n.Id, n.Label, IsInterface(n.Kind), n.Context))
             .ToList();
 
         var ids = new HashSet<string>(types.Select(t => t.Id), StringComparer.Ordinal);

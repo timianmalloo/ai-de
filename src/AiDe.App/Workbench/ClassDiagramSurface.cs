@@ -89,10 +89,39 @@ public sealed class ClassDiagramSurface : ContentControl
             .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
         var labelOf = hierarchy.Types.ToDictionary(t => t.Id, t => t.Label, StringComparer.Ordinal);
 
-        foreach (var type in hierarchy.Types.OrderBy(t => t.Label, StringComparer.OrdinalIgnoreCase))
+        // Group by context (namespace/bounded context) so a large hierarchy is scannable; types with
+        // no context fall into a trailing "(no context)" group.
+        var groups = hierarchy.Types
+            .GroupBy(t => string.IsNullOrWhiteSpace(t.Context) ? null : t.Context, StringComparer.Ordinal)
+            .OrderBy(g => g.Key is null ? 1 : 0)
+            .ThenBy(g => g.Key, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        foreach (var group in groups)
         {
-            _list.Children.Add(Card(type, bySource.TryGetValue(type.Id, out var rels) ? rels : [], labelOf));
+            if (groups.Count > 1)
+            {
+                _list.Children.Add(GroupHeader(group.Key ?? "(no context)", group.Count()));
+            }
+
+            foreach (var type in group.OrderBy(t => t.Label, StringComparer.OrdinalIgnoreCase))
+            {
+                _list.Children.Add(Card(type, bySource.TryGetValue(type.Id, out var rels) ? rels : [], labelOf));
+            }
         }
+    }
+
+    private static TextBlock GroupHeader(string context, int count)
+    {
+        var t = new TextBlock
+        {
+            Text = context + "  ·  " + count + " type(s)",
+            FontSize = 11.5,
+            FontWeight = FontWeights.SemiBold,
+            Margin = new Thickness(2, 10, 0, 4),
+        };
+        t.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        return t;
     }
 
     public void Clear()
