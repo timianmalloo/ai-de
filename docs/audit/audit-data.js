@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T00:50:53Z",
+  "generated": "2026-08-31T00:57:37Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3043,6 +3043,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0170",
+      "shortname": "published-artifact-had-no-daemon",
+      "datetime": "2026-08-31T00:57:37Z",
+      "session": "phase3-pane-probes",
+      "prompt": "also do the next steps now",
+      "summary": "DC-046: the published shell shipped without the daemon it launches. DaemonPath() resolves BaseDirectory/daemon/AiDe.Daemon.exe; the copy target ran AfterTargets=Build into OutDir, and publish does not carry that across, so artifacts/app had AiDe.Daemon.exe flat at the root and nothing at daemon/. Every published build could open no workspace at all. Found while publishing, not by any test — and this session had reported 'published artifacts/app' many times on a command whose exit code was 0. Fixed with a publish-time copy target; verify-published-layout.py publishes to a scratch directory and checks the path read from source, observed failing on the un-fixed build, now in CI.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-published-layout.py"
       ],
       "tags": [],
       "outcome": "success"

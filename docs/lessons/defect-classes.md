@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 19 · partially-controlled 26 · uncontrolled 0
+**Status counts:** controlled 20 · partially-controlled 26 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1548,4 +1548,14 @@ for both or split.*
 - **Control:** `WorkbenchController.WorkspaceDataChanged`, raised after a command that changed the store and **not** after one that failed; the shell re-reads whatever panes the layout currently holds. `IndexingReachesOpenPanesTests` covers all three commands plus the failure path. Observed failing on the un-fixed code (3 of 4, with the failure-path test correctly staying green).
 - **The generalisation to apply elsewhere:** for any command that writes, name the surfaces that are showing what it wrote, and make the freshness of those surfaces part of the command's definition of done. A write path that ends at an announcement is not finished — **the last mile of a write is the screen**.
 - **Residual risk:** the signal is raised by the *controller*, so a write reaching the store by another route (the daemon indexing on its own, a second client) does not raise it. Panes are told about writes this shell commanded, not about the store changing.
+- **Status:** `controlled`
+
+### DC-046 — The layout that was tested was never the layout that shipped
+- **Signature:** code resolves a sibling file by a path relative to itself. A build-time step puts the file there, so every developer run, every test and every local launch is correct. A *different* packaging step — publish, installer, container copy — produces a different arrangement, and the resolution fails only in the artifact users receive. The error message describes the failed operation, not the missing file, so the investigation starts in the wrong place.
+- **Why it survives:** every test runs against the developer layout, which is the one that works. There is no failing test to write without first building the artifact, and building the artifact is the step nobody does in a test. The gap is invisible to code review because both halves of the code are right: the resolver looks in a sensible place, and a copy step really does put it there.
+- **Instance:** 2026-08-30. `MainWindowViewModel.DaemonPath()` resolves `<BaseDirectory>/daemon/AiDe.Daemon.exe`. `CopyDaemonBesideShell` (`AfterTargets="Build"`) wrote it to `$(OutDir)daemon\`; `dotnet publish` writes to `$(PublishDir)` and does not carry that across, so `artifacts/app` shipped with `AiDe.Daemon.exe` flat at the root and nothing at `daemon/`. Every published build could open **no workspace at all**, reporting *"This workspace could not be opened"* — a message about the workspace. Found while publishing at the end of an unrelated fix, not by any test.
+- **The uncomfortable part:** this session had reported "published `artifacts/app`" at the close of many turns. The publish command succeeded every time. **An exit code is not a result** (E-series) — the artifact was produced and was not usable, and nothing in the routine looked at what came out.
+- **Control:** `verify-published-layout.py` publishes the shell to a scratch directory and asserts the daemon is at the path read **from the source** — so renaming the folder in one place fails the gate rather than a user's first click. Observed failing on the un-fixed build, with the diagnosis it prints ("it is in the wrong place, not missing") written from that run. In CI as *Published layout gate*.
+- **The generalisation to apply elsewhere:** for anything resolved by a path relative to the running binary, **assert it in the artifact, not in the build output**. And when a routine ends in "produced X", make the last step read X.
+- **Residual risk:** the gate checks the one path that is currently resolved this way. Another sibling resolved relative to `BaseDirectory` later would need adding; nothing detects a new one automatically.
 - **Status:** `controlled`

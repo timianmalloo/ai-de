@@ -109,6 +109,13 @@ jobs:
       - name: Extractor generation gate
         run: python tools/verify-extractor-generation.py
 
+      # The shell resolves its daemon at <BaseDirectory>/daemon/AiDe.Daemon.exe. A build-time target
+      # put it there, so every developer run and every test worked; publish writes elsewhere and did
+      # not carry it, so the SHIPPED build could not open a workspace at all. The layout that was
+      # tested was never the layout that shipped. Publishes to a scratch directory and looks.
+      - name: Published layout gate
+        run: python tools/verify-published-layout.py
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
