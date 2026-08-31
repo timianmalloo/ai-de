@@ -186,6 +186,39 @@ public sealed class ClassDiagramSurfaceTests
     }
 
     [Fact]
+    public void ShowGraph_WithMembersSource_DoesNotDuplicateTheTruncationNote_AcrossThePrefetchRerender()
+    {
+        OnSta(() =>
+        {
+            // >40 types triggers the "Showing N most-connected of M" note. A members source makes the
+            // surface prefetch then re-render; the note must appear ONCE, not once per render.
+            var nodes = Enumerable.Range(0, 45).Select(i => N($"T{i}", "class")).ToArray();
+            var s = new ClassDiagramSurface
+            {
+                MembersSource = _ => Task.FromResult(
+                    ((IReadOnlyList<string>)new[] { "+ X : int" }, 1)),
+            };
+
+            s.ShowGraph(nodes, System.Array.Empty<CanvasEdge>());
+
+            var occurrences = s.DisclosureText.Split("most-connected").Length - 1;
+            Assert.Equal(1, occurrences);
+        });
+    }
+
+    [Fact]
+    public void ShowGraph_DoesNotClaimMembersAreUnextracted()
+    {
+        OnSta(() =>
+        {
+            var s = new ClassDiagramSurface();
+            s.ShowGraph(new[] { N("A", "class"), N("B", "class") }, new[] { Edge("A", "B", "inherits") });
+            // The stale ADR-0020 Phase 1 note ("Members are not extracted yet") is gone — members are extracted.
+            Assert.DoesNotContain("not extracted", s.DisclosureText, StringComparison.OrdinalIgnoreCase);
+        });
+    }
+
+    [Fact]
     public void ShowDependencies_DrawsDashedDependencyArrows_OnlyWhenToggledOn()
     {
         OnSta(() =>

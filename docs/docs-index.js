@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T21:51:28Z",
+  "generated": "2026-08-31T22:50:50Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1630,6 +1630,32 @@ window.DOCS_INDEX = {
       "sourceSha256": "1019c9d98b854b04b2fc784cada4bdea68e34249dba7f30ffe4979e750f397b4"
     },
     {
+      "id": "note-workspace-open-layout-restore",
+      "path": "docs/notes/workspace-open-layout-restore.md",
+      "title": "Decision note — workspace-open layout restore semantics",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Opening a workspace restores its per-workspace saved layout (US-9), which the user experiences as \"adding a workspace reset my panes\" — especially when the saved layout is degenerate (had lost the graph). Shipped a conservative guard (keep the current layout when the restore would drop the graph it has) and recorded the open product fork: per-workspace restore vs keep-current-on-open.",
+      "tags": [
+        "layout",
+        "persistence",
+        "workbench",
+        "us-9"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7abbbb2ab130dba33cfd4c7866c6155e0a45783ee22a8168131d797850a3dab0"
+    },
+    {
       "id": "conceptual-model-ai-native-ide",
       "path": "docs/design/conceptual-model.md",
       "title": "AI-DE conceptual domain model",
@@ -1979,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0227f292612472ae9e4e6ed45a9b700263047a41e87df6fea5905860860431e6"
+      "sourceSha256": "35e90221e482fe438a185b30c7c04fd75ea063be287d1cbffc24e20ed9d76078"
     },
     {
       "id": "domain-experts",
@@ -6566,7 +6592,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -6660,5 +6686,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ba065a8f0cf09e884a63a1aaa5e0f23e9b966ce688da9ebef9e0db36933dbe80"
+  "graphSha256": "61ccb109e0d384ad0bb71d051b017b651b6045df21d329d2e9d547cb92cdd5fc"
 };

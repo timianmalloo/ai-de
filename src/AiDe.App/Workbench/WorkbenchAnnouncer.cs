@@ -65,6 +65,9 @@ public sealed class WorkbenchAnnouncer : IWorkbenchAnnouncer
 
         Last = message;
         _liveRegion.Text = message;
+        // The visible strip is one line with an ellipsis (it must never grow and eat the window); the
+        // full announcement — which can be a long re-index disclosure list — stays available on hover.
+        _liveRegion.ToolTip = message.Length > 80 ? message : null;
 
         var peer = UIElementAutomationPeer.FromElement(_liveRegion)
             ?? UIElementAutomationPeer.CreatePeerForElement(_liveRegion);

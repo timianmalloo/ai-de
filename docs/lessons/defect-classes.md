@@ -1695,3 +1695,45 @@ for both or split.*
   (`aide.workbench` ActivitySource + a JSON layout log) so a future placement report is traceable —
   the workbench previously had no instrumentation at all.
 - **Status:** controlled
+
+### DC-055 — A one-line status region has no cap, so a long message eats the layout
+
+- **Signature:** a status strip / live region is a wrapping TextBlock in an Auto-height row with no
+  height cap or truncation. A normally-short channel occasionally carries a long message (a re-index
+  announcement is one sentence + 200+ analysis-boundary disclosures, ~5,000 chars), the row grows to
+  fit it, and it squeezes the real content to a sliver. Here it ate ~70% of the window.
+- **Why it survives:** every test and demo used a short status message; the "very long message" state
+  was never designed. The layout is valid; it is just catastrophically proportioned for one input.
+- **Instances:** 2026-08-31 — re-index diagnostics wall. Fixed: LiveRegion is single-line
+  (NoWrap + CharacterEllipsis); the full text is on hover (tooltip) and still read by AT.
+- **Control:** `WorkbenchAnnouncerTests` (long message → tooltip carries it; short → none). A status
+  region is one line by construction.
+- **Status:** controlled
+
+### DC-056 — A re-render helper mutates the caller's list, so a note duplicates per render
+
+- **Signature:** a render builds a `notes`/display list, a member/data prefetch re-renders with the
+  SAME list instance, and each render inserts its own note (`"Showing N of M"`) → the note appears
+  once per render (2×, 3×…). Introduced by the variable-height prefetch-then-rerender.
+- **Why it survives:** a single render is correct; the duplication only appears after an async
+  prefetch re-render, which unit tests without a members source never exercised.
+- **Instances:** 2026-08-31 — class diagram "Showing the 40 most-connected…" shown twice. Fixed: the
+  render builds a private DISPLAY copy for the disclosure and passes the PRISTINE notes to the
+  prefetch, so each render starts from the same base.
+- **Control:** `ShowGraph_WithMembersSource_DoesNotDuplicateTheTruncationNote_AcrossThePrefetchRerender`.
+- **Status:** controlled
+
+### DC-057 — A per-workspace layout restore faithfully brings back a degenerate saved state
+
+- **Signature:** opening a workspace restores its saved `layout.json` over the current arrangement
+  (US-9). When the saved layout is degenerate — e.g. it had lost the primary graph pane — the restore
+  brings back the broken, scattered arrangement, and the user reads "opening the workspace reset my
+  panes and lost the graph."
+- **Why it survives:** the restore is doing exactly what it is designed to do (faithful per-workspace
+  restore); the defect is upstream (a graph-less layout got saved) and the restore has no notion of a
+  "degenerate" state to reject.
+- **Instances:** 2026-08-31 — TheTerrace restored to a graph-less two-stack layout. Mitigated:
+  `LayoutRestoreGuard` keeps the current graph-bearing layout when the restore would drop the graph.
+  The broader per-workspace-vs-global fork is recorded in docs/notes/workspace-open-layout-restore.md.
+- **Control:** `LayoutRestoreGuardTests`; `WorkbenchDiagnostics` records which restore path was taken.
+- **Status:** partially-controlled (guard ships; the product fork is open)

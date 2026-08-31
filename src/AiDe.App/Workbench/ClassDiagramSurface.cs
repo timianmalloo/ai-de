@@ -170,6 +170,8 @@ public sealed class ClassDiagramSurface : ContentControl
     internal void SetShowDependencies(bool on) => _showDeps.IsChecked = on;
     /// <summary>The number of UML dependency arrows drawn by the last render (for tests).</summary>
     internal int DrawnDependencyCount => _drawnDeps;
+    /// <summary>The disclosure/notes line currently shown (for tests).</summary>
+    internal string DisclosureText => _disclosure.Text;
 
     /// <summary>Builds the hierarchy from a graph and renders it (ADR-0020).</summary>
     public void ShowGraph(IReadOnlyList<CanvasNode>? nodes, IReadOnlyList<CanvasEdge>? edges) =>
@@ -215,10 +217,7 @@ public sealed class ClassDiagramSurface : ContentControl
             ? $"Class hierarchy — {hierarchy.Types.Count} of {_full.Types.Count} type(s) match \u201c{_search.Text}\u201d"
             : $"Class hierarchy — {hierarchy.Types.Count} type(s), {hierarchy.Relations.Count} relationship(s)";
 
-        var notes = new List<string>
-        {
-            "Members are not extracted yet, so types show relationships only (ADR-0020 Phase 1).",
-        };
+        var notes = new List<string>();
         if (hierarchy.ExternalRelations > 0)
         {
             notes.Add($"{hierarchy.ExternalRelations} relationship(s) to base types/interfaces outside the analysed scope are not drawn.");
@@ -275,6 +274,10 @@ public sealed class ClassDiagramSurface : ContentControl
     private void RenderDiagram(ClassHierarchy hierarchy, List<string> notes)
     {
         var gen = ++_renderGen;   // supersedes any in-flight member fills from an earlier render
+        // Build a private DISPLAY copy for the disclosure line; the caller's `notes` stays pristine so
+        // the prefetch re-render (below) starts from the same base rather than re-inserting the
+        // "Showing N of M" note on top of a copy that already has it.
+        var display = new List<string>(notes);
         var degree = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var r in hierarchy.Relations)
         {
@@ -291,10 +294,10 @@ public sealed class ClassDiagramSurface : ContentControl
 
         if (hierarchy.Types.Count > drawn.Count)
         {
-            notes.Insert(
+            display.Insert(
                 0, $"Showing the {drawn.Count} most-connected of {hierarchy.Types.Count} types — search to focus, or switch to List.");
         }
-        _disclosure.Text = string.Join("  ", notes);
+        _disclosure.Text = string.Join("  ", display);
 
         var edges = hierarchy.Relations
             .Where(r => drawnIds.Contains(r.From) && drawnIds.Contains(r.To))
