@@ -9,13 +9,22 @@ namespace AiDe.Core.Tests;
 /// <remarks>
 /// <para><b>877 documents were in the graph and not one fact came from their prose.</b> The reader
 /// saw frontmatter only and disclosed <c>knowledge-body-not-analysed</c> on every scope. These pin
-/// the one thing now read from the body — a markdown hyperlink to another document in the same
-/// scope — and, just as importantly, pin that everything else is COUNTED rather than silently
-/// skipped.</para>
+/// the one thing now read from the body — a markdown hyperlink to another document — and, just as
+/// importantly, pin that everything else is COUNTED rather than silently skipped.</para>
 ///
 /// <para><b>Both directions, every time.</b> A disclosure that fires on every scope is noise and one
 /// that never fires is decoration (DC-025), so each boundary here is asserted present when there IS
 /// something to hide and absent when there is not.</para>
+///
+/// <para><b>Every fixture here now names a SCOPE and a WORKSPACE, and that is the policy change
+/// these tests were rewritten for.</b> They were first written when a scope was the unit of
+/// resolution — a link above the scope was its own boundary, because a wider scope might hold the
+/// target and this reader had no way to know. That was right then and is wrong now: knowledge scopes
+/// NEST, each document is emitted by exactly one scope, and there is no wider scope left to resolve
+/// a cross-directory link (DC-051). So resolution reads the whole workspace and emission covers one
+/// directory, and a fixture that conflated the two would be testing a topology the product no longer
+/// has. The behaviour each test guards is unchanged; what moved is where the boundary sits, and the
+/// boundary tests moved with it rather than being relaxed.</para>
 /// </remarks>
 public sealed class KnowledgeBodyTests : IDisposable
 {
@@ -36,10 +45,22 @@ public sealed class KnowledgeBodyTests : IDisposable
         File.WriteAllText(path, content);
     }
 
-    private async Task<IReadOnlyList<EvidenceAssertion>> ReadAsync(string? root = null)
+    /// <summary>Extract ONE scope, resolving against the whole fixture workspace.</summary>
+    /// <remarks>
+    /// <paramref name="scope"/> is the directory whose documents are emitted; <c>_dir</c> is always
+    /// the workspace. Passing the survey explicitly is what the real composition does —
+    /// <c>WorkspaceCore</c> builds it once per revision and hands it to every scope — and building it
+    /// AFTER the fixture is written matters: the map is a snapshot of the filesystem, so a survey
+    /// taken before the files exist would resolve nothing and the test would prove the opposite of
+    /// what it says.
+    /// </remarks>
+    private async Task<IReadOnlyList<EvidenceAssertion>> ReadAsync(string? scope = null)
     {
         var result = await new KnowledgeExtractor().ExtractAsync(
-            new ExtractionRequest("knowledge:docs", root ?? _dir, "rev-1", 1), CancellationToken.None);
+            new ExtractionRequest(
+                "knowledge:docs", scope ?? _dir, "rev-1", 1,
+                WorkspaceKnowledge: KnowledgeExtractor.Survey(_dir)),
+            CancellationToken.None);
 
         return result.Assertions;
     }
@@ -76,7 +97,10 @@ public sealed class KnowledgeBodyTests : IDisposable
             # Workspace
             """);
 
-        var facts = await ReadAsync();
+        // The two documents are in SIBLING directories, which are two scopes. Under the old policy
+        // this edge existed only because a wider scope walked both; now it exists because resolution
+        // reads the workspace, and the scope emitting it is the one that owns `0001.md`.
+        var facts = await ReadAsync(Path.Combine(_dir, "adr"));
 
         var edge = Assert.Single(facts, a => a.Predicate == "links_to");
 
@@ -122,7 +146,7 @@ public sealed class KnowledgeBodyTests : IDisposable
             ---
             """);
 
-        var facts = await ReadAsync();
+        var facts = await ReadAsync(Path.Combine(_dir, "adr"));
 
         Assert.Contains(facts, a => a.Predicate == "implements" && a.Object == "spec-workspace");
         Assert.DoesNotContain(facts, a => a.Predicate == "links_to");
@@ -171,6 +195,9 @@ public sealed class KnowledgeBodyTests : IDisposable
             ---
             """);
 
+        // The target is now REACHABLE — it is in the workspace map — so the only thing that can stop
+        // the edge is the fence. Before workspace-wide resolution this fixture had a second reason to
+        // pass and could not tell them apart.
         Assert.DoesNotContain(await ReadAsync(), a => a.Predicate == "links_to");
     }
 
@@ -182,11 +209,11 @@ public sealed class KnowledgeBodyTests : IDisposable
         // this product indexing documents that opt in. MEASURED on TheTerrace, the `knowledge:docs`
         // scope discloses 109 broken cross-references.
         //
-        // The not-a-node half fires on NEITHER corpus, and that was checked rather than assumed: the
-        // 19 candidates in this repository all point at `../../spikes/*/RESULT.md`, which is outside
-        // the docs scope and is counted by the boundary above it. It is kept, and proved by this
-        // fixture only, because a link to a sibling README inside the same tree is one commit away —
-        // and stated plainly here rather than left to look like a measured number (DC-016).
+        // The not-a-node half NOW FIRES ON A REAL CORPUS, and that is the boundary moving out to the
+        // workspace root made visible: the 19 candidates in this repository all point at
+        // `../../spikes/*/RESULT.md`, and until this change they were counted as "outside this
+        // scope" — a boundary claimed where there was none, since the files are right there and
+        // simply declare no id. Measured after: 19 on ai-de, 0 on TheTerrace.
         Write("a.md", """
             ---
             id: doc-a
@@ -199,7 +226,7 @@ public sealed class KnowledgeBodyTests : IDisposable
 
         var facts = await ReadAsync();
 
-        Assert.Contains("(1 prose link(s) name a markdown file that is not in this scope)",
+        Assert.Contains("(1 prose link(s) name a markdown file that is not in this workspace)",
             Disclosure(facts, KnowledgeExtractor.Disclosures.LinkTargetMissing), StringComparison.Ordinal);
 
         Assert.Contains("(1 prose link(s) resolve to",
@@ -207,26 +234,100 @@ public sealed class KnowledgeBodyTests : IDisposable
     }
 
     [Fact]
-    public async Task ALinkAboveTheScopeIsItsOwnBoundaryAndAUrlIsNotCountedAsOne()
+    public async Task ALinkAboveTheWORKSPACEIsItsOwnBoundaryAndAUrlIsNotCountedAsOne()
     {
-        // The escape and the broken link are also different statements: a document one level up may
-        // well be a node in a wider scope, and this reader will not stat paths outside the tree it
-        // was given to find out. The URL half is the DC-050 guard on the guard — 329 http links on
-        // TheTerrace would have made this count describe something that does not exist.
+        // THE DECISION THIS CHANGE REVERSES, rewritten rather than deleted. The boundary used to be
+        // the SCOPE: a link one directory up was refused because a wider scope might hold the target
+        // and this reader had no way to know. Once each document is emitted by exactly one scope
+        // there is no wider scope, so refusing it would mean the edge exists nowhere — measured, that
+        // is 30 of 42 prose-link edges (DC-051). The boundary has not been relaxed, it has MOVED to
+        // the workspace root, which is the real edge of what this product reads.
+        //
+        // The escape and the broken link are still different statements: a document outside the
+        // workspace may well exist and this reader will not stat paths outside the tree it was given
+        // to find out. The URL half is the DC-050 guard on the guard — 329 http links on TheTerrace
+        // would have made this count describe something that does not exist.
+        //
+        // MEASURED: this fires on NEITHER corpus (0 of TheTerrace's 237 prose links and 0 of this
+        // repository's escape the workspace), so this fixture is the only thing that proves it works
+        // (DC-016). It is kept because a docs tree linking into a sibling checkout is one commit
+        // away, and the alternative is calling such a link broken, which is a wrong number.
         Write("inner/a.md", """
             ---
             id: doc-a
             ---
 
-            See [the parent](../../elsewhere.md) and [the standard](https://example.com/spec.md).
+            See [the parent](../../../elsewhere.md) and [the standard](https://example.com/spec.md).
             """);
 
         var facts = await ReadAsync(Path.Combine(_dir, "inner"));
 
-        Assert.Contains("(1 prose link(s) point above this scope's directory)",
-            Disclosure(facts, KnowledgeExtractor.Disclosures.LinkTargetOutsideScope), StringComparison.Ordinal);
+        Assert.Contains("(1 prose link(s) point above the workspace root)",
+            Disclosure(facts, KnowledgeExtractor.Disclosures.LinkTargetOutsideWorkspace),
+            StringComparison.Ordinal);
 
         Assert.False(Discloses(facts, KnowledgeExtractor.Disclosures.LinkTargetMissing));
+    }
+
+    [Fact]
+    public async Task ALinkAboveTheSCOPEButInsideTheWorkspaceIsAnEdgeRatherThanABoundary()
+    {
+        // THE OTHER DIRECTION of the policy change, and the one that has to be asserted for the
+        // rewrite above to mean anything: the same shape of link — a path climbing out of the
+        // emitting scope — is now FOLLOWED when it lands inside the workspace. Without this, moving
+        // the boundary out would be indistinguishable from deleting the disclosure.
+        Write("inner/a.md", """
+            ---
+            id: doc-a
+            ---
+
+            See [the sibling](../outer/b.md).
+            """);
+
+        Write("outer/b.md", """
+            ---
+            id: doc-b
+            ---
+            """);
+
+        var facts = await ReadAsync(Path.Combine(_dir, "inner"));
+
+        var edge = Assert.Single(facts, a => a.Predicate == "links_to");
+
+        Assert.Equal("doc-a", edge.Subject);
+        Assert.Equal("doc-b", edge.Object);
+        Assert.False(Discloses(facts, KnowledgeExtractor.Disclosures.LinkTargetOutsideWorkspace));
+    }
+
+    [Fact]
+    public async Task AScopeEmitsForItsOwnDirectoryAndNotForTheOneBeneathIt()
+    {
+        // THE DE-DUPLICATION, at the level of the reader. `docs` and `docs/adr` are both scopes
+        // because both hold a document with an id, and a recursive walk had `docs` emit `adr-0001`
+        // as well — 2,371 `node_class` rows for 878 distinct documents on TheTerrace.
+        //
+        // The nested document is still READ: its id is in the workspace survey, which is why the
+        // link below resolves. Read widely, emit narrowly — asserting only the absence would pass
+        // just as well on a reader that had stopped looking at the directory altogether.
+        Write("index.md", """
+            ---
+            id: doc-index
+            ---
+
+            The register is [here](adr/0001.md).
+            """);
+
+        Write("adr/0001.md", """
+            ---
+            id: adr-0001
+            ---
+            """);
+
+        var facts = await ReadAsync();
+
+        Assert.Contains(facts, a => a.Subject == "doc-index" && a.Predicate == "node_class");
+        Assert.DoesNotContain(facts, a => a.Subject == "adr-0001");
+        Assert.Contains(facts, a => a.Predicate == "links_to" && a.Object == "adr-0001");
     }
 
     [Fact]
@@ -398,7 +499,7 @@ public sealed class KnowledgeBodyTests : IDisposable
     }
 
     [Theory]
-    // A sibling directory whose name STARTS with the scope's is not inside it. Without the trailing
+    // A sibling directory whose name STARTS with the root's is not inside it. Without the trailing
     // separator on the prefix test, `docs-old` resolves as though it were under `docs`.
     [InlineData("../docs-old/x.md", false)]
     [InlineData("../x.md", false)]
@@ -408,8 +509,13 @@ public sealed class KnowledgeBodyTests : IDisposable
     [InlineData("https://example.com/x.md", false)]
     [InlineData("x.html", false)]
     [InlineData("x.cs", false)]
-    public void OnlyAMarkdownPathInsideTheScopeResolves(string target, bool expected)
+    public void OnlyAMarkdownPathInsideTheResolutionRootResolves(string target, bool expected)
     {
+        // The ROOT passed here is now the workspace, not the scope — the same containment check, one
+        // level out. The cases are unchanged because the rule is: a path is refused by WHERE IT
+        // LANDS, whatever the root happens to be. What changed is which root the caller supplies,
+        // and `ALinkAboveTheSCOPEButInsideTheWorkspaceIsAnEdgeRatherThanABoundary` is where that is
+        // pinned.
         var root = Path.Combine(_dir, "docs");
         var from = Path.Combine(root, "a.md");
 

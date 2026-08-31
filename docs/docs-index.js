@@ -1,8 +1,8 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T20:54:30Z",
+  "project": "ai-de-facelift",
+  "generated": "2026-08-31T20:55:25Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1979,7 +1979,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eca65f961b4c8aded0ec5862302f9463481fbcdfb8efe831f02d6de079325680"
+      "sourceSha256": "12ad305dac534293ce074e888061c82c25f559656d3381b3f3f7d63318b6dec7"
     },
     {
       "id": "domain-experts",
@@ -2685,7 +2685,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fc0f3a3eedd25e42b46fce0da8b30fa6c38a47a741deb0623f3d47065efdb4cd"
+      "sourceSha256": "d8627086a234845dc0175236c8447f0755814b39356aea84cba1e5dbae626d90"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -6660,5 +6660,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "52f71531643764827c56cb73eaea63302704d046879595490466f05606cdf3fe"
+  "graphSha256": "bb9604685462071420ac1baa0d4d772780200f1477fa381ee9a5e8e90ed66009"
 };

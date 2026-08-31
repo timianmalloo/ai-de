@@ -34,12 +34,70 @@ namespace AiDe.Core.Extraction;
 /// its 5 occurrences in this repository). A link is different in kind: <c>[x](../y.md)</c> has one
 /// reading.</para>
 ///
+/// <para><b>READ WIDELY, EMIT NARROWLY — and this reverses a decision made the day before.</b>
+/// Knowledge scopes NEST: discovery yields a scope for every directory holding a document with an
+/// id, so <c>docs</c> and <c>docs/adr</c> are both scopes, and a reader that walked its scope
+/// RECURSIVELY indexed <c>docs/adr/0001.md</c> from both. MEASURED on TheTerrace: <b>2,371
+/// <c>node_class</c> rows for 878 distinct documents</b> — every knowledge fact stored ~2.7 times.
+/// Walking each scope's OWN directory fixes that exactly, and on its own it cost <b>30 of the 42
+/// prose-link edges</b>: a link from <c>docs/adr</c> to <c>docs/specs</c> only resolved because the
+/// recursive parent had read both sides. That change was made, measured and reverted rather than
+/// shipped (DC-051).</para>
+///
+/// <para><b>So the two jobs are separated instead of traded.</b> RESOLUTION reads the whole
+/// workspace — <see cref="WorkspaceKnowledge"/>, built once per revision by <c>WorkspaceCore</c> and
+/// handed to every scope, exactly as <c>WorkspaceModules</c> already is for Python and TypeScript.
+/// EMISSION covers only the markdown directly in this scope's directory, so each document is
+/// extracted by exactly one scope. Measured on TheTerrace: 878 documents preserved, <c>node_class</c>
+/// 2,371 → 878, distinct <c>links_to</c> edges 42 → 42 (rows 68 → 42).</para>
+///
+/// <para><b>What that overturns.</b> The reader shipped on 2026-08-31 with <em>"a link above the
+/// scope is its own boundary"</em> — a path climbing out of the scope was refused because a wider
+/// scope might hold it and this reader had no way to know. That was RIGHT while the scope was the
+/// unit of resolution, and is WRONG now that each document belongs to exactly one scope: under the
+/// old rule a link from <c>docs/adr/0001.md</c> to <c>../specs/workspace.md</c> would be a boundary
+/// on the only scope that will ever read <c>0001.md</c>, and the edge would exist nowhere. The
+/// boundary has not been deleted, it has MOVED OUT to the workspace root, which is the real edge of
+/// what this product reads. Measured consequence on this repository: 19 links to
+/// <c>../../spikes/*/RESULT.md</c> that used to be counted as "outside the scope" are now correctly
+/// counted as "resolves to a markdown file that declares no id".</para>
+///
+/// <para><b>Widening resolution is not widening inference.</b> The user's decision of 2026-08-30
+/// still governs: a link enters the graph only because an author WROTE a path and that path names a
+/// file this reader opened and found an id in. Nothing here matches by name, by resemblance or by
+/// proximity — the workspace map is keyed by PATH, and a document's id is only ever read out of the
+/// file the path lands on.</para>
+///
 /// <para><b>Why not point the fixture extractor at the repository instead.</b> It enumerates
 /// <c>*</c> recursively with no exclusions — pointed at a real checkout it would walk
 /// <c>node_modules</c>, <c>bin</c> and <c>.git</c>. It also stamps <c>fixture-extractor</c> into
 /// provenance, which would be a lie on a real document. The parsing is shared
 /// (<see cref="KnowledgeFrontmatter"/>); only the walking and the identity differ.</para>
 /// </remarks>
+/// <summary>Every markdown file in the workspace, and the node id it declares — or none.</summary>
+/// <param name="Root">
+/// The workspace root. A prose link that resolves ABOVE this is outside what the product reads, and
+/// is a boundary rather than a broken cross-reference — the same distinction, one level out from
+/// where it used to sit.
+/// </param>
+/// <param name="Documents">
+/// Full path to declared id, or <c>null</c> for a markdown file that declares none. BOTH answers are
+/// needed and they are different: absent means the link names a file that is not there (a defect in
+/// the document), present-with-null means the file is there and declined to join the graph (this
+/// product's boundary). Collapsing them buries the first inside the second.
+/// </param>
+/// <remarks>
+/// <para><b>Keyed by PATH, never by name.</b> The map is what makes cross-directory resolution
+/// possible without inference: a link is followed to a file, and the id is whatever that file says
+/// it is. Nothing is matched by resemblance.</para>
+///
+/// <para>The comparer is ORDINAL-IGNORE-CASE, and this is part of the contract rather than an
+/// implementation detail — these paths come off a Windows filesystem where <c>../ADR/0001.md</c> and
+/// <c>../adr/0001.md</c> are one file, and a case-exact lookup would silently miss one of them.
+/// <see cref="KnowledgeExtractor.Survey"/> is the only thing that should build one.</para>
+/// </remarks>
+public sealed record WorkspaceKnowledge(string Root, IReadOnlyDictionary<string, string?> Documents);
+
 public sealed class KnowledgeExtractor : IExtractor
 {
     public string ScopeKind => "knowledge";
@@ -65,17 +123,47 @@ public sealed class KnowledgeExtractor : IExtractor
     /// </remarks>
     public static class Disclosures
     {
-        /// <summary>A markdown file with frontmatter but no id cannot be a node.</summary>
+        /// <summary>
+        /// A markdown file with frontmatter but no id cannot be a node.
+        /// </summary>
+        /// <remarks>
+        /// <b>Counted over this scope's OWN directory only</b>, since that is now the only markdown
+        /// it emits for. The residual: a directory whose markdown declares graph frontmatter and no
+        /// id is not a scope (nothing in it declares one), so nothing counts its files — where
+        /// before, an ancestor scope's recursive walk did. MEASURED on both corpora at the moment of
+        /// the change: TheTerrace has 209 markdown files in non-scope directories and ai-de 187, and
+        /// <b>zero of either</b> carry graph frontmatter without an id, so nothing observable is lost
+        /// today. Stated here rather than left silent (DC-025): if that number stops being zero the
+        /// fix is in DISCOVERY — such a directory is one that meant to hold knowledge — not another
+        /// recursive walk here, which is the thing this change exists to remove.
+        /// </remarks>
         public const string ArtifactsWithoutIds = "knowledge-artifacts-without-ids";
 
-        /// <summary>GAP: a prose link names a markdown file that is not in this scope's tree.</summary>
+        /// <summary>GAP: a prose link names a markdown file that is nowhere in the workspace.</summary>
         public const string LinkTargetMissing = "knowledge-prose-link-target-missing";
 
         /// <summary>BOUNDARY: a prose link resolves to a markdown file that declares no id.</summary>
         public const string LinkTargetNotANode = "knowledge-prose-link-target-not-a-node";
 
-        /// <summary>BOUNDARY: a prose link points above this scope's root, where it cannot look.</summary>
-        public const string LinkTargetOutsideScope = "knowledge-prose-link-target-outside-scope";
+        /// <summary>
+        /// BOUNDARY: a prose link points above the WORKSPACE root, where this product does not look.
+        /// </summary>
+        /// <remarks>
+        /// <para><b>Renamed from <c>knowledge-prose-link-target-outside-scope</c>, because the
+        /// boundary moved.</b> It used to mean "above this scope's directory", which fired 71 times
+        /// across 16 scopes on TheTerrace for links that a sibling scope could perfectly well
+        /// resolve — a boundary reported where there was none. Now that resolution reads the whole
+        /// workspace, the only place this reader genuinely cannot look is outside the workspace, and
+        /// that is what the disclosure says.</para>
+        ///
+        /// <para><b>It fires on NEITHER corpus, and that is measured rather than assumed</b> — 0 of
+        /// TheTerrace's 237 prose links and 0 of this repository's escape the workspace root. Kept,
+        /// and proved by fixture rather than by corpus, because a docs tree that links into a
+        /// sibling checkout is one commit away and this repository is itself worked in sibling
+        /// worktrees; the alternative is calling such a link a broken cross-reference, which is a
+        /// wrong number rather than a missing one (DC-016, DC-050).</para>
+        /// </remarks>
+        public const string LinkTargetOutsideWorkspace = "knowledge-prose-link-target-outside-workspace";
 
         /// <summary>BOUNDARY: a document's structure is counted, not extracted.</summary>
         public const string HeadingsNotAnalysed = "knowledge-headings-not-analysed";
@@ -118,30 +206,25 @@ public sealed class KnowledgeExtractor : IExtractor
         var glossaries = 0;
 
         // Every document in this scope, read ONCE and held. A link's target cannot be resolved until
-        // every id in the scope is known, and a link may name a document the walk has not reached
-        // yet — resolution that depends on file order is resolution that is wrong half the time.
-        // The Python reader collects its module names first for exactly this reason; the difference
-        // is that a document's id lives inside the file, so the collecting pass IS the reading pass.
+        // every id is known, and a link may name a document the walk has not reached yet —
+        // resolution that depends on file order is resolution that is wrong half the time. The
+        // Python reader collects its module names first for exactly this reason.
         var read = new List<Read>();
 
-        // The FILE is the key, not the id: a link names a path, and a path is the only thing that
-        // tells two documents apart before their ids are known. OrdinalIgnoreCase because these
-        // paths came off a Windows filesystem, where `../ADR/0001.md` and `../adr/0001.md` are one
-        // file and a case-exact lookup would silently miss one of them.
-        var byPath = new Dictionary<string, KnowledgeRecord>(StringComparer.OrdinalIgnoreCase);
+        // RESOLUTION READS THE WHOLE WORKSPACE; EMISSION IS THIS DIRECTORY ONLY. The map is keyed by
+        // PATH — a link names a path, and a path is the only thing that tells two documents apart
+        // before their ids are known — and a null value means "the file is there and declares no
+        // id", which is a different statement from "not in the map" and must stay separable.
+        //
+        // The fallback is the SCOPE's own tree, not an empty map: a null map would turn every prose
+        // link into a broken cross-reference, which is a wrong number rather than a missing one. It
+        // matters only to a caller that builds a request by hand; WorkspaceCore always supplies one.
+        var workspace = request.WorkspaceKnowledge ?? Survey(directory);
+        var resolutionRoot = Path.GetFullPath(workspace.Root);
 
-        // Every markdown file in the scope, id or not. `byPath` answers "is this a node"; this
-        // answers "is this file even there" — and the difference between the two is the difference
-        // between a document that declined to join the graph and a cross-reference that is broken.
-        var markdown = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        var root = Path.GetFullPath(directory);
-
-        foreach (var file in Files(directory).OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
+        foreach (var file in OwnFiles(directory).OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
         {
             cancellationToken.ThrowIfCancellationRequested();
-
-            markdown.Add(Path.GetFullPath(file));
 
             string[] lines;
             try { lines = File.ReadAllLines(file); }
@@ -162,12 +245,11 @@ public sealed class KnowledgeExtractor : IExtractor
             var relative = Path.GetRelativePath(directory, file).Replace((char)92, '/');
 
             read.Add(new Read(Path.GetFullPath(file), relative, record, body));
-            byPath[Path.GetFullPath(file)] = record;
         }
 
         var linksMissing = 0;
         var linksNotANode = 0;
-        var linksOutsideScope = 0;
+        var linksOutsideWorkspace = 0;
 
         foreach (var document in read)
         {
@@ -219,37 +301,45 @@ public sealed class KnowledgeExtractor : IExtractor
 
             foreach (var link in document.Body.MarkdownLinks)
             {
-                var target = Resolve(document.File, link.Target, root);
+                var target = Resolve(document.File, link.Target, resolutionRoot);
 
                 if (target is null)
                 {
-                    // Not a relative markdown path inside this scope. A URL, an .html page, or a
-                    // path that climbs above the scope's root — the last of which may well exist and
-                    // be a node in a wider scope, which this reader has no way to know and will not
-                    // guess at by stat-ing paths outside the tree it was given.
-                    if (IsMarkdownReference(link.Target)) linksOutsideScope++;
+                    // Not a relative markdown path inside the WORKSPACE. A URL, an .html page, or a
+                    // path that climbs out of the tree this product reads — the last of which may
+                    // well exist somewhere else on the machine, which this reader has no way to know
+                    // and will not guess at by stat-ing paths outside what it was given.
+                    if (IsMarkdownReference(link.Target)) linksOutsideWorkspace++;
                     continue;
                 }
 
-                if (!byPath.TryGetValue(target, out var destination))
+                if (!workspace.Documents.TryGetValue(target, out var destination))
                 {
-                    // Two different statements, kept apart on purpose. A file that is not there is a
-                    // broken cross-reference — a defect in the document. A file that is there and
-                    // declares no id is this product's boundary: it indexes documents that opt in.
-                    if (markdown.Contains(target)) linksNotANode++;
-                    else linksMissing++;
+                    // A file that is not there at all is a broken cross-reference — a defect in the
+                    // document, and the only GAP this reader reports.
+                    linksMissing++;
+                    continue;
+                }
+
+                if (destination is null)
+                {
+                    // The file IS there and declares no id. That is this product's BOUNDARY rather
+                    // than a defect: it indexes documents that opt in. Kept apart from the case
+                    // above on purpose (DC-050) — merging them would bury a broken cross-reference
+                    // inside a statement about scope.
+                    linksNotANode++;
                     continue;
                 }
 
                 // A document linking to itself is a table of contents, not a relationship.
-                if (string.Equals(destination.Id, record.Id, StringComparison.Ordinal)) continue;
+                if (string.Equals(destination, record.Id, StringComparison.Ordinal)) continue;
 
                 // Already an EDGE, and a better one. 81 of the 128 resolving prose links on
                 // TheTerrace name a document the frontmatter already links with a TYPED relation
                 // (`refines`, `depends-on`); an untyped second edge between the same pair says
                 // nothing the graph does not carry, and doubles the pair's weight in every view
                 // that counts edges.
-                if (declared.Contains(destination.Id)) continue;
+                if (declared.Contains(destination)) continue;
 
                 // VERIFIED, and it is worth being precise about why. Two things were observed rather
                 // than inferred: the author wrote this href in this document, and the path it names
@@ -258,7 +348,7 @@ public sealed class KnowledgeExtractor : IExtractor
                 // borrowing `relates-to` would make an untyped mention indistinguishable from a
                 // declared relation (DC-022: a predicate is a name, and names collide).
                 assertions.Add(Fact(
-                    request, record.Id, "links_to", destination.Id,
+                    request, record.Id, "links_to", destination,
                     VerificationStatus.Verified, Where(link.Line)));
             }
         }
@@ -266,33 +356,38 @@ public sealed class KnowledgeExtractor : IExtractor
         if (withoutIds > 0)
         {
             // Counted, because a document that MEANT to join the graph and cannot is a defect in
-            // that document — distinct from an ordinary markdown file that was never a node.
+            // that document — distinct from an ordinary markdown file that was never a node. Over
+            // THIS DIRECTORY only, matching what the scope emits for; the residual and its
+            // measurement are on Disclosures.ArtifactsWithoutIds.
             Disclose($"{Disclosures.ArtifactsWithoutIds} ({withoutIds:N0} file(s) have frontmatter but no id)");
         }
 
         if (linksMissing > 0)
         {
-            // A GAP, and the only one here. MEASURED on TheTerrace, on the scope that holds all 877
-            // documents: 109 of its 237 prose links name a markdown file that is not there —
-            // cross-references that rotted when a document moved, and nothing had ever said so.
+            // A GAP, and the only one here. MEASURED on TheTerrace: 109 of 237 prose links name a
+            // markdown file that is nowhere in the workspace — cross-references that rotted when a
+            // document moved, and nothing had ever said so. The count is unchanged by workspace-wide
+            // resolution, which is the check that matters: widening WHERE the reader looks must not
+            // turn broken links into found ones, and it did not.
             Disclose($"{Disclosures.LinkTargetMissing} ({linksMissing:N0} prose link(s) name a " +
-                     "markdown file that is not in this scope)");
+                     "markdown file that is not in this workspace)");
         }
 
         if (linksNotANode > 0)
         {
-            // Fires on NEITHER corpus today, and that is a measurement rather than an assumption:
-            // the 19 candidates in this repository all name `../../spikes/*/RESULT.md`, which the
-            // boundary above counts instead. Kept because a link to a sibling README inside the same
-            // tree is one commit away, and proved by fixture rather than by corpus (DC-016).
+            // NOW FIRES ON A REAL CORPUS, and that is the visible half of the boundary moving out to
+            // the workspace root. The 19 links in this repository naming `../../spikes/*/RESULT.md`
+            // used to be counted as "outside this scope" — a boundary claimed where there was none,
+            // since the files are right there and simply declare no id. Measured: 19 on ai-de, 0 on
+            // TheTerrace.
             Disclose($"{Disclosures.LinkTargetNotANode} ({linksNotANode:N0} prose link(s) resolve to " +
                      "a markdown file that declares no id, so there is nothing to link to)");
         }
 
-        if (linksOutsideScope > 0)
+        if (linksOutsideWorkspace > 0)
         {
-            Disclose($"{Disclosures.LinkTargetOutsideScope} ({linksOutsideScope:N0} prose link(s) " +
-                     "point above this scope's directory)");
+            Disclose($"{Disclosures.LinkTargetOutsideWorkspace} ({linksOutsideWorkspace:N0} prose " +
+                     "link(s) point above the workspace root)");
         }
 
         if (headings > 0)
@@ -344,9 +439,17 @@ public sealed class KnowledgeExtractor : IExtractor
         && !Uri.IsWellFormedUriString(target, UriKind.Absolute);
 
     /// <summary>
-    /// The full path a link names, or null when it is not a markdown file inside this scope.
+    /// The full path a link names, or null when it is not a markdown file inside
+    /// <paramref name="resolutionRoot"/>.
     /// </summary>
     /// <remarks>
+    /// <para><b>The root is the WORKSPACE, not the scope</b> — that is the decision this change
+    /// reverses. A scope-bounded root refused <c>../specs/workspace.md</c> written in
+    /// <c>docs/adr/0001.md</c>, and once each document is extracted by exactly one scope there is no
+    /// second reader to pick it up: the edge would exist nowhere. Bounding at the workspace keeps
+    /// the check doing its real job, which is telling a link this product declines to follow apart
+    /// from a link that is broken.</para>
+    ///
     /// <para>Only <c>.md</c> targets. A link to an <c>.html</c> page or a <c>.cs</c> file names
     /// something this graph has no node for — 31 such links on TheTerrace, 30 of them to HTML — and
     /// resolving one would mean inventing a node kind to point at.</para>
@@ -354,7 +457,7 @@ public sealed class KnowledgeExtractor : IExtractor
     /// <para>The escape check is on the RESOLVED path, so <c>../../../x.md</c> is refused by where
     /// it lands rather than by how it is spelled.</para>
     /// </remarks>
-    internal static string? Resolve(string fromFile, string target, string scopeRoot)
+    internal static string? Resolve(string fromFile, string target, string resolutionRoot)
     {
         if (!IsMarkdownReference(target)) return null;
 
@@ -373,9 +476,9 @@ public sealed class KnowledgeExtractor : IExtractor
             return null;
         }
 
-        // Inside the scope, or nothing. The trailing separator matters: without it a sibling
-        // directory called `docs-old` passes the prefix test against a scope rooted at `docs`.
-        var bounded = scopeRoot.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+        // Inside the root, or nothing. The trailing separator matters: without it a sibling
+        // directory called `docs-old` passes the prefix test against a root of `docs`.
+        var bounded = resolutionRoot.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
             + Path.DirectorySeparatorChar;
 
         return full.StartsWith(bounded, StringComparison.OrdinalIgnoreCase) ? full : null;
@@ -387,8 +490,96 @@ public sealed class KnowledgeExtractor : IExtractor
         new(request.ScopeId, request.ArtifactRevision, subject, predicate, obj,
             EvidenceOrigin.Static, status, provenance);
 
-    /// <summary>Markdown directly under the scope, excluding vendored and generated trees.</summary>
-    internal static IEnumerable<string> Files(string directory)
+    /// <summary>
+    /// The markdown this scope EMITS for: its own directory, and no deeper.
+    /// </summary>
+    /// <remarks>
+    /// <b>Non-recursive, and that is the whole de-duplication.</b> Discovery yields a scope for every
+    /// directory holding a document with an id, so scopes nest; a recursive walk indexed
+    /// <c>docs/adr/0001.md</c> from <c>knowledge:docs</c> AND <c>knowledge:docs/adr</c>, and the
+    /// store held every knowledge fact ~2.7 times — 2,371 <c>node_class</c> rows for 878 distinct
+    /// documents on TheTerrace. Reading only this directory makes each document belong to exactly
+    /// one scope. It is safe ONLY because resolution no longer uses this walk: see
+    /// <see cref="Survey"/> and DC-051.
+    /// </remarks>
+    internal static IEnumerable<string> OwnFiles(string directory)
+    {
+        string[] files;
+        try { files = Directory.GetFiles(directory, "*.md"); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { yield break; }
+
+        foreach (var file in files.Where(f => !IsTemplate(f))) yield return file;
+    }
+
+    /// <summary>
+    /// Every markdown file under <paramref name="root"/>, and the id it declares — or none.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Built ONCE per revision by <c>WorkspaceCore</c> and handed to every scope</b>, for
+    /// the same reason <c>WorkspaceModules</c> is: thirty-nine knowledge scopes each walking the
+    /// whole tree is thirty-nine walks, and resolving against what has already been extracted
+    /// instead would make an edge depend on the order the scopes happened to run in.</para>
+    ///
+    /// <para><b>Only the frontmatter block is read.</b> The id is decided in the first few lines or
+    /// not at all, and this opens every markdown file in the repository — 1,087 on TheTerrace, of
+    /// which 209 are ordinary READMEs that are in the map purely so a link to one is reported as a
+    /// boundary rather than as a broken cross-reference.</para>
+    /// </remarks>
+    public static WorkspaceKnowledge Survey(string root)
+    {
+        ArgumentNullException.ThrowIfNull(root);
+
+        var documents = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+
+        if (Directory.Exists(root))
+        {
+            foreach (var file in AllFiles(root))
+            {
+                documents[Path.GetFullPath(file)] =
+                    KnowledgeFrontmatter.Read(Frontmatter(file), out _)?.Id;
+            }
+        }
+
+        return new WorkspaceKnowledge(Path.GetFullPath(root), documents);
+    }
+
+    /// <summary>The frontmatter block of a file, delimiters included, or nothing.</summary>
+    /// <remarks>
+    /// The whole block rather than a fixed number of lines, so this and
+    /// <see cref="KnowledgeFrontmatter.Read"/> answer "is this a node" identically. A cap would make
+    /// the answer depend on how many typed links a document happens to declare first, and the header
+    /// is not always short: MEASURED in this repository, three frontmatter blocks run to 62, 54 and
+    /// 48 lines. A file that is a node to one reader and not to the other is the shape that produced
+    /// DC-041 here — two correct components disagreeing, with nothing comparing them.
+    /// </remarks>
+    private static IReadOnlyList<string> Frontmatter(string file)
+    {
+        var block = new List<string>();
+
+        try
+        {
+            using var reader = new StreamReader(file);
+
+            if (reader.ReadLine() is not { } first || first.Trim() != "---") return block;
+
+            block.Add(first);
+
+            while (reader.ReadLine() is { } line)
+            {
+                block.Add(line);
+                if (line.Trim() == "---") break;
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return [];
+        }
+
+        return block;
+    }
+
+    /// <summary>Markdown anywhere under a root, excluding vendored and generated trees.</summary>
+    internal static IEnumerable<string> AllFiles(string directory)
     {
         var skip = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {

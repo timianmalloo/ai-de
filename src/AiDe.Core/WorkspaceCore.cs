@@ -143,7 +143,7 @@ public sealed class WorkspaceCore : IDisposable
             .ExtractAsync(
                 new ExtractionRequest(
                     scopeId, rootPathOverride ?? RootPath, artifactRevision, generation,
-                    WorkspaceModules(artifactRevision)),
+                    WorkspaceModules(artifactRevision), WorkspaceDocuments(artifactRevision)),
                 cancellationToken)
             .ConfigureAwait(false);
 
@@ -580,6 +580,38 @@ public sealed class WorkspaceCore : IDisposable
             _modules = modules;
             _modulesRevision = artifactRevision;
             return modules;
+        }
+    }
+
+    private string? _documentsRevision;
+    private WorkspaceKnowledge? _documents;
+
+    /// <summary>
+    /// Every markdown file in the workspace and the node id it declares, so a prose link that leaves
+    /// its scope's directory can be resolved.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The same shape as <see cref="WorkspaceModules"/>, for a sharper reason.</b>
+    /// Knowledge scopes NEST — <c>docs</c> and <c>docs/adr</c> are both scopes — and the reader now
+    /// emits facts for its own directory only, so every document belongs to exactly one scope and
+    /// nothing wider is left to resolve a link that crosses a directory. Measured before the change:
+    /// making the walk narrow without this cost 30 of 42 prose-link edges (DC-051).</para>
+    ///
+    /// <para>Read from the FILESYSTEM rather than the store, and cached per revision, for the two
+    /// reasons stated above <see cref="WorkspaceModules"/>: an edge must not depend on the order the
+    /// scopes ran in, and thirty-nine knowledge scopes must not walk the tree thirty-nine times.
+    /// MEASURED on TheTerrace: one survey of 1,087 markdown files, and the whole index went from
+    /// 7.1s to 5.5s because the duplicated reading it replaces was the larger cost.</para>
+    /// </remarks>
+    private WorkspaceKnowledge WorkspaceDocuments(string artifactRevision)
+    {
+        lock (_modulesGate)
+        {
+            if (_documents is not null && _documentsRevision == artifactRevision) return _documents;
+
+            _documents = KnowledgeExtractor.Survey(RootPath);
+            _documentsRevision = artifactRevision;
+            return _documents;
         }
     }
 

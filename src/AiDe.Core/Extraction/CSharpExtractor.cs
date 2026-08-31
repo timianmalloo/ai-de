@@ -347,12 +347,49 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                 ProvenanceAt(where, projectPath, observedAt)));
         }
 
+        // WHICH TYPE CALLS WHICH, which `depends_on` does not say and was never able to.
+        //
+        // MEASURED on TheTerrace before any of this was written, because the volume decides the
+        // design: 35,364 invocations in hand-written source, of which 10,451 resolve to a type
+        // declared in this repository. Deduplicated that is 1,989 type pairs, 1,492 once a type
+        // calling itself is set aside — and only 415 of those 1,492 already exist as `depends_on`.
+        // **1,077 of them, 72%, are relationships the graph could not show**: a static helper, an
+        // extension method, a factory, a service resolved from a container and used once. A type
+        // depends on what it DECLARES; it calls plenty it never declares.
+        var callWatch = System.Diagnostics.Stopwatch.StartNew();
+        var calls = new CallCensus();
+
+        foreach (var (caller, callee, where) in TypeCalls(compiled.Compilation, calls, cancellationToken))
+        {
+            assertions.Add(Assertion(
+                request, caller, "calls", callee, VerificationStatus.Verified,
+                ProvenanceAt(where, projectPath, observedAt)));
+        }
+
+        callWatch.Stop();
+
+        // Each of these fires only on a non-zero count, and each says a DIFFERENT thing — a boundary
+        // this product declines to index, a gap it meant to read and could not, and three limits on
+        // what a compiler can tell you about where a call actually lands. DC-050 is the reason they
+        // are not one number: 246 "unresolved imports" that were all the standard library became the
+        // top of a priority list for work that did not exist.
+        foreach (var disclosure in calls.Disclosures())
+        {
+            assertions.Add(Assertion(
+                request, ScopeNodeId(request.ScopeId), DisclosurePredicate, disclosure,
+                VerificationStatus.Verified,
+                new Provenance(Path.GetFileName(projectPath), "1:1", ExtractorId, extractorVersion, observedAt)));
+        }
+
         // Complete means "this is the whole snapshot for this scope", which it is: the disclosures
         // are IN the snapshot rather than missing from it. Marking it incomplete would quarantine
         // every unrestored project, which is most of them on a fresh clone.
 
         if (Environment.GetEnvironmentVariable("AIDE_EXTRACTION_TIMING") is not null)
         {
+            Console.Error.WriteLine(
+                $"[timing]   call-scan {callWatch.ElapsedMilliseconds}ms over {calls.Sites:N0} " +
+                $"invocation(s), {calls.InThisRepository:N0} in-repository");
             Console.Error.WriteLine(
                 $"[timing]   enumerate-types {enumerateWatch.ElapsedMilliseconds}ms for {types.Count} type(s), " +
                 $"members {memberWatch.ElapsedMilliseconds}ms " +
@@ -368,6 +405,13 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         Activity.Current?.SetTag("extraction.read_ms", readMs);
         Activity.Current?.SetTag("extraction.walk_ms", walkStarted.ElapsedMilliseconds);
         Activity.Current?.SetTag("extraction.assertions", assertions.Count);
+
+        // The call scan is the largest single addition to a scope's cost — MEASURED at 4.6s of the
+        // main TheTerrace scope, against 1.2s for everything the extractor did before it — so it is
+        // emitted on the normal path rather than behind the timing flag. An operator asking "why did
+        // indexing get slower" should not have to re-run with an environment variable set (IO1).
+        Activity.Current?.SetTag("extraction.call_ms", callWatch.ElapsedMilliseconds);
+        Activity.Current?.SetTag("extraction.call_sites", calls.Sites);
 
         if (Environment.GetEnvironmentVariable("AIDE_EXTRACTION_TIMING") is not null)
         {
@@ -726,6 +770,346 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         }
 
         counts(unresolvedCount, generatedCount);
+    }
+
+    /// <summary>
+    /// What the call scan saw, split by what each outcome MEANS rather than by whether an edge came
+    /// out of it.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>A boundary and a gap are different statements.</b> A call into the base class library
+    /// is a thing this product declines to index; a call that did not resolve is a thing it meant to
+    /// read and could not. Adding them together gives an arithmetically correct number that describes
+    /// nothing, and DC-050 is the entry for what that costs — a session spent on a coverage hole that
+    /// was 1% of what its number said.</para>
+    ///
+    /// <para><b>The three dispatch limits are counted separately for the same reason.</b> "The edge
+    /// points at the declaring type, not at the override that runs", "something was assigned to this
+    /// delegate and I cannot see what", and "this target is a runtime string" are three different
+    /// admissions, and a reader deciding whether to trust a call path needs to know which one applies.</para>
+    /// </remarks>
+    internal sealed class CallCensus
+    {
+        /// <summary>Invocation expressions considered, in hand-written source.</summary>
+        public int Sites { get; set; }
+
+        /// <summary>Files skipped because they declare themselves generated.</summary>
+        public int GeneratedFiles { get; set; }
+
+        /// <summary>Calls whose target is not declared in any source this compilation can see.</summary>
+        public int OutsideThisRepository { get; set; }
+
+        /// <summary>Calls whose target the compiler could not bind at all.</summary>
+        public int NotResolved { get; set; }
+
+        /// <summary>Calls bound at runtime through <c>dynamic</c>.</summary>
+        public int DynamicallyBound { get; set; }
+
+        /// <summary>Calls that invoke a delegate; whatever was assigned to it is not visible.</summary>
+        public int ThroughADelegate { get; set; }
+
+        /// <summary>Calls that hand the target to the reflection APIs as a runtime value.</summary>
+        public int ThroughReflection { get; set; }
+
+        /// <summary>Calls written outside any type declaration, so nothing owns them.</summary>
+        public int OutsideAnyType { get; set; }
+
+        /// <summary>Calls whose target is declared in source. The raw candidate population.</summary>
+        public int InThisRepository { get; set; }
+
+        /// <summary>Of those, the ones whose implementation is chosen at runtime.</summary>
+        public int DispatchedAtRuntime { get; set; }
+
+        /// <summary>Of those, the ones where the caller and the callee are the same type.</summary>
+        public int WithinOneType { get; set; }
+
+        /// <summary>Distinct type pairs that became an edge.</summary>
+        public int Edges { get; set; }
+
+        /// <summary>
+        /// What this scope could not see, one sentence each, only where there was something to say.
+        /// </summary>
+        /// <remarks>
+        /// Every one is guarded on its own count. A disclosure that fires when nothing was hidden is
+        /// how a reader learns to skip the disclosure list, which costs the honest ones too.
+        /// </remarks>
+        public IEnumerable<string> Disclosures()
+        {
+            // THE BOUNDARY, named as one. The C# reader has always declined to draw the runtime, and
+            // the largest number here is the count of times it did so — 23,872 on TheTerrace, against
+            // 10,451 calls that stayed inside the repository. A reader who sees no in-repository
+            // edges from a wrapper class should be able to tell "it calls nothing" from "everything
+            // it calls is somebody else's library".
+            if (OutsideThisRepository > 0)
+            {
+                yield return $"calls-outside-this-repository ({OutsideThisRepository:N0} call(s) " +
+                    "reach a type this product does not index, such as the base class library or a package)";
+            }
+
+            // THE GAP. Unlike the line above, this is something the reader meant to read and failed
+            // to: packages not restored is the usual cause, and every one of these is an edge that
+            // should exist and does not.
+            if (NotResolved > 0)
+            {
+                yield return $"calls-not-resolved ({NotResolved:N0} invocation(s) whose target the " +
+                    "compiler could not bind; packages not restored is the usual cause)";
+            }
+
+            // THE LIMITS — three of them, each a different thing a compiler cannot tell you.
+            if (DispatchedAtRuntime > 0)
+            {
+                yield return $"calls-dispatched-at-runtime ({DispatchedAtRuntime:N0} call(s) name a " +
+                    "virtual, abstract or interface member; the edge is to the type that DECLARES it, " +
+                    "not to the implementation that runs)";
+            }
+
+            if (ThroughADelegate > 0)
+            {
+                yield return $"calls-through-a-delegate ({ThroughADelegate:N0} invocation(s) call a " +
+                    "delegate; what was assigned to it is not determined here and no edge is drawn)";
+            }
+
+            if (ThroughReflection > 0)
+            {
+                yield return $"calls-through-reflection ({ThroughReflection:N0} invocation(s) dispatch " +
+                    "through the reflection APIs; the target is a runtime value and no edge is drawn)";
+            }
+
+            if (DynamicallyBound > 0)
+            {
+                yield return $"calls-dynamically-bound ({DynamicallyBound:N0} invocation(s) bind " +
+                    "through `dynamic`; there is no compile-time target and no edge is drawn)";
+            }
+
+            // Top-level statements, most often. The call is real and there is no type to attribute it
+            // to, which is a different thing from there being no call.
+            if (OutsideAnyType > 0)
+            {
+                yield return $"calls-outside-a-type ({OutsideAnyType:N0} invocation(s) are written " +
+                    "outside any type declaration, so there is no caller to attribute them to)";
+            }
+
+            // A type calling its own members is a true relation whose two ends are one node. It is
+            // not drawn, and it is counted rather than passed over: MEASURED on TheTerrace it is
+            // 5,484 of the 10,451 in-repository calls — the majority — so a silent drop here would
+            // make "this graph shows the calls" a much smaller claim than it sounds.
+            if (WithinOneType > 0)
+            {
+                yield return $"calls-within-one-type ({WithinOneType:N0} call(s) stay inside the type " +
+                    "that made them; a self-edge is not drawn)";
+            }
+
+        }
+    }
+
+    /// <summary>
+    /// The reflection entry points whose target is a runtime value rather than a symbol.
+    /// </summary>
+    /// <remarks>
+    /// Named explicitly, and matched on the FULL name of the declaring type, because this is the
+    /// over-matching direction of DC-033: a repository's own <c>Invoke</c> or <c>CreateInstance</c>
+    /// is an ordinary method and must stay an ordinary edge. Deliberately a small list of the forms
+    /// that actually appear — it is a count, not a security control, and a name missing from it is
+    /// counted as an ordinary call to the runtime rather than lost.
+    /// </remarks>
+    private static readonly string[] ReflectionDispatch =
+    [
+        "System.Reflection.MethodBase.Invoke",
+        "System.Reflection.MethodInfo.Invoke",
+        "System.Reflection.ConstructorInfo.Invoke",
+        "System.Type.InvokeMember",
+        "System.Type.GetMethod",
+        "System.Activator.CreateInstance",
+        "System.Reflection.PropertyInfo.GetValue",
+        "System.Reflection.PropertyInfo.SetValue",
+    ];
+
+    /// <summary>
+    /// Which type calls which, across the whole compilation.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Type-level, and the raw count is the reason.</b> The literal answer to "what calls
+    /// this" is method-to-method, and it was measured before anything was built: TheTerrace's 10,451
+    /// in-repository call sites deduplicate to <b>8,476 method pairs over 5,054 method nodes</b>.
+    /// The graph payload for that workspace is already <b>969,323 bytes against a 1,048,576-byte
+    /// frame</b>, and its bounded default view is 795,979 of the 917,504 a response may carry — so
+    /// method nodes would roughly quadruple a payload with 8% of headroom, and the shrink-to-fit that
+    /// caught INV-0003 and DC-047 would answer by omitting most of the workspace. Worse, the ranking
+    /// that decides what survives is degree, and the highest-degree method in that repository is a
+    /// test helper with 304 callers. A smaller true answer beats a larger unusable one.</para>
+    ///
+    /// <para><b>What type-level still buys, measured rather than assumed.</b> `depends_on` already
+    /// exists at this granularity, so the honest question is whether this adds anything: of the 1,492
+    /// type pairs, <b>only 415 are already `depends_on` and 1,077 are not</b>. A type depends on what
+    /// it declares — fields, parameters, returns — and calls a great deal it never declares: static
+    /// helpers, extension methods, factories, and services obtained from a container.</para>
+    ///
+    /// <para><b>Resolved semantically, never by name.</b> <c>GetSymbolInfo</c> gives the target the
+    /// compiler bound, so an edge is Verified in the sense this codebase means it. An invocation that
+    /// did not bind is not an edge — it is a count on the scope, for the same reason an unresolved
+    /// type is not a <c>depends_on</c>.</para>
+    ///
+    /// <para><b>The runtime is not drawn.</b> A call whose target is declared in metadata rather than
+    /// in source is counted as a boundary and never emitted, so the graph does not fill with
+    /// <c>string</c>, <c>List&lt;T&gt;</c> and <c>ILogger</c>. Python and TypeScript were both
+    /// corrected to this rule after the fact; it is applied here from the start.</para>
+    ///
+    /// <para><b>Generated files are skipped before they are bound.</b> They were 79,042 of
+    /// TheTerrace's 114,406 invocations — 69% — and every one of them is EF describing a schema as it
+    /// stood at a past migration. Skipping them is a correctness decision first and a 3x saving
+    /// second.</para>
+    /// </remarks>
+    private static IEnumerable<(string Caller, string Callee, Location Where)> TypeCalls(
+        Compilation compilation, CallCensus census, CancellationToken cancellationToken)
+    {
+        // Deduplicated HERE rather than by ExtractionFacts.Distinct at the end, because the raw
+        // population is 10,451 call sites for 1,492 edges: building seven times more assertions than
+        // survive is measurable waste in the hot path of the largest scope.
+        var emitted = new HashSet<(string, string)>();
+
+        foreach (var tree in compilation.SyntaxTrees)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (IsGenerated(tree, cancellationToken))
+            {
+                census.GeneratedFiles++;
+                continue;
+            }
+
+            // Built lazily: a file with no invocation at all never needs a semantic model, and
+            // creating one binds every method body in it.
+            SemanticModel? model = null;
+
+            // One `GetDeclaredSymbol` per type declaration rather than per call site. A file with a
+            // thousand calls in one class asked the same question a thousand times.
+            var owners = new Dictionary<Microsoft.CodeAnalysis.CSharp.Syntax.TypeDeclarationSyntax,
+                INamedTypeSymbol?>();
+
+            foreach (var call in tree.GetRoot(cancellationToken).DescendantNodes()
+                .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax>())
+            {
+                census.Sites++;
+
+                // The INNERMOST enclosing type, matching what `SqlTableUsage` already attributes to.
+                // A call inside a lambda, a local function or a field initializer belongs to the type
+                // the lambda was written in, which is the thing the graph can show.
+                var declaration = call.Ancestors()
+                    .OfType<Microsoft.CodeAnalysis.CSharp.Syntax.TypeDeclarationSyntax>()
+                    .FirstOrDefault();
+
+                if (declaration is null)
+                {
+                    census.OutsideAnyType++;
+                    continue;
+                }
+
+                model ??= compilation.GetSemanticModel(tree);
+
+                var info = model.GetSymbolInfo(call, cancellationToken);
+
+                if (info.Symbol is not IMethodSymbol target)
+                {
+                    // `dynamic` is a different admission from "this did not compile": one is a
+                    // language feature working as designed, the other is a picture with holes in it.
+                    if (info.CandidateReason == CandidateReason.LateBound) census.DynamicallyBound++;
+                    else census.NotResolved++;
+                    continue;
+                }
+
+                // The ORIGINAL definition, so `Repository<Order>.Find` and `Repository<Customer>.Find`
+                // are the same callee and the name matches the one `has_type` emits for the type —
+                // `Repository<T>`. The alternative is edges whose object matches no node, which is
+                // the half of DC-033 that got through review.
+                var definition = target.OriginalDefinition;
+
+                if (definition.MethodKind == MethodKind.DelegateInvoke)
+                {
+                    // The delegate's own Invoke is a real symbol and a useless edge: it names the
+                    // delegate TYPE, not whatever method was assigned to it, which is the thing a
+                    // reader asking "what calls this" wants and nothing here can see.
+                    census.ThroughADelegate++;
+                    continue;
+                }
+
+                if (IsReflectionDispatch(definition))
+                {
+                    census.ThroughReflection++;
+                    continue;
+                }
+
+                if (definition.ContainingType is not { } calleeType
+                    || !Resolved(calleeType)
+                    || calleeType.DeclaringSyntaxReferences.Length == 0)
+                {
+                    // Declared in metadata, so it is the runtime or a package. A boundary, counted.
+                    census.OutsideThisRepository++;
+                    continue;
+                }
+
+                census.InThisRepository++;
+
+                if (calleeType.TypeKind == TypeKind.Interface
+                    || definition.IsVirtual || definition.IsAbstract || definition.IsOverride)
+                {
+                    // The edge is still drawn and still true — the call names this member. What is
+                    // not knowable here is which override answers it, and that is what is disclosed.
+                    census.DispatchedAtRuntime++;
+                }
+
+                if (!owners.TryGetValue(declaration, out var callerType))
+                {
+                    owners[declaration] = callerType =
+                        model.GetDeclaredSymbol(declaration, cancellationToken) as INamedTypeSymbol;
+                }
+
+                if (callerType is null)
+                {
+                    // Not counted and not disclosed, deliberately. `GetDeclaredSymbol` on a type
+                    // declaration is nullable by signature, and no input this codebase could
+                    // construct makes it return null — two classes of the same name in one namespace
+                    // both resolve, which was the likeliest candidate and was tried. A disclosure
+                    // whose branch cannot be reached certifies rather than checks (DC-016), so the
+                    // guard stays and the machinery around it does not.
+                    continue;
+                }
+
+                var caller = callerType.ToDisplayString();
+                var callee = calleeType.ToDisplayString();
+
+                if (string.Equals(caller, callee, StringComparison.Ordinal))
+                {
+                    // A self-edge answers no question: "what calls this type" is asked to find the
+                    // OTHER things, and a type's own members are already listed on it. Counted, not
+                    // silently dropped — on TheTerrace it is the majority of in-repository calls.
+                    census.WithinOneType++;
+                    continue;
+                }
+
+                if (!emitted.Add((caller, callee))) continue;
+
+                census.Edges++;
+
+                // The FIRST call site, which is the location `ExtractionFacts.Distinct` would have
+                // kept anyway, and the one a reader following the edge wants to open.
+                yield return (caller, callee, call.GetLocation());
+            }
+        }
+    }
+
+    /// <summary>Whether a method hands its real target to the runtime as a value.</summary>
+    private static bool IsReflectionDispatch(IMethodSymbol method)
+    {
+        if (method.ContainingType is not { } type) return false;
+
+        var name = type.ToDisplayString() + "." + method.Name;
+
+        foreach (var known in ReflectionDispatch)
+        {
+            if (string.Equals(name, known, StringComparison.Ordinal)) return true;
+        }
+
+        return false;
     }
 
     /// <summary>The verbs a SQL statement can begin with.</summary>

@@ -57,6 +57,31 @@ public static class EvidencePredicates
         "declared_at",
     };
 
+    /// <summary>
+    /// The few facts that say WHAT A NODE IS, as opposed to what it is connected to.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why a bounded read needs this.</b> A node's facts are capped, and they were ordered
+    /// alphabetically — so a node with more relations than the cap lost its own type, owner and class
+    /// to its own links. MEASURED: 12 of 877 knowledge documents were already over the 50-row ceiling
+    /// before anything was added to them, and simulating headings pushed nearly every structured
+    /// document over. `adr-0015-erasure-ledger-durable-model` would have returned 44 headings and
+    /// none of `has_type`, `node_class`, `owned_by`, `refines` or `review_by`.</para>
+    ///
+    /// <para><b>Deliberately not "all attributes".</b> <c>has_member</c> is an attribute and a type
+    /// can carry forty of them; putting the whole attribute set first would replace one flood with
+    /// another. This is the small, fixed set that answers "what is this thing" — everything else,
+    /// attribute or relation, competes on equal terms behind it.</para>
+    /// </remarks>
+    public static IReadOnlySet<string> Identity { get; } = new HashSet<string>(StringComparer.Ordinal)
+    {
+        "has_type", "node_class", "declared_in", "owned_by", "review_by",
+    };
+
+    /// <summary>The SQL literal list for <see cref="Identity"/>, generated from the same set.</summary>
+    public static string IdentitySqlList { get; } =
+        string.Join(", ", Identity.Order(StringComparer.Ordinal).Select(p => $"'{p}'"));
+
     /// <summary>The SQL literal list for an <c>IN</c> clause. Built from the same set.</summary>
     /// <remarks>
     /// Generated rather than typed a second time: a hand-written copy in a query is exactly how the

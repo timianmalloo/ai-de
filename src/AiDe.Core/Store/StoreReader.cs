@@ -86,7 +86,24 @@ public sealed class StoreReader : IDisposable
                 JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
                 WHERE a.object = $node AND a.subject <> $node
             )
-            ORDER BY subject, predicate, object
+            -- IDENTITY FIRST, then what this node points at, then what points at it.
+            --
+            -- This was `ORDER BY subject, predicate, object` — alphabetical, which is deterministic
+            -- and says nothing about importance. A node with more facts than the cap therefore lost
+            -- its own type and owner to its own links, and lost them in alphabetical order, so WHICH
+            -- facts survived depended on how the node happened to be named. MEASURED: 12 of 877
+            -- knowledge documents were already over this ceiling before anything was added to them.
+            --
+            -- The bands are coarse on purpose. Identity is a handful of facts that answer "what is
+            -- this"; everything else competes behind it, still alphabetically, so the result stays
+            -- deterministic and the omission count still means what it says.
+            ORDER BY
+                CASE
+                    WHEN subject = $node AND predicate IN ({AiDe.Core.Facts.EvidencePredicates.IdentitySqlList}) THEN 0
+                    WHEN subject = $node THEN 1
+                    ELSE 2
+                END,
+                subject, predicate, object
             LIMIT $limit;
             """, ("$node", nodeId), ("$limit", limit));
         return ReadAssertions(command);
