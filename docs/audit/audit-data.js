@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-08-31T16:46:48Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-08-31T16:49:39Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5291,6 +5291,23 @@ window.AUDIT_DATA = {
         "focus",
         "ux"
       ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0280",
+      "shortname": "knowledge-prose-links-and-typescript-precision",
+      "datetime": "2026-08-31T16:45:56Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do the next steps you listed above. tackle both Roadmap #1 and Roadmap #2 in parallel",
+      "summary": "Both roadmap items shipped, built in parallel in isolated worktrees. Knowledge now emits links_to for prose markdown links whose target resolves to a document that declares an id — both ends observed, no inference; 42 edges from 19 documents, and a real find: 218 prose links naming markdown files that are not there, rotted cross-references nothing had ever reported. Headings, glossary terms and code references were measured and deliberately NOT extracted (0 of 26,924 inline code spans exactly match a node id; headings would push documents past Describe's 50-row ceiling). TypeScript: of 14 import edges, 12 were invented — the matcher had no statement anchor, so prose and compiled JS became imports, including @playwright/test which is a line of Playwright's own code-generation template and which my brief had wrongly called real. Now 0 invented, and removing the export gate revealed 22 functions and 2 classes that were never visible. I then found knowledge scopes nest (2,368 node_class rows for 877 documents, ~2.7x), fixed it, measured that it cost 30 of 42 prose links, and REVERTED — registered as DC-051 with both halves as one roadmap item.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/extractor-roadmap.md"
+      ],
+      "tags": [],
       "outcome": "success"
     },
     {
