@@ -26,16 +26,21 @@ public sealed class WatcherHost : IDisposable
     private readonly IngestHost _ingest;
     private readonly CoordContractLogPump _pump;
     private readonly LivenessProjection _liveness;
+    private readonly string _coordLogDirectory;
+    private readonly TimeProvider _time;
     private OtlpHttpReceiver? _receiver;
     private bool _disposed;
 
     private WatcherHost(
-        SqliteWatcherObservationStore store, IngestHost ingest, CoordContractLogPump pump, LivenessProjection liveness)
+        SqliteWatcherObservationStore store, IngestHost ingest, CoordContractLogPump pump,
+        LivenessProjection liveness, string coordLogDirectory, TimeProvider time)
     {
         _store = store;
         _ingest = ingest;
         _pump = pump;
         _liveness = liveness;
+        _coordLogDirectory = coordLogDirectory;
+        _time = time;
     }
 
     /// <summary>
@@ -65,8 +70,18 @@ public sealed class WatcherHost : IDisposable
         var pump = new CoordContractLogPump(coordLogDirectory, injected);
         var liveness = new LivenessProjection(store, clock, staleAfter ?? TimeSpan.FromSeconds(30));
 
-        return new WatcherHost(store, ingest, pump, liveness);
+        return new WatcherHost(store, ingest, pump, liveness, coordLogDirectory, time);
     }
+
+    /// <summary>The coordination-contract log directory a session opts in by writing to.</summary>
+    public string CoordLogDirectory => _coordLogDirectory;
+
+    /// <summary>
+    /// A writer for the coordination log this host reads - a terminal/agent session in the same process
+    /// registers and heartbeats through it, and the pump ingests it, so the session appears live (US-4).
+    /// </summary>
+    public SessionCoordinationEmitter CreateEmitter() =>
+        new(new CoordContractWriter(_coordLogDirectory, _time));
 
     /// <summary>The observation store, for the read surfaces (the app builds its queries from this).</summary>
     public IWatcherObservationStore Store => _store;

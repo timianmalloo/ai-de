@@ -50,6 +50,7 @@ public sealed class WorkbenchShell : IDisposable
     // coordination-contract log pump, in-process, so liveness is exact). Null until a workspace with a
     // data directory is attached; reset on each attach. The panes then show "not available".
     private WatcherHost? _watcherHost;
+    private SessionCoordinationEmitter? _watcherEmitter;
     private CancellationTokenSource? _watcherPump;
 
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
@@ -866,6 +867,7 @@ public sealed class WorkbenchShell : IDisposable
         _watcherHost?.Dispose();
         _watcherPump = null;
         _watcherHost = null;
+        _watcherEmitter = null;
 
         if (string.IsNullOrEmpty(dataDirectory))
         {
@@ -876,12 +878,16 @@ public sealed class WorkbenchShell : IDisposable
         {
             var host = WatcherHost.Open(dataDirectory, Path.Combine(dataDirectory, "loomkeeper-coord"));
             _watcherHost = host;
+            _watcherEmitter = host.CreateEmitter();
             _watcherPump = new CancellationTokenSource();
             var token = _watcherPump.Token;
 
-            // Off the UI thread: RunAsync's synchronous prefix (the first PumpOnce) must not run on the
-            // caller's thread during construction/attach.
-            _ = Task.Run(() => host.RunAsync(TimeSpan.FromSeconds(2), token), token);
+            // Off the UI thread: the loop's synchronous work (a directory read + a SQLite fold, and a
+            // snapshot of the layout's terminal surfaces) must not run on the caller's thread during
+            // construction/attach. The loop reconciles the terminal panes into coordination sessions so a
+            // terminal the user opens appears in the watcher, then pumps the coordination log into the store.
+            var emitter = _watcherEmitter;
+            _ = Task.Run(() => WatcherLoopAsync(host, emitter, token), token);
 
             return (
                 new WatcherSessionsQuery(host.Store, host.Liveness),
@@ -894,9 +900,82 @@ public sealed class WorkbenchShell : IDisposable
             _watcherPump?.Cancel();
             _watcherHost?.Dispose();
             _watcherHost = null;
+            _watcherEmitter = null;
             _watcherPump = null;
             return (null, null, null, null);
         }
+    }
+
+    /// <summary>
+    /// The watcher's background loop: every tick it reconciles the terminal panes that currently exist into
+    /// coordination sessions (a new pane registers, an existing one heartbeats, a closed one ends - conn-8),
+    /// then pumps the coordination log into the store. A hiccup on any tick is swallowed so the workbench is
+    /// never taken down by watcher work; cancellation ends the loop cleanly.
+    /// </summary>
+    private async Task WatcherLoopAsync(WatcherHost host, SessionCoordinationEmitter emitter, CancellationToken token)
+    {
+        var interval = TimeSpan.FromSeconds(2);
+        while (!token.IsCancellationRequested)
+        {
+            try
+            {
+                var terminals = TerminalSnapshot();
+                var ids = new HashSet<string>(terminals.Select(t => t.Id), StringComparer.Ordinal);
+                emitter.Reconcile(ids, id => IdentityFor(id, terminals));
+                host.PumpOnce();
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                // A reconcile/pump hiccup must never take down the workbench; skip this tick.
+            }
+
+            try { await Task.Delay(interval, token).ConfigureAwait(false); }
+            catch (OperationCanceledException) { break; }
+        }
+    }
+
+    /// <summary>A snapshot of the terminal surfaces (id + agent title) in the current layout.</summary>
+    private IReadOnlyList<(string Id, string Agent)> TerminalSnapshot()
+    {
+        var list = new List<(string, string)>();
+        foreach (var stack in Service.Current.AllStacks())
+        {
+            foreach (var surface in stack.Surfaces)
+            {
+                if (surface.Kind == "terminal")
+                {
+                    list.Add((surface.SurfaceId, surface.Title));
+                }
+            }
+        }
+
+        return list;
+    }
+
+    /// <summary>Builds the coordination identity a terminal pane presents when it registers.</summary>
+    private SessionCoordinationIdentity IdentityFor(string surfaceId, IReadOnlyList<(string Id, string Agent)> terminals)
+    {
+        var root = _workspaceRoot ?? string.Empty;
+        var display = string.IsNullOrEmpty(root) ? "workspace" : Path.GetFileName(root.TrimEnd('\\', '/'));
+        if (string.IsNullOrEmpty(display))
+        {
+            display = "workspace";
+        }
+
+        var agent = terminals.FirstOrDefault(t => t.Id == surfaceId).Agent;
+        if (string.IsNullOrEmpty(agent))
+        {
+            agent = "terminal";
+        }
+
+        var repoPath = string.IsNullOrEmpty(root) ? display : root;
+        return new SessionCoordinationIdentity(
+            RepoPath: repoPath,
+            RepoDisplay: display,
+            WorktreeBranch: "workspace",
+            WorktreePath: repoPath,
+            TerminalId: surfaceId,
+            AgentName: agent);
     }
 
     public void Dispose()

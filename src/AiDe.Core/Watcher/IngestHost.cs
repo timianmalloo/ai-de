@@ -38,6 +38,7 @@ public sealed class IngestHost
     private readonly Channel<HarnessSpanEvent> _queue;
     private readonly SpanIngest _ingest;
     private readonly ITrustedRegistrar _registrar;
+    private readonly IWatcherObservationStore _store;
     private readonly TimeProvider _time;
 
     private long _enqueued;
@@ -60,6 +61,7 @@ public sealed class IngestHost
 
         _registrar = registrar;
         _time = time;
+        _store = store;
         _ingest = new SpanIngest(store, registrar);
 
         // DropOldest keeps the freshest spans under load; the itemDropped callback makes every drop a
@@ -80,6 +82,13 @@ public sealed class IngestHost
     /// <summary>Records a heartbeat after verifying the capability (LK-0001).</summary>
     public void Heartbeat(string sessionId, SessionCapability capability)
         => _registrar.Heartbeat(sessionId, capability);
+
+    /// <summary>
+    /// Marks a session ended (its terminal closed / it reported session-end). Liveness then reads Ended
+    /// rather than lingering Alive/Stale. Called by the coordination ingest on a session-end event; the
+    /// registrar's re-registration path clears the ended mark for a fresh generation.
+    /// </summary>
+    public void EndSession(string sessionId) => _store.MarkEnded(sessionId);
 
     /// <summary>
     /// Enqueues a span event. Never blocks: under load the bounded queue drops its oldest item (counted),

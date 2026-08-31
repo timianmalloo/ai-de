@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 19 · partially-controlled 23 · uncontrolled 0
+**Status counts:** controlled 20 · partially-controlled 23 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1491,4 +1491,12 @@ for both or split.*
   is a separate follow-on (the pump keeps the store current; reopening a pane re-folds it). A session
   only appears if it writes a coordination-contract log under `<dataDir>/loomkeeper-coord` — the
   auto-emitting session wrapper is future work.
+- **Status:** `controlled`
+
+### DC-043 — A coordination session-end removed the mapping but never ended the session, so liveness kept lying "Alive"
+- **Signature:** an ingest handles a `session-end` (or close) event by forgetting the session's *external→internal id mapping*, but never marks the *internal* session ended in the store. Liveness is a projection over the store (Ended iff `IsEnded(sessionId)`, else Alive/Stale by heartbeat recency), so a closed session that was never marked ended keeps reporting **Alive** (or drifts to **Stale**) forever — the watcher shows a live session for a terminal that is gone.
+- **Why it survives:** the mapping removal is the *visible* half of "end the session" and it works — a subsequent heartbeat for that external id is correctly ignored — so the handler looks complete. Nothing in the end path reads liveness back, and a round-trip test that only checks "no new session on a stale heartbeat" passes. The lie only shows when something *evaluates liveness* after the end.
+- **Instances:** 2026-08-31 — `InjectedContractIngest.ContractSessionEnd` (conn-2/conn-5) removed `_byExternalId[externalId]` but never called into the store, so `SessionCoordinationEmitter.End` → coordination `session-end` → pump left the session `Alive`. Found by the conn-8 emitter test `End_WritesSessionEnd_AndStopsTracking` asserting `LivenessState.Ended` after end+pump. **Fixed** the same day: added `IngestHost.EndSession(sessionId) => _store.MarkEnded(sessionId)` and made the `ContractSessionEnd` case call it (via the external→internal lookup) *before* removing the mapping.
+- **Control:** `SessionCoordinationEmitterTests.End_WritesSessionEnd_AndStopsTracking` (end→pump→`Ended`) and `Reconcile_Registers_Heartbeats_AndEnds_FromASnapshot` (a snapshot that drops a session ends exactly that one, leaving it `Ended` while the survivor stays `Alive`) — both mutation-verified: neutralising the `_host.EndSession(...)` call reds the first, and neutralising the "end gone" branch reds the second. Generalisation: **an end/close handler must change the state the reader projects from, not only the lookup that routed the event — and prove it by reading the projection (liveness) back after the end, never only by asserting the routing stopped.**
+- **Residual risk:** the shell drives ends by *reconcile from the current terminal snapshot* (a closed pane disappears from the snapshot and is ended on the next tick, ≤2s later), not by a precise per-pane close event; a session whose pane vanishes without the loop running (e.g. process kill mid-tick) is ended only when the loop next runs, and on host dispose tracked sessions are dropped without an explicit end (they go Stale, then the host's DB is disposed). The async shell loop timing itself is not unit-tested (covered by the Core end-to-end reconcile test + manual smoke).
 - **Status:** `controlled`

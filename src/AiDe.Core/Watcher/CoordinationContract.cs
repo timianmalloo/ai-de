@@ -213,6 +213,12 @@ public sealed class InjectedContractIngest
                 ApplyHeartbeat(heartbeat);
                 break;
             case ContractSessionEnd end:
+                if (_byExternalId.TryGetValue(end.ExternalSessionId, out var ending))
+                {
+                    // Mark the internal session ended so liveness reads Ended, not a lingering Alive/Stale.
+                    _host.EndSession(ending.Session.SessionId);
+                }
+
                 _byExternalId.Remove(end.ExternalSessionId);
                 break;
         }

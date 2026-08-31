@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T21:59:04Z",
+  "generated": "2026-08-31T22:52:10Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3161,6 +3161,31 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0303",
+      "shortname": "implement-watcher-session-emitter",
+      "datetime": "2026-08-31T22:51:55Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (conn-8: auto-emitting session wrapper so terminals appear in the watcher)",
+      "summary": "SessionCoordinationEmitter (Register/Heartbeat/HeartbeatAll/End/Reconcile) + WatcherHost.CreateEmitter seam + WorkbenchShell reconcile-and-pump loop wiring terminal panes into coordination sessions; closed DC-043 (session-end that never ended the session). 9 emitter tests (2 mutation-verified). Core 979/0, App 139/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs",
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "src/AiDe.Core/Watcher/IngestHost.cs",
+        "src/AiDe.Core/Watcher/CoordinationContract.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-session-emitter.md",
+        "docs/proof/watcher-session-emitter.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T22:33:15Z",
+      "duration_seconds": 1120.0
     }
   ],
   "changes": [
@@ -5778,6 +5803,29 @@ window.AUDIT_DATA = {
       "git": {
         "before": "b08993ab4233f88d2b8a3498408666ba7f2d104f",
         "after": "b08993ab4233f88d2b8a3498408666ba7f2d104f",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0123",
+      "datetime": "2026-08-31T22:52:10Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "conn-8: terminal panes auto-register as coordination sessions via a reconcile loop",
+      "prompt": "do the next steps (conn-8)",
+      "summary": "Chose a snapshot-reconcile driver (register/heartbeat/end from the set of live terminal panes) over precise per-pane start/close hooks, because the ConPTY session starts async and there is no clean close event; the reconcile reads only immutable Core layout data so it is safe off the UI thread. Also fixed DC-043 (coordination session-end must mark the store, not only drop the id mapping).",
+      "rationale": "A reconcile from the current terminal surfaces is robust to the async terminal lifecycle and matches the existing reconcile-not-rebuild philosophy (DC-029); ends are eventually-consistent (<=2s) which is acceptable for liveness.",
+      "artifacts": [
+        "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "77f25c3d37317881e27e4e158c421c8e70aef7c4",
+        "after": "77f25c3d37317881e27e4e158c421c8e70aef7c4",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T21:58:27Z",
+  "generated": "2026-08-31T22:51:14Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2475,6 +2475,53 @@ window.DOCS_INDEX = {
       "sourceSha256": "001a6ae7f964e4116e8f95fe6e29656ca37ff25f7ff1ac113808deb52eeb9da3"
     },
     {
+      "id": "design-watcher-session-emitter",
+      "path": "docs/design/watcher-session-emitter.md",
+      "title": "Loomkeeper Session Coordination Emitter - Auto-Emitting Session Wrapper (conn-8)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The app-side writer that makes a terminal/agent session appear in the watcher: a pure, testable SessionCoordinationEmitter (Register/Heartbeat/HeartbeatAll/End/Reconcile) over coordination-contract logs, plus the WorkbenchShell loop that reconciles the live terminal panes into coordination sessions and pumps them into the store. Also closes the session-end-that-never-ended liveness gap (DC-043).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "coordination",
+        "emitter",
+        "session",
+        "liveness",
+        "conn-8",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4d7fa426a329999f8f649d2f37f09f737950a2ef7eb066148a47b783b856e177"
+    },
+    {
       "id": "design-watcher-sessions-surface",
       "path": "docs/design/watcher-sessions-surface.md",
       "title": "Loomkeeper Sessions Surface - WPF Treegrid Row",
@@ -2656,7 +2703,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "848b59683c6e8f389c4dfe15a0e7eae50cb1be5682a052a31b4a4f57870edea9"
+      "sourceSha256": "4481ec6d45753f957b19019773745c18e8e7cb7c54e978a1631dc8b0f67774df"
     },
     {
       "id": "domain-experts",
@@ -7593,6 +7640,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "fc94abce1c6bc7c116b719101dc8f7efca6de7c2c375304ee89692043aec4afe"
     },
     {
+      "id": "proof-watcher-session-emitter",
+      "path": "docs/proof/watcher-session-emitter.md",
+      "title": "Proof Pack - Session Coordination Emitter (conn-8)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for conn-8: the auto-emitting session wrapper (SessionCoordinationEmitter + Reconcile) and its shell wiring, including the DC-043 session-end-to-Ended fix. 9 emitter tests, 2 mutation-verified; Core 979/0, App 139/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "emitter",
+        "coordination",
+        "conn-8",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-session-emitter",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "11e70f24e83ac4f4d00b2755bef2aab5ed5901b9702054bee9f3e63089d571e8"
+    },
+    {
       "id": "proof-watcher-sessions-surface",
       "path": "docs/proof/watcher-sessions-surface.md",
       "title": "Proof Pack - Loomkeeper Sessions Surface (slice 3)",
@@ -8254,5 +8334,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5ca852c059d2a4e62ffdd8efbbfa0b55a01ea0e09b706300cd75c461156b3f05"
+  "graphSha256": "66c6926b4ae69fcc6a6b9bf909ed107c437697a60e16f968c7f05b2dc8e72eea"
 };
