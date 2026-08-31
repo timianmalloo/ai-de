@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 16 · partially-controlled 23 · uncontrolled 1
+**Status counts:** controlled 17 · partially-controlled 23 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1396,16 +1396,26 @@ for both or split.*
   failed once in the full `AiDe.Core.Tests` run (770 tests) during Loomkeeper slice 2, then passed in
   isolation and on the next full run. Observed, **not introduced** by slice 2 — the slice's code
   (`CoordinationContract.cs`) is pure in-process logic that touches no daemon, pipe, or process; the
-  slice added no daemon test. Recorded here so the shape is registered before it is chased as a
-  slice-2 regression.
-- **Control:** `NONE YET` — the durable fix is a **deterministic readiness/teardown barrier**: before
-  a daemon-reuse test starts, poll for *daemon-down* (or give each real-process test a **unique** pipe
-  / mutex name so no prior test's residue can be reused), and gate readiness on an observed state, not
-  a fixed delay (the pack's CI-ENV / RES-LEAK discipline — supply the environment, read the state
-  back). Root-causing the specific race is deferred (pre-existing, outside slice 2). Until then a
-  full-suite red on *only* this test, green in isolation, is the recognised signature — re-run and
-  investigate the teardown ordering, do not treat the green retry as proof.
-- **Residual risk:** with no control, a busy CI runner can surface this as a spurious red on an
-  unrelated change; the counter-discipline is this entry (recognise the signature) plus the pack's
-  rule that a green retry of a flaky real-process test is not evidence the race is gone.
-- **Status:** `uncontrolled`
+  slice added no daemon test. **Root-caused and fixed** 2026-08-31 (slice-3 follow-on): the assertion
+  was `DaemonsRunning() <= before`, a **system-wide `AiDe.Daemon` process count** — a category error,
+  because the daemon *deliberately* outlives its client (the idle grace holds warm state through a
+  shell restart, `ShellBootstrap` §"Launching is racy on purpose"), so other tests' lingering daemons
+  polluted a machine-global counter, and an ordinary load-induced-then-lock-resolved redundant launch
+  (harmless in production) could false-fail it. The counter measured the machine; the invariant is per
+  workspace.
+- **Control:** the reuse test now proves the **workspace-scoped** invariant deterministically — one
+  logical daemon (one store, one **epoch**) per workspace, enforced by `WorkspaceLock`: (1) a
+  **readiness barrier** (`await first.FindAsync(...)`) gates on an *observed answer*, not a delay, so
+  reuse is measured against a ready daemon; (2) **three-way epoch equality** (first == second ==
+  third, all overlapping in scope so the daemon cannot idle-shut-down between them) is the stable
+  oracle — even a momentary redundant launch loses the lock, exits, and the shell reconnects to the
+  incumbent, so the epoch it sees is the incumbent's. The machine-global `DaemonsRunning()` counter was
+  removed. Verified stable across three isolated runs and a full 787-test suite run. The generalisation
+  (a control): **a per-resource invariant must be measured against that resource, never a machine-global
+  count of a shared, deliberately-lingering process** (the pack's CI-ENV / RES-LEAK discipline — the
+  control supplies and observes its own state).
+- **Residual risk:** the fix removes the global-count dependency, but the underlying real-process
+  launcher remains environment-sensitive (a cold start still has a 30s deadline); the epoch oracle is
+  robust to that because lock-resolution makes epoch equality hold regardless of a transient redundant
+  launch.
+- **Status:** `controlled`

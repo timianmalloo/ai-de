@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Runtime.Versioning;
 using AiDe.Core.Ipc;
 
@@ -44,9 +43,6 @@ public sealed class ShellBootstrapTests : IDisposable
         return candidate;
     }
 
-    private static int DaemonsRunning() =>
-        Process.GetProcessesByName("AiDe.Daemon").Length;
-
     // ---- launching -----------------------------------------------------------
 
     [Fact]
@@ -77,15 +73,34 @@ public sealed class ShellBootstrapTests : IDisposable
         await using var first = await ShellBootstrap.ConnectOrLaunchAsync(
             workspace, DaemonPath(), CancellationToken.None);
 
-        var before = DaemonsRunning();
+        // Readiness barrier (DC-040): prove the first daemon is actually *serving* before the second
+        // shell arrives, so reuse is measured against a ready daemon rather than a still-starting one.
+        // Gating on an observed answer — not a fixed delay — is what makes this deterministic.
+        Assert.NotNull(await first.FindAsync("", 1, CancellationToken.None));
 
         await using var second = await ShellBootstrap.ConnectOrLaunchAsync(
             workspace, DaemonPath(), CancellationToken.None);
 
+        // The reuse invariant is one logical daemon — one store, one epoch — per workspace, enforced
+        // by WorkspaceLock. Epoch equality is the DETERMINISTIC, workspace-scoped proof of it: even
+        // if a second shell momentarily launched a redundant process under load, that process loses
+        // the workspace lock and exits, and the shell then connects to the incumbent — so the epoch
+        // it sees is the incumbent's.
+        //
+        // This replaced a system-wide `AiDe.Daemon` process count (DC-040). That count was a category
+        // error: the daemon deliberately outlives its client (the idle grace holds warm state through
+        // a shell restart), so other tests' lingering daemons polluted a machine-global counter, and
+        // an ordinary load-induced-then-lock-resolved redundant launch — harmless in production —
+        // could false-fail it. The counter measured the machine; the invariant is per workspace.
         Assert.Equal(first.Epoch, second.Epoch);
-        Assert.True(
-            DaemonsRunning() <= before,
-            "a second daemon was started for a workspace that already had one");
+
+        // Triangulate the workspace-scoped invariant: a third connect finds the same incumbent. first,
+        // second and third overlap in scope, so the daemon cannot idle-shut-down between them, which
+        // is what makes the three-way epoch equality a stable oracle rather than a timing gamble.
+        await using var third = await ShellBootstrap.ConnectOrLaunchAsync(
+            workspace, DaemonPath(), CancellationToken.None);
+
+        Assert.Equal(first.Epoch, third.Epoch);
     }
 
     [Fact]

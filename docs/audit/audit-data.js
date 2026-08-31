@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T13:26:18Z",
+  "generated": "2026-08-31T13:34:27Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2857,6 +2857,24 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.Core/Watcher/CoordinationContractLog.cs",
         "tests/AiDe.Core.Tests/Watcher/CoordinationContractLogTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0191",
+      "shortname": "investigate-dc040-daemon-reuse-flake",
+      "datetime": "2026-08-31T13:34:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all next steps listed above (root-cause DC-040 daemon-reuse flake)",
+      "summary": "DC-040 controlled: root-caused the ShellBootstrap daemon-reuse flake to a system-wide AiDe.Daemon process count (category error - the daemon deliberately outlives its client, so sibling tests' lingering daemons polluted the counter). Replaced with a readiness barrier (observed answer) + workspace-scoped three-way epoch equality (WorkspaceLock invariant). Verified stable across 3 isolated runs + full 787-test suite. Register updated to controlled.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/ShellBootstrapTests.cs",
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
