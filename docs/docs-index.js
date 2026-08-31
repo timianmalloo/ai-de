@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T13:27:07Z",
+  "generated": "2026-08-31T13:58:50Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1416,6 +1416,33 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "811f039b5fae32ce5c08de88b915d4bfcc9d4689b9f7ab69989ca00f53bacf58"
+    },
+    {
+      "id": "note-20260831-panel-reorder-and-search-breadth",
+      "path": "docs/notes/note-20260831-panel-reorder-and-search-breadth.md",
+      "title": "Panel reorder on redraw, and graph search breadth — root-caused, deferred to coordinated work",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Two findings from live testing of the new surfaces. (1) Opening a tab reorders panes because a native AvalonDock drag is never captured in the owned Layout model, so the full rebuild-from-model on every surface add reverts the user's arrangement — a real reverse-sync gap, deferred because it touches the keyboard/drag-identical and persistence invariants and is untestable headlessly. (2) The graph search box filters only the already-loaded node LABELS client-side; content/keyword/ topic search needs a Core query (and file grep is a new Core capability under DC-022).",
+      "tags": [
+        "decision-note",
+        "layout",
+        "avalondock",
+        "search",
+        "ux"
+      ],
+      "links": [
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1bfc5a5cc8753bb40d48d138284a196cd3610c4db6cc45ec31b96719fcacf9fb"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -3034,7 +3061,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cb5340fb3fcc15f380d145a33e1b5a94cd8e873dee21020fdf72725e8fd84d62"
+      "sourceSha256": "026e14b21e05998695036fa3f25673c21d9b8a47b576123e9490a4b8dc24372e"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -6481,7 +6508,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -6575,5 +6602,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7429e48ecd1c556a088e5849ae61469d58d9a3f7e7d0bd1531a87923b01c5ff6"
+  "graphSha256": "5057adc93b3c0545ad38b6a2b36c8f0d249f9f76b33d1ad8fc174cf4effadb86"
 };

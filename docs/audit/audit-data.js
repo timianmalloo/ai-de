@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T13:51:31Z",
+  "generated": "2026-08-31T13:59:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3364,6 +3364,28 @@ window.AUDIT_DATA = {
         "canvas",
         "navigation",
         "ux"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0272",
+      "shortname": "handoff-panel-reorder-and-search",
+      "datetime": "2026-08-31T13:59:28Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "panels reorder when adding tabs; search too narrow (needs content/keyword search, grep files)",
+      "summary": "Root-caused both and deferred to coordinated work: (2) native AvalonDock drag is never reconciled into the owned Layout model, so rebuild-from-model on every add reverts arrangement (App-only reverse-sync, deferred as UX-critical/headless-untestable); (4) graph search filters loaded node labels client-side only, content/keyword search needs Core FindAsync breadth + file grep is a new Core capability (DC-022). Decision note + session-contracts 4h handoff.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260831-panel-reorder-and-search-breadth.md",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [
+        "layout",
+        "search",
+        "handoff"
       ],
       "outcome": "success"
     }

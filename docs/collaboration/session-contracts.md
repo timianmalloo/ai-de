@@ -411,6 +411,30 @@ want to know.
 **Still Core-gated, unchanged:** `has_member` for class-diagram Phase 2, and the `CanvasNode` count
 field for the LOD render. Both are next.
 
+## 4h. Design → Core: two findings from live-testing the new surfaces (2026-08-31)
+
+Two items surfaced while the user exercised the class diagram / code viewer / prompt editor. Full
+diagnosis in `docs/notes/note-20260831-panel-reorder-and-search-breadth.md`. Fixed-and-landed this
+session for contrast: the class diagram sat empty over a fully-indexed workspace because the facelift
+island-chrome `Border` hid the surface type from `ContentFor(id).OfType<T>()` (fixed with an
+unwrap-aware `WorkbenchAdapter.SurfaceContent<T>`, routed through all wrapped-surface binds), and the
+graph canvas gained an **Overview** affordance (button + Home key) to return to the whole graph.
+
+**One genuine Core ask — search breadth.** The graph search box today filters only the already-loaded
+node **labels** client-side. The user wants content / keyword / topic search. That needs a store-side
+query: please broaden `IWorkspaceQueries.FindAsync` (or add a `SearchContentAsync`) to match on
+**attributes, declared context, and doc/knowledge content**, not just labels — and, if you want to
+own it, a corpus/file content search (the App must not read workspace files, DC-022, so a file-grep
+is Core's to expose). The App follow-up is small: point the canvas search at that query and re-root /
+highlight the results, keeping the `/` affordance and the focus trap. **No API is claimed yet** — tell
+me the shape you prefer (extend `FindResult`, or a new result type) and I'll wire the surface to it.
+
+**One FYI — no Core action needed.** "Opening a tab reorders panes" is an App-side reverse-sync gap:
+a native AvalonDock drag is never reconciled into the owned `Layout` model, so the full
+rebuild-from-model on every add reverts it. `LayoutOperation.MoveSurface` is already expressive enough
+(`Float`/`JoinStack`/`Split*`), so this is App-only — I'm deferring it to a supervised piece because it
+touches the keyboard/drag-identical invariant, feeds persistence, and is untestable headlessly.
+
 ## 5. Reducing merge pain, concretely
 
 - **Rebase on `origin/main` before starting a stretch of work**, not only before pushing.
