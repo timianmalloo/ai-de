@@ -46,9 +46,11 @@ public sealed class WorkbenchShell : IDisposable
     private readonly HashSet<string> _customizationInitialized = new(StringComparer.Ordinal);
     private CanvasGraphViewModel? _canvasGraph;
 
-    // The per-workspace Loomkeeper observation store the read panes fold. Null when no workspace data
-    // directory was supplied or the store could not be opened; the panes then show "not available".
-    private readonly SqliteWatcherObservationStore? _watcherStore;
+    // The per-workspace Loomkeeper host: it owns the observation store AND runs the ingest (the
+    // coordination-contract log pump, in-process, so liveness is exact). Null when no workspace data
+    // directory was supplied or it could not be opened; the panes then show "not available".
+    private readonly WatcherHost? _watcherHost;
+    private readonly CancellationTokenSource? _watcherPump;
 
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
@@ -60,14 +62,11 @@ public sealed class WorkbenchShell : IDisposable
 
         _queries = queries;
 
-        // Loomkeeper read surfaces (Sessions/Board/Leaderboard) read a per-workspace watcher store -
-        // the same SQLite file the ingest host writes agent observations into. Opened here so the
-        // panes render live when data is present and degrade to an honest "not available" when the
-        // store is absent (the walking-skeleton default). Owned by the shell; disposed with it.
-        //
-        // Cross-process caveat: liveness compares monotonic ticks, which are process-relative, so a
-        // heartbeat written by a separate ingest process is not comparable to this process's clock -
-        // in-process ingest is exact, and the cross-process liveness projection is a wiring follow-on.
+        // Loomkeeper read surfaces (Sessions/Board/Leaderboard) read a per-workspace watcher store that
+        // the in-process host also WRITES: the host runs the coordination-contract log pump, so a
+        // session that opts in by writing a register/heartbeat log under the coord directory appears
+        // live. Hosting the ingest in this process makes liveness exact (the registrar and the liveness
+        // projection share one monotonic clock) - the cross-process caveat does not arise here.
         IWatcherSessionsQuery? sessionsQuery = null;
         IWatcherBoardQuery? boardQuery = null;
         IWatcherLeaderboardQuery? leaderboardQuery = null;
@@ -76,25 +75,28 @@ public sealed class WorkbenchShell : IDisposable
         {
             try
             {
-                Directory.CreateDirectory(workspaceDataDirectory);
-                _watcherStore = SqliteWatcherObservationStore.Open(
-                    Path.Combine(workspaceDataDirectory, "watcher.db"));
-                var liveness = new LivenessProjection(
-                    _watcherStore, new SystemMonotonicClock(), TimeSpan.FromSeconds(30));
-                sessionsQuery = new WatcherSessionsQuery(_watcherStore, liveness);
-                boardQuery = new WatcherBoardQuery(_watcherStore);
-                leaderboardQuery = new WatcherLeaderboardQuery(_watcherStore);
-                disputeQuery = new WatcherDisputeQuery(_watcherStore);
+                _watcherHost = WatcherHost.Open(
+                    workspaceDataDirectory,
+                    Path.Combine(workspaceDataDirectory, "loomkeeper-coord"));
+                sessionsQuery = new WatcherSessionsQuery(_watcherHost.Store, _watcherHost.Liveness);
+                boardQuery = new WatcherBoardQuery(_watcherHost.Store);
+                leaderboardQuery = new WatcherLeaderboardQuery(_watcherHost.Store);
+                disputeQuery = new WatcherDisputeQuery(_watcherHost.Store);
+
+                // Drain the coordination log into the store every couple of seconds so the surfaces
+                // reflect new/updated sessions without a restart. Fire-and-forget; cancelled on Dispose.
+                _watcherPump = new CancellationTokenSource();
+                _ = _watcherHost.RunAsync(TimeSpan.FromSeconds(2), _watcherPump.Token);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                // A watcher store that cannot be opened must not stop the workbench from opening: the
-                // panes degrade to their honest "not available" state (a null query), which is the
-                // same code path as the walking-skeleton default. Any open failure (I/O, permission,
-                // a corrupt/locked SQLite file) degrades identically - the workbench is never blocked
-                // by an unreadable observation store.
-                _watcherStore?.Dispose();
-                _watcherStore = null;
+                // A watcher host that cannot be opened must not stop the workbench from opening: the
+                // panes degrade to their honest "not available" state (a null query), the same code
+                // path as the walking-skeleton default. Any open failure degrades identically.
+                _watcherPump?.Cancel();
+                _watcherHost?.Dispose();
+                _watcherHost = null;
+                _watcherPump = null;
             }
         }
 
@@ -860,7 +862,9 @@ public sealed class WorkbenchShell : IDisposable
     public void Dispose()
     {
         Persistence?.Dispose();
-        _watcherStore?.Dispose();
+        _watcherPump?.Cancel();
+        _watcherPump?.Dispose();
+        _watcherHost?.Dispose();
     }
 
     /// <summary>The command palette's rows: every keyboard-reachable layout command.</summary>

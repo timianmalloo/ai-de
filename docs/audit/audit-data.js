@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T17:45:06Z",
+  "generated": "2026-08-31T20:56:56Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3053,6 +3053,29 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0292",
+      "shortname": "implement-watcher-host",
+      "datetime": "2026-08-31T20:56:55Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps",
+      "summary": "Connective 5: in-process WatcherHost composing store+registrar+IngestHost+InjectedContractIngest+CoordContractLogPump (+best-effort OTLP); runs in WorkbenchShell with a 2s background pump so the store fills live and liveness is exact (shared in-process monotonic clock, removes conn-2 caveat). 7 tests, Core 946/0, App 138/0; drain wiring mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-host.md",
+        "docs/proof/watcher-host.md",
+        "tests/AiDe.Core.Tests/Watcher/WatcherHostTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T20:41:27Z",
+      "duration_seconds": 928.0
     }
   ],
   "changes": [
@@ -5648,6 +5671,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "09c7dfee6a1c909dd8934ed142ca9a1b58b97923",
         "after": "09c7dfee6a1c909dd8934ed142ca9a1b58b97923",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0122",
+      "datetime": "2026-08-31T20:56:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "architecture",
+      "skill": "implement",
+      "title": "Loomkeeper conn-5: ingest runs in-process in the WPF app; liveness now exact",
+      "prompt": "host the OTLP receiver + coordination ingest in a running process",
+      "summary": "WatcherHost composes and runs the ingest inside the app process; the registrar and liveness projection share one monotonic clock, so the cross-process liveness caveat recorded in conn-2 is removed. A 2s background coordination-log pump fills the shared store the panes read.",
+      "rationale": "Hosting the ingest beside the read surfaces is the only composition that makes monotonic liveness exact without a shared-epoch heartbeat, and it is the smallest runnable path from live-capable panes to live ones.",
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WatcherHost.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "b08993ab4233f88d2b8a3498408666ba7f2d104f",
+        "after": "b08993ab4233f88d2b8a3498408666ba7f2d104f",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

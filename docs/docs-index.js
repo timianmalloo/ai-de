@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T17:44:41Z",
+  "generated": "2026-08-31T20:56:15Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2010,6 +2010,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c59220a166cbe3df078f1f9b9e55c38180b6ba522703271153e0ad47e00643ce"
+    },
+    {
+      "id": "design-watcher-host",
+      "path": "docs/design/watcher-host.md",
+      "title": "Loomkeeper - In-Process Watcher Host (connective 5)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Compose the observation store, trusted registrar, ingest host, injected coordination-contract ingest + log pump, and (best-effort) the OTLP receiver into one WatcherHost, and run it IN THE WPF APP PROCESS. Running the ingest beside the read surfaces makes liveness exact (the registrar and liveness projection share one process-global monotonic clock), which is the cross-process caveat conn-2 recorded, now removed. The host drains the coordination-contract log on a 2s background loop so a session that writes a register/heartbeat log appears live without a restart. This is the next-step that turns the panes from live-capable into live.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "host",
+        "ingest",
+        "coordination",
+        "liveness",
+        "in-process",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-otlp-receiver",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-board-leaderboard-surfaces",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9f3a01beb28528a18ae915f142fe03bcc2b2f90c4138ef60860d6427a552d27c"
     },
     {
       "id": "design-watcher-ingest-host",
@@ -7010,6 +7056,40 @@ window.DOCS_INDEX = {
       "sourceSha256": "2405d978d3a1793648d5a0958730254c159ccbde6fee4612a0b07bc7d902b664"
     },
     {
+      "id": "proof-watcher-host",
+      "path": "docs/proof/watcher-host.md",
+      "title": "Proof Pack - Loomkeeper In-Process Watcher Host (connective 5)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the in-process WatcherHost composes and runs the ingest: a coordination-contract log registers a session into the shared store through the host; re-pumping is idempotent; liveness is exact because the registrar and the liveness projection share one monotonic clock in-process; an enqueued span is drained by PumpOnce; and the shared store feeds the same Sessions read query the WPF surface folds (E11). Wired into WorkbenchShell with a 2s background pump. 7 tests, Core 946/0, App 138/0; the drain wiring mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "host",
+        "ingest",
+        "coordination",
+        "liveness",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-host",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d041ee55375063cec46a8efd417707c78f308821808906290a3d74461157f6fc"
+    },
+    {
       "id": "proof-watcher-ingest-host",
       "path": "docs/proof/watcher-ingest-host.md",
       "title": "Proof Pack - Loomkeeper Ingest Host (slice 1a)",
@@ -7912,5 +7992,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "85cb38350131f5e2554c4a8a8db017985b70f80fe0d98462b5ca5aa234e33965"
+  "graphSha256": "eb2a112d5aa4667f8e55cbddcfdc9cacdf1f9afd556ec0e8b5634ce86351bd98"
 };
