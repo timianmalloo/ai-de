@@ -185,6 +185,33 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                     request, subject, "inherits", baseName, VerificationStatus.Verified, provenance));
             }
 
+            // MEMBERS, for the class diagram's compartments (ADR-0020).
+            //
+            // Declared on this type only — inherited members belong to the type that declares them,
+            // and repeating them would make every subclass look like it redefined its parent. The
+            // compiler's own generated members are skipped for the same reason `IsGeneratedType`
+            // exists: a record's `<Clone>$` and a property's backing field are artifacts of
+            // compilation, not things anybody wrote.
+            var members = Members(type).ToList();
+
+            foreach (var member in members)
+            {
+                assertions.Add(Assertion(
+                    request, subject, "has_member", member, VerificationStatus.Verified, provenance));
+            }
+
+            // A truncated compartment says so. Without this a class with 300 members renders exactly
+            // like one with 40, and the reader cannot tell a complete list from the top of a long
+            // one — the shape of defect this codebase calls "absence rendered as success" (DC-025).
+            // MEASURED on a real repository: 7 types of 1,428 reach the cap.
+            if (members.Count == MaxMembersPerType)
+            {
+                assertions.Add(Assertion(
+                    request, subject, "members_truncated", DeclaredMemberCount(type).ToString(
+                        System.Globalization.CultureInfo.InvariantCulture),
+                    VerificationStatus.Verified, provenance));
+            }
+
             foreach (var contract in type.Interfaces.Where(Resolved))
             {
                 mark = System.Diagnostics.Stopwatch.GetTimestamp();
@@ -385,6 +412,100 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         var relative = Path.GetRelativePath(dir, location.SourceTree.FilePath).Replace((char)92, '/');
         return new Provenance(relative, $"{line.Line + 1}:{line.Character + 1}", ExtractorId, extractorVersion, observedAt);
     }
+
+    /// <summary>
+    /// A type's own members, rendered for a UML compartment.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Formatted, not structured</b> — <c>+ Name : string</c>, <c>+ Save(int) : Task</c> —
+    /// because the consumer is a compartment of text and a structured payload would be parsed back
+    /// into one. The leading glyph is UML's visibility marker: <c>+</c> public, <c>#</c> protected,
+    /// <c>-</c> private, <c>~</c> internal.</para>
+    ///
+    /// <para><b>What is skipped, and why each.</b> Compiler-generated members (a record's
+    /// <c>&lt;Clone&gt;$</c>, a property's backing field, an event's add/remove pair) are artifacts of
+    /// compilation rather than anything a person wrote. Property accessors are skipped because the
+    /// property itself is already listed and <c>get_Name</c> beside <c>Name</c> is noise. Constructors
+    /// are kept: which constructors a type offers is part of how it is used.</para>
+    ///
+    /// <para><b>Capped per type.</b> A generated or god-class type with hundreds of members would
+    /// dominate a payload sized for a card. The cap is disclosed by count on the type itself, so a
+    /// truncated compartment says so rather than looking complete.</para>
+    /// </remarks>
+    private static IEnumerable<string> Members(INamedTypeSymbol type)
+    {
+        var emitted = 0;
+
+        foreach (var member in type.GetMembers())
+        {
+            if (member.IsImplicitlyDeclared || member.Kind == SymbolKind.NamedType) continue;
+
+            // An accessor is reachable through its property; listing both says the same thing twice.
+            if (member is IMethodSymbol { AssociatedSymbol: not null }) continue;
+
+            var text = member switch
+            {
+                IPropertySymbol property =>
+                    $"{Visibility(property)} {property.Name} : {Short(property.Type)}",
+
+                IFieldSymbol field =>
+                    $"{Visibility(field)} {field.Name} : {Short(field.Type)}",
+
+                IMethodSymbol method =>
+                    $"{Visibility(method)} {method.Name}({string.Join(", ", method.Parameters.Select(p => Short(p.Type)))})"
+                    + (method.ReturnsVoid ? string.Empty : $" : {Short(method.ReturnType)}"),
+
+                IEventSymbol declaredEvent =>
+                    $"{Visibility(declaredEvent)} {declaredEvent.Name} : {Short(declaredEvent.Type)}",
+
+                _ => null,
+            };
+
+            if (text is null) continue;
+
+            yield return text;
+
+            if (++emitted == MaxMembersPerType) yield break;
+        }
+    }
+
+    /// <summary>How many members the type actually declares, for the truncation disclosure.</summary>
+    /// <remarks>
+    /// Counted with the same filter the listing uses, because a total that counted compiler-generated
+    /// members would report a shortfall that is not there — "40 of 312" where 312 includes 200
+    /// backing fields nobody wrote is a worse answer than no number.
+    /// </remarks>
+    private static int DeclaredMemberCount(INamedTypeSymbol type) => type.GetMembers().Count(
+        m => !m.IsImplicitlyDeclared
+            && m.Kind != SymbolKind.NamedType
+            && m is not IMethodSymbol { AssociatedSymbol: not null });
+
+    /// <summary>Members carried per type before the compartment is truncated.</summary>
+    /// <remarks>
+    /// Enough for any type a person reads at once. A class with more than this has a problem the
+    /// diagram cannot fix, and carrying all of them would cost every other type on the canvas.
+    /// </remarks>
+    public const int MaxMembersPerType = 40;
+
+    /// <summary>UML's visibility markers, so a compartment reads as a compartment.</summary>
+    private static string Visibility(ISymbol member) => member.DeclaredAccessibility switch
+    {
+        Accessibility.Public => "+",
+        Accessibility.Protected or Accessibility.ProtectedOrInternal => "#",
+        Accessibility.Private => "-",
+        _ => "~",
+    };
+
+    /// <summary>
+    /// A type name short enough for a card.
+    /// </summary>
+    /// <remarks>
+    /// <c>MinimallyQualifiedFormat</c> rather than the full display string: a compartment reading
+    /// <c>System.Collections.Generic.IReadOnlyList&lt;TheTerrace.Features.Fixtures.Fixture&gt;</c> is
+    /// a compartment nobody can read. The full name is still on the node itself.
+    /// </remarks>
+    private static string Short(ITypeSymbol type) =>
+        type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
     private static string KindOf(INamedTypeSymbol type) => type.TypeKind switch
     {

@@ -23,7 +23,13 @@ public sealed record ScopeDescriptor(string ScopeId, string ProjectPath, string 
 /// </remarks>
 public static class CSharpScopeDiscovery
 {
-    private static readonly string[] Skip = ["bin", "obj", ".git", "node_modules"];
+    // `artifacts` is the .NET SDK's own output layout — the modern sibling of bin and obj — and it
+    // was missing here while `UnanalysedLanguages` already skipped it, so the two lists disagreed
+    // about what counts as build output (DC-022). MEASURED on TheTerrace: TypeScript discovery
+    // indexed `artifacts/s00/publish/wwwroot/_framework`, putting Blazor's published JavaScript in
+    // the graph as source — nodes whose recorded path could not even be resolved back to a file.
+    private static readonly string[] Skip =
+        ["bin", "obj", ".git", "node_modules", "artifacts"];
 
     /// <summary>
     /// Every C# scope under <paramref name="rootPath"/>, ordered so the list is stable between runs.
@@ -246,6 +252,10 @@ public static class CSharpScopeDiscovery
         var skip = new HashSet<string>(Skip, StringComparer.OrdinalIgnoreCase)
         {
             "node_modules", "dist", "build", "out", ".next", "coverage",
+
+            // Published web output. `_framework` is Blazor's, and a `publish` folder is the result of
+            // a build rather than anything anybody wrote.
+            "publish", "_framework",
         };
 
         string[] wanted = [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"];

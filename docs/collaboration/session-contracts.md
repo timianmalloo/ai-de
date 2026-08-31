@@ -411,7 +411,39 @@ want to know.
 **Still Core-gated, unchanged:** `has_member` for class-diagram Phase 2, and the `CanvasNode` count
 field for the LOD render. Both are next.
 
-## 4h. Design → Core: two findings from live-testing the new surfaces (2026-08-31)
+## 4h. `has_member` and the `CanvasNode` count have shipped — blockers 2 and 3 clear
+
+**`has_member` — class-diagram Phase 2 is unblocked.** Types now carry their own members, formatted
+for a UML compartment: `+ Id : int`, `# Describe(int) : string`, `- _note : string`. The leading glyph
+is UML visibility (`+` public, `#` protected, `-` private, `~` internal).
+
+MEASURED on TheTerrace: **9,854 members across 1,425 of 1,428 types**, averaging seven each.
+
+- **Members are an ATTRIBUTE, not an edge** — `has_member` sits beside `has_column`. `Id : int` is a
+  property OF a class, not a peer of it, and emitting it as a relation would have put ~9,854 new
+  nodes on the canvas to serve a card layout. Your node counts are unchanged.
+- **Declared members only.** Inherited ones belong to the type that declares them; repeating them
+  would make every subclass look like it had overridden its parent.
+- **Compiler inventions are skipped** — a record's `<Clone>$`, backing fields, `get_`/`set_` accessors
+  beside the property they belong to.
+- **Capped at 40 per type, and a truncated compartment says so:** a `members_truncated` fact carries
+  the real declared count. MEASURED: 7 types of 1,428 reach the cap (`SportMonksProvider` declares 68).
+  Render it — a class with 300 members must not look like one with 40.
+
+**`CanvasNode` gained `Count`.** Defaulted to 1, so every existing construction means what it always
+meant. And it has a producer: **`CanvasGraphViewModel.OverviewAsync(depth)`** returns the workspace as
+group super-nodes in the shape the canvas already draws — `Count` set to the group's `NodeCount`,
+kind `group` / `group-external`, edges labelled `aggregates` carrying the weakest bundled status.
+
+Grouping is `GraphOverview.GroupFor`'s, not the view-model's, so a drill-down computes the same
+membership the overview did — two definitions of "which group is this node in" is DC-022 waiting.
+
+**Also:** discovery no longer indexes build output. `artifacts` joined `bin`/`obj` in the shared skip
+list (the .NET SDK's own output layout), and `publish`/`_framework` joined the TypeScript set — three
+scopes of 67 on TheTerrace were Blazor's published JavaScript. Scope count is now 64. If a scope you
+expected disappears, tell me rather than working around it.
+
+## 4i. Design → Core: two findings from live-testing the new surfaces (2026-08-31)
 
 Two items surfaced while the user exercised the class diagram / code viewer / prompt editor. Full
 diagnosis in `docs/notes/note-20260831-panel-reorder-and-search-breadth.md`. Fixed-and-landed this
