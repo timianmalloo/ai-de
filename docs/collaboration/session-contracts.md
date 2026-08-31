@@ -325,6 +325,33 @@ first — the three read paths that exist today already do, and `CurrentSourceRe
 base, so you will not normally meet this. It matters if you render a revision from an assertion you
 read yourself.
 
+## 4f. The IPC protocol is now version 3 — one thing to know, no code change for you
+
+**Nothing in `IWorkspaceQueries` or `WorkspaceClient` changed shape.** Every call you make returns
+what it returned before. This is here for one reason: the first time you run after pulling, a daemon
+left over from an earlier build may still be serving a workspace, and it speaks version 2.
+
+You will see:
+
+> This workspace could not be opened: a daemon from an earlier build is still running for this
+> workspace and speaks an older protocol. It exits on its own once idle; to reopen immediately, end
+> the AiDe.Daemon process serving this workspace.
+
+That is the intended behaviour, not a regression — version negotiation refusing a mismatch at the
+boundary instead of letting it become a parse failure somewhere further in. Ending the process or
+waiting out the idle grace is the whole remedy.
+
+**What actually changed.** A payload used to be serialised to JSON and that *text* placed in a string
+field, so the envelope escaped every quote a second time — measured at **1.56–1.57x**. The budget was
+checked on the inner bytes and enforced on the outer ones, which is how a graph inside its byte
+budget was refused by the transport and the pane reported only "The graph could not be loaded". The
+payload is now carried as JSON. Framing overhead: **78 bytes**.
+
+**What you get for free.** The graph is no longer paying a 57% tax, so more of it fits in one message.
+On TheTerrace the canvas's own opening request went from 1,000 nodes and 283 knowledge to **1,500 and
+340**; a 5,000-node request from 706 nodes to **2,792, with 729 knowledge**. If any of your layout or
+density work was tuned against the smaller graph, it is now getting a bigger one.
+
 ## 5. Reducing merge pain, concretely
 
 - **Rebase on `origin/main` before starting a stretch of work**, not only before pushing.
