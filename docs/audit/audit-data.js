@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T05:03:44Z",
+  "generated": "2026-08-31T05:03:45Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3233,6 +3233,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tools/list-workspace-stores.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0184",
+      "shortname": "knowledge-search-saw-only-the-first-200",
+      "datetime": "2026-08-31T05:03:08Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do the next steps autonomously while i go to bed",
+      "summary": "DC-035's third instance, found by sweeping the CALLERS rather than the queries — the earlier sweep checked that each reader query expressed its filter in SQL, and all of them did, but the knowledge caller still capped at 200 ids in id order and matched the term in memory afterwards. On TheTerrace that meant searching only the alphabetically first 200 of 1,255 knowledge nodes; a document sorting later was reported as not existing. StoreReader.KnowledgeNodes now applies term and type in the query and counts the total over the same filtered set, so omitted is measured against what matched. Measured after: spec 34, adr 9, ui 31, type=adr 7, and 707 honestly reported as omitted at a limit of 50. Control puts the only match past the cap on purpose; observed failing 4 of 4.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/KnowledgeSearchSeesEveryDocumentTests.cs"
       ],
       "tags": [],
       "outcome": "success"

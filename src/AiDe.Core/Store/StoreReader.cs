@@ -131,6 +131,47 @@ public sealed class StoreReader : IDisposable
     /// knows, now that <c>has_type</c> is emitted by six extractors and says nothing about which
     /// half of the graph a node belongs to (INV-0004).
     /// </remarks>
+    /// <summary>
+    /// The knowledge nodes a query asks for, with their declared type, and how many matched in all.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The term and the type are applied HERE, not to the result.</b> The caller used to
+    /// take 200 knowledge ids in id order and then filter them by term in memory, so a search only
+    /// ever saw the alphabetically first 200 of 1,255 — and a document whose id sorted later was
+    /// reported as not existing. That is DC-035 for the third time in this file: a bounded read
+    /// whose filter is applied to the RESULT of the read rather than expressed in it.</para>
+    ///
+    /// <para>The total is counted over the same filtered set, so a caller can say what it left out
+    /// instead of presenting a truncation as an answer.</para>
+    /// </remarks>
+    public (IReadOnlyList<(string NodeId, string Type)> Rows, int TotalMatched) KnowledgeNodes(
+        string? term, string? type, int limit)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT n.node_id, a.object AS declared_type
+            FROM node_dim n
+            JOIN evidence_assertion_fact a ON a.subject = n.node_id AND a.predicate = 'has_type'
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE n.node_kind = 'knowledge' AND n.valid_to_seq IS NULL
+              AND ($term IS NULL OR n.node_id LIKE $pattern)
+              AND ($type IS NULL OR a.object = $type COLLATE NOCASE)
+            GROUP BY n.node_id
+            ORDER BY n.node_id;
+            """,
+            ("$term", term), ("$pattern", term is null ? null : $"%{term}%"), ("$type", type));
+
+        using var reader = command.ExecuteReader();
+        var all = new List<(string, string)>();
+
+        while (reader.Read())
+        {
+            all.Add((reader.GetString(0), reader.GetString(1)));
+        }
+
+        return (all.Count > limit ? all[..limit] : all, all.Count);
+    }
+
     public IReadOnlySet<string> KnowledgeNodeIds(int limit)
     {
         using var command = Command(

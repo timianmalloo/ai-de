@@ -748,32 +748,23 @@ public sealed class ProjectionService(WorkspaceStore store)
         var limit = Clamp(query.MaxResults, 1, MaxNeighborsCeiling);
         using var reader = store.BeginRead();
 
-        // KNOWLEDGE FIRST, then everything else. This read the first 200 `has_type` assertions and
-        // filtered THOSE to knowledge — so on any real repository the 200 were C# types in
-        // alphabetical order and the filter left nothing. MEASURED: 0 items returned on a workspace
-        // holding 468 knowledge nodes.
+        // EVERY filter in the query, and the total counted over the same filtered set.
         //
-        // The same defect as DC-035 one projection along: a cap applied before the filter returns
-        // the wrong slice trimmed to the right shape, and nothing in the result says so. The node
-        // class has its own index, so asking for knowledge directly is also the cheaper query.
-        var knowledge = reader.KnowledgeNodeIds(MaxNodesCeiling);
-
-        var typedAssertions = reader.AssertionsWithPredicate("has_type", MaxSearchResultsCeiling);
-        var typed = typedAssertions
-            .Where(a => knowledge.Contains(a.Subject))
-            .GroupBy(a => a.Subject, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
-
-        var ids = typed.Keys
-            .Where(id => query.Term is null || id.Contains(query.Term, StringComparison.OrdinalIgnoreCase))
-            .Where(id => query.Type is null || string.Equals(typed[id].Object, query.Type, StringComparison.OrdinalIgnoreCase))
-            .OrderBy(id => id, StringComparer.Ordinal)
-            .ToList();
+        // This has now been the same defect three times. First it read the first 200 `has_type`
+        // assertions and filtered THOSE to knowledge, so the 200 were C# types in alphabetical order
+        // and the filter left nothing — 0 items on a workspace holding 468 knowledge nodes. Then the
+        // knowledge read was pushed into the query but capped at 200 ids while the TERM was still
+        // matched in memory afterwards, so a search saw only the alphabetically first 200 of 1,255
+        // and a document whose id sorted later was reported as not existing.
+        //
+        // A cap applied before a filter returns the wrong slice trimmed to the right shape, and
+        // nothing in the result says so (DC-035). Moving one filter into the query and leaving the
+        // next one outside it moves the defect rather than removing it.
+        var (rows, totalMatched) = reader.KnowledgeNodes(query.Term, query.Type, limit);
 
         var nodes = new List<KnowledgeNodeView>();
-        foreach (var id in ids.Take(limit))
+        foreach (var (id, declaredType) in rows)
         {
-            var typeAssertion = typed[id];
             var touching = reader.AssertionsTouching(id, MaxEdgesCeiling);
             var owner = touching.FirstOrDefault(a => a.Subject == id && a.Predicate == "owned_by");
             // `review_by` and `declared_in` describe the document; they are not links to other
@@ -792,7 +783,7 @@ public sealed class ProjectionService(WorkspaceStore store)
                 findings.Add("owner not recorded");
             }
 
-            if (typeAssertion.Object == "unknown")
+            if (declaredType == "unknown")
             {
                 findings.Add("type not recorded");
             }
@@ -802,7 +793,11 @@ public sealed class ProjectionService(WorkspaceStore store)
                 findings.Add("orphan: no inbound or outbound links");
             }
 
-            if (typeAssertion.Provenance.SourceLocation is null)
+            // The type assertion carries the provenance, so it is read from the neighbours already
+            // in hand rather than by a second query per node.
+            var typeAssertion = touching.FirstOrDefault(a => a.Subject == id && a.Predicate == "has_type");
+
+            if (typeAssertion?.Provenance.SourceLocation is null)
             {
                 findings.Add("source location not recorded");
             }
@@ -820,17 +815,18 @@ public sealed class ProjectionService(WorkspaceStore store)
             }
 
             nodes.Add(new KnowledgeNodeView(
-                id, typeAssertion.Object, owner?.Object,
+                id, declaredType, owner?.Object,
                 links.Select(ToEdge).ToList(), backlinks.Select(ToEdge).ToList(),
-                typeAssertion.Provenance.SourceLocation, findings));
+                typeAssertion?.Provenance.SourceLocation, findings));
         }
 
+        // Omitted is counted against everything that MATCHED, not against everything that was read.
+        // The two were the same only while the filter ran after the cap.
         var bounds = new ResultBounds(
-            limit, MaxEdgesCeiling, MaxResultBytes, nodes.Count, ids.Count - nodes.Count,
+            limit, MaxEdgesCeiling, MaxResultBytes, nodes.Count, totalMatched - nodes.Count,
             nodes.Sum(n => n.Links.Count + n.Backlinks.Count), 0, false, null);
 
-        return new KnowledgeResult(nodes, bounds,
-            typedAssertions.Count > 0 ? typedAssertions[0].ArtifactRevision : reader.CurrentSourceRevision());
+        return new KnowledgeResult(nodes, bounds, reader.CurrentSourceRevision());
     }
 
     /// <summary>
