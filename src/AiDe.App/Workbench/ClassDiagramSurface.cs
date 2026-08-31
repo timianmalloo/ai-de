@@ -24,6 +24,7 @@ public sealed class ClassDiagramSurface : ContentControl
     private readonly TextBlock _disclosure;
     private readonly TextBox _search;
     private readonly ToggleButton _diagramToggle;
+    private readonly ToggleButton _hideInterfaces;
     private ClassHierarchy _full = new([], [], 0);
 
     // Above this many drawn types a node-and-arrow diagram is an unreadable tangle, so the list stays.
@@ -50,9 +51,23 @@ public sealed class ClassDiagramSurface : ContentControl
         _diagramToggle.Checked += (_, _) => RenderCurrent();
         _diagramToggle.Unchecked += (_, _) => RenderCurrent();
 
+        _hideInterfaces = new ToggleButton
+        {
+            Content = "Hide interfaces",
+            Padding = new Thickness(9, 2, 9, 2),
+            Margin = new Thickness(0, 0, 6, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+            ToolTip = "Hide interface types and the 'implements' arrows to them — a class with many interfaces reads too broad",
+        };
+        AutomationProperties.SetName(_hideInterfaces, "Hide interfaces");
+        _hideInterfaces.Checked += (_, _) => RenderCurrent();
+        _hideInterfaces.Unchecked += (_, _) => RenderCurrent();
+
         var headerRow = new DockPanel { LastChildFill = true };
         DockPanel.SetDock(_diagramToggle, Dock.Right);
+        DockPanel.SetDock(_hideInterfaces, Dock.Right);
         headerRow.Children.Add(_diagramToggle);
+        headerRow.Children.Add(_hideInterfaces);
         headerRow.Children.Add(_header);
         DockPanel.SetDock(headerRow, Dock.Top);
         root.Children.Add(headerRow);
@@ -101,6 +116,9 @@ public sealed class ClassDiagramSurface : ContentControl
     /// <summary>For tests: force diagram or list mode (as the header toggle does).</summary>
     internal void SetDiagramMode(bool on) => _diagramToggle.IsChecked = on;
 
+    /// <summary>For tests: hide/show interface types (as the header toggle does).</summary>
+    internal void SetHideInterfaces(bool on) => _hideInterfaces.IsChecked = on;
+
     /// <summary>Builds the hierarchy from a graph and renders it (ADR-0020).</summary>
     public void ShowGraph(IReadOnlyList<CanvasNode>? nodes, IReadOnlyList<CanvasEdge>? edges) =>
         Show(ClassHierarchyModel.Build(nodes, edges));
@@ -118,6 +136,11 @@ public sealed class ClassDiagramSurface : ContentControl
 
     private void Render(ClassHierarchy hierarchy)
     {
+        if (_hideInterfaces.IsChecked == true)
+        {
+            hierarchy = WithoutInterfaces(hierarchy);
+        }
+
         TypeCount = hierarchy.Types.Count;
         RelationCount = hierarchy.Relations.Count;
 
@@ -248,7 +271,7 @@ public sealed class ClassDiagramSurface : ContentControl
 
         foreach (var t in drawn) { Rank(t.Id, []); }
 
-        const double boxW = 168, boxH = 46, gapX = 26, gapY = 62, pad = 14;
+        const double boxW = 176, boxH = 58, gapX = 26, gapY = 66, pad = 14;
         var rows = drawn.GroupBy(t => rank[t.Id]).OrderBy(g => g.Key).ToList();
         var pos = new Dictionary<string, Point>(StringComparer.Ordinal);
         var maxCols = 1;
@@ -289,6 +312,24 @@ public sealed class ClassDiagramSurface : ContentControl
         _scroller.Content = canvas;
     }
 
+    // Hides interface types and any relationship touching one — a class implementing many interfaces
+    // makes the diagram read too broad. Relationships from a kept type to a now-hidden interface are
+    // recounted as external (disclosed, not drawn), so the count stays honest.
+    private static ClassHierarchy WithoutInterfaces(ClassHierarchy h)
+    {
+        var types = h.Types.Where(t => !t.IsInterface).ToList();
+        var ids = types.Select(t => t.Id).ToHashSet(StringComparer.Ordinal);
+        var relations = new List<ClassRelation>();
+        var external = h.ExternalRelations;
+        foreach (var r in h.Relations)
+        {
+            if (ids.Contains(r.From) && ids.Contains(r.To)) { relations.Add(r); }
+            else if (ids.Contains(r.From)) { external++; }
+        }
+
+        return new ClassHierarchy(types, relations, external);
+    }
+
     private static void AddConnector(Canvas canvas, Point from, Point to, double boxW, double boxH, ClassRelationKind kind)
     {
         var x1 = from.X + boxW / 2;   // top-centre of the derived type
@@ -323,26 +364,52 @@ public sealed class ClassDiagramSurface : ContentControl
         canvas.Children.Add(head);
     }
 
+    // A UML class box: a name compartment (with the «interface» stereotype) over a member compartment,
+    // separated by a rule. The member compartment is empty until Core exposes has_member through a query
+    // (session-contracts) — an empty compartment is valid UML (members not shown) rather than a fiction.
     private static Border DiagramBox(ClassTypeNode type, double w, double h)
     {
-        var panel = new StackPanel { VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(8, 3, 8, 3) };
+        var stack = new DockPanel { LastChildFill = true };
+
+        var nameArea = new StackPanel { Margin = new Thickness(6, 4, 6, 4) };
         if (type.IsInterface)
         {
-            panel.Children.Add(Muted("«interface»", 10.5, center: true));
+            nameArea.Children.Add(Muted("«interface»", 10, center: true));
         }
 
         var name = Text(type.Label, 12.5, FontWeights.SemiBold);
         name.TextAlignment = TextAlignment.Center;
         name.TextWrapping = TextWrapping.NoWrap;
         name.TextTrimming = TextTrimming.CharacterEllipsis;
-        panel.Children.Add(name);
+        nameArea.Children.Add(name);
+        DockPanel.SetDock(nameArea, Dock.Top);
+        stack.Children.Add(nameArea);
+
+        // The compartment rule — what makes the box read as a UML class rather than a plain node.
+        var rule = new Border { BorderThickness = new Thickness(0, 1, 0, 0), Height = 1 };
+        rule.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
+        DockPanel.SetDock(rule, Dock.Top);
+        stack.Children.Add(rule);
+
+        // Member compartment (attributes + operations). Empty for now; a muted marker keeps the
+        // compartment visible so the box is legibly a class box awaiting its members.
+        var members = new TextBlock
+        {
+            Text = "…",
+            FontSize = 11,
+            TextAlignment = TextAlignment.Center,
+            Margin = new Thickness(6, 2, 6, 2),
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+        members.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        stack.Children.Add(members);
 
         var box = new Border
         {
             Width = w,
             Height = h,
-            Child = panel,
-            CornerRadius = new CornerRadius(6),
+            Child = stack,
+            CornerRadius = new CornerRadius(4),
             BorderThickness = new Thickness(1),
         };
         box.SetResourceReference(BackgroundProperty, "RaisedBrush");

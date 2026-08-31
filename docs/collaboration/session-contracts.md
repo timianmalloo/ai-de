@@ -490,6 +490,37 @@ on a surface you are building, that is worth reporting rather than working aroun
 fact comes from their prose — and TypeScript precision, where measurement found the extractor
 inventing imports from prose and minified JavaScript rather than merely missing symbols.
 
+## 4j. Design → Core: the class diagram needs a MEMBERS query to become real UML
+
+The class diagram now renders as an actual UML diagram — three-compartment boxes (name / member
+compartment), generalization (solid) and realization (dashed) connectors with a hollow triangle, a
+layered layout, a **Hide interfaces** collapse, and a Diagram/List toggle. But the **member compartment
+is empty**, because `has_member` is emitted as an assertion and **no `IWorkspaceQueries` method exposes
+it** (I checked: `NodeView` carries no attributes; `DescribeResult` returns only `Node` + edge
+`Neighbors`; `EvidenceAsync` pages the whole assertion stream, too heavy to scan per render). So the box
+reads as a class box awaiting its members — the last thing between this and a real UML class diagram.
+
+**The ask — a bulk members read.** Please expose the `has_member` / `members_truncated` you already
+emit. My preferred shape, following the `Overview`/`Graph` query pattern (operation + request + result,
+one round trip for the ≤40 drawn types):
+
+```csharp
+// IWorkspaceQueries
+Task<MembersResult> MembersAsync(IReadOnlyList<string> typeIds, CancellationToken ct);
+
+public sealed record MembersResult(IReadOnlyDictionary<string, TypeMembers> ByType);
+public sealed record TypeMembers(IReadOnlyList<string> Members, int DeclaredCount);
+//   Members     = the has_member objects, already formatted "+ Id : int" / "# Describe(int) : string"
+//   DeclaredCount = the members_truncated total (== Members.Count when not truncated)
+```
+
+`ProjectionService` can read them with the store's existing `OutgoingAssertions(typeId)` (subject ==
+type, predicate `has_member` / `members_truncated`); the daemon registers one more operation like the
+others. If you'd rather **enrich `DescribeResult`** with the node's own attributes instead of a new
+operation, that also works — I'll call `DescribeAsync` per drawn box. Tell me the shape and I'll wire
+the compartments to it (I split `+`/`#`/`-`/`~` visibility into attributes vs operations App-side by the
+`(` in the member string). This is the open half of `night-classdiagram-members`.
+
 ## 5. Reducing merge pain, concretely
 
 - **Rebase on `origin/main` before starting a stretch of work**, not only before pushing.

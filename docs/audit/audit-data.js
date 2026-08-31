@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T16:46:48Z",
+  "generated": "2026-08-31T17:02:57Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5311,6 +5311,28 @@ window.AUDIT_DATA = {
         "class-diagram",
         "uml",
         "ux"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0284",
+      "shortname": "class-diagram-uml-boxes-collapse",
+      "datetime": "2026-08-31T17:02:57Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "study UML class diagrams — this renders relationships not a UML class diagram; also allow collapsing interfaces (too broad with many interfaces)",
+      "summary": "Class diagram is now real UML: three-compartment boxes (name compartment over a member compartment, divided by a rule) instead of name-only nodes, plus a 'Hide interfaces' collapse toggle that drops interface types and their realization edges (recounted external). Member compartment is empty pending a Core has_member query — handed off in session-contracts 4j (bulk MembersAsync). App+1 test (hide-interfaces).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/ClassDiagramSurface.cs",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [
+        "class-diagram",
+        "uml",
+        "collapse"
       ],
       "outcome": "success"
     }

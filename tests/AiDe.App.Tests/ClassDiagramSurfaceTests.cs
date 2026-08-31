@@ -98,4 +98,26 @@ public sealed class ClassDiagramSurfaceTests
             Assert.True(s.ShowingDiagram);
         });
     }
+
+    [Fact]
+    public void HideInterfaces_DropsInterfaceTypesAndTheirRealizations()
+    {
+        OnSta(() =>
+        {
+            var s = new ClassDiagramSurface();
+            s.ShowGraph(
+                new[] { N("Shop.Order", "class"), N("Shop.Base", "class"), N("Shop.IRepo", "interface") },
+                new[] { Edge("Shop.Order", "Shop.Base", "inherits"), Edge("Shop.Order", "Shop.IRepo", "implements") });
+
+            Assert.Equal(3, s.TypeCount);       // two classes + one interface
+            Assert.Equal(2, s.RelationCount);   // one generalization + one realization
+
+            s.SetHideInterfaces(true);
+            Assert.Equal(2, s.TypeCount);       // the interface is gone
+            Assert.Equal(1, s.RelationCount);   // its realization is gone; the generalization stays
+
+            s.SetHideInterfaces(false);
+            Assert.Equal(3, s.TypeCount);
+        });
+    }
 }
