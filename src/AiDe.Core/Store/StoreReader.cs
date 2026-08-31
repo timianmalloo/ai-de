@@ -124,6 +124,56 @@ public sealed class StoreReader : IDisposable
 
     /// <summary>Assertions with a given predicate — the knowledge projection's entry point.</summary>
     /// <summary>
+    /// The assertion that says where a node was DECLARED — its scope and its path within it.
+    /// </summary>
+    /// <remarks>
+    /// <para>Asked of the store rather than picked out of a neighbour list, because a neighbour list
+    /// is capped. The content reader first filtered <c>AssertionsTouching(id, 50)</c> for the fact
+    /// carrying a path, and on a node with 244 edges that fact was not among the first 50 — so the
+    /// most connected types in a real workspace reported "no recorded source" while the least
+    /// connected ones worked. DC-035, in code written the same day the class was recorded twice.</para>
+    ///
+    /// <para>Ordered so a declaration wins over a mention: <c>has_type</c> and <c>declared_in</c> are
+    /// what a producer emits ABOUT a thing it declared, and their provenance is that thing's own
+    /// file. Any other assertion's path is where it was REFERRED to.</para>
+    /// </remarks>
+    public StoredAssertion? DeclaringAssertion(string nodeId)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT {AssertionColumns} FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.subject = $node AND a.artifact_path_id <> ''
+            ORDER BY CASE a.predicate WHEN 'has_type' THEN 0 WHEN 'declared_in' THEN 1 ELSE 2 END,
+                     a.artifact_path_id
+            LIMIT 1;
+            """, ("$node", nodeId));
+
+        return ReadAssertions(command).FirstOrDefault();
+    }
+
+    /// <summary>
+    /// Where a scope's files live, relative to the workspace root, or null when it never said.
+    /// </summary>
+    /// <remarks>
+    /// Written by the core when it indexes a scope, because the core is what chose the path. An
+    /// empty string is a real answer — the scope IS the workspace root — and is distinct from null,
+    /// which means nothing recorded it and no content can be resolved.
+    /// </remarks>
+    public string? ScopeLocation(string scopeId)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT a.object FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.subject = $scope AND a.predicate = 'declared_at'
+            LIMIT 1;
+            """, ("$scope", scopeId));
+
+        return command.ExecuteScalar() as string;
+    }
+
+    /// <summary>
     /// The ids currently classified as knowledge.
     /// </summary>
     /// <remarks>

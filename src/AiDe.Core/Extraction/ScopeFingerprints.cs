@@ -42,7 +42,12 @@ public sealed class ScopeFingerprints
     // check inside RefreshScopeAsync matched on the unchanged artifact revision and returned an empty
     // result, so 66 scopes were visited and none re-read (DC-044). This bump is the first one that
     // can actually take effect.
-    public const string ExtractorGeneration = "2026-08-30.2";
+    // 2026-08-31.1 — `declared_at`. Every scope now records WHERE its files are, relative to the
+    // workspace root, because nothing did: an assertion's provenance path is relative to its scope
+    // and no fact said where the scope was, so a node could not be resolved to a file at all. A store
+    // written before this cannot answer a content query, and the reader would show "source could not
+    // be located" for everything — which is the shape a stale generation always takes.
+    public const string ExtractorGeneration = "2026-08-31.1";
 
     private const string FileName = "scope-fingerprints.json";
 

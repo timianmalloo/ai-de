@@ -29,7 +29,7 @@ public sealed class WorkspaceCore : IDisposable
         _extractor = extractor;
         Incidents = incidents;
         RootPath = rootPath;
-        Projections = new ProjectionService(store);
+        Projections = new ProjectionService(store, rootPath);
         Dispatch = new DispatchService(store);
         Mcp = new McpToolGateway(Projections, workspaceId);
     }
@@ -161,9 +161,24 @@ public sealed class WorkspaceCore : IDisposable
             return result;
         }
 
+        // WHERE THE SCOPE LIVES, recorded as a fact.
+        //
+        // An assertion's provenance carries a path relative to its SCOPE — `main.bicep`,
+        // `0001-modular-monolith.md` — and nothing recorded where the scope itself was. So a node
+        // could not be resolved to a file at all: `declared_in` names the scope id, not a directory,
+        // and deriving one from the id works for `knowledge:docs/adr` and fails for `bicep:main`,
+        // which is a file stem. Guessing the rest would be a path resolved by pattern-matching, which
+        // is how a reader ends up displaying the wrong file confidently.
+        //
+        // The core is what knows: it chose the path when it discovered the scope. One fact per scope,
+        // relative to the workspace root so the store stays portable.
+        var located = LocateScope(scopeId, rootPathOverride, artifactRevision) is { } where
+            ? result.Assertions.Append(where).ToList()
+            : result.Assertions;
+
         using (var writer = Store.BeginWrite())
         {
-            writer.CommitSnapshot(scopeId, generation, artifactRevision, result.Assertions, complete: true);
+            writer.CommitSnapshot(scopeId, generation, artifactRevision, located, complete: true);
 
             // A subject is always a node. An OBJECT is a node only when the predicate is relational.
             // Found by indexing a real repository: api_version put "2020-02-02" in the graph and
@@ -202,9 +217,14 @@ public sealed class WorkspaceCore : IDisposable
             writer.Commit();
         }
 
+        // What was COMMITTED, not what the extractor handed over. The two differ by the scope's own
+        // location fact, and a caller that counts the return value is counting what is in the store —
+        // which is what the index summary reports and what the evidence pages then page through.
+        // Returning the extractor's set made the summary undercount by one per scope, caught by the
+        // daemon's paging test comparing the summary against everything it could read back.
         activity?.SetTag("outcome", "committed");
-        activity?.SetTag("assertion.count", result.Assertions.Count);
-        return result;
+        activity?.SetTag("assertion.count", located.Count);
+        return result with { Assertions = [.. located] };
     }
 
     /// <summary>The result of indexing a whole repository's C# scopes.</summary>
@@ -241,6 +261,50 @@ public sealed class WorkspaceCore : IDisposable
     /// cost the caller the rest of an index run, and the stale evidence it leaves is exactly the
     /// state that already existed.</para>
     /// </remarks>
+    /// <summary>
+    /// Where a scope's files are, relative to the workspace root, as one assertion.
+    /// </summary>
+    /// <remarks>
+    /// <para>The BASE the scope's provenance paths hang off — a project's directory, a template's
+    /// directory, a documentation folder — mirroring how <see cref="ScopeFingerprints.Compute"/>
+    /// decides the same thing, because a scope pointed at a file means that file's directory and a
+    /// scope pointed at a directory means itself.</para>
+    ///
+    /// <para>Relative, and never above the root: a stored absolute path would leak one machine's
+    /// layout into a store meant to be portable, and an escaping one would let a later reader resolve
+    /// outside the workspace it belongs to.</para>
+    /// </remarks>
+    private Facts.EvidenceAssertion? LocateScope(string scopeId, string? scopePath, string artifactRevision)
+    {
+        if (string.IsNullOrWhiteSpace(scopePath)) return null;
+
+        try
+        {
+            var basePath = File.Exists(scopePath) ? Path.GetDirectoryName(scopePath) : scopePath;
+
+            if (string.IsNullOrEmpty(basePath)) return null;
+
+            var relative = Path.GetRelativePath(RootPath, basePath)
+                .Replace(Path.DirectorySeparatorChar, '/');
+
+            if (relative.StartsWith("..", StringComparison.Ordinal) || Path.IsPathRooted(relative))
+            {
+                return null;
+            }
+
+            return new Facts.EvidenceAssertion(
+                scopeId, artifactRevision, scopeId, "declared_at", relative == "." ? string.Empty : relative,
+                Facts.EvidenceOrigin.Static, Facts.VerificationStatus.Verified,
+                new Facts.Provenance(relative, null, "workspace-core", "1", DateTimeOffset.UtcNow));
+        }
+        catch (Exception ex) when (ex is ArgumentException or PathTooLongException)
+        {
+            // A scope whose location cannot be expressed is a scope whose content cannot be read.
+            // That is a reader saying "no content", not an indexing failure.
+            return null;
+        }
+    }
+
     private void RetractScope(string scopeId, string artifactRevision)
     {
         try

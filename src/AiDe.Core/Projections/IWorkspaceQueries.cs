@@ -28,6 +28,18 @@ public interface IWorkspaceQueries
     Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken cancellationToken);
 
     /// <summary>
+    /// The content behind one node — source, prose, or nothing, as the authority sees it.
+    /// </summary>
+    /// <remarks>
+    /// ADR-0018. Fetched for the ONE node a reader selected, because the graph deliberately carries
+    /// no content: paying for 1,500 nodes to serve one is what overflowed the frame (INV-0003). The
+    /// client does not read files — two authorities on what a node contains would disagree the first
+    /// time one resolved a path differently (DC-022), and file access belongs on the side of the
+    /// boundary that can confine it to the workspace.
+    /// </remarks>
+    Task<NodeContent> NodeContentAsync(string nodeId, CancellationToken cancellationToken);
+
+    /// <summary>
     /// One page of every current assertion.
     /// </summary>
     /// <remarks>
@@ -94,6 +106,9 @@ public sealed class LocalWorkspaceQueries(ProjectionService projections) : IWork
     public Task<KnowledgeResult> KnowledgeAsync(
         string? term, string? type, int maxResults, CancellationToken cancellationToken) =>
         Task.FromResult(projections.Knowledge(new KnowledgeQuery(term, type, maxResults)));
+
+    public Task<NodeContent> NodeContentAsync(string nodeId, CancellationToken cancellationToken) =>
+        Task.FromResult(projections.NodeContent(nodeId));
 
     public Task<EvidencePage> EvidenceAsync(
         string? cursor, int maxAssertions, CancellationToken cancellationToken) =>

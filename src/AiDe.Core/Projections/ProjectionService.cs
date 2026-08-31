@@ -157,7 +157,7 @@ public sealed record KnowledgeResult(
 /// capped on nodes, edges AND bytes — the byte cap matters because node labels come from repository
 /// content, so a count-only cap still admits an unbounded payload.
 /// </remarks>
-public sealed class ProjectionService(WorkspaceStore store)
+public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoot = null)
 {
     private static readonly ActivitySource Activity = new("aide.projection.query");
 
@@ -828,6 +828,163 @@ public sealed class ProjectionService(WorkspaceStore store)
 
         return new KnowledgeResult(nodes, bounds, reader.CurrentSourceRevision());
     }
+
+    /// <summary>
+    /// The content behind one node, for a reader that already has the node.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>On demand, for the one node asked for.</b> The graph carries no content by design —
+    /// fattening 1,500 nodes to serve the one a user selected is what overflowed the frame in the
+    /// first place (INV-0003, ADR-0018).</para>
+    ///
+    /// <para><b>Confined to the workspace.</b> The path is rebuilt from the scope's recorded location
+    /// plus the assertion's own provenance, then checked to be under the root before anything is
+    /// opened. A node id arrives from a client, and a client asking is not a reason to read a file.</para>
+    ///
+    /// <para><b>Bounded, and honest when it truncates.</b> Oversized content returns its first bytes
+    /// and a shortfall saying what was left — never an oversized frame, never a silent half-file.</para>
+    /// </remarks>
+    public NodeContent NodeContent(string nodeId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(nodeId);
+
+        using var activity = Activity.StartActivity("aide.projection.query");
+        activity?.SetTag("projection", "node-content");
+
+        using var reader = store.BeginRead();
+
+        // The node's own facts carry both halves of its address: the scope it belongs to, and the
+        // path relative to that scope. Asked of the store directly — the first version filtered a
+        // CAPPED neighbour list for it, so a node with 244 edges never found its own declaration and
+        // the most connected types in the workspace reported "no recorded source" (DC-035).
+        var declaring = reader.DeclaringAssertion(nodeId);
+
+        if (declaring is null)
+        {
+            return new NodeContent(
+                nodeId, NodeContentKind.None, null, string.Empty, "this node has no recorded source");
+        }
+
+        var resolved = ResolveWithinWorkspace(reader, declaring.ScopeId, declaring.Provenance.ArtifactPathId);
+
+        if (resolved is null)
+        {
+            return new NodeContent(
+                nodeId, NodeContentKind.None, null, string.Empty,
+                $"the source for this node could not be located ({declaring.Provenance.ArtifactPathId})");
+        }
+
+        var kind = KindOf(resolved);
+
+        if (kind == NodeContentKind.None)
+        {
+            return new NodeContent(
+                nodeId, kind, null, string.Empty, $"{Path.GetExtension(resolved)} is not rendered inline");
+        }
+
+        try
+        {
+            var length = new FileInfo(resolved).Length;
+            var text = ReadBounded(resolved, out var truncated);
+
+            return new NodeContent(
+                nodeId, kind, LanguageOf(resolved), text,
+                truncated
+                    ? $"first {MaxContentBytes / 1024} KB of {length / 1024} KB — open the source for the rest"
+                    : null);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // A file that cannot be read is a reader saying so, not a failed query: the node, its
+            // metadata and its edges are still worth rendering.
+            return new NodeContent(
+                nodeId, NodeContentKind.None, null, string.Empty,
+                $"the source could not be read: {ex.Message}");
+        }
+    }
+
+    /// <summary>How much of one artifact travels. Well inside the frame, with the rest named.</summary>
+    public const int MaxContentBytes = 256 * 1024;
+
+    /// <summary>
+    /// The absolute path of an artifact, or null when it cannot be placed INSIDE the workspace.
+    /// </summary>
+    /// <remarks>
+    /// Null covers every failure the same way on purpose — no recorded scope location, a path that
+    /// escapes the root, a file that is not there. A reader needs to know it has no content; which of
+    /// those it was is an operator question, and answering it in the reply would describe the
+    /// filesystem to whoever asked.
+    /// </remarks>
+    private string? ResolveWithinWorkspace(Store.StoreReader reader, string scopeId, string artifactPath)
+    {
+        if (string.IsNullOrWhiteSpace(workspaceRoot)) return null;
+
+        var location = reader.ScopeLocation(scopeId);
+
+        if (location is null) return null;
+
+        try
+        {
+            var root = Path.GetFullPath(workspaceRoot);
+            var candidate = Path.GetFullPath(Path.Combine(root, location, artifactPath));
+
+            // Compared as a path, not as a string: `C:\repo-other` starts with `C:\repo` and is not
+            // inside it.
+            var rooted = root.EndsWith(Path.DirectorySeparatorChar)
+                ? root
+                : root + Path.DirectorySeparatorChar;
+
+            return candidate.StartsWith(rooted, StringComparison.OrdinalIgnoreCase) && File.Exists(candidate)
+                ? candidate
+                : null;
+        }
+        catch (Exception ex) when (ex is ArgumentException or PathTooLongException or NotSupportedException)
+        {
+            return null;
+        }
+    }
+
+    private static string ReadBounded(string path, out bool truncated)
+    {
+        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+        var length = (int)Math.Min(stream.Length, MaxContentBytes);
+        truncated = stream.Length > MaxContentBytes;
+
+        var buffer = new byte[length];
+        stream.ReadExactly(buffer, 0, length);
+
+        return Encoding.UTF8.GetString(buffer);
+    }
+
+    /// <summary>What a file is, by extension — the authority's call, so the reader does not guess.</summary>
+    private static NodeContentKind KindOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch
+    {
+        ".cs" or ".ts" or ".tsx" or ".js" or ".jsx" or ".py" or ".sql" or ".bicep"
+            or ".json" or ".yml" or ".yaml" or ".xml" or ".csproj" or ".props" or ".targets"
+            or ".ps1" or ".sh" or ".razor" or ".css" or ".html" => NodeContentKind.Code,
+        ".md" or ".markdown" or ".txt" or ".log" => NodeContentKind.Text,
+        _ => NodeContentKind.None,
+    };
+
+    private static string? LanguageOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch
+    {
+        ".cs" => "csharp",
+        ".ts" or ".tsx" => "typescript",
+        ".js" or ".jsx" => "javascript",
+        ".py" => "python",
+        ".sql" => "sql",
+        ".bicep" => "bicep",
+        ".json" => "json",
+        ".yml" or ".yaml" => "yaml",
+        ".xml" or ".csproj" or ".props" or ".targets" => "xml",
+        ".ps1" => "powershell",
+        ".sh" => "shell",
+        ".razor" or ".html" => "html",
+        ".css" => "css",
+        ".md" or ".markdown" => "markdown",
+        _ => null,
+    };
 
     /// <summary>
     /// Rebuilds the labelled claim cache from facts. Public because the equality test needs to prove

@@ -41,6 +41,9 @@ public sealed class CanvasGraphViewModelTests
         public Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
             Task.FromResult(new KnowledgeResult([], Bounds(0), "rev-1"));
 
+        public Task<NodeContent> NodeContentAsync(string nodeId, CancellationToken ct) =>
+            Task.FromResult(new NodeContent(nodeId, NodeContentKind.None, null, string.Empty, "stub"));
+
         private static DescribeResult Empty(string nodeId) =>
             new(new NodeView(nodeId, "source", nodeId), [], Bounds(0), "rev-1");
 

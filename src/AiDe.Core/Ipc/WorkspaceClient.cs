@@ -164,6 +164,10 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
         QueryAsync<KnowledgeResult>(
             WorkspaceOperations.Knowledge, new KnowledgeRequest(term, type, maxResults), cancellationToken);
 
+    public Task<NodeContent> NodeContentAsync(string nodeId, CancellationToken cancellationToken) =>
+        QueryAsync<NodeContent>(
+            WorkspaceOperations.NodeContent, new NodeContentRequest(nodeId), cancellationToken);
+
     /// <summary>
     /// Asks the daemon to re-index a scope, and waits for it to finish.
     /// </summary>

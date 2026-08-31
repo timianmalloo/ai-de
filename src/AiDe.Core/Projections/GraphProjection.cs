@@ -146,6 +146,15 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
                 continue;
             }
 
+            // Where a scope's files live is metadata ABOUT a scope, and a scope is not a node here —
+            // every other fact naming one does so through an attribute, so scopes have never been
+            // drawn. Letting this one through would put 67 directory-shaped nodes in TheTerrace's
+            // graph, which is a surface change nobody asked for while adding a content reader.
+            if (assertion.Predicate == "declared_at")
+            {
+                continue;
+            }
+
             // An attribute describes its subject. `has_type` gives the node its kind; the others are
             // recorded as facts and are not relationships between two things.
             if (EvidencePredicates.Attributes.Contains(assertion.Predicate))
