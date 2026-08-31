@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T13:34:27Z",
+  "generated": "2026-08-31T13:57:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2878,6 +2878,27 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0271",
+      "shortname": "implement-watcher-work-episode",
+      "datetime": "2026-08-31T13:57:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 4 implemented; consider the recent ai-forward done_when structure and reflect on how it informs the design",
+      "summary": "Slice 4: Work Episode lifecycle. Domain (Goal/DoneCondition/EpisodeGeneration/EpisodeOutcome/WorkEpisode) mirrors the AI-Forward CT19 goal-state triple; capability-verified Open/Reframe/Close (forgery rejected); changing the goal starts a NEW episode (Superseded + next generation, immutable goal); EpisodeProjection binds only spans in the interval (endpoints inclusive). Store extended (episode dim + SpanCountInInterval; in-memory retains RecordedAt; SQLite work_episode_dim table). 20 tests incl. D4 SQLite + E11 composition; interval-endpoint oracle mutation-verified. Full suite 807/0. Proof docs/proof/watcher-work-episode.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WorkEpisode.cs",
+        "tests/AiDe.Core.Tests/Watcher/WorkEpisodeTests.cs",
+        "docs/proof/watcher-work-episode.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T13:41:28Z",
+      "duration_seconds": 963.0
     }
   ],
   "changes": [
@@ -5340,6 +5361,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "76422e861aa5b3a44a25fb84263cf2d5c1569070",
         "after": "76422e861aa5b3a44a25fb84263cf2d5c1569070",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0115",
+      "datetime": "2026-08-31T13:57:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 4: Work Episode mirrors the AI-Forward CT19 goal-state (symbiotic, one vocabulary)",
+      "prompt": "reflect on the ai-forward done_when structure and implement slice 4 (Work Episode lifecycle)",
+      "summary": "The Work Episode binds one immutable goal + done-condition to one bounded interval of one authenticated session; the unit scoring attaches to. Decision informed by the AI-Forward done_when work: the episode uses the SAME (Goal, DoneWhen, NotInScope) triple as CT19, so a Loomkeeper episode is the durable, scoreable projection of a turn's goal-state - making the substrate symbiotic with the audit ledger rather than a parallel structure. Outcome is the DECLARED lifecycle terminal state; the honesty/drift judgment (PACK-O's three faces) is the Weave (slice 5). Changing the goal starts a new episode generation (the aggregate invariant).",
+      "rationale": "one ledger/vocabulary projected not duplicated; deterministic facts separated from advisory judgment (spec Work Evaluation); capability-verified lifecycle (ADR-0020)",
+      "artifacts": [
+        "docs/design/watcher-work-episode.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "57c1e5eab0cb9d2283389c15609df2ef3c8e7c04",
+        "after": "57c1e5eab0cb9d2283389c15609df2ef3c8e7c04",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

@@ -87,6 +87,25 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         }
     }
 
+    public int SpanCountInInterval(string sessionId, DateTimeOffset from, DateTimeOffset toInclusive)
+    {
+        lock (_gate)
+        {
+            // recorded_at is stored as ISO-8601 round-trip ("O") in UTC, which is fixed-width and
+            // lexicographically ordered, so a string BETWEEN is a correct temporal range (endpoints inclusive).
+            var count = ExecuteScalar(
+                _connection,
+                """
+                SELECT count(*) FROM observed_span_fact
+                WHERE session_id = $session AND recorded_at >= $from AND recorded_at <= $to;
+                """,
+                ("$session", sessionId),
+                ("$from", from.ToUniversalTime().ToString("O")),
+                ("$to", toInclusive.ToUniversalTime().ToString("O")));
+            return Convert.ToInt32(count);
+        }
+    }
+
     public void UpsertHeartbeat(string sessionId, long monotonicTicks)
     {
         lock (_gate)
@@ -214,6 +233,103 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         }
     }
 
+    public void RecordEpisode(WorkEpisode episode)
+    {
+        ArgumentNullException.ThrowIfNull(episode);
+        lock (_gate)
+        {
+            // Upsert a lifecycle dimension row (a reframe/close is an update of the current state, not
+            // an append-only fact). Immutability of the goal/done is enforced by the service, not the row.
+            ExecuteNonQuery(
+                _connection,
+                """
+                INSERT INTO work_episode_dim
+                    (episode_id, session_id, generation, goal, done_when, not_in_scope, opened_at, closed_at, outcome)
+                VALUES ($id, $session, $gen, $goal, $done, $scope, $opened, $closed, $outcome)
+                ON CONFLICT(episode_id) DO UPDATE SET
+                    session_id = $session, generation = $gen, goal = $goal, done_when = $done,
+                    not_in_scope = $scope, opened_at = $opened, closed_at = $closed, outcome = $outcome;
+                """,
+                ("$id", episode.EpisodeId),
+                ("$session", episode.SessionId),
+                ("$gen", episode.Generation.Value),
+                ("$goal", episode.Goal.Statement),
+                ("$done", episode.DoneWhen.Statement),
+                ("$scope", (object?)episode.NotInScope ?? DBNull.Value),
+                ("$opened", episode.OpenedAt.ToUniversalTime().ToString("O")),
+                ("$closed", (object?)episode.ClosedAt?.ToUniversalTime().ToString("O") ?? DBNull.Value),
+                ("$outcome", (object?)episode.Outcome?.ToString() ?? DBNull.Value));
+        }
+    }
+
+    public WorkEpisode? FindEpisode(string episodeId)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText =
+                """
+                SELECT episode_id, session_id, generation, goal, done_when, not_in_scope, opened_at, closed_at, outcome
+                FROM work_episode_dim WHERE episode_id = $id;
+                """;
+            command.Parameters.AddWithValue("$id", episodeId);
+            using var reader = command.ExecuteReader();
+            return reader.Read() ? ReadEpisode(reader) : null;
+        }
+    }
+
+    public IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText =
+                """
+                SELECT episode_id, session_id, generation, goal, done_when, not_in_scope, opened_at, closed_at, outcome
+                FROM work_episode_dim WHERE session_id = $session ORDER BY generation;
+                """;
+            command.Parameters.AddWithValue("$session", sessionId);
+            return ReadEpisodes(command);
+        }
+    }
+
+    public IReadOnlyList<WorkEpisode> AllEpisodes()
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText =
+                """
+                SELECT episode_id, session_id, generation, goal, done_when, not_in_scope, opened_at, closed_at, outcome
+                FROM work_episode_dim ORDER BY session_id, generation;
+                """;
+            return ReadEpisodes(command);
+        }
+    }
+
+    private static IReadOnlyList<WorkEpisode> ReadEpisodes(SqliteCommand command)
+    {
+        using var reader = command.ExecuteReader();
+        var episodes = new List<WorkEpisode>();
+        while (reader.Read())
+        {
+            episodes.Add(ReadEpisode(reader));
+        }
+
+        return episodes;
+    }
+
+    private static WorkEpisode ReadEpisode(SqliteDataReader reader) => new(
+        reader.GetString(0),
+        reader.GetString(1),
+        new EpisodeGeneration(reader.GetInt64(2)),
+        new Goal(reader.GetString(3)),
+        new DoneCondition(reader.GetString(4)),
+        reader.IsDBNull(5) ? null : reader.GetString(5),
+        DateTimeOffset.Parse(reader.GetString(6), null, System.Globalization.DateTimeStyles.RoundtripKind),
+        reader.IsDBNull(7) ? null : DateTimeOffset.Parse(reader.GetString(7), null, System.Globalization.DateTimeStyles.RoundtripKind),
+        reader.IsDBNull(8) ? null : Enum.Parse<EpisodeOutcome>(reader.GetString(8)));
+
     public void MarkEnded(string sessionId)
     {
         lock (_gate)
@@ -333,6 +449,22 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         CREATE TABLE session_ended (
             session_id TEXT NOT NULL PRIMARY KEY
         );
+
+        -- Current-state Work Episode metadata (a lifecycle dimension; slice 4). One row is one episode:
+        -- one immutable (goal, done_when, session, generation) over one interval [opened_at, closed_at?].
+        -- A reframe closes the current row Superseded and inserts a new row at the next generation.
+        CREATE TABLE work_episode_dim (
+            episode_id   TEXT    NOT NULL PRIMARY KEY,
+            session_id   TEXT    NOT NULL,
+            generation   INTEGER NOT NULL,
+            goal         TEXT    NOT NULL,
+            done_when    TEXT    NOT NULL,
+            not_in_scope TEXT    NULL,
+            opened_at    TEXT    NOT NULL,
+            closed_at    TEXT    NULL,
+            outcome      TEXT    NULL
+        );
+        CREATE INDEX ix_work_episode_session ON work_episode_dim (session_id);
         """;
 
     private static void Execute(SqliteConnection connection, string sql)

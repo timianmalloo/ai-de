@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T13:34:26Z",
+  "generated": "2026-08-31T13:56:59Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2101,6 +2101,52 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "9e2f4a197ea31e0fbbc0cfd7e9d19602e8e53a9132b267a21c5ffad894676d57"
+    },
+    {
+      "id": "design-watcher-work-episode",
+      "path": "docs/design/watcher-work-episode.md",
+      "title": "Loomkeeper Work Episode - Goal/Done-When Lifecycle",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper Work Episode (slice 4): the unit scoring attaches to. An episode binds one immutable goal + done-condition (mirroring the AI-Forward CT19 goal-state triple Goal / Done when / Not in scope) to one bounded interval of one authenticated session, with observable activity (spans in the interval) bound to it. Changing the goal starts a NEW episode generation (the aggregate invariant); a capability-verified Open/Reframe/Close lifecycle records a DECLARED outcome. The quality judgment (was the goal actually met, did it drift) is the Weave's job (slice 5), not here.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "work-episode",
+        "goal",
+        "done-when",
+        "scoring",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-watcher-observation-projection",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "971343e1f38cd837fcc7a080ca59011f70d9a5b74f5a762b132f360badf22317"
     },
     {
       "id": "audit-log",
@@ -6695,6 +6741,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "f972a904bfe3c6f5f256263ee6bb296c6cbd106cddfd078b6ca72553a663d04b"
     },
     {
+      "id": "proof-watcher-work-episode",
+      "path": "docs/proof/watcher-work-episode.md",
+      "title": "Proof Pack - Loomkeeper Work Episode (slice 4)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper Work Episode meets its design: an episode binds one immutable goal + done-condition (the CT19 goal-state triple) to one bounded interval of one authenticated session; the lifecycle is capability-verified (forgery rejected on open/reframe/close); changing the goal starts a NEW episode (the old is Superseded, the next generation opens with the new goal, never a mutation); the projection binds only spans inside the interval (endpoints inclusive, open episode uses now); and it persists across a SQLite reopen - proven by 20 tests incl. D4 SQLite + an E11 composition, with the interval-endpoint oracle mutation-verified. Full suite 807/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "work-episode",
+        "goal",
+        "done-when",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-work-episode",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fa128429155af92c08c52f48033ebd5764a806c77b75aa71aa0a2a0d2a716b96"
+    },
+    {
       "id": "spec-agentic-watcher-substrate",
       "path": "docs/specs/agentic-watcher-substrate.md",
       "title": "Loomkeeper - Agentic Watcher Substrate and Observatory",
@@ -7244,5 +7327,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d775ee0b1f73d561e0febafb8c37ca9438f5dd9d6200f076a191b46026b914e2"
+  "graphSha256": "4647103ab2f976120f4d3f9d3dc14c846f269e536e725e32e6fafa2563c364cf"
 };

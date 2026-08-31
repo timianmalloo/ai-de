@@ -32,6 +32,24 @@ public interface IWatcherObservationStore
     /// <summary>Every recorded session, for the read projection (the compute reader, slice 3).</summary>
     IReadOnlyList<SessionRecord> AllSessions();
 
+    /// <summary>Records (upserts) a work episode's current state - a lifecycle dimension row (slice 4).</summary>
+    void RecordEpisode(WorkEpisode episode);
+
+    /// <summary>The current state of a work episode, or null if unknown.</summary>
+    WorkEpisode? FindEpisode(string episodeId);
+
+    /// <summary>A session's episodes in generation order (its sequential episode chain).</summary>
+    IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId);
+
+    /// <summary>Every recorded work episode.</summary>
+    IReadOnlyList<WorkEpisode> AllEpisodes();
+
+    /// <summary>
+    /// Distinct spans for a session whose <c>RecordedAt</c> falls in <c>[from, toInclusive]</c> - the
+    /// observable activity bound to a Work Episode's interval (US-6). Endpoints are inclusive.
+    /// </summary>
+    int SpanCountInInterval(string sessionId, DateTimeOffset from, DateTimeOffset toInclusive);
+
     /// <summary>Marks a session ended (terminal closed or superseded generation).</summary>
     void MarkEnded(string sessionId);
 
@@ -53,9 +71,10 @@ public interface IWatcherObservationStore
 public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
 {
     private readonly object _gate = new();
-    private readonly Dictionary<string, HashSet<string>> _spanIdsBySession = new();
+    private readonly Dictionary<string, Dictionary<string, DateTimeOffset>> _spansBySession = new();
     private readonly Dictionary<string, long> _heartbeats = new();
     private readonly Dictionary<string, SessionRecord> _sessions = new();
+    private readonly Dictionary<string, WorkEpisode> _episodes = new();
     private readonly HashSet<string> _ended = new();
 
     public bool TryAppendSpan(ObservedSpan span)
@@ -63,14 +82,14 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         ArgumentNullException.ThrowIfNull(span);
         lock (_gate)
         {
-            if (!_spanIdsBySession.TryGetValue(span.SessionId, out var ids))
+            if (!_spansBySession.TryGetValue(span.SessionId, out var spans))
             {
-                ids = new HashSet<string>(StringComparer.Ordinal);
-                _spanIdsBySession[span.SessionId] = ids;
+                spans = new Dictionary<string, DateTimeOffset>(StringComparer.Ordinal);
+                _spansBySession[span.SessionId] = spans;
             }
 
-            // HashSet.Add returns false when the id is already present: idempotent dedup.
-            return ids.Add(span.SpanId);
+            // TryAdd returns false when the content-addressed id is already present: idempotent dedup.
+            return spans.TryAdd(span.SpanId, span.RecordedAt);
         }
     }
 
@@ -78,7 +97,29 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
     {
         lock (_gate)
         {
-            return _spanIdsBySession.TryGetValue(sessionId, out var ids) ? ids.Count : 0;
+            return _spansBySession.TryGetValue(sessionId, out var spans) ? spans.Count : 0;
+        }
+    }
+
+    public int SpanCountInInterval(string sessionId, DateTimeOffset from, DateTimeOffset toInclusive)
+    {
+        lock (_gate)
+        {
+            if (!_spansBySession.TryGetValue(sessionId, out var spans))
+            {
+                return 0;
+            }
+
+            var count = 0;
+            foreach (var recordedAt in spans.Values)
+            {
+                if (recordedAt >= from && recordedAt <= toInclusive)
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
     }
 
@@ -120,6 +161,41 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         lock (_gate)
         {
             return [.. _sessions.Values];
+        }
+    }
+
+    public void RecordEpisode(WorkEpisode episode)
+    {
+        ArgumentNullException.ThrowIfNull(episode);
+        lock (_gate)
+        {
+            _episodes[episode.EpisodeId] = episode;
+        }
+    }
+
+    public WorkEpisode? FindEpisode(string episodeId)
+    {
+        lock (_gate)
+        {
+            return _episodes.TryGetValue(episodeId, out var episode) ? episode : null;
+        }
+    }
+
+    public IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId)
+    {
+        lock (_gate)
+        {
+            return [.. _episodes.Values
+                .Where(e => string.Equals(e.SessionId, sessionId, StringComparison.Ordinal))
+                .OrderBy(e => e.Generation.Value)];
+        }
+    }
+
+    public IReadOnlyList<WorkEpisode> AllEpisodes()
+    {
+        lock (_gate)
+        {
+            return [.. _episodes.Values];
         }
     }
 
