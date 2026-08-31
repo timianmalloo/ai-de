@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T23:15:55Z",
+  "generated": "2026-08-31T23:41:10Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5576,6 +5576,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Ipc/IWorkspaceCommands.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0310",
+      "shortname": "disclosure-kind-boundary-or-gap",
+      "datetime": "2026-08-31T23:41:10Z",
+      "session": "phase3-pane-probes",
+      "prompt": "status bar looks much better now. do the next steps",
+      "summary": "Disclosures now carry a machine-readable kind: DisclosureKinds.KindOf returns Boundary or Gap. A boundary is something the product never intended to read; a gap is something it meant to read and could not. On TheTerrace that is 4 gaps and 24 boundaries, and the status line now leads with a GAP rather than the largest boundary — 'Not analysed: calls-not-resolved — 4 gap(s) and 24 boundaries. See Diagnostics.' 127 characters. It is an explicit list rather than a rule about name suffixes because the convention is only a convention: schema-changed-by-raw-sql-not-read reads exactly like a boundary and is a gap, since the recorded schema can be quietly wrong. EveryDisclosureHasAKind reflects over every disclosure constant in the extraction assembly so the list cannot go stale silently, and asserts it found more than twenty so it cannot pass by looking at nothing. An unknown disclosure defaults to Gap because the two mistakes are not symmetric. Handed to the design session in contract 4k so their fly-in can separate the four that matter from the twenty-four that do not.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Facts/DisclosureKinds.cs"
       ],
       "tags": [],
       "outcome": "success"

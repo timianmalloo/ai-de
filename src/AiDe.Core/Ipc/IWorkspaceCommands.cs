@@ -99,16 +99,29 @@ public sealed record IndexSummary(
 
         if (folded.Count == 0) return string.Empty;
 
+        // A GAP first, whatever its size, then the largest boundary. A defect somebody can fix
+        // outranks the biggest thing the product was never going to read — which is the ordering the
+        // register argues for and the status line had backwards.
         var headline = folded
-            .OrderByDescending(Facts.DisclosureSummary.CountIn)
+            .OrderBy(d => Facts.DisclosureKinds.KindOf(d) == Facts.DisclosureKind.Gap ? 0 : 1)
+            .ThenByDescending(Facts.DisclosureSummary.CountIn)
             .ThenBy(d => d, StringComparer.Ordinal)
             .First();
 
         var name = headline.Split(' ')[0];
 
-        return folded.Count == 1
-            ? $"Not analysed: {name}."
-            : $"Not analysed: {name} and {folded.Count - 1} other boundar{(folded.Count == 2 ? "y" : "ies")} — see Diagnostics.";
+        var gaps = folded.Count(d => Facts.DisclosureKinds.KindOf(d) == Facts.DisclosureKind.Gap);
+
+        if (folded.Count == 1) return $"Not analysed: {name}.";
+
+        // The count that earns the words is the number of GAPS. "27 other boundaries" is a fact
+        // about the product; "3 gaps" is a fact about this repository, and only one of them is a
+        // reason to open the panel.
+        return gaps > 0
+            ? $"Not analysed: {name} — {gaps} gap(s) and {folded.Count - gaps} boundar" +
+              $"{(folded.Count - gaps == 1 ? "y" : "ies")}. See Diagnostics."
+            : $"Not analysed: {name} and {folded.Count - 1} other boundar" +
+              $"{(folded.Count == 2 ? "y" : "ies")} — see Diagnostics.";
     }
 }
 

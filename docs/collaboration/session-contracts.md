@@ -613,13 +613,24 @@ calls-outside-this-repository (23,870 call(s) reach a type this product does not
 knowledge-prose-link-target-missing (109 prose link(s) name a markdown file that is not in this workspace, across 2 scope(s))
 ```
 
-**One thing worth designing for.** Those three lines are not equal. The first two are **boundaries** —
-things the product never intended to read — and the third is a **gap**, a real defect in the user's
-documentation. They are currently indistinguishable in a flat list, and the naming convention is the
-only signal (`-not-indexed` / `-not-analysed` versus `-missing` / `-not-resolved`). If the panel can
-separate them, that is the difference between a list nobody reads and the product's most actionable
-output. Core can supply a machine-readable kind on the fact if you want one — say so and it is a
-small change, better than the panel inferring it from a suffix.
+**The kind is now machine-readable — you do not have to parse suffixes.**
+`AiDe.Core.Facts.DisclosureKinds.KindOf(line)` takes a folded disclosure and returns
+`DisclosureKind.Boundary` or `DisclosureKind.Gap`. A **boundary** is something the product never
+intended to read (the BCL, the Python standard library, a minified bundle) — a statement about scope,
+and nothing in the user's repository is wrong. A **gap** is something it meant to read and could not,
+and is usually a defect somebody can fix.
+
+On TheTerrace today that is **4 gaps and 24 boundaries**, and the four are the whole reason to open a
+panel. If the fly-in separates them — gaps first, boundaries collapsed behind a disclosure triangle —
+that is the difference between a list nobody reads and the product's most actionable output.
+
+It is a list, not a rule about names, because the convention is a convention:
+`schema-changed-by-raw-sql-not-read` reads exactly like a boundary and is a gap, since the recorded
+schema can be quietly wrong. A suffix rule would classify it confidently and wrongly.
+`EveryDisclosureHasAKind` reflects over every disclosure constant in the extraction assembly and
+fails when a new one is classified by nobody, so the list cannot go stale silently. An unknown one
+defaults to **Gap** on purpose: a boundary shown as a gap wastes attention once, a gap shown as a
+boundary is a defect filed under "working as intended".
 
 **On clearing:** `workbench.clearStatus` empties the line and announces a four-word confirmation
 rather than nothing. Silence was tried first and the `EveryCatalogCommand_Announces` control refused
