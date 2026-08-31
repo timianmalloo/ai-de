@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T20:55:25Z",
+  "generated": "2026-08-31T21:49:34Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5419,6 +5419,24 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/ClassDiagramSurface.cs",
         "docs/notes/uml-diagram-fidelity-roadmap.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0297",
+      "shortname": "pane-placement-fix-and-instrumentation",
+      "datetime": "2026-08-31T21:49:34Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "there still seems to be odd things with the pane focus and refresh, when i added a class diagrame pane the graph pane disappeared. do we have enough instrumentation to trace these behaviors? investigate the issue(s) above while also doing the other next steps",
+      "summary": "Root-caused the graph-pane-disappear: the default layout stacks the canvas with a document surface (stack-graph), and reference documents were AddSurface'd as a tab into the focused stack (the graph's), hiding it. Fixed with DocumentPlacementPolicy: a class diagram/code viewer tabs into a document stack or splits BESIDE the graph, never onto the canvas stack. Added WorkbenchDiagnostics (aide.workbench ActivitySource + JSON layout log) since the workbench had zero instrumentation. +5 headless App tests (192). Registered DC-054.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/DocumentPlacement.cs",
+        "src/AiDe.App/Workbench/WorkbenchDiagnostics.cs"
       ],
       "tags": [],
       "outcome": "success"

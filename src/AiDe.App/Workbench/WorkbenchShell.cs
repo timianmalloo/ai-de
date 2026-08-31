@@ -160,47 +160,16 @@ public sealed class WorkbenchShell : IDisposable
         };
 
         Controller.NewClassDiagramRequested = () =>
-        {
-            ReconcileViewIntoModel();
-            var stack = TargetStackForNewView();
-
-            if (stack is null) return "There is no pane to open a class diagram in.";
-
-            var id = $"classdiagram#{Guid.NewGuid().ToString("N")[..6]}";
-            var result = Service.Apply(new LayoutOperation.AddSurface(
-                stack.Id, new Surface(id, "classdiagram", "Class diagram")));
-
-            Adapter.Render();
-            BindCanvas();
-            BindContexts();
-            BindJoins();
-            BindClassDiagrams();
-            BindTerminalAttention();
-
-            return result.Applied ? "Class diagram opened." : result.Announcement;
-        };
+            OpenReferenceDocument(
+                new Surface($"classdiagram#{Guid.NewGuid().ToString("N")[..6]}", "classdiagram", "Class diagram"),
+                "Class diagram opened.",
+                "There is no pane to open a class diagram in.");
 
         Controller.NewCodeViewerRequested = () =>
-        {
-            ReconcileViewIntoModel();
-            var stack = TargetStackForNewView();
-
-            if (stack is null) return "There is no pane to open a code viewer in.";
-
-            var id = $"codeviewer#{Guid.NewGuid().ToString("N")[..6]}";
-            var result = Service.Apply(new LayoutOperation.AddSurface(
-                stack.Id, new Surface(id, "codeviewer", "Source")));
-
-            Adapter.Render();
-            BindCanvas();
-            BindContexts();
-            BindJoins();
-            BindClassDiagrams();
-            BindCodeViewers();
-            BindTerminalAttention();
-
-            return result.Applied ? "Code viewer opened." : result.Announcement;
-        };
+            OpenReferenceDocument(
+                new Surface($"codeviewer#{Guid.NewGuid().ToString("N")[..6]}", "codeviewer", "Source"),
+                "Code viewer opened.",
+                "There is no pane to open a code viewer in.");
 
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
         // open there is nothing to persist against, so first-run simply starts from the default.
@@ -1081,14 +1050,46 @@ public sealed class WorkbenchShell : IDisposable
     // else any. Opening "where I am" is the least surprising placement; the canvas fallback preserves the
     // prior behaviour when nothing is focused. Read after ReconcileViewIntoModel, which only touches the
     // model (no render), so AvalonDock's active-content tracking is still valid.
-    private AiDe.Core.Workbench.StackNode? TargetStackForNewView()
+    // Opens a reference-document surface (class diagram, code viewer) via DocumentPlacementPolicy so it
+    // NEVER tabs on top of the graph (the "graph pane disappeared" defect): it tabs into a document
+    // stack, or splits a fresh one beside the graph so both stay visible. Shared so every reference
+    // document places — and is traced — identically.
+    private string OpenReferenceDocument(Surface surface, string okMessage, string noPaneMessage)
     {
-        var active = Adapter.ActiveSurfaceId;
-        return (active is not null
-                ? Service.Current.AllStacks().FirstOrDefault(s => s.Surfaces.Any(su => su.SurfaceId == active))
-                : null)
-            ?? Service.Current.AllStacks().FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "canvas"))
-            ?? Service.Current.AllStacks().FirstOrDefault();
+        ReconcileViewIntoModel();
+
+        var placement = DocumentPlacementPolicy.Decide(Service.Current, Adapter.ActiveSurfaceId);
+        if (placement is null) { return noPaneMessage; }
+
+        LayoutResult result;
+        string mode;
+        if (placement.TabIntoStackId is { } tabStackId)
+        {
+            mode = "tab";
+            result = Service.Apply(new LayoutOperation.AddSurface(tabStackId, surface));
+        }
+        else
+        {
+            mode = "split-beside-graph";
+            var add = Service.Apply(new LayoutOperation.AddSurface(placement.SplitBesideStackId!, surface));
+            result = add.Applied
+                ? Service.Apply(new LayoutOperation.MoveSurface(
+                    surface.SurfaceId, new DropTarget(placement.SplitBesideStackId!, DropKind.SplitRight)))
+                : add;
+        }
+
+        WorkbenchDiagnostics.LayoutMutation(
+            $"open-{surface.Kind}", mode, surface.SurfaceId, Adapter.ActiveSurfaceId, Service.Current);
+
+        Adapter.Render();
+        BindCanvas();
+        BindContexts();
+        BindJoins();
+        BindClassDiagrams();
+        BindCodeViewers();
+        BindTerminalAttention();
+
+        return result.Applied ? okMessage : result.Announcement;
     }
 
     // Before a layout mutation that will trigger a full Render, fold any native pane drag or splitter

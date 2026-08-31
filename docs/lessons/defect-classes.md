@@ -1675,3 +1675,23 @@ for both or split.*
 - **Control:** recorded here and in the briefs given to parallel agents. Not mechanisable in this repository — nothing can stop a subprocess calling `git stash` — which is why the instruction has to be explicit and why both agents preserving what they did not recognise is the behaviour worth keeping.
 - **Residual risk:** the same shape applies to any repo-global state a parallel session might touch. Worth raising against the pack's worktree-discipline knowledge file rather than living only here.
 - **Status:** `partially-controlled`
+
+### DC-054 — A new pane placed into the focused stack hides the surface that stack already held
+
+- **Signature:** "I added X and Y disappeared." A new surface is added as a *tab* into an existing
+  stack (`AddSurface(focusedStackId, …)`), so it lands on top of whatever tab that stack already
+  showed and hides it. Here: adding a class diagram while focused on the graph tabbed the diagram
+  into `stack-graph` (the default layout stacks the canvas + a document surface together), so the
+  graph became a background tab and read as "gone."
+- **Why it survives:** the add succeeds, the model is valid, the surface set is correct, and no test
+  fails — the lost surface is *present*, just not *visible*. Focus-aware placement (a fix for an
+  earlier "it opened in the wrong window" report) made it worse by targeting the focused stack, which
+  is often the graph's.
+- **Instances:** 2026-08-31 — class diagram added on top of the graph. Fixed by
+  `DocumentPlacementPolicy`: a reference document tabs into a document stack, else splits BESIDE the
+  graph so both stay visible; never onto the canvas stack.
+- **Control:** `DocumentPlacementTests` — `OpeningAClassDiagram_KeepsTheGraphVisibleInItsOwnStack`
+  asserts the graph and the diagram end in DIFFERENT stacks. Plus `WorkbenchDiagnostics`
+  (`aide.workbench` ActivitySource + a JSON layout log) so a future placement report is traceable —
+  the workbench previously had no instrumentation at all.
+- **Status:** controlled
