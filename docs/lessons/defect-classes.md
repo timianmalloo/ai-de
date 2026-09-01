@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 35 · partially-controlled 31 · uncontrolled 0
+**Status counts:** controlled 36 · partially-controlled 31 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1738,12 +1738,13 @@ for both or split.*
 - **Control:** `LayoutRestoreGuardTests`; `WorkbenchDiagnostics` records which restore path was taken.
 - **Status:** `controlled` (RESOLVED — workspace-open no longer restores a per-workspace layout; the arrangement is kept. No restore = no degenerate restore. See docs/notes/workspace-open-layout-restore.md)
 
-### DC-059 — An automated conflict resolution stages the markers
+### DC-060 — An automated conflict resolution stages what it did not resolve
 - **Signature:** a rebase or merge is scripted — resolve the known-conflicting files, `git add -A`, `--continue`, loop — because the same two append-only logs conflict on every integration and resolving them by hand each time is waste. Then a file conflicts that the script does not know about. `git add -A` stages it exactly as git left it, `--continue` commits it, and the conflict markers are now content. Nothing errors: the working tree is clean, the rebase finished, and the commit looks like every other one.
 - **Why it survives:** the script is correct for the case it was written for, which is the case that occurs almost every time. This session integrated a dozen times with an append-only log merge tool and it worked; the thirteenth had a third file in conflict and the blanket `add -A` swallowed it. The build does not catch it — markers in a markdown file compile fine — and the tests do not either. It was caught only because a gate happened to parse that file for structure and reported a symptom two steps removed: *"DC-054 has no Status line"*.
 - **Instance:** 2026-08-31. `docs/lessons/defect-classes.md` was committed with `<<<<<<< HEAD`, `=======` and `>>>>>>>` in it, and a duplicated heading, after a scripted rebase whose loop resolved the two audit logs and staged everything else untouched. The register gate flagged a structural oddity, not the markers themselves; the markers were found by looking.
 - **The blast radius is the point.** Markdown, JSON, YAML and config files take conflict markers silently. Source does not, which is why this is a documentation-and-configuration defect and why a green build proves nothing about it.
-- **Control:** grep the tree for `^<<<<<<< `, `^=======$` and `^>>>>>>> ` after any scripted resolution, before committing — one command, and it found this in a second. The scripted loop keeps its value; what it needed was a check that the only files it staged blind were the ones it knew how to resolve.
+- **Second instance the same day, different symptom.** The next scripted rebase reported three conflicts; the log-merging tool resolved one and **two remained** — both DERIVED files (`docs/audit/audit-data.js`, `docs/docs-index.js`). `git add -A` staged them exactly as git had left them, and the marker grep came back clean, because a derived file's conflict does not always leave markers: git had merged the two sides line-wise into something syntactically valid and semantically stale. The tests passed. It surfaced only by regenerating the derived files afterwards and finding a diff. **The marker check was necessary and not sufficient — it proves nobody committed a marker, not that the file is right.**
+- **Control:** two checks after any scripted resolution, before committing: grep the tree for `^<<<<<<< `, `^=======$` and `^>>>>>>> `, **and** regenerate every derived artifact and confirm it produces no diff. The second is what catches a conflict in a generated file, which is the case where markers are least likely and staleness is most likely. The scripted loop keeps its value; what it needed was a check that the only files it staged blind were the ones it knew how to resolve.
 - **The generalisation to apply elsewhere:** **`git add -A` after an automated resolution is a claim that every conflict was handled, and a script can only handle the ones it was told about.** Any automation that resolves conflicts should verify the result contains no markers rather than assume its own completeness — the same shape as trusting an exit code instead of reading the state.
 - **Status:** `controlled`
 
@@ -1759,7 +1760,30 @@ for both or split.*
 - **Residual risk:** folding is textual. It assumes every scope emits the same sentence template for a class, which is true today and is not enforced anywhere; a reader that varied its wording per scope would fold into a total wearing one arbitrary explanation.
 - **Status:** `controlled`
 
-### DC-060 — A deterministic test double produces colliding output across instances
+### DC-059 — A persistent per-frame render subscription that never lets the UI idle
+
+- **Signature:** a control subscribes to `CompositionTarget.Rendering` (or an always-running
+  `DispatcherTimer` that invalidates) for its whole lifetime and polls "is anything dirty?" every
+  frame. WPF is retained-mode and normally rests when nothing changes; a live per-frame subscription
+  defeats that — the UI thread does work ~60×/second forever, for every such control, even when
+  everything is idle. The window feels jittery because the compositor never settles. If the same
+  invalidation is not gated on visibility, a hidden/background pane invalidating also makes the docking
+  host activate it — a focus/tab steal that looks unrelated.
+- **Why it survives:** it works and looks correct; the cost is invisible in a single-control demo and
+  only bites with several instances and on an idle machine. No test fails — the behaviour is a runtime
+  dispatcher/visibility property, not a unit-observable one. The coalescing intent ("only redraw the
+  final state") is real and correct; the *mechanism* (a per-frame poll) is the defect.
+- **Instances:** 2026-08-31 — `TerminalView` per-frame `CompositionTarget.Rendering` poll; two agent
+  terminals made the window jittery and a background one writing stole focus. Fixed: event-driven,
+  coalesced (`Interlocked` gate + one `Dispatcher.BeginInvoke(Render)`), visibility-gated
+  `RequestRedraw`, called by the pump only when `_screen.IsDirty`. Idle → zero repaints.
+- **Control:** the systemic framework in `docs/investigations/redraw-isolation.md` (five principles:
+  event-driven / coalesced / visibility-gated / right-level-leaf-only / isolated islands). No
+  per-frame subscription outside a genuine animation. A grep control for `CompositionTarget.Rendering`
+  in review is the mechanical guard.
+- **Status:** `controlled`
+
+### DC-061 — A deterministic test double produces colliding output across instances
 
 - **Signature:** two independent instances of a "deterministic" fake (a capability, id, or token
   factory seeded from a counter) emit identical values, so a negative test that forges a value from a
@@ -1781,7 +1805,7 @@ for both or split.*
   prevents a future non-salted deterministic double from reintroducing the shape.
 - **Status:** `partially-controlled`
 
-### DC-061 — A real-process daemon-reuse test is timing-fragile under full-suite load
+### DC-062 — A real-process daemon-reuse test is timing-fragile under full-suite load
 
 - **Signature:** a test that starts a real out-of-process daemon (or reuses one over a named pipe /
   workspace mutex) passes when run in isolation but **intermittently fails when the whole suite runs**,
@@ -1821,7 +1845,7 @@ for both or split.*
   launch.
 - **Status:** `controlled`
 
-### DC-062 — Untrusted terminal content drives the render cursor out of the grid and an unguarded index in OnRender crashes the whole app
+### DC-063 — Untrusted terminal content drives the render cursor out of the grid and an unguarded index in OnRender crashes the whole app
 
 - **Signature:** a WPF/`OnRender` draw path indexes a data model at a **cursor/caret position that the
   model legitimately allows to sit off the grid** — for a terminal, the *pending-wrap* column
@@ -1858,7 +1882,7 @@ for both or split.*
   added, to avoid masking future render bugs now that the root cause and its sibling are swept.
 - **Status:** `controlled`
 
-### DC-063 — A workspace-dependent feature wired only in the constructor is dropped by the real composition root
+### DC-064 — A workspace-dependent feature wired only in the constructor is dropped by the real composition root
 
 - **Signature:** a feature is wired into a shell/host in its **constructor**, but the object is built
   before the thing it depends on exists (here: `MainWindow` builds `new WorkbenchShell(null)` before the
@@ -1877,7 +1901,7 @@ for both or split.*
   workspace and the real path, `WorkbenchShell.AttachWorkspace`, rebuilt the factory as
   `new SurfaceContentFactory(queries)` — dropping the watcher queries and never opening the
   `WatcherHost`. Every App test passed (they build the factory directly). Found while investigating the
-  DC-062 crash. **Fixed** the same day: a `StartWatcher(dataDirectory)` helper opens the host and returns
+  DC-063 crash. **Fixed** the same day: a `StartWatcher(dataDirectory)` helper opens the host and returns
   the queries, called from **both** the constructor and `AttachWorkspace`; the shell then
   `Adapter.Invalidate(...)`s the stateless watcher surfaces so the next `Render` rebuilds them against
   the wired factory (never a terminal — DC-029).
@@ -1894,7 +1918,7 @@ for both or split.*
   auto-emitting session wrapper is future work.
 - **Status:** `controlled`
 
-### DC-064 — A coordination session-end removed the mapping but never ended the session, so liveness kept lying "Alive"
+### DC-065 — A coordination session-end removed the mapping but never ended the session, so liveness kept lying "Alive"
 - **Signature:** an ingest handles a `session-end` (or close) event by forgetting the session's *external→internal id mapping*, but never marks the *internal* session ended in the store. Liveness is a projection over the store (Ended iff `IsEnded(sessionId)`, else Alive/Stale by heartbeat recency), so a closed session that was never marked ended keeps reporting **Alive** (or drifts to **Stale**) forever — the watcher shows a live session for a terminal that is gone.
 - **Why it survives:** the mapping removal is the *visible* half of "end the session" and it works — a subsequent heartbeat for that external id is correctly ignored — so the handler looks complete. Nothing in the end path reads liveness back, and a round-trip test that only checks "no new session on a stale heartbeat" passes. The lie only shows when something *evaluates liveness* after the end.
 - **Instances:** 2026-08-31 — `InjectedContractIngest.ContractSessionEnd` (conn-2/conn-5) removed `_byExternalId[externalId]` but never called into the store, so `SessionCoordinationEmitter.End` → coordination `session-end` → pump left the session `Alive`. Found by the conn-8 emitter test `End_WritesSessionEnd_AndStopsTracking` asserting `LivenessState.Ended` after end+pump. **Fixed** the same day: added `IngestHost.EndSession(sessionId) => _store.MarkEnded(sessionId)` and made the `ContractSessionEnd` case call it (via the external→internal lookup) *before* removing the mapping.
@@ -1902,7 +1926,7 @@ for both or split.*
 - **Residual risk:** the shell drives ends by *reconcile from the current terminal snapshot* (a closed pane disappears from the snapshot and is ended on the next tick, ≤2s later), not by a precise per-pane close event; a session whose pane vanishes without the loop running (e.g. process kill mid-tick) is ended only when the loop next runs, and on host dispose tracked sessions are dropped without an explicit end (they go Stale, then the host's DB is disposed). The async shell loop timing itself is not unit-tested (covered by the Core end-to-end reconcile test + manual smoke).
 - **Status:** `controlled`
 
-### DC-065 — A new workbench command must be wired into three coupled places or the menu drifts from the palette
+### DC-066 — A new workbench command must be wired into three coupled places or the menu drifts from the palette
 - **Signature:** a command added to the `WorkbenchCommandCatalog.All` list (so it appears in the Ctrl+K palette) but not to the **hard-coded** per-menu id lists in `MainMenuBuilder`, and/or not reflected in the hard-coded per-menu **count** assertions in `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders`. The palette is data-driven from the catalog; the menu bar is a parallel hand-maintained list. Add a command in one place and the two silently disagree - a command reachable by keyboard-palette but absent from the menu (or vice-versa).
 - **Why it survives:** the catalog edit alone builds clean and the command works from the palette, so nothing local points at the menu. The drift is only visible when a test that reflects over *both* sources runs.
 - **Instances:** 2026-08-31 — conn-11 added `watcher.raiseDispute` to the catalog with `Menu:"_View"`; the build was clean and the palette worked, but `MainMenuTests.TheMenuCoversEveryCatalogCommand` and `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders` both reded until the id was added to `MainMenuBuilder`'s `_View` list and the `_View` count bumped 4→5. **The control worked** — it caught the drift before merge.
@@ -1910,10 +1934,10 @@ for both or split.*
 - **Residual risk:** the coupling itself remains (the menu is not yet generated from the catalog's `Menu` field); a future refactor could make the builder data-driven and delete the parallel list. Until then the control holds the invariant.
 - **Status:** `controlled`
 
-### DC-066 — Parallel branches independently assign the same sequential IDs to different entries
+### DC-067 — Parallel branches independently assign the same sequential IDs to different entries
 - **Signature:** two branches diverge from a common point in an append-only, sequentially-numbered register (defect classes, ADRs, migrations) and each appends new entries starting at the next free number. On merge, the same IDs (here DC-039..DC-044) denote **different** entries on each side, and every code/doc reference to those IDs is now ambiguous. A 3-way text merge cannot resolve it — both sides "added lines".
 - **Why it survives:** each branch is internally consistent and its gate passes in isolation; the collision only exists in the union, and a naive resolution (keep both, or take one side) either duplicates an ID (register gate fails) or silently drops a class. Worse, a blanket find-replace to renumber one side corrupts the *other* side's references to the same numbers.
-- **Instances:** 2026-08-31 — forward-integrating `feature/agent-watcher-substrate` (DC-039..044: test-double, daemon-flake, cursor-crash, watcher-wiring, session-end, menu-drift) into `origin/main` (DC-039..059, different classes). Resolved by keeping main's canonical DC-039..059 verbatim and **renumbering this branch's 6 classes to DC-060..065**, then updating references **per-file, disambiguated by meaning** (my crash ref in TerminalView → DC-062; main's "two kinds" ref in KnowledgeExtractor left as DC-041). A blanket replace was explicitly rejected as it would have corrupted main's same-numbered references.
+- **Instances:** 2026-08-31 — forward-integrating `feature/agent-watcher-substrate` (DC-039..044: test-double, daemon-flake, cursor-crash, watcher-wiring, session-end, menu-drift) into `origin/main` (DC-039..059, different classes). Resolved by keeping main's canonical DC-039..059 verbatim and **renumbering this branch's 6 classes to DC-061..065**, then updating references **per-file, disambiguated by meaning** (my crash ref in TerminalView → DC-063; main's "two kinds" ref in KnowledgeExtractor left as DC-041). A blanket replace was explicitly rejected as it would have corrupted main's same-numbered references.
 - **Control:** `verify-defect-register.py` (unbroken sequence + header counts) catches the duplicate-ID/miscount failure mode at the gate — it is what forces a renumber rather than a silent duplicate. Generalisation: **the integrating branch renumbers its own new entries to follow the trunk's highest, and updates references scoped by meaning, never by blanket replace.** A stronger future control would reserve per-branch ID ranges (or use content-hash ids) so the collision cannot arise.
 - **Residual risk:** reference updates are semantic, not mechanical, so a missed reference keeps an old number; prose references in generated/derived files (docs-index.js) are regenerated from source. The renumber breaks any *external* citation of this branch's pre-merge DC-041..044 (e.g. in commit messages), which are historical and left as-is.
 - **Status:** `partially-controlled`

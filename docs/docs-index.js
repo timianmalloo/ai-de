@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-09-01T01:25:02Z",
+  "generated": "2026-09-01T01:31:36Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2437,7 +2437,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e37138264000feb3cb9217320ad5b465f7c6cf8eb05b89c2d3dd2dee42f5e95b"
+      "sourceSha256": "0eaf02a101d70164aa790c44b49d3ce02024544fb3ccc1ff3488291a849bd3d2"
     },
     {
       "id": "design-watcher-dispute-command",
@@ -2479,7 +2479,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "30b7d68b793400e54251a9d6457a49bf422ca8f4e746aa87beb1eab43b124d59"
+      "sourceSha256": "fcf57f07bfb1dc24c19528f68e3532571ace553f7812dff41b8ce9fc8f3d46b4"
     },
     {
       "id": "design-watcher-dispute-service",
@@ -2750,7 +2750,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e9ebb3e473d14779cf9b3a43ef8fcc9ec457a32af285275d2950b6de9a0e70cb"
+      "sourceSha256": "bd642a11147e56771abcb6b1b2d950930db54f3fb47630f24e364f74bb314808"
     },
     {
       "id": "design-watcher-message-board",
@@ -3043,7 +3043,7 @@ window.DOCS_INDEX = {
       "phase": "2",
       "reviewBy": "2027-02-26",
       "reviewSuggested": [],
-      "summary": "The app-side writer that makes a terminal/agent session appear in the watcher: a pure, testable SessionCoordinationEmitter (Register/Heartbeat/HeartbeatAll/End/Reconcile) over coordination-contract logs, plus the WorkbenchShell loop that reconciles the live terminal panes into coordination sessions and pumps them into the store. Also closes the session-end-that-never-ended liveness gap (DC-064).",
+      "summary": "The app-side writer that makes a terminal/agent session appear in the watcher: a pure, testable SessionCoordinationEmitter (Register/Heartbeat/HeartbeatAll/End/Reconcile) over coordination-contract logs, plus the WorkbenchShell loop that reconciles the live terminal panes into coordination sessions and pumps them into the store. Also closes the session-end-that-never-ended liveness gap (DC-065).",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -3078,7 +3078,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3e85078cfcea1f47f2d82633ba2e0f933bd2e5bd8c58250d2eedc0119727c4ad"
+      "sourceSha256": "37532d9bc5b04aacbc87c09727e623998511670d60352681e5538ed69ec53daf"
     },
     {
       "id": "design-watcher-sessions-surface",
@@ -3308,7 +3308,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8e59633efc82992db153e7d931aea3290ab014c35f27499ced9a8a54ee0ee1ea"
+      "sourceSha256": "1bfcbe6f648a3560ee6a1ca720a2af5a05eb6de6088b4b30046a327b2cf584e6"
     },
     {
       "id": "domain-experts",
@@ -4380,6 +4380,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "24d9164538e3176c623194f377abb8f8b3a3d5c5c4a9397ef41c1da2c3de6ddf"
     },
     {
+      "id": "review-ui-status-strip",
+      "path": "docs/reviews/ui-status-strip.md",
+      "title": "UI review — workbench status strip / re-index diagnostics",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Review + elevate of the workbench status strip. Root cause of the \"wall of text eating the window\": the status strip (Grid.Row Auto) hosts a wrapping, uncapped TextBlock, and the re-index announcement is IndexResult.Describe() — a 200+ disclosure sentence. Fixed by making the strip a single ellipsised line with the full text on hover and still read in full by assistive tech.",
+      "tags": [
+        "ui-design",
+        "status-strip",
+        "diagnostics",
+        "workbench",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e2bec3a144c3dc7728bdc2e92e82044a5768b5645c2fa18d0544524270983def"
+    },
+    {
       "id": "review-ui-workbench",
       "path": "docs/reviews/ui-workbench.md",
       "title": "UI review — AI-DE dockable workbench",
@@ -4520,7 +4547,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e1e4e1093e434f0adfe820815319c770930d5566c5c2f38439449a6e3d963a89"
+      "sourceSha256": "837903b582671e341812ff1a545c6d1a5bedd77a836db6a860ec10d01f151c17"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -4677,16 +4704,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "99a6c7f2d3ca7e12e5c0d8902df3508280fda1e3ce975c545d37922ff083a7dc"
     },
     {
+      "id": "investigation-redraw-isolation",
+      "path": "docs/investigations/redraw-isolation.md",
+      "title": "Investigation — redraw isolation and UI jitter",
+      "type": "investigation",
+      "status": "resolved",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The whole window felt jittery and a background agent terminal writing output stole focus/activated its tab. Root cause: every TerminalView held a persistent CompositionTarget.Rendering subscription — a per-frame callback that runs for the life of the control and never lets WPF's render thread go idle — and it invalidated regardless of whether the pane was visible. Fixed with event-driven, coalesced, visibility-gated invalidation. This note is also the systemic framework for redraw isolation across the app.",
+      "tags": [
+        "performance",
+        "rendering",
+        "wpf",
+        "terminal",
+        "jitter",
+        "redraw-isolation"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d0b5313c7f0ce996e387f26c5ffa4a5ba91e785db40974a220f8b5a5304862da"
+    },
+    {
       "id": "investigation-terminal-cursor-render-crash",
       "path": "docs/investigations/terminal-cursor-render-crash.md",
-      "title": "Investigation - AiDe.App crash: terminal cursor render IndexOutOfRange (DC-062)",
+      "title": "Investigation - AiDe.App crash: terminal cursor render IndexOutOfRange (DC-063)",
       "type": "investigation",
       "status": "resolved",
       "owner": "@timianmalloo",
       "phase": "4",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "AiDe.App terminated with an unhandled IndexOutOfRangeException while two agent CLIs (copilot + claude) were grounding in a repo. Verified root cause (from the Windows Application event log, reproduced deterministically): TerminalView.DrawCursor read the character under the cursor through the raw TerminalScreen indexer, but the cursor legitimately sits at the pending-wrap column (CursorColumn == Columns) after writing the last column; at the bottom row that indexes one past the end of the cell array, and the exception is unhandled on the WPF UI thread inside OnRender, which terminates the process. Fixed with a bounds-safe CellUnderCursor() the renderer uses. Registered as DC-062. (A separate finding: the watcher UX is not wired into the running app - see below.)",
+      "summary": "AiDe.App terminated with an unhandled IndexOutOfRangeException while two agent CLIs (copilot + claude) were grounding in a repo. Verified root cause (from the Windows Application event log, reproduced deterministically): TerminalView.DrawCursor read the character under the cursor through the raw TerminalScreen indexer, but the cursor legitimately sits at the pending-wrap column (CursorColumn == Columns) after writing the last column; at the bottom row that indexes one past the end of the cell array, and the exception is unhandled on the WPF UI thread inside OnRender, which terminates the process. Fixed with a bounds-safe CellUnderCursor() the renderer uses. Registered as DC-063. (A separate finding: the watcher UX is not wired into the running app - see below.)",
       "tags": [
         "loomkeeper",
         "terminal",
@@ -4708,7 +4763,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a343965f1e68a55ac3bcfdb424efa88fed976b34420741436a89132dfcbf7df0"
+      "sourceSha256": "6bbef3b5763fdc061990d67db0a8b8e66d6496e8839c50ed496c28fc659f34a5"
     },
     {
       "id": "kb-agentic-session-observability",
@@ -7813,14 +7868,14 @@ window.DOCS_INDEX = {
     {
       "id": "proof-terminal-cursor-render-crash",
       "path": "docs/proof/terminal-cursor-render-crash.md",
-      "title": "Proof Pack - Terminal cursor render crash fix (DC-062)",
+      "title": "Proof Pack - Terminal cursor render crash fix (DC-063)",
       "type": "proof-pack",
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "4",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Evidence that the terminal cursor render crash (DC-062) is fixed: CellUnderCursor() returns null at the pending-wrap cursor position (the exact index that was one past the end of the cell array), the renderer reads through it instead of the raw indexer, and the guard is mutation-verified to reproduce the original IndexOutOfRangeException when removed. 3 new tests, full Core 970/0, App 138/0.",
+      "summary": "Evidence that the terminal cursor render crash (DC-063) is fixed: CellUnderCursor() returns null at the pending-wrap cursor position (the exact index that was one past the end of the cell array), the renderer reads through it instead of the raw indexer, and the guard is mutation-verified to reproduce the original IndexOutOfRangeException when removed. 3 new tests, full Core 970/0, App 138/0.",
       "tags": [
         "loomkeeper",
         "terminal",
@@ -7838,7 +7893,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "09d2fb8c3839fb22d6211a854f28834e0d18825d17dbca00a8ab9eadfff43c5d"
+      "sourceSha256": "dff72ffaffac021fd8c177fb480d241ab3f73bbf07be5942e79204e6f6596508"
     },
     {
       "id": "proof-watcher-advisory-evaluator",
@@ -7993,7 +8048,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d5f659e8d65c7d378e2a9f89c74eafbce1506d0d7d836e86aa606338788e1f07"
+      "sourceSha256": "032cdcc777ef237ed154cea4cd34851887ccbb3d73bfd4eb398fd3a844accb54"
     },
     {
       "id": "proof-watcher-dispute-command",
@@ -8026,7 +8081,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1f1077c40c9defb056cae8bf164e57be4e2a4a7935fbfeed0e253f0c10d81dc6"
+      "sourceSha256": "8257f5c6200f0c504cd47bb15cf6f39295c012cda3db22149c1ea14665189407"
     },
     {
       "id": "proof-watcher-dispute-service",
@@ -8327,12 +8382,12 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "54de97165dd9fe4263e2ef432a27655d9aecafa40c516f542ed70dbdeff7411f"
+      "sourceSha256": "4fac0f12beab02112bff9e4ed2712559059146787a061d74a892d235483001e7"
     },
     {
       "id": "proof-watcher-runtime-wiring",
       "path": "docs/proof/watcher-runtime-wiring.md",
-      "title": "Proof Pack - Loomkeeper watcher wired into the running app (DC-063)",
+      "title": "Proof Pack - Loomkeeper watcher wired into the running app (DC-064)",
       "type": "proof-pack",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -8364,7 +8419,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4c0c1a95b3de0672926b68eada8d9f549eb69c0c6f462e291619bf0ec3378e5b"
+      "sourceSha256": "8cac45e167208aa050ceede9c4ad79829357e6b50dbe763ebd3609a7119d65f2"
     },
     {
       "id": "proof-watcher-score-dispute",
@@ -8481,7 +8536,7 @@ window.DOCS_INDEX = {
       "phase": "2",
       "reviewBy": "2027-02-26",
       "reviewSuggested": [],
-      "summary": "Proof Pack for conn-8: the auto-emitting session wrapper (SessionCoordinationEmitter + Reconcile) and its shell wiring, including the DC-064 session-end-to-Ended fix. 9 emitter tests, 2 mutation-verified; Core 979/0, App 139/0.",
+      "summary": "Proof Pack for conn-8: the auto-emitting session wrapper (SessionCoordinationEmitter + Reconcile) and its shell wiring, including the DC-065 session-end-to-Ended fix. 9 emitter tests, 2 mutation-verified; Core 979/0, App 139/0.",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -8502,7 +8557,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d75435e5acac2ada1a277cdb7879d5c6180d423836a1403466eb7778ed78bede"
+      "sourceSha256": "1b309a9ee276f8de4f0e28cf93308c3b3d3b6590e5629e2ed161834e4fe2c168"
     },
     {
       "id": "proof-watcher-sessions-surface",
@@ -9161,7 +9216,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-feature-agent-watcher-substrate — Audit & Change Log",
+      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -9271,5 +9326,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c57fa6e96d6eab029066cd2668514bdc1489e0216deb5ed5a99f58a8e8ee78eb"
+  "graphSha256": "e45d551fc914a7871c34e299ff7f908db7cfd00322c0a9cdda6ea33699807b5c"
 };

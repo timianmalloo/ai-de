@@ -117,11 +117,20 @@ public sealed record IndexSummary(
         // The count that earns the words is the number of GAPS. "27 other boundaries" is a fact
         // about the product; "3 gaps" is a fact about this repository, and only one of them is a
         // reason to open the panel.
+        // The GESTURE, not just the name of a place. "See Diagnostics" is an instruction a reader
+        // cannot follow without going to look for it; the chord is the difference between a pointer
+        // and a direction. Read from the catalog rather than typed here, so a rebinding cannot leave
+        // this sentence describing a key that does nothing.
+        var how = Workbench.WorkbenchCommandCatalog.All
+            .FirstOrDefault(c => c.Id == "workspace.diagnostics") is { Gesture.Length: > 0 } command
+                ? $" ({command.Gesture})"
+                : string.Empty;
+
         return gaps > 0
             ? $"Not analysed: {name} — {gaps} gap(s) and {folded.Count - gaps} boundar" +
-              $"{(folded.Count - gaps == 1 ? "y" : "ies")}. See Diagnostics."
+              $"{(folded.Count - gaps == 1 ? "y" : "ies")}. See Diagnostics{how}."
             : $"Not analysed: {name} and {folded.Count - 1} other boundar" +
-              $"{(folded.Count == 2 ? "y" : "ies")} — see Diagnostics.";
+              $"{(folded.Count == 2 ? "y" : "ies")} — see Diagnostics{how}.";
     }
 }
 

@@ -7,7 +7,7 @@ namespace AiDe.App.Tests;
 /// conn-9: the watcher read panes auto-refresh only when the store changes. The subtle claim is that the
 /// change signal (<see cref="WorkbenchShell.WatcherFingerprint"/>) catches a *liveness transition* - a
 /// session going Ended while the session count is unchanged - not only a count change. A count-only
-/// signal would leave a pane showing a session as live after it ended (the DC-064 shape, one layer up).
+/// signal would leave a pane showing a session as live after it ended (the DC-065 shape, one layer up).
 /// </summary>
 public sealed class WorkbenchWatcherRefreshTests : IDisposable
 {

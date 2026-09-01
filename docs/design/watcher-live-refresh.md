@@ -23,8 +23,8 @@ summary: >-
 
 ## Problem & spec trace
 
-DC-063 wired the watcher panes, but they folded **once** on build: a session that registered after a
-pane opened stayed invisible until the pane was reopened (DC-063 residual risk; spec US-4 live board,
+DC-064 wired the watcher panes, but they folded **once** on build: a session that registered after a
+pane opened stayed invisible until the pane was reopened (DC-064 residual risk; spec US-4 live board,
 US-6 live sessions). conn-9 makes the open watcher panes re-render as the store changes.
 
 ## Design
@@ -36,13 +36,13 @@ pane refresh to the UI dispatcher.
 - **Fingerprint** (`WatcherFingerprint`, pure/static): session count + **each session's liveness state**
   (so a session going Stale/Ended is caught, not only a count change) + episode/board/scorecard counts.
   The liveness-state term is the load-bearing part — a count-only signal would leave a pane showing an
-  ended session as live (the DC-064 shape, one layer up).
+  ended session as live (the DC-065 shape, one layer up).
 - **Refresh** (`RefreshWatcherPanesOnUi`, UI thread): invalidate only the stateless watcher pane kinds
   (`sessions`/`board`/`leaderboard`) and `Render()`. A terminal is reconciled, never rebuilt (DC-029),
   so the terminal is untouched. A no-op if the host was reset since the tick was queued.
 - **Gating**: refresh only on a fingerprint change, so an idle watcher never rebuilds a pane — no scroll
   reset, no flicker, no gratuitous work. The `WatcherPaneKinds` set is shared with the AttachWorkspace
-  invalidate (DC-063) so the two paths cannot drift.
+  invalidate (DC-064) so the two paths cannot drift.
 
 ## Failure modes & dispositions
 

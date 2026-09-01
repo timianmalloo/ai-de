@@ -1,6 +1,6 @@
 ---
 id: proof-watcher-runtime-wiring
-title: "Proof Pack - Loomkeeper watcher wired into the running app (DC-063)"
+title: "Proof Pack - Loomkeeper watcher wired into the running app (DC-064)"
 type: proof-pack
 status: accepted
 owner: "@timianmalloo"
@@ -21,7 +21,7 @@ summary: >-
   Sessions pane shows its live empty state, not "not available". App 139/0.
 ---
 
-# Proof Pack: Watcher wired into the running app (DC-063)
+# Proof Pack: Watcher wired into the running app (DC-064)
 
 - **Components:** `WorkbenchShell.StartWatcher` (used by the constructor AND `AttachWorkspace`); `WorkbenchShell.AttachWorkspace` (wires the watcher queries + invalidates the watcher surfaces); `WorkbenchAdapter.Invalidate` + `Render` (rebuild-not-reuse for marked surfaces).
 - **Tests:** `tests/AiDe.App.Tests/WorkbenchShellTests.cs` — 1 new E11 test; full `AiDe.App.Tests` **139/0**; `AiDe.Core.Tests` **970/0** (Core unchanged); builds clean.
@@ -33,7 +33,7 @@ summary: >-
 
 ## Testing Strategy triggers applied
 
-- **E11 (prove through the real composition root):** the regression exercises `AttachWorkspace` → `Adapter.Render` → `ContentFor("sessions")` — the exact runtime path — rather than constructing the factory directly (which is what hid the defect). This is the control for DC-063.
+- **E11 (prove through the real composition root):** the regression exercises `AttachWorkspace` → `Adapter.Render` → `ContentFor("sessions")` — the exact runtime path — rather than constructing the factory directly (which is what hid the defect). This is the control for DC-064.
 - **DC-029 preserved:** the Adapter's `Invalidate` only marks the stateless watcher read surfaces; terminals are never rebuilt (a rebuilt terminal orphans its ConPTY process). The full App suite passing (139/0) confirms the reconcile invariant holds.
 - **UI-thread safety:** `StartWatcher` starts the pump loop via `Task.Run`, so even its synchronous first pump (a directory read + SQLite fold) runs off the UI thread during attach.
 - **Graceful degradation:** a host that cannot open returns null queries — the panes fall back to "not available" and the workbench still opens.

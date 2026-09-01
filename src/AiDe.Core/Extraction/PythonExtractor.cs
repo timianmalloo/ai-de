@@ -41,7 +41,17 @@ public sealed class PythonExtractor : IExtractor
         /// <summary>Imports naming the standard library — a boundary of the product, not a gap in it.</summary>
         public const string StandardLibraryNotIndexed = "python-standard-library-not-indexed";
 
-        /// <summary>Only column-zero declarations are seen; nested ones are invisible.</summary>
+        /// <summary>
+        /// Declarations nested deeper than a class's own body — closures, and definitions inside
+        /// methods.
+        /// </summary>
+        /// <remarks>
+        /// A class's METHODS are read now, as members. What remains is what a module cannot reach:
+        /// MEASURED across 113 Python files in two repositories, 42 closures and 12 classes declared
+        /// inside another class or a function. Counted rather than stated flatly, because "nested
+        /// declarations are not analysed" and "42 closures are not analysed" are different claims
+        /// about how much is missing (DC-050).
+        /// </remarks>
         public const string NestedDeclarationsNotAnalysed = "python-nested-declarations-not-analysed";
 
         /// <summary>Nothing dynamic is followed — importlib, __import__, conditional imports.</summary>
@@ -102,15 +112,10 @@ public sealed class PythonExtractor : IExtractor
         // closed gap reported as open the moment resolution landed — the same defect as hiding one.
         var unresolved = 0;
         var standardLibrary = 0;
+        var nestedDeclarations = 0;
 
-        foreach (var disclosure in new[]
-        {
-            Disclosures.NestedDeclarationsNotAnalysed,
-            Disclosures.DynamicImportsNotAnalysed,
-        })
-        {
-            assertions.Add(Fact(request, ScopeNode(request.ScopeId), "discloses", disclosure));
-        }
+        assertions.Add(Fact(
+            request, ScopeNode(request.ScopeId), "discloses", Disclosures.DynamicImportsNotAnalysed));
 
         foreach (var file in Files(directory))
         {
@@ -136,6 +141,25 @@ public sealed class PythonExtractor : IExtractor
                 assertions.Add(Fact(request, $"{module}.{name}", "has_type", "python-class"));
                 assertions.Add(Fact(request, $"{module}.{name}", "declared_in", module));
             }
+
+            // A CLASS'S METHODS, as members.
+            //
+            // The column-zero rule was right about what it refused — an indented `def` is not a
+            // module-level function and claiming it as one puts a symbol in the graph no importer
+            // can reach. It was wrong that the only options were "module function" or "invisible": a
+            // method is a member OF its class, exactly as `has_member` already records for C#, and a
+            // class with no members renders as an empty box.
+            //
+            // MEASURED across 113 Python files in two repositories: 33 methods on 22 classes. Thin,
+            // and the difference between a class diagram that works for Python and one that does not.
+            var methods = Methods(text, out var nested);
+
+            foreach (var (owner, method) in methods)
+            {
+                assertions.Add(Fact(request, $"{module}.{owner}", "has_member", method));
+            }
+
+            nestedDeclarations += nested;
 
             foreach (var name in Names(TopLevelDef, text))
             {
@@ -194,6 +218,16 @@ public sealed class PythonExtractor : IExtractor
             assertions.Add(Fact(request, ScopeNode(request.ScopeId), "discloses",
                 $"{Disclosures.ImportsNotResolved} ({unresolved:N0} import(s) name something this " +
                 "scope does not contain)"));
+        }
+
+        if (nestedDeclarations > 0)
+        {
+            // Conditional now, and counted. It used to fire on every scope whether or not anything
+            // was nested, which trains a reader to skip disclosures (DC-025) — and it said nothing
+            // about size, which is what decides whether the gap is worth closing.
+            assertions.Add(Fact(request, ScopeNode(request.ScopeId), "discloses",
+                $"{Disclosures.NestedDeclarationsNotAnalysed} ({nestedDeclarations:N0} declaration(s) " +
+                "are nested inside a function or a method and cannot be reached by an importer)"));
         }
 
         if (standardLibrary > 0)
@@ -274,6 +308,82 @@ public sealed class PythonExtractor : IExtractor
         pattern.Matches(text).Select(m => m.Groups[1].Value).Where(n => n.Length > 0);
 
     /// <summary>A module's dotted name, from its path relative to the scope.</summary>
+    /// <summary>
+    /// Each top-level class and the methods declared directly in its body.
+    /// </summary>
+    /// <param name="nested">
+    /// Declarations deeper than a class body — closures, and definitions inside methods. Counted so
+    /// the scope can disclose the size of what it still cannot see.
+    /// </param>
+    /// <remarks>
+    /// <para><b>One indent level, not any.</b> A `def` in a class's own body is a method; a `def`
+    /// inside that method is a closure, and a closure is not a member of anything an importer can
+    /// reach. The body's indent is taken from the class's FIRST indented line rather than assumed to
+    /// be four spaces, because a file that indents with tabs or eight spaces is still Python and a
+    /// hard-coded width would read its methods as closures.</para>
+    ///
+    /// <para><c>simplify: indentation tracking rather than a Python grammar; ceiling is methods of a
+    /// top-level class; upgrade trigger = a consumer needs signatures, decorators, or anything
+    /// declared inside a function.</c></para>
+    /// </remarks>
+    private static IEnumerable<(string Owner, string Method)> Methods(string text, out int nested)
+    {
+        var found = new List<(string, string)>();
+        var deeper = 0;
+
+        string? owner = null;
+        var bodyIndent = -1;
+
+        foreach (var raw in text.Split('\n'))
+        {
+            var line = raw.TrimEnd('\r');
+            var trimmed = line.TrimStart();
+
+            if (trimmed.Length == 0 || trimmed[0] == '#') continue;
+
+            var indent = line.Length - trimmed.Length;
+
+            if (indent == 0)
+            {
+                // A new column-zero statement ends whatever class was open, including another class.
+                owner = null;
+                bodyIndent = -1;
+
+                var top = TopLevelClass.Match(line);
+                if (top.Success) owner = top.Groups[1].Value;
+
+                continue;
+            }
+
+            if (owner is null) continue;
+
+            // The first indented line of the class fixes what "its own body" means.
+            if (bodyIndent < 0) bodyIndent = indent;
+
+            var isDeclaration = trimmed.StartsWith("def ", StringComparison.Ordinal)
+                || trimmed.StartsWith("async def ", StringComparison.Ordinal)
+                || trimmed.StartsWith("class ", StringComparison.Ordinal);
+
+            if (!isDeclaration) continue;
+
+            if (indent > bodyIndent)
+            {
+                deeper++;
+                continue;
+            }
+
+            var name = MethodName.Match(trimmed);
+            if (name.Success) found.Add((owner, name.Groups[1].Value));
+        }
+
+        nested = deeper;
+        return found;
+    }
+
+    /// <summary>The name in a `def`, `async def` or `class` line already known to be indented.</summary>
+    private static readonly Regex MethodName =
+        new(@"^(?:async\s+)?(?:def|class)\s+([A-Za-z_][A-Za-z0-9_]*)", RegexOptions.Compiled);
+
     private static string ModuleName(string directory, string file)
     {
         var relative = Path.GetRelativePath(directory, file);

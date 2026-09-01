@@ -1,7 +1,7 @@
 ---
 id: review-ui-status-strip
 title: "UI review — workbench status strip / re-index diagnostics"
-type: review
+type: doc
 status: accepted
 owner: "@timianmalloo"
 phase: "2"
