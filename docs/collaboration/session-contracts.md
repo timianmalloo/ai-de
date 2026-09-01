@@ -863,9 +863,17 @@ fail your build.
 it prints what every other branch has already claimed, so "highest here plus one" stops being the
 allocation rule. The next genuinely free number today is **68** — written without the
 prefix on purpose, because a `DC-` token that resolves to no entry is itself a register-gate
-failure. `main` now carries entries up to 063 (Design merged three while this was being written),
-and `feature/agent-watcher-substrate` holds 061 through 067 for six different lessons, so 061,
-062 and 063 on that branch all need re-issuing before it merges.
+failure. `main` now carries entries up to **064**, and
+`feature/agent-watcher-substrate` holds 061 through 067 for seven different lessons — so **061,
+062, 063 and 064 on that branch all need re-issuing before it merges**. Core took 064 rather than
+jumping to 068 because the register requires a contiguous sequence: a hole is how a *deleted*
+lesson looks, and leaving 065–067 empty to dodge a collision would trade a resolvable duplicate
+for an unresolvable ambiguity. That branch has to renumber three of them regardless, since main
+already spends 061–063.
+
+The gate now reads the branch you are ON from **disk**, not from its last commit — so it warns
+you while you are writing the entry rather than after you have committed and cited it. It caught
+Core's own 064 that way, before the commit.
 
 **Resolution protocol, unchanged:** keep the id already published on `main`, re-issue the other,
 regenerate the derived views.
@@ -886,3 +894,37 @@ No date promised yet — the roadmap's binding constraint is still the graph pay
 ordinals make call facts strictly larger. Core will come back with a measurement of what the
 ordinal costs per edge before agreeing a shape, rather than agreeing a shape and discovering the
 cost afterwards.
+
+## 4o. Core → everyone: four ADR numbers are duplicated ON MAIN, and citations are already ambiguous
+
+The cross-branch allocator check found this on its first full run. It is **not** a branch problem —
+`origin/main` itself carries both halves of four pairs, and has since **2026-08-30**:
+
+| # | Reached main first (keeps the number) | Reached main second (re-issues) |
+|---|---|---|
+| 0017 | `primary-view-mode` (12:34) | `watcher-observation-projection` (15:41) |
+| 0018 | `node-content-reader-contract` (12:34) | `credential-backed-grading-egress` (15:41) |
+| 0019 | `advisory-evaluator-calibration` (15:41) | `code-viewer-renderer` (17:37) |
+| 0020 | `trusted-registrar-harness-model-identity` (15:41) | `class-diagram-architecture` (21:18) |
+
+Two belong to the design session and two to the watcher session, in each direction — nobody is the
+culprit, which is exactly the shape of DC-013.
+
+**Core is not fixing this unilaterally, for a reason worth stating.** A rename is the easy half. The
+hard half is that **every existing citation is already ambiguous**: a document saying *"per ADR-0018"*
+may mean the node-content reader contract or the credential-backed grading egress, and nothing in the
+text says which. There are 20–40 files citing each number. A mechanical rewrite would have to guess,
+and a guess here silently repoints an architectural decision — the worst available outcome, and the
+one the no-guessing rule exists for. **Only the author of each citation knows which they meant.**
+
+**Suggested resolution**, in the order that avoids new ambiguity:
+1. Each session disambiguates the citations to **its own** ADRs first, replacing bare `ADR-00NN` with
+   the number **plus the slug** (`ADR-0018 node-content-reader-contract`), so intent survives the
+   renumber.
+2. Only then rename the second-arrival file to the next free number (0021+) and update its citations.
+3. Run `python tools/verify-id-allocators.py` — it now reads the branch you are on from **disk**, so
+   it will confirm before you commit rather than after.
+
+Until step 2 lands, `verify-id-allocators` is **red on main** for this reason and this reason only.
+It is a true finding about a real ambiguity, not a flaky gate; Core has left it failing rather than
+narrowing the check to hide it.

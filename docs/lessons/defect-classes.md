@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 37 · partially-controlled 31 · uncontrolled 1
+**Status counts:** controlled 38 · partially-controlled 31 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1903,10 +1903,14 @@ for both or split.*
 - **Instance:** 2026-08-31 — moving the graph out of `split-columns` collapsed it to `workspace`,
   flipping workspace from the left column to the top row ("contents flipping from bottom to top").
   Compounded by `Adapter.Render()` rebuilding the entire dock view on every layout op.
-- **Control:** a decision between (A) named/absolute dock zones matching the mental model, or (B)
-  soften the collapse (structural placeholder / don't reorient the survivor) + incremental view update;
-  a characterization test on source-side collapse and a move-preserves-others test.
-- **Status:** `uncontrolled` (Phase 3 of the investigation — needs a model decision, awaiting approval)
+- **Control:** **Option A chosen** — named absolute dock zones (`adr-0021-named-dock-zones`,
+  `spec-named-dock-zones`): a fixed Left/Right/Bottom/Center frame where a move changes only source +
+  destination, splits are scoped within a zone, and an incremental per-zone adapter removes the
+  whole-view redraw. The **containment-on-move test** (AC-F1) is the control and must be seen failing
+  against a shim that reproduces the old single-child collapse. Design loop complete; lands with
+  `/implement` on ADR-0021 approval.
+- **Status:** `uncontrolled` — in design: model decided (ADR-0021 proposed); control (containment test) lands with
+  the layout-model rewrite.
 
 ### DC-064 — A deterministic test double produces colliding output across instances
 
@@ -2029,3 +2033,51 @@ for both or split.*
 - **Control:** `verify-defect-register.py` (unbroken sequence + header counts) catches the duplicate-ID/miscount failure mode at the gate — it is what forces a renumber rather than a silent duplicate. Generalisation: **the integrating branch renumbers its own new entries to follow the trunk's highest, and updates references scoped by meaning, never by blanket replace.** A stronger future control would reserve per-branch ID ranges (or use content-hash ids) so the collision cannot arise.
 - **Residual risk:** reference updates are semantic, not mechanical, so a missed reference keeps an old number; prose references in generated/derived files (docs-index.js) are regenerated from source. The renumber breaks any *external* citation of this branch's pre-merge DC-041..044 (e.g. in commit messages), which are historical and left as-is.
 - **Status:** `partially-controlled`
+
+### DC-070 — A test written as a list of exclusions accepts everything nobody listed
+
+- **Shape:** a predicate decides whether a value is the simple case by naming what the complicated
+  cases *contain* — `!value.Contains('$') && !value.Contains('(')`. It is correct about every shape
+  its author had in mind, and every shape they did not think of falls through to the **affirmative**
+  branch and is asserted as fact. This is the dangerous half of DC-033's family: there, an
+  unrecognised spelling falls through to "not found" and the fact is merely missing; here it falls
+  through to "yes", and the fact is **wrong**.
+- **Signature:** a boolean written entirely in negatives, guarding an assertion rather than a
+  rejection. Read it as *"anything I did not think to exclude is the simple case"* — if that
+  sentence is not one you would sign, the predicate is inverted. A second tell: the value that
+  reaches the store is **the source text itself**, so the defect is legible in the data as an
+  identifier where a name should be, and nobody looks because it is well-formed.
+- **Why it survives:** it produces no error, no disclosure and no gap. The unresolved-count that
+  would have raised it is incremented in the `else` branch, which the defect never reaches, so the
+  system reports **full coverage of a fact it invented**. Every test written from the shapes the
+  author enumerated passes, because those are the shapes the predicate handles.
+- **Instance:** 2026-08-31 — `BicepExtractor.IsLiteral(name) => !name.Contains('$') &&
+  !name.Contains('(')`. A Bicep resource name is very often a bare identifier —
+  `name: workspaceName` — which contains neither character, so it was `Unquote`d (a no-op on
+  unquoted text) and asserted as `resource_name = "workspaceName"`. **Measured before any change:
+  10 of 27 resource names in the graph were the text of an identifier rather than a name**, and not
+  one was disclosed, because they never reached the branch that counts unresolved names. Ground
+  truth from Azure's own what-if output (`docs/delivery/evidence/S00/recovery/…/recovery-plan.json`)
+  says the first of them is `theterrace-s00-log`.
+
+  The roadmap had ranked this work *"Large, low value — evaluating expressions means writing an
+  interpreter"*, on the premise that the alternative to evaluation was honest disclosure. It was
+  not: the alternative in production was ten fabricated names. **A wrong priority can be the defect
+  hiding, not just the work waiting** — the item as written would have been correctly deprioritised
+  forever.
+- **Control:** the folder is default-deny — every function, every literal form and every reference
+  is on a list of things it *can* fold, and anything else is refused and counted. The executable
+  guard is `NoResourceNameIsEverTheTextOfADeclaredSymbol`, which asserts across a whole template
+  that no emitted `resource_name` equals the source text of any declared `param` or `var`; it is the
+  class, not the instance, and it fails on the un-fixed reader with `Object = vaultName`. Alongside
+  it, a folded name is provenance `Inferred` and a quoted literal stays `Verified`, so the two are
+  never again indistinguishable in the store. **Observed failing 2026-08-31**: 13 of 19 new tests
+  red before the change.
+
+  A refusal test can pass for the wrong reason, which is DC-016 wearing this class's clothes: four
+  of the refusal tests passed on the un-fixed code by construction. Mutation-testing them by adding
+  `guid`/`uniqueString`/`format` to the function table turned two red — but `GuidIsNeverFolded`
+  stayed green, because its arguments were refused before the function table was ever consulted. It
+  was rewritten with a `guid(...)` whose arguments all fold, so the refusal it names is the refusal
+  it tests.
+- **Status:** `controlled`

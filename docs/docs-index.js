@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-09-01T02:40:48Z",
+  "generated": "2026-09-01T02:42:29Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1186,6 +1186,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "fc184c3983c4eacb54336a4b7e13680da7ca551c7664768f7866a48a3f52df97"
     },
     {
+      "id": "adr-0021-named-dock-zones",
+      "path": "docs/adr/0021-named-dock-zones.md",
+      "title": "ADR-0021: Named absolute dock zones replace the proportional split tree",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Adopts a fixed frame of named absolute dock zones (Left/Right/Bottom/Center), each a container of a within-zone stack or editor-group split, replacing the cross-zone proportional split tree whose single-child collapse relocated unrelated panes (DC-063). Splits are scoped inside a zone; moving a pane changes only source and destination.",
+      "tags": [
+        "workbench",
+        "layout",
+        "docking",
+        "architecture",
+        "migration"
+      ],
+      "links": [
+        {
+          "to": "spec-named-dock-zones",
+          "rel": "implements"
+        },
+        {
+          "to": "investigation-terminal-crash-and-pane-moves",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4c746a29988ef246c63afee776422f1b8655d85c2c5ebeeba4880032cc7304ce"
+    },
+    {
       "id": "architecture",
       "path": "docs/architecture.md",
       "title": "AI-DE Architecture",
@@ -2053,6 +2088,41 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "9412b7710088ab7cdfadd54c9d9beb42f0c7d29e2020e5c0fad9fcf461415cb6"
+    },
+    {
+      "id": "design-named-dock-zones-ui",
+      "path": "docs/design/named-dock-zones-ui.md",
+      "title": "Named Dock Zones — UI design (direction, mockup, critique)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The /ui-design output for the named dock-zone workbench: the direction brief, the design decisions for zone chrome and rails, a self-contained mockup with a review harness, and a rubric critique with a ranked plan. Zones are stable containers; chrome is minimal; motion is purposeful and reduced-motion-safe; WCAG 2.2 AA is the floor.",
+      "tags": [
+        "workbench",
+        "layout",
+        "docking",
+        "ux",
+        "ui-design"
+      ],
+      "links": [
+        {
+          "to": "spec-named-dock-zones",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0021-named-dock-zones",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-named-dock-zones",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "08ee2d333004ac65f87cfd0d4cfb6134b418215bc5f373bc886ffeb38484aa73"
     },
     {
       "id": "design-phase-1-walking-skeleton",
@@ -3352,7 +3422,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cba896fd0de030ca519b8ac0fb12999447d427ba349bbc17db911e187eea0841"
+      "sourceSha256": "0c9a25a86a87ac6d02f1cba131e3ece11ec0941121b9e01c3615968bceee7877"
     },
     {
       "id": "domain-experts",
@@ -3850,6 +3920,36 @@ window.DOCS_INDEX = {
       "sourceSha256": "51f511c81ba5ea794b33af699ec2ddb303aa746dd40e8ddcae87a16d92668420"
     },
     {
+      "id": "mockup-named-dock-zones",
+      "path": "docs/mockups/named-dock-zones.md",
+      "title": "Named Dock Zones — mockup (hub)",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Graph hub for docs/mockups/named-dock-zones.html — a self-contained, dependency-free mockup of the named dock-zone workbench with a review harness (zone states, theme, reduced motion). Open the HTML directly; this node makes it discoverable in the graph.",
+      "tags": [
+        "workbench",
+        "layout",
+        "mockup",
+        "ux"
+      ],
+      "links": [
+        {
+          "to": "design-named-dock-zones-ui",
+          "rel": "documents"
+        },
+        {
+          "to": "spec-named-dock-zones",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ea8f4ed0d3c06bccdc3531132459307b83b32bb69dffcfc892077b8366e54deb"
+    },
+    {
       "id": "mockup-uml-erm-surfaces",
       "path": "docs/mockups/uml-erm-surfaces.md",
       "title": "UML & ERM Surfaces — derived views (mockup)",
@@ -4130,7 +4230,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4ec2914d0b8a8b2a162f8d90ba2e6283931a27825be06d4abd51faa223500f93"
+      "sourceSha256": "564f3121d2bb243a42b7eaea55132bd2351842773e88999920685e729f2746d3"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -4591,7 +4691,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d65c960896cd672a10e76187d4a574b49d91c58191debefa6a2cc0720fc7d3e8"
+      "sourceSha256": "bdfaa3ad37c0724b1ee70c38776ff8cb70526ff204b7ad0f2b065d1359def9fe"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -9165,6 +9265,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "99617318b85e83c23b47fba0c33a5162f08f3fdfe91172827972242fe1740025"
     },
     {
+      "id": "spec-named-dock-zones",
+      "path": "docs/specs/named-dock-zones.md",
+      "title": "Named Dock Zones — workbench layout specification",
+      "type": "spec",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Replaces the proportional split-tree workbench layout with a fixed frame of named, absolute dock zones (Left / Right / Bottom / Center) so that moving a pane can only change the zones it belongs to — never relocate or reorient an unrelated pane. Zones resize, collapse to a rail, and maximize reversibly; splits are scoped inside a zone.",
+      "tags": [
+        "workbench",
+        "layout",
+        "docking",
+        "panes",
+        "ux"
+      ],
+      "links": [
+        {
+          "to": "investigation-terminal-crash-and-pane-moves",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8d93ab927f8c6ecfc30efc60072890f7a19380d379ae694b81f943aeebd90de5"
+    },
+    {
       "id": "spec-terminal-sessions",
       "path": "docs/specs/terminal-sessions.md",
       "title": "Multiple terminal sessions — lifecycle, rename, tab colour & colour schemes (spec)",
@@ -9328,7 +9463,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-feature-agent-watcher-substrate — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -9430,6 +9565,14 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-watcher-observatory"
     },
     {
+      "id": "surface-mockups-named-dock-zones",
+      "path": "docs/mockups/named-dock-zones.html",
+      "title": "Named Dock Zones — mockup & review harness",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-named-dock-zones"
+    },
+    {
       "id": "surface-mockups-uml-erm-surfaces",
       "path": "docs/mockups/uml-erm-surfaces.html",
       "title": "UML & ERM Surfaces — derived views (mockup)",
@@ -9438,5 +9581,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0cffee67d744c965887451b4954763a7f021c11e4fd7d8bbe72e851bf8a9bb20"
+  "graphSha256": "8538ac2ee16e74eb6455b4f93fc0db782c38c44908cc246e6e1886aa01f8df59"
 };

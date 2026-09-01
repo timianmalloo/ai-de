@@ -69,9 +69,30 @@ Ranked by *what a user cannot currently ask*, not by what is missing in the abst
 | # | Work | Why it is where it is | Size |
 |---|---|---|---|
 | **1** | **The graph pane's payload budget** | This is now the binding constraint on every extractor, and it moved from theory to arithmetic today. Call edges alone left `graph:default` with **18,496 bytes** of a 1 MiB frame; only because knowledge de-duplication landed in the same change did the combined result come back to **195,896**. Two more edge families and the surface starts dropping nodes to carry them — MEASURED once already, 2,630 drawn nodes falling to 1,471. The graph needs a bounded view (the overview/LOD path exists and is unbound to the canvas) or a way to ask for edges by kind, **before** anything else is added to it. | Medium |
-| **2** | **Python nested declarations** | Column-zero only, so a class inside a function is invisible. Bounded and rarely load-bearing, and now the largest unexamined coverage gap in a built extractor. | Small |
+| **2** | **Nested declarations, Python and TypeScript** | *Both SHIPPED 2026-08-31.* A class's methods are read as `has_member` in both readers; what is still nested is counted rather than stated flatly. MEASURED: Python 33 methods on 22 classes, TypeScript 11 on 2 — and TypeScript's residual gap is **54 declarations, every one of them in `docs/ai-forward-pack/scripts/docs-explorer-core.js`**, a 660-line UMD module whose whole body sits inside a factory function and which currently contributes one fact. That single file is the next coverage item and is sized. | Small |
 | **3** | **Schema changed by raw SQL** | *Investigated 2026-08-31 and NOT built.* The EF reader cannot fold `migrationBuilder.Sql`, and the disclosure now says how much that costs: **4 of 23** raw statements in `Up` methods carry DDL. Measured further — the one raw statement that adds a column is followed by a raw statement dropping the same one, so the net effect on TheTerrace's graph is **zero and the schema shown is correct**. Worth building when a repository is found where raw SQL adds a column and keeps it; building it now would be a fold for a measured zero. | Medium, unproven |
-| **4** | **Bicep expression evaluation** | Resource names built from expressions stay unevaluated; `count` is indeterminate. Correctly disclosed, and evaluating it means writing an interpreter. | Large, low value |
+| **4** | **Bicep expression evaluation** | *SHIPPED 2026-08-31, and **this ranking was wrong** — see below.* A constant folder, not an interpreter: `param`-with-default and `var` are substituted, interpolation and four pure string functions are folded, everything else is refused and counted. 12 of 27 resource names recovered, verified against Azure's own what-if output. `guid(...)` and a `param` with no default remain correctly disclosed. | Was "Large, low value"; actually Medium, and a correctness item |
+
+### Why item 4's ranking was wrong, and what that says about ranking
+
+It was ranked *"Large, low value — correctly disclosed, and evaluating it means writing an
+interpreter"*. Every clause of that was true except the load-bearing one: **it was not correctly
+disclosed.** The predicate deciding whether a name was already a literal was
+`!name.Contains('$') && !name.Contains('(')`, and a bare identifier — `name: workspaceName`, the
+commonest form in the corpus — contains neither. So it never reached the expression branch, was
+never counted as unresolved, and **10 of 27 resource names in the graph were the text of an
+identifier rather than a name**. The store said `workspaceName`; Azure deployed
+`theterrace-s00-log`.
+
+The measurement that was supposed to size the work found the defect instead. Two things follow:
+
+1. **A priority can be a defect hiding.** This item's rank rested on "the alternative to evaluation
+  is honest disclosure". Once that premise was false the rank was meaningless, and as written the
+  item would have been correctly deprioritised forever. Registered as **DC-070**.
+2. **Rank on measured behaviour, not on the described gap.** Every other item in this table was
+  ranked from what the disclosures say. That is the same evidence which, here, was the thing that
+  was wrong. Item 3's "measured zero" holds because somebody counted the statements; item 4's "low
+  value" did not, because nobody had looked at what the names actually were.
 
 **Four extractor items have shipped in two days** — knowledge body analysis, TypeScript precision,
 knowledge de-duplication, and C# call edges. What sits at the top now is not an extractor at all, and

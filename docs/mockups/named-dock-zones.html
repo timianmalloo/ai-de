@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Named Dock Zones — mockup &amp; review harness</title>
+<!--
+  Self-contained, dependency-free mockup for spec-named-dock-zones / adr-0021.
+  No build, no CDN, no framework — opens over file://. The harness bar (top) is
+  review chrome only and is NOT part of the design under review.
+  Tokens live in :root so every value references a token (U3/U20).
+-->
+<style>
+  :root {
+    /* palette tokens (mirror the app's intent; light default) */
+    --bg-frame:      #f3f4f6;
+    --bg-zone:       #ffffff;
+    --bg-rail:       #e9ebef;
+    --bg-tabstrip:   #eef0f3;
+    --bg-tab:        #e2e5ea;
+    --bg-tab-active: #ffffff;
+    --bg-center:     #fbfcfd;
+    --fg:            #1f2430;
+    --fg-muted:      #6b7280;
+    --border:       #d7dbe0;
+    --accent:        #2f6feb;
+    --drop:          rgba(47,111,235,.16);
+    --drop-border:   #2f6feb;
+    --rail-w:        40px;
+    --tab-h:         30px;
+    --radius:        7px;
+    --gap:           6px;
+    --shadow:        0 1px 3px rgba(16,24,40,.10), 0 1px 2px rgba(16,24,40,.06);
+    --motion:        160ms;
+    font-synthesis: none;
+  }
+  [data-theme="dark"] {
+    --bg-frame:#0f1115; --bg-zone:#181b21; --bg-rail:#14171c; --bg-tabstrip:#1c2027;
+    --bg-tab:#23272f; --bg-tab-active:#181b21; --bg-center:#151920; --fg:#e6e8ec;
+    --fg-muted:#9aa2ad; --border:#2b303a; --accent:#5b8cff; --drop:rgba(91,140,255,.20);
+    --drop-border:#5b8cff; --shadow:0 1px 3px rgba(0,0,0,.5);
+  }
+  [data-motion="reduced"] * { transition: none !important; animation: none !important; }
+
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: "Segoe UI", system-ui, sans-serif; color:var(--fg);
+         background:var(--bg-frame); font-size:13px; }
+
+  /* ---- review harness (not part of the design) ---- */
+  .harness { display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+    padding:10px 14px; background:var(--bg-tabstrip); border-bottom:1px solid var(--border); }
+  .harness strong { font-size:12px; letter-spacing:.02em; color:var(--fg-muted); text-transform:uppercase; }
+  .harness label { display:flex; gap:5px; align-items:center; font-size:12.5px; }
+  .harness select, .harness button { font:inherit; padding:3px 8px; border:1px solid var(--border);
+    border-radius:5px; background:var(--bg-zone); color:var(--fg); }
+  .harness .note { color:var(--fg-muted); font-size:12px; }
+
+  /* ---- the workbench frame ---- */
+  .frame { display:grid; height: calc(100vh - 52px); padding:var(--gap); gap:var(--gap);
+    grid-template-columns: var(--col-left) 1fr var(--col-right);
+    grid-template-rows: 1fr var(--row-bottom);
+    grid-template-areas: "left center right" "left bottom right";
+    --col-left: 210px; --col-right: 230px; --row-bottom: 180px; }
+  /* zone-collapse variants driven by data-* on .frame */
+  .frame[data-left="collapsed"]   { --col-left: var(--rail-w); }
+  .frame[data-right="collapsed"]  { --col-right: var(--rail-w); }
+  .frame[data-bottom="collapsed"] { --row-bottom: var(--rail-w); }
+  .frame[data-max="center"] { grid-template-columns: var(--rail-w) 1fr var(--rail-w);
+    grid-template-rows: 1fr var(--rail-w);
+    --col-left:var(--rail-w); --col-right:var(--rail-w); --row-bottom:var(--rail-w); }
+
+  .zone { background:var(--bg-zone); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden;
+    transition: all var(--motion) ease; min-width:0; min-height:0; }
+  .zone.left{grid-area:left;} .zone.right{grid-area:right;}
+  .zone.bottom{grid-area:bottom;} .zone.center{grid-area:center; background:var(--bg-center);}
+
+  .zonehead { display:flex; align-items:center; gap:2px; height:var(--tab-h);
+    background:var(--bg-tabstrip); border-bottom:1px solid var(--border); padding:0 4px; flex:0 0 auto; }
+  .tab { display:flex; align-items:center; gap:6px; height:22px; padding:0 9px; margin:0 1px;
+    background:var(--bg-tab); color:var(--fg-muted); border-radius:5px 5px 0 0; font-size:12.5px;
+    white-space:nowrap; cursor:default; }
+  .tab.active { background:var(--bg-tab-active); color:var(--fg); box-shadow:inset 0 -2px 0 var(--accent); }
+  .tab .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); opacity:.8; }
+  .spacer { flex:1; }
+  .chev { width:22px; height:22px; border:none; background:transparent; color:var(--fg-muted);
+    cursor:pointer; border-radius:4px; font-size:13px; }
+  .chev:hover { background:var(--bg-tab); color:var(--fg); }
+  .zonebody { flex:1; padding:10px 12px; color:var(--fg-muted); overflow:auto; min-height:0; }
+  .zonebody .doc { color:var(--fg); }
+
+  /* rails: a collapsed zone shows only an icon strip */
+  .rail { display:none; flex:0 0 auto; }
+  .zone.collapsed .zonehead, .zone.collapsed .zonebody { display:none; }
+  .zone.collapsed { align-items:center; background:var(--bg-rail); }
+  .zone.collapsed .rail { display:flex; padding:6px 0; }
+  .zone.left.collapsed .rail, .zone.right.collapsed .rail { flex-direction:column; gap:8px; }
+  .zone.bottom.collapsed .rail { flex-direction:row; gap:8px; padding:0 8px; align-items:center; height:100%; }
+  .railbtn { width:26px; height:26px; border-radius:6px; background:var(--bg-tab); color:var(--fg-muted);
+    display:flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; }
+  .railbtn:hover { color:var(--fg); box-shadow:inset 0 0 0 1px var(--accent); }
+  .railhint { color:var(--fg-muted); font-size:11px; writing-mode:vertical-rl; opacity:.55; }
+
+  /* drag-target highlight */
+  .frame[data-drop="bottom"] .zone.bottom { outline:2px dashed var(--drop-border); background:var(--drop); }
+  .frame[data-drop="right"]  .zone.right  { outline:2px dashed var(--drop-border); background:var(--drop); }
+  .dragghost { position:fixed; pointer-events:none; padding:3px 10px; background:var(--bg-tab-active);
+    border:1px solid var(--accent); border-radius:5px; font-size:12.5px; box-shadow:var(--shadow);
+    display:none; }
+  .frame[data-drop] .dragghost { display:block; }
+
+  /* center empty placeholder */
+  .center-empty { display:none; flex:1; align-items:center; justify-content:center; flex-direction:column;
+    gap:8px; color:var(--fg-muted); }
+  .zone.center[data-empty="true"] .zonebody { display:none; }
+  .zone.center[data-empty="true"] .center-empty { display:flex; }
+  .center-empty .k { font-size:14px; color:var(--fg); }
+</style>
+</head>
+<body>
+  <!-- ============ REVIEW HARNESS (chrome only) ============ -->
+  <div class="harness" role="region" aria-label="Mockup review harness">
+    <strong>Harness</strong>
+    <label>State
+      <select id="state">
+        <option value="default">Default (all populated)</option>
+        <option value="left-collapsed">Left collapsed → rail</option>
+        <option value="bottom-collapsed">Bottom collapsed → rail</option>
+        <option value="max-center">Center maximized</option>
+        <option value="drag-right">Drag: dropping into Right</option>
+        <option value="drag-bottom">Drag: dropping into Bottom</option>
+        <option value="center-empty">Center empty (no documents)</option>
+      </select>
+    </label>
+    <label>Theme
+      <select id="theme"><option value="light">Light</option><option value="dark">Dark</option></select>
+    </label>
+    <label>Motion
+      <select id="motion"><option value="full">Full</option><option value="reduced">Reduced</option></select>
+    </label>
+    <span class="note" id="note"></span>
+  </div>
+
+  <!-- ============ THE WORKBENCH (design under review) ============ -->
+  <div class="frame" id="frame" data-left="expanded" data-right="expanded" data-bottom="expanded">
+    <!-- LEFT tool zone -->
+    <section class="zone left" aria-label="Left tool zone">
+      <div class="zonehead">
+        <span class="tab active"><span class="dot"></span>Explorer</span>
+        <span class="tab">Search</span>
+        <span class="spacer"></span>
+        <button class="chev" title="Collapse zone" aria-label="Collapse Left zone">‹</button>
+      </div>
+      <div class="zonebody">
+        <div class="doc">▸ src/AiDe.Core</div>
+        <div class="doc">▸ src/AiDe.App</div>
+        <div>▸ docs</div>
+        <div>▸ tests</div>
+      </div>
+      <div class="rail" aria-label="Left rail (collapsed)">
+        <div class="railbtn" title="Explorer">E</div>
+        <div class="railbtn" title="Search">S</div>
+      </div>
+    </section>
+
+    <!-- CENTER document zone (the anchor) -->
+    <section class="zone center" aria-label="Center document zone" data-empty="false">
+      <div class="zonehead">
+        <span class="tab active"><span class="dot"></span>Knowledge graph</span>
+        <span class="tab">UserService.cs</span>
+        <span class="tab">class: OrderAggregate</span>
+        <span class="spacer"></span>
+        <button class="chev" title="Split editor group" aria-label="Split editor group">⊟</button>
+        <button class="chev" title="Maximize" aria-label="Maximize Center">▢</button>
+      </div>
+      <div class="zonebody">
+        <div class="doc" style="font-size:13px;">Center is the anchor — documents, diagrams and the graph
+          live here and it is <b>never</b> collapsed. It may split into editor groups (scoped to Center).</div>
+        <div style="margin-top:12px; height:60px; border:1px dashed var(--border); border-radius:6px;
+          display:flex; align-items:center; justify-content:center;">◇ graph canvas ◇</div>
+      </div>
+      <div class="center-empty">
+        <div class="k">No documents open</div>
+        <div>Open a file, diagram, or the knowledge graph to begin.</div>
+      </div>
+    </section>
+
+    <!-- RIGHT tool zone -->
+    <section class="zone right" aria-label="Right tool zone">
+      <div class="zonehead">
+        <span class="tab active"><span class="dot"></span>Class diagram</span>
+        <span class="tab">Outline</span>
+        <span class="spacer"></span>
+        <button class="chev" title="Collapse zone" aria-label="Collapse Right zone">›</button>
+      </div>
+      <div class="zonebody">
+        <div class="doc">╔══════════════╗</div>
+        <div class="doc">║ «interface»  ║</div>
+        <div class="doc">║  IRepository ║</div>
+        <div class="doc">╠══════════════╣</div>
+        <div class="doc">║ + Get(id)    ║</div>
+        <div class="doc">╚══════════════╝</div>
+      </div>
+      <div class="rail" aria-label="Right rail (collapsed)">
+        <div class="railbtn" title="Class diagram">◫</div>
+        <div class="railbtn" title="Outline">≣</div>
+      </div>
+    </section>
+
+    <!-- BOTTOM tool zone -->
+    <section class="zone bottom" aria-label="Bottom tool zone">
+      <div class="zonehead">
+        <span class="tab active"><span class="dot"></span>Agent terminal</span>
+        <span class="tab">Diagnostics</span>
+        <span class="tab">Output</span>
+        <span class="spacer"></span>
+        <button class="chev" title="Maximize" aria-label="Maximize Bottom">▢</button>
+        <button class="chev" title="Collapse zone" aria-label="Collapse Bottom zone">⌄</button>
+      </div>
+      <div class="zonebody" style="font-family:'Cascadia Mono',Consolas,monospace; font-size:12px;">
+        <div class="doc">$ dotnet test --nologo</div>
+        <div class="doc">Passed! Core 892 / App 209</div>
+        <div>■</div>
+      </div>
+      <div class="rail" aria-label="Bottom rail (collapsed)">
+        <div class="railbtn" title="Agent terminal">▸</div>
+        <div class="railbtn" title="Diagnostics">◎</div>
+        <div class="railbtn" title="Output">≡</div>
+        <span class="railhint" style="writing-mode:horizontal-tb;">drag a tab here to dock</span>
+      </div>
+    </section>
+
+    <div class="dragghost" id="ghost">Class diagram</div>
+  </div>
+
+<script>
+  // Harness wiring only — toggles the same data-* attributes the real WorkbenchShell would set.
+  const frame = document.getElementById('frame');
+  const note  = document.getElementById('note');
+  const notes = {
+    'default': 'Four named zones. Moving a tab changes only its source and destination — nothing else.',
+    'left-collapsed': 'A collapsed tool zone becomes a rail; its panes are remembered (AC-F4).',
+    'bottom-collapsed': 'Bottom collapsed to a rail — the Center and side zones did not move (AC-F2/F6).',
+    'max-center': 'Maximize is reversible: restore returns every zone size and active tab (AC-F5).',
+    'drag-right': 'During a drag the valid drop zones highlight; drop is destination-local (AC-U1/F7).',
+    'drag-bottom': 'Dropping the Class diagram into Bottom would move only Right→Bottom (AC-F1).',
+    'center-empty': 'Center is never removed; with no documents it shows a placeholder (AC-F3).'
+  };
+  function setState(v) {
+    frame.setAttribute('data-left','expanded'); frame.setAttribute('data-right','expanded');
+    frame.setAttribute('data-bottom','expanded'); frame.removeAttribute('data-max');
+    frame.removeAttribute('data-drop');
+    document.querySelectorAll('.zone').forEach(z=>z.classList.remove('collapsed'));
+    const center = document.querySelector('.zone.center'); center.setAttribute('data-empty','false');
+    if (v==='left-collapsed'){ frame.setAttribute('data-left','collapsed'); q('.left'); }
+    if (v==='bottom-collapsed'){ frame.setAttribute('data-bottom','collapsed'); q('.bottom'); }
+    if (v==='max-center'){ frame.setAttribute('data-max','center');
+      ['.left','.right','.bottom'].forEach(q); }
+    if (v==='drag-right'){ frame.setAttribute('data-drop','right'); }
+    if (v==='drag-bottom'){ frame.setAttribute('data-drop','bottom'); }
+    if (v==='center-empty'){ center.setAttribute('data-empty','true'); }
+    note.textContent = notes[v] || '';
+  }
+  function q(sel){ document.querySelector('.zone'+sel).classList.add('collapsed'); }
+  document.getElementById('state').addEventListener('change', e=>setState(e.target.value));
+  document.getElementById('theme').addEventListener('change', e=>
+    document.documentElement.setAttribute('data-theme', e.target.value));
+  document.getElementById('motion').addEventListener('change', e=>
+    document.documentElement.setAttribute('data-motion', e.target.value==='reduced'?'reduced':'full'));
+  // clicking a collapse chevron collapses its zone (illustrative)
+  document.querySelectorAll('.chev[title="Collapse zone"]').forEach(b=>b.addEventListener('click',()=>{
+    b.closest('.zone').classList.add('collapsed');
+  }));
+  setState('default');
+</script>
+</body>
+</html>

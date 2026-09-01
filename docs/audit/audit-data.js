@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-09-01T02:41:16Z",
+  "generated": "2026-09-01T02:42:29Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2499,825 +2499,6 @@ window.AUDIT_DATA = {
       "datetime": "2026-08-30T19:21:42Z",
       "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
       "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
-      "summary": "**The sweep found the class was live in the tree, and the class now has a control.**\n\nThree instances this session were the same shape — a comment states a bound the code does not apply.\nThe sweep found a fourth still standing: `MaxEvidencePageCeiling` documented as \"sized so a page\nstays comfortably inside `MaxResultBytes`\" when 2,000 assertions serialise to **1,004,397 bytes**,\nfifteen times that constant. Corrected to name the mechanism that actually bounds it.\n\n`tools/verify-bounds-are-enforced.py` requires every constant whose NAME claims a limit to appear in\na comparison, a clamp or a take — searched over code with comments stripped, so prose cannot count as\nproof. On its first run it found `WholeGraphNodeCap`: declared last turn as a \"retained name\",\ndocumented as a ceiling, **zero usages**. Deleted. One false positive (`OverviewNodeCap`, applied\nindirectly through `GraphQuery.MaxNodes`) became a justified exemption rather than a weaker rule,\nbecause \"it is passed somewhere\" is exactly what made `find` look safe.\n\n**The control says what it cannot do.** It checks a bound is APPLIED, not that a sentence describing\nit is TRUE — the TypeScript instance, a regex differing from its comment, is invisible to it. Half\nthe class is mechanised; claiming otherwise would be this class applied to its own control.\n\n**Measurement is repeatable now.** `tools/measure-repositories.py` runs the harness over three\ncodebases chosen for contrast and prints them side by side. It exists because every number in this\nproject came from one repository until a second was tried by hand, and the third exposed a defect in\na control that looked correct against the first.\n\n**The overview's default depth was the useless one, and three repositories showed it:**\n\n    TheTerrace                d1:  74 groups,  1 link    d2: 200,  6    d3: 200, 263\n    BioHacker                 d1:  17 groups,  0 links   d2:  56,  6    d3: 200, 323\n    meridian-finance-planner  d1:  92 groups,  6 links   d2: 159, 18    d3: 200,  93\n\nDepths 1 and 2 are almost linkless in ALL THREE, for an arithmetic reason: at a coarse grain nearly\nevery edge is internal to a group, counted and not drawn. A picture of disconnected islands is\ncorrect and says nothing about structure. Default moved 2 → 3, from evidence rather than taste.\n\n**Raw SQL schemas are read.** BioHacker declares its whole schema in one 197-line file with eight\n`CREATE TABLE`s; the tool said `sql-not-analysed (2 file(s))` and produced **zero** joins — honest,\nand blind to that repository's entire schema side. `SqlSchemaExtractor` emits the SAME node shape as\nthe EF reader (`table:Name`, `has_type table`, `has_column`), because a second spelling would be\nDC-022 with two producers of one predicate and the joins would silently see half the tables.\n\nColumn parsing matches parentheses rather than scanning to the first `)`, so `DECIMAL(9,2)` does not\ntruncate the column list; constraint lines are not claimed as columns; the schema qualifier is\nstripped so `dbo.Principal` and `Principal` are one node.\n\nBioHacker: joins **0 → 8**, 54 `has_column` facts. meridian: 30 → 33 inferred, 31 → 34 scopes.\n\nAnd `.sql` came out of `UnanalysedLanguages`. A closed gap reported as open is the same defect as\nhiding one that is not — **the third time that list has needed this correction, once per extractor\nadded**, so the rule is now written where the list is: it is the LAST STEP of adding an extractor.\n\nDC-038 registered, with its residual risk stated: name-based detection misses a bound named without\none of those suffixes, and a limit written as a magic number is invisible to it.\n\n812 tests green (App 132, Core 680). Eight gates clean, one of them new. Zero design-owned files.",
-      "kind": "prompt",
-      "skill": null,
-      "tool": null,
-      "actor": "claude-opus-5",
-      "artifacts": [],
-      "tags": [
-        "phase-3"
-      ],
-      "outcome": "success",
-      "goal": "Sweep the prose-claims-a-bound class and control it, make multi-repo measurement repeatable, read raw SQL schemas, and settle the overview's default depth",
-      "done_when": "The class has a control observed finding something; three repositories measured by script; SQL tables reach the joins; depth chosen from evidence; gates green; merged and published",
-      "change": "cl-0087",
-      "git": {
-        "sha": "4314a5efc2057dbca92d34e36b598cc74600931b",
-        "short": "4314a5efc",
-        "branch": "session/phase3-pane-probes",
-        "pushed": true
-      }
-    },
-    {
-      "id": "al-0146",
-      "shortname": "collectknowledge-agentic-session-observability",
-      "datetime": "2026-08-30T21:43:56Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
-      "summary": "Established a sourced knowledge base for multi-session observability, coordination, trajectory scoring, Daydream learning, and the distributed-systems/privacy limits.",
-      "kind": "skill",
-      "skill": "collectknowledge",
-      "tool": "Copilot CLI",
-      "actor": "@timianmalloo",
-      "artifacts": [
-        "docs/knowledge/agentic-session-observability/index.md"
-      ],
-      "tags": [
-        "watcher",
-        "scoring"
-      ],
-      "outcome": "success",
-      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
-      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
-      "started_at": "2026-08-30T19:47:28Z",
-      "duration_seconds": 6988.0,
-      "git": {
-        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
-        "short": "160a6a693",
-        "branch": "feature/agent-watcher-substrate",
-        "pushed": null
-      }
-    },
-    {
-      "id": "al-0147",
-      "shortname": "optimize-graph-agentic-watcher",
-      "datetime": "2026-08-30T21:43:56Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
-      "summary": "Executed an eight-node bounded graph with width four, early hard gates, and measured correction loops.",
-      "kind": "skill",
-      "skill": "optimize-graph",
-      "tool": "Copilot CLI",
-      "actor": "@timianmalloo",
-      "artifacts": [
-        "docs/plans/agentic-watcher-substrate.md"
-      ],
-      "tags": [
-        "execution-graph"
-      ],
-      "outcome": "success",
-      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
-      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
-      "git": {
-        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
-        "short": "160a6a693",
-        "branch": "feature/agent-watcher-substrate",
-        "pushed": null
-      }
-    },
-    {
-      "id": "al-0148",
-      "shortname": "specify-loomkeeper",
-      "datetime": "2026-08-30T21:43:56Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
-      "summary": "Specified Loomkeeper, the Weave Score, repo Message Board, Daydream lifecycle, local-only policies, and the three-layer Observatory experience.",
-      "kind": "skill",
-      "skill": "specify",
-      "tool": "Copilot CLI",
-      "actor": "@timianmalloo",
-      "artifacts": [
-        "docs/specs/agentic-watcher-substrate.md",
-        "docs/specs/agentic-watcher-substrate.html"
-      ],
-      "tags": [
-        "specification"
-      ],
-      "outcome": "success",
-      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
-      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
-      "git": {
-        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
-        "short": "160a6a693",
-        "branch": "feature/agent-watcher-substrate",
-        "pushed": null
-      }
-    },
-    {
-      "id": "al-0149",
-      "shortname": "ui-design-watcher-observatory",
-      "datetime": "2026-08-30T21:43:56Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
-      "summary": "Created the G6 Loomkeeper Observatory design language, hard-state interactive mockup, rendered audits, and adversarial UI review.",
-      "kind": "skill",
-      "skill": "ui-design",
-      "tool": "Copilot CLI",
-      "actor": "@timianmalloo",
-      "artifacts": [
-        "docs/mockups/watcher-observatory.html",
-        "docs/reviews/ui-watcher-observatory.md"
-      ],
-      "tags": [
-        "ui-design"
-      ],
-      "outcome": "success",
-      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
-      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
-      "git": {
-        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
-        "short": "160a6a693",
-        "branch": "feature/agent-watcher-substrate",
-        "pushed": null
-      }
-    },
-    {
-      "id": "al-0154",
-      "shortname": "watcher-tighten-and-extend",
-      "datetime": "2026-08-30T22:25:45Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "Review/tighten the Loomkeeper watcher spec, proposal HTML and mockups (gpt walkabout); then add harness+model scoring axes, a harness/model/harness-model leaderboard, user credential/config, and per-turn agent-visible standing with per-score why.",
-      "summary": "Cut spec process residue; fixed Watcher Health nav + Daydream state gaps; replaced the false-precision score gauge in the proposal with an honest chip (61, no conic); added harness/model identity+aggregation, US-13..16, Leaderboard + Configuration surfaces (spec Part B/C, DESIGN.md), a Leaderboard and Configuration view + per-turn Standing block in the mockup; all gates green.",
-      "kind": "skill",
-      "skill": "ui-design",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "docs/specs/agentic-watcher-substrate.md",
-        "docs/mockups/watcher-observatory.html"
-      ],
-      "tags": [
-        "loomkeeper",
-        "leaderboard",
-        "scoring"
-      ],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0158",
-      "shortname": "define-architecture-loomkeeper",
-      "datetime": "2026-08-30T22:40:54Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "Run /define-architecture on Loomkeeper, starting with the credential/egress security model and task-class calibration (the two riskiest new surfaces).",
-      "summary": "Authored docs/architecture/loomkeeper.md (G Continuous Sentinel + D + H; projection-not-second-store; vertical phasing with a walking skeleton) composing existing ADR-0001/0002/0006/0007/0011/0016, and four new ADRs: 0017 observation projection, 0018 credential/DPAPI + egress-deny opt-in (extends 0011), 0019 advisory-evaluator calibration gates, 0020 trusted registrar + harness/model identity (extends 0007). Spikes S1-S4 named not fabricated. Gates green.",
-      "kind": "skill",
-      "skill": "define-architecture",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "docs/architecture/loomkeeper.md",
-        "docs/adr/0018-credential-backed-grading-egress.md",
-        "docs/adr/0019-advisory-evaluator-calibration.md"
-      ],
-      "tags": [
-        "loomkeeper",
-        "architecture",
-        "egress",
-        "calibration"
-      ],
-      "outcome": "success",
-      "started_at": "2026-08-30T22:32:00Z",
-      "duration_seconds": 534.0
-    },
-    {
-      "id": "al-0160",
-      "shortname": "design-implement-watcher-phase1",
-      "datetime": "2026-08-30T23:38:31Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "Run /design on the Phase-1 walking-skeleton components, then /implement it.",
-      "summary": "Designed docs/design/watcher-phase1-skeleton.md (data model, contracts, patterns, failure modes, STRIDE, LINDDUN no-PII, telemetry, test plan) and implemented the deterministic core in src/AiDe.Core/Watcher/ (identity+capability, TrustedRegistrar, idempotent content-addressed span ingest, monotonic liveness projection, default-deny egress gate, IWatcherObservationStore seam + in-memory impl). 30 xUnit tests green (full suite 710/0); forgery + dedup oracles mutation-verified red. Proof Pack committed; DC-039 registered.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "docs/design/watcher-phase1-skeleton.md",
-        "src/AiDe.Core/Watcher/TrustedRegistrar.cs",
-        "docs/proof/watcher-phase1-skeleton.md"
-      ],
-      "tags": [
-        "loomkeeper",
-        "watcher",
-        "phase-1"
-      ],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0165",
-      "shortname": "implement-watcher-sqlite-store",
-      "datetime": "2026-08-31T00:20:11Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "Do the next action: /implement the SQLite observation store behind the IWatcherObservationStore seam.",
-      "summary": "Implemented SqliteWatcherObservationStore (src/AiDe.Core/Watcher/) reusing the ADR-0002 idiom: WAL, single writer, append-only observed_span_fact enforced by BEFORE UPDATE/DELETE triggers, content-addressed PK dedup via INSERT OR IGNORE, session/heartbeat/ended current-state tables mapping 1:1 to the in-memory maps. 11 new D4 real-engine tests (persistence across reopen, append-only rejection, contract fidelity); append-only trigger mutation-verified red. Full suite 721/0; build 0/0. Design + Proof Pack updated.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
-        "tests/AiDe.Core.Tests/Watcher/SqliteWatcherObservationStoreTests.cs",
-        "docs/proof/watcher-phase1-skeleton.md"
-      ],
-      "tags": [
-        "loomkeeper",
-        "watcher",
-        "sqlite",
-        "phase-1"
-      ],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0168",
-      "shortname": "spike-s1-and-ingest-wire",
-      "datetime": "2026-08-31T00:38:20Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "Do the next best actions: run spike S1 (harness OTLP ingest shape), then /design the daemon ingest wire (and implement its deterministic core).",
-      "summary": "Ran spike S1 (spikes/watcher-otlp-ingest, PASS) establishing the OTel-span and registration mappings against the real Activity primitive, with GenAI attributes flagged Development-status and pinned. Designed docs/design/watcher-ingest-wire.md (dual-path adapter/ACL feeding TrustedRegistrar+SpanIngest; new ingest-boundary STRIDE; LINDDUN no-PII; pinned-schema A6 gate). Implemented the deterministic OtelSpanMapper (src/AiDe.Core/Watcher/) + LK-0004 MalformedEvent; 11 tests incl. the A6 pinned-schema gate (mutation-verified red). Full suite 732/0; build 0/0.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "spikes/watcher-otlp-ingest/FINDINGS.md",
-        "docs/design/watcher-ingest-wire.md",
-        "src/AiDe.Core/Watcher/OtelSpanMapper.cs",
-        "docs/proof/watcher-ingest-wire.md"
-      ],
-      "tags": [
-        "loomkeeper",
-        "watcher",
-        "otlp",
-        "ingest",
-        "phase-1"
-      ],
-      "outcome": "success",
-      "started_at": "2026-08-31T00:26:11Z",
-      "duration_seconds": 729.0
-    },
-    {
-      "id": "al-0174",
-      "shortname": "design-implement-ingest-host",
-      "datetime": "2026-08-31T03:40:27Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "Execute the /design -> /implement loop until slice 1 (OTLP transport receiver + daemon host) is fully implemented.",
-      "summary": "Slice 1a: designed docs/design/watcher-ingest-host.md (sync register/heartbeat + async bounded span queue with DropOldest backpressure; forged->rejected, malformed->quarantined; counters answer the operator questions) and implemented IngestHost (src/AiDe.Core/Watcher/) reusing the repo Channel.CreateBounded idiom + TimeProvider. 9 tests incl. flood-drops-counted (compile-enforced counter), malformed-survives, concurrency reconcile. Full suite 741/0; build 0/0. Remaining slice 1b: OTLP network receiver adapter (needs encoding/transport spike).",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": "Copilot CLI",
-      "actor": null,
-      "artifacts": [
-        "docs/design/watcher-ingest-host.md",
-        "src/AiDe.Core/Watcher/IngestHost.cs",
-        "docs/proof/watcher-ingest-host.md"
-      ],
-      "tags": [
-        "loomkeeper",
-        "watcher",
-        "ingest",
-        "phase-1"
-      ],
-      "outcome": "success",
-      "started_at": "2026-08-31T03:28:46Z",
-      "duration_seconds": 701.0
-    },
-    {
-      "id": "al-0175",
-      "shortname": "implement-watcher-otlp-receiver",
-      "datetime": "2026-08-31T03:59:27Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "execute autonomously using our skills, the /design -> /implement loop until slice 1 is fully implemented",
-      "summary": "Slice 1b: OtlpHttpReceiver (OTLP/JSON, stdlib System.Text.Json, per-session token->capability, body cap, loopback). 13 tests incl. 2 real-loopback D4; suite 754/0. Completes Loomkeeper slice 1 (ingest). Proof docs/proof/watcher-otlp-receiver.md",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/OtlpReceiver.cs",
-        "tests/AiDe.Core.Tests/Watcher/OtlpReceiverTests.cs",
-        "docs/proof/watcher-otlp-receiver.md"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0178",
-      "shortname": "implement-watcher-coordination-contract",
-      "datetime": "2026-08-31T04:30:34Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do these next steps to complete slice 2 autonomously over night",
-      "summary": "Slice 2: injected coordination contract - CoordContractParser (tolerant coord-core JSONL read, version pin, sort by at/seq) + InjectedContractIngest adapter (mints+holds capability, feeds same registrar/host; register+heartbeat for non-AI-Forward sessions, one ledger projected). Spike S4 PASS. 16 tests incl. E11 end-to-end; suite 770/0. Proof docs/proof/watcher-coordination-contract.md. Registered DC-040 (pre-existing daemon-reuse flake, observed not introduced).",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/CoordinationContract.cs",
-        "tests/AiDe.Core.Tests/Watcher/CoordinationContractTests.cs",
-        "docs/proof/watcher-coordination-contract.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "started_at": "2026-08-31T04:09:56Z",
-      "duration_seconds": 1238.0
-    },
-    {
-      "id": "al-0188",
-      "shortname": "implement-watcher-sessions-surface",
-      "datetime": "2026-08-31T13:19:02Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do all next steps listed above (slice 3 WPF Sessions treegrid row)",
-      "summary": "Slice 3: sessions read model - store.AllSessions() + WatcherSessionsQuery fold + WatcherSessionsPaneViewModel (honest Not Recorded, no-colour-alone liveness badge, full state set, synchronous load avoids DC-011) + WPF 'sessions' surface kind in default layout. 10 Core tests + 3 STA render tests; Not-Recorded oracle mutation-verified. Core 780/0, App 135/0. Proof docs/proof/watcher-sessions-surface.md",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Presentation/WatcherSessionsPaneViewModel.cs",
-        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
-        "tests/AiDe.Core.Tests/Watcher/WatcherSessionsPaneViewModelTests.cs",
-        "docs/proof/watcher-sessions-surface.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "started_at": "2026-08-31T13:06:31Z",
-      "duration_seconds": 751.0
-    },
-    {
-      "id": "al-0189",
-      "shortname": "implement-coord-contract-log",
-      "datetime": "2026-08-31T13:26:18Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do all next steps listed above (slice-2 residual: session-side writer + log watcher)",
-      "summary": "Slice-2 residual closed: CoordContractWriter (atomic append + LOG-A + seq) + CoordContractLog.ReadDirectory + CoordContractLogPump feed InjectedContractIngest.ApplyAll (idempotent). 7 D4 real-filesystem tests; LOG-A anti-fusion mutation-verified. Full suite 787/0.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/CoordinationContractLog.cs",
-        "tests/AiDe.Core.Tests/Watcher/CoordinationContractLogTests.cs"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0191",
-      "shortname": "investigate-dc040-daemon-reuse-flake",
-      "datetime": "2026-08-31T13:34:27Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do all next steps listed above (root-cause DC-040 daemon-reuse flake)",
-      "summary": "DC-040 controlled: root-caused the ShellBootstrap daemon-reuse flake to a system-wide AiDe.Daemon process count (category error - the daemon deliberately outlives its client, so sibling tests' lingering daemons polluted the counter). Replaced with a readiness barrier (observed answer) + workspace-scoped three-way epoch equality (WorkspaceLock invariant). Verified stable across 3 isolated runs + full 787-test suite. Register updated to controlled.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "tests/AiDe.Core.Tests/ShellBootstrapTests.cs",
-        "docs/lessons/defect-classes.md"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0271",
-      "shortname": "implement-watcher-work-episode",
-      "datetime": "2026-08-31T13:57:31Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do the next steps and lets get all of slice 4 implemented; consider the recent ai-forward done_when structure and reflect on how it informs the design",
-      "summary": "Slice 4: Work Episode lifecycle. Domain (Goal/DoneCondition/EpisodeGeneration/EpisodeOutcome/WorkEpisode) mirrors the AI-Forward CT19 goal-state triple; capability-verified Open/Reframe/Close (forgery rejected); changing the goal starts a NEW episode (Superseded + next generation, immutable goal); EpisodeProjection binds only spans in the interval (endpoints inclusive). Store extended (episode dim + SpanCountInInterval; in-memory retains RecordedAt; SQLite work_episode_dim table). 20 tests incl. D4 SQLite + E11 composition; interval-endpoint oracle mutation-verified. Full suite 807/0. Proof docs/proof/watcher-work-episode.md",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/WorkEpisode.cs",
-        "tests/AiDe.Core.Tests/Watcher/WorkEpisodeTests.cs",
-        "docs/proof/watcher-work-episode.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "started_at": "2026-08-31T13:41:28Z",
-      "duration_seconds": 963.0
-    },
-    {
-      "id": "al-0273",
-      "shortname": "implement-watcher-weave-score",
-      "datetime": "2026-08-31T14:51:25Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do the next steps and lets get all of slice 5 implemented",
-      "summary": "Slice 5: deterministic Weave. WeaveScorer scores a closed Work Episode on the 4 deterministic dimensions (observed weight 70; 2 advisory dims excluded, not faked); hard floors (correctness/security/privacy/data-integrity/evaluator-integrity) trip Blocked + suppress the numeric headline; missing goal/done/verification or open episode -> Not Scored; Partial headline uses observed-weight denominator, never rescales to 0-100; Coverage separate from points. done_when made measurable (Focus drift + Outcome honest-completion = PACK-O faces). 27 tests incl. E11; no-rescale oracle mutation-verified. Full suite 834/0. Proof docs/proof/watcher-weave-score.md",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/WeaveScore.cs",
-        "tests/AiDe.Core.Tests/Watcher/WeaveScorerTests.cs",
-        "docs/proof/watcher-weave-score.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "started_at": "2026-08-31T14:40:21Z",
-      "duration_seconds": 664.0
-    },
-    {
-      "id": "al-0277",
-      "shortname": "implement-watcher-message-board",
-      "datetime": "2026-08-31T16:21:03Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do the next steps and lets get all of slice 6 implemented",
-      "summary": "Slice 6: per-repo Message Board + cross-repo Fleet aggregator. Board (Question/Decision/Breadcrumb/KnowledgeCandidate + Reply/Acknowledgement) append-only, repo-scoped, provenance = session trust; reply/ack must reference an existing parent in the same repo (no orphan, no cross-repo); capability-verified; content quarantined untrusted data + grader-injection flagged (Confused Deputy); policy redaction tombstones payload keeps envelope. FleetAggregator builds repo->session map across >=2 sources. Store board table (both impls). 28 tests incl. D4 SQLite + E11; orphan-rejection oracle mutation-verified. Full suite 862/0. Proof docs/proof/watcher-message-board.md",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/MessageBoard.cs",
-        "src/AiDe.Core/Watcher/FleetAggregator.cs",
-        "tests/AiDe.Core.Tests/Watcher/MessageBoardTests.cs",
-        "docs/proof/watcher-message-board.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "started_at": "2026-08-31T16:07:58Z",
-      "duration_seconds": 785.0
-    },
-    {
-      "id": "al-0279",
-      "shortname": "implement-watcher-advisory-grader",
-      "datetime": "2026-08-31T16:43:26Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do the next steps and lets get all of slice 7 implemented",
-      "summary": "Slice 7 (final): advisory grader + calibration + leaderboard + standing. QWK/stability/anti-Goodhart gates (ADR-0019), gated advisory fold that never overrides a floor (rule 8), leaderboard cohort>=5 + single-operator privacy suppression (rules 10-11, US-10) segmented by task/schema, AgentStanding with no single optimizable scalar (US-16). 27 new tests, full suite 889/0, cohort-minimum oracle mutation-verified.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/AdvisoryScoring.cs",
-        "src/AiDe.Core/Watcher/Leaderboard.cs",
-        "src/AiDe.Core/Watcher/WeaveScore.cs",
-        "docs/design/watcher-advisory-grader.md",
-        "docs/proof/watcher-advisory-grader.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "started_at": "2026-08-31T16:28:44Z",
-      "duration_seconds": 882.0
-    },
-    {
-      "id": "al-0282",
-      "shortname": "implement-watcher-score-persistence",
-      "datetime": "2026-08-31T16:59:56Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
-      "summary": "Connective 1: persist ScoredEpisode+Scorecard as a materialized derived cache (DM7) behind IWatcherObservationStore, in-memory + SQLite (scored_episode_cell + dimension/floor child cells, transactional upsert). AllScoredEpisodes feeds LeaderboardComposer. 9 tests, full suite 897/0, child-cleanup oracle mutation-verified.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/WatcherObservationStore.cs",
-        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
-        "docs/design/watcher-score-persistence.md",
-        "docs/proof/watcher-score-persistence.md",
-        "tests/AiDe.Core.Tests/Watcher/ScorePersistenceTests.cs"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "started_at": "2026-08-31T16:46:52Z",
-      "duration_seconds": 784.0
-    },
-    {
-      "id": "al-0285",
-      "shortname": "implement-watcher-board-leaderboard-surfaces",
-      "datetime": "2026-08-31T17:24:23Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
-      "summary": "Connective 2: Board (US-4) + Leaderboard (US-14) WPF surfaces mirroring slice-3 Sessions; AllBoardMessages reader; factory board/leaderboard kinds + shared ListPane; default-layout seeding + v2->v3 migration (reachable, E10); WorkbenchShell opens the per-workspace watcher SQLite store and wires all three read queries so panes are live. 15 Core + 3 App + 1 migration test; Core 913/0, App 138/0; migration oracle mutation-verified.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Presentation/WatcherBoardPaneViewModel.cs",
-        "src/AiDe.Core/Presentation/WatcherLeaderboardPaneViewModel.cs",
-        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
-        "src/AiDe.App/Workbench/WorkbenchShell.cs",
-        "docs/design/watcher-board-leaderboard-surfaces.md",
-        "docs/proof/watcher-board-leaderboard-surfaces.md"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0288",
-      "shortname": "implement-watcher-advisory-evaluator",
-      "datetime": "2026-08-31T17:34:00Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
-      "summary": "Connective 3: LocalHeuristicAdvisoryEvaluator (deterministic, no egress, conservative defaults, refuses deterministic dims) + EgressGuardedAdvisoryEvaluator enforcing default-deny egress (LK-0003) then credential presence (LK-0002) before any cloud judge, inner never called on denial. 15 tests, suite 928/0, egress-first ordering mutation-verified.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/AdvisoryEvaluators.cs",
-        "docs/design/watcher-advisory-evaluator.md",
-        "docs/proof/watcher-advisory-evaluator.md",
-        "tests/AiDe.Core.Tests/Watcher/AdvisoryEvaluatorsTests.cs"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0289",
-      "shortname": "implement-watcher-score-dispute",
-      "datetime": "2026-08-31T17:45:06Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
-      "summary": "Connective 4: operator dispute path (US-16/rule 12). ScoreDispute append-only fact (own table, append-only triggers, idempotent id) that never overwrites the Scorecard; DisputeProjection derives the Disputed state (DM7); Leaderboard surfaces disputed-episode count. 11 tests, suite 939/0, App 138/0; append-only/idempotent oracle mutation-verified.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/ScoreDispute.cs",
-        "src/AiDe.Core/Watcher/WatcherObservationStore.cs",
-        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
-        "src/AiDe.Core/Presentation/WatcherLeaderboardPaneViewModel.cs",
-        "docs/design/watcher-score-dispute.md",
-        "docs/proof/watcher-score-dispute.md",
-        "tests/AiDe.Core.Tests/Watcher/ScoreDisputeTests.cs"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0292",
-      "shortname": "implement-watcher-host",
-      "datetime": "2026-08-31T20:56:55Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do all of these next steps",
-      "summary": "Connective 5: in-process WatcherHost composing store+registrar+IngestHost+InjectedContractIngest+CoordContractLogPump (+best-effort OTLP); runs in WorkbenchShell with a 2s background pump so the store fills live and liveness is exact (shared in-process monotonic clock, removes conn-2 caveat). 7 tests, Core 946/0, App 138/0; drain wiring mutation-verified.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/WatcherHost.cs",
-        "src/AiDe.App/Workbench/WorkbenchShell.cs",
-        "docs/design/watcher-host.md",
-        "docs/proof/watcher-host.md",
-        "tests/AiDe.Core.Tests/Watcher/WatcherHostTests.cs"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "started_at": "2026-08-31T20:41:27Z",
-      "duration_seconds": 928.0
-    },
-    {
-      "id": "al-0294",
-      "shortname": "implement-watcher-scoring-service",
-      "datetime": "2026-08-31T21:05:28Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do all of these next steps",
-      "summary": "Connective 6: EvidenceComposer (signals->tokens, conservative omission NG1) + ScoringService (deterministic Weave + gated advisory fold, persists ScoredEpisode so the leaderboard populates). 9 tests, suite 955/0; composer->evaluator mapping mutation-verified.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/ScoringService.cs",
-        "docs/design/watcher-scoring-service.md",
-        "docs/proof/watcher-scoring-service.md",
-        "tests/AiDe.Core.Tests/Watcher/ScoringServiceTests.cs"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0295",
-      "shortname": "implement-watcher-dispute-service",
-      "datetime": "2026-08-31T21:14:27Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do all of these next steps",
-      "summary": "Connective 7: DisputeService.RaiseDispute (mints id+timestamp, appends fact, requires trimmed reason); per-session Disputed state (DM7) + Sessions-row no-colour-alone badge + query computation; DelegatingAdvisoryEvaluator cloud-judge scaffold that delegates the rubric and sits behind the ADR-0018 egress guard. 12 tests, Core 967/0, App 138/0; per-session derivation mutation-verified.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/DisputeService.cs",
-        "src/AiDe.Core/Watcher/ScoreDispute.cs",
-        "src/AiDe.Core/Presentation/WatcherSessionsPaneViewModel.cs",
-        "docs/design/watcher-dispute-service.md",
-        "docs/proof/watcher-dispute-service.md",
-        "tests/AiDe.Core.Tests/Watcher/DisputeServiceTests.cs"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0296",
-      "shortname": "investigate-terminal-cursor-crash",
-      "datetime": "2026-08-31T21:46:55Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "the application died with two sessions grounding in the repo",
-      "summary": "Root-caused (from Windows event log, reproduced deterministically) an unhandled IndexOutOfRangeException in TerminalView.DrawCursor: it read the char-under-cursor via the raw TerminalScreen indexer, but the cursor sits at the pending-wrap column (==Columns) after writing the last column; at the bottom row that is one past the cell array -> crash on the WPF UI thread. Fixed with a bounds-safe CellUnderCursor() the renderer uses. DC-041 registered; 3 tests, Core 970/0, App 138/0; guard mutation-verified to reproduce the exact crash. Also found: the watcher UX is inert at runtime (wired in the ctor, but AttachWorkspace drops it) - next step.",
-      "kind": "skill",
-      "skill": "investigate",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Terminal/TerminalScreen.cs",
-        "src/AiDe.App/Workbench/TerminalView.cs",
-        "tests/AiDe.Core.Tests/TerminalScreenTests.cs",
-        "docs/investigations/terminal-cursor-render-crash.md",
-        "docs/proof/terminal-cursor-render-crash.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "started_at": "2026-08-31T21:31:48Z",
-      "duration_seconds": 907.0
-    },
-    {
-      "id": "al-0300",
-      "shortname": "fix-watcher-runtime-wiring",
-      "datetime": "2026-08-31T21:59:04Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "the application died with two sessions grounding in the repo",
-      "summary": "Second defect found while investigating the crash (DC-042): the watcher UX was inert at runtime - wired in the shell constructor (built with a null workspace) while AttachWorkspace rebuilt the factory without the watcher queries. Fixed: StartWatcher helper used by both the ctor and AttachWorkspace (pump off the UI thread via Task.Run), and Adapter.Invalidate rebuilds the already-realized watcher panes against the wired factory (never a terminal, DC-029). E11 test through the real composition root; App 139/0, Core 970/0.",
-      "kind": "skill",
-      "skill": "investigate",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.App/Workbench/WorkbenchShell.cs",
-        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
-        "tests/AiDe.App.Tests/WorkbenchShellTests.cs",
-        "docs/proof/watcher-runtime-wiring.md"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0303",
-      "shortname": "implement-watcher-session-emitter",
-      "datetime": "2026-08-31T22:51:55Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do the next steps (conn-8: auto-emitting session wrapper so terminals appear in the watcher)",
-      "summary": "SessionCoordinationEmitter (Register/Heartbeat/HeartbeatAll/End/Reconcile) + WatcherHost.CreateEmitter seam + WorkbenchShell reconcile-and-pump loop wiring terminal panes into coordination sessions; closed DC-043 (session-end that never ended the session). 9 emitter tests (2 mutation-verified). Core 979/0, App 139/0.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs",
-        "src/AiDe.Core/Watcher/WatcherHost.cs",
-        "src/AiDe.Core/Watcher/IngestHost.cs",
-        "src/AiDe.Core/Watcher/CoordinationContract.cs",
-        "src/AiDe.App/Workbench/WorkbenchShell.cs",
-        "docs/design/watcher-session-emitter.md",
-        "docs/proof/watcher-session-emitter.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "started_at": "2026-08-31T22:33:15Z",
-      "duration_seconds": 1120.0
-    },
-    {
-      "id": "al-0304",
-      "shortname": "implement-watcher-live-refresh",
-      "datetime": "2026-08-31T23:01:56Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do the next steps (conn-9: live pane auto-refresh)",
-      "summary": "WorkbenchShell watcher loop re-renders the sessions/board/leaderboard panes when a store fingerprint changes; the fingerprint's per-session liveness term catches an Ended transition with an unchanged count. 1 App test, mutation-verified. App 140/0.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.App/Workbench/WorkbenchShell.cs",
-        "tests/AiDe.App.Tests/WorkbenchWatcherRefreshTests.cs",
-        "docs/design/watcher-live-refresh.md",
-        "docs/proof/watcher-live-refresh.md"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0306",
-      "shortname": "investigate-conn-10-11-blocker",
-      "datetime": "2026-08-31T23:07:53Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do the next steps (conn-10 auto-score, conn-11 dispute)",
-      "summary": "Grounded in the scorer + spec and established that conn-10/conn-11 are blocked on a Work Episode lifecycle source (declared goal/done-when) + a verification-path telemetry convention that do not exist for terminal sessions; a signals deriver could only honestly return HasVerificationPath=false -> Not-Scored (spec L127). Recorded a decision note, deferred both behind an episode-capture slice rather than fabricating signals (NG1).",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/notes/conn-10-11-episode-source-blocker.md"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0308",
-      "shortname": "implement-watcher-episode-capture",
-      "datetime": "2026-08-31T23:18:43Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do the next steps (unblock conn-10 via episode-lifecycle capture)",
-      "summary": "ep-capture core: AuditLogEpisodeSource parses AI-Forward audit entries with goal+done_when+session (AL5b) into imported closed WorkEpisodes (honest outcome mapping - only success is Completed; no goal-state -> not an episode); WatcherHost.ImportEpisodesFromAuditLog records them (upsert). 6 tests, outcome-mapping mutation-verified. Core 985/0. Shell auto-import + conn-10 scoring are the next increments.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/AuditLogEpisodeSource.cs",
-        "src/AiDe.Core/Watcher/WatcherHost.cs",
-        "tests/AiDe.Core.Tests/Watcher/AuditLogEpisodeSourceTests.cs",
-        "docs/design/watcher-episode-capture.md",
-        "docs/proof/watcher-episode-capture.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Unblock scoring by supplying a real episode source",
-      "done_when": "Goal-state audit entries import as closed Work Episodes into the store, tested"
-    },
-    {
-      "id": "al-0309",
-      "shortname": "implement-ep-capture-shell-import",
-      "datetime": "2026-08-31T23:20:37Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "do the next steps (wire ep-capture live)",
-      "summary": "Shell one-shot import: the watcher loop imports the workspace's docs/audit/audit-log.jsonl declared-goal episodes once per attach (off the UI thread, guarded); the conn-9 fingerprint includes episode count so imported episodes trigger a live pane refresh. App 140/0.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.App/Workbench/WorkbenchShell.cs"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
-      "id": "al-0311",
-      "shortname": "implement-watcher-signals-derivation",
-      "datetime": "2026-08-31T23:44:25Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "/design -> /implement conn-10 (DeterministicSignalsDeriver deriving HasVerificationPath from committed Proof Pack artifacts; auto-score on import)",
-      "summary": "conn-10: DeterministicSignalsDeriver derives honest signals (proof-pack artifact -> HasVerificationPath/RequiredVerificationExecuted; acceptance null; rest conservative defaults); AuditLogEpisodeSource.ParseWithEvidence carries EpisodeEvidence; WatcherHost.ImportAndScoreEpisodesFromAuditLog records+scores (operatorId=session id, never a human; upsert); shell wires it. Proof-pack episode -> Partial, no-proof -> Not-Scored. 5 tests, HasVerificationPath mutation-verified. Core 990/0, App 140/0.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Watcher/DeterministicSignalsDeriver.cs",
-        "src/AiDe.Core/Watcher/AuditLogEpisodeSource.cs",
-        "src/AiDe.Core/Watcher/WatcherHost.cs",
-        "src/AiDe.App/Workbench/WorkbenchShell.cs",
-        "docs/design/watcher-signals-derivation.md",
-        "docs/proof/watcher-signals-derivation.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Auto-score imported episodes honestly",
-      "done_when": "A proof-pack episode scores Partial and a no-proof episode Not-Scored, no fabricated signal, wired into the shell"
-    },
-    {
-      "id": "al-0313",
-      "shortname": "implement-watcher-dispute-command",
-      "datetime": "2026-09-01T00:00:31Z",
-      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "/design -> /implement conn-11 (raise-dispute command against scored episodes + document the cloud judge)",
-      "summary": "conn-11: watcher.raiseDispute command (catalog + WorkbenchController + shell) raises an append-only dispute against the latest genuinely-scored episode via DisputeService (score unchanged; operatorId=loomkeeper-operator, never a human); a Not-Scored card is not disputable. Cloud judge (DelegatingAdvisoryEvaluator behind EgressGuardedAdvisoryEvaluator) documented as egress-opt-in + creds + calibration future work. Registered DC-044 (catalog/menu drift, caught by existing conformance tests). 3 tests, Not-Scored-filter mutation-verified. Core 990/0, App 143/0.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
-        "src/AiDe.App/Workbench/WorkbenchController.cs",
-        "src/AiDe.App/Workbench/WorkbenchShell.cs",
-        "src/AiDe.App/Workbench/MainMenuBuilder.cs",
-        "docs/design/watcher-dispute-command.md",
-        "docs/proof/watcher-dispute-command.md"
-      ],
-      "tags": [],
-      "outcome": "success",
-      "goal": "Give the operator an append-only score-dispute recourse",
-      "done_when": "A keyboard command disputes the latest scored episode append-only under a local operator id, Not-Scored not disputable, cloud judge documented"
-    },
-    {
-      "id": "al-0135",
-      "shortname": "bounds-gate-sql-schemas-repeatable-measurement-depth",
-      "datetime": "2026-08-30T19:21:42Z",
-      "session": "79f8657c-008d-44a7-b6f7-46c339804d70",
-      "prompt": "do the next steps you have listed\nprovide the standard status and next steps tables afterwards",
       "summary": "**The sweep found the class was live in the tree, and the class now has a control.**\n\nThree instances this session were the same shape â€” a comment states a bound the code does not apply.\nThe sweep found a fourth still standing: `MaxEvidencePageCeiling` documented as \"sized so a page\nstays comfortably inside `MaxResultBytes`\" when 2,000 assertions serialise to **1,004,397 bytes**,\nfifteen times that constant. Corrected to name the mechanism that actually bounds it.\n\n`tools/verify-bounds-are-enforced.py` requires every constant whose NAME claims a limit to appear in\na comparison, a clamp or a take â€” searched over code with comments stripped, so prose cannot count as\nproof. On its first run it found `WholeGraphNodeCap`: declared last turn as a \"retained name\",\ndocumented as a ceiling, **zero usages**. Deleted. One false positive (`OverviewNodeCap`, applied\nindirectly through `GraphQuery.MaxNodes`) became a justified exemption rather than a weaker rule,\nbecause \"it is passed somewhere\" is exactly what made `find` look safe.\n\n**The control says what it cannot do.** It checks a bound is APPLIED, not that a sentence describing\nit is TRUE â€” the TypeScript instance, a regex differing from its comment, is invisible to it. Half\nthe class is mechanised; claiming otherwise would be this class applied to its own control.\n\n**Measurement is repeatable now.** `tools/measure-repositories.py` runs the harness over three\ncodebases chosen for contrast and prints them side by side. It exists because every number in this\nproject came from one repository until a second was tried by hand, and the third exposed a defect in\na control that looked correct against the first.\n\n**The overview's default depth was the useless one, and three repositories showed it:**\n\n    TheTerrace                d1:  74 groups,  1 link    d2: 200,  6    d3: 200, 263\n    BioHacker                 d1:  17 groups,  0 links   d2:  56,  6    d3: 200, 323\n    meridian-finance-planner  d1:  92 groups,  6 links   d2: 159, 18    d3: 200,  93\n\nDepths 1 and 2 are almost linkless in ALL THREE, for an arithmetic reason: at a coarse grain nearly\nevery edge is internal to a group, counted and not drawn. A picture of disconnected islands is\ncorrect and says nothing about structure. Default moved 2 â†’ 3, from evidence rather than taste.\n\n**Raw SQL schemas are read.** BioHacker declares its whole schema in one 197-line file with eight\n`CREATE TABLE`s; the tool said `sql-not-analysed (2 file(s))` and produced **zero** joins â€” honest,\nand blind to that repository's entire schema side. `SqlSchemaExtractor` emits the SAME node shape as\nthe EF reader (`table:Name`, `has_type table`, `has_column`), because a second spelling would be\nDC-022 with two producers of one predicate and the joins would silently see half the tables.\n\nColumn parsing matches parentheses rather than scanning to the first `)`, so `DECIMAL(9,2)` does not\ntruncate the column list; constraint lines are not claimed as columns; the schema qualifier is\nstripped so `dbo.Principal` and `Principal` are one node.\n\nBioHacker: joins **0 â†’ 8**, 54 `has_column` facts. meridian: 30 â†’ 33 inferred, 31 â†’ 34 scopes.\n\nAnd `.sql` came out of `UnanalysedLanguages`. A closed gap reported as open is the same defect as\nhiding one that is not â€” **the third time that list has needed this correction, once per extractor\nadded**, so the rule is now written where the list is: it is the LAST STEP of adding an extractor.\n\nDC-038 registered, with its residual risk stated: name-based detection misses a bound named without\none of those suffixes, and a limit written as a magic number is invisible to it.\n\n812 tests green (App 132, Core 680). Eight gates clean, one of them new. Zero design-owned files.",
       "kind": "prompt",
       "skill": null,
@@ -3564,6 +2745,119 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0146",
+      "shortname": "collectknowledge-agentic-session-observability",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Established a sourced knowledge base for multi-session observability, coordination, trajectory scoring, Daydream learning, and the distributed-systems/privacy limits.",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/knowledge/agentic-session-observability/index.md"
+      ],
+      "tags": [
+        "watcher",
+        "scoring"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "started_at": "2026-08-30T19:47:28Z",
+      "duration_seconds": 6988.0,
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0147",
+      "shortname": "optimize-graph-agentic-watcher",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Executed an eight-node bounded graph with width four, early hard gates, and measured correction loops.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/plans/agentic-watcher-substrate.md"
+      ],
+      "tags": [
+        "execution-graph"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0148",
+      "shortname": "specify-loomkeeper",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Specified Loomkeeper, the Weave Score, repo Message Board, Daydream lifecycle, local-only policies, and the three-layer Observatory experience.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/specs/agentic-watcher-substrate.md",
+        "docs/specs/agentic-watcher-substrate.html"
+      ],
+      "tags": [
+        "specification"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0149",
+      "shortname": "ui-design-watcher-observatory",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Created the G6 Loomkeeper Observatory design language, hard-state interactive mockup, rendered audits, and adversarial UI review.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/mockups/watcher-observatory.html",
+        "docs/reviews/ui-watcher-observatory.md"
+      ],
+      "tags": [
+        "ui-design"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
+    },
+    {
       "id": "al-0150",
       "shortname": "investigate-graph-kind-and-knowledge",
       "datetime": "2026-08-30T21:52:28Z",
@@ -3642,6 +2936,28 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0154",
+      "shortname": "watcher-tighten-and-extend",
+      "datetime": "2026-08-30T22:25:45Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Review/tighten the Loomkeeper watcher spec, proposal HTML and mockups (gpt walkabout); then add harness+model scoring axes, a harness/model/harness-model leaderboard, user credential/config, and per-turn agent-visible standing with per-score why.",
+      "summary": "Cut spec process residue; fixed Watcher Health nav + Daydream state gaps; replaced the false-precision score gauge in the proposal with an honest chip (61, no conic); added harness/model identity+aggregation, US-13..16, Leaderboard + Configuration surfaces (spec Part B/C, DESIGN.md), a Leaderboard and Configuration view + per-turn Standing block in the mockup; all gates green.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/agentic-watcher-substrate.md",
+        "docs/mockups/watcher-observatory.html"
+      ],
+      "tags": [
+        "loomkeeper",
+        "leaderboard",
+        "scoring"
+      ],
+      "outcome": "success"
+    },
+    {
       "id": "al-0155",
       "shortname": "inv-0004-node-class-knowledge-health-vocabulary-control",
       "datetime": "2026-08-30T22:26:25Z",
@@ -3702,6 +3018,32 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0158",
+      "shortname": "define-architecture-loomkeeper",
+      "datetime": "2026-08-30T22:40:54Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Run /define-architecture on Loomkeeper, starting with the credential/egress security model and task-class calibration (the two riskiest new surfaces).",
+      "summary": "Authored docs/architecture/loomkeeper.md (G Continuous Sentinel + D + H; projection-not-second-store; vertical phasing with a walking skeleton) composing existing ADR-0001/0002/0006/0007/0011/0016, and four new ADRs: 0017 observation projection, 0018 credential/DPAPI + egress-deny opt-in (extends 0011), 0019 advisory-evaluator calibration gates, 0020 trusted registrar + harness/model identity (extends 0007). Spikes S1-S4 named not fabricated. Gates green.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/architecture/loomkeeper.md",
+        "docs/adr/0018-credential-backed-grading-egress.md",
+        "docs/adr/0019-advisory-evaluator-calibration.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "architecture",
+        "egress",
+        "calibration"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-30T22:32:00Z",
+      "duration_seconds": 534.0
+    },
+    {
       "id": "al-0159",
       "shortname": "knowledge-chip-zero-generation-and-declared-class",
       "datetime": "2026-08-30T23:22:01Z",
@@ -3726,6 +3068,29 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": false
       }
+    },
+    {
+      "id": "al-0160",
+      "shortname": "design-implement-watcher-phase1",
+      "datetime": "2026-08-30T23:38:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Run /design on the Phase-1 walking-skeleton components, then /implement it.",
+      "summary": "Designed docs/design/watcher-phase1-skeleton.md (data model, contracts, patterns, failure modes, STRIDE, LINDDUN no-PII, telemetry, test plan) and implemented the deterministic core in src/AiDe.Core/Watcher/ (identity+capability, TrustedRegistrar, idempotent content-addressed span ingest, monotonic liveness projection, default-deny egress gate, IWatcherObservationStore seam + in-memory impl). 30 xUnit tests green (full suite 710/0); forgery + dedup oracles mutation-verified red. Proof Pack committed; DC-039 registered.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/design/watcher-phase1-skeleton.md",
+        "src/AiDe.Core/Watcher/TrustedRegistrar.cs",
+        "docs/proof/watcher-phase1-skeleton.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "phase-1"
+      ],
+      "outcome": "success"
     },
     {
       "id": "al-0161",
@@ -3815,6 +3180,30 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0165",
+      "shortname": "implement-watcher-sqlite-store",
+      "datetime": "2026-08-31T00:20:11Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Do the next action: /implement the SQLite observation store behind the IWatcherObservationStore seam.",
+      "summary": "Implemented SqliteWatcherObservationStore (src/AiDe.Core/Watcher/) reusing the ADR-0002 idiom: WAL, single writer, append-only observed_span_fact enforced by BEFORE UPDATE/DELETE triggers, content-addressed PK dedup via INSERT OR IGNORE, session/heartbeat/ended current-state tables mapping 1:1 to the in-memory maps. 11 new D4 real-engine tests (persistence across reopen, append-only rejection, contract fidelity); append-only trigger mutation-verified red. Full suite 721/0; build 0/0. Design + Proof Pack updated.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "tests/AiDe.Core.Tests/Watcher/SqliteWatcherObservationStoreTests.cs",
+        "docs/proof/watcher-phase1-skeleton.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "sqlite",
+        "phase-1"
+      ],
+      "outcome": "success"
+    },
+    {
       "id": "al-0166",
       "shortname": "implement-prompt-draft-foundation",
       "datetime": "2026-08-31T00:34:04Z",
@@ -3848,6 +3237,34 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0168",
+      "shortname": "spike-s1-and-ingest-wire",
+      "datetime": "2026-08-31T00:38:20Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Do the next best actions: run spike S1 (harness OTLP ingest shape), then /design the daemon ingest wire (and implement its deterministic core).",
+      "summary": "Ran spike S1 (spikes/watcher-otlp-ingest, PASS) establishing the OTel-span and registration mappings against the real Activity primitive, with GenAI attributes flagged Development-status and pinned. Designed docs/design/watcher-ingest-wire.md (dual-path adapter/ACL feeding TrustedRegistrar+SpanIngest; new ingest-boundary STRIDE; LINDDUN no-PII; pinned-schema A6 gate). Implemented the deterministic OtelSpanMapper (src/AiDe.Core/Watcher/) + LK-0004 MalformedEvent; 11 tests incl. the A6 pinned-schema gate (mutation-verified red). Full suite 732/0; build 0/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "spikes/watcher-otlp-ingest/FINDINGS.md",
+        "docs/design/watcher-ingest-wire.md",
+        "src/AiDe.Core/Watcher/OtelSpanMapper.cs",
+        "docs/proof/watcher-ingest-wire.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "otlp",
+        "ingest",
+        "phase-1"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-31T00:26:11Z",
+      "duration_seconds": 729.0
     },
     {
       "id": "al-0169",
@@ -3936,6 +3353,51 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0174",
+      "shortname": "design-implement-ingest-host",
+      "datetime": "2026-08-31T03:40:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Execute the /design -> /implement loop until slice 1 (OTLP transport receiver + daemon host) is fully implemented.",
+      "summary": "Slice 1a: designed docs/design/watcher-ingest-host.md (sync register/heartbeat + async bounded span queue with DropOldest backpressure; forged->rejected, malformed->quarantined; counters answer the operator questions) and implemented IngestHost (src/AiDe.Core/Watcher/) reusing the repo Channel.CreateBounded idiom + TimeProvider. 9 tests incl. flood-drops-counted (compile-enforced counter), malformed-survives, concurrency reconcile. Full suite 741/0; build 0/0. Remaining slice 1b: OTLP network receiver adapter (needs encoding/transport spike).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/design/watcher-ingest-host.md",
+        "src/AiDe.Core/Watcher/IngestHost.cs",
+        "docs/proof/watcher-ingest-host.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "ingest",
+        "phase-1"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-31T03:28:46Z",
+      "duration_seconds": 701.0
+    },
+    {
+      "id": "al-0175",
+      "shortname": "implement-watcher-otlp-receiver",
+      "datetime": "2026-08-31T03:59:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "execute autonomously using our skills, the /design -> /implement loop until slice 1 is fully implemented",
+      "summary": "Slice 1b: OtlpHttpReceiver (OTLP/JSON, stdlib System.Text.Json, per-session token->capability, body cap, loopback). 13 tests incl. 2 real-loopback D4; suite 754/0. Completes Loomkeeper slice 1 (ingest). Proof docs/proof/watcher-otlp-receiver.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/OtlpReceiver.cs",
+        "tests/AiDe.Core.Tests/Watcher/OtlpReceiverTests.cs",
+        "docs/proof/watcher-otlp-receiver.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0176",
       "shortname": "define-architecture-class-diagram",
       "datetime": "2026-08-31T04:18:19Z",
@@ -3969,6 +3431,27 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0178",
+      "shortname": "implement-watcher-coordination-contract",
+      "datetime": "2026-08-31T04:30:34Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do these next steps to complete slice 2 autonomously over night",
+      "summary": "Slice 2: injected coordination contract - CoordContractParser (tolerant coord-core JSONL read, version pin, sort by at/seq) + InjectedContractIngest adapter (mints+holds capability, feeds same registrar/host; register+heartbeat for non-AI-Forward sessions, one ledger projected). Spike S4 PASS. 16 tests incl. E11 end-to-end; suite 770/0. Proof docs/proof/watcher-coordination-contract.md. Registered DC-040 (pre-existing daemon-reuse flake, observed not introduced).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/CoordinationContract.cs",
+        "tests/AiDe.Core.Tests/Watcher/CoordinationContractTests.cs",
+        "docs/proof/watcher-coordination-contract.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T04:09:56Z",
+      "duration_seconds": 1238.0
     },
     {
       "id": "al-0179",
@@ -4126,6 +3609,46 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0188",
+      "shortname": "implement-watcher-sessions-surface",
+      "datetime": "2026-08-31T13:19:02Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all next steps listed above (slice 3 WPF Sessions treegrid row)",
+      "summary": "Slice 3: sessions read model - store.AllSessions() + WatcherSessionsQuery fold + WatcherSessionsPaneViewModel (honest Not Recorded, no-colour-alone liveness badge, full state set, synchronous load avoids DC-011) + WPF 'sessions' surface kind in default layout. 10 Core tests + 3 STA render tests; Not-Recorded oracle mutation-verified. Core 780/0, App 135/0. Proof docs/proof/watcher-sessions-surface.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/WatcherSessionsPaneViewModel.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "tests/AiDe.Core.Tests/Watcher/WatcherSessionsPaneViewModelTests.cs",
+        "docs/proof/watcher-sessions-surface.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T13:06:31Z",
+      "duration_seconds": 751.0
+    },
+    {
+      "id": "al-0189",
+      "shortname": "implement-coord-contract-log",
+      "datetime": "2026-08-31T13:26:18Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all next steps listed above (slice-2 residual: session-side writer + log watcher)",
+      "summary": "Slice-2 residual closed: CoordContractWriter (atomic append + LOG-A + seq) + CoordContractLog.ReadDirectory + CoordContractLogPump feed InjectedContractIngest.ApplyAll (idempotent). 7 D4 real-filesystem tests; LOG-A anti-fusion mutation-verified. Full suite 787/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/CoordinationContractLog.cs",
+        "tests/AiDe.Core.Tests/Watcher/CoordinationContractLogTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0190",
       "shortname": "node-content-query-unblocks-the-code-viewer",
       "datetime": "2026-08-31T13:26:30Z",
@@ -4138,6 +3661,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Projections/NodeContent.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0191",
+      "shortname": "investigate-dc040-daemon-reuse-flake",
+      "datetime": "2026-08-31T13:34:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all next steps listed above (root-cause DC-040 daemon-reuse flake)",
+      "summary": "DC-040 controlled: root-caused the ShellBootstrap daemon-reuse flake to a system-wide AiDe.Daemon process count (category error - the daemon deliberately outlives its client, so sibling tests' lingering daemons polluted the counter). Replaced with a readiness barrier (observed answer) + workspace-scoped three-way epoch equality (WorkspaceLock invariant). Verified stable across 3 isolated runs + full 787-test suite. Register updated to controlled.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/ShellBootstrapTests.cs",
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
@@ -6007,6 +5548,27 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0271",
+      "shortname": "implement-watcher-work-episode",
+      "datetime": "2026-08-31T13:57:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 4 implemented; consider the recent ai-forward done_when structure and reflect on how it informs the design",
+      "summary": "Slice 4: Work Episode lifecycle. Domain (Goal/DoneCondition/EpisodeGeneration/EpisodeOutcome/WorkEpisode) mirrors the AI-Forward CT19 goal-state triple; capability-verified Open/Reframe/Close (forgery rejected); changing the goal starts a NEW episode (Superseded + next generation, immutable goal); EpisodeProjection binds only spans in the interval (endpoints inclusive). Store extended (episode dim + SpanCountInInterval; in-memory retains RecordedAt; SQLite work_episode_dim table). 20 tests incl. D4 SQLite + E11 composition; interval-endpoint oracle mutation-verified. Full suite 807/0. Proof docs/proof/watcher-work-episode.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WorkEpisode.cs",
+        "tests/AiDe.Core.Tests/Watcher/WorkEpisodeTests.cs",
+        "docs/proof/watcher-work-episode.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T13:41:28Z",
+      "duration_seconds": 963.0
+    },
+    {
       "id": "al-0272",
       "shortname": "handoff-panel-reorder-and-search",
       "datetime": "2026-08-31T13:59:28Z",
@@ -6027,6 +5589,27 @@ window.AUDIT_DATA = {
         "handoff"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0273",
+      "shortname": "implement-watcher-weave-score",
+      "datetime": "2026-08-31T14:51:25Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 5 implemented",
+      "summary": "Slice 5: deterministic Weave. WeaveScorer scores a closed Work Episode on the 4 deterministic dimensions (observed weight 70; 2 advisory dims excluded, not faked); hard floors (correctness/security/privacy/data-integrity/evaluator-integrity) trip Blocked + suppress the numeric headline; missing goal/done/verification or open episode -> Not Scored; Partial headline uses observed-weight denominator, never rescales to 0-100; Coverage separate from points. done_when made measurable (Focus drift + Outcome honest-completion = PACK-O faces). 27 tests incl. E11; no-rescale oracle mutation-verified. Full suite 834/0. Proof docs/proof/watcher-weave-score.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WeaveScore.cs",
+        "tests/AiDe.Core.Tests/Watcher/WeaveScorerTests.cs",
+        "docs/proof/watcher-weave-score.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T14:40:21Z",
+      "duration_seconds": 664.0
     },
     {
       "id": "al-0274",
@@ -6091,6 +5674,28 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0277",
+      "shortname": "implement-watcher-message-board",
+      "datetime": "2026-08-31T16:21:03Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 6 implemented",
+      "summary": "Slice 6: per-repo Message Board + cross-repo Fleet aggregator. Board (Question/Decision/Breadcrumb/KnowledgeCandidate + Reply/Acknowledgement) append-only, repo-scoped, provenance = session trust; reply/ack must reference an existing parent in the same repo (no orphan, no cross-repo); capability-verified; content quarantined untrusted data + grader-injection flagged (Confused Deputy); policy redaction tombstones payload keeps envelope. FleetAggregator builds repo->session map across >=2 sources. Store board table (both impls). 28 tests incl. D4 SQLite + E11; orphan-rejection oracle mutation-verified. Full suite 862/0. Proof docs/proof/watcher-message-board.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/MessageBoard.cs",
+        "src/AiDe.Core/Watcher/FleetAggregator.cs",
+        "tests/AiDe.Core.Tests/Watcher/MessageBoardTests.cs",
+        "docs/proof/watcher-message-board.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T16:07:58Z",
+      "duration_seconds": 785.0
+    },
+    {
       "id": "al-0278",
       "shortname": "new-view-opens-in-focused-stack",
       "datetime": "2026-08-31T16:37:25Z",
@@ -6111,6 +5716,29 @@ window.AUDIT_DATA = {
         "ux"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0279",
+      "shortname": "implement-watcher-advisory-grader",
+      "datetime": "2026-08-31T16:43:26Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 7 implemented",
+      "summary": "Slice 7 (final): advisory grader + calibration + leaderboard + standing. QWK/stability/anti-Goodhart gates (ADR-0019), gated advisory fold that never overrides a floor (rule 8), leaderboard cohort>=5 + single-operator privacy suppression (rules 10-11, US-10) segmented by task/schema, AgentStanding with no single optimizable scalar (US-16). 27 new tests, full suite 889/0, cohort-minimum oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AdvisoryScoring.cs",
+        "src/AiDe.Core/Watcher/Leaderboard.cs",
+        "src/AiDe.Core/Watcher/WeaveScore.cs",
+        "docs/design/watcher-advisory-grader.md",
+        "docs/proof/watcher-advisory-grader.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T16:28:44Z",
+      "duration_seconds": 882.0
     },
     {
       "id": "al-0280",
@@ -6149,6 +5777,29 @@ window.AUDIT_DATA = {
         "ux"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0282",
+      "shortname": "implement-watcher-score-persistence",
+      "datetime": "2026-08-31T16:59:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 1: persist ScoredEpisode+Scorecard as a materialized derived cache (DM7) behind IWatcherObservationStore, in-memory + SQLite (scored_episode_cell + dimension/floor child cells, transactional upsert). AllScoredEpisodes feeds LeaderboardComposer. 9 tests, full suite 897/0, child-cleanup oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WatcherObservationStore.cs",
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "docs/design/watcher-score-persistence.md",
+        "docs/proof/watcher-score-persistence.md",
+        "tests/AiDe.Core.Tests/Watcher/ScorePersistenceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T16:46:52Z",
+      "duration_seconds": 784.0
     },
     {
       "id": "al-0283",
@@ -6190,6 +5841,28 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0285",
+      "shortname": "implement-watcher-board-leaderboard-surfaces",
+      "datetime": "2026-08-31T17:24:23Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 2: Board (US-4) + Leaderboard (US-14) WPF surfaces mirroring slice-3 Sessions; AllBoardMessages reader; factory board/leaderboard kinds + shared ListPane; default-layout seeding + v2->v3 migration (reachable, E10); WorkbenchShell opens the per-workspace watcher SQLite store and wires all three read queries so panes are live. 15 Core + 3 App + 1 migration test; Core 913/0, App 138/0; migration oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/WatcherBoardPaneViewModel.cs",
+        "src/AiDe.Core/Presentation/WatcherLeaderboardPaneViewModel.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-board-leaderboard-surfaces.md",
+        "docs/proof/watcher-board-leaderboard-surfaces.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0286",
       "shortname": "classdiagram-uml-members",
       "datetime": "2026-08-31T17:27:09Z",
@@ -6220,6 +5893,49 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/plans/extractor-roadmap.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0288",
+      "shortname": "implement-watcher-advisory-evaluator",
+      "datetime": "2026-08-31T17:34:00Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 3: LocalHeuristicAdvisoryEvaluator (deterministic, no egress, conservative defaults, refuses deterministic dims) + EgressGuardedAdvisoryEvaluator enforcing default-deny egress (LK-0003) then credential presence (LK-0002) before any cloud judge, inner never called on denial. 15 tests, suite 928/0, egress-first ordering mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AdvisoryEvaluators.cs",
+        "docs/design/watcher-advisory-evaluator.md",
+        "docs/proof/watcher-advisory-evaluator.md",
+        "tests/AiDe.Core.Tests/Watcher/AdvisoryEvaluatorsTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0289",
+      "shortname": "implement-watcher-score-dispute",
+      "datetime": "2026-08-31T17:45:06Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 4: operator dispute path (US-16/rule 12). ScoreDispute append-only fact (own table, append-only triggers, idempotent id) that never overwrites the Scorecard; DisputeProjection derives the Disputed state (DM7); Leaderboard surfaces disputed-episode count. 11 tests, suite 939/0, App 138/0; append-only/idempotent oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/ScoreDispute.cs",
+        "src/AiDe.Core/Watcher/WatcherObservationStore.cs",
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "src/AiDe.Core/Presentation/WatcherLeaderboardPaneViewModel.cs",
+        "docs/design/watcher-score-dispute.md",
+        "docs/proof/watcher-score-dispute.md",
+        "tests/AiDe.Core.Tests/Watcher/ScoreDisputeTests.cs"
       ],
       "tags": [],
       "outcome": "success"
@@ -6260,6 +5976,29 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0292",
+      "shortname": "implement-watcher-host",
+      "datetime": "2026-08-31T20:56:55Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps",
+      "summary": "Connective 5: in-process WatcherHost composing store+registrar+IngestHost+InjectedContractIngest+CoordContractLogPump (+best-effort OTLP); runs in WorkbenchShell with a 2s background pump so the store fills live and liveness is exact (shared in-process monotonic clock, removes conn-2 caveat). 7 tests, Core 946/0, App 138/0; drain wiring mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-host.md",
+        "docs/proof/watcher-host.md",
+        "tests/AiDe.Core.Tests/Watcher/WatcherHostTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T20:41:27Z",
+      "duration_seconds": 928.0
+    },
+    {
       "id": "al-0293",
       "shortname": "graph-edge-filter-wt13-raw-sql-counted",
       "datetime": "2026-08-31T20:59:01Z",
@@ -6275,6 +6014,71 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0294",
+      "shortname": "implement-watcher-scoring-service",
+      "datetime": "2026-08-31T21:05:28Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps",
+      "summary": "Connective 6: EvidenceComposer (signals->tokens, conservative omission NG1) + ScoringService (deterministic Weave + gated advisory fold, persists ScoredEpisode so the leaderboard populates). 9 tests, suite 955/0; composer->evaluator mapping mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/ScoringService.cs",
+        "docs/design/watcher-scoring-service.md",
+        "docs/proof/watcher-scoring-service.md",
+        "tests/AiDe.Core.Tests/Watcher/ScoringServiceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0295",
+      "shortname": "implement-watcher-dispute-service",
+      "datetime": "2026-08-31T21:14:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps",
+      "summary": "Connective 7: DisputeService.RaiseDispute (mints id+timestamp, appends fact, requires trimmed reason); per-session Disputed state (DM7) + Sessions-row no-colour-alone badge + query computation; DelegatingAdvisoryEvaluator cloud-judge scaffold that delegates the rubric and sits behind the ADR-0018 egress guard. 12 tests, Core 967/0, App 138/0; per-session derivation mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DisputeService.cs",
+        "src/AiDe.Core/Watcher/ScoreDispute.cs",
+        "src/AiDe.Core/Presentation/WatcherSessionsPaneViewModel.cs",
+        "docs/design/watcher-dispute-service.md",
+        "docs/proof/watcher-dispute-service.md",
+        "tests/AiDe.Core.Tests/Watcher/DisputeServiceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0296",
+      "shortname": "investigate-terminal-cursor-crash",
+      "datetime": "2026-08-31T21:46:55Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "the application died with two sessions grounding in the repo",
+      "summary": "Root-caused (from Windows event log, reproduced deterministically) an unhandled IndexOutOfRangeException in TerminalView.DrawCursor: it read the char-under-cursor via the raw TerminalScreen indexer, but the cursor sits at the pending-wrap column (==Columns) after writing the last column; at the bottom row that is one past the cell array -> crash on the WPF UI thread. Fixed with a bounds-safe CellUnderCursor() the renderer uses. DC-041 registered; 3 tests, Core 970/0, App 138/0; guard mutation-verified to reproduce the exact crash. Also found: the watcher UX is inert at runtime (wired in the ctor, but AttachWorkspace drops it) - next step.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/TerminalScreen.cs",
+        "src/AiDe.App/Workbench/TerminalView.cs",
+        "tests/AiDe.Core.Tests/TerminalScreenTests.cs",
+        "docs/investigations/terminal-cursor-render-crash.md",
+        "docs/proof/terminal-cursor-render-crash.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T21:31:48Z",
+      "duration_seconds": 907.0
     },
     {
       "id": "al-0297",
@@ -6330,6 +6134,26 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0300",
+      "shortname": "fix-watcher-runtime-wiring",
+      "datetime": "2026-08-31T21:59:04Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "the application died with two sessions grounding in the repo",
+      "summary": "Second defect found while investigating the crash (DC-042): the watcher UX was inert at runtime - wired in the shell constructor (built with a null workspace) while AttachWorkspace rebuilt the factory without the watcher queries. Fixed: StartWatcher helper used by both the ctor and AttachWorkspace (pump off the UI thread via Task.Run), and Adapter.Invalidate rebuilds the already-realized watcher panes against the wired factory (never a terminal, DC-029). E11 test through the real composition root; App 139/0, Core 970/0.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "tests/AiDe.App.Tests/WorkbenchShellTests.cs",
+        "docs/proof/watcher-runtime-wiring.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0301",
       "shortname": "disclosures-folded-by-class",
       "datetime": "2026-08-31T22:33:15Z",
@@ -6365,6 +6189,51 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0303",
+      "shortname": "implement-watcher-session-emitter",
+      "datetime": "2026-08-31T22:51:55Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (conn-8: auto-emitting session wrapper so terminals appear in the watcher)",
+      "summary": "SessionCoordinationEmitter (Register/Heartbeat/HeartbeatAll/End/Reconcile) + WatcherHost.CreateEmitter seam + WorkbenchShell reconcile-and-pump loop wiring terminal panes into coordination sessions; closed DC-043 (session-end that never ended the session). 9 emitter tests (2 mutation-verified). Core 979/0, App 139/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs",
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "src/AiDe.Core/Watcher/IngestHost.cs",
+        "src/AiDe.Core/Watcher/CoordinationContract.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-session-emitter.md",
+        "docs/proof/watcher-session-emitter.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T22:33:15Z",
+      "duration_seconds": 1120.0
+    },
+    {
+      "id": "al-0304",
+      "shortname": "implement-watcher-live-refresh",
+      "datetime": "2026-08-31T23:01:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (conn-9: live pane auto-refresh)",
+      "summary": "WorkbenchShell watcher loop re-renders the sessions/board/leaderboard panes when a store fingerprint changes; the fingerprint's per-session liveness term catches an Ended transition with an unchanged count. 1 App test, mutation-verified. App 140/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tests/AiDe.App.Tests/WorkbenchWatcherRefreshTests.cs",
+        "docs/design/watcher-live-refresh.md",
+        "docs/proof/watcher-live-refresh.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0305",
       "shortname": "keep-layout-on-workspace-open",
       "datetime": "2026-08-31T23:05:14Z",
@@ -6378,6 +6247,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs",
         "docs/notes/workspace-open-layout-restore.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0306",
+      "shortname": "investigate-conn-10-11-blocker",
+      "datetime": "2026-08-31T23:07:53Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (conn-10 auto-score, conn-11 dispute)",
+      "summary": "Grounded in the scorer + spec and established that conn-10/conn-11 are blocked on a Work Episode lifecycle source (declared goal/done-when) + a verification-path telemetry convention that do not exist for terminal sessions; a signals deriver could only honestly return HasVerificationPath=false -> Not-Scored (spec L127). Recorded a decision note, deferred both behind an episode-capture slice rather than fabricating signals (NG1).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/conn-10-11-episode-source-blocker.md"
       ],
       "tags": [],
       "outcome": "success"
@@ -6400,6 +6286,46 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0308",
+      "shortname": "implement-watcher-episode-capture",
+      "datetime": "2026-08-31T23:18:43Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (unblock conn-10 via episode-lifecycle capture)",
+      "summary": "ep-capture core: AuditLogEpisodeSource parses AI-Forward audit entries with goal+done_when+session (AL5b) into imported closed WorkEpisodes (honest outcome mapping - only success is Completed; no goal-state -> not an episode); WatcherHost.ImportEpisodesFromAuditLog records them (upsert). 6 tests, outcome-mapping mutation-verified. Core 985/0. Shell auto-import + conn-10 scoring are the next increments.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AuditLogEpisodeSource.cs",
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "tests/AiDe.Core.Tests/Watcher/AuditLogEpisodeSourceTests.cs",
+        "docs/design/watcher-episode-capture.md",
+        "docs/proof/watcher-episode-capture.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Unblock scoring by supplying a real episode source",
+      "done_when": "Goal-state audit entries import as closed Work Episodes into the store, tested"
+    },
+    {
+      "id": "al-0309",
+      "shortname": "implement-ep-capture-shell-import",
+      "datetime": "2026-08-31T23:20:37Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (wire ep-capture live)",
+      "summary": "Shell one-shot import: the watcher loop imports the workspace's docs/audit/audit-log.jsonl declared-goal episodes once per attach (off the UI thread, guarded); the conn-9 fingerprint includes episode count so imported episodes trigger a live pane refresh. App 140/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0310",
       "shortname": "disclosure-kind-boundary-or-gap",
       "datetime": "2026-08-31T23:41:10Z",
@@ -6415,6 +6341,30 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0311",
+      "shortname": "implement-watcher-signals-derivation",
+      "datetime": "2026-08-31T23:44:25Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "/design -> /implement conn-10 (DeterministicSignalsDeriver deriving HasVerificationPath from committed Proof Pack artifacts; auto-score on import)",
+      "summary": "conn-10: DeterministicSignalsDeriver derives honest signals (proof-pack artifact -> HasVerificationPath/RequiredVerificationExecuted; acceptance null; rest conservative defaults); AuditLogEpisodeSource.ParseWithEvidence carries EpisodeEvidence; WatcherHost.ImportAndScoreEpisodesFromAuditLog records+scores (operatorId=session id, never a human; upsert); shell wires it. Proof-pack episode -> Partial, no-proof -> Not-Scored. 5 tests, HasVerificationPath mutation-verified. Core 990/0, App 140/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DeterministicSignalsDeriver.cs",
+        "src/AiDe.Core/Watcher/AuditLogEpisodeSource.cs",
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-signals-derivation.md",
+        "docs/proof/watcher-signals-derivation.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Auto-score imported episodes honestly",
+      "done_when": "A proof-pack episode scores Partial and a no-proof episode Not-Scored, no fabricated signal, wired into the shell"
     },
     {
       "id": "al-0312",
@@ -6434,25 +6384,28 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
-      "id": "al-0316",
-      "shortname": "forward-integrate-main",
-      "datetime": "2026-09-01T01:28:13Z",
+      "id": "al-0313",
+      "shortname": "implement-watcher-dispute-command",
+      "datetime": "2026-09-01T00:00:31Z",
       "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
-      "prompt": "re-base/forward-integrate to ensure you have the latest from the other sessions, then do the next steps",
-      "summary": "Forward-integrated origin/main (103 commits from the app-facelift + phase3-pane-probes sessions) into feature/agent-watcher-substrate. Resolved 11 conflicts: append-only logs union-merged; generated files (docs-index.js, audit-data.js) regenerated; code (WorkbenchShell/Controller/SurfaceContentFactory/MainMenuBuilder) union-merged (my watcher wiring + their new surfaces); menu-count test reconciled to 9. Both branches independently used DC-039..044 for different classes -> kept main's DC-039..059 canonical, renumbered mine to DC-060..065, updated references per-file disambiguated by meaning (registered DC-066 for the ID-collision class). Fixed my DC-042 watcher-wiring test's query double for main's new BindJoins FindAsync/EvidenceAsync path. Merge 1378f49. Core 1188/0, App 220/0, full solution builds clean.",
-      "kind": "manual",
+      "prompt": "/design -> /implement conn-11 (raise-dispute command against scored episodes + document the cloud judge)",
+      "summary": "conn-11: watcher.raiseDispute command (catalog + WorkbenchController + shell) raises an append-only dispute against the latest genuinely-scored episode via DisputeService (score unchanged; operatorId=loomkeeper-operator, never a human); a Not-Scored card is not disputable. Cloud judge (DelegatingAdvisoryEvaluator behind EgressGuardedAdvisoryEvaluator) documented as egress-opt-in + creds + calibration future work. Registered DC-044 (catalog/menu drift, caught by existing conformance tests). 3 tests, Not-Scored-filter mutation-verified. Core 990/0, App 143/0.",
+      "kind": "skill",
       "skill": "implement",
       "tool": null,
       "actor": null,
       "artifacts": [
-        "docs/lessons/defect-classes.md",
+        "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
+        "src/AiDe.App/Workbench/WorkbenchController.cs",
         "src/AiDe.App/Workbench/WorkbenchShell.cs",
-        "tests/AiDe.App.Tests/WorkbenchShellTests.cs"
+        "src/AiDe.App/Workbench/MainMenuBuilder.cs",
+        "docs/design/watcher-dispute-command.md",
+        "docs/proof/watcher-dispute-command.md"
       ],
       "tags": [],
       "outcome": "success",
-      "goal": "Bring the watcher branch current with the other two sessions",
-      "done_when": "origin/main merged in, all conflicts resolved, full solution + suites green"
+      "goal": "Give the operator an append-only score-dispute recourse",
+      "done_when": "A keyboard command disputes the latest scored episode append-only under a local operator id, Not-Scored not disputable, cloud judge documented"
     },
     {
       "id": "al-0314",
@@ -6488,6 +6441,27 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0316",
+      "shortname": "forward-integrate-main",
+      "datetime": "2026-09-01T01:28:13Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "re-base/forward-integrate to ensure you have the latest from the other sessions, then do the next steps",
+      "summary": "Forward-integrated origin/main (103 commits from the app-facelift + phase3-pane-probes sessions) into feature/agent-watcher-substrate. Resolved 11 conflicts: append-only logs union-merged; generated files (docs-index.js, audit-data.js) regenerated; code (WorkbenchShell/Controller/SurfaceContentFactory/MainMenuBuilder) union-merged (my watcher wiring + their new surfaces); menu-count test reconciled to 9. Both branches independently used DC-039..044 for different classes -> kept main's DC-039..059 canonical, renumbered mine to DC-060..065, updated references per-file disambiguated by meaning (registered DC-066 for the ID-collision class). Fixed my DC-042 watcher-wiring test's query double for main's new BindJoins FindAsync/EvidenceAsync path. Merge 1378f49. Core 1188/0, App 220/0, full solution builds clean.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tests/AiDe.App.Tests/WorkbenchShellTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Bring the watcher branch current with the other two sessions",
+      "done_when": "origin/main merged in, all conflicts resolved, full solution + suites green"
     },
     {
       "id": "al-0317",
@@ -6556,6 +6530,74 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0321",
+      "shortname": "typescript-members-and-bicep-fold",
+      "datetime": "2026-09-01T02:08:31Z",
+      "session": "phase3-pane-probes",
+      "prompt": "5: lets get going on both TypeScript and Bicep",
+      "summary": "Goal: close the remaining TypeScript coverage and roadmap item 4 (Bicep). Done when: both measured before building, both shipped with controls observed failing, generation bumped once, all gates green. TypeScript: class/interface members as has_member (11 measured), nested and dynamic-import disclosures made conditional and counted; the corpus has ZERO hand-written .ts files, so this reader is in practice a JavaScript reader. Bicep: the measurement found a shipped fabrication — IsLiteral was !contains(dollar) and !contains(paren), so a bare identifier passed and 10 of 27 resource names in the graph were identifier text; a default-deny constant folder recovers 12, verified against Azure's own what-if output. Registered DC-064.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/plans/extractor-roadmap.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0322",
+      "shortname": "specify-named-dock-zones",
+      "datetime": "2026-09-01T02:10:46Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Phase 3 = absolute dock zones; run full specify->ui-design->define-architecture loop; confirm zones support resize/collapse/maximize",
+      "summary": "Wrote spec-named-dock-zones (3 layers: Functional/UX/UI) with 9 functional + 4 UX + 3 UI falsifiable acceptance criteria; core scenario = move a pane changes only source+destination; named zones Left/Right/Bottom/Center, tool zones collapse to rails, Center is the always-present anchor, reversible maximize.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/named-dock-zones.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0323",
+      "shortname": "ui-design-named-dock-zones",
+      "datetime": "2026-09-01T02:10:46Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "run full specify->ui-design->define-architecture loop for absolute dock zones",
+      "summary": "Wrote design-named-dock-zones-ui (direction brief, minimal zone chrome + rails, tokenized, purposeful reduced-motion-safe motion) + a self-contained dependency-free mockup (named-dock-zones.html) with a review harness across 7 zone states x theme x motion; rubric critique found one Blocker on the built control (keyboard-complete zone ops) with a ranked plan.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/named-dock-zones.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0324",
+      "shortname": "define-architecture-named-dock-zones",
+      "datetime": "2026-09-01T02:10:46Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "run full specify->ui-design->define-architecture loop for absolute dock zones",
+      "summary": "Wrote ADR-0021: named absolute dock zones replace the split tree. Model = WorkbenchLayout{Zones(Left/Right/Bottom/Center), Floating, Maximized}; each zone holds a ZoneStack or a within-zone ZoneSplit (editor groups) that never leaves the zone. Ops are zone-scoped (move changes only source+dest); incremental per-zone adapter kills the whole-view redraw. Migration expand-migrate-contract from layout.json via a tested TreeToZones converter. Alternatives B(soften collapse) and C(3rd-party dock lib) rejected.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0021-named-dock-zones.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0325",
       "shortname": "merge-watcher-to-main",
       "datetime": "2026-09-01T02:11:20Z",
@@ -6597,6 +6639,23 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Enable richer honest scores + wire the advisory judge seam",
       "done_when": "An instrumented audit entry scores all deterministic dims; a qualified local evaluator folds advisory dims; absent signals stay conservative"
+    },
+    {
+      "id": "al-0326",
+      "shortname": "implement-zone-model-expand-slice",
+      "datetime": "2026-09-01T02:33:09Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "approved; lets start building it (ADR-0021 named dock zones)",
+      "summary": "Expand slice (additive, Core-only): WorkbenchLayout/ZoneState/ZoneContent(ZoneStack,ZoneSplit) zone model; ZoneLayoutService zone-scoped ops (MovePane/OpenPane/ClosePane/Activate/Collapse/Expand/Resize/Maximize/Restore) where every op confines its effect to source+destination zones via WithZone; TreeToZones migration converter. 14 tests incl. the AC-F1 containment control (observed failing under a whole-restructure shim, then green). Core 1216 green; App untouched.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneLayout.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -8784,6 +8843,108 @@ window.AUDIT_DATA = {
       }
     },
     {
+      "id": "cl-0088",
+      "datetime": "2026-08-30T19:34:24Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Full-window surfaces are a primary view mode (body-content swap); the Explorer reader fetches node content via a bounded Core query",
+      "prompt": "/define-architecture the full-window Explorer mode",
+      "summary": "ADR-0017 (primary view mode via body-content swap, retain-not-rebuild) + ADR-0018 (on-demand bounded NodeContentAsync reader contract). Additive to the workbench/docking model; amends ADR-0013 (per-mode persistence) and ADR-0015 (graph<->reader keyboard cycle).",
+      "rationale": "A full-window graph+reader must not compete as a dock pane nor be a dismiss-only modal; a body-content swap keyed by a shell view-mode is the smallest correct mechanism and generalises to future full-window surfaces. Content on the graph payload would overflow the IPC frame, so the reader fetches per-node on demand.",
+      "artifacts": [
+        "docs/adr/0017-primary-view-mode.md",
+        "docs/adr/0018-node-content-reader-contract.md",
+        "docs/architecture.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "ceb2389",
+        "after": "ceb2389e829e25c991f5e0a916f68c7863796399",
+        "branch": "feature/app-facelift-and-graph-surfaces",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0089",
+      "datetime": "2026-08-30T19:49:35Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "SQL folded, usage not mapping, and three gates that CI had never run",
+      "prompt": null,
+      "summary": "**SQL scripts are folded, not just read.** MEASURED: one repository carries **125 `ALTER TABLE … ADD`**\nstatements, so reading `CREATE` alone showed its schema as it stood at the first migration and called\nthat current. Adds, `DROP COLUMN` and `DROP TABLE` are now applied in file order — drops especially,\nbecause a column that no longer exists is a **wrong** fact rather than a missing one. Renames are\ncounted and disclosed rather than guessed: every dialect spells them differently, and guessing\nproduces a confidently wrong column name.\n\n**Three gates I wrote this session were not in CI.** `verify-id-allocators`,\n`verify-project-coverage` and `verify-bounds-are-enforced` sat in `tools/` for several commits with\nno workflow line — they ran only when I remembered. A gate nobody invokes is the \"lesson recorded as\nprose\" failure wearing an executable's clothes: it looks like a control in every review and fires\nnever. All three wired, and `verify-project-coverage` now asks the same question about gates that it\nasks about projects — **what exists to be run, and is not run.** Observed failing with a gate removed\nfrom the workflow.\n\n**The `simplify:` marker audit found one triggered and one premise already false.** `IpcFraming`'s\ntrigger fired during INV-0003 — and the answer was **none of the two exits the marker listed**.\nNeither a bigger frame nor a data lane: the operation did not legitimately need to carry more. A\n2,815-node hairball was never a useful answer and the spec had always said so, so every response was\nbounded below the cap instead. Recorded, because a marker naming two exits invites you to take one.\n\nIts stated premise — *\"a control lane carries envelopes, not payloads: the largest legitimate message\nis a command with a small JSON body\"* — was **already false when audited**: ordinary responses are an\nevidence page at 659,164 bytes, a graph at 475,223, an overview at 345,507. That sentence had not\nbeen re-read since it was true. The other twelve markers were reviewed with no evidence of firing.\n\n**\"Verified joins for non-EF repositories\" turned out to be the wrong question, and the finding is\nbetter than the feature.** BioHacker has zero `DbContext` files, zero `[Table]` attributes and 191\nSQL literals naming tables from inside store classes. There is **no declaration of a code→schema\nmapping to verify** — and there should not be one invented. A store class issuing four statements\nagainst three tables is not *mapped* to any of them.\n\nWhat the source does declare is **usage**, so that is what is emitted: `uses_table`, Verified because\nthe literal is in the type. **62 edges on BioHacker**, structure it simply did not have. Deliberately\nnot `maps_to` — reusing the mapping predicate would launder usage into a mapping exactly where a\nreader trusts it (DC-022's shape). Joins there remain 0 verified / 8 inferred, which is the honest\nanswer.\n\n**Deduplication moved into one place on its third copy.** Python and TypeScript each grew the same\nsix lines after the same raw `UNIQUE constraint failed` from mid-index; `uses_table` hit it a third\ntime immediately, because one store names the same table in four statements. `ExtractionFacts.Distinct`\nnow owns it, so the fourth extractor inherits it. The store's key stays strict — silencing it would\ntrade a loud correct failure for a quiet wrong graph.\n\n**And \"make the measurement a CI nightly\" was wrong, stated rather than quietly dropped.** The\nrepositories are sibling checkouts on one machine; a hosted runner has none of them, so the job would\nfail or skip every night — a gate that cannot fire, dressed as diligence. `--record` is the\nachievable half: readings append to `docs/measurements/repositories.jsonl`, so drift shows up in\n`git diff` rather than in somebody's memory. First reading committed.\n\n831 tests green (App 132, Core 699). Eight gates clean, all eight now actually run by CI. Zero\ndesign-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/SqlSchemaExtractor.cs",
+        "src/AiDe.Core/Extraction/CSharpExtractor.cs",
+        ".github/workflows/build.yml"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "fd8516ff7fafe459cebb0ce2f55e68de32bc1881",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0090",
+      "datetime": "2026-08-30T20:46:13Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "A matcher that invents facts is worse than one that misses them",
+      "prompt": null,
+      "summary": "**I shipped a defect last turn and this turn's sweep caught it.** The `uses_table` reader matched a\nSQL keyword followed by a word ANYWHERE in a string literal, so *\"we update the record\"* produced an\nedge to a table called `the`. MEASURED: 63 prose strings in TheTerrace, and its `uses_table` count\nfell from **150 to 56** once the reader required a statement SHAPE.\n\nUnder-matching hides real facts; over-matching invents them — and the invented ones are worse,\nbecause they arrive labelled **Verified**. Same root cause as DC-033 in the opposite direction: the\nmatcher's fit to real input had never been measured. **A matcher is not finished until you know both\nwhat it misses and what it invents.**\n\n**The naive fix broke the real case, which is exactly why both directions must be measured\ntogether.** Requiring each literal to begin with a verb found **nothing at all** on the repository\nthat motivated the feature — real code splits SQL across concatenated literals, and the fragment\nholding `FROM dbo.AssessmentJob` begins with `FROM`. The reader folds the `+` chain and reads it as\none statement; a chain containing anything non-literal is skipped whole rather than half-read.\n\nA smaller lesson: the regex form of that shape test silently returned false for\n`\"INSERT INTO dbo.AssessmentJob (…)\"` — a string plainly beginning with one of its own alternatives —\nand cost more to diagnose than the check was worth. It is explicit code now.\n\n**`uses_table` reaches the Joins pane.** A distinct kind, never folded into `maps_to`: a store class\nissuing four statements against three tables is not mapped to any of them, and counting usage as\nmapping would make the verified/inferred ratio the pane exists to show meaningless. BioHacker's pane\ngoes from **0 verified / 8 inferred to 57 / 8** — a repository that showed nothing now shows what its\ncode actually touches.\n\n**Step 2 needed no work and step 3 was answered by measurement.** The EF reader ALREADY folds\n`CreateTable`, `AddColumn`, `DropColumn`, `DropTable`, `RenameTable` and raw `Sql` — I assumed it\nmight not, without checking, which is the habit this session keeps catching. Measured against real\nusage: the operations it does not handle (`CreateIndex` 113, `AddForeignKey` 19, `AlterColumn`) do\nnot change which tables or columns EXIST. One genuine gap found and closed: `RenameColumn` was\nunhandled with no default case, so a renamed column silently kept its old name — a wrong fact. EF\nstates renames in named arguments, so unlike raw SQL it is simply readable.\n\n**Python and TypeScript do not embed SQL, so nothing was built for them.** The counts looked\npromising — 186, 61, 1,162 \"SQL literals\" — and sampling showed *\"update the\"*, *\"select more than\none option from this\"*, and **zero** files containing `insert into`. Building `uses_table` there\nwould have emitted edges from English prose. Evidence for NOT building something is worth as much as\nevidence for building it.\n\n**The measurement log earns its keep at two readings.** Verified joins across the three repositories\nmoved **64 → 120**, **0 → 57**, **35 → 50**, with assertion counts slightly DOWN as prose noise left\nthe graph. One reading is a point; two is a direction, and the drift is now in `git diff` rather than\nin my memory of last turn's numbers.\n\n840 tests green (App 137, Core 703). Eight gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/CSharpExtractor.cs",
+        "src/AiDe.Core/Projections/JoinProjection.cs",
+        "docs/measurements/repositories.jsonl"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "87f04b04886d1fb8a5a0c239c253565e765e81b7",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0091",
+      "datetime": "2026-08-30T21:03:59Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Every extractor was inventing facts out of comments, and now a control says so",
+      "prompt": null,
+      "summary": "**The invent-direction of DC-033 now has a control, and it found four more defects on its first\nrun.** `ExtractorsDoNotInventTests` feeds every reader a corpus with no declarations and plenty of\ntext SHAPED like declarations, and asserts it produces nothing but disclosures:\n\n- the **SQL** reader read `-- CREATE TABLE Ghost` and `/* CREATE TABLE Historical */` as tables;\n- the **TypeScript** reader read `export class Removed {}` out of a block comment;\n- the **Python** reader read a class out of a **docstring** — the one place its column-zero rule\n  cannot tell documentation from declaration;\n- the **C#** reader turned *\"delete from your account to remove it\"* into `table:your`, because that\n  sentence genuinely begins with a SQL verb and last turn's shape test could not reject it.\n\n**Commented-out code is the worst possible input for a line-oriented reader**, and every repository\nis full of it — it is real syntax, because it *was* code. `SourceText` blanks comments before any\nreader believes a line, keeping newlines so provenance line numbers stay true. The C# case needed a\nsecond rule: a real table reference **ends where a clause can begin** — a keyword, punctuation, or\nthe end of the statement. In prose the next token is just another word.\n\n**Two things the fixes got wrong first, kept because they are the lesson.** Blanking string contents\nfor SQL deleted `\"main\".\"Thing\"`: in SQL a double quote is a quoted IDENTIFIER, not a string, so the\nreader lost the very names it exists to find — caught by a test in seconds, which is the cheapest\npossible way to learn that two languages disagree about a quote character. And `PRINT 'about to\ncreate table X'` names no table while `EXEC('CREATE TABLE …')` does; the reader can tell neither from\nthe other, so it reads neither and discloses the count.\n\n**Step 1 was answered by measurement and needed no change.** The Bicep and context readers were swept\non a repository they were not written against: Bicep's matchers are line-anchored on `resource`,\n`module` and `param`, and their values came back as real parameter names (`sqlServerName`,\n`identityName`) and real Azure types — nothing invented. The context map's `*` is a documented suffix\nwildcard and the real patterns end at a `.` boundary. Both pinned by the new control so they stay\nthat way.\n\n**The third reading shows the CORRECTION, which is what a third reading is for.** Verified joins:\n\n    TheTerrace                64 -> 120 -> 95\n    BioHacker                  0 ->  57 -> 55\n    meridian-finance-planner  35 ->  50 -> 46\n\nThe middle number was inflated by prose; the last is the honest one. **A single reading would have\nrecorded 120 as progress**, and two readings would have recorded it as a trend.\n\n**On `AlterColumn` — the decision, not an assumption.** It is not folded, and should not be. The\ngraph's `has_column` records that a column EXISTS; `AlterColumn` changes a type or nullability, which\nthat fact does not carry, so folding it would change nothing observable. Recording types is a\ndifferent feature — it would need a fact shape that can express them, both schema readers agreeing on\nit, and a consumer that wants it. None of those exists, so this stays where it is: named in the\nextractor's `simplify:` ceiling as the upgrade trigger, rather than half-built.\n\n848 tests green (App 139, Core 709). Eight gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/SourceText.cs",
+        "tests/AiDe.Core.Tests/ExtractorsDoNotInventTests.cs",
+        "docs/measurements/repositories.jsonl"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "66bfcf62cc39fad546ab14fcfe32f6bffc3e7b4d",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
       "id": "cl-0092",
       "datetime": "2026-08-30T21:44:42Z",
       "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
@@ -8858,6 +9019,32 @@ window.AUDIT_DATA = {
       }
     },
     {
+      "id": "cl-0095",
+      "datetime": "2026-08-30T22:00:00Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Knowledge was zero because nothing ever looked",
+      "prompt": null,
+      "summary": "**The knowledge graph was never being populated, and the reason is worse than a bug.** The reader had\nexisted since Phase 1, with tests, inside the fixture extractor. `CompositeExtractor` had a route for\nit. And `CSharpScopeDiscovery` produced six scope kinds — `csharp`, `bicep`, `schema`, `python`,\n`typescript`, `sql` — and **no knowledge scope at all**. The capability was correct, tested, and\nunreachable on every real repository for the life of the project.\n\nBoth halves passed their own tests. The producer is proven by unit tests that hand it input; the\nrouter is proven by fixtures that name the scope explicitly. Only DISCOVERY was untested against\nreality, and its gap is invisible from either side.\n\n**A zero that means \"nobody looked\" reads as \"there is none\"** — which is the shape this product\nexists to avoid, in the product's own headline surface, on a repository whose premise is that *docs\nhold intent, code holds reality, and the expensive defects live in the gap*. Half of that sentence\nwas never being read.\n\nMEASURED after wiring discovery, on this repository: **466 `owned_by`, 346 `refines`, 287\n`implements`, 272 `relates-to`, 66 `depends-on`**, centred on `knowledge-hub` with 78 edges. Scopes\nacross the three measured repositories: **28→66, 34→48, 34→56**. Every response still fits the frame.\n\n**Running it over real documents immediately found two defects in the new reader** — which is the\nlesson from last turn applied one turn later:\n\n- link lines carry a trailing YAML comment, and trimming from the END left it attached: the graph\n  gained a relation literally called `implements }   # typed edges — registry in …`. Parsing now\n  stops at the closing brace.\n- **templates** carry frontmatter in exactly the shape a real document does, with `<artifact-id>`\n  where the id goes — so they became nodes describing the shape of a document, linked to things that\n  do not exist. Excluded by filename and, independently, by rejecting angle-bracketed placeholders.\n\nDC-041 registered: **a capability is complete, tested, and nothing ever routes work to it.** The\nsignature is a count that is exactly zero on every real repository while a sibling count is large,\nand the question that finds it is *\"what produces the keys this router matches on, and does it\nproduce this one?\"*. The control compares the two lists in a test instead of in somebody's head:\n`EveryRouteHasAProducerAndEveryProducerHasARoute` fails if discovery emits a kind nothing routes, or\nif a route exists that nothing discovers.\n\n**The other next steps, carried:**\n\n- **Bicep is comment-stripped too.** It PASSED the invent control — line-anchored matchers, and a\n  sweep of an unfamiliar repository produced only real parameter names and real Azure types. Stripped\n  anyway: it was the last line-oriented reader still parsing raw text, and all three readers caught\n  inventing were caught reading commented-out code.\n- **Provenance line numbers are asserted, not assumed.** Comments are blanked rather than deleted\n  precisely so a claim can still be opened at the right line; a test now pins `5:1` for a table\n  declared after a multi-line comment. It was the reason for the design and had never been checked.\n- **The invent control now runs against real repository text**, which is how both knowledge defects\n  surfaced — synthetic noise is written by the same person as the reader (DC-028's shape).\n- **`GraphQuery` filters: ANSWERED by the user — presets, three named views.** Recorded in the\n  contract with the three query shapes (Domain / Everything / This project). `Kinds` is deliberately\n  not one of them: it is a refinement *within* a view, and folding it in would rebuild the\n  combinatorial space presets exist to avoid.\n\n859 tests green (App 139, Core 720). Eight gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/KnowledgeExtractor.cs",
+        "src/AiDe.Core/Extraction/CSharpScopeDiscovery.cs",
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "609b4e0d4892a919866f2e8e3eee7e2d4d425e95",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
       "id": "cl-0096",
       "datetime": "2026-08-30T22:26:01Z",
       "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
@@ -8874,6 +9061,32 @@ window.AUDIT_DATA = {
         "after": "b326c18e75e6047944c7e650c0424ebaa843a995",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0097",
+      "datetime": "2026-08-30T22:26:13Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "INV-0004: everything was knowledge because everything has a type",
+      "prompt": null,
+      "summary": "**INV-0004's root cause was a Phase-1 assumption that six extractors later made false.** Node\nclassification read:\n\n    var isKnowledge = result.Assertions.Any(a => a.Subject == nodeId && a.Predicate == \"has_type\");\n\n*Anything with a type is knowledge* — true when the fixture reader was the only producer of\n`has_type`, and false the moment a second extractor emitted it. By now every C# class, table, bicep\nresource and python module carried one, so almost the entire graph was classified `knowledge`, and it\nsurfaced exactly as the design session saw it: a bicep resource reading **\"kind: knowledge\"**. DC-022\nprecisely — a predicate gained producers and a consumer kept its assumption about who emits it.\n\n**Fixed by having the PRODUCER declare it.** Scope-id prefixes were the first attempt and were nearly\nright, but the fixture reader emits knowledge from a scope not named for it, so the id could not be\nthe authority either. A fact can be: both knowledge-reading paths now emit `node_class = knowledge`,\nand the core classifies from that. Nothing infers a node's half of the graph from a type name again.\n\n**Neighbours carry their real kind.** `DescribeResult` gained `NeighborKinds`; the canvas hardcoded\n`\"source\"` for every neighbour because the projection did not carry one, so a drill-down showed a\ntable, a bicep resource and a class as the same thing and the filter could not tell them apart. A\nrenderer inventing a default is a renderer stating a fact it does not have.\n\n**`UpsertNode` is a no-op when nothing changed.** It is a Type-2 dimension and every call closed the\ncurrent row and opened a new one, so re-indexing rewrote the history of every unchanged node. History\nwhose every row is an artefact of re-running the indexer cannot answer the question it exists for.\n\n**The knowledge pane was returning code.** It filtered on `has_type` alone — the same stale\nassumption, one projection along — so now that knowledge is finally indexed it would have shown C#\nclasses beside ADRs. It filters on `node_class` now, which is the dimension that knows.\n\n**`review-by` is read and overdue reviews are a health finding.** 460 review dates on this repository.\n`owned_by` and `review_by` joined the attribute set: a person and a date are not things to navigate\nto, and drawing them would have put \"@someone\" and \"2027-02-28\" in the graph as peers of the\ndocuments that carry them.\n\n**The one \"document with no id\" was a false positive of mine.** `INSTALL.md` opens with `doc:`,\n`bundle_version:` and `changes:` — a pack manifest that happens to use YAML, never a graph node. The\ncomplaint now fires only when the frontmatter is GRAPH frontmatter (a type, owner, links or review\ndate) and still has no id. Same mistake as reading prose into a schema, one field along.\n\n**The code↔knowledge join is NOT buildable today, and that is the finding.** Measured: **no knowledge\nlink in this repository targets a code symbol** — every `to:` names another document id. There is no\ndeclared relationship to read, and inferring one from titles or namespaces is exactly the guessing\nthis codebase refuses. What would unblock it is a change to how docs are WRITTEN, not to the reader:\na link such as `- { to: TheTerrace.Features.Fixtures, rel: governs }`. Recorded rather than invented.\n\n**DC-042's residual is now checkable.** `ConsumersReadWhatProducersEmitTests` reads the join\nprojection's predicate list FROM ITS SOURCE and asserts every name is one some extractor actually\nemits — so a renamed predicate fails a test instead of quietly returning fewer edges. Its first run\nreported `is_secret` and `resource_name_expression` as orphaned; they are emitted on real\nrepositories, and the gap was in the fixture I had written. A control validated against input its\nauthor wrote is a control that measures the author — so the fixture now exercises the whole bicep\nvocabulary.\n\n867 tests green (App 144, Core 723). Eight gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/WorkspaceCore.cs",
+        "src/AiDe.Core/Projections/ProjectionService.cs",
+        "tests/AiDe.Core.Tests/ConsumersReadWhatProducersEmitTests.cs"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "df001100c4408da481fddf804225e7f01f8148a9",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
         "commits": []
       }
     },
@@ -8904,6 +9117,32 @@ window.AUDIT_DATA = {
       }
     },
     {
+      "id": "cl-0099",
+      "datetime": "2026-08-30T23:21:49Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "Knowledge read 0 because the store was a generation behind, and the chip matched type names",
+      "prompt": null,
+      "summary": "**The Knowledge chip read 0 on a repository holding 2,343 knowledge nodes. Two causes, both Core's.**\n\n**The store was cached from a build that had no knowledge reader.** `ScopeFingerprints` already\ncarried an `ExtractorGeneration` for exactly this — a constant in every fingerprint so that upgrading\nthe product invalidates the sidecar — and nobody bumped it. So the knowledge extractor, `node_class`,\ncomment stripping in four readers, the SQL fold and `uses_table` all shipped while every existing\nworkspace kept serving results produced by the previous generation. Bumped to `2026-08-30.1`; an\nupgraded app now rebuilds rather than reusing.\n\n**And the graph carried only each node's FINE kind.** MEASURED: TheTerrace's knowledge types are\n`spec` and **`knowledge-epl-fan-platform`** — a name that repository invented. A chip matching a\nfixed list of type names cannot work across repositories, and widening the list only moves the\nproblem to the next one (DC-033). `GraphNode.IsKnowledge` carries the DECLARED coarse dimension, so a\nfilter asks the question instead of recognising spellings.\n\nVerified end to end: TheTerrace now yields **2,343 `node_class`, 639 `owned_by`, 428 `refines`, 114\n`spec`** — 24,058 assertions across 66 scopes, every response still inside the frame.\n\n**The code↔knowledge join is closed by decision, not deferred.** The user's rule: *\"It's ok if docs\nand code are not linkable and orthogonal, they will tend to be orthogonal which is why pruning the\ngraph on one or the other is a meaningful cut. Do not infer — the graph should only be on observable\nlinks/relationships.\"*\n\nRecorded as a decision note, because it is a standing principle rather than one answer: **an edge is\na claim that something in the repository says so.** Orthogonality is information — because the two\nhalves are separate, \"show the knowledge\" and \"show the code\" are exact cuts rather than blurred\nones. Inference would have made membership depend on how good the guess was that day, and this\ncodebase has paid for that twice already (`depends_on` produced 7,426 false Verified edges;\n`uses_table` turned *\"we update the record\"* into a table called `the`). What would legitimately\nunblock a join is a link written down — `- { to: TheTerrace.Features.Fixtures, rel: governs }` — which\nthe frontmatter reader would index today with no code change.\n\n**Python dynamic and nested declarations: measured, and NOT built.** Dynamic imports are unobservable\nstatically, so reading them would be inference — ruled out by the principle above. Nested\ndeclarations are observable but MEASURED at 28/31/21 against 356/457/150 top-level across three\nrepositories (~7%), and they are implementation details inside functions with no type information to\nbuild edges from: the graph would gain volume, not structure. The existing disclosures already state\nexactly this. INV-0004's fourth handoff closes as a priority call answered.\n\n**DC-013 recurred a sixth time and the gate caught it.** Both sessions allocated `DC-042`; mine was\npublished first, so theirs is re-issued as `DC-043` per the contract. Their entry also arrived with an\nunbackticked `Status:` value for the second time — and the register gate reported it as *\"declares no\nStatus line\"* when the line was there and the FORMAT was wrong. That message misdirected me twice, so\nit now names the actual problem and shows the expected form. **A control that misnames its own finding\ncosts the reader the time the control saved.**\n\n869 tests green (App 144, Core 725). Eight gates clean. Zero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/ScopeFingerprints.cs",
+        "src/AiDe.Core/Projections/GraphProjection.cs",
+        "docs/notes/note-20260830-the-graph-carries-only-observable-links.md"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "693ce79705bd30345b23a2c93b0750de89324492",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
       "id": "cl-0100",
       "datetime": "2026-08-30T23:38:31Z",
       "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
@@ -8923,6 +9162,58 @@ window.AUDIT_DATA = {
         "after": "d4b1727d3b4270d0a60383f4413e7a79c436e1bc",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0101",
+      "datetime": "2026-08-30T23:40:28Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "The knowledge pane capped before it filtered, and CI never ran on the branch that broke it",
+      "prompt": null,
+      "summary": "**The knowledge pane was STILL returning zero, and the reason was a second, independent defect.**\nChasing the render rather than the data found it: `Knowledge()` read the first 200 `has_type`\nassertions and filtered THOSE to knowledge — so on any real repository the 200 were code types in\nalphabetical order and the filter left nothing. MEASURED: **0 items on a workspace holding 468\nknowledge nodes**; now 50, the ceiling.\n\nThat is DC-035's shape one projection along — **a cap applied before a filter returns the wrong\nslice trimmed to the right shape, and nothing in the result says so.** I fixed exactly this in\n`GraphProjection` and did not look for siblings. Pinned by a test whose fixture puts 400 code types\nalphabetically ahead of the knowledge, which is the condition that hid it.\n\n**The generation bump is now a control instead of a memory.** `ExtractorGeneration` existed and was\ncomplete; using it was a thing somebody had to remember, and a full day of extractor changes shipped\nwithout it. `verify-extractor-generation.py` fails when anything under `src/AiDe.Core/Extraction/`\nchanged since the generation last did. Deliberately conservative — a comment-only edit trips it, and\nthe remedy is a one-line bump costing one re-index, where deciding which edits \"really\" change output\nis a judgement nobody can make reliably about a compiler-driven extractor. Observed failing by\nreplaying the real baseline: it lists the exact extractors that shipped unbumped.\n\nIt uses `git log -G`, not `-S`. `-S` counts occurrences, so replacing one generation value with\nanother leaves the count unchanged and the bump looks like no change at all.\n\n**CI only ran on `push: main` and `pull_request`.** The design session pushes to a long-lived feature\nbranch with no PR, so its work met no gate until it reached main — by which point it was merged. That\nis why an unbackticked `Status:` value arrived twice and a duplicate `DC-` id six times, each caught\nby whoever merged next rather than by the branch that introduced it. **A gate that only guards the\ndestination reports problems to the wrong person.** CI now runs on every branch.\n\n**And the new gate would not have fired in CI.** `actions/checkout@v4` is shallow by default, so the\nsearch for the last generation bump would have found nothing and the gate would have passed silently\n— the defect it exists to prevent, one layer up. `fetch-depth: 0` added.\n\n**`IsKnowledge` is proven across the pipe, with an assertion that can fail.** The first version I\nwrote was `Assert.Equal(n.IsKnowledge, n.IsKnowledge)` against a fixture with no knowledge in it —\na tautology over an empty set. The daemon fixture now holds a document beside the code, and the test\nasserts a known-knowledge node arrives with the flag set and a known-code node without it.\n\n**Knowledge health is computed and unrendered**, so it is a contract request rather than Core work:\n`owner not recorded`, `type not recorded`, `orphan`, `source location not recorded` and now `review\noverdue since <date>` — 460 review dates on this repository. Findings that exist and are shown\nnowhere are \"absence of evidence stays explicit\" failing at the last step.\n\n870 tests green (App 144, Core 726). Nine gates clean, all nine run by CI, on every branch.\nZero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/ProjectionService.cs",
+        "tools/verify-extractor-generation.py",
+        ".github/workflows/build.yml"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "1b61599cc8be5ad753ad2725b61a78b27def6c69",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0102",
+      "datetime": "2026-08-31T00:12:08Z",
+      "session": null,
+      "kind": "architecture",
+      "skill": null,
+      "title": "The cap-before-filter sweep, and telling the other session what changed under them",
+      "prompt": null,
+      "summary": "**The cap-before-filter sweep, run properly this time.** Every bounded read in the projection service\nwas checked rather than spot-sampled: `Find` filters inside `SearchNodeIds`, `Describe` inside\n`AssertionsTouching`, `Impact` inside `OutgoingAssertions`, `Evidence` inside the cursor page — all\nfour apply the cap to rows the query has ALREADY filtered, which is the correct order and also the\ncheaper one, because the filter uses an index. `Knowledge` was the only place the order was inverted,\nand it was inverted for a reason worth naming: **its filter lived in C# rather than in the query.**\n\nThat gives the class a signature you can recognise without reading every projection: **a bounded read\nwhose `.Where(...)` is applied to the RESULT of the read rather than expressed in it.** If the filter\nis in the query the cap cannot be wrong; if it is in the caller, the cap chose the rows before anyone\nasked what was wanted. Recorded on DC-035 along with the one residual — `Knowledge` still reads each\nnode's touching assertions at 500 and splits them afterwards, so a document with ~495+ real links\nwould get an arbitrary 500 with no omission count. No repository measured comes close.\n\n**Measurements re-recorded after the knowledge work.** TheTerrace 24,058 assertions across 66 scopes,\nBioHacker 4,420 / 48, meridian 12,613 / 56 — every response still inside the frame.\n\n**The design session is told what changed under them, in their own file.** A new §4d says CI now runs\non every branch, that the next push to their branch will run all nine gates, and — because it will be\nnoisy the first time — names the two that will fire and how to satisfy them, with a worked example of\nthe accepted and rejected `Status:` forms. Neither is a new rule; both were always enforced, just not\nanywhere they could see them.\n\n**`review-by` on code: decided no, on the user's own rule.** The symmetry is tempting — 460 review\ndates on documents, so why not flag a stale class? Because nothing in a C# file, a Bicep template or\na SQL script DECLARES when it should next be read. A date could only be manufactured from\nlast-modified time or churn, and it would render identically to the dates documents actually declare.\nA reader could not tell the two apart, which is exactly the failure the no-inference note exists to\nprevent. A code artifact gets a review date the moment something writes one down; until then the\nabsence is accurate.\n\n**Still only verifiable by you:** whether the Knowledge chip lights up in the running app. Both known\ncauses are fixed and proven at every layer I can reach — the extractor, the store, the projection, and\nacross the daemon pipe — but I have not watched it render. It needs one re-index in the new build,\nbecause the generation bump makes that a rebuild rather than a reuse.\n\n870 tests green (App 144, Core 726). Nine gates clean, all nine run by CI, on every branch.\nZero design-owned files.",
+      "rationale": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "docs/collaboration/session-contracts.md",
+        "docs/measurements/repositories.jsonl"
+      ],
+      "tags": [
+        "phase-3"
+      ],
+      "git": {
+        "before": null,
+        "after": "aec47955ceaddd0f6c598c27952696dfe4a36e87",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
         "commits": []
       }
     },
@@ -8950,6 +9241,28 @@ window.AUDIT_DATA = {
       }
     },
     {
+      "id": "cl-0104",
+      "datetime": "2026-08-31T00:37:34Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Read-only code viewer renders with native AvalonEdit, not Monaco-in-WebView2",
+      "prompt": "define-architecture the viewer renderer choice",
+      "summary": "ADR-0019 chose native AvalonEdit (MIT) over Monaco-in-WebView2 for the read-only code viewer",
+      "rationale": "The repo's documented WebView2 airspace + float-crash cost (ADR-0015) outweighs Monaco's VS-Code parity, which a read-only viewer does not need; native avoids a second WebView2",
+      "artifacts": [
+        "docs/adr/0019-code-viewer-renderer.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "425c514a8721ac19192961c5fa5e22f89b8935e7",
+        "after": "425c514a8721ac19192961c5fa5e22f89b8935e7",
+        "branch": "feature/app-facelift-and-graph-surfaces",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
       "id": "cl-0105",
       "datetime": "2026-08-31T00:38:20Z",
       "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
@@ -8970,6 +9283,51 @@ window.AUDIT_DATA = {
         "after": "860cb6c4357b8008fbf2eb59db53f26290a809f9",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0106",
+      "datetime": "2026-08-31T00:50:10Z",
+      "session": "phase3-pane-probes",
+      "kind": "decision",
+      "skill": "investigate",
+      "title": "A fact's identity includes the reader that produced it",
+      "prompt": "knowledge still shows as 0 post re-index",
+      "summary": "The store's natural key said 'one revision, one answer' — true only while the extractor was fixed. A stored revision now carries the extractor generation that produced it (SourceRevision), so the same bytes read by a better reader are a different observation the key can represent. Applied inside RefreshScopeAsync so every entry point gets one answer instead of three; stripped at the read boundary so a surface still shows the revision the user named. Second decision: a command that changes the store raises WorkspaceDataChanged and the shell re-reads whatever panes are open — the last mile of a write is the screen.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Extraction/SourceRevision.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "d7ba31fdfa443b51fefa42c155320d906abb0b21",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      },
+      "audit_ref": "al-0169"
+    },
+    {
+      "id": "cl-0107",
+      "datetime": "2026-08-31T03:39:19Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "AvalonEdit confirmed for the read-only code viewer (ADR-0019 residual cleared by PoC)",
+      "prompt": "AvalonEdit read-only highlighting PoC",
+      "summary": "PoC passed: read-only + highlighting + no airspace (pure WPF Control); C#/py/js/sql covered, ts/bicep degrade to plain",
+      "rationale": "Confirms ADR-0019's Inferred residual by execution, so the read-only viewer is ready to build once Core ships NodeContentAsync",
+      "artifacts": [
+        "docs/adr/0019-code-viewer-renderer.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "bf83370d7bf8d301024d21382f3724e6df4ed55e",
+        "after": "bf83370d7bf8d301024d21382f3724e6df4ed55e",
+        "branch": "feature/app-facelift-and-graph-surfaces",
+        "pushed": true,
         "commits": []
       }
     },
@@ -9021,6 +9379,28 @@ window.AUDIT_DATA = {
       }
     },
     {
+      "id": "cl-0110",
+      "datetime": "2026-08-31T04:18:19Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Class diagram: App-side type-hierarchy from the existing graph, dependency-free; members/Mermaid deferred (ADR-0020)",
+      "prompt": "class-diagram define-architecture",
+      "summary": "ADR-0020 chose an App-side derived type-hierarchy view (inherits/implements) over vendoring Mermaid now; members via a Core has_member handoff",
+      "rationale": "The data already has inherits/implements as graph edges but no members; a Mermaid classDiagram with empty compartments is not worth ~3MB vendored, so defer it until has_member exists",
+      "artifacts": [
+        "docs/adr/0020-class-diagram-architecture.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "140a9a5bd49b2cce968b4489178ea97de2007bab",
+        "after": "140a9a5bd49b2cce968b4489178ea97de2007bab",
+        "branch": "feature/app-facelift-and-graph-surfaces",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
       "id": "cl-0111",
       "datetime": "2026-08-31T04:30:34Z",
       "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
@@ -9043,6 +9423,29 @@ window.AUDIT_DATA = {
       }
     },
     {
+      "id": "cl-0112",
+      "datetime": "2026-08-31T04:38:55Z",
+      "session": "phase3-pane-probes",
+      "kind": "architecture",
+      "skill": "implement",
+      "title": "The IPC payload is JSON, not text about JSON",
+      "prompt": "do the next steps autonomously",
+      "summary": "IpcRequest/IpcResponse carry the payload as a JsonElement rather than a string containing serialised JSON, so the envelope no longer escapes it a second time. Version 3; IpcPayload.Read accepts a JSON string as a version-2 payload and parses its text, which is what keeps IpcVersion.Previous a real guarantee rather than a comment. Writing always produces the new form: two encodings on the write side is how a wire format ends up with no single answer to what it looks like. Measured: framing overhead 1.57x to 78 bytes.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Ipc/IpcContract.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "01850d5b0f75a41482b251be4d5aefb2943355bb",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      },
+      "audit_ref": "al-0181"
+    },
+    {
       "id": "cl-0113",
       "datetime": "2026-08-31T13:19:02Z",
       "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
@@ -9061,6 +9464,28 @@ window.AUDIT_DATA = {
         "after": "76422e861aa5b3a44a25fb84263cf2d5c1569070",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0114",
+      "datetime": "2026-08-31T13:26:30Z",
+      "session": "phase3-pane-probes",
+      "kind": "architecture",
+      "skill": "implement",
+      "title": "A scope records where its files are",
+      "prompt": "unblock the design session",
+      "summary": "Provenance carries a path relative to a scope; nothing carried the scope's own location, so no node could be resolved to a file. Scopes now emit declared_at — an attribute, so scopes do not become graph nodes — and the content reader composes it with the provenance path, confined under the workspace root. This is what makes ADR-0018 buildable at all; the alternative was deriving directories from scope ids, which works for knowledge:docs/adr and fails for bicep:main.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/WorkspaceCore.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "1345cb811e502ba96fd4e02adcd3fa6634708195",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
         "commits": []
       }
     },
@@ -9105,6 +9530,28 @@ window.AUDIT_DATA = {
         "after": "2b75785294b530e434e1af09a8844fa523f7aa14",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0117",
+      "datetime": "2026-08-31T14:57:38Z",
+      "session": "phase3-pane-probes",
+      "kind": "architecture",
+      "skill": "implement",
+      "title": "Compaction runs at startup, retaining only what renders",
+      "prompt": "decide the compaction threshold",
+      "summary": "DefaultThreshold 8 to 1 and DefaultRetain 2 to 1. The old threshold came from the P1-PERF latency curve and answered when growth starts to hurt; it never answered how big the store gets, which is what a user sees, and it never fired on real usage. The retained second generation was kept for investigation and nothing could investigate it — every read composes with the latest-generation filter — so it was residue, not history, and the audit log is where this project records what happened. Safe at one because a failed extraction returns before committing, so the newest snapshot always renders. The daemon compacts before opening the store: the deliberate maintenance moment the design asks for.",
+      "rationale": null,
+      "artifacts": [
+        "src/AiDe.Core/Store/StoreCompactor.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "8865ad0418c7980c0db26e98f7ff8a077f55e573",
+        "branch": "session/phase3-pane-probes",
+        "pushed": true,
         "commits": []
       }
     },
@@ -9693,6 +10140,50 @@ window.AUDIT_DATA = {
         "after": "c1241a814329f1409a1c6daa1e9d0d9e05ecd8a4",
         "branch": "feature/watcher-richer-signals",
         "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0126",
+      "datetime": "2026-09-01T02:08:52Z",
+      "session": "phase3-pane-probes",
+      "kind": "decision",
+      "skill": "implement",
+      "title": "Bicep resource names: fold against declared defaults, never invent",
+      "prompt": "5: lets get going on both TypeScript and Bicep",
+      "summary": "A default-deny constant folder, not an interpreter. Folds param-with-literal-default, var, string interpolation and four pure string functions; refuses and COUNTS everything else. A folded name is Inferred, a quoted literal stays Verified. Loop count resolution not built (zero loops measured) and format() not folded (zero uses measured), for the same reason schema-changed-by-raw-sql was not built. Secure-parameter defaults are never folded, so a secret cannot reach the store through the graph. Verified against Azure's own what-if output.",
+      "rationale": "The measurement meant to size roadmap item 4 found a shipped fabrication instead: IsLiteral was a list of exclusions, so a bare identifier passed it and 10 of 27 resource names in the graph were identifier text (workspaceName) rather than names (theterrace-s00-log). The item was ranked Large, low value on the premise that the alternative to evaluation was honest disclosure; it was not.",
+      "artifacts": [
+        "src/AiDe.Core/Extraction/BicepConstantFolder.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "d26d2ff04c11619afe96fc5f4b427452e6bdf5c1",
+        "branch": "session/phase3-pane-probes",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0127",
+      "datetime": "2026-09-01T02:10:46Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Adopt named absolute dock zones (replace the proportional split tree)",
+      "prompt": "Phase 3 absolute dock zones; full specify->ui-design->define-architecture loop",
+      "summary": "ADR-0021: fixed Left/Right/Bottom/Center zones as stable containers; within-zone splits only; zone-scoped ops; expand-migrate-contract migration. Fixes DC-063 structurally.",
+      "rationale": "The split tree relocated unrelated panes on collapse and rebuilt the whole view; named zones make containment a model invariant, matching every mainstream IDE and the user's stated mental model.",
+      "artifacts": [
+        "docs/adr/0021-named-dock-zones.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "25aecba209b9c28f1f46b7e054a079d6cf6153ce",
+        "after": "25aecba209b9c28f1f46b7e054a079d6cf6153ce",
+        "branch": "feature/app-facelift-and-graph-surfaces",
+        "pushed": true,
         "commits": []
       }
     }
