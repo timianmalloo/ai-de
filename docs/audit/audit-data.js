@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T22:47:16Z",
+  "generated": "2026-09-01T22:52:15Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7471,6 +7471,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tools/verify-harness-diagnostics.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0369",
+      "shortname": "dc-079-coexisting-conventions",
+      "datetime": "2026-09-01T22:52:15Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Design session closing note: the real finding isn't the eighteen. Nine correct and nine broken harnesses side by side, nothing marking which is which, so copying was a coin flip and every copy looked like following precedent.",
+      "summary": "Measured the mechanism: 31 test files each declare their own STA harness, 3 names, 5 timeouts; tests/Shared already exists as a home, so the duplication was never load-bearing. Registered DC-079 partially-controlled - the DC-078 gate closes the divergence that caused a defect but does not remove the coin flip; consolidation across 31 files is sized and NOT done. Derived rule: when two forms of one thing coexist and one is wrong, the coexistence is the defect, not the instances.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
