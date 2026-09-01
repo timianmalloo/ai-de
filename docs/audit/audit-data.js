@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T15:47:54Z",
+  "generated": "2026-09-01T15:48:03Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7227,6 +7227,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "7ad28e2a72f8d697d9d0c91bde7a2569b1e0c8bf",
         "short": "7ad28e2a7",
+        "branch": "feature/ui-experience-refinement",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0358",
+      "shortname": "session-3-bounds-harness",
+      "datetime": "2026-09-01T15:44:12Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "yes on all ... do next",
+      "summary": "Built BoundsReachTheSurfaceTests. Renders SearchSurface and reads the laid-out visual tree including TextBlock Inlines, because a Run is not a visual child and is exactly where the detail lands. Four tests: the surface must render every field it was handed plus the skipped-file count; a planted DropsItsDetailSurface proves the harness can fail (R4 - without it a broken harvester makes every assertion vacuous and the file reports green forever); a DC-016 guard requiring every bound-carrying field to be covered or allowed; a stale-allowance test. Landed GREEN with an allowance list rather than red, because landing red gets a gate switched off - the verify-standins.py shape. THE GUARD FOUND SEVEN UNCOVERED FIELDS ON ITS FIRST RUN by reflecting over the real assembly: ContentSearchResult.Truncated, EvidenceRead.Shortfall, JoinResult.Disclosures, KnowledgeNodeView.HealthFindings, PathResult.Truncated, WorkspaceGraph.Disclosures, WorkspaceOverview.Disclosures - several absent from the nine-item list, which is the re-derivation that list needed. Recorded as open questions with named owners and deliberately NOT classified by reading the render sites, because reading produced a false blocker and two wrong re-derivations in one day. 261 App tests green.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Claude Code",
+      "actor": "claude-ui-experience",
+      "artifacts": [
+        "tests/AiDe.App.Tests/BoundsReachTheSurfaceTests.cs"
+      ],
+      "tags": [
+        "ui-craft"
+      ],
+      "outcome": "success",
+      "goal": "Build the behavioural half of the section 8.3a control, and re-derive the unverified nine-item list by a method that does not read names.",
+      "done_when": "A test renders a surface and reads its laid-out tree; it is proven able to fail on a planted non-compliant surface; a DC-016 guard stops it shrinking silently; a stale-allowance test stops the list rotting; it lands green rather than red; and the bound-carrying field list is derived from the assembly rather than from a document.",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "e33dcd3f324767aa494be29a98febef50022b305",
+        "short": "e33dcd3f3",
         "branch": "feature/ui-experience-refinement",
         "pushed": false
       }
