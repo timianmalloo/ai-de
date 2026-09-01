@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T13:09:40Z",
+  "generated": "2026-09-01T13:39:37Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7011,6 +7011,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/investigations/terminal-input-not-local-to-focus.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0353",
+      "shortname": "investigate-knowledge-chip-reads-zero-again",
+      "datetime": "2026-09-01T13:39:37Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "/investigate knowledge shows as 0 again + status 1492 edges omitted by result bound, 27 analysis boundary notes",
+      "summary": "Verified root cause: the App categorises graph nodes for the Knowledge chip by spelling the fine kind string, ignoring the authoritative IsKnowledge flag Core added to GraphNode to fix exactly this; the flag is dropped at the CanvasNode boundary (CanvasGraphViewModel.cs:20/156) so the client falls back to a fixed spelling list (CanvasPage categoryOf) that cannot match a repo whose knowledge kinds are spec/invented. Regression against a landed cross-session contract. Secondary: 1500-node degree cap starves low-degree knowledge. Recurrence of DC-042's named residual risk (the canvas categoriser). 5-phase repair plan, Phase 0 = payload instrumentation. Stopped for review.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/knowledge-chip-reads-zero-again.md"
       ],
       "tags": [],
       "outcome": "success"

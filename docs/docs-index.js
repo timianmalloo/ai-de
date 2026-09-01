@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T13:09:07Z",
+  "generated": "2026-09-01T13:39:09Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3487,7 +3487,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d2175ddd29520af7c9677a148f844f52bc20aa6a523cf9b8ab3e09bb6ac077a7"
+      "sourceSha256": "2d6ca4bbc0ac38867586896939535c47f756a6811e7f214cb2afdfa44d9af3ad"
     },
     {
       "id": "domain-experts",
@@ -4911,6 +4911,44 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "99a6c7f2d3ca7e12e5c0d8902df3508280fda1e3ce975c545d37922ff083a7dc"
+    },
+    {
+      "id": "inv-knowledge-chip-reads-zero-again",
+      "path": "docs/investigations/knowledge-chip-reads-zero-again.md",
+      "title": "The Knowledge category chip reads 0 again — the App ignores the IsKnowledge flag",
+      "type": "investigation",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "The Knowledge category chip reads 0 despite the workspace holding indexed knowledge (39 knowledge scopes, 4,471 headings in the boundary notes). Verified root cause: Core widened the graph node with an authoritative IsKnowledge flag to fix exactly this, but the App drops it at the CanvasNode boundary and still categorises nodes by spelling-matching the fine `kind` string — which cannot work across repositories. A secondary compounding cause is the 1,500-node degree cap, which can starve low-degree knowledge nodes out of the view the chip counts from. Recurrence of DC-042's named-but-uncontrolled residual risk (the canvas categoriser keyed on a producer's vocabulary).",
+      "tags": [
+        "graph",
+        "canvas",
+        "knowledge",
+        "category",
+        "kind",
+        "isknowledge",
+        "regression",
+        "taxonomy"
+      ],
+      "links": [
+        {
+          "to": "inv-0004-graph-kind-taxonomy-and-knowledge",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-knowledge-explorer-mode",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "507b4af9ddb9cce415fa21b5f517518b5cd46dafef2c284bb77372f32b7f35f6"
     },
     {
       "id": "inv-terminal-input-not-local-to-focus",
@@ -9683,5 +9721,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ff9e9255eb52d281a583173d776b5aff6eb2695edf0b5493e6daeb9ebe87c5b7"
+  "graphSha256": "fedd8a52496a6acd2a8e9d9516f370588576bb4d630e3a8730c2398d8675ac7b"
 };

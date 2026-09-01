@@ -1597,6 +1597,27 @@ for both or split.*
   project. MEASURED after wiring discovery: on this repo, 466 `owned_by`, 346 `refines`, 287
   `implements`, 272 `relates-to`, 66 `depends-on`; scopes across three repositories went 28→66,
   34→48, 34→56.
+- **Instance, 2026-09-01 — the recurrence the residual risk predicted (the canvas categoriser).**
+  The user opened the build and the **Knowledge** category chip read **0** while the status panel's own
+  boundary notes reported **39 knowledge scopes, 4,471 headings, 3 glossary documents**. Root cause:
+  Core had widened `GraphNode` with an authoritative `IsKnowledge` flag *specifically* to stop the chip
+  guessing at type spellings (`GraphProjection.cs:22-36`, itself citing a measured 2,343-knowledge-node
+  repo whose kinds were `spec`/`knowledge-epl-fan-platform`), but the App **drops the flag at the
+  `CanvasNode` boundary** (`CanvasGraphViewModel.cs:20/156`) and still categorises by spelling the fine
+  `kind` (`CanvasPage.cs:156-165, 661`) against a fixed list. This is DC-042's **named-but-uncontrolled
+  residual risk** — *"the canvas's node kinds are all keyed this way; only extraction routing is
+  asserted so far"* — recurring exactly where it was written down. **The control was too narrow:**
+  `RoutedKinds` asserts the *extractor* routing but nothing asserts the *canvas categoriser* consumes a
+  producer-declared signal, and the fix was cross-session — the producer's half (the flag) shipped, the
+  consumer's half (using it) never did, so both sides passed their own tests. A secondary compounding
+  cause: the 1,500-node degree cap starves low-degree knowledge out of the counted view. Full analysis:
+  `docs/investigations/knowledge-chip-reads-zero-again.md`. **Control to extend:** a canvas analogue of
+  `RoutedKinds` — a test that the categoriser is driven by producer signals (`IsKnowledge`/`IsExternal`/
+  the `has_type` families) and that every advertised chip category has a signal the App consumes; plus
+  sourcing the chip *count* from a workspace aggregate rather than the capped payload. **Not yet built**
+  — investigation only; the control must be observed failing on today's code (a payload node with
+  `IsKnowledge==true` and `kind=="spec"` categorises as `specs`/`code`, not `knowledge`) before it
+  counts.
 - **The sharpest part of it:** this happened on a repository whose stated premise is that *docs hold
   intent, code holds reality, and the expensive defects live in the gap*. Half of that sentence was
   never being read, and the product said so with a zero.
