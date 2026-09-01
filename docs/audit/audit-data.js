@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T23:37:00Z",
+  "generated": "2026-09-01T23:43:25Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7575,6 +7575,27 @@ window.AUDIT_DATA = {
         "docs/notes/note-20260901-the-default-graph-is-a-map-of-the-code.md"
       ],
       "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0375",
+      "shortname": "smoke91-phase-e-sequence-wiring",
+      "datetime": "2026-09-01T23:41:31Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "do phase e",
+      "summary": "Phase E: wired SequenceModel.Build to Core InteractionAsync ordered feed (ShowNodeInSequenceDiagramsAsync/BindSequenceDiagrams/ShowFor), added Sequence to a type's NodeViewMenu + OpenNodeView routing; +2 tests (303 App), app alive.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/SequenceDiagramSurface.cs"
+      ],
+      "tags": [
+        "ui",
+        "sequence-diagram"
+      ],
       "outcome": "success"
     }
   ],

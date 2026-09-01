@@ -90,6 +90,16 @@ public sealed class SequenceDiagramSurface : ContentControl, IHasDisplayName
     /// <summary>Messages drawn by the last render (test hook).</summary>
     public int MessageCount => _messageCount;
 
+    /// <summary>The node whose interactions are shown, or null when nothing has been loaded (Phase E).</summary>
+    public string? NodeId { get; private set; }
+
+    /// <summary>Shows a specific node's interactions and records which node, so a re-render does not re-fetch.</summary>
+    public void ShowFor(string nodeId, SequenceModel model)
+    {
+        NodeId = nodeId;
+        Show(model);
+    }
+
     /// <summary>Renders the interaction, or the empty state when it has no participants.</summary>
     public void Show(SequenceModel model)
     {

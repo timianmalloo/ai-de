@@ -14,12 +14,12 @@ public sealed class NodeViewMenuTests
         NodeViewMenu.OptionsFor(kind, isKnowledge).Select(o => o.Kind).ToArray();
 
     [Fact]
-    public void AType_OffersSourceAndClassDiagram_NotSequence()
+    public void AType_OffersSourceClassDiagramAndSequence()
     {
         var kinds = Kinds("class");
         Assert.Contains(NodeViewKind.Source, kinds);
         Assert.Contains(NodeViewKind.ClassDiagram, kinds);
-        Assert.DoesNotContain(NodeViewKind.Sequence, kinds);
+        Assert.Contains(NodeViewKind.Sequence, kinds);   // a type has interactions too (Phase E)
     }
 
     [Fact]
