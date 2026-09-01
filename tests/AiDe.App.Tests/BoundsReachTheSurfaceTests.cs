@@ -99,16 +99,26 @@ public sealed class BoundsReachTheSurfaceTests
             // ADDED BY CORE, 2026-09-01, following this file's own instruction — the field is new
             // and the guard caught it within minutes of it being added, which is the guard working
             // rather than a gap in it.
-            ["EvidenceRow.Evidence/unrendered"] =
-                "NEW FIELD, NOT YET RENDERED. The evidence pane lists search results, and a search " +
-                "now matches attribute VALUES as well as identity — so a row can come back because " +
-                "one of its members matched. EvidenceRow.Evidence carries that reason (e.g. " +
-                "'has_member = + addEventListener()') and the row's AccessibleName reads it, but no " +
-                "test walks the evidence pane's rendered tree, so whether a sighted user sees it is " +
-                "UNVERIFIED. Found by enumerating client records, not by anybody noticing the pane. " +
-                "Closes when a render assertion covers the evidence pane — the same shape as " +
-                "SearchSurface's, and the same defect it fixed: a correct hit that reads as a wrong " +
-                "one until the row says why. OWNER: the UI session, as a surface question.",
+            ["EvidenceRow.Evidence/verified-dropped"] =
+                "VERIFIED DROPPED — Core opened this as UNVERIFIED and asked for a render check; " +
+                "here it is, and the answer is worse than the record suggested. " +
+                "SurfaceContentFactory.EvidenceContent (:70-78) builds the pane's ListBox with " +
+                "DisplayMemberPath = nameof(EvidenceRow.DisplayLabel) and NO ItemTemplate, no " +
+                "ItemContainerStyle, and no per-item AccessibleName binding. A ListBox with a " +
+                "DisplayMemberPath renders exactly that one property, so the pane shows the label " +
+                "and drops Evidence, NodeKind AND Confidence — three of the record's five fields. " +
+                "AutomationProperties.SetName is applied to the LIST, not to its items, so " +
+                "EvidenceRow.AccessibleName — which Core wrote specifically to carry the reason — " +
+                "is a computed property nothing reads. A screen reader gets the DisplayMemberPath " +
+                "text, same as the eye. " +
+                "SO: adding the field to the record could not have fixed it, and a reviewer " +
+                "reading EvidenceRow would conclude it had. The binding is the defect, one layer " +
+                "out from where it was looked for — this file's whole subject. " +
+                "NO RENDER ASSERTION IS ADDED YET, deliberately: it would land RED, and a red " +
+                "gate gets switched off (and a [Skip] reports green while proving nothing, " +
+                "DC-012). It converts to an assertion the moment the binding lands. " +
+                "OWNER: Design — SurfaceContentFactory is theirs under §2. Raised in " +
+                "docs/ui/craft-findings-2026-09-01.md.",
 
             ["EvidenceRead.Shortfall/global-and-transient"] =
                 "CORRECTION. This entry previously said the shortfall is announced and therefore " +
