@@ -1,12 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-<<<<<<< HEAD
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T01:37:15Z",
-=======
-  "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-09-01T01:24:15Z",
->>>>>>> origin/main
+  "generated": "2026-09-01T01:38:54Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5638,7 +5633,6 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
-<<<<<<< HEAD
       "id": "al-0317",
       "shortname": "investigate-terminal-crash-and-pane-moves",
       "datetime": "2026-09-01T01:37:15Z",
@@ -5651,7 +5645,11 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/investigations/terminal-crash-and-pane-moves.md"
-=======
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0315",
       "shortname": "python-methods-and-diagnostics-destination",
       "datetime": "2026-09-01T01:17:18Z",
@@ -5664,7 +5662,6 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/PythonExtractor.cs"
->>>>>>> origin/main
       ],
       "tags": [],
       "outcome": "success"
