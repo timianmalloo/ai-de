@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T21:38:49Z",
+  "generated": "2026-09-01T21:53:30Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -4788,7 +4788,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9763197dc7936c02b8916635d9bc11b848a5f6289bcfae59b77d0348425cd54a"
+      "sourceSha256": "2f6fa9ac36d1a88536f766c5d59eaaa13c80b5efe0c6ea5745ad599715ddd5a1"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -5185,7 +5185,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "39d30c4cbe77bc9dfbcf89c4191b139a0c1f6a7af79fbdfe02f9b4a30209130b"
+      "sourceSha256": "1d3aa523dfa2217e613316d0d0f2dfc1e78dae6943a480a12f0624d27389cab7"
     },
     {
       "id": "ui-unbacked-affordances",
@@ -9858,5 +9858,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "1f6f8cc18fafad31610e43ce6d8ce9a317f3d12c7f719e51a39fe2103cc48c99"
+  "graphSha256": "a57417c6a64c75b37b0c6afa46ad42887dba20241be4937be6522b2dadce0e07"
 };

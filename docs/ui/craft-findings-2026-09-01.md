@@ -228,6 +228,40 @@ symptom.**
 or below the dock adapter*, in the layout→AvalonDock reconcile, not in creation, placement or
 activation. `WorkbenchAdapter.cs` is Core's under §2.
 
+### 5b. FIXED and verified — and the fix has a side effect that defeats its own intent
+
+Core fixed §5a at `b5ca354` (`ZoneBackedLayoutService.Move` read the drop's target node and ignored
+its `Kind` for everything except `Float`, so `SplitRight` against the Center resolved to "move into
+the Center"). Re-run against the fix, same probe:
+
+```
+newCodeViewer   -> [zone-right] active=0 -> codeviewer:Source      (a NEW zone; graph stays put)
+newClassDiagram -> [zone-right] active=1 -> classdiagram           (rule 2, tabs beside it)
+```
+
+Both correct. The split is honoured, the document region is created beside the graph rather than on
+top of it, and a second document joins the first. My §5a finding is closed.
+
+**But the same run shows a side effect nobody has looked at.** Immediately after `newCodeViewer`:
+
+```
+[zone-center] active=4 -> leaderboard:Leaderboard
+              canvas, view, sessions, board, leaderboard
+```
+
+**Opening a code viewer changed which tab is selected in a different zone** — the graph went from
+active to fourth-of-five, replaced by the Leaderboard. The entire stated purpose of rule 3 is
+*"split one BESIDE the graph so the graph stays visible"*, and the operation that achieves the split
+**deselects the graph on the way**. It is visible in the sense of "its zone is on screen" and not in
+the sense a user means.
+
+It is also inconsistent: the subsequent `newClassDiagram` leaves `zone-center` back at
+`active=0 -> canvas:Graph`. So the deselection is transient and depends on the operation, which
+makes it the kind of thing that reproduces for a user and not for whoever tries to confirm it.
+
+Not diagnosed further here — `ZoneBackedLayoutService` is Core's under §2. Measured, not inferred:
+the numbers above are the real service's, read from a probe driving the real shell.
+
 ### 5a. A second, independent finding: the placement policy's decision is discarded
 
 `Decide` returned **`splitBeside=zone-center`** — rule 3, whose stated intent in its own comment is

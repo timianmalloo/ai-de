@@ -2159,3 +2159,52 @@ review trigger, not just an append path. The surface gate now fails when a *new*
 owner — it cannot notice that an existing section has stopped describing the team. The cheapest
 honest version is a line in §2 itself saying when it was last reconciled against the tree and by
 whom, so a reader can see its age rather than inferring currency from correctness.
+
+### 8.12 The decision-note hole is narrower than it looked — the index exists
+
+Core recorded a named hole: nothing catches **proposing work a recorded decision already refused**.
+It nearly built docs→code edges that `note-20260830-the-graph-carries-only-observable-links` had
+permanently ruled out on 2026-08-30. The hole is real and Core's judgement not to build a keyword
+gate for it is right — matching *a proposal* against *a decision* is not a text problem.
+
+**But one half of the framing is wrong, and the correction makes it much cheaper.** Core described
+`docs/notes/` as *"decisions with no index anything consults"*. Checked:
+
+| | |
+|---|---|
+| decision notes in `docs/notes/` | **19** |
+| present in the derived `docs-index.js` | **19 — all of them** |
+| typed `decision-note`, carrying `status` | yes |
+| the specific note Core nearly violated | present, `status: accepted`, and its **title alone states the constraint**: *"The graph carries only observable links — docs and code are expected to be orthogonal"* |
+
+**The index is not missing. It is derived from frontmatter on every sweep and nothing queries it.**
+That is a different and far cheaper problem than "there is no index": no fifth hand-maintained list,
+no keyword matcher, no new artifact. The whole corpus is 19 titles, and reading them is seconds.
+
+**The practice change, which is not a gate:** grounding lists the accepted decision notes. A
+proposer who had seen that title would not have needed a matcher — the constraint is *in the title*.
+Proposed here rather than built, because it is a change to how a session grounds rather than a
+control anyone can enforce, and both sessions have agreed all day that a control nobody can enforce
+should be named rather than pretended.
+
+**What genuinely cannot be automated, and is the residue of Core's point.** The notes mix two
+things that `status` does not separate:
+
+- **constraints** — *"we decided never to do Y"* (the observable-links note)
+- **records** — *"we decided to do X, here is why"* (the styling and framing notes)
+
+Both are `accepted`. A gate would have to tell them apart, and nothing in the frontmatter says
+which a note is. **That** is the actual missing piece, and it is a one-field frontmatter question
+for whoever owns the note schema — not a matcher. Recorded, not proposed: the schema is
+pack-managed (`docs/ai-forward-pack/`).
+
+#### A fifth instance of the R4 shape, in this section's own tooling
+
+The script that produced the table above first reported **"0 decision notes"** — it read the index's
+`nodes` key when the entries live under `artifacts`. A scan that found nothing, reporting as *there
+are none*. It was caught only because zero contradicted a count taken minutes earlier, and the
+script now asserts non-empty before printing.
+
+Fifth appearance of the family inside our own tooling today, after Core's two controls' blind spots,
+this harness's namespace scope, and the `EvaluateAsync` sentinel. **Every one of them was a checking
+tool that could not distinguish "nothing there" from "I did not look properly."**
