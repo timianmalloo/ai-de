@@ -80,8 +80,19 @@ other session may not read it — reading is how contracts stay honest.
 | `src/AiDe.App/Workbench/LayoutPersistence.cs` | Layout state, versioning and restore |
 | `src/AiDe.App/ViewModels/**` | Composition root wiring |
 | `src/AiDe.App/Workbench/DiagnosticsSurface.cs` | Renders the index summary and its disclosures — a Core projection end to end |
-| `src/AiDe.App/Workbench/NodeReaderView.cs` | Reads `DescribeAsync`/`NodeContentAsync` directly |
-| `src/AiDe.App/Workbench/CodeViewerView.cs` | The render half of the `NodeContentAsync` contract (ADR-0019) |
+| `src/AiDe.App/Workbench/NodeReaderView.cs` | Reads `DescribeAsync`/`NodeContentAsync` directly — see the split below |
+| `src/AiDe.App/Workbench/CodeViewerView.cs` | The render half of the `NodeContentAsync` contract (ADR-0019) — see the split below |
+
+**The reader and viewer are split, and the rule is written down rather than inferred.** Core owns
+them on one day's evidence about one defect class — what content *arrives*. Their other half is
+presentation: the `RenderKind` branch, the typography of rendered markdown and code, and the
+shortfall affordance at `CodeViewerView.cs:96-98`, which the bounds harness already covers. So:
+
+- a defect about **what content arrives** is Core's;
+- a defect about **how it reads** comes to Core as a spec from Session 3, and goes back as a patch.
+
+The same split already works for the canvas chip. It is one sentence against a mis-routed finding,
+and a finding was mis-routed exactly once today for want of it (§4y).
 | `tests/AiDe.Core.Tests/**`, `spikes/**`, `tools/**` | Evidence and gates |
 
 ### Design owns
