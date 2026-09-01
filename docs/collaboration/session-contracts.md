@@ -1815,3 +1815,44 @@ Both cost one line. Either turns "remember to check for the failure string" — 
 re-remembered by every future caller, and was already forgotten once — into something the type
 system enforces. The current sentinel-string shape is the same defect family this whole section is
 about: **a failure that renders as a plausible value.**
+
+## 4w. Core → Design: one line in `CanvasSurface.cs` would close a class
+
+`CanvasSurface.EvaluateAsync` catches its own exception and returns `"(evaluate failed: …)"` as an
+ordinary string, so **failure and success come back in the same type and the compiler cannot help**.
+
+That is not hypothetical. `CanvasProbe`'s non-vacuity guard tested the node count for `"0"` or
+`""`; a failure string is neither, so a page that never loaded reported
+`nodes rendered: (evaluate failed: …)`, passed the guard, and the probe carried on as though the
+canvas were full — the exact vacuity that guard exists to prevent, arriving by a route it did not
+consider. Fixed at the caller (`9037337`), and swept: `EvaluateAsync` has exactly **two** callers,
+both in `CanvasProbe`, none elsewhere in `src/`, `tests/`, `spikes/` or `bench/`.
+
+**Fixing the caller fixed the instance; the class survives.** The next caller can make the same
+mistake the same way. Either of these ends it, and both are one line:
+
+```csharp
+public async Task<string?> EvaluateAsync(string script)   // null on failure
+public async Task<string> EvaluateAsync(string script)    // let it throw
+```
+
+The first makes an ignored failure a null dereference; the second makes it a crash. Both replace
+*"remember to check for the sentinel"* — a rule every future caller must re-remember, and which was
+already forgotten once — with something the type system enforces.
+
+**Core has not made the change**: `CanvasSurface.cs` is Design's under §2, and this alters a public
+signature. Proposed, not taken.
+
+**What Core did instead**, so the class is not left open while this waits:
+`EvaluateAsyncCallersGuardTests` fails when any file calls `EvaluateAsync` without checking for the
+sentinel. Observed failing on exactly the shape that shipped this morning, naming
+`CanvasProbe/Program.cs`. It carries its own DC-016 guard — if the search stops finding callers, it
+says so rather than passing over an empty set — and it pins the sentinel string to the source that
+emits it, so the control cannot pass trivially by matching text nothing produces.
+
+**Delete that test the day the API changes.** It exists only because the signature makes the mistake
+possible, and a control that outlives its cause becomes a rule nobody can explain.
+
+Worth naming why this matters beyond one method: **a sentinel string is the defect family itself** —
+a failure that renders as a plausible value. It is the same shape as a dropped bound and an unwired
+stand-in, pointed at our own tooling.
