@@ -13,9 +13,16 @@ namespace AiDe.Core.Extraction;
 ///
 /// <para><b>Structure, not semantics — the same bargain as Python.</b> There is no TypeScript
 /// compiler here: this recognises `import`/`export` STATEMENTS, and column-zero `class`,
-/// `interface`, `type`, `enum`, `function` and `namespace` whether or not they are exported. Types
+/// `interface`, `type`, `enum`, `function` and `namespace` whether or not they are exported, plus
+/// the members declared directly in a class's or an interface's body. Types
 /// are not checked, call graphs are not built, and a module specifier is resolved only when it names
 /// a file this scope contains. Every gap is a disclosure on the scope.</para>
+///
+/// <para><b>Members are named, not typed, and are an ATTRIBUTE.</b> A member renders as
+/// <c>+ add()</c> or <c>- values</c> — no parameter or return types, because this reader holds a
+/// line of text rather than a compiled symbol and <c>typescript-types-not-checked</c> is a standing
+/// disclosure. `has_member` is registered in <c>EvidencePredicates.Attributes</c>, so forty members
+/// on a type cost forty rows and nothing on the canvas.</para>
 ///
 /// <para><b>Precision before volume — MEASURED, and the reason this reader was rewritten.</b> On
 /// TheTerrace it produced 14 import edges and <b>not one of them described a dependency between two
@@ -41,10 +48,11 @@ namespace AiDe.Core.Extraction;
 /// earned.</para>
 ///
 /// <para><c>simplify: line-oriented recognition rather than a TypeScript grammar; ceiling is
-/// column-zero declarations and static import/export statements resolved only within the workspace,
+/// column-zero declarations, the members of a column-zero class or interface named without their
+/// types, and static import/export statements resolved only within the workspace,
 /// with npm and Node's runtime counted rather than drawn; upgrade trigger = a consumer needs type
-/// relationships, call edges, CommonJS `require`, tsconfig path aliases, or anything declared inside
-/// a function or a namespace block.</c></para>
+/// relationships, call edges, member signatures, CommonJS `require`, tsconfig path aliases, or
+/// anything declared inside a function or a namespace block.</c></para>
 /// </remarks>
 public sealed class TypeScriptExtractor : IExtractor
 {
@@ -92,7 +100,20 @@ public sealed class TypeScriptExtractor : IExtractor
         /// <summary>Bundled or generated JavaScript, skipped because nobody wrote it.</summary>
         public const string GeneratedSourceNotRead = "typescript-generated-source-not-read";
 
-        /// <summary>Anything inside a function, a class or a namespace block is invisible.</summary>
+        /// <summary>
+        /// A declaration inside a function, a method or a namespace block — something no importer
+        /// can reach by name.
+        /// </summary>
+        /// <remarks>
+        /// A class's or interface's MEMBERS are read now, as members. What remains is what a module
+        /// cannot reach: MEASURED across 8 hand-written files in two repositories, <b>54</b> such
+        /// declarations, 27 in each repository and every one of them in the same shared file — a UMD
+        /// module whose entire body sits inside a factory function. Counted rather than stated
+        /// flatly, because "nested declarations are not analysed" and "27 functions in this one file
+        /// are not analysed" are different claims about how much is missing (DC-050), and because it
+        /// used to fire on all 13 of TheTerrace's TypeScript scopes when only 2 of them hide
+        /// anything (DC-025).
+        /// </remarks>
         public const string NestedDeclarationsNotAnalysed = "typescript-nested-declarations-not-analysed";
     }
 
@@ -131,6 +152,69 @@ public sealed class TypeScriptExtractor : IExtractor
     /// </remarks>
     private static readonly HashSet<string> ValueBindings =
         new(StringComparer.Ordinal) { "const", "let", "var" };
+
+    /// <summary>
+    /// A column-zero <c>class</c> or <c>interface</c> — the only two things that own members.
+    /// </summary>
+    /// <remarks>
+    /// Deliberately NOT <see cref="Declaration"/>. That pattern also matches <c>namespace</c>,
+    /// <c>enum</c>, <c>type</c> and <c>function</c>, and the contents of those are not members of
+    /// anything — a function's body holds locals and a namespace's body holds declarations an
+    /// importer reaches by a different name. Both are counted as nested instead.
+    /// </remarks>
+    private static readonly Regex TypeDeclaration = new(
+        @"^(?:export[ \t]+)?(?:default[ \t]+)?(?:declare[ \t]+)?(?:abstract[ \t]+)?" +
+        @"(?:class|interface)[ \t]+([A-Za-z_$][A-Za-z0-9_$]*)",
+        RegexOptions.Compiled);
+
+    /// <summary>
+    /// A declaration this reader would have emitted had it been at column zero.
+    /// </summary>
+    /// <remarks>
+    /// <para>The same keywords as <see cref="Declaration"/> <b>minus</b> <c>const</c>, <c>let</c> and
+    /// <c>var</c>. An indented value binding is a local variable, and counting every local as an
+    /// unread declaration would produce a number that describes nothing — the shape of DC-050, where
+    /// a count is arithmetically right and sends the reader after a gap that is not there.</para>
+    ///
+    /// <para>MEASURED across both corpora: <b>54</b> matches, 27 in each repository, and every one of
+    /// them in the same file — <c>docs/ai-forward-pack/scripts/docs-explorer-core.js</c>, a 660-line
+    /// UMD module whose entire body sits inside a factory function. That file currently contributes
+    /// one <c>typescript-module</c> fact and nothing else, and it is the largest hand-written
+    /// JavaScript file in either repository.</para>
+    /// </remarks>
+    private static readonly Regex NestedDeclaration = new(
+        @"^(?:export[ \t]+)?(?:default[ \t]+)?(?:declare[ \t]+)?(?:abstract[ \t]+)?(?:async[ \t]+)?" +
+        @"(?:class|interface|type|enum|function|namespace|module)[ \t]*\*?[ \t]+[A-Za-z_$][A-Za-z0-9_$]*",
+        RegexOptions.Compiled);
+
+    /// <summary>
+    /// A member line inside a class or interface body: its modifiers, its name, and what follows.
+    /// </summary>
+    /// <remarks>
+    /// <para>The trailing character is the whole discrimination. <c>(</c> or <c>&lt;</c> means an
+    /// operation, anything else an attribute; requiring one at all is what stops a line of prose, a
+    /// closing bracket or a fragment of a multi-line expression from becoming a member. Every part of
+    /// this pattern is a thing the line SAYS — no type is inferred, because this reader does not type
+    /// check and <c>typescript-types-not-checked</c> is a standing disclosure, not a formality.</para>
+    ///
+    /// <para><c>#name</c> is JavaScript's private field, which is why the name may begin with one;
+    /// the modifier keywords are TypeScript's, which is why they are optional. <c>get</c> and
+    /// <c>set</c> are matched separately from the name because they are also legal member NAMES —
+    /// <c>get(key)</c> is a method on a cache, not an accessor — so the accessor form requires the
+    /// whitespace that a call cannot have.</para>
+    /// </remarks>
+    private static readonly Regex MemberLine = new(
+        @"^(?:(?:public|private|protected|readonly|static|abstract|async|override|declare)[ \t]+)*" +
+        @"(?<accessor>(?:get|set)[ \t]+)?[ \t]*\*?[ \t]*" +
+        @"(?<name>\#?[A-Za-z_$][A-Za-z0-9_$]*)[ \t]*[?!]?[ \t]*(?<tail>[(<:=;]|$)",
+        RegexOptions.Compiled);
+
+    /// <summary>Modifiers that change a member's UML visibility glyph.</summary>
+    private static readonly Regex PrivateModifier =
+        new(@"^(?:[A-Za-z]+[ \t]+)*?private\b", RegexOptions.Compiled);
+
+    private static readonly Regex ProtectedModifier =
+        new(@"^(?:[A-Za-z]+[ \t]+)*?protected\b", RegexOptions.Compiled);
 
     /// <summary>
     /// A line that exports something this reader did not recognise.
@@ -274,15 +358,21 @@ public sealed class TypeScriptExtractor : IExtractor
         var nodeBuiltins = 0;
         var packages = 0;
         var unrecognisedExports = 0;
+        var nestedDeclarations = 0;
 
         // NonExportedNotAnalysed is NOT here any more: non-exported top-level declarations are read,
         // and disclosing a gap that has been closed is the same defect as hiding one that has not.
         // What replaces it is narrower and true — the ceiling is now column zero, not the export
         // keyword.
+        //
+        // NestedDeclarationsNotAnalysed is NOT here any more either. It is conditional and counted
+        // below: it used to fire on all 13 TypeScript scopes of TheTerrace whether or not anything
+        // was nested, and MEASURED, only 2 of those 13 have a nested declaration in them. A
+        // disclosure that fires when nothing was hidden trains a reader to skip disclosures (DC-025),
+        // and one with no number says nothing about whether the gap is worth closing (DC-050).
         foreach (var disclosure in new[]
         {
             Disclosures.TypesNotChecked,
-            Disclosures.NestedDeclarationsNotAnalysed,
             Disclosures.DynamicImportsNotAnalysed,
         })
         {
@@ -331,6 +421,34 @@ public sealed class TypeScriptExtractor : IExtractor
                 // narrow reader could give — which of these is the module's public surface.
                 assertions.Add(Fact(request, $"{module}.{name}", "is_exported",
                     exported ? "true" : "false"));
+            }
+
+            // A CLASS'S OR INTERFACE'S MEMBERS.
+            //
+            // The column-zero rule was right about what it refused and wrong that the only two
+            // outcomes were "top-level declaration" or "invisible": a method is a member OF its
+            // type, exactly as `has_member` already records for C# and Python, and a type with no
+            // members renders as an empty box in the class diagram — which `typescript-class` and
+            // `typescript-interface` already reach, both being in ClassHierarchyModel.TypeKinds.
+            //
+            // An ATTRIBUTE, not a relation, and the reason is arithmetic rather than taste: a member
+            // is a property OF a type, and emitting one as an edge would put every method and field
+            // in the node table as something to navigate to. `has_member` is registered in
+            // EvidencePredicates.Attributes, so none of this draws.
+            //
+            // MEASURED across both corpora before it was built: 11 members on 2 classes, 0
+            // interfaces, and 0 hand-written `.ts` or `.tsx` files anywhere. That is thin, thinner
+            // than Python's 33-on-22, and it is reported rather than dressed up. It is built anyway
+            // for one reason that does hold: the nested-declaration COUNT below cannot be right
+            // without this scan. A method sitting at a class's body indent is reachable through its
+            // type and is not a hidden declaration; counting it as one would have reported 38 nested
+            // declarations on TheTerrace where the true figure is 27.
+            var members = Members(text, out var nested);
+            nestedDeclarations += nested;
+
+            foreach (var (owner, member) in members)
+            {
+                assertions.Add(Fact(request, $"{module}.{owner}", "has_member", member));
             }
 
             var specifiers = FromSpecifier.Matches(text).Select(m => m.Groups[2].Value)
@@ -399,6 +517,19 @@ public sealed class TypeScriptExtractor : IExtractor
                 "which this product does not index)"));
         }
 
+        if (nestedDeclarations > 0)
+        {
+            // Conditional, and counted. MEASURED: 54 across both repositories, every one of them in
+            // `docs/ai-forward-pack/scripts/docs-explorer-core.js` — a 660-line UMD module whose
+            // whole body sits inside a factory function, and which currently contributes one
+            // `typescript-module` fact and nothing else. That is a specific, sized, actionable
+            // statement; "nested declarations are not analysed", fired on all 13 scopes, was not.
+            assertions.Add(Fact(request, request.ScopeId, "discloses",
+                $"{Disclosures.NestedDeclarationsNotAnalysed} ({nestedDeclarations:N0} declaration(s) " +
+                "are nested inside a function, a method or a namespace block and cannot be reached " +
+                "by an importer)"));
+        }
+
         if (generated > 0)
         {
             assertions.Add(Fact(request, request.ScopeId, "discloses",
@@ -463,6 +594,157 @@ public sealed class TypeScriptExtractor : IExtractor
         // A directory specifier means its index file.
         var index = candidate.Length == 0 ? "index" : candidate + "/index";
         return modules.Contains(index) ? index : null;
+    }
+
+    /// <summary>
+    /// Each column-zero class or interface and the members declared directly in its body.
+    /// </summary>
+    /// <param name="nested">
+    /// Declarations this reader would have emitted at column zero and cannot reach where they are —
+    /// inside a function, a method, or a namespace block. Counted so the scope can disclose the SIZE
+    /// of what it still cannot see rather than only its existence.
+    /// </param>
+    /// <remarks>
+    /// <para><b>Indentation, not braces — and that choice was measured, not preferred.</b> The
+    /// obvious reading of a C-family language is to track brace depth. It does not survive this
+    /// corpus: of the 8 hand-written files across both repositories, <b>1 leaves brace depth at
+    /// −4</b> — <c>scripts/check-mockup-imagery.js</c>, which contains four regex literals of the
+    /// form <c>/function esc\([\s\S]*?\n}/</c>, each carrying a <c>}</c> and no <c>{</c>.
+    /// <see cref="SourceText.WithoutCComments"/> has no regex-literal state and cannot, so a
+    /// depth-counting reader is lost from line 12 of that file onward and every member it attributes
+    /// after that point is invented. An indentation reader never counts a brace and is not exposed to
+    /// it at all. Both approaches were run over both corpora and agreed on the member count
+    /// (<b>11</b>); only one of them agreed for a reason that holds.</para>
+    ///
+    /// <para><b>The same shape as PythonExtractor.Methods, deliberately.</b> One indent level below
+    /// the declaration is a member; deeper is a closure or a local type, which is not a member of
+    /// anything an importer can reach. The body's indent is taken from the class's FIRST indented
+    /// line rather than assumed, because a file indented with tabs is still JavaScript.</para>
+    ///
+    /// <para><b>Template literals are skipped.</b> A backtick string may hold lines shaped exactly
+    /// like members — <c>name: value</c> inside an indented HTML fragment is a member line by every
+    /// syntactic test — and <see cref="SourceText.WithoutCComments"/> does not know backticks. The
+    /// toggle is per line and unbalanced ticks cost members rather than invent them, which is the
+    /// direction this reader was rewritten to fail in.</para>
+    ///
+    /// <para><c>simplify: indentation tracking rather than a TypeScript grammar; ceiling is members
+    /// of a column-zero class or interface, named without their types; upgrade trigger = a consumer
+    /// needs parameter or return types, decorators, computed or string-literal member names, or
+    /// anything declared inside a function or a namespace block.</c></para>
+    /// </remarks>
+    internal static IReadOnlyList<(string Owner, string Member)> Members(string text, out int nested)
+    {
+        var found = new List<(string, string)>();
+        var deeper = 0;
+
+        string? owner = null;
+        var bodyIndent = -1;
+        var inTemplate = false;
+
+        foreach (var raw in text.Split('\n'))
+        {
+            var line = raw.TrimEnd('\r');
+
+            // The line that CLOSES a template is still template text; the line that opens one has
+            // real code before the backtick, so it is read.
+            var wasInTemplate = inTemplate;
+            if (UnescapedBackticks(line) % 2 == 1) inTemplate = !inTemplate;
+            if (wasInTemplate) continue;
+
+            var trimmed = line.TrimStart();
+            if (trimmed.Length == 0) continue;
+
+            var indent = line.Length - trimmed.Length;
+
+            if (indent == 0)
+            {
+                // Any column-zero statement ends whatever type was open, including another type.
+                owner = null;
+                bodyIndent = -1;
+
+                var top = TypeDeclaration.Match(line);
+                if (top.Success) owner = top.Groups[1].Value;
+
+                continue;
+            }
+
+            if (owner is null)
+            {
+                // Indented, and nothing owns it: a declaration inside a function, an IIFE or a
+                // namespace block. This is where all 54 measured nested declarations live.
+                if (NestedDeclaration.IsMatch(trimmed)) deeper++;
+                continue;
+            }
+
+            // The first indented line of the body fixes what "its own body" means.
+            if (bodyIndent < 0) bodyIndent = indent;
+
+            if (indent > bodyIndent || NestedDeclaration.IsMatch(trimmed))
+            {
+                if (NestedDeclaration.IsMatch(trimmed)) deeper++;
+                continue;
+            }
+
+            // A closing brace, a bracket or the tail of a multi-line expression is not a member. The
+            // pattern would reject them anyway; skipping first keeps the intent legible.
+            if (!char.IsLetter(trimmed[0]) && trimmed[0] is not ('_' or '$' or '#')) continue;
+
+            var member = MemberLine.Match(trimmed);
+            if (member.Success) found.Add((owner, Uml(trimmed, member)));
+        }
+
+        nested = deeper;
+        return found;
+    }
+
+    /// <summary>
+    /// A member rendered for a UML compartment: <c>+ add()</c>, <c>- values</c>.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Named, never typed — and that is the honest ceiling rather than an omission.</b> The
+    /// C# reader writes <c>+ Name : string</c> because it holds a compiled symbol and can be asked.
+    /// This one holds a line of text. A JavaScript member has no type to transcribe at all, and a
+    /// TypeScript annotation is only sometimes on the same line as the name — so a reader that
+    /// printed one would be right about the easy cases and inventing on the rest, which is the defect
+    /// this file was rewritten for. UML makes the type optional; a wrong type is not optional.</para>
+    ///
+    /// <para><b>And it could not have been verified.</b> Neither measured repository contains a
+    /// single hand-written <c>.ts</c> or <c>.tsx</c> file — every one found was a vendored
+    /// <c>.d.ts</c> under build output. Type transcription would therefore be a code path with no
+    /// input in the environment that verifies it (DC-016), shipped on the strength of a fixture
+    /// somebody wrote from memory.</para>
+    ///
+    /// <para>An accessor renders as the attribute it presents, not as the method it is: a
+    /// <c>get</c>/<c>set</c> pair is one thing to a reader of the diagram, and the deduplication the
+    /// extractor already performs collapses the two identical facts into one.</para>
+    /// </remarks>
+    private static string Uml(string trimmed, Match member)
+    {
+        var name = member.Groups["name"].Value;
+
+        var visibility =
+            name.StartsWith('#') || PrivateModifier.IsMatch(trimmed) ? "-"
+            : ProtectedModifier.IsMatch(trimmed) ? "#"
+            : "+";
+
+        var operation = member.Groups["tail"].Value is "(" or "<"
+            && !member.Groups["accessor"].Success;
+
+        return operation ? $"{visibility} {name}()" : $"{visibility} {name}";
+    }
+
+    /// <summary>Backticks on a line that are not escaped, so a template literal can be tracked.</summary>
+    private static int UnescapedBackticks(string line)
+    {
+        var count = 0;
+
+        for (var i = 0; i < line.Length; i++)
+        {
+            if (line[i] == '\\') { i++; continue; }
+            if (line[i] == '`') count++;
+        }
+
+        return count;
     }
 
     /// <summary>A module's path-like name, relative to the scope and without its extension.</summary>
