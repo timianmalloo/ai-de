@@ -2139,3 +2139,37 @@ for both or split.*
   only substantive difference being the project name.
 - **Status:** `controlled`
 
+
+### DC-072 — Ambient input handler competes with a focused capture surface
+- **Signature:** a window-level key handler — a tunnelling `PreviewKeyDown`, an ancestor
+  `InputBinding`/`KeyBinding`, or a modal key-capture — acts on keys a **focused capture surface**
+  (a terminal, a canvas/WebView, a code editor, a game view) needs, with **no rule that yields to the
+  focused capture surface**. For a terminal specifically, a second shape of the same class: the input
+  translator's output does not depend on a **mode the peer negotiated on the output channel** (DECCKM
+  application-cursor-keys, `\e[?1h`), so the surface emits the wrong sequence for the state the peer is
+  in. Recognisable as: "keys work in some states and not others" in a surface that should own raw input.
+- **Why it survives:** each ambient handler is individually correct and was added for a real chrome
+  feature (pane resize, surface-switch), and each passes its own test; **nothing tests the interaction**
+  between an ambient handler and a *focused* capture surface. The mode gap survives because the parser
+  that drops the mode is on the *output* path while the translator that ignores it is on the *input*
+  path — two files, no test spanning them — and it is invisible until a child process that uses the
+  mode is run. The terminal's private-mode shortcut was reasoned in a code comment but **not marked**
+  `simplify:` with a ceiling, so nothing flagged when its ceiling was reached.
+- **Instances:** 2026-09-01 — terminal keystrokes "get weird" in states: (H1) the workbench resize
+  handler (`WorkbenchController.cs:699` host `PreviewKeyDown` → `HandleResizeKey`) tunnels arrows away
+  from a focused terminal while a resize is active; (H2 root) `VtParser.Dispatch` (`VtParser.cs:274`)
+  ignores all DEC private modes so DECCKM is never tracked and `TerminalInput.ForKey` is structurally
+  mode-blind (no mode parameter), always sending the CSI form; (H3, inferred) terminal focus can rest
+  on a container after a render so keys route elsewhere. Full analysis:
+  `docs/investigations/terminal-input-not-local-to-focus.md`.
+- **Control:** a single **"focused capture surface owns input"** rule — a marker interface
+  `ICapturesInput` implemented by `TerminalView` (and other raw-input surfaces); every ambient host key
+  handler consults one shared helper `focused-element-is-ICapturesInput` and yields; a
+  **class-prevention test** asserts that, for each registered ambient key handler, a focused
+  `ICapturesInput` surface receives the key. Paired, for terminals, with a **mode-aware input contract**
+  (track DECCKM on `TerminalScreen`; thread `applicationCursorKeys` into `ForKey`; SS3 form when set) and
+  a parser test that `\e[?1h`/`\e[?1l` set/clear the flag. **Not yet built** — this is an investigation;
+  the control must be *observed failing on today's code* (a focused-terminal-plus-active-resize test
+  fails now) before it counts. Phased repair plan in the investigation, Phase 0 = input-path
+  instrumentation.
+- **Status:** `uncontrolled` (investigation complete; repair plan awaiting human approval)

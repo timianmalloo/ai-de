@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T12:58:46Z",
+  "generated": "2026-09-01T13:09:40Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6994,6 +6994,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0348",
+      "shortname": "investigate-terminal-input-not-local-to-focus",
+      "datetime": "2026-09-01T13:09:40Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "/investigate key strokes in the terminal windows... states where keystrokes get weird, cant use func+end, arrows to move cursor dont work all the time; ensure keyboard/mouse actions and shortcuts are local to the terminal",
+      "summary": "Verified root cause: no input-ownership rule for a focused terminal + mode-blind input path. Three contributing causes: (H1 verified) host resize PreviewKeyDown tunnels arrows away from a focused terminal during resize; (H2 root verified) VtParser ignores all DEC private modes so DECCKM is untracked and ForKey has no mode param -> always CSI form; (H3 inferred) focus lands on container after render. Class DC-072 registered; 6-phase repair plan (Phase 0 = input-path instrumentation). Stopped for human review.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/terminal-input-not-local-to-focus.md"
       ],
       "tags": [],
       "outcome": "success"

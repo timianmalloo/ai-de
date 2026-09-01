@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T04:50:22Z",
+  "generated": "2026-09-01T13:09:07Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3487,7 +3487,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "45fbbf2f7c06c66c2027fdc71d4e7a0a561b6814f2b036923e6c7348e00dbd2f"
+      "sourceSha256": "d2175ddd29520af7c9677a148f844f52bc20aa6a523cf9b8ab3e09bb6ac077a7"
     },
     {
       "id": "domain-experts",
@@ -4911,6 +4911,43 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "99a6c7f2d3ca7e12e5c0d8902df3508280fda1e3ce975c545d37922ff083a7dc"
+    },
+    {
+      "id": "inv-terminal-input-not-local-to-focus",
+      "path": "docs/investigations/terminal-input-not-local-to-focus.md",
+      "title": "Terminal keystrokes are not owned by the focused terminal",
+      "type": "investigation",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "Terminal keystrokes get \"weird\" in specific states — arrows/End stop moving the cursor and shortcuts leak — because keyboard input is not owned by the focused terminal. Three verified contributing causes: an ambient host resize handler that tunnels arrows away from a focused terminal, the VT parser ignoring all DEC private modes (so DECCKM/application-cursor mode is never honored and the input path is mode-blind), and terminal focus that can land on a container after a render. The systemic fix is a focus-scoped, mode-aware terminal input-ownership model.",
+      "tags": [
+        "terminal",
+        "input",
+        "keyboard",
+        "focus",
+        "decckm",
+        "vt",
+        "routing"
+      ],
+      "links": [
+        {
+          "to": "spec-terminal-sessions",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0005-terminal-runtime-boundary",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-phase-2-real-code-and-terminal",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ff71dbe76956b39245cdb544b102aa05b5dda15741ff768a2fe8e9065fedfebd"
     },
     {
       "id": "investigation-redraw-isolation",
@@ -9646,5 +9683,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a28e6640792c3f779ecaa3e09422169c78ecc7b79eb76aef14079016e83d04dd"
+  "graphSha256": "ff9e9255eb52d281a583173d776b5aff6eb2695edf0b5493e6daeb9ebe87c5b7"
 };
