@@ -261,9 +261,14 @@ public sealed class LackingWorkspaceTests : IDisposable
             && a.Object.StartsWith(
                 PythonExtractor.Disclosures.StandardLibraryNotIndexed, StringComparison.Ordinal));
 
-        // The METHOD is not claimed. Only column-zero declarations are seen, and asserting `handle`
-        // as a module-level function would put a symbol in the graph no importer can reach.
-        Assert.DoesNotContain(facts, a => a.Subject.EndsWith(".handle", StringComparison.Ordinal));
+        // The method is not claimed as a FUNCTION — asserting `handle` as a module-level function
+        // would put a symbol in the graph no importer can reach — and it IS claimed as a member of
+        // the class that declares it, which is what a class diagram needs and what the column-zero
+        // rule used to throw away along with the error it was avoiding.
+        Assert.DoesNotContain(facts, a => a.Predicate == "has_type"
+            && a.Subject.EndsWith(".handle", StringComparison.Ordinal));
+
+        Assert.Contains(facts, a => a.Predicate == "has_member" && a.Object == "handle");
 
         // An import target is INFERRED: the module path as written, not a resolved symbol. Calling
         // that Verified is exactly the defect DC-022 is about.
@@ -276,7 +281,13 @@ public sealed class LackingWorkspaceTests : IDisposable
         // scope does not contain" are different statements about how much of the graph is a guess.
         Assert.Contains(disclosed, d =>
             d.StartsWith(PythonExtractor.Disclosures.ImportsNotResolved, StringComparison.Ordinal));
-        Assert.Contains(PythonExtractor.Disclosures.NestedDeclarationsNotAnalysed, disclosed);
+        // The nested-declaration disclosure is CONDITIONAL now: this fixture's method is read as a
+        // member, and nothing else is nested, so a disclosure here would be describing a gap that is
+        // no longer there. A disclosure that fires when nothing was hidden trains a reader to skip
+        // disclosures (DC-025), and `PythonMethodTests` asserts it still fires — with a count — when
+        // something genuinely is nested inside a method.
+        Assert.DoesNotContain(disclosed, d =>
+            d.StartsWith(PythonExtractor.Disclosures.NestedDeclarationsNotAnalysed, StringComparison.Ordinal));
         Assert.Contains(PythonExtractor.Disclosures.DynamicImportsNotAnalysed, disclosed);
     }
 
