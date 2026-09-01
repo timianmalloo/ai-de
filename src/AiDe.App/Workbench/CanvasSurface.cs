@@ -29,6 +29,48 @@ public sealed record NodeContextMenuRequest(string NodeId, string? NodeKind, boo
 /// first and posts <c>focus.leave</c>. A page that forgets them is a keyboard trap — which is why
 /// this is a contract on the page rather than a nicety, and why <c>P2-FOCUS-03</c> exists.</para>
 /// </remarks>
+/// <summary>What a refresh actually did, so a caller can say something true about it.</summary>
+/// <remarks>
+/// <para><b>Why this is a return value and not a void.</b> The shell used to announce
+/// <i>"Graph centred on X"</i> and then start the refresh fire-and-forget. Two independent things
+/// could make that sentence false: the refresh opens with <c>if (!Ready) return;</c> and silently
+/// does nothing while the WebView2 is still initialising, and a discarded task's fault is observed
+/// by nobody. Measured by the design session on a real surface outside a window: <c>Ready</c> false,
+/// the task completed, the graph source was asked <b>0</b> times — and the user had already been
+/// told the graph centred on a node it never looked up.</para>
+///
+/// <para>A statement made BEFORE an action, about an action that may not happen, cannot be repaired
+/// by wording. The refresh has to report, and the caller has to speak from the report.</para>
+/// </remarks>
+public enum CanvasRefreshOutcome
+{
+    /// <summary>The page was not ready; the requested root is held and will be applied on load.</summary>
+    Deferred,
+
+    /// <summary>No workspace is open, so there was no graph to centre.</summary>
+    NoWorkspace,
+
+    /// <summary>A plain redraw with no requested root.</summary>
+    Refreshed,
+
+    /// <summary>The requested node is in the drawn graph and is now the root.</summary>
+    Centred,
+
+    /// <summary>
+    /// The refresh ran, but the requested node is not among the drawn nodes.
+    /// </summary>
+    /// <remarks>
+    /// Not an error and not rare: the graph draws a bounded most-connected-first slice, and
+    /// knowledge nodes have a measured median relation degree of 0, so a search hit the user picked
+    /// may legitimately not be in view. Saying so is better than claiming a centring that did not
+    /// happen.
+    /// </remarks>
+    NotInView,
+}
+
+/// <summary>The outcome of a refresh, with the label to use when speaking about it.</summary>
+public readonly record struct CanvasRefresh(CanvasRefreshOutcome Outcome, string? Label);
+
 public sealed class CanvasSurface : ContentControl, IDisposable
 {
     private readonly WebView2 _view;
@@ -49,12 +91,22 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         _view.NavigationCompleted += async (_, _) =>
         {
             Ready = true;
-            await RefreshAsync();
+
+            // A centring asked for while the page was loading is APPLIED here rather than dropped.
+            // Without this the honest announcement would be "nothing happened", which is true and
+            // useless; the request arrived, so the fix is to honour it, not to report its loss.
+            var pending = _pendingRoot;
+            _pendingRoot = null;
+
+            await RefreshAsync(pending);
         };
         _view.WebMessageReceived += OnWebMessage;
 
         Loaded += async (_, _) => await InitialiseAsync();
     }
+
+    /// <summary>A root requested before the page was ready, applied when it becomes ready.</summary>
+    private string? _pendingRoot;
 
     public string SurfaceId { get; }
 
@@ -91,9 +143,18 @@ public sealed class CanvasSurface : ContentControl, IDisposable
     internal const string GroupRootPrefix = "\u0001group:";
     internal static string GroupRoot(string groupId) => GroupRootPrefix + groupId;
 
-    public async Task RefreshAsync(string? rootId = null, CancellationToken cancellationToken = default)
+    public async Task<CanvasRefresh> RefreshAsync(
+        string? rootId = null, CancellationToken cancellationToken = default)
     {
-        if (!Ready) return;
+        if (!Ready)
+        {
+            // Hold the root, and say the request is deferred rather than letting the caller assume
+            // it ran. A null root is a plain redraw and needs no holding — NavigationCompleted does
+            // one anyway, which is what MainWindow's Explorer re-entry relies on.
+            if (rootId is not null) _pendingRoot = rootId;
+
+            return new CanvasRefresh(CanvasRefreshOutcome.Deferred, rootId);
+        }
 
         var graph = GraphSource is null
             // No workspace, so no nodes and nothing for a count to be a fraction of.
@@ -110,15 +171,28 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         // Reader-follows (design D3): a specific node was requested, so name the now-selected node.
         // The graph is rooted on it, so its own record and the neighbourhood edges are already here —
         // no second query, and the reader cannot disagree with the graph about the selection.
-        if (rootId is not null)
+        if (rootId is null)
         {
-            var node = graph.Nodes.FirstOrDefault(n => string.Equals(n.Id, rootId, StringComparison.Ordinal))
-                ?? graph.Nodes.FirstOrDefault(n => n.IsRoot);
-            if (node is not null)
-            {
-                NodeSelected?.Invoke(this, new CanvasNodeSelection(node, graph.Edges));
-            }
+            return new CanvasRefresh(
+                GraphSource is null ? CanvasRefreshOutcome.NoWorkspace : CanvasRefreshOutcome.Refreshed,
+                null);
         }
+
+        var node = graph.Nodes.FirstOrDefault(n => string.Equals(n.Id, rootId, StringComparison.Ordinal))
+            ?? graph.Nodes.FirstOrDefault(n => n.IsRoot);
+
+        if (node is null)
+        {
+            // The drawn graph is the authority on what the user can see. It already knows the answer
+            // — no second query, and the announcement cannot disagree with the picture.
+            return new CanvasRefresh(
+                GraphSource is null ? CanvasRefreshOutcome.NoWorkspace : CanvasRefreshOutcome.NotInView,
+                rootId);
+        }
+
+        NodeSelected?.Invoke(this, new CanvasNodeSelection(node, graph.Edges));
+
+        return new CanvasRefresh(CanvasRefreshOutcome.Centred, node.Label);
     }
 
     /// <summary>

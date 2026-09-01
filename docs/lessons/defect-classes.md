@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 44 · partially-controlled 31 · uncontrolled 1
+**Status counts:** controlled 45 · partially-controlled 31 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2401,3 +2401,62 @@ for both or split.*
   domain of the input I just fixed, and did I observe all of it?* Where the domain is closed and
   small, enumerate it from the source of truth; where it is not, say which region was tested.
 - **Status:** `controlled` for the layout enums, `open` as a general shape
+
+### DC-077 — Success is announced before the work, about work that may not happen
+
+- **Shape:** a handler announces an outcome and then starts the work fire-and-forget. The sentence is
+  written before there is anything to describe, so it is not a report — it is a prediction, phrased
+  as a report. Two independent things then make it false: the operation can return early without
+  doing anything (a readiness gate, an empty precondition), and the discarded task's fault is
+  observed by nobody. Neither shows up as an error, because from the announcer's side nothing went
+  wrong; it never asked.
+- **Signature:** `Announce(...)` on the line above `_ = SomethingAsync(...)`. The discard is the tell,
+  and so is the tense — a message in the past tense sitting above the call that would make it true.
+  The second tell is a method whose first statement is `if (!Ready) return;` and whose return type is
+  `Task` rather than a result: it has no way to say it did nothing, so every caller is structurally
+  forced to guess.
+- **Why it survives:** this is **not** the dropped-in-transit family, and treating it as one is why
+  it lasted. Those defects concern a value that EXISTED and failed to reach the user — a dropped
+  binding, an unasked payload, a field narrowed at a boundary — and every one of them is found by
+  following the value. Here there is no value to follow. The statement is about an ACTION, made
+  before the action, about an action that may not occur; it was never true when it was said. Reading
+  the code confirms the announcement is present, well-worded, and on a reasonable path. Only running
+  it reveals that the thing it describes did not happen.
+- **Instance:** 2026-09-01 — three sites in `WorkbenchShell.cs` (`:913`, `:1044`, `:1447`) announced
+  *"Graph centred on {id}"* and then discarded `canvas.RefreshAsync(id)`. Measured by the design
+  session on a real `CanvasSurface` outside a window: `Ready` **false**, the task completed, the
+  graph source asked **0** times. A screen-reader user was told the graph centred on a node it never
+  looked up — and not in an exotic state, but in the ordinary first moments after a canvas opens.
+
+  **It compounded with a bound nobody had connected to it.** The graph draws 1,500 of 2,992
+  most-connected-first, and knowledge nodes have a measured median relation degree of 0, so even when
+  the refresh *does* run, a search hit the user picked may not be in the drawn slice — and the same
+  sentence was announced regardless. Two defects in one line, arrived at from opposite directions.
+
+  **A fourth site existed that the report did not name:** `ExplorerSurface.cs:69`
+  (`reader.OnWalk(targetId => _ = graph.RefreshAsync(targetId))`) carries the silent-no-op half
+  without the announcement half — a reader edge walk simply lost while the page loads. Found by
+  sweeping every caller of the method rather than the three that were reported, which is DC-076's
+  rule applied on its first opportunity.
+- **Control:** two changes, because reporting the loss honestly would have been a true sentence about
+  a broken feature. **(1)** `RefreshAsync` returns `CanvasRefresh(Outcome, Label)` — `Deferred`,
+  `NoWorkspace`, `Refreshed`, `Centred`, `NotInView` — so a caller cannot speak without a result in
+  hand, and the label comes **from the drawn graph** rather than from the caller's id, so the
+  sentence cannot disagree with the picture. **(2)** A root requested while the page is loading is
+  **held and applied** on `NavigationCompleted` instead of dropped, which fixes the fourth site too.
+  The shell's `CentreOnAsync` awaits, announces from the outcome including the honest negative
+  (*"X is not in the current view"*), and catches faults into an announcement — which is what makes
+  the remaining `_ =` safe: nothing can escape the task.
+
+  **Observed failing 2026-09-01** with the deferral removed and `Centred` returned in its place:
+  the not-ready test reported the wrong outcome, and the deferral test printed *"the deferred root
+  was never applied; the source was asked for: (none)"* — the same zero the design session measured,
+  reproduced independently.
+
+  **The test needs a real WebView2 and says so rather than skipping.** Its entire subject is the
+  window between construction and `NavigationCompleted`; a fake that is ready on construction has no
+  such window, so a test driving one would pass while proving the opposite (DC-016). While writing
+  it, the harness it was modelled on was found to wrap *every* failure — assertion failures included
+  — in *"requires the WebView2 runtime"*, reporting a real defect as a broken machine. That is this
+  same class pointed at a diagnostic, so the copy rethrows `XunitException` unwrapped.
+- **Status:** `controlled`

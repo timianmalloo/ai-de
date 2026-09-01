@@ -894,6 +894,62 @@ public sealed class WorkbenchShell : IDisposable
     /// context would otherwise centre the graph on a node the canvas has been told not to draw, and
     /// the user would click a row and watch nothing happen.
     /// </remarks>
+    /// <summary>
+    /// Centres the canvas on a node and announces WHAT HAPPENED, after it happened.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The defect this replaces.</b> Three sites announced <i>"Graph centred on X"</i> and
+    /// then started the refresh fire-and-forget. Measured on a real surface: the canvas was not
+    /// ready, the refresh returned immediately, the graph source was asked <b>0</b> times, and the
+    /// announcement had already gone out. A screen-reader user was told the graph centred on a node
+    /// it never looked up.</para>
+    ///
+    /// <para><b>It is not the same defect as a value that fails to reach the surface.</b> The
+    /// dropped-in-transit family concerns something that EXISTED and did not arrive. This is a
+    /// statement about an ACTION, made before the action, about an action that may not occur — it
+    /// was never true when it was said, so no amount of care in the wording repairs it. The only fix
+    /// is to speak from the result.</para>
+    ///
+    /// <para><b>And the second reason it could be false.</b> The graph draws a bounded
+    /// most-connected-first slice, so a node the user picked may not be in view at all — measured
+    /// median relation degree for knowledge nodes is 0, which makes this the ordinary case rather
+    /// than the edge case. <c>NotInView</c> says so. An honest negative is a better sentence than a
+    /// centring that did not happen.</para>
+    ///
+    /// <para><b>The discarded task is safe here</b> — and only here — because nothing can escape it:
+    /// every path inside announces, including the failure. A bare <c>_ =</c> over a call that can
+    /// fault observes the fault with nobody, which was the other half of the finding.</para>
+    /// </remarks>
+    private async Task CentreOnAsync(CanvasSurface canvas, string nodeId, string fallbackLabel)
+    {
+        CanvasRefresh result;
+
+        try
+        {
+            result = await canvas.RefreshAsync(nodeId);
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // The fault the discarded task used to swallow. Saying the graph could not be centred is
+            // the whole point of catching it; silence here would rebuild the defect one layer in.
+            Announcer.Announce($"The graph could not be centred on {fallbackLabel}: {ex.Message}");
+            return;
+        }
+
+        var label = result.Label ?? fallbackLabel;
+
+        Announcer.Announce(result.Outcome switch
+        {
+            CanvasRefreshOutcome.Centred => $"Graph centred on {label}.",
+            CanvasRefreshOutcome.NotInView =>
+                $"{label} is not in the current view. The graph draws the most connected nodes, and "
+                + "this one is outside that slice.",
+            CanvasRefreshOutcome.Deferred => $"The graph is still loading. It will centre on {label} when ready.",
+            CanvasRefreshOutcome.NoWorkspace => "No workspace is open, so there is no graph to centre.",
+            _ => $"Graph refreshed for {label}.",
+        });
+    }
+
     private void OnJoinNodeSelected(object? sender, string nodeId)
     {
         var canvas = Service.Current.AllStacks()
@@ -910,8 +966,7 @@ public sealed class WorkbenchShell : IDisposable
             Announcer.Announce("Graph filter cleared.");
         }
 
-        Announcer.Announce($"Graph centred on {nodeId}.");
-        _ = canvas.RefreshAsync(nodeId);
+        _ = CentreOnAsync(canvas, nodeId, nodeId);
     }
 
     private void OnContextSelected(object? sender, string context)
@@ -1041,8 +1096,7 @@ public sealed class WorkbenchShell : IDisposable
                 var canvas = OpenCanvas();
                 if (canvas is not null)
                 {
-                    Announcer.Announce($"Graph centred on {nodeId}.");
-                    _ = canvas.RefreshAsync(nodeId);
+                    _ = CentreOnAsync(canvas, nodeId, nodeId);
                 }
                 break;
         }
@@ -1444,8 +1498,7 @@ public sealed class WorkbenchShell : IDisposable
             Announcer.Announce("Graph filter cleared.");
         }
 
-        Announcer.Announce($"Graph centred on {hit.Label}.");
-        _ = canvas.RefreshAsync(hit.Id);
+        _ = CentreOnAsync(canvas, hit.Id, hit.Label);
     }
 
     internal void BindClassDiagrams()
