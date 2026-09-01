@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-09-01T02:12:20Z",
+  "generated": "2026-09-01T02:21:33Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3378,7 +3378,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cba896fd0de030ca519b8ac0fb12999447d427ba349bbc17db911e187eea0841"
+      "sourceSha256": "0c9a25a86a87ac6d02f1cba131e3ece11ec0941121b9e01c3615968bceee7877"
     },
     {
       "id": "domain-experts",
@@ -4186,7 +4186,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4ec2914d0b8a8b2a162f8d90ba2e6283931a27825be06d4abd51faa223500f93"
+      "sourceSha256": "564f3121d2bb243a42b7eaea55132bd2351842773e88999920685e729f2746d3"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -4647,7 +4647,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d65c960896cd672a10e76187d4a574b49d91c58191debefa6a2cc0720fc7d3e8"
+      "sourceSha256": "bdfaa3ad37c0724b1ee70c38776ff8cb70526ff204b7ad0f2b065d1359def9fe"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -9384,7 +9384,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-facelift — Audit & Change Log",
+      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -9502,5 +9502,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b602f2d4731a891ee6fce48b6bcab6b32507b76028b2e935abe0c1a8e17d5a12"
+  "graphSha256": "282ef44c83adc02f7a8f6672ee78040c28a3e92eecfee0ef96287924a884d1f3"
 };

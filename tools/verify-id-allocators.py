@@ -315,12 +315,21 @@ def _git(root: Path, args: list[str]) -> str | None:
     return out.stdout if out.returncode == 0 else None
 
 
-def signatures_at(root: Path, family: dict, ref: str) -> dict[str, str] | None:
+def signatures_at(
+    root: Path, family: dict, ref: str, working_tree: bool = False,
+) -> dict[str, str] | None:
     """id -> what that id SAYS, as of one ref. None when the ref does not carry the family."""
     found: dict[str, str] = {}
 
     if family["kind"] == "filename":
-        listing = _git(root, ["ls-tree", "--name-only", f"{ref}:{family['path']}"])
+        if working_tree:
+            directory = root / family["path"]
+            listing = (chr(10).join(
+                sorted(e.name for e in directory.iterdir() if e.is_file()))
+                if directory.is_dir() else None)
+        else:
+            listing = _git(root, ["ls-tree", "--name-only", f"{ref}:{family['path']}"])
+
         if listing is None:
             return None
 
@@ -333,7 +342,15 @@ def signatures_at(root: Path, family: dict, ref: str) -> dict[str, str] | None:
 
         return found
 
-    text = _git(root, ["show", f"{ref}:{family['path']}"])
+    if working_tree:
+        # The branch you are ON is read from DISK, not from its last commit. An id you have just
+        # written and not yet committed is exactly the one worth being told about — waiting for the
+        # commit means the warning arrives after the entry has been written and cited.
+        path = root / family["path"]
+        text = path.read_text(encoding="utf-8", errors="replace") if path.exists() else None
+    else:
+        text = _git(root, ["show", f"{ref}:{family['path']}"])
+
     if text is None:
         return None
 
@@ -491,7 +508,7 @@ def across_refs(
             continue  # unrelated history; nothing to say about it
 
         for family in families:
-            here = signatures_at(root, family, ref)
+            here = signatures_at(root, family, ref, working_tree=_is_mine(ref, mine))
             if here is None:
                 continue
 

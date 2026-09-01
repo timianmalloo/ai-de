@@ -109,6 +109,13 @@ public sealed class TypeScriptDeclarationCoverageTests : IDisposable
     {
         // The ceiling, unchanged and still disclosed: column zero is what tells a top-level
         // declaration from a method or a closure, exactly as it does for Python.
+        //
+        // The disclosure is now CONDITIONAL and CARRIES A COUNT, which is what this assertion had to
+        // be rewritten to express. It compared for equality against the bare string, so a disclosure
+        // that said HOW MUCH was hidden failed it — a test pinning the weaker of two behaviours.
+        // Two declarations are hidden here and the disclosure now says two; `inner()` is not among
+        // them, because a method is reachable through its type and is emitted as a member rather
+        // than counted as a loss.
         var assertions = await ExtractAsync("""
             export class Outer {
                 inner() {
@@ -121,8 +128,17 @@ public sealed class TypeScriptDeclarationCoverageTests : IDisposable
         Assert.Empty(Kinds(assertions, "Hidden"));
         Assert.Empty(Kinds(assertions, "alsoHidden"));
 
-        Assert.Contains(assertions, a => a.Predicate == "discloses"
-            && a.Object == TypeScriptExtractor.Disclosures.NestedDeclarationsNotAnalysed);
+        var disclosure = assertions
+            .Where(a => a.Predicate == "discloses")
+            .Select(a => a.Object)
+            .Single(o => o.StartsWith(
+                TypeScriptExtractor.Disclosures.NestedDeclarationsNotAnalysed, StringComparison.Ordinal));
+
+        Assert.Contains("2 declaration(s)", disclosure, StringComparison.Ordinal);
+
+        Assert.Contains(assertions, a => a.Predicate == "has_member"
+            && a.Subject.EndsWith(".Outer", StringComparison.Ordinal)
+            && a.Object == "+ inner()");
     }
 
     [Fact]
