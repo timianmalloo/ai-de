@@ -74,7 +74,28 @@ public sealed record ImpactResult(
     ResultBounds Bounds,
     string SourceRevision);
 
-public sealed record FindMatch(string NodeId, string NodeKind, string DisplayLabel, AuthorshipOrigin Authorship);
+/// <summary>One search hit, and why it is one.</summary>
+/// <param name="MatchedOn">
+/// Whether the node's own identity contained the term, or one of its attribute values did.
+/// </param>
+/// <param name="Evidence">
+/// <c>predicate = value</c> for an attribute match, truncated; null for an identity match, where the
+/// id is already the evidence. A result whose relevance is invisible reads as a wrong result:
+/// searching <c>addEventListener</c> and being shown a class called <c>Element</c> is correct, and
+/// looks like a defect until the row says why.
+/// </param>
+/// <remarks>
+/// The two fields are ADDED rather than replacing anything, and both are optional to read. A client
+/// that ignores them behaves exactly as before — which is what makes this a widening of the contract
+/// and not a break of it.
+/// </remarks>
+public sealed record FindMatch(
+    string NodeId,
+    string NodeKind,
+    string DisplayLabel,
+    AuthorshipOrigin Authorship,
+    Store.NodeMatchKind MatchedOn = Store.NodeMatchKind.Identity,
+    string? Evidence = null);
 
 public sealed record FindResult(IReadOnlyList<FindMatch> Matches, ResultBounds Bounds, string SourceRevision);
 
@@ -705,7 +726,7 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
 
         // Identity columns only: a leading-wildcard LIKE cannot use an index, so the cheapest
         // correct shape is to scan a covering index instead of hydrating every row's provenance.
-        var (candidates, totalMatched) = reader.SearchNodeIds(term, limit);
+        var (candidates, totalMatched) = reader.SearchNodes(term, limit);
 
         // The byte bound, ENFORCED rather than merely declared. This built the whole match list and
         // then reported `MaxBytes: 65,536` beside it — MEASURED at 461,750 bytes returned on a real
@@ -716,19 +737,25 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
         var bytes = 0;
         var byteCapped = false;
 
-        foreach (var id in candidates)
+        foreach (var hit in candidates)
         {
-            var node = NodeOf(reader, id);
+            var node = NodeOf(reader, hit.NodeId);
 
             var match = new FindMatch(node.NodeId, node.NodeKind, node.DisplayLabel,
                 // Phase 1 has no agent-authored records yet; stating the origin explicitly now
                 // means the field exists on the wire before agents can write, rather than being
                 // retrofitted after the laundering path is already open.
-                AuthorshipOrigin.RepositoryArtifact);
+                AuthorshipOrigin.RepositoryArtifact,
+                hit.Kind,
+                hit.Evidence);
 
+            // The evidence is counted. A budget that ignores a field it just added is a budget
+            // that no longer describes the response — the exact shape that let a 1.18 MB payload
+            // through a 1 MiB frame while reporting itself inside the limit.
             var size = Encoding.UTF8.GetByteCount(match.NodeId)
                 + Encoding.UTF8.GetByteCount(match.NodeKind)
                 + Encoding.UTF8.GetByteCount(match.DisplayLabel)
+                + (match.Evidence is null ? 0 : Encoding.UTF8.GetByteCount(match.Evidence))
                 + AssertionOverheadBytes;
 
             // At least one result always comes back, for the same reason the evidence page keeps

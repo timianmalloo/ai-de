@@ -300,34 +300,83 @@ public sealed class StoreReader : IDisposable
         return subjects;
     }
 
-    public (IReadOnlyList<string> Matches, int TotalMatched) SearchNodeIds(string term, int limit)
+    /// <summary>
+    /// Nodes whose identity contains the term, and nodes one of whose ATTRIBUTE VALUES does.
+    /// </summary>
+    /// <remarks>
+    /// <para>Identity-only search cannot answer the question a person actually asks. Searching
+    /// <c>addEventListener</c> found ONE node by id and could not find the class that HAS that
+    /// member; searching a Bicep resource's deployed name found the name and not the resource.
+    /// MEASURED across TheTerrace: matching attribute values adds 1–14 nodes per term that identity
+    /// search cannot reach at all, and they are the ones a person meant.</para>
+    ///
+    /// <para><b>An attribute match returns the node that OWNS the attribute, never the value.</b>
+    /// That is why the original query excluded attribute objects: a value is not a node, and putting
+    /// <c>api_version = 2023-01-01</c> in a result list as though it were a thing you can navigate
+    /// to is how dates ended up in the graph. The exclusion was right about the object and wrong
+    /// about the subject — the owner is a real node, and it is the answer.</para>
+    ///
+    /// <para>Each row carries WHY it matched and the matched text, because a result whose relevance
+    /// is invisible reads as a wrong result. The evidence is truncated in SQL rather than after, so
+    /// a long value never crosses the boundary just to be trimmed on the far side.</para>
+    /// </remarks>
+    public (IReadOnlyList<NodeSearchHit> Matches, int TotalMatched) SearchNodes(string term, int limit)
     {
         using var command = Command($"""
             {LatestCte}
-            SELECT DISTINCT id FROM (
-                SELECT a.subject AS id FROM evidence_assertion_fact a
+            SELECT id, MIN(kind) AS kind, MIN(evidence) AS evidence FROM (
+                SELECT a.subject AS id, 0 AS kind, '' AS evidence
+                FROM evidence_assertion_fact a
                 JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
                 WHERE a.subject LIKE $pattern
-                UNION
-                SELECT a.object AS id FROM evidence_assertion_fact a
+                UNION ALL
+                SELECT a.object AS id, 0 AS kind, '' AS evidence
+                FROM evidence_assertion_fact a
                 JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
                 WHERE a.object LIKE $pattern
-                  -- An attribute's object is a VALUE. Without this, api_version puts dates in the
-                  -- graph and resource_name_expression puts unevaluated strings there.
+                  -- An attribute's object is a VALUE, not a node. Without this, api_version puts
+                  -- dates in the graph and resource_name_expression puts unevaluated strings there.
                   AND a.predicate NOT IN ({AiDe.Core.Facts.EvidencePredicates.SqlList})
+                UNION ALL
+                -- The owner of a matching attribute value. Same rows the clause above refuses to
+                -- treat as nodes, read the other way round: the SUBJECT is a node, and it is what
+                -- the person was looking for.
+                SELECT a.subject AS id, 1 AS kind,
+                       a.predicate || ' = ' || SUBSTR(a.object, 1, $evidence) AS evidence
+                FROM evidence_assertion_fact a
+                JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+                WHERE a.object LIKE $pattern
+                  AND a.predicate IN ({AiDe.Core.Facts.EvidencePredicates.SqlList})
             )
-            ORDER BY id;
-            """, ("$pattern", $"%{term}%"));
+            GROUP BY id
+            ORDER BY kind, id;
+            """, ("$pattern", $"%{term}%"), ("$evidence", MaxEvidenceCharacters));
 
         using var reader = command.ExecuteReader();
-        var all = new List<string>();
+        var all = new List<NodeSearchHit>();
+
         while (reader.Read())
         {
-            all.Add(reader.GetString(0));
+            // MIN(kind) means identity wins over attribute when a node matched both ways — the
+            // stronger reason, and the one that needs no explaining in the UI.
+            var identity = reader.GetInt64(1) == 0;
+
+            all.Add(new NodeSearchHit(
+                reader.GetString(0),
+                identity ? NodeMatchKind.Identity : NodeMatchKind.Attribute,
+                identity ? null : reader.GetString(2)));
         }
 
         return (all.Count > limit ? all[..limit] : all, all.Count);
     }
+
+    /// <summary>How much of a matched attribute value comes back as evidence.</summary>
+    /// <remarks>
+    /// Enough to recognise why a row is here, not enough to be content. A summary or a long
+    /// expression would otherwise put unbounded text on a response whose budget is already the
+    /// binding constraint on this product (INV-0003).
+    /// </remarks>
+    private const int MaxEvidenceCharacters = 120;
 
     /// <summary>
     /// The highest generation any scope has ever been asked for, or 0 for an empty store.

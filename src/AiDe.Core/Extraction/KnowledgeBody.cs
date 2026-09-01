@@ -34,9 +34,13 @@ internal sealed record KnowledgeBodySurvey(
 /// <list type="bullet">
 ///   <item><b>Headings</b> — 4,471 across 375 of 877 documents on TheTerrace. Not extracted, and the
 ///   reason is measured rather than aesthetic. A heading is a PROPERTY of its document, so it would
-///   be an attribute; attribute objects are excluded from node search by construction
-///   (<c>StoreReader.SearchNodeIds</c>) and from the graph by <c>EvidencePredicates.Attributes</c>,
-///   so the text would be neither findable nor drawn. The full body is ALREADY served whole by
+///   be an attribute; attribute objects are excluded from the graph by
+///   <c>EvidencePredicates.Attributes</c>, so the text would not be drawn. <b>Half of this reason
+///   expired on 2026-08-31:</b> it also said attribute objects were excluded from node search by
+///   construction, and <c>StoreReader.SearchNodes</c> now matches them and returns the OWNING node,
+///   so heading text WOULD be findable. The decision does not change — the two reasons below are
+///   the ones carrying it — but the argument as written is no longer true, and a decision resting
+///   on a premise nobody rechecked is the gap between docs and code this product exists to find. The full body is ALREADY served whole by
 ///   <c>ProjectionService.NodeContent</c> (256 KB ceiling), so nothing would become visible that is
 ///   not visible now. And it measurably breaks the surface it was meant to enrich: simulated on the
 ///   real store, <c>adr-0015-erasure-ledger-durable-model</c> returns all 19 of its facts from
