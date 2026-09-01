@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 42 · partially-controlled 31 · uncontrolled 1
+**Status counts:** controlled 43 · partially-controlled 31 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2298,5 +2298,52 @@ for both or split.*
   cluster stands for many nodes of mixed kinds, and the path view hard-codes `source`. Each is
   commented at the site rather than left to look like an oversight, and the first is a real gap:
   closing it means `Describe` carrying the knowledge ids too.
+- **Status:** `controlled`
+
+### DC-075 — An append-only record is written into a tree nobody will commit from
+
+- **Shape:** a tool appends to a repository-global, append-only log. The path it resolves is
+  relative to the *caller's working directory*, not to the repository, so running it from the wrong
+  tree writes the entry somewhere that tree will never commit from. The write succeeds. The entry is
+  correct. It exists in exactly one place, uncommitted, and nothing says so.
+- **Signature:** a `--root` or path default that is a **bare relative string** (`"docs"`) in a tool
+  whose subject is repo-global, in a repository that uses worktrees. Compare with a sibling tool in
+  the same bundle that resolves the same directory against the repository root — two tools
+  disagreeing about what "the repo" means is the tell. The symptom appears much later and wearing a
+  disguise: a fast-forward refuses because a file is dirty, and the fastest way to unblock it
+  deletes the record.
+- **Why it survives:** every step is individually correct. The tool wrote what it was asked, to a
+  real path, in a real checkout. No error, no conflict, no test. It only becomes visible when
+  somebody merges — and at that moment it presents as an obstacle rather than as data, so the
+  natural response (`git checkout --` on the offending file) is the one that loses it. The window
+  in which the mistake is cheap and the window in which it is visible do not overlap.
+- **Instance:** 2026-09-01 — a session ran `prompt-log.py` as its first command, before creating its
+  worktree, so `al-0347` was appended to the **primary** checkout's `docs/audit/audit-log.jsonl`. It
+  sat uncommitted in a tree nobody was working in, blocked a fast-forward hours later, and was
+  recovered by hand (`7cda687`) only because the merge was inspected rather than unblocked.
+  Verified: `audit-log.py:769` defaults `--root` to the string `"docs"` with no repo-root
+  resolution, while `coord-core.py` deliberately resolves `.agents/` against the primary from any
+  worktree.
+- **Control:** `tools/verify-stranded-audit.py`. It checks the **primary checkout always** — under
+  worktree discipline nobody works there, so a dirty append-only log in it is the hazard by
+  definition — and every other worktree only when no session is live in it, read from
+  `.agents/log/*.jsonl` using coord's own 8-hour window. A gate that fired on a session's own tree
+  mid-turn would be muted within a week, which is the lesson `verify-id-allocators` already had to
+  be taught. **Observed failing 2026-09-01** twice: on a planted fixture, and by reproducing the
+  real incident in the real primary checkout, where it named the tree and the file.
+
+  **Only the SELF-TEST runs in CI, deliberately.** A runner has one checkout and it is clean by
+  construction, so the real check would pass every time without being able to fail — a control that
+  cannot fire in the environment that verifies it (DC-016), which is this control's own subject one
+  layer up. The self-test builds its own repository and can fail, so CI proves the control is alive
+  while the control runs where the hazard is.
+
+  **Why the obvious fix was rejected.** Both sessions first proposed patching `audit-log.py` to
+  refuse a target outside the caller's toplevel — five lines, and wrong. `audit-log.py` is a
+  **listed** pack artifact and `/updatepack` replaces listed artifacts wholesale, so the patch is
+  one pack update away from vanishing silently, leaving a control everybody believes exists. That is
+  this class pointed at the thing meant to prevent it. **Adding an unlisted file to a pack-managed
+  tree is safe; modifying a listed one is not** — opposite rules, easily mistaken for one. The
+  upstream fix (teaching the pack's tools one definition of "the repo") is deferred, not rejected.
 - **Status:** `controlled`
 

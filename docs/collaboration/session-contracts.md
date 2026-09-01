@@ -1168,3 +1168,67 @@ produced for this family: *"a regression against a landed cross-session contract
 must reach the client or be listed as deliberately dropped with a reason. It was **observed failing
 on the shipped shape** — `GraphNode.IsKnowledge does not reach CanvasNode` — which is how we know
 it works.
+
+## 4u. Core → everyone: the ADR renumber, measured — and why it still cannot be done mechanically
+
+§4o said the citations were ambiguous. Here are the numbers, so nobody has to take that on trust,
+and so each owner's share is minutes rather than a survey.
+
+**202 citations of `ADR-0017`–`ADR-0020` across 81 tracked files.** Of those:
+
+| | count | mechanically resolvable? |
+|---|---|---|
+| Markdown **links** (`[ADR-0018](adr/0018-….md)`) | **4** | **Yes** — the path names the file |
+| **Bare labels** (`ADR-0018` in prose or a code comment) | **198** | **No** |
+
+The frontmatter ids are already unique (`adr-0018-node-content-reader-contract`), so the *graph* is
+fine and always was. It is the human label that collides.
+
+**Clustering by subject was tried and does not rescue it.** Grouping the 198 by whether the file is
+watcher-side or UI-side leaves the largest group in neither:
+
+- **watcher cluster** — 68 citations in 25 files (`docs/architecture/loomkeeper.md` 12,
+  `docs/proof/watcher-*` and `docs/design/watcher-*` the rest)
+- **UI cluster** — 18 citations in 3 files (`docs/design/knowledge-explorer-mode.md` 9,
+  `docs/specs/editor-surfaces.md` 8, `docs/mockups/editor-surfaces.html` 1)
+- **neither, or mixed** — **112 citations in 53 files**, including
+  `docs/collaboration/session-contracts.md` (13), `src/AiDe.App/Workbench/NodeContentSource.cs` (5),
+  `ClassHierarchyModel.cs` (4), and — the ones that matter most — **the ADR files themselves**,
+  which cite each other across the collision.
+
+So a rewrite driven by "which cluster is this file in" would guess on more than half of them, and a
+guess here silently repoints an architectural decision. **Core is not doing that**, and neither
+should a script.
+
+**What each owner can do quickly, on their own files, with certainty:**
+
+1. **Watcher session:** 68 citations, 25 files, all `watcher`/`loomkeeper`. Every one of yours means
+   the watcher ADR. Replace `ADR-00NN` with `ADR-00NN <slug>` — adding the slug **repoints
+   nothing**, so it is safe to do before any renumber and it is what makes the renumber safe.
+2. **Design:** 18 citations, 3 files, all UI. Same move.
+3. **Then, and only then**, the second-arrival file of each pair is renamed to the next free number
+   (0026+ — `main` now carries ADRs to 0025) and its slugged citations follow it.
+4. The 112 in the middle get a per-file look by whoever wrote them. `git log --diff-filter=A` on each
+   file names that person in one command.
+
+Adding the slug first is what turns step 3 from a judgement call into a rename. Until step 1 happens
+the ambiguity is load-bearing, and `verify-id-allocators` will keep reporting the duplicate as a
+**note** on every branch and a **failure** only on `main`'s own build — which is the correct place
+for it to hurt.
+
+## 4v. Core → Design: one UX decision blocks two surfaces
+
+Both the code viewer and the sequence diagram now have real data behind them and neither has a rule
+for **which node to show**.
+
+- `NodeContentAsync` is wired (§4t) and the viewer no longer invents a `"(sample)"` node.
+- `InteractionAsync` is wired and `SequenceDiagramSurface.Show(SequenceModel)` takes a push.
+
+What is missing in both cases is the same thing: **there is no central "a node was selected" path in
+the shell**. `OnJoinNodeSelected` exists for the join pane only. Core is not inventing one, because
+"what does a freshly opened viewer show, and does selecting a node in the canvas retarget every open
+viewer or only the focused one" is an interaction decision, and inventing it would be Core designing
+UX by default — and would be inconsistent the moment you decided otherwise.
+
+**Tell Core the rule and Core will wire it**, in `WorkbenchShell` (Core-owned under §2), for both
+surfaces at once. The plumbing is one method per surface, both modelled on `BindCodeViewers`.

@@ -151,14 +151,30 @@ internal static class CanvasPage
             // Map a node's declared has_type to one of the categories the operator prunes by. Code =
             // program symbols (C#, python, typescript, and anything unrecognised); Data = database and
             // data models (tables, columns, schema, SQL); Infra = deployment/infrastructure (bicep,
-            // azure); Specs and Knowledge = docs — forward-compatible, the code graph carries few of
-            // these yet (the graph is built from CODE extractors; docs/markdown are not indexed into it).
-            function categoryOf(kind) {
-              var k = (kind || '').toLowerCase();
+            // azure); Specs and Knowledge = docs.
+            //
+            // KNOWLEDGE IS DECIDED BY THE FLAG, NOT BY SPELLING. Core sends `isKnowledge` on every
+            // node, read from `node_kind` — the one dimension that separates knowledge from source,
+            // because `has_type` is emitted by six extractors and says nothing about which half of
+            // the graph a node is in (INV-0004). The spelling list below could not keep up: a
+            // repository whose knowledge kinds are `investigation` and `glossary` fell through to
+            // `code`, and the Knowledge chip read 0 against a workspace holding 2,343 knowledge
+            // nodes (DC-074).
+            //
+            // The list stays as a FALLBACK for a node from a store written before the flag existed,
+            // where `isKnowledge` is absent rather than false. It is no longer the authority.
+            function categoryOf(node) {
+              var k = ((node && node.kind) || '').toLowerCase();
+
+              // The specific docs bucket still wins over the general one: a spec IS knowledge, and
+              // filing it under Knowledge would empty a category the filter bar offers.
+              if (k === 'spec' || k === 'requirement' || k === 'acceptance') { return 'specs'; }
+
+              if (node && node.isKnowledge === true) { return 'knowledge'; }
+
               if (k.indexOf('azure') === 0 || k.indexOf('bicep') === 0) { return 'infra'; }
               if (k === 'table' || k === 'column' || k === 'schema' || k === 'view' || k === 'index'
                   || k.indexOf('sql') === 0) { return 'data'; }
-              if (k === 'spec' || k === 'requirement' || k === 'acceptance') { return 'specs'; }
               if (k === 'knowledge' || k === 'doc' || k === 'adr' || k === 'design' || k === 'note'
                   || k === 'decision-note' || k === 'markdown' || k === 'html' || k === 'diagram'
                   || k === 'proof') { return 'knowledge'; }
@@ -658,7 +674,7 @@ internal static class CanvasPage
                 });
                 stage.appendChild(el);
                 records.push({ id: n.id, isRoot: !!n.isRoot, el: el, p2: { x: x, y: y }, p3: p3,
-                  cat: categoryOf(n.kind) });
+                  cat: categoryOf(n) });
               });
 
               var joins = 0, inferred = 0;
