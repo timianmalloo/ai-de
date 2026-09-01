@@ -115,33 +115,40 @@ public sealed class BoundsReachTheSurfaceTests
                 "CONFIRMED DROPPED: zero consumption sites. A truncated path that reads as a " +
                 "complete route is the §8.3a shape on the impact/paths surface. Design.",
 
-            ["WorkspaceGraph.Disclosures/dropped"] =
-                "CONFIRMED DROPPED: CanvasGraph carries them (CanvasGraphViewModel.cs:163) and " +
-                "nothing in CanvasSurface or CanvasPage reads them. The field survives the " +
-                "boundary and is then ignored — the case Core's FieldsSurviveTheClientBoundary " +
-                "test structurally cannot see, and this file exists for. Design.",
+            ["WorkspaceGraph.Disclosures/rendered"] =
+                "RETRACTED — NOT DROPPED. Verified end to end: WorkspaceGraph.Disclosures flows " +
+                "into CanvasGraph.Disclosures (CanvasGraphViewModel.cs:163), which is serialised " +
+                "whole (CanvasSurface.cs:98), and CanvasPage.cs:739-754 renders it as a " +
+                "collapsible warning. Kept as an entry only until a render assertion replaces it.",
 
-            ["WorkspaceOverview.Disclosures/dropped"] =
-                "CONFIRMED DROPPED: same path, CanvasGraphViewModel.cs:331. Design.",
+            ["WorkspaceOverview.Disclosures/rendered"] =
+                "RETRACTED — NOT DROPPED. Same chain via CanvasGraphViewModel.cs:331.",
 
             // ---- a ninth, found by WIDENING THIS GUARD'S OWN SCOPE ------------------------
             // The guard originally scanned only AiDe.Core.Projections, so it could not see the
             // client-side records in AiDe.Core.Presentation — its own blind spot, and exactly the
             // shape it exists to catch. Widening the namespace filter surfaced this immediately.
-            ["CanvasGraph.Disclosures/dropped"] =
-                "The CLIENT-side end of WorkspaceGraph.Disclosures. The producer publishes them, " +
-                "CanvasGraphViewModel.cs:163 faithfully carries them across the boundary, and no " +
-                "canvas surface reads them — so Core's FieldsSurviveTheClientBoundary test passes " +
-                "(the field DID survive) while the user still never sees a disclosure. That is the " +
-                "precise seam between the two controls, with a real instance sitting in it. Design.",
+            ["CanvasGraph.Disclosures/rendered-in-javascript"] =
+                "RETRACTED — NOT DROPPED, and the retraction is the most instructive of the day. " +
+                "CanvasPage.cs:739-754 renders it as a collapsible warning ('N edge(s) omitted by " +
+                "the result bound', 'Not analysed: …'), hidden when empty, with a comment reasoning " +
+                "about the affordance. It is arguably the BEST implementation of this whole family " +
+                "in the codebase. " +
+                "WHY BOTH SESSIONS CALLED IT DROPPED: we searched C# identifiers in a file whose " +
+                "consumers are JAVASCRIPT. The value crosses a language AND a case boundary — " +
+                "Disclosures becomes graph.disclosures inside a JS string literal — so no search " +
+                "for the C# name can follow it. Fourth instance of 'a name search cannot follow a " +
+                "renamed value', and the most invisible kind. " +
+                "KNOWN HOLE: this harness cannot check it either. The canvas is a WebView2 hosting " +
+                "HTML; the harvester walks a WPF visual tree and structurally cannot see into the " +
+                "page. Second named hole in this control, alongside the MainWindow status line.",
 
             // ---- an eighth, found by Core while classifying the seven ----------------------
-            ["CanvasGraph.Message/dropped"] =
-                "VERIFIED HERE: CanvasGraph.Message (CanvasGraphViewModel.cs:57) carries the " +
-                "'N node(s) hidden, showing only X' text and has no consumer — the only '.Message' " +
-                "references in CanvasSurface and CanvasPage are 'ex.Message'. This is the bound on " +
-                "the graph itself, on the surface where a hidden node matters most: a picture that " +
-                "silently omits nodes is the strongest form of the whole family. Design.",
+            ["CanvasGraph.Message/rendered-in-javascript"] =
+                "RETRACTED — NOT DROPPED. CanvasPage.cs:728 uses graph.message as the caption when " +
+                "present. My 'no consumer' claim came from grepping '.Message' in C#, which finds " +
+                "only 'ex.Message' — the real consumer is 'graph.message' in the page's JavaScript. " +
+                "Same language-boundary blindness as CanvasGraph.Disclosures above.",
         };
 
     /// <summary>
