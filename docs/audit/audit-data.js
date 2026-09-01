@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T13:30:19Z",
+  "generated": "2026-09-01T13:36:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7029,6 +7029,21 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.Core/Projections/Interaction.cs"
       ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0347",
+      "shortname": "ground yourself in the repo, particularly for the cross session/agent co…",
+      "datetime": "2026-09-01T13:08:29Z",
+      "session": "prompt-log",
+      "prompt": "ground yourself in the repo, particularly for the cross session/agent collaboration; then create a distinct work tree for this session; then register with the other two active sessions for ACTIVE collaboration across the sessions. Session 1: other claude code session owns core infrastructure. Session 2: copilot session owns main UI implementation. Session 3: this session - refining, elevating and filling in gaps around the overall UI and Experience, potentially picking up missing surfaces. Goal: active collaboration with the other sessions and minimizing conflicts.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
       "tags": [],
       "outcome": "success"
     }
