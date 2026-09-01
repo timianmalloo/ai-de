@@ -71,30 +71,43 @@ public sealed class ZoneBackedLayoutService : ILayoutService
             bottom = rootKids[1];
         }
 
-        // The columns row holds [Left?, Center, Right?] in order.
+        // The columns row holds [Left?, Center, Right?] in order. A native side-drop can add or nest
+        // columns; rather than revert, map the FIRST column to Left and the LAST to Right (when those
+        // zones are rendered) and merge everything in between into the Center. This lets a tab dragged
+        // to a zone's pane — even one that created an extra split — resolve to a zone.
         var colChildren = columns is SplitNode { Orientation: Orientation.Horizontal } split
             ? split.Children.ToList()
             : [columns];
 
-        var expected = (Rendered(ZoneId.Left) ? 1 : 0) + 1 + (Rendered(ZoneId.Right) ? 1 : 0);
-        if (colChildren.Count != expected)
+        var wantLeft = Rendered(ZoneId.Left);
+        var wantRight = Rendered(ZoneId.Right);
+        var minColumns = 1 + (wantLeft ? 1 : 0) + (wantRight ? 1 : 0);
+        if (colChildren.Count < minColumns)
         {
-            return null; // a side-drop split, an emptied column, or an unexpected shape — not confident
+            return null; // a column collapsed away (emptied drag) — not confident, let the caller revert
         }
 
-        var idx = 0;
         var assigned = new Dictionary<ZoneId, IReadOnlyList<Surface>>();
-        if (Rendered(ZoneId.Left))
+        var lo = 0;
+        var hi = colChildren.Count - 1;
+        if (wantLeft)
         {
-            assigned[ZoneId.Left] = SurfacesUnder(colChildren[idx++]);
+            assigned[ZoneId.Left] = SurfacesUnder(colChildren[lo++]);
         }
 
-        assigned[ZoneId.Center] = SurfacesUnder(colChildren[idx++]);
-
-        if (Rendered(ZoneId.Right))
+        if (wantRight)
         {
-            assigned[ZoneId.Right] = SurfacesUnder(colChildren[idx++]);
+            assigned[ZoneId.Right] = SurfacesUnder(colChildren[hi--]);
         }
+
+        // Everything between (inclusive) is the Center — merges any extra middle columns.
+        var center = new List<Surface>();
+        for (var i = lo; i <= hi; i++)
+        {
+            center.AddRange(SurfacesUnder(colChildren[i]));
+        }
+
+        assigned[ZoneId.Center] = center;
 
         if (bottom is not null)
         {

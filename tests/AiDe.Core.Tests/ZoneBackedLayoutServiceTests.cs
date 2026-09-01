@@ -167,6 +167,33 @@ public sealed class ZoneBackedLayoutServiceTests
         Assert.Equal(ZoneId.Center, svc.Zones.FindZoneOf("y")); // canvas → Center by kind
     }
 
+    [Fact]
+    public void Restore_AfterASideDropCreatingAnExtraColumn_MergesItIntoTheCenter_NotReverts()
+    {
+        var svc = new ZoneBackedLayoutService(WorkbenchLayout.Default());
+        var tree = svc.Current;
+
+        var left = tree.AllStacks().Single(s => s.Id == ZonesToTree.LeftStackId);
+        var center = tree.AllStacks().Single(s => s.Id == ZonesToTree.CenterStackId);
+        var bottom = tree.AllStacks().Single(s => s.Id == ZonesToTree.BottomStackId);
+        var sessions = center.Surfaces.Single(s => s.SurfaceId == "sessions");
+
+        // Simulate a native side-drop that split "sessions" out into its own extra column.
+        var center2 = new StackNode("c", center.Surfaces.Remove(sessions));
+        var extra = new StackNode("extra", [sessions]);
+        var post = new Layout(
+            new SplitNode("root", Orientation.Vertical,
+                [new SplitNode("cols", Orientation.Horizontal, [left, center2, extra], [0.25, 0.5, 0.25]), bottom],
+                [0.7, 0.3]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+
+        svc.Restore(post);
+
+        // The extra column merges into the Center rather than reverting the whole drag.
+        Assert.Equal(ZoneId.Center, svc.Zones.FindZoneOf("sessions"));
+        Assert.Equal(ZoneId.Left, svc.Zones.FindZoneOf("explore")); // Left untouched
+    }
+
     private static IReadOnlyList<string> StackSurfaces(ILayoutService svc, string stackId) =>
         svc.Current.AllStacks().FirstOrDefault(s => s.Id == stackId)?.Surfaces.Select(s => s.SurfaceId).ToList()
         ?? new List<string>();

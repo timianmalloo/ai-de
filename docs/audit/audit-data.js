@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T03:41:31Z",
+  "generated": "2026-09-01T03:47:56Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6791,6 +6791,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Workbench/ZoneLayoutStore.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0336",
+      "shortname": "implement-native-drag-robustness",
+      "datetime": "2026-09-01T03:47:56Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "native drag-to-zone",
+      "summary": "native drag-to-zone robustness: the position-aware reconcile now maps columns first=Left / last=Right / middle=Center, so a native side-drop that creates or nests an extra column MERGES into a zone (Center) instead of reverting the whole drag. Vertical side-drops already flattened; the surface-set guard still refuses any lossy mapping. 1 new test. Core 1284 green. (Deterministic Move-to-zone menu remains the immediate path; native drags are captured on the next interaction via reconcile-before-mutation.)",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs"
       ],
       "tags": [],
       "outcome": "success"
