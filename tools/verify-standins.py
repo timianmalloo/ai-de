@@ -45,7 +45,11 @@ ALLOWED = {
 STANDIN = re.compile(r"\bnew\s+((?:Mock|Stub|Sample|Fake)[A-Za-z0-9_]*)\s*[\(<]")
 
 # Where production code lives. A stand-in inside a test IS the point of a test.
-PRODUCTION = ("src/",)
+# WIDENED 2026-09-01. It scanned only `src/`, which was an assumption I never tested — the same
+# shape of blind spot as a guard reporting clean over a namespace it was not looking at. `spikes/`
+# is measurement code that legitimately fakes things, and `tests/` is where a stand-in belongs, so
+# both stay out; `tools/` ships behaviour and is now in scope.
+PRODUCTION = ("src/", "tools/")
 
 
 def repo_root() -> Path:

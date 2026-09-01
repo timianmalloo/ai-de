@@ -48,6 +48,36 @@ public sealed class FieldsSurviveTheClientBoundaryTests
                 "Reaches the canvas as part of Kind (`group-external`) rather than as its own "
                 + "field, because the page colours by kind.",
         }),
+
+        // WIDENED 2026-09-01, deliberately, after the design session found its own guard reporting
+        // clean over a namespace it was not scanning — R4 one layer up. The way they found it was by
+        // widening the scope and watching it go red, not by reasoning about whether it was complete.
+        // This list had exactly one pair, hand-written by me, and "the pairs I thought of" is the
+        // same shape of blind spot.
+        new(typeof(GraphEdge), typeof(CanvasEdge), new()
+        {
+            // GraphEdge.Status is VerificationStatus; CanvasEdge.Status is its string form. The name
+            // survives, so the check passes on it — worth saying out loud that this control compares
+            // NAMES and would not have noticed a type change that lost meaning.
+        }),
+
+        new(typeof(GraphCluster), typeof(CanvasNode), new()
+        {
+            ["NodeCount"] = "Crosses as CanvasNode.Count — renamed at the boundary, which is exactly "
+                + "the rename this control cannot follow. Named here so the gap is recorded rather "
+                + "than passing silently.",
+            ["IsExternal"] = "Folded into Kind (`group-external`), as for GraphNode.",
+
+            // FOUND BY THE WIDENING, and it is a decision rather than a defect — but it had never
+            // been written down anywhere, which is the whole point of the list. The canvas sizes a
+            // group by how many NODES it stands for, because that is the honesty claim
+            // `CanvasNode.Count` exists to make: a dot standing for 240 types is only honest while
+            // the 240 is on it. How densely those 240 are connected to each other is a different
+            // and weaker claim, and drawing it would need a second visual channel the overview does
+            // not have. Revisit if the overview ever gains one.
+            ["InternalEdges"] = "The overview sizes a group by node count, not by internal density; "
+                + "there is no second visual channel to carry it.",
+        }),
     ];
 
     [Fact]
