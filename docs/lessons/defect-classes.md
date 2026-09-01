@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 46 · partially-controlled 31 · uncontrolled 1
+**Status counts:** controlled 46 · partially-controlled 32 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2508,3 +2508,42 @@ for both or split.*
   failure, not a clean run. **Observed failing 2026-09-01** on a planted fixture (unguarded reported,
   guarded and literal-throwing fixture left alone) and on the repository itself before the sweep.
 - **Status:** `controlled`
+
+### DC-079 — Two conventions for one job coexist with nothing marking which is correct, so copying is a coin flip
+
+- **Shape:** the same helper is written by hand in many files. Over time the copies diverge, and one
+  variant acquires a defect the others do not have. Both forms are now present, both look like
+  precedent, and nothing in the directory says which is which — so the next author, doing the right
+  thing by following the local idiom, has a 50/50 chance of propagating the broken one. Every copy
+  looks like conformance. There is no missing convention to notice, which is why reading more of the
+  codebase makes it worse rather than better.
+- **Signature:** *n* files declaring the same private helper with no shared implementation, and the
+  measurable tell is **divergence in the details nobody re-derives**: the helper's name, its timeout,
+  its error path. When those disagree across copies, the copies are not one convention with variants
+  — they are independent artifacts that merely look alike.
+- **Why it survives:** it is invisible in the steady state. Nothing is wrong until something fails,
+  and it is discovered at the exact moment the reader is least inclined to look (see DC-078). It also
+  defeats the normal defence: "check how the rest of the codebase does it" resolves to two answers,
+  and the reader cannot tell that they asked an ambiguous question. **Observed, not theorised** — the
+  design session wrote a new harness on 2026-09-01 *after reading several existing ones* and picked
+  the broken form, having spent that same day arguing that you cannot tell a thing by looking at it.
+- **Instance:** 2026-09-01, the STA harness. **Measured: 31 test files each declare their own**,
+  under **3 different names** (`OnSta` ×20, `OnStaThread` ×7, `OnUiThread` ×2), with **5 different
+  timeouts** (60s ×15, 30s ×14, and one each of 10s, 20s, 5s). Nine rethrew assertion failures
+  correctly and eighteen wrapped them as infrastructure complaints (DC-078). A shared home already
+  exists and is already referenced by both test projects — `tests/Shared/` (`namespace
+  AiDe.Testing`) — so the duplication was never load-bearing; it accumulated because writing the
+  helper again is always cheaper *for the file being written* than putting it somewhere shared.
+- **Control:** partial, and honestly so. `tools/verify-harness-diagnostics.py` (DC-078) closes the
+  one divergence that caused a defect, which is the administrative fix: it stops this variant without
+  removing the coin flip. **The systemic fix is to delete the choice** — one implementation in
+  `tests/Shared/`, the 31 call sites migrated, after which there is no second form to copy. That is
+  a real piece of work across 31 files and is **not** done; it is recorded here with its measurement
+  so the decision is sized rather than remembered.
+
+  **The derived rule, which is the part that generalises:** when you find two forms of one thing
+  coexisting and one is wrong, correcting the instances is not the fix — *the coexistence* is the
+  defect. Ask what makes the wrong form representable, and remove that, or gate it. A gate is the
+  right answer when consolidation is expensive, precisely because no amount of reading the directory
+  would have told the reader which form to copy.
+- **Status:** `partially-controlled`
