@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T01:38:54Z",
+  "generated": "2026-09-01T01:40:21Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "983f2ec23c3f88f87d32ec61a617ff76d64677d26432bec239e80311f7c74d8f"
+      "sourceSha256": "7306b2fa0ad20e7e93dd794d0d199d96d79f2f696c2b84d2b008f7cf4e06f1d6"
     },
     {
       "id": "domain-experts",
@@ -3332,7 +3332,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8f2a48297d69b35f0a1686044aa3bada4d6c6f3a2bbaebf8bb37452700c0015c"
+      "sourceSha256": "68fde5efe455e883b16f198acc6ca53f6bf60a0a25f1ce12823cf6a013ff6a0b"
     },
     {
       "id": "kb-ai-native-ide-shell",
@@ -6774,5 +6774,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3a9f0c4194fe419c03a3c58495c72afb83da5f911437a92d1f39ca03da3ce707"
+  "graphSha256": "0d2bd838d3e6dcc90bb5dd74b4b6bff62608d452625698188352a830a27f1be0"
 };

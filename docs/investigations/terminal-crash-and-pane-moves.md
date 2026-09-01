@@ -133,13 +133,13 @@ relocation is a **different** mechanism — **source-side collapse** — which t
 
 ## Generalization — the failure classes
 
-- **DC-060 — a type promises total input-safety but one access path is unguarded.** `TerminalScreen`
+- **DC-061 — a type promises total input-safety but one access path is unguarded.** `TerminalScreen`
   documents "nothing throws / every coordinate is clamped", yet the indexer bypasses it. Survives
   because the promise makes every caller assume the reader is safe.
-- **DC-061 — UI-thread render reads shared state a background thread mutates, with a false
+- **DC-062 — UI-thread render reads shared state a background thread mutates, with a false
   "single-threaded / reads-between-writes" invariant.** Works under light load; crashes under
   concurrent load (two sessions). The documented invariant is the tell.
-- **DC-062 — a proportional-split-tree layout collapses single-child splits on pane removal,
+- **DC-063 — a proportional-split-tree layout collapses single-child splits on pane removal,
   relocating unrelated panes.** Emergent surprise from individually-correct ops; mismatches the
   "fixed docks, panes contained" mental model.
 
@@ -156,7 +156,7 @@ crash. The crash was instead predicted by **two false documented invariants** (l
 |---|---|---|---|---|
 | **1 — Stop the crash (deterministic)** | Bounds-safe read: `DrawCursor` reads the cursor cell only when `CursorColumn < Columns && CursorRow < Rows` (skip the glyph redraw in deferred-wrap); or clamp the indexer / add a safe `CellAt`. **Test:** the deferred-wrap repro (bottom-right) — fails on today's code, passes after. | Root cause A; **stops the crash** | Low | Smallest correct fix; ship first. |
 | **2 — Make the screen safe to render concurrently** | Isolate the reader from the writer: either (a) marshal all `_parser.Consume` mutation to the UI dispatcher, or (b) have the pump publish an **immutable frame snapshot** the render reads, or (c) a lock around mutate/read. **Test:** a stress test writing on a background thread while reading `[cursor]`/cells on another, asserting no throw over N iterations. | Root cause B (the race under two sessions) | Med | Design choice (snapshot preferred — no UI-thread parsing cost). Data-race, so Distributed-Systems/Test-Architect review. |
-| **3 — Pane-move: decide the model** | **Product/architecture decision first.** Either (A) **named dock zones** so panes are contained in stable regions matching your mental model (bigger change), or (B) keep the split-tree but **soften collapse** (preserve a structural placeholder / don't reorient the survivor) + **incremental view update** instead of full `Adapter.Render()`. **Test:** characterization test on source-side collapse; a move-preserves-others test. | Root cause DC-062 (relocation + re-draw) | High | Needs your call on A vs B — it changes the layout model. |
+| **3 — Pane-move: decide the model** | **Product/architecture decision first.** Either (A) **named dock zones** so panes are contained in stable regions matching your mental model (bigger change), or (B) keep the split-tree but **soften collapse** (preserve a structural placeholder / don't reorient the survivor) + **incremental view update** instead of full `Adapter.Render()`. **Test:** characterization test on source-side collapse; a move-preserves-others test. | Root cause DC-063 (relocation + re-draw) | High | Needs your call on A vs B — it changes the layout model. |
 
 ## Residual risk / what would change the diagnosis
 - Issue 1 is Verified (repro seen). If a fix only clamps the indexer but leaves the background/UI race,

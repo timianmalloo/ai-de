@@ -1783,7 +1783,7 @@ for both or split.*
   in review is the mechanical guard.
 - **Status:** controlled
 
-### DC-060 — A type promises total input-safety, but one access path is unguarded
+### DC-061 — A type promises total input-safety, but one access path is unguarded
 
 - **Signature:** a type's doc-comment promises "nothing throws / every coordinate is clamped" (or
   similar total-safety), and every *mutator* honours it — but one path, usually a read/indexer,
@@ -1801,7 +1801,7 @@ for both or split.*
 - **Status:** uncontrolled (fix is Phase 1 of docs/investigations/terminal-crash-and-pane-moves.md,
   awaiting approval)
 
-### DC-061 — UI-thread render reads state a background thread mutates, behind a false single-thread invariant
+### DC-062 — UI-thread render reads state a background thread mutates, behind a false single-thread invariant
 
 - **Signature:** a mutable model is documented "not thread-safe / read between writes" and treated as
   single-threaded, but the writer is a background pump and the reader is the UI render, with no lock,
@@ -1816,7 +1816,7 @@ for both or split.*
   stress test. A recurrence means the boundary leaked.
 - **Status:** uncontrolled (Phase 2 of the investigation, awaiting approval)
 
-### DC-062 — A proportional-split-tree layout collapses single-child splits, relocating unrelated panes
+### DC-063 — A proportional-split-tree layout collapses single-child splits, relocating unrelated panes
 
 - **Signature:** moving/removing one pane changes the position or orientation of *other* panes, and the
   whole view re-draws. There are no fixed/absolute dock regions — the layout is a tree of proportional
