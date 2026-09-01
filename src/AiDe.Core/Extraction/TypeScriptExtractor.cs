@@ -359,6 +359,7 @@ public sealed class TypeScriptExtractor : IExtractor
         var packages = 0;
         var unrecognisedExports = 0;
         var nestedDeclarations = 0;
+        var dynamicImports = 0;
 
         // NonExportedNotAnalysed is NOT here any more: non-exported top-level declarations are read,
         // and disclosing a gap that has been closed is the same defect as hiding one that has not.
@@ -370,14 +371,13 @@ public sealed class TypeScriptExtractor : IExtractor
         // was nested, and MEASURED, only 2 of those 13 have a nested declaration in them. A
         // disclosure that fires when nothing was hidden trains a reader to skip disclosures (DC-025),
         // and one with no number says nothing about whether the gap is worth closing (DC-050).
-        foreach (var disclosure in new[]
-        {
-            Disclosures.TypesNotChecked,
-            Disclosures.DynamicImportsNotAnalysed,
-        })
-        {
-            assertions.Add(Fact(request, request.ScopeId, "discloses", disclosure));
-        }
+        // TypesNotChecked stays unconditional because it is unconditionally TRUE: this reader does
+        // not typecheck, on any file, ever. DynamicImportsNotAnalysed is not like that — it is a
+        // claim about the source in front of it, and it moved below to be counted. MEASURED with the
+        // reader's own generated-file filter applied: 5 dynamic imports across 3 of TheTerrace's 6
+        // hand-written files, and ZERO anywhere in this repository — where it had been firing on
+        // every scope regardless (DC-025).
+        assertions.Add(Fact(request, request.ScopeId, "discloses", Disclosures.TypesNotChecked));
 
         foreach (var file in files)
         {
@@ -445,6 +445,12 @@ public sealed class TypeScriptExtractor : IExtractor
             // declarations on TheTerrace where the true figure is 27.
             var members = Members(text, out var nested);
             nestedDeclarations += nested;
+
+            // Counted on the comment-stripped text, so a commented-out `require(` does not inflate
+            // the number. A specifier inside a string still can — which is the safe direction for a
+            // disclosure, since overstating what is hidden costs a reader attention while
+            // understating it costs them a fact they believed they had.
+            dynamicImports += DynamicImport.Matches(text).Count;
 
             foreach (var (owner, member) in members)
             {
@@ -528,6 +534,19 @@ public sealed class TypeScriptExtractor : IExtractor
                 $"{Disclosures.NestedDeclarationsNotAnalysed} ({nestedDeclarations:N0} declaration(s) " +
                 "are nested inside a function, a method or a namespace block and cannot be reached " +
                 "by an importer)"));
+        }
+
+        if (dynamicImports > 0)
+        {
+            // Conditional, and counted, for the same reason the nested one is. It was fired on all
+            // 13 of TheTerrace's TypeScript scopes and on all of this repository's, while the true
+            // figure here is zero: a disclosure that fires when nothing is hidden is indistinguishable
+            // from one that fires when something is (DC-025), and a disclosure with no number says
+            // nothing about whether the gap is worth closing (DC-050).
+            assertions.Add(Fact(request, request.ScopeId, "discloses",
+                $"{Disclosures.DynamicImportsNotAnalysed} ({dynamicImports:N0} call(s) to " +
+                "`import(...)` or `require(...)` name their module at run time, so the edge cannot " +
+                "be drawn)"));
         }
 
         if (generated > 0)
@@ -780,6 +799,16 @@ public sealed class TypeScriptExtractor : IExtractor
     /// <para>Read line by line and abandoned at the first long one, so a three-megabyte bundle costs
     /// one line rather than a full parse.</para>
     /// </remarks>
+    /// <summary>A module named at run time — <c>import(x)</c> or <c>require(x)</c>.</summary>
+    /// <remarks>
+    /// The lookbehind is what keeps it from counting the STATIC forms this reader already resolves:
+    /// without it, <c>await import("./x.js")</c> is indistinguishable from a member call spelled
+    /// <c>thing.import(</c>, and `foo.require(` would be counted as a module load. Matched against
+    /// comment-stripped text so a commented-out call does not inflate the figure.
+    /// </remarks>
+    private static readonly Regex DynamicImport =
+        new(@"(?<![\w$.])(?:import|require)\s*\(", RegexOptions.Compiled);
+
     private static bool IsGenerated(string path)
     {
         // `.min.` is the one naming convention that means this unambiguously, and it costs nothing.
