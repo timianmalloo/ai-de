@@ -56,15 +56,18 @@ public sealed record CanvasGraph(
     IReadOnlyList<string> Disclosures,
     string? Message,
     /// <summary>
-    /// Knowledge nodes the workspace holds, drawn or not — the denominator for a knowledge count.
+    /// Every node kind the workspace declares and how many there are — drawn or not.
     /// </summary>
     /// <remarks>
-    /// MEASURED on a real workspace: 878 knowledge nodes with median relation degree 0, against a
-    /// median of 4 for everything else, so a most-connected-first cap leaves roughly 620 of them
-    /// undrawn. The chip read "Knowledge 257" — true about what was drawn, and read as a statement
-    /// about what exists. A surface cannot tell a lower bound from an exact count without this.
+    /// <para>The denominator a category count is a numerator of. MEASURED on a real workspace: 878
+    /// knowledge nodes with median relation degree 0 against a median of 4 for everything else, so a
+    /// most-connected-first cap leaves roughly 620 undrawn. The chip read "Knowledge 257" — true
+    /// about what was drawn, and read as a statement about what exists.</para>
+    ///
+    /// <para>Kinds rather than the canvas's five categories: the taxonomy is the surface's, and the
+    /// surface already has a <c>categoryOf</c> to run over these. 29 kinds, ~636 bytes.</para>
     /// </remarks>
-    int KnowledgeDeclared = 0);
+    IReadOnlyList<GraphKindTotal>? DeclaredByKind = null);
 
 /// <summary>
 /// Builds the canvas's view from the same read surface every other pane uses.
@@ -172,7 +175,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
             graph.Omitted,
             graph.Disclosures,
             message,
-            graph.KnowledgeDeclared);
+            graph.DeclaredByKind);
     }
 
     public async Task<CanvasGraph> LoadAsync(

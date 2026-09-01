@@ -98,21 +98,31 @@ public sealed record GraphQuery(
 /// <summary>The whole graph, and what it left out.</summary>
 /// <param name="Omitted">Nodes present in the evidence and not returned, because a cap applied.</param>
 /// <param name="Disclosures">What the extraction said it could not see, lifted out of the edges.</param>
-/// <param name="KnowledgeDeclared">
-/// How many knowledge nodes the workspace holds, whether or not they were drawn.
+/// <param name="DeclaredByKind">
+/// Every node kind the workspace declares, and how many there are — drawn or not.
 /// </param>
 /// <remarks>
-/// <para><b>Why the knowledge total needs its own field when the node total does not.</b> The
-/// overall total is recoverable as <c>Nodes.Count + Omitted</c>, so a surface can already say
-/// "1,500 of 2,992". Knowledge cannot be recovered that way: the omitted nodes are gone, and with
-/// them any way to know how many were knowledge.</para>
+/// <para><b>Why totals need their own field when the node total does not.</b> The overall total is
+/// recoverable as <c>Nodes.Count + Omitted</c>, so a surface can already say "1,500 of 2,992". A
+/// per-category total cannot be recovered that way: the omitted nodes are gone, and with them any
+/// way to know what they were.</para>
 ///
 /// <para><b>And it is not a detail.</b> MEASURED on a real workspace: 878 knowledge nodes, median
 /// relation degree <b>0</b>, against a median of 4 for everything else — so under a
 /// most-connected-first cap roughly 620 of them are never candidates for a slot. The surface
 /// reported "Knowledge 257" with no denominator, which is true about what was drawn and reads as a
-/// statement about what exists. A count that is a lower bound and one that is exact must be
-/// distinguishable, and the surface cannot make that distinction without this number.</para>
+/// statement about what exists.</para>
+///
+/// <para><b>By KIND, not by the surface's categories.</b> Code / Data / Infra / Specs / Knowledge is
+/// the canvas's taxonomy, and Core teaching itself that taxonomy would put a UI decision in the
+/// projection — where it would then be wrong for every other consumer. Kinds are what Core knows;
+/// the surface already has a <c>categoryOf</c> and can run it over these totals to get its own
+/// denominators. MEASURED: 29 kinds, ~636 bytes.</para>
+///
+/// <para><b>The knowledge flag travels with each kind, rather than kind alone.</b> Measured on a
+/// real workspace, no kind appears both as knowledge and as source — so kind alone WOULD work
+/// today. That is a property of one corpus, not a guarantee, and a total that is silently wrong in
+/// a repository where a kind is used both ways would be indistinguishable from a correct one.</para>
 /// </remarks>
 public sealed record WorkspaceGraph(
     IReadOnlyList<GraphNode> Nodes,
@@ -120,7 +130,14 @@ public sealed record WorkspaceGraph(
     int Omitted,
     IReadOnlyList<string> Disclosures,
     string SourceRevision,
-    int KnowledgeDeclared = 0);
+    IReadOnlyList<GraphKindTotal>? DeclaredByKind = null);
+
+/// <summary>How many nodes of one kind the workspace declares, drawn or not.</summary>
+/// <param name="IsKnowledge">
+/// Carried per kind rather than assumed from it: measured on a real workspace no kind is used both
+/// ways, and that is one corpus rather than a rule.
+/// </param>
+public sealed record GraphKindTotal(string Kind, bool IsKnowledge, int Declared);
 
 /// <summary>
 /// The whole workspace as a graph, rather than one node and its neighbours.
@@ -292,9 +309,13 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
             // finding that mattered.
             [.. AiDe.Core.Facts.DisclosureSummary.Fold(disclosures)],
             sourceRevision,
-            // Counted over every knowledge node the walk SAW, not the ones that survived the cap —
-            // the whole point is to be the denominator the drawn count is a numerator of.
-            KnowledgeDeclared: knowledge.Count(declared.Contains));
+            // Counted over every node the walk SAW, not the ones that survived the cap — the whole
+            // point is to be the denominator the drawn count is a numerator of.
+            DeclaredByKind: [.. declared
+                .GroupBy(id => (Kind: kinds.GetValueOrDefault(id, "external"), Knowledge: knowledge.Contains(id)))
+                .Select(g => new GraphKindTotal(g.Key.Kind, g.Key.Knowledge, g.Count()))
+                .OrderByDescending(t => t.Declared)
+                .ThenBy(t => t.Kind, StringComparer.Ordinal)]);
     }
 
     /// <summary>
