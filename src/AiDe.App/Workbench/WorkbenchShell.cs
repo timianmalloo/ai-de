@@ -1263,6 +1263,32 @@ public sealed class WorkbenchShell : IDisposable
             $"{c.RelativePath}:{c.Line}",
             c.Text)));
 
+        // THE BOUND IS PART OF THE ANSWER, so it travels as a row.
+        //
+        // Core counts what it could not read — files too large to serve, files it could not open —
+        // and reports whether the match cap fired. A list that shows twelve hits and says nothing
+        // about forty unread files is a coverage claim nobody can check, which is DC-025 exactly,
+        // re-entered one boundary further out than where it was fixed. Core can only make the
+        // number available; only this can make it visible.
+        //
+        // It is a ROW rather than a field because the provider's contract is
+        // `Task<IReadOnlyList<SearchResult>>` and has nowhere else to put it. A row is honest and
+        // costs no change to a surface Design owns; if the shortfall deserves its own affordance
+        // later, that is a shape change to agree, not a reason to drop the number now.
+        var shortfall = new List<string>();
+
+        if (content.Truncated) shortfall.Add($"first {content.Matches.Count} match(es) only");
+        if (content.FilesSkipped > 0) shortfall.Add($"{content.FilesSkipped:N0} file(s) not read");
+
+        if (shortfall.Count > 0)
+        {
+            results.Add(new SearchResult(
+                Id: string.Empty,
+                SearchResultKind.Other,
+                $"Searched {content.FilesSearched:N0} file(s) — {string.Join(", ", shortfall)}",
+                "This result is a lower bound. Narrow the term to see the rest."));
+        }
+
         return results;
     }
 

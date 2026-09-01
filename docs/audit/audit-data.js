@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T15:38:31Z",
+  "generated": "2026-09-01T15:40:12Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7060,6 +7060,40 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/investigations/knowledge-chip-reads-zero-again.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0354",
+      "shortname": "iskeknowledge-dropped-in-transit",
+      "datetime": "2026-09-01T13:50:46Z",
+      "session": "phase3-pane-probes",
+      "prompt": "cross-session: Design found the Knowledge chip reads 0 again; IsKnowledge dropped at the CanvasNode boundary",
+      "summary": "Goal: verify and fix the third recurrence of the Knowledge-reads-0 defect. Verified rather than taken on report: GraphNode.IsKnowledge existed, CanvasNode did not carry it, and the page guessed from a fixed spelling list that cannot match spec/investigation/glossary. The drop was in Core's own CanvasGraphViewModel, not the App. Fixed the two graph-loading paths; the other three sites cannot know and each says so at the site. Registered DC-074 with FieldsSurviveTheClientBoundaryTests, observed failing on the shipped shape. Design's half is one JS line - the field is already on the wire as isKnowledge via JsonSerializerDefaults.Web.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/FieldsSurviveTheClientBoundaryTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0356",
+      "shortname": "next-steps-knowledge-flag-stranded-gate-adr-measure",
+      "datetime": "2026-09-01T15:36:10Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do these next steps",
+      "summary": "Goal: the five outstanding next actions. Done: (2) the canvas page now categorises knowledge by the isKnowledge flag rather than a spelling list that could not match investigation/glossary, with the list kept as a fallback and specs still their own bucket; (4) tools/verify-stranded-audit.py built after the user made it repo-owned - checks the primary always and other trees only when nobody is live, observed failing on a planted fixture AND by reproducing the real incident in the real primary checkout, CI runs only its self-test because a runner has one clean checkout and the real check could never fail there (DC-016); (3) search adapter was already wired by Design and correct - added the missing bound as a row since the provider contract has nowhere else to put it; (5) ADR renumber measured: 202 citations, only 4 are links, 198 bare, 112 in neither subject cluster - not mechanically resolvable, per-owner file lists written to 4u. Registered DC-075.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-stranded-audit.py"
       ],
       "tags": [],
       "outcome": "success"

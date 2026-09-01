@@ -123,6 +123,16 @@ jobs:
       - name: Stand-ins gate — self-test
         run: python tools/verify-standins.py --self-test
 
+      # ONLY the self-test runs here, and that is deliberate. The real check looks across every
+      # worktree for an append-only log left uncommitted in a tree nobody is working in; a CI runner
+      # has exactly one checkout and it is clean by construction, so running the check here would
+      # pass every time without ever being able to fail — a control that cannot fire in the
+      # environment that verifies it (DC-016), which is the defect it exists to prevent, one layer
+      # up. The self-test builds its own repository and CAN fail, so CI proves the control is alive
+      # while the control itself runs where the hazard is: a developer's machine, pre-commit.
+      - name: Stranded audit-log gate — self-test
+        run: python tools/verify-stranded-audit.py --self-test
+
       # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
       # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the
       # twist that the gate was not stale but NARROW). Builds every tracked project the solution does
