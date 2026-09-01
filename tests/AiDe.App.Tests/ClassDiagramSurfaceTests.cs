@@ -238,4 +238,29 @@ public sealed class ClassDiagramSurfaceTests
             Assert.Equal(0, s.DrawnDependencyCount);
         });
     }
+
+    [Fact]
+    public void ShowGraph_DrawsAssociations_WhenAFieldIsTypedAsAnotherDrawnClass()
+    {
+        OnSta(() =>
+        {
+            var s = new ClassDiagramSurface
+            {
+                // A has a single-typed field (association) and a collection field (aggregation) to B.
+                MembersSource = id => Task.FromResult(id == "A"
+                    ? ((IReadOnlyList<string>)new[] { "+ Ref : B", "+ Items : List<B>" }, 2)
+                    : ((IReadOnlyList<string>)Array.Empty<string>(), 0)),
+            };
+
+            s.ShowGraph(
+                new[] { N("A", "class"), N("B", "class") },
+                Array.Empty<CanvasEdge>());
+
+            Assert.True(s.ShowingDiagram);
+            // With completed-task members the prefetch re-render runs synchronously, so the derived
+            // association + aggregation to B are drawn (2 connectors), even with no inheritance edges.
+            Assert.True(s.DrawnAssociationCount >= 1,
+                $"expected derived associations, drew {s.DrawnAssociationCount}");
+        });
+    }
 }

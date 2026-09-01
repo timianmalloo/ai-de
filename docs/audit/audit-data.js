@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T04:25:32Z",
+  "generated": "2026-09-01T04:26:08Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6854,6 +6854,23 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "acceptance_met": true
       }
+    },
+    {
+      "id": "al-0338",
+      "shortname": "implement-uml-associations",
+      "datetime": "2026-09-01T04:22:10Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do the enumerated next steps in priority order — #1 uml-richer-relations",
+      "summary": "uml-richer-relations (App-only, unblocked): derive UML association/aggregation from members. A field/property typed as another drawn class is an association (solid line, open arrowhead); a collection of it is an aggregation (hollow diamond at the owner). Pure DeriveAssociations parses member strings (vis name : Type), strips namespaces/nullable/generics, resolves collection element types, matches by simple label. Rendered on the class-diagram surface after the member prefetch. 11 tests. App 238 green. NOTE: static/abstract member modifiers and true composition need Core extractor data (member modifiers + ownership) the graph does not emit — deferred as a Core ask.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/ClassHierarchyModel.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
