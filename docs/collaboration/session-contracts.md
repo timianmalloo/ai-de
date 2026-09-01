@@ -2019,6 +2019,23 @@ half, and it stays human — but it can refuse to let a surface exist with no an
 whole forcing-function shape both sessions have been converging on. **Proposed, not built:
 `tools/**` is Core's under §2.**
 
+#### And the omission includes the session that found it
+
+Checked after writing the above, because a finding about what a document fails to say should be
+pointed at the finder first: **§2's tables do not mention Session 3 anywhere.** No `docs/ui/**` row,
+no entry in either table. §8.1 said this session's lane *"adds one row to each table"* — it
+described the addition and never made it, because §8 is a proposal until Core and Design accept it,
+and nobody circled back.
+
+So the §8.11 finding was written by the one participant §2 also omits. That is not ironic so much
+as confirming: **the omission is not about carelessness with new surfaces, it is a property of a
+register that is only ever appended to.** Nothing in §2 is wrong. Nothing in §2 has been revisited
+either, and an append-only document accumulates correct statements while its coverage decays.
+
+Left unfixed on purpose. Editing §2's tables to add this session would be exactly the unilateral
+amendment §8.2 exists to prevent, and it is the same joint call as the nine — Core has proposed a
+carve in §4y, Design has not answered, and one more row can wait for the same conversation.
+
 Adding the nine is a joint call between Core and Design and Session 3 is not making it. What is
 recorded here is that the question exists for nine files and nobody has been asked it.
 
