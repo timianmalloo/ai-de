@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T21:18:53Z",
+  "generated": "2026-09-01T21:31:12Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -5147,6 +5147,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "35bd6c0025a9201dcf472c612f8ae7b7035ee5ef361a3c208ea80bc0400dc7bc"
     },
     {
+      "id": "ui-unbacked-affordances",
+      "path": "docs/ui/unbacked-surfaces-and-affordances.md",
+      "title": "Inventory — surfaces not built, and affordances with no implementation",
+      "type": "investigation",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "Two inventories, computed by enumeration rather than read. Headline: three of the four left-rail mode buttons (Coordinate, Compose, Audit) have no Click handler, no Command, no x:Name and no disabled state — they render as live 44x44 targets, are announced to assistive technology, and do nothing silently. The menu and command layer is by contrast completely clean at 28/28/28. Two icon resources are declared and never referenced, and two commands miss their intended icon through a case-sensitive Contains against camelCase ids.",
+      "tags": [
+        "ui",
+        "ux",
+        "inventory",
+        "accessibility",
+        "session-3",
+        "dead-affordance"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-craft-findings-2026-09-01",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "129eb0e73f70c9b572e82f760e1a4f00f52e34a51b7d2691b6f2c495b35b5eee"
+    },
+    {
       "id": "kb-agentic-session-observability",
       "path": "docs/knowledge/agentic-session-observability/index.md",
       "title": "Agentic Session Observability, Coordination, Learning, and Scoring",
@@ -9785,5 +9817,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a88b4282ec2975aafe588106e5344737fefc074acd9c25684ddae9dbe80acbe0"
+  "graphSha256": "960c1b7dfa4bdd56d1b14b1953e9b1e720ea31a77c667afcaede51466963bc27"
 };
