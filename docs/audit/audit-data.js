@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T04:36:22Z",
+  "generated": "2026-09-01T04:43:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6902,6 +6902,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/SequenceDiagramSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0345",
+      "shortname": "implement-app-search-breadth",
+      "datetime": "2026-09-01T04:43:43Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "do the enumerated next steps in that priority order (step 4: app-search-breadth)",
+      "summary": "Added App-side breadth-search: pure SearchModel (kind-ordered grouping) + native SearchSurface (query box, debounced/generation-guarded provider, grouped results, idle/not-indexed/no-match states, navigate hand-off). Registered 'search' surface kind with injectable provider, controller hook, workbench.newSearch View command (Ctrl+K,F). 8 tests; App 251 green; smoke passed. Provider awaits Core search index.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SearchSurface.cs"
       ],
       "tags": [],
       "outcome": "success"

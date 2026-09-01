@@ -20,10 +20,11 @@ public sealed class SurfaceContentFactory(
     IWatcherSessionsQuery? watcherSessions = null,
     IWatcherBoardQuery? watcherBoard = null,
     IWatcherLeaderboardQuery? watcherLeaderboard = null,
-    IWatcherDisputeQuery? watcherDisputes = null)
+    IWatcherDisputeQuery? watcherDisputes = null,
+    System.Func<string, System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SearchResult>>>? searchProvider = null)
 {
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
-    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "prompt", "classdiagram", "sequence", "codeviewer", "diagnostics"];
+    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"];
 
     public FrameworkElement Create(Surface surface)
     {
@@ -40,6 +41,7 @@ public sealed class SurfaceContentFactory(
             "prompt" => new PromptDraftSurface(surface.SurfaceId, surface.Title),
             "classdiagram" => new ClassDiagramSurface(surface.Title),
             "sequence" => new SequenceDiagramSurface(),
+            "search" => new SearchSurface { Provider = searchProvider },
             "codeviewer" => new CodeViewerView(surface.Title),
             "diagnostics" => new DiagnosticsSurface(surface.Title),
             _ => Unavailable(surface),

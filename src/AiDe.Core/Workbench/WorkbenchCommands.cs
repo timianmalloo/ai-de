@@ -156,6 +156,11 @@ public static class WorkbenchCommandCatalog
             "Opens a staged prompt-draft pane. Compose a prompt and transfer it to a ready terminal session.",
             Menu: "_Terminal"),
 
+        new("workbench.newSearch", "Search workspace", "Ctrl+K, F",
+            nameof(LayoutOperation.AddSurface),
+            "Opens a breadth-search pane: one query over the whole workspace \u2014 types, members, files and graph nodes.",
+            Menu: "_View"),
+
         new("workbench.newClassDiagram", "New class diagram", "Ctrl+K, M",
             nameof(LayoutOperation.AddSurface),
             "Opens a class-diagram pane: the type hierarchy (classes/interfaces and their inheritance) of the open workspace.",

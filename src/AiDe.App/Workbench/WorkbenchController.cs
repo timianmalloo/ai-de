@@ -124,6 +124,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workbench.newSequenceDiagram":
                 return NewSequenceDiagram();
 
+            case "workbench.newSearch":
+                return NewSearch();
+
             case "workbench.newCodeViewer":
                 return NewCodeViewer();
 
@@ -452,6 +455,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// <summary>Opens a sequence-diagram surface. Set by the shell that can create surfaces.</summary>
     public Func<string>? NewSequenceDiagramRequested { get; set; }
 
+    /// <summary>Opens a workspace breadth-search surface. Set by the shell that can create surfaces.</summary>
+    public Func<string>? NewSearchRequested { get; set; }
+
     /// <summary>Opens a read-only code-viewer surface. Set by the shell that can create surfaces.</summary>
     public Func<string>? NewCodeViewerRequested { get; set; }
 
@@ -490,6 +496,15 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         announcer.Announce(NewSequenceDiagramRequested is null
             ? "Sequence diagrams are not available in this build."
             : NewSequenceDiagramRequested());
+
+        return true;
+    }
+
+    private bool NewSearch()
+    {
+        announcer.Announce(NewSearchRequested is null
+            ? "Workspace search is not available in this build."
+            : NewSearchRequested());
 
         return true;
     }

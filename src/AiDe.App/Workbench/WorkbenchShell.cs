@@ -228,6 +228,12 @@ public sealed class WorkbenchShell : IDisposable
                 "Sequence diagram opened.",
                 "There is no pane to open a sequence diagram in.");
 
+        Controller.NewSearchRequested = () =>
+            OpenReferenceDocument(
+                new Surface($"search#{Guid.NewGuid().ToString("N")[..6]}", "search", "Search"),
+                "Search opened.",
+                "There is no pane to open search in.");
+
         Controller.NewCodeViewerRequested = () =>
             OpenReferenceDocument(
                 new Surface($"codeviewer#{Guid.NewGuid().ToString("N")[..6]}", "codeviewer", "Source"),
