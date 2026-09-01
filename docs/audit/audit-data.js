@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T15:51:02Z",
+  "generated": "2026-09-01T16:08:24Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7259,6 +7259,37 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "e33dcd3f324767aa494be29a98febef50022b305",
         "short": "e33dcd3f3",
+        "branch": "feature/ui-experience-refinement",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0359",
+      "shortname": "session-3-language-blindness",
+      "datetime": "2026-09-01T16:08:24Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "Cross-session from ai-de-a7: verified the retraction independently, bounded the JS exposure, widened both of its own controls (one went red on GraphCluster.InternalEdges), and asked that the general form of the language-blindness lesson be written down.",
+      "summary": "Retracted four verdicts both sessions had called DROPPED - CanvasGraph.Disclosures, CanvasGraph.Message, WorkspaceGraph.Disclosures, WorkspaceOverview.Disclosures. All four are rendered: CanvasPage.cs:728 shows graph.message as the caption and :739-754 shows graph.disclosures and graph.omitted as a collapsible warning hidden when empty, with a comment reasoning about the affordance. Arguably the best implementation of the family in the codebase, and both sessions had written it off. Cause: we searched C# identifiers in a file whose consumers are JavaScript; the value crosses a language boundary AND a case convention AND lives inside a string literal. Wrote section 8.3d with the general rule - state the language a control reads and treat any consumer outside it as NOT CHECKED rather than absent, because a full complete scan of the wrong language is R4 with a cause that is harder to see than an empty one. Recorded the corollary that cost the most: two methods agreeing is corroboration only if they have different blind spots; both stopped at the C# edge so the agreement carried no information. Verified independently by searching the camelCase names that no consumer of healthFindings or truncated exists in the App, so the two survivors are genuine and are promoted for Design.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Claude Code",
+      "actor": "claude-ui-experience",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [
+        "ui-craft"
+      ],
+      "outcome": "success",
+      "goal": "Retract four wrong dropped-verdicts, and write down the general form of why both sessions produced them.",
+      "done_when": "The four retractions are verified end to end and on main; the two survivors are promoted in the craft findings for Design; and the general rule is recorded so it outlives the two specific holes it came from.",
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "240ddd6c487e9ecd15f2a99c8dfbd3e6255e091b",
+        "short": "240ddd6c4",
         "branch": "feature/ui-experience-refinement",
         "pushed": false
       }
