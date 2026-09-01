@@ -48,6 +48,7 @@ Each audit entry records one meaningful action. The five **required** fields are
   "tags": ["payments", "resilience"],    // keywords for search
   "outcome": "success",                  // success|partial|failed|blocked
   "goal": "…", "done_when": "…",         // the turn's goal-state (front matter CT19); done_when is the PACK-O presence signal
+  "signals": { "acceptance_met": true, "verification_path": true },  // optional watcher telemetry (AL2a); only observed fields
   "change": "cl-0003",                   // link to a change-log entry, when this action was also a decision
   "git": { "sha": "…", "short": "…", "branch": "main", "pushed": true }  // optional, via --git
 }
@@ -63,6 +64,8 @@ Each audit entry records one meaningful action. The five **required** fields are
 - **`change`** — when an action was also a meaningful decision, it links to the change-log entry (§3), so the two logs cross-reference.
 - **`goal`** + **`done_when`** — the turn's goal-state (front matter CT19): the objective and its **terminal condition**. `done_when` is the **PACK-O presence signal** — a substantive turn without it skipped the front matter — and the `done_when`→`summary` pair is what `/dream` mines for scope drift (a summary that plainly exceeds the goal). Captured via `--goal` / `--done-when`.
 - **`git`** — the commit context at the time, for actions worth pinning to a sha.
+
+**AL2a — The optional `signals` object (watcher telemetry, honest by construction).** A turn **MAY** record a `signals` object carrying the **deterministic signals it actually observed at close** — the watcher's `DeterministicSignalsDeriver` reads it to lift an imported Work Episode above its conservative default when scoring an agent. The safe, close-observable booleans are captured by flag: `--signal-verification-path` (a committed Proof Pack / verification path exists), `--signal-verification-executed` (the red-observed verification actually ran), `--signal-acceptance-met` (the `done_when` criterion was met), and `--signal-regression` (a known regression was introduced — a claim, so emit only when checked). The object is **honest by construction**: only supplied fields are written, so an un-instrumented turn simply omits it and the reader falls back to a **conservative default** rather than a fabricated value (spec L127 / NG1). The **judgement-laden counts** (`guidance_required`/`guidance_satisfied`, `coordination_required`/`coordination_observed`) get **no flag** precisely so a harness cannot fabricate them; a caller with a genuine observation source supplies the full object via `--from-json`. Absent = omitted = conservative — never a guess.
 
 **AL3 — Granularity: meaningful, not every keystroke.** An audit entry is written for a **meaningful unit of work** — a skill run, a script invocation, a deliberate prompt that changed the repo or the plan — not for every tool call or trivial read. The bar is *"would a future session want to know this happened?"*. Over-logging buries the signal; under-logging loses the history. When in doubt for a load-bearing action, log it.
 

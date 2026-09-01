@@ -498,6 +498,23 @@ def cmd_append(args):
         _v = getattr(args, _opt, None) or base.get(_opt)
         if _v:
             entry[_opt] = _v
+    # Watcher telemetry convention (AL2a): an OPTIONAL `signals` object carrying the deterministic
+    # signals a turn actually OBSERVED at close, read by the watcher's DeterministicSignalsDeriver to
+    # lift an imported episode above its conservative default. Honest by construction - only supplied
+    # fields are emitted, so anything absent stays a conservative default rather than a fabricated
+    # value (spec L127 / NG1). The flags cover the safe, close-observable booleans; a richer caller
+    # may supply the full object (incl. the judgement-laden guidance_*/coordination_* counts, which
+    # get no flag precisely so a harness cannot fabricate them) via --from-json.
+    _signals = dict(base.get("signals") or {})
+    for _flag, _key in (("signal_verification_path", "verification_path"),
+                        ("signal_verification_executed", "verification_executed"),
+                        ("signal_acceptance_met", "acceptance_met"),
+                        ("signal_regression", "regression")):
+        _sv = getattr(args, _flag, None)
+        if _sv is not None:
+            _signals[_key] = (_sv == "true")
+    if _signals:
+        entry["signals"] = _signals
     # Instrumentation over inference (IO1): duration is DEFAULT-ON. An explicit --started wins;
     # otherwise the stamp recorded by `start --session` at grounding is picked up automatically,
     # so no caller has to remember a flag. Absent/unparseable/skewed -> no duration, never a
@@ -764,6 +781,20 @@ def main():
     ap_a.add_argument("--change", help="link to a change-log id (cl-NNNN)")
     ap_a.add_argument("--goal", help="the turn's goal (front matter CT19)")
     ap_a.add_argument("--done-when", dest="done_when", help="the terminal condition (front matter CT19); the PACK-O presence signal /dream mines (AL5b)")
+    # Watcher telemetry convention (AL2a): the safe, close-observable deterministic signals a turn
+    # may record. Tri-state (absent -> omitted -> the watcher reader's conservative default; NG1).
+    ap_a.add_argument("--signal-verification-path", dest="signal_verification_path",
+                      choices=["true", "false"],
+                      help="signal: a committed Proof Pack / verification path exists (watcher AL2a)")
+    ap_a.add_argument("--signal-verification-executed", dest="signal_verification_executed",
+                      choices=["true", "false"],
+                      help="signal: the verification (red-observed) was actually executed")
+    ap_a.add_argument("--signal-acceptance-met", dest="signal_acceptance_met",
+                      choices=["true", "false"],
+                      help="signal: the done_when acceptance criterion was met")
+    ap_a.add_argument("--signal-regression", dest="signal_regression",
+                      choices=["true", "false"],
+                      help="signal: a known regression was introduced (a claim, so emit only when checked)")
     ap_a.add_argument("--git", action="store_true", help="capture current git context")
     ap_a.add_argument("--started", help="ISO-8601 UTC start stamp captured at grounding; records "
                                         "started_at + duration_seconds so elapsed time is MEASURED, "
