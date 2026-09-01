@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T01:38:54Z",
+  "generated": "2026-09-01T01:41:56Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5633,23 +5633,6 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
-      "id": "al-0317",
-      "shortname": "investigate-terminal-crash-and-pane-moves",
-      "datetime": "2026-09-01T01:37:15Z",
-      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
-      "prompt": "the build crashed again while I had two sessions active; STILL crazy pane actions - moving one pane moves others, contents flip bottom to top; are docks absolute with panes contained? /investigate",
-      "summary": "VERIFIED two root causes (diagnosis only, no fix). (1) CRASH: TerminalScreen indexer is unbounded and DrawCursor reads screen[cursor] while the cursor is in deferred-wrap (CursorColumn==Columns) at the bottom row -> index==array length -> IndexOutOfRangeException; verified by a bottom-right repro seen throwing; compounded by the screen being mutated on a background pump thread while OnRender reads on the UI thread (its 'reads between writes' invariant is false). (2) PANE MOVES: no absolute docks - the layout is a proportional split tree; removing a pane collapses a single-child split into its child (Remove: 1=>children[0]), relocating unrelated panes + a full Adapter.Render rebuild. Registered DC-060/061/062. Phased plan awaits approval.",
-      "kind": "skill",
-      "skill": "investigate",
-      "tool": null,
-      "actor": null,
-      "artifacts": [
-        "docs/investigations/terminal-crash-and-pane-moves.md"
-      ],
-      "tags": [],
-      "outcome": "success"
-    },
-    {
       "id": "al-0315",
       "shortname": "python-methods-and-diagnostics-destination",
       "datetime": "2026-09-01T01:17:18Z",
@@ -5662,6 +5645,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/PythonExtractor.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0317",
+      "shortname": "investigate-terminal-crash-and-pane-moves",
+      "datetime": "2026-09-01T01:37:15Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "the build crashed again while I had two sessions active; STILL crazy pane actions - moving one pane moves others, contents flip bottom to top; are docks absolute with panes contained? /investigate",
+      "summary": "VERIFIED two root causes (diagnosis only, no fix). (1) CRASH: TerminalScreen indexer is unbounded and DrawCursor reads screen[cursor] while the cursor is in deferred-wrap (CursorColumn==Columns) at the bottom row -> index==array length -> IndexOutOfRangeException; verified by a bottom-right repro seen throwing; compounded by the screen being mutated on a background pump thread while OnRender reads on the UI thread (its 'reads between writes' invariant is false). (2) PANE MOVES: no absolute docks - the layout is a proportional split tree; removing a pane collapses a single-child split into its child (Remove: 1=>children[0]), relocating unrelated panes + a full Adapter.Render rebuild. Registered DC-060/061/062. Phased plan awaits approval.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/terminal-crash-and-pane-moves.md"
       ],
       "tags": [],
       "outcome": "success"
