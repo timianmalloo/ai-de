@@ -66,8 +66,20 @@ public sealed record CanvasGraph(
     ///
     /// <para>Kinds rather than the canvas's five categories: the taxonomy is the surface's, and the
     /// surface already has a <c>categoryOf</c> to run over these. 29 kinds, ~636 bytes.</para>
+    ///
+    /// <para><b>Null means the counts in this view are EXACT, not that a total is missing.</b> Only
+    /// a view that samples the workspace under a cap has a workspace-wide denominator. A focused
+    /// node's neighbourhood, one group's contents, a route between two nodes — each IS its result,
+    /// so "12 of 870" would be false there: nothing was withheld. A surface must render a null total
+    /// as a plain count, never as a ratio and never as "≥ 12".</para>
+    ///
+    /// <para><b>It has no default on purpose.</b> It was added with <c>= null</c>, and eight of the
+    /// nine construction sites silently kept it — a nullable parameter with a default is a
+    /// hand-listed set wearing a type signature, and the compiler cannot help. Removing the default
+    /// made the compiler enumerate every site, which is the only enumeration all day that has not
+    /// missed one.</para>
     /// </remarks>
-    IReadOnlyList<GraphKindTotal>? DeclaredByKind = null);
+    IReadOnlyList<GraphKindTotal>? DeclaredByKind);
 
 /// <summary>
 /// Builds the canvas's view from the same read surface every other pane uses.
@@ -266,7 +278,10 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
             return new CanvasGraph(
                 nodes, edges, describe.Node.NodeId, describe.Bounds.OmittedEdges,
-                AiDe.Core.Facts.DisclosureSummary.Fold(disclosures), message);
+                AiDe.Core.Facts.DisclosureSummary.Fold(disclosures), message,
+                // Null, not a total: this view IS its result. Nothing was withheld, so its counts
+                // are exact and a workspace-wide denominator would be a false claim about them.
+                DeclaredByKind: null);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -342,7 +357,11 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
                   + "pick one to go deeper.";
 
             return new CanvasGraph(
-                nodes, edges, RootId: null, overview.OmittedClusters, overview.Disclosures, message);
+                nodes, edges, RootId: null, overview.OmittedClusters, overview.Disclosures, message,
+                // Null. These counts are CLUSTERS, not nodes, and a cluster count's bound is already
+                // `OmittedClusters`. A node denominator beside a group count would compare two
+                // different things and read as though groups were missing.
+                DeclaredByKind: null);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -386,7 +405,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
             if (graph.Nodes.Count == 0)
             {
-                return new CanvasGraph([], [], groupId, 0, graph.Disclosures, $"{groupId} has no members in view.");
+                return new CanvasGraph([], [], groupId, 0, graph.Disclosures, $"{groupId} has no members in view.", DeclaredByKind: null);
             }
 
             var kept = graph.Nodes
@@ -409,7 +428,10 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
                 RootId: groupId,
                 graph.Omitted,
                 graph.Disclosures,
-                message);
+                message,
+                // Null. A group's members are bounded WITHIN the group, and the message already says
+                // "N of M member(s)". The workspace totals would answer a question nobody asked here.
+                DeclaredByKind: null);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -446,12 +468,12 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
     {
         if (queries is null)
         {
-            return new CanvasGraph([], [], null, 0, [], "No workspace is open.");
+            return new CanvasGraph([], [], null, 0, [], "No workspace is open.", DeclaredByKind: null);
         }
 
         if (string.IsNullOrWhiteSpace(fromId) || string.IsNullOrWhiteSpace(toId))
         {
-            return new CanvasGraph([], [], null, 0, [], "Pick a start and an end.");
+            return new CanvasGraph([], [], null, 0, [], "Pick a start and an end.", DeclaredByKind: null);
         }
 
         var result = await queries
@@ -467,7 +489,8 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
                 [], [], fromId, 0, [],
                 result.Reason is null
                     ? $"No route from {Shorten(fromId)} to {Shorten(toId)}."
-                    : $"No route: {result.Reason}.");
+                    : $"No route: {result.Reason}.",
+                DeclaredByKind: null);
         }
 
         var nodes = new List<CanvasNode>();
@@ -521,7 +544,10 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
         return new CanvasGraph(
             nodes, distinct, fromId, 0, [],
-            $"{route} from {Shorten(fromId)} to {Shorten(toId)}, shortest {hops}; {confidence}.{truncation}");
+            $"{route} from {Shorten(fromId)} to {Shorten(toId)}, shortest {hops}; {confidence}.{truncation}",
+            // Null. A route IS its result; `Truncated` above already says whether more of the same
+            // length exist, which is a different bound from "how much of the workspace is missing".
+            DeclaredByKind: null);
     }
 
     public Func<string, string?> ContextLookup { get; set; } = _ => null;
@@ -545,5 +571,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
         return cut > 0 && cut < nodeId.Length - 1 ? nodeId[(cut + 1)..] : nodeId;
     }
 
-    private static CanvasGraph Empty(string message) => new([], [], null, 0, [], message);
+    /// <summary>An empty canvas with a reason. No nodes, so no count needs a denominator.</summary>
+    private static CanvasGraph Empty(string message) =>
+        new([], [], null, 0, [], message, DeclaredByKind: null);
 }

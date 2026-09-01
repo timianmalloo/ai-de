@@ -90,7 +90,10 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         if (!Ready) return;
 
         var graph = GraphSource is null
-            ? new CanvasGraph([], [], null, 0, [], "No workspace is open. Open one to see its graph.")
+            // No workspace, so no nodes and nothing for a count to be a fraction of.
+            ? new CanvasGraph(
+                [], [], null, 0, [], "No workspace is open. Open one to see its graph.",
+                DeclaredByKind: null)
             : await GraphSource(rootId, cancellationToken);
 
         // Serialised with the SAME options the incoming direction uses, so a field that survives one

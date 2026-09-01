@@ -64,7 +64,7 @@ internal static class Program
                 new CanvasNode("Shop.Ledger", "Ledger", "source", IsRoot: false),
             ],
             [new CanvasEdge("Shop.Order", "Shop.Customer", "depends_on", "Verified")],
-            "Shop.Order", 0, [], null));
+            "Shop.Order", 0, [], null, DeclaredByKind: null));
         var before = new Button { Content = "before" };
         var after = new Button { Content = "after" };
 
