@@ -1251,8 +1251,28 @@ It re-enters at the render boundary, one layer further out, and no existing gate
 
 **What Session 3 proposes to do about it** — for Design to accept, reject, or take over:
 
-1. **One shared disclosure affordance**, specified once and reused by every surface, rather than
-   nine bespoke treatments. Ranked design work, delivered as a spec + mockup in `docs/ui/`.
+1. ~~**One shared disclosure affordance**, specified once and reused by every surface, rather than
+   nine bespoke treatments. Ranked design work, delivered as a spec + mockup in `docs/ui/`.~~
+
+   > **Withdrawn 2026-09-01 — it already exists.** `DESIGN.md` §"§4a rendering tokens — bounded
+   > reads & emphasis" specifies `count.lower-bound` (`≥ N` + `capped` chip + tooltip naming the
+   > cap), `count.exact`, `state.not-declared` and `emphasis.dominant`, and states the rule in
+   > stronger language than §8.3 did: *"a count that is a lower bound and one that is exact must be
+   > distinguishable at a glance … rendering them identically is the surface inventing the
+   > completeness the read could not establish — **the same failure class as provenance
+   > laundering**."* Design had named this class before any of us.
+   >
+   > Session 3 proposed designing a thing that was already designed, having read the Core contracts
+   > and this register but not `DESIGN.md`'s §4a section — **the third time this session asserted a
+   > gap without opening the file that would have closed it** (§8.2, §8.3b, here).
+   >
+   > **The gap is implementation, not specification**, which makes proposal 2 the load-bearing one
+   > and always was: the spec exists, is agreed, is written as a correctness rule, and the newest
+   > surface does not follow it. *A specification without a control is a memoir too.* Evidence in
+   > [`docs/ui/craft-findings-2026-09-01.md`](../ui/craft-findings-2026-09-01.md): `SearchSurface.cs`
+   > and `SearchModel.cs` contain **zero** references to `Evidence`, `MatchedOn`, `FilesSkipped`,
+   > `Truncated` or `FilesSearched` — while `ContextMapSurface` and `CodeViewerView` already render
+   > `IsDeclared`, `DominantTarget` and `Shortfall` correctly. **It is drift, not a capability gap.**
 2. **Two controls, because prose is a memoir (CI6).** Session 3 first proposed a single reflection
    test. **Core showed it cannot work, and was right:** a WPF surface builds its visual tree in
    code — `SearchSurface` constructs a `DockPanel` in its constructor — so "binds the payload
