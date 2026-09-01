@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T02:00:28Z",
+  "generated": "2026-09-01T02:10:46Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5714,6 +5714,57 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0322",
+      "shortname": "specify-named-dock-zones",
+      "datetime": "2026-09-01T02:10:46Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Phase 3 = absolute dock zones; run full specify->ui-design->define-architecture loop; confirm zones support resize/collapse/maximize",
+      "summary": "Wrote spec-named-dock-zones (3 layers: Functional/UX/UI) with 9 functional + 4 UX + 3 UI falsifiable acceptance criteria; core scenario = move a pane changes only source+destination; named zones Left/Right/Bottom/Center, tool zones collapse to rails, Center is the always-present anchor, reversible maximize.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/named-dock-zones.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0323",
+      "shortname": "ui-design-named-dock-zones",
+      "datetime": "2026-09-01T02:10:46Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "run full specify->ui-design->define-architecture loop for absolute dock zones",
+      "summary": "Wrote design-named-dock-zones-ui (direction brief, minimal zone chrome + rails, tokenized, purposeful reduced-motion-safe motion) + a self-contained dependency-free mockup (named-dock-zones.html) with a review harness across 7 zone states x theme x motion; rubric critique found one Blocker on the built control (keyboard-complete zone ops) with a ranked plan.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/named-dock-zones.html"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0324",
+      "shortname": "define-architecture-named-dock-zones",
+      "datetime": "2026-09-01T02:10:46Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "run full specify->ui-design->define-architecture loop for absolute dock zones",
+      "summary": "Wrote ADR-0021: named absolute dock zones replace the split tree. Model = WorkbenchLayout{Zones(Left/Right/Bottom/Center), Floating, Maximized}; each zone holds a ZoneStack or a within-zone ZoneSplit (editor groups) that never leaves the zone. Ops are zone-scoped (move changes only source+dest); incremental per-zone adapter kills the whole-view redraw. Migration expand-migrate-contract from layout.json via a tested TreeToZones converter. Alternatives B(soften collapse) and C(3rd-party dock lib) rejected.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0021-named-dock-zones.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
@@ -8284,6 +8335,28 @@ window.AUDIT_DATA = {
         "before": null,
         "after": "8865ad0418c7980c0db26e98f7ff8a077f55e573",
         "branch": "session/phase3-pane-probes",
+        "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0127",
+      "datetime": "2026-09-01T02:10:46Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Adopt named absolute dock zones (replace the proportional split tree)",
+      "prompt": "Phase 3 absolute dock zones; full specify->ui-design->define-architecture loop",
+      "summary": "ADR-0021: fixed Left/Right/Bottom/Center zones as stable containers; within-zone splits only; zone-scoped ops; expand-migrate-contract migration. Fixes DC-063 structurally.",
+      "rationale": "The split tree relocated unrelated panes on collapse and rebuilt the whole view; named zones make containment a model invariant, matching every mainstream IDE and the user's stated mental model.",
+      "artifacts": [
+        "docs/adr/0021-named-dock-zones.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "25aecba209b9c28f1f46b7e054a079d6cf6153ce",
+        "after": "25aecba209b9c28f1f46b7e054a079d6cf6153ce",
+        "branch": "feature/app-facelift-and-graph-surfaces",
         "pushed": true,
         "commits": []
       }
