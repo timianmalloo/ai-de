@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-09-01T02:07:01Z",
+  "generated": "2026-09-01T02:40:48Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3171,6 +3171,50 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "9894d65811cae15e06497c09a50e1cce0019420042ef46f3c2828a87632eab85"
+    },
+    {
+      "id": "design-watcher-signals-telemetry",
+      "path": "docs/design/watcher-signals-telemetry.md",
+      "title": "Loomkeeper Signals Telemetry Convention + Advisory-Evaluator Seam (t3/t4)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The honest richer-signals path: an OPTIONAL `signals` object an instrumented AI-Forward turn records on its audit entry (the telemetry convention), read into the deterministic signals with a conservative fallback for every absent field (no fabrication). Plus the advisory-evaluator seam - the auto-score path accepts an optional evaluator + calibration registry, so the on-device local heuristic (no egress) folds the two advisory dimensions when qualified; the cloud judge is the same seam behind an egress opt-in + creds.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "signals",
+        "telemetry",
+        "advisory",
+        "cloud-judge",
+        "t3",
+        "t4",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-signals-derivation",
+          "rel": "refines"
+        },
+        {
+          "to": "design-watcher-dispute-command",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a518666f23d7387cffe87f385584f338e3a7516b8efee1ade43ec42c95a19087"
     },
     {
       "id": "design-watcher-weave-score",
@@ -8663,6 +8707,41 @@ window.DOCS_INDEX = {
       "sourceSha256": "b7673d4a415c606529db40ed4637ad4bbc155eee6a180f3700c12bb2eb885bd8"
     },
     {
+      "id": "proof-watcher-signals-telemetry",
+      "path": "docs/proof/watcher-signals-telemetry.md",
+      "title": "Proof Pack - Signals Telemetry + Advisory Seam (t3/t4)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for t3/t4: an optional audit `signals` object is read into the deterministic signals with a conservative fallback for every absent field (fabrication guard mutation-verified); a fully-instrumented episode scores all four deterministic dimensions; and the advisory-evaluator seam folds the advisory dims through the host when a qualified local (on-device) evaluator is supplied. Core 1208/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "signals",
+        "telemetry",
+        "advisory",
+        "t3",
+        "t4",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-signals-telemetry",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "14d42b11e6880deb1898eb984148d2ac350ac62891231df082df1bc5da40a638"
+    },
+    {
       "id": "proof-watcher-weave-score",
       "path": "docs/proof/watcher-weave-score.md",
       "title": "Proof Pack - Loomkeeper Deterministic Weave (slice 5)",
@@ -9249,7 +9328,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-facelift — Audit & Change Log",
+      "title": "ai-de-feature-agent-watcher-substrate — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -9359,5 +9438,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "bd1c460bd6f0291dccaa0154f91df642318511eba28d1a81c6518d3adf3466be"
+  "graphSha256": "0cffee67d744c965887451b4954763a7f021c11e4fd7d8bbe72e851bf8a9bb20"
 };

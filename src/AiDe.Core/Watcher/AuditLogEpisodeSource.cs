@@ -100,8 +100,43 @@ public static class AuditLogEpisodeSource
             ClosedAt: closedAt,
             Outcome: MapOutcome(ReadString(root, "outcome")));
 
-        return new ImportedEpisode(episode, new EpisodeEvidence(HasProofPack: HasProofPackArtifact(root)));
+        return new ImportedEpisode(episode, new EpisodeEvidence(
+            HasProofPack: HasProofPackArtifact(root),
+            Signals: ReadSignals(root)));
     }
+
+    /// <summary>
+    /// Reads the optional <c>signals</c> object an instrumented AI-Forward turn may record (the telemetry
+    /// convention). Absent object or absent field -> null, so the deriver falls back to its conservative
+    /// default (no fabrication, spec L127 / NG1). Returns null when there is no <c>signals</c> object.
+    /// </summary>
+    private static AuditSignals? ReadSignals(JsonElement root)
+    {
+        if (!root.TryGetProperty("signals", out var sig) || sig.ValueKind != JsonValueKind.Object)
+        {
+            return null;
+        }
+
+        return new AuditSignals(
+            VerificationPath: ReadBool(sig, "verification_path"),
+            VerificationExecuted: ReadBool(sig, "verification_executed"),
+            AcceptanceMet: ReadBool(sig, "acceptance_met"),
+            Regression: ReadBool(sig, "regression"),
+            GuidanceRequired: ReadInt(sig, "guidance_required"),
+            GuidanceSatisfied: ReadInt(sig, "guidance_satisfied"),
+            CoordinationRequired: ReadInt(sig, "coordination_required"),
+            CoordinationObserved: ReadInt(sig, "coordination_observed"));
+    }
+
+    private static bool? ReadBool(JsonElement obj, string name)
+        => obj.TryGetProperty(name, out var v) && v.ValueKind is JsonValueKind.True or JsonValueKind.False
+            ? v.GetBoolean()
+            : null;
+
+    private static int? ReadInt(JsonElement obj, string name)
+        => obj.TryGetProperty(name, out var v) && v.ValueKind == JsonValueKind.Number && v.TryGetInt32(out var n)
+            ? n
+            : null;
 
     /// <summary>True when the entry lists a committed Proof Pack artifact (a <c>docs/proof/</c> path).</summary>
     private static bool HasProofPackArtifact(JsonElement root)

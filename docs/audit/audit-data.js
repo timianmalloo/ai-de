@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-09-01T02:11:20Z",
+  "generated": "2026-09-01T02:41:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6574,6 +6574,29 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Land the 19-slice Loomkeeper watcher on main",
       "done_when": "origin/main fast-forwarded to the watcher branch, green, with all 3 sessions' work reconciled"
+    },
+    {
+      "id": "al-0327",
+      "shortname": "implement-signals-telemetry",
+      "datetime": "2026-09-01T02:41:15Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do tasks 2-4 (richer-signals telemetry + cloud-judge seam + retire worktree)",
+      "summary": "t3: optional audit signals object read into DeterministicEpisodeSignals with conservative fallback per absent field (fabrication guard mutation-verified) - a fully-instrumented episode scores all 4 deterministic dims. t4: WatcherHost auto-score accepts an optional evaluator+registry; the on-device local-heuristic (no egress) folds the 2 advisory dims when qualified; cloud judge is the same seam behind egress opt-in+creds. 6 tests. Core 1208/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DeterministicSignalsDeriver.cs",
+        "src/AiDe.Core/Watcher/AuditLogEpisodeSource.cs",
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "docs/design/watcher-signals-telemetry.md",
+        "docs/proof/watcher-signals-telemetry.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Enable richer honest scores + wire the advisory judge seam",
+      "done_when": "An instrumented audit entry scores all deterministic dims; a qualified local evaluator folds advisory dims; absent signals stay conservative"
     }
   ],
   "changes": [
@@ -9648,6 +9671,28 @@ window.AUDIT_DATA = {
         "after": "8865ad0418c7980c0db26e98f7ff8a077f55e573",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0128",
+      "datetime": "2026-09-01T02:41:16Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "t3/t4: signals telemetry convention + advisory-evaluator seam",
+      "prompt": "do tasks 2-4",
+      "summary": "An optional audit signals object lets an instrumented turn record what it observed; the deriver uses explicit-or-conservative-default (no fabrication). The auto-score path accepts an optional advisory evaluator + calibration registry; the on-device local heuristic folds the advisory dimensions when qualified, the cloud judge is the same seam behind an egress opt-in + creds.",
+      "rationale": "Richer scores without fabrication require the turn to record its own signals (spec L127); the advisory fold must stay gated on calibration (ADR-0019) and egress opt-in, so the seam is operator-configurable and off by default.",
+      "artifacts": [
+        "docs/design/watcher-signals-telemetry.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "c1241a814329f1409a1c6daa1e9d0d9e05ecd8a4",
+        "after": "c1241a814329f1409a1c6daa1e9d0d9e05ecd8a4",
+        "branch": "feature/watcher-richer-signals",
+        "pushed": null,
         "commits": []
       }
     }
