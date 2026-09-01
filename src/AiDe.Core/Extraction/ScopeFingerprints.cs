@@ -49,7 +49,13 @@ public sealed class ScopeFingerprints
     // be located" for everything — which is the shape a stale generation always takes.
     // 2026-09-01.5 — Python classes carry their methods as members, and the nested-declaration
     // disclosure is conditional and counted instead of firing on every scope.
-    public const string ExtractorGeneration = "2026-09-01.5";
+    // 2026-09-01.6 — TypeScript classes and interfaces carry their members, and its
+    // nested-declaration and dynamic-import disclosures are conditional and counted. Bicep resource
+    // names are folded against declared defaults; this half is a CORRECTNESS bump, not a coverage
+    // one — 10 of 27 resource names in every existing store are the text of an identifier
+    // (`workspaceName`) rather than a name (`theterrace-s00-log`), and no store fixes itself until
+    // this changes.
+    public const string ExtractorGeneration = "2026-09-01.6";
 
     private const string FileName = "scope-fingerprints.json";
 
