@@ -36,13 +36,27 @@ public sealed record ConfidenceBadge(string Glyph, string Text, string TokenName
 }
 
 /// <summary>One row of the accessible evidence list — the permanent keyboard/screen-reader surface.</summary>
+/// <param name="Evidence">
+/// Why this row matched, when it matched on something other than its own identity — e.g.
+/// <c>has_member = + addEventListener()</c>. Null when the id itself matched, where repeating it
+/// would be noise.
+/// </param>
+/// <remarks>
+/// The pane lists search results, and a search now matches attribute VALUES as well as identity. A
+/// row that came back because one of its members matched is <b>correct</b> and reads as a wrong
+/// result until it says so — the same defect fixed on the search surface, found here by enumerating
+/// client records rather than by anybody noticing the pane.
+/// </remarks>
 public sealed record EvidenceRow(
     string NodeId,
     string DisplayLabel,
     string NodeKind,
-    ConfidenceBadge Confidence)
+    ConfidenceBadge Confidence,
+    string? Evidence = null)
 {
-    public string AccessibleName => $"{DisplayLabel}, {NodeKind}, {Confidence.AccessibleName}";
+    public string AccessibleName => Evidence is null
+        ? $"{DisplayLabel}, {NodeKind}, {Confidence.AccessibleName}"
+        : $"{DisplayLabel}, {NodeKind}, matched on {Evidence}, {Confidence.AccessibleName}";
 }
 
 /// <summary>One section of the provenance pane, in the spec's fixed evidence order.</summary>
@@ -89,7 +103,9 @@ public sealed class EvidencePaneViewModel(IWorkspaceQueries queries)
 
             _allRows = [.. result.Matches.Select(m => new EvidenceRow(
                 m.NodeId, m.DisplayLabel, m.NodeKind,
-                ConfidenceBadge.For(VerificationStatus.Verified)))];
+                ConfidenceBadge.For(VerificationStatus.Verified),
+                // Only when the match was NOT on the id — otherwise the row would repeat itself.
+                m.MatchedOn == Store.NodeMatchKind.Attribute ? m.Evidence : null))];
 
             Rows = _allRows;
 

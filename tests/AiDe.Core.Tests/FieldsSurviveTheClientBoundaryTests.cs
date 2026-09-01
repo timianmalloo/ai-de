@@ -75,6 +75,18 @@ public sealed class FieldsSurviveTheClientBoundaryTests
                 + "than carried, so the decision is visible if a surface ever needs it.",
         }),
 
+        // FOUND BY THE ENUMERATION, 2026-09-01. Five client records were paired with nothing, so no
+        // assertion here could see a field dropped on the way into them.
+        new(typeof(FindMatch), typeof(Presentation.EvidenceRow), new()
+        {
+            ["MatchedOn"] =
+                "Folded into Evidence: the row carries the reason only when the match was NOT on the "
+                + "id, so the kind is implied by the field's presence.",
+            ["Authorship"] =
+                "Every match is a repository artifact today; the pane has no agent-authored rows to "
+                + "distinguish. Revisit when agents can write.",
+        }),
+
         new(typeof(GraphCluster), typeof(CanvasNode), new()
         {
             ["NodeCount"] = "Crosses as CanvasNode.Count — renamed at the boundary, which is exactly "
@@ -93,6 +105,78 @@ public sealed class FieldsSurviveTheClientBoundaryTests
                 + "there is no second visual channel to carry it.",
         }),
     ];
+
+    /// <summary>
+    /// Client records that are deliberately not paired with a producer, and why.
+    /// </summary>
+    /// <remarks>
+    /// The pair list is maintained by hand and cannot be derived — the mapping is not a naming rule
+    /// (<c>GraphCluster</c> and <c>GraphNode</c> both become <c>CanvasNode</c>). What CAN be
+    /// enumerated is the other half: every record on the client side. So the list nobody can derive
+    /// is checked against a set nobody can forget, and "a client record I never listed" stops being
+    /// possible. It is the compiler's trick — enumerate the space, force a decision on each — applied
+    /// where there is no compiler.
+    /// </remarks>
+    private static readonly Dictionary<string, string> UnpairedClientRecords = new(StringComparer.Ordinal)
+    {
+        ["ConfidenceBadge"] = "A rendering of one assertion's status, not a projection of a record.",
+        ["ProvenanceSection"] = "Groups EvidenceRow for display; carries no producer field of its own.",
+        ["LivenessBadge"] = "Derived from a timestamp comparison, not carried across a boundary.",
+        ["WatcherSessionSnapshot"] = "Assembled from several watcher queries; no single producer record.",
+        ["WatcherSessionRow"] =
+            "Built from WatcherSessionSnapshot, which is itself a client record — a client-to-client "
+            + "projection, not a producer boundary.",
+        ["WatcherBoardRow"] =
+            "A display projection of BoardMessage owned by the watcher work. Pairing it means "
+            + "writing that owner's reasons for a dozen dropped ids and keys, which is their "
+            + "judgement rather than mine — named here so it is a known debt, not an oversight.",
+        ["WatcherLeaderboardRow"] = "Same: a display projection of ScoredEpisode, same owner.",
+        ["WorkspaceDiagnostics"] =
+            "Assembled from environment probes (installed versions, incidents, MCP tools) rather "
+            + "than projected from a producer record.",
+    };
+
+    [Fact]
+    public void EveryClientRecordIsEitherPairedOrNamed()
+    {
+        // THE HALF THAT CAN BE ENUMERATED. The pairs cannot be derived; the client records can, and
+        // an unlisted one is invisible to every assertion in this file. Nine of twelve were unlisted
+        // when this was written — including the evidence and watcher rows, which is where bounds
+        // live.
+        var paired = Boundaries.Select(b => b.Client.Name).ToHashSet(StringComparer.Ordinal);
+
+        var clientRecords = typeof(Presentation.CanvasNode).Assembly.GetTypes()
+            .Where(t => t.Namespace == "AiDe.Core.Presentation" && t.IsSealed
+                        && t.GetMethod("<Clone>$", BindingFlags.Public | BindingFlags.Instance) is not null)
+            .Select(t => t.Name)
+            .ToList();
+
+        Assert.True(clientRecords.Count > 5,
+            $"only {clientRecords.Count} client record(s) found — the finder has stopped seeing them "
+            + "and this test would pass by looking at nothing");
+
+        var unaccounted = clientRecords
+            .Where(n => !paired.Contains(n) && !UnpairedClientRecords.ContainsKey(n))
+            .Order(StringComparer.Ordinal)
+            .ToList();
+
+        Assert.True(unaccounted.Count == 0,
+            "these client records are neither paired with a producer nor named as unpaired, so no "
+            + "assertion in this file can see a field dropped on the way into them: "
+            + string.Join(", ", unaccounted));
+    }
+
+    [Fact]
+    public void NoRecordIsNamedUnpairedWhileAlsoBeingPaired()
+    {
+        // The stale-allowance rule, applied to this list too.
+        var paired = Boundaries.Select(b => b.Client.Name).ToHashSet(StringComparer.Ordinal);
+
+        var both = UnpairedClientRecords.Keys.Where(paired.Contains).Order(StringComparer.Ordinal);
+
+        Assert.True(!both.Any(),
+            "named as unpaired and also paired: " + string.Join(", ", both));
+    }
 
     [Fact]
     public void EveryProducerFieldEitherCrossesOrIsNamed()

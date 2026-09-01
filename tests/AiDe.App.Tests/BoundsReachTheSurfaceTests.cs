@@ -96,6 +96,20 @@ public sealed class BoundsReachTheSurfaceTests
             // reading has been wrong three times in one day. Every entry still needs a render
             // assertion to close — a verdict is a hypothesis until the tree is walked.
 
+            // ADDED BY CORE, 2026-09-01, following this file's own instruction — the field is new
+            // and the guard caught it within minutes of it being added, which is the guard working
+            // rather than a gap in it.
+            ["EvidenceRow.Evidence/unrendered"] =
+                "NEW FIELD, NOT YET RENDERED. The evidence pane lists search results, and a search " +
+                "now matches attribute VALUES as well as identity — so a row can come back because " +
+                "one of its members matched. EvidenceRow.Evidence carries that reason (e.g. " +
+                "'has_member = + addEventListener()') and the row's AccessibleName reads it, but no " +
+                "test walks the evidence pane's rendered tree, so whether a sighted user sees it is " +
+                "UNVERIFIED. Found by enumerating client records, not by anybody noticing the pane. " +
+                "Closes when a render assertion covers the evidence pane — the same shape as " +
+                "SearchSurface's, and the same defect it fixed: a correct hit that reads as a wrong " +
+                "one until the row says why. OWNER: the UI session, as a surface question.",
+
             ["EvidenceRead.Shortfall/global-and-transient"] =
                 "CORRECTION. This entry previously said the shortfall is announced and therefore " +
                 "'reaches assistive technology and nothing else'. That was wrong, and the wrong " +
