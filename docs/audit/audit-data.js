@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T04:22:10Z",
+  "generated": "2026-09-01T04:26:21Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6842,6 +6842,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/ClassHierarchyModel.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0340",
+      "shortname": "adopt-central-package-management",
+      "datetime": "2026-09-01T04:26:21Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "next step #2: adopt Central Package Management",
+      "summary": "Adopted Central Package Management: created Directory.Packages.props at the repo root with one PackageVersion per package (18 packages, no version conflicts across the repo), ManagePackageVersionsCentrally + transitive pinning + floating enabled (AvalonEdit stays 6.*). Stripped Version= from PackageReference in all 16 csproj. Whole solution builds; Core 1284 / App 238 green. Upgrades are now a one-line change; per-project drift is impossible.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "Directory.Packages.props"
       ],
       "tags": [],
       "outcome": "success"

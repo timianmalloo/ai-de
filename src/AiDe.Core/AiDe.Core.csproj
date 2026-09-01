@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.11" />
+    <PackageReference Include="Microsoft.Data.Sqlite" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,7 +28,7 @@
       that is the layer that loads projects by evaluating MSBuild, which spike D3 measured executing
       repository-supplied code. cl-0021 adopted reading the project file as data instead.
     -->
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
 </ItemGroup>
 
 </Project>

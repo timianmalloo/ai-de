@@ -47,15 +47,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Locator" Version="1.9.1" />
+    <PackageReference Include="Microsoft.Build.Locator" />
     <!--
       NOT ExcludeAssets="runtime". These are Roslyn, and the host needs them at runtime; only the
       MSBuild assemblies below must be withheld so MSBuildLocator can bind them from the SDK. An
       earlier revision excluded both and failed at the first workspace call with a
       FileNotFoundException for Microsoft.CodeAnalysis.Workspaces — the distinction is load-bearing.
     -->
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.14.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <!--
       Required, and its absence fails in a way worth remembering: without the C# LANGUAGE SERVICE,
       MSBuildWorkspace loads zero projects and reports "the language 'C#' is not supported" as an
@@ -63,7 +63,7 @@
       would have read that as "no generators executed" — a clean bill of health from an instrument
       that never ran (defect class DC-009).
     -->
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,7 +79,7 @@
       via MSBuildLocator (hence ExcludeAssets="runtime" throughout), so the package version governs
       what we compile against, not what executes.
     -->
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.14.8" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" ExcludeAssets="runtime" />
   </ItemGroup>
 
 </Project>

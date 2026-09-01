@@ -29,20 +29,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Locator" Version="1.9.1" />
+    <PackageReference Include="Microsoft.Build.Locator" />
     <!--
       NOT ExcludeAssets="runtime": these are Roslyn and the host needs them. Only MSBuild itself is
       withheld. S2 recorded that excluding both fails at the first workspace call.
     -->
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.14.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <!--
       Required. Without the C# LANGUAGE SERVICE, MSBuildWorkspace loads ZERO projects and says so as
       an ordinary diagnostic - and a probe that only counted markers would read that as "nothing
       executed": a clean bill of health from an instrument that never ran (DC-009). The non-vacuity
       guard in TaskExecutionProbe exists because of exactly this.
     -->
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
   </ItemGroup>
 
 </Project>
