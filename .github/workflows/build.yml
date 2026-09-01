@@ -101,6 +101,17 @@ jobs:
       - name: Monotonic id allocator gate — self-test
         run: python tools/verify-id-allocators.py --self-test
 
+      # The derived views are generated from frontmatter and from the append-only logs, and they
+      # are line-oriented JSON — so a rebase merges them into something that PARSES, carries no
+      # conflict marker, and is wrong. Nothing in the test suite reads them, so nothing fails.
+      # That has happened three times in two days (DC-060). The response was "always regenerate
+      # after a rebase", which is a habit; this is the executable form.
+      - name: Derived views match their generators
+        run: python tools/verify-derived-views.py
+
+      - name: Derived views gate — self-test
+        run: python tools/verify-derived-views.py --self-test
+
       # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
       # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the
       # twist that the gate was not stale but NARROW). Builds every tracked project the solution does

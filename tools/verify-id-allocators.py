@@ -376,11 +376,24 @@ def resolve_trunk(root: Path, trunk: str) -> str | None:
     is reported to the branch that introduced it rather than to whoever merges next. Getting this
     fallback wrong would have made it a no-op in the one place it matters most.
     """
-    for candidate in (trunk, f"origin/{trunk}"):
-        if _git(root, ["rev-parse", "--verify", "--quiet", f"{candidate}^{{commit}}"]):
-            return candidate
+    present = [
+        candidate for candidate in (trunk, f"origin/{trunk}")
+        if _git(root, ["rev-parse", "--verify", "--quiet", f"{candidate}^{{commit}}"])]
 
-    return None
+    if not present:
+        return None
+
+    # Whichever is FURTHER AHEAD. A local `main` left behind while `origin/main` moved on makes
+    # every id the remote has published look newly allocated by whoever rebased onto it — this
+    # branch reported three of its own inherited entries as collisions the first time that
+    # happened. The trunk is "what has been published", not "what this checkout last fetched".
+    best = present[0]
+
+    for candidate in present[1:]:
+        if _git(root, ["merge-base", "--is-ancestor", best, candidate]) is not None:
+            best = candidate
+
+    return best
 
 
 def interesting_refs(root: Path, trunk: str) -> list[str]:

@@ -861,8 +861,11 @@ fail your build.
 
 **What to do.** Run `python tools/verify-id-allocators.py` before you write a new register entry —
 it prints what every other branch has already claimed, so "highest here plus one" stops being the
-allocation rule. The next genuinely free id today is **DC-068**; `feature/agent-watcher-substrate`
-already holds DC-061 through DC-067.
+allocation rule. The next genuinely free number today is **68** — written without the
+prefix on purpose, because a `DC-` token that resolves to no entry is itself a register-gate
+failure. `main` now carries entries up to 063 (Design merged three while this was being written),
+and `feature/agent-watcher-substrate` holds 061 through 067 for six different lessons, so 061,
+062 and 063 on that branch all need re-issuing before it merges.
 
 **Resolution protocol, unchanged:** keep the id already published on `main`, re-issue the other,
 regenerate the derived views.

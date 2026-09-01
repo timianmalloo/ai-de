@@ -1803,6 +1803,21 @@ for both or split.*
 - **Second instance the same day, different symptom.** The next scripted rebase reported three conflicts; the log-merging tool resolved one and **two remained** — both DERIVED files (`docs/audit/audit-data.js`, `docs/docs-index.js`). `git add -A` staged them exactly as git had left them, and the marker grep came back clean, because a derived file's conflict does not always leave markers: git had merged the two sides line-wise into something syntactically valid and semantically stale. The tests passed. It surfaced only by regenerating the derived files afterwards and finding a diff. **The marker check was necessary and not sufficient — it proves nobody committed a marker, not that the file is right.**
 - **Control:** two checks after any scripted resolution, before committing: grep the tree for `^<<<<<<< `, `^=======$` and `^>>>>>>> `, **and** regenerate every derived artifact and confirm it produces no diff. The second is what catches a conflict in a generated file, which is the case where markers are least likely and staleness is most likely. The scripted loop keeps its value; what it needed was a check that the only files it staged blind were the ones it knew how to resolve.
 - **The generalisation to apply elsewhere:** **`git add -A` after an automated resolution is a claim that every conflict was handled, and a script can only handle the ones it was told about.** Any automation that resolves conflicts should verify the result contains no markers rather than assume its own completeness — the same shape as trusting an exit code instead of reading the state.
+
+  **Third instance, 2026-08-31, and the control that replaces the habit.** A three-commit rebase
+  regenerated the views between commits two and three; the third commit then changed a document,
+  so `docs/docs-index.js` merged and committed with a stale `sourceSha256`. Valid JSON, no marker,
+  no failing test. Caught by performing the habit — which is exactly the problem: the control was
+  a thing a person remembers to do.
+
+  `tools/verify-derived-views.py` (CI, plus a `--self-test`) now runs each generator and compares
+  its output with what is committed. The generation **timestamp is excluded** — it changes on
+  every run by construction, and a gate that fails always is one people learn to bypass; every
+  content hash is compared byte for byte. It restores the committed bytes whether it passes or
+  fails, so a failing gate never leaves the tree rewritten and never makes the next command's
+  output a lie. **Observed failing 2026-08-31** against a planted one-value edit of the shape a
+  line-wise merge produces, and observed NOT failing against a timestamp-only difference.
+
 - **Status:** `controlled`
 
 ### DC-058 — Every warning is correct and the wall of them hides the one that matters
