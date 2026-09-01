@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T15:47:45Z",
+  "generated": "2026-09-01T15:47:49Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -5083,6 +5083,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "a78c2da9ecb72f49f1fb8810d4e9ed9e4ab6892ba08838f6f5e254a1b072fcfb"
     },
     {
+      "id": "ui-craft-findings-2026-09-01",
+      "path": "docs/ui/craft-findings-2026-09-01.md",
+      "title": "Craft pass — the surfaces on main, 2026-09-01",
+      "type": "investigation",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "First craft pass over the surfaces already on main, run by Session 3. Measured with ui-craft-gate.py before diagnosing. Headline: the search surface renders none of the five bound fields Core publishes, and DESIGN.md already specifies the affordance for exactly this — so the §8.3 gap is implementation, not specification, and Session 3's proposal to design one is withdrawn. Two surfaces already implement the pattern correctly, which makes this drift rather than a capability gap. Plus eight Major token findings in the canvas page, including two near-miss hexes.",
+      "tags": [
+        "ui",
+        "craft-gate",
+        "review",
+        "bounded-reads",
+        "token-discipline",
+        "session-3"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "knowledge-hub",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d656826ad40cce33202d221c0049606863103333aa847bda1bb6b9abf6af12a1"
+    },
+    {
       "id": "kb-agentic-session-observability",
       "path": "docs/knowledge/agentic-session-observability/index.md",
       "title": "Agentic Session Observability, Coordination, Learning, and Scoring",
@@ -9721,5 +9753,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "36ea0bb29edf81a5e8a3e37f6593f78a0dea5cfc5bef27420474ee1fdcba3c8f"
+  "graphSha256": "9464841bf4d3f5b3a84ab81278de4109b53fb495d49bf637ac6c807ca076c180"
 };

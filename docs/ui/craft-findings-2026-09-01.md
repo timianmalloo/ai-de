@@ -1,7 +1,7 @@
 ---
 id: ui-craft-findings-2026-09-01
 title: "Craft pass — the surfaces on main, 2026-09-01"
-type: review
+type: investigation
 status: draft
 owner: "@timianmalloo"
 phase: "3"
