@@ -34,7 +34,118 @@ public sealed class ZoneBackedLayoutService : ILayoutService
     public void Restore(Layout layout)
     {
         ArgumentNullException.ThrowIfNull(layout);
-        Set(TreeToZones.Convert(layout));
+
+        // Two callers reach here through one ILayoutService.Restore:
+        //  (1) the native-drag reconcile passes a FIXED-FRAME tree — map it by POSITION so a tab
+        //      dragged into another zone's pane follows the drag (not reclassified by kind);
+        //  (2) persistence/migration passes an arbitrary or legacy tree — position mapping returns
+        //      null and we fall back to kind-based conversion (AC-F9). A reconcile shape we cannot
+        //      map confidently also returns null, and the fallback keeps the surfaces without a flip.
+        Set(TryMapByPosition(layout, _zones) ?? TreeToZones.Convert(layout));
+    }
+
+    /// <summary>
+    /// Maps a fixed-frame tree back to zones by POSITION, using the current occupancy to disambiguate
+    /// which columns are present. Returns null for any shape that is not the expected frame — the caller
+    /// then falls back to kind-based conversion. This is what makes a native tab drag between zones
+    /// follow the drop instead of snapping back to the surface's kind-zone.
+    /// </summary>
+    internal static WorkbenchLayout? TryMapByPosition(Layout tree, WorkbenchLayout current)
+    {
+        bool Rendered(ZoneId z) => !current.Zone(z).Collapsed && !current.Zone(z).IsEmpty;
+
+        // Split the root into the columns row and (optionally) the bottom zone.
+        LayoutNode columns = tree.Root;
+        LayoutNode? bottom = null;
+        if (Rendered(ZoneId.Bottom)
+            && tree.Root is SplitNode { Orientation: Orientation.Vertical, Children: { Count: 2 } rootKids })
+        {
+            columns = rootKids[0];
+            bottom = rootKids[1];
+        }
+
+        // The columns row holds [Left?, Center, Right?] in order.
+        var colChildren = columns is SplitNode { Orientation: Orientation.Horizontal } split
+            ? split.Children.ToList()
+            : [columns];
+
+        var expected = (Rendered(ZoneId.Left) ? 1 : 0) + 1 + (Rendered(ZoneId.Right) ? 1 : 0);
+        if (colChildren.Count != expected)
+        {
+            return null; // a side-drop split, an emptied column, or an unexpected shape — not confident
+        }
+
+        var idx = 0;
+        var assigned = new Dictionary<ZoneId, IReadOnlyList<Surface>>();
+        if (Rendered(ZoneId.Left))
+        {
+            assigned[ZoneId.Left] = SurfacesUnder(colChildren[idx++]);
+        }
+
+        assigned[ZoneId.Center] = SurfacesUnder(colChildren[idx++]);
+
+        if (Rendered(ZoneId.Right))
+        {
+            assigned[ZoneId.Right] = SurfacesUnder(colChildren[idx++]);
+        }
+
+        if (bottom is not null)
+        {
+            assigned[ZoneId.Bottom] = SurfacesUnder(bottom);
+        }
+
+        // Build the result from the current model (so extents / collapsed tool zones are preserved),
+        // replacing the content of each rendered zone with its position-mapped surfaces.
+        var result = current;
+        foreach (var id in Enum.GetValues<ZoneId>())
+        {
+            if (!assigned.TryGetValue(id, out var surfaces))
+            {
+                continue; // a collapsed/empty zone that was not rendered keeps its current content
+            }
+
+            var welcomeOnly = surfaces.Count == 1 && surfaces[0].SurfaceId == ZonesToTree.WelcomePlaceholder.SurfaceId;
+            ZoneContent? content = surfaces.Count == 0 || welcomeOnly
+                ? null
+                : new ZoneStack([.. surfaces]);
+            result = result.WithZone(result.Zone(id) with { Content = content });
+        }
+
+        // The strong guard: a reconcile that lost, duplicated or invented a surface is corrupt — refuse
+        // and let the caller fall back rather than render a dropped pane.
+        var before = current.AllSurfaces().Select(s => s.SurfaceId).Where(id => id != ZonesToTree.WelcomePlaceholder.SurfaceId).ToHashSet(StringComparer.Ordinal);
+        var after = result.AllSurfaces().Select(s => s.SurfaceId).Where(id => id != ZonesToTree.WelcomePlaceholder.SurfaceId).ToList();
+        if (after.Count != before.Count || !after.ToHashSet(StringComparer.Ordinal).SetEquals(before))
+        {
+            return null;
+        }
+
+        result.AssertInvariant();
+        return result;
+    }
+
+    private static IReadOnlyList<Surface> SurfacesUnder(LayoutNode node)
+    {
+        var surfaces = new List<Surface>();
+        Walk(node);
+        return surfaces;
+
+        void Walk(LayoutNode n)
+        {
+            switch (n)
+            {
+                case StackNode s:
+                    surfaces.AddRange(s.Surfaces);
+                    break;
+                case SplitNode p:
+                    foreach (var child in p.Children)
+                    {
+                        Walk(child);
+                    }
+
+                    break;
+            }
+        }
     }
 
     public LayoutResult Apply(LayoutOperation operation)

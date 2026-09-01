@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T02:52:28Z",
+  "generated": "2026-09-01T03:01:15Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6706,6 +6706,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0332",
+      "shortname": "implement-zone-interact",
+      "datetime": "2026-09-01T03:01:15Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "continue autonomously through all slices",
+      "summary": "dz-interact: (1) position-aware Restore in ZoneBackedLayoutService — a native tab drag between zones now follows the drop instead of snapping back to the surface's kind-zone, with a safe fallback to kind conversion for legacy/migration trees (and a strong surface-set guard). (2) 'Move to zone' tab context menu (Left/Center/Right/Bottom) for deterministic, keyboard-reachable cross-zone moves. Collapse/maximize/float already route through the existing Window-menu commands to zone ops. 2 new Core tests. Core 1278 / App 220 green; app launches clean.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs"
       ],
       "tags": [],
       "outcome": "success"

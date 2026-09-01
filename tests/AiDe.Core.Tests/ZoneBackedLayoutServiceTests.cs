@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using AiDe.Core.Workbench;
 
 namespace AiDe.Core.Tests;
@@ -115,7 +116,59 @@ public sealed class ZoneBackedLayoutServiceTests
         Assert.Contains("graph", svc.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.SurfaceId));
     }
 
+    [Fact]
+    public void Restore_AfterANativeDragBetweenZones_FollowsTheDropByPosition_NotByKind()
+    {
+        var svc = new ZoneBackedLayoutService(WorkbenchLayout.Default());
+        var tree = svc.Current; // Vertical[ Horizontal[zone-left, zone-center], zone-bottom ]
+
+        var left = tree.AllStacks().Single(s => s.Id == ZonesToTree.LeftStackId);
+        var center = tree.AllStacks().Single(s => s.Id == ZonesToTree.CenterStackId);
+        var bottom = tree.AllStacks().Single(s => s.Id == ZonesToTree.BottomStackId);
+        var domain = center.Surfaces.Single(s => s.SurfaceId == "domain"); // a Center document (kind "view")
+
+        // Simulate the user dragging "domain" out of the Center pane into the Bottom pane.
+        var center2 = new StackNode("c", center.Surfaces.Remove(domain));
+        var bottom2 = new StackNode("b", bottom.Surfaces.Add(domain));
+        var post = new Layout(
+            new SplitNode("root", Orientation.Vertical,
+                [new SplitNode("cols", Orientation.Horizontal, [left, center2], [0.3, 0.7]), bottom2],
+                [0.7, 0.3]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+
+        svc.Restore(post);
+
+        // Position wins: "domain" is now in the Bottom zone — a kind-based reconcile would have snapped
+        // it back to the Center (its "view" kind).
+        Assert.Equal(ZoneId.Bottom, svc.Zones.FindZoneOf("domain"));
+        Assert.Equal(ZoneId.Center, svc.Zones.FindZoneOf("graph")); // untouched Center doc stayed
+    }
+
+    [Fact]
+    public void Restore_OfAnUnmappableTree_FallsBackToConversion_WithoutLosingSurfaces()
+    {
+        var svc = new ZoneBackedLayoutService(WorkbenchLayout.Default());
+
+        // A shape the position mapper will not recognise for the current 2-column occupancy: 3 columns.
+        var a = new StackNode("a", [new Surface("x", "view", "X")]);
+        var b = new StackNode("b", [new Surface("y", "canvas", "Y")]);
+        var c = new StackNode("c", [new Surface("z", "inspector", "Z")]);
+        var weird = new Layout(
+            new SplitNode("cols", Orientation.Horizontal, [a, b, c], [0.33, 0.34, 0.33]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+
+        svc.Restore(weird);
+
+        // Falls back to kind-based conversion; every surface survives and lands in a deterministic zone.
+        var all = svc.Current.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).ToHashSet();
+        Assert.Contains("x", all);
+        Assert.Contains("y", all);
+        Assert.Contains("z", all);
+        Assert.Equal(ZoneId.Center, svc.Zones.FindZoneOf("y")); // canvas → Center by kind
+    }
+
     private static IReadOnlyList<string> StackSurfaces(ILayoutService svc, string stackId) =>
         svc.Current.AllStacks().FirstOrDefault(s => s.Id == stackId)?.Surfaces.Select(s => s.SurfaceId).ToList()
         ?? new List<string>();
 }
+

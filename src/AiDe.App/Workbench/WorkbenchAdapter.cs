@@ -209,6 +209,33 @@ public sealed class WorkbenchAdapter
     {
         var menu = content is TerminalSurface terminal ? terminal.CreateContextMenu() : new ContextMenu();
 
+        // Move-to-zone: a deterministic, keyboard-reachable way to send a pane to another zone (the
+        // reliable counterpart to native drag). Only when the layout is zone-based (ADR-0021).
+        if (_service is ZoneBackedLayoutService)
+        {
+            if (menu.Items.Count > 0)
+            {
+                menu.Items.Add(new Separator());
+            }
+
+            var moveTo = new MenuItem { Header = "Move to" };
+            foreach (var (label, stackId) in new[]
+            {
+                ("_Left", ZonesToTree.LeftStackId),
+                ("_Center", ZonesToTree.CenterStackId),
+                ("_Right", ZonesToTree.RightStackId),
+                ("_Bottom", ZonesToTree.BottomStackId),
+            })
+            {
+                var target = stackId;
+                var item = new MenuItem { Header = label };
+                item.Click += (_, _) => MoveToZone(surfaceId, target);
+                moveTo.Items.Add(item);
+            }
+
+            menu.Items.Add(moveTo);
+        }
+
         if (menu.Items.Count > 0)
         {
             menu.Items.Add(new Separator());
@@ -218,6 +245,13 @@ public sealed class WorkbenchAdapter
         close.Click += (_, _) => CloseSurface(surfaceId);
         menu.Items.Add(close);
         return menu;
+    }
+
+    // Sends a surface to a named zone through the model (never a direct view mutation), then re-renders.
+    private void MoveToZone(string surfaceId, string zoneStackId)
+    {
+        _service.Apply(new LayoutOperation.MoveSurface(surfaceId, new DropTarget(zoneStackId, DropKind.JoinStack)));
+        Render();
     }
 
     private void CloseSurface(string surfaceId)
