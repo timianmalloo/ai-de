@@ -175,7 +175,8 @@ def main() -> int:
         print("  stale binary and reports a number nobody can tell is old.")
         return 1
 
-    print("verify-project-coverage: OK — every tracked project compiles.")
+    print(f"verify-project-coverage: OK — {len(tracked)} tracked project(s), {len(covered)} in "
+          f"{SOLUTION}; every one compiles.")
     return 0
 
 

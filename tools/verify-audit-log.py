@@ -165,8 +165,17 @@ def main(argv: list[str]) -> int:
     logs = [Path(a) for a in argv] if argv else DEFAULT_LOGS
 
     findings: list[str] = []
+    counted = 0
     for path in logs:
         findings.extend(check(path))
+
+        # PRINT THE CARDINALITY, NOT JUST THE VERDICT. "OK" and "OK — 347 entries" fail identically
+        # and differ completely: only the second can be contradicted by a later run, and being
+        # contradicted is how every blind spot found today surfaced. A gate that prints only OK
+        # gives the next run nothing to disagree with.
+        if path.exists():
+            counted += sum(1 for line in path.read_text(encoding="utf-8", errors="replace").splitlines()
+                           if line.strip())
 
     print()
     if findings:
@@ -175,7 +184,8 @@ def main(argv: list[str]) -> int:
             print(f"  - {finding}")
         return 1
 
-    print("verify-audit-log: OK — every audit id is claimed by exactly one entry.")
+    print(f"verify-audit-log: OK — {counted:,} entr(ies) across {len(logs)} log(s); every id is "
+          "claimed by exactly one entry.")
     return 0
 
 

@@ -180,8 +180,10 @@ def main() -> int:
             print(f"  - {finding}")
         return 1
 
-    print(f"verify-defect-register: OK — every cited class resolves, the sequence is unbroken, "
-          f"and the header counts match.")
+    # The count, so a later run can disagree with this one. A register that quietly stopped being
+    # read would print OK forever; one that prints how many it read cannot.
+    print(f"verify-defect-register: OK — {len(found)} class(es); every cited class resolves, the "
+          "sequence is unbroken, and the header counts match.")
     return 0
 
 
