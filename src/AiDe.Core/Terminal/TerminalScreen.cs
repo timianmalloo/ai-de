@@ -94,12 +94,16 @@ public enum EraseExtent
 /// simplify: viewport only; ceiling is one screen; upgrade trigger = scrollback becomes a
 /// requirement, at which point it arrives as a bounded ring beside this, not inside it.</para>
 ///
-/// <para><b>Nothing here throws on bad input.</b> Every coordinate is clamped, because the values
-/// arrive in escape sequences written by an untrusted process and an exception reachable by
-/// printing is a denial of service.</para>
+/// <para><b>Nothing here throws on bad input.</b> Every coordinate is clamped — including the
+/// indexer, not only the mutators — because the values arrive in escape sequences written by an
+/// untrusted process and an exception reachable by printing is a denial of service. A read is as
+/// reachable from that output as a write (the renderer reads the cursor cell every frame), so it
+/// honours the same clamp.</para>
 ///
-/// <para>Not thread-safe: one screen belongs to one session's parser, and the renderer reads it on
-/// the UI thread between writes.</para>
+/// <para>One screen belongs to one session's parser, which writes it on the pump thread while the
+/// renderer reads it on the UI thread. They coordinate through <see cref="SyncRoot"/>: a mutation
+/// is made under the lock, and a frame is drawn under the lock, so neither observes the other
+/// half-applied. See <see cref="SyncRoot"/> for why the dirty flag alone is not enough.</para>
 /// </remarks>
 public sealed class TerminalScreen
 {
@@ -138,7 +142,22 @@ public sealed class TerminalScreen
     /// </remarks>
     public bool IsDirty { get; private set; } = true;
 
-    public TerminalCell this[int row, int column] => _cells[(row * Columns) + column];
+    public TerminalCell this[int row, int column] =>
+        _cells[(Math.Clamp(row, 0, Rows - 1) * Columns) + Math.Clamp(column, 0, Columns - 1)];
+
+    /// <summary>
+    /// The monitor that coordinates mutation and reads across threads.
+    /// </summary>
+    /// <remarks>
+    /// The parser writes this screen on the session's pump thread while the renderer reads it on the
+    /// UI thread (the two differ by three orders of magnitude in rate, so marshalling every write to
+    /// the UI thread is not affordable — see the surface). "Joined only by the dirty flag" is not a
+    /// synchronization primitive: a <see cref="Resize"/> swaps <c>_cells</c> and updates
+    /// <see cref="Columns"/> as two separate writes, and a reader that observes the new column count
+    /// against the old array indexes past its end. A writer holds this lock across a mutation; the
+    /// renderer holds it across a whole frame, so a frame never sees a half-applied change.
+    /// </remarks>
+    public object SyncRoot { get; } = new();
 
     /// <summary>
     /// The cell under the cursor, or <c>null</c> when the cursor is not on a real cell. The cursor
@@ -146,7 +165,7 @@ public sealed class TerminalScreen
     /// held after writing the last column until the next write wraps), and can be left outside the grid
     /// by other sequences. The renderer MUST read the character-under-cursor through this, never through
     /// the raw indexer: an out-of-bounds index in <c>OnRender</c> throws on the WPF UI thread, which is
-    /// unhandled and terminates the whole application (DC-063).
+    /// unhandled and terminates the whole application (DC-061).
     /// </summary>
     public TerminalCell? CellUnderCursor() =>
         CursorRow >= 0 && CursorRow < Rows && CursorColumn >= 0 && CursorColumn < Columns

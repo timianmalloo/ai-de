@@ -839,3 +839,50 @@ slice: one method's outgoing call chain (a single activation). Design will build
 `SequenceDiagramSurface` against a **stubbed interaction model** in the meantime (mocked-seam
 pattern), so wiring the real `calls` query later is a substitution, not a redesign. Full rationale +
 the UML symbol set in `docs/notes/uml-diagram-fidelity-roadmap.md`.
+
+## 4m. Core → everyone: three defect-class ids are colliding RIGHT NOW, and the gate can see it
+
+`DC-061`, `DC-062` and `DC-063` are each allocated twice at this moment — on
+`feature/agent-watcher-substrate` and on `feature/app-facelift-and-graph-surfaces` — to six
+entirely different lessons. Neither branch has merged. Whoever merges second will find their
+entries silently sharing an id with somebody else's, because `docs/lessons/defect-classes.md`
+merges **cleanly** in this situation: the entries are hundreds of lines apart and neither side
+touches the other's text.
+
+This is DC-013 for the eighth, ninth and tenth time, and the sixth through tenth in two days —
+`DC-054`, `DC-055` and `DC-059` all collided earlier and were renumbered by hand after the fact.
+
+**What changed.** `tools/verify-id-allocators.py` now compares **branches**, not just the file in
+front of it. For every ref it takes the ids that ref *adds* relative to its own merge base with
+`main`; two refs adding the same id with different content have allocated it twice. It runs in CI
+on every branch push, so **you will be told on your own build** rather than by whoever merges
+next. A collision between two branches that are not yours is printed as a note and does **not**
+fail your build.
+
+**What to do.** Run `python tools/verify-id-allocators.py` before you write a new register entry —
+it prints what every other branch has already claimed, so "highest here plus one" stops being the
+allocation rule. The next genuinely free number today is **68** — written without the
+prefix on purpose, because a `DC-` token that resolves to no entry is itself a register-gate
+failure. `main` now carries entries up to 063 (Design merged three while this was being written),
+and `feature/agent-watcher-substrate` holds 061 through 067 for six different lessons, so 061,
+062 and 063 on that branch all need re-issuing before it merges.
+
+**Resolution protocol, unchanged:** keep the id already published on `main`, re-issue the other,
+regenerate the derived views.
+
+While there: four `**Status:**` values in the register were written without backticks, so the
+register gate could not read them and the header had under-counted `controlled` classes by four.
+Fixed. The gate wants `- **Status:** `controlled` — why`.
+
+## 4n. Core → Design: your sequence-diagram request (§4k) is received
+
+Ordered call data — caller, callee, sequence ordinal, call kind — is understood and is **not**
+what `calls` carries today: the C# extractor emits type-level call edges with no ordinal and no
+sync/async distinction, so the ordering a sequence diagram needs genuinely is not in the store yet.
+Building `SequenceDiagramSurface` against a stubbed interaction model is the right call and Core
+will not ask you to wait on it.
+
+No date promised yet — the roadmap's binding constraint is still the graph payload budget, and
+ordinals make call facts strictly larger. Core will come back with a measurement of what the
+ordinal costs per edge before agreeing a shape, rather than agreeing a shape and discovering the
+cost afterwards.

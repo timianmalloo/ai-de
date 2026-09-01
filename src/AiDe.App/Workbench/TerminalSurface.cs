@@ -382,9 +382,11 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
     /// Moves session output into the screen until the session ends.
     /// </summary>
     /// <remarks>
-    /// Parsing happens off the UI thread and drawing happens on it, joined only by the screen and
-    /// its dirty flag. Marshalling every chunk to the dispatcher instead would put a megabyte a
-    /// second of parse work on the thread that also has to stay responsive to typing.
+    /// Parsing happens off the UI thread and drawing happens on it. They coordinate through
+    /// <see cref="TerminalScreen.SyncRoot"/> — a chunk is consumed under the lock, a frame is drawn
+    /// under it — so a frame never observes a half-applied write or a resize mid-swap. Marshalling
+    /// every chunk to the dispatcher instead would put a megabyte a second of parse work on the
+    /// thread that also has to stay responsive to typing.
     /// </remarks>
     private async Task PumpAsync(ConPtyTerminalSession session)
     {
@@ -394,7 +396,10 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
             {
                 while (session.Output.TryRead(out var chunk))
                 {
-                    _parser.Consume(chunk.Bytes.Span);
+                    lock (_screen.SyncRoot)
+                    {
+                        _parser.Consume(chunk.Bytes.Span);
+                    }
 
                     // Event-driven repaint: ask the view to repaint (coalesced to one per frame) only
                     // when output actually changed the screen. Replaces the old per-frame poll, so an

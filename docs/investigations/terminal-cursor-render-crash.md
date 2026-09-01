@@ -1,6 +1,6 @@
 ---
 id: investigation-terminal-cursor-render-crash
-title: "Investigation - AiDe.App crash: terminal cursor render IndexOutOfRange (DC-063)"
+title: "Investigation - AiDe.App crash: terminal cursor render IndexOutOfRange (DC-061)"
 type: investigation
 status: resolved
 owner: "@timianmalloo"
@@ -19,10 +19,10 @@ summary: >-
   (CursorColumn == Columns) after writing the last column; at the bottom row that indexes one past the
   end of the cell array, and the exception is unhandled on the WPF UI thread inside OnRender, which
   terminates the process. Fixed with a bounds-safe CellUnderCursor() the renderer uses. Registered as
-  DC-063. (A separate finding: the watcher UX is not wired into the running app - see below.)
+  DC-061. (A separate finding: the watcher UX is not wired into the running app - see below.)
 ---
 
-# Investigation: AiDe.App terminal cursor render crash (DC-063)
+# Investigation: AiDe.App terminal cursor render crash (DC-061)
 
 ## 1. Symptom (reported)
 
@@ -91,15 +91,15 @@ the raw index throws (mutation-verified - see the Proof Pack).
 `Resize` already clamps the cursor to the new bounds (the stale-cursor-after-shrink sibling is therefore
 already safe); a characterisation test pins that.
 
-## 5. Generalisation (DC-063)
+## 5. Generalisation (DC-061)
 
 **A render / `OnRender` path over untrusted, unbounded content must read every position through a
 bounds-safe accessor - never a raw indexer - because an exception there is unhandled on the UI thread and
 terminates the process.** The model may legitimately hold an off-grid caret; the *renderer*, not the
-model, must be robust. Registered in `docs/lessons/defect-classes.md` as **DC-063**, controlled by the
+model, must be robust. Registered in `docs/lessons/defect-classes.md` as **DC-061**, controlled by the
 mutation-verified regression test.
 
-## 6. Second defect found and fixed (not the crash): the watcher UX was inert at runtime (DC-064)
+## 6. Second defect found and fixed (not the crash): the watcher UX was inert at runtime (DC-066)
 
 While tracing the crash I found the Loomkeeper read surfaces were **not wired into the running app**.
 `MainWindow` builds the shell with `new WorkbenchShell(null)` (no data directory), and the real runtime
@@ -109,14 +109,14 @@ path, `WorkbenchShell.AttachWorkspace(...)`, rebuilt the factory as `new Surface
 always rendered "not available" and no ingest ran. Pure E2E-C: the App tests exercised the factory
 directly, never through `AttachWorkspace`.
 
-**Fixed** the same day (registered as **DC-064**): a `StartWatcher(dataDirectory)` helper opens the host
+**Fixed** the same day (registered as **DC-066**): a `StartWatcher(dataDirectory)` helper opens the host
 (off the UI thread) and returns the read queries, called from **both** the constructor and
 `AttachWorkspace`; because panes already realized against the un-wired factory are *reused* not rebuilt
 (DC-029), the shell then `Adapter.Invalidate(...)`s the stateless watcher surfaces so the next `Render`
 reconstructs them against the wired factory (never a terminal). Proven by an **E11 test through the real
 composition root** (`AttachWorkspace_WiresTheWatcher_SoTheSessionsPaneIsLive_NotUnavailable`): after
 attach, the Sessions pane shows its live empty state ("No sessions observed"), not "not available". The
-crash fix (DC-063) was committed first as the urgent stability fix; this wiring fix followed.
+crash fix (DC-061) was committed first as the urgent stability fix; this wiring fix followed.
 
 Remaining for a *populated* watcher smoke test: a session must write a coordination-contract log under
 `<dataDir>/loomkeeper-coord` (or emit OTLP) to appear - an auto-emitting session wrapper is the next

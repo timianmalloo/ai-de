@@ -108,5 +108,5 @@ Reuse the registrar, the host, the mapper, and `coord-core`'s append log — **n
 ## 9. Residual (out of slice 2)
 
 - The **session-side writer** — **now implemented** (slice-2 residual): `CoordContractWriter` writes `register`/`heartbeat`/`session-end` records to `<dir>/<session>.jsonl` with the same atomic-append + LOG-A discipline as the coord-core writer, and `CoordContractLog.ReadDirectory` + `CoordContractLogPump.PumpOnce` read a log directory and feed `InjectedContractIngest.ApplyAll` (idempotent re-read). Proven by `CoordinationContractLogTests` (7 D4 real-filesystem tests; LOG-A anti-fusion mutation-verified).
-- A **live `FileSystemWatcher` tail** that calls `PumpOnce` on change is a thin wrapper over the tested pump, deferred to avoid a DC-063-style flaky FS-watcher surface; the pull-based pump is the tested core.
+- A **live `FileSystemWatcher` tail** that calls `PumpOnce` on change is a thin wrapper over the tested pump, deferred to avoid a DC-064-style flaky FS-watcher surface; the pull-based pump is the tested core.
 - **Board / goal-done** kinds over the same log — slices 6 / 4.

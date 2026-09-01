@@ -84,8 +84,33 @@ jobs:
       # entries under DC-032. This asks the generalising question instead: what else here is numbered
       # by reading the highest and adding one? It also reports an UNDECLARED sequence, so the next
       # allocator is guarded on the day it is invented rather than the day it collides.
+      #
+      # It also compares BRANCHES, which is why fetch-depth: 0 and `on: push` (every branch) both
+      # matter here. DC-054, DC-055, DC-059, DC-061, DC-062 and DC-063 were each allocated twice in
+      # two days — once per session, in separate worktrees — and every file involved was internally
+      # consistent, so the within-a-file check passed in both trees until the branches met. The
+      # cross-branch half reports the collision to the branch that introduces it; a collision
+      # between two OTHER branches is a note, not a failure, so nobody's build goes red waiting on
+      # somebody else.
       - name: Monotonic id allocator gate
         run: python tools/verify-id-allocators.py
+
+      # The control must be observed failing, not asserted to work (CI6). Both halves have a
+      # planted-failure self-test, and the cross-branch one builds a throwaway two-branch
+      # repository because the shape it guards cannot be reproduced inside a single tree.
+      - name: Monotonic id allocator gate — self-test
+        run: python tools/verify-id-allocators.py --self-test
+
+      # The derived views are generated from frontmatter and from the append-only logs, and they
+      # are line-oriented JSON — so a rebase merges them into something that PARSES, carries no
+      # conflict marker, and is wrong. Nothing in the test suite reads them, so nothing fails.
+      # That has happened three times in two days (DC-060). The response was "always regenerate
+      # after a rebase", which is a habit; this is the executable form.
+      - name: Derived views match their generators
+        run: python tools/verify-derived-views.py
+
+      - name: Derived views gate — self-test
+        run: python tools/verify-derived-views.py --self-test
 
       # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
       # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the

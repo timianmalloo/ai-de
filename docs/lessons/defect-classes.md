@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 36 · partially-controlled 31 · uncontrolled 0
+**Status counts:** controlled 37 · partially-controlled 31 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -329,6 +329,21 @@ for both or split.*
   of the audit-id rule; the later entry was renumbered `DC-033`. **The control was too narrow, not
   ignored:** `verify-audit-log.py` was built for the two JSONL logs and this file is a third
   monotonic allocator that nobody had classified as one.
+
+  2026-08-30/31 (**fifth, sixth and seventh occurrences, all in one day, and the reason the control
+  changed shape again**) — `DC-054`, `DC-055` and `DC-059` were each allocated twice, once in the
+  core session's worktree and once in the design session's. Every one of the six files involved was
+  internally consistent, so `verify-defect-register.py` and `verify-id-allocators.py` both passed in
+  **both** trees and went on passing until the branches met. Each was found by a human noticing, and
+  resolved by renumbering to `DC-058` and `DC-060`. **The control was still looking at one tree.**
+  Duplicate-within-a-file is the shape a collision has AFTER the merge, and by then the cost is
+  already paid: the entry has been written, cited, and in two of these three cases cross-referenced
+  from other documents.
+
+  On the day the cross-branch check was built it immediately found an **eighth and ninth**: `DC-061`
+  and `DC-062` are being allocated right now on two unmerged branches — `feature/agent-watcher-substrate`
+  and `feature/app-facelift-and-graph-surfaces` — to four entirely different lessons. Neither has
+  merged, so this is the first occurrence of the class caught **before** it cost anything.
 - **Control:** `tools/verify-audit-log.py`, run in CI: no id may be claimed by more than one entry in
   `audit-log.jsonl` or `change-log.jsonl`. **Observed failing 2026-08-26** against a synthetic log
   carrying a planted duplicate — reported the id, the count and the fix, exit 1 — and green against
@@ -357,6 +372,36 @@ for both or split.*
   first read ADR ids out of `architecture.md`, which merely CITES them: **an allocator is where an id
   is created, never where it is mentioned**, and confusing the two makes every citation look like a
   duplicate allocation.
+
+  **The cross-branch half (2026-08-31).** `verify-id-allocators.py` gained the
+  check the first version could not do: for every ref, the ids it **adds** relative to its own merge
+  base with the trunk. An id added by two refs with different content was allocated twice; an id
+  added on a branch that the trunk already spends is already gone. The **merge base** is what keeps
+  it honest — a stale branch that merely still CONTAINS an old id adds nothing, and a merged branch
+  adds nothing at all, so neither is reported. The signature is what makes two claims
+  distinguishable: the heading text for the register, the filename for the file-allocated families,
+  `shortname` for the logs. Nobody names the same lesson twice.
+
+  It runs in CI, which builds **every branch push** with full history, so both sides of a collision
+  are visible as remote refs and the branch that introduces one is told on its own build. A
+  collision between two OTHER branches is printed as a **note and does not fail** the third branch's
+  build — failing it would make every session's gate red until somebody else fixed theirs, which is
+  how a control becomes noise. Both halves of that scoping are in the self-test.
+
+  **Observed failing 2026-08-31** on a throwaway repository reproducing the exact shape: two
+  branches off one base, each adding `DC-002` for a different lesson, both files internally
+  consistent. The cross-branch check fires; `check_family` — the old control — **passes on both**,
+  which is the whole point of the addition.
+
+  **Two ways the new check certified instead of checking, both caught by its own guard.** It read
+  every ref through `subprocess(text=True)`, which decodes with the locale codec — cp1252 here,
+  against UTF-8 files. Every read threw on a background thread, every comparison saw an empty
+  string, and it printed **OK while reading nothing** (DC-016). The guard added in response — *the
+  trunk must yield ids for every family it carries* — then caught a second one within the minute:
+  the heading reader used `re.findall` with a pattern that captures the id, so it got `DC-054` where
+  it wanted the whole heading, failed to re-match it, and read **zero** ids from a file holding
+  sixty. Only `DC` is a heading family, so the other four readers kept working and an aggregate
+  guard stayed quiet — which is why the guard is now **per family**.
 
   **Not adopted: electing a single allocator between sessions.** It was considered and rejected. The
   sessions work in separate worktrees on purpose, and an election needs a rendezvous they do not
@@ -471,7 +516,8 @@ for both or split.*
   that it can say no — and negatives are invisible unless something forces them. It hides
   particularly well behind an outer control that already prevents the case: the inner one is then
   correct, unreachable, and indistinguishable from load-bearing.
-- **Instances (all 2026-08-27, all on the IPC transport):**
+- **Instances:**
+  **2026-08-27, all on the IPC transport:**
   - **Unreachable by construction.** A per-connection in-flight semaphore intended to refuse a
     command flood. The serve loop reads, answers, then reads again, so in-flight is one by
     construction and the refusal could never happen. Found only because a test written to *expect*
@@ -483,6 +529,17 @@ for both or split.*
     alone. A mutex is owned by a *thread* and is re-entrant, so a second acquisition inside one
     process succeeds — and ADR-0009 keeps an in-process daemon as a supported hosting mode, making
     that the case the lock most needed to cover.
+
+  **2026-08-31, two in one function within a minute of each other.** The new cross-branch check in
+  `verify-id-allocators.py` read every ref with the locale codec against UTF-8 files, threw on a
+  background thread for each one, compared empty strings, and printed `OK — 11 other branch(es)
+  compared` **having compared nothing**. The guard written in response (*the trunk must yield ids
+  for every family it carries*) fired immediately on a second instance: the heading reader used
+  `re.findall` with an id-capturing pattern, so it received the captured id rather than the whole
+  line, failed to re-match it, and read zero of sixty entries. The first was invisible because it
+  was green; the second was invisible because four other readers still worked — which is why the
+  guard counts **per family** rather than in aggregate. Neither was found by review. Both were found
+  by a check that asks whether the reader saw anything at all.
 - **Control:** **mutation is the detector, and it must run on every control at this boundary** —
   disable each one and require a test to fail. Then, per outcome: *unreachable by construction* is
   **deleted**, not made reachable by adding machinery to justify it (the semaphore was removed and
@@ -1746,6 +1803,21 @@ for both or split.*
 - **Second instance the same day, different symptom.** The next scripted rebase reported three conflicts; the log-merging tool resolved one and **two remained** — both DERIVED files (`docs/audit/audit-data.js`, `docs/docs-index.js`). `git add -A` staged them exactly as git had left them, and the marker grep came back clean, because a derived file's conflict does not always leave markers: git had merged the two sides line-wise into something syntactically valid and semantically stale. The tests passed. It surfaced only by regenerating the derived files afterwards and finding a diff. **The marker check was necessary and not sufficient — it proves nobody committed a marker, not that the file is right.**
 - **Control:** two checks after any scripted resolution, before committing: grep the tree for `^<<<<<<< `, `^=======$` and `^>>>>>>> `, **and** regenerate every derived artifact and confirm it produces no diff. The second is what catches a conflict in a generated file, which is the case where markers are least likely and staleness is most likely. The scripted loop keeps its value; what it needed was a check that the only files it staged blind were the ones it knew how to resolve.
 - **The generalisation to apply elsewhere:** **`git add -A` after an automated resolution is a claim that every conflict was handled, and a script can only handle the ones it was told about.** Any automation that resolves conflicts should verify the result contains no markers rather than assume its own completeness — the same shape as trusting an exit code instead of reading the state.
+
+  **Third instance, 2026-08-31, and the control that replaces the habit.** A three-commit rebase
+  regenerated the views between commits two and three; the third commit then changed a document,
+  so `docs/docs-index.js` merged and committed with a stale `sourceSha256`. Valid JSON, no marker,
+  no failing test. Caught by performing the habit — which is exactly the problem: the control was
+  a thing a person remembers to do.
+
+  `tools/verify-derived-views.py` (CI, plus a `--self-test`) now runs each generator and compares
+  its output with what is committed. The generation **timestamp is excluded** — it changes on
+  every run by construction, and a gate that fails always is one people learn to bypass; every
+  content hash is compared byte for byte. It restores the committed bytes whether it passes or
+  fails, so a failing gate never leaves the tree rewritten and never makes the next command's
+  output a lie. **Observed failing 2026-08-31** against a planted one-value edit of the shape a
+  line-wise merge produces, and observed NOT failing against a timestamp-only difference.
+
 - **Status:** `controlled`
 
 ### DC-058 — Every warning is correct and the wall of them hides the one that matters
@@ -1783,7 +1855,60 @@ for both or split.*
   in review is the mechanical guard.
 - **Status:** `controlled`
 
-### DC-061 — A deterministic test double produces colliding output across instances
+### DC-061 — A type promises total input-safety, but one access path is unguarded
+
+- **Signature:** a type's doc-comment promises "nothing throws / every coordinate is clamped" (or
+  similar total-safety), and every *mutator* honours it — but one path, usually a read/indexer,
+  bypasses it. Callers read the promise and assume the whole surface is safe.
+- **Why it survives:** the promise is load-bearing trust; nobody re-checks the one method that breaks
+  it, and it only faults on a state most inputs never reach.
+- **Instance:** 2026-08-31 — `TerminalScreen` documents "Nothing here throws on bad input. Every
+  coordinate is clamped", but `this[row,column] => _cells[(row*Columns)+column]` has no bounds check.
+  `DrawCursor` read the cursor cell while the cursor was in the deferred-wrap position
+  (`CursorColumn == Columns`) at the bottom row → index == `_cells.Length` → IndexOutOfRangeException.
+  Verified by a bottom-right deferred-wrap repro (seen throwing).
+- **Control:** the indexer now clamps both coordinates (`TerminalScreen.this[row,column]` uses
+  `Math.Clamp`), honouring the type's own "every coordinate is clamped" promise. Regression tests
+  `TerminalScreenTests.ReadingTheCursorCell_AtDeferredWrapOnTheBottomRow_DoesNotThrow` and
+  `TheIndexer_ClampsOutOfRangeCoordinates_AndNeverThrows` — **observed failing** on the un-fixed code
+  (5 cases, all `IndexOutOfRangeException`) and green after the clamp.
+- **Status:** `controlled` — clamp landed Phase 1; regression tests observed red-then-green.
+
+### DC-062 — UI-thread render reads state a background thread mutates, behind a false single-thread invariant
+
+- **Signature:** a mutable model is documented "not thread-safe / read between writes" and treated as
+  single-threaded, but the writer is a background pump and the reader is the UI render, with no lock,
+  snapshot, or marshalling. Works under light load; tears/faults under concurrent load.
+- **Why it survives:** on one quiet session the write and the read almost never interleave, so it
+  passes every manual test; the failure needs concurrency pressure (here: two active sessions).
+- **Instance:** 2026-08-31 — `TerminalScreen` is mutated by `TerminalSurface.PumpAsync` (background)
+  while `OnRender` reads it (UI); crash reproduced "with two sessions active". The documented "renderer
+  reads … between writes" invariant is not enforced anywhere.
+- **Control:** `TerminalScreen.SyncRoot` — the pump holds it across `_parser.Consume`
+  (`TerminalSurface.PumpAsync`) and the renderer holds it across a whole frame (`TerminalView.OnRender`),
+  so a frame never observes a half-applied write or a `Resize` array-swap. Guard test
+  `TerminalScreenTests.ConcurrentWritesAndReads_UnderSyncRoot_DoNotThrow` exercises write+resize vs
+  full-grid read under contention. A recurrence means a mutation or a read escaped the lock.
+- **Status:** `controlled` — SyncRoot coordination landed Phase 2.
+
+### DC-063 — A proportional-split-tree layout collapses single-child splits, relocating unrelated panes
+
+- **Signature:** moving/removing one pane changes the position or orientation of *other* panes, and the
+  whole view re-draws. There are no fixed/absolute dock regions — the layout is a tree of proportional
+  splits, and removing a pane can leave a split with one child, which collapses into that child and
+  restructures the tree.
+- **Why it survives:** each operation is individually correct (the collapse prevents empty regions; the
+  weight-normalise is right), so no test fails; the surprise is emergent and only visible interactively.
+  It also mismatches the common "fixed docks, panes contained within" mental model, so it reads as a bug.
+- **Instance:** 2026-08-31 — moving the graph out of `split-columns` collapsed it to `workspace`,
+  flipping workspace from the left column to the top row ("contents flipping from bottom to top").
+  Compounded by `Adapter.Render()` rebuilding the entire dock view on every layout op.
+- **Control:** a decision between (A) named/absolute dock zones matching the mental model, or (B)
+  soften the collapse (structural placeholder / don't reorient the survivor) + incremental view update;
+  a characterization test on source-side collapse and a move-preserves-others test.
+- **Status:** `uncontrolled` (Phase 3 of the investigation — needs a model decision, awaiting approval)
+
+### DC-064 — A deterministic test double produces colliding output across instances
 
 - **Signature:** two independent instances of a "deterministic" fake (a capability, id, or token
   factory seeded from a counter) emit identical values, so a negative test that forges a value from a
@@ -1805,7 +1930,7 @@ for both or split.*
   prevents a future non-salted deterministic double from reintroducing the shape.
 - **Status:** `partially-controlled`
 
-### DC-062 — A real-process daemon-reuse test is timing-fragile under full-suite load
+### DC-065 — A real-process daemon-reuse test is timing-fragile under full-suite load
 
 - **Signature:** a test that starts a real out-of-process daemon (or reuses one over a named pipe /
   workspace mutex) passes when run in isolation but **intermittently fails when the whole suite runs**,
@@ -1845,44 +1970,7 @@ for both or split.*
   launch.
 - **Status:** `controlled`
 
-### DC-063 — Untrusted terminal content drives the render cursor out of the grid and an unguarded index in OnRender crashes the whole app
-
-- **Signature:** a WPF/`OnRender` draw path indexes a data model at a **cursor/caret position that the
-  model legitimately allows to sit off the grid** — for a terminal, the *pending-wrap* column
-  (`CursorColumn == Columns`, held after writing the last column until the next write wraps). At the
-  bottom row that index is exactly `cells.Length` (one past the end), so `IndexOutOfRangeException` is
-  thrown **on the UI thread inside `OnRender`**, which WPF does not catch — the process is terminated.
-- **Why it survives:** every unit test of the model passes (the pending-wrap cursor is *correct*
-  behaviour, not a bug), and the render tests pass because the cursor draw is **focus-gated**
-  (`if (!IsKeyboardFocused) return;`) — an unfocused view never runs the crashing branch, so no
-  automated render test exercises it. The crash only happens on a **focused** terminal whose producer
-  filled the last column of the bottom row — which is exactly what agent CLIs do continuously (a
-  full-width status/progress/spinner line pinned to the bottom). So it is invisible to the suite and
-  reliably reproducible in real use.
-- **Instances:** 2026-08-31 — `AiDe.App.exe` terminated (`0xe0434352`, unhandled
-  `System.IndexOutOfRangeException`) with two agent CLIs (copilot + claude) grounding in a repo. Stack:
-  `TerminalScreen.get_Item` → `TerminalView.DrawCursor` (`_screen[CursorRow, CursorColumn]`) →
-  `OnRender` → WPF `Arrange`. Root-caused from the Windows Application event log and reproduced
-  deterministically at the screen level (fill the bottom row → cursor at `(Rows-1, Columns)` →
-  the raw index throws).
-- **Control:** `TerminalScreen.CellUnderCursor()` returns the cell **or null** when the cursor is not
-  on a real cell (pending-wrap or any off-grid position), bounds-checking both row and column;
-  `DrawCursor` reads the character-under-cursor through it (never the raw indexer) and clamps the drawn
-  rect to the last cell, so the pending-wrap cursor shows on the last column and **no out-of-bounds
-  index can fault `OnRender`**. Proven by `CellUnderCursor_AtPendingWrapOnTheBottomRow_IsNull_NotThrowing`
-  (mutation-verified: removing the bounds check reproduces the exact `IndexOutOfRangeException`), with a
-  companion `Resize_Shrink_ClampsTheCursor...` characterising the already-safe sibling. Generalisation:
-  **a render/`OnRender` path over untrusted, unbounded content must read every position through a
-  bounds-safe accessor — never a raw indexer — because an exception there is unhandled on the UI thread
-  and terminates the process**; the model may legitimately hold an off-grid caret, so the *renderer*,
-  not the model, must be robust.
-- **Residual risk:** the fix is at the two render read sites; other future `OnRender` code that indexes
-  the screen by a cursor/derived position must use `CellUnderCursor()` or a bounded loop. A broader
-  belt (a guarded `OnRender` that logs-and-skips a frame rather than crashing) was deliberately NOT
-  added, to avoid masking future render bugs now that the root cause and its sibling are swept.
-- **Status:** `controlled`
-
-### DC-064 — A workspace-dependent feature wired only in the constructor is dropped by the real composition root
+### DC-066 — A workspace-dependent feature wired only in the constructor is dropped by the real composition root
 
 - **Signature:** a feature is wired into a shell/host in its **constructor**, but the object is built
   before the thing it depends on exists (here: `MainWindow` builds `new WorkbenchShell(null)` before the
@@ -1901,7 +1989,7 @@ for both or split.*
   workspace and the real path, `WorkbenchShell.AttachWorkspace`, rebuilt the factory as
   `new SurfaceContentFactory(queries)` — dropping the watcher queries and never opening the
   `WatcherHost`. Every App test passed (they build the factory directly). Found while investigating the
-  DC-063 crash. **Fixed** the same day: a `StartWatcher(dataDirectory)` helper opens the host and returns
+  DC-061 crash. **Fixed** the same day: a `StartWatcher(dataDirectory)` helper opens the host and returns
   the queries, called from **both** the constructor and `AttachWorkspace`; the shell then
   `Adapter.Invalidate(...)`s the stateless watcher surfaces so the next `Render` rebuilds them against
   the wired factory (never a terminal — DC-029).
@@ -1918,7 +2006,7 @@ for both or split.*
   auto-emitting session wrapper is future work.
 - **Status:** `controlled`
 
-### DC-065 — A coordination session-end removed the mapping but never ended the session, so liveness kept lying "Alive"
+### DC-067 — A coordination session-end removed the mapping but never ended the session, so liveness kept lying "Alive"
 - **Signature:** an ingest handles a `session-end` (or close) event by forgetting the session's *external→internal id mapping*, but never marks the *internal* session ended in the store. Liveness is a projection over the store (Ended iff `IsEnded(sessionId)`, else Alive/Stale by heartbeat recency), so a closed session that was never marked ended keeps reporting **Alive** (or drifts to **Stale**) forever — the watcher shows a live session for a terminal that is gone.
 - **Why it survives:** the mapping removal is the *visible* half of "end the session" and it works — a subsequent heartbeat for that external id is correctly ignored — so the handler looks complete. Nothing in the end path reads liveness back, and a round-trip test that only checks "no new session on a stale heartbeat" passes. The lie only shows when something *evaluates liveness* after the end.
 - **Instances:** 2026-08-31 — `InjectedContractIngest.ContractSessionEnd` (conn-2/conn-5) removed `_byExternalId[externalId]` but never called into the store, so `SessionCoordinationEmitter.End` → coordination `session-end` → pump left the session `Alive`. Found by the conn-8 emitter test `End_WritesSessionEnd_AndStopsTracking` asserting `LivenessState.Ended` after end+pump. **Fixed** the same day: added `IngestHost.EndSession(sessionId) => _store.MarkEnded(sessionId)` and made the `ContractSessionEnd` case call it (via the external→internal lookup) *before* removing the mapping.
@@ -1926,7 +2014,7 @@ for both or split.*
 - **Residual risk:** the shell drives ends by *reconcile from the current terminal snapshot* (a closed pane disappears from the snapshot and is ended on the next tick, ≤2s later), not by a precise per-pane close event; a session whose pane vanishes without the loop running (e.g. process kill mid-tick) is ended only when the loop next runs, and on host dispose tracked sessions are dropped without an explicit end (they go Stale, then the host's DB is disposed). The async shell loop timing itself is not unit-tested (covered by the Core end-to-end reconcile test + manual smoke).
 - **Status:** `controlled`
 
-### DC-066 — A new workbench command must be wired into three coupled places or the menu drifts from the palette
+### DC-068 — A new workbench command must be wired into three coupled places or the menu drifts from the palette
 - **Signature:** a command added to the `WorkbenchCommandCatalog.All` list (so it appears in the Ctrl+K palette) but not to the **hard-coded** per-menu id lists in `MainMenuBuilder`, and/or not reflected in the hard-coded per-menu **count** assertions in `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders`. The palette is data-driven from the catalog; the menu bar is a parallel hand-maintained list. Add a command in one place and the two silently disagree - a command reachable by keyboard-palette but absent from the menu (or vice-versa).
 - **Why it survives:** the catalog edit alone builds clean and the command works from the palette, so nothing local points at the menu. The drift is only visible when a test that reflects over *both* sources runs.
 - **Instances:** 2026-08-31 — conn-11 added `watcher.raiseDispute` to the catalog with `Menu:"_View"`; the build was clean and the palette worked, but `MainMenuTests.TheMenuCoversEveryCatalogCommand` and `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders` both reded until the id was added to `MainMenuBuilder`'s `_View` list and the `_View` count bumped 4→5. **The control worked** — it caught the drift before merge.
@@ -1934,10 +2022,10 @@ for both or split.*
 - **Residual risk:** the coupling itself remains (the menu is not yet generated from the catalog's `Menu` field); a future refactor could make the builder data-driven and delete the parallel list. Until then the control holds the invariant.
 - **Status:** `controlled`
 
-### DC-067 — Parallel branches independently assign the same sequential IDs to different entries
+### DC-069 — Parallel branches independently assign the same sequential IDs to different entries
 - **Signature:** two branches diverge from a common point in an append-only, sequentially-numbered register (defect classes, ADRs, migrations) and each appends new entries starting at the next free number. On merge, the same IDs (here DC-039..DC-044) denote **different** entries on each side, and every code/doc reference to those IDs is now ambiguous. A 3-way text merge cannot resolve it — both sides "added lines".
 - **Why it survives:** each branch is internally consistent and its gate passes in isolation; the collision only exists in the union, and a naive resolution (keep both, or take one side) either duplicates an ID (register gate fails) or silently drops a class. Worse, a blanket find-replace to renumber one side corrupts the *other* side's references to the same numbers.
-- **Instances:** 2026-08-31 — forward-integrating `feature/agent-watcher-substrate` (DC-039..044: test-double, daemon-flake, cursor-crash, watcher-wiring, session-end, menu-drift) into `origin/main` (DC-039..059, different classes). Resolved by keeping main's canonical DC-039..059 verbatim and **renumbering this branch's 6 classes to DC-061..065**, then updating references **per-file, disambiguated by meaning** (my crash ref in TerminalView → DC-063; main's "two kinds" ref in KnowledgeExtractor left as DC-041). A blanket replace was explicitly rejected as it would have corrupted main's same-numbered references.
+- **Instances:** 2026-08-31 — forward-integrating `feature/agent-watcher-substrate` (DC-039..044: test-double, daemon-flake, cursor-crash, watcher-wiring, session-end, menu-drift) into `origin/main` (DC-039..059, different classes). Resolved by keeping main's canonical DC-039..059 verbatim and **renumbering this branch's 6 classes to DC-064..065**, then updating references **per-file, disambiguated by meaning** (my crash ref in TerminalView → DC-061; main's "two kinds" ref in KnowledgeExtractor left as DC-041). A blanket replace was explicitly rejected as it would have corrupted main's same-numbered references.
 - **Control:** `verify-defect-register.py` (unbroken sequence + header counts) catches the duplicate-ID/miscount failure mode at the gate — it is what forces a renumber rather than a silent duplicate. Generalisation: **the integrating branch renumbers its own new entries to follow the trunk's highest, and updates references scoped by meaning, never by blanket replace.** A stronger future control would reserve per-branch ID ranges (or use content-hash ids) so the collision cannot arise.
 - **Residual risk:** reference updates are semantic, not mechanical, so a missed reference keeps an old number; prose references in generated/derived files (docs-index.js) are regenerated from source. The renumber breaks any *external* citation of this branch's pre-merge DC-041..044 (e.g. in commit messages), which are historical and left as-is.
 - **Status:** `partially-controlled`

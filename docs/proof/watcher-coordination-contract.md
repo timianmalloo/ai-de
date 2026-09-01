@@ -24,7 +24,7 @@ summary: >-
 # Proof Pack: Loomkeeper Injected Coordination Contract (slice 2)
 
 - **Component:** `src/AiDe.Core/Watcher/CoordinationContract.cs` (`CoordContract`, `CoordContractEvent`+3, `CoordContractParser`, `InjectedContractIngest`)
-- **Tests:** `tests/AiDe.Core.Tests/Watcher/CoordinationContractTests.cs` — 16 tests, **Passed 16 / 16**; full `AiDe.Core.Tests` suite **770/0** (on retry — see residual DC-062); build clean (0 warnings, `TreatWarningsAsErrors`).
+- **Tests:** `tests/AiDe.Core.Tests/Watcher/CoordinationContractTests.cs` — 16 tests, **Passed 16 / 16**; full `AiDe.Core.Tests` suite **770/0** (on retry — see residual DC-065); build clean (0 warnings, `TreatWarningsAsErrors`).
 - **Spike:** `spikes/watcher-coord-contract/` (PASS) — established the real `coord-core` writer byte shape (sorted-key JSONL, open schema, `seq` auto-assign, LOG-A leading-newline guard, atomic `O_APPEND`) and the C# tolerant read that consumes it.
 
 | Claim | Evidence (test) | Source | Oracle | Red observed | Confidence | Residual |
@@ -55,6 +55,6 @@ summary: >-
 **Security note (STRIDE, carried from design):** the append log is a local, forgeable surface (ADR-0007), so the capability is **never** read from it — the adapter mints it at `register` and verifies every `heartbeat` against the held capability; a forged heartbeat for a session never registered here is dropped (`Unknown`). A forged register can only assert `Asserted` trust unless it names a real harness, and asserted identity cannot satisfy a correctness floor (ADR-0020). Defence in depth: the registrar's own `LK-0001` forgery check still guards heartbeat.
 
 **Residual:**
-- **DC-062 (registered):** `ShellBootstrapTests.ASecondShell_ReusesTheRunningDaemon...` flaked once in the full run and passed in isolation and on retry — a pre-existing real-process daemon-teardown timing flake, **not introduced by slice 2** (this slice's code is pure in-process logic and adds no daemon test). Registered as `uncontrolled` with the readiness-barrier control to build.
+- **DC-065 (registered):** `ShellBootstrapTests.ASecondShell_ReusesTheRunningDaemon...` flaked once in the full run and passed in isolation and on retry — a pre-existing real-process daemon-teardown timing flake, **not introduced by slice 2** (this slice's code is pure in-process logic and adds no daemon test). Registered as `uncontrolled` with the readiness-barrier control to build.
 - **Session-side writer** (injecting a `.loomkeeper/contract` helper into a non-pack repo that emits these records) is external — slice 2 ships the **ingest** half; the writer is versioned by `contract`.
 - A **file watcher** tailing `log/*.jsonl` and calling `ApplyAll` is a wiring concern (deferred); the adapter is pure and file-agnostic, so tests drive `Apply` directly.

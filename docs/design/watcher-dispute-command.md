@@ -65,7 +65,7 @@ grain/additivity change.
 ## Change-surface list (E7)
 
 store (dispute log exists) → DisputeService (exists) → shell helper (new) → Controller command (new) →
-catalog + menu builder (new entry, kept in sync — DC-066) → announcer status (existing). No new field
+catalog + menu builder (new entry, kept in sync — DC-068) → announcer status (existing). No new field
 crosses the wire; the dispute pane already reads the log (conn-7).
 
 ## Failure-mode analysis
@@ -77,7 +77,7 @@ crosses the wire; the dispute pane already reads the log (conn-7).
 | Watcher unavailable (null host) | Honest message ("watcher is not available"), no throw. |
 | Empty/whitespace reason | `DisputeService` rejects (ArgumentException) — guarded upstream; the command supplies a non-empty default. |
 | Re-dispute the same episode | Append-only — a second dispute is a second fact (rule 12), by design. |
-| Command missing from the menu | Caught by the menu-conformance tests (DC-066) before merge. |
+| Command missing from the menu | Caught by the menu-conformance tests (DC-068) before merge. |
 
 ## Adversarial analysis (STRIDE-lite)
 
@@ -110,7 +110,7 @@ one. No new spans/error-codes/HTTP.
   a Not-Scored-only store is not disputable; an empty store yields an honest message, not a throw.
 - **Conformance (existing controls)** — the catalog/menu drift is held by
   `MainMenuTests.TheMenuCoversEveryCatalogCommand` + `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders`
-  (DC-066).
+  (DC-068).
 
 ## Residual risk
 

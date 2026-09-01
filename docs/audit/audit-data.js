@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-09-01T01:31:36Z",
+  "generated": "2026-09-01T02:07:01Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6485,6 +6485,72 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Extraction/PythonExtractor.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0317",
+      "shortname": "investigate-terminal-crash-and-pane-moves",
+      "datetime": "2026-09-01T01:37:15Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "the build crashed again while I had two sessions active; STILL crazy pane actions - moving one pane moves others, contents flip bottom to top; are docks absolute with panes contained? /investigate",
+      "summary": "VERIFIED two root causes (diagnosis only, no fix). (1) CRASH: TerminalScreen indexer is unbounded and DrawCursor reads screen[cursor] while the cursor is in deferred-wrap (CursorColumn==Columns) at the bottom row -> index==array length -> IndexOutOfRangeException; verified by a bottom-right repro seen throwing; compounded by the screen being mutated on a background pump thread while OnRender reads on the UI thread (its 'reads between writes' invariant is false). (2) PANE MOVES: no absolute docks - the layout is a proportional split tree; removing a pane collapses a single-child split into its child (Remove: 1=>children[0]), relocating unrelated panes + a full Adapter.Render rebuild. Registered DC-060/061/062. Phased plan awaits approval.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/terminal-crash-and-pane-moves.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0318",
+      "shortname": "1: yes commit and push in TheTerrace / 2: yes do this / 3: yes do this /…",
+      "datetime": "2026-09-01T01:43:06Z",
+      "session": "prompt-log",
+      "prompt": "1: yes commit and push in TheTerrace / 2: yes do this / 3: yes do this / 4: yes do this / 5: lets get going on both TypeScript and Bicep",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0319",
+      "shortname": "id-allocator-cross-branch",
+      "datetime": "2026-09-01T01:43:06Z",
+      "session": "phase3-pane-probes",
+      "prompt": "1: yes commit and push in TheTerrace / 2: yes do this / 3: yes do this / 4: yes do this / 5: lets get going on both TypeScript and Bicep",
+      "summary": "Goal: push the TheTerrace link fix, verify the published generation, close the cross-branch half of the id-collision gate, and start TypeScript members and Bicep expression folding. Done when: branch pushed, gate observed failing on the real two-branch shape, all gates green. The gate found DC-061/062/063 colliding on two unmerged branches — the first time the class was caught before it cost anything — and caught two DC-016 instances in its own reader (locale decode, findall-returns-capture). Also backticked four Status values the register gate could not see, which had under-reported controlled classes by four.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-id-allocators.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0320",
+      "shortname": "implement-terminal-crash-and-race-fixes",
+      "datetime": "2026-09-01T01:59:02Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Approve Phase 1 (crash guard) and Phase 2 (render/pump race); Phase 3 = absolute dock zones, run full specify->ui-design->define-architecture loop",
+      "summary": "Phase 1: clamped TerminalScreen indexer (Math.Clamp both coords) honouring its own 'every coordinate is clamped' contract; regression tests observed red (5x IndexOutOfRangeException) then green. Phase 2: added TerminalScreen.SyncRoot; pump holds it across _parser.Consume and OnRender holds it across the whole frame, keeping off-UI-thread parsing; concurrent write/resize vs read guard test. Core 892 / App 209 green. Threading stays pane-local not zone-local (design input recorded for Phase 3).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/TerminalScreen.cs"
       ],
       "tags": [],
       "outcome": "success"
