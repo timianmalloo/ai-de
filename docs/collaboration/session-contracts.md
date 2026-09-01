@@ -1775,3 +1775,43 @@ real findings sit open with Design.
 The costing's value is that the price is now known and small: **when the canvas next changes, this
 is a day's work at most, and the alternative — reasoning about whether a JS consumer still reads a
 field — is the exact method that failed four times in one day.**
+
+#### Follow-on: the trap was already live, and naming it was only half the job
+
+§8.9 named the `EvaluateAsync` trap for a **future** test. Core then did the thing that should have
+followed the naming and grepped for who was already in it — and found it shipping.
+`CanvasProbe/Program.cs` guarded non-vacuity with `if (nodeCount.Trim('"') is "0" or "")`, and a
+failure string is neither `"0"` nor `""`. A page that never loaded reported
+`nodes rendered: (evaluate failed: …)`, passed the guard, and the probe carried on as though the
+canvas were full. The guard existed to prevent exactly that vacuity and the failure arrived by a
+route it had not considered. Fixed at `9037337` by splitting the check in two, because *"I could
+not ask"* and *"nothing was there"* are different findings and collapsing them loses the only
+signal that says whether the run measured anything.
+
+**The process defect is mine, and it is small and worth naming.** The register's own
+continuous-improvement rule is *class → sweep → derive → prevent*. I produced the class and the
+derivation and **skipped the sweep** — I described a hazard for a test nobody had written while
+two live callers sat in the tree. A named hazard with no sweep is a warning about the future issued
+from inside the present.
+
+**Sweep, run now and reported so it cannot be mistaken for not having run:** `EvaluateAsync` has
+**exactly two callers**, both in `tests/AiDe.App.CanvasProbe/Program.cs:152-153`, and both are
+covered by Core's fix. **No further instances anywhere in `src/`, `tests/`, `spikes/` or `bench/`.**
+
+#### The prevention half, proposed rather than built
+
+Fixing the caller fixes the instance. The class survives, because the next caller can make the same
+mistake in the same way — the API hands back failure and success in the same type, so the compiler
+cannot help.
+
+**Proposal for Design** (`CanvasSurface.cs` is Design's under §2, so this is a request, not a
+change): make the failure **unrepresentable as data**. Either
+
+- `Task<string?>` returning `null` on failure, so a caller that ignores it dereferences null rather
+  than measures a sentence; or
+- let the exception propagate, so a caller that ignores it fails loudly.
+
+Both cost one line. Either turns "remember to check for the failure string" — a rule that has to be
+re-remembered by every future caller, and was already forgotten once — into something the type
+system enforces. The current sentinel-string shape is the same defect family this whole section is
+about: **a failure that renders as a plausible value.**
