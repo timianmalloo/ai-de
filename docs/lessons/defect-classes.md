@@ -1781,3 +1781,53 @@ for both or split.*
   per-frame subscription outside a genuine animation. A grep control for `CompositionTarget.Rendering`
   in review is the mechanical guard.
 - **Status:** controlled
+
+### DC-060 — A type promises total input-safety, but one access path is unguarded
+
+- **Signature:** a type's doc-comment promises "nothing throws / every coordinate is clamped" (or
+  similar total-safety), and every *mutator* honours it — but one path, usually a read/indexer,
+  bypasses it. Callers read the promise and assume the whole surface is safe.
+- **Why it survives:** the promise is load-bearing trust; nobody re-checks the one method that breaks
+  it, and it only faults on a state most inputs never reach.
+- **Instance:** 2026-08-31 — `TerminalScreen` documents "Nothing here throws on bad input. Every
+  coordinate is clamped", but `this[row,column] => _cells[(row*Columns)+column]` has no bounds check.
+  `DrawCursor` read the cursor cell while the cursor was in the deferred-wrap position
+  (`CursorColumn == Columns`) at the bottom row → index == `_cells.Length` → IndexOutOfRangeException.
+  Verified by a bottom-right deferred-wrap repro (seen throwing).
+- **Control:** make the unguarded path honour the promise (clamp the indexer / a safe `CellAt`), and a
+  test that reads at the deferred-wrap boundary. A grep control: a type claiming "nothing throws"
+  whose indexer/reader does raw array indexing is a review flag.
+- **Status:** uncontrolled (fix is Phase 1 of docs/investigations/terminal-crash-and-pane-moves.md,
+  awaiting approval)
+
+### DC-061 — UI-thread render reads state a background thread mutates, behind a false single-thread invariant
+
+- **Signature:** a mutable model is documented "not thread-safe / read between writes" and treated as
+  single-threaded, but the writer is a background pump and the reader is the UI render, with no lock,
+  snapshot, or marshalling. Works under light load; tears/faults under concurrent load.
+- **Why it survives:** on one quiet session the write and the read almost never interleave, so it
+  passes every manual test; the failure needs concurrency pressure (here: two active sessions).
+- **Instance:** 2026-08-31 — `TerminalScreen` is mutated by `TerminalSurface.PumpAsync` (background)
+  while `OnRender` reads it (UI); crash reproduced "with two sessions active". The documented "renderer
+  reads … between writes" invariant is not enforced anywhere.
+- **Control:** put a real boundary between writer and reader — an immutable frame snapshot the render
+  consumes, or marshal all mutation to the UI dispatcher, or a lock; plus a concurrent write/read
+  stress test. A recurrence means the boundary leaked.
+- **Status:** uncontrolled (Phase 2 of the investigation, awaiting approval)
+
+### DC-062 — A proportional-split-tree layout collapses single-child splits, relocating unrelated panes
+
+- **Signature:** moving/removing one pane changes the position or orientation of *other* panes, and the
+  whole view re-draws. There are no fixed/absolute dock regions — the layout is a tree of proportional
+  splits, and removing a pane can leave a split with one child, which collapses into that child and
+  restructures the tree.
+- **Why it survives:** each operation is individually correct (the collapse prevents empty regions; the
+  weight-normalise is right), so no test fails; the surprise is emergent and only visible interactively.
+  It also mismatches the common "fixed docks, panes contained within" mental model, so it reads as a bug.
+- **Instance:** 2026-08-31 — moving the graph out of `split-columns` collapsed it to `workspace`,
+  flipping workspace from the left column to the top row ("contents flipping from bottom to top").
+  Compounded by `Adapter.Render()` rebuilding the entire dock view on every layout op.
+- **Control:** a decision between (A) named/absolute dock zones matching the mental model, or (B)
+  soften the collapse (structural placeholder / don't reorient the survivor) + incremental view update;
+  a characterization test on source-side collapse and a move-preserves-others test.
+- **Status:** uncontrolled (Phase 3 of the investigation — needs a model decision, awaiting approval)

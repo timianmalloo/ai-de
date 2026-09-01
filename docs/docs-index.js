@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-09-01T01:13:57Z",
+  "generated": "2026-09-01T01:36:23Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "171fe86dfe902b27fad8430282489ec3d23db33267b58096cea3a24828b9b468"
+      "sourceSha256": "abd7e23b70155800c212fbac198508e2e0959fee8b9b5e995482fcbdcd44274b"
     },
     {
       "id": "domain-experts",
@@ -3300,6 +3300,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "d0b5313c7f0ce996e387f26c5ffa4a5ba91e785db40974a220f8b5a5304862da"
+    },
+    {
+      "id": "investigation-terminal-crash-and-pane-moves",
+      "path": "docs/investigations/terminal-crash-and-pane-moves.md",
+      "title": "Investigation — terminal render crash + pane-move relocation",
+      "type": "investigation",
+      "status": "resolved",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Two workbench-surface defects. (1) CRASH: TerminalView.DrawCursor reads screen[CursorRow,CursorColumn] and the indexer is unbounded; after writing the last column the cursor is at CursorColumn==Columns (deferred wrap), so at the bottom row the index equals the array length — IndexOutOfRangeException — compounded by the screen being mutated on a background thread while OnRender reads it on the UI thread (its own \"reads between writes\" invariant is false). (2) PANE MOVES: the layout is a tree of proportional splits, not absolute docks; removing a pane collapses a single-child split into its child, which relocates unrelated panes. This report is the diagnosis + phased plan; NO fix applied.",
+      "tags": [
+        "crash",
+        "terminal",
+        "rendering",
+        "layout",
+        "docking",
+        "threading",
+        "race"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "investigation-redraw-isolation",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8f2a48297d69b35f0a1686044aa3bada4d6c6f3a2bbaebf8bb37452700c0015c"
     },
     {
       "id": "kb-ai-native-ide-shell",
@@ -6741,5 +6774,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "2d2ce18f8c36cf231f7b1776466fff53339f1a87322ef3ac4378d282f8f86a4e"
+  "graphSha256": "46b426ee54678a98b50d19858885909bdd121ae48aa09dab040810907d71b7b1"
 };
