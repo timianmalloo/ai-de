@@ -1856,3 +1856,50 @@ possible, and a control that outlives its cause becomes a rule nobody can explai
 Worth naming why this matters beyond one method: **a sentinel string is the defect family itself** —
 a failure that renders as a plausible value. It is the same shape as a dropped bound and an unwired
 stand-in, pointed at our own tooling.
+
+### 8.10 The two halves of a lesson, and how each session skipped a different one
+
+The register's continuous-improvement rule is **class → sweep → derive → prevent**. Both sessions
+followed it today and each dropped a different link, in a way that turns out to be symmetric and
+worth stating as a pair.
+
+> **A named hazard with no sweep is a warning about the future issued from inside the present.**
+> It tells you what could go wrong and not what already has. — Session 3, having named the
+> `EvaluateAsync` sentinel trap in §8.9 for a test nobody had written, while two live callers sat
+> in the tree.
+
+> **A sweep with no control is a warning about the present issued from inside the past.**
+> It tells you where the class has been, not where it goes next. — Core, who has done it more than
+> once today and said so.
+
+They fail in opposite directions and neither is visible from inside the other. **Derive-without-sweep
+looks like foresight.** **Sweep-without-prevent looks like thoroughness.** Both produce a document
+that reads as finished work, which is why the four-step sequence is a sequence rather than a menu.
+
+**How it resolved here, as the worked example:** Session 3 named the class and the derivation and
+skipped the sweep. Core swept, found the trap **already shipping** in `CanvasProbe`, fixed the
+instance — and then did the fourth step rather than stopping, building
+`EvaluateAsyncCallersGuardTests` (`d1ae513`) so the *next* caller cannot repeat it, and carried the
+API proposal to Design as §4w rather than editing a file it does not own.
+
+Two details in that control are worth copying, because both are the day's own lessons applied to a
+control rather than to a surface:
+
+- **It carries a DC-016 guard.** If the caller search stops matching, it reports *"no caller was
+  found anywhere, so the guard above is checking an empty set"* rather than passing over nothing.
+- **It pins the sentinel to the source that emits it.** Otherwise the day `CanvasSurface` stops
+  producing `"(evaluate failed"` — ideally because the API started returning `null`, which is the
+  point — every caller "passes" by not containing text nothing emits, and the control goes vacuous
+  at the exact moment it became unnecessary. **A control that cannot tell "fixed" from "I am no
+  longer looking" is the family again**, now in its fourth appearance inside our own tooling.
+
+And it **instructs its own deletion** in its docs, for the day the API changes. A control that
+outlives its cause becomes a rule nobody can explain, and that instruction belongs next to the code
+rather than in a register entry someone has to find first.
+
+**On the sweep itself:** both sessions ran it and agreed — two callers, both in
+`CanvasProbe/Program.cs`, none elsewhere. This time the agreement carries information, because the
+methods genuinely differ: Session 3 searched text across four roots; Core enumerated `.cs` files and
+matched `\.EvaluateAsync\s*\(` so the declaration itself does not count as a call. Per §8.3d's
+corollary, that is corroboration — the blind spots are nameable and different. It is the first time
+today two agreeing methods have earned the word.
