@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T23:43:25Z",
+  "generated": "2026-09-01T23:57:08Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3463,6 +3463,43 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "2bac1a5909ea830ac927bcc96331d68c2354106d48ec904a498373597adeda12"
+    },
+    {
+      "id": "ux-agent-session-registration",
+      "path": "docs/design/ux-agent-session-registration.md",
+      "title": "Agent session registration — the environment contract and harness-scripted launch",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "Spec for making an agent terminal self-registering with Loomkeeper without the agent's cooperation, the AI-Forward pack, or any repo directive. Registration already works and is harness-agnostic; the gap is that four identity fields are never filled, two more are placeholders, and nothing is passed to the child process. Adds a documented environment contract that any harness can read, and harness-scripted launch entries (New Claude Code session / New Copilot session) that supply the harness identity AI-DE cannot otherwise know.",
+      "tags": [
+        "ux",
+        "terminal",
+        "loomkeeper",
+        "watcher",
+        "agent",
+        "environment-contract",
+        "session-3"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2a6d8699ef43ac695be7e09d77695a420bc122d1517d256c0cb6fce40af2c9aa"
     },
     {
       "id": "audit-log",
@@ -9885,5 +9922,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "36238fe0155faade07ac1c5b7f5a0b595cb72a79e7c565a63f9b6268badf2745"
+  "graphSha256": "ab349db71fa6a5ca65febf97b5ab2f1122c7c7fcc689b3620da0f2b93e5feeac"
 };
