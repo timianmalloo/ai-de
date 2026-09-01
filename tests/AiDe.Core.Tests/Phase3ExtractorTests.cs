@@ -51,6 +51,10 @@ public sealed class Phase3ExtractorTests : IDisposable
         resource sql 'Microsoft.Sql/servers@2022-05-01' = {
           name: 'demo-sql'
         }
+
+        resource sqlRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+          name: guid(sql.id, 'reader')
+        }
         """;
 
     [Fact]
@@ -66,17 +70,27 @@ public sealed class Phase3ExtractorTests : IDisposable
     }
 
     [Fact]
-    public async Task ALiteralNameIsAFact_AndAnExpressionIsRecordedAsAnExpression()
+    public async Task ALiteralNameIsAFact_AndAnUnfoldableExpressionIsRecordedAsAnExpression()
     {
         // A guessed resource name would be a confident wrong edge between a table and a server, and
         // the user would act on it. So an unresolved name is kept verbatim under a DIFFERENT
         // predicate, which is what stops a join treating it as a name.
+        //
+        // The exemplar CHANGED and the rule did not. This test used to prove itself with
+        // `'${namePrefix}-vnet'`, which is now folded against the parameter's declared default — the
+        // interpolation was never the point, "an expression is not a name" was. The role
+        // assignment's `guid(...)` is the corpus's real unfoldable shape (6 of 27 names measured
+        // across TheTerrace) and cannot be resolved at any tier, so it carries the rule now.
         var path = Write("infra/main.bicep", Template);
         var result = await new BicepExtractor().ExtractAsync(Request("bicep:main", path), CancellationToken.None);
 
         Assert.Contains(Where(result, "resource_name"), a => a.Object == "demo-sql");
-        Assert.Contains(Where(result, "resource_name_expression"), a => a.Object.Contains("namePrefix", StringComparison.Ordinal));
+        Assert.Contains(Where(result, "resource_name_expression"), a => a.Object.StartsWith("guid(", StringComparison.Ordinal));
         Assert.DoesNotContain(Where(result, "resource_name"), a => a.Object.Contains('$'));
+
+        // And the folded one is the name Azure would deploy for the declared default, not the
+        // expression and not the identifier.
+        Assert.Contains(Where(result, "resource_name"), a => a.Object == "demo-vnet");
     }
 
     [Fact]
@@ -85,9 +99,13 @@ public sealed class Phase3ExtractorTests : IDisposable
         var path = Write("infra/main.bicep", Template);
         var result = await new BicepExtractor().ExtractAsync(Request("bicep:main", path), CancellationToken.None);
 
+        // Counted, not just stated. "expressions are not evaluated" was true when none were and
+        // would have read as a wholly open gap once folding closed most of it (DC-025/DC-050); the
+        // count is what tells a reader whether the residue is worth anybody's attention.
         Assert.Contains(
             Where(result, CSharpExtractor.DisclosurePredicate),
-            a => a.Object == ExtractionDisclosures.BicepExpressionsNotEvaluated);
+            a => a.Object == ExtractionDisclosures.BicepExpressionsNotEvaluated
+                + " (1 of 3 resource name(s) are expressions this reader does not evaluate)");
     }
 
     [Fact]
@@ -148,9 +166,13 @@ public sealed class Phase3ExtractorTests : IDisposable
 
         var result = await new BicepExtractor().ExtractAsync(Request("bicep:shapes", path), CancellationToken.None);
 
+        // The disclosure now carries the two counts that cause it. A loop can make the declaration
+        // count wrong by any amount; a conditional can only make it one too many. Reporting them as
+        // one flag made those indistinguishable.
         Assert.Contains(
             Where(result, CSharpExtractor.DisclosurePredicate),
-            a => a.Object == ExtractionDisclosures.BicepResourceCountIndeterminate);
+            a => a.Object == ExtractionDisclosures.BicepResourceCountIndeterminate
+                + " (1 loop(s) and 0 conditional resource(s) of 1 declaration(s))");
     }
 
     [Fact]

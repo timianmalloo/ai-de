@@ -14,8 +14,20 @@ namespace AiDe.Core.Extraction;
 ///
 /// <para><b>Measured at parity for what it claims.</b> Against <c>az bicep build</c> on a real
 /// 677-line template: 24 of 24 resources, 19 of 19 types, 18 of 18 parameters
-/// (<c>spikes/bicep-as-data</c>). What it does <i>not</i> recover is resolved names — 8 of those 24
-/// are expressions — and those are disclosed rather than guessed.</para>
+/// (<c>spikes/bicep-as-data</c>).</para>
+///
+/// <para><b>Names are CONSTANT-FOLDED, not evaluated.</b> Parameters with a declared default and
+/// variables are substituted, string interpolation and four pure string functions are folded over
+/// values already known, and everything else is refused and counted. MEASURED across every
+/// <c>.bicep</c> file in TheTerrace and this repository — 27 resource declarations — that resolves
+/// 20 names and leaves 7. The residue is <c>guid(...)</c>, whose arguments are resource IDs that do
+/// not exist until a deployment names a subscription, and one parameter with no default. Both are
+/// boundaries, not gaps: no amount of reading a file closes either.</para>
+///
+/// <para>The reason it folds at all is a defect rather than coverage. The old test for "literal" was
+/// <i>contains no <c>$</c> and no <c>(</c></i>, which a bare identifier passes — so
+/// <c>name: workspaceName</c> was asserted as the name <c>workspaceName</c>. That was <b>10 of the
+/// 27</b>, undisclosed, because they never reached the expression branch.</para>
 ///
 /// <para><b>The value of an <c>@secure()</c> parameter is never read.</b> Not redacted after the
 /// fact: the parameter is recorded as existing and as secret, and its value is never looked at, so
@@ -92,8 +104,14 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
         var fileName = Path.GetFileName(path);
         var scopeNode = CSharpExtractor.ScopeNodeId(request.ScopeId);
         var unresolved = 0;
+        var named = 0;
+        var resources = 0;
         var loops = 0;
         var conditionals = 0;
+
+        // What the template declares about itself, read once. Built from the COMMENT-STRIPPED text,
+        // so a commented-out `var` is not a binding.
+        var folder = BicepConstantFolder.From(text);
 
         Provenance At(int index)
         {
@@ -101,9 +119,11 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
             return new Provenance(fileName, $"{line}:1", ExtractorId, extractorVersion, observedAt);
         }
 
-        EvidenceAssertion Fact(string subject, string predicate, string obj, Provenance provenance) =>
+        EvidenceAssertion Fact(
+            string subject, string predicate, string obj, Provenance provenance,
+            VerificationStatus status = VerificationStatus.Verified) =>
             new(request.ScopeId, request.ArtifactRevision, subject, predicate, obj,
-                EvidenceOrigin.Static, VerificationStatus.Verified, provenance);
+                EvidenceOrigin.Static, status, provenance);
 
         // Where each declaration ends, so a dependsOn is attributed to the resource that contains
         // it rather than to whichever declaration happened to come before it in the file.
@@ -124,6 +144,7 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
             var symbol = match.Groups["symbol"].Value;
             var node = $"{request.ScopeId}/{symbol}";
             var provenance = At(match.Index);
+            resources++;
 
             var tail = match.Groups["tail"].Value.TrimStart();
             var isExisting = match.Groups["existing"].Success;
@@ -163,15 +184,26 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
                 assertions.Add(Fact(node, "depends_on", $"{request.ScopeId}/{dependency}", provenance));
             }
 
-            var name = NameAfter(text, match.Index);
+            var name = NameAfter(text, match.Index, declarationEnds);
             if (name.Length == 0) continue;
 
-            // A literal name is a fact. An expression is a fact ABOUT an expression — recorded
-            // verbatim so a reader can see what it is, and never resolved. A guessed name would be
-            // a confident wrong edge between a table and a server, and the user would act on it.
-            if (IsLiteral(name))
+            named++;
+
+            // A literal name is a fact. A FOLDED name is a fact about the template's declared
+            // defaults — exact for those defaults, and Inferred because `--parameters namePrefix=…`
+            // can say otherwise. Anything else is a fact ABOUT an expression, recorded verbatim so a
+            // reader can see what it is, and never resolved.
+            //
+            // The old test for "literal" was `contains no $ and no (`, which a bare identifier
+            // passes: `name: workspaceName` was asserted as the name `workspaceName`. MEASURED on
+            // TheTerrace, that was 10 of 27 resource names, undisclosed because they never reached
+            // the expression branch — a confident wrong edge between a table and a server, which is
+            // exactly what this branch exists to prevent.
+            if (folder.TryFold(name, out var value, out var computed))
             {
-                assertions.Add(Fact(node, "resource_name", Unquote(name), provenance));
+                assertions.Add(Fact(
+                    node, "resource_name", value!, provenance,
+                    computed ? VerificationStatus.Inferred : VerificationStatus.Verified));
             }
             else
             {
@@ -214,21 +246,38 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
 
         var scopeProvenance = new Provenance(fileName, "1:1", ExtractorId, extractorVersion, observedAt);
 
+        // Counted, and only when something is actually hidden. It used to fire whenever ANY name was
+        // not a bare literal, which after folding would report a closed gap as an open one — and it
+        // said nothing about size, which is what decides whether the residue is worth closing. It is
+        // still a BOUNDARY: what remains after folding is `guid()`/`uniqueString()`, whose inputs do
+        // not exist until a deployment names a subscription, and parameters with no default, whose
+        // values do not exist until somebody supplies them. Neither is a defect anybody can fix
+        // (DC-025, DC-050).
         if (unresolved > 0)
         {
             assertions.Add(Fact(
                 scopeNode, CSharpExtractor.DisclosurePredicate,
-                ExtractionDisclosures.BicepExpressionsNotEvaluated, scopeProvenance));
+                $"{ExtractionDisclosures.BicepExpressionsNotEvaluated} ({unresolved:N0} of {named:N0} " +
+                "resource name(s) are expressions this reader does not evaluate)",
+                scopeProvenance));
         }
 
         // How many resources a loop actually deploys depends on a collection nobody here evaluates,
         // and whether a conditional one is deployed depends on an expression. Both are disclosed so
-        // a resource count is never mistaken for a deployment count.
+        // a resource count is never mistaken for a deployment count — now with the two counted
+        // separately, because a loop can make the declaration count wrong by any amount while a
+        // conditional can only make it one too many.
+        //
+        // Loop COUNTS are deliberately not resolved. MEASURED: zero `[for …]` resources across every
+        // .bicep file in both corpora, so evaluating collections would be a fold for a measured zero
+        // — the same reading that closed `schema-changed-by-raw-sql`.
         if (loops > 0 || conditionals > 0)
         {
             assertions.Add(Fact(
                 scopeNode, CSharpExtractor.DisclosurePredicate,
-                ExtractionDisclosures.BicepResourceCountIndeterminate, scopeProvenance));
+                $"{ExtractionDisclosures.BicepResourceCountIndeterminate} ({loops:N0} loop(s) and " +
+                $"{conditionals:N0} conditional resource(s) of {resources:N0} declaration(s))",
+                scopeProvenance));
         }
 
         return Task.FromResult(new ExtractionResult(assertions, Complete: true, []));
@@ -252,24 +301,34 @@ public sealed partial class BicepExtractor(string extractorVersion = "1.0.0") : 
         }
     }
 
-    private static string NameAfter(string text, int declarationIndex)
+    /// <summary>The <c>name:</c> a declaration states, bounded to its own span.</summary>
+    /// <remarks>
+    /// Bounded for the same reason <c>dependsOn</c> is: a child resource declared with
+    /// <c>parent:</c> and no <c>name:</c> would otherwise be given whatever name appeared next in
+    /// the file. That is a name that is individually plausible and collectively a fiction, and it is
+    /// the one thing this reader must never produce.
+    /// </remarks>
+    private static string NameAfter(string text, int declarationIndex, Func<int, int> endOf)
     {
         var match = NameProperty().Match(text, declarationIndex);
-        return match.Success ? match.Groups["name"].Value.Trim() : string.Empty;
+        if (!match.Success || match.Index >= endOf(declarationIndex)) return string.Empty;
+
+        return match.Groups["name"].Value.Trim();
     }
-
-    private static bool IsLiteral(string name) => !name.Contains('$') && !name.Contains('(');
-
-    private static string Unquote(string value) =>
-        value.Length >= 2 && value[0] == '\'' && value[^1] == '\'' ? value[1..^1] : value;
 
     /// <summary>Whether a <c>@secure()</c> decorator sits above this parameter.</summary>
     /// <remarks>
-    /// Scanned backwards past other decorators and doc lines, stopping at the first line that is
-    /// clearly not part of this declaration's preamble — so a <c>@secure()</c> belonging to the
-    /// PREVIOUS parameter is not attributed to this one.
+    /// <para>Scanned backwards past other decorators and doc lines, stopping at the first line that
+    /// is clearly not part of this declaration's preamble — so a <c>@secure()</c> belonging to the
+    /// PREVIOUS parameter is not attributed to this one.</para>
+    ///
+    /// <para><b>Internal because the constant folder needs the same answer.</b> A <c>@secure()</c>
+    /// parameter may legally carry a default, and folding one into a resource name would put its
+    /// value in the store — through the graph rather than through the parameter's own facts, but in
+    /// the store all the same. One definition, so the guarantee cannot drift between the two
+    /// readers that depend on it.</para>
     /// </remarks>
-    private static bool IsSecure(string[] lines, int declarationLine)
+    internal static bool IsSecure(string[] lines, int declarationLine)
     {
         for (var back = declarationLine - 1; back >= 0 && back >= declarationLine - 6; back--)
         {
