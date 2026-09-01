@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T02:49:52Z",
+  "generated": "2026-09-01T02:52:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6689,6 +6689,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0331",
+      "shortname": "implement-zone-shell-swap",
+      "datetime": "2026-09-01T02:52:28Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "continue autonomously through all slices",
+      "summary": "dz-shell: swapped WorkbenchShell's LayoutService for ZoneBackedLayoutService. All 220 App tests green (the Strangler is contract-faithful) and the app launches + renders the zone layout with no crash (E11 smoke). Open/close/command-move no longer flip other panes. Native AvalonDock drag currently reclassifies by kind on reconcile (interim; dz-interact will make drag zone-position-aware).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
       ],
       "tags": [],
       "outcome": "success"

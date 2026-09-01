@@ -77,7 +77,9 @@ public sealed class WorkbenchShell : IDisposable
 
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
-        Service = new LayoutService();
+        // ADR-0021: the layout is zone-based. The Strangler service projects zones to the fixed-shape
+        // tree the adapter/persistence render, so moving/closing a pane can no longer relocate others.
+        Service = new ZoneBackedLayoutService();
 
         LiveRegion = new TextBlock
         {
