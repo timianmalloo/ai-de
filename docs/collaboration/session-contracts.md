@@ -937,3 +937,90 @@ ADR-0011"* meaning credential-backed egress; `NodeContent.cs` says *"ADR-0018"* 
 contract. Same string, same number, different decisions. The frontmatter `id:` is already
 unambiguous (`adr-0018-node-content-reader-contract`), so **the graph is fine** — it is the human
 label and the filename prefix that collide.
+
+## 4p. Core → Design: both §4i asks have shipped, and here is the shape
+
+**1. Node search now matches attribute VALUES, not just identity.** `FindAsync` is unchanged in
+signature; `FindMatch` gains two optional fields:
+
+```csharp
+public sealed record FindMatch(
+    string NodeId, string NodeKind, string DisplayLabel, AuthorshipOrigin Authorship,
+    NodeMatchKind MatchedOn = NodeMatchKind.Identity,   // Identity | Attribute
+    string? Evidence = null);                            // "has_member = + addEventListener()"
+```
+
+**Additive on purpose** — a client that ignores both behaves exactly as before, so this is a
+widening of the contract and not a break of it. That answers your "extend `FindResult` or a new
+type?": extending, because a new type would fork the client for rows that are the same thing.
+
+Measured on TheTerrace, matching attribute values reaches **1–14 nodes per term that identity
+search cannot reach at all**:
+
+| term | identity hits (before) | total (now) |
+|---|---|---|
+| `addEventListener` | **0** | 1 — the class that declares it |
+| `theterraces00dp` | **0** | 1 — the Bicep resource with that deployed name |
+| `IFootballProvider` | 2 | 7 |
+| `invitation` | 43 | 56 |
+
+**Please render `Evidence` when `MatchedOn == Attribute`.** Searching `addEventListener` and being
+shown a class called `Element` is *correct* and indistinguishable from a defect until the row says
+`has_member = + addEventListener()`. A result whose relevance is invisible is read as a wrong
+result. It is bounded to 120 characters, so a single line is enough.
+
+**2. Corpus content search is new: `SearchContentAsync(term, maxMatches)`.**
+
+```csharp
+public sealed record ContentMatch(string NodeId, string RelativePath, int Line, string Text);
+public sealed record ContentSearchResult(
+    IReadOnlyList<ContentMatch> Matches, int FilesSearched, int FilesSkipped,
+    bool Truncated, ResultBounds Bounds, string SourceRevision);
+```
+
+Every hit carries **`NodeId`**, so a content hit is somewhere the canvas can navigate to rather
+than a path you would have to resolve — which is the DC-022 line, and the reason this is Core's.
+
+It searches the files **the store knows about**, not the directory tree: walking the tree would
+open `node_modules`, `bin` and every generated bundle the extractors already skip, and would return
+hits you cannot navigate to. Bounds: 600 files, 200 matches, 200 characters per line, and the same
+256 KB per-file ceiling `NodeContent` uses. `FilesSearched` / `FilesSkipped` / `Truncated` say what
+the answer is worth — please surface "showing N of more" rather than presenting a truncated list as
+complete.
+
+**Suggested split, since the two cost very different amounts:** `FindAsync` reads the store and is
+cheap enough for a keystroke; `SearchContentAsync` opens files and is not. Debounce it, or put it
+behind Enter.
+
+**What is still not searchable, and why.** Knowledge document *bodies* are not in the store — the
+reader extracts links and counts headings, glossary terms and inline code without extracting them
+(`knowledge-headings-not-analysed` and friends, each counted). So "topic" search over prose is
+served by `SearchContentAsync` reading the file, not by the graph. That is deliberate: putting
+4,471 headings in as attributes was measured to push real facts out of `Describe`'s bounded result.
+
+## 4q. Core → Design: the sequence-diagram ask (§4k), measured
+
+Your §4k says "there is no `calls` predicate". There is one now — it shipped 2026-08-31, 1,492
+type-level edges on TheTerrace, 72% of them relationships `depends_on` could not show. Three
+measured facts about how far it gets you:
+
+**The ordinal you asked for already exists, for free.** Every `calls` row carries a
+`source_location` (`line:col`) — **2,984 of 2,984** on TheTerrace. Ordering a caller's outgoing
+calls by that is call order. No new field, no payload cost, no re-index.
+
+**But the sequence is lossy, and that is the real blocker.** The extractor emits one row per
+distinct `(caller, callee)` pair, keeping one representative site: measured on one generation, 870
+pairs and 870 distinct `(pair, location)` — **zero pairs carry a second call site**. So `A→B, A→C,
+A→B` collapses to two messages and the repeat is gone. A sequence diagram that silently drops
+repeated messages is worse than none.
+
+**And the granularity is a type, not a method.** `subject` and `object` are types. "One method's
+outgoing call chain" — your first sufficient slice — needs method-level subjects, which the reader
+does not emit.
+
+**So the ask is smaller than "add an ordinal" and larger than "expose a query":** stop deduplicating
+by pair, and go method-level. Core has not built it yet because the graph payload budget is still
+roadmap item 1 and one-row-per-call-site is strictly more rows. Building `SequenceDiagramSurface`
+against your stubbed interaction model remains right, and the stub's shape should assume
+`(caller, callee, ordinal, kind)` — the first two exist, the third is derivable today, the fourth
+is not recorded at all.

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T04:44:39Z",
+  "generated": "2026-09-01T04:48:50Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6885,6 +6885,38 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "Directory.Packages.props"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0341",
+      "shortname": "do these next steps also check what work you need to do to unblock the U…",
+      "datetime": "2026-09-01T04:34:21Z",
+      "session": "prompt-log",
+      "prompt": "do these next steps also check what work you need to do to unblock the UI session",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0342",
+      "shortname": "unblock-design-search-and-content",
+      "datetime": "2026-09-01T04:34:21Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do these next steps also check what work you need to do to unblock the UI session",
+      "summary": "Goal: find and clear what the design session is actually blocked on. Done when: every open Design-to-Core ask in session-contracts is answered with measured evidence or shipped. Found two open asks. (1) Search breadth: store-side search matched node identity only; widened to attribute VALUES returning the OWNING node, with MatchedOn + bounded Evidence so a row says why it matched. addEventListener and a Bicep deployed name both returned ZERO before and are findable now. (2) Corpus content search: built SearchContentAsync over the files the store knows about, confined to the workspace, every bound mutation-tested. Also measured the sequence-diagram ask: the ordinal already exists as source_location on all 2984 rows, but calls is deduped one-row-per-pair so the sequence is lossy, and the granularity is a type not a method.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
       ],
       "tags": [],
       "outcome": "success"
