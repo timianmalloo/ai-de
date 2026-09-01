@@ -173,6 +173,38 @@ public sealed class WorkbenchShellTests
     }
 
     /// <summary>A concrete no-op workspace read surface for attach tests (base defaults, nothing thrown).</summary>
+    [Fact]
+    public void AttachWorkspace_SwapsTheSampleContentSourceForTheRealOne()
+    {
+        // THE CONTROL FOR A STAND-IN THAT OUTLIVED ITS REASON. `MockNodeContentSource` was written
+        // to stand in "until Core ships NodeContentAsync", behind a seam whose stated purpose was a
+        // one-line swap. Core shipped the query. Nothing swapped the field, and the code viewer went
+        // on showing a labelled SAMPLE against a fully indexed workspace — with every signal green,
+        // because the seam existed, the surface rendered, and the tests passed against the mock.
+        //
+        // Before a workspace there is nothing to ask, so the sample is right. After one, asking the
+        // authority is the only correct answer, and this is what fails if the wiring is ever undone.
+        var dataDir = System.IO.Path.Combine(
+            System.IO.Path.GetTempPath(), $"aide-content-swap-{Guid.NewGuid():N}");
+
+        try
+        {
+            var (before, after) = WithShell((shell, _) =>
+            {
+                var idle = shell.NodeContentSource;
+                shell.AttachWorkspace(new BareQueries(), dataDir);
+                return (idle, shell.NodeContentSource);
+            });
+
+            Assert.IsType<MockNodeContentSource>(before);
+            Assert.IsType<CoreNodeContentSource>(after);
+        }
+        finally
+        {
+            try { System.IO.Directory.Delete(dataDir, recursive: true); } catch (System.IO.IOException) { }
+        }
+    }
+
     private sealed class BareQueries : FakeWorkspaceQueries
     {
         // Main added BindJoins to AttachWorkspace, whose join Source calls FindAsync + EvidenceAsync during

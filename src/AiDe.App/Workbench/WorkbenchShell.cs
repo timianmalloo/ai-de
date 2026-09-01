@@ -1353,9 +1353,21 @@ public sealed class WorkbenchShell : IDisposable
         return (described.Members ?? [], described.MembersDeclared);
     }
 
-    // The code viewer's content source. A mock until Core ships NodeContentAsync (ADR-0018); swapping
-    // this field for the Core-backed source is the whole live-wiring change.
-    private INodeContentSource _nodeContentSource = new MockNodeContentSource();
+    // The code viewer's content source. DERIVED from `_queries` rather than assigned, because
+    // `_queries` is set in two places (the constructor and AttachWorkspace) and a field set in one of
+    // them is a field that is stale in the other — which is how the watcher panes came to read "not
+    // available" after a workspace opened.
+    //
+    // It was `new MockNodeContentSource()`, written to stand in "until Core ships NodeContentAsync".
+    // Core shipped it, nothing swapped the field, and the viewer went on showing a labelled SAMPLE
+    // against a fully indexed workspace. A stand-in is honest only while the thing it stands in for
+    // is missing; after that it is a defect wearing a feature's clothes.
+    internal INodeContentSource NodeContentSource => _queries is null
+        ? _mockNodeContent
+        : _coreNodeContent ??= new CoreNodeContentSource(_queries);
+
+    private readonly INodeContentSource _mockNodeContent = new MockNodeContentSource();
+    private CoreNodeContentSource? _coreNodeContent;
 
     /// <summary>
     /// Feeds each open code-viewer surface content (ADR-0018/0019). Until Core's NodeContentAsync ships,
@@ -1380,8 +1392,19 @@ public sealed class WorkbenchShell : IDisposable
     {
         try
         {
-            var content = await _nodeContentSource.GetAsync("(sample)", CancellationToken.None);
-            foreach (var v in viewers) { v.Show(content); }
+            // "(sample)" is not a node. With the mock that was the point — it returned a labelled
+            // sample whatever it was handed. With the real source it would be a lookup for something
+            // that does not exist, and showing its empty answer would replace an honest "nothing
+            // selected yet" with a wrong "this node has no content".
+            //
+            // So: sample only while there is no workspace to ask. With one attached, the viewer
+            // keeps its own first-load state until a selection arrives. WHICH node a freshly opened
+            // viewer should show is Design's call, not Core's, and is recorded as such in §4s.
+            if (_queries is null)
+            {
+                var sample = await _mockNodeContent.GetAsync("(sample)", CancellationToken.None);
+                foreach (var v in viewers) { v.Show(sample); }
+            }
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
         {

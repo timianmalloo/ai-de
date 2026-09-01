@@ -112,6 +112,17 @@ jobs:
       - name: Derived views gate — self-test
         run: python tools/verify-derived-views.py --self-test
 
+      # A stand-in wired into production outlives the thing it stood in for, and every signal stays
+      # green because the seam works exactly as designed (DC-073). MockNodeContentSource shipped a
+      # labelled SAMPLE to the code viewer for a day after the real query landed, with zero calls to
+      # it anywhere in the App. Not a ban — a forcing function: each one names the condition that
+      # makes it right, and the next reader is asked whether that condition still holds.
+      - name: Production stand-ins are accounted for
+        run: python tools/verify-standins.py
+
+      - name: Stand-ins gate — self-test
+        run: python tools/verify-standins.py --self-test
+
       # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
       # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the
       # twist that the gate was not stale but NARROW). Builds every tracked project the solution does
