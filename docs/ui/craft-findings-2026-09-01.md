@@ -278,3 +278,48 @@ were considered.
 Owner: Core (`WorkbenchAdapter.cs`, `DocumentPlacement.cs` sits with the App-side placement Core
 routes). Raised, not taken.
 
+---
+
+## 6. MEASURED — "the graph repaints in the right dock after being moved left"
+
+The last unobserved symptom, and it needed no AvalonDock: **it is in the layout model.** A probe
+drove the real `ZoneBackedLayoutService` with every `DropKind` against every zone.
+
+| Drop target | Landed in | Announcement |
+|---|---|---|
+| `zone-left` + **any split kind** | **`zone-center`** | *"Moved Graph within the center."* — and the graph becomes the **last tab** |
+| `zone-right` + any split kind | **`zone-center`** | *"Moved Graph within the center."* — last tab |
+| `zone-bottom` + any split kind | **`zone-center`** | *"Moved Graph within the center."* — last tab |
+| `zone-center` + any split kind | `zone-right` | *"Moved Graph to the right zone."* |
+| any zone + `JoinStack` | **the targeted zone** ✓ | correct |
+
+**Only `JoinStack` honours the zone it was dropped on.** Every split-kind drop onto a side zone
+puts the surface back in the centre.
+
+### What the user saw
+
+Dropping the graph on the **left** with a split gesture leaves it in `zone-center` **as the last
+tab** — the right-hand end of the centre tab strip. Whether "right dock" was meant literally or as
+"it ended up over on the right", **the graph demonstrably does not go left**, and it visibly moves
+rightward from index 0 to last. That is the strongest available explanation of the report and it is
+measured rather than reasoned.
+
+### The announcement is confidently wrong
+
+*"Moved Graph within the center"* is announced when the user dropped on the **left zone**. The
+operation reports success and describes an outcome the user did not ask for — so a screen-reader
+user is told the move worked and told the wrong destination. **This is the §8.3a family in the
+announcer**: the honest data (the requested target) exists, and what reaches the user is a
+confident statement about something else.
+
+### It is the fifth partial sweep, inside the fix for the fourth
+
+Core fixed `SplitRight` against the Center at `b5ca354` — `ZoneBackedLayoutService.Move` read the
+drop's target node and ignored its `Kind` for everything except `Float`. That fix made
+`zone-center` + split resolve to `zone-right`. **The sibling cases — a split dropped on `zone-left`,
+`zone-right` or `zone-bottom` — were never swept**, and all of them still fall through to "within
+the center".
+
+Same shape as §8.11 and §8.13's first lesson: the fix asserted about the case in front of it and
+not about the rule it was serving. `ZoneBackedLayoutService` is Core's under §2 — measured, raised,
+not taken.
