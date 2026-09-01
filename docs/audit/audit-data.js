@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T19:06:49Z",
+  "generated": "2026-09-01T20:16:26Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7338,6 +7338,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0362",
+      "shortname": "surface-ownership-gate-and-register-decay",
+      "datetime": "2026-09-01T20:16:26Z",
+      "session": "phase3-pane-probes",
+      "prompt": "cross-session: section 2 assigns 4 of 13 surfaces; gate proposed but tools/ is Core's",
+      "summary": "Goal: close the ownership gap the design session found. Verified 13 surface/view files with 4 assigned and 9 unowned including SearchSurface. Built tools/verify-surface-ownership.py - every surface in exactly one owner table or a recorded unassigned list, and a file claimed by TWO tables fails as the section 8.2 contradiction mechanised. Observed failing on a planted unowned surface and NOT firing on an assigned one. Deliberately does not pick owners: a gate that assigned surfaces would be one session deciding another's scope by writing a script. Proposed a carve in 4y and 4z covering both the nine surfaces and the missing Session 3 row, to be agreed rather than assumed. The class underneath is an append-only register that accumulates correct statements while its coverage decays.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-surface-ownership.py"
       ],
       "tags": [],
       "outcome": "success"
