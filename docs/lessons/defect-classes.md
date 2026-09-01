@@ -1903,14 +1903,16 @@ for both or split.*
 - **Instance:** 2026-08-31 — moving the graph out of `split-columns` collapsed it to `workspace`,
   flipping workspace from the left column to the top row ("contents flipping from bottom to top").
   Compounded by `Adapter.Render()` rebuilding the entire dock view on every layout op.
-- **Control:** **Option A chosen** — named absolute dock zones (`adr-0021-named-dock-zones`,
-  `spec-named-dock-zones`): a fixed Left/Right/Bottom/Center frame where a move changes only source +
-  destination, splits are scoped within a zone, and an incremental per-zone adapter removes the
-  whole-view redraw. The **containment-on-move test** (AC-F1) is the control and must be seen failing
-  against a shim that reproduces the old single-child collapse. Design loop complete; lands with
-  `/implement` on ADR-0021 approval.
-- **Status:** `uncontrolled` — in design: model decided (ADR-0021 proposed); control (containment test) lands with
-  the layout-model rewrite.
+- **Control:** **Named absolute dock zones**, shipped via a Strangler service (`adr-0021-named-dock-zones`).
+  `ZoneLayoutService` confines every operation to the zone(s) it names (`WithZone` leaves the other
+  zones reference-identical); `ZoneBackedLayoutService : ILayoutService` projects the zone model to a
+  fixed-shape tree so the existing adapter renders it, and moving/closing a pane can no longer flip the
+  frame. Controls, observed failing on a whole-restructure shim then green: **model** —
+  `ZoneLayoutServiceTests.MovePane_ChangesOnlySourceAndDestination_OtherZonesReferenceIdentical`;
+  **view (end-to-end through AvalonDock)** —
+  `ZoneWorkbenchAdapterTests.MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface`.
+- **Status:** controlled — zone model shipped and wired into the shell; containment proven at the
+  model and the rendered view.
 
 ### DC-064 — A deterministic test double produces colliding output across instances
 

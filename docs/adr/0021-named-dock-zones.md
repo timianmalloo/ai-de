@@ -2,7 +2,7 @@
 id: adr-0021-named-dock-zones
 title: "ADR-0021: Named absolute dock zones replace the proportional split tree"
 type: adr
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "3"
 tags: [workbench, layout, docking, architecture, migration]
@@ -20,7 +20,13 @@ summary: >-
 
 # ADR-0021: Named absolute dock zones replace the proportional split tree
 
-**Status:** Proposed · **Date:** 2026-08-31 · **Deciders:** @timianmalloo (+ Design session)
+**Status:** Accepted (implemented) · **Date:** 2026-08-31 · **Deciders:** @timianmalloo (+ Design session)
+
+> **Implemented** via a Strangler Fig — `ZoneBackedLayoutService : ILayoutService` projecting the zone
+> model to a fixed-shape tree the existing adapter renders — rather than an adapter rewrite; see
+> `note-zone-strangler-approach`. The **contract phase below is N/A** (the tree is now the projection
+> format), and **persistence is deferred** (no active restore caller). Model + view containment tests
+> ship green (DC-063 controlled).
 
 ## Context
 

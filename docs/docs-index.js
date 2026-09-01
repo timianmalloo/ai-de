@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-09-01T02:49:52Z",
+  "generated": "2026-09-01T03:07:56Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1190,7 +1190,7 @@ window.DOCS_INDEX = {
       "path": "docs/adr/0021-named-dock-zones.md",
       "title": "ADR-0021: Named absolute dock zones replace the proportional split tree",
       "type": "adr",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "3",
       "reviewBy": "2027-02-28",
@@ -1218,7 +1218,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4c746a29988ef246c63afee776422f1b8655d85c2c5ebeeba4880032cc7304ce"
+      "sourceSha256": "e5c3f2c93a80886ef7f10800277ea20756361e8f917d645c625873630a3dbc76"
     },
     {
       "id": "architecture",
@@ -1990,6 +1990,37 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "0bea1f643446253c62355f55fb690fcedf1e92b84bbfd32c0ecb54b903f34932"
+    },
+    {
+      "id": "note-zone-strangler-approach",
+      "path": "docs/notes/zone-strangler-approach.md",
+      "title": "Dock zones implemented via Strangler Fig, not an adapter rewrite",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Chose to implement ADR-0021's named dock zones as a Strangler Fig — a ZoneBackedLayoutService : ILayoutService that projects the zone model to a fixed-shape tree the existing AvalonDock adapter renders — rather than rewriting the 554-line adapter. Records why, and why persistence (dz-persist) is deferred and the contract phase is N/A.",
+      "tags": [
+        "workbench",
+        "layout",
+        "docking",
+        "strangler",
+        "decision"
+      ],
+      "links": [
+        {
+          "to": "adr-0021-named-dock-zones",
+          "rel": "refines"
+        },
+        {
+          "to": "investigation-terminal-crash-and-pane-moves",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9f354b593bcf55dfe52518e20a017ac3aec72f35f05c864a6acb0e7d2a7a8148"
     },
     {
       "id": "conceptual-model-ai-native-ide",
@@ -3422,7 +3453,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0c9a25a86a87ac6d02f1cba131e3ece11ec0941121b9e01c3615968bceee7877"
+      "sourceSha256": "716ed3e51c83b5dbed6f59c3b17d5a3c40206baa1235776cd429790972f59567"
     },
     {
       "id": "domain-experts",
@@ -9581,5 +9612,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8538ac2ee16e74eb6455b4f93fc0db782c38c44908cc246e6e1886aa01f8df59"
+  "graphSha256": "a10ac9becc081aa2584842901fff6875bdcad2488030bd293611465d9fce62e2"
 };

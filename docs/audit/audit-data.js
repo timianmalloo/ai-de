@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T03:04:59Z",
+  "generated": "2026-09-01T03:07:56Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6740,6 +6740,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tests/AiDe.App.Tests/ZoneWorkbenchAdapterTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0334",
+      "shortname": "zone-refactor-complete",
+      "datetime": "2026-09-01T03:07:56Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "continue through all slices until the refactor is complete; stop when all slices are done",
+      "summary": "ADR-0021 named-dock-zone refactor COMPLETE via Strangler Fig. All 7 slices done: expand (model+service+converter), adapter (ZonesToTree+ZoneBackedLayoutService), shell (one-line swap), interact (position-aware drag reconcile + Move-to-zone menu), tests (App-level containment through the real adapter). dz-persist deferred (no restore caller; YAGNI) and dz-contract N/A (tree is the projection format) — both documented in note-zone-strangler-approach. DC-063 controlled at model+view. ADR accepted. Final: Core 1278 / App 223 green; app runs clean.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/zone-strangler-approach.md"
       ],
       "tags": [],
       "outcome": "success"
