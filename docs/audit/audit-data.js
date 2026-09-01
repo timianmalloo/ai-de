@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T02:34:09Z",
+  "generated": "2026-09-01T02:49:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6630,6 +6630,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Workbench/ZoneLayout.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0330",
+      "shortname": "implement-zone-strangler-core",
+      "datetime": "2026-09-01T02:49:28Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "continue autonomously through all slices; checkpoint after each; safe validatable phases",
+      "summary": "dz-adapter via Strangler Fig (Core, additive): ZonesToTree projects the zone model to a fixed-shape tree (deterministic per-zone ids; collapsed/empty zones omitted; empty-Center welcome placeholder); ZoneBackedLayoutService : ILayoutService translates all 8 tree-shaped ops (Move/Add/Close/Activate/Reorder/Resize/SetState/Reset) + Restore to zone ops, so the existing adapter/shell/controller/persistence render zones unchanged and cannot flip. 14 new tests incl. add/close containment through the projection. Core 1270 green; App untouched (shell swap is the next validated step).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs"
       ],
       "tags": [],
       "outcome": "success"
