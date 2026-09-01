@@ -55,6 +55,16 @@ which is the defect signature the data-modelling standard names.
 
 ## 2. File ownership
 
+**Last reconciled against the tree: 2026-09-01**, by the core session, on the repository owner's
+instruction, covering the nine surfaces §4y listed and the Session 3 rows in §4z.
+
+*Why this line exists.* Everything in this section was correct while it silently stopped describing
+the app: it assigned four of thirteen surfaces, because it is appended to and never revisited, and
+the decay is invisible when every individual line still checks out. A reader cannot tell a current
+register from a stale one by reading it — only by knowing when it was last checked. Reconcile it
+when a surface is added, and move this date. `tools/verify-surface-ownership.py` fails a surface
+with no owner; nothing can fail a section that has quietly stopped covering its subject.
+
 Ownership means: **you edit it, the other session proposes changes to it.** It does not mean the
 other session may not read it — reading is how contracts stay honest.
 
@@ -69,6 +79,9 @@ other session may not read it — reading is how contracts stay honest.
 | `src/AiDe.App/Workbench/SurfaceContentFactory.cs` | The registry mapping a surface kind to a control |
 | `src/AiDe.App/Workbench/LayoutPersistence.cs` | Layout state, versioning and restore |
 | `src/AiDe.App/ViewModels/**` | Composition root wiring |
+| `src/AiDe.App/Workbench/DiagnosticsSurface.cs` | Renders the index summary and its disclosures — a Core projection end to end |
+| `src/AiDe.App/Workbench/NodeReaderView.cs` | Reads `DescribeAsync`/`NodeContentAsync` directly |
+| `src/AiDe.App/Workbench/CodeViewerView.cs` | The render half of the `NodeContentAsync` contract (ADR-0019) |
 | `tests/AiDe.Core.Tests/**`, `spikes/**`, `tools/**` | Evidence and gates |
 
 ### Design owns
@@ -81,7 +94,15 @@ other session may not read it — reading is how contracts stay honest.
 | `src/AiDe.App/Workbench/CanvasPage.cs`, `CanvasSurface.cs` | The graph surface and its embedded page |
 | `src/AiDe.App/Workbench/TerminalView.cs`, `TerminalPalette.cs` | Terminal rendering and colour |
 | `src/AiDe.App/Workbench/CommandPalette.cs`, `PromptBar.cs`, `MainMenuBuilder.cs` | Interactive chrome |
+| `src/AiDe.App/Workbench/ClassDiagramSurface.cs` | A design surface (ADR-0020) |
+| `src/AiDe.App/Workbench/SequenceDiagramSurface.cs` | A design surface; Core owns its `InteractionAsync` feed |
+| `src/AiDe.App/Workbench/SearchSurface.cs` | Design authored it; Core owns its provider — how it was actually built |
+| `src/AiDe.App/Workbench/ExplorerSurface.cs` | The full-window Explorer shell (ADR-0017) |
+| `src/AiDe.App/Workbench/PromptDraftSurface.cs` | Interactive chrome |
+| `src/AiDe.App/Workbench/TerminalSurface.cs` | Terminal rendering, with `TerminalView` |
 | `docs/mockups/**`, `docs/design/**` | Design artifacts |
+| `docs/ui/**` | Session 3 (`claude-ui-experience`) — craft findings, mockups, review harnesses |
+| `docs/design/ux-*.md`, `docs/design/ui-*.md` | Session 3 — UX/UI specs it authors |
 
 ### Shared, and therefore rule-bound
 

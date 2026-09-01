@@ -44,16 +44,17 @@ SURFACES = "src/AiDe.App/Workbench"
 #
 # Assigning these is a joint call between the core and design sessions and is NOT made here — a gate
 # that picked owners would be one session deciding another's scope by writing a script.
-UNASSIGNED = {
-    "ClassDiagramSurface.cs": "built for ADR-0020 after §2 was written",
-    "CodeViewerView.cs": "built for ADR-0019 after §2 was written",
-    "DiagnosticsSurface.cs": "built with the diagnostics command after §2 was written",
-    "ExplorerSurface.cs": "built for the Explorer mode (ADR-0017) after §2 was written",
-    "NodeReaderView.cs": "built for the Explorer reader after §2 was written",
-    "PromptDraftSurface.cs": "built with prompt dispatch after §2 was written",
-    "SearchSurface.cs": "built 2026-09-01; Design authored it, Core wrote its provider",
-    "SequenceDiagramSurface.cs": "built 2026-09-01 against a stub, before its Core feed existed",
-    "TerminalSurface.cs": "split from TerminalView after §2 was written",
+UNASSIGNED: dict[str, str] = {
+    # EMPTY, and that is the goal state rather than a missing list.
+    #
+    # It held nine surfaces built after §2 was written — including SearchSurface, half of one day's
+    # work. §2 was reconciled on 2026-09-01 and every one of them now has an owner, so each entry
+    # became a description of a state that no longer exists. The gate's stale-allowance half caught
+    # all nine the moment the rows landed, which is the half of a forcing function that keeps the
+    # list from outliving its subject.
+    #
+    # A new surface with no owner fails the check. Adding it here is the escape hatch when the
+    # assignment needs a decision nobody has made yet — with the reason, and not for long.
 }
 
 OWNER_TABLE = re.compile(r"^### (.+?) owns\s*$", re.MULTILINE)
