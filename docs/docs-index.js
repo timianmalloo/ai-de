@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T21:18:53Z",
+  "generated": "2026-09-01T21:38:10Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -4885,6 +4885,47 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4cd3f297ac37a5b81be47a3404f3e2ba027a5321ccc6ae58ea9d287e24fbe6f8"
+    },
+    {
+      "id": "ui-smoke-test-9-1",
+      "path": "docs/reviews/ui-smoke-test-9-1.md",
+      "title": "Smoke-test 9-1 — UI review, contextual-viewer UX, and durable-fix plan",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "Review of 15 smoke-test snapshots plus the Claude-Code terminal render complaint. Triages every issue to a root cause and disposition, records the two durable fixes landed now (the Source pane now follows graph selection, and shows no fabricated source with no workspace), and designs the IntelliJ-style contextual-viewer UX the user asked for — right-click a node to open the viewer appropriate to its type (source, class diagram, metadata), right-click a method for a sequence diagram — as a phased plan across the graph, the explorer, and the diagram surfaces.",
+      "tags": [
+        "ui",
+        "ux",
+        "review",
+        "graph",
+        "source-viewer",
+        "class-diagram",
+        "sequence-diagram",
+        "contexts",
+        "legibility",
+        "docking",
+        "terminal"
+      ],
+      "links": [
+        {
+          "to": "design-knowledge-explorer-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "inv-terminal-input-not-local-to-focus",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2bc49549fb7ed8db29f524bdb62dc3d528009e9efeef0d17f9c846952261b2fa"
     },
     {
       "id": "kb-agentic-session-observability-glossary",
@@ -9785,5 +9826,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a88b4282ec2975aafe588106e5344737fefc074acd9c25684ddae9dbe80acbe0"
+  "graphSha256": "c6a2158b263ed0988f4915bef65ac5ca37daf236ab063382104e244ad3416fe5"
 };

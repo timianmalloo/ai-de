@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T20:16:26Z",
+  "generated": "2026-09-01T21:38:10Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7355,6 +7355,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tools/verify-surface-ownership.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0363",
+      "shortname": "fix-source-viewer-follows-selection",
+      "datetime": "2026-09-01T21:38:10Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "review smoke-test 9-1 snapshots, investigate, design and implement durable fixes; think about IntelliJ-style contextual node->viewer UX; ui-design review+elevate",
+      "summary": "Phase A landed: Source pane follows graph selection (BindCanvas subscribes CanvasSurface.NodeSelected -> code viewers via NodeContentSource), viewer opened after a selection shows that node, and no fake source with no workspace. 2 tests (CodeViewerFollowsSelectionTests); App 284 green; smoke passed. Produced docs/reviews/ui-smoke-test-9-1.md triaging all 15 snapshots + terminal and designing the contextual-viewer (Open as...) UX with a phased plan A-H.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
       ],
       "tags": [],
       "outcome": "success"

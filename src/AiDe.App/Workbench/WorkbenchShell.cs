@@ -979,6 +979,13 @@ public sealed class WorkbenchShell : IDisposable
         // two halves of "the canvas is standing aside" cannot drift apart.
         Controller.DragStateChanged -= canvas.SetObscured;
         Controller.DragStateChanged += canvas.SetObscured;
+
+        // Follow graph selection into any open Source pane (§4s — Design owns which node a viewer
+        // shows; the answer is "the one you just selected"). Named handler with -=/+= so repeated
+        // binds do not stack, the same idiom the join-endpoint subscription uses (smoke 9-1: "select
+        // a node … nothing updates in any of the source tabs").
+        canvas.NodeSelected -= OnCanvasNodeSelectedForViewers;
+        canvas.NodeSelected += OnCanvasNodeSelectedForViewers;
     }
 
     /// <summary>
@@ -1422,6 +1429,41 @@ public sealed class WorkbenchShell : IDisposable
     private readonly INodeContentSource _mockNodeContent = new MockNodeContentSource();
     private CoreNodeContentSource? _coreNodeContent;
 
+    // The last node the user selected in the graph, so a Source pane opened AFTER a selection shows
+    // that node rather than a blank — the "code viewer opened but no source" case (smoke 9-1).
+    private string? _lastSelectedNodeId;
+
+    private void OnCanvasNodeSelectedForViewers(object? sender, CanvasNodeSelection selection)
+    {
+        _lastSelectedNodeId = selection.Node.Id;
+        _ = ShowNodeInCodeViewersAsync(selection.Node.Id, OpenCodeViewers());
+    }
+
+    private List<CodeViewerView> OpenCodeViewers() =>
+        Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => s.Kind == "codeviewer")
+            .Select(s => Adapter.SurfaceContent<CodeViewerView>(s.SurfaceId))
+            .OfType<CodeViewerView>()
+            .ToList();
+
+    // Loads one node's content into the given code viewers through the SAME source the whole app uses
+    // (real when a workspace is open, mock never — see NodeContentSource). Internal so a shell test can
+    // drive the routing without a WebView selection event.
+    internal async Task ShowNodeInCodeViewersAsync(string nodeId, IReadOnlyList<CodeViewerView> viewers)
+    {
+        if (viewers.Count == 0 || _queries is null) { return; }
+        try
+        {
+            var content = await NodeContentSource.GetAsync(nodeId, CancellationToken.None);
+            foreach (var v in viewers) { v.Show(content); }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // Leave the viewers in their current state rather than crash on a lookup failure.
+        }
+    }
+
     /// <summary>
     /// Feeds each open code-viewer surface content (ADR-0018/0019). Until Core's NodeContentAsync ships,
     /// this shows a labelled SAMPLE so the read-only highlighted viewer is visible and reachable; the
@@ -1445,18 +1487,14 @@ public sealed class WorkbenchShell : IDisposable
     {
         try
         {
-            // "(sample)" is not a node. With the mock that was the point — it returned a labelled
-            // sample whatever it was handed. With the real source it would be a lookup for something
-            // that does not exist, and showing its empty answer would replace an honest "nothing
-            // selected yet" with a wrong "this node has no content".
-            //
-            // So: sample only while there is no workspace to ask. With one attached, the viewer
-            // keeps its own first-load state until a selection arrives. WHICH node a freshly opened
-            // viewer should show is Design's call, not Core's, and is recorded as such in §4s.
-            if (_queries is null)
+            // No fake sample any more (smoke 9-1: "source worked with no workspace open"). With no
+            // workspace the viewer stays in its honest "Select a node to read its source." empty
+            // state. With a workspace AND a prior selection, a freshly opened viewer shows that node
+            // — so opening Source after clicking a node is not a blank pane (smoke 9-1: "code viewer
+            // opened but no source tab").
+            if (_queries is not null && _lastSelectedNodeId is { } id)
             {
-                var sample = await _mockNodeContent.GetAsync("(sample)", CancellationToken.None);
-                foreach (var v in viewers) { v.Show(sample); }
+                await ShowNodeInCodeViewersAsync(id, viewers);
             }
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)
