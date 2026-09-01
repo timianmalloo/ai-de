@@ -1265,11 +1265,24 @@ public sealed class WorkbenchShell : IDisposable
         else
         {
             mode = "split-beside-graph";
-            var add = Service.Apply(new LayoutOperation.AddSurface(placement.SplitBesideStackId!, surface));
-            result = add.Applied
-                ? Service.Apply(new LayoutOperation.MoveSurface(
-                    surface.SurfaceId, new DropTarget(placement.SplitBesideStackId!, DropKind.SplitRight)))
-                : add;
+
+            // ADDED STRAIGHT INTO THE NEIGHBOURING ZONE, not added here and then moved.
+            //
+            // Add-then-move worked and had a side effect that defeated the whole point of this
+            // branch: the surface landed in the graph's stack, became its active tab, and left again
+            // — and removing an active tab applies CLOSE semantics, which activate the neighbour. So
+            // opening a code viewer beside the graph left the graph fourth of five behind the
+            // Leaderboard. Rule 3 exists so the graph stays visible, and the mechanism implementing
+            // it was what hid the graph.
+            //
+            // Measured by the design session re-running its probe after the split fix landed: the
+            // document went to zone-right correctly AND zone-center's active tab changed. Neither of
+            // us would have seen it in the diff.
+            var beside = ZonesToTree.ZoneOfStackId(placement.SplitBesideStackId!) == ZoneId.Center
+                ? ZonesToTree.RightStackId
+                : ZonesToTree.CenterStackId;
+
+            result = Service.Apply(new LayoutOperation.AddSurface(beside, surface));
         }
 
         WorkbenchDiagnostics.LayoutMutation(

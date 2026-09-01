@@ -205,6 +205,41 @@ public sealed class WorkbenchShellTests
         }
     }
 
+    [Fact]
+    public void OpeningAReferenceDocument_LeavesTheGraphTheActiveTabWhereItWas()
+    {
+        // RULE 3 EXISTS SO THE GRAPH STAYS VISIBLE, and the mechanism implementing it was what hid
+        // the graph. The surface was added to the graph's own stack — becoming its active tab — and
+        // then moved out; removing an active tab applies CLOSE semantics, which activate the
+        // neighbour. So opening a code viewer beside the graph left the graph fourth of five,
+        // behind the Leaderboard.
+        //
+        // "Visible" in the sense that its zone is on screen is not the sense a user means. This
+        // asserts about the zone the document did NOT go to, which is the half a placement test
+        // naturally omits — and the half the defect was in.
+        var (before, after, wentElsewhere) = WithShell((shell, _) =>
+        {
+            var centre = shell.Service.Current.AllStacks()
+                .First(st => st.Surfaces.Any(x => x.Kind == "canvas"));
+
+            var was = centre.Surfaces[centre.ActiveIndex].SurfaceId;
+
+            Assert.True(shell.Controller.Execute("workbench.newCodeViewer"));
+
+            var centreNow = shell.Service.Current.AllStacks()
+                .First(st => st.Surfaces.Any(x => x.Kind == "canvas"));
+
+            var doc = shell.Service.Current.AllStacks()
+                .SelectMany(st => st.Surfaces.Select(x => (Stack: st, Surface: x)))
+                .First(x => x.Surface.Kind == "codeviewer");
+
+            return (was, centreNow.Surfaces[centreNow.ActiveIndex].SurfaceId, doc.Stack.Id != centreNow.Id);
+        });
+
+        Assert.Equal(before, after);
+        Assert.True(wentElsewhere, "the document landed in the graph's own stack, not beside it");
+    }
+
     private sealed class BareQueries : FakeWorkspaceQueries
     {
         // Main added BindJoins to AttachWorkspace, whose join Source calls FindAsync + EvidenceAsync during
