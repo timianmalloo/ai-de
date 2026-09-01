@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T21:38:10Z",
+  "generated": "2026-09-01T21:38:49Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -5185,7 +5185,39 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "35bd6c0025a9201dcf472c612f8ae7b7035ee5ef361a3c208ea80bc0400dc7bc"
+      "sourceSha256": "39d30c4cbe77bc9dfbcf89c4191b139a0c1f6a7af79fbdfe02f9b4a30209130b"
+    },
+    {
+      "id": "ui-unbacked-affordances",
+      "path": "docs/ui/unbacked-surfaces-and-affordances.md",
+      "title": "Inventory — surfaces not built, and affordances with no implementation",
+      "type": "investigation",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "Two inventories, computed by enumeration rather than read. Headline: three of the four left-rail mode buttons (Coordinate, Compose, Audit) have no Click handler, no Command, no x:Name and no disabled state — they render as live 44x44 targets, are announced to assistive technology, and do nothing silently. The menu and command layer is by contrast completely clean at 28/28/28. Two icon resources are declared and never referenced, and two commands miss their intended icon through a case-sensitive Contains against camelCase ids.",
+      "tags": [
+        "ui",
+        "ux",
+        "inventory",
+        "accessibility",
+        "session-3",
+        "dead-affordance"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-craft-findings-2026-09-01",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "129eb0e73f70c9b572e82f760e1a4f00f52e34a51b7d2691b6f2c495b35b5eee"
     },
     {
       "id": "kb-agentic-session-observability",
@@ -9826,5 +9858,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c6a2158b263ed0988f4915bef65ac5ca37daf236ab063382104e244ad3416fe5"
+  "graphSha256": "1f6f8cc18fafad31610e43ce6d8ce9a317f3d12c7f719e51a39fe2103cc48c99"
 };
