@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T23:00:13Z",
+  "generated": "2026-09-01T23:07:50Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7499,6 +7499,23 @@ window.AUDIT_DATA = {
       "session": "phase3-pane-probes",
       "prompt": "Design session: my first scan disagreed with yours - 14 files/2 names vs your 31/3. Chased the disagreement, the wrong one was mine; my pattern required the return type immediately before the helper name. I'd have published 14 if you hadn't published 31 first.",
       "summary": "Audited my own gate the same way: reconciled its count against files declaring an STA thread and chased the 3-file gap. WRAPS matched on variable NAME so an error-named harness was invisible; two exist, both currently correct. Pattern now structural and name-independent; self-test carries an error-named fixture so the widening stays observed (old pattern False, new True). All 31 STA files reconcile exactly. Recorded in DC-079.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-harness-diagnostics.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0371",
+      "shortname": "gate-blind-spots-two-and-three",
+      "datetime": "2026-09-01T23:07:50Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Design session: your gate prints 17, your message said 19. Both split to 31 so the denominator is agreed, but the gate's printed number and an independent scan both say 17 wrapping while your prose says 19 guarded.",
+      "summary": "My 19 counted files containing the guard, not files needing it. Chasing the gap found two more gate blind spots: \\w*Exception missed System.InvalidOperationException (a file reported clean while it wrapped, safe only by a hand-added guard), and fixing that exposed the guard pattern rejecting the braced form. Three narrowings in one pattern, each invisible to the audit that found the previous. Removed a dead guard in PromptBarTests. Accounting exact: 31 = 18 wrap + 12 plain + 1 subject-is-an-exception. Self-test carries a fixture per blind spot.",
       "kind": "skill",
       "skill": "investigate",
       "tool": null,
