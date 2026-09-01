@@ -86,6 +86,15 @@ Every rebase between sessions conflicts on the same files, and never on code (§
 After any rebase, run both regenerators and commit the result. `python
 tools/verify-derived-views.py` fails if you forget.
 
+**Run `prompt-log.py` and `audit-log.py` from your own worktree, never from the primary checkout.**
+The audit log is repo-global in meaning but **per-checkout in storage**: a script writes into
+whichever tree it was run from. An entry logged from a checkout you then leave is stranded where
+only that checkout can see it, it blocks the next fast-forward, and the convenient fix — `git
+checkout --` on the dirty file — deletes it silently. That has already happened once and was caught
+by hand (§8.7). **Never discard a dirty `docs/audit/*.jsonl` to clear a merge**: it is append-only,
+so a dirty line is almost certainly an entry that exists nowhere else. Read it; if it is another
+session's, commit it as its own change so it stays theirs.
+
 **Take defect-class and ADR ids from `python tools/verify-id-allocators.py`, never "highest in the
 file plus one."** It reads your working tree and compares against `origin/main`, so it warns while
 you are writing rather than after you have committed and cited the id. Six ids collided across

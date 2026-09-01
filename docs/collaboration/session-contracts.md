@@ -1333,10 +1333,16 @@ It re-enters at the render boundary, one layer further out, and no existing gate
    proves only that a field was noticed. **Both fail on surfaces that ship today, which is the
    point.** Core wants it and will take whatever it says about Core's payloads. **Design has to
    want it too, and neither Core nor Session 3 can reach Design to ask.**
-3. **A defect-class entry.** Core suggests **DC-074**. Not allocated here, and not yet confirmable:
-   the gate reports `DC 72` as the highest declared, because Core's `DC-073` is on an unpushed
-   branch. It will be run rather than trusted once Core pushes — the whole point of taking ids from
-   the gate is that it reads the world, and right now the world has not seen 073.
+3. **A defect-class entry — `DC-074`, reserved, deliberately not yet written.** Core suggested the
+   id; Session 3 declined it on Core's word and re-ran the gate after Core pushed. It now reports
+   `DC 73` as highest declared, so **074 is confirmed free by observation.**
+
+   The entry is still not written, and the reason is the register's own rule. Every neighbouring
+   entry cites a control **observed failing** — `DC-073` names the assertion it watched go red and
+   the planted stand-in `verify-standins.py` caught. `DC-074`'s control is the §8.3 harness, which
+   is **proposed and unbuilt**, because it needs Design and Design cannot yet be reached. An entry
+   written now would carry a shape, a signature and no control: *a lesson recorded as prose is a
+   memoir* (CI6). **The id is held; the entry lands with its control, not before.**
 
 ### 8.3a The class is wider than dropped bounds
 
@@ -1416,3 +1422,44 @@ Not attempted: changing `coord-core.py`'s hook to carry messages in its decision
 path already renders into another model's context and is sanitised for it (`_safe`, B4), so the
 channel exists — but it is the pack's, not this repository's, and a message that only arrives when
 an edit is *refused* would make blocking someone the way to talk to them. Wrong shape.
+
+### 8.7 An audit entry written from a checkout you then leave is stranded
+
+Found by Core, 2026-09-01, rescuing an entry of Session 3's that would otherwise have been deleted
+by the convenient fix. It belongs here because **§4b's append-only rule does not cover it.**
+
+**What happened.** Session 3's first command logged its prompt with `prompt-log.py` **before the
+worktree existed**, so it ran in the primary checkout and wrote `al-0347` into
+`C:/Projects/ai-de/docs/audit/audit-log.jsonl`. The session then moved into its own worktree and
+never touched that file again. The entry sat as an **uncommitted modification in a checkout nobody
+was working in** — invisible to every other tree, and blocking a fast-forward. Core hit it merging
+`main`, and the one-keystroke fix — `git checkout --` on the dirty file — would have deleted it
+silently. Core preserved it and committed it separately so it stayed attributable (`7cda687`).
+
+**Why §4b does not catch it.** That protocol governs a conflict between two **committed** copies:
+union by content, never by id, `merge-append-only-log.py`. It says nothing about an entry that was
+**never committed at all**. The tool cannot union a side that does not exist in the index.
+
+**The shape, and why it is the day's family again:** the log is repo-**global**, but a script writes
+into whichever **checkout** it was run from. Nothing errors. The entry is written, the tool reports
+success, and the record is correct in the tree that can no longer see it. *The operation succeeded
+and something honest is gone* — the same sentence as §8.3a, one layer further out, at the level of
+where a file lives rather than what a surface renders.
+
+**Rules, until there is a control:**
+
+1. **Run `prompt-log.py` and `audit-log.py` from your own worktree**, never from the primary. If
+   you log before your worktree exists — which is the natural order, since the prompt arrives
+   first — go back and check the primary for a dirty `docs/audit/` afterwards.
+2. **Never `git checkout --` a dirty `docs/audit/*.jsonl` to clear a merge.** It is append-only:
+   a dirty line is almost certainly an entry that exists nowhere else. Read it first; if it is
+   someone else's, commit it as its own change so it stays theirs.
+3. **A worktree is not the unit of the audit log.** `coord-core.py` resolves `.agents/` against the
+   primary checkout deliberately, so coordination is repo-global. `docs/audit/` is repo-global in
+   *meaning* but per-checkout in *storage*, and that mismatch is the whole defect.
+
+**Candidate control, not yet built:** `audit-log.py` could refuse, or warn loudly, when its target
+`docs/audit/` is in a checkout other than the caller's `git rev-parse --show-toplevel` — the same
+"say which tree you are writing into" check `coord worktree list` already performs for worktrees.
+Not written here: it is `docs/ai-forward-pack/` and therefore pack-managed, and Session 3 does not
+own it. Raised for whoever does.
