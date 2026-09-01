@@ -51,31 +51,61 @@ Findings 1–3 below were found by reading, not by the gate, and are the more se
 
 ---
 
-## 1. BLOCKER — the search surface renders none of the bounds Core publishes
+## 1. ~~BLOCKER — the search surface renders none of the bounds Core publishes~~
 
-**Verified:** `SearchSurface.cs` (230 lines) and `SearchModel.cs` contain **zero** references to
-`Evidence`, `MatchedOn`, `FilesSkipped`, `Truncated` or `FilesSearched`.
+> ## ⚠ RETRACTED IN PART, 2026-09-01 — and the method that produced it is the real finding
+>
+> **`Evidence` and `MatchedOn` were wrong. They are rendered.** Caught by Core, verified here:
+>
+> - `WorkbenchShell.cs:1257` maps `m.Evidence ?? string.Empty` into `SearchResult`'s fourth
+>   positional argument, which is **`Detail`**.
+> - `SearchSurface.ResultRow` renders `hit.Detail` as a muted `Run` appended to the label
+>   (`SearchSurface.cs:201-206`).
+> - `m.MatchedOn` is consumed at `WorkbenchShell.cs:1249` to select `SearchResultKind.Member`,
+>   which becomes a **group header**.
+>
+> So searching `addEventListener` already shows `has_member = + addEventListener()` beneath the
+> row. The *field names* are absent from the surface; the *values* are on screen.
+>
+> **How I got it wrong: I grepped for field names and called it verification.** A name search is
+> not a data-flow check. The value crosses the boundary renamed — `Evidence` becomes `Detail` —
+> and a grep for `Evidence` in `SearchSurface.cs` cannot see it.
+>
+> That is the same tell this session had already named three times (register §8.2, §8.3b, §2 of
+> this document) — asserting a gap without following it to the file that closes it. **This is the
+> fourth, and it was committed in the same breath as naming the other three.** Core checked
+> precisely *because* the pattern had been flagged, which is the only reason it was caught in an
+> hour rather than after someone built on it.
+>
+> **What this does to §8.3's nine-item list: it makes it unverified.** That list was assembled by
+> this same method — reading §4a's request table and grepping for names. At least one entry was
+> wrong. **The list must be re-derived by data flow, or by the harness, before anyone builds
+> against it.** Recorded rather than quietly re-listed, because the count "nine" has already been
+> quoted in three places.
+>
+> **And it is the strongest argument yet for the behavioural harness.** Two agents, both careful,
+> both reading the same code, reached opposite wrong conclusions about whether a value reaches the
+> screen. That question has one reliable answer: **render the surface and look.** Which is exactly
+> what the harness does, and exactly what neither of us did.
 
-Core publishes all five:
+**What survives — and it was real.** `FilesSkipped`, `FilesSearched` and `Truncated` genuinely were
+not surfaced. `ContentSearchResult(Matches, FilesSearched, FilesSkipped, Truncated, Bounds,
+SourceRevision)` (`ContentSearch.cs:19`) is consumed at `WorkbenchShell.cs:1259-1263`, which takes
+`c.NodeId`, `c.RelativePath`, `c.Line` and `c.Text` and **nothing else**. So "12 results" meant 12
+out of the files that could be opened, with no way to know 40 were skipped — `DC-025` re-entering at
+the render boundary, against Core's own comment that these are reported rather than silently dropped
+*"because a search that quietly skipped half the corpus and said nothing would be a coverage claim
+nobody could check."*
 
-- `FindMatch(NodeId, NodeKind, DisplayLabel, Authorship, MatchedOn, Evidence?)` —
-  `src/AiDe.Core/Projections/ProjectionService.cs:92`
-- `ContentSearchResult(Matches, FilesSearched, FilesSkipped, Truncated, Bounds, SourceRevision)` —
-  `src/AiDe.Core/Projections/ContentSearch.cs:19`
+**Now wired by Core** as an interim: a trailing `SearchResult` of kind `Other` reading
+*"Searched 412 file(s) — 40 file(s) not read"* with *"This result is a lower bound."* as its detail —
+a row rather than a field, because the provider's contract is `Task<IReadOnlyList<SearchResult>>`
+and has nowhere else to put it.
 
-Two user-visible consequences, both live on `main` today:
-
-| What the user sees | What is true |
-|---|---|
-| a class called `Element` returned for `addEventListener` | correct — it matched an attribute value — and it reads as a bug, because `MatchedOn`/`Evidence` are on the record precisely to say why, and are dropped |
-| "12 results" | 12 results **out of the files that could be opened**. `FilesSkipped` counts the ones too large or unreadable, and is dropped |
-
-The second is `DC-025` re-entering at the render boundary. Core's own comment on the field says these
-are reported rather than silently dropped because *"a search that quietly skipped half the corpus and
-said nothing would be a coverage claim nobody could check."* The surface then makes exactly that
-claim.
-
-**Owner:** Design (`SearchSurface.cs`, §2). **Not fixed here.**
+**The interim is the wrong shape, and Core says so first.** `DESIGN.md` §4a specifies
+`count.lower-bound` as a **capped chip with a tooltip naming the cap** — not a row. The row makes the
+number visible today; the chip is what closes it. **That is a Design change** (`SearchSurface.cs`,
+§2), and it is finding #1's remaining substance.
 
 ---
 
@@ -153,8 +183,9 @@ compounds.
 
 | # | Finding | Severity | Owner | Cost |
 |---|---|---|---|---|
-| 1 | `SearchSurface` renders no bound: `Evidence`, `MatchedOn`, `FilesSkipped`, `Truncated` | **Blocker** — a correctness rule by `DESIGN.md`'s own words | Design | small — the tokens are already specified |
-| 2 | The §8.3 behavioural harness | **Major** — the only thing that stops #1 recurring | Session 3, on Design's yes | medium |
+| 1 | `FilesSkipped`/`Truncated` shown as a **row**, where `DESIGN.md` §4a specifies a `count.lower-bound` **capped chip + tooltip**. (`Evidence`/`MatchedOn` retracted — they render via `Detail`) | **Major** — a correctness rule by `DESIGN.md`'s own words, now visible but in the wrong affordance | Design | small — the tokens are already specified |
+| 2 | The §8.3 behavioural harness | **Blocker**, promoted — two agents reading the same code reached opposite wrong conclusions about what reaches the screen. Only rendering answers it | Session 3 | medium |
+| 2a | Re-derive §8.3's nine-item list **by data flow or by the harness** | **Major** — the list was built by the method that produced the retraction above, so its count is unverified | Session 3 | small once the harness exists |
 | 3 | Sequence-diagram message cap unreported | Major | Design | small |
 | 4 | Two near-miss hexes in `CanvasPage.cs` | Major | Design | trivial |
 | 5 | Six undeclared hexes in `CanvasPage.cs` | Major | Design | small — or declare them in `DESIGN.md` if they are real roles |
