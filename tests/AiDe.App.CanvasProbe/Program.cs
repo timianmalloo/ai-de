@@ -155,6 +155,22 @@ internal static class Program
 
         // Non-vacuity: an empty canvas leaves on the FIRST Tab by design, which would pass this test
         // while proving nothing about the end of a node list.
+        //
+        // The failure string is checked FIRST, and separately, because `EvaluateAsync` swallows its
+        // own exception and returns "(evaluate failed: …)" as an ordinary string
+        // (CanvasSurface.cs:267). That is neither "0" nor "", so the count guard below waves it
+        // through — a page that never loaded would report `nodes rendered: (evaluate failed: …)`
+        // and this probe would carry on as though the canvas were full. A control that cannot tell
+        // "nothing rendered" from "I could not ask" is the shape it exists to prevent (DC-016).
+        if (seen.StartsWith("(evaluate failed", StringComparison.Ordinal)
+            || nodeCount.StartsWith("(evaluate failed", StringComparison.Ordinal))
+        {
+            Console.Error.WriteLine(
+                "the page could not be evaluated, so nothing below this line was measured: "
+                + $"tabsSeen={seen}, nodeCount={nodeCount}");
+            return CanvasNeverLoaded;
+        }
+
         if (nodeCount.Trim('"') is "0" or "")
         {
             Console.Error.WriteLine("the canvas rendered no nodes — this test would pass vacuously");
