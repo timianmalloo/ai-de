@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-08-31T23:44:26Z",
+  "generated": "2026-09-01T00:00:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -3287,6 +3287,30 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Auto-score imported episodes honestly",
       "done_when": "A proof-pack episode scores Partial and a no-proof episode Not-Scored, no fabricated signal, wired into the shell"
+    },
+    {
+      "id": "al-0313",
+      "shortname": "implement-watcher-dispute-command",
+      "datetime": "2026-09-01T00:00:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "/design -> /implement conn-11 (raise-dispute command against scored episodes + document the cloud judge)",
+      "summary": "conn-11: watcher.raiseDispute command (catalog + WorkbenchController + shell) raises an append-only dispute against the latest genuinely-scored episode via DisputeService (score unchanged; operatorId=loomkeeper-operator, never a human); a Not-Scored card is not disputable. Cloud judge (DelegatingAdvisoryEvaluator behind EgressGuardedAdvisoryEvaluator) documented as egress-opt-in + creds + calibration future work. Registered DC-044 (catalog/menu drift, caught by existing conformance tests). 3 tests, Not-Scored-filter mutation-verified. Core 990/0, App 143/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
+        "src/AiDe.App/Workbench/WorkbenchController.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/MainMenuBuilder.cs",
+        "docs/design/watcher-dispute-command.md",
+        "docs/proof/watcher-dispute-command.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Give the operator an append-only score-dispute recourse",
+      "done_when": "A keyboard command disputes the latest scored episode append-only under a local operator id, Not-Scored not disputable, cloud judge documented"
     }
   ],
   "changes": [
@@ -5949,6 +5973,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": "93c4eee87a21401981365a8dbee3c22925666972",
         "after": "93c4eee87a21401981365a8dbee3c22925666972",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0125",
+      "datetime": "2026-09-01T00:00:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "conn-11: operator raise-dispute command; cloud judge deferred behind egress opt-in + calibration",
+      "prompt": "/design -> /implement conn-11",
+      "summary": "A keyboard command raises an append-only dispute (rule 12) against the latest genuinely-scored episode; the score is never changed; a Not-Scored card is not disputable; operatorId is a fixed local constant (no human identity). The real cloud judge plugs into ScoreAndRecord's evaluator+registry, deferred behind an operator egress opt-in, credentials, and calibration.",
+      "rationale": "Disputes must be append-only recourse without mutating scores (rule 12); the cloud judge must not egress episode content without operator consent + calibration, so it stays documented-not-wired until those exist.",
+      "artifacts": [
+        "docs/design/watcher-dispute-command.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "5865e971729385c7b4efa76165cbe4112d452cef",
+        "after": "5865e971729385c7b4efa76165cbe4112d452cef",
         "branch": "feature/agent-watcher-substrate",
         "pushed": null,
         "commits": []

@@ -74,7 +74,7 @@ internal static class MainMenuBuilder
         ("_File", ["workspace.open", "workspace.indexSolution", "workspace.reindexAll", "workspace.refresh"]),
         ("_Edit", ["workbench.moveSurface", "workbench.resizePane"]),
         ("_View", ["workbench.focusCanvas", "workbench.nextSurface", "workbench.previousSurface",
-                   "workbench.reorderSurface"]),
+                   "workbench.reorderSurface", "watcher.raiseDispute"]),
         ("_Window", ["workbench.floatPane", "workbench.collapsePane", "workbench.maximizePane",
                      "workbench.closeSurface", "workbench.toggleLock", "workbench.resetLayout"]),
         ("_Terminal", ["terminal.new", "terminal.newAgent", "workbench.dispatchPrompt"]),

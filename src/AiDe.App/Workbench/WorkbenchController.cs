@@ -76,6 +76,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "terminal.new":
                 return NewTerminal();
 
+            case "watcher.raiseDispute":
+                return RaiseDispute();
+
             case "workbench.focusCanvas":
                 return FocusCanvas();
 
@@ -382,6 +385,18 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
 
     /// <summary>Opens a plain shell terminal (never an agent). Set by the shell that can create surfaces.</summary>
     public Func<string>? NewTerminalRequested { get; set; }
+
+    /// <summary>Raises an append-only dispute against the latest scored episode. Set by the shell (US rule 12).</summary>
+    public Func<string>? RaiseDisputeRequested { get; set; }
+
+    private bool RaiseDispute()
+    {
+        announcer.Announce(RaiseDisputeRequested is null
+            ? "Score disputes are not available in this build."
+            : RaiseDisputeRequested());
+
+        return true;
+    }
 
     private bool NewAgentTerminal()
     {

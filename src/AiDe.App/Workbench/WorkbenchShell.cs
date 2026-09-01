@@ -150,6 +150,10 @@ public sealed class WorkbenchShell : IDisposable
         };
         Controller.PromptBarOpen = Prompt.Open;
 
+        // The operator's recourse against a score they disagree with (US rule 12): an append-only dispute
+        // against the latest scored episode. It records evidence for review; it never changes the score.
+        Controller.RaiseDisputeRequested = () => RaiseDisputeOnLatestScore();
+
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
         // open there is nothing to persist against, so first-run simply starts from the default.
         //
@@ -1053,6 +1057,38 @@ public sealed class WorkbenchShell : IDisposable
             .Where(s => WatcherPaneKinds.Contains(s.Kind))
             .Select(s => s.SurfaceId));
         Adapter.Render();
+    }
+
+    /// <summary>
+    /// Raises an append-only dispute against the latest genuinely-scored episode (conn-11 / US rule 12).
+    /// A no-op-with-message when the watcher is unavailable or nothing has been scored yet. The dispute
+    /// records the operator's disagreement as evidence; it never changes the score.
+    /// </summary>
+    internal string RaiseDisputeOnLatestScore(string reason = "Operator disputes this score.")
+        => _watcherHost is null
+            ? "The watcher is not available."
+            : RaiseDisputeOnLatest(_watcherHost.Store, TimeProvider.System, "loomkeeper-operator", reason);
+
+    /// <summary>
+    /// The pure dispute selection + append: dispute the most recently scored episode that carries a real
+    /// verdict (Not-Scored has no number to dispute), via the append-only <see cref="DisputeService"/>.
+    /// operatorId is a fixed local operator, never a human identity (privacy). Returns a status message.
+    /// </summary>
+    internal static string RaiseDisputeOnLatest(
+        IWatcherObservationStore store, TimeProvider time, string operatorId, string reason)
+    {
+        var disputable = store.AllScoredEpisodes()
+            .Where(s => s.Scorecard.Verdict != WeaveVerdict.NotScored)
+            .OrderByDescending(s => s.Scorecard.EvaluatedAt)
+            .FirstOrDefault();
+
+        if (disputable is null)
+        {
+            return "There is no scored episode to dispute yet.";
+        }
+
+        new DisputeService(store, time).RaiseDispute(disputable.EpisodeId, operatorId, reason);
+        return $"Dispute recorded against {disputable.EpisodeId} (append-only; the score is unchanged).";
     }
 
     public void Dispose()

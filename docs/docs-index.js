@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T23:43:56Z",
+  "generated": "2026-09-01T00:00:00Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2050,6 +2050,48 @@ window.DOCS_INDEX = {
       "sourceSha256": "c59220a166cbe3df078f1f9b9e55c38180b6ba522703271153e0ad47e00643ce"
     },
     {
+      "id": "design-watcher-dispute-command",
+      "path": "docs/design/watcher-dispute-command.md",
+      "title": "Loomkeeper Raise-Dispute Command + Cloud-Judge Seam (conn-11)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "A keyboard-reachable workbench command that raises an append-only operator dispute against the latest genuinely-scored episode (US rule 12) via DisputeService - the score is never changed. A Not-Scored card is not disputable. Also documents the real cloud judge (DelegatingAdvisoryEvaluator behind EgressGuardedAdvisoryEvaluator) as egress-gated, operator-cred future work.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "dispute",
+        "command",
+        "cloud-judge",
+        "conn-11",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-signals-derivation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-score-dispute",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8af54edb3161ce6d223b8f86a7bcc36814dd7fead94cf9a593904f83b130262b"
+    },
+    {
       "id": "design-watcher-dispute-service",
       "path": "docs/design/watcher-dispute-service.md",
       "title": "Loomkeeper - Raise-Dispute API, Sessions Badge & Cloud-Judge Scaffold (connective 7)",
@@ -2876,7 +2918,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4481ec6d45753f957b19019773745c18e8e7cb7c54e978a1631dc8b0f67774df"
+      "sourceSha256": "9280f403d7438ebd03d1dabff4972cf50f37b49cbd7ce5395c0f5fba2e90a015"
     },
     {
       "id": "domain-experts",
@@ -7435,6 +7477,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "2405d978d3a1793648d5a0958730254c159ccbde6fee4612a0b07bc7d902b664"
     },
     {
+      "id": "proof-watcher-dispute-command",
+      "path": "docs/proof/watcher-dispute-command.md",
+      "title": "Proof Pack - Raise-Dispute Command (conn-11)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for conn-11: a keyboard-reachable command raises an append-only operator dispute against the latest genuinely-scored episode (score unchanged, local operator id); a Not-Scored card is not disputable (mutation-verified). Core 990/0, App 143/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "dispute",
+        "command",
+        "conn-11",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-dispute-command",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "15939d5b676c3a61f5bc7fc3d03e41524f44cf699266a637b82b5b87f3323c43"
+    },
+    {
       "id": "proof-watcher-dispute-service",
       "path": "docs/proof/watcher-dispute-service.md",
       "title": "Proof Pack - Loomkeeper Raise-Dispute API, Sessions Badge & Cloud-Judge Scaffold (connective 7)",
@@ -8605,5 +8680,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b526f6a67d8415699f62a9201d00540ccbd1d0aaf02a81052f972f6917c2face"
+  "graphSha256": "22c13ff3212f80b721995857703982351219e97d88f73fdadee874599f2d14fb"
 };
