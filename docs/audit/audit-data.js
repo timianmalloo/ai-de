@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T23:41:31Z",
+  "generated": "2026-09-01T23:58:58Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7578,6 +7578,27 @@ window.AUDIT_DATA = {
       "tags": [
         "ui",
         "sequence-diagram"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0376",
+      "shortname": "smoke91-phase-f-dock-investigate",
+      "datetime": "2026-09-01T23:58:58Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "do F->G->H (phase F: docking drag/close/focus)",
+      "summary": "Phase F: root-caused #4 (empty tool zones never floored extent -> sliver); fixed via UsableExtentFor floor on OpenPane+MovePane (+3 Core tests, 1326). #10/#11/#12/#3-focus root-caused at model/render boundary and designed (need WPF repro), documented in review §5a.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneLayoutService.cs",
+        "docs/reviews/ui-smoke-test-9-1.md"
+      ],
+      "tags": [
+        "docking",
+        "investigate"
       ],
       "outcome": "success"
     }

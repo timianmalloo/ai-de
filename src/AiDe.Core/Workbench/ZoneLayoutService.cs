@@ -46,7 +46,7 @@ public static class ZoneLayoutService
 
         var next = layout
             .WithZone(src with { Content = srcContent })
-            .WithZone(dst with { Content = dstContent, Collapsed = false });
+            .WithZone(dst with { Content = dstContent, Collapsed = false, Extent = UsableExtentFor(dst, target) });
 
         next.AssertInvariant();
         return new ZoneLayoutResult(next, true, null,
@@ -68,10 +68,20 @@ public static class ZoneLayoutService
         {
             Content = AddSurface(dst.Content, surface, dropIndex: null),
             Collapsed = false,
+            Extent = UsableExtentFor(dst, target),
         });
         next.AssertInvariant();
         return new ZoneLayoutResult(next, true, null, $"Opened {surface.Title} in {ZoneName(target)}.");
     }
+
+    // A pane arriving into an EMPTY tool zone must land at a usable width, not whatever sliver a
+    // previous resize/collapse left behind — the "created but hidden in the container till I widened
+    // it" case (smoke 9-1 #4). Only empty tool zones are floored: a zone that already holds panes
+    // keeps the width the user chose, and the Center sizes itself from the remainder.
+    private static double UsableExtentFor(ZoneState dst, ZoneId target) =>
+        dst.IsEmpty && target != ZoneId.Center
+            ? Math.Max(dst.Extent, ZoneState.DefaultExtent)
+            : dst.Extent;
 
     /// <summary>Closes a surface, changing only its own zone. The Center never disappears (becomes empty).</summary>
     public static ZoneLayoutResult ClosePane(WorkbenchLayout layout, string surfaceId)
