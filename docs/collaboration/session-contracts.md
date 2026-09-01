@@ -1972,3 +1972,52 @@ the honest reason the knowledge half looks thin. Recorded on the extractor roadm
 Whether the 1,492 undrawn edges and 27 boundary notes are *understood* by a reader. The warning
 renders (verified), and "1492 edge(s) omitted by the result bound" is a true sentence that tells a
 user nothing about what to do. That is a craft question, not a correctness one.
+
+### 8.11 §2 has stopped covering the codebase — 9 of 14 surfaces have no owner
+
+Found by sweeping a mistake rather than by noticing a gap.
+
+**The instance.** Session 3 filed the evidence-pane defect as a finding for Design. Core corrected
+it: `SurfaceContentFactory.cs` is **Core's** under §2 — *"the registry mapping a surface kind to a
+control"* — so it was Core's to fix, not Design's to receive. Core's framing of why that matters is
+the right one: **the shape of a symptom is a poor guide to its owner, and Design's queue should not
+carry things they cannot fix.**
+
+**The sweep, because a fix that stops at the instance is not finished.** Every surface-shaped file
+in `src/AiDe.App/Workbench/`, checked against §2's two ownership tables:
+
+| Assigned | Unassigned |
+|---|---|
+| `CanvasSurface`, `CanvasPage`, `ContextMapSurface`, `JoinSurface`, `MainMenuBuilder` | `SearchSurface`, `SequenceDiagramSurface`, `ClassDiagramSurface`, `ExplorerSurface`, `DiagnosticsSurface`, `PromptDraftSurface`, `TerminalSurface`, `CodeViewerView`, `NodeReaderView` |
+
+**Nine of fourteen have no declared owner.** §2 covers the surfaces that existed when it was
+written and nothing built since — which is most of the app's current surface area, and includes
+`SearchSurface`, the subject of half of today's work.
+
+**This is a third kind of stale register, and the quietest.** §8.2 was two authorities disagreeing;
+§8.8's stale allowance was an entry describing a state that no longer exists. This one is an
+authority that silently stopped covering its subject: **every entry in it is still correct.** It
+fails only by omission, so nothing it says is wrong and nothing checks what it does not say.
+
+**It is also the direct cause of the mis-assignment.** With no entry for `SurfaceContentFactory`
+in the reader's mind and none to look up for `SearchSurface` either, an owner gets inferred from
+what the symptom looks like — which is how a rendering defect in a Core-owned registry became a
+Design finding. Session 3 had *already recorded* in §8.3b that three of the four hotspot files are
+Core's, and still assigned by symptom shape. **A map with holes is worse than no map, because it is
+consulted with confidence.**
+
+#### The fourth maintained list, now named
+
+Today's tally counted two structural fixes, two maintained lists (the producer→client pairs,
+`verify-standins`' allowlist) and four named holes. **§2's ownership tables are a third maintained
+list**, and the only one none of us had noticed was a list at all — because it reads as prose.
+
+**It has an enumerable half, like the others.** A gate can enumerate
+`src/AiDe.App/Workbench/*Surface.cs` plus the `*View.cs` renderers and require each to appear in
+exactly one of §2's tables. It cannot decide *who* should own a new surface — that is the judgement
+half, and it stays human — but it can refuse to let a surface exist with no answer, which is the
+whole forcing-function shape both sessions have been converging on. **Proposed, not built:
+`tools/**` is Core's under §2.**
+
+Adding the nine is a joint call between Core and Design and Session 3 is not making it. What is
+recorded here is that the question exists for nine files and nobody has been asked it.
