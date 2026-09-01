@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T04:26:21Z",
+  "generated": "2026-09-01T04:26:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6828,6 +6828,32 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0339",
+      "shortname": "vendor-signals-writer",
+      "datetime": "2026-09-01T04:25:32Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do these next steps",
+      "summary": "Surgically vendored the watcher-telemetry writer into ai-de so writer+reader coexist: audit-log.py gains the signals flags; /implement skill (Claude + Copilot) emits honest signals at close; AL2a documented in knowledge+instructions. Smoke-verified with/without; 0 C# files changed so the compiled reader is unaffected; docs-graph 0 defects.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/ai-forward-pack/scripts/audit-log.py",
+        ".claude/skills/implement/SKILL.md",
+        ".github/prompts/implement.prompt.md"
+      ],
+      "tags": [
+        "watcher",
+        "telemetry"
+      ],
+      "outcome": "success",
+      "signals": {
+        "verification_path": true,
+        "acceptance_met": true
+      }
     },
     {
       "id": "al-0338",
