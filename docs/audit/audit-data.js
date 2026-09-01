@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T02:12:20Z",
+  "generated": "2026-09-01T02:33:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6599,6 +6599,23 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Land the 19-slice Loomkeeper watcher on main",
       "done_when": "origin/main fast-forwarded to the watcher branch, green, with all 3 sessions' work reconciled"
+    },
+    {
+      "id": "al-0326",
+      "shortname": "implement-zone-model-expand-slice",
+      "datetime": "2026-09-01T02:33:09Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "approved; lets start building it (ADR-0021 named dock zones)",
+      "summary": "Expand slice (additive, Core-only): WorkbenchLayout/ZoneState/ZoneContent(ZoneStack,ZoneSplit) zone model; ZoneLayoutService zone-scoped ops (MovePane/OpenPane/ClosePane/Activate/Collapse/Expand/Resize/Maximize/Restore) where every op confines its effect to source+destination zones via WithZone; TreeToZones migration converter. 14 tests incl. the AC-F1 containment control (observed failing under a whole-restructure shim, then green). Core 1216 green; App untouched.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneLayout.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
