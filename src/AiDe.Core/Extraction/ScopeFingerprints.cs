@@ -33,7 +33,24 @@ public sealed class ScopeFingerprints
     /// an extractor improvement would reach only the files a user happened to touch afterwards —
     /// and the graph would be a mix of two extractor generations with nothing saying so.
     /// </remarks>
-    public const string ExtractorGeneration = "2026-08-29.1";
+    // 2026-08-30.1 — the knowledge extractor, node_class classification, comment stripping in four
+    // readers, the SQL fold and uses_table. Every one of those changes extraction OUTPUT for input
+    // that did not change, so a store built before them is a mix of two generations. The user saw
+    // exactly that: Knowledge read 0 on a repository holding 2,343 knowledge nodes, because the
+    // scopes were cached from a build that had no knowledge reader.
+    // 2026-08-30.2 — SourceRevision. The .1 bump was correct and reached nothing: a second reuse
+    // check inside RefreshScopeAsync matched on the unchanged artifact revision and returned an empty
+    // result, so 66 scopes were visited and none re-read (DC-044). This bump is the first one that
+    // can actually take effect.
+    // 2026-08-31.1 — `declared_at`. Every scope now records WHERE its files are, relative to the
+    // workspace root, because nothing did: an assertion's provenance path is relative to its scope
+    // and no fact said where the scope was, so a node could not be resolved to a file at all. A store
+    // written before this cannot answer a content query, and the reader would show "source could not
+    // be located" for everything — which is the shape a stale generation always takes.
+    // 2026-09-01.4 — the call walk runs one tree per thread. Output is identical by construction
+    // (a set, merged with a deterministic provenance rule) and this bump exists so a store cannot
+    // be half-written by two generations if anything about that claim turns out to be wrong.
+    public const string ExtractorGeneration = "2026-09-01.4";
 
     private const string FileName = "scope-fingerprints.json";
 

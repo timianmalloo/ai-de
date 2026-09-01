@@ -4,7 +4,20 @@ using AiDe.Core.Projections;
 namespace AiDe.Core.Presentation;
 
 /// <summary>One node as the canvas draws it.</summary>
-public sealed record CanvasNode(string Id, string Label, string Kind, bool IsRoot, string? Context = null);
+/// <summary>
+/// One node as the canvas draws it.
+/// </summary>
+/// <param name="Count">
+/// How many underlying nodes this stands for. 1 for a real node; more for a group super-node.
+/// </param>
+/// <remarks>
+/// <b>The count is on the node because a dot standing for 240 types is only honest while the 240 is
+/// on it.</b> Without it the overview renders a group exactly like a single type, and the picture
+/// says the workspace is small rather than that the view is summarised. Defaulted to 1, so every
+/// existing construction means what it always meant.
+/// </remarks>
+public sealed record CanvasNode(
+    string Id, string Label, string Kind, bool IsRoot, string? Context = null, int Count = 1);
 
 /// <summary>One edge as the canvas draws it.</summary>
 public sealed record CanvasEdge(string From, string To, string Predicate, string Status)
@@ -207,7 +220,15 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
                 if (seen.Add(other))
                 {
-                    nodes.Add(new CanvasNode(other, Shorten(other), "source", IsRoot: false, Context: otherContext));
+                    // The NEIGHBOUR's own kind, not a hardcoded default (INV-0004). A drill-down
+                    // that labels a table, a bicep resource and a class all "source" has told the
+                    // user nothing and told the filter something false.
+                    var otherKind = describe.NeighborKinds is { } kinds
+                        && kinds.TryGetValue(other, out var known)
+                            ? known
+                            : "unknown";
+
+                    nodes.Add(new CanvasNode(other, Shorten(other), otherKind, IsRoot: false, Context: otherContext));
                 }
 
                 edges.Add(new CanvasEdge(edge.Subject, edge.Object, edge.Predicate, edge.Status.ToString()));
@@ -225,7 +246,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
             return new CanvasGraph(
                 nodes, edges, describe.Node.NodeId, describe.Bounds.OmittedEdges,
-                disclosures.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToList(), message);
+                AiDe.Core.Facts.DisclosureSummary.Fold(disclosures), message);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -233,6 +254,142 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
             // and the pane says what happened rather than rendering an empty graph that reads as
             // "there is nothing here".
             return Empty($"The graph could not be loaded: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// The workspace as GROUPS rather than nodes — the source for a semantic-zoom render.
+    /// </summary>
+    /// <param name="depth">How many identifier segments to group by. Higher is finer.</param>
+    /// <remarks>
+    /// <para><b>Why this exists beside the node graph.</b> The bounded default draws 1,500 of a
+    /// workspace's declared nodes and says what it dropped, which is honest and is still a hairball.
+    /// A group view answers the question the first look actually asks — <i>what is in here</i> — and
+    /// the node view answers the second.</para>
+    ///
+    /// <para><b>Each group is a node carrying its size.</b> The canvas already knows how to draw
+    /// nodes and edges, so an overview arrives as the same shape with <see cref="CanvasNode.Count"/>
+    /// set — rather than as a second payload with a second renderer that would then disagree with
+    /// this one about what a node is.</para>
+    ///
+    /// <para><b>Grouping is the projection's, not this method's.</b> <c>GraphOverview.GroupFor</c> is
+    /// public precisely so a caller that drills into a group computes the same membership the
+    /// overview did; two definitions of "which group is this node in" is the defect signature this
+    /// codebase has paid for repeatedly (DC-022).</para>
+    /// </remarks>
+    public async Task<CanvasGraph> OverviewAsync(int depth = 3, CancellationToken cancellationToken = default)
+    {
+        if (queries is null)
+        {
+            return Empty("No workspace is open.");
+        }
+
+        try
+        {
+            var overview = await queries
+                .OverviewAsync(
+                    new OverviewQuery(depth, Query: new GraphQuery(
+                        GraphProjection.DefaultMaxNodes, IncludeExternal: false)),
+                    cancellationToken)
+                .ConfigureAwait(false);
+
+            if (overview.Clusters.Count == 0)
+            {
+                return Empty("Nothing indexed yet. Run \"Index C# projects in this workspace\".");
+            }
+
+            // A group's kind is "group", not the kind of whatever happens to be inside it. Borrowing
+            // a member's kind would colour a group of 240 mixed types by its alphabetically first
+            // one, which is a picture that means nothing and looks like it means something.
+            var nodes = overview.Clusters
+                .Select(c => new CanvasNode(
+                    c.Id, c.Label, c.IsExternal ? "group-external" : "group",
+                    IsRoot: false, Context: null, Count: c.NodeCount))
+                .ToList();
+
+            var edges = overview.Edges
+                .Select(e => new CanvasEdge(e.From, e.To, "aggregates", e.Status.ToString()))
+                .ToList();
+
+            var message = overview.OmittedClusters > 0
+                ? $"{nodes.Count:N0} of {nodes.Count + overview.OmittedClusters:N0} group(s) over "
+                  + $"{overview.TotalNodes:N0} node(s). {overview.OmittedClusters:N0} group(s) not drawn."
+                : $"{nodes.Count:N0} group(s) over {overview.TotalNodes:N0} node(s) — "
+                  + "pick one to go deeper.";
+
+            return new CanvasGraph(
+                nodes, edges, RootId: null, overview.OmittedClusters, overview.Disclosures, message);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Empty($"The overview could not be loaded: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// The member nodes of one overview group — the drill-down from a cluster (semantic zoom) to the
+    /// real nodes it stands for.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Membership is the projection's, via <c>GraphQuery.GroupId</c>.</b> The group whose
+    /// super-node the canvas drew carried its id; asked to open it, this hands that id straight back to
+    /// <see cref="IWorkspaceQueries.GraphAsync"/>, which keeps only the nodes <c>GraphOverview.GroupFor</c>
+    /// assigns to it. So "which nodes are in this group" has one definition, shared by the overview that
+    /// drew the group and the drill-down that opens it (the DC-022 trap this avoids).</para>
+    ///
+    /// <para><b>RootId is the group id.</b> The result is a rooted view, so the canvas keeps Back and
+    /// Overview live — a group opened with no way back is the keyboard trap the canvas exists to avoid.</para>
+    /// </remarks>
+    public async Task<CanvasGraph> GroupAsync(string groupId, CancellationToken cancellationToken = default)
+    {
+        if (queries is null)
+        {
+            return Empty("No workspace is open.");
+        }
+
+        if (string.IsNullOrWhiteSpace(groupId))
+        {
+            return await WholeGraphAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        try
+        {
+            var graph = await queries
+                .GraphAsync(
+                    new GraphQuery(OverviewNodeCap, IncludeExternal: false, GroupId: groupId),
+                    cancellationToken)
+                .ConfigureAwait(false);
+
+            if (graph.Nodes.Count == 0)
+            {
+                return new CanvasGraph([], [], groupId, 0, graph.Disclosures, $"{groupId} has no members in view.");
+            }
+
+            var kept = graph.Nodes
+                .Where(n => ContextFilter is null
+                    || string.Equals(ContextOf(n.Id), ContextFilter, StringComparison.Ordinal))
+                .ToList();
+
+            var visible = kept.Select(n => n.Id).ToHashSet(StringComparer.Ordinal);
+
+            var message = graph.Omitted > 0
+                ? $"{kept.Count:N0} of {kept.Count + graph.Omitted:N0} member(s) of {groupId}. " +
+                  $"{graph.Omitted:N0} not drawn — pick a node to go deeper."
+                : $"{kept.Count:N0} member(s) of {groupId}.";
+
+            return new CanvasGraph(
+                [.. kept.Select(n => new CanvasNode(n.Id, n.Label, n.Kind, IsRoot: false, ContextOf(n.Id)))],
+                [.. graph.Edges
+                    .Where(e => visible.Contains(e.From) && visible.Contains(e.To))
+                    .Select(e => new CanvasEdge(e.From, e.To, e.Predicate, e.Status.ToString()))],
+                RootId: groupId,
+                graph.Omitted,
+                graph.Disclosures,
+                message);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Empty($"The group could not be loaded: {ex.Message}");
         }
     }
 

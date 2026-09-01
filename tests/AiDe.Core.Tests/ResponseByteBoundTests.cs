@@ -71,6 +71,56 @@ public sealed class ResponseByteBoundTests : IDisposable
                     System.Text.Json.JsonSerializerDefaults.Web)));
 
     [Fact]
+    public void KnowledgeIsSelectedBeforeTheCap_NotFilteredAfterIt()
+    {
+        // MEASURED at 0 items on a workspace holding 468 knowledge nodes. The projection read the
+        // first 200 `has_type` assertions and filtered THOSE to knowledge — so on any real
+        // repository the 200 were code types in alphabetical order and the filter left nothing.
+        // DC-035's shape one projection along: a cap before a filter returns the wrong slice
+        // trimmed to the right shape, and nothing in the result says so.
+        var store = WorkspaceStore.Open(Path.Combine(_dir, $"kb-{Guid.NewGuid():N}.db"));
+        var facts = new List<EvidenceAssertion>();
+
+        // Code that sorts BEFORE the knowledge, in bulk — the condition that hid the defect.
+        for (var i = 0; i < 400; i++)
+        {
+            facts.Add(new EvidenceAssertion(
+                "scope", "rev-1", $"AAA.Code.Type{i:D4}", "has_type", "class",
+                EvidenceOrigin.Static, VerificationStatus.Verified,
+                new Provenance("src/x.cs", "1:1", "test", "1.0.0", DateTimeOffset.UnixEpoch)));
+        }
+
+        facts.Add(new EvidenceAssertion(
+            "scope", "rev-1", "zzz-adr-1", "has_type", "adr",
+            EvidenceOrigin.Static, VerificationStatus.Verified,
+            new Provenance("docs/adr.md", "2:1", "test", "1.0.0", DateTimeOffset.UnixEpoch)));
+
+        facts.Add(new EvidenceAssertion(
+            "scope", "rev-1", "zzz-adr-1", "node_class", "knowledge",
+            EvidenceOrigin.Static, VerificationStatus.Verified,
+            new Provenance("docs/adr.md", "2:1", "test", "1.0.0", DateTimeOffset.UnixEpoch)));
+
+        using (var writer = store.BeginWrite())
+        {
+            writer.DesireScopeGeneration("scope", 1, "rev-1");
+            writer.CommitSnapshot("scope", 1, "rev-1", facts, complete: true);
+
+            foreach (var id in facts.Select(f => f.Subject).Distinct(StringComparer.Ordinal))
+            {
+                writer.UpsertNode(id, id.StartsWith("zzz", StringComparison.Ordinal) ? "knowledge" : "source", id);
+            }
+
+            writer.Commit();
+        }
+
+        var result = new ProjectionService(store).Knowledge(new KnowledgeQuery(null, null, 50));
+
+        var node = Assert.Single(result.Nodes);
+        Assert.Equal("zzz-adr-1", node.NodeId);
+        Assert.Equal("adr", node.Type);
+    }
+
+    [Fact]
     public void TheBudgetLeavesRealHeadroomUnderTheFrame()
     {
         // A projection that fills the frame exactly is one repository away from INV-0003.

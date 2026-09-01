@@ -57,6 +57,7 @@ public sealed class EfSchemaExtractor(string extractorVersion = "1.0.0") : IExtr
 
         var tables = new Dictionary<string, TableState>(StringComparer.OrdinalIgnoreCase);
         var rawSql = 0;
+        var rawSqlChangingSchema = 0;
 
         foreach (var file in files)
         {
@@ -118,6 +119,29 @@ public sealed class EfSchemaExtractor(string extractorVersion = "1.0.0") : IExtr
                             break;
                         }
 
+                    case "RenameColumn":
+                        {
+                            // The one unhandled operation that changes a NAME rather than a
+                            // decoration. Without it a renamed column keeps its old name in the
+                            // graph — a wrong fact, which is worse than a missing one, and silent
+                            // because there was no default case to notice. EF states the rename in
+                            // named arguments, so unlike raw SQL (where every dialect spells it
+                            // differently and the SQL reader can only disclose it) this one is
+                            // simply readable.
+                            var table = Named(call, "table");
+                            var from = Named(call, "name");
+                            var to = Named(call, "newName");
+
+                            if (table is not null && from is not null && to is not null
+                                && tables.TryGetValue(table, out var state)
+                                && state.Columns.Remove(from))
+                            {
+                                state.Columns.Add(to);
+                            }
+
+                            break;
+                        }
+
                     case "RenameTable":
                         {
                             var from = Named(call, "name");
@@ -132,9 +156,22 @@ public sealed class EfSchemaExtractor(string extractorVersion = "1.0.0") : IExtr
 
                     case "Sql":
                         // Raw SQL can create tables, add columns and move data, and none of it is
-                        // legible here. Counted so the scope can DISCLOSE that its picture may be
-                        // incomplete — measured: four of these in the corpus repository.
+                        // folded into the schema here.
+                        //
+                        // Counted in TWO buckets, because "30 raw statements were not read" and
+                        // "8 of them change the schema" are different statements about how wrong
+                        // this picture might be, and only the second is worth anybody's attention.
+                        // MEASURED on the corpus repository: 30 raw bodies, of which 8 carry DDL —
+                        // the other 22 are application locks, data moves and index hints that could
+                        // not change a column list whatever they did.
+                        //
+                        // Reporting them as one number is the defect DC-050 is about, and it is why
+                        // this reader's own gap was over-stated for weeks: the blanket sentence made
+                        // 22 harmless statements look like 30 unknowns.
                         rawSql++;
+
+                        if (Ddl.IsMatch(RawSqlBody(call))) rawSqlChangingSchema++;
+
                         break;
                 }
             }
@@ -177,13 +214,49 @@ public sealed class EfSchemaExtractor(string extractorVersion = "1.0.0") : IExtr
 
         if (rawSql > 0)
         {
+            // The count that matters leads. A reader who sees "8 of 30" knows how much of the schema
+            // is in question; one who sees only "raw SQL was not read" has to go and look.
             assertions.Add(Fact(
                 scopeNode, CSharpExtractor.DisclosurePredicate,
-                ExtractionDisclosures.SchemaChangedByRawSqlNotRead, scopeProvenance));
+                $"{ExtractionDisclosures.SchemaChangedByRawSqlNotRead} "
+                + $"({rawSqlChangingSchema:N0} of {rawSql:N0} raw statement(s) carry DDL and were not folded)",
+                scopeProvenance));
         }
 
         return Task.FromResult(new ExtractionResult(assertions, Complete: true, []));
     }
+
+    /// <summary>
+    /// Whether a raw SQL body carries schema DDL at all.
+    /// </summary>
+    /// <remarks>
+    /// <para>Deliberately a recogniser and not a parser. It answers "could this have changed the
+    /// column list", which is the question the disclosure asks; folding the change would need the
+    /// statement understood, and MEASURED on the corpus repository that would buy nothing today —
+    /// exactly one raw statement adds a column and a later raw statement drops the same one, so the
+    /// net effect on the graph is zero and the schema shown is correct.</para>
+    ///
+    /// <para>Multi-line on purpose: real migration SQL puts <c>ALTER TABLE [schema].[Table]</c> on
+    /// one line and <c>ADD [Column] nvarchar(64) NULL;</c> on the next, so a line-anchored pattern
+    /// sees neither. That is how this count would have read zero while eight statements changed
+    /// tables.</para>
+    /// </remarks>
+    private static readonly System.Text.RegularExpressions.Regex Ddl = new(
+        @"\b(CREATE\s+TABLE|ALTER\s+TABLE|DROP\s+TABLE|DROP\s+COLUMN|CREATE\s+INDEX|CREATE\s+VIEW)\b",
+        System.Text.RegularExpressions.RegexOptions.IgnoreCase
+        | System.Text.RegularExpressions.RegexOptions.Compiled);
+
+    /// <summary>The literal text a <c>migrationBuilder.Sql(...)</c> call carries, or empty.</summary>
+    /// <remarks>
+    /// Only a literal is read. An interpolated or composed argument is SQL this reader cannot see at
+    /// all, and guessing at it would be inventing schema — it still counts toward the raw total, so
+    /// the disclosure stays honest about it.
+    /// </remarks>
+    private static string RawSqlBody(InvocationExpressionSyntax call) =>
+        call.ArgumentList.Arguments.Count > 0
+        && call.ArgumentList.Arguments[0].Expression is LiteralExpressionSyntax literal
+            ? literal.Token.ValueText
+            : string.Empty;
 
     private sealed record TableState(string Migration, int Line, string File)
     {

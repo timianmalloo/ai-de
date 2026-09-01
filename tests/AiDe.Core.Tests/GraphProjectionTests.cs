@@ -131,6 +131,39 @@ public sealed class GraphProjectionTests
         Assert.Equal(1, graph.Omitted);
     }
 
+    [Fact]
+    public void ANodeCarriesTheCLASSItsProducerDeclared()
+    {
+        // Reported by the user: the Knowledge chip read 0 on a repository holding 2,343 knowledge
+        // nodes. The graph carried each node's fine Kind, and that repository's knowledge kinds are
+        // `spec` and `knowledge-epl-fan-platform` — a name it invented. A filter matching a fixed
+        // list of type names cannot work across repositories, and widening the list only moves the
+        // problem to the next one. The coarse class is DECLARED, so a filter can ask directly.
+        var graph = new GraphProjection(
+        [
+            Say("adr-1", "has_type", "adr"),
+            Say("adr-1", "node_class", "knowledge"),
+            Say("Shop.Order", "has_type", "class"),
+        ], "rev-1").Compute();
+
+        Assert.True(Assert.Single(graph.Nodes, n => n.Id == "adr-1").IsKnowledge);
+        Assert.False(Assert.Single(graph.Nodes, n => n.Id == "Shop.Order").IsKnowledge);
+    }
+
+    [Fact]
+    public void AnInventedKnowledgeTypeIsStillKnowledge()
+    {
+        // The whole point: `knowledge-epl-fan-platform` is a type this product has never heard of,
+        // and the class still answers correctly because the producer said so.
+        var graph = new GraphProjection(
+        [
+            Say("kb-fans", "has_type", "knowledge-epl-fan-platform"),
+            Say("kb-fans", "node_class", "knowledge"),
+        ], "rev-1").Compute();
+
+        Assert.True(Assert.Single(graph.Nodes).IsKnowledge);
+    }
+
     // ---- the filtered subgraph ---------------------------------------------
 
     [Fact]

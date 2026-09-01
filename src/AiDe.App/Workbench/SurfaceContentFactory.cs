@@ -23,7 +23,7 @@ public sealed class SurfaceContentFactory(
     IWatcherDisputeQuery? watcherDisputes = null)
 {
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
-    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard"];
+    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "prompt", "classdiagram", "codeviewer", "diagnostics"];
 
     public FrameworkElement Create(Surface surface)
     {
@@ -37,6 +37,10 @@ public sealed class SurfaceContentFactory(
             "sessions" => Sessions(surface),
             "board" => Board(surface),
             "leaderboard" => Leaderboard(surface),
+            "prompt" => new PromptDraftSurface(surface.SurfaceId, surface.Title),
+            "classdiagram" => new ClassDiagramSurface(surface.Title),
+            "codeviewer" => new CodeViewerView(surface.Title),
+            "diagnostics" => new DiagnosticsSurface(surface.Title),
             _ => Unavailable(surface),
         };
 

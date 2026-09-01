@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 21 · partially-controlled 23 · uncontrolled 0
+**Status counts:** controlled 35 · partially-controlled 31 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -704,7 +704,11 @@ for both or split.*
   it is joined; there is still no gate.
 - **Status:** `partially-controlled`
 
+- **Instance, 2026-08-31 — two lists of "what is build output".** `CSharpScopeDiscovery.Skip` held `bin, obj, .git, node_modules`; `UnanalysedLanguages.Skip` held those plus `artifacts, dist, build, __pycache__, .venv, target, vendor`. Both answer the same question and only one had been kept current, so TypeScript discovery indexed `artifacts/s00/publish/wwwroot/_framework` — Blazor's published JavaScript — as source. MEASURED: 3 scopes of 67 on TheTerrace were build output, and their nodes could not be resolved back to a file at all, which is how they were noticed. `artifacts` is the .NET SDK's own output layout and belongs beside `bin` and `obj`; `publish` and `_framework` were added to the TypeScript set. **The generalisation:** when a second copy of a list appears, the question is not which is right but why there are two — a divergence found through a THIRD symptom is a divergence that has been wrong for a while.
+
 ### DC-023 — A gate keeps passing because it runs a stale build of the thing it tests
+- **Recurrence, 2026-08-30 — the harness chose the stale build on purpose.** `ShellBootstrapTests` launches a real daemon, and picked its configuration as *"Release if a Release directory exists, else Debug"*. A single `dotnet publish -c Release`, run for something else entirely, created that directory — so Debug tests began launching a Release daemon built hours earlier. When the IPC protocol changed, three tests failed with `ipc.unsupported_version`, which is version negotiation working perfectly and the harness pointing at the wrong binary. **The existing control did not hold because it was written about build ORDER, and this was build SELECTION** — the daemon was built, and freshly; the harness went and found a different one.
+- **What the fix had to get right on the second try.** The configuration now comes from the test assembly's own path, and the staleness check compares the `AiDe.Core.dll` beside the daemon with the one beside the tests — content, not timestamps. Timestamps were tried first and were wrong: a daemon that did not need rebuilding is OLDER than the tests and perfectly current, so every incremental build reported staleness. Observed failing against the stale Release build, with the diagnosis it now prints.
 - **Signature:** a test drives a separate executable — an out-of-process probe, a CLI, a helper — and
   that executable is **not** a build-order dependency of the test project. It was built once, by
   somebody building the whole solution, and every run since has exercised that old binary. The gate
@@ -811,11 +815,6 @@ for both or split.*
     finds less — indistinguishable from a smaller file. This is the state a developer is in most
     often. Fixed with `ExtractionDisclosures.SourceDidNotParse`, which names the files and their
     count while still contributing what did parse.
-  - 2026-08-30 — the first Loomkeeper Observatory partial-observation state lowered the Evidence
-    Coverage bar but left a complete `73 / 100` Weave Score on screen. Missing evidence was rendered
-    as a complete score. Fixed by rendering `earned / observed weight` (for example `58 / 70
-    observed`) and never rescaling the missing weight to 100; the AI Systems and accessibility
-    reviews now check the partial state explicitly.
 - **Control:** each fix carries the same shape — **a field that distinguishes "none" from "not
   looked at"**, and a test for BOTH directions, because a disclosure that fires on every workspace is
   noise and one that never fires is decoration. `spikes/joins-on-a-real-repo` runs the panes over a
@@ -1132,6 +1131,72 @@ for both or split.*
   defect as the evidence page documenting a byte cap it did not apply, and as `find` reporting a
   `MaxBytes` it never enforced. Three instances in one session of **a claim in prose that the code
   does not make true**; when a comment states a bound, the next question is which line applies it.
+- **A THIRD reader, 2026-08-31 — and this one had no statement anchor at all.** The TypeScript
+  extractor matched `from\s+['"]([^'"]+)['"]` **anywhere in a file**. The word "from" in prose, in a
+  template literal, or at the end of one string literal with the *next* literal supplying the closing
+  quote, all began an import. MEASURED on TheTerrace: of 14 import edges, **12 were invented and 0
+  described a dependency between two things in the repository** — including
+  `the product must include full fantasy management,` (prose in a generated data file), `${url}`, and
+  ` + quoteFileNameIfNeeded(((_c = patch.oldFileName) !== null && _c !== void 0 ? _c : ` (two adjacent
+  literals in compiled JavaScript).
+- **The sharpest instance looked completely legitimate.** `@playwright/test` was assumed real — by me,
+  in the brief I wrote — and is a line of Playwright's own **code-generation template**:
+  `import { test, expect… } from '@playwright/test';`, the text it emits when scaffolding a test.
+  Nothing about the specifier looks wrong. Only opening the file says otherwise, which is the whole
+  lesson: **a plausible-looking fact is the one you have to go and read the source for.**
+- **Both directions measured, as the class demands.** Old matcher 19 occurrences / 13 distinct; new
+  statement-anchored matcher 15 / 12. Every one of the 10 dropped was opened by hand: all inside a
+  string literal or a JSDoc example, **0 real specifiers lost**. The new matcher also finds 9 the old
+  one missed (`from"./x"` with no space). Tightening without measuring the other direction is how the
+  first `uses_table` fix matched nothing at all.
+- **The same reader hid a coverage gap behind the invention.** `export` was a CONDITION on seeing a
+  declaration, so 13 scopes produced zero classes, functions and interfaces while all 13 disclosed
+  `typescript-non-exported-not-analysed` — the disclosure was true and the cause was a gate nobody
+  had questioned. Removing it: 22 functions and 2 classes appear, with `is_exported` recorded as an
+  attribute instead. Verified by hand — `grep -cE "^(async )?(function|class)"` over the six
+  hand-written files gives exactly the 24 emitted.
+- **The same root cause runs in the OTHER direction, and I shipped it (2026-08-30).** The
+  `uses_table` reader matched an SQL keyword followed by a word ANYWHERE in a string literal, so the
+  sentence *"we update the record"* produced an edge to a table called `the`. MEASURED: 63 prose
+  strings in one repository, and its `uses_table` count fell from **150 to 56** once the reader
+  required a statement SHAPE — a literal beginning, after its start or a semicolon, with a SQL verb.
+  Under-matching hides real facts; over-matching invents them, and the invented ones are worse
+  because they arrive labelled **Verified**. The shared cause is that neither direction had been
+  measured against real input: **a matcher is not finished until you know both what it misses and
+  what it invents**, and both numbers come from a repository nobody used while writing it.
+- **The naive fix broke the real case, which is why both directions must be measured together.**
+  Requiring each literal to begin with a verb found **nothing at all** on the repository that
+  motivated the feature: real code splits SQL across concatenated literals, and the fragment holding
+  `FROM dbo.AssessmentJob` begins with `FROM`. The reader folds the `+` chain and reads it as one
+  statement; a chain containing anything non-literal is skipped whole rather than half-read.
+- **A smaller lesson worth keeping:** the regex form of that shape test silently returned false for
+  `"INSERT INTO dbo.AssessmentJob (…)"` — a string that plainly begins with one of its own
+  alternatives — and cost more to diagnose than the check was worth. It is explicit code now. When a
+  one-line matcher behaves impossibly, replacing it with something readable is usually cheaper than
+  proving why it does not.
+- **The invent-direction now has a CONTROL, and it found four more on its first run.**
+  `ExtractorsDoNotInventTests` feeds every reader a corpus with no declarations and plenty of text
+  SHAPED like declarations, and asserts it produces nothing but disclosures. On the first run:
+  - the **SQL** reader read `-- CREATE TABLE Ghost` and `/* CREATE TABLE Historical */` as tables;
+  - the **TypeScript** reader read `export class Removed {}` out of a block comment;
+  - the **Python** reader read a class out of a **docstring** — the one place its column-zero rule
+    cannot tell documentation from declaration;
+  - the **C#** `uses_table` reader turned *"delete from your account to remove it"* into
+    `table:your`, because that sentence genuinely begins with a SQL verb and the shape test alone
+    could not reject it.
+- **Commented-out code is the worst possible input for a line-oriented reader**, and every repository
+  is full of it — it is real syntax, because it *was* code. `SourceText` blanks comments (keeping
+  newlines, so provenance line numbers stay true) before any of the three readers believes a line.
+  The C# case needed a second rule: a real table reference **ends where a clause can begin** — a
+  keyword, punctuation, or the end of the statement. In prose the next token is just another word.
+- **Two things the fixes got wrong first, kept because they are the lesson.** Blanking string
+  contents for SQL deleted `"main"."Thing"` — in SQL a double quote is a quoted IDENTIFIER, not a
+  string, so the reader lost the very names it exists to find. And a `PRINT 'about to create table X'`
+  names no table while `EXEC('CREATE TABLE …')` does: the reader can tell neither from the other, so
+  it reads neither and discloses the count.
+- **The measurement shows the correction, which is what a third reading is for.** Verified joins on
+  the three repositories went `64 → 120 → 95`, `0 → 57 → 55`, `35 → 50 → 46`. The middle number was
+  inflated by prose; the last is the honest one. A single reading would have recorded 120 as progress.
 - **Residual risk:** the receiver test is a name match on `EntityTypeBuilder` /
   `OwnedNavigationBuilder`, so an EF fork or a wrapper builder is not read; `ToTable` reached through
   an interface or an extension method on a non-builder is not read. Both now fall into the counted
@@ -1155,10 +1220,6 @@ for both or split.*
     `Command="{x:Null}"`, so the ✕ on every tab did nothing; closing a terminal was impossible from
     the tab. Fixed by wiring the button (and AvalonDock's `DocumentClosing`) through the layout
     model's `CloseSurface`, plus a "Close" item on the tab context menu.
-  - 2026-08-30 — the first Loomkeeper treegrid moved keyboard focus with arrow keys but selected a
-    session only from the pointer `click` handler. The row looked keyboard-operable and did nothing
-    on Enter/Space. Fixed by routing click and keyboard activation through one `selectRow` path; the
-    accessibility re-review confirmed the primary drill flow is no longer pointer-only.
 - **Control:** when a custom control template replaces a stock one, verify every interactive element
   it carries still performs its action — click it, or assert its `Command`/handler is non-null. A
   visible affordance with no behaviour is a defect even though nothing throws.
@@ -1241,11 +1302,39 @@ for both or split.*
   fails when a method is added with no frame-size check — observed failing with an entry removed.
   Writing the list out would have been a fixture restating the product's list (DC-021) and would go
   stale in exactly the case that matters: a new method nobody weighed.
+- **A SECOND instance, and the sweep that should have followed the first (2026-08-30).**
+  `ProjectionService.Knowledge` read the first 200 `has_type` assertions and filtered THOSE to
+  knowledge — so on any real repository the 200 were code types in alphabetical order and the filter
+  left nothing. MEASURED: **0 items returned on a workspace holding 468 knowledge nodes**, which the
+  user reported as "knowledge still says 0". The first instance was fixed in `GraphProjection` and no
+  sibling sweep followed; this is what that costs.
+- **The sweep, run properly this time.** Every bounded read in the projection service was checked:
+  `Find` filters inside `SearchNodeIds`, `Describe` inside `AssertionsTouching`, `Impact` inside
+  `OutgoingAssertions`, `Evidence` inside the cursor page — all four apply the cap to rows the query
+  has ALREADY filtered, which is the correct order and also the cheaper one, because the filter uses
+  an index. `Knowledge` was the only place the order was inverted, and it was inverted because the
+  filter lived in C# rather than in the query.
+- **The signature, stated so it is recognisable without reading every projection:** a bounded read
+  whose `.Where(...)` is applied to the RESULT of the read rather than expressed in it. If the filter
+  is in the query the cap cannot be wrong; if it is in the caller, the cap chose the rows before
+  anyone asked what was wanted.
+- **Residual, named rather than implied:** `Knowledge` still reads each node's touching assertions at
+  `MaxEdgesCeiling` (500) and splits them into links and backlinks afterwards. A document with more
+  than ~495 real links would get an arbitrary 500 and no omission count. No repository measured comes
+  close, and the fix is the same shape if one ever does.
 - **Status:** `partially-controlled` — Core's side is complete and tested (bounded default, legible
   `PayloadTooLarge`, byte bounds on every read operation, the aggregated overview, and a reflective
   gate that catches the next operation). **Design's half is open:** rendering the overview and the
   "narrow your focus" state. The write side was measured too and needs nothing: an `IndexSummary` for
   28 scopes is **1,724 bytes**, three orders of magnitude below the frame.
+
+- **Third instance, 2026-08-30 — and the first two fixes each moved it one step along.** The knowledge projection read the first 200 `has_type` assertions and filtered THOSE to knowledge: the 200 were C# types in alphabetical order, so a workspace holding 468 knowledge nodes returned nothing. The fix pushed the knowledge filter into the query. It left the read capped at 200 ids **in id order** while the TERM was still matched in memory afterwards — so a search saw the alphabetically first 200 of 1,255, and a document sorting later was reported as not existing. MEASURED on the real workspace: 757 knowledge documents carry a type, and searches for *spec*, *adr*, *ui* now return 34, 9 and 31 where the capped read could reach only ids beginning with the earliest letters.
+- **What the sweep missed, and why.** The earlier sweep checked whether each *reader query* expressed its filter in SQL, and all of them did. It did not check the **callers**, and the caller is where a second filter had been left outside. The signature has to be read as covering the whole path from query to result: *every* filter must be inside the read, not merely the one that was moved there. A cap applied before a filter returns the wrong slice trimmed to the right shape — moving one filter in and leaving the next one out relocates that, it does not remove it.
+- **Control:** `StoreReader.KnowledgeNodes(term, type, limit)` applies both filters and counts the total over the same filtered set, so `Bounds.OmittedNodes` is measured against what matched rather than what was read. `KnowledgeSearchSeesEveryDocumentTests` puts the only matching document past the cap on purpose — 400 fillers sorting before it — so a filter applied after the read cannot reach it. Observed failing on the reinstated shape, 4 of 4, printing "the one that matches sorts past the id cap".
+
+- **Fourth instance, 2026-08-31 — written the day after the third was recorded, by the person who recorded it.** The new node-content reader resolved a node's file by taking `AssertionsTouching(id, 50)` and filtering it for the fact carrying a path. `AssertionsTouching` orders by subject, so on a node whose callers sort alphabetically before it, fifty rows of callers filled the window and the node's own declaration never arrived. MEASURED on TheTerrace: the most connected type in the workspace — `TheTerrace.Infrastructure.Data.AppDbContext`, 244 edges, callers all named `TheTerrace.Features.*` — reported *"no recorded source"*, while every small type worked. **The failure sorted by popularity**, so the more important the type, the more likely the reader had nothing to show.
+- **The signature was known and still did not fire in the author's head.** The class had been recorded twice in twenty-four hours and its lesson written as *every filter must be inside the read*. Knowing a class is not a control (CI6): what caught this was measuring the feature on a real repository, and what will catch the next one is `StoreReader.DeclaringAssertion`, which asks the store for the node's declaration rather than sieving a page of neighbours.
+- **The fixture could not reproduce it, twice, silently.** The first attempt referenced the hub by property type — the extractor emits no edge for that, so the hub had 3 touching facts against a cap of 50. The second used inheritance but named the referencing types so they sorted *after* the hub, so its declaration was always in the window. Both passed against the un-fixed code. The test now **asserts its own preconditions** — that the hub exceeds the cap, and that its declaration is genuinely absent from the capped window — before asserting anything about the fix. A fixture that cannot reproduce is DC-016 wearing a green tick, and the only reliable way to find one is to run the control against the broken code and watch it fail.
 
 ### DC-036 — A graph is drawn with a layout that does not scale to its node count
 
@@ -1358,7 +1447,319 @@ for both or split.*
   a limit expressed as a magic number rather than a constant is invisible to it.
 - **Status:** `partially-controlled`
 
-### DC-039 — A deterministic test double produces colliding output across instances
+### DC-039 — A focus-trapped surface reused in a new host without re-wiring its escape
+
+- **Shape:** a control that deliberately traps keyboard focus and posts a "leave" signal at its
+  boundary (so a host can route focus out) is reused in a NEW host that binds the graph/content but
+  forgets to subscribe to the leave signal. The trap still fires; nothing consumes it; the keyboard
+  user is stuck inside the surface with no way out — a WCAG 2.1.2 (No Keyboard Trap) failure.
+- **Signature:** the surface exposes an escape event (here `CanvasSurface.FocusLeaveRequested`, the
+  ADR-0015 contract) that the ORIGINAL host wires (`WorkbenchShell.BindCanvas`), and a second
+  construction path (`CreateExplorerGraph`) sets the data source but not the escape handler. Grep the
+  escape event: it is raised in one place and subscribed in fewer places than there are hosts.
+- **Why it survives:** the surface works — it renders, it navigates, the mouse is fine — and the trap
+  only bites a keyboard-only user who tabs to the boundary, which no populated-fixture test and no
+  mouse-driven demo exercises. The focus contract lived in the first host's binding, so a new host
+  that copies the *data* wiring silently drops the *focus* wiring.
+- **Instances:**
+  - 2026-08-30 — the Phase-1 Explorer mode built its graph via `CreateExplorerGraph`, which set
+    `GraphSource` but never subscribed `FocusLeaveRequested`. In Explorer mode the graph canvas
+    trapped keyboard focus with nothing routing out. Fixed: `ExplorerSurface` routes the leave into
+    the reader region (`NodeReaderView.FocusReader`), so a Tab off the graph lands in the reader.
+- **Control:** a surface that owns a focus contract carries its escape wiring with its construction,
+  not in one host's binding — or every construction path is asserted to wire it. Here
+  `Reader_FocusReader_LandsFocusInTheReader` proves the escape has a landing target; the real
+  boundary-Tab→reader integration is the P2-FOCUS analogue at the Explorer level (a CanvasProbe
+  follow-on).
+- **The generalisation to apply elsewhere:** when a control with a keyboard contract (a trap, a
+  roving tab-stop, a boundary handler) is instantiated a second way, the contract is part of the
+  control's construction, not the first caller's setup. A second construction path that copies the
+  data wiring and not the focus wiring is this class.
+- **Status:** `partially-controlled` — the escape is wired and its landing target is tested; the
+  full real-WebView2 boundary-Tab integration test is a follow-on.
+
+### DC-040 — A retained component captures a dependency that arrives (or changes) later
+
+- **Shape:** a lazily-created, then RETAINED, component captures a dependency (a query interface, a
+  service, config) **by value at creation**. On the original host that dependency is set/updated later
+  (a workspace attaches, a connection opens), and the original host rebinds — but the retained copy
+  captured the old value (often null) and never rebinds, so it shows an empty or stale state forever
+  while the original works.
+- **Signature:** a factory reads a mutable field into a `new SomeViewModel(field)` and hands the result
+  to a long-lived, reused surface; elsewhere a separate "attach/bind" path updates that field and
+  re-creates the *original* consumer but not the retained one. The retained surface and the live one
+  disagree, and only the retained one is wrong.
+- **Why it survives:** the happy demo opens the dependency BEFORE creating the retained surface, so the
+  captured value is good and it works; the bug only appears when creation and attachment race the other
+  way, or when the dependency changes after creation. The original consumer works, which misdirects the
+  investigation away from the retained copy.
+- **Instances:**
+  - 2026-08-30 — `WorkbenchShell.CreateExplorerGraph` built the Explorer graph's `CanvasGraphViewModel`
+    from a captured `_queries`; the Explorer surface is retained (US-E6), so a surface first created
+    before the workspace attached stayed bound to null and showed "No workspace is open" even with a
+    workspace open — while the workbench graph (rebound via `BindCanvas`) worked. Fixed: read `_queries`
+    LIVE in the `GraphSource` lambda, and refresh the Explorer graph on each mode entry.
+- **Control:** a retained component reads a mutable dependency **live at use time** (capture the host,
+  not the value), and/or **refreshes on re-activation**. A test that attaches the dependency AFTER
+  creating the retained component and asserts it then works catches the capture.
+- **The generalisation to apply elsewhere:** when a reused/retained surface depends on something that
+  can arrive or change after the surface exists, do not snapshot it at construction — resolve it each
+  time, or re-resolve when the surface is shown. Retention (US-E6 "don't rebuild") is about the VIEW,
+  never a licence to freeze its data source.
+- **Status:** `partially-controlled` — the live-read + refresh-on-entry fix is landed; a realized-shell
+  integration test (Explorer shows the graph after a workspace opens) is a follow-on.
+
+
+### DC-041 — Two "kind" fields with different granularity, and the coarse one shown where the fine was meant
+- **Signature:** a domain has both a fine type (`has_type` → `azure-resource`, `table`, `class`) and a coarse dimensional class (`node_kind` → `source` vs `knowledge`), and a reader/label displays the coarse one where a user expects the fine one — a bicep resource reads "kind: knowledge".
+- **Why it survives:** both fields are individually correct and individually tested; the overview path uses the fine one and the describe/reader path uses the coarse one, so no single test compares the two surfaces (E2E-D: component tests that can't see each other).
+- **Instances:** 2025 — Explorer reader showed `describe.Node.NodeKind` (coarse `node_kind`) so an azure-resource read "knowledge"; the overview + category filter used `has_type` and were correct — the two surfaces disagreed.
+- **Control:** when two fields name overlapping concepts at different granularity, name them distinctly (`Type` vs `Class`), and the surface that a user reads chooses the fine one unless the coarse one is explicitly what's asked. Design fix: reader prefers the `has_type` edge over the coarse `node_kind`. Root fix (Core): the extractor should not emit `knowledge` for extracted source, and neighbours should carry their real `has_type`, not a hardcoded `"source"`.
+- **Status:** `partially-controlled` — reader fixed in Design; extractor/neighbour labels handed to Core (INV-0004).
+
+### DC-042 — A capability is complete, tested, and nothing ever routes work to it
+
+- **Shape:** a producer is written, unit-tested and wired into a composition — and the thing that
+  DISCOVERS work for it was never taught to. Every test passes, because tests hand it input directly.
+  On real input it is unreachable, and the surface that reports its output shows a legitimate-looking
+  **zero**.
+- **Signature:** a count that is exactly zero on every real repository while a sibling count is large.
+  The tell in code is a router keyed on something — a scope prefix, a file kind, a MIME type — whose
+  keys are produced by a DIFFERENT component, and nobody has compared the two lists. Ask: *what
+  produces the keys this router matches on, and does it produce this one?*
+- **Why it survives:** it passes the strongest evidence a team usually has. Unit tests construct the
+  input, so the producer is proven correct. Integration tests use fixtures that name the scope
+  explicitly, so routing is proven correct. Only DISCOVERY is untested against reality, and its gap
+  is invisible from either side — the producer is not broken and the router is not broken. And the
+  zero is worse than an error: an error gets investigated, a zero gets believed.
+- **Instances:** 2026-08-30 — reported by the user: *"the graph was showing knowledge as zero count
+  and code as a large count."* `FixtureExtractor` had read knowledge frontmatter since Phase 1 with
+  tests; `CompositeExtractor` had a fallback route; and `CSharpScopeDiscovery` produced six scope
+  kinds — `csharp`, `bicep`, `schema`, `python`, `typescript`, `sql` — and no knowledge scope. The
+  reader was correct, tested, and unreachable on every real repository for the entire life of the
+  project. MEASURED after wiring discovery: on this repo, 466 `owned_by`, 346 `refines`, 287
+  `implements`, 272 `relates-to`, 66 `depends-on`; scopes across three repositories went 28→66,
+  34→48, 34→56.
+- **The sharpest part of it:** this happened on a repository whose stated premise is that *docs hold
+  intent, code holds reality, and the expensive defects live in the gap*. Half of that sentence was
+  never being read, and the product said so with a zero.
+- **Control:** `WorkspaceExtractors.RoutedKinds` is asserted against what discovery emits, so a route
+  with no producer — or a producer with no route — fails a test rather than reporting nothing.
+  `KnowledgeExtractorTests` covers the reader on real-shaped documents, and the multi-repository
+  harness records scope counts per kind so a kind that silently stops being discovered shows up as a
+  drop in `git diff`.
+- **The generalisation to apply elsewhere:** for every consumer keyed on a producer's vocabulary,
+  **compare the two lists in a test rather than in your head**. And treat a zero on a real
+  repository as a question, never as an answer: the useful form of the question is *"is this zero
+  because there is none, or because nobody looked?"* — which is the same question this product asks
+  about evidence, turned on the product itself.
+- **Residual risk:** the same shape exists wherever a router matches on strings someone else emits.
+  The IPC operation names, the join projection's predicates and the canvas's node kinds are all
+  keyed this way; only extraction routing is asserted so far.
+- **Status:** `partially-controlled`
+
+
+- **Instance, 2026-08-31 — the compaction check.** `WorkspaceCore.CheckCompactionNeeded` was complete, tested, and called by nothing: no shell, no daemon, no command. A workspace could pass the generation threshold, slow measurably past its refresh budget, and the diagnosis would sit in a method nobody invoked. Found while answering "why is the store growing", not by any test. MEASURED on the user's workspace: 2 generations per scope against a threshold of 8 — under the trigger, and yet **half the store (23,672 of 47,809 assertions) was already superseded**, because the threshold is tuned for LATENCY and the symptom people see is SIZE. The daemon now calls it at startup, which is the moment the store is open, no session is in progress, and an operator is looking. **The residual is the threshold itself:** nothing yet triggers on size, and reclaiming space needs `retain: 1`, which drops the diagnostic history the default keeps. That is a decision, not an oversight, and it is still open.
+
+### DC-043 — A second construction of a view-model omits configuration the first applied
+- **Signature:** the same data is shown by two surfaces built from the same view-model type, but one construction sets a configuration the other omits, so a DERIVED property (here: node colour, computed from a node's context) silently differs — one surface is right, the other is subtly wrong, and both pass their own tests.
+- **Why it survives:** the data is identical (same query, same counts, same disclosures) so a data test sees no difference; only a rendered, cross-surface comparison reveals it. Sibling of DC-040 (a retained component reading a dependency the shared one had) — the fix pattern is the same: share the configuration, or read it live in both places.
+- **Instances:** 2025 — the Explorer graph rendered all-grey while the workbench graph was coloured, because `CreateExplorerGraph` built a fresh `CanvasGraphViewModel` without wiring `ContextLookup` (colour comes from context; default lookup returns null). Workbench VM set it (WorkbenchShell:774); Explorer VM did not (WorkbenchShell:810).
+- **Control:** extract the shared configuration into one helper both constructions call (`BuildContextLookup`), read live so a workspace change is reflected. When two surfaces show the same data, assert they agree on the derived surface, not just the data (E2E-D / E12 cross-surface consistency).
+- **Status:** `controlled` — both paths now call `BuildContextLookup`; App.Tests + launch smoke green.
+
+### DC-044 — Two guards answer one question and only one is taught about a new input
+- **Signature:** a decision is protected by two independent checks written at different times for the same question ("is the cached answer still good?"). A new input arrives — a version, a generation, a schema stamp — and is wired into **one** of them. The other keeps answering from what it already knew, and its answer wins, because the two are in series and the narrower one runs last. Nothing fails: the run completes, reports success, and does no work.
+- **Why it survives:** each guard is individually correct and individually tested. The invalidation mechanism was *proven* to work — the fingerprint really did change, the sidecar really was rejected — so the evidence all pointed at a mechanism that was doing its job. The failure only exists in the composition, which nothing owned. A gate that asserts the new input is *present* (here `verify-extractor-generation.py`, which checks the constant was bumped) tests the input, never that the input *reaches an outcome* — so a green gate was evidence the bump happened, not that it did anything (E-series: a gate's green result is evidence the gate passed, not that its contents passed).
+- **Instance:** 2026-08-30. `ScopeFingerprints.ExtractorGeneration` was bumped so an upgrade would re-extract every scope, and it correctly invalidated the sidecar. `WorkspaceCore.RefreshScopeAsync` then applied its own reuse check — *does the store already hold this artifact revision?* — which knew nothing about the generation, matched on the unchanged `rev-1`, and returned an empty result. MEASURED in the user's own store: the C# scopes were last extracted **2026-08-28T23:50**, unchanged across five extractor changes shipped since, while the knowledge and TypeScript scopes (which had no prior snapshot, so no second guard to defeat) extracted normally at 2026-08-31T00:20. The user saw *"Indexed 66 of 66 scope(s): 0 assertion(s)"* — a run that visited everything and wrote nothing.
+- **The deeper cause, and why deleting the guard would not have been the fix:** the natural key is `(scope_id, artifact_revision, subject, predicate, object, extractor_id)` — P1-STORE-05, *one revision, one answer*. True while the extractor was fixed; false the moment extraction could improve for input that had not changed. Had the guard been removed, every unchanged fact would have collided with the unique index, because the key genuinely could not represent *the same bytes read by a better reader*. The guard was the symptom; the **grain of the key** was the cause (DM: declare the grain before the columns).
+- **Control:** `SourceRevision` makes the reader part of a fact's stored identity, applied inside `RefreshScopeAsync` so every entry point — shell, daemon refresh op, test — gets one answer instead of three. `UpgradingTheExtractorReExtractsTests` asserts the *outcome*: a store written by an older build gains the new facts, and an unchanged re-index still writes nothing. Observed failing on the un-fixed code (2 of 4). The generation is also its own telemetry axis (`extractor.generation`), so "which reader built this graph" is measurable rather than inferred.
+- **The generalisation to apply elsewhere:** when adding an input to a staleness or cache decision, **find every guard on the path and check the input reaches the last one**, because the narrowest guard wins. And assert the *outcome* — new facts arrive — never that the mechanism changed.
+- **Residual risk:** the stamp lives in the revision string rather than its own column (marked `simplify:` with its upgrade trigger). Anything rendering a stored revision must call `SourceRevision.Base` first; three read paths do today, and a fourth added later would show the stamp to a user before anyone noticed.
+- **Status:** `controlled`
+
+### DC-045 — The write succeeds, the screen keeps the old answer, and both halves report success
+- **Signature:** a command changes what the store holds and completes normally. Every open surface goes on rendering the projection it fetched when it loaded. The command's own report is accurate, each pane's content is internally consistent, and the only thing wrong is that they describe different moments. The user reads the stale number *as the result of the action they just took*, which is worse than an error — it is a confident wrong answer with a success message attached.
+- **Why it survives:** every component passes its own tests, because every component is correct. The defect is in the seam, and a seam has no owner by default. It is invisible to unit tests (each side is right), to integration tests that assert against the store (the store is right), and to a render test that loads a pane fresh (loading is the case that works). It needs a test of the *sequence* — change, then look — which is the one nobody writes because both halves are known good.
+- **Instance:** 2026-08-30. A re-index of TheTerrace wrote all 38 knowledge scopes — 10,242 assertions, 2,343 `node_class` facts, 2,502 knowledge nodes — committed at 17:20:24 local. A screenshot at 17:20:50, twenty-six seconds later, showed the graph's Knowledge chip reading **0**, with a node total (1,996) matching the pre-index projection exactly. `IndexSolution` announced its outcome and told nothing else. Diagnosed by timestamp, not by inspection: the store proved itself correct, and the current build's own projection returned 236 knowledge nodes over that same store.
+- **The trap in the diagnosis:** the visible symptom (a zero) was the same symptom as two earlier defects with real causes — knowledge never extracted, and a cap applied before a filter. Both had been fixed. Assuming a third cause in the same layer would have cost a day; reading the commit timestamps cost one query. **When a symptom recurs after its cause was fixed, date the evidence before re-opening the diagnosis.**
+- **Control:** `WorkbenchController.WorkspaceDataChanged`, raised after a command that changed the store and **not** after one that failed; the shell re-reads whatever panes the layout currently holds. `IndexingReachesOpenPanesTests` covers all three commands plus the failure path. Observed failing on the un-fixed code (3 of 4, with the failure-path test correctly staying green).
+- **The generalisation to apply elsewhere:** for any command that writes, name the surfaces that are showing what it wrote, and make the freshness of those surfaces part of the command's definition of done. A write path that ends at an announcement is not finished — **the last mile of a write is the screen**.
+- **Residual risk:** the signal is raised by the *controller*, so a write reaching the store by another route (the daemon indexing on its own, a second client) does not raise it. Panes are told about writes this shell commanded, not about the store changing.
+- **Status:** `controlled`
+
+### DC-046 — The layout that was tested was never the layout that shipped
+- **Signature:** code resolves a sibling file by a path relative to itself. A build-time step puts the file there, so every developer run, every test and every local launch is correct. A *different* packaging step — publish, installer, container copy — produces a different arrangement, and the resolution fails only in the artifact users receive. The error message describes the failed operation, not the missing file, so the investigation starts in the wrong place.
+- **Why it survives:** every test runs against the developer layout, which is the one that works. There is no failing test to write without first building the artifact, and building the artifact is the step nobody does in a test. The gap is invisible to code review because both halves of the code are right: the resolver looks in a sensible place, and a copy step really does put it there.
+- **Instance:** 2026-08-30. `MainWindowViewModel.DaemonPath()` resolves `<BaseDirectory>/daemon/AiDe.Daemon.exe`. `CopyDaemonBesideShell` (`AfterTargets="Build"`) wrote it to `$(OutDir)daemon\`; `dotnet publish` writes to `$(PublishDir)` and does not carry that across, so `artifacts/app` shipped with `AiDe.Daemon.exe` flat at the root and nothing at `daemon/`. Every published build could open **no workspace at all**, reporting *"This workspace could not be opened"* — a message about the workspace. Found while publishing at the end of an unrelated fix, not by any test.
+- **The uncomfortable part:** this session had reported "published `artifacts/app`" at the close of many turns. The publish command succeeded every time. **An exit code is not a result** (E-series) — the artifact was produced and was not usable, and nothing in the routine looked at what came out.
+- **Control:** `verify-published-layout.py` publishes the shell to a scratch directory and asserts the daemon is at the path read **from the source** — so renaming the folder in one place fails the gate rather than a user's first click. Observed failing on the un-fixed build, with the diagnosis it prints ("it is in the wrong place, not missing") written from that run. In CI as *Published layout gate*.
+- **The generalisation to apply elsewhere:** for anything resolved by a path relative to the running binary, **assert it in the artifact, not in the build output**. And when a routine ends in "produced X", make the last step read X.
+- **Residual risk:** the gate checks the one path that is currently resolved this way. Another sibling resolved relative to `BaseDirectory` later would need adding; nothing detects a new one automatically.
+- **Status:** `controlled`
+
+### DC-047 — The budget is checked on one side of an encoding and enforced on the other
+- **Signature:** a payload is measured against a transport limit, and between the measurement and the transport it is **encoded again** — escaped into a string field, compressed, base64'd, wrapped. The check passes on the inner bytes; the limit applies to the outer ones. Every test agrees with the guard because every test measures what the guard measures, so the guard and its tests are wrong together and consistently.
+- **Why it survives:** the budget looks conservative. `768 * 1024` against a `1024 * 1024` frame reads as *three quarters of the limit, a quarter of headroom* — a number nobody re-examines, because the arithmetic is visibly cautious. Nothing in it says which bytes it counts. The estimator was even validated (`actual/estimate ≈ 0.93`, conservative), which is the trap: the estimator was accurate about the **inner** payload and that was never the quantity at risk.
+- **Instance:** 2026-08-30. `IpcResponse.Payload` is a `string`, so a projection is serialised to JSON and that JSON *text* is then carried as a field in the envelope, escaping every quote. MEASURED across every payload on a real workspace, the inflation was **1.56–1.57x**. A 727,244-byte graph — inside its 768 KiB budget — reached **1,137,104 bytes** on the wire and was refused. The user saw only *"The graph could not be loaded: ipc.payload_too_large: the response is 1,176,341 bytes"* on opening a workspace.
+- **Two things it hid.** The shrink-to-fit path applied **one** proportional correction and returned without re-checking, so even where it ran it could fall short. And the same budget governs the evidence and find pages, which were within one measured page (652,425 bytes → ~1.02 MB framed) of the same failure without anyone noticing.
+- **Control:** the graph now measures `FramedCost` — the payload serialised, escaped and enveloped exactly as the transport does it — and shrinks until that fits, with 64 KiB of headroom because shrinking stops at the first size that fits (measured with none: 1,044,916 against a 1,048,576 frame, one long type name from failing). Row-wise bounds cannot afford a per-row serialisation, so they keep a factor — and `TheBudgetFitsTheFrameTests` asserts `MaxResponseBytes * 2 <= FrameBytes`, so the assumed worst case cannot drift past what a frame holds. `TheGraphAlwaysFitsInAFrameTests` measures the framed bytes on a hub-shaped store; observed failing on the un-fixed code (3 of 5), reproducing the user's number to within 1%.
+- **Calibrating the fixture was the hard half.** Three fixtures passed against the un-fixed code before one reproduced it: too large and the old code shrank it to safety, too small and it never approached the frame. The discriminating window — an inner payload between 686 KB and 718 KB — was found by **measuring the fixture**, not by choosing numbers that looked big. A control that cannot fail is worse than none, because it certifies (DC-016).
+- **The generalisation to apply elsewhere:** measure the artifact **at the boundary that rejects it**, in the form it has when it gets there. Where the exact measurement is too expensive, write the assumed ratio down as an assertion between the two constants rather than as headroom in one of them.
+- **Closed at the cause, same night.** The factor managed the encoding rather than removing it, so the `simplify:` marker on `MaxResponseBytes` named its own upgrade trigger — *an envelope carrying raw JSON* — and that trigger was then pulled: IPC version 3 carries the payload as JSON instead of as a string holding JSON text. MEASURED after: framing overhead fell from **1.57x to 78 bytes**, and the canvas's own request on the real workspace went from 1,000 nodes and 283 knowledge to **1,500 and 340**. `IpcPayload.Read` accepts either encoding so a version-2 peer is still understood, and `ThePayloadIsNotEncodedTwice` fails if string-carried JSON returns — at the seam, not at a user opening a workspace. A marker whose trigger has fired is a defect with a date on it, and this one was three hours old.
+- **Residual risk:** none for the encoding. The shrink's overshoot became its own class (**DC-048**).
+- **Status:** `controlled`
+
+### DC-048 — The margin that guarantees termination becomes the answer
+- **Signature:** a correction loop narrows on a constraint — shrink until it fits, back off until it succeeds, reduce until it is under budget — and each round is forced to take a *minimum* step so the loop cannot stall. That floor is a termination argument, and nothing else. But the first value that satisfies the constraint is **returned**, so the size of the safety step silently becomes the size of the result. The bigger the safety margin, the worse the answer, and the relationship is invisible from either the loop or the constraint.
+- **Why it survives:** the loop is correct on every property anyone thought to state. It terminates, it never returns something over budget, it has a bounded cost. The defect is in a property nobody wrote down — *the answer should be as large as the constraint allows* — and it hides behind the property that was written down, because both are satisfied by "it fits".
+- **Instance:** 2026-08-30. The graph shrinks until it fits a frame, cutting **at least a third** each round so the loop terminates even where bytes barely move with node count. MEASURED on the real workspace: asking for 5,000 nodes returned **706** while asking for 1,500 returned **1,000**. A caller who asked for more was served less, and the smaller answer was indistinguishable from a smaller workspace. On the calibrated fixture the same shape gives 868 against 1,281.
+- **The tell:** an answer that moves in a direction the request cannot explain. Any parameter where "ask for more, get less" is possible is this class or its sibling.
+- **Control:** after the loop, up to four probes at the midpoint of (fits, does-not-fit), each accepted only if it also fits — so recovery can widen the answer and never break it. MEASURED: none 868, two 1,193, four 1,274, six 1,274 again, against 1,281 available. `AskingForMoreNeverReturnsFewer` asserts a larger request never returns materially fewer, where *materially* is `MinRecoveryGap` — the precision recovery actually offers, named rather than guessed. Observed failing without recovery (868 against 1,000, eight times the gap). The fixture was calibrated by measurement: lighter shapes never shrink far enough to invert, and one that cannot invert cannot catch this (DC-016).
+- **The generalisation to apply elsewhere:** when a loop's step size exists to guarantee progress, **do not let the value it lands on be the value you return.** Bracket, then search the bracket. And state the property the constraint does not: not only "the answer is legal" but "the answer is the best legal one", because only the first is checked by fitting.
+- **Residual risk:** monotonicity here is an approximation with a named precision, not a guarantee. It is exact only if the largest fitting size is *found* rather than approached, and that is affordable only once the node ORDERING is computed once and candidate sizes evaluated against it — today every probe redoes work that cannot change. Recorded on `MinRecoveryGap`.
+- **Status:** `partially-controlled`
+
+### DC-049 — A launched process decides where to write, so a caller cannot stop it
+- **Signature:** a component derives its own state location from a machine-wide place — an app-data folder, a home directory, a registry key — and exposes no way for a caller to say otherwise. Everything that starts it therefore writes into the user's real profile, including tests, which believe they are isolated because *their own* files are in a temp directory. Nothing fails. The residue is invisible until somebody counts it.
+- **Why it survives:** every test passes, and each one is individually reasonable — a temp workspace, a real daemon, a clean-up of the temp workspace afterwards. The leak is in a path no test names, created by a process no test looks inside. Test isolation is normally verified by *what a test asserts*, and nothing asserts about a directory the test never mentions.
+- **Instance:** 2026-08-30. `AiDe.Daemon` computed `LocalAppData/AiDe/workspaces/<id>` for itself. MEASURED: **12** directories per run of the Core suite, and **2,695** accumulated over four days — all but one an empty or fixture-sized store from a test that had finished long before, 468 MB in total. The one real workspace was the user's. Found while investigating "why are there 2,399 of these", not by any check.
+- **It also removed a duplicated derivation.** The shell computed exactly the same path independently, so two expressions produced one value and agreed only for as long as nobody edited one of them (DC-022). The shell now passes the directory it already has.
+- **Control:** the daemon takes `--data`, and `ShellBootstrap.ConnectOrLaunchAsync` passes it through. `ADaemonToldWhereToKeepItsState_WritesNowhereElse` snapshots the machine-wide directory, launches a daemon with an explicit one, and asserts nothing new appeared — an assertion about the directory that must stay untouched, because an assertion about the one that must be written would have passed all along. Observed failing with the option removed. MEASURED after: **0** leaked per full-suite run, down from 12.
+- **A second lesson, from building the cleanup tool.** `list-workspace-stores.py` opened each store read-only to count its facts, and SQLite created a `-wal` and a `-shm` beside every one: **5,390 files, two per store.** On its second run those files were the difference — 1,495 directories that had held nothing but a store now held three, and the tool reported every one of them as in use. **A read that writes is not a read**, and a measurement whose own footprint changes the next measurement will always converge on a wrong answer. It now opens `immutable=1` where there is no write-ahead log to miss, and counts a store's sidecars as part of the store.
+- **The generalisation to apply elsewhere:** any component that writes outside the directory it was pointed at should take that directory as an argument. And when a suite launches a real process, assert about **where it wrote**, not only about what it answered.
+- **Residual risk:** the 2,695 directories already written are still there. The tool reports them and removes only the provably empty ones, because an id is a one-way hash of a path — "not in the recent list" is not proof a workspace is gone, only that nothing can name it.
+- **Status:** `controlled`
+
+### DC-050 — A disclosure conflates a boundary with a gap, and the plan follows the wrong one
+- **Signature:** a reader honestly reports what it could not resolve, and the report merges two different things: what the product **does not intend to read** (a runtime, a third-party package, a generated tree) and what it **meant to read and could not**. Both are "unresolved", so both are counted together. The number is arithmetically correct and describes something that does not exist — and because it is the largest number in the report, it becomes the top of somebody's list.
+- **Why it survives:** every check passes. The count is right, the disclosure fires only when there is something to disclose, and the wording is literally true — *"names something this scope does not contain"* is a true sentence about `import sys`. Nothing is wrong until a person reads it as a priority, and by then the cost has already been paid in planning rather than in code.
+- **Instance:** 2026-08-31. Python disclosed `python-imports-not-resolved (246 import(s) name something this scope does not contain)` on TheTerrace. I ranked it **the largest coverage gap in any built extractor** and put it top of a priority list — on the strength of the number alone. Measuring the targets took one query: **all 246, across all 32 distinct names, were the standard library** — `sys`, `pathlib`, `json`, `argparse`, `os`, `subprocess`, `urllib`. After teaching the extractor the difference: **2 genuine unknowns** (`coord_ids`, `bounded_process`). The gap was 1% of what the number said.
+- **It was hiding the real signal, too.** Two unidentifiable imports inside a count of 246 are invisible. Separating the two made a number nobody could act on into a number somebody can fix in an afternoon.
+- **The second half, one layer along.** The standard library was also being DRAWN — 226 edges, putting `sys`, `os`, `json` and `re` among the most connected nodes in the graph. The C# extractor had already declined to draw the BCL, with the reason written down: *"a first view centred on the BCL is not a picture of anybody's domain."* The same reasoning had simply never been applied to Python. **A principle recorded in one reader is not a principle the codebase holds.**
+- **And the fix's own filter was wrong.** The standard-library set was generated from `sys.stdlib_module_names` — correct — and filtered to drop "private names", which dropped `__future__`: the one module in the set that looks private and is imported constantly. 26 false unknowns, caught by measuring again after the fix rather than by assuming a generated list must be right.
+- **Control:** `PythonStandardLibrary`, generated from the interpreter rather than remembered, and `PythonImportBoundaryTests` pinning all three outcomes — resolved in-repo, standard library, genuinely unknown — plus that the standard library is counted and not drawn. The rule is written into `docs/plans/extractor-roadmap.md` as a standing rule for any extractor added later.
+- **The generalisation to apply elsewhere:** **a disclosure is a planning input, so it has to distinguish "will not" from "cannot".** Before acting on any count of unknowns, look at the unknowns — the query is cheap and the alternative is a session spent on a hole that is not there. And when a reader records a principle in its own comments, ask which other readers should be holding it.
+- **The residual was measured the next day, and it was wrong.** This entry said TypeScript's unresolved specifiers "are probably npm packages — probably, which is exactly the word this class is about". It was: **2 of the 12 were anything at all, and both were Node builtins**. The other 10 were invented (see DC-033). So the TypeScript import gap was **83% invention, 17% boundary, 0% coverage hole** — a register entry hedging correctly about its uncertainty and still landing on the wrong shape. **A `probably` in a register entry is a task, not a caveat**; this one sat for a day and would have sent the next session looking for packages that were not there.
+- **The same fix applied, from the runtime's own answer.** `NodeBuiltinModules` is generated from `require('module').builtinModules` on Node v24.18.0, mirroring `PythonStandardLibrary`. It distinguishes the 42 bare-importable builtins from the three reachable only behind `node:` (`test`, `sqlite`, `sea`) — so a bare `test` is correctly an npm package, not Node's test runner. Builtins and packages are counted, never drawn. After: TheTerrace has 2 builtins, 0 packages, **0 genuine unknowns**.
+- **Residual risk:** `react` on this repository is reported as a genuine unknown and is almost certainly npm. `package.json` `dependencies` would settle it without guessing; neither repository has one outside build output. Named as the upgrade trigger in the code rather than guessed at here.
+- **Status:** `controlled`
+
+### DC-052 — A bound is deterministic and orders by the wrong thing
+- **Signature:** a read is capped, and the cap is applied after an ordering chosen for **determinism** rather than for **importance** — alphabetical, insertion order, id order. Every property anyone thought to check holds: the same query returns the same rows, the omission count is honest, nothing is invented. What is missing is that the rows which survive were selected by a property of the *names*, so which facts a caller sees depends on how the thing happened to be called.
+- **Why it survives:** determinism is the property a bounded read is usually reviewed for, and this has it. The cap is disclosed and the count is right. It fails only for items that exceed the cap, which are the minority — and they are the most connected, most important ones, so the failure is concentrated exactly where it costs most and is rarest in a fixture.
+- **Instance:** 2026-08-31. `AssertionsTouching` capped at 50 ordered `subject, predicate, object`. A node with more facts than that lost its own `has_type`, `node_class`, `owned_by` and `review_by` to its own links, in alphabetical order. MEASURED: 12 of 877 knowledge documents were already over the ceiling before anything was added to them; simulating headings put `adr-0015-erasure-ledger-durable-model` at 44 headings and none of its identity. It is also why the knowledge reader correctly declined to emit headings — the extractor was working around a defect one layer down.
+- **Its sibling was found the same day, one caller along.** The node-content reader filtered this same capped list for a node's declaring fact, so `AppDbContext` — 244 edges, callers named `TheTerrace.Features.*` sorting before it — reported "no recorded source" while every small type worked. That was fixed with a dedicated query (DC-035's fourth instance). Two failures, one cause: **a window ordered by names, read by callers who wanted meaning.**
+- **Control:** `EvidencePredicates.Identity` — a deliberately small set of facts that say what a node IS — sorts first, then the node's own outbound facts, then inbound; alphabetical within each band, so determinism is untouched and the omission count still means what it says. Deliberately NOT "all attributes": `has_member` is an attribute and a type can carry forty, which would replace one flood with another. `ABoundedDescribeKeepsIdentityTests` builds a node whose identity sorts *after* its links and exceeds the cap — a fixture whose identity happened to sort first would pass against the unfixed reader and prove nothing. Observed failing: *"'has_type' fell outside a 50-row window on a node with 105 facts — the caller cannot tell what this node even is"*.
+- **The generalisation to apply elsewhere:** **a cap needs a ranking, and determinism is not one.** For every bounded read, ask what the caller would keep if it could only keep three rows, and put those first. Alphabetical order is a tiebreaker, not a priority.
+- **Residual risk:** the bands are coarse. Within "the node's own facts" a type with forty members still competes with its relations on name order, so a member-heavy type can still push a relation out. Measured as acceptable because members are attributes and the graph does not draw them; it would stop being acceptable if a surface started reading relations from this window expecting completeness.
+- **Status:** `controlled`
+
+### DC-051 — A fix for real duplication silently pays for it in resolution
+- **Signature:** two scopes overlap, so the same input is processed twice and every derived fact is stored more than once. The obvious fix is to stop the overlap — give each scope only its own inputs. It works, and it quietly removes the *context* the wider scope was providing: anything that resolved a reference by looking across the overlap can no longer see the other side. The duplication metric improves, a different capability degrades, and nothing connects the two numbers.
+- **Why it survives:** the fix is measured, and measured against the thing it set out to fix. Storage falls, counts become correct, no inputs are lost — every check the author thought to run passes. The regression is in a feature the author was not looking at, and it is only visible if the *outputs* are compared rather than the inputs.
+- **Instance:** 2026-08-31. Knowledge scopes nest — `knowledge:docs` walks everything beneath it and `knowledge:docs/adr` walks it again — so every knowledge fact was stored **~2.7 times**: 2,368 `node_class` rows for **877** distinct documents. The roadmap's own "2,359 documents" was that inflated number, repeated as a document count. Making the walk non-recursive fixed it exactly: **877 documents preserved**, knowledge facts 10,508 → 4,326.
+- **And it cost 30 of 42 prose-link edges**, delivered hours earlier. A markdown link from one directory to another only resolves for a scope that read both, and the recursive parent had been the only thing reading both. The de-duplication metric was perfect and a feature lost 71% of its output.
+- **Caught by comparing outputs, not inputs.** The document count was the safety check and it passed. `links_to` was checked only because it was new enough to still be in mind. **The rule that generalises: when a change is justified by one number, name the number that would get worse if the change were wrong, and read it too.**
+- **Resolution: reverted, not shipped.** The compensating fix — resolve link targets against the whole workspace while emitting facts only for the scope's own files — contradicts a deliberate design decision in the reader (`a link above the scope is its own boundary`) and the tests written for it. That is a redesign, not an integration, and shipping a 71% regression to reach it would have been the worse trade. Both halves are now item 1 on the extractor roadmap, together, with the measurement attached.
+- **The generalisation to apply elsewhere:** deduplication and resolution pull in opposite directions wherever scopes overlap. Before removing an overlap, ask what was using it — and prefer splitting the two jobs (read widely, emit narrowly) over choosing between them.
+- **Status:** `partially-controlled` — the trade-off is measured and recorded; neither half is fixed.
+
+### DC-053 — A worktree isolates the working tree, not everything a command touches
+- **Signature:** work is split across git worktrees precisely so two sessions cannot collide — separate working trees, separate indexes, separate HEADs. Then one of them uses a command whose state lives in the **shared** `.git` rather than in the worktree, and the isolation the whole arrangement was built on silently does not apply to that one operation. Nothing errors. The command does exactly what it is documented to do, on a stack that belongs to everybody.
+- **Why it survives:** the isolation is real for everything anyone thinks to test. Branches, indexes, HEADs and untracked files are all per-worktree, so the mental model "my worktree is mine" is correct almost everywhere — and it is reinforced every time it works. `refs/stash` is a single ref in the common directory. So is `refs/bisect`, so are `MERGE_HEAD`-style operations for a given worktree, and so are notes, config and hooks.
+- **Instance:** 2026-08-31. Two agents ran concurrently in `ai-de-knowledge-dedup` and `ai-de-csharp-calls`, both branched from the same commit, both under instructions that named worktree isolation as the reason they could work in parallel. One stashed its `src` changes to take before/after timings; the other stashed at almost the same moment with a colliding WIP message. The first `stash pop` restored **the other session's** 387-line `CSharpExtractor.cs` change into the wrong worktree, and the second pop took the first's knowledge work.
+- **Both agents caught it, and that is the only reason this is a near miss.** One recovered its source from a copy it had taken before its red runs and re-verified every measured number byte-identically afterwards; the other pushed the foreign change **back onto the stack** with an explicit message — `RESTORED by session/csharp-calls: another worktree's stash, popped here by accident (shared refs/stash)` — rather than discarding what it did not recognise. Verified at integration: nothing was lost, and the stash on the stack was a redundant copy of work already committed.
+- **The rule:** **`git stash` is a repository-global stack and is therefore not a worktree-local tool.** For a temporary revert while a sibling session is live, copy the file. The pack's worktree discipline (WT1–WT12) says a session gets its own tree so two agents cannot share an index — it does not yet say which commands escape that boundary, and this is the list to start: `stash`, `bisect`, notes, config, hooks.
+- **The generalisation to apply elsewhere:** when isolation is the reason two things may run at once, **enumerate what the isolation does not cover** before relying on it. "Separate working directories" is a statement about files, not about every piece of state a tool keeps.
+- **Control:** **WT13**, added to `.claude/knowledge/session-worktree-discipline.md` — the always-loaded rule, where a session reads it before opening a worktree rather than after colliding in one — plus a line in the self-verification checklist. Not mechanisable: nothing can stop a subprocess calling `git stash`, which is why it has to be a rule and why both agents preserving what they did not recognise is the behaviour worth keeping.
+- **Residual risk:** WT13 names `refs/stash` sharply and the rest of the shared directory generally (`refs/bisect`, notes, config, hooks). A session that meets a different piece of shared state will not find it listed — the rule it will find is the generalisation: enumerate what the isolation does not cover before relying on it.
+- **Status:** `partially-controlled`
+
+### DC-054 — A new pane placed into the focused stack hides the surface that stack already held
+
+- **Signature:** "I added X and Y disappeared." A new surface is added as a *tab* into an existing
+  stack (`AddSurface(focusedStackId, …)`), so it lands on top of whatever tab that stack already
+  showed and hides it. Here: adding a class diagram while focused on the graph tabbed the diagram
+  into `stack-graph` (the default layout stacks the canvas + a document surface together), so the
+  graph became a background tab and read as "gone."
+- **Why it survives:** the add succeeds, the model is valid, the surface set is correct, and no test
+  fails — the lost surface is *present*, just not *visible*. Focus-aware placement (a fix for an
+  earlier "it opened in the wrong window" report) made it worse by targeting the focused stack, which
+  is often the graph's.
+- **Instances:** 2026-08-31 — class diagram added on top of the graph. Fixed by
+  `DocumentPlacementPolicy`: a reference document tabs into a document stack, else splits BESIDE the
+  graph so both stay visible; never onto the canvas stack.
+- **Control:** `DocumentPlacementTests` — `OpeningAClassDiagram_KeepsTheGraphVisibleInItsOwnStack`
+  asserts the graph and the diagram end in DIFFERENT stacks. Plus `WorkbenchDiagnostics`
+  (`aide.workbench` ActivitySource + a JSON layout log) so a future placement report is traceable —
+  the workbench previously had no instrumentation at all.
+- **Status:** `controlled`
+
+### DC-055 — A one-line status region has no cap, so a long message eats the layout
+
+- **Signature:** a status strip / live region is a wrapping TextBlock in an Auto-height row with no
+  height cap or truncation. A normally-short channel occasionally carries a long message (a re-index
+  announcement is one sentence + 200+ analysis-boundary disclosures, ~5,000 chars), the row grows to
+  fit it, and it squeezes the real content to a sliver. Here it ate ~70% of the window.
+- **Why it survives:** every test and demo used a short status message; the "very long message" state
+  was never designed. The layout is valid; it is just catastrophically proportioned for one input.
+- **Instances:** 2026-08-31 — re-index diagnostics wall. Fixed: LiveRegion is single-line
+  (NoWrap + CharacterEllipsis); the full text is on hover (tooltip) and still read by AT.
+- **Control:** `WorkbenchAnnouncerTests` (long message → tooltip carries it; short → none). A status
+  region is one line by construction.
+- **Status:** `controlled`
+
+### DC-056 — A re-render helper mutates the caller's list, so a note duplicates per render
+
+- **Signature:** a render builds a `notes`/display list, a member/data prefetch re-renders with the
+  SAME list instance, and each render inserts its own note (`"Showing N of M"`) → the note appears
+  once per render (2×, 3×…). Introduced by the variable-height prefetch-then-rerender.
+- **Why it survives:** a single render is correct; the duplication only appears after an async
+  prefetch re-render, which unit tests without a members source never exercised.
+- **Instances:** 2026-08-31 — class diagram "Showing the 40 most-connected…" shown twice. Fixed: the
+  render builds a private DISPLAY copy for the disclosure and passes the PRISTINE notes to the
+  prefetch, so each render starts from the same base.
+- **Control:** `ShowGraph_WithMembersSource_DoesNotDuplicateTheTruncationNote_AcrossThePrefetchRerender`.
+- **Status:** `controlled`
+
+### DC-057 — A per-workspace layout restore faithfully brings back a degenerate saved state
+
+- **Signature:** opening a workspace restores its saved `layout.json` over the current arrangement
+  (US-9). When the saved layout is degenerate — e.g. it had lost the primary graph pane — the restore
+  brings back the broken, scattered arrangement, and the user reads "opening the workspace reset my
+  panes and lost the graph."
+- **Why it survives:** the restore is doing exactly what it is designed to do (faithful per-workspace
+  restore); the defect is upstream (a graph-less layout got saved) and the restore has no notion of a
+  "degenerate" state to reject.
+- **Instances:** 2026-08-31 — TheTerrace restored to a graph-less two-stack layout. Mitigated:
+  `LayoutRestoreGuard` keeps the current graph-bearing layout when the restore would drop the graph.
+  The broader per-workspace-vs-global fork is recorded in docs/notes/workspace-open-layout-restore.md.
+- **Control:** `LayoutRestoreGuardTests`; `WorkbenchDiagnostics` records which restore path was taken.
+- **Status:** `controlled` (RESOLVED — workspace-open no longer restores a per-workspace layout; the arrangement is kept. No restore = no degenerate restore. See docs/notes/workspace-open-layout-restore.md)
+
+### DC-059 — An automated conflict resolution stages the markers
+- **Signature:** a rebase or merge is scripted — resolve the known-conflicting files, `git add -A`, `--continue`, loop — because the same two append-only logs conflict on every integration and resolving them by hand each time is waste. Then a file conflicts that the script does not know about. `git add -A` stages it exactly as git left it, `--continue` commits it, and the conflict markers are now content. Nothing errors: the working tree is clean, the rebase finished, and the commit looks like every other one.
+- **Why it survives:** the script is correct for the case it was written for, which is the case that occurs almost every time. This session integrated a dozen times with an append-only log merge tool and it worked; the thirteenth had a third file in conflict and the blanket `add -A` swallowed it. The build does not catch it — markers in a markdown file compile fine — and the tests do not either. It was caught only because a gate happened to parse that file for structure and reported a symptom two steps removed: *"DC-054 has no Status line"*.
+- **Instance:** 2026-08-31. `docs/lessons/defect-classes.md` was committed with `<<<<<<< HEAD`, `=======` and `>>>>>>>` in it, and a duplicated heading, after a scripted rebase whose loop resolved the two audit logs and staged everything else untouched. The register gate flagged a structural oddity, not the markers themselves; the markers were found by looking.
+- **The blast radius is the point.** Markdown, JSON, YAML and config files take conflict markers silently. Source does not, which is why this is a documentation-and-configuration defect and why a green build proves nothing about it.
+- **Control:** grep the tree for `^<<<<<<< `, `^=======$` and `^>>>>>>> ` after any scripted resolution, before committing — one command, and it found this in a second. The scripted loop keeps its value; what it needed was a check that the only files it staged blind were the ones it knew how to resolve.
+- **The generalisation to apply elsewhere:** **`git add -A` after an automated resolution is a claim that every conflict was handled, and a script can only handle the ones it was told about.** Any automation that resolves conflicts should verify the result contains no markers rather than assume its own completeness — the same shape as trusting an exit code instead of reading the state.
+- **Status:** `controlled`
+
+### DC-058 — Every warning is correct and the wall of them hides the one that matters
+- **Signature:** a component reports what it could not do, per unit of work, conditionally, with a count — every rule a good disclosure is supposed to follow. Then the unit of work multiplies. Thirty-nine scopes each raise the same two boundaries with their own numbers, so nothing deduplicates them, and a surface that concatenates the list shows sixty near-identical sentences. Each one is true. The reader stops reading, and the single line that was a real finding is somewhere in the middle of them.
+- **Why it survives:** every control passes and every rule was followed. This codebase has spent real effort making disclosures fire — conditional, counted, never blanket, asserted in both directions — and **none of that effort was about what a reader does with sixty of them**. The failure is not in any disclosure; it is in the absence of anyone owning the aggregate. It also grows silently: each new extractor and each new scope adds lines to a list nobody re-reads.
+- **Instance:** 2026-08-31. A real index of TheTerrace produced **178 disclosure strings, 108 distinct, for 28 actual classes**. `knowledge-headings-not-analysed` and `knowledge-inline-code-not-resolved` appeared **39 times each** — once per knowledge scope, each with a different count, so `Distinct()` merged none. The user's screenshot shows the result: the disclosure text occupies roughly four fifths of the window and the graph is a strip along the top. Buried in it, in the same typeface as everything else, is `knowledge-prose-link-target-missing (107 …)` — 109 rotted cross-references, the most actionable thing the product had ever told anybody.
+- **The numbers were also less useful than they looked.** "914 headings in this scope" answers nothing a person asks; "4,471 headings across the workspace" answers "how much of this repository is unread". Folding produced facts that had never been stated, from data that had been there all along.
+- **The fix nearly shipped with a worse defect.** Summing the leading count and keeping the rest of one scope's sentence rendered `knowledge-headings-not-analysed (4,471 heading(s) in 10 document(s))` — a true workspace total beside one scope's document count, reading as though somebody had counted both. **A stale number inside a corrected one is worse than either alone.** Everything from the second number onward is now cut, and the dangling preposition that leaves is trimmed.
+- **Folding was necessary and not sufficient.** 28 lines is a better list and still not a status message: the user's actual words were *"the status bar should not have more than a couple lines… anything more should be a modal fly-in as opposed to taking up real estate."* `IndexSummary.Describe()` now names the largest disclosure and counts the rest — **8,000 characters to 139** — and the full folded list stays on the result for a surface that can hold it. **The right length for a diagnostic depends on where it is shown, so the aggregate needs an owner per surface, not one globally.**
+- **Control:** `DisclosureSummary.Fold`, used by every surface that renders disclosures (the graph projection, the canvas view-model, the index summary). `DisclosureSummaryTests` pins the total, the cut, the dangling word, the single-scope case that must keep its exact sentence, and that two different classes never merge — that last one because folding a boundary and a gap together is DC-050 arriving from a new direction.
+- **The generalisation to apply elsewhere:** **a rule about one item is not a rule about the list.** Whenever something is emitted per unit — a warning, a log line, a health finding — ask what it looks like at a hundred units, and give the aggregate an owner. The signal-to-noise ratio of a diagnostic is a property of the collection, not of any member of it.
+- **Residual risk:** folding is textual. It assumes every scope emits the same sentence template for a class, which is true today and is not enforced anywhere; a reader that varied its wording per scope would fold into a total wearing one arbitrary explanation.
+- **Status:** `controlled`
+
+### DC-060 — A deterministic test double produces colliding output across instances
 
 - **Signature:** two independent instances of a "deterministic" fake (a capability, id, or token
   factory seeded from a counter) emit identical values, so a negative test that forges a value from a
@@ -1380,7 +1781,7 @@ for both or split.*
   prevents a future non-salted deterministic double from reintroducing the shape.
 - **Status:** `partially-controlled`
 
-### DC-040 — A real-process daemon-reuse test is timing-fragile under full-suite load
+### DC-061 — A real-process daemon-reuse test is timing-fragile under full-suite load
 
 - **Signature:** a test that starts a real out-of-process daemon (or reuses one over a named pipe /
   workspace mutex) passes when run in isolation but **intermittently fails when the whole suite runs**,
@@ -1420,7 +1821,7 @@ for both or split.*
   launch.
 - **Status:** `controlled`
 
-### DC-041 — Untrusted terminal content drives the render cursor out of the grid and an unguarded index in OnRender crashes the whole app
+### DC-062 — Untrusted terminal content drives the render cursor out of the grid and an unguarded index in OnRender crashes the whole app
 
 - **Signature:** a WPF/`OnRender` draw path indexes a data model at a **cursor/caret position that the
   model legitimately allows to sit off the grid** — for a terminal, the *pending-wrap* column
@@ -1457,7 +1858,7 @@ for both or split.*
   added, to avoid masking future render bugs now that the root cause and its sibling are swept.
 - **Status:** `controlled`
 
-### DC-042 — A workspace-dependent feature wired only in the constructor is dropped by the real composition root
+### DC-063 — A workspace-dependent feature wired only in the constructor is dropped by the real composition root
 
 - **Signature:** a feature is wired into a shell/host in its **constructor**, but the object is built
   before the thing it depends on exists (here: `MainWindow` builds `new WorkbenchShell(null)` before the
@@ -1476,7 +1877,7 @@ for both or split.*
   workspace and the real path, `WorkbenchShell.AttachWorkspace`, rebuilt the factory as
   `new SurfaceContentFactory(queries)` — dropping the watcher queries and never opening the
   `WatcherHost`. Every App test passed (they build the factory directly). Found while investigating the
-  DC-041 crash. **Fixed** the same day: a `StartWatcher(dataDirectory)` helper opens the host and returns
+  DC-062 crash. **Fixed** the same day: a `StartWatcher(dataDirectory)` helper opens the host and returns
   the queries, called from **both** the constructor and `AttachWorkspace`; the shell then
   `Adapter.Invalidate(...)`s the stateless watcher surfaces so the next `Render` rebuilds them against
   the wired factory (never a terminal — DC-029).
@@ -1493,7 +1894,7 @@ for both or split.*
   auto-emitting session wrapper is future work.
 - **Status:** `controlled`
 
-### DC-043 — A coordination session-end removed the mapping but never ended the session, so liveness kept lying "Alive"
+### DC-064 — A coordination session-end removed the mapping but never ended the session, so liveness kept lying "Alive"
 - **Signature:** an ingest handles a `session-end` (or close) event by forgetting the session's *external→internal id mapping*, but never marks the *internal* session ended in the store. Liveness is a projection over the store (Ended iff `IsEnded(sessionId)`, else Alive/Stale by heartbeat recency), so a closed session that was never marked ended keeps reporting **Alive** (or drifts to **Stale**) forever — the watcher shows a live session for a terminal that is gone.
 - **Why it survives:** the mapping removal is the *visible* half of "end the session" and it works — a subsequent heartbeat for that external id is correctly ignored — so the handler looks complete. Nothing in the end path reads liveness back, and a round-trip test that only checks "no new session on a stale heartbeat" passes. The lie only shows when something *evaluates liveness* after the end.
 - **Instances:** 2026-08-31 — `InjectedContractIngest.ContractSessionEnd` (conn-2/conn-5) removed `_byExternalId[externalId]` but never called into the store, so `SessionCoordinationEmitter.End` → coordination `session-end` → pump left the session `Alive`. Found by the conn-8 emitter test `End_WritesSessionEnd_AndStopsTracking` asserting `LivenessState.Ended` after end+pump. **Fixed** the same day: added `IngestHost.EndSession(sessionId) => _store.MarkEnded(sessionId)` and made the `ContractSessionEnd` case call it (via the external→internal lookup) *before* removing the mapping.
@@ -1501,10 +1902,18 @@ for both or split.*
 - **Residual risk:** the shell drives ends by *reconcile from the current terminal snapshot* (a closed pane disappears from the snapshot and is ended on the next tick, ≤2s later), not by a precise per-pane close event; a session whose pane vanishes without the loop running (e.g. process kill mid-tick) is ended only when the loop next runs, and on host dispose tracked sessions are dropped without an explicit end (they go Stale, then the host's DB is disposed). The async shell loop timing itself is not unit-tested (covered by the Core end-to-end reconcile test + manual smoke).
 - **Status:** `controlled`
 
-### DC-044 — A new workbench command must be wired into three coupled places or the menu drifts from the palette
+### DC-065 — A new workbench command must be wired into three coupled places or the menu drifts from the palette
 - **Signature:** a command added to the `WorkbenchCommandCatalog.All` list (so it appears in the Ctrl+K palette) but not to the **hard-coded** per-menu id lists in `MainMenuBuilder`, and/or not reflected in the hard-coded per-menu **count** assertions in `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders`. The palette is data-driven from the catalog; the menu bar is a parallel hand-maintained list. Add a command in one place and the two silently disagree - a command reachable by keyboard-palette but absent from the menu (or vice-versa).
 - **Why it survives:** the catalog edit alone builds clean and the command works from the palette, so nothing local points at the menu. The drift is only visible when a test that reflects over *both* sources runs.
 - **Instances:** 2026-08-31 — conn-11 added `watcher.raiseDispute` to the catalog with `Menu:"_View"`; the build was clean and the palette worked, but `MainMenuTests.TheMenuCoversEveryCatalogCommand` and `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders` both reded until the id was added to `MainMenuBuilder`'s `_View` list and the `_View` count bumped 4→5. **The control worked** — it caught the drift before merge.
 - **Control:** the two conformance tests, **already in place** — `MainMenuTests.TheMenuCoversEveryCatalogCommand` (every catalog command appears in exactly one menu) and `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders` (declared per-menu counts equal what the builder renders). They fail closed on any catalog/menu drift. Generalisation: **when two sources must agree (a data-driven list + a hand-maintained parallel list), a reflection-over-both conformance test is the control that makes the drift a red, not a production surprise** — and adding an item means updating every coupled source in the same change.
 - **Residual risk:** the coupling itself remains (the menu is not yet generated from the catalog's `Menu` field); a future refactor could make the builder data-driven and delete the parallel list. Until then the control holds the invariant.
 - **Status:** `controlled`
+
+### DC-066 — Parallel branches independently assign the same sequential IDs to different entries
+- **Signature:** two branches diverge from a common point in an append-only, sequentially-numbered register (defect classes, ADRs, migrations) and each appends new entries starting at the next free number. On merge, the same IDs (here DC-039..DC-044) denote **different** entries on each side, and every code/doc reference to those IDs is now ambiguous. A 3-way text merge cannot resolve it — both sides "added lines".
+- **Why it survives:** each branch is internally consistent and its gate passes in isolation; the collision only exists in the union, and a naive resolution (keep both, or take one side) either duplicates an ID (register gate fails) or silently drops a class. Worse, a blanket find-replace to renumber one side corrupts the *other* side's references to the same numbers.
+- **Instances:** 2026-08-31 — forward-integrating `feature/agent-watcher-substrate` (DC-039..044: test-double, daemon-flake, cursor-crash, watcher-wiring, session-end, menu-drift) into `origin/main` (DC-039..059, different classes). Resolved by keeping main's canonical DC-039..059 verbatim and **renumbering this branch's 6 classes to DC-060..065**, then updating references **per-file, disambiguated by meaning** (my crash ref in TerminalView → DC-062; main's "two kinds" ref in KnowledgeExtractor left as DC-041). A blanket replace was explicitly rejected as it would have corrupted main's same-numbered references.
+- **Control:** `verify-defect-register.py` (unbroken sequence + header counts) catches the duplicate-ID/miscount failure mode at the gate — it is what forces a renumber rather than a silent duplicate. Generalisation: **the integrating branch renumbers its own new entries to follow the trunk's highest, and updates references scoped by meaning, never by blanket replace.** A stronger future control would reserve per-branch ID ranges (or use content-hash ids) so the collision cannot arise.
+- **Residual risk:** reference updates are semantic, not mechanical, so a missed reference keeps an old number; prose references in generated/derived files (docs-index.js) are regenerated from source. The renumber breaks any *external* citation of this branch's pre-merge DC-041..044 (e.g. in commit messages), which are historical and left as-is.
+- **Status:** `partially-controlled`

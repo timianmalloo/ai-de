@@ -1,6 +1,8 @@
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Interop;
+using System.Windows.Media;
 using AiDe.App.ViewModels;
 using AiDe.App.Workbench;
 
@@ -8,6 +10,8 @@ namespace AiDe.App;
 
 public partial class MainWindow : Window
 {
+    private readonly ShellModeController _mode;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -40,6 +44,28 @@ public partial class MainWindow : Window
         RootLayer.Children.Add(Shell.Palette.Root);
 
         Shell.Bind(this);
+
+        // Primary view mode (ADR-0017): the Explore rail item toggles the body between the workbench
+        // docking host and the full-window Explorer surface. Shell is held for the window's life, so
+        // the swap only unparents the docking host — the workbench (and a running terminal) survive.
+        _mode = new ShellModeController(
+            WorkbenchHost,
+            Shell.Manager,
+            () => new ExplorerSurface(Shell.CreateExplorerGraph(), new NodeReaderView()));
+        _mode.ModeChanged += (_, mode) =>
+        {
+            ReflectMode(mode);
+
+            // Reload the Explorer graph with the CURRENT workspace when entering. The surface is
+            // retained (US-E6), so without this a surface first created before a workspace opened
+            // would keep showing "No workspace is open" on every later entry. No-ops on the very
+            // first entry (the canvas is not Ready yet); its own NavigationCompleted does that load.
+            if (mode == ShellViewMode.Explorer && _mode.ExplorerSurface is ExplorerSurface explorer)
+            {
+                _ = explorer.Graph.RefreshAsync();
+            }
+        };
+        ReflectMode(ShellViewMode.Workbench);
 
         // The most common moment to lose an arrangement is rearranging and immediately closing, so
         // the pending debounced save is flushed on the way out rather than left to a timer.
@@ -152,6 +178,21 @@ public partial class MainWindow : Window
     {
         Shell.Controller.Execute("workbench.resetLayout");
         Shell.Adapter.Render();
+    }
+
+    /// <summary>Toggles the shell between the workbench and the full-window Explorer (ADR-0017).</summary>
+    private void OnToggleExplorer(object sender, RoutedEventArgs e) => _mode.Toggle();
+
+    /// <summary>Reflects the active view mode on the Explore rail item — accent bar, pill, icon colour.</summary>
+    private void ReflectMode(ShellViewMode mode)
+    {
+        var active = mode == ShellViewMode.Explorer;
+        ExploreAccentBar.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
+        ExploreRailButton.Background = active ? (Brush)FindResource("SurfaceRaisedBrush") : Brushes.Transparent;
+        ExploreRailButton.Foreground = active
+            ? (Brush)FindResource("AccentBrush")
+            : (Brush)FindResource("TextMutedBrush");
+        AutomationProperties.SetName(ExploreRailButton, active ? "Explorer mode (active)" : "Explorer mode");
     }
 
     // FACELIFT — the window's own chrome, drawn by DWM, not by us. AllowsTransparency stays False

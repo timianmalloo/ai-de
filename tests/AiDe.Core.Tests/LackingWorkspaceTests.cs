@@ -252,7 +252,14 @@ public sealed class LackingWorkspaceTests : IDisposable
             && a.Subject.EndsWith("Service", StringComparison.Ordinal));
         Assert.Contains(facts, a => a.Predicate == "has_type" && a.Object == "python-function"
             && a.Subject.EndsWith("main", StringComparison.Ordinal));
-        Assert.Contains(facts, a => a.Predicate == "imports" && a.Object == "os");
+        // `os` is NOT an edge. The standard library is a boundary of this product, not a gap in it,
+        // and drawing it put sys/os/json/re among the most connected nodes of a real graph — the same
+        // reason the C# extractor declines to draw the BCL. It is counted in a disclosure instead.
+        Assert.DoesNotContain(facts, a => a.Predicate == "imports" && a.Object == "os");
+
+        Assert.Contains(facts, a => a.Predicate == "discloses"
+            && a.Object.StartsWith(
+                PythonExtractor.Disclosures.StandardLibraryNotIndexed, StringComparison.Ordinal));
 
         // The METHOD is not claimed. Only column-zero declarations are seen, and asserting `handle`
         // as a module-level function would put a symbol in the graph no importer can reach.
@@ -307,7 +314,10 @@ public sealed class LackingWorkspaceTests : IDisposable
             Directory.CreateDirectory(Path.Combine(r, "pkg"));
             File.WriteAllText(Path.Combine(r, "pkg", "models.py"), "class Order:" + (char)10 + "    pass" + (char)10);
             File.WriteAllText(Path.Combine(r, "pkg", "service.py"),
-                "import os" + (char)10 + "from .models import Order" + (char)10);
+                // A stdlib import, a resolvable local one, and one nobody can identify — the three
+                // outcomes this test distinguishes.
+                "import os" + (char)10 + "import third_party_thing" + (char)10
+                + "from .models import Order" + (char)10);
         });
 
         using var core = WorkspaceCore.Open("pyimp", root, Path.Combine(_dir, "pyimpdata"),
@@ -321,8 +331,13 @@ public sealed class LackingWorkspaceTests : IDisposable
         var resolved = Assert.Single(imports, i => i.Object == "pkg/models");
         Assert.Equal(VerificationStatus.Verified, resolved.Status);
 
-        var external = Assert.Single(imports, i => i.Object == "os");
-        Assert.Equal(VerificationStatus.Inferred, external.Status);
+        // The standard library is counted, not drawn — so the contrast this test exists to pin is
+        // now between a resolved local module and an import nobody can identify, which is the pair
+        // that actually differs in status.
+        Assert.DoesNotContain(imports, i => i.Object == "os");
+
+        var unknown = Assert.Single(imports, i => i.Object == "third_party_thing");
+        Assert.Equal(VerificationStatus.Inferred, unknown.Status);
     }
 
     [Fact]
@@ -383,8 +398,21 @@ public sealed class LackingWorkspaceTests : IDisposable
         Assert.Contains(facts, a => a.Predicate == "has_type" && a.Object == "typescript-interface"
             && a.Subject.EndsWith(".Order", StringComparison.Ordinal));
 
-        // Not exported, so not claimed.
-        Assert.DoesNotContain(facts, a => a.Subject.EndsWith(".hidden", StringComparison.Ordinal));
+        // POLICY CHANGED, and this assertion changed with it rather than being deleted. It read "not
+        // exported, so not claimed" — which is why 13 TypeScript scopes on TheTerrace produced no
+        // class, function, interface or type at all while every one of them disclosed
+        // `typescript-non-exported-not-analysed`. A function at column zero is a thing that exists;
+        // the export keyword says who may REACH it, so it is now an attribute of the declaration
+        // rather than a condition on seeing it. The limit that remains is column zero, which is what
+        // `typescript-nested-declarations-not-analysed` discloses.
+        Assert.Contains(facts, a => a.Predicate == "has_type" && a.Object == "typescript-function"
+            && a.Subject.EndsWith(".hidden", StringComparison.Ordinal));
+
+        Assert.Contains(facts, a => a.Predicate == "is_exported" && a.Object == "false"
+            && a.Subject.EndsWith(".hidden", StringComparison.Ordinal));
+
+        Assert.Contains(facts, a => a.Predicate == "is_exported" && a.Object == "true"
+            && a.Subject.EndsWith(".App", StringComparison.Ordinal));
 
         // Nor is the declaration file.
         Assert.DoesNotContain(facts, a => a.Subject.Contains("globals", StringComparison.Ordinal));

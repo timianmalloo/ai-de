@@ -1,6 +1,6 @@
 ---
 id: proof-terminal-cursor-render-crash
-title: "Proof Pack - Terminal cursor render crash fix (DC-041)"
+title: "Proof Pack - Terminal cursor render crash fix (DC-062)"
 type: proof-pack
 status: accepted
 owner: "@timianmalloo"
@@ -11,13 +11,13 @@ links:
 review-by: 2027-02-28
 review-suggested: []
 summary: >-
-  Evidence that the terminal cursor render crash (DC-041) is fixed: CellUnderCursor() returns null at the
+  Evidence that the terminal cursor render crash (DC-062) is fixed: CellUnderCursor() returns null at the
   pending-wrap cursor position (the exact index that was one past the end of the cell array), the renderer
   reads through it instead of the raw indexer, and the guard is mutation-verified to reproduce the original
   IndexOutOfRangeException when removed. 3 new tests, full Core 970/0, App 138/0.
 ---
 
-# Proof Pack: Terminal cursor render crash fix (DC-041)
+# Proof Pack: Terminal cursor render crash fix (DC-062)
 
 - **Components:** `src/AiDe.Core/Terminal/TerminalScreen.cs` (`CellUnderCursor()`), `src/AiDe.App/Workbench/TerminalView.cs` (`DrawCursor` reads through it + clamps the drawn rect).
 - **Tests:** `tests/AiDe.Core.Tests/TerminalScreenTests.cs` — 3 new (26 total in the class); full `AiDe.Core.Tests` **970/0**, `AiDe.App.Tests` **138/0**; builds clean (0 warnings, `TreatWarningsAsErrors`).
@@ -41,7 +41,7 @@ summary: >-
 render test ever executed the crashing branch — the crash needs a *focused* terminal in real use. The
 model-level regression (`CellUnderCursor` at pending-wrap) is the deterministic control, and the
 `DrawCursor` change is a two-line switch to the safe accessor + a rect clamp, reviewed against the crash
-stack. DC-041's generalisation (a render path must read untrusted content through a bounds-safe accessor,
+stack. DC-062's generalisation (a render path must read untrusted content through a bounds-safe accessor,
 never a raw indexer) is the durable control.
 
 ## Security / robustness note
@@ -55,7 +55,7 @@ bugs now that the root cause and its sibling are swept).
 ## Residual risk
 
 - **Other future `OnRender` reads** by a cursor/derived position must use `CellUnderCursor()` or a
-  bounded loop — DC-041 records the rule; there is no automated focused-render test (the focus gate makes
+  bounded loop — DC-062 records the rule; there is no automated focused-render test (the focus gate makes
   it impractical), so the control is the model-level accessor + the registered class.
 - **Separate defect (not this fix):** the watcher UX is inert at runtime — the wiring is in the shell
   constructor, but the runtime path (`AttachWorkspace`) drops it. Documented in the investigation report

@@ -339,7 +339,8 @@ public sealed class ScopeRefreshTests
 
             var response = await client.InvokeAsync(
                 ScopeRefreshService.Operations.RefreshStatus, "cmd-x", pipeName, Epoch,
-                "{\"commandId\":\"never-started\"}", CancellationToken.None);
+                IpcPayloadTestExtensions.Json("{\"commandId\":\"never-started\"}"),
+                CancellationToken.None);
 
             Assert.False(response.Ok);
             Assert.Equal(IpcErrorCodes.CommandUnknown, response.ErrorCode);

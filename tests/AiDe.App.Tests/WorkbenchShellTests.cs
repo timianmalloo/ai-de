@@ -173,7 +173,19 @@ public sealed class WorkbenchShellTests
     }
 
     /// <summary>A concrete no-op workspace read surface for attach tests (base defaults, nothing thrown).</summary>
-    private sealed class BareQueries : FakeWorkspaceQueries;
+    private sealed class BareQueries : FakeWorkspaceQueries
+    {
+        // Main added BindJoins to AttachWorkspace, whose join Source calls FindAsync + EvidenceAsync during
+        // attach. This test's intent is an EMPTY store, so both return empty rather than the base's refusal.
+        public override Task<AiDe.Core.Projections.FindResult> FindAsync(
+            string term, int maxResults, CancellationToken cancellationToken) =>
+            Task.FromResult(new AiDe.Core.Projections.FindResult(
+                [], new AiDe.Core.Projections.ResultBounds(0, 0, 1024, 0, 0, 0, 0, false, null), "rev-empty"));
+
+        public override Task<AiDe.Core.Projections.EvidencePage> EvidenceAsync(
+            string? cursor, int maxAssertions, CancellationToken cancellationToken) =>
+            Task.FromResult(new AiDe.Core.Projections.EvidencePage([], null, "rev-empty"));
+    }
 
     [Fact]
     public void AttachWorkspace_WiresTheWatcher_SoTheSessionsPaneIsLive_NotUnavailable()

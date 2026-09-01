@@ -18,7 +18,7 @@ summary: >-
   The app-side writer that makes a terminal/agent session appear in the watcher: a pure, testable
   SessionCoordinationEmitter (Register/Heartbeat/HeartbeatAll/End/Reconcile) over coordination-contract
   logs, plus the WorkbenchShell loop that reconciles the live terminal panes into coordination sessions
-  and pumps them into the store. Also closes the session-end-that-never-ended liveness gap (DC-043).
+  and pumps them into the store. Also closes the session-end-that-never-ended liveness gap (DC-064).
 ---
 
 # Session Coordination Emitter (conn-8)
@@ -26,7 +26,7 @@ summary: >-
 ## Problem & spec trace
 
 The watcher only ever showed a session if *something* wrote a coordination-contract log under
-`<dataDir>/loomkeeper-coord` (spec US-4 registration; DC-042 residual risk). Nothing in the tool
+`<dataDir>/loomkeeper-coord` (spec US-4 registration; DC-063 residual risk). Nothing in the tool
 wrote one, so a terminal the operator opened was invisible to the watcher — the UX was wired but
 inert against real terminals. conn-8 supplies the missing **writer** and drives it from the shell so
 opening a terminal pane makes a live session appear (US-4/US-6), and closing it ends the session
@@ -63,7 +63,7 @@ loop (`WatcherLoopAsync`, off the UI thread) that every 2s:
 worktree branch). All required attributes are non-empty, so a register is never quarantined
 (LK-0004). A hiccup on any tick is swallowed — watcher work never takes down the workbench.
 
-## The liveness gap this closes (DC-043)
+## The liveness gap this closes (DC-064)
 
 `InjectedContractIngest.ContractSessionEnd` removed the external→internal id mapping but never marked
 the internal session ended, so liveness (a projection reading `IsEnded`) kept reporting **Alive** for
@@ -78,9 +78,9 @@ called from the `ContractSessionEnd` case before the mapping is removed. Control
 | Register with a missing required attribute | The registrar throws `MalformedEvent` (LK-0004) and quarantines it (counted, no crash). `IdentityFor` supplies non-empty values so this cannot happen from the shell. |
 | Heartbeat/End for an unknown id | No-op (guarded by the live set). |
 | Re-register the same id | Idempotent — heartbeats instead (the `_live.Add` guard). |
-| Session-end that leaves liveness Alive | Closed by DC-043 — `EndSession` marks the store, liveness reads Ended. |
+| Session-end that leaves liveness Alive | Closed by DC-064 — `EndSession` marks the store, liveness reads Ended. |
 | Reconcile snapshot read off the UI thread | Safe — `Service.Current` is an immutable layout snapshot. |
-| A pane vanishes between ticks | Ended on the next tick (≤2s); residual risk recorded (DC-043). |
+| A pane vanishes between ticks | Ended on the next tick (≤2s); residual risk recorded (DC-064). |
 | A reconcile/pump throws | Swallowed per tick; the loop continues; the workbench is never blocked. |
 
 ## Boundary set

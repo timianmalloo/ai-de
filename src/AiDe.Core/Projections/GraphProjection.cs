@@ -19,7 +19,21 @@ namespace AiDe.Core.Projections;
 /// <c>string</c> alone. Ranking by raw degree therefore puts the BCL at the centre of a picture of
 /// somebody's domain, and capping by raw degree drops their code to keep it.
 /// </remarks>
-public sealed record GraphNode(string Id, string Label, string Kind, int Degree, bool IsExternal);
+/// <param name="IsKnowledge">
+/// Whether the producer declared this node as knowledge rather than source.
+/// </param>
+/// <remarks>
+/// <b>Reported by the user: the Knowledge chip read 0 on a repository holding 2,343 knowledge
+/// nodes.</b> The graph carried each node's fine <c>Kind</c> — and on that repository the knowledge
+/// kinds are <c>spec</c> and <c>knowledge-epl-fan-platform</c>, which is a name that repository
+/// invented. A chip matching a fixed list of type names cannot work across repositories, and
+/// widening the list only moves the problem to the next repository (DC-033).
+///
+/// The coarse class is a DECLARED dimension — the producer says it (<c>node_class</c>) — so a filter
+/// can ask the question directly instead of recognising spellings.
+/// </remarks>
+public sealed record GraphNode(
+    string Id, string Label, string Kind, int Degree, bool IsExternal, bool IsKnowledge = false);
 
 /// <summary>One relationship, with the status of the evidence behind it.</summary>
 public sealed record GraphEdge(string From, string To, string Predicate, VerificationStatus Status);
@@ -55,12 +69,31 @@ public sealed record GraphEdge(string From, string To, string Predicate, Verific
 /// <c>TheTerrace.Features</c> at depth 3 and receive nothing, with no error and no way to tell that
 /// from an empty group.</para>
 /// </remarks>
+/// <param name="ExcludeEdges">
+/// Edge predicates to leave out entirely. Null keeps every kind.
+/// </param>
+/// <remarks>
+/// <para><b>Why excluding rather than selecting.</b> MEASURED on TheTerrace: the canvas's own default
+/// spends <b>702,425 of 852,680 bytes on edges</b> — 82% — and two predicates are 74% of them
+/// (<c>depends_on</c> 2,155, <c>calls</c> 1,272). Edges, not nodes, are what fills the frame, so the
+/// only lever that buys a bigger picture is dropping a kind.</para>
+///
+/// <para>An <i>include</i> list would be a caller restating the extractors' vocabulary, and would go
+/// stale silently the first time a reader emitted a predicate nobody had added to it — the shape this
+/// codebase has paid for repeatedly (DC-042, DC-022). Excluding means a new predicate appears in
+/// every view by default, which is the safe direction: a caller sees something unexpected rather than
+/// silently missing something.</para>
+///
+/// <para>Applied BEFORE the cap, like every other filter here. An excluded edge frees its bytes for
+/// nodes rather than being trimmed after the ranking has already been paid for (DC-035).</para>
+/// </remarks>
 public sealed record GraphQuery(
     int MaxNodes = GraphProjection.DefaultMaxNodes,
     IReadOnlyList<string>? Kinds = null,
     string? ScopeId = null,
     bool IncludeExternal = true,
-    string? GroupId = null);
+    string? GroupId = null,
+    IReadOnlyList<string>? ExcludeEdges = null);
 
 /// <summary>The whole graph, and what it left out.</summary>
 /// <param name="Omitted">Nodes present in the evidence and not returned, because a cap applied.</param>
@@ -111,6 +144,10 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
 
         var disclosures = new List<string>();
 
+        var excluded = query.ExcludeEdges is { Count: > 0 }
+            ? query.ExcludeEdges.ToHashSet(StringComparer.Ordinal)
+            : null;
+
         // Declared HERE: something in this workspace says what it is or where it lives. Everything
         // else is a name this code refers to and does not contain.
         var declared = assertions
@@ -119,6 +156,7 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
             .ToHashSet(StringComparer.Ordinal);
 
         var kinds = new Dictionary<string, string>(StringComparer.Ordinal);
+        var knowledge = new HashSet<string>(StringComparer.Ordinal);
         var declaredIn = new Dictionary<string, string>(StringComparer.Ordinal);
         var mentioned = new HashSet<string>(StringComparer.Ordinal);
         var candidateEdges = new List<GraphEdge>();
@@ -131,6 +169,24 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
                 continue;
             }
 
+            // An edge kind the caller does not want costs nothing: not an edge, and not a reason to
+            // draw the node at its far end. A node this workspace DECLARES still survives, because
+            // its own `has_type` mentions it — so excluding `calls` hides call relationships without
+            // hiding the types that make them.
+            if (excluded is not null && excluded.Contains(assertion.Predicate))
+            {
+                continue;
+            }
+
+            // Where a scope's files live is metadata ABOUT a scope, and a scope is not a node here —
+            // every other fact naming one does so through an attribute, so scopes have never been
+            // drawn. Letting this one through would put 67 directory-shaped nodes in TheTerrace's
+            // graph, which is a surface change nobody asked for while adding a content reader.
+            if (assertion.Predicate == "declared_at")
+            {
+                continue;
+            }
+
             // An attribute describes its subject. `has_type` gives the node its kind; the others are
             // recorded as facts and are not relationships between two things.
             if (EvidencePredicates.Attributes.Contains(assertion.Predicate))
@@ -138,6 +194,10 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
                 if (assertion.Predicate == "has_type")
                 {
                     kinds[assertion.Subject] = assertion.Object;
+                }
+                else if (assertion.Predicate == "node_class" && assertion.Object == "knowledge")
+                {
+                    knowledge.Add(assertion.Subject);
                 }
                 else if (assertion.Predicate == "declared_in")
                 {
@@ -205,10 +265,15 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
         return new WorkspaceGraph(
             [.. nodes.Select(kv => new GraphNode(
                 kv.Key, Label(kv.Key), kinds.GetValueOrDefault(kv.Key, "external"), kv.Value,
-                IsExternal: !declared.Contains(kv.Key)))],
+                IsExternal: !declared.Contains(kv.Key),
+                IsKnowledge: knowledge.Contains(kv.Key)))],
             visible,
             omitted,
-            [.. disclosures.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)],
+            // Folded by class, not deduplicated. 39 knowledge scopes each disclose their own
+            // heading count, so `Distinct` merges nothing and the caller receives 108 lines for 28
+            // classes — measured on a real workspace, where it filled the window and buried the one
+            // finding that mattered.
+            [.. AiDe.Core.Facts.DisclosureSummary.Fold(disclosures)],
             sourceRevision);
     }
 

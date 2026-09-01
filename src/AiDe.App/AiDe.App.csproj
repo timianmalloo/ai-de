@@ -18,6 +18,11 @@
       pane is floated (spike webview2-airspace).
     -->
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3485.44" />
+    <!--
+      ADR-0019: native AvalonEdit (MIT) for the read-only code viewer — a pure WPF Control, so no
+      HwndHost/WebView2 airspace (unlike Monaco), confirmed by the spikes/avalonedit-viewer PoC.
+    -->
+    <PackageReference Include="AvalonEdit" Version="6.*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +51,21 @@
       <DaemonPayload Include="$(MSBuildThisFileDirectory)..\AiDe.Daemon\bin\$(Configuration)\net10.0-windows\**\*" />
     </ItemGroup>
     <Copy SourceFiles="@(DaemonPayload)" DestinationFolder="$(OutDir)daemon\%(RecursiveDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+  <!--
+    The same copy again, for PUBLISH. AfterTargets="Build" writes to $(OutDir); publish writes to
+    $(PublishDir) and does not carry it across, so the published shell shipped WITHOUT the daemon it
+    launches, and no workspace could be opened at all. The only symptom was "This workspace could not
+    be opened", which reads like a problem with the workspace. The developer build was correct
+    throughout, which is exactly why it survived: the layout that was tested was never the layout
+    that shipped.
+  -->
+  <Target Name="CopyDaemonBesidePublishedShell" AfterTargets="Publish">
+    <ItemGroup>
+      <PublishedDaemonPayload Include="$(MSBuildThisFileDirectory)..\AiDe.Daemon\bin\$(Configuration)\net10.0-windows\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(PublishedDaemonPayload)" DestinationFolder="$(PublishDir)daemon\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
 
   <ItemGroup>

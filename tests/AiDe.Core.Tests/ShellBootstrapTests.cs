@@ -28,17 +28,70 @@ public sealed class ShellBootstrapTests : IDisposable
         return path;
     }
 
+    /// <summary>
+    /// Where a daemon launched by these tests keeps its state: beside the temp workspace.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Not the machine-wide default, which is what these tests used to leave behind.</b> The
+    /// daemon derived its own directory under LocalAppData, so every run wrote into the user's real
+    /// profile. MEASURED: one run of this suite left <b>12</b> workspace directories there, and 2,674
+    /// had built up over four days — all but one an empty store from a test.</para>
+    ///
+    /// <para>A test that writes outside its own temp directory is not isolated, however green it is.
+    /// The cleanup below removes the workspace and its state together, which was impossible while the
+    /// state lived somewhere the test never named.</para>
+    /// </remarks>
+    private static string DataFor(string workspace) => Path.Combine(workspace, ".aide-data");
+
+    /// <summary>
+    /// The daemon built alongside THESE tests.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The configuration comes from this assembly's own path</b>, not from whichever
+    /// configuration directory happens to exist. It used to prefer Release when a Release directory
+    /// was present — so a single <c>dotnet publish -c Release</c>, run for something else entirely,
+    /// left these Debug tests launching a Release daemon built hours earlier. When the IPC protocol
+    /// changed, three tests failed with <c>ipc.unsupported_version</c>, which is the protocol
+    /// working correctly and the harness pointing at the wrong binary (DC-023: a gate running a
+    /// stale build).</para>
+    ///
+    /// <para>The staleness check is the half that matters. Picking the right directory does not help
+    /// if what is in it was built before the change under test, and "the daemon is old" is otherwise
+    /// indistinguishable from "the daemon is broken".</para>
+    /// </remarks>
     private static string DaemonPath()
     {
+        var here = new DirectoryInfo(AppContext.BaseDirectory);
+        var configuration =
+            here.FullName.Contains($"{Path.DirectorySeparatorChar}Release{Path.DirectorySeparatorChar}",
+                StringComparison.OrdinalIgnoreCase) ? "Release" : "Debug";
+
         var root = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory, "..", "..", "..", "..", "..", "src", "AiDe.Daemon", "bin"));
-        var configuration = Directory.Exists(Path.Combine(root, "Release")) ? "Release" : "Debug";
         var candidate = Path.Combine(root, configuration, "net10.0-windows", "AiDe.Daemon.exe");
 
         Assert.True(
             File.Exists(candidate),
-            $"the daemon was not built. Expected it at:\n  {candidate}\n"
+            $"the daemon was not built in {configuration}. Expected it at:\n  {candidate}\n"
             + "Build the solution rather than the test project alone.");
+
+        // Not timestamps: a daemon that did not need rebuilding is OLDER than the tests and
+        // perfectly current, so a time comparison reports staleness on every incremental build.
+        // What actually matters is whether it carries the same AiDe.Core — the protocol, the
+        // envelope and the operations all live there — and .NET builds deterministically, so equal
+        // source gives equal bytes.
+        var mine = Path.Combine(AppContext.BaseDirectory, "AiDe.Core.dll");
+        var theirs = Path.Combine(Path.GetDirectoryName(candidate)!, "AiDe.Core.dll");
+
+        if (File.Exists(mine) && File.Exists(theirs))
+        {
+            Assert.True(
+                File.ReadAllBytes(mine).AsSpan().SequenceEqual(File.ReadAllBytes(theirs)),
+                $"the {configuration} daemon at\n  {candidate}\n"
+                + "was built against a different AiDe.Core than these tests. Launching it would test "
+                + "a build that is not the one under test — which is how an IPC protocol change "
+                + "looked like three broken tests (DC-023). Build the solution.");
+        }
 
         return candidate;
     }
@@ -51,7 +104,7 @@ public sealed class ShellBootstrapTests : IDisposable
         var workspace = FreshWorkspace();
 
         await using var client = await ShellBootstrap.ConnectOrLaunchAsync(
-            workspace, DaemonPath(), CancellationToken.None);
+            workspace, DaemonPath(), CancellationToken.None, DataFor(workspace));
 
         // A connected client is not enough — it must answer, which means the daemon opened its
         // store and registered its operations, not merely accepted a pipe.
@@ -71,7 +124,7 @@ public sealed class ShellBootstrapTests : IDisposable
         var workspace = FreshWorkspace();
 
         await using var first = await ShellBootstrap.ConnectOrLaunchAsync(
-            workspace, DaemonPath(), CancellationToken.None);
+            workspace, DaemonPath(), CancellationToken.None, DataFor(workspace));
 
         // Readiness barrier (DC-040): prove the first daemon is actually *serving* before the second
         // shell arrives, so reuse is measured against a ready daemon rather than a still-starting one.
@@ -79,7 +132,7 @@ public sealed class ShellBootstrapTests : IDisposable
         Assert.NotNull(await first.FindAsync("", 1, CancellationToken.None));
 
         await using var second = await ShellBootstrap.ConnectOrLaunchAsync(
-            workspace, DaemonPath(), CancellationToken.None);
+            workspace, DaemonPath(), CancellationToken.None, DataFor(workspace));
 
         // The reuse invariant is one logical daemon — one store, one epoch — per workspace, enforced
         // by WorkspaceLock. Epoch equality is the DETERMINISTIC, workspace-scoped proof of it: even
@@ -108,10 +161,13 @@ public sealed class ShellBootstrapTests : IDisposable
     {
         // The lock and the pipe name are both per workspace; sharing a daemon across two would put
         // two stores behind one epoch.
+        var one = FreshWorkspace();
+        var two = FreshWorkspace();
+
         await using var alpha = await ShellBootstrap.ConnectOrLaunchAsync(
-            FreshWorkspace(), DaemonPath(), CancellationToken.None);
+            one, DaemonPath(), CancellationToken.None, DataFor(one));
         await using var beta = await ShellBootstrap.ConnectOrLaunchAsync(
-            FreshWorkspace(), DaemonPath(), CancellationToken.None);
+            two, DaemonPath(), CancellationToken.None, DataFor(two));
 
         var alphaResult = await alpha.FindAsync("", 5, CancellationToken.None);
         var betaResult = await beta.FindAsync("", 5, CancellationToken.None);
@@ -149,8 +205,49 @@ public sealed class ShellBootstrapTests : IDisposable
         await cancellation.CancelAsync();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => ShellBootstrap.ConnectOrLaunchAsync(
-                FreshWorkspace(), DaemonPath(), cancellation.Token));
+            () =>
+            {
+                var workspace = FreshWorkspace();
+                return ShellBootstrap.ConnectOrLaunchAsync(
+                    workspace, DaemonPath(), cancellation.Token, DataFor(workspace));
+            });
+    }
+
+    [Fact]
+    public async Task ADaemonToldWhereToKeepItsState_WritesNowhereElse()
+    {
+        // The control for DC-049. Before the daemon accepted `--data` it derived its own directory
+        // under the user's LocalAppData and no caller could say otherwise, so every test that
+        // launched one wrote into the real profile: 12 directories per run of this suite, 2,674
+        // accumulated over four days, all but one an empty store belonging to a finished test.
+        //
+        // Nothing failed then and nothing would fail now — which is why the assertion has to be
+        // about the directory that must stay untouched, not about the one that must be written.
+        var machineWide = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "AiDe", "workspaces");
+
+        var workspace = FreshWorkspace();
+
+        // THIS daemon's directory, by name, rather than a snapshot of the whole folder.
+        //
+        // The first version compared the directory before and after. That is a machine-global
+        // location, so anything else creating a workspace during the test failed it — and something
+        // does: `dotnet test AiDe.sln` runs the App and Core assemblies concurrently, and the suite
+        // is not alone on the machine. It failed once in a solution run and passed alone, which is
+        // the signature of a control asserting about shared state rather than about its subject.
+        var mine = Path.Combine(machineWide, IpcPipeName.ForWorkspace(workspace));
+
+        await using (await ShellBootstrap.ConnectOrLaunchAsync(
+            workspace, DaemonPath(), CancellationToken.None, DataFor(workspace)))
+        {
+            Assert.True(File.Exists(Path.Combine(DataFor(workspace), "workspace.db")),
+                $"the daemon was told to keep its state in {DataFor(workspace)} and did not");
+        }
+
+        Assert.False(Directory.Exists(mine),
+            $"launching a daemon with an explicit state directory still created {mine} — the daemon "
+            + "wrote into the user's profile despite being told where to put its state");
     }
 
     public void Dispose()

@@ -70,6 +70,14 @@ public sealed class DaemonProcessTests
         };
 
         start.ArgumentList.Add(workspace);
+
+        // Beside the workspace, so the state dies with it. Without this the daemon writes into the
+        // user's real LocalAppData and the directory outlives the test by months.
+        foreach (var argument in DaemonStateDirectory.ArgumentsFor(workspace))
+        {
+            start.ArgumentList.Add(argument);
+        }
+
         foreach (var argument in extra)
         {
             start.ArgumentList.Add(argument);
@@ -124,7 +132,7 @@ public sealed class DaemonProcessTests
                 "ping", "cmd-1", pipeName, 1, null, CancellationToken.None);
 
             Assert.True(pong.Ok, pong.Reason);
-            Assert.Equal("pong", pong.Payload);
+            Assert.Equal("pong", pong.Payload.AsText());
 
             // The peer really is another process — the whole point of the phase.
             Assert.NotEqual(Environment.ProcessId, daemon.Id);
@@ -284,6 +292,20 @@ public sealed class DaemonProcessTests
         // projection in process would have proved the half that was never broken.
         var workspace = FreshWorkspace();
         Directory.CreateDirectory(Path.Combine(workspace, "infra"));
+        Directory.CreateDirectory(Path.Combine(workspace, "docs"));
+
+        // A knowledge artifact beside the code, so the graph this test reads holds BOTH halves —
+        // which is the only way an assertion about the declared class can fail when it should.
+        await File.WriteAllTextAsync(Path.Combine(workspace, "docs", "note.md"),
+            """
+            ---
+            id: probe-note
+            type: decision-note
+            owner: "@probe"
+            ---
+
+            # A note the graph should carry as knowledge
+            """);
 
         await File.WriteAllTextAsync(Path.Combine(workspace, "infra", "main.bicep"),
             """
@@ -351,6 +373,20 @@ public sealed class DaemonProcessTests
 
             Assert.NotEmpty(byKind.Nodes);
             Assert.All(byKind.Nodes, n => Assert.Equal(kind, n.Kind));
+
+            // ---- the DECLARED class survives the pipe ----------------------------------------
+            // The Knowledge chip reads this. It read 0 on a repository holding 2,343 knowledge
+            // nodes, and one cause was that the graph carried only each node's FINE kind — which
+            // there is a name that repository invented (`knowledge-epl-fan-platform`), so no fixed
+            // list of type names could recognise it. A bool that arrives defaulted to false across
+            // the pipe reproduces the same symptom with the fix in place, so it is asserted on a
+            // node KNOWN to be knowledge and on one known not to be.
+            Assert.Contains(graph.Nodes, n => n.IsKnowledge);
+            Assert.Contains(graph.Nodes, n => !n.IsKnowledge);
+
+            var document = Assert.Single(graph.Nodes, n => n.Id == "probe-note");
+            Assert.True(document.IsKnowledge, "the document arrived across the pipe as source");
+            Assert.Equal("decision-note", document.Kind);
 
             // ---- and a ROUTE crosses the pipe ------------------------------------------------
             // A path is the one result whose shape is a list of lists, so it is the one most likely
@@ -420,6 +456,14 @@ public sealed class DaemonProcessTests
                 CreateNoWindow = true,
             };
             start.ArgumentList.Add(workspace);
+
+            // The same state directory as the first: this is the SAME workspace, and pointing the
+            // second daemon elsewhere would test two workspaces refusing to share a lock, which
+            // they never would.
+            foreach (var argument in DaemonStateDirectory.ArgumentsFor(workspace))
+            {
+                start.ArgumentList.Add(argument);
+            }
 
             using var second = Process.Start(start)!;
             var error = await second.StandardError.ReadToEndAsync();

@@ -379,6 +379,152 @@ public sealed class WorkbenchAdapter
             .FirstOrDefault(d => string.Equals(d.ContentId, surfaceId, StringComparison.Ordinal))
             ?.Content as FrameworkElement;
 
+    /// <summary>
+    /// The inner surface content of type <typeparamref name="T"/> for <paramref name="surfaceId"/>,
+    /// looking THROUGH the island chrome (<see cref="SurfaceChrome.WrapAsIsland"/>) that non-windowed
+    /// panes are wrapped in.
+    /// </summary>
+    /// <remarks>
+    /// A wrapped pane's <see cref="ContentFor"/> returns the framing <see cref="Border"/>, not the
+    /// surface, so <c>ContentFor(id).OfType&lt;ClassDiagramSurface&gt;()</c> silently finds nothing and
+    /// the pane never populates — the exact defect that left the class diagram (and every other wrapped
+    /// surface bound by type) empty over a fully indexed workspace. Canvas and terminal are returned
+    /// UNWRAPPED (airspace), so the direct-cast branch finds them; everything else is a
+    /// <see cref="Border"/> whose <see cref="Border.Child"/> is the real surface. Both are handled here
+    /// so no caller has to know which, and so a future wrapped kind cannot reintroduce the same silence.
+    /// </remarks>
+    public T? SurfaceContent<T>(string surfaceId) where T : class =>
+        ContentFor(surfaceId) switch
+        {
+            T direct => direct,
+            Border { Child: T wrapped } => wrapped,
+            _ => null,
+        };
+
+    /// <summary>
+    /// The surface id of the document the user is currently focused in, or null. Read from AvalonDock's
+    /// own active-content tracking so a "new pane" command can open where the user is looking rather than
+    /// in a fixed corner of the layout.
+    /// </summary>
+    public string? ActiveSurfaceId =>
+        Manager.Layout?.ActiveContent?.ContentId
+            ?? Manager.Layout?.Descendents().OfType<LayoutDocument>()
+                .FirstOrDefault(d => d.IsSelected)?.ContentId;
+
+    /// <summary>
+    /// Reads the CURRENT AvalonDock arrangement back into the owned model, so a native pane drag or a
+    /// splitter resize the user performed is captured before the next <see cref="Render"/> would rebuild
+    /// from a stale model and revert it. Returns null when the view cannot be mapped confidently.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Fail-safe by construction.</b> The model is the source of truth and a wrong reconcile
+    /// would be rendered AND persisted, so this returns null the moment it meets a shape it cannot map
+    /// losslessly — a floating window, an anchorable pane, an empty pane, an unknown node, a document
+    /// whose surface the model does not know, or a result that does not carry exactly the same set of
+    /// surfaces it started with. The caller then leaves the model untouched, degrading to the
+    /// pre-existing revert-on-rebuild, never to a lost or duplicated pane.</para>
+    ///
+    /// <para><b>Surface identity comes from the model, not the view.</b> A <see cref="LayoutDocument"/>
+    /// carries only its <c>ContentId</c> (the surface id); the Kind and Title live on the model's
+    /// <see cref="Surface"/> record, looked up here, so a reconciled surface keeps the identity the rest
+    /// of the system routes on. Node ids are freshly minted — they are internal and need not be stable.</para>
+    /// </remarks>
+    public Layout? ReadLayoutFromView()
+    {
+        if (Manager.Layout is not { } root) { return null; }
+
+        // Floating windows are not mapped yet — bail rather than silently drop a floated pane.
+        if (root.FloatingWindows.Any()) { return null; }
+
+        var known = _service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .ToDictionary(s => s.SurfaceId, StringComparer.Ordinal);
+
+        var mapped = MapNode(root.RootPanel, known);
+        if (mapped is null) { return null; }
+
+        var reconciled = _service.Current with { Root = mapped, Floating = [] };
+
+        // The strong guard: a reconcile that lost, duplicated or invented a surface is a corrupt
+        // reconcile, and rendering it would drop a pane. Compare the surface SET, and refuse if it moved.
+        var before = known.Keys.ToHashSet(StringComparer.Ordinal);
+        var after = reconciled.AllStacks().SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).ToList();
+        if (after.Count != before.Count || !after.ToHashSet(StringComparer.Ordinal).SetEquals(before))
+        {
+            return null;
+        }
+
+        return reconciled;
+    }
+
+    private static LayoutNode? MapNode(ILayoutElement element, IReadOnlyDictionary<string, Surface> known)
+    {
+        // A group — a LayoutPanel or a document-pane group — is an oriented split over weighted children.
+        System.Windows.Controls.Orientation? orientation = element switch
+        {
+            LayoutPanel p => p.Orientation,
+            LayoutDocumentPaneGroup g => g.Orientation,
+            _ => null,
+        };
+
+        if (orientation is { } o && element is ILayoutContainer container)
+        {
+            var children = new List<LayoutNode>();
+            var weights = new List<double>();
+            foreach (var child in container.Children.OfType<ILayoutElement>())
+            {
+                var node = MapNode(child, known);
+                if (node is null) { return null; }
+                children.Add(node);
+                weights.Add(WeightOf(child, o));
+            }
+
+            if (children.Count == 0) { return null; }
+            if (children.Count == 1) { return children[0]; }   // an unsplit group is just its child
+
+            var core = o == System.Windows.Controls.Orientation.Horizontal
+                ? CoreOrientation.Horizontal
+                : CoreOrientation.Vertical;
+            return new SplitNode(NewNodeId("split"), core, [.. children], [.. weights]);
+        }
+
+        if (element is LayoutDocumentPane docPane)
+        {
+            var surfaces = new List<Surface>();
+            foreach (var doc in docPane.Children.OfType<LayoutDocument>())
+            {
+                if (doc.ContentId is not { } id || !known.TryGetValue(id, out var surface)) { return null; }
+                surfaces.Add(surface);
+            }
+
+            if (surfaces.Count == 0) { return null; }
+            var active = Math.Clamp(docPane.SelectedContentIndex, 0, surfaces.Count - 1);
+            return new StackNode(NewNodeId("stack"), [.. surfaces], active);
+        }
+
+        // Anchorable panes and anything else this workbench does not produce — fail safe.
+        return null;
+    }
+
+    private static double WeightOf(ILayoutElement element, System.Windows.Controls.Orientation orientation)
+    {
+        var horizontal = orientation == System.Windows.Controls.Orientation.Horizontal;
+        GridLength length = element switch
+        {
+            LayoutPanel p => horizontal ? p.DockWidth : p.DockHeight,
+            LayoutDocumentPaneGroup g => horizontal ? g.DockWidth : g.DockHeight,
+            LayoutDocumentPane dp => horizontal ? dp.DockWidth : dp.DockHeight,
+            _ => default,
+        };
+
+        if (length.IsStar && length.Value > 0) { return length.Value; }
+        return 1.0;   // SplitNode normalizes, so an equal share is a safe default
+    }
+
+    private static int _nodeSeq;
+    private static string NewNodeId(string prefix) =>
+        $"{prefix}-view-{System.Threading.Interlocked.Increment(ref _nodeSeq)}";
+
     private LayoutDocumentPane BuildPane(StackNode stack, IReadOnlyDictionary<string, FrameworkElement> reuse)
     {
         var pane = new LayoutDocumentPane();

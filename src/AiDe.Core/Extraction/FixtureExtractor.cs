@@ -15,6 +15,13 @@ public static class ExtractionErrorCodes
 /// Every module id the workspace holds, so an import that leaves this scope can be resolved instead
 /// of disclosed.
 /// </param>
+/// <param name="WorkspaceKnowledge">
+/// Every markdown file the workspace holds and the node id it declares, so a prose link that leaves
+/// this scope's directory can be resolved instead of disclosed. The knowledge reader's counterpart
+/// to <paramref name="WorkspaceModules"/>, and it exists for a sharper reason: knowledge scopes
+/// NEST, so each document is now emitted by exactly one scope and there is no wider scope left to
+/// resolve a cross-directory link (DC-051).
+/// </param>
 /// <remarks>
 /// <para><b>Why a whole-workspace set rather than per-scope discovery.</b> A Python or TypeScript
 /// scope is one directory, and an import that names a sibling package resolves to a file in a
@@ -30,7 +37,8 @@ public sealed record ExtractionRequest(
     string RootPath,
     string ArtifactRevision,
     long DesiredGeneration,
-    IReadOnlySet<string>? WorkspaceModules = null);
+    IReadOnlySet<string>? WorkspaceModules = null,
+    WorkspaceKnowledge? WorkspaceKnowledge = null);
 
 public sealed record ExtractionDiagnostic(string ErrorCode, string ArtifactPathId, string Message);
 
@@ -223,6 +231,12 @@ public sealed class FixtureExtractor(string extractorVersion = "1.0.0") : IExtra
             request.ScopeId, request.ArtifactRevision, id, "has_type", type ?? "unknown",
             EvidenceOrigin.Static, type is null ? VerificationStatus.Unverified : VerificationStatus.Verified,
             Where(2)));
+
+        // Declared, not inferred — the same statement KnowledgeExtractor makes. This reader produces
+        // both knowledge nodes and fixture facts, so its scope id cannot say which a node is.
+        assertions.Add(new EvidenceAssertion(
+            request.ScopeId, request.ArtifactRevision, id, "node_class", "knowledge",
+            EvidenceOrigin.Static, VerificationStatus.Verified, Where(2)));
 
         // Owner is recorded so US-4's "missing source/owner is a health finding" can be answered.
         // It names a person, so it stays workspace-local and never reaches telemetry.

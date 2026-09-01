@@ -29,9 +29,58 @@ public static class EvidencePredicates
         "api_version", "resource_type", "resource_name", "resource_name_expression",
         "module_path", "parameter_type", "is_secret",
         "has_column", "introduced_by",
+
+        // A type's members, for UML member compartments (ADR-0020). An ATTRIBUTE for the same reason
+        // has_column is one: `Id : int` is a property OF a class, not a peer of it, and drawing one
+        // would put every method and field in the graph as a thing to navigate to. MEASURED on a real
+        // repository, that would have been tens of thousands of new nodes to serve a card layout.
+        "has_member", "members_truncated",
         "is_existing_reference", "is_loop", "is_conditional",
         "declares_table",
+
+        // Whether a TypeScript declaration is exported. An ATTRIBUTE for the same reason `is_secret`
+        // is one: `true` and `false` are not things to navigate to, and drawing them would put two
+        // nodes in the graph that every declaration in the repository points at. It exists because
+        // the reader now sees non-exported declarations, so the export keyword — which used to be
+        // the condition on a declaration being seen at all — is what still says which of them is the
+        // module's public surface.
+        "is_exported",
+
+        // Knowledge attributes. `owned_by` names a PERSON and `review_by` a DATE — neither is a
+        // thing to navigate to, and drawing them would put "@someone" and "2027-02-28" in the graph
+        // as peers of the documents that carry them.
+        "owned_by", "review_by", "node_class",
+
+        // Where a SCOPE's files are. Its object is a directory path, which is not a thing to
+        // navigate to, and its subject is a scope — which this graph has never treated as a node
+        // (`declared_in` points at scope ids precisely as an attribute, so they are not drawn).
+        "declared_at",
     };
+
+    /// <summary>
+    /// The few facts that say WHAT A NODE IS, as opposed to what it is connected to.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why a bounded read needs this.</b> A node's facts are capped, and they were ordered
+    /// alphabetically — so a node with more relations than the cap lost its own type, owner and class
+    /// to its own links. MEASURED: 12 of 877 knowledge documents were already over the 50-row ceiling
+    /// before anything was added to them, and simulating headings pushed nearly every structured
+    /// document over. `adr-0015-erasure-ledger-durable-model` would have returned 44 headings and
+    /// none of `has_type`, `node_class`, `owned_by`, `refines` or `review_by`.</para>
+    ///
+    /// <para><b>Deliberately not "all attributes".</b> <c>has_member</c> is an attribute and a type
+    /// can carry forty of them; putting the whole attribute set first would replace one flood with
+    /// another. This is the small, fixed set that answers "what is this thing" — everything else,
+    /// attribute or relation, competes on equal terms behind it.</para>
+    /// </remarks>
+    public static IReadOnlySet<string> Identity { get; } = new HashSet<string>(StringComparer.Ordinal)
+    {
+        "has_type", "node_class", "declared_in", "owned_by", "review_by",
+    };
+
+    /// <summary>The SQL literal list for <see cref="Identity"/>, generated from the same set.</summary>
+    public static string IdentitySqlList { get; } =
+        string.Join(", ", Identity.Order(StringComparer.Ordinal).Select(p => $"'{p}'"));
 
     /// <summary>The SQL literal list for an <c>IN</c> clause. Built from the same set.</summary>
     /// <remarks>

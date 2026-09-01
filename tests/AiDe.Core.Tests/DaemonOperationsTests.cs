@@ -90,6 +90,8 @@ public sealed class DaemonOperationsTests : IDisposable
             Assert.Equal(expected.Bounds, actual.Bounds);
             Assert.Equal(expected.SourceRevision, actual.SourceRevision);
             Assert.Equal(expected.Neighbors, actual.Neighbors);
+            Assert.Equal(expected.Members, actual.Members); // enriched fields survive the wire (class-diagram compartments)
+            Assert.Equal(expected.MembersDeclared, actual.MembersDeclared);
         });
     }
 
@@ -220,7 +222,7 @@ public sealed class DaemonOperationsTests : IDisposable
             Assert.True((await client.OpenWorkspaceAsync(_pipeName, 0, CancellationToken.None)).Ok);
 
             var response = await client.InvokeAsync(
-                WorkspaceOperations.Find, "cmd-1", _pipeName, epoch: 1, payload: "{\"term\":\"Service\",\"maxResults\":5}",
+                WorkspaceOperations.Find, "cmd-1", _pipeName, epoch: 1, payload: IpcPayloadTestExtensions.Json("{\"term\":\"Service\",\"maxResults\":5}"),
                 CancellationToken.None);
 
             Assert.False(response.Ok);
@@ -255,7 +257,7 @@ public sealed class DaemonOperationsTests : IDisposable
 
             var rejected = await raw.InvokeAsync(
                 WorkspaceOperations.Find, "cmd-1", _pipeName, _workspace.Store.CoreEpoch,
-                "{ this is not json", CancellationToken.None);
+                IpcPayloadTestExtensions.Json("{ this is not json"), CancellationToken.None);
 
             Assert.False(rejected.Ok);
             Assert.Equal(IpcErrorCodes.MalformedEnvelope, rejected.ErrorCode);

@@ -23,7 +23,7 @@ public sealed class IpcBoundaryTests
     {
         var registry = new CapabilityRegistry();
         var endpoint = new DaemonEndpoint(Workspace, registry, _ => epoch);
-        endpoint.Register("describe", (_, _) => IpcResponse.Success("described"));
+        endpoint.Register("describe", (_, _) => IpcResponse.Success(IpcPayloadTestExtensions.Json("described")));
         return (endpoint, registry);
     }
 
@@ -36,7 +36,7 @@ public sealed class IpcBoundaryTests
     private static string? Capability(IpcResponse response) =>
         response.Payload is null
             ? null
-            : System.Text.Json.JsonSerializer.Deserialize<IpcOpenResult>(response.Payload)!.Capability;
+            : response.Payload.As<IpcOpenResult>()!.Capability;
 
     private static IpcPeer Peer(int processId = 1234, string connection = "conn-a") =>
         new("S-1-5-21-owner", processId, connection);
@@ -115,7 +115,7 @@ public sealed class IpcBoundaryTests
         var response = endpoint.Invoke(Request(token), peer);
 
         Assert.True(response.Ok);
-        Assert.Equal("described", response.Payload);
+        Assert.Equal("described", response.Payload.AsText());
     }
 
     [Fact]
@@ -251,7 +251,7 @@ public sealed class IpcBoundaryTests
         var registry = new CapabilityRegistry();
         var epoch = Epoch;
         var endpoint = new DaemonEndpoint(Workspace, registry, _ => epoch);
-        endpoint.Register("describe", (_, _) => IpcResponse.Success("described"));
+        endpoint.Register("describe", (_, _) => IpcResponse.Success(IpcPayloadTestExtensions.Json("described")));
 
         var peer = Peer();
         var token = Capability(endpoint.OpenWorkspace(Request(null), peer));

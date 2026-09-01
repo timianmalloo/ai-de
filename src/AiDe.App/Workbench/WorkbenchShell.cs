@@ -34,6 +34,9 @@ namespace AiDe.App.Workbench;
 /// </remarks>
 public sealed class WorkbenchShell : IDisposable
 {
+    /// <summary>The UI thread, captured where the shell is wired — indexing completes on a worker.</summary>
+    private System.Windows.Threading.Dispatcher _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+
     private SurfaceContentFactory _factory;
     private IWorkspaceQueries? _queries;
     private string? _workspaceRoot;
@@ -45,6 +48,16 @@ public sealed class WorkbenchShell : IDisposable
     private TerminalCustomizationStore? _customizationStore;
     private readonly HashSet<string> _customizationInitialized = new(StringComparer.Ordinal);
     private CanvasGraphViewModel? _canvasGraph;
+    // Prompt dispatch context, stored so both the focused-terminal path (Prompt.Dispatch) and the
+    // named-session path (DispatchToAsync, for the prompt-draft surface) share one choreography.
+    private IWorkspaceDispatch? _dispatch;
+    private string? _dispatchScopeId;
+    // The last re-index's summary + the daemon diagnostics VM, for the Diagnostics pane. The pane is
+    // opened on demand and shows the most recent index's coverage rather than re-indexing itself.
+    private AiDe.Core.Ipc.IndexSummary? _lastIndex;
+    private AiDe.Core.Presentation.WorkspaceDiagnosticsViewModel? _diagnosticsVm;
+    // Cross-restart prompt drafts, keyed by the stable SurfaceId (off the Core layout model).
+    private PromptDraftStore? _promptDraftStore;
 
     // The per-workspace Loomkeeper host: it owns the observation store AND runs the ingest (the
     // coordination-contract log pump, in-process, so liveness is exact). Null until a workspace with a
@@ -66,7 +79,15 @@ public sealed class WorkbenchShell : IDisposable
     {
         Service = new LayoutService();
 
-        LiveRegion = new TextBlock { TextWrapping = TextWrapping.Wrap };
+        LiveRegion = new TextBlock
+        {
+            // A status strip is ONE line. Wrapping + an Auto-height row let a long announcement (a
+            // re-index reports 200+ analysis-boundary disclosures) grow the strip until it ate ~70%
+            // of the window. Single-line with an ellipsis caps it permanently; the full text stays on
+            // hover (tooltip, set in the announcer) and is still read in full by assistive tech.
+            TextWrapping = TextWrapping.NoWrap,
+            TextTrimming = TextTrimming.CharacterEllipsis,
+        };
         LiveRegion.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
         Announcer = new WorkbenchAnnouncer(LiveRegion);
 
@@ -96,6 +117,7 @@ public sealed class WorkbenchShell : IDisposable
 
         Controller.NewAgentTerminalRequested = () =>
         {
+            ReconcileViewIntoModel();
             var agent = TerminalSurface.AvailableAgents.FirstOrDefault();
             if (agent is null)
             {
@@ -127,6 +149,7 @@ public sealed class WorkbenchShell : IDisposable
         };
         Controller.NewTerminalRequested = () =>
         {
+            ReconcileViewIntoModel();
             var terminalStack = Service.Current.AllStacks()
                 .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"));
 
@@ -153,6 +176,48 @@ public sealed class WorkbenchShell : IDisposable
         // The operator's recourse against a score they disagree with (US rule 12): an append-only dispute
         // against the latest scored episode. It records evidence for review; it never changes the score.
         Controller.RaiseDisputeRequested = () => RaiseDisputeOnLatestScore();
+
+        Controller.NewPromptDraftRequested = () =>
+        {
+            ReconcileViewIntoModel();
+            // Open the draft beside a terminal (its transfer target) when there is one, else in any
+            // stack — a draft is useful even before a session exists (it just cannot transfer yet).
+            var stack = Service.Current.AllStacks()
+                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"))
+                ?? Service.Current.AllStacks().FirstOrDefault();
+
+            if (stack is null) return "There is no pane to open a prompt draft in.";
+
+            var id = $"prompt#{Guid.NewGuid().ToString("N")[..6]}";
+            var result = Service.Apply(new LayoutOperation.AddSurface(
+                stack.Id, new Surface(id, "prompt", "Prompt draft")));
+
+            Adapter.Render();
+            BindCanvas();
+            BindContexts();
+            BindJoins();
+            BindTerminalAttention();
+
+            return result.Applied ? "Prompt draft opened." : result.Announcement;
+        };
+
+        Controller.NewClassDiagramRequested = () =>
+            OpenReferenceDocument(
+                new Surface($"classdiagram#{Guid.NewGuid().ToString("N")[..6]}", "classdiagram", "Class diagram"),
+                "Class diagram opened.",
+                "There is no pane to open a class diagram in.");
+
+        Controller.NewCodeViewerRequested = () =>
+            OpenReferenceDocument(
+                new Surface($"codeviewer#{Guid.NewGuid().ToString("N")[..6]}", "codeviewer", "Source"),
+                "Code viewer opened.",
+                "There is no pane to open a code viewer in.");
+
+        Controller.NewDiagnosticsRequested = () =>
+            OpenReferenceDocument(
+                new Surface($"diagnostics#{Guid.NewGuid().ToString("N")[..6]}", "diagnostics", "Diagnostics"),
+                "Diagnostics opened.",
+                "There is no pane to open diagnostics in.");
 
         // Persistence is per workspace and lives beside the fact store (ADR-0013). With no workspace
         // open there is nothing to persist against, so first-run simply starts from the default.
@@ -183,13 +248,7 @@ public sealed class WorkbenchShell : IDisposable
             _customizationStore = new TerminalCustomizationStore(
                 Path.Combine(workspaceDataDirectory, "terminal-customization.json"));
 
-            var restored = Persistence.Restore();
-            if (restored.ErrorCode is not null || restored.WasDefaulted)
-            {
-                // A partial or failed restore must be told to the user, not silently absorbed: they
-                // are about to look at an arrangement that is not the one they left.
-                Announcer.Announce(restored.Announcement);
-            }
+            KeepArrangementOnWorkspaceOpen();
         }
 
         Adapter.Render();
@@ -372,65 +431,44 @@ public sealed class WorkbenchShell : IDisposable
 
         // Prompt dispatch: the shell owns the terminal, the daemon owns the receipt (D1), so the
         // choreography runs here with the two durable phases supplied by whoever holds the store.
+        // Stored on fields so the focused-terminal path (here) and the named-session path
+        // (DispatchToAsync, for the prompt-draft surface) share ONE choreography (DispatchToSurfaceAsync).
         if (commands is IWorkspaceDispatch dispatch)
         {
-            Prompt.Dispatch = async body =>
+            _dispatch = dispatch;
+            _dispatchScopeId = scopeId;
+
+            Prompt.Dispatch = body =>
             {
                 var surface = FocusedTerminal()
                     ?? throw new InvalidOperationException("focus a terminal pane before dispatching");
-
-                var session = surface.Session
-                    ?? throw new InvalidOperationException("the terminal has not started yet");
-
-                var command = new DispatchCommand(
-                    WorkspaceId: scopeId,
-                    WorkspaceEpoch: await dispatch.EpochAsync(CancellationToken.None),
-                    Caller: new CallerPrincipal(Environment.UserName, CallerKind.Shell),
-                    CommandId: Guid.NewGuid().ToString("N"),
-                    DraftId: $"draft-{session.SessionId}",
-                    RevisionNo: 1,
-                    Body: body,
-                    SessionId: session.SessionId,
-                    SessionGeneration: session.Generation);
-
-                // Readiness decides whether this is attempted at all. A session that cannot report
-                // when it is waiting for input may be showing a sign-in or a confirmation, and a
-                // prompt sent into one of those is consumed by it.
-                // The surface knows how ITS session reports readiness — OSC 133 for a shell, an
-                // observed prompt marker for an agent, nothing otherwise — and an agent that has
-                // not yet reached its prompt is refused rather than written into.
-                var evidence = surface.ReadinessEvidence;
-                var ready = evidence == ReadinessEvidence.ObservedPattern
-                    ? surface.AgentReadiness?.IsReady == true
-                    : session.Activity == SessionActivity.Ready;
-
-                var readiness = evidence == ReadinessEvidence.None
-                    ? SessionReadiness.Unknown
-                    : ready ? SessionReadiness.Ready : SessionReadiness.NotReady;
-
-                return await BoundaryDispatcher.BeginAndWriteAsync(
-                    command, session, dispatch.DispatchBeginAsync, dispatch.DispatchFinalizeAsync,
-                    CancellationToken.None, readiness);
+                return DispatchToSurfaceAsync(surface, body);
             };
         }
 
         // Diagnostics needs no daemon connection: the installation layout is on disk and the
         // incident sidecar is a local file, so the state is readable even when the daemon is not.
-        var diagnostics = new WorkspaceDiagnosticsViewModel(
+        _diagnosticsVm = new WorkspaceDiagnosticsViewModel(
             string.IsNullOrEmpty(dataDirectory) ? null : new DaemonInstallation(dataDirectory),
             string.IsNullOrEmpty(dataDirectory)
                 ? null
                 : new HealthIncidentSidecar(Path.Combine(dataDirectory, "health-incidents.jsonl")));
 
-        Controller.WorkspaceDiagnostics = () => diagnostics.Read().Describe();
+        Controller.WorkspaceDiagnostics = () => _diagnosticsVm.Read().Describe();
+
+        // Indexing changes what every data-backed pane is showing. Subscribed once here rather than
+        // per pane: panes come and go, and RereadDataSurfaces asks the layout what is open now.
+        _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+        Controller.WorkspaceDataChanged -= OnWorkspaceDataChanged;
+        Controller.WorkspaceDataChanged += OnWorkspaceDataChanged;
 
         if (commands is not null)
         {
             Controller.WorkspaceIndex = async () =>
-                (await commands.IndexSolutionAsync(artifactRevision, CancellationToken.None)).Describe();
+                CaptureIndex(await commands.IndexSolutionAsync(artifactRevision, CancellationToken.None)).Describe();
 
             Controller.WorkspaceReindexAll = async () =>
-                (await commands.IndexSolutionAsync(artifactRevision, CancellationToken.None, force: true))
+                CaptureIndex(await commands.IndexSolutionAsync(artifactRevision, CancellationToken.None, force: true))
                     .Describe();
         }
 
@@ -457,11 +495,7 @@ public sealed class WorkbenchShell : IDisposable
             _customizationStore = new TerminalCustomizationStore(
                 Path.Combine(dataDirectory, "terminal-customization.json"));
 
-            var restored = Persistence.Restore();
-            if (restored.ErrorCode is not null || restored.WasDefaulted)
-            {
-                Announcer.Announce(restored.Announcement);
-            }
+            KeepArrangementOnWorkspaceOpen();
         }
 
         Adapter.Render();
@@ -484,7 +518,7 @@ public sealed class WorkbenchShell : IDisposable
     {
         var pane = Service.Current.AllStacks()
             .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .Select(surface => Adapter.SurfaceContent<ContextMapSurface>(surface.SurfaceId))
             .OfType<ContextMapSurface>()
             .FirstOrDefault();
 
@@ -649,6 +683,16 @@ public sealed class WorkbenchShell : IDisposable
                 }
             }
         }
+
+        // Prompt-draft targets are terminal-derived, so refresh them whenever the terminal set is
+        // (re)bound — a session becoming ready or a pane closing changes what a draft can transfer to.
+        BindPromptDrafts();
+
+        // Class diagrams derive from the graph; (re)populate any that are open (early-returns when none).
+        BindClassDiagrams();
+
+        // Code viewers show node source (a labelled sample until Core's content query ships).
+        BindCodeViewers();
     }
 
     // A rename lives on the surface (reconcile keeps it alive); re-render so the tab caption, which
@@ -714,7 +758,7 @@ public sealed class WorkbenchShell : IDisposable
     {
         var pane = Service.Current.AllStacks()
             .SelectMany(stack => stack.Surfaces)
-            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .Select(surface => Adapter.SurfaceContent<JoinSurface>(surface.SurfaceId))
             .OfType<JoinSurface>()
             .FirstOrDefault();
 
@@ -735,6 +779,47 @@ public sealed class WorkbenchShell : IDisposable
         pane.NodeSelected += OnJoinNodeSelected;
 
         pane.Refresh();
+    }
+
+    /// <summary>Re-reads every pane whose content came from the store.</summary>
+    /// <remarks>
+    /// <para>Raised off the UI thread — indexing runs on a worker — so the work is marshalled before
+    /// any of these touch a WPF element.</para>
+    ///
+    /// <para>The layout is asked what is open rather than a list being kept: a pane can be closed,
+    /// reopened or moved between stacks while an index runs, and a remembered reference would either
+    /// refresh a pane that is gone or miss one that arrived.</para>
+    /// </remarks>
+    private void OnWorkspaceDataChanged() => _ = _dispatcher.InvokeAsync(RereadDataSurfaces);
+
+    internal void RereadDataSurfaces()
+    {
+        var contents = Service.Current.AllStacks()
+            .SelectMany(stack => stack.Surfaces)
+            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .ToList();
+
+        foreach (var content in contents)
+        {
+            switch (content)
+            {
+                // The canvas re-queries from its current root, so a user who has navigated into a
+                // node stays where they are and sees that node's new neighbours.
+                case CanvasSurface canvas:
+                    _ = canvas.RefreshAsync();
+                    break;
+
+                // These two pull through a Source delegate that reads the store on every call, so
+                // Refresh IS the re-read.
+                case ContextMapSurface contexts:
+                    contexts.Refresh();
+                    break;
+
+                case JoinSurface joins:
+                    joins.Refresh();
+                    break;
+            }
+        }
     }
 
     /// <summary>Centres the graph on a join's endpoint.</summary>
@@ -810,19 +895,9 @@ public sealed class WorkbenchShell : IDisposable
         // Nodes carry their declared context so the canvas can colour by it. Loaded once per bind
         // rather than per node: the map is a file, and re-reading it for every node in a graph would
         // make navigation cost scale with the map.
-        if (!string.IsNullOrEmpty(_workspaceRoot))
-        {
-            var contexts = BoundedContextReader.Load(
-                Path.Combine(_workspaceRoot, BoundedContextReader.DefaultRelativePath), []);
+        graph.ContextLookup = BuildContextLookup();
 
-            if (contexts.Contexts.Count > 0)
-            {
-                graph.ContextLookup = id => contexts.Contexts
-                    .FirstOrDefault(c => c.Includes.Any(p => BoundedContextReader.Matches(p, id)))?.Name;
-            }
-        }
-
-        canvas.GraphSource = (rootId, ct) => graph.LoadAsync(rootId, cancellationToken: ct);
+        canvas.GraphSource = (rootId, ct) => LoadRouted(graph, rootId, ct);
 
         // Subscribed once per canvas instance: reconcile reuses the surface across renders, and a
         // lambda handler cannot be removed, so an unguarded += would accumulate on every mutation.
@@ -839,6 +914,390 @@ public sealed class WorkbenchShell : IDisposable
         Controller.DragStateChanged -= canvas.SetObscured;
         Controller.DragStateChanged += canvas.SetObscured;
     }
+
+    /// <summary>
+    /// Builds a graph canvas for the full-window Explorer surface (design D2), bound to the SAME
+    /// workspace queries the workbench canvas reads — two graph-shaped APIs would be two answers that
+    /// can disagree. A dedicated instance: the workbench's canvas is a pane in the docking tree and is
+    /// never reparented across visual trees (the WebView2 airspace trap).
+    /// </summary>
+    public CanvasSurface CreateExplorerGraph()
+    {
+        var canvas = new CanvasSurface("explorer-graph", "Graph");
+
+        // Read _queries AND the context map LIVE at load time, not captured once: the Explorer
+        // surface is created lazily and then retained (US-E6), so a canvas built before the workspace
+        // attached would otherwise stay bound to a null queries forever (DC-040) — and, symmetrically,
+        // a VM built without the context lookup renders every node grey because colour comes from
+        // context (the Explorer-graph-monochrome defect). Wiring ContextLookup here makes the Explorer
+        // graph colour-consistent with the workbench graph.
+        canvas.GraphSource = (rootId, ct) =>
+            LoadRouted(
+                new CanvasGraphViewModel(_queries) { ContextLookup = BuildContextLookup() }, rootId, ct);
+
+        return canvas;
+    }
+
+    // The canvas asks for three kinds of view through one GraphSource seam: a described node (a real
+    // id), the grouped semantic-zoom overview (GroupedOverviewRoot), or one group's contents
+    // (GroupRootPrefix + id). Routed here so both canvas wirings agree on what a sentinel means, and so
+    // the flat default (a null/real root) is unchanged.
+    private static Task<CanvasGraph> LoadRouted(
+        CanvasGraphViewModel vm, string? rootId, CancellationToken ct)
+    {
+        if (string.Equals(rootId, CanvasSurface.GroupedOverviewRoot, StringComparison.Ordinal))
+        {
+            return vm.OverviewAsync(cancellationToken: ct);
+        }
+
+        if (rootId is { } r && r.StartsWith(CanvasSurface.GroupRootPrefix, StringComparison.Ordinal))
+        {
+            return vm.GroupAsync(r[CanvasSurface.GroupRootPrefix.Length..], ct);
+        }
+
+        return vm.LoadAsync(rootId, cancellationToken: ct);
+    }
+
+    /// <summary>
+    /// Builds the context lookup that colours graph nodes, from the current workspace's declared
+    /// bounded-context map. Returns a lookup that yields null (no colour) when there is no workspace
+    /// or no map. Shared by the workbench canvas and the Explorer canvas so the two colour identically.
+    /// </summary>
+    private Func<string, string?> BuildContextLookup()
+    {
+        if (string.IsNullOrEmpty(_workspaceRoot)) { return _ => null; }
+
+        var contexts = BoundedContextReader.Load(
+            Path.Combine(_workspaceRoot, BoundedContextReader.DefaultRelativePath), []);
+        if (contexts.Contexts.Count == 0) { return _ => null; }
+
+        return id => contexts.Contexts
+            .FirstOrDefault(c => c.Includes.Any(p => BoundedContextReader.Matches(p, id)))?.Name;
+    }
+
+    /// <summary>
+    /// The prompt-dispatch choreography for one terminal surface — shared by the focused-terminal path
+    /// (Prompt.Dispatch) and the named-session path (DispatchToAsync). The shell owns the terminal, the
+    /// daemon owns the receipt (D1); readiness decides whether the write is attempted at all so a
+    /// prompt is never fed into a sign-in or confirmation the session is showing.
+    /// </summary>
+    private async Task<DispatchReceipt> DispatchToSurfaceAsync(TerminalSurface surface, string body)
+    {
+        if (_dispatch is null) { throw new InvalidOperationException("prompt dispatch is not available"); }
+
+        var session = surface.Session
+            ?? throw new InvalidOperationException("the terminal has not started yet");
+
+        var command = new DispatchCommand(
+            WorkspaceId: _dispatchScopeId ?? "workspace",
+            WorkspaceEpoch: await _dispatch.EpochAsync(CancellationToken.None),
+            Caller: new CallerPrincipal(Environment.UserName, CallerKind.Shell),
+            CommandId: Guid.NewGuid().ToString("N"),
+            DraftId: $"draft-{session.SessionId}",
+            RevisionNo: 1,
+            Body: body,
+            SessionId: session.SessionId,
+            SessionGeneration: session.Generation);
+
+        var readiness = ReadinessOf(surface, session);
+
+        return await BoundaryDispatcher.BeginAndWriteAsync(
+            command, session, _dispatch.DispatchBeginAsync, _dispatch.DispatchFinalizeAsync,
+            CancellationToken.None, readiness);
+    }
+
+    /// <summary>How a terminal reports readiness — OSC 133 for a shell, an observed marker for an agent,
+    /// nothing otherwise (an agent not yet at its prompt is refused rather than written into).</summary>
+    private static SessionReadiness ReadinessOf(TerminalSurface surface, ITerminalSession session)
+    {
+        var evidence = surface.ReadinessEvidence;
+        var ready = evidence == ReadinessEvidence.ObservedPattern
+            ? surface.AgentReadiness?.IsReady == true
+            : session.Activity == SessionActivity.Ready;
+
+        return evidence == ReadinessEvidence.None
+            ? SessionReadiness.Unknown
+            : ready ? SessionReadiness.Ready : SessionReadiness.NotReady;
+    }
+
+    /// <summary>
+    /// Transfers a prompt-draft body to a NAMED ready session (spec-editor-surfaces US-ED6), by its
+    /// session id, through the same choreography as the focused path. Returns whether the terminal
+    /// accepted the write (PtyWriteAccepted); anything else leaves the draft retryable.
+    /// </summary>
+    public async Task<bool> DispatchToAsync(string sessionId, string body)
+    {
+        if (_dispatch is null) { return false; }
+
+        var surface = TerminalSurfaces()
+            .FirstOrDefault(s => string.Equals(s.Session?.SessionId, sessionId, StringComparison.Ordinal));
+        if (surface is null) { return false; }
+
+        try
+        {
+            var receipt = await DispatchToSurfaceAsync(surface, body);
+            return receipt.State == DispatchState.PtyWriteAccepted;
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>The ready terminal sessions a prompt draft may transfer to (US-ED6), live.</summary>
+    public IReadOnlyList<PromptTarget> ReadyPromptTargets()
+    {
+        var targets = new List<PromptTarget>();
+        foreach (var surface in TerminalSurfaces())
+        {
+            var session = surface.Session;
+            if (session is null) { continue; }
+            if (ReadinessOf(surface, session) != SessionReadiness.Ready) { continue; }
+            targets.Add(new PromptTarget(session.SessionId, surface.DisplayName ?? surface.SurfaceId));
+        }
+
+        return targets;
+    }
+
+    /// <summary>Every live terminal surface in the current layout.</summary>
+    private IEnumerable<TerminalSurface> TerminalSurfaces() =>
+        Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => s.Kind == "terminal")
+            .Select(s => Adapter.ContentFor(s.SurfaceId))
+            .OfType<TerminalSurface>();
+
+    /// <summary>
+    /// Wires every prompt-draft surface to the shell after a render (US-ED5/ED6): the live ready
+    /// targets, the named-session dispatch, the persisted body, and the save callback. Idempotent —
+    /// reconcile reuses surfaces, and Configure re-reads targets each time.
+    /// </summary>
+    internal void BindPromptDrafts()
+    {
+        _promptDraftStore ??= new PromptDraftStore(
+            string.IsNullOrEmpty(_workspaceRoot)
+                ? Path.Combine(Path.GetTempPath(), "aide-prompt-drafts.json")
+                : Path.Combine(_workspaceRoot, ".aide", "prompt-drafts.json"));
+
+        foreach (var stack in Service.Current.AllStacks())
+        {
+            foreach (var surface in stack.Surfaces.Where(s => s.Kind == "prompt"))
+            {
+                if (Adapter.SurfaceContent<PromptDraftSurface>(surface.SurfaceId) is not { } draft) { continue; }
+
+                var id = surface.SurfaceId;
+                draft.Configure(
+                    ReadyPromptTargets,
+                    DispatchToAsync,
+                    _promptDraftStore.TryGet(id, out var body) ? body : null,
+                    text => _promptDraftStore.Save(id, text));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Feeds every class-diagram surface the current graph, from which it derives the type hierarchy
+    /// (ADR-0020). Reads `_queries` live and wires the same context lookup the canvas uses, so a class
+    /// diagram opened before or after the workspace attaches still populates.
+    /// </summary>
+    // The stack a new view should open in: the one the user is focused in, else the graph/canvas stack,
+    // else any. Opening "where I am" is the least surprising placement; the canvas fallback preserves the
+    // prior behaviour when nothing is focused. Read after ReconcileViewIntoModel, which only touches the
+    // model (no render), so AvalonDock's active-content tracking is still valid.
+    // Opens a reference-document surface (class diagram, code viewer) via DocumentPlacementPolicy so it
+    // NEVER tabs on top of the graph (the "graph pane disappeared" defect): it tabs into a document
+    // stack, or splits a fresh one beside the graph so both stay visible. Shared so every reference
+    // document places — and is traced — identically.
+    private string OpenReferenceDocument(Surface surface, string okMessage, string noPaneMessage)
+    {
+        ReconcileViewIntoModel();
+
+        var placement = DocumentPlacementPolicy.Decide(Service.Current, Adapter.ActiveSurfaceId);
+        if (placement is null) { return noPaneMessage; }
+
+        LayoutResult result;
+        string mode;
+        if (placement.TabIntoStackId is { } tabStackId)
+        {
+            mode = "tab";
+            result = Service.Apply(new LayoutOperation.AddSurface(tabStackId, surface));
+        }
+        else
+        {
+            mode = "split-beside-graph";
+            var add = Service.Apply(new LayoutOperation.AddSurface(placement.SplitBesideStackId!, surface));
+            result = add.Applied
+                ? Service.Apply(new LayoutOperation.MoveSurface(
+                    surface.SurfaceId, new DropTarget(placement.SplitBesideStackId!, DropKind.SplitRight)))
+                : add;
+        }
+
+        WorkbenchDiagnostics.LayoutMutation(
+            $"open-{surface.Kind}", mode, surface.SurfaceId, Adapter.ActiveSurfaceId, Service.Current);
+
+        Adapter.Render();
+        BindCanvas();
+        BindContexts();
+        BindJoins();
+        BindClassDiagrams();
+        BindCodeViewers();
+        BindDiagnostics();
+        BindTerminalAttention();
+
+        return result.Applied ? okMessage : result.Announcement;
+    }
+
+    // Before a layout mutation that will trigger a full Render, fold any native pane drag or splitter
+    // resize the user performed back into the model, so the rebuild preserves their arrangement instead
+    // of reverting it. Fail-safe: ReadLayoutFromView returns null on any shape it cannot map losslessly,
+    // and this is then a no-op — the pre-existing revert stands, never a corrupted layout.
+    private void ReconcileViewIntoModel()
+    {
+        if (Adapter.ReadLayoutFromView() is { } reconciled)
+        {
+            Service.Restore(reconciled);
+        }
+    }
+
+    // The product decision: opening a workspace KEEPS the current arrangement rather than restoring a
+    // per-workspace saved layout. Restoring on open reset/scattered the user's panes (and could bring
+    // back a degenerate, graph-less saved layout), so we deliberately do NOT call Persistence.Restore()
+    // on open. Persistence still SAVES the arrangement, so the data is kept and a setting could re-enable
+    // restore later. (Supersedes US-9 restore-on-open, per the product owner.)
+    private void KeepArrangementOnWorkspaceOpen()
+    {
+        WorkbenchDiagnostics.LayoutMutation("workspace-open", "keep-current", "layout", null, Service.Current);
+    }
+
+    internal void BindClassDiagrams()
+    {
+        var surfaces = Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => s.Kind == "classdiagram")
+            .Select(s => Adapter.SurfaceContent<ClassDiagramSurface>(s.SurfaceId))
+            .OfType<ClassDiagramSurface>()
+            .Where(s => s.IsEmpty)   // first load only — avoids reloading (and flickering) on every render
+            .ToList();
+        if (surfaces.Count == 0) { return; }
+
+        _ = PopulateClassDiagramsAsync(surfaces);
+    }
+
+    private async Task PopulateClassDiagramsAsync(IReadOnlyList<ClassDiagramSurface> surfaces)
+    {
+        foreach (var surface in surfaces) { surface.ShowLoading(); }
+
+        try
+        {
+            var vm = new CanvasGraphViewModel(_queries) { ContextLookup = BuildContextLookup() };
+            var graph = await vm.LoadAsync(null, cancellationToken: CancellationToken.None);
+            foreach (var surface in surfaces)
+            {
+                surface.MembersSource = MembersForTypeAsync;   // fills each box's UML member compartment
+                surface.ShowGraph(graph.Nodes, graph.Edges);
+            }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // An explicit error state, never a misleading empty "no classes" (U9).
+            foreach (var surface in surfaces) { surface.ShowError(ex.Message); }
+        }
+    }
+
+    // A type's declared members for the class-diagram compartment, read through the workspace's Describe
+    // query (ADR-0020 Phase 2). maxNeighbors is 1 because members ride on the node itself, not its edges.
+    private async Task<(IReadOnlyList<string> Members, int Declared)> MembersForTypeAsync(string typeId)
+    {
+        if (_queries is null) { return ([], 0); }
+
+        var described = await _queries.DescribeAsync(typeId, 1, CancellationToken.None);
+        return (described.Members ?? [], described.MembersDeclared);
+    }
+
+    // The code viewer's content source. A mock until Core ships NodeContentAsync (ADR-0018); swapping
+    // this field for the Core-backed source is the whole live-wiring change.
+    private INodeContentSource _nodeContentSource = new MockNodeContentSource();
+
+    /// <summary>
+    /// Feeds each open code-viewer surface content (ADR-0018/0019). Until Core's NodeContentAsync ships,
+    /// this shows a labelled SAMPLE so the read-only highlighted viewer is visible and reachable; the
+    /// real per-node source (following graph selection) drops in when the source is swapped.
+    /// </summary>
+    internal void BindCodeViewers()
+    {
+        var surfaces = Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => s.Kind == "codeviewer")
+            .Select(s => Adapter.SurfaceContent<CodeViewerView>(s.SurfaceId))
+            .OfType<CodeViewerView>()
+            .Where(v => v.NodeId is null)   // first load only
+            .ToList();
+        if (surfaces.Count == 0) { return; }
+
+        _ = PopulateCodeViewersAsync(surfaces);
+    }
+
+    private async Task PopulateCodeViewersAsync(IReadOnlyList<CodeViewerView> viewers)
+    {
+        try
+        {
+            var content = await _nodeContentSource.GetAsync("(sample)", CancellationToken.None);
+            foreach (var v in viewers) { v.Show(content); }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // Leaves the viewer in its fallback state rather than crashing.
+        }
+    }
+
+    // Captures a completed re-index so the Diagnostics pane can show its coverage, and refreshes any
+    // open pane. Called from the re-index handlers, which complete on a background thread — the pane
+    // update touches WPF, so it is marshalled to the UI dispatcher.
+    private AiDe.Core.Ipc.IndexSummary CaptureIndex(AiDe.Core.Ipc.IndexSummary result)
+    {
+        _lastIndex = result;
+        _ = _dispatcher.InvokeAsync(BindDiagnostics);
+        return result;
+    }
+
+    internal void BindDiagnostics()
+    {
+        var surfaces = Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => s.Kind == "diagnostics")
+            .Select(s => Adapter.SurfaceContent<DiagnosticsSurface>(s.SurfaceId))
+            .OfType<DiagnosticsSurface>()
+            .ToList();
+        if (surfaces.Count == 0) { return; }
+
+        var report = BuildDiagnosticsReport();
+        foreach (var surface in surfaces) { surface.Show(report); }
+    }
+
+    private DiagnosticsReport BuildDiagnosticsReport()
+    {
+        string? summary = null;
+        IReadOnlyList<string> disclosures = [];
+        var failed = 0;
+        if (_lastIndex is { } idx)
+        {
+            summary = ConciseIndexSummary(idx);
+            disclosures = AiDe.Core.Facts.DisclosureSummary.Fold(idx.Disclosures);
+            failed = idx.Failed.Count;
+        }
+
+        var daemon = _diagnosticsVm?.Read().Describe();
+        return new DiagnosticsReport(summary, disclosures, failed, daemon);
+    }
+
+    private static string ConciseIndexSummary(AiDe.Core.Ipc.IndexSummary idx)
+    {
+        var text = $"Indexed {idx.ScopesIndexed} of {idx.ScopesFound} scope(s) · {idx.Assertions:N0} assertion(s)";
+        if (idx.ScopesReused > 0) { text += $" · {idx.ScopesReused} reused"; }
+        if (!string.IsNullOrWhiteSpace(idx.Contexts)) { text += $" · {idx.Contexts}"; }
+        return text;
+    }
+
 
     /// <summary>The terminal pane the user is working in, or null when none is focused.</summary>
     /// <remarks>

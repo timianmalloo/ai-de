@@ -142,15 +142,14 @@ public sealed class PrivacyMarkerTests : IDisposable
         var opened = endpoint.OpenWorkspace(Open(workspace), Peer());
         Assert.True(opened.Ok, opened.Reason);
 
-        var capability = System.Text.Json.JsonSerializer
-            .Deserialize<IpcOpenResult>(opened.Payload!)!.Capability;
+        var capability = opened.Payload.As<IpcOpenResult>()!.Capability;
 
         var response = endpoint.Invoke(
             new IpcRequest(
                 // A plain command id: the id is legitimately recorded, and seeding it here would
                 // assert the wrong thing. The PAYLOAD is what this case is about.
                 IpcVersion.Current, WorkspaceOperations.Find, "cmd-payload", workspace, 1,
-                capability, $"{{\"term\":\"{Secret}\",\"maxResults\":5}}"),
+                capability, IpcPayloadTestExtensions.Json($"{{\"term\":\"{Secret}\",\"maxResults\":5}}")),
             Peer());
 
         Assert.True(response.Ok, response.Reason);
@@ -165,13 +164,12 @@ public sealed class PrivacyMarkerTests : IDisposable
         // is the id and nothing else rides along with it.
         var endpoint = Endpoint(out var workspace);
         var opened = endpoint.OpenWorkspace(Open(workspace), Peer());
-        var capability = System.Text.Json.JsonSerializer
-            .Deserialize<IpcOpenResult>(opened.Payload!)!.Capability;
+        var capability = opened.Payload.As<IpcOpenResult>()!.Capability;
 
         endpoint.Invoke(
             new IpcRequest(
                 IpcVersion.Current, WorkspaceOperations.Find, Secret, workspace, 1,
-                capability, "{\"term\":\"x\",\"maxResults\":1}"),
+                capability, IpcPayloadTestExtensions.Json("{\"term\":\"x\",\"maxResults\":1}")),
             Peer());
 
         // The id is deliberately EXEMPT from the absence rule — it is the correlation key. What must
@@ -193,13 +191,12 @@ public sealed class PrivacyMarkerTests : IDisposable
         // that authority can be read out of.
         var endpoint = Endpoint(out var workspace);
         var opened = endpoint.OpenWorkspace(Open(workspace), Peer());
-        var capability = System.Text.Json.JsonSerializer
-            .Deserialize<IpcOpenResult>(opened.Payload!)!.Capability;
+        var capability = opened.Payload.As<IpcOpenResult>()!.Capability;
 
         endpoint.Invoke(
             new IpcRequest(
                 IpcVersion.Current, WorkspaceOperations.Find, "cmd-1", workspace, 1,
-                capability, "{\"term\":\"x\",\"maxResults\":1}"),
+                capability, IpcPayloadTestExtensions.Json("{\"term\":\"x\",\"maxResults\":1}")),
             Peer());
 
         AssertNoSpanCarries(capability);
@@ -214,13 +211,13 @@ public sealed class PrivacyMarkerTests : IDisposable
         refresh.Register(endpoint);
 
         var opened = endpoint.OpenWorkspace(Open(workspace), Peer());
-        var capability = System.Text.Json.JsonSerializer
-            .Deserialize<IpcOpenResult>(opened.Payload!)!.Capability;
+        var capability = opened.Payload.As<IpcOpenResult>()!.Capability;
 
         endpoint.Invoke(
             new IpcRequest(
                 IpcVersion.Current, ScopeRefreshService.Operations.Refresh, "cmd-1", workspace, 1,
-                capability, $"{{\"scopeId\":\"{Secret}\",\"artifactRevision\":\"{Secret}\"}}"),
+                capability, IpcPayloadTestExtensions.Json(
+                    $"{{\"scopeId\":\"{Secret}\",\"artifactRevision\":\"{Secret}\"}}")),
             Peer());
 
         await Task.Delay(200);
@@ -249,7 +246,7 @@ public sealed class PrivacyMarkerTests : IDisposable
         endpoint.Invoke(
             new IpcRequest(
                 IpcVersion.Current, WorkspaceOperations.Find, "cmd-1", workspace, 1,
-                Secret, $"{{\"term\":\"{Secret}\"}}"),
+                Secret, IpcPayloadTestExtensions.Json($"{{\"term\":\"{Secret}\"}}")),
             Peer());
 
         AssertNoSpanCarries(Secret);

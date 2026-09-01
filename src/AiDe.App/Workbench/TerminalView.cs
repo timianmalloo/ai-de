@@ -228,7 +228,7 @@ public sealed class TerminalView : FrameworkElement
         // Redrawn over the block so the character under the cursor stays readable. Read through
         // CellUnderCursor, NOT the raw indexer: at the pending-wrap position (or any off-grid cursor)
         // there is no cell, and indexing it would throw IndexOutOfRangeException on the WPF UI thread
-        // during OnRender - unhandled, terminating the whole application (DC-041). No cell => nothing
+        // during OnRender - unhandled, terminating the whole application (DC-062). No cell => nothing
         // to redraw, which is correct: the wrap position holds no character.
         if (_screen.CellUnderCursor() is { } cell && cell.Character != ' ')
         {

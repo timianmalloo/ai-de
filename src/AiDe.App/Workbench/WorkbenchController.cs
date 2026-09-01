@@ -36,6 +36,21 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     public Func<Task<string>>? WorkspaceRefresh { get; set; }
 
     /// <summary>
+    /// Raised after a command that CHANGED what the store holds has finished.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Indexing used to end at the announcement.</b> A re-index wrote 10,242 new assertions
+    /// — the whole knowledge half of a real repository — and every open pane went on rendering the
+    /// projection it had fetched when it loaded. The user re-indexed, watched the message say it had
+    /// worked, and read a Knowledge count of 0 taken from a graph twenty-six seconds out of date.
+    /// The store was right and the screen was wrong, which is the worst of the two.</para>
+    ///
+    /// <para>An event rather than a call into the panes: the controller dispatches commands and owns
+    /// no surface. Who listens, and what re-reading costs them, belongs to whoever holds the pane.</para>
+    /// </remarks>
+    public event Action? WorkspaceDataChanged;
+
+    /// <summary>
     /// Routes focus across the canvas boundary. Set when a graph canvas surface attaches.
     /// </summary>
     /// <remarks>
@@ -64,6 +79,21 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workspace.indexSolution":
                 return IndexSolution();
 
+            case "workbench.clearStatus":
+                // Cleared, then a SHORT confirmation — not silence.
+                //
+                // Silence was the first attempt, on the grounds that announcing into a line the user
+                // just cleared is absurd. `EveryCatalogCommand_Announces` refused it, and that
+                // control is right: a command that does its work without saying so is
+                // indistinguishable from a dead key (DC-011), and for a screen-reader user it IS a
+                // dead key — SC 4.1.3 exists for exactly this.
+                //
+                // The user's complaint was never that the line exists; it was that it had grown to
+                // fill the window. Four words is not real estate.
+                announcer.Clear();
+                announcer.Announce("Status cleared.");
+                return true;
+
             case "workspace.diagnostics":
                 return ShowDiagnostics();
 
@@ -84,6 +114,18 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
 
             case "workbench.dispatchPrompt":
                 return OpenPromptBar();
+
+            case "workbench.newPromptDraft":
+                return NewPromptDraft();
+
+            case "workbench.newClassDiagram":
+                return NewClassDiagram();
+
+            case "workbench.newCodeViewer":
+                return NewCodeViewer();
+
+            case "workbench.newDiagnostics":
+                return NewDiagnostics();
 
             case "workbench.toggleLock":
                 service.IsLocked = !service.IsLocked;
@@ -398,11 +440,59 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         return true;
     }
 
+    /// <summary>Opens a prompt-draft surface. Set by the shell that can create surfaces.</summary>
+    public Func<string>? NewPromptDraftRequested { get; set; }
+
+    /// <summary>Opens a class-diagram surface. Set by the shell that can create surfaces.</summary>
+    public Func<string>? NewClassDiagramRequested { get; set; }
+
+    /// <summary>Opens a read-only code-viewer surface. Set by the shell that can create surfaces.</summary>
+    public Func<string>? NewCodeViewerRequested { get; set; }
+
+    /// <summary>Opens the workspace diagnostics surface. Set by the shell that can create surfaces.</summary>
+    public Func<string>? NewDiagnosticsRequested { get; set; }
+
     private bool NewAgentTerminal()
     {
         announcer.Announce(NewAgentTerminalRequested is null
             ? "Agent terminals are not available in this build."
             : NewAgentTerminalRequested());
+
+        return true;
+    }
+
+    private bool NewPromptDraft()
+    {
+        announcer.Announce(NewPromptDraftRequested is null
+            ? "Prompt drafts are not available in this build."
+            : NewPromptDraftRequested());
+
+        return true;
+    }
+
+    private bool NewClassDiagram()
+    {
+        announcer.Announce(NewClassDiagramRequested is null
+            ? "Class diagrams are not available in this build."
+            : NewClassDiagramRequested());
+
+        return true;
+    }
+
+    private bool NewCodeViewer()
+    {
+        announcer.Announce(NewCodeViewerRequested is null
+            ? "The code viewer is not available in this build."
+            : NewCodeViewerRequested());
+
+        return true;
+    }
+
+    private bool NewDiagnostics()
+    {
+        announcer.Announce(NewDiagnosticsRequested is null
+            ? "Diagnostics are not available in this build."
+            : NewDiagnosticsRequested());
 
         return true;
     }
@@ -478,7 +568,12 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     {
         try
         {
-            announcer.Announce(await work());
+            var outcome = await work();
+
+            // Before the message, not after: the panes start re-reading while the user is still
+            // reading what happened, so the number they look at next is the new one.
+            WorkspaceDataChanged?.Invoke();
+            announcer.Announce(outcome);
         }
         catch (Exception ex)
         {
@@ -533,8 +628,11 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 outcome = $"Re-indexing failed: {ex.Message}";
+                announcer.Announce(outcome);
+                return;
             }
 
+            WorkspaceDataChanged?.Invoke();
             announcer.Announce(outcome);
         });
 

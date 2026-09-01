@@ -157,6 +157,9 @@ a user currently cannot see.
 | Show `ContextEdge.DominantTarget` more prominently | 57 of 72 crossings being one class is the difference between "this boundary failed" and "this boundary is carrying the ORM". It is currently a grey suffix on the expander header | `ContextEdge.DominantTarget`, `DominantCount` |
 | A visual state for `ContextMapView.IsDeclared == false` | "No context map is declared" is currently a heading and a muted paragraph. It is the *first* thing a new workspace shows, and it is closer to an empty state than to a message | `ContextMapView.IsDeclared` |
 | Bind `CanvasGraphViewModel.RouteAsync(from, to)` | "How does A reach B" is the question impact analysis is for, and nothing can ask it. It returns **the same `CanvasGraph`** the canvas already binds — same nodes, same edges — so the only new work is two inputs and showing `Message`. Endpoints arrive with `IsRoot = true` | `CanvasGraphViewModel.RouteAsync` |
+| **Filter the Knowledge chip on `GraphNode.IsKnowledge`, not on a list of type names** | **The user reported the chip reading 0 on TheTerrace, which holds 2,343 knowledge nodes.** Two causes, both now fixed in Core: the store was cached from a build with no knowledge reader (`ExtractorGeneration` bumped, so upgrading rebuilds it), and the graph carried only each node's FINE kind. TheTerrace's knowledge kinds are `spec` and `knowledge-epl-fan-platform` — a name that repository invented — so no fixed list of type names can work across repositories, and widening the list only moves the problem to the next one (DC-033). `GraphNode.IsKnowledge` is the declared coarse dimension: the producer says it, so the chip can ask directly | `GraphNode.IsKnowledge` |
+| Render the knowledge **health findings** | Every knowledge node carries `HealthFindings` already: `owner not recorded`, `type not recorded`, `orphan: no inbound or outbound links`, `source location not recorded`, and now `review overdue since <date>` — MEASURED at 460 review dates on this repo. They are computed on every read and shown nowhere, which is the "absence of evidence stays explicit" rule failing at the last step | `KnowledgeNodeView.HealthFindings` |
+| Bind `KnowledgeAsync` — the knowledge graph is populated now | **The user reported the graph showing knowledge as zero against a large code count.** Nothing was discovering knowledge scopes, so the reader — which had existed since Phase 1 — was never reached. MEASURED on this repo after the fix: 466 `owned_by`, 346 `refines`, 287 `implements`, 272 `relates-to`, 66 `depends-on`. A knowledge node is a document id with a `has_type` and typed edges; it lives in the same store and the same graph as code | `IWorkspaceQueries.KnowledgeAsync`, and `GraphQuery(Kinds: ["adr", "spec", …])` for the graph surface |
 | Bind `OverviewAsync` for the large-graph canvas | **The Core half of DC-035, and the thing the force-layout work needs at scale.** The workspace as GROUPS instead of 1,500 truncated dots. MEASURED on TheTerrace at depth 3: `Features.Fixtures` 117, `Features.Teams` 117, `Features.Matches` 107, `Infrastructure.Data` 70 — the actual shape of the repo, in **55,758 bytes** against 533,484 for the node graph. `Depth` is the zoom control (1 = coarsest); each cluster carries `NodeCount`, `InternalEdges` and `IsExternal`; each link carries `Weight` for thickness and the **weakest** `Status` of the edges it bundles | `IWorkspaceQueries.OverviewAsync`, `WorkspaceOverview` |
 | Use `GraphOverview.GroupFor(id, depth)` when grouping detail nodes | Now public for exactly this. If the canvas derives its own grouping, the two definitions will disagree and a node will render in the wrong cluster — which looks like a layout bug and is not one (DC-022's shape) | `GraphOverview.GroupFor` |
 | Surface the **refresh cost** | `RefreshMetrics` now reports p50/p95/max and how many refreshes have happened. It exists to answer a question a design decision is blocked on, and nobody can see it | `WorkspaceClient.RefreshMetricsAsync()` |
@@ -176,11 +179,20 @@ call and this session does not own it:
 | `Kinds: [...]` | Keeps only nodes of the given `has_type` values | "Show me the classes", "show me the tables". The kinds present are discoverable from the graph the surface already has |
 | `ScopeId: "..."` | Keeps only nodes one scope declares | TheTerrace is 28 scopes; a per-project view is a different picture from a per-repository one |
 
-**The question for you, and Core will follow whichever way you answer it:** are these a persistent
-control strip on the canvas, a per-view preset (Domain / Everything / This project), or not surfaced
-at all for now? A **preset** is Core's guess at the better answer — three named views are one decision
-a user makes once, where three toggles are a combinatorial space they have to reason about — but it
-is a guess about users, which is the thing this session is least qualified to make.
+**ANSWERED by the user, 2026-08-30: presets — three named views.** Not a control strip, not
+per-filter toggles. Core's reasoning held: three named views are one decision a user makes once,
+where three toggles are a combinatorial space they must reason about.
+
+Core suggests these three, and the design session owns the names and the default:
+
+| view | query |
+|---|---|
+| **Domain** | `IncludeExternal: false` — this workspace's own declared code, nothing else |
+| **Everything** | no filters — includes framework and package types |
+| **This project** | `ScopeId: <selected scope>` — one project's declarations |
+
+`Kinds` is deliberately not one of the three: it is a *refinement within* a view rather than a view,
+and folding it in would produce the combinatorial space the presets exist to avoid.
 
 **What Core commits to either way:** the filter runs BEFORE the node cap, and degree is computed over
 what survives it, so a filtered view ranks and trims the graph that was asked for rather than the
@@ -203,6 +215,11 @@ up the root cause, the scaling model (`knowledge-exploration.md` **US-K10–K12*
 | **Default graph view no longer loads the whole graph** | **DONE (Core)** — a dedicated `OverviewNodeCap = 1_500` with `IncludeExternal: false`, so the default overview is this workspace's *own* declared code, ranked, bounded, and honest about what it omits (US-K10). `WholeGraphNodeCap` is retained for callers that want the projection ceiling. | `CanvasGraphViewModel.OverviewNodeCap` |
 | **Daemon returns a legible error instead of closing on an oversized frame** | **DONE (Core)** — `IpcErrorCodes.PayloadTooLarge`; `IpcServer.Respond` measures the payload and returns the error (with the byte counts) rather than letting the write throw and drop the pipe (US-K12). Tested in `OversizedResponseTests`. | `IpcServer.Respond`, `IpcContract` |
 | **A bounded/aggregated overview query + semantic-zoom/LOD source** | **Core DONE; Design REMAINING (now unblocked).** Core shipped `IWorkspaceQueries.OverviewAsync` / `WorkspaceOverview` — prefix-grouped clusters carrying `NodeCount` / `InternalEdges` / `IsExternal`, links carrying `Weight` (thickness) and the **weakest** `Status` of the edges they bundle, with `Depth` as the zoom control — and made `GraphOverview.GroupFor(id, depth)` public so the canvas groups detail nodes the SAME way (else two definitions disagree, DC-022). **Design's LOD render is the remaining half:** bind `OverviewAsync`, render group **super-nodes** (dot sized by `NodeCount`, with the count ON the glyph — a dot standing for 240 types is only honest while the 240 is on it), expand-on-click (drill `Depth`+1 or fetch the group's detail), coexisting with the node-graph view + the search/pan/zoom just landed. **One small contract touch needed:** the page's `CanvasNode` (`Id, Label, Kind, IsRoot, Context`) has no count/group field, so the `NodeCount` cannot reach the renderer today — coordinate adding it (or a distinct overview payload kind). Worth a `/design` of the overview→page payload + expand protocol before building. | Core: `OverviewAsync`, `WorkspaceOverview`, `GraphOverview.GroupFor` (landed); Design: `CanvasPage.cs` render + binding + a `CanvasNode` count field |
+| **A bounded node-content query for the Explorer reader** | **NEW — Core to build (Design consumes).** The full-window Explorer mode (`spec-knowledge-explorer-mode`, **ADR-0018**) has a reader that renders a selected node's *content* (rendered markdown / rendered html / syntax-highlighted code / text) + metadata + edges. The graph payload deliberately carries **no** content (US-K12 bound), so the reader needs an **on-demand** query for the *one* selected node — provisionally `NodeContentAsync(nodeId, ct)` → `NodeContent(Id, RenderKind, Language?, Content, Metadata, Edges, Shortfall?)`, **transport-bounded** (oversized content returns a `Shortfall` "first N — open source", never an oversized frame). `RenderKind` (markdown/html/code/text/**none**) is the authority's call so the reader's per-kind branch is data, not a client guess (a diagram/proof node → `none` → metadata+edges fallback). Rejected alternatives (ADR-0018): fattening `CanvasNode` (blows the frame — INV-0003 shape) and App-side file reading (two authorities — DC-022). **Not urgent:** ADR-0017 Phase 1 mocks this seam (reader shows metadata+edges from the graph node it already has); Phase 2 drops in the real query. | Core: a new `IWorkspaceQueries.NodeContentAsync` + `NodeContent` DTO on the IPC seam; Design: the reader renders it |
+| **Graph kind taxonomy & the docs/knowledge extractor** (INV-0004) | **NEW — Core to build (Design consumes).** Four items surfaced while building the Explorer category filter (`inv-0004-graph-kind-taxonomy-and-knowledge`). **(1) A docs/knowledge extractor** so the repo's markdown specs/ADRs/designs enter the graph and the Explorer's **Knowledge/Specs** chips populate — today the graph is code-only (C#/py/ts/EF-SQL/bicep), so US-K1's "one graph over all artifacts" is only half-built and those chips are correctly 0. **(2) `node_kind = knowledge` on extracted (source) nodes** — a bicep resource carries the coarse dimensional `node_kind` of `knowledge` where `source` is expected; confirm the classification or fix it at the extractor/projection (`WorkspaceSchema.cs:56`). Design mitigated the *symptom* by making the reader prefer the fine `has_type` over the coarse `node_kind`, but the underlying label is Core's. **(3) Neighbour `has_type` on the describe path** — `CanvasGraphViewModel:210` hardcodes neighbour `Kind = "source"`, so a *focused* graph loses every neighbour's real type and the category filter can only categorise the *overview* accurately; carry the neighbour's `has_type` on the describe result. **(4) Extractor coverage** — `python-dynamic-imports-not-analysed`, `python-nested-declarations-not-analysed`, `schema-changed-by-raw-sql-not-read` are genuine coverage gaps (the rest of the disclosures are by-design/external boundaries); a priority call, not a defect. | Core: docs extractor, `node_kind` fix, neighbour `has_type`, extractor coverage; Design: reader now prefers `has_type` (landed), filter categorises by `has_type` (landed) |
+| **The docked "Explore" view shows "not available" on an open workspace** | **NEW — Core/shared to decide (Design diagnosed).** The default layout (`LayoutModel.cs:137`) declares a docked `explore` surface of kind `view`; a `view` pane renders evidence content only when the factory has live `queries`. Panes built at startup — before a workspace attaches — are built with a null-queries factory (→ `Unavailable`, *"'Explore' is not available in this build."*) and are **not refreshed when the workspace attaches** (the documented "reopen a pane to see them" behaviour, `WorkbenchShell` AttachWorkspace). Now that a workspace **auto-opens** (TheTerrace), the first-run view therefore shows a dead pane even though the graph — which reads live `_queries` — is populated. Two questions for Core/shared: **(a)** refresh open `view`/`inspector` panes' content on workspace attach (the Adapter/Controller reconcile path, Core-owned) so they stop showing "not available"; **(b)** the docked `explore` pane is now **semantically redundant** with the full-window Explorer rail mode (ADR-0017) — consider removing it from the default layout or renaming it, since two "Explore" surfaces confuse. Design owns the rail/full-window Explorer; the docked default-layout surface + the attach-refresh are Core. | Core: refresh view panes on attach; decide the docked `explore` surface's fate (LayoutModel default). Design: rail/full-window Explorer (done) |
+| **FYI — Design added a user command to the Core command catalog** (`workbench.newPromptDraft`) | **FYI, not a request.** Building the prompt-draft surface (spec-editor-surfaces) needed a reachable entry point. Adding a user command is, by the seam the `MainMenuBuilder` comment already documents (*"CORE-OWNED DATA in a design-owned file … adding a command and placing it one atomic change"*), an atomic change spanning the Core catalog (`WorkbenchCommands.cs`, the `Menu:`-carrying entry) and the App menu (`MainMenuBuilder`). Design added `new("workbench.newPromptDraft", "New prompt draft", "Ctrl+K, D", nameof(LayoutOperation.AddSurface), …, Menu: "_Terminal")` to the catalog, the id to the `_Terminal` menu list, and bumped the `_Terminal` count 3→4 in the Core tripwire test `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders`. No behaviour change to any existing command. Flagged here so Core sees the catalog touch; the standing proposal to move the menu mapping onto the catalog entry (so this seam stops crossing) still applies. | Design added the command (done); Core owns the catalog long-term |
+| **`has_member` extraction for the class diagram** (ADR-0020) | **NEW — Core to build (Design consumes).** The class-diagram surface (spec-uml-erm-surfaces, ADR-0020) renders a type hierarchy today from the graph's existing `inherits`/`implements` edges — but **no extractor emits members** (`has_member`/`has_method`/`has_field`), so the Phase-1 view is member-less by construction. Core adding `has_member` (methods/fields/properties per class, with visibility where cheap) is the **Phase-2 unlock** for UML member compartments — at which point a notation-valid Mermaid `classDiagram` render (vendored locally) becomes worthwhile. **Optional Phase-2 sibling:** a bounded `ClassModelAsync(context)` query returning the complete class model (classes/interfaces + generalization/realization/association + members) for a scope — a sibling of `OverviewAsync`/`NodeContentAsync` — for when the overview cap omits hierarchy edges. Design's Phase-1 filters the graph already in hand; neither is Phase-1-blocking. | Core: `has_member` extraction (priority); optional `ClassModelAsync`. Design: Phase-1 type-hierarchy view from the existing graph (in progress) |
 
 Lesson for both sessions: this is exactly the file-overlap the ownership split exists to prevent —
 both sessions edited `IpcServer.cs` / `CanvasGraphViewModel.cs` in the same window. It converged
@@ -246,6 +263,380 @@ item 4 is settled above.
 
 ---
 
+## 4d. CI now runs on YOUR branch, and will flag things it never used to
+
+Until 2026-08-30 the workflow triggered on `push` to `main` and on `pull_request` only. The design
+session works on a long-lived feature branch with no PR open, so **its commits met no gate until they
+reached `main`** — by which point they were merged and the finding landed on whoever merged next.
+
+That is not a hypothetical: an entry arrived in the defect register with an unbackticked `Status:`
+value **twice**, and a `DC-` id was allocated twice across the two sessions **six times**. Every one
+was caught at a merge rather than at the push that introduced it. A gate that only guards the
+destination reports problems to the wrong person.
+
+`on: push:` now has no branch filter, so **the next push to your branch runs all nine gates**. Expect
+it to be noisy the first time. Two are worth knowing about in advance:
+
+- **`verify-defect-register`** wants the status VALUE in backticks. Its message used to say
+  "declares no **Status:** line" when the line was there and only the format was wrong; it now names
+  the actual problem and shows the expected form:
+
+  ```
+  - **Status:** `partially-controlled` — why            <- accepted
+  - **Status:** partially-controlled (why)              <- rejected
+  ```
+- **`verify-id-allocators`** fails on a duplicate `DC-`/`al-`/`cl-`/`adr-`/`INV-` id. If it fires,
+  the protocol is §4b item 2: keep the id already on `main`, re-issue yours, regenerate the derived
+  views.
+
+Neither is a new rule — both were always enforced, just not where you could see them.
+
+## 4e. New: a pane is now TOLD when the store changes (`WorkspaceDataChanged`)
+
+**Why this exists.** A re-index of TheTerrace wrote 10,242 assertions — the whole knowledge half of
+the repository — and every open pane went on rendering the projection it had fetched when it loaded.
+The user re-indexed, read a message saying it had worked, and looked at a Knowledge chip reading
+**0** taken from a graph twenty-six seconds out of date. The store was right and the screen was
+wrong, which is the worse of the two failures. Registered as **DC-045**.
+
+**What changed.** `WorkbenchController` now raises `WorkspaceDataChanged` after a command that
+actually changed the store — index, re-index-all, refresh — and **not** after one that failed.
+`WorkbenchShell.RereadDataSurfaces` handles it, asking the layout what is open right now and
+re-reading each pane:
+
+| pane | how it re-reads |
+|---|---|
+| `CanvasSurface` (graph) | `RefreshAsync()` from its current root, so a user who has navigated into a node stays there |
+| `ContextMapSurface` | `Refresh()` — its `Source` delegate reads the store on every call |
+| `JoinSurface` | `Refresh()` — same |
+
+**What this asks of you: one line per new surface kind.** If you add a data-backed pane, add its
+case to `RereadDataSurfaces`. A pane that is not in that switch is not broken and not obviously
+wrong — it just quietly shows yesterday's answer after an index, which is exactly the failure above.
+
+**What it does not do.** The signal comes from the *controller*, so a write reaching the store by
+another route (the daemon indexing on its own, a second client) does not raise it. Panes are told
+about writes this shell commanded, not about the store changing. Say so if you need the stronger
+guarantee — it is a daemon-side change and Core owns it.
+
+**Also worth knowing:** a stored artifact revision now carries the extractor generation that produced
+it (`SourceRevision`). Anything that shows a revision to a person must call `SourceRevision.Base`
+first — the three read paths that exist today already do, and `CurrentSourceRevision()` returns the
+base, so you will not normally meet this. It matters if you render a revision from an assertion you
+read yourself.
+
+## 4f. The IPC protocol is now version 3 — one thing to know, no code change for you
+
+**Nothing in `IWorkspaceQueries` or `WorkspaceClient` changed shape.** Every call you make returns
+what it returned before. This is here for one reason: the first time you run after pulling, a daemon
+left over from an earlier build may still be serving a workspace, and it speaks version 2.
+
+You will see:
+
+> This workspace could not be opened: a daemon from an earlier build is still running for this
+> workspace and speaks an older protocol. It exits on its own once idle; to reopen immediately, end
+> the AiDe.Daemon process serving this workspace.
+
+That is the intended behaviour, not a regression — version negotiation refusing a mismatch at the
+boundary instead of letting it become a parse failure somewhere further in. Ending the process or
+waiting out the idle grace is the whole remedy.
+
+**What actually changed.** A payload used to be serialised to JSON and that *text* placed in a string
+field, so the envelope escaped every quote a second time — measured at **1.56–1.57x**. The budget was
+checked on the inner bytes and enforced on the outer ones, which is how a graph inside its byte
+budget was refused by the transport and the pane reported only "The graph could not be loaded". The
+payload is now carried as JSON. Framing overhead: **78 bytes**.
+
+**What you get for free.** The graph is no longer paying a 57% tax, so more of it fits in one message.
+On TheTerrace the canvas's own opening request went from 1,000 nodes and 283 knowledge to **1,500 and
+340**; a 5,000-node request from 706 nodes to **2,792, with 729 knowledge**. If any of your layout or
+density work was tuned against the smaller graph, it is now getting a bigger one.
+
+## 4g. `NodeContentAsync` has shipped — the code viewer is unblocked
+
+**Status: DONE (Core).** ADR-0018's query is on `IWorkspaceQueries` and on the IPC seam. Your
+`INodeContentSource` swap is the one line you staged it to be.
+
+```csharp
+// AiDe.App/Workbench/NodeContentSource.cs — beside MockNodeContentSource
+public sealed class CoreNodeContentSource(IWorkspaceQueries queries) : INodeContentSource
+{
+    public async Task<NodeContent> GetAsync(string nodeId, CancellationToken cancellationToken = default)
+    {
+        var content = await queries.NodeContentAsync(nodeId, cancellationToken).ConfigureAwait(false);
+
+        return new NodeContent(
+            content.NodeId,
+            content.RenderKind switch
+            {
+                AiDe.Core.Projections.NodeContentKind.Code => NodeContentKind.Code,
+                AiDe.Core.Projections.NodeContentKind.Text => NodeContentKind.Text,
+                _ => NodeContentKind.None,
+            },
+            content.Language,
+            content.Content,
+            content.Shortfall);
+    }
+}
+```
+
+Your `NodeContentKind` and Core's carry the same three cases in the same order, so the mapping above
+is exhaustive today and will stay so — if Core ever adds a case, that `_` sends it to `None` and the
+reader shows metadata and edges rather than mis-rendering.
+
+**What it returns, measured on TheTerrace** (1,500 drawn nodes): **1,158 Code, 340 Text, 2 None.**
+The two are TypeScript modules under `bin/Debug/.playwright/` whose recorded path is their scope id —
+a TypeScript-extractor quirk in build output, not a reader problem.
+
+| you will see | when |
+|---|---|
+| `RenderKind = Code`, `Language = "csharp"` etc. | a source file — highlight by `Language` |
+| `RenderKind = Text`, `Language = "markdown"` | prose — a document's body, frontmatter included |
+| `RenderKind = None`, `Content` empty, `Shortfall` set | no recorded source, an unreadable file, or a kind not rendered inline — show metadata + edges (US-E7) |
+| `Shortfall` set with content present | truncated at 256 KB: *"first 256 KB of 389 KB — open the source for the rest"* |
+
+**Two things worth knowing.**
+
+**It needs a re-index.** Nothing previously recorded *where a scope's files are* — an assertion's
+provenance path is relative to its scope, and no fact said where the scope was, so a node could not be
+resolved to a file at all. Scopes now emit `declared_at`, and `ExtractorGeneration` moved to
+`2026-08-31.1`, so the first index after pulling re-reads everything. A store written before that
+answers `None` with *"the source for this node could not be located"* — which is correct and is what a
+stale store should say.
+
+**Scopes did not become nodes.** `declared_at` is an attribute and the graph skips it explicitly, so
+your node counts are unchanged. If you ever see a directory-shaped node, that is a regression and I
+want to know.
+
+**Still Core-gated, unchanged:** `has_member` for class-diagram Phase 2, and the `CanvasNode` count
+field for the LOD render. Both are next.
+
+## 4h. `has_member` and the `CanvasNode` count have shipped — blockers 2 and 3 clear
+
+**`has_member` — class-diagram Phase 2 is unblocked.** Types now carry their own members, formatted
+for a UML compartment: `+ Id : int`, `# Describe(int) : string`, `- _note : string`. The leading glyph
+is UML visibility (`+` public, `#` protected, `-` private, `~` internal).
+
+MEASURED on TheTerrace: **9,854 members across 1,425 of 1,428 types**, averaging seven each.
+
+- **Members are an ATTRIBUTE, not an edge** — `has_member` sits beside `has_column`. `Id : int` is a
+  property OF a class, not a peer of it, and emitting it as a relation would have put ~9,854 new
+  nodes on the canvas to serve a card layout. Your node counts are unchanged.
+- **Declared members only.** Inherited ones belong to the type that declares them; repeating them
+  would make every subclass look like it had overridden its parent.
+- **Compiler inventions are skipped** — a record's `<Clone>$`, backing fields, `get_`/`set_` accessors
+  beside the property they belong to.
+- **Capped at 40 per type, and a truncated compartment says so:** a `members_truncated` fact carries
+  the real declared count. MEASURED: 7 types of 1,428 reach the cap (`SportMonksProvider` declares 68).
+  Render it — a class with 300 members must not look like one with 40.
+
+**`CanvasNode` gained `Count`.** Defaulted to 1, so every existing construction means what it always
+meant. And it has a producer: **`CanvasGraphViewModel.OverviewAsync(depth)`** returns the workspace as
+group super-nodes in the shape the canvas already draws — `Count` set to the group's `NodeCount`,
+kind `group` / `group-external`, edges labelled `aggregates` carrying the weakest bundled status.
+
+Grouping is `GraphOverview.GroupFor`'s, not the view-model's, so a drill-down computes the same
+membership the overview did — two definitions of "which group is this node in" is DC-022 waiting.
+
+**Also:** discovery no longer indexes build output. `artifacts` joined `bin`/`obj` in the shared skip
+list (the .NET SDK's own output layout), and `publish`/`_framework` joined the TypeScript set — three
+scopes of 67 on TheTerrace were Blazor's published JavaScript. Scope count is now 64. If a scope you
+expected disappears, tell me rather than working around it.
+
+## 4i. Design → Core: two findings from live-testing the new surfaces (2026-08-31)
+
+Two items surfaced while the user exercised the class diagram / code viewer / prompt editor. Full
+diagnosis in `docs/notes/note-20260831-panel-reorder-and-search-breadth.md`. Fixed-and-landed this
+session for contrast: the class diagram sat empty over a fully-indexed workspace because the facelift
+island-chrome `Border` hid the surface type from `ContentFor(id).OfType<T>()` (fixed with an
+unwrap-aware `WorkbenchAdapter.SurfaceContent<T>`, routed through all wrapped-surface binds), and the
+graph canvas gained an **Overview** affordance (button + Home key) to return to the whole graph.
+
+**One genuine Core ask — search breadth.** The graph search box today filters only the already-loaded
+node **labels** client-side. The user wants content / keyword / topic search. That needs a store-side
+query: please broaden `IWorkspaceQueries.FindAsync` (or add a `SearchContentAsync`) to match on
+**attributes, declared context, and doc/knowledge content**, not just labels — and, if you want to
+own it, a corpus/file content search (the App must not read workspace files, DC-022, so a file-grep
+is Core's to expose). The App follow-up is small: point the canvas search at that query and re-root /
+highlight the results, keeping the `/` affordance and the focus trap. **No API is claimed yet** — tell
+me the shape you prefer (extend `FindResult`, or a new result type) and I'll wire the surface to it.
+
+**One FYI — no Core action needed.** "Opening a tab reorders panes" is an App-side reverse-sync gap:
+a native AvalonDock drag is never reconciled into the owned `Layout` model, so the full
+rebuild-from-model on every add reverts it. `LayoutOperation.MoveSurface` is already expressive enough
+(`Float`/`JoinStack`/`Split*`), so this is App-only — I'm deferring it to a supervised piece because it
+touches the keyboard/drag-identical invariant, feeds persistence, and is untestable headlessly.
+
+## 4i. What the graph can tell you — `docs/plans/extractor-roadmap.md`
+
+**A standing answer to "why is X not in the graph?"**, so you do not have to ask Core and wait.
+
+It lists every extractor, what each reads and emits, its coverage **measured on TheTerrace** rather
+than estimated, what is not built at all, and the order the remaining work is worth doing in. When a
+surface shows less than you expected, that file will usually say whether it is a boundary of the
+product, a disclosed gap, or a defect.
+
+**The distinction it turns on, because it will affect how you read disclosures.** A *boundary* is
+something the product does not intend to read — the .NET base class library, the Python standard
+library. A *gap* is something it means to read and cannot. Conflating them cost this session a
+misplaced priority: Python disclosed *"246 import(s) name something this scope does not contain"*,
+which read as the largest coverage hole in any extractor and was ranked as one — and all 246 turned
+out to be `sys`, `json`, `pathlib` and friends. The real number was **2**. Registered as DC-050.
+
+So when a disclosure names a count, it now tells you which kind it is. If one still reads ambiguously
+on a surface you are building, that is worth reporting rather than working around.
+
+**Currently in flight (Core):** knowledge body analysis — 2,359 documents are in the graph and not one
+fact comes from their prose — and TypeScript precision, where measurement found the extractor
+inventing imports from prose and minified JavaScript rather than merely missing symbols.
+
+## 4j. Design → Core: the class diagram needs a MEMBERS query to become real UML
+
+> **RESOLVED (Design self-implemented, 2026 — commit pending).** The members query was built
+> Design-side by **enriching the existing `DescribeResult`** rather than adding a new IPC operation
+> (lowest-risk path — `System.Text.Json` makes added record fields backward-compatible, so no daemon
+> contract break). `ProjectionService.Describe` now reads `OutgoingAssertions(nodeId, MaxMembersRead=80)`,
+> filters `has_member` → `DescribeResult.Members` and `members_truncated` → `MembersDeclared`.
+> `ClassDiagramSurface` fills each drawn box's compartment via `MembersSource = DescribeAsync(typeId, 1)`
+> (≤40 boxes, parallel fire-and-forget, render-gen guarded). Tests: `ClassMemberProjectionTests` (Core,
+> in-process extraction) + `Describe_AgreesWithTheInProcessProjection` now asserts `Members`/
+> `MembersDeclared` survive the wire + `ClassDiagramSurfaceTests` (App, one fill dispatched per box).
+> **No Core action needed for the members feature.**
+>
+> **Core finding (attribute predicates leak into `Describe.Neighbors`).** While wiring this I found
+> `Describe` builds `Neighbors` from `AssertionsTouching` **without excluding attribute predicates**, so
+> `has_member`, `has_type`, and `members_truncated` appear as neighbour *edges* (objects like
+> `"+ Id : int"` or `"class"`). That is harmless for the class diagram (it reads `Members`, not
+> `Neighbors`) but pollutes the evidence/describe neighbour list — and, if the canvas graph builds nodes
+> from these edges anywhere, would render member-string / `"class"` pseudo-nodes. Recommend Core exclude
+> the attribute-predicate set (`has_type`, `has_member`, `members_truncated`, and siblings) from the
+> `edges` projection in `Describe` (and confirm the canvas graph filters them too). Design left this
+> alone as it is Core's projection-semantics domain.
+
+The class diagram now renders as an actual UML diagram — three-compartment boxes (name / member
+compartment), generalization (solid) and realization (dashed) connectors with a hollow triangle, a
+layered layout, a **Hide interfaces** collapse, and a Diagram/List toggle. But the **member compartment
+is empty**, because `has_member` is emitted as an assertion and **no `IWorkspaceQueries` method exposes
+it** (I checked: `NodeView` carries no attributes; `DescribeResult` returns only `Node` + edge
+`Neighbors`; `EvidenceAsync` pages the whole assertion stream, too heavy to scan per render). So the box
+reads as a class box awaiting its members — the last thing between this and a real UML class diagram.
+
+**The ask — a bulk members read.** Please expose the `has_member` / `members_truncated` you already
+emit. My preferred shape, following the `Overview`/`Graph` query pattern (operation + request + result,
+one round trip for the ≤40 drawn types):
+
+```csharp
+// IWorkspaceQueries
+Task<MembersResult> MembersAsync(IReadOnlyList<string> typeIds, CancellationToken ct);
+
+public sealed record MembersResult(IReadOnlyDictionary<string, TypeMembers> ByType);
+public sealed record TypeMembers(IReadOnlyList<string> Members, int DeclaredCount);
+//   Members     = the has_member objects, already formatted "+ Id : int" / "# Describe(int) : string"
+//   DeclaredCount = the members_truncated total (== Members.Count when not truncated)
+```
+
+`ProjectionService` can read them with the store's existing `OutgoingAssertions(typeId)` (subject ==
+type, predicate `has_member` / `members_truncated`); the daemon registers one more operation like the
+others. If you'd rather **enrich `DescribeResult`** with the node's own attributes instead of a new
+operation, that also works — I'll call `DescribeAsync` per drawn box. Tell me the shape and I'll wire
+the compartments to it (I split `+`/`#`/`-`/`~` visibility into attributes vs operations App-side by the
+`(` in the member string). This is the open half of `night-classdiagram-members`.
+
+## 4j. The graph can now be asked for fewer edge KINDS — and it is your call which
+
+**`GraphQuery` gained `ExcludeEdges`.** Null keeps every kind, so nothing you have changes.
+
+**Why you want it.** Edges, not nodes, are what fills the frame. MEASURED on TheTerrace with the
+canvas's own default request: **702,425 of 852,680 bytes are edges — 82%** — and two predicates are
+74% of them (`depends_on` 2,155, `calls` 1,272, the latter new this session).
+
+| request | nodes drawn | omitted | framed bytes |
+|---|---|---|---|
+| everything, 1,500 asked *(today)* | 1,500 | 1,492 | 852,680 |
+| without `calls` | 1,500 | 1,492 | 685,237 |
+| without `calls` + `depends_on` | 1,500 | 1,492 | 375,044 |
+| everything, 5,000 asked | 2,243 | 749 | 979,719 |
+| **without `calls` + `depends_on`, 5,000 asked** | **2,992** | **0** | **602,364** |
+
+That last row is the whole workspace, nothing omitted, with 446 KB spare. The graph has never been
+able to show all of it.
+
+**This is a UX decision and it is yours.** Core has made it askable and measured what each answer
+costs; which relationships a first view should draw — and whether the user gets a control for it — is
+the pane's question, not the projection's. Two shapes worth considering: a default that omits the
+structural-dependency kinds and a toggle to bring them back, or a legend where each kind can be
+switched off and the node count visibly grows.
+
+**Why exclusions rather than a list of kinds to include.** An include list is a caller restating the
+extractors' vocabulary, and goes stale silently the first time a reader emits a predicate nobody added
+to it — the shape this codebase has paid for repeatedly. Excluding means a new predicate appears in
+every view by default: a caller sees something unexpected rather than silently missing something. A
+misspelled exclusion is inert, and there is a test that says so.
+
+**Two things that changed under you this session**, both measured, neither requiring action:
+`calls` is a new edge kind (1,492 type-to-type call edges, 72% of which have no `depends_on`), and
+knowledge documents are no longer double-indexed — `node_class` rows fell 2,371 to 878 with all 878
+documents preserved, which is what left room for the call edges in the first place.
+
+## 4k. Core → Design: the status line needs a fly-in, and here is the content for it
+
+**The user's words:** *"the status bar should not have more than a couple lines... anything more
+should be a modal fly-in as opposed to taking up real estate. Also I should be able to clear the
+status bar."*
+
+**What happened.** A real index of TheTerrace produced 178 disclosure strings, and the status line
+carried all of them — roughly four fifths of the window, with the graph reduced to a strip along the
+top. Every disclosure was correct; nobody owned the aggregate (DC-054).
+
+**What Core has already done, so you are not starting from the wall of text:**
+
+| | |
+|---|---|
+| Folded disclosures by class, summing counts | **108 lines → 28** |
+| `IndexSummary.Describe()` no longer lists them | now one clause: *"Not analysed: knowledge-inline-code-not-resolved and 27 other boundaries — see Diagnostics."* |
+| Added `workbench.clearStatus` | **Ctrl+K, Ctrl+C**, in the `_View` menu and the palette |
+
+The status line after an index is now **two sentences**, not eighty.
+
+**What is yours, and why.** The fly-in itself is chrome — `MainWindow.xaml` and the interactive
+surfaces are Design-owned, and a modal panel is a design decision about layering, dismissal, focus
+return and motion, not a projection concern.
+
+**The content is ready for it.** `IndexSummary.Disclosures` still carries the full folded list —
+`Describe()` simply stopped inlining it — and `WorkspaceGraph.Disclosures` is folded the same way. So
+a panel needs no new query: bind the list you already receive. The folded lines are stable, sorted
+and carry workspace totals, e.g.
+
+```
+knowledge-inline-code-not-resolved (26,970 inline code span(s) …, across 39 scope(s))
+calls-outside-this-repository (23,870 call(s) reach a type this product does not index …)
+knowledge-prose-link-target-missing (109 prose link(s) name a markdown file that is not in this workspace, across 2 scope(s))
+```
+
+**The kind is now machine-readable — you do not have to parse suffixes.**
+`AiDe.Core.Facts.DisclosureKinds.KindOf(line)` takes a folded disclosure and returns
+`DisclosureKind.Boundary` or `DisclosureKind.Gap`. A **boundary** is something the product never
+intended to read (the BCL, the Python standard library, a minified bundle) — a statement about scope,
+and nothing in the user's repository is wrong. A **gap** is something it meant to read and could not,
+and is usually a defect somebody can fix.
+
+On TheTerrace today that is **4 gaps and 24 boundaries**, and the four are the whole reason to open a
+panel. If the fly-in separates them — gaps first, boundaries collapsed behind a disclosure triangle —
+that is the difference between a list nobody reads and the product's most actionable output.
+
+It is a list, not a rule about names, because the convention is a convention:
+`schema-changed-by-raw-sql-not-read` reads exactly like a boundary and is a gap, since the recorded
+schema can be quietly wrong. A suffix rule would classify it confidently and wrongly.
+`EveryDisclosureHasAKind` reflects over every disclosure constant in the extraction assembly and
+fails when a new one is classified by nobody, so the list cannot go stale silently. An unknown one
+defaults to **Gap** on purpose: a boundary shown as a gap wastes attention once, a gap shown as a
+boundary is a defect filed under "working as intended".
+
+**On clearing:** `workbench.clearStatus` empties the line and announces a four-word confirmation
+rather than nothing. Silence was tried first and the `EveryCatalogCommand_Announces` control refused
+it — a command that acts without saying so is a dead key to a screen-reader user (SC 4.1.3). If the
+fly-in gets its own dismissal, the same rule applies to it.
+
 ## 5. Reducing merge pain, concretely
 
 - **Rebase on `origin/main` before starting a stretch of work**, not only before pushing.
@@ -269,8 +660,16 @@ item 4 is settled above.
   merge commits is withdrawn. Moving to pull requests remains open to either session to propose.
 - Whether the design session wants the view-model records to carry presentation hints (a severity, an
   ordering weight) or to compute those itself from the data.
-- **Which `GraphQuery` filters the canvas offers, and as what control.** Stated as a concrete
-  question with a recommendation in §4a; it is an IA decision, so Core has not taken it.
+- ~~Which `GraphQuery` filters the canvas offers, and as what control.~~ **Settled 2026-08-30: three
+  named presets (Domain / Everything / This project).** The shapes are in §4a; the design session owns
+  the names and the default.
+- ~~Whether code and knowledge should be joined.~~ **Settled 2026-08-30 by the user: NO, and not by
+  inference.** Measured first — no knowledge link in any repository targets a code symbol, so a join
+  could only have been guessed. Docs and code being orthogonal is a useful property: it makes "show
+  the knowledge" and "show the code" exact cuts rather than blurred ones. The graph carries only
+  links something in the repository declares. Full reasoning and what would legitimately unblock a
+  join (a `governs` link written in frontmatter) is in
+  `docs/notes/note-20260830-the-graph-carries-only-observable-links.md`.
 - Where visual regression evidence lives, and whether it belongs in the same gate run as the unit
   tests or in a slower ring (`ci-and-test-efficiency.md` would say the slower ring).
 
@@ -397,3 +796,22 @@ Delivered, all Design-owned ("if it changes how a pane looks, Design owns it"):
 - Touched the Core-listed `SurfaceContentFactory.cs` for the **visual wrap only** (one return
   statement); no kind mapping or behaviour changed. Full solution green: 680 tests, App.Tests 118
   (baseline bumped), Core.Tests 562. **Still square: document-tab corners** (needs retemplating).
+
+## 4k. Design → Core: sequence diagrams need ORDERED CALL data (2026-08-31)
+
+The class diagram is now real UML (variable-height three-compartment classifier boxes, stereotypes,
+generalization/realization arrowheads, members). Next UML surface: **sequence diagrams**. A UML
+sequence diagram renders an *ordered* interaction — lifelines, activation bars, and messages
+(synchronous filled-arrow, asynchronous open-arrow, dashed return) top-to-bottom in call order.
+
+**The blocker: there is no ordered-call data in the store.** There is no `calls` predicate, and
+nothing carries a call **sequence ordinal**. `depends_on` (7585) is unordered and type-level, not a
+call sequence.
+
+**The ask.** Emit a `calls` assertion per call site: subject = the calling method/type, object = the
+called method/type, plus metadata carrying (a) a **sequence ordinal** within the caller (so the
+messages can be ordered) and (b) a **call kind** (`sync` | `async` | `return`). A first, sufficient
+slice: one method's outgoing call chain (a single activation). Design will build
+`SequenceDiagramSurface` against a **stubbed interaction model** in the meantime (mocked-seam
+pattern), so wiring the real `calls` query later is a substitution, not a redesign. Full rationale +
+the UML symbol set in `docs/notes/uml-diagram-fidelity-roadmap.md`.

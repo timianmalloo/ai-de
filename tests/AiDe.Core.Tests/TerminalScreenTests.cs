@@ -344,7 +344,7 @@ public sealed class TerminalScreenTests
         Assert.True(screen.IsDirty);
     }
 
-    // ---- cursor-under-render safety (regression: DC-041) --------------------
+    // ---- cursor-under-render safety (regression: DC-062) --------------------
     // A focused terminal renders a cursor block AND redraws the character under it. The character
     // read used the raw indexer at (CursorRow, CursorColumn), but the cursor legitimately sits at
     // the pending-wrap column (CursorColumn == Columns) after writing the last column, and at the

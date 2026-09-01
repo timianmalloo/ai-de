@@ -36,14 +36,32 @@ internal static class CanvasPage
           button.chrome { font: inherit; background: #1A1F26; color: #E4E9EF; border: 1px solid #2A313B;
                   border-radius: 8px; padding: 2px 10px; cursor: pointer; }
           button.chrome[disabled] { opacity: .4; cursor: default; }
+          button.chrome[aria-pressed="true"] { background: #21303f; border-color: #5B9DD9; color: #CDE3FF; }
+          .node.group::before { border-radius: 24%; }
           input.search { font: inherit; font-size: 13px; background: #0D1014; color: #E4E9EF;
                   border: 1px solid #2A313B; border-radius: 8px; padding: 3px 9px; width: 190px; }
           input.search::placeholder { color: #98A3B2; }
           input.search:focus { outline: 2px solid #5B9DD9; outline-offset: 1px; }
+          #filters { display: flex; gap: 6px; margin: 8px 0 0; flex-wrap: wrap; align-items: center; }
+          #filters .flabel { color: #98A3B2; font-size: 12px; margin-right: 2px; }
+          .fchip { font: inherit; font-size: 12px; background: #1A1F26; color: #E4E9EF;
+                  border: 1px solid #2A313B; border-radius: 999px; padding: 2px 10px; cursor: pointer; }
+          .fchip .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+                  margin-right: 5px; vertical-align: middle; }
+          .fchip[aria-pressed="false"] { color: #98A3B2; opacity: .55; }
+          .fchip[aria-pressed="false"] .dot { opacity: .4; }
+          .fchip:focus { outline: 2px solid #5B9DD9; outline-offset: 1px; }
           #fit { margin-left: auto; }
           #mode { margin-left: 6px; }
           #caption { color: #98A3B2; margin: 6px 0 0; }
-          #warn { color: #D8A650; margin: 4px 0 0; min-height: 1em; }
+          #warn { color: #D8A650; margin: 4px 0 0; }
+          #warn[hidden] { display: none; }
+          #warn summary { cursor: pointer; list-style: none; outline: none; }
+          #warn summary::-webkit-details-marker { display: none; }
+          #warn summary:focus-visible { outline: 2px solid #5B9DD9; outline-offset: 2px; border-radius: 4px; }
+          #warn summary::before { content: '\25B8'; display: inline-block; margin-right: 5px; font-size: 11px; transition: transform .12s ease; }
+          #warn[open] summary::before { transform: rotate(90deg); }
+          #warndetail { color: #B99A5E; font-size: 12.5px; margin: 4px 0 0 16px; line-height: 1.45; }
           #stage { position: relative; height: 440px; margin-top: 10px; border-radius: 10px;
                    background: #0D1014; overflow: hidden; }
           #stage.grab { cursor: grab; }
@@ -78,11 +96,14 @@ internal static class CanvasPage
             <h1>Graph canvas</h1>
             <input id="search" class="search" type="text" placeholder="Search a node (press /)" aria-label="Search the graph" />
             <button id="back" class="chrome" disabled>&#8592; Back</button>
+            <button id="home" class="chrome" title="Back to the whole graph (press Home)" aria-label="Show the whole graph" disabled>&#8962; Overview</button>
             <button id="fit" class="chrome" title="Fit the graph to the view (2D)">Fit</button>
             <button id="mode" class="chrome" title="Toggle 2D / 3D (press 2 or 3)" aria-label="Switch to 3D view">View in 3D</button>
+            <button id="group" class="chrome" title="Show the workspace as groups (semantic zoom)" aria-label="Show the workspace as groups" aria-pressed="false">Group</button>
           </header>
           <p id="caption">Waiting for the workspace&#8230;</p>
-          <p id="warn"></p>
+          <details id="warn" hidden><summary class="warnsum" id="warnsum"></summary><div id="warndetail"></div></details>
+          <div id="filters" role="group" aria-label="Filter the graph by artifact category"></div>
           <div id="stage"><svg id="edges"></svg></div>
           <p class="legend" id="legend"></p>
           <script>
@@ -92,6 +113,11 @@ internal static class CanvasPage
             var history = [];
             var current = null;
             var backButton = document.getElementById('back');
+            var homeButton = document.getElementById('home');
+            var groupButton = document.getElementById('group');
+            var grouped = false;          // top level: flat nodes vs grouped semantic-zoom
+            var currentIsGroup = false;   // is `current` a group id (opened via group.open)?
+            var pendingGroup = false;     // will the next render's root be a group?
             var modeButton = document.getElementById('mode');
             var fitButton = document.getElementById('fit');
             var searchInput = document.getElementById('search');
@@ -108,20 +134,129 @@ internal static class CanvasPage
             var mode = '2d';
             var rotX = -0.35, rotY = 0.6;   // a gentle default 3D framing
             var lastGraph = null;
-            var records = [];   // { id, isRoot, el, p2:{x,y}, p3:{x,y,z} }
+            var records = [];   // { id, isRoot, el, p2:{x,y}, p3:{x,y,z}, cat }
             var edgeRecs = [];  // { from, to, line }
+
+            // ---- category filter: prune the graph to the artifact categories the operator wants ----
+            var filtersEl = document.getElementById('filters');
+            var CATS = [
+              { id: 'code', label: 'Code', color: '#5B9DD9' },
+              { id: 'data', label: 'Data', color: '#5FB98F' },
+              { id: 'infra', label: 'Infra', color: '#E0955F' },
+              { id: 'specs', label: 'Specs', color: '#B08AD0' },
+              { id: 'knowledge', label: 'Knowledge', color: '#D8A650' }
+            ];
+            var activeCats = { code: true, data: true, infra: true, specs: true, knowledge: true };
+
+            // Map a node's declared has_type to one of the categories the operator prunes by. Code =
+            // program symbols (C#, python, typescript, and anything unrecognised); Data = database and
+            // data models (tables, columns, schema, SQL); Infra = deployment/infrastructure (bicep,
+            // azure); Specs and Knowledge = docs — forward-compatible, the code graph carries few of
+            // these yet (the graph is built from CODE extractors; docs/markdown are not indexed into it).
+            function categoryOf(kind) {
+              var k = (kind || '').toLowerCase();
+              if (k.indexOf('azure') === 0 || k.indexOf('bicep') === 0) { return 'infra'; }
+              if (k === 'table' || k === 'column' || k === 'schema' || k === 'view' || k === 'index'
+                  || k.indexOf('sql') === 0) { return 'data'; }
+              if (k === 'spec' || k === 'requirement' || k === 'acceptance') { return 'specs'; }
+              if (k === 'knowledge' || k === 'doc' || k === 'adr' || k === 'design' || k === 'note'
+                  || k === 'decision-note' || k === 'markdown' || k === 'html' || k === 'diagram'
+                  || k === 'proof') { return 'knowledge'; }
+              return 'code';
+            }
+
+            function buildFilters(counts) {
+              filtersEl.innerHTML = '';
+              var lab = document.createElement('span');
+              lab.className = 'flabel';
+              lab.textContent = 'Show:';
+              filtersEl.appendChild(lab);
+              CATS.forEach(function (c) {
+                var n = counts[c.id] || 0;
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'fchip';
+                function label() {
+                  return c.label + ', ' + n + ' node(s), ' + (activeCats[c.id] ? 'shown' : 'hidden');
+                }
+                b.setAttribute('aria-pressed', activeCats[c.id] ? 'true' : 'false');
+                b.innerHTML = '<span class="dot" style="background:' + c.color + '"></span>'
+                  + c.label + ' ' + n;
+                b.setAttribute('aria-label', label());
+                b.addEventListener('click', function () {
+                  activeCats[c.id] = !activeCats[c.id];
+                  b.setAttribute('aria-pressed', activeCats[c.id] ? 'true' : 'false');
+                  b.setAttribute('aria-label', label());
+                  applyFilter();
+                });
+                filtersEl.appendChild(b);
+              });
+            }
+
+            function applyFilter() {
+              var visible = {};
+              var shown = 0;
+              records.forEach(function (r) {
+                var on = activeCats[r.cat] !== false;
+                r.el.style.display = on ? '' : 'none';
+                if (on) { visible[r.id] = 1; shown++; }
+              });
+              edgeRecs.forEach(function (er) {
+                er.line.style.display = (visible[er.from] && visible[er.to]) ? '' : 'none';
+              });
+              if (CATS.some(function (c) { return !activeCats[c.id]; }) && lastGraph) {
+                document.getElementById('caption').textContent =
+                  shown + ' of ' + (lastGraph.nodes || []).length + ' node(s) shown — filtered by category.';
+              }
+            }
 
             function activate(nodeId) {
               if (!nodeId || nodeId === current) { return; }
-              if (current) { history.push(current); }
+              if (current) { history.push({ id: current, group: currentIsGroup }); }
+              pendingGroup = false;
               post({ kind: 'node.activate', nodeId: nodeId });
+            }
+
+            // Drill from a group super-node to the real nodes it stands for. Distinct from activate:
+            // a group is not a described node, so the host routes it to the group-contents query.
+            function openGroup(groupId) {
+              if (!groupId) { return; }
+              if (current) { history.push({ id: current, group: currentIsGroup }); }
+              pendingGroup = true;
+              post({ kind: 'group.open', nodeId: groupId });
             }
 
             backButton.addEventListener('click', function () {
               if (!history.length) { return; }
               var previous = history.pop();
               current = null;
-              post({ kind: 'node.activate', nodeId: previous });
+              pendingGroup = !!previous.group;
+              post(previous.group
+                ? { kind: 'group.open', nodeId: previous.id }
+                : { kind: 'node.activate', nodeId: previous.id });
+            });
+
+            // Overview jumps straight back to the whole graph. Back climbs the drill-down history one
+            // node at a time, and that history can be many hops deep; there was no single gesture to
+            // return to the top. Clearing the history means the next Back after an Overview is disabled,
+            // which is correct — the whole graph IS the top.
+            homeButton.addEventListener('click', function () {
+              if (!current) { return; }
+              history = [];
+              current = null;
+              pendingGroup = false;
+              post(grouped ? { kind: 'graph.grouped' } : { kind: 'node.overview' });
+            });
+
+            // Group toggles the top level between the flat node overview and the grouped semantic-zoom
+            // view. Clearing history is correct: each is a top, and Back climbs within a top, not across.
+            groupButton.addEventListener('click', function () {
+              grouped = !grouped;
+              groupButton.setAttribute('aria-pressed', grouped ? 'true' : 'false');
+              history = [];
+              current = null;
+              pendingGroup = false;
+              post(grouped ? { kind: 'graph.grouped' } : { kind: 'node.overview' });
             });
 
             function setMode(next) {
@@ -194,9 +329,15 @@ internal static class CanvasPage
             window.addEventListener('focus', claimFocus);
 
             document.addEventListener('keydown', function (e) {
-              // While the search box has focus its own handlers own the keys — the node shortcuts
-              // (2/3, /, Enter, Escape) must not fire, or typing a query would toggle the view.
-              if (e.target === searchInput || document.activeElement === searchInput) { return; }
+              // While a chrome control (search box, filter chip, or a header button) has focus, its
+              // own handlers own the keys — the node shortcuts (2/3/0, /) must not fire, or typing a
+              // query or toggling a filter would also switch the view.
+              var ae = document.activeElement;
+              if (ae && (ae === searchInput
+                  || ae.tagName === 'SUMMARY'
+                  || (ae.classList && (ae.classList.contains('fchip') || ae.classList.contains('chrome'))))) {
+                return;
+              }
 
               // Jump to search from anywhere in the graph, and reset the 2D view with 0.
               if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
@@ -227,6 +368,10 @@ internal static class CanvasPage
 
               if ((e.key === 'Backspace' || (e.key === 'ArrowLeft' && e.altKey)) && history.length) {
                 e.preventDefault(); backButton.click(); return;
+              }
+
+              if (e.key === 'Home' && current) {
+                e.preventDefault(); homeButton.click(); return;
               }
 
               if (e.key !== 'Tab') { return; }
@@ -421,6 +566,8 @@ internal static class CanvasPage
               var svg = document.getElementById('edges');
               var caption = document.getElementById('caption');
               var warn = document.getElementById('warn');
+              var warnsum = document.getElementById('warnsum');
+              var warndetail = document.getElementById('warndetail');
 
               Array.prototype.slice.call(stage.querySelectorAll('.node')).forEach(function (n) { n.remove(); });
               svg.innerHTML = '';
@@ -428,7 +575,9 @@ internal static class CanvasPage
               edgeRecs = [];
 
               current = graph.rootId;
+              currentIsGroup = pendingGroup;
               backButton.disabled = history.length === 0;
+              homeButton.disabled = !current;
 
               var nodes = graph.nodes || [];
               var width = stage.clientWidth || 800;
@@ -454,18 +603,21 @@ internal static class CanvasPage
               // root". The sphere uses a Fibonacci lattice so neighbours spread evenly.
               nodes.forEach(function (n) {
                 var el = document.createElement('span');
-                el.className = 'node' + (n.isRoot ? ' root' : '');
+                var isGroup = (n.kind || '').indexOf('group') === 0;
+                el.className = 'node' + (n.isRoot ? ' root' : '') + (isGroup ? ' group' : '');
                 el.tabIndex = 0;
                 var lbl = document.createElement('span');
                 lbl.className = 'lbl';
-                lbl.textContent = n.label;   // the accessible name, and the on-demand visible label
+                lbl.textContent = isGroup && n.count > 1 ? n.label + ' \u00b7 ' + n.count : n.label;   // group super-nodes carry their size
                 el.appendChild(lbl);
                 el.title = n.id;
                 el.setAttribute('data-id', n.id);
 
                 // Degree-sized dot: a hub reads as bigger, so the eye finds the load-bearing nodes.
                 var deg = degree[n.id] || 0;
-                el.style.setProperty('--r', (n.isRoot ? 18 : Math.min(26, 9 + deg * 3)) + 'px');
+                el.style.setProperty('--r', isGroup
+                  ? Math.max(14, Math.min(44, 10 + Math.log((n.count || 1) + 1) * 5)) + 'px'
+                  : (n.isRoot ? 18 : Math.min(26, 9 + deg * 3)) + 'px');
 
                 var x = cx, y = cy;
                 var p3 = { x: 0, y: 0, z: 0 };
@@ -501,9 +653,12 @@ internal static class CanvasPage
                   uncovered++;
                 }
 
-                el.addEventListener('click', function () { activate(n.id); });
+                el.addEventListener('click', function () {
+                  if (isGroup) { openGroup(n.id); } else { activate(n.id); }
+                });
                 stage.appendChild(el);
-                records.push({ id: n.id, isRoot: !!n.isRoot, el: el, p2: { x: x, y: y }, p3: p3 });
+                records.push({ id: n.id, isRoot: !!n.isRoot, el: el, p2: { x: x, y: y }, p3: p3,
+                  cat: categoryOf(n.kind) });
               });
 
               var joins = 0, inferred = 0;
@@ -531,6 +686,12 @@ internal static class CanvasPage
               fit();
               place();
 
+              // Category filter chips, with a live per-category count, then apply the current filter.
+              var catCounts = {};
+              records.forEach(function (r) { catCounts[r.cat] = (catCounts[r.cat] || 0) + 1; });
+              buildFilters(catCounts);
+              applyFilter();
+
               var legend = document.getElementById('legend');
               var contextNames = Object.keys(contexts);
               var contextLegend = contextNames.length === 0
@@ -555,10 +716,28 @@ internal static class CanvasPage
                   + 'to pan and scroll to zoom (Fit reframes); Backspace goes back; 2/3 toggles 2D/3D; '
                   + 'drag to rotate in 3D; Tab off either end to leave.';
 
-              var notes = [];
-              if (graph.omitted > 0) { notes.push(graph.omitted + ' edge(s) omitted by the result bound'); }
-              if ((graph.disclosures || []).length) { notes.push('not analysed: ' + graph.disclosures.join(', ')); }
-              warn.textContent = notes.join(' - ');
+              // Disclosures are load-bearing honesty (the analysis boundaries), but a five-line wall
+              // of orange buries the graph. Collapse them: a short summary is always visible, the full
+              // list expands on demand. Hidden entirely when there is nothing to disclose.
+              var omitted = graph.omitted > 0 ? graph.omitted : 0;
+              var discl = graph.disclosures || [];
+              if (omitted === 0 && discl.length === 0) {
+                warn.hidden = true;
+                warn.removeAttribute('open');
+              } else {
+                warn.hidden = false;
+                var sum = [];
+                if (omitted > 0) { sum.push(omitted + ' edge(s) omitted by the result bound'); }
+                if (discl.length) { sum.push(discl.length + ' analysis boundary note(s)'); }
+                warnsum.textContent = '\u26A0 ' + sum.join('  \u00B7  ');
+                var detail = [];
+                if (omitted > 0) {
+                  detail.push(omitted + ' edge(s) were not drawn because the result bound was reached — '
+                    + 'search or pick a node to go deeper.');
+                }
+                if (discl.length) { detail.push('Not analysed: ' + discl.join(', ') + '.'); }
+                warndetail.textContent = detail.join('  ');
+              }
 
               if (searchInput) { searchInput.value = ''; stage.classList.remove('searching'); }
 

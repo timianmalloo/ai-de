@@ -1,4 +1,5 @@
 using System.Globalization;
+using AiDe.Core.Extraction;
 using AiDe.Core.Facts;
 using Microsoft.Data.Sqlite;
 
@@ -85,7 +86,24 @@ public sealed class StoreReader : IDisposable
                 JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
                 WHERE a.object = $node AND a.subject <> $node
             )
-            ORDER BY subject, predicate, object
+            -- IDENTITY FIRST, then what this node points at, then what points at it.
+            --
+            -- This was `ORDER BY subject, predicate, object` — alphabetical, which is deterministic
+            -- and says nothing about importance. A node with more facts than the cap therefore lost
+            -- its own type and owner to its own links, and lost them in alphabetical order, so WHICH
+            -- facts survived depended on how the node happened to be named. MEASURED: 12 of 877
+            -- knowledge documents were already over this ceiling before anything was added to them.
+            --
+            -- The bands are coarse on purpose. Identity is a handful of facts that answer "what is
+            -- this"; everything else competes behind it, still alphabetically, so the result stays
+            -- deterministic and the omission count still means what it says.
+            ORDER BY
+                CASE
+                    WHEN subject = $node AND predicate IN ({AiDe.Core.Facts.EvidencePredicates.IdentitySqlList}) THEN 0
+                    WHEN subject = $node THEN 1
+                    ELSE 2
+                END,
+                subject, predicate, object
             LIMIT $limit;
             """, ("$node", nodeId), ("$limit", limit));
         return ReadAssertions(command);
@@ -122,6 +140,120 @@ public sealed class StoreReader : IDisposable
     }
 
     /// <summary>Assertions with a given predicate — the knowledge projection's entry point.</summary>
+    /// <summary>
+    /// The assertion that says where a node was DECLARED — its scope and its path within it.
+    /// </summary>
+    /// <remarks>
+    /// <para>Asked of the store rather than picked out of a neighbour list, because a neighbour list
+    /// is capped. The content reader first filtered <c>AssertionsTouching(id, 50)</c> for the fact
+    /// carrying a path, and on a node with 244 edges that fact was not among the first 50 — so the
+    /// most connected types in a real workspace reported "no recorded source" while the least
+    /// connected ones worked. DC-035, in code written the same day the class was recorded twice.</para>
+    ///
+    /// <para>Ordered so a declaration wins over a mention: <c>has_type</c> and <c>declared_in</c> are
+    /// what a producer emits ABOUT a thing it declared, and their provenance is that thing's own
+    /// file. Any other assertion's path is where it was REFERRED to.</para>
+    /// </remarks>
+    public StoredAssertion? DeclaringAssertion(string nodeId)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT {AssertionColumns} FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.subject = $node AND a.artifact_path_id <> ''
+            ORDER BY CASE a.predicate WHEN 'has_type' THEN 0 WHEN 'declared_in' THEN 1 ELSE 2 END,
+                     a.artifact_path_id
+            LIMIT 1;
+            """, ("$node", nodeId));
+
+        return ReadAssertions(command).FirstOrDefault();
+    }
+
+    /// <summary>
+    /// Where a scope's files live, relative to the workspace root, or null when it never said.
+    /// </summary>
+    /// <remarks>
+    /// Written by the core when it indexes a scope, because the core is what chose the path. An
+    /// empty string is a real answer — the scope IS the workspace root — and is distinct from null,
+    /// which means nothing recorded it and no content can be resolved.
+    /// </remarks>
+    public string? ScopeLocation(string scopeId)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT a.object FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.subject = $scope AND a.predicate = 'declared_at'
+            LIMIT 1;
+            """, ("$scope", scopeId));
+
+        return command.ExecuteScalar() as string;
+    }
+
+    /// <summary>
+    /// The ids currently classified as knowledge.
+    /// </summary>
+    /// <remarks>
+    /// <c>node_kind</c> is the dimension that separates knowledge from source — the one thing that
+    /// knows, now that <c>has_type</c> is emitted by six extractors and says nothing about which
+    /// half of the graph a node belongs to (INV-0004).
+    /// </remarks>
+    /// <summary>
+    /// The knowledge nodes a query asks for, with their declared type, and how many matched in all.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The term and the type are applied HERE, not to the result.</b> The caller used to
+    /// take 200 knowledge ids in id order and then filter them by term in memory, so a search only
+    /// ever saw the alphabetically first 200 of 1,255 — and a document whose id sorted later was
+    /// reported as not existing. That is DC-035 for the third time in this file: a bounded read
+    /// whose filter is applied to the RESULT of the read rather than expressed in it.</para>
+    ///
+    /// <para>The total is counted over the same filtered set, so a caller can say what it left out
+    /// instead of presenting a truncation as an answer.</para>
+    /// </remarks>
+    public (IReadOnlyList<(string NodeId, string Type)> Rows, int TotalMatched) KnowledgeNodes(
+        string? term, string? type, int limit)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT n.node_id, a.object AS declared_type
+            FROM node_dim n
+            JOIN evidence_assertion_fact a ON a.subject = n.node_id AND a.predicate = 'has_type'
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE n.node_kind = 'knowledge' AND n.valid_to_seq IS NULL
+              AND ($term IS NULL OR n.node_id LIKE $pattern)
+              AND ($type IS NULL OR a.object = $type COLLATE NOCASE)
+            GROUP BY n.node_id
+            ORDER BY n.node_id;
+            """,
+            ("$term", term), ("$pattern", term is null ? null : $"%{term}%"), ("$type", type));
+
+        using var reader = command.ExecuteReader();
+        var all = new List<(string, string)>();
+
+        while (reader.Read())
+        {
+            all.Add((reader.GetString(0), reader.GetString(1)));
+        }
+
+        return (all.Count > limit ? all[..limit] : all, all.Count);
+    }
+
+    public IReadOnlySet<string> KnowledgeNodeIds(int limit)
+    {
+        using var command = Command(
+            "SELECT node_id FROM node_dim WHERE node_kind = 'knowledge' AND valid_to_seq IS NULL "
+            + "ORDER BY node_id LIMIT $limit;",
+            ("$limit", limit));
+
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+
+        using var reader = command.ExecuteReader();
+        while (reader.Read()) ids.Add(reader.GetString(0));
+
+        return ids;
+    }
+
     public IReadOnlyList<StoredAssertion> AssertionsWithPredicate(string predicate, int limit)
     {
         using var command = Command($"""
@@ -221,7 +353,9 @@ public sealed class StoreReader : IDisposable
             SELECT artifact_revision FROM scope_snapshot_committed_fact
             WHERE complete = 1 ORDER BY generation DESC, scope_id LIMIT 1;
             """);
-        return command.ExecuteScalar() as string ?? "none";
+        // Base, not stamped. What is stored carries the extractor generation that produced it
+        // (SourceRevision); what a person is shown is the revision they named.
+        return SourceRevision.Base(command.ExecuteScalar() as string ?? "none");
     }
 
     /// <summary>
@@ -410,7 +544,7 @@ public sealed class StoreReader : IDisposable
         while (reader.Read())
         {
             results.Add(new StoredAssertion(
-                reader.GetString(0), reader.GetString(1), reader.GetString(2),
+                reader.GetString(0), reader.GetString(1), SourceRevision.Base(reader.GetString(2)),
                 reader.GetString(3), reader.GetString(4), reader.GetString(5),
                 Enum.Parse<EvidenceOrigin>(reader.GetString(6)),
                 Enum.Parse<VerificationStatus>(reader.GetString(7)),

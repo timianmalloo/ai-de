@@ -42,7 +42,8 @@ internal static class Program
         if (args.Length < 1 || string.IsNullOrWhiteSpace(args[0]))
         {
             await Console.Error.WriteLineAsync(
-                "usage: AiDe.Daemon <workspace-path> [--idle-seconds N] [--startup-seconds N]");
+                "usage: AiDe.Daemon <workspace-path> [--data <directory>] "
+                + "[--idle-seconds N] [--startup-seconds N]");
             return ExitBadUsage;
         }
 
@@ -69,7 +70,20 @@ internal static class Program
 
                 // Opened AFTER the lock and before the pipe. A daemon that published an endpoint and
                 // then failed to open its store would be reachable while unable to answer anything.
-                var (endpoint, opened) = OpenWorkspace(workspacePath);
+                // BEFORE the store is opened, because compaction rebuilds and swaps the file.
+                //
+                // This is the deliberate maintenance moment the design asks for: no session is in
+                // progress, no pane is rendering, and a daemon that has just started is the one
+                // moment an operator is watching. Reporting alone was the previous answer and it
+                // was worse than useless — the check existed, was tested, and nothing called it, so
+                // a workspace grew without limit while its diagnosis sat in an uninvoked method
+                // (DC-042).
+                //
+                // MEASURED: 1.09s to halve a 53 MB store, 1-34ms to decide there is nothing to do.
+                // Cheap enough to simply always ask.
+                Compact(workspacePath, Option(args, "--data"));
+
+                var (endpoint, opened) = OpenWorkspace(workspacePath, Option(args, "--data"));
                 core = opened;
 
                 var server = new IpcServer(pipeName, endpoint, options);
@@ -117,13 +131,26 @@ internal static class Program
     /// request and appears in operator output, and the pipe name was already computed precisely so
     /// the path does not have to.</para>
     /// </remarks>
-    private static (DaemonEndpoint Endpoint, WorkspaceCore Core) OpenWorkspace(string workspacePath)
+    /// <param name="dataDirectoryOverride">
+    /// Where to keep this workspace's state. Absent means the machine-wide default.
+    /// </param>
+    /// <remarks>
+    /// <para><b>Why an override exists at all.</b> Without one the daemon decides for itself, from a
+    /// machine-wide folder, and a caller cannot say otherwise — so anything that launches a daemon
+    /// writes into the user's real profile whether it meant to or not. MEASURED: one run of the Core
+    /// test suite left <b>12</b> workspace directories under LocalAppData, and 2,674 had accumulated
+    /// there over four days, all but one of them an empty store from a test.</para>
+    ///
+    /// <para>It also removes a second derivation of the same value: the shell already computes this
+    /// path and can now pass the one it computed, rather than the two of them agreeing by
+    /// coincidence for as long as both copies of the expression stay identical (DC-022).</para>
+    /// </remarks>
+    private static (DaemonEndpoint Endpoint, WorkspaceCore Core) OpenWorkspace(
+        string workspacePath, string? dataDirectoryOverride)
     {
         var workspaceId = IpcPipeName.ForWorkspace(workspacePath);
 
-        var dataDirectory = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "AiDe", "workspaces", workspaceId);
+        var dataDirectory = DataDirectoryFor(workspacePath, dataDirectoryOverride);
 
         // BEFORE the store is opened. A migration interrupted by a power loss leaves a store that
         // may be anything, and the only thing known to be good is its snapshot — so the next start
@@ -192,6 +219,52 @@ internal static class Program
     /// A daemon that refused to start over an unparseable tuning flag would turn a typo in a
     /// supervisor's command line into an unopenable workspace. The defaults are safe.
     /// </remarks>
+    /// <summary>
+    /// Where this workspace's state lives — one derivation, used by everything that needs it.
+    /// </summary>
+    /// <remarks>
+    /// Extracted because compaction needs the same answer as opening does, and a second copy of this
+    /// expression would agree with the first only until somebody edited one of them (DC-022).
+    /// </remarks>
+    private static string DataDirectoryFor(string workspacePath, string? dataDirectoryOverride) =>
+        string.IsNullOrWhiteSpace(dataDirectoryOverride)
+            ? Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "AiDe", "workspaces", IpcPipeName.ForWorkspace(workspacePath))
+            : Path.GetFullPath(dataDirectoryOverride);
+
+    /// <summary>Reclaims superseded generations, if there are any, before anything opens the store.</summary>
+    private static void Compact(string workspacePath, string? dataDirectoryOverride)
+    {
+        var database = Path.Combine(DataDirectoryFor(workspacePath, dataDirectoryOverride), "workspace.db");
+
+        if (!File.Exists(database)) return;
+
+        try
+        {
+            var result = new AiDe.Core.Store.StoreCompactor(database).Compact();
+
+            if (result.Ran)
+            {
+                Console.WriteLine(result.Summary);
+            }
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or AiDe.Core.Store.WorkspaceStoreException)
+        {
+            // A workspace that cannot be compacted is a workspace that starts anyway, larger than it
+            // needs to be. Refusing to serve because housekeeping failed would trade a disk cost for
+            // an outage.
+            Console.Error.WriteLine($"compaction skipped: {ex.Message}");
+        }
+    }
+
+    /// <summary>The value after a flag, or null when the flag is absent or last.</summary>
+    private static string? Option(string[] args, string flag)
+    {
+        var index = Array.IndexOf(args, flag);
+        return index >= 0 && index + 1 < args.Length ? args[index + 1] : null;
+    }
+
     private static TimeSpan? Seconds(string[] args, string flag)
     {
         var index = Array.IndexOf(args, flag);

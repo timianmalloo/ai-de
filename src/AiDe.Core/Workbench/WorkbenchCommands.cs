@@ -86,6 +86,13 @@ public static class WorkbenchCommandCatalog
             "Returns to the default arrangement.",
             Menu: "_Window"),
 
+        // A status message has no natural end, and the longest one is usually the last one. This is
+        // how a reader puts it away; what it said is still in the diagnostics.
+        new("workbench.clearStatus", "Clear the status message", "Ctrl+K, Ctrl+C",
+            nameof(LayoutOperation.ResetToDefault),
+            "Empties the status line. What it said is still available under Diagnostics.",
+            Menu: "_View"),
+
         // Not a layout operation, so it carries no OperationKind: SC 2.5.7's conformance test asks
         // that every DRAGGABLE operation has a keyboard path, and focusing the canvas is not one.
         // It is here because WPF traversal cannot reach the canvas at all (spike S4), so without an
@@ -143,6 +150,26 @@ public static class WorkbenchCommandCatalog
             string.Empty,
             "Type a prompt and press Enter. The recorded delivery receipt is announced, including when delivery is unknown.",
             Menu: "_Terminal"),
+
+        new("workbench.newPromptDraft", "New prompt draft", "Ctrl+K, D",
+            nameof(LayoutOperation.AddSurface),
+            "Opens a staged prompt-draft pane. Compose a prompt and transfer it to a ready terminal session.",
+            Menu: "_Terminal"),
+
+        new("workbench.newClassDiagram", "New class diagram", "Ctrl+K, M",
+            nameof(LayoutOperation.AddSurface),
+            "Opens a class-diagram pane: the type hierarchy (classes/interfaces and their inheritance) of the open workspace.",
+            Menu: "_View"),
+
+        new("workbench.newCodeViewer", "New code viewer", "Ctrl+K, U",
+            nameof(LayoutOperation.AddSurface),
+            "Opens a read-only source viewer. Renders a node's source with syntax highlighting (a labelled sample until the content query ships).",
+            Menu: "_View"),
+
+        new("workbench.newDiagnostics", "Diagnostics", "Ctrl+K, D",
+            nameof(LayoutOperation.AddSurface),
+            "Opens the workspace diagnostics pane: the last re-index's analysis coverage (what was not analysed, grouped by category) and the daemon state.",
+            Menu: "_View"),
 
         new("workbench.focusCanvas", "Focus graph canvas", "Ctrl+K, G",
             string.Empty,

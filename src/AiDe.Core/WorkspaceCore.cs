@@ -29,7 +29,7 @@ public sealed class WorkspaceCore : IDisposable
         _extractor = extractor;
         Incidents = incidents;
         RootPath = rootPath;
-        Projections = new ProjectionService(store);
+        Projections = new ProjectionService(store, rootPath);
         Dispatch = new DispatchService(store);
         Mcp = new McpToolGateway(Projections, workspaceId);
     }
@@ -98,9 +98,19 @@ public sealed class WorkspaceCore : IDisposable
         string scopeId, string artifactRevision, CancellationToken cancellationToken = default,
         string? rootPathOverride = null)
     {
+        // A fact's identity includes the reader that produced it, so the revision is stamped with
+        // the extractor generation before anything is compared or written. Stamping HERE rather than
+        // at each call site is the point: the shell, the daemon's refresh op and a test all reach
+        // this method, and the previous version let each of them ask a different question.
+        artifactRevision = SourceRevision.Stamp(artifactRevision);
+
         using var activity = Activity.StartActivity("aide.ingestion.scope");
         activity?.SetTag("scope.id", scopeId);
-        activity?.SetTag("artifact.revision", artifactRevision);
+        // The revision the CALLER named, plus the generation as its own axis. Putting the stamp in
+        // the revision tag would make the same repository state look like a different revision on
+        // every upgrade, and an operator grouping by revision would see churn that is not there.
+        activity?.SetTag("artifact.revision", SourceRevision.Base(artifactRevision));
+        activity?.SetTag("extractor.generation", ScopeFingerprints.ExtractorGeneration);
 
         // Re-extracting a revision the store already holds is a NO-OP, decided here rather than
         // absorbed by the database.
@@ -133,7 +143,7 @@ public sealed class WorkspaceCore : IDisposable
             .ExtractAsync(
                 new ExtractionRequest(
                     scopeId, rootPathOverride ?? RootPath, artifactRevision, generation,
-                    WorkspaceModules(artifactRevision)),
+                    WorkspaceModules(artifactRevision), WorkspaceDocuments(artifactRevision)),
                 cancellationToken)
             .ConfigureAwait(false);
 
@@ -151,9 +161,24 @@ public sealed class WorkspaceCore : IDisposable
             return result;
         }
 
+        // WHERE THE SCOPE LIVES, recorded as a fact.
+        //
+        // An assertion's provenance carries a path relative to its SCOPE — `main.bicep`,
+        // `0001-modular-monolith.md` — and nothing recorded where the scope itself was. So a node
+        // could not be resolved to a file at all: `declared_in` names the scope id, not a directory,
+        // and deriving one from the id works for `knowledge:docs/adr` and fails for `bicep:main`,
+        // which is a file stem. Guessing the rest would be a path resolved by pattern-matching, which
+        // is how a reader ends up displaying the wrong file confidently.
+        //
+        // The core is what knows: it chose the path when it discovered the scope. One fact per scope,
+        // relative to the workspace root so the store stays portable.
+        var located = LocateScope(scopeId, rootPathOverride, artifactRevision) is { } where
+            ? result.Assertions.Append(where).ToList()
+            : result.Assertions;
+
         using (var writer = Store.BeginWrite())
         {
-            writer.CommitSnapshot(scopeId, generation, artifactRevision, result.Assertions, complete: true);
+            writer.CommitSnapshot(scopeId, generation, artifactRevision, located, complete: true);
 
             // A subject is always a node. An OBJECT is a node only when the predicate is relational.
             // Found by indexing a real repository: api_version put "2020-02-02" in the graph and
@@ -165,18 +190,41 @@ public sealed class WorkspaceCore : IDisposable
                 .Concat(result.Assertions.Where(a => !AiDe.Core.Facts.EvidencePredicates.Attributes.Contains(a.Predicate)).Select(a => a.Object))
                 .Distinct(StringComparer.Ordinal);
 
+            // A node is KNOWLEDGE because a knowledge scope declared it — not because it has a type.
+            //
+            // This read `Any(a => a.Subject == nodeId && a.Predicate == "has_type")`, which was true
+            // in Phase 1 when the fixture reader was the only producer of `has_type` and the only
+            // reader of knowledge markdown. Six extractors later every declared C# class, table,
+            // bicep resource and python module carries `has_type` too, so almost everything in the
+            // graph was classified `knowledge` — and INV-0004 found it the way these are always
+            // found, as a bicep resource reading "kind: knowledge" in the reader.
+            //
+            // DC-022 exactly: a predicate gained producers and a consumer kept its assumption about
+            // who emits it. The scope id is the thing that actually knows.
+            // The PRODUCER declares it. Scope ids were the first attempt and were nearly right —
+            // but the fixture reader emits knowledge from a scope that is not named for it, so the
+            // id cannot be the authority either. A fact can be.
+            var knowledge = result.Assertions
+                .Where(a => a.Predicate == "node_class" && a.Object == "knowledge")
+                .Select(a => a.Subject)
+                .ToHashSet(StringComparer.Ordinal);
+
             foreach (var nodeId in nodeIds)
             {
-                var isKnowledge = result.Assertions.Any(a => a.Subject == nodeId && a.Predicate == "has_type");
-                writer.UpsertNode(nodeId, isKnowledge ? "knowledge" : "source", nodeId);
+                writer.UpsertNode(nodeId, knowledge.Contains(nodeId) ? "knowledge" : "source", nodeId);
             }
 
             writer.Commit();
         }
 
+        // What was COMMITTED, not what the extractor handed over. The two differ by the scope's own
+        // location fact, and a caller that counts the return value is counting what is in the store —
+        // which is what the index summary reports and what the evidence pages then page through.
+        // Returning the extractor's set made the summary undercount by one per scope, caught by the
+        // daemon's paging test comparing the summary against everything it could read back.
         activity?.SetTag("outcome", "committed");
-        activity?.SetTag("assertion.count", result.Assertions.Count);
-        return result;
+        activity?.SetTag("assertion.count", located.Count);
+        return result with { Assertions = [.. located] };
     }
 
     /// <summary>The result of indexing a whole repository's C# scopes.</summary>
@@ -213,6 +261,50 @@ public sealed class WorkspaceCore : IDisposable
     /// cost the caller the rest of an index run, and the stale evidence it leaves is exactly the
     /// state that already existed.</para>
     /// </remarks>
+    /// <summary>
+    /// Where a scope's files are, relative to the workspace root, as one assertion.
+    /// </summary>
+    /// <remarks>
+    /// <para>The BASE the scope's provenance paths hang off — a project's directory, a template's
+    /// directory, a documentation folder — mirroring how <see cref="ScopeFingerprints.Compute"/>
+    /// decides the same thing, because a scope pointed at a file means that file's directory and a
+    /// scope pointed at a directory means itself.</para>
+    ///
+    /// <para>Relative, and never above the root: a stored absolute path would leak one machine's
+    /// layout into a store meant to be portable, and an escaping one would let a later reader resolve
+    /// outside the workspace it belongs to.</para>
+    /// </remarks>
+    private Facts.EvidenceAssertion? LocateScope(string scopeId, string? scopePath, string artifactRevision)
+    {
+        if (string.IsNullOrWhiteSpace(scopePath)) return null;
+
+        try
+        {
+            var basePath = File.Exists(scopePath) ? Path.GetDirectoryName(scopePath) : scopePath;
+
+            if (string.IsNullOrEmpty(basePath)) return null;
+
+            var relative = Path.GetRelativePath(RootPath, basePath)
+                .Replace(Path.DirectorySeparatorChar, '/');
+
+            if (relative.StartsWith("..", StringComparison.Ordinal) || Path.IsPathRooted(relative))
+            {
+                return null;
+            }
+
+            return new Facts.EvidenceAssertion(
+                scopeId, artifactRevision, scopeId, "declared_at", relative == "." ? string.Empty : relative,
+                Facts.EvidenceOrigin.Static, Facts.VerificationStatus.Verified,
+                new Facts.Provenance(relative, null, "workspace-core", "1", DateTimeOffset.UtcNow));
+        }
+        catch (Exception ex) when (ex is ArgumentException or PathTooLongException)
+        {
+            // A scope whose location cannot be expressed is a scope whose content cannot be read.
+            // That is a reader saying "no content", not an indexing failure.
+            return null;
+        }
+    }
+
     private void RetractScope(string scopeId, string artifactRevision)
     {
         try
@@ -267,6 +359,10 @@ public sealed class WorkspaceCore : IDisposable
         string artifactRevision, CancellationToken cancellationToken = default,
         TimeSpan? perScopeBudget = null, bool force = false)
     {
+        // Stamped once here so every revision this method compares or writes — the per-scope
+        // refresh, a retraction, the stale-scope disclosure — is the same string.
+        artifactRevision = SourceRevision.Stamp(artifactRevision);
+
         var scopes = CSharpScopeDiscovery.DiscoverAll(RootPath);
         var budget = perScopeBudget ?? TimeSpan.FromSeconds(60);
 
@@ -484,6 +580,38 @@ public sealed class WorkspaceCore : IDisposable
             _modules = modules;
             _modulesRevision = artifactRevision;
             return modules;
+        }
+    }
+
+    private string? _documentsRevision;
+    private WorkspaceKnowledge? _documents;
+
+    /// <summary>
+    /// Every markdown file in the workspace and the node id it declares, so a prose link that leaves
+    /// its scope's directory can be resolved.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The same shape as <see cref="WorkspaceModules"/>, for a sharper reason.</b>
+    /// Knowledge scopes NEST — <c>docs</c> and <c>docs/adr</c> are both scopes — and the reader now
+    /// emits facts for its own directory only, so every document belongs to exactly one scope and
+    /// nothing wider is left to resolve a link that crosses a directory. Measured before the change:
+    /// making the walk narrow without this cost 30 of 42 prose-link edges (DC-051).</para>
+    ///
+    /// <para>Read from the FILESYSTEM rather than the store, and cached per revision, for the two
+    /// reasons stated above <see cref="WorkspaceModules"/>: an edge must not depend on the order the
+    /// scopes ran in, and thirty-nine knowledge scopes must not walk the tree thirty-nine times.
+    /// MEASURED on TheTerrace: one survey of 1,087 markdown files, and the whole index went from
+    /// 7.1s to 5.5s because the duplicated reading it replaces was the larger cost.</para>
+    /// </remarks>
+    private WorkspaceKnowledge WorkspaceDocuments(string artifactRevision)
+    {
+        lock (_modulesGate)
+        {
+            if (_documents is not null && _documentsRevision == artifactRevision) return _documents;
+
+            _documents = KnowledgeExtractor.Survey(RootPath);
+            _documentsRevision = artifactRevision;
+            return _documents;
         }
     }
 

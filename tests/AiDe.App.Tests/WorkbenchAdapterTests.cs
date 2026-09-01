@@ -262,6 +262,157 @@ public sealed class WorkbenchAdapterTests
         _ => throw new InvalidOperationException("unexpected pane " + e.GetType().Name),
     };
 
+    // The regression for the empty class diagram: SurfaceChrome.WrapAsIsland frames a non-windowed
+    // pane's content in a Border, so ContentFor(id) returns the Border — and a bind that did
+    // ContentFor(id).OfType<ClassDiagramSurface>() found nothing and never populated the pane, which
+    // sat on its construction-time empty state over a fully indexed workspace. SurfaceContent<T> must
+    // look THROUGH the island. Fails RED without the unwrap branch.
+    [Fact]
+    public void SurfaceContent_LooksThroughIslandChrome_WhileContentForReturnsTheWrapper()
+    {
+        var (throughHelper, viaContentFor) = OnStaThread(() =>
+        {
+            var service = new LayoutService();
+            var stackId = service.Current.AllStacks().First().Id;
+            const string id = "classdiagram#test01";
+            service.Apply(new LayoutOperation.AddSurface(
+                stackId, new Surface(id, "classdiagram", "Class diagram")));
+
+            var manager = new DockingManager();
+            var adapter = new WorkbenchAdapter(manager, service,
+                surface => surface.Kind == "classdiagram"
+                    ? SurfaceChrome.WrapAsIsland(new ClassDiagramSurface(surface.Title))
+                    : new ContentControl());
+
+            var window = new Window
+            {
+                Content = manager,
+                Width = 900,
+                Height = 600,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            window.Show();
+            adapter.Render();
+            window.UpdateLayout();
+            manager.UpdateLayout();
+
+            try
+            {
+                return (adapter.SurfaceContent<ClassDiagramSurface>(id), adapter.ContentFor(id));
+            }
+            finally { window.Close(); }
+        });
+
+        Assert.NotNull(throughHelper);          // the helper unwraps the island and finds the surface
+        Assert.IsType<Border>(viaContentFor);   // documents WHY: the raw content is the framing Border
+    }
+
+    // The reverse mapper that makes native pane drags survive a rebuild: rendering a model then reading
+    // it back must reproduce the same stacks with the same surfaces. If forward-then-reverse were not the
+    // identity, reconciling before an add would silently rearrange the user's panes. Compares the
+    // surface-grouping (which surfaces share a stack), ignoring stack order and freshly-minted node ids.
+    [Fact]
+    public void ReadLayoutFromView_RoundTripsTheRenderedModel_PreservingStacksAndSurfaces()
+    {
+        var (before, after) = OnStaThread(() =>
+        {
+            var service = new LayoutService();   // Layout.Default(): workspace / graph+domain / console
+            var manager = new DockingManager();
+            var adapter = new WorkbenchAdapter(manager, service, _ => new ContentControl());
+
+            var window = new Window
+            {
+                Content = manager,
+                Width = 1000,
+                Height = 700,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            window.Show();
+            adapter.Render();
+            window.UpdateLayout();
+            manager.UpdateLayout();
+
+            try
+            {
+                var input = Groupings(service.Current);
+                var roundTripped = adapter.ReadLayoutFromView();
+                return (input, roundTripped is null ? null : Groupings(roundTripped));
+            }
+            finally { window.Close(); }
+        });
+
+        Assert.NotNull(after);
+        Assert.Equal(before, after);
+    }
+
+    // Fail-safe: with nothing rendered there is no arrangement to read, so the reconcile REFUSES (null)
+    // rather than inventing an empty layout that a Render would then apply, dropping every pane.
+    [Fact]
+    public void ReadLayoutFromView_RefusesWhenTheViewDoesNotHoldTheModelsSurfaces()
+    {
+        var result = OnStaThread(() =>
+        {
+            var manager = new DockingManager();   // never rendered — its layout does not hold the surfaces
+            var adapter = new WorkbenchAdapter(manager, new LayoutService());
+            return adapter.ReadLayoutFromView();
+        });
+
+        Assert.Null(result);
+    }
+
+    // Focus-aware placement reads AvalonDock's active document, so a new pane can open where the user is
+    // looking. After a render the active content is one of the model's surfaces, never a stale id.
+    [Fact]
+    public void ActiveSurfaceId_AfterRender_IsOneOfTheModelsSurfaces()
+    {
+        var (active, known) = OnStaThread(() =>
+        {
+            var service = new LayoutService();
+            var manager = new DockingManager();
+            var adapter = new WorkbenchAdapter(manager, service, _ => new ContentControl());
+            var window = new Window
+            {
+                Content = manager,
+                Width = 900,
+                Height = 600,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Left = -10000,
+                Top = -10000,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+            };
+            window.Show();
+            adapter.Render();
+            window.UpdateLayout();
+            manager.UpdateLayout();
+            try
+            {
+                var ids = service.Current.AllStacks()
+                    .SelectMany(s => s.Surfaces).Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
+                return (adapter.ActiveSurfaceId, ids);
+            }
+            finally { window.Close(); }
+        });
+
+        // Null is acceptable (nothing active); a non-null id must be a real surface, never invented.
+        if (active is not null) { Assert.Contains(active, known); }
+    }
+
+    private static List<string> Groupings(AiDe.Core.Workbench.Layout layout) =>
+        layout.AllStacks()
+            .Select(s => string.Join(
+                ",", s.Surfaces.Select(x => x.SurfaceId).OrderBy(x => x, StringComparer.Ordinal)))
+            .OrderBy(x => x, StringComparer.Ordinal)
+            .ToList();
+
     private sealed class DisposableBorder(Action onDispose) : Border, IDisposable
     {
         public void Dispose() => onDispose();

@@ -10,10 +10,17 @@ WHAT IT IS NOT. Not a test and not a gate: these are real repositories on one ma
 under us, and the numbers are evidence rather than assertions. It exists so the evidence can be
 REPRODUCED and disputed — the same reason the spike it drives exists.
 
+WHY IT IS NOT A CI JOB, stated because "make it nightly" was the obvious next step and it is wrong:
+these are sibling checkouts on one developer's machine. A hosted runner has none of them, so the job
+would either fail every night or skip every night — a gate that cannot fire (DC-016) dressed as
+diligence. `--record` is the achievable half: append the readings to a committed log so drift shows
+up in `git diff` rather than in somebody's memory of last week's numbers.
+
 Usage:
   python tools/measure-repositories.py                    # every repository configured below
   python tools/measure-repositories.py C:/path/to/repo    # ad hoc, one or more
-  python tools/measure-repositories.py --json             # machine-readable, for a change log
+  python tools/measure-repositories.py --json             # machine-readable
+  python tools/measure-repositories.py --record           # append to docs/measurements/repositories.jsonl
 """
 
 from __future__ import annotations
@@ -23,6 +30,7 @@ import json
 import re
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Sibling checkouts, chosen for CONTRAST rather than convenience: a large C#+EF codebase, a C#
@@ -104,6 +112,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("repositories", nargs="*", help="paths to measure (default: the configured set)")
     parser.add_argument("--json", action="store_true", help="emit readings as JSON")
+    parser.add_argument(
+        "--record", action="store_true",
+        help="append the readings to the committed log, so drift is visible in git rather than remembered")
     args = parser.parse_args()
 
     root = repo_root()
@@ -151,6 +162,24 @@ def main() -> int:
         row = "  ".join(
             f"d{d['depth']}: {d['groups']}g {d['links']}l" for d in r["depths"])
         print(f"  {r['repository']:<28} {row}")
+
+    if args.record:
+        log = root / "docs" / "measurements" / "repositories.jsonl"
+        log.parent.mkdir(parents=True, exist_ok=True)
+
+        stamp = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+        revision = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True, cwd=root).stdout.strip()
+
+        # Append-only, one line per reading, like every other log here: a rewritten history of
+        # measurements is a history nobody can dispute.
+        with log.open("a", encoding="utf-8", newline=chr(10)) as handle:
+            for reading in readings:
+                handle.write(json.dumps({"at": stamp, "revision": revision, **reading}) + chr(10))
+
+        print()
+        print(f"  recorded {len(readings)} reading(s) at {revision} -> {log.relative_to(root)}")
 
     failed = [r for r in readings if "error" not in r and not r["all_fit"]]
 

@@ -42,8 +42,14 @@ public static class ShellBootstrap
     /// <summary>Connects to the workspace's daemon, starting one if none answers.</summary>
     /// <param name="workspacePath">The workspace root. Determines the pipe name and the lock.</param>
     /// <param name="daemonExecutable">The daemon build to launch if none is running.</param>
+    /// <param name="dataDirectory">
+    /// Where a launched daemon should keep this workspace's state. Null leaves it to the daemon's
+    /// machine-wide default — which is right for the shell and wrong for anything that must not
+    /// write into the user's profile, such as a test.
+    /// </param>
     public static async Task<WorkspaceClient> ConnectOrLaunchAsync(
-        string workspacePath, string daemonExecutable, CancellationToken cancellationToken)
+        string workspacePath, string daemonExecutable, CancellationToken cancellationToken,
+        string? dataDirectory = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workspacePath);
         ArgumentException.ThrowIfNullOrWhiteSpace(daemonExecutable);
@@ -68,7 +74,7 @@ public static class ShellBootstrap
                 $"no daemon is running for this workspace and none is installed at '{daemonExecutable}'");
         }
 
-        Launch(daemonExecutable, workspacePath);
+        Launch(daemonExecutable, workspacePath, dataDirectory);
 
         var deadline = DateTimeOffset.UtcNow + LaunchDeadline;
 
@@ -102,7 +108,7 @@ public static class ShellBootstrap
     /// <para>The process handle is disposed immediately: we are not its supervisor, the workspace
     /// lock decides who serves, and the idle grace decides when it stops.</para>
     /// </remarks>
-    private static void Launch(string daemonExecutable, string workspacePath)
+    private static void Launch(string daemonExecutable, string workspacePath, string? dataDirectory)
     {
         var start = new ProcessStartInfo(daemonExecutable)
         {
@@ -112,6 +118,12 @@ public static class ShellBootstrap
         };
 
         start.ArgumentList.Add(workspacePath);
+
+        if (!string.IsNullOrWhiteSpace(dataDirectory))
+        {
+            start.ArgumentList.Add("--data");
+            start.ArgumentList.Add(dataDirectory);
+        }
 
         try
         {
@@ -147,6 +159,21 @@ public static class ShellBootstrap
             // holding this name is a security-relevant condition, not a slow start.
             throw new DaemonUnavailableException(
                 "a pipe with this workspace's name exists but is owned by another user");
+        }
+        catch (IpcRequestException ex) when (ex.Code == IpcErrorCodes.UnsupportedVersion)
+        {
+            // A daemon from an EARLIER BUILD is still serving this workspace. It holds the pipe, and
+            // one daemon per workspace is the store's single-writer invariant — so a second cannot
+            // be started beside it.
+            //
+            // Version negotiation did its job here: the mismatch was refused at the boundary instead
+            // of becoming a parse failure further in. What was missing was saying so in terms of the
+            // thing a person can act on — "ipc.unsupported_version" names the protocol; this names
+            // the process that has to go.
+            throw new DaemonUnavailableException(
+                "a daemon from an earlier build is still running for this workspace and speaks an "
+                + "older protocol. It exits on its own once idle; to reopen immediately, end the "
+                + $"AiDe.Daemon process serving this workspace ({ex.Message})");
         }
     }
 }

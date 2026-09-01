@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<!--
+  Knowledge Explorer — full-window dual-pane mode. Self-contained, dependency-free review mockup for
+  docs/specs/knowledge-explorer-mode.md (US-E1..E8). Renders the mode's hard states: reader
+  default(code)/markdown/html/empty/loading/error/unsupported/overflow, and graph loading/empty/error.
+  Tokens are the project DESIGN.md (chrome + the separate syntax palette + provenance). Review chrome
+  (the top harness bar) is NOT part of the product and never ships. Opens over file://, no CDN.
+-->
+<head>
+<meta charset="utf-8">
+<title>Knowledge Explorer mode — mockup</title>
+<style>
+  :root{
+    /* chrome — DESIGN.md */
+    --surface:#12151A; --raised:#1A1F26; --sunken:#0D1014; --border:#2A313B;
+    --text:#E4E9EF; --muted:#98A3B2; --accent:#5B9DD9; --accent-contrast:#0D1014;
+    --verified:#5FB98F; --inferred:#D8A650; --unverified:#98A3B2; --danger:#E07A6F;
+    --focus:#8FC0EA; --splitter:#2A313B; --splitter-hover:#5B9DD9;
+    /* syntax — DESIGN.md Material Palenight (code-node view only) */
+    --syn-key:#C792EA; --syn-type:#82AAFF; --syn-comment:#5A6472; --syn-str:#C3E88D; --syn-hl:#B08CD9;
+    --ui:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+    --mono:"Cascadia Mono",Consolas,ui-monospace,monospace;
+    --r:8px; color-scheme:dark;
+  }
+  [data-theme="contrast"]{ --surface:#101418; --raised:#101418; --sunken:#000; --text:#FFF;
+    --border:#3A424D; --muted:#C3CBD6; }
+  html,body{margin:0;height:100%;font:14px/1.5 var(--ui);background:#05070a;color:var(--text)}
+  *{box-sizing:border-box}
+
+  /* ---- review harness (never ships) ---- */
+  .harness{display:flex;gap:14px;flex-wrap:wrap;align-items:center;padding:10px 14px;background:#0f141a;
+    border-bottom:1px solid var(--border)}
+  .harness .tag{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--inferred)}
+  .harness label{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+  .harness select{background:var(--raised);color:var(--text);border:1px solid var(--border);
+    border-radius:6px;padding:3px 7px;font:inherit;font-size:12px}
+  .audit{margin-left:auto;font-size:11px;color:var(--muted)}
+  .audit b{color:var(--verified)} .audit .bad{color:var(--danger)}
+
+  /* ---- shell frame ---- */
+  #app{height:calc(100% - 43px);display:flex;flex-direction:column;background:var(--surface)}
+  .menubar{height:26px;display:flex;align-items:center;gap:14px;padding:0 12px;background:var(--surface);
+    border-bottom:1px solid var(--border);font-size:12px;color:var(--muted)}
+  .titlestrip{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;
+    background:var(--sunken);border-bottom:1px solid var(--border)}
+  .titlestrip .id{font-size:14px;color:var(--text)}
+  .titlestrip .reset{font-size:12px;color:var(--text);background:var(--raised);border:1px solid var(--border);
+    border-radius:var(--r);padding:3px 10px;cursor:pointer}
+  .body{flex:1;display:flex;min-height:0}
+  .statusstrip{height:26px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;
+    background:var(--sunken);border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+
+  /* ---- activity rail ---- */
+  .rail{width:56px;background:var(--sunken);border-right:1px solid var(--border);display:flex;
+    flex-direction:column;align-items:center;padding-top:8px;gap:8px}
+  .rail .item{position:relative;width:44px;height:44px;border-radius:var(--r);display:flex;
+    align-items:center;justify-content:center;background:transparent;border:0;color:var(--muted);cursor:pointer}
+  .rail .item:hover{color:var(--text)}
+  .rail .item.active{background:var(--raised);color:var(--accent)}
+  .rail .item.active::before{content:"";position:absolute;left:-6px;top:9px;width:3px;height:26px;
+    border-radius:0 2px 2px 0;background:var(--accent)}
+  .rail .item:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  .rail .glyph{width:22px;height:22px;stroke:currentColor;stroke-width:1.6;fill:none;stroke-linejoin:round;stroke-linecap:round}
+
+  /* ---- explorer surface (the mode) ---- */
+  .explorer{flex:1;display:flex;min-width:0;animation:slidein .22s ease-out}
+  @keyframes slidein{from{opacity:.4;transform:translateX(8px)}to{opacity:1;transform:none}}
+  [data-rm="on"] .explorer{animation:none}
+
+  .region{min-width:0;min-height:0;display:flex;flex-direction:column}
+  .graph{flex:1 1 58%}
+  .reader{flex:1 1 42%;border-left:1px solid var(--border);background:var(--surface)}
+  .split{width:6px;cursor:col-resize;background:var(--splitter);flex:0 0 6px}
+  .split:hover{background:var(--splitter-hover)}
+  [data-viewport="narrow"] .explorer{flex-direction:column}
+  [data-viewport="narrow"] .reader{border-left:0;border-top:1px solid var(--border)}
+  [data-viewport="narrow"] .split{width:auto;height:6px;cursor:row-resize;flex-basis:6px}
+
+  /* graph region */
+  .rhead{height:38px;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1px solid var(--border);
+    background:var(--surface)}
+  .rhead .search{flex:0 0 200px;background:var(--sunken);border:1px solid var(--border);border-radius:var(--r);
+    padding:4px 9px;color:var(--text);font:inherit;font-size:13px}
+  .rhead .search::placeholder{color:var(--muted)}
+  .rhead .btn{background:var(--raised);border:1px solid var(--border);border-radius:var(--r);padding:4px 9px;
+    color:var(--text);font:inherit;font-size:12px;cursor:pointer}
+  .rhead .grow{flex:1}
+  .stage{position:relative;flex:1;background:var(--sunken);overflow:hidden}
+  .stage svg{position:absolute;inset:0;width:100%;height:100%}
+  .dot{fill:#47566B;stroke:#63748C;stroke-width:1}
+  .dot.root{fill:#21303f;stroke:var(--accent)}
+  .dot.sel{stroke:var(--accent);stroke-width:2.5}
+  .elink{stroke:var(--border)} .elink.join{stroke:var(--accent)} .elink.inf{stroke:var(--inferred);stroke-dasharray:5 4}
+  .glabel{fill:var(--muted);font:11px var(--ui)}
+  .cap{position:absolute;left:10px;bottom:8px;font-size:12px;color:var(--muted);background:rgba(13,16,20,.7);
+    border:1px solid var(--border);border-radius:var(--r);padding:4px 9px}
+
+  /* reader region */
+  .dhead{padding:9px 12px;border-bottom:1px solid var(--border);background:var(--raised);display:flex;
+    align-items:baseline;gap:9px;flex-wrap:wrap}
+  .dhead .title{font-size:14px;color:var(--text);font-weight:600}
+  .dhead .kind{font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:1px 8px}
+  .prov{display:inline-flex;align-items:center;gap:5px;font-size:11px}
+  .prov::before{content:"";width:9px;height:9px;border-radius:50%}
+  .prov.verified{color:var(--verified)} .prov.verified::before{background:var(--verified)}
+  .prov.inferred{color:var(--inferred)} .prov.inferred::before{background:var(--inferred);
+    box-shadow:0 0 0 1px var(--inferred) inset}
+  .dbody{flex:1;overflow:auto;padding:14px 16px}
+  .meta{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+  .meta dt{color:var(--muted);float:left;clear:left;width:74px} .meta dd{margin:0 0 3px 82px;color:var(--text)}
+  .edges{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+  .edges h4{margin:0 0 7px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .edge-row{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;cursor:pointer;font-size:13px}
+  .edge-row:hover{background:var(--raised)} .edge-row:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+  .edge-row .rel{color:var(--muted);font:12px var(--mono);flex:0 0 96px}
+  .edge-row .tgt{color:var(--text)}
+  .edge-row .p{margin-left:auto;font-size:11px}
+  .p.v{color:var(--verified)} .p.i{color:var(--inferred)}
+
+  /* rendered content variants */
+  .md h1{font-size:19px;margin:.1em 0 .4em} .md h2{font-size:15px;margin:1em 0 .3em;color:var(--text)}
+  .md p{margin:.4em 0;color:var(--text)} .md code{font:12px var(--mono);background:var(--sunken);
+    border:1px solid var(--border);border-radius:4px;padding:1px 5px;color:var(--syn-str)}
+  .md ul{margin:.3em 0 .3em 1.1em} .md a{color:var(--accent)}
+  .htmlview{border:1px dashed var(--border);border-radius:6px;padding:10px;background:var(--sunken)}
+  .htmlview .badge{font-size:11px;color:var(--muted);margin-bottom:6px}
+  pre.code{margin:0;font:12.5px/1.55 var(--mono);color:var(--text);white-space:pre;overflow:auto;
+    background:var(--sunken);border:1px solid var(--border);border-radius:6px;padding:10px 12px;
+    display:grid;grid-template-columns:auto 1fr;gap:0 14px}
+  pre.code .ln{color:var(--syn-comment);text-align:right;user-select:none}
+  .k{color:var(--syn-key)} .t{color:var(--syn-type)} .s{color:var(--syn-str)} .c{color:var(--syn-comment)}
+
+  /* states */
+  .state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+    text-align:center;color:var(--muted);padding:24px}
+  .state .em{font-size:26px;opacity:.8}
+  .state strong{color:var(--text);font-weight:600;font-size:14px}
+  .state .act{margin-top:4px;display:flex;gap:8px}
+  .state .act .btn{background:var(--raised);border:1px solid var(--border);border-radius:var(--r);
+    padding:5px 12px;color:var(--text);font:inherit;font-size:13px;cursor:pointer}
+  .state.err strong{color:var(--danger)}
+  .skel{width:100%;max-width:520px;display:flex;flex-direction:column;gap:9px}
+  .skel i{display:block;height:12px;border-radius:4px;background:linear-gradient(90deg,var(--raised),#232a33,var(--raised));
+    background-size:200% 100%;animation:sh 1.1s linear infinite}
+  @keyframes sh{to{background-position:-200% 0}}
+  [data-rm="on"] .skel i{animation:none;background:var(--raised)}
+  .hidden{display:none!important}
+</style>
+</head>
+<body data-viewport="wide" data-rm="off">
+
+  <!-- ===== review harness (not product) ===== -->
+  <div class="harness" role="region" aria-label="Review harness (not part of the product)">
+    <span class="tag">Review harness</span>
+    <label>State
+      <select id="hState">
+        <option value="code">Reader · code node</option>
+        <option value="md">Reader · markdown node</option>
+        <option value="html">Reader · html node</option>
+        <option value="empty">Reader · empty (no selection)</option>
+        <option value="loading">Reader · loading</option>
+        <option value="error">Reader · error</option>
+        <option value="unsupported">Reader · unsupported kind</option>
+        <option value="overflow">Reader · overflow (long file)</option>
+        <option value="graph-loading">Graph · loading</option>
+        <option value="graph-empty">Graph · empty (nothing indexed)</option>
+        <option value="graph-error">Graph · too large (US-K12)</option>
+      </select>
+    </label>
+    <label>Viewport
+      <select id="hViewport"><option value="wide">Wide (side-by-side)</option><option value="narrow">Narrow (stacked · US-E8)</option></select>
+    </label>
+    <label>Theme
+      <select id="hTheme"><option value="dark">Dark</option><option value="contrast">High contrast</option></select>
+    </label>
+    <label>Reduced motion
+      <select id="hRm"><option value="off">Off</option><option value="on">On</option></select>
+    </label>
+    <span class="audit" id="audit">contrast: <b id="cA">—</b> · targets: <b id="cT">—</b></span>
+  </div>
+
+  <!-- ===== shell ===== -->
+  <div id="app">
+    <div class="menubar"><span>File</span><span>View</span><span>Explore</span><span>Coordinate</span><span>Help</span></div>
+    <div class="titlestrip"><span class="id">TheTerrace — workspace</span><button class="reset">Reset layout</button></div>
+
+    <div class="body">
+      <!-- activity rail: Graph mode active -->
+      <nav class="rail" aria-label="Activity">
+        <button class="item active" aria-pressed="true" title="Explorer — graph & reader (Ctrl+Shift+G)" aria-label="Explorer mode">
+          <svg class="glyph" viewBox="0 0 24 24"><circle cx="6" cy="7" r="2.4"/><circle cx="17" cy="6" r="2.4"/><circle cx="13" cy="17" r="2.4"/><path d="M8 8l7-1M15 8l-2 7M8 9l4 7"/></svg>
+        </button>
+        <button class="item" title="Coordinate" aria-label="Coordinate"><svg class="glyph" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/><path d="M11 7h4v6"/></svg></button>
+        <button class="item" title="Compose" aria-label="Compose"><svg class="glyph" viewBox="0 0 24 24"><path d="M5 19l2-6 9-9 4 4-9 9-6 2z"/><path d="M14 6l4 4"/></svg></button>
+        <button class="item" title="Audit" aria-label="Audit"><svg class="glyph" viewBox="0 0 24 24"><path d="M5 5h14v14H5z"/><path d="M8 10h8M8 14h5"/></svg></button>
+      </nav>
+
+      <!-- the Explorer mode fills the body -->
+      <div class="explorer" role="main" aria-label="Knowledge Explorer">
+        <!-- GRAPH REGION -->
+        <section class="region graph" aria-label="Graph">
+          <div class="rhead">
+            <input class="search" placeholder="Search a node (/)…" aria-label="Search the graph">
+            <div class="grow"></div>
+            <button class="btn">2D</button><button class="btn">Fit</button>
+          </div>
+          <div class="stage" id="stage">
+            <svg id="gsvg" viewBox="0 0 600 420" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
+            <div class="cap" id="gcap">18 node(s), 24 edge(s) · / searches · drag to pan, scroll to zoom</div>
+            <div class="state" id="gstate" hidden></div>
+          </div>
+        </section>
+
+        <div class="split" id="split" role="separator" aria-orientation="vertical" aria-label="Resize graph and reader" tabindex="0"></div>
+
+        <!-- READER REGION -->
+        <section class="region reader" aria-label="Reader">
+          <div class="dhead" id="dhead">
+            <span class="title" id="dtitle">MatchInsightStage</span>
+            <span class="kind" id="dkind">code · C#</span>
+            <span class="prov verified" id="dprov">Verified</span>
+          </div>
+          <div class="dbody" id="dbody"><!-- filled by JS per state --></div>
+        </section>
+      </div>
+    </div>
+
+    <div class="statusstrip"><span id="live">Explorer opened · 18 nodes in view</span><span>Indexed · healthy</span></div>
+  </div>
+
+<script>
+(function(){
+  var body=document.body, dbody=document.getElementById('dbody'), dhead=document.getElementById('dhead'),
+      dtitle=document.getElementById('dtitle'), dkind=document.getElementById('dkind'), dprov=document.getElementById('dprov'),
+      gstate=document.getElementById('gstate'), gcap=document.getElementById('gcap'), gsvg=document.getElementById('gsvg');
+
+  // ---- representative static graph (mockup only) ----
+  var N=[[300,210,'MatchInsightStage',1],[150,120,'SportMonksProvider',0],[460,110,'ScheduledRefresh',0],
+    [120,300,'AppDbContext',0],[470,300,'Fixture',0],[300,60,'MatchService',0],[520,210,'ReceiptLedger',0],
+    [90,200,'CapabilityScope',0],[380,360,'DigestJob',0],[220,380,'LiveScore',0]];
+  var E=[[0,1,'join'],[0,2,''],[0,5,'join'],[0,6,''],[0,4,'inf'],[1,3,''],[2,8,''],[5,7,'join'],[4,8,''],[3,9,''],[0,3,''],[6,4,'']];
+  function drawGraph(sel){
+    var s='';
+    E.forEach(function(e){var a=N[e[0]],b=N[e[1]];s+='<line class="elink '+(e[2]==='join'?'join':e[2]==='inf'?'inf':'')+'" x1='+a[0]+' y1='+a[1]+' x2='+b[0]+' y2='+b[1]+'/>';});
+    N.forEach(function(n,i){var r=n[3]?9:(6+((i*7)%9)); s+='<circle class="dot'+(n[3]?' root':'')+(i===sel?' sel':'')+'" cx='+n[0]+' cy='+n[1]+' r='+r+'/>'; if(n[3]||i===sel) s+='<text class="glabel" x='+(n[0]+11)+' y='+(n[1]+4)+'>'+n[2]+'</text>';});
+    gsvg.innerHTML=s;
+  }
+
+  // ---- reader content by kind ----
+  function codeView(){
+    var rows=[
+      ['1','<span class="k">public sealed</span> <span class="k">class</span> <span class="t">MatchInsightStage</span> : <span class="t">ICascadeStage</span>'],
+      ['2','{'],
+      ['3','    <span class="c">// Pattern: Cascade (1.2) — resolve routine fixtures deterministically.</span>'],
+      ['4','    <span class="k">public async</span> <span class="t">Task</span>&lt;<span class="t">StageResult</span>&gt; <span class="t">ProcessAsync</span>('],
+      ['5','        <span class="t">Fixture</span> fixture, <span class="t">BudgetContext</span> budget, <span class="t">CancellationToken</span> ct)'],
+      ['6','    {'],
+      ['7','        <span class="k">if</span> (fixture.IsSettled) <span class="k">return</span> <span class="t">Resolved</span>.<span class="t">Of</span>(fixture);'],
+      ['8','        <span class="k">var</span> insight = <span class="k">await</span> _model.<span class="t">RankAsync</span>(fixture, budget, ct);'],
+      ['9','        <span class="k">return</span> <span class="k">new</span> <span class="t">Passthrough</span>(insight);'],
+      ['10','    }'],['11','}']];
+    return '<pre class="code" tabindex="0" aria-label="Source of MatchInsightStage.cs">'+
+      rows.map(function(r){return '<span class="ln">'+r[0]+'</span><span>'+r[1]+'</span>';}).join('')+'</pre>'+metaBlock()+edgeBlock();
+  }
+  function mdView(){
+    return '<div class="md">'+
+      '<h1>Match Insight Stage</h1>'+
+      '<p>The cascade stage that turns a raw <code>Fixture</code> into a ranked insight. It resolves settled fixtures deterministically (tier&nbsp;T0) and escalates only the uncertain ones to the model.</p>'+
+      '<h2>Invariants</h2><ul><li>A settled fixture never reaches the model.</li><li>Every escalation charges the budget.</li></ul>'+
+      '<p>See <a href="#">ADR-0009 — cascade tiers</a>.</p></div>'+metaBlock('knowledge · markdown','verified','Design note')+edgeBlock();
+  }
+  function htmlView(){
+    return '<div class="htmlview"><div class="badge">rendered html · sanitised</div>'+
+      '<h1 style="font-size:18px;margin:.2em 0">Coverage report</h1>'+
+      '<p style="margin:.3em 0">Line coverage <strong style="color:var(--verified)">92%</strong> · Branch <strong style="color:var(--inferred)">78%</strong></p>'+
+      '<p style="margin:.3em 0;color:var(--muted)">Generated 2026-08-30.</p></div>'+metaBlock('proof · html','inferred','CI artifact')+edgeBlock();
+  }
+  function metaBlock(kind,prov,name){
+    return '<dl class="meta">'+
+      '<dt>id</dt><dd>TheTerrace.Features.Matches.MatchInsightStage</dd>'+
+      '<dt>kind</dt><dd>'+(kind||'code · C#')+'</dd>'+
+      '<dt>context</dt><dd>Matches</dd>'+
+      '<dt>source</dt><dd>src/Features/Matches/MatchInsightStage.cs</dd></dl>';
+  }
+  function edgeBlock(){
+    var rows=[
+      ['depends_on','Fixture','v','Verified'],
+      ['depends_on','BudgetContext','v','Verified'],
+      ['calls','PredictionModel.RankAsync','i','Inferred'],
+      ['tested_by','MatchInsightStageTests','v','Verified'],
+      ['documents ←','ADR-0009 cascade tiers','v','Verified']];
+    return '<div class="edges"><h4>Typed edges — select to walk</h4>'+
+      rows.map(function(r){return '<div class="edge-row" tabindex="0" role="button" aria-label="Walk '+r[0]+' '+r[1]+'"><span class="rel">'+r[0]+'</span><span class="tgt">'+r[1]+'</span><span class="p '+r[2]+'">'+r[3]+'</span></div>';}).join('')+'</div>';
+  }
+
+  function stateBlock(kind){
+    var m={
+      empty:['🗺️','Select a node to read it.','Click a dot in the graph — its code, docs, metadata and edges appear here.',''],
+      error:['⚠','This node\u2019s source couldn\u2019t be read.','The artifact may have moved since the last index.','Pick another node · Open the source'],
+      unsupported:['📄','No rich view for a <b>diagram</b> node.','Showing its metadata and edges instead.',''],
+    };
+    var d=m[kind]; var acts=d[3]?('<div class="act">'+d[3].split(' · ').map(function(a){return '<button class="btn">'+a+'</button>';}).join('')+'</div>'):'';
+    return '<div class="state '+(kind==='error'?'err':'')+'"><div class="em">'+d[0]+'</div><strong>'+d[1]+'</strong><div>'+d[2]+'</div>'+acts+
+      (kind==='unsupported'?metaBlock('diagram · mermaid','verified')+edgeBlock():'')+'</div>';
+  }
+  function loadingBlock(){
+    return '<div class="state"><div class="skel"><i style="width:40%"></i><i></i><i style="width:90%"></i><i style="width:75%"></i><i></i><i style="width:60%"></i></div><div style="margin-top:6px">Reading the node…</div></div>';
+  }
+  function overflowView(){
+    var body='';
+    for(var i=1;i<=60;i++){ body+='<span class="ln">'+i+'</span><span>'+(i%9===0?'<span class="c">// section '+(i/9|0)+'</span>':'<span class="k">var</span> line'+i+' = <span class="s">"…"</span>;')+'</span>'; }
+    return '<pre class="code" tabindex="0" aria-label="Long source, scrolls within the reader">'+body+'</pre>'+
+      '<p style="font-size:11px;color:var(--muted);margin:8px 2px 0">Long file — scrolls within the reader; the window never grows.</p>'+edgeBlock();
+  }
+
+  function graphState(kind){
+    var m={
+      'graph-loading':['⏳','Indexing the workspace…','Building the graph from your C# projects.'],
+      'graph-empty':['🗺️','Nothing indexed yet.','Run “Index C# projects in this workspace” (Ctrl+K, I).'],
+      'graph-error':['⚠','This graph is too large to draw at this focus.','Narrow your focus — search a node, or zoom in to a cluster.']
+    };
+    var d=m[kind];
+    gstate.className='state'+(kind==='graph-error'?' err':''); gstate.innerHTML='<div class="em">'+d[0]+'</div><strong>'+d[1]+'</strong><div>'+d[2]+'</div>';
+  }
+
+  // ---- state machine ----
+  function apply(state){
+    var readerKinds={code:1,md:1,html:1,empty:1,loading:1,error:1,unsupported:1,overflow:1};
+    var graphOn=!(state in {'graph-loading':1,'graph-empty':1,'graph-error':1});
+    gsvg.style.display=graphOn?'':'none'; gstate.hidden=graphOn; gcap.style.display=graphOn?'':'none';
+    if(!graphOn){ graphState(state); }
+    // reader
+    dhead.style.display=(state in {empty:1,loading:1})?'none':'';
+    if(state==='code'){ dtitle.textContent='MatchInsightStage'; dkind.textContent='code · C#'; setProv('verified','Verified'); dbody.innerHTML=codeView(); }
+    else if(state==='md'){ dtitle.textContent='Match Insight Stage'; dkind.textContent='knowledge · markdown'; setProv('verified','Verified'); dbody.innerHTML=mdView(); }
+    else if(state==='html'){ dtitle.textContent='Coverage report'; dkind.textContent='proof · html'; setProv('inferred','Inferred'); dbody.innerHTML=htmlView(); }
+    else if(state==='overflow'){ dtitle.textContent='GeneratedSchema'; dkind.textContent='code · C#'; setProv('verified','Verified'); dbody.innerHTML=overflowView(); }
+    else if(state==='loading'){ dbody.innerHTML=loadingBlock(); }
+    else if(state==='empty'||state==='error'||state==='unsupported'){ if(state!=='unsupported'){/*header hidden for empty only*/}
+      if(state==='unsupported'){ dtitle.textContent='ContextMap'; dkind.textContent='diagram · mermaid'; setProv('verified','Verified'); }
+      if(state==='error'){ dtitle.textContent='OrphanedDoc'; dkind.textContent='knowledge · markdown'; setProv('inferred','Inferred'); }
+      dbody.innerHTML=stateBlock(state); }
+    else { /* graph-only states keep the last reader */ dbody.innerHTML=stateBlock('empty'); dhead.style.display='none'; }
+    if(graphOn) drawGraph(0);
+    audit();
+  }
+  function setProv(cls,txt){ dprov.className='prov '+cls; dprov.textContent=txt; }
+
+  // ---- in-artifact contrast + target audit (mechanical) ----
+  function lum(hex){ var c=hex.replace('#',''); if(c.length===3)c=c.replace(/./g,'$&$&');
+    var v=[0,2,4].map(function(i){var x=parseInt(c.substr(i,2),16)/255; return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4);});
+    return .2126*v[0]+.7152*v[1]+.0722*v[2]; }
+  function ratio(a,b){ var L1=lum(a),L2=lum(b); return ((Math.max(L1,L2)+.05)/(Math.min(L1,L2)+.05)); }
+  function audit(){
+    var cs=getComputedStyle(document.documentElement);
+    function tok(n){ return cs.getPropertyValue(n).trim()||'#000'; }
+    // text/surface pairings that must clear AA 4.5:1 (text) / 3:1 (large/ui)
+    var pairs=[['text','surface',4.5],['muted','surface',4.5],['accent','sunken',3],['verified','surface',4.5],['inferred','surface',4.5],['danger','surface',4.5]];
+    var worst=99, bad=0;
+    pairs.forEach(function(p){ var r=ratio(tok('--'+p[0]),tok('--'+p[1])); if(r<p[2])bad++; if(r<worst)worst=r; });
+    var cA=document.getElementById('cA'); cA.textContent=worst.toFixed(2)+':1'; cA.className=bad?'bad':'';
+    document.getElementById('cT').textContent='44px rail · ok';  // rail items are 44x44 (WCAG 2.5.8)
+  }
+
+  // ---- harness wiring ----
+  document.getElementById('hState').addEventListener('change',function(e){apply(e.target.value);});
+  document.getElementById('hViewport').addEventListener('change',function(e){body.setAttribute('data-viewport',e.target.value);});
+  document.getElementById('hTheme').addEventListener('change',function(e){document.documentElement.setAttribute('data-theme',e.target.value);audit();});
+  document.getElementById('hRm').addEventListener('change',function(e){body.setAttribute('data-rm',e.target.value);});
+
+  apply('code');
+})();
+</script>
+</body>
+</html>

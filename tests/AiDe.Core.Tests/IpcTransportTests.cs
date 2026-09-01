@@ -32,11 +32,11 @@ public sealed class IpcTransportTests
     private static DaemonEndpoint Endpoint(long epoch = Epoch)
     {
         var endpoint = new DaemonEndpoint(Workspace, new CapabilityRegistry(), _ => epoch);
-        endpoint.Register("describe", (request, _) => IpcResponse.Success($"described:{request.Payload}"));
+        endpoint.Register("describe", (request, _) => IpcResponse.Success(IpcPayloadTestExtensions.Json($"described:{request.Payload.AsText()}")));
         endpoint.Register("slow", (_, _) =>
         {
             Thread.Sleep(400);
-            return IpcResponse.Success("slow-done");
+            return IpcResponse.Success(IpcPayloadTestExtensions.Json("slow-done"));
         });
         return endpoint;
     }
@@ -85,10 +85,10 @@ public sealed class IpcTransportTests
             Assert.True(client.IsOpen);
 
             var response = await client.InvokeAsync(
-                "describe", "cmd-1", Workspace, Epoch, "payload", CancellationToken.None);
+                "describe", "cmd-1", Workspace, Epoch, IpcPayloadTestExtensions.Json("payload"), CancellationToken.None);
 
             Assert.True(response.Ok, response.Reason);
-            Assert.Equal("described:payload", response.Payload);
+            Assert.Equal("described:payload", response.Payload.AsText());
         });
     }
 
@@ -196,7 +196,7 @@ public sealed class IpcTransportTests
         endpoint.Register("whoami", (_, peer) =>
         {
             observed = peer;
-            return IpcResponse.Success("ok");
+            return IpcResponse.Success(IpcPayloadTestExtensions.Json("ok"));
         });
 
         var server = new IpcServer(pipeName, endpoint);
@@ -314,11 +314,11 @@ public sealed class IpcTransportTests
             await using var other = await ConnectAsync(name);
             var opened = await other.OpenWorkspaceAsync(Workspace, Epoch, CancellationToken.None);
             var served = await other.InvokeAsync(
-                "describe", "cmd-other", Workspace, Epoch, "second", CancellationToken.None);
+                "describe", "cmd-other", Workspace, Epoch, IpcPayloadTestExtensions.Json("second"), CancellationToken.None);
 
             Assert.True(opened.Ok, opened.Reason);
             Assert.True(served.Ok, "a second client could not be served while the first was busy");
-            Assert.Equal("described:second", served.Payload);
+            Assert.Equal("described:second", served.Payload.AsText());
 
             Assert.True((await occupied).Ok);
         });
@@ -470,7 +470,7 @@ public sealed class IpcTransportTests
             await Task.Delay(TimeSpan.FromMilliseconds(900));
 
             var response = await client.InvokeAsync(
-                "describe", "cmd-late", Workspace, Epoch, "still-here", CancellationToken.None);
+                "describe", "cmd-late", Workspace, Epoch, IpcPayloadTestExtensions.Json("still-here"), CancellationToken.None);
 
             Assert.True(response.Ok, "the daemon exited while a client was still attached");
             Assert.Equal(1, running.ActiveConnections);
@@ -535,7 +535,7 @@ public sealed class IpcTransportTests
 
     /// <summary>The capability out of a handshake response, which now carries the epoch too.</summary>
     private static string Capability(IpcResponse opened) =>
-        System.Text.Json.JsonSerializer.Deserialize<IpcOpenResult>(opened.Payload!)!.Capability;
+        opened.Payload.As<IpcOpenResult>()!.Capability;
 
     private static Task Send(Stream pipe, string kind, string operation, string? capability) =>
         IpcFraming.WriteAsync(

@@ -54,6 +54,9 @@ public sealed record GraphRequest(
 /// <inheritdoc cref="DescribeRequest"/>
 public sealed record KnowledgeRequest(string? Term, string? Type, int MaxResults);
 
+/// <summary>One node, for the reader that selected it (ADR-0018).</summary>
+public sealed record NodeContentRequest(string NodeId);
+
 /// <summary>Phase 1 of a dispatch: make the attempt durable before any byte leaves the shell.</summary>
 public sealed record DispatchBeginRequest(DispatchCommand Command);
 
@@ -89,13 +92,12 @@ public static class DaemonOperations
         ArgumentNullException.ThrowIfNull(endpoint);
         ArgumentNullException.ThrowIfNull(epoch);
 
-        endpoint.Register(Ping, (_, _) => IpcResponse.Success("pong"));
+        endpoint.Register(Ping, (_, _) => IpcResponse.Success("pong", WorkspaceOperations.Wire));
 
         // Read at call time, not captured once: the epoch advances when the core is replaced, and a
         // snapshot taken at registration would hand every later caller a fence value that has since
         // stopped being true.
-        endpoint.Register(Epoch, (_, _) => IpcResponse.Success(epoch().ToString(
-            System.Globalization.CultureInfo.InvariantCulture)));
+        endpoint.Register(Epoch, (_, _) => IpcResponse.Success(epoch(), WorkspaceOperations.Wire));
     }
 }
 
@@ -124,6 +126,9 @@ public static class WorkspaceOperations
     public const string Impact = "impact";
     public const string Find = "find";
     public const string Knowledge = "knowledge";
+
+    /// <summary>One node's content, on demand (ADR-0018).</summary>
+    public const string NodeContent = "nodeContent";
     public const string Evidence = "evidence";
     public const string Graph = "graph";
 
@@ -176,6 +181,13 @@ public static class WorkspaceOperations
             Refusable(() => Handle<GraphRequest>(request, body => projections.Graph(
                 new GraphQuery(
                     body.MaxNodes, body.Kinds, body.ScopeId, body.IncludeExternal, body.GroupId)))));
+
+        // Reads a FILE, unlike every other operation here — which is exactly why it is on this side
+        // of the boundary. The projection confines the path to the workspace root; a client that did
+        // its own reading would answer to nothing (ADR-0018).
+        endpoint.Register(NodeContent, (request, _) =>
+            Refusable(() => Handle<NodeContentRequest>(request,
+                body => projections.NodeContent(body.NodeId))));
 
         endpoint.Register(Evidence, (request, _) =>
             Refusable(() => Handle<EvidenceRequest>(request,
@@ -274,9 +286,7 @@ public static class WorkspaceOperations
 
         try
         {
-            body = request.Payload is null
-                ? default
-                : JsonSerializer.Deserialize<TRequest>(request.Payload, Wire);
+            body = IpcPayload.Read<TRequest>(request.Payload, Wire);
         }
         catch (JsonException)
         {
@@ -290,6 +300,6 @@ public static class WorkspaceOperations
                 IpcErrorCodes.MalformedEnvelope, $"'{request.Operation}' requires a payload");
         }
 
-        return IpcResponse.Success(JsonSerializer.Serialize(project(body), Wire));
+        return IpcResponse.Success(project(body), Wire);
     }
 }

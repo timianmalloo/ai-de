@@ -41,6 +41,9 @@ public sealed class CanvasGraphViewModelTests
         public Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
             Task.FromResult(new KnowledgeResult([], Bounds(0), "rev-1"));
 
+        public Task<NodeContent> NodeContentAsync(string nodeId, CancellationToken ct) =>
+            Task.FromResult(new NodeContent(nodeId, NodeContentKind.None, null, string.Empty, "stub"));
+
         private static DescribeResult Empty(string nodeId) =>
             new(new NodeView(nodeId, "source", nodeId), [], Bounds(0), "rev-1");
 
@@ -221,5 +224,51 @@ public sealed class CanvasGraphViewModelTests
         await new CanvasGraphViewModel(queries).LoadAsync("Shop.Chosen");
 
         Assert.Equal("Shop.Chosen", queries.LastDescribedNode);
+    }
+
+    [Fact]
+    public async Task GroupAsync_LoadsAGroupsMembers_RootedOnTheGroupSoBackStaysLive()
+    {
+        // Drilling from a semantic-zoom super-node to the nodes it stands for. The projection filters
+        // by GraphQuery.GroupId; here the stub returns the members, and the view is ROOTED on the group
+        // id so the canvas keeps Back/Overview enabled rather than stranding the reader inside it.
+        var queries = new StubQueries
+        {
+            Graph = new WorkspaceGraph(
+                [
+                    new GraphNode("Shop.Order", "Order", "class", 1, IsExternal: false),
+                    new GraphNode("Shop.Customer", "Customer", "class", 1, IsExternal: false),
+                ],
+                [new GraphEdge("Shop.Order", "Shop.Customer", "depends_on", VerificationStatus.Verified)],
+                Omitted: 0,
+                [],
+                "rev-1"),
+        };
+
+        var graph = await new CanvasGraphViewModel(queries).GroupAsync("Shop");
+
+        Assert.Equal(2, graph.Nodes.Count);
+        Assert.Equal("Shop", graph.RootId);
+        Assert.Contains("member(s) of Shop", graph.Message);
+    }
+
+    [Fact]
+    public async Task GroupAsync_WithNoGroupId_FallsBackToTheWholeGraph()
+    {
+        var queries = new StubQueries
+        {
+            Graph = new WorkspaceGraph(
+                [new GraphNode("Shop.Order", "Order", "class", 1, IsExternal: false)],
+                [],
+                Omitted: 0,
+                [],
+                "rev-1"),
+        };
+
+        var graph = await new CanvasGraphViewModel(queries).GroupAsync("  ");
+
+        // The whole-graph fallback is rooted on null, not on a group.
+        Assert.Null(graph.RootId);
+        Assert.Single(graph.Nodes);
     }
 }

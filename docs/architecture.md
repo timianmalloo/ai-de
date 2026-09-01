@@ -476,6 +476,26 @@ description/schema edit — not only protocol conformance.
 - [ADR-0013](adr/0013-layout-persistence-envelope.md): **the workbench layout is persisted inside our
   own versioned envelope**, outside the workspace fact store, and degrades to the default arrangement
   rather than to a broken window.
+- [ADR-0017](adr/0017-primary-view-mode.md): **a full-window surface is a primary *view mode*** the
+  shell holds (Workbench | Explorer), realised as a **body-content swap** of the docking-host region
+  with the rail as the mode selector — not a dock pane and not a modal overlay; the non-active mode's
+  state is retained, never rebuilt. *(Amends ADR-0013 with a per-mode persistence slot and ADR-0015
+  with the graph↔reader keyboard-cycle contract.)*
+- [ADR-0018](adr/0018-node-content-reader-contract.md): **the Explorer reader fetches a node's content
+  on demand via a bounded Core query** (a sibling of `OverviewAsync`), not by fattening the graph
+  payload — content is paid for only for the selected node and is transport-bounded like every other
+  query.
+- [ADR-0019](adr/0019-code-viewer-renderer.md): **the read-only code viewer renders with native
+  AvalonEdit (MIT), not Monaco-in-WebView2** — the deciding factor is the repo's own documented
+  WebView2 airspace/float-crash cost (ADR-0015); a read-only viewer does not need Monaco's VS-Code
+  parity, so it should not pay a second WebView2's cost. Markdown via Markdig; rich content reuses the
+  one existing canvas WebView2.
+- [ADR-0020](adr/0020-class-diagram-architecture.md): **the class diagram is an App-side type-hierarchy
+  view derived from the existing graph** (classes/interfaces + `inherits`→generalization,
+  `implements`→realization), dependency-free and Core-ungated for Phase 1; **members and a
+  notation-valid Mermaid `classDiagram` render defer to Phase 2**, gated on a Core `has_member`
+  extractor enhancement (a Mermaid classDiagram with empty compartments is not worth vendoring ~3 MB
+  of mermaid.js).
 
 ## Delivery phasing — vertical slices
 

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-09-01T00:00:00Z",
+  "generated": "2026-09-01T01:25:02Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -869,6 +869,54 @@ window.DOCS_INDEX = {
       "sourceSha256": "1981ce647e3374d9e9985742d0b503122434c27855aff21b480b4a4bc0f188cc"
     },
     {
+      "id": "adr-0017-primary-view-mode",
+      "path": "docs/adr/0017-primary-view-mode.md",
+      "title": "ADR-0017 — Full-window surfaces are a primary view mode (body-content swap), not a dock pane or a modal overlay",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "A surface that needs the whole body (the Knowledge Explorer's graph+reader) is presented as a primary VIEW MODE the shell holds — Workbench | Explorer — realised as a body-content swap of the region the docking host occupies, with the activity rail as the mode selector. Rejects making it a dock pane (it would compete for space — the defect being fixed) and a modal overlay (the rail must persist and it is not dismiss-only). The non-active mode's state is retained, never rebuilt.",
+      "tags": [
+        "architecture",
+        "ui-shell",
+        "view-mode",
+        "explorer",
+        "docking",
+        "accessibility"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0008-shell-host",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0013-layout-persistence-envelope",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "33fa8d47c7ff1d0044252c2961c4a9d81b97eabdb6728dfe1e4f3c23104b20dc"
+    },
+    {
       "id": "adr-0017-watcher-observation-projection",
       "path": "docs/adr/0017-watcher-observation-projection.md",
       "title": "ADR-0017 — Loomkeeper observes as a projection over the shared fact store, not a second database",
@@ -946,6 +994,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "967858353b15a2c3f5c665c8b42043f852ad8d856de56ade35105dc23d80cad7"
     },
     {
+      "id": "adr-0018-node-content-reader-contract",
+      "path": "docs/adr/0018-node-content-reader-contract.md",
+      "title": "ADR-0018 — The reader fetches node content on demand via a bounded Core query, not on the graph payload",
+      "type": "adr",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The Explorer's reader needs a selected node's CONTENT (source/markdown/html) and metadata, which the graph payload deliberately does not carry. It is fetched on demand for the one selected node via a new bounded Core query (a sibling of GraphOverview), not by fattening CanvasNode — because content on every node would blow the IPC transport bound (US-K12) for a value only the selected node needs.",
+      "tags": [
+        "architecture",
+        "reader",
+        "explorer",
+        "ipc",
+        "contract",
+        "transport-bound"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4717e8bf67ad30e341ea64f1e512187f2db334114e5f265f75b422b664f69fc2"
+    },
+    {
       "id": "adr-0019-advisory-evaluator-calibration",
       "path": "docs/adr/0019-advisory-evaluator-calibration.md",
       "title": "ADR-0019 — Advisory dimensions and the leaderboard require calibrated, held-out-validated evaluators",
@@ -981,6 +1069,84 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "5abb6588cbfeb19126e3e8cc9b885fc86599a0bd076d572827cf92a11abae1a3"
+    },
+    {
+      "id": "adr-0019-code-viewer-renderer",
+      "path": "docs/adr/0019-code-viewer-renderer.md",
+      "title": "ADR-0019 — Render the read-only code viewer with native AvalonEdit, not Monaco-in-WebView2",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "For the read-only code viewer (spec-editor-surfaces US-ED1–ED4), use native AvalonEdit (MIT) rather than Monaco-in-WebView2 (MIT). The deciding factor is the repo's own documented WebView2 airspace pain (ADR-0015: the windowed control cannot be drawn over and the composition alternative crashes on float) — a read-only viewer does not need Monaco's VS-Code parity, so it should not pay a second WebView2's airspace and process-risk cost. Markdown content renders via Markdig (BSD-2); rich content (Mermaid/charts) reuses the ONE existing canvas WebView2 rather than adding another.",
+      "tags": [
+        "architecture",
+        "editor",
+        "avalonedit",
+        "monaco",
+        "webview2",
+        "airspace",
+        "read-only",
+        "viewer"
+      ],
+      "links": [
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-content-rendering-comparables",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "32125e82283ff33fc2c9d8084f3aed992fbcec914560d33b9e5f0d5b06c5861f"
+    },
+    {
+      "id": "adr-0020-class-diagram-architecture",
+      "path": "docs/adr/0020-class-diagram-architecture.md",
+      "title": "ADR-0020 — Class diagram: an App-side type-hierarchy view from the existing graph, dependency-free; members & Mermaid deferred",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The class-diagram surface (spec-uml-erm-surfaces US-U*) renders a UML type hierarchy — classes and interfaces as the nodes, `inherits` → generalization and `implements` → realization as the edges — built App-side from the EXISTING graph projection (C# already extracts these edges), so Phase 1 needs no new Core query and no vendored diagram library. Members are NOT extracted today, so the Phase-1 view is member-less by construction; a full member-bearing, notation-valid Mermaid `classDiagram` render is deferred to Phase 2, gated on a Core `has_member` extractor enhancement — because a Mermaid classDiagram with empty compartments is not worth vendoring ~3 MB of mermaid.js for.",
+      "tags": [
+        "architecture",
+        "class-diagram",
+        "uml",
+        "mermaid",
+        "graph",
+        "derived-view"
+      ],
+      "links": [
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0019-code-viewer-renderer",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c4969f43c03d38620516205ffc4efd9e8a45f99e77010e28630843b4ffbc3eaa"
     },
     {
       "id": "adr-0020-trusted-registrar-harness-model-identity",
@@ -1133,7 +1299,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
         }
       ],
-      "sourceSha256": "1bcbc703fc47da2f24c24d07ae93b0c3c3709704678f996ac51610c5db0a8dda"
+      "sourceSha256": "93bc32b87ab1da76b8b9fc5ad8d9e8c4c2b2480c36cc75580facd5289c2ca1e0"
     },
     {
       "id": "architecture-loomkeeper",
@@ -1211,6 +1377,77 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "6c61ff31a5e56c22b9165b075b48c2658ed6a74adcfe00105d6cb3c860d8bfce"
+    },
+    {
+      "id": "note-2026-08-30-overnight-surfaces",
+      "path": "docs/notes/note-2026-08-30-overnight-surfaces.md",
+      "title": "Overnight run — three-surfaces progress & morning next-steps",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-30",
+      "reviewSuggested": [],
+      "summary": "What the autonomous overnight run of 2026-08-30 delivered on the three requested new surfaces (class diagram, read-only code viewer, prompt editor) and what remains — mostly Core-gated. All increments landed green (App.Tests 171, Core.Tests 735, launch smoke); each is a clean vertical slice or a ready-to-substitute component behind a defined seam.",
+      "tags": [
+        "overnight",
+        "class-diagram",
+        "code-viewer",
+        "prompt-editor",
+        "editor-surfaces",
+        "status"
+      ],
+      "links": [
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0020-class-diagram-architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0019-code-viewer-renderer",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "38cfdca171bb12ffb3e7a99fe22d35bb438908a03dcdc2bdfbbbe16ebc8a3db3"
+    },
+    {
+      "id": "note-2026-08-30-prompt-draft-wiring",
+      "path": "docs/notes/note-2026-08-30-prompt-draft-wiring.md",
+      "title": "Prompt-draft surface — built foundation & the shell-wiring plan",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "What landed for the prompt-draft surface (spec-editor-surfaces US-ED5–ED7) and the precise shell wiring that finishes it. Built + tested this increment: the testable transfer core (PromptDraftViewModel, 7 tests), the surface UI (PromptDraftSurface), and the factory kind \"prompt\". The remaining wiring is a self-contained next increment on the central WorkbenchShell dispatch choreography, deliberately split out so that change is its own verified step.",
+      "tags": [
+        "prompt-draft",
+        "editor-surfaces",
+        "dispatch",
+        "wiring",
+        "phasing"
+      ],
+      "links": [
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "mockup-editor-surfaces",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f04aba5b96efac9356ac72136dfee444b7d440b7b4082052cd82d58baefede62"
     },
     {
       "id": "note-20260826-council-review-ai-ide-arch",
@@ -1380,6 +1617,60 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "2c540d97f9b2ab94ec8a6d1f9cda36b7c05813282ad30cfe75f7b3e391e48ffd"
+    },
+    {
+      "id": "note-20260830-the-graph-carries-only-observable-links",
+      "path": "docs/notes/note-20260830-the-graph-carries-only-observable-links.md",
+      "title": "The graph carries only observable links — docs and code are expected to be orthogonal",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Asked whether documentation should be joined to code, the answer is no: the graph carries only links that are declared somewhere observable, and docs and code being orthogonal is a useful property rather than a gap to close by inference.",
+      "tags": [
+        "decision-note",
+        "graph",
+        "knowledge",
+        "evidence",
+        "provenance"
+      ],
+      "links": [
+        {
+          "to": "adr-0001-derived-evidence-views",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "811f039b5fae32ce5c08de88b915d4bfcc9d4689b9f7ab69989ca00f53bacf58"
+    },
+    {
+      "id": "note-20260831-panel-reorder-and-search-breadth",
+      "path": "docs/notes/note-20260831-panel-reorder-and-search-breadth.md",
+      "title": "Panel reorder on redraw, and graph search breadth — root-caused, deferred to coordinated work",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Two findings from live testing of the new surfaces. (1) Opening a tab reorders panes because a native AvalonDock drag is never captured in the owned Layout model, so the full rebuild-from-model on every surface add reverts the user's arrangement — a real reverse-sync gap, deferred because it touches the keyboard/drag-identical and persistence invariants and is untestable headlessly. (2) The graph search box filters only the already-loaded node LABELS client-side; content/keyword/ topic search needs a Core query (and file grep is a new Core capability under DC-022).",
+      "tags": [
+        "decision-note",
+        "layout",
+        "avalondock",
+        "search",
+        "ux"
+      ],
+      "links": [
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1bfc5a5cc8753bb40d48d138284a196cd3610c4db6cc45ec31b96719fcacf9fb"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -1578,6 +1869,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "450714ae4b68f3c3370e2d7df000cd7003531c5765e78a40388826127d03872e"
     },
     {
+      "id": "note-uml-diagram-fidelity-roadmap",
+      "path": "docs/notes/uml-diagram-fidelity-roadmap.md",
+      "title": "Decision note — full-fidelity UML class & sequence diagrams",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The class diagram now renders variable-height, three-compartment UML classifier boxes (name / attributes / operations) sized to each type's members, with «interface» stereotypes, italic interface names, monospace member lines, and correct generalization/realization arrowheads. This note records the remaining UML class-diagram fidelity gaps and the design + Core data contract for a UML sequence-diagram surface.",
+      "tags": [
+        "uml",
+        "class-diagram",
+        "sequence-diagram",
+        "visualization",
+        "class-diagram-surface"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1019c9d98b854b04b2fc784cada4bdea68e34249dba7f30ffe4979e750f397b4"
+    },
+    {
       "id": "note-watcher-substrate-framing",
       "path": "docs/notes/watcher-substrate-framing.md",
       "title": "Loomkeeper framing, score authority, and Observatory archetype",
@@ -1611,6 +1929,32 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c20b395a9957338b90358af9b8af08d35c4cb32863c8b29e530c097d41878c78"
+    },
+    {
+      "id": "note-workspace-open-layout-restore",
+      "path": "docs/notes/workspace-open-layout-restore.md",
+      "title": "Decision note — workspace-open layout restore semantics",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Opening a workspace restores its per-workspace saved layout (US-9), which the user experiences as \"adding a workspace reset my panes\" — especially when the saved layout is degenerate (had lost the graph). Shipped a conservative guard (keep the current layout when the restore would drop the graph it has) and recorded the open product fork: per-workspace restore vs keep-current-on-open.",
+      "tags": [
+        "layout",
+        "persistence",
+        "workbench",
+        "us-9"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0bea1f643446253c62355f55fb690fcedf1e92b84bbfd32c0ecb54b903f34932"
     },
     {
       "id": "conceptual-model-ai-native-ide",
@@ -1663,6 +2007,52 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "97d517658252e65e6cf51a7392d73986c9eb96aa4d78d91569aaeeead093e21e"
+    },
+    {
+      "id": "design-knowledge-explorer-mode",
+      "path": "docs/design/knowledge-explorer-mode.md",
+      "title": "Knowledge Explorer mode — component design (Phase 1 walking skeleton)",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Component design for the Phase-1 walking skeleton of the full-window Explorer mode: the ShellViewMode swap (WorkbenchHost.Content toggles Manager↔ExplorerSurface, Shell held so the workbench and its live ConPTY/WebView2 children hide-not-destroy), a dedicated CanvasSurface in Explorer (not reparented), a new CanvasSurface.NodeSelected seam the reader follows, and a NodeReaderView stub (metadata + walkable edges; content deferred to ADR-0018 Phase 2). Resolves the mechanism the ADRs deferred, with a red-first test plan whose key control is \"a live terminal survives an Explorer round-trip\".",
+      "tags": [
+        "explorer",
+        "view-mode",
+        "reader",
+        "wpf",
+        "design",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0017-primary-view-mode",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "refines"
+        },
+        {
+          "to": "mockup-knowledge-explorer-mode",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Component & data flow",
+          "mermaid": "flowchart LR\n  Rail[Explore rail item] -->|Toggle| SMC[ShellModeController]\n  SMC -->|Workbench| WH[WorkbenchHost.Content = Shell.Manager]\n  SMC -->|Explorer| EX[WorkbenchHost.Content = ExplorerSurface]\n  EX --> G[CanvasSurface 'explorer-graph']\n  EX --> R[NodeReaderView]\n  G -->|NodeSelected CanvasNodeRef| R\n  R -->|activate edge -> RefreshAsync target| G\n  G -. GraphSource .-> VM[CanvasGraphViewModel over IWorkspaceQueries]"
+        }
+      ],
+      "sourceSha256": "9412b7710088ab7cdfadd54c9d9beb42f0c7d29e2020e5c0fad9fcf461415cb6"
     },
     {
       "id": "design-phase-1-walking-skeleton",
@@ -2047,7 +2437,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c59220a166cbe3df078f1f9b9e55c38180b6ba522703271153e0ad47e00643ce"
+      "sourceSha256": "e37138264000feb3cb9217320ad5b465f7c6cf8eb05b89c2d3dd2dee42f5e95b"
     },
     {
       "id": "design-watcher-dispute-command",
@@ -2089,7 +2479,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8af54edb3161ce6d223b8f86a7bcc36814dd7fead94cf9a593904f83b130262b"
+      "sourceSha256": "30b7d68b793400e54251a9d6457a49bf422ca8f4e746aa87beb1eab43b124d59"
     },
     {
       "id": "design-watcher-dispute-service",
@@ -2360,7 +2750,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9db103e3332bf32e809ad63d5a14aa319ca20ec17a09203226e14a54e801f9c6"
+      "sourceSha256": "e9ebb3e473d14779cf9b3a43ef8fcc9ec457a32af285275d2950b6de9a0e70cb"
     },
     {
       "id": "design-watcher-message-board",
@@ -2653,7 +3043,7 @@ window.DOCS_INDEX = {
       "phase": "2",
       "reviewBy": "2027-02-26",
       "reviewSuggested": [],
-      "summary": "The app-side writer that makes a terminal/agent session appear in the watcher: a pure, testable SessionCoordinationEmitter (Register/Heartbeat/HeartbeatAll/End/Reconcile) over coordination-contract logs, plus the WorkbenchShell loop that reconciles the live terminal panes into coordination sessions and pumps them into the store. Also closes the session-end-that-never-ended liveness gap (DC-043).",
+      "summary": "The app-side writer that makes a terminal/agent session appear in the watcher: a pure, testable SessionCoordinationEmitter (Register/Heartbeat/HeartbeatAll/End/Reconcile) over coordination-contract logs, plus the WorkbenchShell loop that reconciles the live terminal panes into coordination sessions and pumps them into the store. Also closes the session-end-that-never-ended liveness gap (DC-064).",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -2688,7 +3078,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4d7fa426a329999f8f649d2f37f09f737950a2ef7eb066148a47b783b856e177"
+      "sourceSha256": "3e85078cfcea1f47f2d82633ba2e0f933bd2e5bd8c58250d2eedc0119727c4ad"
     },
     {
       "id": "design-watcher-sessions-surface",
@@ -2918,7 +3308,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9280f403d7438ebd03d1dabff4972cf50f37b49cbd7ce5395c0f5fba2e90a015"
+      "sourceSha256": "8e59633efc82992db153e7d931aea3290ab014c35f27499ced9a8a54ee0ee1ea"
     },
     {
       "id": "domain-experts",
@@ -3259,6 +3649,39 @@ window.DOCS_INDEX = {
       "sourceSha256": "019b6dfead9d172ec258bf9ada3019edcd311fc3601c556dc544132abe0ca999"
     },
     {
+      "id": "mockup-editor-surfaces",
+      "path": "docs/mockups/editor-surfaces.md",
+      "title": "Editor & content surfaces — mockup",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Self-contained, dependency-free review mockup of the two editor & content surfaces (spec-editor-surfaces): a READ-ONLY code viewer (syntax-highlighted, read-only badge, shortfall banner, walkable typed-edge footer, with hard states code/markdown/overflow/loading/empty/error/ unsupported-kind) and a PROMPT-DRAFT editor (staged badge, saved-with-layout note, a one-way Transfer to a NAMED ready session with the no-ready-session disabled state and the transferred confirmation). Review harness (surface · viewer-state · draft-state · theme · reduced-motion) and an in-artifact contrast audit (AA). Tokens are the project DESIGN.md chrome + Material Palenight syntax palette. Open `editor-surfaces.html` over file://.",
+      "tags": [
+        "editor",
+        "code-viewer",
+        "prompt-draft",
+        "read-only",
+        "monaco",
+        "mockup",
+        "wpf"
+      ],
+      "links": [
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-knowledge-explorer-mode",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c571f814ec5e7af24935f32fb241ea3f06992a1822094380b1613043b37b438b"
+    },
+    {
       "id": "mockup-facelift-elevate",
       "path": "docs/mockups/facelift-elevate.md",
       "title": "Facelift elevate proposals — visualization",
@@ -3349,6 +3772,38 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "2ba356a6b77d2ed153dcf4f491c25b1bf8595ddfc2f0bcd2cba0459438ad9e36"
+    },
+    {
+      "id": "mockup-knowledge-explorer-mode",
+      "path": "docs/mockups/knowledge-explorer-mode.md",
+      "title": "Knowledge Explorer mode — mockup",
+      "type": "doc",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Self-contained, dependency-free review mockup of the full-window dual-pane Knowledge Explorer mode (spec-knowledge-explorer-mode): the activity rail + a body-wide graph|reader split, with the reader's hard states (code/markdown/html/empty/loading/error/unsupported-kind/overflow) and the graph's loading/empty/too-large states, a review harness (state · viewport · theme · reduced-motion) and an in-artifact contrast/target audit. Tokens are the project DESIGN.md (chrome + the separate syntax palette + provenance). Open `knowledge-explorer-mode.html` over file://.",
+      "tags": [
+        "knowledge-graph",
+        "explorer",
+        "reader",
+        "dual-pane",
+        "mockup",
+        "wpf"
+      ],
+      "links": [
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-graph-canvas",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "51f511c81ba5ea794b33af699ec2ddb303aa746dd40e8ddcae87a16d92668420"
     },
     {
       "id": "mockup-uml-erm-surfaces",
@@ -3601,6 +4056,37 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
+    },
+    {
+      "id": "plan-extractor-roadmap",
+      "path": "docs/plans/extractor-roadmap.md",
+      "title": "Extractor roadmap — what reads the repository, and in what order",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Every extractor this product has, every one it does not, and the order the remaining work is worth doing in — with the coverage of each measured on a real repository rather than estimated.",
+      "tags": [
+        "plan",
+        "extractors",
+        "coverage",
+        "graph",
+        "evidence"
+      ],
+      "links": [
+        {
+          "to": "plan-ai-native-ide-architecture",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4ec2914d0b8a8b2a162f8d90ba2e6283931a27825be06d4abd51faa223500f93"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -4034,7 +4520,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "acbb087ebecc581379758360b80c2f52be402c92e72f72bfb5fa32793a045d68"
+      "sourceSha256": "e1e4e1093e434f0adfe820815319c770930d5566c5c2f38439449a6e3d963a89"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -4158,16 +4644,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "855af815674245851df9fc51855e1117fe59ddff3127449ee9da7583c0c75f07"
     },
     {
+      "id": "inv-0004-graph-kind-taxonomy-and-knowledge",
+      "path": "docs/investigations/INV-0004-graph-kind-taxonomy-and-knowledge.md",
+      "title": "INV-0004 — Why 'Knowledge' is 0, the bicep-as-knowledge mislabel, and the 'not resolved' disclosures",
+      "type": "investigation",
+      "status": "resolved",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Three related findings from the graph on TheTerrace. (1) The category filter's Knowledge/Specs chips are 0 because the app's graph is built from CODE extractors (C#, python, typescript, EF/SQL schema, bicep/azure) — the repo's docs/knowledge artifacts (markdown specs, ADRs, designs) are not extracted into it. (2) A bicep resource reads \"kind: knowledge\" in the reader because the system has two 'kind' notions — the fine has_type (azure-resource) and a coarse node_kind (source vs knowledge, a dimensional Type-2 classification); the reader was showing node_kind. (3) The \"not resolved\" disclosures are the projection's honest analysis boundaries — mostly legitimate, a few extractor coverage gaps. Design fixes landed; the node_kind and neighbour-kind items are handed to Core.",
+      "tags": [
+        "graph",
+        "taxonomy",
+        "kind",
+        "knowledge",
+        "extractor",
+        "disclosures",
+        "investigation"
+      ],
+      "links": [
+        {
+          "to": "spec-knowledge-exploration",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-knowledge-explorer-mode",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "99a6c7f2d3ca7e12e5c0d8902df3508280fda1e3ce975c545d37922ff083a7dc"
+    },
+    {
       "id": "investigation-terminal-cursor-render-crash",
       "path": "docs/investigations/terminal-cursor-render-crash.md",
-      "title": "Investigation - AiDe.App crash: terminal cursor render IndexOutOfRange (DC-041)",
+      "title": "Investigation - AiDe.App crash: terminal cursor render IndexOutOfRange (DC-062)",
       "type": "investigation",
       "status": "resolved",
       "owner": "@timianmalloo",
       "phase": "4",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "AiDe.App terminated with an unhandled IndexOutOfRangeException while two agent CLIs (copilot + claude) were grounding in a repo. Verified root cause (from the Windows Application event log, reproduced deterministically): TerminalView.DrawCursor read the character under the cursor through the raw TerminalScreen indexer, but the cursor legitimately sits at the pending-wrap column (CursorColumn == Columns) after writing the last column; at the bottom row that indexes one past the end of the cell array, and the exception is unhandled on the WPF UI thread inside OnRender, which terminates the process. Fixed with a bounds-safe CellUnderCursor() the renderer uses. Registered as DC-041. (A separate finding: the watcher UX is not wired into the running app - see below.)",
+      "summary": "AiDe.App terminated with an unhandled IndexOutOfRangeException while two agent CLIs (copilot + claude) were grounding in a repo. Verified root cause (from the Windows Application event log, reproduced deterministically): TerminalView.DrawCursor read the character under the cursor through the raw TerminalScreen indexer, but the cursor legitimately sits at the pending-wrap column (CursorColumn == Columns) after writing the last column; at the bottom row that indexes one past the end of the cell array, and the exception is unhandled on the WPF UI thread inside OnRender, which terminates the process. Fixed with a bounds-safe CellUnderCursor() the renderer uses. Registered as DC-062. (A separate finding: the watcher UX is not wired into the running app - see below.)",
       "tags": [
         "loomkeeper",
         "terminal",
@@ -4189,7 +4708,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "24bcafb9ba39c42119263437bfa8fb3fde7c73f21cdee5bac15317d9400194d6"
+      "sourceSha256": "a343965f1e68a55ac3bcfdb424efa88fed976b34420741436a89132dfcbf7df0"
     },
     {
       "id": "kb-agentic-session-observability",
@@ -7294,14 +7813,14 @@ window.DOCS_INDEX = {
     {
       "id": "proof-terminal-cursor-render-crash",
       "path": "docs/proof/terminal-cursor-render-crash.md",
-      "title": "Proof Pack - Terminal cursor render crash fix (DC-041)",
+      "title": "Proof Pack - Terminal cursor render crash fix (DC-062)",
       "type": "proof-pack",
       "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "4",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Evidence that the terminal cursor render crash (DC-041) is fixed: CellUnderCursor() returns null at the pending-wrap cursor position (the exact index that was one past the end of the cell array), the renderer reads through it instead of the raw indexer, and the guard is mutation-verified to reproduce the original IndexOutOfRangeException when removed. 3 new tests, full Core 970/0, App 138/0.",
+      "summary": "Evidence that the terminal cursor render crash (DC-062) is fixed: CellUnderCursor() returns null at the pending-wrap cursor position (the exact index that was one past the end of the cell array), the renderer reads through it instead of the raw indexer, and the guard is mutation-verified to reproduce the original IndexOutOfRangeException when removed. 3 new tests, full Core 970/0, App 138/0.",
       "tags": [
         "loomkeeper",
         "terminal",
@@ -7319,7 +7838,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "889f7a7e998fa13c59b9b8b7cfbed2d2d06d070f8c444d969a4a3ec5fd9b55a4"
+      "sourceSha256": "09d2fb8c3839fb22d6211a854f28834e0d18825d17dbca00a8ab9eadfff43c5d"
     },
     {
       "id": "proof-watcher-advisory-evaluator",
@@ -7474,7 +7993,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2405d978d3a1793648d5a0958730254c159ccbde6fee4612a0b07bc7d902b664"
+      "sourceSha256": "d5f659e8d65c7d378e2a9f89c74eafbce1506d0d7d836e86aa606338788e1f07"
     },
     {
       "id": "proof-watcher-dispute-command",
@@ -7507,7 +8026,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "15939d5b676c3a61f5bc7fc3d03e41524f44cf699266a637b82b5b87f3323c43"
+      "sourceSha256": "1f1077c40c9defb056cae8bf164e57be4e2a4a7935fbfeed0e253f0c10d81dc6"
     },
     {
       "id": "proof-watcher-dispute-service",
@@ -7808,12 +8327,12 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "88db95fbfe34817d03c84ba141127c2ef29ac097928899e06b8d4f455a376a88"
+      "sourceSha256": "54de97165dd9fe4263e2ef432a27655d9aecafa40c516f542ed70dbdeff7411f"
     },
     {
       "id": "proof-watcher-runtime-wiring",
       "path": "docs/proof/watcher-runtime-wiring.md",
-      "title": "Proof Pack - Loomkeeper watcher wired into the running app (DC-042)",
+      "title": "Proof Pack - Loomkeeper watcher wired into the running app (DC-063)",
       "type": "proof-pack",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -7845,7 +8364,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1c2452d14bbe52fe4b78cf8d8041e46d4b32f413a0609056e007cd0c12f44cfe"
+      "sourceSha256": "4c0c1a95b3de0672926b68eada8d9f549eb69c0c6f462e291619bf0ec3378e5b"
     },
     {
       "id": "proof-watcher-score-dispute",
@@ -7962,7 +8481,7 @@ window.DOCS_INDEX = {
       "phase": "2",
       "reviewBy": "2027-02-26",
       "reviewSuggested": [],
-      "summary": "Proof Pack for conn-8: the auto-emitting session wrapper (SessionCoordinationEmitter + Reconcile) and its shell wiring, including the DC-043 session-end-to-Ended fix. 9 emitter tests, 2 mutation-verified; Core 979/0, App 139/0.",
+      "summary": "Proof Pack for conn-8: the auto-emitting session wrapper (SessionCoordinationEmitter + Reconcile) and its shell wiring, including the DC-064 session-end-to-Ended fix. 9 emitter tests, 2 mutation-verified; Core 979/0, App 139/0.",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -7983,7 +8502,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "11e70f24e83ac4f4d00b2755bef2aab5ed5901b9702054bee9f3e63089d571e8"
+      "sourceSha256": "d75435e5acac2ada1a277cdb7879d5c6180d423836a1403466eb7778ed78bede"
     },
     {
       "id": "proof-watcher-sessions-surface",
@@ -8333,6 +8852,62 @@ window.DOCS_INDEX = {
       "sourceSha256": "b9c49e5aaf87e7290f150837b4cdad32506f2b3d7ae9846832d74fd67e7b11a4"
     },
     {
+      "id": "spec-editor-surfaces",
+      "path": "docs/specs/editor-surfaces.md",
+      "title": "Editor & Content Surfaces — read-only code viewer & prompt drafts (spec)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [
+        {
+          "by": "adr-0019-code-viewer-renderer",
+          "on": "2026-08-30",
+          "reason": "residual cleared: AvalonEdit read-only highlighting PoC passed (C#/py/js/sql covered, ts/bicep degrade to plain, pure-WPF no airspace)"
+        }
+      ],
+      "summary": "Specifies two content surfaces the workbench still lacks: a READ-ONLY code viewer (syntax-highlighted source for a selected node/file, never an editor of record) and a PROMPT-DRAFT editor (rich-text prompts staged until an explicit transfer to a ready terminal session). Both are read/compose surfaces, not a general-purpose code editor (explicitly out of scope in spec-ai-native-ide). The code viewer is the render side of the ADR-0018 NodeContentAsync seam; the prompt draft composes with the terminal-sessions surface. Grounds the reuse decision (Monaco MIT via WebView2, AvalonEdit MIT native, Markdig BSD-2) and names the Design/Core ownership lanes so the surfaces can be built in parallel against defined contracts.",
+      "tags": [
+        "editor",
+        "monaco",
+        "avalonedit",
+        "markdig",
+        "code-viewer",
+        "prompt-draft",
+        "content-rendering",
+        "read-only"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-knowledge-explorer-mode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-terminal-sessions",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-editor-and-content-rendering-surfaces",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0019-code-viewer-renderer",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "948b97adb9009257f71a1df014adc2c271f8ab18df213148ecf6d9b3f4bde21c"
+    },
+    {
       "id": "spec-knowledge-exploration",
       "path": "docs/specs/knowledge-exploration.md",
       "title": "Knowledge Exploration Surface (spec)",
@@ -8640,12 +9215,28 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-context-map-join"
     },
     {
+      "id": "surface-mockups-editor-surfaces",
+      "path": "docs/mockups/editor-surfaces.html",
+      "title": "Editor & content surfaces — mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-editor-surfaces"
+    },
+    {
       "id": "surface-mockups-graph-canvas",
       "path": "docs/mockups/graph-canvas.html",
       "title": "Graph canvas — target UX",
       "kind": "knowledge-tool",
       "description": "Open an interactive knowledge artifact.",
       "artifactId": "mockup-graph-canvas"
+    },
+    {
+      "id": "surface-mockups-knowledge-explorer-mode",
+      "path": "docs/mockups/knowledge-explorer-mode.html",
+      "title": "Knowledge Explorer mode — mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-knowledge-explorer-mode"
     },
     {
       "id": "surface-mockups-knowledge-explorer",
@@ -8680,5 +9271,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "22c13ff3212f80b721995857703982351219e97d88f73fdadee874599f2d14fb"
+  "graphSha256": "c57fa6e96d6eab029066cd2668514bdc1489e0216deb5ed5a99f58a8e8ee78eb"
 };

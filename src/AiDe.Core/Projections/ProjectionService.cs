@@ -48,11 +48,24 @@ public sealed record EdgeView(
 
 public sealed record NodeView(string NodeId, string NodeKind, string DisplayLabel);
 
+/// <param name="NeighborKinds">
+/// Each neighbouring node's own <c>has_type</c>, keyed by node id.
+/// </param>
+/// <remarks>
+/// <b>INV-0004.</b> The canvas hardcoded <c>"source"</c> as every neighbour's kind because the
+/// describe result did not carry one — so a drill-down showed a table, a bicep resource and a class
+/// as the same thing, and the filter could not tell them apart. The kind is a property of the
+/// NEIGHBOUR, and only the projection can read it; a renderer inventing a default is a renderer
+/// stating a fact it does not have.
+/// </remarks>
 public sealed record DescribeResult(
     NodeView Node,
     IReadOnlyList<EdgeView> Neighbors,
     ResultBounds Bounds,
-    string SourceRevision);
+    string SourceRevision,
+    IReadOnlyDictionary<string, string>? NeighborKinds = null,
+    IReadOnlyList<string>? Members = null,
+    int MembersDeclared = 0);
 
 public sealed record ImpactResult(
     string RootNodeId,
@@ -146,11 +159,14 @@ public sealed record KnowledgeResult(
 /// capped on nodes, edges AND bytes — the byte cap matters because node labels come from repository
 /// content, so a count-only cap still admits an unbounded payload.
 /// </remarks>
-public sealed class ProjectionService(WorkspaceStore store)
+public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoot = null)
 {
     private static readonly ActivitySource Activity = new("aide.projection.query");
 
     public const int MaxNeighborsCeiling = 50;
+    // A type's declared members are capped by the extractor at 40; 80 gives headroom for that plus the
+    // members_truncated marker without letting a pathological node return an unbounded compartment.
+    public const int MaxMembersRead = 80;
     public const int MaxEdgesCeiling = 500;
     public const int MaxNodesCeiling = 200;
     public const int MaxResultBytes = 64 * 1024;
@@ -170,8 +186,35 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// hypothetical: MEASURED on a real repository, an evidence page of 2,000 assertions serialises
     /// to <b>1,004,397 bytes</b>, which is 95.8% of the frame and fifteen times the
     /// <see cref="MaxResultBytes"/> its own documentation claimed it stayed "comfortably inside".</para>
+    ///
+    /// <para><b>Why the headroom is the size it is.</b> A response is its payload plus an envelope,
+    /// and from IPC version 3 that is all it is: the payload is carried as JSON rather than as a
+    /// string holding JSON text, so nothing is escaped twice. Through version 2 it was, at a measured
+    /// <b>1.56–1.57x</b> — which is how a 727,244-byte graph inside a 768 KiB budget reached
+    /// 1,137,104 bytes on the wire and was refused (DC-047). The budget had been checked on the inner
+    /// bytes and enforced on the outer ones, and its tests counted the inner bytes too, so the guard
+    /// and its proof were wrong together.</para>
+    ///
+    /// <para>128 KiB below the frame, which is the envelope with room to spare.
+    /// <c>ThePayloadIsNotEncodedTwice</c> holds up the premise this rests on — that payload and frame
+    /// are within a few percent — and <c>TheBudgetCannotDriftPastWhatAFrameHolds</c> holds up the
+    /// arithmetic. Neither is optional: this number is only safe while both pass.</para>
     /// </remarks>
-    public const int MaxResponseBytes = 768 * 1024;
+    public const int MaxResponseBytes = 896 * 1024;
+
+    /// <summary>The transport's own limit, restated here only so the budget can be checked against it.</summary>
+    public const int FrameBytes = Ipc.IpcFraming.MaxFrameBytes;
+
+    /// <summary>
+    /// What a shrunk graph must fit inside — the frame, less real headroom.
+    /// </summary>
+    /// <remarks>
+    /// Shrinking stops at the FIRST size that fits, so a target equal to the frame leaves whatever
+    /// margin the last step happened to produce. MEASURED with no headroom: 1,044,916 bytes against
+    /// a 1,048,576 frame — 3,660 bytes, which is one longer type name away from failing. A limit met
+    /// exactly is not a limit respected.
+    /// </remarks>
+    public const int MaxFramedGraphBytes = FrameBytes - (64 * 1024);
 
     /// <summary>
     /// What one assertion costs in JSON beyond its own text.
@@ -183,6 +226,39 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// under-counts is a guard that lets the frame overflow.
     /// </remarks>
     public const int AssertionOverheadBytes = 448;
+
+    /// <summary>
+    /// How many times a graph may be shrunk before it must already fit.
+    /// </summary>
+    /// <remarks>
+    /// Each round takes at least a third off, so twelve rounds reduce five thousand nodes to fewer
+    /// than five — far past any real graph. It is a cost bound, not the thing that makes the loop
+    /// terminate; the guaranteed reduction does that.
+    /// </remarks>
+    public const int MaxShrinkAttempts = 12;
+
+    /// <summary>
+    /// How many times a shrunk graph may probe upward for the size it overshot.
+    /// </summary>
+    /// <remarks>
+    /// Each probe halves the remaining gap. MEASURED on the calibrated fixture: none returns 868
+    /// nodes where 1,281 fit, two returns 1,193, four returns 1,274, and six returns 1,274 again —
+    /// by then <see cref="MinRecoveryGap"/> stops it. Four is where the curve flattens, and every
+    /// probe is a full recompute of the graph, which is the expensive half.
+    /// </remarks>
+    public const int MaxRecoveryProbes = 4;
+
+    /// <summary>
+    /// Below this, the nodes still recoverable are not worth a recompute to find.
+    /// </summary>
+    /// <remarks>
+    /// It is also the precision of the monotonicity this class offers: a larger request can return
+    /// up to this many fewer nodes than a smaller one, because recovery approximates the largest
+    /// fitting size rather than finding it. Exact monotonicity needs the node ORDERING computed once
+    /// and candidate sizes evaluated against it — the ordering is identical for every size, so today
+    /// each probe redoes work that does not change. That is the upgrade, and it is not free.
+    /// </remarks>
+    public const int MinRecoveryGap = 50;
 
     /// <summary>
     /// The ceiling on a SEARCH, which is a different question from a neighbour list.
@@ -271,7 +347,28 @@ public sealed class ProjectionService(WorkspaceStore store)
         activity?.SetTag("returned.edges", edges.Count);
         activity?.SetTag("omitted.edges", bounds.OmittedEdges);
 
-        return new DescribeResult(NodeOf(reader, nodeId), edges, bounds, revision);
+        // The kinds of the nodes on the other end. Read here because the projection is the only
+        // thing that can: the canvas has ids and nothing else.
+        var kinds = edges
+            .SelectMany(e => new[] { e.Subject, e.Object })
+            .Where(id => !string.Equals(id, nodeId, StringComparison.Ordinal))
+            .Distinct(StringComparer.Ordinal)
+            .ToDictionary(id => id, id => NodeOf(reader, id).NodeKind, StringComparer.Ordinal);
+
+        // The type's OWN members (has_member) — the class-diagram compartment (ADR-0020 Phase 2). Read
+        // directly by subject so the neighbour cap cannot starve them; `members_truncated` carries the
+        // real declared count when the extractor capped the listing. Empty for a non-type node.
+        var ownRows = reader.OutgoingAssertions(nodeId, MaxMembersRead);
+        var members = ownRows.Where(a => a.Predicate == "has_member").Select(a => a.Object).ToList();
+        var declared = members.Count;
+        var truncated = ownRows.FirstOrDefault(a => a.Predicate == "members_truncated");
+        if (truncated is not null
+            && int.TryParse(truncated.Object, System.Globalization.CultureInfo.InvariantCulture, out var d))
+        {
+            declared = d;
+        }
+
+        return new DescribeResult(NodeOf(reader, nodeId), edges, bounds, revision, kinds, members, declared);
     }
 
     /// <summary>
@@ -463,17 +560,74 @@ public sealed class ProjectionService(WorkspaceStore store)
         // but the operation is still reachable, and an operation that can never succeed is a defect
         // whoever calls it. Shrink to fit and let Omitted say so, rather than build a response the
         // transport will refuse.
-        var estimate = Weigh(graph);
+        // Shrink until it FITS, and check that it did.
+        //
+        // The previous version applied ONE proportional correction and returned whatever came back.
+        // That assumes bytes fall in proportion to node count, and they do not: nodes are kept in
+        // degree order, so the ones that survive a cut are the most connected ones, and the edges
+        // they carry dominate the payload. Cutting 15% of the nodes can cut 2% of the bytes.
+        //
+        // MEASURED on a real workspace: the response reached 1,176,341 bytes against a 1,048,576
+        // frame, and the only thing the user saw was "The graph could not be loaded" on opening the
+        // workspace — a shrink that had run, reported success by returning, and not worked.
+        var weight = FramedCost(graph);
+        var attempts = 0;
 
-        if (estimate > MaxResponseBytes)
+        // The smallest node count KNOWN not to fit, so the recovery below has something to aim at.
+        var tooMany = int.MaxValue;
+
+        while (weight > MaxFramedGraphBytes && graph.Nodes.Count > 1 && attempts < MaxShrinkAttempts)
         {
-            // One retry, scaled by how far over it was, with a margin for the unevenness of node
-            // sizes. Iterating to convergence would trade a bounded cost for an unbounded one.
-            var scaled = (int)(graph.Nodes.Count * (MaxResponseBytes / (double)estimate) * 0.85);
+            tooMany = graph.Nodes.Count;
 
-            graph = projection.Compute(query with { MaxNodes = Math.Max(1, scaled) });
-            activity?.SetTag("shrunk.to_fit", true);
+            var proportional = (int)(graph.Nodes.Count * (MaxFramedGraphBytes / (double)weight) * 0.85);
+
+            // A third off every round at minimum, so this terminates even on a graph whose bytes
+            // barely move when its node count does. Without it the loop ends only at the attempt
+            // cap — and the cap firing would mean returning a response the transport refuses, which
+            // is a circuit breaker used as a termination argument (GO12).
+            var next = Math.Clamp(proportional, 1, graph.Nodes.Count * 2 / 3);
+
+            graph = projection.Compute(query with { MaxNodes = next });
+            weight = FramedCost(graph);
+            attempts++;
         }
+
+        // Take back what the shrink overshot.
+        //
+        // Every round above cuts by AT LEAST a third, which is what makes it terminate — and it means
+        // the first size that fits can be far below the largest that would have. MEASURED before this:
+        // asking for 5,000 nodes returned 706 while asking for 1,500 returned 1,000, so a caller who
+        // asked for MORE was served LESS. That is not a shortfall in fidelity, it is a surface whose
+        // answer depends on a number in a way nobody could predict or explain.
+        //
+        // Two probes at the midpoint of (fits, does-not-fit) recover most of it for a bounded cost.
+        // Only ever accepted when the probe fits, so this can widen the answer and never break it.
+        var recoveries = 0;
+
+        while (attempts > 0 && recoveries < MaxRecoveryProbes
+            && tooMany - graph.Nodes.Count > MinRecoveryGap)
+        {
+            var midpoint = graph.Nodes.Count + ((tooMany - graph.Nodes.Count) / 2);
+            var candidate = projection.Compute(query with { MaxNodes = midpoint });
+            var candidateWeight = FramedCost(candidate);
+
+            if (candidateWeight <= MaxFramedGraphBytes)
+            {
+                graph = candidate;
+                weight = candidateWeight;
+            }
+            else
+            {
+                tooMany = candidate.Nodes.Count;
+            }
+
+            recoveries++;
+        }
+
+        activity?.SetTag("shrunk.attempts", attempts);
+        activity?.SetTag("recovery.probes", recoveries);
+        activity?.SetTag("returned.bytes", weight);
 
         activity?.SetTag("returned.nodes", graph.Nodes.Count);
         activity?.SetTag("returned.edges", graph.Edges.Count);
@@ -612,27 +766,32 @@ public sealed class ProjectionService(WorkspaceStore store)
         var limit = Clamp(query.MaxResults, 1, MaxNeighborsCeiling);
         using var reader = store.BeginRead();
 
-        // Knowledge nodes are found by predicate, which has its own index — the projection never
-        // reads the source corpus it is not interested in (P1-PERF-03).
-        var typedAssertions = reader.AssertionsWithPredicate("has_type", MaxNodesCeiling);
-        var typed = typedAssertions
-            .GroupBy(a => a.Subject, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
-
-        var ids = typed.Keys
-            .Where(id => query.Term is null || id.Contains(query.Term, StringComparison.OrdinalIgnoreCase))
-            .Where(id => query.Type is null || string.Equals(typed[id].Object, query.Type, StringComparison.OrdinalIgnoreCase))
-            .OrderBy(id => id, StringComparer.Ordinal)
-            .ToList();
+        // EVERY filter in the query, and the total counted over the same filtered set.
+        //
+        // This has now been the same defect three times. First it read the first 200 `has_type`
+        // assertions and filtered THOSE to knowledge, so the 200 were C# types in alphabetical order
+        // and the filter left nothing — 0 items on a workspace holding 468 knowledge nodes. Then the
+        // knowledge read was pushed into the query but capped at 200 ids while the TERM was still
+        // matched in memory afterwards, so a search saw only the alphabetically first 200 of 1,255
+        // and a document whose id sorted later was reported as not existing.
+        //
+        // A cap applied before a filter returns the wrong slice trimmed to the right shape, and
+        // nothing in the result says so (DC-035). Moving one filter into the query and leaving the
+        // next one outside it moves the defect rather than removing it.
+        var (rows, totalMatched) = reader.KnowledgeNodes(query.Term, query.Type, limit);
 
         var nodes = new List<KnowledgeNodeView>();
-        foreach (var id in ids.Take(limit))
+        foreach (var (id, declaredType) in rows)
         {
-            var typeAssertion = typed[id];
             var touching = reader.AssertionsTouching(id, MaxEdgesCeiling);
             var owner = touching.FirstOrDefault(a => a.Subject == id && a.Predicate == "owned_by");
-            var links = touching.Where(a => a.Subject == id && a.Predicate is not ("has_type" or "owned_by")).ToList();
-            var backlinks = touching.Where(a => a.Object == id && a.Predicate is not ("has_type" or "owned_by")).ToList();
+            // `review_by` and `declared_in` describe the document; they are not links to other
+            // knowledge, and drawing them as such puts a date in the graph as a thing to navigate to.
+            var links = touching.Where(a => a.Subject == id
+                && a.Predicate is not ("has_type" or "owned_by" or "review_by" or "declared_in" or "node_class")).ToList();
+
+            var backlinks = touching.Where(a => a.Object == id
+                && a.Predicate is not ("has_type" or "owned_by" or "review_by" or "declared_in" or "node_class")).ToList();
 
             // Missing evidence is surfaced as a health finding rather than rendered as a clean node —
             // the spec's "absence of evidence stays explicit".
@@ -642,7 +801,7 @@ public sealed class ProjectionService(WorkspaceStore store)
                 findings.Add("owner not recorded");
             }
 
-            if (typeAssertion.Object == "unknown")
+            if (declaredType == "unknown")
             {
                 findings.Add("type not recorded");
             }
@@ -652,24 +811,198 @@ public sealed class ProjectionService(WorkspaceStore store)
                 findings.Add("orphan: no inbound or outbound links");
             }
 
-            if (typeAssertion.Provenance.SourceLocation is null)
+            // The type assertion carries the provenance, so it is read from the neighbours already
+            // in hand rather than by a second query per node.
+            var typeAssertion = touching.FirstOrDefault(a => a.Subject == id && a.Predicate == "has_type");
+
+            if (typeAssertion?.Provenance.SourceLocation is null)
             {
                 findings.Add("source location not recorded");
             }
 
+            // A review date that has passed is the one health finding that arrives on its own: the
+            // document has not changed, the calendar has. Read from the frontmatter the pack already
+            // writes, so a stale artifact says so rather than waiting to be noticed.
+            var reviewBy = touching.FirstOrDefault(a => a.Subject == id && a.Predicate == "review_by");
+
+            if (reviewBy is not null
+                && DateOnly.TryParse(reviewBy.Object, System.Globalization.CultureInfo.InvariantCulture, out var due)
+                && due < DateOnly.FromDateTime(DateTime.UtcNow))
+            {
+                findings.Add($"review overdue since {due:yyyy-MM-dd}");
+            }
+
             nodes.Add(new KnowledgeNodeView(
-                id, typeAssertion.Object, owner?.Object,
+                id, declaredType, owner?.Object,
                 links.Select(ToEdge).ToList(), backlinks.Select(ToEdge).ToList(),
-                typeAssertion.Provenance.SourceLocation, findings));
+                typeAssertion?.Provenance.SourceLocation, findings));
         }
 
+        // Omitted is counted against everything that MATCHED, not against everything that was read.
+        // The two were the same only while the filter ran after the cap.
         var bounds = new ResultBounds(
-            limit, MaxEdgesCeiling, MaxResultBytes, nodes.Count, ids.Count - nodes.Count,
+            limit, MaxEdgesCeiling, MaxResultBytes, nodes.Count, totalMatched - nodes.Count,
             nodes.Sum(n => n.Links.Count + n.Backlinks.Count), 0, false, null);
 
-        return new KnowledgeResult(nodes, bounds,
-            typedAssertions.Count > 0 ? typedAssertions[0].ArtifactRevision : reader.CurrentSourceRevision());
+        return new KnowledgeResult(nodes, bounds, reader.CurrentSourceRevision());
     }
+
+    /// <summary>
+    /// The content behind one node, for a reader that already has the node.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>On demand, for the one node asked for.</b> The graph carries no content by design —
+    /// fattening 1,500 nodes to serve the one a user selected is what overflowed the frame in the
+    /// first place (INV-0003, ADR-0018).</para>
+    ///
+    /// <para><b>Confined to the workspace.</b> The path is rebuilt from the scope's recorded location
+    /// plus the assertion's own provenance, then checked to be under the root before anything is
+    /// opened. A node id arrives from a client, and a client asking is not a reason to read a file.</para>
+    ///
+    /// <para><b>Bounded, and honest when it truncates.</b> Oversized content returns its first bytes
+    /// and a shortfall saying what was left — never an oversized frame, never a silent half-file.</para>
+    /// </remarks>
+    public NodeContent NodeContent(string nodeId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(nodeId);
+
+        using var activity = Activity.StartActivity("aide.projection.query");
+        activity?.SetTag("projection", "node-content");
+
+        using var reader = store.BeginRead();
+
+        // The node's own facts carry both halves of its address: the scope it belongs to, and the
+        // path relative to that scope. Asked of the store directly — the first version filtered a
+        // CAPPED neighbour list for it, so a node with 244 edges never found its own declaration and
+        // the most connected types in the workspace reported "no recorded source" (DC-035).
+        var declaring = reader.DeclaringAssertion(nodeId);
+
+        if (declaring is null)
+        {
+            return new NodeContent(
+                nodeId, NodeContentKind.None, null, string.Empty, "this node has no recorded source");
+        }
+
+        var resolved = ResolveWithinWorkspace(reader, declaring.ScopeId, declaring.Provenance.ArtifactPathId);
+
+        if (resolved is null)
+        {
+            return new NodeContent(
+                nodeId, NodeContentKind.None, null, string.Empty,
+                $"the source for this node could not be located ({declaring.Provenance.ArtifactPathId})");
+        }
+
+        var kind = KindOf(resolved);
+
+        if (kind == NodeContentKind.None)
+        {
+            return new NodeContent(
+                nodeId, kind, null, string.Empty, $"{Path.GetExtension(resolved)} is not rendered inline");
+        }
+
+        try
+        {
+            var length = new FileInfo(resolved).Length;
+            var text = ReadBounded(resolved, out var truncated);
+
+            return new NodeContent(
+                nodeId, kind, LanguageOf(resolved), text,
+                truncated
+                    ? $"first {MaxContentBytes / 1024} KB of {length / 1024} KB — open the source for the rest"
+                    : null);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // A file that cannot be read is a reader saying so, not a failed query: the node, its
+            // metadata and its edges are still worth rendering.
+            return new NodeContent(
+                nodeId, NodeContentKind.None, null, string.Empty,
+                $"the source could not be read: {ex.Message}");
+        }
+    }
+
+    /// <summary>How much of one artifact travels. Well inside the frame, with the rest named.</summary>
+    public const int MaxContentBytes = 256 * 1024;
+
+    /// <summary>
+    /// The absolute path of an artifact, or null when it cannot be placed INSIDE the workspace.
+    /// </summary>
+    /// <remarks>
+    /// Null covers every failure the same way on purpose — no recorded scope location, a path that
+    /// escapes the root, a file that is not there. A reader needs to know it has no content; which of
+    /// those it was is an operator question, and answering it in the reply would describe the
+    /// filesystem to whoever asked.
+    /// </remarks>
+    private string? ResolveWithinWorkspace(Store.StoreReader reader, string scopeId, string artifactPath)
+    {
+        if (string.IsNullOrWhiteSpace(workspaceRoot)) return null;
+
+        var location = reader.ScopeLocation(scopeId);
+
+        if (location is null) return null;
+
+        try
+        {
+            var root = Path.GetFullPath(workspaceRoot);
+            var candidate = Path.GetFullPath(Path.Combine(root, location, artifactPath));
+
+            // Compared as a path, not as a string: `C:\repo-other` starts with `C:\repo` and is not
+            // inside it.
+            var rooted = root.EndsWith(Path.DirectorySeparatorChar)
+                ? root
+                : root + Path.DirectorySeparatorChar;
+
+            return candidate.StartsWith(rooted, StringComparison.OrdinalIgnoreCase) && File.Exists(candidate)
+                ? candidate
+                : null;
+        }
+        catch (Exception ex) when (ex is ArgumentException or PathTooLongException or NotSupportedException)
+        {
+            return null;
+        }
+    }
+
+    private static string ReadBounded(string path, out bool truncated)
+    {
+        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+        var length = (int)Math.Min(stream.Length, MaxContentBytes);
+        truncated = stream.Length > MaxContentBytes;
+
+        var buffer = new byte[length];
+        stream.ReadExactly(buffer, 0, length);
+
+        return Encoding.UTF8.GetString(buffer);
+    }
+
+    /// <summary>What a file is, by extension — the authority's call, so the reader does not guess.</summary>
+    private static NodeContentKind KindOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch
+    {
+        ".cs" or ".ts" or ".tsx" or ".js" or ".jsx" or ".py" or ".sql" or ".bicep"
+            or ".json" or ".yml" or ".yaml" or ".xml" or ".csproj" or ".props" or ".targets"
+            or ".ps1" or ".sh" or ".razor" or ".css" or ".html" => NodeContentKind.Code,
+        ".md" or ".markdown" or ".txt" or ".log" => NodeContentKind.Text,
+        _ => NodeContentKind.None,
+    };
+
+    private static string? LanguageOf(string path) => Path.GetExtension(path).ToLowerInvariant() switch
+    {
+        ".cs" => "csharp",
+        ".ts" or ".tsx" => "typescript",
+        ".js" or ".jsx" => "javascript",
+        ".py" => "python",
+        ".sql" => "sql",
+        ".bicep" => "bicep",
+        ".json" => "json",
+        ".yml" or ".yaml" => "yaml",
+        ".xml" or ".csproj" or ".props" or ".targets" => "xml",
+        ".ps1" => "powershell",
+        ".sh" => "shell",
+        ".razor" or ".html" => "html",
+        ".css" => "css",
+        ".md" or ".markdown" => "markdown",
+        _ => null,
+    };
 
     /// <summary>
     /// Rebuilds the labelled claim cache from facts. Public because the equality test needs to prove
@@ -740,6 +1073,32 @@ public sealed class ProjectionService(WorkspaceStore store)
     /// rather than a serialisation — serialising to find out whether to serialise costs what it
     /// saves, and the budget already carries a quarter-frame of headroom for the difference.
     /// </remarks>
+    private static readonly System.Text.Json.JsonSerializerOptions Wire =
+        new(System.Text.Json.JsonSerializerDefaults.Web);
+
+    /// <summary>
+    /// What a graph costs ON THE WIRE, framed exactly as the transport frames it.
+    /// </summary>
+    /// <remarks>
+    /// <para>The graph is one object, so — unlike a row-wise bound — it can simply be measured, and
+    /// the thing measured is the thing the transport counts: the payload serialised, escaped, and
+    /// wrapped in the envelope. <see cref="Weigh"/> counts the payload only, which is the estimate
+    /// that let a 727,244-byte graph reach 1,137,104 bytes on the wire and be refused.</para>
+    ///
+    /// <para>Serialising twice is not free, so it is only paid where it could matter: a graph under a
+    /// third of a frame cannot reach it at any inflation observed (1.57x), and returns the estimate,
+    /// which is under budget by the same arithmetic.</para>
+    /// </remarks>
+    private static int FramedCost(WorkspaceGraph graph)
+    {
+        var estimate = Weigh(graph);
+
+        if (estimate * 3 <= FrameBytes) return estimate;
+
+        return Encoding.UTF8.GetByteCount(System.Text.Json.JsonSerializer.Serialize(
+            Ipc.IpcResponse.Success(graph, Wire), Wire));
+    }
+
     private static int Weigh(WorkspaceGraph graph)
     {
         var bytes = 0;
