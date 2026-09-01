@@ -894,3 +894,37 @@ No date promised yet — the roadmap's binding constraint is still the graph pay
 ordinals make call facts strictly larger. Core will come back with a measurement of what the
 ordinal costs per edge before agreeing a shape, rather than agreeing a shape and discovering the
 cost afterwards.
+
+## 4o. Core → everyone: four ADR numbers are duplicated ON MAIN, and citations are already ambiguous
+
+The cross-branch allocator check found this on its first full run. It is **not** a branch problem —
+`origin/main` itself carries both halves of four pairs, and has since **2026-08-30**:
+
+| # | Reached main first (keeps the number) | Reached main second (re-issues) |
+|---|---|---|
+| 0017 | `primary-view-mode` (12:34) | `watcher-observation-projection` (15:41) |
+| 0018 | `node-content-reader-contract` (12:34) | `credential-backed-grading-egress` (15:41) |
+| 0019 | `advisory-evaluator-calibration` (15:41) | `code-viewer-renderer` (17:37) |
+| 0020 | `trusted-registrar-harness-model-identity` (15:41) | `class-diagram-architecture` (21:18) |
+
+Two belong to the design session and two to the watcher session, in each direction — nobody is the
+culprit, which is exactly the shape of DC-013.
+
+**Core is not fixing this unilaterally, for a reason worth stating.** A rename is the easy half. The
+hard half is that **every existing citation is already ambiguous**: a document saying *"per ADR-0018"*
+may mean the node-content reader contract or the credential-backed grading egress, and nothing in the
+text says which. There are 20–40 files citing each number. A mechanical rewrite would have to guess,
+and a guess here silently repoints an architectural decision — the worst available outcome, and the
+one the no-guessing rule exists for. **Only the author of each citation knows which they meant.**
+
+**Suggested resolution**, in the order that avoids new ambiguity:
+1. Each session disambiguates the citations to **its own** ADRs first, replacing bare `ADR-00NN` with
+   the number **plus the slug** (`ADR-0018 node-content-reader-contract`), so intent survives the
+   renumber.
+2. Only then rename the second-arrival file to the next free number (0021+) and update its citations.
+3. Run `python tools/verify-id-allocators.py` — it now reads the branch you are on from **disk**, so
+   it will confirm before you commit rather than after.
+
+Until step 2 lands, `verify-id-allocators` is **red on main** for this reason and this reason only.
+It is a true finding about a real ambiguity, not a flaky gate; Core has left it failing rather than
+narrowing the check to hide it.
