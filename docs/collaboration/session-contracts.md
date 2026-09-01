@@ -100,6 +100,15 @@ and a finding was mis-routed exactly once today for want of it (§4y).
 | Path | Why |
 |---|---|
 | `src/AiDe.App/App.xaml`, `MainWindow.xaml` (+ `.cs`) | Theme, tokens, window chrome |
+
+**Recorded crossing, 2026-09-01.** Core edited two Design-owned files after the design
+session closed and handed its remaining items to the user, and at the user's direction:
+`CanvasSurface.cs` (RefreshAsync returning an outcome, so the shell could stop announcing a
+centring before it happened — verified by the design session at 20/20 before it closed) and
+`MainWindow.xaml` (disabling the three inert rail buttons). Recorded rather than done quietly,
+because a contract that is silently crossed is worse than one that is amended: the next reader
+would find §2 and this history disagreeing with no way to tell which was current. Ownership
+of both files is unchanged and returns to Design.
 | `src/AiDe.App/Workbench/ContextMapSurface.cs` | A design surface |
 | `src/AiDe.App/Workbench/JoinSurface.cs` | A design surface |
 | `src/AiDe.App/Workbench/CanvasPage.cs`, `CanvasSurface.cs` | The graph surface and its embedded page |

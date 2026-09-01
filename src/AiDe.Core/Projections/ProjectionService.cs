@@ -51,12 +51,24 @@ public sealed record NodeView(string NodeId, string NodeKind, string DisplayLabe
 /// <param name="NeighborKinds">
 /// Each neighbouring node's own <c>has_type</c>, keyed by node id.
 /// </param>
+/// <param name="KnowledgeIds">
+/// Which of the described node and its neighbours the workspace classifies as knowledge.
+/// </param>
 /// <remarks>
-/// <b>INV-0004.</b> The canvas hardcoded <c>"source"</c> as every neighbour's kind because the
+/// <para><b>INV-0004.</b> The canvas hardcoded <c>"source"</c> as every neighbour's kind because the
 /// describe result did not carry one — so a drill-down showed a table, a bicep resource and a class
 /// as the same thing, and the filter could not tell them apart. The kind is a property of the
 /// NEIGHBOUR, and only the projection can read it; a renderer inventing a default is a renderer
-/// stating a fact it does not have.
+/// stating a fact it does not have.</para>
+///
+/// <para><b><c>KnowledgeIds</c> closes the same shape one field over.</b> The view model carried a
+/// written-down gap — <c>IsKnowledge</c> defaulted to <c>false</c> on every drill-down neighbour
+/// because a kind is not a node class, so the view "genuinely cannot tell knowledge from source".
+/// <c>false</c> under-counted rather than mislabelled, which is the safer direction and still a
+/// renderer answering a question it had no data for. It matters more now that the graph reports
+/// <c>NotInView</c>: the default view is a map of the code, and a knowledge node the budget could
+/// never draw is reached by drill-down instead — so the drill-down has to know what it is
+/// holding.</para>
 /// </remarks>
 public sealed record DescribeResult(
     NodeView Node,
@@ -65,7 +77,8 @@ public sealed record DescribeResult(
     string SourceRevision,
     IReadOnlyDictionary<string, string>? NeighborKinds = null,
     IReadOnlyList<string>? Members = null,
-    int MembersDeclared = 0);
+    int MembersDeclared = 0,
+    IReadOnlyCollection<string>? KnowledgeIds = null);
 
 public sealed record ImpactResult(
     string RootNodeId,
@@ -389,7 +402,12 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
             declared = d;
         }
 
-        return new DescribeResult(NodeOf(reader, nodeId), edges, bounds, revision, kinds, members, declared);
+        // The described node AND its neighbours, in one bounded read. Asking per-node would make the
+        // cost of a drill-down a function of its neighbour count in round trips rather than in rows.
+        var knowledge = reader.ReadKnowledgeIds([nodeId, .. kinds.Keys]);
+
+        return new DescribeResult(
+            NodeOf(reader, nodeId), edges, bounds, revision, kinds, members, declared, knowledge);
     }
 
     /// <summary>

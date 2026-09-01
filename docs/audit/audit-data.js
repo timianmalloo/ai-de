@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T23:58:58Z",
+  "generated": "2026-09-01T23:59:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7556,6 +7556,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0374",
+      "shortname": "node-budget-describe-rail",
+      "datetime": "2026-09-01T23:36:19Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do these next steps",
+      "summary": "Node-budget decision made and recorded: the default graph is a map of the code, knowledge reached by navigation, because knowledge has median relation degree 0 and reserving slots would draw hundreds of disconnected dots. Made it a stated bound rather than a silent loss by closing the written-down IsKnowledge gap - Describe now carries KnowledgeIds read from the same node_class fact GraphProjection reads, root and neighbours; 4 of 5 tests fail without it. Disabled the three inert rail buttons with a stated reason and asserted the rule rather than the names; observed failing on the original markup. Recorded the Design-file ownership crossing in section 2. 1626 tests, 15 gates.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260901-the-default-graph-is-a-map-of-the-code.md"
       ],
       "tags": [],
       "outcome": "success"

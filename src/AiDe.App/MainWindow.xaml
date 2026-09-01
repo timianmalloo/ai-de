@@ -87,23 +87,59 @@
                               StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                     </Button>
                 </Grid>
-                <Button Margin="6,4" Height="44" Style="{StaticResource RoundedButton}"
+                <!-- IsEnabled=False, and it is the whole fix. ShellViewMode declares two modes; this
+                     rail declared four, so three buttons were styled exactly like the working one,
+                     carried a ToolTip promising a mode and an AutomationProperties.Name announcing
+                     one, and did nothing at all on click - not even the "not available in this
+                     build" the command layer says. Silence is the failure mode the disclosure work
+                     exists to remove, and an inert control is a promise made in the UI.
+
+                     Disabling is what makes it honest without deciding the product question: WPF
+                     drops a disabled button from the tab order and reports it as disabled to
+                     assistive technology, so nobody is told a button exists and left to discover by
+                     pressing it that it is a no-op. Whether Coordinate is BUILT or REMOVED is the
+                     user's call and is not made here. -->
+                <Button Margin="6,4" Height="44" Style="{StaticResource RoundedButton}" IsEnabled="False"
                         AutomationProperties.Name="Coordinate" Background="Transparent" BorderThickness="0"
-                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Coordinate">
+                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Coordinate — not in this build">
                     <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconCoordinate}"
                           Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                           StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                 </Button>
-                <Button Margin="6,4" Height="44" Style="{StaticResource RoundedButton}"
+                <!-- IsEnabled=False, and it is the whole fix. ShellViewMode declares two modes; this
+                     rail declared four, so three buttons were styled exactly like the working one,
+                     carried a ToolTip promising a mode and an AutomationProperties.Name announcing
+                     one, and did nothing at all on click - not even the "not available in this
+                     build" the command layer says. Silence is the failure mode the disclosure work
+                     exists to remove, and an inert control is a promise made in the UI.
+
+                     Disabling is what makes it honest without deciding the product question: WPF
+                     drops a disabled button from the tab order and reports it as disabled to
+                     assistive technology, so nobody is told a button exists and left to discover by
+                     pressing it that it is a no-op. Whether Compose is BUILT or REMOVED is the
+                     user's call and is not made here. -->
+                <Button Margin="6,4" Height="44" Style="{StaticResource RoundedButton}" IsEnabled="False"
                         AutomationProperties.Name="Compose" Background="Transparent" BorderThickness="0"
-                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Compose">
+                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Compose — not in this build">
                     <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconCompose}"
                           Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                           StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />
                 </Button>
-                <Button Margin="6,4" Height="44" Style="{StaticResource RoundedButton}"
+                <!-- IsEnabled=False, and it is the whole fix. ShellViewMode declares two modes; this
+                     rail declared four, so three buttons were styled exactly like the working one,
+                     carried a ToolTip promising a mode and an AutomationProperties.Name announcing
+                     one, and did nothing at all on click - not even the "not available in this
+                     build" the command layer says. Silence is the failure mode the disclosure work
+                     exists to remove, and an inert control is a promise made in the UI.
+
+                     Disabling is what makes it honest without deciding the product question: WPF
+                     drops a disabled button from the tab order and reports it as disabled to
+                     assistive technology, so nobody is told a button exists and left to discover by
+                     pressing it that it is a no-op. Whether Audit is BUILT or REMOVED is the
+                     user's call and is not made here. -->
+                <Button Margin="6,4" Height="44" Style="{StaticResource RoundedButton}" IsEnabled="False"
                         AutomationProperties.Name="Audit" Background="Transparent" BorderThickness="0"
-                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Audit">
+                        Foreground="{StaticResource TextMutedBrush}" ToolTip="Audit — not in this build">
                     <Path Width="22" Height="22" Stretch="Uniform" Data="{StaticResource IconAudit}"
                           Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
                           StrokeThickness="1.6" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round" />

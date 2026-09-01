@@ -116,8 +116,30 @@ def check(root: Path) -> tuple[list[str], int]:
         if GUARD.search(text):
             guarded.add(path)
 
-        if "SetApartmentState(ApartmentState.STA)" in text:
+        threads = text.count("SetApartmentState(ApartmentState.STA)")
+
+        if threads:
             sta.add(path)
+
+            # THE UNIT OF ANALYSIS, the one error a wider pattern cannot fix. This gate reaches a
+            # verdict per FILE, but the thing that can be right or wrong is the HARNESS. A file
+            # standing up two INDEPENDENT harnesses - one wrapping, one plain - gets a single
+            # verdict, and the passing one masks the failing one. No regex width changes that; only
+            # counting the right unit does.
+            #
+            # Measured on a THIRD denominator: 31 files, 31 thread creations, so nothing is exposed
+            # today. Two files declare an extra overload, but each DELEGATES to the single creation
+            # rather than standing up its own thread - one harness with two entry points, benign,
+            # and the reason a count of declarations (29) and a count of creations (31) disagree
+            # without either being wrong. One creation per file is the invariant that matters.
+            if threads > 1:
+                problems.append(
+                    f"{path.relative_to(root).as_posix()} stands up {threads} separate STA threads, "
+                    "so it holds more than one harness - but this gate reaches one verdict per FILE. "
+                    "One harness passing would mask another failing, and no widening of the patterns "
+                    "would show it, because the error is the unit of analysis rather than the "
+                    "window. Split them into separate files, or have one delegate to the other so "
+                    "there is a single thing to judge.")
 
             # THE CATEGORIES MUST BE MUTUALLY EXCLUSIVE OR THE SUM IS MEANINGLESS. A wrapping file
             # usually ALSO contains a plain rethrow elsewhere, so counting both gave 18 + 30 + 1 = 49
@@ -242,8 +264,20 @@ def self_test() -> int:
             'if (failure is not null) throw new InvalidOperationException("STA work failed", failure);\n',
             encoding="utf-8")
 
+        # TWO INDEPENDENT HARNESSES IN ONE FILE: the granularity error, which no pattern width fixes.
+        # None exists in the repository today, so without this fixture the check would never be seen
+        # to fire at all.
+        (place / TESTS / "TwoHarnessTests.cs").write_text(
+            "thread.SetApartmentState(ApartmentState.STA);\n"
+            "if (failure is not null) throw failure;\n"
+            "other.SetApartmentState(ApartmentState.STA);\n"
+            'if (failure is not null) '
+            'throw new InvalidOperationException("STA work failed", failure);\n',
+            encoding="utf-8")
+
         # THE BRACED GUARD, which the first pattern rejected — a correctly guarded file reported as
         # unguarded. Kept so the gate cannot narrow back into a false alarm.
+
         (place / TESTS / "BracedGuardTests.cs").write_text(
             "if (failure is Xunit.Sdk.XunitException) { throw failure; }\n"
             'if (failure is not null) { throw new System.InvalidOperationException("x", failure); }\n',
@@ -306,6 +340,12 @@ def self_test() -> int:
         print("verify-harness-diagnostics: SELF-TEST FAILED — a harness wrapping with a "
               "FULLY-QUALIFIED exception type was not reported. That was this gate's second blind "
               "spot: `\\w*Exception` does not match `System.InvalidOperationException`.")
+        return 1
+
+    if not any("TwoHarnessTests.cs" in p and "separate STA threads" in p for p in problems):
+        print("verify-harness-diagnostics: SELF-TEST FAILED - a file standing up two independent "
+              "harnesses was not reported. That is the granularity error: one verdict per file lets "
+              "a passing harness mask a failing one, and no pattern width would show it.")
         return 1
 
     if any("FixtureTests.cs" in p for p in problems):

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T23:12:45Z",
+  "generated": "2026-09-01T23:57:08Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1706,6 +1706,33 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1bfc5a5cc8753bb40d48d138284a196cd3610c4db6cc45ec31b96719fcacf9fb"
+    },
+    {
+      "id": "note-20260901-the-default-graph-is-a-map-of-the-code",
+      "path": "docs/notes/note-20260901-the-default-graph-is-a-map-of-the-code.md",
+      "title": "The default graph is a map of the code, and knowledge is reached by navigation",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-01",
+      "reviewSuggested": [],
+      "summary": "The default graph keeps the most-connected nodes and reserves no slots per category, so knowledge nodes — measured median relation degree 0, and 569 of 878 with no edge at all — are reached by search and drill-down rather than by a share of the node budget. The cut is stated rather than silent: DeclaredByKind carries the denominator, NotInView says when a hit was not drawn, and DescribeResult.KnowledgeIds lets the drill-down know what it is holding.",
+      "tags": [
+        "decision-note",
+        "graph",
+        "knowledge",
+        "node-budget",
+        "projection"
+      ],
+      "links": [
+        {
+          "to": "note-20260830-the-graph-carries-only-observable-links",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3e1a47c20b770cce124ca36a2397d39b7d9bbe7ccb76f58036b882e58fdace53"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -3438,6 +3465,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "2bac1a5909ea830ac927bcc96331d68c2354106d48ec904a498373597adeda12"
     },
     {
+      "id": "ux-agent-session-registration",
+      "path": "docs/design/ux-agent-session-registration.md",
+      "title": "Agent session registration — the environment contract and harness-scripted launch",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "Spec for making an agent terminal self-registering with Loomkeeper without the agent's cooperation, the AI-Forward pack, or any repo directive. Registration already works and is harness-agnostic; the gap is that four identity fields are never filled, two more are placeholders, and nothing is passed to the child process. Adds a documented environment contract that any harness can read, and harness-scripted launch entries (New Claude Code session / New Copilot session) that supply the harness identity AI-DE cannot otherwise know.",
+      "tags": [
+        "ux",
+        "terminal",
+        "loomkeeper",
+        "watcher",
+        "agent",
+        "environment-contract",
+        "session-3"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2a6d8699ef43ac695be7e09d77695a420bc122d1517d256c0cb6fce40af2c9aa"
+    },
+    {
       "id": "audit-log",
       "path": "docs/audit/audit-log.md",
       "title": "Audit & Change Log",
@@ -4788,7 +4852,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e048165f4198a20155690ec9fe6a0a82b1e3e9b3a68cd873e062c2651ef1a9a8"
+      "sourceSha256": "cb8c6c7a6d918fee796308eb13b74b615740d102deca7255a9a4c9e856399883"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -4925,7 +4989,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "889d907737586b77fb3b96b29827b6951ddaa3ea300a5061275b877eb55da744"
+      "sourceSha256": "5ce3ec68d79da709881554a9027d255beacc22bd0d1dceac4d9d1825cf656ad6"
     },
     {
       "id": "kb-agentic-session-observability-glossary",
@@ -9858,5 +9922,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a6467a433de77d0232525e522b6f22a59706152dbc90970d4f5405d8a4bbb1fe"
+  "graphSha256": "ab349db71fa6a5ca65febf97b5ab2f1122c7c7fcc689b3620da0f2b93e5feeac"
 };

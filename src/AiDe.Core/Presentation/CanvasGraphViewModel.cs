@@ -213,8 +213,12 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
 
             var nodes = new List<CanvasNode>
             {
+                // The ROOT too, not only its neighbours. A drill-down onto a knowledge node reached
+                // from a NotInView search hit is the case this whole path exists for, and it is
+                // exactly the one a neighbours-only fix would have missed.
                 new(describe.Node.NodeId, describe.Node.DisplayLabel, describe.Node.NodeKind,
-                    IsRoot: true, Context: ContextOf(describe.Node.NodeId)),
+                    IsRoot: true, Context: ContextOf(describe.Node.NodeId),
+                    IsKnowledge: describe.KnowledgeIds?.Contains(describe.Node.NodeId) ?? false),
             };
 
             var edges = new List<CanvasEdge>();
@@ -255,12 +259,17 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
                             ? known
                             : "unknown";
 
-                    // IsKnowledge is NOT set here, and that is a gap rather than a decision.
-                    // `DescribeResult.NeighborKinds` carries each neighbour's kind and not its
-                    // node_kind, so this view genuinely cannot tell knowledge from source — and
-                    // `false` is the safe direction only in the sense that it under-counts rather
-                    // than mislabels. Closing it means Describe carrying the knowledge ids too.
-                    nodes.Add(new CanvasNode(other, Shorten(other), otherKind, IsRoot: false, Context: otherContext));
+                    // The gap recorded here is closed: Describe carries the knowledge ids, read from
+                    // the same `node_class` fact the graph projection reads rather than re-derived
+                    // from the kind. A kind is not a node class, and deciding it twice is how
+                    // INV-0004 happened one field over.
+                    //
+                    // It matters more now the graph reports NotInView. The default view is a map of
+                    // the code, so a knowledge node the budget can never draw is reached by
+                    // drill-down instead — and a drill-down has to know what it is holding.
+                    nodes.Add(new CanvasNode(
+                        other, Shorten(other), otherKind, IsRoot: false, Context: otherContext,
+                        IsKnowledge: describe.KnowledgeIds?.Contains(other) ?? false));
                 }
 
                 edges.Add(new CanvasEdge(edge.Subject, edge.Object, edge.Predicate, edge.Status.ToString()));
