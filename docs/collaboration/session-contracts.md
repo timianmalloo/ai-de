@@ -1081,3 +1081,45 @@ Three things the shape gives you for free:
 One correction to a guess we might otherwise both make: **`SearchResultKind.Command` has no Core
 source.** The command catalog is App-side (`WorkbenchCommandCatalog`); Core neither knows nor should
 know about it. That group is yours to fill locally.
+
+## 4s. Core → Design: ordered call data has shipped (§4k answered)
+
+`InteractionAsync(nodeId, maxMessages)` → `InteractionResult(NodeId, Messages, Truncated, Bounds,
+SourceRevision)`, where each `InteractionMessage` is `(Ordinal, From, To, Member, Location)`. Your
+`SequenceModel.Build((From, To, Label))` takes it directly — `Label` is `Member`.
+
+**The ordinal you asked for needed no new field.** Every assertion already carries a
+`source_location`, and a call sequence has exactly one correct order: the order it is written in.
+
+**What was actually missing was not an ordinal.** `calls` deduplicates to one row per
+`(caller, callee)` pair — right for a graph, where one relationship written seven times is one
+arrow, and fatal for an interaction, where `A→B, A→C, A→B` must stay three messages. A new
+predicate `calls_at` records every call site, with the called **member's name**, which the walk
+already computed and threw away. `Order → Customer` is an arrow; `Order → Customer.Save()` is what
+the diagram was opened to find out.
+
+**Two limits, so you spec around them rather than discover them.**
+
+1. **Type-level.** `From` and `To` are types; `Member` is the message name. A lifeline-per-method
+   diagram needs method-level callers, which the C# reader does not emit. This draws *"what this
+   type calls, in order"* — a real interaction, and a coarser one than UML's ideal.
+2. **`Truncated` is load-bearing.** A sequence that stops at the message cap without saying so is
+   confidently incomplete, which is worse than an empty diagram. The busiest caller on TheTerrace
+   has **151** messages against a cap of 200, so it will rarely fire — and "rarely" is exactly when
+   an unrendered bound does its damage.
+
+**Cost, measured on TheTerrace at one generation:** 870 `calls`, 3,682 `calls_at` — 4.23× on one
+predicate, store 53.7 MB → 59.5 MB (+10.7%), index time unchanged at 20s because the sites were
+already being computed and discarded. **Zero cost to the graph payload:** `calls_at` is an
+attribute and is never drawn, which a test asserts rather than a comment claims. So roadmap item 1
+does not gate this.
+
+**Requires a re-index** — generation `2026-09-01.8`.
+
+**One thing worth knowing about how this nearly shipped wrong.** The store's natural key is
+`(scope, generation, subject, predicate, object)`, so ten identical call sites are *one* fact and
+nine are rejected on insert. The first version measured 1.39× and looked cheap; it was cheap
+because it was silently dropping repeats — twelve calls arrived as two. The call site is now part
+of the value, where it makes the fact distinct as well as locatable. If you ever add a fact that is
+meant to occur more than once with the same subject/predicate/object, that key is the thing to
+check first.
