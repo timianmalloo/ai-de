@@ -447,20 +447,37 @@ public sealed class Phase3SurfacingTests : IDisposable
     }
 
     [Fact]
-    public void DeclaredMenusMatchWhatTheBuilderRenders()
+    public void EveryCommandNamesAMenuTheShellRenders()
     {
-        // The two sources agree today, and this is what fails the moment they stop — which is the
-        // window in which the builder can be switched over safely by the design session.
-        var declared = WorkbenchCommandCatalog.All
-            .GroupBy(c => c.Menu, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal);
+        // WHAT THIS CAN AND CANNOT CHECK. `MainMenuBuilder` is internal to AiDe.App, so this test
+        // cannot see what the builder renders — despite its name, it never compared two sources. It
+        // asserted six hard-coded per-menu COUNTS against the catalog alone, which proves nothing
+        // about the builder and breaks every time anybody adds a command. It broke on `_View`
+        // (9 → 11) the day the design session added the search and sequence surfaces, and the
+        // correct response to that failure was to change a number, which is the signature of a test
+        // that is measuring the wrong thing (DC-021).
+        //
+        // The real invariant — every catalog command appears in the rendered menu — is asserted by
+        // `MainMenuTests.TheMenuCoversEveryCatalogCommand`, App-side, against the actual builder.
+        // What is left here is what Core CAN see and what actually holds: every command declares a
+        // menu, and that menu is one the shell knows how to render.
+        var menus = new HashSet<string>(
+            ["_File", "_Edit", "_View", "_Window", "_Terminal", "_Help"], StringComparer.Ordinal);
 
-        Assert.Equal(4, declared["_File"]);
-        Assert.Equal(2, declared["_Edit"]);
-        Assert.Equal(9, declared["_View"]);
-        Assert.Equal(6, declared["_Window"]);
-        Assert.Equal(4, declared["_Terminal"]);
-        Assert.Equal(1, declared["_Help"]);
+        var undeclared = WorkbenchCommandCatalog.All
+            .Where(c => string.IsNullOrEmpty(c.Menu) || !menus.Contains(c.Menu))
+            .Select(c => $"{c.Id} -> '{c.Menu}'")
+            .ToList();
+
+        Assert.True(undeclared.Count == 0,
+            "these commands name a menu the shell does not render, so they are unreachable from it: "
+            + string.Join(", ", undeclared));
+
+        // And the check is asserted to be looking at something: an empty catalog would satisfy every
+        // line above (DC-016).
+        Assert.True(WorkbenchCommandCatalog.All.Count > 20,
+            $"only {WorkbenchCommandCatalog.All.Count} command(s) found — this test would pass by "
+            + "looking at nothing");
     }
 
     [Fact]
