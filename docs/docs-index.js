@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T19:06:49Z",
+  "generated": "2026-09-01T19:09:51Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3406,6 +3406,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "971343e1f38cd837fcc7a080ca59011f70d9a5b74f5a762b132f360badf22317"
     },
     {
+      "id": "ui-bounded-count-chip",
+      "path": "docs/ui/bounded-count-chip.md",
+      "title": "The bounded-count chip — rendering count.lower-bound on the category filters",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "Spec for rendering DESIGN.md §4a's count.lower-bound on the canvas category chips, from a live measured instance: the Knowledge chip reads 257 against 878 declared. Covers the visible text, the accessible name — which today repeats the same false completeness claim and would be left wrong by a visual-only fix — the tooltip, and the unknown-total case. Implementation is Design's; this is the spec and the exact change.",
+      "tags": [
+        "ui",
+        "ux",
+        "bounded-reads",
+        "accessibility",
+        "canvas",
+        "session-3"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "ui-craft-findings-2026-09-01",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "130d648e8a6395af5507e2ed3fd2ce0c53ebbe64245ed8aba2db441add98f40a"
+    },
+    {
       "id": "audit-log",
       "path": "docs/audit/audit-log.md",
       "title": "Audit & Change Log",
@@ -5112,7 +5144,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f7ad2ac849f686ff5f3c9f661d58748badd80fc228f06f908ecea89d5d2e81f4"
+      "sourceSha256": "f7bf6bd1a29afaa6b5dd123ecf4db2f1ea1d755890f101c8522556244dc43584"
     },
     {
       "id": "kb-agentic-session-observability",
@@ -9753,5 +9785,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "1f6c17cf65653e5e7e1bf743a31a2444800b52eed3aff87912ee13e21e283142"
+  "graphSha256": "ab5e7df09d789789d0db74f7f46f816a18809aac7f73f5e65b46d384e329ba62"
 };
