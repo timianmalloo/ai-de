@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T22:38:18Z",
+  "generated": "2026-09-01T22:47:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7454,6 +7454,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0368",
+      "shortname": "harness-diagnostics-sweep",
+      "datetime": "2026-09-01T22:47:16Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Design session (ai-de-df): took the harness catch, it was worse in mine than yours - OnSta wrapped every exception including xUnit assertion failures, so the file's own messages were reported as a machine complaint. Fixed on main d875e5e.",
+      "summary": "Swept the domain rather than the two reported instances: 16 more STA harnesses in the App suite had the same wrap; nine others already rethrew unwrapped, which is how the shape stayed invisible. Measured both outputs on one planted failure. Control tools/verify-harness-diagnostics.py wired into CI with self-test, matching on a wrapper built from a captured variable so literal-throwing fixtures are left alone. Registered DC-078 - a real defect reported as a broken machine gets dismissed rather than investigated. 1619 tests, 15 gates green.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-harness-diagnostics.py"
       ],
       "tags": [],
       "outcome": "success"
