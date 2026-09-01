@@ -3,124 +3,152 @@ using AiDe.Core.Workbench;
 namespace AiDe.Core.Tests;
 
 /// <summary>
-/// A split drop puts the surface BESIDE its target, not on top of it.
+/// A drop lands in the zone it was dropped on, whatever gesture made it.
 /// </summary>
 /// <remarks>
-/// <para><b>What was wrong.</b> <c>ZoneBackedLayoutService.Move</c> read the drop's target node and
-/// ignored its <c>Kind</c> for everything except <c>Float</c>. So a <c>SplitRight</c> against the
-/// Center resolved to "move into the Center" — the surface was tabbed on top of the very thing it
-/// had been asked to sit beside.</para>
+/// <para><b>Two defects, and the second was in the fix for the first.</b> Originally
+/// <c>ZoneBackedLayoutService.Move</c> ignored the drop's <c>Kind</c> entirely except for
+/// <c>Float</c>, so a "split beside the graph" placement tabbed the document on top of the graph.
+/// The fix remapped split kinds to a neighbouring zone — which made the reported case right and
+/// every sibling case wrong: a user dragging a pane onto the LEFT zone with a split gesture had it
+/// sent to the centre, as the last tab, announced as <i>"Moved Graph within the center."</i> A drop
+/// that reports success and names a destination nobody asked for.</para>
 ///
-/// <para><b>Why that is worse than not having a policy.</b>
-/// <c>DocumentPlacementPolicy</c> computes this placement deliberately, with the comment "split one
-/// BESIDE the graph so the graph stays visible". The result was applied and then silently
-/// reinterpreted as its opposite — a decision that is computed, honoured in form and inverted in
-/// effect. Found by driving the app rather than reading it: the probe showed
-/// <c>splitBeside=zone-center</c> followed by a sixth tab in zone-center, on top of the graph.</para>
+/// <para><b>The error was one of kind, not coverage.</b> A placement-policy translation was put in a
+/// user-gesture handler. "Beside the graph" is a thing one caller wants; "where I dropped it" is
+/// what a drop means. The beside rule now lives with the caller that wants it —
+/// <c>WorkbenchShell.OpenReferenceDocument</c> adds a reference document straight into the
+/// neighbouring zone — and is asserted there.</para>
 ///
-/// <para><b>A zone layout cannot split within a zone</b> — that is what zones are — but it can honour
-/// the intent, which is that both surfaces stay visible. Beside the Center is the Right zone; beside
-/// anything else is the Center, the largest region and the one no rail collapses.</para>
+/// <para><b>Every zone is exercised, not the one the report named.</b> The sibling cases were missed
+/// because a fix's test set is drawn from the defect report, and a report names one case. That is
+/// the fifth instance of the shape in a day, four of them inside something just built.</para>
 /// </remarks>
 public sealed class SplitMeansBesideTests
 {
-    private static ZoneBackedLayoutService WithGraphInCentre()
+    /// <summary>
+    /// Every docking gesture, READ FROM THE ENUM rather than listed.
+    /// </summary>
+    /// <remarks>
+    /// A hand-written list is the defect this file records, one level up: it covers the kinds
+    /// somebody thought of on the day. Reflecting the enum means a kind added tomorrow is swept
+    /// without anyone remembering this file exists — the sweep cannot go stale because there is no
+    /// second list to keep in step. <c>Float</c> is excluded because it leaves the docked tree
+    /// entirely, so "which zone did it land in" has no answer for it; that is a different contract,
+    /// asserted elsewhere.
+    /// </remarks>
+    private static IEnumerable<DropKind> EveryDockingKind() =>
+        Enum.GetValues<DropKind>().Where(k => k != DropKind.Float);
+
+    /// <summary>Every zone's stack id, likewise derived from <see cref="ZoneId"/>.</summary>
+    private static IEnumerable<string> EveryZoneStack() =>
+        Enum.GetValues<ZoneId>().Select(StackIdOf);
+
+    private static string StackIdOf(ZoneId zone) => zone switch
+    {
+        ZoneId.Left => ZonesToTree.LeftStackId,
+        ZoneId.Right => ZonesToTree.RightStackId,
+        ZoneId.Bottom => ZonesToTree.BottomStackId,
+        ZoneId.Center => ZonesToTree.CenterStackId,
+        _ => throw new ArgumentOutOfRangeException(
+            nameof(zone), zone,
+            "a zone was added and this sweep has no stack id for it — that is the finding, not a "
+            + "test-maintenance chore: the mover's behaviour on the new zone is unasserted"),
+    };
+
+    private static string? StackOf(ZoneBackedLayoutService service, string surfaceId) =>
+        service.Current.AllStacks().FirstOrDefault(s => s.Surfaces.Any(x => x.SurfaceId == surfaceId))?.Id;
+
+    private static ZoneBackedLayoutService Seeded(out string graphStack)
     {
         var service = new ZoneBackedLayoutService();
 
-        // The default layout already puts the canvas in the Center; assert it rather than assume,
-        // or every expectation below is about a layout this test invented.
-        Assert.Contains(
-            service.Current.AllStacks().SelectMany(s => s.Surfaces),
-            s => s.Kind == "canvas");
+        var stack = service.Current.AllStacks().FirstOrDefault(s => s.Surfaces.Any(x => x.Kind == "canvas"));
+        Assert.NotNull(stack);
 
+        graphStack = stack!.Id;
         return service;
     }
 
-    private static string? ZoneOf(ZoneBackedLayoutService service, string surfaceId)
+    [Fact]
+    public void EveryDropKindLandsInTheZoneItTargeted()
     {
-        foreach (var stack in service.Current.AllStacks())
+        // THE DEFECT, swept across every combination rather than the one that was reported. Measured
+        // before the fix: every split onto a side zone resolved to the centre; only JoinStack
+        // honoured its target.
+        var wrong = new List<string>();
+
+        foreach (var target in EveryZoneStack())
         {
-            if (stack.Surfaces.Any(s => s.SurfaceId == surfaceId))
+            foreach (var kind in EveryDockingKind())
             {
-                return stack.Id;
+                var service = Seeded(out var graphStack);
+                var doc = new Surface($"doc-{target}-{kind}", "codeviewer", "Source");
+
+                service.Apply(new LayoutOperation.AddSurface(graphStack, doc));
+                service.Apply(new LayoutOperation.MoveSurface(doc.SurfaceId, new DropTarget(target, kind)));
+
+                var landed = StackOf(service, doc.SurfaceId);
+
+                if (landed != target) wrong.Add($"{kind} onto {target} landed in {landed}");
             }
         }
 
-        return null;
-    }
-
-    private static string GraphStackId(ZoneBackedLayoutService service) =>
-        service.Current.AllStacks().First(s => s.Surfaces.Any(x => x.Kind == "canvas")).Id;
-
-    [Fact]
-    public void ASplitAgainstTheGraphDoesNotLandInTheGraphsOwnStack()
-    {
-        // THE DEFECT, as the user met it: a code viewer opened over the graph rather than beside it.
-        var service = WithGraphInCentre();
-        var graphStack = GraphStackId(service);
-
-        var doc = new Surface("codeviewer#1", "codeviewer", "Source");
-        Assert.True(service.Apply(new LayoutOperation.AddSurface(graphStack, doc)).Applied);
-
-        service.Apply(new LayoutOperation.MoveSurface(
-            doc.SurfaceId, new DropTarget(graphStack, DropKind.SplitRight)));
-
-        Assert.NotEqual(graphStack, ZoneOf(service, doc.SurfaceId));
+        Assert.True(wrong.Count == 0,
+            "these drops did not land where they were dropped: " + string.Join("; ", wrong));
     }
 
     [Fact]
-    public void TheGraphStaysWhereItWas()
+    public void TheAnnouncementNamesTheZoneTheUserChose()
     {
-        // Beside means the OTHER surface does not move. A "split" that relocated the graph instead
-        // would satisfy the assertion above and still lose the thing the policy protects.
-        var service = WithGraphInCentre();
-        var graphStack = GraphStackId(service);
-        var canvas = service.Current.AllStacks()
-            .SelectMany(s => s.Surfaces).First(s => s.Kind == "canvas");
+        // The confidently-wrong half. The move succeeded and said "within the center" for a drop on
+        // the LEFT — a screen-reader user was told it worked and told the wrong place. The honest
+        // data existed; what reached the user was a statement about somewhere else.
+        var service = Seeded(out var graphStack);
+        var doc = new Surface("doc-announce", "codeviewer", "Source");
 
-        var doc = new Surface("codeviewer#2", "codeviewer", "Source");
         service.Apply(new LayoutOperation.AddSurface(graphStack, doc));
-        service.Apply(new LayoutOperation.MoveSurface(
-            doc.SurfaceId, new DropTarget(graphStack, DropKind.SplitRight)));
 
-        Assert.Equal(graphStack, ZoneOf(service, canvas.SurfaceId));
-    }
+        var result = service.Apply(new LayoutOperation.MoveSurface(
+            doc.SurfaceId, new DropTarget(ZonesToTree.LeftStackId, DropKind.SplitLeft)));
 
-    [Fact]
-    public void AJoinStackDropStillTabsIn()
-    {
-        // The other half. "Split" and "join" are different requests, and honouring the first must not
-        // quietly redirect the second — a user dragging onto a tab strip is asking to tab.
-        var service = WithGraphInCentre();
-        var graphStack = GraphStackId(service);
-
-        var doc = new Surface("codeviewer#3", "codeviewer", "Source");
-        service.Apply(new LayoutOperation.AddSurface(graphStack, doc));
-        service.Apply(new LayoutOperation.MoveSurface(
-            doc.SurfaceId, new DropTarget(graphStack, DropKind.JoinStack)));
-
-        Assert.Equal(graphStack, ZoneOf(service, doc.SurfaceId));
+        Assert.True(result.Applied);
+        Assert.DoesNotContain("center", result.Announcement, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("left", result.Announcement, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
     public void TheSurfaceIsNeverLost()
     {
-        // The invariant the old fallback existed to protect, kept. Whatever a drop means, the surface
-        // is somewhere afterwards — a placement rule that could drop a pane on the floor would be a
-        // worse defect than the one being fixed.
-        var service = WithGraphInCentre();
-        var graphStack = GraphStackId(service);
-
-        foreach (var kind in new[]
-                 { DropKind.SplitLeft, DropKind.SplitRight, DropKind.SplitTop, DropKind.SplitBottom })
+        // The invariant the original fallback protected. A placement rule that could drop a pane on
+        // the floor would be a worse defect than either of the two this file records.
+        foreach (var target in EveryZoneStack())
         {
-            var doc = new Surface($"doc#{kind}", "codeviewer", "Source");
-            service.Apply(new LayoutOperation.AddSurface(graphStack, doc));
-            service.Apply(new LayoutOperation.MoveSurface(
-                doc.SurfaceId, new DropTarget(graphStack, kind)));
+            foreach (var kind in EveryDockingKind())
+            {
+                var service = Seeded(out var graphStack);
+                var doc = new Surface($"keep-{target}-{kind}", "codeviewer", "Source");
 
-            Assert.NotNull(ZoneOf(service, doc.SurfaceId));
+                service.Apply(new LayoutOperation.AddSurface(graphStack, doc));
+                service.Apply(new LayoutOperation.MoveSurface(doc.SurfaceId, new DropTarget(target, kind)));
+
+                Assert.NotNull(StackOf(service, doc.SurfaceId));
+            }
         }
+    }
+
+    [Fact]
+    public void AnUnknownTargetStillLandsSomewhere()
+    {
+        // The documented fallback, kept and now asserted: an id no zone claims resolves to the
+        // Center rather than losing the surface.
+        var service = Seeded(out var graphStack);
+        var doc = new Surface("doc-unknown", "codeviewer", "Source");
+
+        service.Apply(new LayoutOperation.AddSurface(graphStack, doc));
+        service.Apply(new LayoutOperation.MoveSurface(
+            doc.SurfaceId, new DropTarget("not-a-zone", DropKind.SplitRight)));
+
+        Assert.Equal(ZonesToTree.CenterStackId, StackOf(service, doc.SurfaceId));
     }
 }

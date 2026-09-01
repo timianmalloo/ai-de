@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 43 · partially-controlled 31 · uncontrolled 1
+**Status counts:** controlled 44 · partially-controlled 31 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2352,3 +2352,52 @@ for both or split.*
   upstream fix (teaching the pack's tools one definition of "the repo") is deferred, not rejected.
 - **Status:** `controlled`
 
+
+### DC-076 — A fix's test set is drawn from the defect report, so the reported case is the only one repaired
+
+- **Shape:** a defect arrives naming one case. The cause is found, the fix is correct for that case,
+  and the test written to prove it asserts that case. The input, however, ranges over a **closed
+  set** — an enum, a fixed list of ids, a small set of zones or modes — and the fix's behaviour on
+  the other members was never observed. The reported case goes green while its siblings ship broken,
+  and the green test is read as coverage of the rule rather than of one point on it.
+- **Signature:** the fix touches a `switch`, a ternary, or a conditional whose subject is an enum or
+  a fixed set, and the accompanying test names **one or two** members of that set as literals. The
+  strongest tell is a hand-written array in the test — `DropKind[] kinds = [SplitLeft, JoinStack]` —
+  because it is a second list that has to be kept in step with the first by memory. A second tell:
+  the test's name matches the bug report's title.
+- **Why it survives:** every control in the chain is satisfied. The regression test was seen to fail
+  on the un-fixed code (CI6), the reviewer confirmed the cause, the suite is green, the gate passes.
+  Nothing in the loop compares the tested inputs against the **domain** of the input, so a test over
+  1 of 5 members and a test over 5 of 5 are indistinguishable to every check that exists. The
+  report's framing is doing the sampling, and a report names the case somebody hit.
+- **Instance:** 2026-09-01 — `ZoneBackedLayoutService.Move` was fixed so a "split beside the graph"
+  drop stopped tabbing onto the graph. The fix remapped split kinds `Center → Right`, else `→
+  Center`, and its four tests covered the reported centre case. The design session then measured
+  every `DropKind` × zone and found **16 of 20 combinations wrong**: a pane dropped on the left,
+  right, or bottom with any split gesture landed in the centre as the last tab, announced *"Moved
+  Graph within the center."* Only `JoinStack` honoured its target. Verified by reproducing the
+  matrix — the planted defect fails the sweep with all 16 named.
+
+  **The fifth instance of this shape in one day, four of them inside a fresh fix**, and the register
+  records the same movement in DC-065 (*"the sweep stopped at that one test"*), in the projection
+  bounds class (*"no sibling sweep followed; this is what that costs"*), and in the extractor ratio
+  class. It had never been registered as a class in its own right, so each occurrence was absorbed
+  as a footnote in the class it happened to strike — which is why the count reached five before
+  anyone counted.
+- **Control:** **make the stale list impossible, one rung above a gate.** `SplitMeansBesideTests`
+  derives its sweep from `Enum.GetValues<DropKind>()` and `Enum.GetValues<ZoneId>()` rather than
+  listing members, so a kind or zone added tomorrow enters the cross-product with no one
+  remembering the file exists, and the zone→stack mapping `throw`s on an unmapped member with the
+  reason rather than skipping it. There is no second list to drift. **Observed failing 2026-09-01**:
+  the removed remap was replanted and the sweep named every one of the 16 wrong placements, while
+  `TheSurfaceIsNeverLost` correctly stayed green — an invariant guard is not a defect detector.
+
+  **What this control does NOT do, stated so it is not over-read.** It fixes the sweep for *these*
+  two enums. It cannot make the next fix sweep its own domain: no gate can tell that an input ranges
+  over a closed set the author did not think to enumerate, and one that guessed would fire on every
+  test in the repository and be muted within a week (the lesson `verify-id-allocators` and DC-075's
+  control both had to be taught). The general remedy is the **question**, carried in
+  `continuous-improvement.md`'s sweep step and now with an instance count behind it: *what is the
+  domain of the input I just fixed, and did I observe all of it?* Where the domain is closed and
+  small, enumerate it from the source of truth; where it is not, say which region was tested.
+- **Status:** `controlled` for the layout enums, `open` as a general shape

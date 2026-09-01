@@ -220,27 +220,27 @@ public sealed class ZoneBackedLayoutService : ILayoutService
             return Float(op.SurfaceId);
         }
 
-        // A drop targets a zone: map the target node id back to its zone. Unknown ids fall back to
-        // the Center so a move is never silently lost.
+        // A DROP LANDS WHERE IT WAS DROPPED, whatever gesture made it.
+        //
+        // A zone layout cannot split WITHIN a zone — that is what zones are — so every non-float
+        // drop resolves to the zone it targeted, and the split kinds differ from JoinStack only in
+        // the gesture, not the destination.
+        //
+        // This briefly remapped the split kinds to a neighbouring zone, to make a
+        // "split beside the graph" placement land beside the graph rather than on it. That was a
+        // PLACEMENT POLICY translation put in a USER GESTURE handler, and it did what such a thing
+        // always does: a user dragging a pane onto the left zone with a split gesture had it sent
+        // to the centre, announced as "moved within the center" — a drop that reports success and
+        // names a destination nobody asked for. Measured across every kind and zone by the design
+        // session; only JoinStack honoured its target.
+        //
+        // The "beside" rule belongs to the caller that wants it, and lives there:
+        // `WorkbenchShell.OpenReferenceDocument` adds a reference document straight into the
+        // neighbouring zone. A policy that needs a different destination should ask for that
+        // destination, not rely on the mover to reinterpret the one it gave.
+        //
+        // Unknown ids still fall back to the Center so a move is never silently lost.
         var zone = ZonesToTree.ZoneOfStackId(op.Target.TargetNodeId) ?? ZoneId.Center;
-
-        // A SPLIT MEANS BESIDE, AND IN A ZONE MODEL "BESIDE" IS ANOTHER ZONE.
-        //
-        // This used to ignore the drop kind for everything except Float, so a split against the
-        // Center resolved to "move into the Center" — the surface was tabbed on top of the thing it
-        // was asked to sit beside. `DocumentPlacementPolicy` computes exactly that placement, with
-        // the comment "split one BESIDE the graph so the graph stays visible", and the result was
-        // discarded: a decision computed, applied, and silently reinterpreted as its opposite.
-        //
-        // A zone layout cannot split within a zone — that is the point of zones — but it CAN honour
-        // the intent, which is that the two surfaces stay visible together. Beside the Center is the
-        // Right zone; beside anything else is the Center, which is the largest region and the one a
-        // rail-collapsed zone is not.
-        if (op.Target.Kind is DropKind.SplitLeft or DropKind.SplitRight
-            or DropKind.SplitTop or DropKind.SplitBottom)
-        {
-            zone = zone == ZoneId.Center ? ZoneId.Right : ZoneId.Center;
-        }
 
         return ZoneLayoutService.MovePane(_zones, op.SurfaceId, zone);
     }
