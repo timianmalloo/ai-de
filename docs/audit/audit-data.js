@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T13:51:12Z",
+  "generated": "2026-09-01T13:59:06Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7029,6 +7029,60 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0349",
+      "shortname": "session-3-registration",
+      "datetime": "2026-09-01T13:14:14Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "ground yourself in the repo, particularly for the cross session/agent collaboration; then create a distinct work tree for this session; then register with the other two active sessions for ACTIVE collaboration across the sessions. Session 1: the other claude code session owns the core infrastructure for the application. Session 2: the copilot session owns the main UI implementation. Session 3: this session will be used for refining, elevating and filling in gaps around the overall UI and Experience, potentially picking up some missing surfaces. The goal is active collaboration with the other sessions and minimizing conflicts.",
+      "summary": "Session 3 grounded in the coordination substrate (coord-core leases over the shared .agents/ record, session-worktree-discipline WT1-WT13), created worktree C:/Projects/ai-de-feature-ui-experience-refinement on branch feature/ui-experience-refinement, registered via coord session start, and stood up a durable ownership register at .agents/sessions/ (README.md protocol + claude-ui-experience.md declaration). Named the two-layer model: coord leases are enforced and short; ownership is advisory, one file per session, folded by readers. Measured the repo's real contention point from git history (every AiDe.App surface edits WorkbenchShell/MainMenuBuilder/SurfaceContentFactory/WorkbenchController) and recorded that no artifacts.yml exists, so coord class returns COORD-CLASS-UNREGISTERED and the merge-derived driver never fires. Claimed docs/ui/** (ttl 14400) and VERIFIED by calling coord.check() as both other sessions that the lease refuses nothing either of them works on. Registered with Session 1 (ai-de-a7) by cross-session message with two asks; Session 2 is GitHub Copilot and is not addressable by message, so registration for it rides the shared .agents/ record its hook already reads, and a human relay is required.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Claude Code",
+      "actor": "claude-ui-experience",
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Join ai-de's cross-session coordination as Session 3 (UI/experience refinement) in an isolated worktree, registered with the core-infrastructure Claude session and the Copilot UI session, with a conflict-avoidance protocol that minimises collisions.",
+      "done_when": "A dedicated worktree and branch exist and are registered in the coord record; a durable ownership declaration naming owns / by-negotiation / will-not-touch is readable by every worktree; the lease held is proven to block neither other session; and Session 1 has been sent the registration with explicit asks.",
+      "git": {
+        "sha": "0e488b329abd788a16a5f61f57f91e86022e5572",
+        "short": "0e488b329",
+        "branch": "feature/ui-experience-refinement",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0350",
+      "shortname": "session-3-register-contradiction",
+      "datetime": "2026-09-01T13:18:00Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "Cross-session reply from ai-de-a7 (Session 1): confirms core lane, corrects the worktree inference, states a standing App-adapter exception, supplies the IWorkspaceQueries query map, and flags verify-id-allocators / verify-derived-views plus the DC-id allocation rule.",
+      "summary": "Read docs/collaboration/session-contracts.md (missed at grounding) and found it contradicts .agents/sessions/claude-core.md on three of the four measured hotspot files: WorkbenchShell.cs, WorkbenchController.cs and SurfaceContentFactory.cs are Core-owned under the tracked accepted contract and Session-2-owned under the new register. Withdrew the hotspot protocol Session 1 and I had agreed without that file in view, and proposed the tracked contract remain the ownership authority while .agents/sessions/ narrows to liveness (DM7: two definitions of one quantity). Ran both gates rather than accept them on report: verify-id-allocators exit 0 and verify-derived-views exit 0 on this branch, ADR 0017-0020 duplicates confirmed as notes; the same run surfaced DC-072 colliding between session/phase3-pane-probes and origin/main, which Session 1 had not mentioned, and that was returned to them. Verified FindMatch (ProjectionService.cs:92) and ContentSearchResult (ContentSearch.cs:19) by reading them; accepted the Evidence-rendering UX obligation and added a second one Session 1 had not named, that dropping FilesSkipped/Truncated re-introduces DC-025 at the UI layer.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Claude Code",
+      "actor": "claude-ui-experience",
+      "artifacts": [
+        ".agents/sessions/claude-ui-experience.md"
+      ],
+      "tags": [
+        "multi-agent-coordination"
+      ],
+      "outcome": "success",
+      "goal": "Reconcile Session 3's registration with Session 1's reply and with the pre-existing tracked ownership contract.",
+      "done_when": "The roster is corrected to fact; every claim Session 1 reported is either verified here or marked unverified; and any contradiction between the two ownership registers is surfaced to both other sessions rather than silently resolved.",
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "0e488b329abd788a16a5f61f57f91e86022e5572",
+        "short": "0e488b329",
+        "branch": "feature/ui-experience-refinement",
+        "pushed": null
+      }
     },
     {
       "id": "al-0351",
