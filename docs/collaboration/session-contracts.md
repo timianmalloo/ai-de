@@ -863,9 +863,17 @@ fail your build.
 it prints what every other branch has already claimed, so "highest here plus one" stops being the
 allocation rule. The next genuinely free number today is **68** — written without the
 prefix on purpose, because a `DC-` token that resolves to no entry is itself a register-gate
-failure. `main` now carries entries up to 063 (Design merged three while this was being written),
-and `feature/agent-watcher-substrate` holds 061 through 067 for six different lessons, so 061,
-062 and 063 on that branch all need re-issuing before it merges.
+failure. `main` now carries entries up to **064**, and
+`feature/agent-watcher-substrate` holds 061 through 067 for seven different lessons — so **061,
+062, 063 and 064 on that branch all need re-issuing before it merges**. Core took 064 rather than
+jumping to 068 because the register requires a contiguous sequence: a hole is how a *deleted*
+lesson looks, and leaving 065–067 empty to dodge a collision would trade a resolvable duplicate
+for an unresolvable ambiguity. That branch has to renumber three of them regardless, since main
+already spends 061–063.
+
+The gate now reads the branch you are ON from **disk**, not from its last commit — so it warns
+you while you are writing the entry rather than after you have committed and cited it. It caught
+Core's own 064 that way, before the commit.
 
 **Resolution protocol, unchanged:** keep the id already published on `main`, re-issue the other,
 regenerate the derived views.
