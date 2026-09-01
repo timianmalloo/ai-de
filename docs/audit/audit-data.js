@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T16:31:48Z",
+  "generated": "2026-09-01T19:06:49Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7324,6 +7324,23 @@ window.AUDIT_DATA = {
         "branch": "feature/ui-experience-refinement",
         "pushed": false
       }
+    },
+    {
+      "id": "al-0361",
+      "shortname": "post-reindex-carve-and-knowledge-denominator",
+      "datetime": "2026-09-01T19:06:49Z",
+      "session": "phase3-pane-probes",
+      "prompt": "new code viewer did not result in a tab / knowledge results screenshot / graph repainted in the right dock after being moved left / carve work between core and ui",
+      "summary": "Goal: turn four post-re-index symptoms into carved work. MEASURED on the user's real store before carving: knowledge nodes 878 with median relation degree 0 against 4 for everything else, so a most-connected-first cap leaves ~620 undrawn and the chip's 257 is a lower bound with no denominator. Fixed Domain-not-available: view and inspector were gated on queries but excluded from the post-attach rebuild set, the same defect as the watcher panes swept only as far as the reported instance. Added WorkspaceGraph.KnowledgeDeclared so a surface can render 257 of 878 - my own boundary control missed it because the container pair was not listed, widened and it went red immediately.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [

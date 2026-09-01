@@ -1903,3 +1903,72 @@ methods genuinely differ: Session 3 searched text across four roots; Core enumer
 matched `\.EvaluateAsync\s*\(` so the declaration itself does not count as a call. Per §8.3d's
 corollary, that is corroboration — the blind spots are nameable and different. It is the first time
 today two agreeing methods have earned the word.
+
+## 4x. Carving the post-re-index findings between Core and UI
+
+Four symptoms from one screenshot of a re-indexed TheTerrace. Measured against the user's real store
+(`aide.31abcd25…`, 63,591 assertions) before carving, because three of the four look like UI and only
+two are.
+
+### Already fixed by Core (`0347986`)
+
+**"Domain is not available in this build"** — not a missing feature. `SurfaceContentFactory` builds
+`view` and `inspector` only `when queries is not null`, so a pane realized at construction keeps the
+unavailable placeholder until something marks it to rebuild. Only the three *watcher* kinds were
+marked. Same defect as the watcher panes, swept as far as the reported instance and no further. The
+rebuild set is now derived and tested against the factory's actual behaviour.
+
+### Core's, not yet done — the Knowledge count is a **selection** problem, not a rendering one
+
+The chip reads **Knowledge 257**. That is not wrong about what is drawn, and it is badly misleading.
+
+Measured on the user's store:
+
+| | |
+|---|---|
+| knowledge nodes in the store | **878** |
+| knowledge median relation degree | **0** |
+| non-knowledge median degree | **4** |
+| nodes the graph draws | 1,500 of 2,992, *most connected first* |
+| knowledge among the most-connected 1,500 | ~192 |
+
+**The graph's node budget is spent by a rule that structurally disfavours the half of the product the
+product is about.** "Docs hold intent, code holds reality, and the expensive defects live in the gap"
+— and the intent half has median degree **zero**, so it loses every tie for a slot. Roughly 620 of
+878 knowledge nodes are never candidates for drawing, and the chip says `257` with no denominator.
+
+Two separate Core pieces, in order:
+
+1. **Give the chip a denominator.** `GraphResult` should carry per-category totals so a surface can
+   render "257 of 878" instead of "257". Without this no UI change can fix the number, because the
+   information does not cross the wire. Core's, small.
+2. **Decide how the budget is allocated.** Most-connected-first is a defensible default and a poor
+   one when one category is systematically low-degree. Options: proportional allocation per category,
+   a floor per category, or making the rank category-aware. This is a *design* decision about what
+   the graph is for, and Core will not pick it unilaterally.
+
+The deeper finding underneath: **median degree 0 means most knowledge documents connect to nothing
+this product can resolve.** That is the knowledge extractor's coverage, not the graph's — and it is
+the honest reason the knowledge half looks thin. Recorded on the extractor roadmap.
+
+### UI session's
+
+- **The Knowledge chip must render as a lower bound.** This is `DESIGN.md` §4a `count.lower-bound`
+  exactly — the finding already at the top of the craft pass, now with a live instance and a number.
+  Blocked on Core item 1 above: nothing to render until the denominator crosses the wire.
+- **"New code viewer" produced no tab.** The command, the controller case, the hook and the factory
+  branch are all wired and tested (`workbench.newCodeViewer`, Ctrl+K, U). So the failure is *placement
+  or rendering*, not creation: `OpenReferenceDocument` returns "There is no pane to open a code viewer
+  in." when `DocumentPlacementPolicy.Decide` finds no target, and that message goes to the status line
+  the user may not have looked at. **Needs the rendered observation neither Core control can make** —
+  what did the status line say?
+- **The graph repainted in the right dock after being moved to the left.** This is Design's own §4i
+  FYI, unchanged: a native AvalonDock drag is never reconciled into the owned `Layout` model, so the
+  rebuild-from-model on the next add reverts it. Design deferred it as "a supervised piece"; it is now
+  reproduced by a user and should be promoted.
+
+### Not carved to anyone yet
+
+Whether the 1,492 undrawn edges and 27 boundary notes are *understood* by a reader. The warning
+renders (verified), and "1492 edge(s) omitted by the result bound" is a true sentence that tells a
+user nothing about what to do. That is a craft question, not a correctness one.

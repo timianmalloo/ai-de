@@ -54,7 +54,17 @@ public sealed record CanvasGraph(
     string? RootId,
     int Omitted,
     IReadOnlyList<string> Disclosures,
-    string? Message);
+    string? Message,
+    /// <summary>
+    /// Knowledge nodes the workspace holds, drawn or not — the denominator for a knowledge count.
+    /// </summary>
+    /// <remarks>
+    /// MEASURED on a real workspace: 878 knowledge nodes with median relation degree 0, against a
+    /// median of 4 for everything else, so a most-connected-first cap leaves roughly 620 of them
+    /// undrawn. The chip read "Knowledge 257" — true about what was drawn, and read as a statement
+    /// about what exists. A surface cannot tell a lower bound from an exact count without this.
+    /// </remarks>
+    int KnowledgeDeclared = 0);
 
 /// <summary>
 /// Builds the canvas's view from the same read surface every other pane uses.
@@ -161,7 +171,8 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
             RootId: null,
             graph.Omitted,
             graph.Disclosures,
-            message);
+            message,
+            graph.KnowledgeDeclared);
     }
 
     public async Task<CanvasGraph> LoadAsync(

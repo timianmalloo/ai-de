@@ -61,6 +61,20 @@ public sealed class FieldsSurviveTheClientBoundaryTests
             // NAMES and would not have noticed a type change that lost meaning.
         }),
 
+        // WIDENED AGAIN 2026-09-01. The list held the three NODE-level pairs and not the container
+        // pair, so `WorkspaceGraph.KnowledgeDeclared` — added the same hour, precisely so a surface
+        // could show a denominator — crossed nothing and this control said nothing. A hand-listed
+        // set is the hole it exists to catch, and it caught me twice in one day.
+        new(typeof(WorkspaceGraph), typeof(CanvasGraph), new()
+        {
+            // Nodes and Edges keep their NAMES across the boundary (the element type changes, which
+            // this control cannot see — that is what the element-level pairs below are for). Listing
+            // them as dropped was wrong, and the stale-allowance test said so.
+            ["SourceRevision"] =
+                "The canvas draws what it was given and does not display a revision. Recorded rather "
+                + "than carried, so the decision is visible if a surface ever needs it.",
+        }),
+
         new(typeof(GraphCluster), typeof(CanvasNode), new()
         {
             ["NodeCount"] = "Crosses as CanvasNode.Count — renamed at the boundary, which is exactly "

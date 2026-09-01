@@ -98,12 +98,29 @@ public sealed record GraphQuery(
 /// <summary>The whole graph, and what it left out.</summary>
 /// <param name="Omitted">Nodes present in the evidence and not returned, because a cap applied.</param>
 /// <param name="Disclosures">What the extraction said it could not see, lifted out of the edges.</param>
+/// <param name="KnowledgeDeclared">
+/// How many knowledge nodes the workspace holds, whether or not they were drawn.
+/// </param>
+/// <remarks>
+/// <para><b>Why the knowledge total needs its own field when the node total does not.</b> The
+/// overall total is recoverable as <c>Nodes.Count + Omitted</c>, so a surface can already say
+/// "1,500 of 2,992". Knowledge cannot be recovered that way: the omitted nodes are gone, and with
+/// them any way to know how many were knowledge.</para>
+///
+/// <para><b>And it is not a detail.</b> MEASURED on a real workspace: 878 knowledge nodes, median
+/// relation degree <b>0</b>, against a median of 4 for everything else — so under a
+/// most-connected-first cap roughly 620 of them are never candidates for a slot. The surface
+/// reported "Knowledge 257" with no denominator, which is true about what was drawn and reads as a
+/// statement about what exists. A count that is a lower bound and one that is exact must be
+/// distinguishable, and the surface cannot make that distinction without this number.</para>
+/// </remarks>
 public sealed record WorkspaceGraph(
     IReadOnlyList<GraphNode> Nodes,
     IReadOnlyList<GraphEdge> Edges,
     int Omitted,
     IReadOnlyList<string> Disclosures,
-    string SourceRevision);
+    string SourceRevision,
+    int KnowledgeDeclared = 0);
 
 /// <summary>
 /// The whole workspace as a graph, rather than one node and its neighbours.
@@ -274,7 +291,10 @@ public sealed class GraphProjection(IReadOnlyList<EvidenceAssertion> assertions,
             // classes — measured on a real workspace, where it filled the window and buried the one
             // finding that mattered.
             [.. AiDe.Core.Facts.DisclosureSummary.Fold(disclosures)],
-            sourceRevision);
+            sourceRevision,
+            // Counted over every knowledge node the walk SAW, not the ones that survived the cap —
+            // the whole point is to be the denominator the drawn count is a numerator of.
+            KnowledgeDeclared: knowledge.Count(declared.Contains));
     }
 
     /// <summary>
