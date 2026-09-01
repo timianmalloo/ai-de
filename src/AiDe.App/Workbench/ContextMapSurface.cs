@@ -146,7 +146,7 @@ public sealed class ContextMapSurface : ContentControl
                 Text = $"{group.Symbols,6}  {group.Namespace}",
                 FontFamily = new FontFamily("Cascadia Mono, Consolas"),
                 Margin = new Thickness(0, 2, 0, 0),
-                Opacity = 0.85,
+                Foreground = Res("TextMutedBrush"),
                 ToolTip = string.Join(Environment.NewLine, group.Examples),
             };
 
@@ -181,7 +181,7 @@ public sealed class ContextMapSurface : ContentControl
                 Text = $"{member.Subject}  —{member.Predicate}→  {member.Object}",
                 FontFamily = new FontFamily("Cascadia Mono, Consolas"),
                 TextWrapping = TextWrapping.Wrap,
-                Opacity = 0.8,
+                Foreground = Res("TextMutedBrush"),
                 Margin = new Thickness(0, 1, 0, 0),
             });
         }
@@ -191,7 +191,7 @@ public sealed class ContextMapSurface : ContentControl
             members.Children.Add(new TextBlock
             {
                 Text = $"… and {edge.Undisclosed} more not listed.",
-                Opacity = 0.6,
+                Foreground = Res("TextMutedBrush"),
                 Margin = new Thickness(0, 4, 0, 0),
             });
         }
@@ -234,7 +234,12 @@ public sealed class ContextMapSurface : ContentControl
         foreach (var c in context.Name) hue = ((hue * 31) + c) % 360;
 
         var panel = new StackPanel();
-        panel.Children.Add(new TextBlock { Text = context.Name, FontWeight = FontWeights.SemiBold });
+        panel.Children.Add(new TextBlock
+        {
+            Text = context.Name,
+            FontWeight = FontWeights.SemiBold,
+            Foreground = Res("TextBrush"),
+        });
 
         if (!string.IsNullOrWhiteSpace(context.Description))
         {
@@ -242,7 +247,7 @@ public sealed class ContextMapSurface : ContentControl
             {
                 Text = context.Description,
                 TextWrapping = TextWrapping.Wrap,
-                Opacity = 0.75,
+                Foreground = Res("TextBrush"),
                 Margin = new Thickness(0, 2, 0, 0),
             });
         }
@@ -252,7 +257,7 @@ public sealed class ContextMapSurface : ContentControl
             Text = $"{context.Symbols} symbol(s) · {context.InternalEdges} internal edge(s) · " +
                    $"{context.Crossings} crossing(s)",
             Margin = new Thickness(0, 4, 0, 0),
-            Opacity = 0.85,
+            Foreground = Res("TextMutedBrush"),
         });
 
         return new Border
@@ -307,7 +312,7 @@ public sealed class ContextMapSurface : ContentControl
     {
         Text = text,
         TextWrapping = TextWrapping.Wrap,
-        Opacity = 0.7,
+        Foreground = Res("TextMutedBrush"),
         Margin = new Thickness(0, 8, 0, 0),
     };
 
@@ -374,7 +379,6 @@ public sealed class ContextMapSurface : ContentControl
             TextWrapping = TextWrapping.Wrap,
             MaxWidth = 420,
             TextAlignment = TextAlignment.Center,
-            Opacity = 0.75,
             Foreground = Res("TextMutedBrush"),
         });
 

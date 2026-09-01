@@ -156,8 +156,8 @@ state, not repeat five times.
 | Phase | Scope (code + tests) | Addresses | Owner | Depends on |
 |---|---|---|---|---|
 | **A ✅** | Source pane follows selection; no fake source | #1, #2, #3-source | App | landed |
-| **B** | `/ui-design` legibility slice — de-stack opacity / `TextBodyBrush`, contrast-audited | #7, #8, #9 | App/UX | measure on surface |
-| **C** | `NodeViewMenu` — type-driven "Open as…" context menu on graph + explorer nodes; opens the viewer in the focused pane | #5, #7-nav | App | A |
+| **B ✅** | Legibility — de-opacitied muted text; content (context descriptions, join basis) promoted to full `TextBrush`, counts stay muted (ContextMapSurface + JoinSurface) | #7, #8 | App/UX | landed (provenance is XAML — follow-up) |
+| **C ✅** | `NodeViewMenu` — type-driven right-click "Open as source/class-diagram/sequence/metadata/reveal"; wired JS→CanvasSurface event→shell menu→actions | #5, #7-nav | App | landed (needs user functional verification) |
 | **D** | Class-diagram pan/zoom (mouse+trackpad) + method context menu | #6 | App | C |
 | **E** | Wire `SequenceModel.Build` to Core `Interaction.cs`, entered from a method's "Open as sequence" | #14, #6-seq | App + Core | C, Core feed |
 | **F** | Investigate dock drag/close focus+visibility (new-pane min width, close→re-render, reveal new tab) | #4, #10, #11, #12, #3-focus | App | — |
@@ -172,6 +172,6 @@ analytical surface) and **C** (the contextual menu — the centerpiece the user 
 
 | | |
 |---|---|
-| **Completed** | Triage of all 15 snapshots + terminal; **Phase A landed** (Source pane follows selection; no fake source; 2 tests); the contextual-viewer UX designed (§3) |
-| **Remaining** | Phases B–H (legibility, the `NodeViewMenu`, class-diagram pan/zoom, sequence wiring, docking + terminal-render investigations, sessions surface) |
-| **Best next action** | Phase B (measured legibility slice) and Phase C (the `NodeViewMenu` contextual "Open as…") — both build on the landed selection plumbing |
+| **Completed** | Phases **A, B, C** landed — Source pane follows selection; legibility de-opacitied on contexts/joins; the `NodeViewMenu` contextual "Open as…" right-click on graph nodes (pure core + 7 tests, wired end-to-end) |
+| **Remaining** | Phase **D** (class-diagram pan/zoom — the user's requested "big area"), E (sequence wiring to Core `Interaction.cs`), F/G (docking + terminal-render investigations), H (sessions surface), provenance legibility (XAML) |
+| **Best next action** | **Checkpoint before D** (per the user — pan/zoom is its own big effort); then Phase E (sequence wiring) or the F/G investigations |

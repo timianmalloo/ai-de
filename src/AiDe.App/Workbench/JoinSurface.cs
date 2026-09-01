@@ -96,7 +96,7 @@ public sealed class JoinSurface : ContentControl
                 Text = "• " + Explain(disclosure),
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(0, 2, 0, 0),
-                Opacity = 0.85,
+                Foreground = Res("TextMutedBrush"),
             });
         }
     }
@@ -129,7 +129,7 @@ public sealed class JoinSurface : ContentControl
             {
                 Text = edge.Basis,
                 TextWrapping = TextWrapping.Wrap,
-                Opacity = 0.7,
+                Foreground = Res("TextBrush"),
                 Margin = new Thickness(12, 1, 0, 0),
             });
 
@@ -196,7 +196,12 @@ public sealed class JoinSurface : ContentControl
     {
         Text = text,
         TextWrapping = TextWrapping.Wrap,
-        Opacity = 0.7,
+        Foreground = Res("TextMutedBrush"),
         Margin = new Thickness(0, 4, 0, 0),
     };
+
+    /// <summary>A design-language brush by key, falling back to grey rather than throwing.</summary>
+    private static System.Windows.Media.Brush Res(string key) =>
+        (System.Windows.Application.Current?.TryFindResource(key) as System.Windows.Media.Brush)
+        ?? System.Windows.Media.Brushes.Gray;
 }

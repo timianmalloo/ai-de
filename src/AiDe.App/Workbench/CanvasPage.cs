@@ -672,6 +672,12 @@ internal static class CanvasPage
                 el.addEventListener('click', function () {
                   if (isGroup) { openGroup(n.id); } else { activate(n.id); }
                 });
+                el.addEventListener('contextmenu', function (ev) {
+                  if (isGroup) { return; }   // groups are aggregates, not nodes to open
+                  ev.preventDefault();        // suppress the browser menu; the host shows ours
+                  post({ kind: 'node.contextmenu', nodeId: n.id, nodeKind: n.kind || '',
+                    isKnowledge: n.isKnowledge === true });
+                });
                 stage.appendChild(el);
                 records.push({ id: n.id, isRoot: !!n.isRoot, el: el, p2: { x: x, y: y }, p3: p3,
                   cat: categoryOf(n) });

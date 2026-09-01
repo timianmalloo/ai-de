@@ -12,6 +12,9 @@ namespace AiDe.App.Workbench;
 /// <summary>The node the canvas has re-rooted on, and the edges in view — for a reader to follow.</summary>
 public sealed record CanvasNodeSelection(CanvasNode Node, IReadOnlyList<CanvasEdge> Edges);
 
+/// <summary>A right-clicked node, with the type signals that decide which viewers it offers.</summary>
+public sealed record NodeContextMenuRequest(string NodeId, string? NodeKind, bool IsKnowledge);
+
 /// <summary>
 /// The graph canvas: a windowed WebView2 pane, with focus routed explicitly in both directions.
 /// </summary>
@@ -75,6 +78,9 @@ public sealed class CanvasSurface : ContentControl, IDisposable
     /// definitions of "what is selected". Not raised for the initial unfocused overview.
     /// </summary>
     public event EventHandler<CanvasNodeSelection>? NodeSelected;
+
+    /// <summary>Raised when a node is right-clicked, so the host can show the contextual "Open as…" menu.</summary>
+    public event EventHandler<NodeContextMenuRequest>? NodeContextMenuRequested;
 
     /// <summary>Loads the graph around <paramref name="rootId"/> and pushes it to the page.</summary>
     // Sentinel roots the page uses to ask, through the ONE GraphSource seam, for a view that is not a
@@ -201,6 +207,18 @@ public sealed class CanvasSurface : ContentControl, IDisposable
             return;
         }
 
+        if (string.Equals(message.Kind, "node.contextmenu", StringComparison.Ordinal))
+        {
+            if (!string.IsNullOrWhiteSpace(message.NodeId))
+            {
+                NodeContextMenuRequested?.Invoke(
+                    this,
+                    new NodeContextMenuRequest(message.NodeId, message.NodeKind, message.IsKnowledge));
+            }
+
+            return;
+        }
+
         if (!string.Equals(message.Kind, "focus.leave", StringComparison.Ordinal))
         {
             return;
@@ -216,7 +234,8 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         FocusLeaveRequested?.Invoke(this, direction);
     }
 
-    private sealed record CanvasMessage(string Kind, string? Direction, string? NodeId);
+    private sealed record CanvasMessage(
+        string Kind, string? Direction, string? NodeId, string? NodeKind = null, bool IsKnowledge = false);
 
     /// <summary>
     /// Sends a key to the page through the browser's own input layer.

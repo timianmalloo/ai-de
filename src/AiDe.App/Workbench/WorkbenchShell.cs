@@ -986,7 +986,74 @@ public sealed class WorkbenchShell : IDisposable
         // a node … nothing updates in any of the source tabs").
         canvas.NodeSelected -= OnCanvasNodeSelectedForViewers;
         canvas.NodeSelected += OnCanvasNodeSelectedForViewers;
+
+        // Right-click a node for the contextual "Open as source / class diagram / …" menu (smoke 9-1
+        // §3 — the IntelliJ model: a viewer is opened from an entry point in the model).
+        canvas.NodeContextMenuRequested -= OnNodeContextMenuRequested;
+        canvas.NodeContextMenuRequested += OnNodeContextMenuRequested;
     }
+
+    // Builds and shows the contextual "Open as…" menu for a right-clicked node, filtered to the
+    // viewers its type supports (NodeViewMenu). The menu shows at the cursor.
+    private void OnNodeContextMenuRequested(object? sender, NodeContextMenuRequest req)
+    {
+        var options = NodeViewMenu.OptionsFor(req.NodeKind, req.IsKnowledge);
+        if (options.Count == 0) { return; }
+
+        var menu = new System.Windows.Controls.ContextMenu
+        {
+            Placement = System.Windows.Controls.Primitives.PlacementMode.Mouse,
+        };
+        foreach (var option in options)
+        {
+            var item = new System.Windows.Controls.MenuItem { Header = option.Label };
+            var kind = option.Kind;
+            item.Click += (_, _) => OpenNodeView(req.NodeId, kind);
+            menu.Items.Add(item);
+        }
+
+        menu.IsOpen = true;
+    }
+
+    // Performs a chosen "Open as…" action, reusing the existing open-surface commands and the
+    // selection→viewer routing. New viewers fill from _lastSelectedNodeId on their next bind.
+    private void OpenNodeView(string nodeId, NodeViewKind kind)
+    {
+        switch (kind)
+        {
+            case NodeViewKind.Source:
+            case NodeViewKind.Read:
+                _lastSelectedNodeId = nodeId;
+                Controller.NewCodeViewerRequested?.Invoke();          // opens a Source pane
+                _ = ShowNodeInCodeViewersAsync(nodeId, OpenCodeViewers());  // fill any already open
+                break;
+
+            case NodeViewKind.ClassDiagram:
+                Controller.NewClassDiagramRequested?.Invoke();
+                break;
+
+            case NodeViewKind.Sequence:
+                Controller.NewSequenceDiagramRequested?.Invoke();
+                break;
+
+            case NodeViewKind.GraphNeighbourhood:
+            case NodeViewKind.Metadata:
+                var canvas = OpenCanvas();
+                if (canvas is not null)
+                {
+                    Announcer.Announce($"Graph centred on {nodeId}.");
+                    _ = canvas.RefreshAsync(nodeId);
+                }
+                break;
+        }
+    }
+
+    private CanvasSurface? OpenCanvas() =>
+        Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Select(s => Adapter.ContentFor(s.SurfaceId))
+            .OfType<CanvasSurface>()
+            .FirstOrDefault();
 
     /// <summary>
     /// Builds a graph canvas for the full-window Explorer surface (design D2), bound to the SAME

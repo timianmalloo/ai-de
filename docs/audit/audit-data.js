@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T21:38:10Z",
+  "generated": "2026-09-01T22:02:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7372,6 +7372,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0364",
+      "shortname": "smoke91-phase-b-c-legibility-nodeviewmenu",
+      "datetime": "2026-09-01T22:02:09Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "do next steps through C then checkpoint (D is its own big area)",
+      "summary": "Phase B: legibility — removed opacity-dimming on muted text across ContextMapSurface + JoinSurface; promoted readable content (context descriptions, join basis) to full TextBrush with hierarchy via weight, kept counts muted. Phase C: NodeViewMenu — the IntelliJ contextual 'Open as...' grammar: pure type-driven OptionsFor (7 tests) + wiring (JS contextmenu on graph nodes -> node.contextmenu message -> CanvasSurface.NodeContextMenuRequested event -> shell builds a WPF ContextMenu -> opens source/class-diagram/sequence viewer or reveals in graph). App 291 green; smoke passed. Checkpoint before D (class-diagram pan/zoom) per user.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/NodeViewMenu.cs"
       ],
       "tags": [],
       "outcome": "success"
