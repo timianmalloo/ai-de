@@ -165,6 +165,12 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
             WorkspaceOperations.SearchContent,
             new SearchContentRequest(term, maxMatches), cancellationToken);
 
+    public Task<InteractionResult> InteractionAsync(
+        string nodeId, int maxMessages, CancellationToken cancellationToken) =>
+        QueryAsync<InteractionResult>(
+            WorkspaceOperations.Interaction,
+            new InteractionRequest(nodeId, maxMessages), cancellationToken);
+
     public Task<KnowledgeResult> KnowledgeAsync(
         string? term, string? type, int maxResults, CancellationToken cancellationToken) =>
         QueryAsync<KnowledgeResult>(

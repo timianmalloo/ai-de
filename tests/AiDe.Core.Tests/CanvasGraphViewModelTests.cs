@@ -41,6 +41,9 @@ public sealed class CanvasGraphViewModelTests
         public Task<ContentSearchResult> SearchContentAsync(string term, int maxMatches, CancellationToken ct) =>
             Task.FromResult(new ContentSearchResult([], 0, 0, false, Bounds(0), "rev-1"));
 
+        public Task<InteractionResult> InteractionAsync(string nodeId, int maxMessages, CancellationToken ct) =>
+            Task.FromResult(new InteractionResult(nodeId, [], false, Bounds(0), "rev-1"));
+
         public Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken ct) =>
             Task.FromResult(new KnowledgeResult([], Bounds(0), "rev-1"));
 

@@ -909,6 +909,81 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
     /// written to prevent (DC-016), and a budget that is reported but not applied is how a 1.18 MB
     /// payload crossed a 1 MiB frame (INV-0003).</para>
     /// </remarks>
+    /// <summary>
+    /// One caller's outgoing calls, in call order — the feed for a UML sequence diagram.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this is not <c>calls</c>.</b> The <c>calls</c> edges are deduplicated to one row
+    /// per <c>(caller, callee)</c> pair, which is correct for a graph and destroys an interaction:
+    /// <c>A→B, A→C, A→B</c> collapses to two messages and the repeat is gone. <c>calls_at</c> keeps
+    /// every site. MEASURED on TheTerrace: 2,024 sites against 1,492 deduplicated edges, so keeping
+    /// them costs about a third more rows on one predicate and nothing at all on the graph payload —
+    /// <c>calls_at</c> is an attribute and is never drawn.</para>
+    ///
+    /// <para><b>Type-level, and it says so.</b> The caller and callee are types; the member is the
+    /// message name. A sequence diagram of one METHOD's activation needs method-level callers, which
+    /// the C# reader does not emit — so this draws "what this type calls, in order", which is a real
+    /// interaction and not the one a lifeline-per-method diagram would show. Better to hand over a
+    /// true smaller thing than a plausible larger one.</para>
+    /// </remarks>
+    public InteractionResult Interaction(string nodeId, int maxMessages)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(nodeId);
+
+        using var activity = Activity.StartActivity("aide.projection.query");
+        activity?.SetTag("projection", "interaction");
+
+        var limit = Clamp(maxMessages, 1, MaxInteractionMessages);
+        using var reader = store.BeginRead();
+
+        // One more than asked for, so "is there another" is answered by looking rather than guessing.
+        var found = reader.OutgoingCallsInOrder(nodeId, limit + 1);
+        var truncated = found.Count > limit;
+
+        var messages = new List<InteractionMessage>();
+        var bytes = 0;
+        var byteCapped = false;
+
+        foreach (var (callee, member, location) in found.Take(limit))
+        {
+            var message = new InteractionMessage(
+                messages.Count + 1, nodeId, callee, member, location);
+
+            var size = Encoding.UTF8.GetByteCount(message.From)
+                + Encoding.UTF8.GetByteCount(message.To)
+                + Encoding.UTF8.GetByteCount(message.Member)
+                + Encoding.UTF8.GetByteCount(message.Location)
+                + AssertionOverheadBytes;
+
+            if (messages.Count > 0 && bytes + size > MaxResponseBytes)
+            {
+                byteCapped = true;
+                break;
+            }
+
+            messages.Add(message);
+            bytes += size;
+        }
+
+        return new InteractionResult(
+            nodeId, messages, truncated || byteCapped,
+            new ResultBounds(
+                MaxNodes: limit, MaxEdges: 0, MaxBytes: MaxResponseBytes,
+                ReturnedNodes: messages.Count,
+                OmittedNodes: Math.Max(0, found.Count - messages.Count),
+                ReturnedEdges: 0, OmittedEdges: 0,
+                ByteCapped: byteCapped, NextCursor: null),
+            reader.CurrentSourceRevision());
+    }
+
+    /// <summary>The most messages one interaction will return.</summary>
+    /// <remarks>
+    /// A lifeline with 500 messages on it is not a diagram anybody reads. MEASURED on TheTerrace,
+    /// the busiest single caller has 46 outgoing call sites, so this bounds the pathological case
+    /// without truncating any real one.
+    /// </remarks>
+    public const int MaxInteractionMessages = 200;
+
     public ContentSearchResult SearchContent(string term, int maxMatches)
     {
         using var activity = Activity.StartActivity("aide.projection.query");

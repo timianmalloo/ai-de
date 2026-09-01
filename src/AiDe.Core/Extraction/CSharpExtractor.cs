@@ -359,10 +359,33 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         var callWatch = System.Diagnostics.Stopwatch.StartNew();
         var calls = new CallCensus();
 
-        foreach (var (caller, callee, where) in TypeCalls(compiled.Compilation, calls, cancellationToken))
+        // `TypeCalls` is not an iterator — the walk runs and both results are ready before the
+        // enumerable is touched — so the sites are populated by the time the loop below reads them.
+        var edges = TypeCalls(compiled.Compilation, calls, out var callSites, cancellationToken);
+
+        foreach (var (caller, callee, where) in edges)
         {
             assertions.Add(Assertion(
                 request, caller, "calls", callee, VerificationStatus.Verified,
+                ProvenanceAt(where, projectPath, observedAt)));
+        }
+
+        // EVERY CALL SITE, in order — the interaction, as opposed to the relationship.
+        //
+        // `calls` is deduplicated to one row per pair, which is right for a graph and wrong for a
+        // sequence diagram: `A -> B, A -> C, A -> B` collapses to two messages and the repeat is
+        // gone. An interaction that silently drops a repeated call is confidently incomplete, which
+        // is worse than an empty diagram.
+        //
+        // It is an ATTRIBUTE (see EvidencePredicates), so it is never drawn: the graph keeps its
+        // deduplicated edges and its payload, and these rows are read only by a query that asks for
+        // ONE caller. The object encodes `Type#Member` because a message needs a name — `Order ->
+        // Customer` is an arrow, `Order -> Customer.Save()` is the thing the diagram was opened to
+        // find out — and `#` cannot occur in a C# display string, so the two parts always split.
+        foreach (var (caller, callee, member, where) in callSites)
+        {
+            assertions.Add(Assertion(
+                request, caller, "calls_at", $"{callee}#{member}", VerificationStatus.Verified,
                 ProvenanceAt(where, projectPath, observedAt)));
         }
 
@@ -985,7 +1008,9 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
     /// second.</para>
     /// </remarks>
     private static IEnumerable<(string Caller, string Callee, Location Where)> TypeCalls(
-        Compilation compilation, CallCensus census, CancellationToken cancellationToken)
+        Compilation compilation, CallCensus census,
+        out List<(string Caller, string Callee, string Member, Location Where)> sites,
+        CancellationToken cancellationToken)
     {
         // ONE TREE AT A TIME, ON SEVERAL THREADS.
         //
@@ -1004,7 +1029,7 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         // call site", and "first" in a parallel walk is whichever thread arrived first. So the merge
         // picks the smallest location by file path and then position, which is the same answer every
         // run and, on a single-threaded walk, the same answer as before.
-        var perTree = new (CallCensus Census, List<(string Caller, string Callee, Location Where)> Found)[
+        var perTree = new (CallCensus Census, List<(string Caller, string Callee, string Member, Location Where)> Found)[
             compilation.SyntaxTrees.Count()];
 
         var trees = compilation.SyntaxTrees.ToArray();
@@ -1012,7 +1037,7 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         Parallel.For(0, trees.Length, new ParallelOptions { CancellationToken = cancellationToken }, i =>
         {
             var local = new CallCensus();
-            var found = new List<(string, string, Location)>();
+            var found = new List<(string Caller, string Callee, string Member, Location Where)>();
             perTree[i] = (local, found);
 
             WalkOneTree(compilation, trees[i], local, found, cancellationToken);
@@ -1028,7 +1053,7 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         // first to see the same pair, and summing would count that edge twice in a disclosure.
         var emitted = new Dictionary<(string, string), Location>();
 
-        foreach (var (caller, callee, where) in perTree.SelectMany(t => t.Found))
+        foreach (var (caller, callee, _, where) in perTree.SelectMany(t => t.Found))
         {
             if (!emitted.TryGetValue((caller, callee), out var existing) || Earlier(where, existing))
             {
@@ -1037,6 +1062,22 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         }
 
         census.Edges = emitted.Count;
+
+        // EVERY SITE, ordered, alongside the deduplicated edges.
+        //
+        // The dedup is right for the GRAPH: `Order -> Customer` is one relationship however many
+        // times it is written, and drawing it seven times is seven identical arrows. It is wrong for
+        // an INTERACTION: `A -> B, A -> C, A -> B` collapses to two messages, and a sequence diagram
+        // that silently drops a repeated call is worse than no diagram, because it is confidently
+        // incomplete.
+        //
+        // Ordered by location here, once, rather than by every reader: a call sequence has exactly
+        // one correct order and it is the order it is written in.
+        sites = [.. perTree
+            .SelectMany(t => t.Found)
+            .OrderBy(f => f.Caller, StringComparer.Ordinal)
+            .ThenBy(f => f.Where.SourceTree?.FilePath ?? string.Empty, StringComparer.Ordinal)
+            .ThenBy(f => f.Where.SourceSpan.Start)];
 
         return emitted
             .OrderBy(e => e.Key.Item1, StringComparer.Ordinal)
@@ -1061,7 +1102,7 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         Compilation compilation,
         SyntaxTree tree,
         CallCensus census,
-        List<(string Caller, string Callee, Location Where)> found,
+        List<(string Caller, string Callee, string Member, Location Where)> found,
         CancellationToken cancellationToken)
     {
         {
@@ -1173,6 +1214,12 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                 var caller = callerType.ToDisplayString();
                 var callee = calleeType.ToDisplayString();
 
+                // The called MEMBER, which this walk used to compute and discard. A sequence diagram
+                // draws messages, and a message with no name is an arrow: `Order -> Customer` says
+                // almost nothing where `Order -> Customer.Save()` says the thing you opened the
+                // diagram to find out. It costs one property read on a symbol already in hand.
+                var member = definition.Name;
+
                 if (string.Equals(caller, callee, StringComparison.Ordinal))
                 {
                     // A self-edge answers no question: "what calls this type" is asked to find the
@@ -1184,7 +1231,7 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
 
                 // Collected, not yet deduplicated: which pair a thread sees first is a property of
                 // the scheduler, so the choice of call site is made once, afterwards, in the merge.
-                found.Add((caller, callee, call.GetLocation()));
+                found.Add((caller, callee, member, call.GetLocation()));
             }
         }
     }

@@ -170,6 +170,57 @@ public sealed class StoreReader : IDisposable
     }
 
     /// <summary>
+    /// One caller's outgoing calls, in the order they are written.
+    /// </summary>
+    /// <remarks>
+    /// <para>The interaction, as opposed to the relationship. <c>calls</c> is deduplicated to one
+    /// row per <c>(caller, callee)</c> pair — right for a graph, where the same relationship written
+    /// seven times is one arrow, and wrong for a sequence diagram, where <c>A→B, A→C, A→B</c> must
+    /// stay three messages. A diagram that silently drops a repeat is confidently incomplete.</para>
+    ///
+    /// <para><b>Ordered by source position, because that is the only order there is.</b> No ordinal
+    /// column was added: every assertion already carries <c>source_location</c> as <c>line:col</c>,
+    /// and a call sequence has exactly one correct order — the order it is written in. Sorted
+    /// numerically rather than as text, or line 10 would come before line 9.</para>
+    /// </remarks>
+    public IReadOnlyList<(string Callee, string Member, string Location)> OutgoingCallsInOrder(
+        string caller, int limit)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT a.object, a.source_location FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.subject = $caller AND a.predicate = 'calls_at'
+            ORDER BY
+              CAST(SUBSTR(a.source_location, 1, INSTR(a.source_location, ':') - 1) AS INTEGER),
+              CAST(SUBSTR(a.source_location, INSTR(a.source_location, ':') + 1) AS INTEGER),
+              a.object
+            LIMIT $limit;
+            """, ("$caller", caller), ("$limit", limit));
+
+        using var reader = command.ExecuteReader();
+        var calls = new List<(string, string, string)>();
+
+        while (reader.Read())
+        {
+            var value = reader.GetString(0);
+            var location = reader.IsDBNull(1) ? string.Empty : reader.GetString(1);
+
+            // `Type#Member`. `#` cannot occur in a C# display string, so the split is total — but a
+            // value without one is returned whole as the callee rather than silently dropped: a fact
+            // this reader cannot parse is a fact somebody else wrote, and losing it quietly is how a
+            // diagram ends up missing a message nobody can account for.
+            var hash = value.LastIndexOf('#');
+
+            calls.Add(hash < 0
+                ? (value, string.Empty, location)
+                : (value[..hash], value[(hash + 1)..], location));
+        }
+
+        return calls;
+    }
+
+    /// <summary>
     /// The distinct files the graph knows about, each with a node that is declared in it.
     /// </summary>
     /// <remarks>

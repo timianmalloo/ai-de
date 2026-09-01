@@ -113,6 +113,11 @@ public sealed class EveryOperationFitsTheFrameTests : IDisposable
         [nameof(IWorkspaceQueries.SearchContentAsync)] =
             (p, _) => p.SearchContent("e", ProjectionService.MaxContentMatches),
 
+        // A caller's whole outgoing sequence. Weighed at the ceiling because the bound is on
+        // MESSAGES, and a message carries two type ids — the widest rows in the store.
+        [nameof(IWorkspaceQueries.InteractionAsync)] =
+            (p, hub) => p.Interaction(hub, ProjectionService.MaxInteractionMessages),
+
         [nameof(IWorkspaceQueries.PathsAsync)] =
             (p, hub) => p.Paths(new PathQuery(hub, hub, ProjectionService.MaxPathsCeiling, ProjectionService.MaxPathLengthCeiling)),
 
