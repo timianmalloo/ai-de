@@ -1238,7 +1238,7 @@ public sealed class WorkbenchShell : IDisposable
     // content half, behind the surface's debounce). The mapping is Core's (session-contracts §4r): a
     // member match is an attribute hit whose evidence starts "has_member"; a file hit carries the NodeId
     // of the node it belongs to, so activation navigates to a node, never a raw path (DC-022).
-    private async Task<IReadOnlyList<SearchResult>> SearchWorkspaceAsync(string term)
+    internal async Task<IReadOnlyList<SearchResult>> SearchWorkspaceAsync(string term)
     {
         var q = _queries;
         if (q is null) { return new List<SearchResult>(); }
