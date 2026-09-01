@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T03:47:56Z",
+  "generated": "2026-09-01T04:00:53Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6808,6 +6808,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0337",
+      "shortname": "implement-collapse-to-rail",
+      "datetime": "2026-09-01T04:00:53Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "true collapse-to-rail",
+      "summary": "collapse-to-rail DONE: ZoneRails wraps the docking host in a DockPanel with edge strips (Left/Right/Bottom) that appear when a tool zone is collapsed; a one-click rail button expands the zone (its panes were retained). Custom chrome around AvalonDock (which renders documents, not auto-hiding anchorables), driven by the zone model, refreshed on Manager.LayoutChanged. Lazy host-parenting keeps Manager free for direct hosting. Fixed a launch crash where ShellModeController double-parented Manager (now toggles WorkbenchRoot). 2 STA tests (rail reflects collapsed state; click invokes expand). App 227 / Core 1284 green; app launches clean.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/ZoneRails.cs"
       ],
       "tags": [],
       "outcome": "success"

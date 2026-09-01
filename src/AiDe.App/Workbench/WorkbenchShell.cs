@@ -56,6 +56,7 @@ public sealed class WorkbenchShell : IDisposable
     // opened on demand and shows the most recent index's coverage rather than re-indexing itself.
     private AiDe.Core.Ipc.IndexSummary? _lastIndex;
     private AiDe.Core.Presentation.WorkspaceDiagnosticsViewModel? _diagnosticsVm;
+    private readonly ZoneRails _rails;
     // Cross-restart prompt drafts, keyed by the stable SurfaceId (off the Core layout model).
     private PromptDraftStore? _promptDraftStore;
 
@@ -113,6 +114,16 @@ public sealed class WorkbenchShell : IDisposable
         // launch.
         Adapter = new WorkbenchAdapter(Manager, Service, surface => _factory.Create(surface));
         Controller = new WorkbenchController(Service, Announcer);
+
+        // ADR-0021 collapse-to-rail: wrap the docking host in edge rails that appear when a tool zone
+        // is collapsed. The rail's one-click expand returns the zone (its panes were retained in the
+        // model). Rails refresh whenever the projection is re-rendered (Manager.LayoutChanged fires
+        // when Render replaces the layout).
+        _rails = new ZoneRails(
+            Manager,
+            () => (Service as ZoneBackedLayoutService)?.Zones,
+            ExpandZone);
+        Manager.LayoutChanged += (_, _) => _rails.Refresh();
 
         Palette = new CommandPalette(Controller, Announcer);
         Prompt = new PromptBar(Announcer);
@@ -263,6 +274,13 @@ public sealed class WorkbenchShell : IDisposable
     public ILayoutService Service { get; }
 
     public DockingManager Manager { get; }
+
+    /// <summary>
+    /// The docking host wrapped in collapse-to-rail edge strips (ADR-0021). Host this instead of
+    /// <see cref="Manager"/> so a collapsed tool zone shows a one-click rail back. Falls back to the
+    /// bare manager when the layout is not zone-based.
+    /// </summary>
+    public FrameworkElement WorkbenchRoot => _rails.Root;
 
     public WorkbenchAdapter Adapter { get; }
 
@@ -1173,6 +1191,28 @@ public sealed class WorkbenchShell : IDisposable
         var restore = Persistence?.Restore();
         WorkbenchDiagnostics.LayoutMutation(
             "workspace-open", restore is null ? "keep-current" : "restore-zones", "layout", null, Service.Current);
+    }
+
+    // Expands a collapsed tool zone from its rail (ADR-0021 collapse-to-rail). SetStackState(Docked)
+    // maps to ExpandZone on the zone service; the re-render then reincludes the zone's pane and the
+    // rail hides itself.
+    private void ExpandZone(ZoneId zone)
+    {
+        var stackId = zone switch
+        {
+            ZoneId.Left => ZonesToTree.LeftStackId,
+            ZoneId.Right => ZonesToTree.RightStackId,
+            ZoneId.Bottom => ZonesToTree.BottomStackId,
+            _ => (string?)null,
+        };
+
+        if (stackId is null)
+        {
+            return;
+        }
+
+        Service.Apply(new LayoutOperation.SetStackState(stackId, StackState.Docked));
+        Adapter.Render();
     }
 
     internal void BindClassDiagrams()

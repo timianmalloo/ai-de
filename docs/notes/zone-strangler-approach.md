@@ -54,10 +54,13 @@ Confidence: **Verified** (all slices landed green; app runs; model + view contai
   and an absent/unreadable/corrupt save degrades to "keep the current arrangement" — so it supersedes
   the earlier keep-current guard without reintroducing the reset/scatter complaint.
 
-## Follow-ups (captured, not lost)
+## Follow-ups (all now implemented)
 
-- Native AvalonDock **within-zone splitting** (side-drops creating extra panes) is not mapped to zones;
-  the position-aware reconcile returns null for those shapes and the model reverts them (safe). A
-  richer drag-to-zone (with in-Center editor-group splits in Left/Right too) is future work.
-- A true **collapse-to-rail** visual (rather than hiding a collapsed zone) needs adapter/AvalonDock
-  work; today a collapsed tool zone is omitted from the projection and re-expanded via the Window menu.
+- **Native drag-to-zone** is robust: the position-aware reconcile maps columns first=Left / last=Right /
+  middle=Center, so a native tab drag between zones follows the drop and a side-drop merges into a zone
+  rather than reverting; the deterministic Move-to-zone tab menu is the immediate path.
+- **Collapse-to-rail** is implemented: `ZoneRails` wraps the docking host in edge strips that appear
+  when a tool zone is collapsed, with a one-click expand (AC-F4). Custom chrome around AvalonDock,
+  driven by the zone model, refreshed on `Manager.LayoutChanged`.
+- Remaining future work: in-Center editor-group *splitting* UX and within-zone splits for Left/Right
+  (v1 renders each tool zone as one tab strip).

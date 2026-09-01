@@ -23,7 +23,7 @@ public partial class MainWindow : Window
         DataContext = new MainWindowViewModel();
 
         Shell = new WorkbenchShell(null);
-        WorkbenchHost.Content = Shell.Manager;
+        WorkbenchHost.Content = Shell.WorkbenchRoot;
 
         // FACELIFT — the docking host ships AvalonDock's default LIGHT theme (white panes, light
         // square tabs), which clashed with the dark shell and was the "clunky, square" look. A dark
@@ -50,7 +50,7 @@ public partial class MainWindow : Window
         // the swap only unparents the docking host — the workbench (and a running terminal) survive.
         _mode = new ShellModeController(
             WorkbenchHost,
-            Shell.Manager,
+            Shell.WorkbenchRoot,
             () => new ExplorerSurface(Shell.CreateExplorerGraph(), new NodeReaderView()));
         _mode.ModeChanged += (_, mode) =>
         {
