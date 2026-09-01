@@ -1503,11 +1503,22 @@ public sealed class WorkbenchShell : IDisposable
 
     internal void BindClassDiagrams()
     {
-        var surfaces = Service.Current.AllStacks()
+        var all = Service.Current.AllStacks()
             .SelectMany(s => s.Surfaces)
             .Where(s => s.Kind == "classdiagram")
             .Select(s => Adapter.SurfaceContent<ClassDiagramSurface>(s.SurfaceId))
             .OfType<ClassDiagramSurface>()
+            .ToList();
+
+        // Right-click "Open as…" on a type box, reusing the graph's dispatcher (Phase C/D). Idempotent
+        // per surface, the same -=/+= idiom the canvas uses.
+        foreach (var diagram in all)
+        {
+            diagram.NodeContextMenuRequested -= OnNodeContextMenuRequested;
+            diagram.NodeContextMenuRequested += OnNodeContextMenuRequested;
+        }
+
+        var surfaces = all
             .Where(s => s.IsEmpty)   // first load only — avoids reloading (and flickering) on every render
             .ToList();
         if (surfaces.Count == 0) { return; }

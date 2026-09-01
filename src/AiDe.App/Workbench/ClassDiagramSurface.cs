@@ -20,6 +20,19 @@ public sealed class ClassDiagramSurface : ContentControl
 {
     private readonly StackPanel _list;
     private readonly ScrollViewer _scroller;
+
+    // Pan/zoom (Phase D): a scale transform on the diagram canvas + drag-pan on the scroller. The
+    // zoom persists across re-renders (a toggle rebuilds the canvas), so it lives on the surface.
+    private readonly System.Windows.Media.ScaleTransform _zoom = new(1, 1);
+    private System.Windows.Point _panStart;
+    private double _panH, _panV;
+    private bool _panning;
+
+    /// <summary>Current zoom level (test hook).</summary>
+    internal double ZoomLevel => _zoom.ScaleX;
+
+    /// <summary>Raised when a type box is right-clicked, so the host can show the contextual "Open as…" menu.</summary>
+    public event EventHandler<NodeContextMenuRequest>? NodeContextMenuRequested;
     private readonly TextBlock _header;
     private readonly TextBlock _disclosure;
     private readonly TextBox _search;
@@ -131,6 +144,10 @@ public sealed class ClassDiagramSurface : ContentControl
             HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
             Content = _list,
         };
+        _scroller.PreviewMouseWheel += OnDiagramWheel;
+        _scroller.PreviewMouseDown += OnDiagramPanStart;
+        _scroller.PreviewMouseMove += OnDiagramPanMove;
+        _scroller.PreviewMouseUp += OnDiagramPanEnd;
         root.Children.Add(_scroller);
 
         Content = root;
@@ -275,6 +292,71 @@ public sealed class ClassDiagramSurface : ContentControl
     // hollow triangle at the base end, laid out in inheritance ranks (bases on top, derived below, arrows
     // pointing up). Capped to the most-connected DiagramMax types — a diagram of hundreds is a tangle, and
     // search narrows a large hierarchy into a readable one.
+    private void OnDiagramWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+    {
+        if (_scroller.Content is not Canvas) { return; }   // list mode scrolls normally
+
+        var mods = System.Windows.Input.Keyboard.Modifiers;
+        if ((mods & System.Windows.Input.ModifierKeys.Control) != 0)
+        {
+            // Ctrl/Cmd + wheel = zoom to the cursor.
+            var cursor = e.GetPosition(_scroller);
+            var oldScale = _zoom.ScaleX;
+            var newScale = DiagramZoom.NextScale(oldScale, e.Delta);
+            if (newScale != oldScale)
+            {
+                var oldH = _scroller.HorizontalOffset;
+                var oldV = _scroller.VerticalOffset;
+                _zoom.ScaleX = _zoom.ScaleY = newScale;
+                _scroller.UpdateLayout();   // recompute the scaled extent before re-anchoring
+                _scroller.ScrollToHorizontalOffset(DiagramZoom.Reanchor(oldScale, newScale, oldH, cursor.X));
+                _scroller.ScrollToVerticalOffset(DiagramZoom.Reanchor(oldScale, newScale, oldV, cursor.Y));
+            }
+
+            e.Handled = true;
+        }
+        else if ((mods & System.Windows.Input.ModifierKeys.Shift) != 0)
+        {
+            // Shift + wheel = horizontal scroll (the trackpad two-finger gesture already scrolls both
+            // axes on its own).
+            _scroller.ScrollToHorizontalOffset(_scroller.HorizontalOffset - e.Delta);
+            e.Handled = true;
+        }
+        // else: plain wheel keeps the ScrollViewer's default vertical scroll.
+    }
+
+    private void OnDiagramPanStart(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton != System.Windows.Input.MouseButton.Middle || _scroller.Content is not Canvas)
+        {
+            return;
+        }
+
+        _panning = true;
+        _panStart = e.GetPosition(_scroller);
+        _panH = _scroller.HorizontalOffset;
+        _panV = _scroller.VerticalOffset;
+        _scroller.CaptureMouse();
+        e.Handled = true;
+    }
+
+    private void OnDiagramPanMove(object sender, System.Windows.Input.MouseEventArgs e)
+    {
+        if (!_panning) { return; }
+
+        var p = e.GetPosition(_scroller);
+        _scroller.ScrollToHorizontalOffset(_panH - (p.X - _panStart.X));
+        _scroller.ScrollToVerticalOffset(_panV - (p.Y - _panStart.Y));
+    }
+
+    private void OnDiagramPanEnd(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (!_panning) { return; }
+
+        _panning = false;
+        _scroller.ReleaseMouseCapture();
+    }
+
     private void RenderDiagram(ClassHierarchy hierarchy, List<string> notes)
     {
         var gen = ++_renderGen;   // supersedes any in-flight member fills from an earlier render
@@ -372,6 +454,7 @@ public sealed class ClassDiagramSurface : ContentControl
             Width = pad * 2 + maxCols * (boxW + gapX) - gapX,
             Height = Math.Max(pad * 2, y - gapY + pad),
             Background = Brushes.Transparent,
+            LayoutTransform = _zoom,   // Phase D: zoom scales the canvas, so the scrollbars follow
         };
 
         // Connectors first, so the boxes paint over their endpoints.
@@ -405,6 +488,12 @@ public sealed class ClassDiagramSurface : ContentControl
             var r = rects[t.Id];
             Canvas.SetLeft(box, r.X);
             Canvas.SetTop(box, r.Y);
+            var id = t.Id;
+            box.MouseRightButtonUp += (_, ev) =>
+            {
+                NodeContextMenuRequested?.Invoke(this, new NodeContextMenuRequest(id, "class", false));
+                ev.Handled = true;
+            };
             canvas.Children.Add(box);
         }
 

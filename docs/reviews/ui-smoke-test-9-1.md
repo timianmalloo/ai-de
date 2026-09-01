@@ -158,7 +158,7 @@ state, not repeat five times.
 | **A ✅** | Source pane follows selection; no fake source | #1, #2, #3-source | App | landed |
 | **B ✅** | Legibility — de-opacitied muted text; content (context descriptions, join basis) promoted to full `TextBrush`, counts stay muted (ContextMapSurface + JoinSurface) | #7, #8 | App/UX | landed (provenance is XAML — follow-up) |
 | **C ✅** | `NodeViewMenu` — type-driven right-click "Open as source/class-diagram/sequence/metadata/reveal"; wired JS→CanvasSurface event→shell menu→actions | #5, #7-nav | App | landed (needs user functional verification) |
-| **D** | Class-diagram pan/zoom (mouse+trackpad) + method context menu | #6 | App | C |
+| **D ✅** | Class-diagram pan/zoom — wheel scrolls, Shift+wheel horizontal, Ctrl+wheel zoom-to-cursor, middle-drag pans; right-click a **type box** → `NodeViewMenu` "Open as…". Method-level right-click → sequence is unlocked by **E** | #6 | App | landed |
 | **E** | Wire `SequenceModel.Build` to Core `Interaction.cs`, entered from a method's "Open as sequence" | #14, #6-seq | App + Core | C, Core feed |
 | **F** | Investigate dock drag/close focus+visibility (new-pane min width, close→re-render, reveal new tab) | #4, #10, #11, #12, #3-focus | App | — |
 | **G** | Investigate terminal render/refresh (stale glyphs on cursor move) | #16 | App/Core | — |
@@ -172,6 +172,6 @@ analytical surface) and **C** (the contextual menu — the centerpiece the user 
 
 | | |
 |---|---|
-| **Completed** | Phases **A, B, C** landed — Source pane follows selection; legibility de-opacitied on contexts/joins; the `NodeViewMenu` contextual "Open as…" right-click on graph nodes (pure core + 7 tests, wired end-to-end) |
-| **Remaining** | Phase **D** (class-diagram pan/zoom — the user's requested "big area"), E (sequence wiring to Core `Interaction.cs`), F/G (docking + terminal-render investigations), H (sessions surface), provenance legibility (XAML) |
-| **Best next action** | **Checkpoint before D** (per the user — pan/zoom is its own big effort); then Phase E (sequence wiring) or the F/G investigations |
+| **Completed** | Phases **A, B, C, D** landed — source-follows-selection; contexts/joins legibility; the `NodeViewMenu` contextual "Open as…" on graph nodes; and class-diagram **pan/zoom** (wheel / Shift+wheel / Ctrl+wheel-to-cursor / middle-drag) + right-click type-box menu |
+| **Remaining** | Phase **E** (sequence wiring to Core `Interaction.cs` — also unlocks method-level right-click), F/G (docking + terminal-render investigations), H (sessions), provenance legibility (XAML) |
+| **Best next action** | Phase **E** (sequence data + method entry point) or the F/G investigations |
