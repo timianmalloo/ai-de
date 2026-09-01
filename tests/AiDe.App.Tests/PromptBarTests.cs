@@ -34,8 +34,10 @@ public sealed class PromptBarTests
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
         Assert.True(thread.Join(TimeSpan.FromSeconds(60)));
-        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
-
+        // No XunitException guard here: this harness already rethrows unwrapped, so a guard would
+        // be a line that can never fire. The bulk sweep added one because the FILE contained a
+        // wrapper string — in a fixture that throws a literal to simulate an error, not in the
+        // harness. Removed once the gate could tell the two apart.
         if (failure is not null) throw failure;
     }
 

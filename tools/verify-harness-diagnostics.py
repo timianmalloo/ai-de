@@ -54,11 +54,25 @@ TESTS = "tests"
 #
 # A fixture that throws to SIMULATE an error passes only string literals, so it does not match and is
 # none of this gate's business.
+# THE TYPE NAME MAY BE QUALIFIED. `\w*Exception` does not match `System.InvalidOperationException`,
+# and one real harness writes it that way — so the gate reported it clean while it wrapped. It was
+# safe only because a guard had been added there by hand, which is the worst way to be safe: the
+# check said nothing and the protection came from somewhere the check could not see.
+#
+# Found on the SECOND count reconciliation, after the first one fixed the variable-name narrowness
+# above. Two blind spots in one 60-character pattern, each invisible to the audit that found the
+# other, both located by a printed number disagreeing with an independent scan.
 WRAPS = re.compile(
-    r"throw new \w*Exception\([^;]*?,\s*([A-Za-z_]\w*)\s*\)\s*;",
+    r"throw new [\w.]*Exception\([^;]*?,\s*([A-Za-z_]\w*)\s*\)\s*;",
     re.DOTALL)
 
-GUARD = re.compile(r"is\s+(Xunit\.Sdk\.)?XunitException\s*\)?\s*throw")
+# The guard may be braced — `if (failure is XunitException) { throw failure; }` — which the first
+# version of this pattern rejected, reporting a correctly guarded file as unguarded. That is the
+# gentler failure direction (a false alarm gets investigated; a false clean does not), but it is the
+# third narrowness found in this one small script, each by a count disagreeing with a count. The
+# lesson is not "write better regexes": it is that a checker's window is itself a claim, and an
+# unexamined one.
+GUARD = re.compile(r"is\s+(Xunit\.Sdk\.)?XunitException\s*\)?\s*\{?\s*throw")
 
 
 def repo_root() -> Path:
@@ -141,6 +155,13 @@ def self_test() -> int:
             'if (failure is not null) throw new InvalidOperationException("STA work failed", failure);\n',
             encoding="utf-8")
 
+        # THE BRACED GUARD, which the first pattern rejected — a correctly guarded file reported as
+        # unguarded. Kept so the gate cannot narrow back into a false alarm.
+        (place / TESTS / "BracedGuardTests.cs").write_text(
+            "if (failure is Xunit.Sdk.XunitException) { throw failure; }\n"
+            'if (failure is not null) { throw new System.InvalidOperationException("x", failure); }\n',
+            encoding="utf-8")
+
         (place / TESTS / "UnguardedTests.cs").write_text(
             'if (failure is not null) throw new InvalidOperationException("STA work failed", failure);\n',
             encoding="utf-8")
@@ -151,6 +172,14 @@ def self_test() -> int:
         # narrow version missed is indistinguishable from one that changed nothing.
         (place / TESTS / "OtherNameTests.cs").write_text(
             'if (error is not null) throw new InvalidOperationException("STA work failed", error);\n',
+            encoding="utf-8")
+
+        # THE SECOND BLIND SPOT: a fully-qualified type name. `\w*Exception` does not match
+        # `System.InvalidOperationException`, and a real harness writes it that way — the gate
+        # called it clean while it wrapped.
+        (place / TESTS / "QualifiedTypeTests.cs").write_text(
+            'if (failure is not null) '
+            'throw new System.InvalidOperationException("STA work failed", failure);\n',
             encoding="utf-8")
 
         # A fixture that throws to SIMULATE an error, built from a literal. Must not be reported —
@@ -178,6 +207,18 @@ def self_test() -> int:
     if any("GuardedTests.cs" in p for p in problems):
         print("verify-harness-diagnostics: SELF-TEST FAILED — a guarded harness was reported, so the "
               "gate would be red on correct code.")
+        return 1
+
+    if any("BracedGuardTests.cs" in p for p in problems):
+        print("verify-harness-diagnostics: SELF-TEST FAILED — a BRACED guard was not recognised, so "
+              "a correctly guarded file is reported as unguarded. A false alarm is the gentler "
+              "direction, but it trains readers to ignore this gate.")
+        return 1
+
+    if not any("QualifiedTypeTests.cs" in p for p in problems):
+        print("verify-harness-diagnostics: SELF-TEST FAILED — a harness wrapping with a "
+              "FULLY-QUALIFIED exception type was not reported. That was this gate's second blind "
+              "spot: `\\w*Exception` does not match `System.InvalidOperationException`.")
         return 1
 
     if any("FixtureTests.cs" in p for p in problems):

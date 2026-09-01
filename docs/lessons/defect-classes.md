@@ -2548,6 +2548,20 @@ for both or split.*
   only one of those is comfortable. The pattern is now structural (a wrapper whose last argument is a
   bare identifier) and the self-test carries an `error`-named fixture, so the widening stays observed
   rather than asserted: the old pattern does not match it, the new one does.
+
+  **Then the gate's own printed count contradicted a number stated in prose, and found two more.**
+  The gate printed 17; a summary written the same hour said 19, having counted files *containing* the
+  guard rather than files that *needed* it. Reconciling the two exposed a second narrowness —
+  `\w*Exception` does not match `System.InvalidOperationException`, so a harness writing the
+  fully-qualified name was reported clean **while it wrapped**, safe only because a guard had been
+  added there by hand. That is the worst way to be safe: the check said nothing and the protection
+  came from somewhere the check could not see. Fixing it exposed a third, in the opposite direction —
+  the guard pattern rejected the braced form `) { throw failure; }` and called a correctly guarded
+  file unguarded. **Three narrowings in one sixty-character pattern**, each invisible to the audit
+  that found the previous one, every one located by a count disagreeing with a count and none by
+  reading. The corrected accounting is exact: 31 STA files = 18 wrapping + 12 plain rethrows + 1
+  whose caught exception is the test's own subject. The lesson is not *write better patterns*: **a
+  checker's window is itself a claim, and normally an unexamined one.**
 - **Control:** partial, and honestly so. `tools/verify-harness-diagnostics.py` (DC-078) closes the
   one divergence that caused a defect, which is the administrative fix: it stops this variant without
   removing the coin flip. **The systemic fix is to delete the choice** — one implementation in
