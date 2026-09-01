@@ -85,12 +85,6 @@ public sealed class BoundsReachTheSurfaceTests
             // reading has been wrong three times in one day. Every entry still needs a render
             // assertion to close — a verdict is a hypothesis until the tree is walked.
 
-            ["ContentSearchResult.Truncated/reported-fixed"] =
-                "Core reports this closed by the footer row at WorkbenchShell.cs:1280 (landed in " +
-                "bad3073). READ, NOT RENDERED. Close by asserting SearchSurface renders a " +
-                "distinguishable state when Truncated is true — the row names the skipped count, " +
-                "not the truncation.",
-
             ["EvidenceRead.Shortfall/global-and-transient"] =
                 "CORRECTION. This entry previously said the shortfall is announced and therefore " +
                 "'reaches assistive technology and nothing else'. That was wrong, and the wrong " +
@@ -105,11 +99,6 @@ public sealed class BoundsReachTheSurfaceTests
                 "KNOWN HOLE: this harness cannot check it. The status line lives in MainWindow, " +
                 "not in a surface, so it is outside the harvester's reach. Neither Core's reading " +
                 "nor this file settles whether it actually paints.",
-
-            ["JoinResult.Disclosures/reported-rendered"] =
-                "Core reports JoinSurface.cs:86,92 renders these. READ, NOT RENDERED. Close by " +
-                "constructing JoinSurface with a JoinResult carrying disclosures and asserting " +
-                "they appear in the tree.",
 
             ["KnowledgeNodeView.HealthFindings/dropped"] =
                 "CONFIRMED DROPPED by Core's call-site check: zero consumption sites in " +
@@ -248,6 +237,67 @@ public sealed class BoundsReachTheSurfaceTests
     }
 
     /// <summary>
+    /// <see cref="JoinResult.Disclosures"/> — "what could not be joined" — must reach the screen.
+    /// </summary>
+    /// <remarks>
+    /// Taken over from Core, whose verdict on this was a reading of JoinSurface.cs:86,92 and the
+    /// last item on either session's list still resting on one agent's word. This harness reaches
+    /// JoinSurface and Core's does not, so it was cheaper here.
+    /// <para>
+    /// Both directions are asserted. A disclosure list that renders is only half the claim: the
+    /// surface must also say plainly that nothing was withheld when nothing was, because a
+    /// "what could not be joined" heading over silence reads as an empty section rather than as
+    /// an answer — the same reasoning as Core's <c>ACompleteSearchPutsNoCaveatOnScreen</c>.
+    /// </para>
+    /// </remarks>
+    [Fact]
+    public void JoinSurface_RendersWhatCouldNotBeJoined_AndSaysSoWhenNothingWas()
+    {
+        OnSta(() =>
+        {
+            var edge = new AiDe.Core.Projections.JoinEdge(
+                "Orders", "dbo.Orders", "maps-to",
+                AiDe.Core.Facts.VerificationStatus.Verified, "EF model");
+
+            // With a disclosure: the code must be on screen. Asserted on the CODE, not on the
+            // prose, because JoinSurface.Explain() expands known codes into a sentence and passes
+            // unknown ones through — so the code is the stable part and the prose is not.
+            var withDisclosure = new JoinSurface("Joins")
+            {
+                Source = () => new AiDe.Core.Projections.JoinResult(
+                    [edge], ["sql-resource-name-unresolved"], 1, 0),
+            };
+            withDisclosure.Refresh();
+            var rendered = RenderedText(withDisclosure);
+
+            Assert.True(rendered.Contains("sql-resource-name-unresolved", System.StringComparison.Ordinal),
+                "JoinSurface was given a disclosure and did not render it. 'What could not be "
+                + "joined' is the section that stops a join list reading as complete.\n"
+                + RenderedForMessage(rendered));
+
+            // Not vacuous: the surface really did render its content, so the assertion above was
+            // about a disclosure being present rather than about an empty tree.
+            Assert.True(rendered.Contains("Orders", System.StringComparison.Ordinal),
+                "The surface rendered no edges either, so the disclosure assertion proved nothing "
+                + "(R4).\n" + RenderedForMessage(rendered));
+
+            // Without one: the absence must be stated, not left as an empty heading.
+            var clean = new JoinSurface("Joins")
+            {
+                Source = () => new AiDe.Core.Projections.JoinResult([edge], [], 1, 0),
+            };
+            clean.Refresh();
+            var cleanRendered = RenderedText(clean);
+
+            Assert.True(cleanRendered.Contains("Nothing was withheld", System.StringComparison.Ordinal),
+                "Nothing was withheld and the surface did not say so. A 'what could not be joined' "
+                + "heading over silence reads as an unfinished section, which is the same defect "
+                + "as an unfired caveat reached from the other side.\n"
+                + RenderedForMessage(cleanRendered));
+        });
+    }
+
+    /// <summary>
     /// The harness proves it can fail, on a surface planted to fail it.
     /// </summary>
     /// <remarks>
@@ -299,6 +349,9 @@ public sealed class BoundsReachTheSurfaceTests
             // rendered and asserted above
             "FindMatch.Evidence",
             "ContentSearchResult.FilesSkipped",
+            "ContentSearchResult.Truncated",   // SearchProviderBoundTests.AFiredMatchCapIsSaidOutLoud
+                                              // + SearchBoundEndToEndTests.AFiredCapIsOnScreenToo (Core)
+            "JoinResult.Disclosures",          // asserted below, mutation-tested
             // rendered by surfaces outside this file's subject, verified by reading the render site
             "NodeContent.Shortfall",            // CodeViewerView.cs:96-98
             "ContextMapView.IsDeclared",        // ContextMapSurface.cs:77
