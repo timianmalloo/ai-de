@@ -6,6 +6,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace AiDe.App.Workbench;
 
@@ -27,6 +28,7 @@ public sealed class SearchSurface : ContentControl, IHasDisplayName
     private readonly TextBox _query;
     private readonly TextBlock _status;
     private readonly StackPanel _results;
+    private readonly DispatcherTimer _debounce;
 
     private int _resultCount;
     private int _generation;
@@ -60,7 +62,21 @@ public sealed class SearchSurface : ContentControl, IHasDisplayName
         AutomationProperties.SetName(_query, "Search the workspace");
         _query.SetResourceReference(BackgroundProperty, "SunkenBrush");
         _query.SetResourceReference(ForegroundProperty, "TextBrush");
-        _query.TextChanged += async (_, _) => await SearchAsync(_query.Text);
+
+        // Debounced, not per-keystroke: the provider opens workspace files for the content half of the
+        // search (Core's guidance — cheap node lookup is fine on a keystroke, the file read is not), so
+        // the query runs once typing pauses rather than on every character.
+        _debounce = new DispatcherTimer { Interval = System.TimeSpan.FromMilliseconds(300) };
+        _debounce.Tick += async (_, _) =>
+        {
+            _debounce.Stop();
+            await SearchAsync(_query.Text);
+        };
+        _query.TextChanged += (_, _) =>
+        {
+            _debounce.Stop();
+            _debounce.Start();
+        };
         DockPanel.SetDock(_query, Dock.Top);
         root.Children.Add(_query);
 

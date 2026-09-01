@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T04:49:08Z",
+  "generated": "2026-09-01T12:58:46Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6977,6 +6977,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/SearchSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0346",
+      "shortname": "wire-search-provider-to-core",
+      "datetime": "2026-09-01T12:58:46Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "do the next steps",
+      "summary": "Wired SearchSurface to Core's shipped search: SearchWorkspaceAsync composes FindAsync (node/attribute, member via has_member evidence) + SearchContentAsync (file hits carrying NodeId) per session-contracts §4r; provider passed to factory at both construction sites; added 300ms debounce on the surface (content search opens files); OnActivate navigates via canvas RefreshAsync(nodeId) mirroring join-endpoint selection. App 251 green; smoke passed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
       ],
       "tags": [],
       "outcome": "success"

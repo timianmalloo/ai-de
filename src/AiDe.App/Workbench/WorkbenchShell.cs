@@ -104,7 +104,8 @@ public sealed class WorkbenchShell : IDisposable
         var watcher = StartWatcher(workspaceDataDirectory);
 
         _factory = new SurfaceContentFactory(
-            queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes);
+            queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
+            queries is not null ? SearchWorkspaceAsync : null);
         Manager = new DockingManager();
         AutomationProperties.SetName(Manager, "Workbench");
 
@@ -433,7 +434,8 @@ public sealed class WorkbenchShell : IDisposable
         // "not available" even after a workspace opened.
         var watcher = StartWatcher(dataDirectory);
         _factory = new SurfaceContentFactory(
-            queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes);
+            queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
+            SearchWorkspaceAsync);
 
         // The watcher read panes may already have been realized (at construction) against a factory with
         // no watcher queries - showing "not available". Mark them to rebuild on the next Render so they
@@ -727,6 +729,9 @@ public sealed class WorkbenchShell : IDisposable
 
         // Code viewers show node source (a labelled sample until Core's content query ships).
         BindCodeViewers();
+
+        // Search surfaces navigate a hit into the graph; (re)bind the activation hand-off.
+        BindSearchSurfaces();
     }
 
     // A rename lives on the surface (reconcile keeps it alive); re-render so the tab caption, which
@@ -1176,6 +1181,7 @@ public sealed class WorkbenchShell : IDisposable
         BindClassDiagrams();
         BindCodeViewers();
         BindDiagnostics();
+        BindSearchSurfaces();
         BindTerminalAttention();
 
         return result.Applied ? okMessage : result.Announcement;
@@ -1225,6 +1231,81 @@ public sealed class WorkbenchShell : IDisposable
 
         Service.Apply(new LayoutOperation.SetStackState(stackId, StackState.Docked));
         Adapter.Render();
+    }
+
+    // The breadth-search provider (app-search-breadth), wired to the two Core queries that shipped for
+    // it: FindAsync (cheap node/attribute lookup, safe on a keystroke) and SearchContentAsync (the file-
+    // content half, behind the surface's debounce). The mapping is Core's (session-contracts §4r): a
+    // member match is an attribute hit whose evidence starts "has_member"; a file hit carries the NodeId
+    // of the node it belongs to, so activation navigates to a node, never a raw path (DC-022).
+    private async Task<IReadOnlyList<SearchResult>> SearchWorkspaceAsync(string term)
+    {
+        var q = _queries;
+        if (q is null) { return new List<SearchResult>(); }
+
+        var found = await q.FindAsync(term, 50, CancellationToken.None);
+        var results = found.Matches.Select(m => new SearchResult(
+            m.NodeId,
+            m.MatchedOn == AiDe.Core.Store.NodeMatchKind.Attribute
+                && m.Evidence?.StartsWith("has_member", StringComparison.Ordinal) == true
+                    ? SearchResultKind.Member
+                    : m.NodeKind.Contains("class", StringComparison.OrdinalIgnoreCase)
+                      || m.NodeKind.Contains("interface", StringComparison.OrdinalIgnoreCase)
+                        ? SearchResultKind.Type
+                        : SearchResultKind.Node,
+            m.DisplayLabel,
+            m.Evidence ?? string.Empty)).ToList();
+
+        var content = await q.SearchContentAsync(term, 50, CancellationToken.None);
+        results.AddRange(content.Matches.Select(c => new SearchResult(
+            c.NodeId,
+            SearchResultKind.File,
+            $"{c.RelativePath}:{c.Line}",
+            c.Text)));
+
+        return results;
+    }
+
+    /// <summary>Wires each open search surface's activation to graph navigation (idempotent per surface).</summary>
+    internal void BindSearchSurfaces()
+    {
+        var surfaces = Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => s.Kind == "search")
+            .Select(s => Adapter.SurfaceContent<SearchSurface>(s.SurfaceId))
+            .OfType<SearchSurface>()
+            .ToList();
+
+        foreach (var surface in surfaces)
+        {
+            surface.OnActivate ??= OnSearchResultActivated;   // set once — avoids rebinding on every render
+        }
+    }
+
+    // A search hit is a place in the graph: centre the canvas on the hit's node, exactly as selecting a
+    // join endpoint does. A file hit carries the NodeId of its file's node, so this works for every kind.
+    private void OnSearchResultActivated(SearchResult hit)
+    {
+        var canvas = Service.Current.AllStacks()
+            .SelectMany(stack => stack.Surfaces)
+            .Select(surface => Adapter.ContentFor(surface.SurfaceId))
+            .OfType<CanvasSurface>()
+            .FirstOrDefault();
+
+        if (canvas is null)
+        {
+            Announcer.Announce($"Selected {hit.Label}. Open the graph to navigate to it.");
+            return;
+        }
+
+        if (_canvasGraph?.ContextFilter is not null)
+        {
+            _canvasGraph.ContextFilter = null;
+            Announcer.Announce("Graph filter cleared.");
+        }
+
+        Announcer.Announce($"Graph centred on {hit.Label}.");
+        _ = canvas.RefreshAsync(hit.Id);
     }
 
     internal void BindClassDiagrams()
