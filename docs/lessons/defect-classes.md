@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 38 · partially-controlled 31 · uncontrolled 1
+**Status counts:** controlled 40 · partially-controlled 31 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1911,7 +1911,7 @@ for both or split.*
   `ZoneLayoutServiceTests.MovePane_ChangesOnlySourceAndDestination_OtherZonesReferenceIdentical`;
   **view (end-to-end through AvalonDock)** —
   `ZoneWorkbenchAdapterTests.MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface`.
-- **Status:** controlled — zone model shipped and wired into the shell; containment proven at the
+- **Status:** `controlled` — zone model shipped and wired into the shell; containment proven at the
   model and the rendered view.
 
 ### DC-064 — A deterministic test double produces colliding output across instances
@@ -1959,6 +1959,23 @@ for both or split.*
   polluted a machine-global counter, and an ordinary load-induced-then-lock-resolved redundant launch
   (harmless in production) could false-fail it. The counter measured the machine; the invariant is per
   workspace.
+
+  2026-08-31 (**a sibling the first sweep missed**) —
+  `DaemonProcessTests.AfterTheFirstDaemonExits_AnotherCanTakeTheWorkspace` failed under
+  `verify-test-run` (both projects together, 1,496 tests): the daemon started with
+  `--startup-seconds 2` exited **-1** where the test asserts exactly 0, and the identical run
+  immediately afterwards passed. Not introduced by the change in flight — that change touches
+  extractors, tools and docs and no daemon code — and it passes in a solution-wide `dotnet test`,
+  so the trigger is the heavier concurrent run.
+
+  **The class was registered and its first instance fixed, but the sweep stopped at that one test.**
+  `DaemonProcessTests` carries at least two more assertions of the same shape
+  (`ADaemonNobodyConnectsTo_ExitsOnItsOwn`, `ADaemonWhoseClientLeaves_ExitsAfterTheIdleGrace`), each
+  pinning an exact exit code from a process whose shutdown races the suite. `class → sweep → derive
+  → prevent` (CI1) makes the sweep part of the fix — this is the register's own rule not being
+  applied to the register's own entry. The open question is what these tests may legitimately assert
+  about a process exit under load: "exited within its grace" is a product claim, "exited with
+  exactly 0" is a claim about scheduling.
 - **Control:** the reuse test now proves the **workspace-scoped** invariant deterministically — one
   logical daemon (one store, one **epoch**) per workspace, enforced by `WorkspaceLock`: (1) a
   **readiness barrier** (`await first.FindAsync(...)`) gates on an *observed answer*, not a delay, so
@@ -2083,3 +2100,42 @@ for both or split.*
   was rewritten with a `guid(...)` whose arguments all fold, so the refusal it names is the refusal
   it tests.
 - **Status:** `controlled`
+
+### DC-071 — A generated artifact records the environment that produced it
+
+- **Shape:** a generator stamps a derived file with something true of **where it ran** rather than
+  of **what it describes** — the working directory's name, the host, the user, an absolute path.
+  Every producer then produces a different artifact from identical inputs, so the file is no longer
+  a function of its sources and cannot be compared with itself.
+- **Signature:** a generated file whose diff, on a run that changed nothing, contains a value that
+  names a *place*. The tell in code is a fallback of the form
+  `os.path.basename(os.path.abspath(...))` reached when the real identity is unavailable — a
+  last-resort that is silently correct in the single-checkout case the author was in, and silently
+  wrong everywhere else. In a repository using worktrees the directory is the **worktree's** name,
+  never the repository's.
+- **Why it survives:** it is invisible from inside one checkout, which is where it is written and
+  tested. It only appears when two producers regenerate the same file, and then it presents as a
+  merge nuisance — a line that flips back and forth — which reads as somebody's mistake rather than
+  as non-determinism. Nothing fails: the artifact is well-formed and self-consistent every time.
+- **Instance:** 2026-08-31 — `audit-log.py render` stamped `"project"` from the directory two
+  levels above `docs/`. On `main` the value oscillated between `ai-de-facelift` and
+  `ai-de-session-phase3-pane-probes` depending on which session last regenerated, and carried into
+  `docs/audit/index.html`'s `<title>`. `docs-graph.py` was half-immune — it re-read the value out of
+  the existing `docs-index.js` — but its own fallback had the same shape, so a fresh clone in a
+  differently-named directory would have set it and every later run inherited it.
+
+  **The cost was not cosmetic.** The project name feeds `graphSha256`, so the graph hash differed
+  per worktree too, and any comparison keyed on it was meaningless. It also came within one commit
+  of neutering `verify-derived-views` (DC-060's control, shipped the same day): that gate fails when
+  a derived view does not match its generator, and this defect made a *correct* view fail on any
+  machine but the last one to write it. **A non-deterministic generator does not just corrupt its
+  output, it disarms every control that reads it.**
+- **Control:** identity comes from the **origin URL** — the same string in every worktree, on every
+  machine, permanently — and only then from the directory. Deliberately *not* "keep whatever value
+  is already recorded": that is stable only until two producers disagree, at which point it is
+  first-writer-wins with a diff every time the loser regenerates, which is the defect wearing a
+  hat. The executable guard is `verify-derived-views.py`, which now passes across worktrees for the
+  first time. **Observed failing 2026-08-31** on `main`: both derived views reported stale, with the
+  only substantive difference being the project name.
+- **Status:** `controlled`
+

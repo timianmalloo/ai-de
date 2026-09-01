@@ -210,20 +210,31 @@ def number(identifier: str) -> int | None:
     return int(match.group(1)) if match else None
 
 
-def check_family(root: Path, family: dict) -> list[str]:
+def check_family(
+    root: Path, family: dict, inherited: set[str] | None = None,
+) -> tuple[list[str], list[str]]:
+    """Duplicates and holes in one tree. Returns (failures, notes).
+
+    A duplicate the TRUNK already carries is a note, not a failure. It is real and it is reported
+    in full every run — but no feature branch introduced it, and failing every branch's build for
+    it teaches a whole team that this gate is somebody else's problem, which is how a control stops
+    being read. The same scoping the cross-branch half uses: tell the person who can act. `main`'s
+    own build still fails, which is where the defect lives.
+    """
     problems: list[str] = []
+    notes: list[str] = []
     found, error = ids_in_family(root, family)
 
     if error:
-        return [error]
+        return [error], notes
 
     if not found:
-        return [f"{family['path']} allocates no {family['what']} — is the family still real?"]
+        return [f"{family['path']} allocates no {family['what']} — is the family still real?"], notes
 
     # 1. No id handed out twice. THE defect this file is named for.
     for identifier, count in sorted(Counter(found).items()):
         if count > 1:
-            problems.append(
+            (notes if inherited and identifier in inherited else problems).append(
                 f"{family['prefix']}: {identifier} is claimed by {count} {family['what']} "
                 f"in {family['path']} — two trees allocated it independently (DC-013)")
 
@@ -243,7 +254,48 @@ def check_family(root: Path, family: dict) -> list[str]:
                 f"{family['prefix']}: the sequence has {len(missing)} hole(s) in "
                 f"{family['path']} — {shown}{more}")
 
-    return problems
+    return problems, notes
+
+
+def duplicates_on(root: Path, family: dict, trunk: str) -> set[str]:
+    """The ids the trunk itself already claims twice — a condition, not a regression."""
+    resolved = resolve_trunk(root, trunk)
+
+    if resolved is None:
+        return set()
+
+    seen = signatures_at(root, family, resolved)
+
+    if seen is None:
+        return set()
+
+    # signatures_at() is a dict, so it cannot count duplicates. Ask the tree directly.
+    if family["kind"] == "filename":
+        listing = _git(root, ["ls-tree", "--name-only", f"{resolved}:{family['path']}"]) or ""
+        numbers = [
+            f"{family['prefix']}-{m.group(1)}"
+            for m in (re.match(family["pattern"], n) for n in listing.splitlines()) if m]
+    else:
+        text = _git(root, ["show", f"{resolved}:{family['path']}"]) or ""
+
+        if family["kind"] == "jsonl":
+            numbers = []
+            for line in text.splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entry = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                value = entry.get(family["field"])
+                if isinstance(value, str) and value:
+                    numbers.append(value)
+        else:
+            numbers = [m.group(1) for m in
+                       (re.match(family["pattern"], line) for line in text.splitlines()) if m]
+
+    return {identifier for identifier, count in Counter(numbers).items() if count > 1}
 
 
 def undeclared_families(root: Path, declared: set[str]) -> list[str]:
@@ -575,17 +627,30 @@ def main() -> int:
 
     problems: list[str] = []
 
+    notes: list[str] = []
+
+    # On the trunk itself nothing is "inherited" — the buck stops here, and main's own build is
+    # exactly where a duplicate already on main should be failing. Without this the downgrade would
+    # apply everywhere and the defect would be a note nobody's build ever refuses.
+    on_trunk = args.trunk.split("/")[-1] in current_branch(root)
+
     for family in FAMILIES:
-        problems.extend(check_family(root, family))
+        inherited = (set() if args.this_tree_only or on_trunk
+                     else duplicates_on(root, family, args.trunk))
+        failures, inherited_notes = check_family(root, family, inherited)
+        problems.extend(failures)
+        notes.extend(
+            n + f" — already on {args.trunk}, so no branch introduced it; it is reported here "
+                "and fails main's own build"
+            for n in inherited_notes)
 
     problems.extend(undeclared_families(root, {f["prefix"].lower() for f in FAMILIES}))
 
-    notes: list[str] = []
-
     if not args.this_tree_only:
-        found, notes = across_refs(
+        found, cross_notes = across_refs(
             root, FAMILIES, args.trunk, current_branch(root))
         problems.extend(found)
+        notes.extend(cross_notes)
 
     # Printed whether or not this run fails, and BEFORE the verdict. A collision between two other
     # branches is real, is not this branch's to fix, and must still be visible to whoever is
@@ -662,7 +727,7 @@ def self_test_across_refs(root: Path) -> int:
         subprocess.run(["git", "checkout", "-q", "-b", "session-b"], cwd=place, capture_output=True)
         commit("### DC-001 - the one they already share\n### DC-002 - a status line has no cap\n", "b")
 
-        single_tree = check_family(place, family)
+        single_tree, _ = check_family(place, family)
 
         # On session-b's own checkout the collision is session-b's to fix, so it must FAIL.
         mine, _ = across_refs(place, [family], "main", {"session-b"})
@@ -724,7 +789,7 @@ def self_test(root: Path) -> int:
             '{"id": "zz-0005"}\n',  # the hole a lost merge would leave
             encoding="utf-8")
 
-        problems = check_family(Path(directory), family)
+        problems, _ = check_family(Path(directory), family)
 
     duplicate = any("claimed by 2" in p for p in problems)
     hole = any("hole" in p for p in problems)

@@ -209,8 +209,25 @@ public sealed class WorkbenchShellTests
                 return stack.Children.OfType<TextBlock>().Last().Text;
             });
 
+            // The claim is the one in this test's NAME: the pane is LIVE rather than "not available".
+            //
+            // It used to also assert "No sessions observed" — the absence of any session — and that is
+            // a race the test cannot reliably win, because `StartWatcher` calls `CreateEmitter()` and
+            // the shell REGISTERS ITSELF. The pump runs on `Task.Run`, so alone the assertion usually
+            // beats the registration, and under load it does not: running both test projects together
+            // made it read "1 session(s) — 1 alive" and fail. Nothing was shared between assemblies —
+            // the data directory is a fresh GUID temp dir — the shell simply observed its own session.
+            //
+            // So assert what is actually true and load-bearing: the pane is wired, and it renders a
+            // real session status. Pinning the count to zero asserted that the product does NOT do
+            // something it is supposed to do.
             Assert.DoesNotContain("not available", status, StringComparison.OrdinalIgnoreCase);
-            Assert.Contains("No sessions observed", status, StringComparison.OrdinalIgnoreCase);
+
+            Assert.True(
+                status.Contains("No sessions observed", StringComparison.OrdinalIgnoreCase)
+                || status.Contains("session(s)", StringComparison.OrdinalIgnoreCase),
+                "the Sessions pane is wired but rendered neither its empty state nor a session "
+                + $"count: {status}");
         }
         finally
         {

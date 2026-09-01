@@ -925,6 +925,15 @@ one the no-guessing rule exists for. **Only the author of each citation knows wh
 3. Run `python tools/verify-id-allocators.py` — it now reads the branch you are on from **disk**, so
    it will confirm before you commit rather than after.
 
-Until step 2 lands, `verify-id-allocators` is **red on main** for this reason and this reason only.
-It is a true finding about a real ambiguity, not a flaky gate; Core has left it failing rather than
-narrowing the check to hide it.
+**This does not block your branch.** A duplicate the trunk already carries is reported as a
+**note** on a feature branch and fails only **main's own build** — the same scoping the
+cross-branch half uses, because no feature branch introduced this and failing everyone's build for
+it is how a gate becomes something people route around. The note prints in full on every run, so it
+is not hidden; it is addressed to whoever can act.
+
+Measured, so nobody has to take the ambiguity claim on trust: **201 citations** of
+`ADR-0017`–`ADR-0020` across `docs/`, `src/` and `tests/`. `EgressGate.cs` says *"ADR-0018, extends
+ADR-0011"* meaning credential-backed egress; `NodeContent.cs` says *"ADR-0018"* meaning the reader
+contract. Same string, same number, different decisions. The frontmatter `id:` is already
+unambiguous (`adr-0018-node-content-reader-contract`), so **the graph is fine** — it is the human
+label and the filename prefix that collide.
