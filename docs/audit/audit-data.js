@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-09-01T02:42:29Z",
+  "generated": "2026-09-01T02:45:13Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6653,6 +6653,25 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Workbench/ZoneLayout.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0329",
+      "shortname": "land-richer-signals-main",
+      "datetime": "2026-09-01T02:45:13Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do tasks 2-4",
+      "summary": "Forward-integrated origin/main (merge-3, 4 generated/append conflicts) and pushed richer-signals telemetry (t3) + advisory-evaluator seam (t4) to main a5c7cf3..92051b7; Core 1262/0, App 220/0 green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DeterministicSignalsDeriver.cs",
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "docs/design/watcher-signals-telemetry.md"
       ],
       "tags": [],
       "outcome": "success"
