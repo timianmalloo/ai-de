@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T19:38:48Z",
+  "generated": "2026-09-01T19:40:18Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3415,7 +3415,7 @@ window.DOCS_INDEX = {
       "phase": "3",
       "reviewBy": "2026-12-01",
       "reviewSuggested": [],
-      "summary": "Spec for rendering DESIGN.md §4a's count.lower-bound on the canvas category chips, from a live measured instance: the Knowledge chip reads 257 against 878 declared. Covers the visible text, the accessible name — which today repeats the same false completeness claim and would be left wrong by a visual-only fix — the tooltip, and the unknown-total case. Implementation is Design's; this is the spec and the exact change.",
+      "summary": "Spec for rendering DESIGN.md §4a's count.lower-bound on the canvas category chips, from a live measured instance: the Knowledge chip reads 257 against 878 declared. Covers the visible text, the accessible name — which today repeats the same false completeness claim and would be left wrong by a visual-only fix — the tooltip, and what an absent total means (a positive claim that the view's counts are exact, not a fallback). Implementation is Design's; this is the spec and the exact change.",
       "tags": [
         "ui",
         "ux",
@@ -3435,7 +3435,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c3cb936cf39e54b2b2067f1c90a9b994b3eca8bc0847023641e147e3fd373146"
+      "sourceSha256": "2bac1a5909ea830ac927bcc96331d68c2354106d48ec904a498373597adeda12"
     },
     {
       "id": "audit-log",
@@ -9785,5 +9785,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "47ed43e475b2c063231b954d3a624bdb652382477e2f6c0013a43deaad6fa900"
+  "graphSha256": "120f2ebffa277f4281c2d05a8cc96ec234fc70970474833bc492925c9c45d349"
 };

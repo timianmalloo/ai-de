@@ -15,7 +15,7 @@ summary: >-
   Spec for rendering DESIGN.md §4a's count.lower-bound on the canvas category chips, from a live
   measured instance: the Knowledge chip reads 257 against 878 declared. Covers the visible text, the
   accessible name — which today repeats the same false completeness claim and would be left wrong by
-  a visual-only fix — the tooltip, and the unknown-total case. Implementation is Design's; this is
+  a visual-only fix — the tooltip, and what an absent total means (a positive claim that the view's counts are exact, not a fallback). Implementation is Design's; this is
   the spec and the exact change.
 ---
 
@@ -82,48 +82,53 @@ assertion about it would pass.
 |---|---|---|
 | drawn **<** declared | `Knowledge 257 of 878` | The ratio is strictly more informative than `≥ 257`, and it is available here. §4a's `≥ N` is the shape for a bound whose total is *unknown*; when the total is known, show it |
 | drawn **=** declared | `Knowledge 878` | An exact count must stay visually plain, or the reader learns to ignore the qualifier — the same reasoning as Core's `ACompleteSearchPutsNoCaveatOnScreen` |
-| total **unavailable** | `Knowledge ≥ 257` + `capped` chip | §4a's literal form. **Keep it — see §3.1a, this is the majority case today, not a legacy one** |
+| total **absent** | `Knowledge 257` — plain | **Absent is a positive claim: the count is exact for this view.** Not a ratio, and not `≥ N` — see §3.1a |
 | zero drawn, some declared | `Knowledge 0 of 878` | **Not** hidden. A category the filter bar offers, showing nothing, with no explanation, is the defect the disclosure work exists to prevent |
 
-### 3.1a Keep the `≥ N` fallback — and not for the reason it was offered
+### 3.1a What a missing total means — corrected twice, and the second correction changes the rule
 
-Core replaced `KnowledgeDeclared` with `DeclaredByKind` covering all 29 kinds, and asked whether the
-`≥ N` fallback could now be dropped, suggesting it might still be worth keeping for stores written
-before the field existed.
+**First version of this section said the overview is the canvas's default view and ships no
+denominators. That was wrong.** Verified after Core challenged it: `WorkbenchShell.LoadRouted`
+(`:1011-1025`) reaches `OverviewAsync` only when the root is the explicit `GroupedOverviewRoot`
+sentinel, and `GroupAsync` only on the group prefix. **A null `rootId` falls through to
+`LoadAsync`** — the whole graph, site `:169`, the one site that already carried totals. The default
+view had its denominator all along. The finding stands; the urgency did not.
 
-**Checked rather than answered: the fallback is not a legacy concern, it is the majority case
-today.** `CanvasGraphViewModel` constructs `CanvasGraph` at **nine** sites. Exactly **one** passes
-`DeclaredByKind`:
+**Second correction, and it changes the instruction rather than a fact.** This section originally
+specced a missing total as *"no total available — distinguish it from zero"*. Having gone site by
+site, Core established that is not what it means:
 
-| Site | View | Totals |
+> **A missing total is a positive claim: the counts in this view are EXACT.**
+
+Only a view that **samples the workspace under a cap** has a workspace-wide denominator. A focused
+node's neighbourhood, one group's members, a route between two nodes — **each *is* its result**.
+Nothing was withheld, so `12 of 870` would be a false statement about them rather than a helpful
+one. The overview is absent for a third reason again: its counts are **clusters**, and a node
+denominator beside a group count compares two different things and would read as though groups were
+missing.
+
+**So the rule is the opposite of a fallback:**
+
+| Total | Render | Because |
 |---|---|---|
-| `:169` | the rooted/whole graph | **yes** |
-| `:267` | focused view (`DescribeAsync`) | no |
-| `:344` | **the overview — the canvas's default view** | no |
-| `:404` | group drill-down | no |
-| `:522` | route result | no |
-| `:389`, `:449`, `:454`, `:466` | empty and error states | no — correctly, there are no chips to qualify |
+| present, drawn < total | `Knowledge 257 of 878` | the view sampled, and the reader needs the denominator |
+| present, drawn = total | `Knowledge 878` | exact, and a qualifier that never fires teaches readers to skip qualifiers |
+| **absent** | `Knowledge 257` — **plain** | **the count is exact for this view.** Not a ratio, and *not* `≥ N` |
+| genuinely unknown | `Knowledge ≥ 257` + `capped` chip | a store written before the field existed — the only surviving case |
 
-So **four of the five populated views ship no denominators right now**, including the one a user
-sees first. The field is declared `IReadOnlyList<GraphKindTotal>? = null`, so those sites compile
-and return `null` silently.
+`≥ N` therefore covers almost nothing after Core's change, which is the correct outcome: it was
+carrying two meanings (*"sampled but I can't tell you by how much"* and *"exact"*) and only the
+first was ever real.
 
-**Therefore:**
-
-1. **The fallback stays.** Dropping it would render the default view's chips with no qualifier at
-   all — the exact false-completeness claim this spec exists to remove, reintroduced on the most
-   visited surface.
-2. **The four populated sites want wiring** (`:267`, `:344`, `:404`, `:522`). Core's file, Core's
-   call; raised, not taken.
-3. Until they are, the chip must **distinguish "no total available" from "total is zero"**. A
-   missing map renders `≥ N`; a present map with no entry for a category genuinely means zero
-   declared, and renders `0 of 0` only if the category is shown at all.
-
-**This is the fourth partial-sweep of the day**, and the sharpest, because it is inside the field
-added specifically to fix a partial-visibility problem: a nullable parameter with a default makes
-every un-updated call site compile and return nothing, which is the same shape as a hand-listed set
-— *the sites I remembered* — with the compiler unable to help. §8.10's pair applies directly: the
-class was swept for readers and not for writers.
+**The count was eleven, not nine, and the compiler found the difference.** Core took the
+derive-over-list suggestion by removing the `= null` default, and the compiler enumerated every
+construction site: the nine in `CanvasGraphViewModel` plus one in `CanvasSurface.cs:93` and one in
+the canvas probe — **two files neither of us thought to enumerate, because we each enumerated the
+file we were thinking about.** A careful manual count was 18% short. That is the argument for
+deriving over listing made *by* the enumeration rather than about it, and it is the fourth partial
+sweep of the day and the first whose fix is structural: **a compiler cannot forget a site.** Each
+site now carries its decision in a comment, so the next person adding a view has to answer the
+question rather than accidentally not answer it.
 
 The `of 878` half carries `count.lower-bound`'s treatment — `{typography.mono}` and the muted
 foreground already used for `.fchip[aria-pressed="false"]` — so the drawn number stays the primary
