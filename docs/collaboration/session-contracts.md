@@ -1364,6 +1364,30 @@ Two members of one family:
 |---|---|---|
 | **The bound was dropped** | the surface asked, got the answer and its qualifier, and rendered only the answer | the nine in §8.3, plus the sequence-diagram message cap |
 | **The payload was never asked for** | the surface never called the query at all, and its stand-in still looked right | DC-073 |
+| **The field was dropped in transit** | the producer published it, an intermediate mapping silently narrowed the contract, and the surface never had the chance to render it | `GraphNode.IsKnowledge` → dropped at the `CanvasNode` boundary (Design, `f18221f`) |
+
+**The third member arrived while this section was being written, and it breaks the control proposed
+above.** Design's investigation `f18221f` root-caused the Knowledge chip reading 0 *again*: Core
+widened `GraphNode` with an authoritative `IsKnowledge` flag to end exactly this, and the App still
+categorises by spelling the fine kind string — because the flag is dropped at the `CanvasNode`
+boundary (`CanvasGraphViewModel.cs:20/156`) and never reaches the surface. The surface then guesses
+from a fixed list that cannot match a repository whose knowledge kinds are
+`spec` / `investigation` / `glossary`.
+
+**Why it matters to §8.3:** the behavioural harness hands a payload **to a surface** and reads the
+rendered tree. It would pass a surface that renders everything it was given — while the field was
+lost one layer upstream. The harness tests the last boundary; this member fails at an earlier one.
+Design's own words for it are the right ones: *"a regression against a landed cross-session
+contract — Core widened `GraphNode`; the App never consumed it."*
+
+**The third control this implies**, and it is cheap: for each producer→client record pair
+(`GraphNode` → `CanvasNode`, `FindMatch` → the search row's model, and the rest), assert every field
+on the producer either **reaches** the client record or is **listed as intentionally dropped**. Same
+forcing-function shape as `verify-standins.py`: not a ban, a list where the unasked question gets
+asked. It fails today on `IsKnowledge`, which is how we would know it works.
+
+So the family needs **three** controls, not two — surface, harness, and now boundary — because it
+has three ways to lose the truth and each hides from the other two's test.
 
 Neither is caught by a test of the layer below, because that layer is correct in both. Both are
 caught by the §8.3 harness, which is the argument for building it once rather than twice: a harness
