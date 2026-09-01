@@ -85,6 +85,24 @@ def check(root: Path) -> tuple[list[str], int]:
     problems: list[str] = []
     harnesses = 0
 
+    # THE SECOND DENOMINATOR, and the reason this gate reconciles instead of just counting.
+    #
+    # Two scans of one corpus with the same pattern family are ONE scan. A gate printing 17 and an
+    # "independent" scan printing 17 agreed here for four hours because both used `\w*Exception`, and
+    # neither could see `System.InvalidOperationException` — in the one file that was hand-guarded,
+    # so nothing ever failed. Agreement between instruments that share a blind spot carries no
+    # information at all (§8.3d).
+    #
+    # A file that declares an STA thread is found by a DIFFERENT means than the wrap pattern, so it
+    # cannot share its blind spot. Every such file must land in exactly one category. One that lands
+    # in none is the shape both scans missed, and it is now a red gate with the filename in it.
+    sta: set[Path] = set()
+    accounted: set[Path] = set()
+    guarded: set[Path] = set()
+    wrapped: set[Path] = set()
+    plain = 0
+    other = 0
+
     directory = root / TESTS
 
     if not directory.is_dir():
@@ -93,10 +111,37 @@ def check(root: Path) -> tuple[list[str], int]:
     for path in sorted(directory.rglob("*.cs")):
         text = path.read_text(encoding="utf-8", errors="replace")
 
-        if not WRAPS.search(text):
+        wraps = bool(WRAPS.search(text))
+
+        if GUARD.search(text):
+            guarded.add(path)
+
+        if "SetApartmentState(ApartmentState.STA)" in text:
+            sta.add(path)
+
+            # THE CATEGORIES MUST BE MUTUALLY EXCLUSIVE OR THE SUM IS MEANINGLESS. A wrapping file
+            # usually ALSO contains a plain rethrow elsewhere, so counting both gave 18 + 30 + 1 = 49
+            # against a denominator of 31 — caught by this reconciliation on its first run, which is
+            # the cheapest possible demonstration that it does something.
+            if wraps:
+                pass                                     # counted as a wrap below
+            elif re.search(r"throw (failure|error|caught|thrown)\s*;", text):
+                # Rethrows the captured exception as itself — correct, and needing no guard.
+                accounted.add(path)
+                plain += 1
+            elif re.search(r"Assert\.(Null|NotNull|IsType)\s*\(\s*(thrown|failure|error)", text):
+                # A test whose CAUGHT EXCEPTION IS ITS OWN SUBJECT is not a harness at all: it
+                # asserts that nothing was thrown. One exists (a cross-thread announce test) and it
+                # must be neither a defect nor an unexplained gap.
+                accounted.add(path)
+                other += 1
+
+        if not wraps:
             continue
 
         harnesses += 1
+        accounted.add(path)
+        wrapped.add(path)
 
         if GUARD.search(text):
             continue
@@ -109,12 +154,54 @@ def check(root: Path) -> tuple[list[str], int]:
             "flakiness is a re-run, not an investigation. Add: "
             "`if (failure is Xunit.Sdk.XunitException) throw failure;` before the wrap.")
 
+    # A GUARD WITH NOTHING TO GUARD. This is the check that actually found the qualified-name blind
+    # spot, and it is stronger than the reconciliation below because it detects a MISCLASSIFIED file
+    # rather than an unclassifiable one.
+    #
+    # Somebody wrote `if (failure is XunitException) throw failure;` in a file this gate believes has
+    # no wrapper. Exactly one of two things is true, and both are worth a look: the guard is dead code
+    # and should go, or there is a wrap here that WRAPS cannot see — which is what a narrow pattern
+    # looks like from the outside. The one real instance was the second: a hand-added guard in a file
+    # wrapping with a fully-qualified type name, and the hand-guard is precisely what kept the gate's
+    # blindness symptomless for four hours.
+    for path in sorted(guarded - wrapped):
+        problems.append(
+            f"{path.relative_to(root).as_posix()} carries an XunitException guard but this gate sees "
+            "no wrapper for it to guard. Either the guard is dead code and should be removed, or "
+            "there is a wrap here the pattern cannot read — a hand-written guard over a wrap the "
+            "check cannot see is protection from somewhere the check does not know about, and its "
+            "silence is then indistinguishable from coverage.")
+
+    # THE RECONCILIATION. Every file found by the independent denominator must have been classified
+    # by one of the pattern-based rules. A file in neither is precisely the shape a narrow pattern
+    # hides, and it is named rather than summarised.
+    #
+    # ITS LIMIT, MEASURED RATHER THAN ASSUMED. This catches an UNCLASSIFIABLE file, not a
+    # MISCLASSIFIED one. Re-running the day-one blind pattern with the reconciliation in place still
+    # sums correctly — 17 + 13 + 1 = 31 — because the blind file was absorbed by the plain-rethrow
+    # category, its guard line containing a bare `throw failure;`. A category broad enough to absorb
+    # a miss cannot report it. That is why the guard-with-nothing-to-guard check above exists, and
+    # why claiming this reconciliation "would have caught it" was wrong until it was run.
+    for path in sorted(sta - accounted):
+        problems.append(
+            f"{path.relative_to(root).as_posix()} declares an STA thread but matched none of this "
+            "gate's categories — not a wrap, not a plain rethrow, not a test whose subject is an "
+            "exception. That gap is the shape a narrow pattern hides: the file is real, the scan was "
+            "full, and the silence is indistinguishable from coverage. Read it and either widen a "
+            "pattern or add its category.")
+
     # The DC-016 guard. If the pattern stopped matching — a refactor renamed the captured variable,
     # say — this gate would report a clean run having examined nothing at all.
     if harnesses == 0:
         problems.append(
             "no wrapping harness was found anywhere under tests/, so this gate examined nothing. "
             "Either every harness was rewritten, or WRAPS no longer matches the shape it is about.")
+
+    if problems:
+        return (problems, harnesses)
+
+    print(f"verify-harness-diagnostics: {len(sta)} file(s) declare an STA thread = "
+          f"{harnesses} wrapping + {plain} plain rethrow(s) + {other} whose subject is an exception.")
 
     return (problems, harnesses)
 

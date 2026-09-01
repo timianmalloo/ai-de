@@ -1557,6 +1557,44 @@ but *"could they both be wrong the same way?"*
 agree, name each one's blind spot before believing them — and if you cannot name them, you have one
 method twice.*
 
+**The test for whether you have two methods** (Session 3's, added 2026-09-01 after the corollary
+caught its own author): *two numbers are independent only if they were derived from different
+**denominators**. Two scans of the same corpus with the same pattern family are one scan.*
+
+It was added because the corollary fired again, on the last measurement of the day, against the
+session that wrote it. A gate printed **17** wrapping harnesses and an "independent" scan printed
+**17**, and the agreement was used as the argument for trusting both over a stated 19. Both patterns
+were `throw new \w*Exception\(`; neither matches `System.InvalidOperationException`; the one file
+both were blind to was the hand-guarded one, so there was no symptom. The prose number was wrong for
+its own unrelated reason, and the instinct that it was *not* 17 was right. The blindness survived
+four hours of two people auditing precisely this problem.
+
+What broke it was not a third opinion but a **different denominator** — counting files that declare
+an STA thread (31) and requiring the categories to sum to it. That is why this test is phrased about
+denominators rather than about instruments: two instruments are cheap to produce and easy to
+duplicate accidentally, whereas a second denominator has to come from somewhere else in the world.
+
+**The mechanised form.** Where a control can state its denominator, it must: print the total, print
+each category, and **fail when they do not sum**. An unaccounted-for item is then a red gate rather
+than an invisible gap. `tools/verify-harness-diagnostics.py` was given exactly this reconciliation
+after the episode above.
+
+**And the reconciliation was not enough — which was found by running it rather than by believing
+it.** This section first claimed the reconciliation *"would have failed on day one with the blind
+file named."* Replaying the day-one pattern with the reconciliation in place shows it summing
+cleanly: **17 + 13 + 1 = 31**, green, because the blind file was absorbed into the plain-rethrow
+category, its guard line containing a bare `throw failure;`. **A category broad enough to absorb a
+miss cannot report it.** A reconciliation detects an *unclassifiable* item; it does not detect a
+*misclassified* one, and the difference is the whole distance between a control and a comfort.
+
+What did catch it, mechanised as the check that now runs first: **a guard with nothing to guard.**
+A file carrying `if (failure is XunitException) throw failure;` that the gate believes has no wrapper
+is either dead code or a wrap the pattern cannot read — and the second is what a narrow pattern looks
+like from outside itself. Replayed against the day-one pattern, that check fails and names the file.
+**A hand-written guard over a wrap the checker cannot see is protection from somewhere the check does
+not know about, and its silence is then indistinguishable from coverage** — which is why the blindness
+survived four hours of two people auditing precisely this problem.
+
 It goes first because the rule tells you to check a property of your control, while this tells you
 to distrust **the moment that feels most like success**. Agreement read as confirmation here
 precisely *because* it was rare: after a day of methods contradicting each other, two converging
