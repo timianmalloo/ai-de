@@ -34,6 +34,17 @@ namespace AiDe.App.Tests;
 /// field that crosses and is then ignored. That case is this file's job.
 /// </para>
 /// <para>
+/// <b>Three things it structurally cannot see</b>, named here rather than left implied by whichever
+/// instance surfaced them: the <c>MainWindow</c> status line (not a surface, outside the
+/// harvester); anything inside the WebView2 (the canvas is a hosted HTML page, and the harvester
+/// walks a WPF visual tree — see session-contracts §8.9 for the costing to close it); and
+/// <b>attributes</b>, of which <c>AutomationProperties.Name</c> / <c>aria-label</c> is the one that
+/// matters. That third came from a live instance: the canvas chip renders its count twice, once as
+/// text and once as an accessible name, and a fix to the visible half alone would leave the
+/// accessible half stating the same false completeness claim — which this file reads as "absent"
+/// because it harvests text, not attributes.
+/// </para>
+/// <para>
 /// <b>It lands green with an allowance list, deliberately.</b> Landing red gets a gate switched
 /// off. The list is the <c>verify-standins.py</c> shape: a non-compliant surface is legitimate
 /// only while it is written down with a reason, and an entry describing a state that no longer

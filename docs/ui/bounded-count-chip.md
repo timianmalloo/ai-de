@@ -57,10 +57,24 @@ way. Fixing the budget does not remove the need; it changes the numbers.
 
 ## 3. The rendering
 
-Core shipped the enabling half: `WorkspaceGraph.KnowledgeDeclared` → `CanvasGraph.KnowledgeDeclared`
-(`GraphProjection.cs:123`, `CanvasGraphViewModel.cs:67`), which reaches the page as
-`graph.knowledgeDeclared` through the existing whole-record serialisation. **No new transport, no
-Core ask.**
+Core shipped the enabling half as **`DeclaredByKind`** — `IReadOnlyList<GraphKindTotal>?`, every
+node kind the workspace declares with its count, drawn or not (`GraphProjection.cs:133`,
+`CanvasGraphViewModel.cs:70`). It reaches the page as `graph.declaredByKind` through the existing
+whole-record serialisation. **No new transport, no Core ask.**
+
+It **replaced** the narrower `KnowledgeDeclared` rather than joining it — two fields for one
+quantity is a defect signature (DM7), and nothing consumed the narrow one yet. The page's
+`categoryOf` runs over the kinds to get per-category denominators, so Core never learns the
+Code/Data/Infra/Specs/Knowledge taxonomy — that is the canvas's, and putting it in the projection
+would make it wrong for every other consumer.
+
+Two properties of it worth relying on, both of which Core established by measurement rather than
+assumption: the knowledge flag travels **with each kind** rather than being inferred from it (no
+kind is used both ways on this corpus — but that is one corpus, not a rule, and a total silently
+wrong in a repository that used a kind both ways would look exactly like a correct one); and the
+tests force the cap to bite and require the total to **differ** from the drawn count, because a
+denominator that cannot disagree with its numerator would render `n of n` forever and every
+assertion about it would pass.
 
 ### 3.1 Visible text
 
@@ -68,8 +82,48 @@ Core ask.**
 |---|---|---|
 | drawn **<** declared | `Knowledge 257 of 878` | The ratio is strictly more informative than `≥ 257`, and it is available here. §4a's `≥ N` is the shape for a bound whose total is *unknown*; when the total is known, show it |
 | drawn **=** declared | `Knowledge 878` | An exact count must stay visually plain, or the reader learns to ignore the qualifier — the same reasoning as Core's `ACompleteSearchPutsNoCaveatOnScreen` |
-| total unknown (any category with no `…Declared` field) | `Knowledge ≥ 257` + `capped` chip | §4a's literal form, unchanged. Today only knowledge has the declared total; the others fall here until Core adds theirs |
+| total **unavailable** | `Knowledge ≥ 257` + `capped` chip | §4a's literal form. **Keep it — see §3.1a, this is the majority case today, not a legacy one** |
 | zero drawn, some declared | `Knowledge 0 of 878` | **Not** hidden. A category the filter bar offers, showing nothing, with no explanation, is the defect the disclosure work exists to prevent |
+
+### 3.1a Keep the `≥ N` fallback — and not for the reason it was offered
+
+Core replaced `KnowledgeDeclared` with `DeclaredByKind` covering all 29 kinds, and asked whether the
+`≥ N` fallback could now be dropped, suggesting it might still be worth keeping for stores written
+before the field existed.
+
+**Checked rather than answered: the fallback is not a legacy concern, it is the majority case
+today.** `CanvasGraphViewModel` constructs `CanvasGraph` at **nine** sites. Exactly **one** passes
+`DeclaredByKind`:
+
+| Site | View | Totals |
+|---|---|---|
+| `:169` | the rooted/whole graph | **yes** |
+| `:267` | focused view (`DescribeAsync`) | no |
+| `:344` | **the overview — the canvas's default view** | no |
+| `:404` | group drill-down | no |
+| `:522` | route result | no |
+| `:389`, `:449`, `:454`, `:466` | empty and error states | no — correctly, there are no chips to qualify |
+
+So **four of the five populated views ship no denominators right now**, including the one a user
+sees first. The field is declared `IReadOnlyList<GraphKindTotal>? = null`, so those sites compile
+and return `null` silently.
+
+**Therefore:**
+
+1. **The fallback stays.** Dropping it would render the default view's chips with no qualifier at
+   all — the exact false-completeness claim this spec exists to remove, reintroduced on the most
+   visited surface.
+2. **The four populated sites want wiring** (`:267`, `:344`, `:404`, `:522`). Core's file, Core's
+   call; raised, not taken.
+3. Until they are, the chip must **distinguish "no total available" from "total is zero"**. A
+   missing map renders `≥ N`; a present map with no entry for a category genuinely means zero
+   declared, and renders `0 of 0` only if the category is shown at all.
+
+**This is the fourth partial-sweep of the day**, and the sharpest, because it is inside the field
+added specifically to fix a partial-visibility problem: a nullable parameter with a default makes
+every un-updated call site compile and return nothing, which is the same shape as a hand-listed set
+— *the sites I remembered* — with the compiler unable to help. §8.10's pair applies directly: the
+class was swept for readers and not for writers.
 
 The `of 878` half carries `count.lower-bound`'s treatment — `{typography.mono}` and the muted
 foreground already used for `.fchip[aria-pressed="false"]` — so the drawn number stays the primary
