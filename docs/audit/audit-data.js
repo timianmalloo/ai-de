@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T23:07:50Z",
+  "generated": "2026-09-01T23:16:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7522,6 +7522,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tools/verify-harness-diagnostics.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0372",
+      "shortname": "different-denominators",
+      "datetime": "2026-09-01T23:16:18Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Design session: my independent scan used the same \\w*Exception pattern as your gate. The two numbers I leaned on agreed BECAUSE they shared the identical blind spot. Rule: two numbers are only independent if derived from different denominators.",
+      "summary": "Added the rule to 8.3d and mechanised it: the gate now prints 31 STA files = 18 wrapping + 12 plain + 1 subject. Then tested the claim that this would have caught the blind file and it is FALSE - the day-one pattern still sums 17+13+1=31 because the blind file was absorbed by the plain category. Corrected the doc. The check that does catch it, verified by replay: a guard with nothing to guard, which fails and names the file under the day-one pattern. Reconciliation also caught its own arithmetic (18+30+1=49) on first run.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
       ],
       "tags": [],
       "outcome": "success"
