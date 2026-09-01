@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T04:26:59Z",
+  "generated": "2026-09-01T04:41:26Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3425,6 +3425,40 @@ window.DOCS_INDEX = {
       "links": [],
       "diagrams": [],
       "sourceSha256": "71819e58949cf27b8efd509901f9d19ca6e787cb2fbec6d274a59b8b8fd5e003"
+    },
+    {
+      "id": "backlog-watcher-telemetry",
+      "path": "docs/backlog/watcher-telemetry.md",
+      "title": "Watcher telemetry — backlog",
+      "type": "doc",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-11-30",
+      "reviewSuggested": [],
+      "summary": "Cross-session backlog for the watcher scoring/telemetry loop. The writer half (audit-log.py emits an honest signals object) and the /implement emitter wiring are DONE and live in ai-de; these are the remaining next steps a future session picks up.",
+      "tags": [
+        "watcher",
+        "telemetry",
+        "backlog",
+        "continuous-improvement"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-signals-telemetry",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-advisory-evaluator",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "334b67013be9821b409974b9a41e729c5671298435384e058152299f15438ce2"
     },
     {
       "id": "defect-classes",
@@ -9612,5 +9646,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7d0abcbb7ebf2e75dd72d612c10cb04d2edaa3a75097ee8b07db3453ce2cdec8"
+  "graphSha256": "0a2a4a57404b6f8d21626fcfc3f62dd5c27af077a93c9ff6c9f9c407742c033c"
 };
