@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T13:09:40Z",
+  "generated": "2026-09-01T13:30:19Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7011,6 +7011,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/investigations/terminal-input-not-local-to-focus.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0351",
+      "shortname": "sequence-feed-and-session-3-coordination",
+      "datetime": "2026-09-01T13:30:19Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do these next steps also check what new work you need to do to unblock the UI session",
+      "summary": "Goal: find and clear what the UI sessions are blocked on, including what they had not filed. Found two unfiled blocks by grepping the App for stand-in markers: the code viewer was showing a hardcoded SAMPLE because NodeContentAsync shipped and nothing swapped the mock (zero calls in the App), and SequenceModel was built against a stub because calls deduplicates one row per pair. Fixed both. Registered DC-073 (a stand-in outlives the thing it stood in for) with verify-standins.py in CI. calls_at records every call site with the called member; the store's natural key nearly ate it silently - ten identical sites are one fact - so the call site is now part of the value. MEASURED 870 calls vs 3682 calls_at, 4.23x on one predicate, +10.7% store, zero graph payload. Corrected my own earlier figure to Session 3: 1.39x was measured on the broken build.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Projections/Interaction.cs"
       ],
       "tags": [],
       "outcome": "success"
