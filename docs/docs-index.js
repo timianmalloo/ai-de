@@ -1,8 +1,8 @@
 // Derived from artifact frontmatter by scripts/docs-graph.py — DO NOT hand-edit (frontmatter wins; see knowledge-visualization.md V2/V18).
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
-  "project": "ai-de-facelift",
-  "generated": "2026-09-01T01:40:21Z",
+  "project": "ai-de-session-phase3-pane-probes",
+  "generated": "2026-09-01T02:00:28Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7306b2fa0ad20e7e93dd794d0d199d96d79f2f696c2b84d2b008f7cf4e06f1d6"
+      "sourceSha256": "3c990d47c1186c60015ccb400f9305606bc8a66eba682fff6959d9a767aca029"
     },
     {
       "id": "domain-experts",
@@ -3172,7 +3172,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "837903b582671e341812ff1a545c6d1a5bedd77a836db6a860ec10d01f151c17"
+      "sourceSha256": "d65c960896cd672a10e76187d4a574b49d91c58191debefa6a2cc0720fc7d3e8"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -3332,7 +3332,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "68fde5efe455e883b16f198acc6ca53f6bf60a0a25f1ce12823cf6a013ff6a0b"
+      "sourceSha256": "62222cc3449b4071b25720b7581650dedbedd99f047bae9110ac8dc45fe623f0"
     },
     {
       "id": "kb-ai-native-ide-shell",
@@ -6774,5 +6774,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0d2bd838d3e6dcc90bb5dd74b4b6bff62608d452625698188352a830a27f1be0"
+  "graphSha256": "2954ede381c6fbdb12438552c5bc099cd9d5970166f5b146e5680f1b7ba3972e"
 };

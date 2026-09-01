@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T01:59:02Z",
+  "generated": "2026-09-01T02:00:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5662,6 +5662,38 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/investigations/terminal-crash-and-pane-moves.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0318",
+      "shortname": "1: yes commit and push in TheTerrace / 2: yes do this / 3: yes do this /…",
+      "datetime": "2026-09-01T01:43:06Z",
+      "session": "prompt-log",
+      "prompt": "1: yes commit and push in TheTerrace / 2: yes do this / 3: yes do this / 4: yes do this / 5: lets get going on both TypeScript and Bicep",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0319",
+      "shortname": "id-allocator-cross-branch",
+      "datetime": "2026-09-01T01:43:06Z",
+      "session": "phase3-pane-probes",
+      "prompt": "1: yes commit and push in TheTerrace / 2: yes do this / 3: yes do this / 4: yes do this / 5: lets get going on both TypeScript and Bicep",
+      "summary": "Goal: push the TheTerrace link fix, verify the published generation, close the cross-branch half of the id-collision gate, and start TypeScript members and Bicep expression folding. Done when: branch pushed, gate observed failing on the real two-branch shape, all gates green. The gate found DC-061/062/063 colliding on two unmerged branches — the first time the class was caught before it cost anything — and caught two DC-016 instances in its own reader (locale decode, findall-returns-capture). Also backticked four Status values the register gate could not see, which had under-reported controlled classes by four.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-id-allocators.py"
       ],
       "tags": [],
       "outcome": "success"

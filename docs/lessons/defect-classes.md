@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 27 · partially-controlled 29 · uncontrolled 0
+**Status counts:** controlled 31 · partially-controlled 29 · uncontrolled 3
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -329,6 +329,21 @@ for both or split.*
   of the audit-id rule; the later entry was renumbered `DC-033`. **The control was too narrow, not
   ignored:** `verify-audit-log.py` was built for the two JSONL logs and this file is a third
   monotonic allocator that nobody had classified as one.
+
+  2026-08-30/31 (**fifth, sixth and seventh occurrences, all in one day, and the reason the control
+  changed shape again**) — `DC-054`, `DC-055` and `DC-059` were each allocated twice, once in the
+  core session's worktree and once in the design session's. Every one of the six files involved was
+  internally consistent, so `verify-defect-register.py` and `verify-id-allocators.py` both passed in
+  **both** trees and went on passing until the branches met. Each was found by a human noticing, and
+  resolved by renumbering to `DC-058` and `DC-060`. **The control was still looking at one tree.**
+  Duplicate-within-a-file is the shape a collision has AFTER the merge, and by then the cost is
+  already paid: the entry has been written, cited, and in two of these three cases cross-referenced
+  from other documents.
+
+  On the day the cross-branch check was built it immediately found an **eighth and ninth**: `DC-061`
+  and `DC-062` are being allocated right now on two unmerged branches — `feature/agent-watcher-substrate`
+  and `feature/app-facelift-and-graph-surfaces` — to four entirely different lessons. Neither has
+  merged, so this is the first occurrence of the class caught **before** it cost anything.
 - **Control:** `tools/verify-audit-log.py`, run in CI: no id may be claimed by more than one entry in
   `audit-log.jsonl` or `change-log.jsonl`. **Observed failing 2026-08-26** against a synthetic log
   carrying a planted duplicate — reported the id, the count and the fix, exit 1 — and green against
@@ -357,6 +372,36 @@ for both or split.*
   first read ADR ids out of `architecture.md`, which merely CITES them: **an allocator is where an id
   is created, never where it is mentioned**, and confusing the two makes every citation look like a
   duplicate allocation.
+
+  **The cross-branch half (2026-08-31).** `verify-id-allocators.py` gained the
+  check the first version could not do: for every ref, the ids it **adds** relative to its own merge
+  base with the trunk. An id added by two refs with different content was allocated twice; an id
+  added on a branch that the trunk already spends is already gone. The **merge base** is what keeps
+  it honest — a stale branch that merely still CONTAINS an old id adds nothing, and a merged branch
+  adds nothing at all, so neither is reported. The signature is what makes two claims
+  distinguishable: the heading text for the register, the filename for the file-allocated families,
+  `shortname` for the logs. Nobody names the same lesson twice.
+
+  It runs in CI, which builds **every branch push** with full history, so both sides of a collision
+  are visible as remote refs and the branch that introduces one is told on its own build. A
+  collision between two OTHER branches is printed as a **note and does not fail** the third branch's
+  build — failing it would make every session's gate red until somebody else fixed theirs, which is
+  how a control becomes noise. Both halves of that scoping are in the self-test.
+
+  **Observed failing 2026-08-31** on a throwaway repository reproducing the exact shape: two
+  branches off one base, each adding `DC-002` for a different lesson, both files internally
+  consistent. The cross-branch check fires; `check_family` — the old control — **passes on both**,
+  which is the whole point of the addition.
+
+  **Two ways the new check certified instead of checking, both caught by its own guard.** It read
+  every ref through `subprocess(text=True)`, which decodes with the locale codec — cp1252 here,
+  against UTF-8 files. Every read threw on a background thread, every comparison saw an empty
+  string, and it printed **OK while reading nothing** (DC-016). The guard added in response — *the
+  trunk must yield ids for every family it carries* — then caught a second one within the minute:
+  the heading reader used `re.findall` with a pattern that captures the id, so it got `DC-054` where
+  it wanted the whole heading, failed to re-match it, and read **zero** ids from a file holding
+  sixty. Only `DC` is a heading family, so the other four readers kept working and an aggregate
+  guard stayed quiet — which is why the guard is now **per family**.
 
   **Not adopted: electing a single allocator between sessions.** It was considered and rejected. The
   sessions work in separate worktrees on purpose, and an election needs a rendezvous they do not
@@ -471,7 +516,8 @@ for both or split.*
   that it can say no — and negatives are invisible unless something forces them. It hides
   particularly well behind an outer control that already prevents the case: the inner one is then
   correct, unreachable, and indistinguishable from load-bearing.
-- **Instances (all 2026-08-27, all on the IPC transport):**
+- **Instances:**
+  **2026-08-27, all on the IPC transport:**
   - **Unreachable by construction.** A per-connection in-flight semaphore intended to refuse a
     command flood. The serve loop reads, answers, then reads again, so in-flight is one by
     construction and the refusal could never happen. Found only because a test written to *expect*
@@ -483,6 +529,17 @@ for both or split.*
     alone. A mutex is owned by a *thread* and is re-entrant, so a second acquisition inside one
     process succeeds — and ADR-0009 keeps an in-process daemon as a supported hosting mode, making
     that the case the lock most needed to cover.
+
+  **2026-08-31, two in one function within a minute of each other.** The new cross-branch check in
+  `verify-id-allocators.py` read every ref with the locale codec against UTF-8 files, threw on a
+  background thread for each one, compared empty strings, and printed `OK — 11 other branch(es)
+  compared` **having compared nothing**. The guard written in response (*the trunk must yield ids
+  for every family it carries*) fired immediately on a second instance: the heading reader used
+  `re.findall` with an id-capturing pattern, so it received the captured id rather than the whole
+  line, failed to re-match it, and read zero of sixty entries. The first was invisible because it
+  was green; the second was invisible because four other readers still worked — which is why the
+  guard counts **per family** rather than in aggregate. Neither was found by review. Both were found
+  by a check that asks whether the reader saw anything at all.
 - **Control:** **mutation is the detector, and it must run on every control at this boundary** —
   disable each one and require a test to fail. Then, per outcome: *unreachable by construction* is
   **deleted**, not made reachable by adding machinery to justify it (the semaphore was removed and
@@ -1708,7 +1765,7 @@ for both or split.*
   (NoWrap + CharacterEllipsis); the full text is on hover (tooltip) and still read by AT.
 - **Control:** `WorkbenchAnnouncerTests` (long message → tooltip carries it; short → none). A status
   region is one line by construction.
-- **Status:** controlled
+- **Status:** `controlled`
 
 ### DC-056 — A re-render helper mutates the caller's list, so a note duplicates per render
 
@@ -1721,7 +1778,7 @@ for both or split.*
   render builds a private DISPLAY copy for the disclosure and passes the PRISTINE notes to the
   prefetch, so each render starts from the same base.
 - **Control:** `ShowGraph_WithMembersSource_DoesNotDuplicateTheTruncationNote_AcrossThePrefetchRerender`.
-- **Status:** controlled
+- **Status:** `controlled`
 
 ### DC-057 — A per-workspace layout restore faithfully brings back a degenerate saved state
 
@@ -1736,7 +1793,7 @@ for both or split.*
   `LayoutRestoreGuard` keeps the current graph-bearing layout when the restore would drop the graph.
   The broader per-workspace-vs-global fork is recorded in docs/notes/workspace-open-layout-restore.md.
 - **Control:** `LayoutRestoreGuardTests`; `WorkbenchDiagnostics` records which restore path was taken.
-- **Status:** controlled (RESOLVED — workspace-open no longer restores a per-workspace layout; the arrangement is kept. No restore = no degenerate restore. See docs/notes/workspace-open-layout-restore.md)
+- **Status:** `controlled` (RESOLVED — workspace-open no longer restores a per-workspace layout; the arrangement is kept. No restore = no degenerate restore. See docs/notes/workspace-open-layout-restore.md)
 
 ### DC-060 — An automated conflict resolution stages what it did not resolve
 - **Signature:** a rebase or merge is scripted — resolve the known-conflicting files, `git add -A`, `--continue`, loop — because the same two append-only logs conflict on every integration and resolving them by hand each time is waste. Then a file conflicts that the script does not know about. `git add -A` stages it exactly as git left it, `--continue` commits it, and the conflict markers are now content. Nothing errors: the working tree is clean, the rebase finished, and the commit looks like every other one.
@@ -1746,6 +1803,21 @@ for both or split.*
 - **Second instance the same day, different symptom.** The next scripted rebase reported three conflicts; the log-merging tool resolved one and **two remained** — both DERIVED files (`docs/audit/audit-data.js`, `docs/docs-index.js`). `git add -A` staged them exactly as git had left them, and the marker grep came back clean, because a derived file's conflict does not always leave markers: git had merged the two sides line-wise into something syntactically valid and semantically stale. The tests passed. It surfaced only by regenerating the derived files afterwards and finding a diff. **The marker check was necessary and not sufficient — it proves nobody committed a marker, not that the file is right.**
 - **Control:** two checks after any scripted resolution, before committing: grep the tree for `^<<<<<<< `, `^=======$` and `^>>>>>>> `, **and** regenerate every derived artifact and confirm it produces no diff. The second is what catches a conflict in a generated file, which is the case where markers are least likely and staleness is most likely. The scripted loop keeps its value; what it needed was a check that the only files it staged blind were the ones it knew how to resolve.
 - **The generalisation to apply elsewhere:** **`git add -A` after an automated resolution is a claim that every conflict was handled, and a script can only handle the ones it was told about.** Any automation that resolves conflicts should verify the result contains no markers rather than assume its own completeness — the same shape as trusting an exit code instead of reading the state.
+
+  **Third instance, 2026-08-31, and the control that replaces the habit.** A three-commit rebase
+  regenerated the views between commits two and three; the third commit then changed a document,
+  so `docs/docs-index.js` merged and committed with a stale `sourceSha256`. Valid JSON, no marker,
+  no failing test. Caught by performing the habit — which is exactly the problem: the control was
+  a thing a person remembers to do.
+
+  `tools/verify-derived-views.py` (CI, plus a `--self-test`) now runs each generator and compares
+  its output with what is committed. The generation **timestamp is excluded** — it changes on
+  every run by construction, and a gate that fails always is one people learn to bypass; every
+  content hash is compared byte for byte. It restores the committed bytes whether it passes or
+  fails, so a failing gate never leaves the tree rewritten and never makes the next command's
+  output a lie. **Observed failing 2026-08-31** against a planted one-value edit of the shape a
+  line-wise merge produces, and observed NOT failing against a timestamp-only difference.
+
 - **Status:** `controlled`
 
 ### DC-058 — Every warning is correct and the wall of them hides the one that matters
@@ -1781,7 +1853,7 @@ for both or split.*
   event-driven / coalesced / visibility-gated / right-level-leaf-only / isolated islands). No
   per-frame subscription outside a genuine animation. A grep control for `CompositionTarget.Rendering`
   in review is the mechanical guard.
-- **Status:** controlled
+- **Status:** `controlled`
 
 ### DC-061 — A type promises total input-safety, but one access path is unguarded
 
@@ -1834,4 +1906,4 @@ for both or split.*
 - **Control:** a decision between (A) named/absolute dock zones matching the mental model, or (B)
   soften the collapse (structural placeholder / don't reorient the survivor) + incremental view update;
   a characterization test on source-side collapse and a move-preserves-others test.
-- **Status:** uncontrolled (Phase 3 of the investigation — needs a model decision, awaiting approval)
+- **Status:** `uncontrolled` (Phase 3 of the investigation — needs a model decision, awaiting approval)
