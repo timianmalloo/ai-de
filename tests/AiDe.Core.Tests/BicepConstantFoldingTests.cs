@@ -247,10 +247,21 @@ public sealed class BicepConstantFoldingTests : IDisposable
             resource role 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
               name: guid(web.id, roleId)
             }
+            resource foldableArguments 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+              name: guid('scope', namePrefix)
+            }
             """);
 
         Assert.Null(NameOf(result, "role"));
         Assert.Equal("guid(web.id, roleId)", ExpressionOf(result, "role"));
+
+        // The second case exists because the first does not actually test the refusal it names.
+        // `web.id` is a property access, so it is refused as an ARGUMENT and `guid` is never reached
+        // — MEASURED by adding guid to the function table and watching this test stay green, which
+        // is DC-016 wearing a tick. Every argument here folds, so the only thing standing between
+        // this template and an invented GUID is the function table itself.
+        Assert.Null(NameOf(result, "foldableArguments"));
+        Assert.Equal("guid('scope', namePrefix)", ExpressionOf(result, "foldableArguments"));
     }
 
     [Fact]
