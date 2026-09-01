@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-09-01T01:14:35Z",
+  "generated": "2026-09-01T01:28:13Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6432,6 +6432,27 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0316",
+      "shortname": "forward-integrate-main",
+      "datetime": "2026-09-01T01:28:13Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "re-base/forward-integrate to ensure you have the latest from the other sessions, then do the next steps",
+      "summary": "Forward-integrated origin/main (103 commits from the app-facelift + phase3-pane-probes sessions) into feature/agent-watcher-substrate. Resolved 11 conflicts: append-only logs union-merged; generated files (docs-index.js, audit-data.js) regenerated; code (WorkbenchShell/Controller/SurfaceContentFactory/MainMenuBuilder) union-merged (my watcher wiring + their new surfaces); menu-count test reconciled to 9. Both branches independently used DC-039..044 for different classes -> kept main's DC-039..059 canonical, renumbered mine to DC-060..065, updated references per-file disambiguated by meaning (registered DC-066 for the ID-collision class). Fixed my DC-042 watcher-wiring test's query double for main's new BindJoins FindAsync/EvidenceAsync path. Merge 1378f49. Core 1188/0, App 220/0, full solution builds clean.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tests/AiDe.App.Tests/WorkbenchShellTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Bring the watcher branch current with the other two sessions",
+      "done_when": "origin/main merged in, all conflicts resolved, full solution + suites green"
     }
   ],
   "changes": [
