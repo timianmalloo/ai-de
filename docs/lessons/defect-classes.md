@@ -1909,7 +1909,7 @@ for both or split.*
   whole-view redraw. The **containment-on-move test** (AC-F1) is the control and must be seen failing
   against a shim that reproduces the old single-child collapse. Design loop complete; lands with
   `/implement` on ADR-0021 approval.
-- **Status:** in-design — model decided (ADR-0021 proposed); control (containment test) lands with
+- **Status:** `uncontrolled` — in design: model decided (ADR-0021 proposed); control (containment test) lands with
   the layout-model rewrite.
 
 ### DC-064 — A deterministic test double produces colliding output across instances

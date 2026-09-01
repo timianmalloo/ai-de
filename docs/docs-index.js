@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-09-01T02:17:43Z",
+  "generated": "2026-09-01T02:21:33Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3378,7 +3378,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1f1e9cb953f1d54aa3cf9a7e7940332aeb7de17dba856accf9849ce31128c758"
+      "sourceSha256": "0c9a25a86a87ac6d02f1cba131e3ece11ec0941121b9e01c3615968bceee7877"
     },
     {
       "id": "domain-experts",
@@ -9502,5 +9502,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3da3f4b00d120d03659453640a6f33afc23313f4f0daea4d9565287d607e0a75"
+  "graphSha256": "282ef44c83adc02f7a8f6672ee78040c28a3e92eecfee0ef96287924a884d1f3"
 };
