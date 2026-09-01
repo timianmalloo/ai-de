@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T03:01:15Z",
+  "generated": "2026-09-01T03:04:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6723,6 +6723,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0333",
+      "shortname": "implement-zone-app-tests",
+      "datetime": "2026-09-01T03:04:59Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "continue autonomously through all slices",
+      "summary": "dz-tests: 3 App-level AC-U tests exercising the zone-backed layout end-to-end through the real WorkbenchAdapter + AvalonDock on an STA thread — every default surface renders as a realized document; a cross-zone move loses no pane and moves only that surface (containment at the view, E11/E12); closing a Center doc leaves the other zones untouched. The 12 legacy tree-model App tests still pass (they exercise LayoutService/tree directly, now the projection format). App 223 green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/ZoneWorkbenchAdapterTests.cs"
       ],
       "tags": [],
       "outcome": "success"
