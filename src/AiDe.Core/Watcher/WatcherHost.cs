@@ -102,15 +102,21 @@ public sealed class WatcherHost : IDisposable
     }
 
     /// <summary>
-    /// Imports the workspace's declared-goal episodes (ep-capture) AND auto-scores each one (conn-10):
-    /// derives its <see cref="DeterministicEpisodeSignals"/> from the observable audit evidence and records
-    /// the deterministic Weave (no advisory evaluator - the safe default). An episode with a committed Proof
-    /// Pack scores an honest Partial; one without renders Not-Scored. Idempotent: episode and scorecard are
-    /// upserts, so a re-run re-scores rather than duplicates. Returns the number of episodes imported.
-    /// operatorId is the session id (the honest grouping key, never a human identity); taskClass marks the
-    /// row as imported. A missing file imports nothing.
+    /// Imports the workspace's declared-goal episodes (ep-capture) AND auto-scores each one (conn-10).
+    /// Derives its <see cref="DeterministicEpisodeSignals"/> from the observable audit evidence (a committed
+    /// Proof Pack, plus any explicit telemetry <see cref="AuditSignals"/> the turn recorded - t3) and records
+    /// the Weave. When <paramref name="evaluator"/> and <paramref name="registry"/> are supplied the two
+    /// ADVISORY dimensions are folded too, but only if the evaluator has qualified in the registry (ADR-0019):
+    /// the safe default (both null) records the deterministic Weave only. The local heuristic evaluator is
+    /// on-device (no egress); the cloud judge additionally needs an operator egress opt-in + credentials
+    /// (t4). Idempotent (episode + scorecard upsert); operatorId is the session id (never a human identity);
+    /// a missing file imports nothing.
     /// </summary>
-    public int ImportAndScoreEpisodesFromAuditLog(string auditLogPath, string taskClass = "audit-import")
+    public int ImportAndScoreEpisodesFromAuditLog(
+        string auditLogPath,
+        string taskClass = "audit-import",
+        IAdvisoryEvaluator? evaluator = null,
+        CalibrationRegistry? registry = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(auditLogPath);
         ArgumentException.ThrowIfNullOrEmpty(taskClass);
@@ -121,7 +127,9 @@ public sealed class WatcherHost : IDisposable
         {
             _store.RecordEpisode(episode);
             var signals = DeterministicSignalsDeriver.Derive(episode, evidence, _store);
-            scoring.ScoreAndRecord(episode, signals, operatorId: episode.SessionId, taskClass: taskClass);
+            scoring.ScoreAndRecord(
+                episode, signals, operatorId: episode.SessionId, taskClass: taskClass,
+                evaluator: evaluator, registry: registry);
         }
 
         return imported.Count;

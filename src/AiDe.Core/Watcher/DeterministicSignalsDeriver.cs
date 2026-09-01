@@ -1,12 +1,31 @@
 namespace AiDe.Core.Watcher;
 
 /// <summary>
-/// The observable audit-entry evidence a signal derivation grounds on (conn-10). Deliberately minimal:
-/// today the only honest, non-fuzzy verification signal from an audit entry is whether the recorded work
-/// shipped a committed Proof Pack artifact (a <c>docs/proof/</c> path). More fields join here only when a
-/// telemetry convention makes them observable - never a heuristic guess (spec L127, NG1).
+/// The optional, explicit deterministic signals an instrumented AI-Forward turn may record on its audit
+/// entry (a <c>signals</c> object - the watcher telemetry convention). Every field is nullable by design:
+/// a harness emits only what it actually observed, and the watcher falls back to a conservative default for
+/// anything absent - never a fabricated value (spec L127, NG1). This is the reader-side data shape; the
+/// writer half (audit-log.py emitting a <c>signals</c> object) is a future AI-Forward enhancement, so a
+/// current entry simply omits it and scores conservatively. See
+/// <c>docs/design/watcher-signals-telemetry.md</c>.
 /// </summary>
-public sealed record EpisodeEvidence(bool HasProofPack);
+public sealed record AuditSignals(
+    bool? VerificationPath = null,
+    bool? VerificationExecuted = null,
+    bool? AcceptanceMet = null,
+    bool? Regression = null,
+    int? GuidanceRequired = null,
+    int? GuidanceSatisfied = null,
+    int? CoordinationRequired = null,
+    int? CoordinationObserved = null);
+
+/// <summary>
+/// The observable audit-entry evidence a signal derivation grounds on (conn-10). At minimum a committed
+/// Proof Pack artifact (a <c>docs/proof/</c> path); optionally the explicit <see cref="AuditSignals"/> an
+/// instrumented turn recorded. Absent signals never fabricate a value - the deriver falls back to the
+/// conservative default (spec L127, NG1).
+/// </summary>
+public sealed record EpisodeEvidence(bool HasProofPack, AuditSignals? Signals = null);
 
 /// <summary>An imported closed Work Episode paired with the audit evidence a signal derivation needs.</summary>
 public sealed record ImportedEpisode(WorkEpisode Episode, EpisodeEvidence Evidence);
@@ -29,9 +48,13 @@ public static class DeterministicSignalsDeriver
         ArgumentNullException.ThrowIfNull(evidence);
         ArgumentNullException.ThrowIfNull(store);
 
-        // The one honest verification signal: a committed Proof Pack. No proof pack -> HasVerificationPath
-        // false -> the scorer renders Not-Scored ("no minimum verification path"), which is correct.
-        var verified = evidence.HasProofPack;
+        var s = evidence.Signals;
+
+        // Verification: an explicit signal wins; else the one honest fallback is a committed Proof Pack. No
+        // proof pack and no signal -> HasVerificationPath false -> the scorer renders Not-Scored, which is
+        // correct. Every field below is "explicit signal ?? conservative default" - absent never fabricates.
+        var verified = s?.VerificationPath ?? evidence.HasProofPack;
+        var verificationExecuted = s?.VerificationExecuted ?? evidence.HasProofPack;
 
         // Work observed after the done condition (PACK-O drift). Endpoints are inclusive; imported episodes
         // typically have no spans in this store, so this is 0 - honest, never a wrong count.
@@ -39,20 +62,32 @@ public static class DeterministicSignalsDeriver
             ? store.SpanCountInInterval(episode.SessionId, closed, DateTimeOffset.MaxValue)
             : 0;
 
+        var guidanceRequired = s?.GuidanceRequired ?? 0;
+        var guidanceSatisfied = s?.GuidanceSatisfied ?? 0;
+        var coordinationRequired = s?.CoordinationRequired ?? 0;
+        var coordinationObserved = s?.CoordinationObserved ?? 0;
+
+        // Coverage is calibrated only when a turn recorded explicit required-signal totals; then the
+        // observed/required pair is real. Absent any signal -> uncalibrated -> coverage renders Not-Recorded
+        // (never a fake 100%/0%). The totals are the guidance + coordination requirements the turn declared.
+        var requiredTotal = guidanceRequired + coordinationRequired;
+        var observedTotal = guidanceSatisfied + coordinationObserved;
+        var coverageCalibrated = s is not null && requiredTotal > 0;
+
         return new DeterministicEpisodeSignals(
             HasVerificationPath: verified,
-            AcceptanceCriteriaMet: null,                 // unknown from an audit entry (null != false)
-            RequiredVerificationExecuted: verified,      // the proof pack IS the executed-verification record
-            RegressionPresent: false,                    // none observed (not a claim that none exists)
+            AcceptanceCriteriaMet: s?.AcceptanceMet,     // explicit only; absent stays null (unknown != false)
+            RequiredVerificationExecuted: verificationExecuted,
+            RegressionPresent: s?.Regression ?? false,   // none observed (not a claim that none exists)
             UnresolvedFloorBlockers: new HashSet<FloorDomain>(),
             ActionsAfterDoneCondition: actionsAfterDone,
-            PrematureCompletion: false,                  // not observable from an audit entry
-            RequiredGuidanceTriggers: 0,                 // not observable -> GuidanceAdherence Not-Recorded
-            SatisfiedGuidanceTriggers: 0,
-            RequiredCoordinationSignals: 0,              // not observable -> CoordinationAndLearning Not-Recorded
-            ObservedCoordinationSignals: 0,
-            CoverageCalibrated: false,                   // no calibrated required-total -> coverage Not-Recorded
-            RequiredSignalTotal: 0,
-            ObservedSignalTotal: 0);
+            PrematureCompletion: false,                  // not observable from an audit entry alone
+            RequiredGuidanceTriggers: guidanceRequired,  // 0 when absent -> GuidanceAdherence Not-Recorded
+            SatisfiedGuidanceTriggers: guidanceSatisfied,
+            RequiredCoordinationSignals: coordinationRequired, // 0 when absent -> CoordinationAndLearning Not-Recorded
+            ObservedCoordinationSignals: coordinationObserved,
+            CoverageCalibrated: coverageCalibrated,
+            RequiredSignalTotal: requiredTotal,
+            ObservedSignalTotal: observedTotal);
     }
 }
