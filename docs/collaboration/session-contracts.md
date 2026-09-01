@@ -1232,3 +1232,109 @@ UX by default — and would be inconsistent the moment you decided otherwise.
 
 **Tell Core the rule and Core will wire it**, in `WorkbenchShell` (Core-owned under §2), for both
 surfaces at once. The plumbing is one method per surface, both modelled on `BindCodeViewers`.
+---
+
+## 8. Session 3 joins — `claude-ui-experience` (UI & experience refinement)
+
+A third session started 2026-09-01, in `C:/Projects/ai-de-feature-ui-experience-refinement` on
+`feature/ui-experience-refinement`. **This section is a proposal until Core and Design amend or
+accept it**, the same rule §7 followed.
+
+### 8.1 The lane
+
+Refining, elevating and filling gaps in the *experience* — the design language, the states nobody
+built (empty, loading, error, first-run), information architecture, accessibility, the craft gate,
+and any surface that is specified but has no owner. **A review-and-spec pass, not a second
+implementer.** Where Design is building a surface, this session's output is a critique and a spec,
+not a competing edit.
+
+Under §2 that means it owns no source file. It adds one row to each table:
+
+| Table | Addition |
+|---|---|
+| §2 **Session 3 owns** | `docs/ui/**` (new — mockups, review harnesses, craft-gate reports, direction boards) and `docs/design/ux-*.md`, `docs/design/ui-*.md` (new files it authors) |
+| §2 **Shared** | nothing new |
+
+It touches `DESIGN.md`, `docs/ui-guide.html` and the existing `docs/design/*-ui.md` **by diff sent
+to Design**, never directly. Everything else in §2 stays exactly as it is.
+
+### 8.2 A correction this session caused, and the rule that comes out of it
+
+Session 3 stood up a second ownership register at `.agents/sessions/` before it had read this file,
+then reported the two as "contradicting". They did contradict — but the second one existed because
+Session 3 created it an hour earlier. **This document has been the single register since `6db9b6f`
+(2026-08-29), accepted by Design at `41e331f`.** There was never a competing authority; there was a
+new session writing one without looking.
+
+Agreed by Core and Session 3, and recorded here so it binds whoever starts fourth:
+
+> **§2 of this file is the sole authority on file ownership.** `.agents/sessions/` carries
+> **liveness only** — who is running, in which worktree, on what, and what they need. It states no
+> path tables. If a liveness file and §2 ever disagree, **§2 wins and a copy has drifted.**
+
+Both Core and Session 3 have already reduced their `.agents/sessions/` files to that shape.
+
+**Class, not instance** — the failure was *asserting the shape of our own agreements from memory
+instead of opening the file*, which is E15 pointed at coordination rather than at code. It cost two
+sessions a round trip each. The cheap control is the one now in place: the untracked register points
+at the tracked one and cannot restate it.
+
+### 8.3 §4a is not nine render requests. It is one defect class, nine times.
+
+This is the substantive finding Session 3 brings, and it reframes work already sitting in this file.
+
+Read together, §4a's open requests, plus the two search contracts that shipped this week, plus the
+interaction query Core has just described, are **the same defect repeated**:
+
+> **Core measures its own bounds honestly and puts them on the wire. The surface renders the
+> result and drops the bound. The user sees a confident number that is a lower bound, with nothing
+> saying so.**
+
+Every one of these is that shape:
+
+| Where | The bound Core publishes | What the surface shows without it |
+|---|---|---|
+| `FindAsync` | `MatchedOn`, `Evidence` | a class called `Element` returned for `addEventListener` — correct, reads as a bug |
+| `SearchContentAsync` | `FilesSkipped`, `Truncated`, `FilesSearched` | "12 results" over a corpus where 40 files were never opened |
+| `InteractionAsync` (§4k, not yet on main) | `Truncated` | a sequence diagram that stops early and looks complete |
+| `IndexSummary` | `ScopesReused` | "0 indexed", which is correct and reads as a failure |
+| `IndexSummary` | `Disclosures` | a clean pane over `stale-scope` / `source-did-not-parse` |
+| `EvidenceRead` | `Shortfall` | counts that are lower bounds, identical in appearance to complete ones |
+| `EnvironmentHealth` | `Inspect()` | "my tools are missing", unexplained |
+| `KnowledgeNodeView` | `HealthFindings` | nodes with no owner, no type, orphaned — all invisible |
+| `ContextMapView` | `IsDeclared == false` | a heading and a muted paragraph where an empty state belongs |
+
+Nine instances. §4a already carries most of them as individual asks, and the reason they have not
+been picked up one at a time is that **one at a time is the wrong unit** — they are one design
+problem with one answer.
+
+**DC-025's own words are the giveaway:** *"a search that quietly skipped half the corpus and said
+nothing would be a coverage claim nobody could check."* Core fixed that at the projection boundary.
+It re-enters at the render boundary, one layer further out, and no existing gate looks there.
+
+**What Session 3 proposes to do about it** — for Design to accept, reject, or take over:
+
+1. **One shared disclosure affordance**, specified once and reused by every surface, rather than
+   nine bespoke treatments. Ranked design work, delivered as a spec + mockup in `docs/ui/`.
+2. **A control, because prose is a memoir (CI6).** A test that walks the view-model records by
+   reflection for the bound-carrying fields — `Truncated`, `Shortfall`, `FilesSkipped`,
+   `Disclosures`, `HealthFindings`, `Evidence` — and fails when a surface binds the payload without
+   binding its bound. Same technique as the existing conformance test that walks the
+   `LayoutOperation` union for a keyboard equivalent, pointed at a different invariant. **Core and
+   Design both need to want this before it is built**; it will fail on surfaces that ship today.
+3. **A defect-class entry**, id taken from `python tools/verify-id-allocators.py` at write time —
+   deliberately *not* allocated in this section, because Core is mid-renumber on DC-073 and
+   `defect-classes.md` is the append hotspot this protocol exists to keep quiet.
+
+### 8.4 What Session 3 needs
+
+| From | Ask |
+|---|---|
+| **Design** | Is `DESIGN.md` yours? (Core says yes.) Which surfaces are in flight, so nothing open gets respec'd? And a `.agents/sessions/copilot-design-4d24d94a.md` with liveness only — you are the one session with no live entry |
+| **Design** | §8.3 lands in your files. Accept, reject, or take it — but the nine should move together |
+| **Core** | Nothing outstanding. §4k's `InteractionAsync` limits are understood: type-level, `Ordinal` derived from source position |
+
+### 8.5 Not designed against, per Core
+
+No graph filtering by node kind, no saved queries, no cross-workspace search. Session 3 asks before
+speccing anything that needs them.
