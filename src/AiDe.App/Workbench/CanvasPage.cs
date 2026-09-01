@@ -153,12 +153,17 @@ internal static class CanvasPage
             // data models (tables, columns, schema, SQL); Infra = deployment/infrastructure (bicep,
             // azure); Specs and Knowledge = docs — forward-compatible, the code graph carries few of
             // these yet (the graph is built from CODE extractors; docs/markdown are not indexed into it).
-            function categoryOf(kind) {
+            function categoryOf(kind, isKnowledge) {
               var k = (kind || '').toLowerCase();
               if (k.indexOf('azure') === 0 || k.indexOf('bicep') === 0) { return 'infra'; }
               if (k === 'table' || k === 'column' || k === 'schema' || k === 'view' || k === 'index'
                   || k.indexOf('sql') === 0) { return 'data'; }
               if (k === 'spec' || k === 'requirement' || k === 'acceptance') { return 'specs'; }
+              // The producer's authoritative flag wins over spelling the kind: a knowledge document
+              // whose kind is a repo-invented name (or any of adr/design/investigation/glossary/
+              // lesson…) is still knowledge. Spelling a fixed list could not work across repositories
+              // (INV knowledge-chip-reads-zero-again / DC-042).
+              if (isKnowledge === true) { return 'knowledge'; }
               if (k === 'knowledge' || k === 'doc' || k === 'adr' || k === 'design' || k === 'note'
                   || k === 'decision-note' || k === 'markdown' || k === 'html' || k === 'diagram'
                   || k === 'proof') { return 'knowledge'; }
@@ -658,7 +663,7 @@ internal static class CanvasPage
                 });
                 stage.appendChild(el);
                 records.push({ id: n.id, isRoot: !!n.isRoot, el: el, p2: { x: x, y: y }, p3: p3,
-                  cat: categoryOf(n.kind) });
+                  cat: categoryOf(n.kind, n.isKnowledge) });
               });
 
               var joins = 0, inferred = 0;

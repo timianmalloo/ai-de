@@ -1614,10 +1614,15 @@ for both or split.*
   `docs/investigations/knowledge-chip-reads-zero-again.md`. **Control to extend:** a canvas analogue of
   `RoutedKinds` — a test that the categoriser is driven by producer signals (`IsKnowledge`/`IsExternal`/
   the `has_type` families) and that every advertised chip category has a signal the App consumes; plus
-  sourcing the chip *count* from a workspace aggregate rather than the capped payload. **Not yet built**
-  — investigation only; the control must be observed failing on today's code (a payload node with
-  `IsKnowledge==true` and `kind=="spec"` categorises as `specs`/`code`, not `knowledge`) before it
-  counts.
+  sourcing the chip *count* from a workspace aggregate rather than the capped payload. **Phase 1
+  landed 2026-09-01** (`knowledge-chip-isknowledge`): `CanvasNode` now carries `IsKnowledge`,
+  `WholeGraphAsync`/the group path propagate `GraphNode.IsKnowledge`, the payload serialises it, and
+  `CanvasPage.categoryOf(kind, isKnowledge)` prefers the authoritative flag over spelling (specs keep
+  their own chip). Control observed failing then passing:
+  `CanvasGraphViewModelTests.WholeGraph_CarriesTheIsKnowledgeFlag_SoTheChipDoesNotSpellTheKind` (red on
+  the un-wired mapping, green after). **Residual:** the drill-down (describe) neighbour path and the
+  aggregate-count fix (Phase 3, Core) are not yet done, so a capped view can still under-count
+  low-degree knowledge; the JS categoriser has no direct unit harness.
 - **The sharpest part of it:** this happened on a repository whose stated premise is that *docs hold
   intent, code holds reality, and the expensive defects live in the gap*. Half of that sentence was
   never being read, and the product said so with a zero.

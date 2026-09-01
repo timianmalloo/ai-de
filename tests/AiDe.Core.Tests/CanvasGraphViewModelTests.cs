@@ -158,6 +158,36 @@ public sealed class CanvasGraphViewModelTests
     }
 
     [Fact]
+    public async Task WholeGraph_CarriesTheIsKnowledgeFlag_SoTheChipDoesNotSpellTheKind()
+    {
+        // INV knowledge-chip-reads-zero-again / DC-042: the App categorised the Knowledge chip by
+        // spelling the fine `kind` and dropped the authoritative IsKnowledge flag here. A knowledge
+        // document whose kind is "spec" (or a repo-invented kind) must still reach the client AS
+        // knowledge — the flag, not the spelling, is the answer.
+        var queries = new StubQueries
+        {
+            Graph = new WorkspaceGraph(
+                [
+                    new GraphNode("Shop.Order", "Order", "class", 2, IsExternal: false),
+                    new GraphNode("docs/spec.md", "spec.md", "spec", 1, IsExternal: false, IsKnowledge: true),
+                ],
+                [
+                    new GraphEdge("Shop.Order", "docs/spec.md", "documents", VerificationStatus.Verified),
+                ],
+                Omitted: 0,
+                [],
+                "rev-1"),
+        };
+
+        var graph = await new CanvasGraphViewModel(queries).LoadAsync();
+
+        var knowledge = graph.Nodes.Single(n => n.Id == "docs/spec.md");
+        Assert.True(knowledge.IsKnowledge, "the knowledge node must carry IsKnowledge to the client");
+        var code = graph.Nodes.Single(n => n.Id == "Shop.Order");
+        Assert.False(code.IsKnowledge, "a code node must not be flagged knowledge");
+    }
+
+    [Fact]
     public async Task DisclosuresAreLiftedOutOfTheGraph_AndReportedSeparately()
     {
         // They arrive as ordinary facts because that is how the extractor records them, but a

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T13:40:15Z",
+  "generated": "2026-09-01T15:38:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7060,6 +7060,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/investigations/knowledge-chip-reads-zero-again.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0357",
+      "shortname": "implement-knowledge-chip-isknowledge",
+      "datetime": "2026-09-01T15:38:31Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "do these next steps (knowledge-chip investigation Phase 1+2)",
+      "summary": "Fixed Knowledge chip=0: CanvasNode now carries IsKnowledge; WholeGraphAsync + group path propagate GraphNode.IsKnowledge; payload serialises it; CanvasPage.categoryOf(kind,isKnowledge) prefers the authoritative flag over spelling (specs keep own chip). Red-first VM test WholeGraph_CarriesTheIsKnowledgeFlag (red then green). Core 1309, App 257 green; smoke passed. Residual: drill-down describe path + aggregate count (Phase 3, Core).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs"
       ],
       "tags": [],
       "outcome": "success"

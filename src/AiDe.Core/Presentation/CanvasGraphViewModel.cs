@@ -17,7 +17,8 @@ namespace AiDe.Core.Presentation;
 /// existing construction means what it always meant.
 /// </remarks>
 public sealed record CanvasNode(
-    string Id, string Label, string Kind, bool IsRoot, string? Context = null, int Count = 1);
+    string Id, string Label, string Kind, bool IsRoot, string? Context = null, int Count = 1,
+    bool IsKnowledge = false);
 
 /// <summary>One edge as the canvas draws it.</summary>
 public sealed record CanvasEdge(string From, string To, string Predicate, string Status)
@@ -153,7 +154,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
         }
 
         return new CanvasGraph(
-            [.. kept.Select(n => new CanvasNode(n.Id, n.Label, n.Kind, IsRoot: false, ContextOf(n.Id)))],
+            [.. kept.Select(n => new CanvasNode(n.Id, n.Label, n.Kind, IsRoot: false, ContextOf(n.Id), IsKnowledge: n.IsKnowledge))],
             [.. graph.Edges
                 .Where(e => visible.Contains(e.From) && visible.Contains(e.To))
                 .Select(e => new CanvasEdge(e.From, e.To, e.Predicate, e.Status.ToString()))],
@@ -378,7 +379,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
                 : $"{kept.Count:N0} member(s) of {groupId}.";
 
             return new CanvasGraph(
-                [.. kept.Select(n => new CanvasNode(n.Id, n.Label, n.Kind, IsRoot: false, ContextOf(n.Id)))],
+                [.. kept.Select(n => new CanvasNode(n.Id, n.Label, n.Kind, IsRoot: false, ContextOf(n.Id), IsKnowledge: n.IsKnowledge))],
                 [.. graph.Edges
                     .Where(e => visible.Contains(e.From) && visible.Contains(e.To))
                     .Select(e => new CanvasEdge(e.From, e.To, e.Predicate, e.Status.ToString()))],
