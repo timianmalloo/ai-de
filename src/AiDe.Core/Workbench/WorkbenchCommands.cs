@@ -161,6 +161,11 @@ public static class WorkbenchCommandCatalog
             "Opens a class-diagram pane: the type hierarchy (classes/interfaces and their inheritance) of the open workspace.",
             Menu: "_View"),
 
+        new("workbench.newSequenceDiagram", "New sequence diagram", "Ctrl+K, Q",
+            nameof(LayoutOperation.AddSurface),
+            "Opens a sequence-diagram pane: participant lifelines and the ordered messages exchanged between them.",
+            Menu: "_View"),
+
         new("workbench.newCodeViewer", "New code viewer", "Ctrl+K, U",
             nameof(LayoutOperation.AddSurface),
             "Opens a read-only source viewer. Renders a node's source with syntax highlighting (a labelled sample until the content query ships).",

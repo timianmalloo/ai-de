@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T04:26:59Z",
+  "generated": "2026-09-01T04:36:22Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6885,6 +6885,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "Directory.Packages.props"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0343",
+      "shortname": "implement-sequence-diagram-scaffold",
+      "datetime": "2026-09-01T04:36:22Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "do the enumerated next steps in that priority order (step 3: uml-sequence-diagram)",
+      "summary": "Added native WPF SequenceDiagramSurface + pure SequenceModel (participants/lifelines/ordered call+return+self messages), registered 'sequence' surface kind, controller hook, and workbench.newSequenceDiagram View-menu command. 5 new tests; App 243 green; smoke passed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SequenceDiagramSurface.cs"
       ],
       "tags": [],
       "outcome": "success"
