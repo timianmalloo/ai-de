@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T16:08:24Z",
+  "generated": "2026-09-01T16:31:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7290,6 +7290,37 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "240ddd6c487e9ecd15f2a99c8dfbd3e6255e091b",
         "short": "240ddd6c4",
+        "branch": "feature/ui-experience-refinement",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-0360",
+      "shortname": "session-3-webview2-costing",
+      "datetime": "2026-09-01T16:31:48Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "Cross-session from ai-de-a7: cost the WebView2 hole, do not build it; fold in that the canvas is the only embedded page and that the payload half is free; include what it cannot cover even if built.",
+      "summary": "Closed JoinResult.Disclosures with a render assertion in both directions, mutation-tested by dropping the disclosure text from JoinSurface and observing red, then restoring from a file copy rather than the stash (WT13). Asserted on the disclosure CODE not the prose, because JoinSurface.Explain expands known codes and passes unknown ones through - a distinction only visible by constructing an input, not by reading the render site. Verified Core's correction rather than taking it: ContentSearchResult.Truncated is fully closed by AFiredMatchCapIsSaidOutLoud and AFiredCapIsOnScreenToo, so my list was wrong to call it unasserted. Priced the WebView2 hole as section 8.9: every part already exists - CanvasFocusIntegrationTests drives a real window and real WebView2 and fails rather than skips when the runtime is absent, CanvasSurface.cs:98 serialises the whole record so payload injection is free, and CanvasSurface.EvaluateAsync is public and documented for tests. Price is one test class reusing the existing host. Named two traps: EvaluateAsync swallows its own failure and returns it as an ordinary string, so an assertion can pass on a failure; and ExecuteScriptAsync returns JSON so results arrive quoted. Named what it could not cover even if built: it proves the page renders for a constructed payload not that the page renders, textContent in the DOM is not visibility, it cannot see the drawn graph, and it belongs in the slow CI ring. Recommended building it when something needs it, since all three fields it would cover are currently rendered correctly.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Claude Code",
+      "actor": "claude-ui-experience",
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [
+        "ui-craft"
+      ],
+      "outcome": "success",
+      "goal": "Close JoinResult.Disclosures with a mutation-tested render assertion, and price the WebView2 hole rather than build it.",
+      "done_when": "No item on either session's list rests on an unverified reading; the WebView2 costing states what exists, what it would cost, the traps in the tooling, and what it could not cover even if built.",
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "d7120b261c71e509367f8ed4ab9a20c25ca85ec5",
+        "short": "d7120b261",
         "branch": "feature/ui-experience-refinement",
         "pushed": false
       }

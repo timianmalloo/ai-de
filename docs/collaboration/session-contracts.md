@@ -1714,3 +1714,64 @@ using the pack gets it; out of scope here, and it does not block the gate.
 **Current state, measured:** primary checkout `333` entries, `origin/main` `333` — clean. The
 hazard is dormant, has fired exactly once, and cost a manual rescue (`7cda687`). Building this is
 prevention, not firefighting.
+
+### 8.9 Costing the WebView2 hole — priced, not built
+
+Core asked for a price rather than an implementation, both queues being empty and this being the
+largest surface no control can see (§8.3d). **The answer is that it is much cheaper than the
+abstract framing suggests, because every part already exists** — and that the thing it buys is
+narrower than it sounds.
+
+#### The parts, all of which are already in the repo
+
+| Need | Already exists | Evidence |
+|---|---|---|
+| an STA host with a real window and a **real WebView2** | `CanvasFocusIntegrationTests.OnUiThread` | drives a pumping dispatcher, 60 s timeout; written for the P2-FOCUS-03 keyboard trap |
+| the runtime's absence must **fail, not skip** | same file, already decided | *"A skipped keyboard-trap test reports green while proving nothing (DC-012)"* |
+| getting a payload **into** the page | free | `CanvasSurface.cs:98` serialises the whole `CanvasGraph` with `JsonSerializerDefaults.Web`; a test sets `GraphSource` and every field crosses with no mapping to maintain |
+| getting a result **out** of the page | `CanvasSurface.EvaluateAsync(string script)` | **public**, and its own doc says *"Used by tests to diagnose input."* |
+| the canvas is the **only** embedded page in `src/AiDe.App` | verified by Core while bounding the retraction | so the hole is exactly one surface wide |
+
+**Price: one test class, one method per assertion, reusing `CanvasFocusIntegrationTests`' host
+verbatim.** Nothing to build, nothing to install, no new dependency. That is a small fraction of
+what "assert a JavaScript consumer of a C# record" costs when reasoned about instead of measured —
+which is itself the day's lesson pointed at an estimate.
+
+#### Two traps in the tooling, named before anyone hits them
+
+1. **`EvaluateAsync` swallows its own failure.** It catches and returns
+   `"(evaluate failed: …)"` as an ordinary string. An assertion like
+   `Assert.Contains("40", result)` therefore **passes on some failure strings** and definitely
+   passes on a page that never loaded, if the failure text happens to contain the token. Any test
+   built on it must first assert the result is not a failure string — otherwise the control is
+   DC-016 on its first day.
+2. **`ExecuteScriptAsync` returns JSON**, so a string result arrives quoted and escaped. Assertions
+   must decode rather than string-match raw, or they will pass and fail for the wrong reasons.
+
+#### What it would NOT cover, even fully built — the part Core asked for
+
+- **It proves the page renders for a payload we constructed, not that the page renders.** Exactly
+  the limit of the WPF harness, one medium over. A constructed payload is a hypothesis about what
+  the producer emits; only the end-to-end test Core wrote for search closes that, and the canvas
+  equivalent would be a second, separate piece of work.
+- **`textContent` in the DOM is not visibility.** The strongest available assertion is that a string
+  exists in the page's object model. It cannot see a rule that clips, hides or zero-opacities the
+  element carrying it — the DOM-side twin of this repo's own §4a lesson, where a value reached the
+  screen and the affordance was still wrong. **A green result here means "the value arrived", never
+  "a person can read it."**
+- **It cannot see the canvas drawing itself.** The graph is drawn, not written; nodes and edges are
+  geometry. This buys the disclosure/message/caption text and nothing about the picture.
+- **It is slow and belongs in the slow ring** (`ci-and-test-efficiency`, rings of integration). The
+  existing real-WebView2 test carries a 60 s timeout. This is not an every-push control.
+
+#### Recommendation
+
+**Worth building when something needs it, not now.** The three fields it would cover —
+`CanvasGraph.Disclosures`, `.Message`, `.Omitted` — are all currently **rendered correctly**
+(§8.3a, retracted), so the test would land green and guard against regression rather than catch a
+defect. That is a legitimate reason to write a test and a poor reason to prioritise one while five
+real findings sit open with Design.
+
+The costing's value is that the price is now known and small: **when the canvas next changes, this
+is a day's work at most, and the alternative — reasoning about whether a JS consumer still reads a
+field — is the exact method that failed four times in one day.**
