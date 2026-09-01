@@ -252,7 +252,7 @@ public sealed class WorkbenchShell : IDisposable
             _customizationStore = new TerminalCustomizationStore(
                 Path.Combine(workspaceDataDirectory, "terminal-customization.json"));
 
-            KeepArrangementOnWorkspaceOpen();
+            RestoreArrangementOnWorkspaceOpen();
         }
 
         Adapter.Render();
@@ -499,7 +499,7 @@ public sealed class WorkbenchShell : IDisposable
             _customizationStore = new TerminalCustomizationStore(
                 Path.Combine(dataDirectory, "terminal-customization.json"));
 
-            KeepArrangementOnWorkspaceOpen();
+            RestoreArrangementOnWorkspaceOpen();
         }
 
         Adapter.Render();
@@ -1163,14 +1163,16 @@ public sealed class WorkbenchShell : IDisposable
         }
     }
 
-    // The product decision: opening a workspace KEEPS the current arrangement rather than restoring a
-    // per-workspace saved layout. Restoring on open reset/scattered the user's panes (and could bring
-    // back a degenerate, graph-less saved layout), so we deliberately do NOT call Persistence.Restore()
-    // on open. Persistence still SAVES the arrangement, so the data is kept and a setting could re-enable
-    // restore later. (Supersedes US-9 restore-on-open, per the product owner.)
-    private void KeepArrangementOnWorkspaceOpen()
+    // ADR-0021 dz-persist: opening a workspace RESTORES its saved zone arrangement. This is safe now
+    // that the layout is zone-based: restore preserves exact placement (it cannot scatter panes the way
+    // the old tree-restore did), the zone store drops surfaces the workspace can no longer provide, and
+    // an absent/unreadable/corrupt save degrades to "keep the current arrangement" rather than resetting
+    // to a degenerate layout. So the earlier keep-current guard is subsumed by faithful restore.
+    private void RestoreArrangementOnWorkspaceOpen()
     {
-        WorkbenchDiagnostics.LayoutMutation("workspace-open", "keep-current", "layout", null, Service.Current);
+        var restore = Persistence?.Restore();
+        WorkbenchDiagnostics.LayoutMutation(
+            "workspace-open", restore is null ? "keep-current" : "restore-zones", "layout", null, Service.Current);
     }
 
     internal void BindClassDiagrams()
@@ -1566,3 +1568,4 @@ public sealed class WorkbenchShell : IDisposable
     public static IReadOnlyList<WorkbenchCommand> PaletteCommands(string search) =>
         [.. WorkbenchCommandCatalog.Search(search)];
 }
+

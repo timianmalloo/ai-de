@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T03:07:56Z",
+  "generated": "2026-09-01T03:41:10Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6757,6 +6757,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/notes/zone-strangler-approach.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0335",
+      "shortname": "implement-zone-persistence-restore",
+      "datetime": "2026-09-01T03:41:10Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "do all of these including the restore (dz-persist), native drag-to-zone, true collapse-to-rail",
+      "summary": "dz-persist DONE: ZoneLayoutStore serializes WorkbenchLayout to a .zones.json (preserves collapsed content + per-zone extent + exact placement; drops unavailable surfaces; degrades safely on missing/corrupt). LayoutPersistence is zone-aware (saves zones on the existing debounce/dispose, restores them). Opening a workspace now RESTORES its saved zone arrangement (RestoreArrangementOnWorkspaceOpen) — safe because zone restore preserves placement (no scatter) and an absent save keeps current. 7 tests (5 store + 2 round-trip). Core 1283 / App 225 green; app launches clean.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneLayoutStore.cs"
       ],
       "tags": [],
       "outcome": "success"

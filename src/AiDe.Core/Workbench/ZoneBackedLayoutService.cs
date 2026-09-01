@@ -27,6 +27,13 @@ public sealed class ZoneBackedLayoutService : ILayoutService
     /// <summary>The zone model — the real source of truth behind the projected tree.</summary>
     public WorkbenchLayout Zones => _zones;
 
+    /// <summary>Replaces the whole zone arrangement (used by persistence restore).</summary>
+    public void RestoreZones(WorkbenchLayout zones)
+    {
+        ArgumentNullException.ThrowIfNull(zones);
+        Set(zones);
+    }
+
     public Layout Current => _projection ??= ZonesToTree.ToTree(_zones);
 
     public bool IsLocked { get; set; }

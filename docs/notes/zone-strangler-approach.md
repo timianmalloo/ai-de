@@ -45,13 +45,14 @@ Confidence: **Verified** (all slices landed green; app runs; model + view contai
   — the tree is now the projection/render format, and ~10 test files still exercise the tree mechanics
   directly. So the ADR's **contract phase (delete the split tree) is not applicable**: there is nothing
   to delete; the tree is load-bearing as the projection.
-- **Persistence (dz-persist) is deferred.** The shell deliberately does **not** call
-  `Persistence.Restore()` on workspace open or startup (the resolved keep-arrangement decision), so the
-  saved layout has no active reader. Making persistence zone-faithful (preserving collapsed-zone content
-  and exact extents, which the projected tree loses) would be building ahead of a consumer that does not
-  exist — YAGNI. If restore is ever re-enabled, `ZoneBackedLayoutService.Restore` already degrades
-  safely (position-aware for a fixed-frame tree, kind-based conversion otherwise), losing arrangement
-  detail but never a surface. Re-open dz-persist then, with a `WorkbenchLayout` serializer.
+- **Persistence (dz-persist) is implemented.** `ZoneLayoutStore` serializes the `WorkbenchLayout`
+  directly (a `.zones.json` sibling of `layout.json`), preserving collapsed-zone content and per-zone
+  extent that the projected tree cannot, and dropping surfaces the workspace can no longer provide.
+  `LayoutPersistence` is zone-aware (saves zones on the existing debounce/dispose, restores them), and
+  opening a workspace now **restores its saved zone arrangement** (`RestoreArrangementOnWorkspaceOpen`).
+  This is safe where tree-restore was not: zone restore preserves exact placement (it cannot scatter),
+  and an absent/unreadable/corrupt save degrades to "keep the current arrangement" — so it supersedes
+  the earlier keep-current guard without reintroducing the reset/scatter complaint.
 
 ## Follow-ups (captured, not lost)
 

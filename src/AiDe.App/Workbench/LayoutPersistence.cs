@@ -23,6 +23,10 @@ public sealed class LayoutPersistence : IDisposable
     private readonly Func<StackNode, bool> _displayIsConnected;
     private readonly System.Timers.Timer _debounce;
     private bool _disposed;
+    private readonly ZoneLayoutStore? _zoneStore;
+    private readonly ZoneBackedLayoutService? _zoneService;
+    private readonly IReadOnlySet<string> _availableSurfaces;
+    private readonly IReadOnlySet<string> _restorableKinds;
 
     /// <param name="restorableKinds">
     /// Surface kinds the shell can build content for. Surfaces CREATED at runtime — an agent
@@ -39,13 +43,29 @@ public sealed class LayoutPersistence : IDisposable
     {
         _service = service;
         _store = new LayoutStore(layoutFilePath);
-        _availability = new SurfaceAvailability(
-            availableSurfaces,
-            restorableKinds ?? new HashSet<string>(StringComparer.Ordinal));
+        _availableSurfaces = availableSurfaces;
+        _restorableKinds = restorableKinds ?? new HashSet<string>(StringComparer.Ordinal);
+        _availability = new SurfaceAvailability(availableSurfaces, _restorableKinds);
         _displayIsConnected = displayIsConnected ?? VirtualScreen.IsOnAConnectedDisplay;
+
+        // ADR-0021 dz-persist: when the layout is zone-based, save/restore the ZONE model (which
+        // preserves collapsed content and per-zone extents the projected tree cannot), to a sibling
+        // file. The tree store stays wired for the legacy service and does no harm.
+        if (service is ZoneBackedLayoutService zbs)
+        {
+            _zoneService = zbs;
+            _zoneStore = new ZoneLayoutStore(ZonesPathFor(layoutFilePath));
+        }
 
         _debounce = new System.Timers.Timer(debounceMilliseconds) { AutoReset = false };
         _debounce.Elapsed += (_, _) => SaveNow();
+    }
+
+    private static string ZonesPathFor(string layoutFilePath)
+    {
+        var dir = Path.GetDirectoryName(layoutFilePath) ?? string.Empty;
+        var name = Path.GetFileNameWithoutExtension(layoutFilePath);
+        return Path.Combine(dir, name + ".zones.json");
     }
 
     /// <summary>The last restore's outcome — what to announce, and what could not be honoured.</summary>
@@ -54,10 +74,29 @@ public sealed class LayoutPersistence : IDisposable
     /// <summary>Loads the saved arrangement, or the default when there is none or it cannot be honoured.</summary>
     public RestoreResult Restore()
     {
-        var result = _store.Load(_availability, _displayIsConnected);
-        LastRestore = result;
-        _service.Restore(result.Layout);
-        return result;
+        if (_zoneService is not null && _zoneStore is not null)
+        {
+            var zones = _zoneStore.Load(_availableSurfaces, _restorableKinds);
+            if (zones is not null)
+            {
+                _zoneService.RestoreZones(zones);
+                var result = new RestoreResult(_zoneService.Current, false, null, [], [],
+                    "Restored your saved workbench arrangement.");
+                LastRestore = result;
+                return result;
+            }
+
+            // No saved zone layout (or unreadable): keep the current arrangement rather than resetting.
+            var kept = new RestoreResult(_zoneService.Current, false, null, [], [],
+                "Kept the current workbench arrangement.");
+            LastRestore = kept;
+            return kept;
+        }
+
+        var treeResult = _store.Load(_availability, _displayIsConnected);
+        LastRestore = treeResult;
+        _service.Restore(treeResult.Layout);
+        return treeResult;
     }
 
     /// <summary>Schedules a save. Repeated calls within the debounce window collapse into one write.</summary>
@@ -82,7 +121,14 @@ public sealed class LayoutPersistence : IDisposable
 
         try
         {
-            _store.Save(_service.Current);
+            if (_zoneService is not null && _zoneStore is not null)
+            {
+                _zoneStore.Save(_zoneService.Zones); // zone-faithful: keeps collapsed content + extents
+            }
+            else
+            {
+                _store.Save(_service.Current);
+            }
         }
         catch (IOException)
         {
