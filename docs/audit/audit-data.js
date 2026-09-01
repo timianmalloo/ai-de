@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T22:52:15Z",
+  "generated": "2026-09-01T23:00:13Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7488,6 +7488,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0370",
+      "shortname": "gate-narrowness-audit",
+      "datetime": "2026-09-01T23:00:13Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Design session: my first scan disagreed with yours - 14 files/2 names vs your 31/3. Chased the disagreement, the wrong one was mine; my pattern required the return type immediately before the helper name. I'd have published 14 if you hadn't published 31 first.",
+      "summary": "Audited my own gate the same way: reconciled its count against files declaring an STA thread and chased the 3-file gap. WRAPS matched on variable NAME so an error-named harness was invisible; two exist, both currently correct. Pattern now structural and name-independent; self-test carries an error-named fixture so the widening stays observed (old pattern False, new True). All 31 STA files reconcile exactly. Recorded in DC-079.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-harness-diagnostics.py"
       ],
       "tags": [],
       "outcome": "success"
