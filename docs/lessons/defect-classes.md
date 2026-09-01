@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 40 · partially-controlled 31 · uncontrolled 0
+**Status counts:** controlled 41 · partially-controlled 31 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2194,3 +2194,55 @@ for both or split.*
   fails now) before it counts. Phased repair plan in the investigation, Phase 0 = input-path
   instrumentation.
 - **Status:** `uncontrolled` (investigation complete; repair plan awaiting human approval)
+
+### DC-073 — A stand-in outlives the thing it was standing in for
+
+- **Shape:** a seam is introduced with a deliberate placeholder — a mock, a sample, a stub, a
+  hard-coded default — because the real implementation does not exist yet. The comment says
+  *"until X ships"*, and the whole design is that swapping it is one line. X ships. Nobody swaps
+  it. The placeholder keeps working perfectly, which is the problem.
+- **Signature:** a `Mock`/`Sample`/`Stub` type instantiated in production wiring, next to a comment
+  naming the thing that would replace it — and that thing now exists. Grep the codebase for
+  *"until … ships"*, *"awaiting"*, *"placeholder"*, *"for now"* and check each against reality:
+  every one is a dated claim, and nothing dates it. A second tell is a **query with no callers**:
+  the shipped implementation is reachable from tests and from nowhere else.
+- **Why it survives:** every signal is green, and green for the right reasons. The seam exists and
+  is well designed. The surface renders. The tests pass — against the placeholder, which is exactly
+  what they were written to do. Nothing fails, nothing is missing, and the only evidence is a
+  comparison nobody makes: *"is the thing this is waiting for still missing?"* It is the planned,
+  documented, reviewed shortcut, which is why it hides better than an accident. It also crosses a
+  **hand-off boundary**: the session that shipped the real thing announced it and moved on, and the
+  session that owned the placeholder had already moved on too.
+- **Instance:** 2026-09-01 — `MockNodeContentSource` returned a labelled `// SAMPLE` and
+  `WorkbenchShell` instantiated it directly, under the comment *"A mock until Core ships
+  NodeContentAsync (ADR-0018); swapping this field for the Core-backed source is the whole
+  live-wiring change."* `NodeContentAsync` had shipped, and `§4g` of the session contract had
+  announced it as *"the code viewer is unblocked"*. **Measured: the App contained zero calls to
+  `NodeContentAsync`.** The code viewer showed a sample against a fully indexed workspace, and the
+  first-load path asked for a node id of `"(sample)"` — a string that is not a node. Found by
+  grepping the App for stand-in markers, not by anything failing.
+- **Control:** `AttachWorkspace_SwapsTheSampleContentSourceForTheRealOne` asserts the shell holds a
+  `MockNodeContentSource` before a workspace and a `CoreNodeContentSource` after — the swap itself,
+  not a behaviour downstream of it. **Observed failing 2026-09-01** against exactly the shipped
+  shape (`=> _mockNodeContent`): *Expected `CoreNodeContentSource`, Actual `MockNodeContentSource`*.
+
+  The wiring is **derived rather than assigned** — a property computed from `_queries` — because
+  `_queries` is set in two places and a field initialised at one of them is stale at the other. That
+  is the same shape as DC-045, and assigning at both sites would have left the next person one
+  `_queries = …` away from reintroducing this.
+
+  **The class-wide control:** `tools/verify-standins.py`, in CI. Every `Mock*` / `Stub*` /
+  `Sample*` / `Fake*` type constructed outside the test projects must be listed with the condition
+  that makes it legitimate, and an entry naming a construction that no longer exists is also a
+  failure — a stale allowance keeps a question alive nobody has to answer. It is **not a ban**: a
+  stand-in is right for a state where the real thing cannot be asked at all (no workspace open, no
+  credential configured). It is a forcing function, and the list is where the unasked question gets
+  asked. **Observed failing 2026-09-01** on a planted unlisted stand-in, and observed NOT firing on
+  a comment that merely quotes one — this entry's own explanation contains the construction it
+  replaced, and a checker that could not tell the two apart would fail on the lesson itself.
+
+  It deliberately does **not** try to decide whether the real implementation exists yet: that needs
+  semantic analysis, and a wrong answer would be a false alarm on a gate family this repository has
+  already had to teach people to trust twice. A short human-maintained list, and the review it
+  forces, is the cheaper correct thing.
+- **Status:** `controlled`

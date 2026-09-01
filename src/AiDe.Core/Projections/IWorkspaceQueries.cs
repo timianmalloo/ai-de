@@ -36,6 +36,16 @@ public interface IWorkspaceQueries
     /// </remarks>
     Task<ContentSearchResult> SearchContentAsync(string term, int maxMatches, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// One caller's outgoing calls, in the order they are written — a UML sequence diagram's feed.
+    /// </summary>
+    /// <remarks>
+    /// Not <c>calls</c>: those edges are deduplicated to one per pair, which is right for a graph
+    /// and destroys an interaction, because a repeated call collapses and the message is lost.
+    /// Type-level — the caller and callee are types and the member is the message name.
+    /// </remarks>
+    Task<InteractionResult> InteractionAsync(string nodeId, int maxMessages, CancellationToken cancellationToken);
+
     Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken cancellationToken);
 
     /// <summary>
@@ -117,6 +127,10 @@ public sealed class LocalWorkspaceQueries(ProjectionService projections) : IWork
     public Task<ContentSearchResult> SearchContentAsync(
         string term, int maxMatches, CancellationToken cancellationToken) =>
         Task.FromResult(projections.SearchContent(term, maxMatches));
+
+    public Task<InteractionResult> InteractionAsync(
+        string nodeId, int maxMessages, CancellationToken cancellationToken) =>
+        Task.FromResult(projections.Interaction(nodeId, maxMessages));
 
     public Task<KnowledgeResult> KnowledgeAsync(
         string? term, string? type, int maxResults, CancellationToken cancellationToken) =>

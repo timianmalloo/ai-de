@@ -24,6 +24,9 @@ public sealed record FindRequest(string Term, int MaxResults);
 /// <summary>Ask for lines of workspace files containing a term.</summary>
 public sealed record SearchContentRequest(string Term, int MaxMatches);
 
+/// <summary>Ask for one caller's outgoing calls in order.</summary>
+public sealed record InteractionRequest(string NodeId, int MaxMessages);
+
 /// <summary>Asks for one page of every current assertion.</summary>
 /// <param name="Cursor">Null for the first page; otherwise the previous page's NextCursor.</param>
 public sealed record EvidenceRequest(string? Cursor, int MaxAssertions);
@@ -136,6 +139,9 @@ public static class WorkspaceOperations
     /// the cheap one on every keystroke and the expensive one on demand.
     /// </remarks>
     public const string SearchContent = "search-content";
+
+    /// <summary>One caller's outgoing calls, in call order — a sequence diagram's feed.</summary>
+    public const string Interaction = "interaction";
     public const string Knowledge = "knowledge";
 
     /// <summary>One node's content, on demand (ADR-0018).</summary>
@@ -216,6 +222,10 @@ public static class WorkspaceOperations
         endpoint.Register(SearchContent, (request, _) =>
             Refusable(() => Handle<SearchContentRequest>(request, body =>
                 projections.SearchContent(body.Term, body.MaxMatches))));
+
+        endpoint.Register(Interaction, (request, _) =>
+            Refusable(() => Handle<InteractionRequest>(request, body =>
+                projections.Interaction(body.NodeId, body.MaxMessages))));
 
         endpoint.Register(Knowledge, (request, _) =>
             Refusable(() => Handle<KnowledgeRequest>(request, body =>

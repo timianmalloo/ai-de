@@ -35,6 +35,13 @@ public static class EvidencePredicates
         // would put every method and field in the graph as a thing to navigate to. MEASURED on a real
         // repository, that would have been tens of thousands of new nodes to serve a card layout.
         "has_member", "members_truncated",
+
+        // Every call SITE, for sequence diagrams (session-contracts §4k). An attribute, so it is
+        // never drawn: `calls` already carries the deduplicated relationship as an edge, and drawing
+        // one arrow per site would be seven identical arrows on TheTerrace measured against 1,492
+        // edges. The object is `Type#Member`, which is a VALUE describing the message, not a node —
+        // exactly the has_member reasoning, one level out.
+        "calls_at",
         "is_existing_reference", "is_loop", "is_conditional",
         "declares_table",
 
