@@ -70,6 +70,27 @@ public sealed class WorkbenchShell : IDisposable
     /// <summary>The stateless watcher read-pane kinds - rebuilt on refresh; never a terminal (DC-029).</summary>
     private static readonly HashSet<string> WatcherPaneKinds = new(StringComparer.Ordinal) { "sessions", "board", "leaderboard" };
 
+    /// <summary>
+    /// Every pane kind whose content depends on a workspace being open.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Derived from the factory, not restated.</b> A pane realized before
+    /// <see cref="AttachWorkspace"/> was built against a factory with no queries, so it rendered
+    /// "not available" — and it stays that way until something marks it to rebuild. The watcher
+    /// kinds were marked; <c>view</c> and <c>inspector</c> were not, so the default layout's
+    /// "Domain" pane read <i>"Domain is not available in this build"</i> against a fully indexed
+    /// workspace, permanently.</para>
+    ///
+    /// <para>That is the same defect as the watcher panes, fixed once and swept as far as the
+    /// reported instance. The list is now the union rather than the three kinds somebody happened
+    /// to be looking at — the fix is the sweep, not the patch.</para>
+    ///
+    /// <para><b>Never a terminal</b> (DC-029): rebuilding one kills a live process. Only kinds whose
+    /// content is a pure function of the queries belong here.</para>
+    /// </remarks>
+    private static readonly HashSet<string> WorkspaceDependentPaneKinds =
+        new(StringComparer.Ordinal) { "sessions", "board", "leaderboard", "view", "inspector" };
+
     /// <summary>The last observed watcher-store fingerprint; the loop only re-renders the panes when it changes (conn-9).</summary>
     private string? _watcherFingerprint;
 
@@ -437,13 +458,19 @@ public sealed class WorkbenchShell : IDisposable
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
             SearchWorkspaceAsync);
 
-        // The watcher read panes may already have been realized (at construction) against a factory with
-        // no watcher queries - showing "not available". Mark them to rebuild on the next Render so they
-        // pick up the now-wired factory. Only the stateless watcher kinds - never a terminal (DC-029).
-        var watcherKinds = WatcherPaneKinds;
+        // Panes realized at construction were built against a factory with no queries and render
+        // "not available". Mark every workspace-dependent kind to rebuild on the next Render so they
+        // pick up the now-wired factory. Never a terminal (DC-029) - rebuilding one kills a live
+        // process.
+        //
+        // This was the three WATCHER kinds. `view` and `inspector` have the same dependency - the
+        // factory builds them only `when queries is not null` - so the default layout's "Domain"
+        // pane read "not available in this build" against a fully indexed workspace, forever. Same
+        // defect, swept only as far as the pane somebody reported.
+        var rebuildable = WorkspaceDependentPaneKinds;
         Adapter.Invalidate(Service.Current.AllStacks()
             .SelectMany(s => s.Surfaces)
-            .Where(s => watcherKinds.Contains(s.Kind))
+            .Where(s => rebuildable.Contains(s.Kind))
             .Select(s => s.SurfaceId));
 
         // The palette's re-index command is inert until a workspace exists to re-index. Wiring it
