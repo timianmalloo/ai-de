@@ -53,10 +53,15 @@ public sealed class BoundsReachTheSurfaceTests
         new Dictionary<string, string>
         {
             ["ContentSearchResult.FilesSkipped/affordance"] =
-                "Core wired the skipped-file count as a trailing SearchResult of kind Other " +
-                "(a footer row). The number IS visible, so this file's render assertions pass. " +
-                "DESIGN.md §4a specifies count.lower-bound as a capped CHIP with a tooltip naming " +
-                "the cap, not a row. Design closes it; remove this entry when the chip lands.",
+                "HALF-CLOSED. Core's SearchProviderBoundTests now asserts the provider EMITS the " +
+                "row (Other kind, Label carrying 40 of 412, Detail non-empty, and absent when " +
+                "nothing was hidden — the half of DC-025 that gets forgotten, because a caveat " +
+                "that fires when nothing was hidden trains a reader to skip caveats). This file " +
+                "asserts the surface RENDERS it. The pair composes across a contract now stated " +
+                "on both sides, with the residual seam named in the test. " +
+                "WHAT REMAINS: the affordance. DESIGN.md §4a specifies count.lower-bound as a " +
+                "capped CHIP with a tooltip naming the cap, not a row. Design closes it; remove " +
+                "this entry when the chip lands.",
 
             ["InteractionResult.Truncated/unwired"] =
                 "The sequence surface has no caller for InteractionAsync at all — which node " +
@@ -217,6 +222,28 @@ public sealed class BoundsReachTheSurfaceTests
                 "The search result set reported 40 unread files and the number is nowhere on "
                 + "screen. A result list that shows hits without its skipped count is DC-025 at "
                 + "the render boundary.\n" + RenderedForMessage(rendered));
+
+            // ---- the join with Core's half of this claim, stated rather than assumed ----------
+            //
+            // SearchProviderBoundTests (Core) asserts the PROVIDER emits a bound row:
+            // SearchResultKind.Other, Label carrying the counts, Detail non-empty. This file
+            // asserts the SURFACE renders whatever it is handed. Neither runs the real provider
+            // into the real surface, so the two compose only across a contract that had been
+            // implicit in both. It is asserted here so that a change to either side breaks
+            // something rather than quietly opening the gap between them:
+            var footer = hits.Single(h => h.Kind == SearchResultKind.Other);
+            Assert.True(rendered.Contains(footer.Label, System.StringComparison.Ordinal)
+                        && rendered.Contains(footer.Detail, System.StringComparison.Ordinal),
+                "A SearchResultKind.Other row is the shape Core's provider uses to carry a "
+                + "bounded read. Both its Label (the counts) and its Detail (what the counts "
+                + "mean) must reach the screen — a footer that renders half of itself states a "
+                + "number with no claim attached.\n" + RenderedForMessage(rendered));
+
+            // RESIDUAL SEAM, named because it is the honest limit of the pair: both halves are
+            // tested against the contract, not against each other. A provider that stopped
+            // emitting the row would still pass this file, and a surface that dropped it would
+            // still pass Core's. Closing that needs one test driving the real provider into the
+            // real surface, which neither of us has written.
         });
     }
 

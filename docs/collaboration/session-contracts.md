@@ -1511,7 +1511,26 @@ codebase, and we had both written it off.
 | it crosses a **case-convention** boundary (`Disclosures` → `disclosures`) | even a cross-language text search fails on the exact name |
 | the consumer lives **inside a string literal** | it is invisible to any parser of the host language, including a compiler |
 
-#### The rule
+#### First, the corollary — it cost the most and it fires earliest
+
+> **Two methods agreeing is corroboration only if they have different blind spots.**
+
+Core and Session 3 reached the same "dropped" verdict by two different methods and read the
+agreement as confirmation. It was two instruments with one shared limit — both stopped at the C#
+edge — so the agreement carried no information at all. **Convergence is evidence about the methods
+before it is evidence about the answer**, and the question to ask first is not *"do they agree?"*
+but *"could they both be wrong the same way?"*
+
+**The operational form** (Core's phrasing, and better than the abstract one): *when two methods
+agree, name each one's blind spot before believing them — and if you cannot name them, you have one
+method twice.*
+
+It goes first because the rule tells you to check a property of your control, while this tells you
+to distrust **the moment that feels most like success**. Agreement read as confirmation here
+precisely *because* it was rare: after a day of methods contradicting each other, two converging
+looked like the finding. It was the same instrument held twice.
+
+#### Then the rule
 
 > **State the language a control reads, and treat any consumer outside it as NOT CHECKED rather
 > than as absent.** A control that cannot see a surface must say so — in the file, next to the
@@ -1522,15 +1541,11 @@ Both controls now carry their holes in writing: `BoundsReachTheSurface` names th
 status line and anything inside the WebView2; `FieldsSurviveTheClientBoundaryTests` names the
 rename it structurally cannot follow (`GraphCluster.NodeCount` → `CanvasNode.Count`).
 
-#### The corollary, which cost the most
-
-> **Two methods agreeing is corroboration only if they have different blind spots.**
-
-Core and Session 3 reached the same "dropped" verdict by two different methods and read the
-agreement as confirmation. It was two instruments with one shared limit — both stopped at the C#
-edge — so the agreement carried no information at all. **Convergence is evidence about the methods
-before it is evidence about the answer**, and the question to ask first is not *"do they agree?"*
-but *"could they both be wrong the same way?"*
+**The third property has no defence in static analysis, and that is the argument for rendering.** A
+string literal is opaque to the host language's own compiler — no amount of C# rigour could have
+seen `graph.disclosures` inside it. That is not a gap in our methods; it is a property of the
+medium. Which is exactly the case for *render it and look*: the only observer that does not care
+what language the consumer was written in is the running program.
 
 #### What this leaves uncovered, named rather than implied
 
