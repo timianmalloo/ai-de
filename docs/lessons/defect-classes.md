@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 39 · partially-controlled 31 · uncontrolled 1
+**Status counts:** controlled 40 · partially-controlled 31 · uncontrolled 0
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1911,7 +1911,7 @@ for both or split.*
   `ZoneLayoutServiceTests.MovePane_ChangesOnlySourceAndDestination_OtherZonesReferenceIdentical`;
   **view (end-to-end through AvalonDock)** —
   `ZoneWorkbenchAdapterTests.MovingASurfaceToAnotherZone_LosesNoPane_AndMovesOnlyThatSurface`.
-- **Status:** controlled — zone model shipped and wired into the shell; containment proven at the
+- **Status:** `controlled` — zone model shipped and wired into the shell; containment proven at the
   model and the rendered view.
 
 ### DC-064 — A deterministic test double produces colliding output across instances
