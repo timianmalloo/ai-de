@@ -16,9 +16,16 @@ public sealed class ZoneLayoutPersistenceTests : IDisposable
 
     private static IReadOnlySet<string> Available => new HashSet<string>(StringComparer.Ordinal);
 
-    private static IReadOnlySet<string> Kinds => new HashSet<string>(
-        new[] { "view", "canvas", "terminal", "inspector", "sessions", "board", "leaderboard", "contexts", "joins" },
-        StringComparer.Ordinal);
+    /// <summary>The restorable kinds, taken from the product rather than restated.</summary>
+    /// <remarks>
+    /// This was a hand-written list, and it had already drifted: it omitted <c>prompt</c>,
+    /// <c>classdiagram</c>, <c>codeviewer</c> and <c>diagnostics</c>, so persistence was being
+    /// proven against a set of kinds that is not the one that ships. A surface that failed to
+    /// restore in production would still have passed here (DC-021). <c>WorkbenchShell</c> passes
+    /// <see cref="SurfaceContentFactory.KnownKinds"/>; so does this.
+    /// </remarks>
+    private static IReadOnlySet<string> Kinds =>
+        SurfaceContentFactory.KnownKinds.ToHashSet(StringComparer.Ordinal);
 
     [Fact]
     public void AZoneArrangement_IsSavedAndRestored_AcrossSessions()
