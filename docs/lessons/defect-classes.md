@@ -1959,6 +1959,23 @@ for both or split.*
   polluted a machine-global counter, and an ordinary load-induced-then-lock-resolved redundant launch
   (harmless in production) could false-fail it. The counter measured the machine; the invariant is per
   workspace.
+
+  2026-08-31 (**a sibling the first sweep missed**) —
+  `DaemonProcessTests.AfterTheFirstDaemonExits_AnotherCanTakeTheWorkspace` failed under
+  `verify-test-run` (both projects together, 1,496 tests): the daemon started with
+  `--startup-seconds 2` exited **-1** where the test asserts exactly 0, and the identical run
+  immediately afterwards passed. Not introduced by the change in flight — that change touches
+  extractors, tools and docs and no daemon code — and it passes in a solution-wide `dotnet test`,
+  so the trigger is the heavier concurrent run.
+
+  **The class was registered and its first instance fixed, but the sweep stopped at that one test.**
+  `DaemonProcessTests` carries at least two more assertions of the same shape
+  (`ADaemonNobodyConnectsTo_ExitsOnItsOwn`, `ADaemonWhoseClientLeaves_ExitsAfterTheIdleGrace`), each
+  pinning an exact exit code from a process whose shutdown races the suite. `class → sweep → derive
+  → prevent` (CI1) makes the sweep part of the fix — this is the register's own rule not being
+  applied to the register's own entry. The open question is what these tests may legitimately assert
+  about a process exit under load: "exited within its grace" is a product claim, "exited with
+  exactly 0" is a claim about scheduling.
 - **Control:** the reuse test now proves the **workspace-scoped** invariant deterministically — one
   logical daemon (one store, one **epoch**) per workspace, enforced by `WorkspaceLock`: (1) a
   **readiness barrier** (`await first.FindAsync(...)`) gates on an *observed answer*, not a delay, so

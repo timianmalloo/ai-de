@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T03:12:09Z",
+  "generated": "2026-09-01T03:12:12Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3453,7 +3453,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "644e1672250a730f710f68d8e68eb2587d5d1bc1bfa7aefc47d2a2bf6570c147"
+      "sourceSha256": "b08f290ba4b448312bd9db0e0b9f4291180fee2401afd1858bbe2bebe7f307db"
     },
     {
       "id": "domain-experts",
@@ -9612,5 +9612,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d89124f1dcec56b668f7f69f34a09c5a05c2f9bae075f30cb975226b89fd91f9"
+  "graphSha256": "acb147a1704012548fa746de1dfd867e3ccf8e425ac3abf175ba1471759ed05c"
 };
