@@ -759,6 +759,9 @@ public sealed class WorkbenchShell : IDisposable
 
         // Search surfaces navigate a hit into the graph; (re)bind the activation hand-off.
         BindSearchSurfaces();
+
+        // Sequence diagrams follow the last "Sequence diagram" action (Phase E).
+        BindSequenceDiagrams();
     }
 
     // A rename lives on the surface (reconcile keeps it alive); re-render so the tab caption, which
@@ -1088,7 +1091,9 @@ public sealed class WorkbenchShell : IDisposable
                 break;
 
             case NodeViewKind.Sequence:
+                _lastSequenceNodeId = nodeId;
                 Controller.NewSequenceDiagramRequested?.Invoke();
+                _ = ShowNodeInSequenceDiagramsAsync(nodeId, OpenSequenceDiagrams());
                 break;
 
             case NodeViewKind.GraphNeighbourhood:
@@ -1100,6 +1105,46 @@ public sealed class WorkbenchShell : IDisposable
                 }
                 break;
         }
+    }
+
+    private List<SequenceDiagramSurface> OpenSequenceDiagrams() =>
+        Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => s.Kind == "sequence")
+            .Select(s => Adapter.SurfaceContent<SequenceDiagramSurface>(s.SurfaceId))
+            .OfType<SequenceDiagramSurface>()
+            .ToList();
+
+    // Feeds a node's ordered outgoing calls (Core's InteractionAsync — the real §4k feed) into open
+    // sequence diagrams as a SequenceModel. Not the `calls` edges: those dedupe per pair and destroy a
+    // repeated message, where an interaction preserves order and repetition (Phase E).
+    internal async Task ShowNodeInSequenceDiagramsAsync(
+        string nodeId, IReadOnlyList<SequenceDiagramSurface> surfaces)
+    {
+        if (surfaces.Count == 0 || _queries is null) { return; }
+        try
+        {
+            var result = await _queries.InteractionAsync(nodeId, 200, CancellationToken.None);
+            var calls = result.Messages
+                .OrderBy(m => m.Ordinal)
+                .Select(m => (m.From, m.To, m.Member))
+                .ToList();
+            var model = SequenceModel.Build(calls);
+            foreach (var s in surfaces) { s.ShowFor(nodeId, model); }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // Leave the diagrams in their current state rather than crash on a lookup failure.
+        }
+    }
+
+    /// <summary>Fills any open sequence diagram not already showing the last-requested node (Phase E).</summary>
+    internal void BindSequenceDiagrams()
+    {
+        if (_lastSequenceNodeId is not { } id) { return; }
+        var surfaces = OpenSequenceDiagrams().Where(s => s.NodeId != id).ToList();
+        if (surfaces.Count == 0) { return; }
+        _ = ShowNodeInSequenceDiagramsAsync(id, surfaces);
     }
 
     private CanvasSurface? OpenCanvas() =>
@@ -1350,6 +1395,7 @@ public sealed class WorkbenchShell : IDisposable
         BindCodeViewers();
         BindDiagnostics();
         BindSearchSurfaces();
+        BindSequenceDiagrams();
         BindTerminalAttention();
 
         return result.Applied ? okMessage : result.Announcement;
@@ -1576,6 +1622,10 @@ public sealed class WorkbenchShell : IDisposable
     // The last node the user selected in the graph, so a Source pane opened AFTER a selection shows
     // that node rather than a blank — the "code viewer opened but no source" case (smoke 9-1).
     private string? _lastSelectedNodeId;
+
+    // The last node a "Sequence diagram" action was invoked on (Phase E), so a sequence pane opened
+    // for it populates from Core's InteractionAsync feed.
+    private string? _lastSequenceNodeId;
 
     private void OnCanvasNodeSelectedForViewers(object? sender, CanvasNodeSelection selection)
     {

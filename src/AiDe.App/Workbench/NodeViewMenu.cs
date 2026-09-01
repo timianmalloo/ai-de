@@ -56,13 +56,14 @@ public static class NodeViewMenu
             };
         }
 
-        // A type — its source, its class diagram, its neighbourhood.
+        // A type — its source, its class diagram, its sequence of outgoing calls, its neighbourhood.
         if (IsType(k))
         {
             return new List<NodeViewOption>
             {
                 new(NodeViewKind.Source, "View source"),
                 new(NodeViewKind.ClassDiagram, "Class diagram"),
+                new(NodeViewKind.Sequence, "Sequence diagram"),
                 new(NodeViewKind.Metadata, "Metadata & edges"),
                 new(NodeViewKind.GraphNeighbourhood, "Reveal in graph"),
             };

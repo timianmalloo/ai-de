@@ -45,7 +45,7 @@ Severity: **S3** blocks a core task · **S2** major friction · **S1** polish.
 | 11 | "closed one source tab; explorer took focus and both source tabs gone on the right" | Docking + focus | **I** — closing a surface re-rendered and reset focus/visibility of the stack | **Investigate** (close→re-render focus/visibility) | ▢ planned |
 | 12 | "view post workspace reload — TheTerrace" | Docking | **I** — layout after opening a workspace (prior complaint: opening should keep the arrangement) | **Investigate** — confirm restore-on-open holds for this path | ▢ planned |
 | 13 | "graph on the correct side — where I wanted it" | Docking | positive confirmation | none | ✅ ok |
-| 14 | "sequence diagram — no context" | Sequence diagram | **V** — the sequence surface is a scaffold with no real ordered-call feed (Core `Interaction.cs` just landed; not yet wired) | Wire the real feed (§3, depends on Core) | ▢ planned |
+| 14 | "sequence diagram — no context" | Sequence diagram | **V** — the sequence surface is a scaffold with no real ordered-call feed (Core `Interaction.cs` just landed; not yet wired) | Wire the real feed (§3, depends on Core) | ✅ landed (E) |
 | 15 | "what sessions are surfacing in this list" | Sessions | **V** — five near-identical `Terminal — pwsh · Not Recorded · Stale` rows; the list is unclear about what a "session" is and why these appear | **Design** — clearer session identity/labels/empty-vs-stale | ▢ planned |
 | 16 | Claude-Code terminal: "moving the cursor paints characters without proper refresh" | Terminal render | **I** — the terminal render path coalesces dirty regions; a cursor move that only invalidates the old/new cell may leave stale glyphs when the app repaints a region the view considers clean | **Investigate** (terminal render/refresh — distinct from DC-072 input routing) | ▢ planned |
 
@@ -159,7 +159,7 @@ state, not repeat five times.
 | **B ✅** | Legibility — de-opacitied muted text; content (context descriptions, join basis) promoted to full `TextBrush`, counts stay muted (ContextMapSurface + JoinSurface) | #7, #8 | App/UX | landed (provenance is XAML — follow-up) |
 | **C ✅** | `NodeViewMenu` — type-driven right-click "Open as source/class-diagram/sequence/metadata/reveal"; wired JS→CanvasSurface event→shell menu→actions | #5, #7-nav | App | landed (needs user functional verification) |
 | **D ✅** | Class-diagram pan/zoom — wheel scrolls, Shift+wheel horizontal, Ctrl+wheel zoom-to-cursor, middle-drag pans; right-click a **type box** → `NodeViewMenu` "Open as…". Method-level right-click → sequence is unlocked by **E** | #6 | App | landed |
-| **E** | Wire `SequenceModel.Build` to Core `Interaction.cs`, entered from a method's "Open as sequence" | #14, #6-seq | App + Core | C, Core feed |
+| **E ✅** | Wire `SequenceModel.Build` to Core `Interaction.cs` (`ShowNodeInSequenceDiagramsAsync` → `InteractionAsync` ordered feed → `SequenceModel.Build` → `ShowFor`); Sequence added to a **type's** `NodeViewMenu` options and routed via `OpenNodeView`; `BindSequenceDiagrams` re-fills open panes | #14, #6-seq | App + Core | landed (needs user functional verification of the render + method entry) |
 | **F** | Investigate dock drag/close focus+visibility (new-pane min width, close→re-render, reveal new tab) | #4, #10, #11, #12, #3-focus | App | — |
 | **G** | Investigate terminal render/refresh (stale glyphs on cursor move) | #16 | App/Core | — |
 | **H** | Sessions surface identity/labels/empty-state | #15 | App | — |
@@ -173,5 +173,5 @@ analytical surface) and **C** (the contextual menu — the centerpiece the user 
 | | |
 |---|---|
 | **Completed** | Phases **A, B, C, D** landed — source-follows-selection; contexts/joins legibility; the `NodeViewMenu` contextual "Open as…" on graph nodes; and class-diagram **pan/zoom** (wheel / Shift+wheel / Ctrl+wheel-to-cursor / middle-drag) + right-click type-box menu |
-| **Remaining** | Phase **E** (sequence wiring to Core `Interaction.cs` — also unlocks method-level right-click), F/G (docking + terminal-render investigations), H (sessions), provenance legibility (XAML) |
-| **Best next action** | Phase **E** (sequence data + method entry point) or the F/G investigations |
+| **Remaining** | F/G (docking + terminal-render investigations), H (sessions), provenance legibility (XAML) |
+| **Best next action** | The F/G investigations (docking pane-move flakiness + terminal render), then H (sessions surface) |
