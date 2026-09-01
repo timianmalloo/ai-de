@@ -2208,3 +2208,72 @@ script now asserts non-empty before printing.
 Fifth appearance of the family inside our own tooling today, after Core's two controls' blind spots,
 this harness's namespace scope, and the `EvaluateAsync` sentinel. **Every one of them was a checking
 tool that could not distinguish "nothing there" from "I did not look properly."**
+
+### 8.13 Three closing lessons, and the one derivation neither of us drew
+
+Verified first: Core's add-then-move fix (`259adb1`) holds. `zone-center` stays
+`active=0 -> canvas:Graph` through both `newCodeViewer` and `newClassDiagram`, and the documents
+land in `zone-right`. The graph is visible in the sense a user means.
+
+#### 1. A placement test naturally omits the half the defect is in
+
+Core's own account, and it generalises past placement:
+
+> *"My four split tests all asserted where the surface landed; not one asked what happened to the
+> thing it was meant to sit beside."*
+
+The rule the split exists to serve — *the graph stays visible* — was about the **other** stack, and
+every test looked at the new one. **It is the same shape as asserting a payload without its bound**
+(§8.3a): the assertion covers the thing the code produced and not the promise the code was written
+to keep.
+
+Generalised: **when an operation's stated purpose is about something it does not return, the test
+must assert about that something.** A placement test that only checks placement, a search test that
+only checks results, a fix that only checks the fixed path — each is complete about its output and
+silent about its reason.
+
+#### 2. Overstating a gap is a way of deferring it
+
+Core described the decision-note problem as *"decisions with no index anything consults"*. All 19
+are in the derived index, typed, with status, and the constraint in the title (§8.12). Core's own
+conclusion is the lesson:
+
+> *"I'd overstated the gap in the direction that made it sound unsolvable, which is its own failure:
+> a problem described as structural gets deferred, a problem described as a missing habit gets
+> fixed."*
+
+Worth pairing with the day's other direction of error. We spent the day correcting **overconfident
+claims** — a value is dropped, a field is unrendered, a surface is unowned. This is the mirror:
+**an overconfident claim about a problem's difficulty**, which is harder to notice because it looks
+like rigour. "This needs a new control" and "this needs someone to read nineteen titles" are
+different sentences about the same gap, and only one of them gets acted on.
+
+#### 3. Five R4 catches, none of them caught by a control
+
+Five times today a checking tool could not distinguish *"nothing there"* from *"I did not look
+properly"*: Core's two controls' blind spots, this harness's namespace scope, the `EvaluateAsync`
+sentinel, and a script reading the wrong index key and reporting **"0 decision notes"**.
+
+Core's observation about how each was caught is the uncomfortable one:
+
+> *"The one thing that caught each was a number that disagreed with something already known. Not a
+> control. A memory."*
+
+Every catch depended on someone remembering a prior count. That is not a mechanism; it is luck with
+a good session behind it, and it does not survive the session ending.
+
+**The derivation neither of us drew, and it is cheap: a control should print the number it
+measured.** Not pass/fail — the count. `verify-surface-ownership` already does this
+(*"13 surface(s), 13 assigned"*), and so does `merge-append-only-log` (*"331 entries, 0 dropped"*),
+which is why a drop would have been visible. A gate that prints only `OK` gives a later run nothing
+to disagree with, and turns the one thing that actually caught these five into a memory nobody has.
+
+Stated as a rule for controls in this repository:
+
+> **Print the cardinality you checked, not just the verdict.** *"OK"* and *"OK — 277 artifacts, 19
+> decision notes"* fail identically and differ completely: only the second can be contradicted by
+> the next run, and being contradicted is how all five of today's blind spots surfaced.
+
+Not built here — it is a change across several tools in `tools/` and `docs/ai-forward-pack/`,
+neither of which this session owns. Recorded as the actionable residue of a pattern both sessions
+independently hit five times.
