@@ -507,6 +507,25 @@ public sealed class BoundsReachTheSurfaceTests
     private static string RenderedForMessage(string rendered) =>
         "What the surface actually rendered:\n---\n" + rendered.Trim() + "\n---";
 
+    /// <summary>
+    /// Runs <paramref name="work"/> on an STA thread, preserving what failed and why.
+    /// </summary>
+    /// <remarks>
+    /// <b>An assertion failure is rethrown UNWRAPPED.</b> The first version wrapped every exception
+    /// in <c>InvalidOperationException("STA work failed", …)</c>, which reported this file's own
+    /// assertion messages as a broken harness — *"STA work failed"* on the surface with
+    /// *"SearchSurface rendered 12 results and never mentioned 40 skipped files"* buried in an
+    /// inner exception. The failure messages are the entire value of this file, and the harness
+    /// was hiding them behind a machine complaint.
+    /// <para>
+    /// That is this file's own subject pointed at its diagnostics: **a real defect reported as an
+    /// environment problem** is a false claim in the direction that gets the finding dismissed
+    /// rather than investigated. Caught by Core, who inherited the shape when it copied this helper
+    /// for its own WebView2 harness (§8.3a, DC-077's neighbourhood).
+    /// </para>
+    /// A genuine infrastructure failure — a thread that never finishes, a real exception from the
+    /// code under test — still gets its wrapper, because there the wrapper is the true statement.
+    /// </remarks>
     private static void OnSta(System.Action work)
     {
         System.Exception? failure = null;
@@ -514,6 +533,8 @@ public sealed class BoundsReachTheSurfaceTests
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
         Assert.True(thread.Join(System.TimeSpan.FromSeconds(30)), "STA thread did not finish");
+
+        if (failure is Xunit.Sdk.XunitException) { throw failure; }   // the assertion, verbatim
         if (failure is not null) { throw new System.InvalidOperationException("STA work failed", failure); }
     }
 }
