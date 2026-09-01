@@ -210,11 +210,17 @@ public sealed class StoreReader : IDisposable
             // value without one is returned whole as the callee rather than silently dropped: a fact
             // this reader cannot parse is a fact somebody else wrote, and losing it quietly is how a
             // diagram ends up missing a message nobody can account for.
-            var hash = value.LastIndexOf('#');
+            // `Type#Member@line:col`. The position is in the value because the store's natural key
+            // would otherwise fold two identical call sites into one fact (P1-STORE-05) — and an
+            // interaction is precisely a record of things that happened more than once.
+            var at = value.LastIndexOf('@');
+            var body = at < 0 ? value : value[..at];
+
+            var hash = body.LastIndexOf('#');
 
             calls.Add(hash < 0
-                ? (value, string.Empty, location)
-                : (value[..hash], value[(hash + 1)..], location));
+                ? (body, string.Empty, location)
+                : (body[..hash], body[(hash + 1)..], location));
         }
 
         return calls;

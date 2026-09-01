@@ -384,9 +384,22 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
         // find out — and `#` cannot occur in a C# display string, so the two parts always split.
         foreach (var (caller, callee, member, where) in callSites)
         {
+            var at = ProvenanceAt(where, projectPath, observedAt);
+
+            // THE CALL SITE IS PART OF THE VALUE, not just of the provenance.
+            //
+            // The store's natural key is (scope, generation, subject, predicate, object) — P1-STORE-05
+            // — so two rows saying `Order calls Customer#Save` are ONE fact however many times the
+            // call is written, and the second is rejected on insert. That is correct for a fact; it
+            // is fatal for an interaction, and it defeated the first version of this silently: ten
+            // identical call sites arrived as one message and the sequence was quietly short.
+            //
+            // So the position goes in the object, where it makes the fact distinct as well as
+            // locatable. `Order -> Customer.Save at 12:9` and `at 14:9` are genuinely two different
+            // things that happened, which is exactly what a sequence diagram draws.
             assertions.Add(Assertion(
-                request, caller, "calls_at", $"{callee}#{member}", VerificationStatus.Verified,
-                ProvenanceAt(where, projectPath, observedAt)));
+                request, caller, "calls_at", $"{callee}#{member}@{at.SourceLocation}",
+                VerificationStatus.Verified, at));
         }
 
         callWatch.Stop();

@@ -62,7 +62,11 @@ public sealed class ScopeFingerprints
     // re-index is the cheap side of that trade: the gate exists because a stale generation once made
     // a repository of 2,343 knowledge nodes read as 0, and a gate taught to ignore "harmless"
     // changes is a gate that will one day ignore the wrong one.
-    public const string ExtractorGeneration = "2026-09-01.7";
+    // 2026-09-01.8 — every C# call SITE is recorded as `calls_at`, in call order, with the called
+    // member's name. `calls` keeps its deduplicated one-row-per-pair shape for the graph; this is
+    // the interaction a sequence diagram draws, where a repeated call is a repeated message rather
+    // than a duplicate to be folded away. An attribute, so it is never drawn.
+    public const string ExtractorGeneration = "2026-09-01.8";
 
     private const string FileName = "scope-fingerprints.json";
 
