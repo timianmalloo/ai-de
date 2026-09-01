@@ -144,6 +144,17 @@ jobs:
       - name: Surface-ownership gate — self-test
         run: python tools/verify-surface-ownership.py --self-test
 
+      # Every STA harness in the App suite wrapped assertion failures in "STA work failed", so the
+      # runner's headline named the environment while the real sentence sat in an inner exception.
+      # That reads as flakiness, and the response to flakiness is a re-run rather than an
+      # investigation — a false claim aimed at the person diagnosing, which is why it outranks the
+      # announcement classes it came from. 16 harnesses, found by sweeping after a copy exposed one.
+      - name: An assertion failure is reported as itself
+        run: python tools/verify-harness-diagnostics.py
+
+      - name: Harness-diagnostics gate — self-test
+        run: python tools/verify-harness-diagnostics.py --self-test
+
       # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
       # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the
       # twist that the gate was not stale but NARROW). Builds every tracked project the solution does

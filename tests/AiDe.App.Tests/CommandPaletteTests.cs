@@ -23,6 +23,8 @@ public sealed class CommandPaletteTests
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
         Assert.True(thread.Join(TimeSpan.FromSeconds(60)));
+        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
+
         if (failure is not null) { throw new InvalidOperationException("STA work failed", failure); }
         return result;
     }

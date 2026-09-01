@@ -19,6 +19,8 @@ public sealed class ExplorerModeTests
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
         Assert.True(thread.Join(TimeSpan.FromSeconds(30)), "STA thread did not finish");
+        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
+
         if (failure is not null) { throw new InvalidOperationException("STA work failed", failure); }
     }
 

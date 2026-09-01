@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 45 · partially-controlled 31 · uncontrolled 1
+**Status counts:** controlled 46 · partially-controlled 31 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2458,5 +2458,53 @@ for both or split.*
   such window, so a test driving one would pass while proving the opposite (DC-016). While writing
   it, the harness it was modelled on was found to wrap *every* failure — assertion failures included
   — in *"requires the WebView2 runtime"*, reporting a real defect as a broken machine. That is this
-  same class pointed at a diagnostic, so the copy rethrows `XunitException` unwrapped.
+  same class pointed at a diagnostic. It turned out to be 18 harnesses rather than one, and is now
+  **DC-078** with a gate of its own.
+- **Status:** `controlled`
+
+### DC-078 — A harness reports a real defect as a broken machine, and the finding gets dismissed
+
+- **Shape:** a test harness catches everything and rethrows it wrapped in an infrastructure
+  complaint — *"STA work failed"*, *"requires the WebView2 runtime"*, *"the daemon is not
+  reachable"*. Assertion failures travel that path too, so the runner's headline names a cause that
+  is not the cause, and the sentence the test author wrote to make the failure legible is demoted to
+  an inner exception. The test does fail, and the suite is honest about red — what is lost is the
+  reason.
+- **Signature:** `catch (Exception ex) { failure = ex; }` in a thread or dispatcher harness, followed
+  by `throw new SomeException("<infrastructure phrase>", failure)` with no `XunitException` rethrow
+  before it. The tell is the wrapper's wording: it describes the *environment* while the exception it
+  carries describes the *product*.
+- **Why it survives, and why it is worse than the family it came from:** the announcement classes
+  (DC-074, DC-077) make a **user** believe something false. This one makes an **engineer stop
+  looking**. *"STA work failed"* reads as a flaky harness or a missing runtime, and the rational
+  response to flakiness is to re-run, not to investigate — so a real finding is triaged away by
+  someone behaving correctly on the information they were given. It also hides in plain sight
+  because nothing is broken until a test fails, and a passing suite shows no symptom at all.
+- **Instance:** 2026-09-01, found in a **copy**. Writing a control for DC-077, the design session's
+  `OnSta` helper was reproduced verbatim; the new file's first planted failure printed the
+  environment complaint instead of the assertion text, which made the flaw visible in the copy rather
+  than in the original. Both sessions then swept.
+
+  **The sweep found 16 more, not the 2 that were reported** — every STA harness in the App suite
+  (`ClassDiagramSurface`, `CodeViewer`, `CommandPalette`, `DiagnosticsSurface`, `DpiAndResize`,
+  `ExplorerMode`, `PromptBar`, `SequenceDiagram`, `SurfaceContent`, `TerminalCustomization`,
+  `TerminalView`, `WorkbenchAdapter`, `WorkbenchAnnouncer`, `WorkbenchShell`, `ZoneRails`,
+  `ZoneWorkbenchAdapter`, plus `CanvasFocusIntegrationTests`). Nine other harnesses already rethrew
+  unwrapped and needed nothing, which is how the shape stayed invisible: the correct form and the
+  broken form sat side by side in one directory.
+
+  **Measured both ways on the same planted failure:**
+
+      without the guard   System.InvalidOperationException : STA work failed
+                          ---- PROBE: the rail reported three buttons and two of them do nothing.
+      with the guard      PROBE: the rail reported three buttons and two of them do nothing.
+
+- **Control:** `tools/verify-harness-diagnostics.py`. A test file that rethrows a **captured
+  failure** wrapped must first rethrow `XunitException` unwrapped; a genuine infrastructure failure
+  keeps its wrapper, because there the wrapper is a true statement. The gate matches on the wrapper
+  being constructed *from a captured variable*, which is what separates a harness from a fixture
+  that throws a literal to simulate an error — a gate firing on those would be muted within a week,
+  and the real check would go with it. It carries a DC-016 guard: finding zero harnesses is a
+  failure, not a clean run. **Observed failing 2026-09-01** on a planted fixture (unguarded reported,
+  guarded and literal-throwing fixture left alone) and on the repository itself before the sweep.
 - **Status:** `controlled`

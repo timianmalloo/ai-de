@@ -44,6 +44,8 @@ public sealed class TerminalViewTests
         thread.Start();
         thread.Join();
 
+        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
+
         if (failure is not null)
         {
             throw new InvalidOperationException("the STA body threw", failure);

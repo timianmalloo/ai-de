@@ -100,6 +100,8 @@ public sealed class CanvasFocusIntegrationTests
         thread.Start();
         Assert.True(thread.Join(Timeout + TimeSpan.FromSeconds(30)), "the canvas UI thread did not finish");
 
+        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
+
         if (failure is not null)
         {
             // Deliberately not Skip. A missing WebView2 runtime is a broken environment, and a

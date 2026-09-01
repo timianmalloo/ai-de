@@ -28,6 +28,8 @@ public sealed class WorkbenchAdapterTests
         thread.Start();
         // Generous: the first WPF window in a process pays for framework initialisation.
         Assert.True(thread.Join(TimeSpan.FromSeconds(60)), "STA thread did not finish");
+        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
+
         if (failure is not null) { throw new InvalidOperationException("STA work failed", failure); }
         return result;
     }
