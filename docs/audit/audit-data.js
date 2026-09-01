@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T13:59:33Z",
+  "generated": "2026-09-01T15:34:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7165,6 +7165,37 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0355",
+      "shortname": "session-3-craft-pass",
+      "datetime": "2026-09-01T15:34:31Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "yes push and do next steps",
+      "summary": "Pushed feature/ui-experience-refinement. Ran ui-craft-gate.py: 8 Major token findings in CanvasPage.cs, the only file the detector can read since the rest of the app is WPF built in code - recorded as a floor, not a verdict, because a clean run over the whole App dir would be an empty corpus reporting clean (the R4 failure). Read-only pass, nothing in src/ edited. Blocker found by reading rather than by the gate: SearchSurface.cs and SearchModel.cs contain zero references to Evidence, MatchedOn, FilesSkipped, Truncated or FilesSearched, all five of which Core publishes - DC-025 re-entering at the render boundary. WITHDREW Session 3's own section 8.3 proposal 1: DESIGN.md already specifies count.lower-bound, count.exact, state.not-declared and emphasis.dominant, and already names the class as the same failure as provenance laundering. Proposed designing a thing already designed, having read the Core contracts and the register but not DESIGN.md section 4a - the third instance this session of asserting a gap without opening the file that would close it. The gap is implementation not specification, which makes the behavioural harness the load-bearing half. Established it is drift not a capability gap: ContextMapSurface renders IsDeclared and DominantTarget, CodeViewerView renders Shortfall. Two near-miss hexes in CanvasPage.cs - B08AD0 against declared B08CD9 - a colour re-typed from memory rather than referenced.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Claude Code",
+      "actor": "claude-ui-experience",
+      "artifacts": [
+        "docs/ui/craft-findings-2026-09-01.md"
+      ],
+      "tags": [
+        "ui-craft"
+      ],
+      "outcome": "success",
+      "goal": "Push the branch, then run the first craft pass over the surfaces already on main.",
+      "done_when": "The branch is on the remote; the craft gate has been RUN rather than reasoned about; findings are ranked and attributed to the owning session under section 2; and anything the pass disproves about Session 3's own earlier proposals is withdrawn in the register.",
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "git": {
+        "sha": "7ad28e2a72f8d697d9d0c91bde7a2569b1e0c8bf",
+        "short": "7ad28e2a7",
+        "branch": "feature/ui-experience-refinement",
+        "pushed": false
+      }
     }
   ],
   "changes": [
