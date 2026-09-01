@@ -2040,6 +2040,29 @@ half, and it stays human — but it can refuse to let a surface exist with no an
 whole forcing-function shape both sessions have been converging on. **Proposed, not built:
 `tools/**` is Core's under §2.**
 
+#### Resolved 2026-09-01, and the seam the carve leaves
+
+The repository owner authorised the carve; §2 now assigns 13 of 13 surfaces and carries Session 3's
+rows and a **last-reconciled** line. Session 3 accepts every assignment as made and corrects none.
+
+**What unblocked it was not a better argument.** Both sessions identified the boundary correctly
+and then stalled at it — Core would not add Session 3's rows for it, Session 3 would not add its
+own. The stall was the right outcome rather than a failure to route around: the one participant who
+can amend a shared contract said go, and neither agent could have substituted for that.
+
+**One seam worth naming before it produces another mis-route.** `CodeViewerView` and
+`NodeReaderView` are Core's on the evidence that they read Core queries directly and that every
+defect found in them today was Core's. That is sound, and it is one day of evidence about one defect
+class — *what content arrives*. Their other half is presentation: `RenderKind` branching, the
+typography of rendered markdown and code, and the shortfall affordance (`CodeViewerView.cs:96-98`
+renders `NodeContent.Shortfall`, a §8.3a family member this harness already covers).
+
+So the routing rule, stated rather than left to be inferred from the file name — which is precisely
+the inference §8.11 is about: **a defect about *what content arrives* is Core's; one about *how it
+reads* comes to Session 3 as a spec, and back to Core as a patch.** Same split that already works
+for the canvas chip. Naming it costs a sentence; discovering it costs a mis-routed finding, and
+this section exists because that already happened once.
+
 #### And the omission includes the session that found it
 
 Checked after writing the above, because a finding about what a document fails to say should be
