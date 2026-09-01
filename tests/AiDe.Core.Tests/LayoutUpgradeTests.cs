@@ -55,7 +55,7 @@ public sealed class LayoutUpgradeTests : IDisposable
     {
         new LayoutStore(Path_, appVersion: "0.3.0").Save(layout);
         File.WriteAllText(Path_, File.ReadAllText(Path_)
-            .Replace("\"schemaVersion\": 2", "\"schemaVersion\": 1", StringComparison.Ordinal));
+            .Replace($"\"schemaVersion\": {LayoutStore.CurrentSchemaVersion}", "\"schemaVersion\": 1", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -153,6 +153,31 @@ public sealed class LayoutUpgradeTests : IDisposable
 
         layout.AssertInvariant();
         Assert.Single(layout.AllStacks().SelectMany(s => s.Surfaces), s => s.SurfaceId == "joins");
+    }
+
+    [Fact]
+    public void TheV2ToV3Migration_AddsBoardAndLeaderboardBesideSessions()
+    {
+        // A layout arranged before Loomkeeper shipped has Sessions but not Board/Leaderboard. The
+        // shipped v2→v3 step must add both beside Sessions, or the watcher UX is invisible to the
+        // operators who arranged their workbench first (the same visibility lesson as Joins).
+        var withoutWatcherPanes = LayoutService.Detach(
+            LayoutService.Detach(Layout.Default(), "board")!, "leaderboard")!;
+        var start = new LayoutDto(LayoutStore.ToDto(withoutWatcherPanes.Root), []);
+        Assert.DoesNotContain(start.Root.Surfaces ?? [], s => s.SurfaceId == "board");
+
+        var step = LayoutMigrations.Default.Single(m => m.FromVersion == 2);
+        var migrated = new Layout(LayoutStore.FromDto(step.Apply(start).Root), [],
+            System.Collections.Immutable.ImmutableDictionary<string, StackState>.Empty);
+
+        var surfaces = migrated.AllStacks().SelectMany(s => s.Surfaces).ToList();
+        // Both are present, exactly once, in the same stack as sessions.
+        var sessionsStack = migrated.AllStacks().Single(s => s.Surfaces.Any(x => x.SurfaceId == "sessions"));
+        Assert.Contains(sessionsStack.Surfaces, s => s.SurfaceId == "board");
+        Assert.Contains(sessionsStack.Surfaces, s => s.SurfaceId == "leaderboard");
+        Assert.Single(surfaces, s => s.SurfaceId == "board");
+        Assert.Single(surfaces, s => s.SurfaceId == "leaderboard");
+        migrated.AssertInvariant();
     }
 
     // The upgrade path: an old file, a new app, and a surface that was renamed between them.

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-09-01T02:10:46Z",
+  "generated": "2026-09-01T02:12:20Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -917,6 +917,83 @@ window.DOCS_INDEX = {
       "sourceSha256": "33fa8d47c7ff1d0044252c2961c4a9d81b97eabdb6728dfe1e4f3c23104b20dc"
     },
     {
+      "id": "adr-0017-watcher-observation-projection",
+      "path": "docs/adr/0017-watcher-observation-projection.md",
+      "title": "ADR-0017 — Loomkeeper observes as a projection over the shared fact store, not a second database",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Loomkeeper adds harness/model dimensions and watcher facts (span, board message, work episode, evidence, scorecard, daydream observation) to the existing ADR-0002 SQLite fact store and computes liveness, Weave, and the leaderboard as ADR-0001 derived views, rather than owning a second store.",
+      "tags": [
+        "architecture",
+        "loomkeeper",
+        "facts",
+        "dimensions",
+        "projection",
+        "observability"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0001-derived-evidence-views",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "324e75068c16ec719d8a2d162d0c687cd567c925c4d88c0d8031f662af2ac4c0"
+    },
+    {
+      "id": "adr-0018-credential-backed-grading-egress",
+      "path": "docs/adr/0018-credential-backed-grading-egress.md",
+      "title": "ADR-0018 — Credentials are DPAPI local secrets and off-device grading is an opt-in egress path",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Loomkeeper credentials are sealed with DPAPI CurrentUser and never logged or emitted; outbound network is denied by default; credential-backed off-device grading is an ADR-0011 ExternalProcessing egress path that stays blocked until an explicit, revocable, per-path opt-in reclassifies it.",
+      "tags": [
+        "architecture",
+        "loomkeeper",
+        "security",
+        "privacy",
+        "egress",
+        "credentials",
+        "dpapi"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0011-session-processing-class-egress",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "967858353b15a2c3f5c665c8b42043f852ad8d856de56ade35105dc23d80cad7"
+    },
+    {
       "id": "adr-0018-node-content-reader-contract",
       "path": "docs/adr/0018-node-content-reader-contract.md",
       "title": "ADR-0018 — The reader fetches node content on demand via a bounded Core query, not on the graph payload",
@@ -955,6 +1032,43 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4717e8bf67ad30e341ea64f1e512187f2db334114e5f265f75b422b664f69fc2"
+    },
+    {
+      "id": "adr-0019-advisory-evaluator-calibration",
+      "path": "docs/adr/0019-advisory-evaluator-calibration.md",
+      "title": "ADR-0019 — Advisory dimensions and the leaderboard require calibrated, held-out-validated evaluators",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "A model-graded dimension contributes score points only after its evaluator version passes stability (>=95% same 0-4 band over 20 runs) and human agreement (quadratic weighted kappa >=0.75) on separate versioned corpora; leaderboard ranks are scoped to one calibrated task class and score schema, and anti-Goodhart counter-metrics gate whether a score rise counts as improvement.",
+      "tags": [
+        "architecture",
+        "loomkeeper",
+        "scoring",
+        "evaluation",
+        "calibration",
+        "leaderboard",
+        "ai-systems"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5abb6588cbfeb19126e3e8cc9b885fc86599a0bd076d572827cf92a11abae1a3"
     },
     {
       "id": "adr-0019-code-viewer-renderer",
@@ -1033,6 +1147,43 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c4969f43c03d38620516205ffc4efd9e8a45f99e77010e28630843b4ffbc3eaa"
+    },
+    {
+      "id": "adr-0020-trusted-registrar-harness-model-identity",
+      "path": "docs/adr/0020-trusted-registrar-harness-model-identity.md",
+      "title": "ADR-0020 — A trusted registrar binds harness/model identity and issues a per-session capability",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Registration binds repository/worktree/terminal/agent/harness/model/session-generation and issues a per-session capability verified on every event; asserted identity is labelled and cannot clear a floor; non-AI-Forward sessions get an injected coordination contract while AI-Forward sessions reuse the coord-core records rather than a second ledger.",
+      "tags": [
+        "architecture",
+        "loomkeeper",
+        "identity",
+        "registration",
+        "capability",
+        "harness",
+        "model"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0007-agent-session-adapter",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fc184c3983c4eacb54336a4b7e13680da7ca551c7664768f7866a48a3f52df97"
     },
     {
       "id": "adr-0021-named-dock-zones",
@@ -1184,6 +1335,83 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "93bc32b87ab1da76b8b9fc5ad8d9e8c4c2b2480c36cc75580facd5289c2ca1e0"
+    },
+    {
+      "id": "architecture-loomkeeper",
+      "path": "docs/architecture/loomkeeper.md",
+      "title": "Loomkeeper Watcher Substrate - Architecture",
+      "type": "architecture",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Top-level architecture for Loomkeeper, the local agentic watcher subsystem. It observes many terminal-agent sessions across repositories by composing the existing AI-DE fact store, derived views, delivery semantics, session adapter, and egress governance, and adds a trusted registrar, harness/model attribution, a calibrated advisory evaluator, a leaderboard, per-turn standing feedback, and a human-gated Daydream learning loop - local-only by default.",
+      "tags": [
+        "loomkeeper",
+        "agent-observability",
+        "architecture",
+        "scoring",
+        "leaderboard",
+        "daydream",
+        "watcher"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        },
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0001-derived-evidence-views",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0006-terminal-delivery-semantics",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0007-agent-session-adapter",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0011-session-processing-class-egress",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0016-bounded-context-declaration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-watcher-observation-projection",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0019-advisory-evaluator-calibration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6c61ff31a5e56c22b9165b075b48c2658ed6a74adcfe00105d6cb3c860d8bfce"
     },
     {
       "id": "note-2026-08-30-overnight-surfaces",
@@ -1608,6 +1836,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "7512d0c42ae281d521239e2d341d6a2c1af30a4551b7963e559a931dcfa76675"
     },
     {
+      "id": "note-conn-10-11-episode-source-blocker",
+      "path": "docs/notes/conn-10-11-episode-source-blocker.md",
+      "title": "conn-10/conn-11 are blocked on an episode-lifecycle source + verification telemetry",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "conn-10 (auto-score-on-close) and conn-11 (raise-dispute + cloud judge) cannot ship honestly yet: no terminal session opens a goal/done-when Work Episode, and there is no telemetry convention for observing a verification path - so a deterministic signals deriver could only ever return HasVerificationPath=false, which the scorer correctly renders Not-Scored, and disputes have no scored episode to target. Deferring both behind an episode-lifecycle capture slice rather than fabricating signals (spec L127; no-guessing).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "scoring",
+        "dispute",
+        "blocker",
+        "conn-10",
+        "conn-11",
+        "decision-note"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-session-emitter",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "298403503f40f940c45953096e643b6c7e4ed02fb37be09cdaf441b107d7a1d1"
+    },
+    {
       "id": "note-terminal-customization-persistence",
       "path": "docs/notes/terminal-customization-persistence.md",
       "title": "Decision — terminal customization persistence & busy-close",
@@ -1663,6 +1929,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1019c9d98b854b04b2fc784cada4bdea68e34249dba7f30ffe4979e750f397b4"
+    },
+    {
+      "id": "note-watcher-substrate-framing",
+      "path": "docs/notes/watcher-substrate-framing.md",
+      "title": "Loomkeeper framing, score authority, and Observatory archetype",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Records the decision to name the watcher Loomkeeper, keep deterministic facts authoritative over advisory model judgments, human-gate Daydream promotion, and use a G6 evidence-led Observatory inside the existing AI-DE workbench.",
+      "tags": [
+        "decision-note",
+        "loomkeeper",
+        "scoring",
+        "ui-archetype",
+        "privacy"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-watcher-observatory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c20b395a9957338b90358af9b8af08d35c4cb32863c8b29e530c097d41878c78"
     },
     {
       "id": "note-workspace-open-layout-restore",
@@ -2028,6 +2329,1008 @@ window.DOCS_INDEX = {
       "sourceSha256": "4fc0b16537275ee9743dcadefb508ce94a027e92d70521b041d15616aa6cdeb4"
     },
     {
+      "id": "design-watcher-advisory-evaluator",
+      "path": "docs/design/watcher-advisory-evaluator.md",
+      "title": "Loomkeeper - Local Advisory Evaluator & Egress Guard (connective 3)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Implement the IAdvisoryEvaluator seam two ways: a deterministic LOCAL heuristic evaluator that scores the two advisory dimensions from a quarantined evidence token list with a conservative default (needs no model, credential, or egress - the safe smoke-test default), and an EgressGuardedAdvisoryEvaluator that enforces default-deny egress (LK-0003) THEN a present credential (LK-0002) before any egressing cloud judge can run (ADR-0018), never calling the inner evaluator when either check fails. The real cloud model call stays a seam behind the guard - a local smoke test uses the local evaluator.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "advisory",
+        "evaluator",
+        "egress",
+        "credential",
+        "adr-0018",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-advisory-grader",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "be3bcdad905ba7bf7fea9404ea36391fb9630f26237435f961121ff6e6c829dd"
+    },
+    {
+      "id": "design-watcher-advisory-grader",
+      "path": "docs/design/watcher-advisory-grader.md",
+      "title": "Loomkeeper Advisory Grader - Calibration Gates, Leaderboard, Standing",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper advisory grader (slice 7, final). The deterministic cores: the ADR-0019 calibration gates (stability >=95% band consistency with spread <=1, quadratic weighted kappa >=0.75 vs human labels, and anti-Goodhart counter-metrics that must not worsen) that decide whether an advisory evaluator version may contribute points; the gated fold of a qualified advisory dimension into the Weave (never overriding a deterministic dimension); the leaderboard (cohort >=5 or Not Comparable, segmented by task class + score schema version, per harness/model/harness-model, non-identifying); and per-turn agent standing (rank + trend + one evidence reason per dimension, no single optimizable scalar). The model judge itself sits behind an IAdvisoryEvaluator seam.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "advisory",
+        "calibration",
+        "kappa",
+        "leaderboard",
+        "standing",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0019-advisory-evaluator-calibration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9b7c531d475e24574be847f70c0c5b79ec52c466c83d7afed07118ffb1669318"
+    },
+    {
+      "id": "design-watcher-board-leaderboard-surfaces",
+      "path": "docs/design/watcher-board-leaderboard-surfaces.md",
+      "title": "Loomkeeper - Board & Leaderboard WPF Surfaces (connective 2)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Two new WPF read surfaces - Message Board (US-4) and Leaderboard (US-14) - built exactly like the slice-3 Sessions pane: a synchronous store-fold view model in AiDe.Core.Presentation behind a null-safe query seam, rendered by SurfaceContentFactory, seeded into the default layout and added to existing layouts by a v2->v3 migration so they are reachable (E10). WorkbenchShell now opens the per-workspace watcher SQLite store and wires all three read queries, so the panes render live when the ingest host has written data and degrade to an honest \"not available\" when the store is absent.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "wpf",
+        "surface",
+        "board",
+        "leaderboard",
+        "standing",
+        "ui",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "refines"
+        },
+        {
+          "to": "design-watcher-score-persistence",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-message-board",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-advisory-grader",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2ea59168999401ccd1495966b00711bce1cfc874ed38b5d8b326a7000ad05feb"
+    },
+    {
+      "id": "design-watcher-coordination-contract",
+      "path": "docs/design/watcher-coordination-contract.md",
+      "title": "Loomkeeper Injected Coordination Contract - Non-Pack Ingest Adapter",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper injected coordination contract (slice 2): a versioned, coord-core-append schema that lets a session from a repository WITHOUT the AI-Forward pack register and heartbeat over the same append-only ledger (one ledger, projected, not duplicated). A pure CoordContractParser reads the JSONL tolerantly (LOG-A leading newline, CRLF, blank/malformed skip, version pin, sort by at/seq), and an InjectedContractIngest adapter mints the capability at register, holds external-id->capability, and feeds the same TrustedRegistrar/IngestHost as the OTLP path. Contract established by spike S4.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "coordination",
+        "injected-contract",
+        "coord-core",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-ingest-host",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b35449953a8e36be6f47f6be73211d64ac85e3d2386f5fe29f3deba6b310f499"
+    },
+    {
+      "id": "design-watcher-dispute-command",
+      "path": "docs/design/watcher-dispute-command.md",
+      "title": "Loomkeeper Raise-Dispute Command + Cloud-Judge Seam (conn-11)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "A keyboard-reachable workbench command that raises an append-only operator dispute against the latest genuinely-scored episode (US rule 12) via DisputeService - the score is never changed. A Not-Scored card is not disputable. Also documents the real cloud judge (DelegatingAdvisoryEvaluator behind EgressGuardedAdvisoryEvaluator) as egress-gated, operator-cred future work.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "dispute",
+        "command",
+        "cloud-judge",
+        "conn-11",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-signals-derivation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-score-dispute",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a5ce7554f95af1781cd6ef8b65d0289154d6791885db47d8883a1af70fea5920"
+    },
+    {
+      "id": "design-watcher-dispute-service",
+      "path": "docs/design/watcher-dispute-service.md",
+      "title": "Loomkeeper - Raise-Dispute API, Sessions Badge & Cloud-Judge Scaffold (connective 7)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Close the US-16 fairness loop and make the model-judge seam concrete. DisputeService.RaiseDispute is the operator API that mints the dispute id + timestamp and appends the append-only fact (requiring a reason). A session is Disputed iff any of its episodes carries a dispute (DM7), surfaced as a no-colour-alone badge on the Sessions row and computed by the sessions query. DelegatingAdvisoryEvaluator is the cloud-judge scaffold: an IAdvisoryEvaluator that delegates the 0-4 rubric to an injected model call and is placed inside the EgressGuardedAdvisoryEvaluator, so the network call only happens after the ADR-0018 egress opt-in + credential check pass.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "dispute",
+        "sessions",
+        "badge",
+        "cloud-judge",
+        "adr-0018",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-score-dispute",
+          "rel": "refines"
+        },
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "refines"
+        },
+        {
+          "to": "design-watcher-advisory-evaluator",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fbb52b9329b1f4c843ce6366b425da52a31da18240774100a941b2f500709d41"
+    },
+    {
+      "id": "design-watcher-episode-capture",
+      "path": "docs/design/watcher-episode-capture.md",
+      "title": "Loomkeeper Episode-Lifecycle Capture from the Audit Log (ep-capture)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The episode source that unblocks scoring: imported closed Work Episodes are read from a repo's AI-Forward audit log (the goal + done_when + session goal-state entries, AL5b) via a pure AuditLogEpisodeSource and recorded directly into the store (historical facts, not live capability-verified operations). Only an explicit success maps to Completed; an entry without a declared goal-state is not an episode (no fabrication, spec L127 / NG1).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "episode",
+        "capture",
+        "audit-log",
+        "done-when",
+        "ep-capture",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-work-episode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-conn-10-11-episode-source-blocker",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9a58cfd121f9b667b946a6c808ee4898c78fb50876ee04f706c65a591c03f416"
+    },
+    {
+      "id": "design-watcher-host",
+      "path": "docs/design/watcher-host.md",
+      "title": "Loomkeeper - In-Process Watcher Host (connective 5)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Compose the observation store, trusted registrar, ingest host, injected coordination-contract ingest + log pump, and (best-effort) the OTLP receiver into one WatcherHost, and run it IN THE WPF APP PROCESS. Running the ingest beside the read surfaces makes liveness exact (the registrar and liveness projection share one process-global monotonic clock), which is the cross-process caveat conn-2 recorded, now removed. The host drains the coordination-contract log on a 2s background loop so a session that writes a register/heartbeat log appears live without a restart. This is the next-step that turns the panes from live-capable into live.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "host",
+        "ingest",
+        "coordination",
+        "liveness",
+        "in-process",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-otlp-receiver",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-board-leaderboard-surfaces",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9f3a01beb28528a18ae915f142fe03bcc2b2f90c4138ef60860d6427a552d27c"
+    },
+    {
+      "id": "design-watcher-ingest-host",
+      "path": "docs/design/watcher-ingest-host.md",
+      "title": "Loomkeeper Ingest Host - Bounded Queue and Drain Loop",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper ingest host (slice 1): synchronous registration/heartbeat plus an async, bounded span queue (Channel.CreateBounded + DropOldest backpressure) drained into OtelSpanMapper -> TrustedRegistrar/SpanIngest, with forged spans rejected, malformed events quarantined, and counters exposing the operator questions. Transport is a substitutable IHarnessEventSource port; the OTLP network receiver is a follow-on adapter (slice 1b).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "ingest",
+        "host",
+        "backpressure",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-ingest-wire",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2a6e6fed3056569095f9808007d5dfc1c55e747a4a5a8c7df6e5ddeed6a2b62d"
+    },
+    {
+      "id": "design-watcher-ingest-wire",
+      "path": "docs/design/watcher-ingest-wire.md",
+      "title": "Loomkeeper Ingest Wire - Harness Telemetry to Observation",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper ingest wire: a dual-path adapter that turns harness telemetry - native OTel spans and a registration/session-start event - into TrustedRegistrar registrations and capability-verified SpanIngest calls. Its deterministic core is a pure OtelSpanMapper (built now); the OTLP transport receiver and daemon host remain. Contract established by spike S1.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "ingest",
+        "otlp",
+        "adapter",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-watcher-observation-projection",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "019d9cfedee12d87e29eb6c749715ff3d1dbf27ff6789aeb74fa4e909597e989"
+    },
+    {
+      "id": "design-watcher-live-refresh",
+      "path": "docs/design/watcher-live-refresh.md",
+      "title": "Loomkeeper Live Pane Auto-Refresh (conn-9)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The watcher read panes (sessions/board/leaderboard) re-render live when the observation store changes - a session registering/ending, a board post, or a new score shows up without a manual reopen - gated by a cheap store fingerprint so an idle watcher never gratuitously rebuilds a pane (no scroll reset/flicker).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "refresh",
+        "liveness",
+        "ux",
+        "conn-9",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-session-emitter",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bcb015d10354b35100ef988dd69abb9d1d7a892d1fc0dafcf808d474fb98b15b"
+    },
+    {
+      "id": "design-watcher-message-board",
+      "path": "docs/design/watcher-message-board.md",
+      "title": "Loomkeeper Message Board + Fleet Aggregator",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper Message Board + Fleet aggregator (slice 6). The board is a per-repository, append-only communication surface (Question / Decision / Breadcrumb / Knowledge Candidate + Reply / Acknowledgement) with author/session/time/trust provenance; a reply/ack must reference an existing parent (no orphan thread); all content is quarantined untrusted data that cannot instruct a grader, and grader-injection shapes (score 100 / ignore the rubric / promote this lesson) are flagged; policy deletion redacts the payload but keeps the immutable envelope as a tombstone. The Fleet aggregator builds the repo->session map across >=2 stores. Rides the coord-core append semantics.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "message-board",
+        "fleet",
+        "cross-repo",
+        "quarantine",
+        "phase-3"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6fdf4b28bfea48ee8af4d2e88e47db4c5f38ef4a01921e529e1254f6155e3a58"
+    },
+    {
+      "id": "design-watcher-otlp-receiver",
+      "path": "docs/design/watcher-otlp-receiver.md",
+      "title": "Loomkeeper OTLP Receiver - Transport Adapter",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper OTLP receiver (slice 1b): a loopback HttpListener that accepts OTLP/JSON trace exports at /v1/traces, resolves a per-session bearer token to the session's capability, parses spans with stdlib System.Text.Json (no protobuf dependency), and enqueues them into the ingest host. Split into a pure OtlpJsonParser and thin OtlpHttpReceiver glue. Contract established by the slice-1b spike.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "otlp",
+        "receiver",
+        "transport",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-ingest-host",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cd1fd8022e65e8c70e7d0d628e243ad8cc0ddd47b4fb34a54c964319deda8f19"
+    },
+    {
+      "id": "design-watcher-phase1-skeleton",
+      "path": "docs/design/watcher-phase1-skeleton.md",
+      "title": "Loomkeeper Phase-1 Walking Skeleton - Deterministic Observation Core",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Detailed design for the Loomkeeper Phase-1 walking skeleton: the deterministic T0 observation core - identity value objects with harness/model, a Trusted Registrar issuing per-session capabilities, content-addressed idempotent span ingest, monotonic liveness projection, and a default-deny egress gate - over an IWatcherObservationStore seam with an in-memory implementation. No personal data, no model, no network.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "identity",
+        "ingest",
+        "liveness",
+        "egress",
+        "walking-skeleton"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-watcher-observation-projection",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0006-terminal-delivery-semantics",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "807705a3a65c94b27ae9d0b1385fec92878071c1eb7a3a6d8d0e4bde10249762"
+    },
+    {
+      "id": "design-watcher-score-dispute",
+      "path": "docs/design/watcher-score-dispute.md",
+      "title": "Loomkeeper - Operator Dispute Path (connective 4)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The operator dispute path (US-16 / spec rule 12): an operator records a ScoreDispute against a scored episode - an append-only fact that NEVER overwrites the Scorecard - and the episode's Disputed state is DERIVED from the presence of dispute facts (DM7), never a stored flag. Persisted in both stores (append-only trigger + idempotent id), read by a DisputeProjection, and surfaced as a disputed-episode count on the Leaderboard so a disputed score is discoverable from the surface (US-16).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "dispute",
+        "fairness",
+        "append-only",
+        "us-16",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-score-persistence",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-board-leaderboard-surfaces",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b48c6eb4f0bab2ac1e528f39a4bb57a209f33e4cdd98f7d22c85587902adbf59"
+    },
+    {
+      "id": "design-watcher-score-persistence",
+      "path": "docs/design/watcher-score-persistence.md",
+      "title": "Loomkeeper - Scorecard & Leaderboard Persistence (connective 1)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Persist a scored episode (ScoredEpisode + its Scorecard) as a MATERIALIZED DERIVED CACHE behind the existing IWatcherObservationStore seam, so the WPF Leaderboard/Standing surfaces read scored data without recomputing. The cache is a current-state cell (upsert, not append-only) because a recomputation must replace the prior card; it is rebuildable from (episode + signals) via WeaveScorer (DM7), and a round-trip test asserts persisted == in-memory == the value the scorer produced.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "persistence",
+        "scorecard",
+        "leaderboard",
+        "materialized-cache",
+        "sqlite",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-advisory-grader",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3285197bb91bd7151d61d1d1e0e0323be851d728de01776acbaaeda1ba6982a9"
+    },
+    {
+      "id": "design-watcher-scoring-service",
+      "path": "docs/design/watcher-scoring-service.md",
+      "title": "Loomkeeper - Evidence Composer & Scoring Service (connective 6)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Compose a closed episode's DeterministicEpisodeSignals into the local evaluator's evidence token string (EvidenceComposer), and turn (episode + signals + classification) into a persisted ScoredEpisode (ScoringService) so scored episodes reach the Leaderboard/Standing surfaces. The four deterministic dimensions are always scored; the two advisory dimensions fold only when the evaluator's (version, taskClass, schemaVersion) is qualified in the calibration registry (ADR-0019, rule 8); with no evaluator, only the deterministic Weave is recorded (the safe default).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "scoring",
+        "evidence",
+        "calibration",
+        "advisory",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-advisory-grader",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-advisory-evaluator",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-score-persistence",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "001a6ae7f964e4116e8f95fe6e29656ca37ff25f7ff1ac113808deb52eeb9da3"
+    },
+    {
+      "id": "design-watcher-session-emitter",
+      "path": "docs/design/watcher-session-emitter.md",
+      "title": "Loomkeeper Session Coordination Emitter - Auto-Emitting Session Wrapper (conn-8)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "The app-side writer that makes a terminal/agent session appear in the watcher: a pure, testable SessionCoordinationEmitter (Register/Heartbeat/HeartbeatAll/End/Reconcile) over coordination-contract logs, plus the WorkbenchShell loop that reconciles the live terminal panes into coordination sessions and pumps them into the store. Also closes the session-end-that-never-ended liveness gap (DC-067).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "coordination",
+        "emitter",
+        "session",
+        "liveness",
+        "conn-8",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e7eb0b7aba803580c7eaa2562513f4ebbc61e6cafd2b60cfc6024843d1e723ee"
+    },
+    {
+      "id": "design-watcher-sessions-surface",
+      "path": "docs/design/watcher-sessions-surface.md",
+      "title": "Loomkeeper Sessions Surface - WPF Treegrid Row",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper Sessions surface (slice 3): the compute reader that closes the Phase-1 change-surface. A synchronous, deterministic projection folds the observation store + liveness into honest session rows (Not Recorded for an unproven harness/model, a no-colour-alone liveness badge), exposed by a testable WatcherSessionsPaneViewModel (in AiDe.Core/Presentation, mirroring EvidencePaneViewModel) with the full state set, and rendered by a \"sessions\" surface kind in the WPF workbench (G6 Multi-Panel Data Terminal), in the default layout so it is actually visible.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "ui",
+        "sessions",
+        "wpf",
+        "liveness",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "mockup-watcher-observatory",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0017-watcher-observation-projection",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9e2f4a197ea31e0fbbc0cfd7e9d19602e8e53a9132b267a21c5ffad894676d57"
+    },
+    {
+      "id": "design-watcher-signals-derivation",
+      "path": "docs/design/watcher-signals-derivation.md",
+      "title": "Loomkeeper Deterministic Signals Derivation + Auto-Score (conn-10)",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Derives DeterministicEpisodeSignals for an imported closed episode from what is honestly observable - a committed Proof Pack artifact sets HasVerificationPath/RequiredVerificationExecuted; acceptance stays null (unknown); the rest are honest defaults - then auto-scores on import via ScoringService. An episode with a proof pack scores an honest Partial (Focus only, coverage Not-Recorded); one without is Not-Scored. No signal is fabricated (spec L127, NG1).",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "signals",
+        "scoring",
+        "auto-score",
+        "conn-10",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-episode-capture",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-conn-10-11-episode-source-blocker",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9894d65811cae15e06497c09a50e1cce0019420042ef46f3c2828a87632eab85"
+    },
+    {
+      "id": "design-watcher-weave-score",
+      "path": "docs/design/watcher-weave-score.md",
+      "title": "Loomkeeper Deterministic Weave - Score, Floors, Coverage",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper deterministic Weave (slice 5): a pure scoring engine that evaluates a CLOSED Work Episode on the four deterministic dimensions (Outcome integrity 30, Focus & termination 15, Guidance adherence 15, Coordination & learning 10 = observed weight 70), leaving the two advisory dimensions (Evidence discipline, Solution economy = 30) excluded until the grader passes its calibration gates (slice 7). Hard floors (correctness, security, privacy, data integrity, evaluator integrity) trip a Blocked verdict and suppress the numeric headline; a missing goal/done/verification path is Not Scored; the headline is honest \"Partial: earned / observed weight\" with no rescale to 0-100. Evidence Coverage is separate from points. This is where done_when becomes measured.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "weave",
+        "scoring",
+        "floors",
+        "coverage",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-work-episode",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0019-advisory-evaluator-calibration",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1313ec1c4e7eb40c7a48ff546eb8d35d9191c0a749e2634e71464531e735bfce"
+    },
+    {
+      "id": "design-watcher-work-episode",
+      "path": "docs/design/watcher-work-episode.md",
+      "title": "Loomkeeper Work Episode - Goal/Done-When Lifecycle",
+      "type": "design",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Design for the Loomkeeper Work Episode (slice 4): the unit scoring attaches to. An episode binds one immutable goal + done-condition (mirroring the AI-Forward CT19 goal-state triple Goal / Done when / Not in scope) to one bounded interval of one authenticated session, with observable activity (spans in the interval) bound to it. Changing the goal starts a NEW episode generation (the aggregate invariant); a capability-verified Open/Reframe/Close lifecycle records a DECLARED outcome. The quality judgment (was the goal actually met, did it drift) is the Weave's job (slice 5), not here.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "work-episode",
+        "goal",
+        "done-when",
+        "scoring",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0020-trusted-registrar-harness-model-identity",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-watcher-observation-projection",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "971343e1f38cd837fcc7a080ca59011f70d9a5b74f5a762b132f360badf22317"
+    },
+    {
       "id": "audit-log",
       "path": "docs/audit/audit-log.md",
       "title": "Audit & Change Log",
@@ -2075,7 +3378,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3c990d47c1186c60015ccb400f9305606bc8a66eba682fff6959d9a767aca029"
+      "sourceSha256": "cba896fd0de030ca519b8ac0fb12999447d427ba349bbc17db911e187eea0841"
     },
     {
       "id": "domain-experts",
@@ -2631,6 +3934,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "9207edfaa5dc6f86fc08966edc223d6689c8107ad9edbb9e7c10882d5b187550"
     },
     {
+      "id": "mockup-watcher-observatory",
+      "path": "docs/mockups/watcher-observatory.md",
+      "title": "Loomkeeper Observatory - Interactive UI Mockup",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Self-contained interactive mockup for watching cross-repository agent sessions, score evidence, repository messages, Daydream learning, privacy controls, and Loomkeeper's own health through a review harness covering personas, viewports, hard states, themes, density, and reduced motion.",
+      "tags": [
+        "loomkeeper",
+        "ui-mockup",
+        "observability",
+        "agent-scoring",
+        "daydream"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "ui-review-watcher-observatory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "59c7e099db8b64f212ed8e42a2bac1efce7588f295e66dacf9389e240c602b64"
+    },
+    {
       "id": "mockup-workbench",
       "path": "docs/mockups/workbench.md",
       "title": "AI-DE workbench — reviewable mockup",
@@ -2704,6 +4038,47 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "db224bf7106c094b4c7a3e4f54182436c18f5f3f712a52021fde24f07fc3dcef"
+    },
+    {
+      "id": "plan-agentic-watcher-substrate",
+      "path": "docs/plans/agentic-watcher-substrate.md",
+      "title": "Execution Graph - Loomkeeper Knowledge, Specification, and UI",
+      "type": "doc",
+      "status": "resolved",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "The bounded execution graph used to ground the repository, coordinate with active worktrees, research the domain, specify Loomkeeper, create the Observatory, and pass independent evidence, model, security, privacy, UX, accessibility, AI, and simplification gates.",
+      "tags": [
+        "execution-graph",
+        "loomkeeper",
+        "collectknowledge",
+        "specify",
+        "ui-design"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "depends-on"
+        },
+        {
+          "to": "mockup-watcher-observatory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Optimized graph",
+          "mermaid": "flowchart LR\n  G[Ground repository] --> W[Worktree + coordination]\n  W --> K[Knowledge base]\n  K --> S[Specification]\n  S --> D[Design language]\n  D --> M[Observatory mockup]\n  M --> R[Mechanical + adversarial review]\n  K --> C[Discoverability + audit]\n  S --> C\n  R --> C"
+        }
+      ],
+      "sourceSha256": "0208d50d6a1acd8e31f9ffc5b1c2ca4a34b7f67411b522222f1e5db56d859000"
     },
     {
       "id": "plan-ai-native-ide-architecture",
@@ -3341,6 +4716,61 @@ window.DOCS_INDEX = {
       "sourceSha256": "87360ac96ef97fa830bbcee369a8ec3a8f5545eae3d45d82dbb9433a460e93ef"
     },
     {
+      "id": "ui-review-watcher-observatory",
+      "path": "docs/reviews/ui-watcher-observatory.md",
+      "title": "UI Review - Loomkeeper Observatory",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Create-mode review of the Loomkeeper Observatory mockup. The evidence-first G6 structure, hard states, score honesty, keyboard treegrid, token discipline, and model-governance controls pass; native WPF UI Automation, platform keyboard conventions, system contrast, and multi-monitor DPI remain implementation conditions.",
+      "tags": [
+        "ui-review",
+        "loomkeeper",
+        "accessibility",
+        "agent-observability"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "documents"
+        },
+        {
+          "to": "mockup-watcher-observatory",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4cd3f297ac37a5b81be47a3404f3e2ba027a5321ccc6ae58ea9d287e24fbe6f8"
+    },
+    {
+      "id": "kb-agentic-session-observability-glossary",
+      "path": "docs/knowledge/agentic-session-observability/glossary.md",
+      "title": "Agentic Session Observability - Glossary",
+      "type": "glossary",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Ubiquitous language for the watcher domain, separating identities, observations, evaluations, coordination records, and promoted learning.",
+      "tags": [
+        "glossary",
+        "ubiquitous-language",
+        "watcher"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "855af815674245851df9fc51855e1117fe59ddff3127449ee9da7583c0c75f07"
+    },
+    {
       "id": "inv-0004-graph-kind-taxonomy-and-knowledge",
       "path": "docs/investigations/INV-0004-graph-kind-taxonomy-and-knowledge.md",
       "title": "INV-0004 — Why 'Knowledge' is 0, the bicep-as-knowledge mislabel, and the 'not resolved' disclosures",
@@ -3433,6 +4863,228 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "62222cc3449b4071b25720b7581650dedbedd99f047bae9110ac8dc45fe623f0"
+    },
+    {
+      "id": "investigation-terminal-cursor-render-crash",
+      "path": "docs/investigations/terminal-cursor-render-crash.md",
+      "title": "Investigation - AiDe.App crash: terminal cursor render IndexOutOfRange (DC-061)",
+      "type": "investigation",
+      "status": "resolved",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "AiDe.App terminated with an unhandled IndexOutOfRangeException while two agent CLIs (copilot + claude) were grounding in a repo. Verified root cause (from the Windows Application event log, reproduced deterministically): TerminalView.DrawCursor read the character under the cursor through the raw TerminalScreen indexer, but the cursor legitimately sits at the pending-wrap column (CursorColumn == Columns) after writing the last column; at the bottom row that indexes one past the end of the cell array, and the exception is unhandled on the WPF UI thread inside OnRender, which terminates the process. Fixed with a bounds-safe CellUnderCursor() the renderer uses. Registered as DC-061. (A separate finding: the watcher UX is not wired into the running app - see below.)",
+      "tags": [
+        "loomkeeper",
+        "terminal",
+        "crash",
+        "render",
+        "cursor",
+        "defect",
+        "dc-041",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-host",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a78c2da9ecb72f49f1fb8810d4e9ed9e4ab6892ba08838f6f5e254a1b072fcfb"
+    },
+    {
+      "id": "kb-agentic-session-observability",
+      "path": "docs/knowledge/agentic-session-observability/index.md",
+      "title": "Agentic Session Observability, Coordination, Learning, and Scoring",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Evidence base for a local watcher that registers terminal-agent sessions across repositories, observes their traces and coordination, supports shared knowledge, evaluates agent effectiveness, and turns repeated failure patterns into reviewable daydream learnings.",
+      "tags": [
+        "agent-observability",
+        "coordination",
+        "evaluation",
+        "continuous-learning",
+        "terminal-sessions"
+      ],
+      "links": [
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "28b8980906af6e24c2800a47de876b2bc1a027f7acedcaeefefe91156cf50ef7"
+    },
+    {
+      "id": "kb-agentic-session-observability-comparables",
+      "path": "docs/knowledge/agentic-session-observability/comparables.md",
+      "title": "Agentic Session Observability - Comparables",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Comparable observability platforms, agent runtimes, coordination services, benchmarks, and learning systems, with the specific capability each contributes and the gap it leaves.",
+      "tags": [
+        "comparables",
+        "observability",
+        "coordination",
+        "evaluation"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d5c1b090e869d383c7ac0b65f84673f1665b5cf6565a3df44d1622b1dbfca889"
+    },
+    {
+      "id": "kb-agentic-session-observability-data",
+      "path": "docs/knowledge/agentic-session-observability/data-and-constants.md",
+      "title": "Agentic Session Observability - Data and Constants",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Measured findings, system invariants, candidate score dimensions, and boundary conditions that should constrain later specification and architecture work.",
+      "tags": [
+        "metrics",
+        "benchmarks",
+        "invariants",
+        "scoring"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a94476b3054b28929a5520607f1cb9ba79c8a06f06c98139d690949457c9e1bf"
+    },
+    {
+      "id": "kb-agentic-session-observability-open",
+      "path": "docs/knowledge/agentic-session-observability/open-questions.md",
+      "title": "Agentic Session Observability - Open Questions",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Unsettled contracts, known domain failure modes, and the strongest arguments against a watcher that scores and continuously teaches active coding agents.",
+      "tags": [
+        "open-questions",
+        "risks",
+        "disconfirmation"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9204f159ffef151fcf799756c7a23b66070adba876f86a0d60ce6cb51b726a70"
+    },
+    {
+      "id": "kb-agentic-session-observability-references",
+      "path": "docs/knowledge/agentic-session-observability/references.md",
+      "title": "Agentic Session Observability - References",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Standards, official documentation, benchmark papers, and learning-safety research that establish the watcher domain's contracts and known limitations.",
+      "tags": [
+        "references",
+        "standards",
+        "papers"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b5336422ebacdb56e46d9da074cef0ecf380dcba836dad11baf71fe1c19fbcb7"
+    },
+    {
+      "id": "kb-agentic-session-observability-sota",
+      "path": "docs/knowledge/agentic-session-observability/state-of-the-art.md",
+      "title": "Agentic Session Observability - State of the Art",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Current techniques for observing agent sessions, evaluating trajectories, coordinating live processes, and evolving agent context, including the limitations that prevent any one technique from serving as the whole watcher.",
+      "tags": [
+        "state-of-the-art",
+        "opentelemetry",
+        "agent-evaluation",
+        "memory"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "452d920b9c06d806e7b1f685a7d5c87433e45be5ee62982ec87200c24113aee0"
+    },
+    {
+      "id": "kb-agentic-session-observability-sources",
+      "path": "docs/knowledge/agentic-session-observability/sources.md",
+      "title": "Agentic Session Observability - Sources",
+      "type": "knowledge",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2026-11-28",
+      "reviewSuggested": [],
+      "summary": "Full external and repository source list for the agentic watcher evidence base, with access dates and the claims each source supports.",
+      "tags": [
+        "sources",
+        "citations",
+        "provenance"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4ef09f61c84e341e3fcdf547fa1da6d95c60de55fca16cab435125167948359f"
     },
     {
       "id": "kb-ai-native-ide-shell",
@@ -6347,6 +7999,923 @@ window.DOCS_INDEX = {
       "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
+      "id": "proof-terminal-cursor-render-crash",
+      "path": "docs/proof/terminal-cursor-render-crash.md",
+      "title": "Proof Pack - Terminal cursor render crash fix (DC-061)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the terminal cursor render crash (DC-061) is fixed: CellUnderCursor() returns null at the pending-wrap cursor position (the exact index that was one past the end of the cell array), the renderer reads through it instead of the raw indexer, and the guard is mutation-verified to reproduce the original IndexOutOfRangeException when removed. 3 new tests, full Core 970/0, App 138/0.",
+      "tags": [
+        "loomkeeper",
+        "terminal",
+        "crash",
+        "render",
+        "cursor",
+        "proof-pack",
+        "dc-041",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "investigation-terminal-cursor-render-crash",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "73d32a73a5484953d8ff84c5c83b4b246ba24c2276512cad029ec55b1ce49e0c"
+    },
+    {
+      "id": "proof-watcher-advisory-evaluator",
+      "path": "docs/proof/watcher-advisory-evaluator.md",
+      "title": "Proof Pack - Loomkeeper Local Advisory Evaluator & Egress Guard (connective 3)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the advisory seam has a safe local implementation and an enforced egress boundary: the local heuristic scores the two advisory dimensions deterministically from a quarantined evidence token list, defaults conservatively for absent tokens (a missing signal can only lower a score), refuses a deterministic dimension (rule 8), and is stable over 20 repeats; and the egress guard denies a non-opted-in path (LK-0003) and a missing credential (LK-0002) - egress checked first - never calling the inner cloud evaluator when either fails, and delegating only when both hold. 15 tests, full suite 928/0, the egress-first ordering mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "advisory",
+        "evaluator",
+        "egress",
+        "credential",
+        "adr-0018",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-advisory-evaluator",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0018-credential-backed-grading-egress",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "22650db2ba58b4eb65f125c289eb910dffb703e6fd9bdafb5fbad0d3aa578891"
+    },
+    {
+      "id": "proof-watcher-advisory-grader",
+      "path": "docs/proof/watcher-advisory-grader.md",
+      "title": "Proof Pack - Loomkeeper Advisory Grader, Calibration, Leaderboard & Standing (slice 7)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper advisory grader meets its design: the two advisory dimensions (Evidence discipline, Solution economy) enter Weave points ONLY after the ADR-0019 calibration gates pass - evaluator stability (>=95% modal band, spread <=1 over 20 repeats), quadratic-weighted-kappa >=0.75 against human labels, and an anti-Goodhart held-out counter-metric check; the advisory fold never raises a Blocked or Not Scored verdict (rule 8) and only folds a dimension whose (evaluatorVersion, taskClass, schemaVersion) triple is qualified in the registry; the leaderboard is Not Comparable below a cohort of 5 (rule 10) or with a single operator (US-10 privacy suppression), and is segmented by (task class, schema version) (rule 11); and the AgentStanding exposes rank, trend and one reason per dimension but NO single optimizable scalar (US-16 anti-Goodhart) - proven by 27 tests incl. a reflection guard on the no-scalar contract and a mutation-verified cohort-minimum oracle. Full suite 889/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "advisory",
+        "calibration",
+        "qwk",
+        "leaderboard",
+        "standing",
+        "anti-goodhart",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-advisory-grader",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0019-advisory-evaluator-calibration",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ddfd8d51c3ee1bc76913c7228b1062ab4686f4327cbae48b015e0a5d65e24a46"
+    },
+    {
+      "id": "proof-watcher-board-leaderboard-surfaces",
+      "path": "docs/proof/watcher-board-leaderboard-surfaces.md",
+      "title": "Proof Pack - Loomkeeper Board & Leaderboard WPF Surfaces (connective 2)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Board (US-4) and Leaderboard (US-14) WPF surfaces render honestly and are reachable: the pane view models fold the store synchronously and degrade to explicit states (never Loading-forever, DC-011); untrusted board content is shown-but-flagged and a redaction is a tombstone; the leaderboard segments by (task class, schema) and shows Not Comparable for a below-cohort or single-operator cell (US-10); both surfaces render a populated ListBox through SurfaceContentFactory and are in the default layout; a v2->v3 migration adds them to existing layouts (E10); and WorkbenchShell opens the per-workspace watcher store and wires all three queries. 15 Core + 3 App render + 1 migration test; Core suite 913/0, App suite 138/0; the migration oracle mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "wpf",
+        "surface",
+        "board",
+        "leaderboard",
+        "ui",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-board-leaderboard-surfaces",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fae984158d8e5013b350f258459eef3bfaa02972e7709bfba5465c56804601b4"
+    },
+    {
+      "id": "proof-watcher-coordination-contract",
+      "path": "docs/proof/watcher-coordination-contract.md",
+      "title": "Proof Pack - Loomkeeper Injected Coordination Contract (slice 2)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper injected coordination contract meets its design: a non-AI-Forward session registers and heartbeats over the coord-core append log and appears identically in the fact store (one ledger, projected); the parser tolerantly reads the real writer shape (LOG-A leading newline, CRLF, blank/malformed skip, version pin, sort by at/seq); and the capability lives in the adapter, so a heartbeat for a session never registered here is dropped - proven by 16 tests incl. an end-to-end parse->adapter->real-registrar->liveness composition, with the version-pin oracle mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "coordination",
+        "injected-contract",
+        "coord-core",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-ingest-host",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5fa9741013bb7e88311ef9a97b418ebe042d7fa9e115d5c6c7a5e74576935a7b"
+    },
+    {
+      "id": "proof-watcher-dispute-command",
+      "path": "docs/proof/watcher-dispute-command.md",
+      "title": "Proof Pack - Raise-Dispute Command (conn-11)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for conn-11: a keyboard-reachable command raises an append-only operator dispute against the latest genuinely-scored episode (score unchanged, local operator id); a Not-Scored card is not disputable (mutation-verified). Core 990/0, App 143/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "dispute",
+        "command",
+        "conn-11",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-dispute-command",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "31d0e67c73bb37a24e5ab000bd9a6d59593a09ddcec86987724379da0ab5bb1a"
+    },
+    {
+      "id": "proof-watcher-dispute-service",
+      "path": "docs/proof/watcher-dispute-service.md",
+      "title": "Proof Pack - Loomkeeper Raise-Dispute API, Sessions Badge & Cloud-Judge Scaffold (connective 7)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the US-16 fairness loop closes and the model-judge seam is concrete: RaiseDispute mints the id + timestamp and appends the fact (requiring a trimmed reason); a session is Disputed iff any of its episodes carries a dispute (DM7), shown as a no-colour-alone Sessions badge and computed by the query; and the DelegatingAdvisoryEvaluator clamps + delegates the rubric and, behind the ADR-0018 egress guard, does not judge until opted-in and credentialed. 12 tests, Core 967/0, App 138/0; the per-session derivation mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "dispute",
+        "sessions",
+        "cloud-judge",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-dispute-service",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f87ced28267f64ac14f8f93bb64033a1f1c6f631de453d1ebb0f3545e5f147a3"
+    },
+    {
+      "id": "proof-watcher-episode-capture",
+      "path": "docs/proof/watcher-episode-capture.md",
+      "title": "Proof Pack - Episode-Lifecycle Capture (ep-capture)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for ep-capture: AuditLogEpisodeSource parses goal-state audit entries into imported closed Work Episodes and WatcherHost.ImportEpisodesFromAuditLog records them (upsert). Honest outcome mapping mutation-verified. 6 tests; Core 985/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "episode",
+        "capture",
+        "ep-capture",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-episode-capture",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5634574bb240391ec6f74fa083588b14dba730bd4a98e331a40e03cfd36e99f2"
+    },
+    {
+      "id": "proof-watcher-host",
+      "path": "docs/proof/watcher-host.md",
+      "title": "Proof Pack - Loomkeeper In-Process Watcher Host (connective 5)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the in-process WatcherHost composes and runs the ingest: a coordination-contract log registers a session into the shared store through the host; re-pumping is idempotent; liveness is exact because the registrar and the liveness projection share one monotonic clock in-process; an enqueued span is drained by PumpOnce; and the shared store feeds the same Sessions read query the WPF surface folds (E11). Wired into WorkbenchShell with a 2s background pump. 7 tests, Core 946/0, App 138/0; the drain wiring mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "host",
+        "ingest",
+        "coordination",
+        "liveness",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-host",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d041ee55375063cec46a8efd417707c78f308821808906290a3d74461157f6fc"
+    },
+    {
+      "id": "proof-watcher-ingest-host",
+      "path": "docs/proof/watcher-ingest-host.md",
+      "title": "Proof Pack - Loomkeeper Ingest Host (slice 1a)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper ingest host meets its design: registration/heartbeat are synchronous, the bounded span queue absorbs a flood with drop-oldest (every drop counted), forged spans are rejected, malformed ones are quarantined without killing the drain, and the counters reconcile - proven by 9 tests with the backpressure counter compile-enforced.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "ingest",
+        "host",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-ingest-host",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7f2257bbec97ef54f25287ab10a6d4693272478071d5ba10838f50ae4bda75b1"
+    },
+    {
+      "id": "proof-watcher-ingest-wire",
+      "path": "docs/proof/watcher-ingest-wire.md",
+      "title": "Proof Pack - Loomkeeper Ingest Wire (OtelSpanMapper)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper ingest wire's deterministic core (OtelSpanMapper) meets the contract spike S1 established: OTel span and registration events map to ObservedSpan/SessionBinding, unknown harness/model degrade to Not Recorded, malformed events raise LK-0004, and the Development-status GenAI schema is pinned behind a mutation-verified regression gate.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "ingest",
+        "otlp",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-ingest-wire",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "07dc272b05d9b7465d19962793780c6cbf508420fa0528abbaa6b26635178edc"
+    },
+    {
+      "id": "proof-watcher-live-refresh",
+      "path": "docs/proof/watcher-live-refresh.md",
+      "title": "Proof Pack - Live Pane Auto-Refresh (conn-9)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for conn-9: the watcher panes re-render on a store change, gated by a fingerprint whose liveness-state term catches an Ended transition with an unchanged session count. App 140/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "refresh",
+        "conn-9",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-live-refresh",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8f52e88382a3c4eb755bef88d2cb1432aa8b6539bbce88d1f7f36be78f6c7563"
+    },
+    {
+      "id": "proof-watcher-message-board",
+      "path": "docs/proof/watcher-message-board.md",
+      "title": "Proof Pack - Loomkeeper Message Board + Fleet (slice 6)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper Message Board + Fleet aggregator meet their design: a per-repository, append-only board with author/session/time/trust provenance; a reply/ack must reference an existing parent in the same repo (no orphan, no cross-repo thread); a forged capability is rejected; content is quarantined untrusted data and grader-injection shapes are flagged; a policy redaction tombstones the payload while the envelope remains and the thread stays anchored; and the fleet builds the repo->session map across >=2 sources - proven by 28 tests incl. D4 SQLite + an E11 composition, with the orphan-rejection oracle mutation-verified. Full suite 862/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "message-board",
+        "fleet",
+        "cross-repo",
+        "quarantine",
+        "phase-3"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-message-board",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "82001dba2186495be6196426e3f4fe2300e8b9ebde8bca51fae637cf6c7119d5"
+    },
+    {
+      "id": "proof-watcher-otlp-receiver",
+      "path": "docs/proof/watcher-otlp-receiver.md",
+      "title": "Proof Pack - Loomkeeper OTLP Receiver (slice 1b)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper OTLP/HTTP receiver meets its design: it accepts OTLP/JSON exports at /v1/traces with stdlib System.Text.Json (no protobuf dependency), resolves a per-session bearer token to a capability (the capability never travels the wire), parses and enqueues spans onto the ingest host, caps the body, and answers 200 even when it drops a bad/unauthenticated export - proven by 13 tests including two real-loopback HTTP integration tests, with the auth oracle compile-enforced.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "ingest",
+        "otlp",
+        "receiver",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-otlp-receiver",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-ingest-host",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e80bf48108977ae23e7440abfcd75d65651e94b5be26cbbaffe4aa2a46fd9bfb"
+    },
+    {
+      "id": "proof-watcher-phase1-skeleton",
+      "path": "docs/proof/watcher-phase1-skeleton.md",
+      "title": "Proof Pack - Loomkeeper Phase-1 Walking Skeleton",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper Phase-1 deterministic core (identity + Trusted Registrar, idempotent span ingest, monotonic liveness, default-deny egress) and its durable SQLite store meet their design contracts: 41 xUnit tests green (30 core + 11 SQLite), with red observed on the forgery, dedup, and append-only oracles by mutation.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e31a8a73d3e56403d5b777b3c0e3b536e4f3976ee0f54e175839e14924869eb5"
+    },
+    {
+      "id": "proof-watcher-runtime-wiring",
+      "path": "docs/proof/watcher-runtime-wiring.md",
+      "title": "Proof Pack - Loomkeeper watcher wired into the running app (DC-066)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper watcher read surfaces are now wired into the running app. The wiring moved from the shell constructor (which the app builds with a null workspace) into AttachWorkspace (the real runtime path, which previously rebuilt the factory without the watcher queries and never opened the host), and the already-realized watcher panes are invalidated so they rebuild against the wired factory (never a terminal, DC-029). Proven by an E11 test through the real composition root: after attach the Sessions pane shows its live empty state, not \"not available\". App 139/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "wiring",
+        "composition-root",
+        "e2e-c",
+        "dc-042",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "investigation-terminal-cursor-render-crash",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-host",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-board-leaderboard-surfaces",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5e313783745aed433660d63ed5cd230d3bc4e9d39cb9bc6af7b392a9203fc50f"
+    },
+    {
+      "id": "proof-watcher-score-dispute",
+      "path": "docs/proof/watcher-score-dispute.md",
+      "title": "Proof Pack - Loomkeeper Operator Dispute Path (connective 4)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the operator dispute path meets US-16 / rule 12: a ScoreDispute is an append-only fact that never overwrites the Scorecard (prior score preserved); it round-trips whole-score and per-dimension on both stores and persists across a reopen; the SQLite fact rejects UPDATE/DELETE (DM11) and ignores a duplicate id idempotently; the Disputed state is derived from the facts (DM7); and the Leaderboard surfaces the disputed-episode count so a disputed score is discoverable (US-16). 11 tests, full suite 939/0, App 138/0; the append-only/idempotent oracle mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "dispute",
+        "fairness",
+        "append-only",
+        "us-16",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-score-dispute",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c8869ba6128799e705fde59370dfb21277e7aec8b568b5846b7cc02aa46a390c"
+    },
+    {
+      "id": "proof-watcher-score-persistence",
+      "path": "docs/proof/watcher-score-persistence.md",
+      "title": "Proof Pack - Loomkeeper Scorecard & Leaderboard Persistence (connective 1)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that a scored episode persists as a materialized derived cache (DM7) behind IWatcherObservationStore: the in-memory and real SQLite stores return an equal card; the persisted card equals the value WeaveScorer produced (persisted == in-memory == derived); a recompute upserts and leaves no stale dimension/floor child rows; null Coverage round-trips as null not zero; and AllScoredEpisodes() feeds LeaderboardComposer through to a comparable cell. 9 tests, full suite 897/0, the child-cleanup oracle mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "persistence",
+        "scorecard",
+        "leaderboard",
+        "materialized-cache",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-score-persistence",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "cd337f7f5d2c37cacf7b72808676c74bbe24fbf8a9282d2cad9d0f2fbc0f98d3"
+    },
+    {
+      "id": "proof-watcher-scoring-service",
+      "path": "docs/proof/watcher-scoring-service.md",
+      "title": "Proof Pack - Loomkeeper Evidence Composer & Scoring Service (connective 6)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "4",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Evidence that the scoring path is wired: EvidenceComposer maps deterministic signals to the local evaluator's token vocabulary (omitting unobserved tokens so they default conservatively) and round-trips through the evaluator; ScoringService scores an episode and persists a ScoredEpisode that feeds the Leaderboard; the two advisory dimensions fold only when the evaluator is qualified in the registry (ADR-0019, rule 8) and stay excluded otherwise; and a recompute replaces the prior card. 9 tests, full suite 955/0, the composer->evaluator mapping mutation-verified.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "scoring",
+        "evidence",
+        "calibration",
+        "phase-4"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-scoring-service",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fc94abce1c6bc7c116b719101dc8f7efca6de7c2c375304ee89692043aec4afe"
+    },
+    {
+      "id": "proof-watcher-session-emitter",
+      "path": "docs/proof/watcher-session-emitter.md",
+      "title": "Proof Pack - Session Coordination Emitter (conn-8)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for conn-8: the auto-emitting session wrapper (SessionCoordinationEmitter + Reconcile) and its shell wiring, including the DC-067 session-end-to-Ended fix. 9 emitter tests, 2 mutation-verified; Core 979/0, App 139/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "emitter",
+        "coordination",
+        "conn-8",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-session-emitter",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "df9f118007ce2f1342653afecb2fc4df3596bec912e88ad4c929e8df0ec37294"
+    },
+    {
+      "id": "proof-watcher-sessions-surface",
+      "path": "docs/proof/watcher-sessions-surface.md",
+      "title": "Proof Pack - Loomkeeper Sessions Surface (slice 3)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper Sessions surface meets its design: a synchronous, deterministic projection folds the observation store + liveness into honest session rows (Not Recorded for an unproven harness/model, a no-colour-alone liveness badge), the pane VM carries the full state set and never strands on Loading nor renders an unreadable store as blank success (DC-011), and the WPF \"sessions\" surface shows an observed row and is in the default layout - proven by 10 Core tests + 3 STA render tests, with the Not-Recorded honesty oracle mutation-verified. Core 780/0, App 135/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "ui",
+        "sessions",
+        "wpf",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-sessions-surface",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f972a904bfe3c6f5f256263ee6bb296c6cbd106cddfd078b6ca72553a663d04b"
+    },
+    {
+      "id": "proof-watcher-signals-derivation",
+      "path": "docs/proof/watcher-signals-derivation.md",
+      "title": "Proof Pack - Deterministic Signals Derivation + Auto-Score (conn-10)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Proof Pack for conn-10: DeterministicSignalsDeriver derives honest signals (proof pack -> verification path; acceptance null) and WatcherHost auto-scores imported episodes - a proof-pack episode scores an honest Partial, one without is Not-Scored. HasVerificationPath mutation-verified. Core 990/0, App 140/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "signals",
+        "scoring",
+        "conn-10",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-signals-derivation",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b7673d4a415c606529db40ed4637ad4bbc155eee6a180f3700c12bb2eb885bd8"
+    },
+    {
+      "id": "proof-watcher-weave-score",
+      "path": "docs/proof/watcher-weave-score.md",
+      "title": "Proof Pack - Loomkeeper Deterministic Weave (slice 5)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper deterministic Weave meets its design: a closed Work Episode is scored on the four deterministic dimensions (observed weight 70) with the two advisory dimensions excluded (not faked); a hard floor (correctness / security / privacy / data integrity / evaluator integrity) trips a Blocked verdict and suppresses the numeric headline; a missing goal / done-condition / verification path or an open episode is Not Scored; the Partial headline uses the observed-weight denominator and never rescales to 0-100; and Evidence Coverage is separate from points - proven by 27 tests incl. an E11 composition, with the no-rescale oracle mutation-verified. Full suite 834/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "weave",
+        "scoring",
+        "floors",
+        "coverage",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-work-episode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "69ffea8b77a21e25742f2fc4f309e2fd185c26445fcde439dc228cc92a335345"
+    },
+    {
+      "id": "proof-watcher-work-episode",
+      "path": "docs/proof/watcher-work-episode.md",
+      "title": "Proof Pack - Loomkeeper Work Episode (slice 4)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Evidence that the Loomkeeper Work Episode meets its design: an episode binds one immutable goal + done-condition (the CT19 goal-state triple) to one bounded interval of one authenticated session; the lifecycle is capability-verified (forgery rejected on open/reframe/close); changing the goal starts a NEW episode (the old is Superseded, the next generation opens with the new goal, never a mutation); the projection binds only spans inside the interval (endpoints inclusive, open episode uses now); and it persists across a SQLite reopen - proven by 20 tests incl. D4 SQLite + an E11 composition, with the interval-endpoint oracle mutation-verified. Full suite 807/0.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "proof-pack",
+        "work-episode",
+        "goal",
+        "done-when",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-work-episode",
+          "rel": "tested-by"
+        },
+        {
+          "to": "design-watcher-phase1-skeleton",
+          "rel": "depends-on"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fa128429155af92c08c52f48033ebd5764a806c77b75aa71aa0a2a0d2a716b96"
+    },
+    {
+      "id": "spec-agentic-watcher-substrate",
+      "path": "docs/specs/agentic-watcher-substrate.md",
+      "title": "Loomkeeper - Agentic Watcher Substrate and Observatory",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Specifies Loomkeeper, a local agentic watcher that registers terminal-agent sessions across repositories, exposes repo-scoped collaboration, produces evidence-backed agent scorecards attributed by harness and model, ranks harness/model performance on a leaderboard, is user-configured with local credentials, and turns repeated patterns into reviewable daydream learning through the Observatory UI.",
+      "tags": [
+        "loomkeeper",
+        "agent-observability",
+        "coordination",
+        "scoring",
+        "leaderboard",
+        "daydream",
+        "watcher"
+      ],
+      "links": [
+        {
+          "to": "kb-agentic-session-observability",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Registration and blind spots",
+          "mermaid": "flowchart TD\n  A([Open Watch]) --> B{Any watched repository?}\n  B -->|no| C[First run: local-only notice + Watch a repository]\n  C --> D{Repository identity valid?}\n  D -->|no| E[Show invalid/duplicate repository and retry] --> C\n  D -->|yes| F\n  B -->|yes| F([Terminal or agent session starts])\n  F --> G{Registration available?}\n  G -->|native or injected contract| H[Bind repository, worktree, terminal, agent, harness, model, generation]\n  G -->|unsupported| I[Blind Spot: Partially Observed or Not Watched]\n  H --> J{Identity authority valid?}\n  J -->|verified capability| K[Registered: heartbeat and observation begin]\n  J -->|asserted only| L[Registered with Asserted trust label]\n  J -->|duplicate or forged| M[Reject, record attempt, open identity investigation]\n  M --> N{Disposition}\n  N -->|new process generation| H\n  N -->|dismiss false detection| I\n  I --> O{Operator action}\n  O -->|install adapter or register| H\n  O -->|accept gap| P([Remain Not Recorded and unscored])\n  K --> Q{Heartbeat fresh?}\n  L --> Q\n  Q -->|yes| R([Alive])\n  Q -->|expired| S[Stale; scores marked stale]\n  S --> T{Process resumes?}\n  T -->|yes| U[New registration/generation; old authority rejected]\n  T -->|no| V([Ended or unknown])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Work Episode lifecycle",
+          "mermaid": "flowchart TD\n  A([Registered Agent Session]) --> B{Goal and done condition declared?}\n  B -->|no| C[No Work Episode; Not Scored]\n  B -->|yes| D[Open immutable Work Episode]\n  D --> E[Observe actions, evidence, messages, and outputs]\n  E --> F{Goal changes?}\n  F -->|yes| G[Close prior episode as superseded goal] --> H[Open new Work Episode] --> E\n  F -->|no| I{Done condition reached or session ends?}\n  I -->|no| E\n  I -->|yes| J[Close episode]\n  J --> K{Minimum verification present?}\n  K -->|yes| L([Scoreable])\n  K -->|no| M([Not Scored with missing verification])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Watching and evidence adjudication",
+          "mermaid": "flowchart TD\n  A([Open Watch / Sessions]) --> B[Choose repository, worktree, terminal, or session]\n  B --> C[Open Session Detail]\n  C --> D{Goal and verification available?}\n  D -->|no| E[Not Scored with named missing evidence]\n  D -->|yes| F[Open Weave Scorecard]\n  F --> G{Hard floor failed?}\n  G -->|yes| H[Blocked verdict; failing floor pinned]\n  G -->|no| I[Show score + Evidence Coverage + dimensions]\n  H --> J[Open dimension evidence]\n  I --> J\n  J --> K{Accept judgment?}\n  K -->|yes| L([Return to Sessions])\n  K -->|dispute| M[Append dispute with reason and evidence]\n  M --> N[Deterministic/human disposition wins; prior version retained]\n  N --> F\n  K -->|send feedback| O[One behavior + one consequence + one next-turn correction]\n  O --> O1{Trustworthy evidence exists?}\n  O1 -->|no| O2[Decline feedback with reason]\n  O1 -->|yes| P{Leaks held-out grader?}\n  P -->|yes| Q[Block or redact]\n  P -->|no| R([Feedback delivered])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Repo Message Board",
+          "mermaid": "flowchart TD\n  A([Open Message Board]) --> A1{Repository context selected?}\n  A1 -->|no / All repositories| A2[Require repository picker] --> A1\n  A1 -->|yes| B{Post, reply, acknowledge, search}\n  B -->|post| C[Choose Question, Decision, Breadcrumb, or Knowledge Candidate]\n  C --> D[Attempt append with provenance and trust]\n  D --> D1{Append succeeds?}\n  D1 -->|no| D2[Show failed write; preserve draft; retry]\n  D1 -->|yes| I\n  B -->|reply| E{Parent exists?}\n  E -->|yes| F[Append reply linked to parent]\n  E -->|no| G[Reject orphan reply with reason]\n  B -->|acknowledge| H[Append acknowledgement; unanswered state clears]\n  B -->|search| H1[Show repository-scoped results and return to thread]\n  H --> K\n  F --> I{Instruction-like or poisoned content?}\n  I -->|yes| J[Quarantine as untrusted; no grader/promotion authority]\n  I -->|no| K([Visible in thread])\n  B -->|read failure or stale| L[Show failed/stale state and retry]"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Daydream review and learning",
+          "mermaid": "flowchart TD\n  A([Observe behavior or outcome]) --> B[Daydream Observation with evidence and confidence]\n  B --> C{Repeated or deterministically reproduced?}\n  C -->|no| D([Remain Observation])\n  C -->|yes| E[Propose Candidate Lesson]\n  E --> F[Show sources, counter-evidence, expected effect, and disconfirming check]\n  F --> G{Disconfirming check complete?}\n  G -->|no| H[Promotion disabled]\n  H --> H1[Run or attach disconfirming check] --> G\n  G -->|yes, candidate refuted| H2[Mark Disconfirmed; promotion blocked]\n  G -->|yes, survives| I{Human decision}\n  I -->|promote| J[Versioned Promoted Learning aligned to Dream/defect class]\n  I -->|defer| K([Remain Candidate])\n  I -->|reject| L([Archive with reason])\n  J --> M{Source corrected/deleted or later contradiction?}\n  M -->|yes| N[Retract or supersede learning and projections]\n  M -->|no| O[Measure recurrence/effect]\n  J --> P{Operator retracts or supersedes?}\n  P -->|yes, with reason| N\n  P -->|no| O"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Privacy, retention, and deletion",
+          "mermaid": "flowchart TD\n  A([First repository capture]) --> B[Notice: purpose, data classes, retention, deletion, non-personnel boundary]\n  B --> C{Operator acknowledges?}\n  C -->|no| D[Capture registration/health only; no work content]\n  C -->|yes| E[Set per-repo opt-in content capture and redaction]\n  E --> F([Local-only capture])\n  F --> G{Request}\n  G -->|external export or hosted judge| H[Export blocked in v1; hosted judge only via explicit egress opt-in]\n  G -->|rank a person| I[Refused]\n  G -->|delete| J[Preview source + derived scores/learning affected]\n  J --> K{Confirm deletion?}\n  K -->|no| F\n  K -->|yes| L[Run resumable deletion/retraction process]\n  L --> M{All required effects complete?}\n  M -->|yes| N[Issue Complete receipt]\n  M -->|partial or failed| O[Issue Partial receipt with failed effects]\n  O --> P[Retry incomplete effects] --> L"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Configuration and credentials",
+          "mermaid": "flowchart TD\n  A([Open Configuration]) --> B[Choose watched harnesses, models, and repositories]\n  B --> C{Credential needed for a watched harness?}\n  C -->|no| D([Watch selected scope, local-only])\n  C -->|yes| E[Enter credential]\n  E --> F[Store as local secret; never logged or emitted]\n  F --> G{Grader/Daydream must call a model off-device?}\n  G -->|no| D\n  G -->|yes| H[Egress opt-in notice: purpose, endpoint, data classes]\n  H --> I{Operator opts in?}\n  I -->|no| J([Stay local-only; that path disabled; Egress blocked])\n  I -->|yes| K[Enable that egress path only]\n  K --> L{Later revoke or credential removed?}\n  L -->|yes| M[Revoke: disable path, drop secret, keep no derived copy]\n  L -->|no| N([Watching with opted-in egress])\n  D --> O{Harness or model unreported?}\n  O -->|yes| P[Attribution Not Recorded; episode still scored]\n  O -->|no| Q([Attributed to harness and model])"
+        },
+        {
+          "kind": "flowchart",
+          "title": "Leaderboard",
+          "mermaid": "flowchart TD\n  A([Open Leaderboard]) --> B{Task class and score schema selected?}\n  B -->|no| C[Require task class + score schema version] --> B\n  B -->|yes| D[Gather comparable episodes in that class + version]\n  D --> E{Cohort >= minimum and not a single-human proxy?}\n  E -->|no| F[Show Not Comparable with reason; no rank]\n  E -->|yes| G[Rank by harness, model, and harness-model]\n  G --> H[Show rank, cohort size, Evidence Coverage, and trend per cell]\n  H --> I{Open a cell?}\n  I -->|yes| J[Open the episodes and Scorecards behind the rank]\n  I -->|no| K([Return to Leaderboard])\n  H --> L{Rubric/schema/model version changed?}\n  L -->|yes| M[Segment versions; do not trend incompatible results into one rank]\n  L -->|no| K"
+        }
+      ],
+      "sourceSha256": "835df96d89a3ed0442dd6cb4df83b9c1dfeac8c5aa182aa62eebb0715b243c2f"
+    },
+    {
       "id": "spec-ai-native-ide",
       "path": "docs/specs/ai-native-ide.md",
       "title": "AI-native IDE — Product specification",
@@ -6901,6 +9470,22 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-knowledge-explorer"
     },
     {
+      "id": "surface-specs-agentic-watcher-substrate",
+      "path": "docs/specs/agentic-watcher-substrate.html",
+      "title": "Loomkeeper - Agentic watcher proposal",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "spec-agentic-watcher-substrate"
+    },
+    {
+      "id": "surface-mockups-watcher-observatory",
+      "path": "docs/mockups/watcher-observatory.html",
+      "title": "Loomkeeper Observatory - review mockup",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact.",
+      "artifactId": "mockup-watcher-observatory"
+    },
+    {
       "id": "surface-mockups-named-dock-zones",
       "path": "docs/mockups/named-dock-zones.html",
       "title": "Named Dock Zones — mockup & review harness",
@@ -6917,5 +9502,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ff90dbd9555b86adcc7fcf6a5a8b924fc25a36234505aaf7b3c2d29f256daabd"
+  "graphSha256": "b602f2d4731a891ee6fce48b6bcab6b32507b76028b2e935abe0c1a8e17d5a12"
 };

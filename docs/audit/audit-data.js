@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T02:10:46Z",
+  "generated": "2026-09-01T02:12:20Z",
   "audit": [
     {
       "id": "al-0001",
@@ -2745,6 +2745,119 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0146",
+      "shortname": "collectknowledge-agentic-session-observability",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Established a sourced knowledge base for multi-session observability, coordination, trajectory scoring, Daydream learning, and the distributed-systems/privacy limits.",
+      "kind": "skill",
+      "skill": "collectknowledge",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/knowledge/agentic-session-observability/index.md"
+      ],
+      "tags": [
+        "watcher",
+        "scoring"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "started_at": "2026-08-30T19:47:28Z",
+      "duration_seconds": 6988.0,
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0147",
+      "shortname": "optimize-graph-agentic-watcher",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Executed an eight-node bounded graph with width four, early hard gates, and measured correction loops.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/plans/agentic-watcher-substrate.md"
+      ],
+      "tags": [
+        "execution-graph"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0148",
+      "shortname": "specify-loomkeeper",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Specified Loomkeeper, the Weave Score, repo Message Board, Daydream lifecycle, local-only policies, and the three-layer Observatory experience.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/specs/agentic-watcher-substrate.md",
+        "docs/specs/agentic-watcher-substrate.html"
+      ],
+      "tags": [
+        "specification"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-0149",
+      "shortname": "ui-design-watcher-observatory",
+      "datetime": "2026-08-30T21:43:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Created the G6 Loomkeeper Observatory design language, hard-state interactive mockup, rendered audits, and adversarial UI review.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": "@timianmalloo",
+      "artifacts": [
+        "docs/mockups/watcher-observatory.html",
+        "docs/reviews/ui-watcher-observatory.md"
+      ],
+      "tags": [
+        "ui-design"
+      ],
+      "outcome": "success",
+      "goal": "Establish Loomkeeper evidence, specification, proposal, and Observatory mockup in an isolated coordinated worktree.",
+      "done_when": "Knowledge, spec, HTML proposal, DESIGN.md, mockup, review, graph index, and audit records are complete and validated.",
+      "git": {
+        "sha": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "short": "160a6a693",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null
+      }
+    },
+    {
       "id": "al-0150",
       "shortname": "investigate-graph-kind-and-knowledge",
       "datetime": "2026-08-30T21:52:28Z",
@@ -2823,6 +2936,28 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0154",
+      "shortname": "watcher-tighten-and-extend",
+      "datetime": "2026-08-30T22:25:45Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Review/tighten the Loomkeeper watcher spec, proposal HTML and mockups (gpt walkabout); then add harness+model scoring axes, a harness/model/harness-model leaderboard, user credential/config, and per-turn agent-visible standing with per-score why.",
+      "summary": "Cut spec process residue; fixed Watcher Health nav + Daydream state gaps; replaced the false-precision score gauge in the proposal with an honest chip (61, no conic); added harness/model identity+aggregation, US-13..16, Leaderboard + Configuration surfaces (spec Part B/C, DESIGN.md), a Leaderboard and Configuration view + per-turn Standing block in the mockup; all gates green.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/specs/agentic-watcher-substrate.md",
+        "docs/mockups/watcher-observatory.html"
+      ],
+      "tags": [
+        "loomkeeper",
+        "leaderboard",
+        "scoring"
+      ],
+      "outcome": "success"
+    },
+    {
       "id": "al-0155",
       "shortname": "inv-0004-node-class-knowledge-health-vocabulary-control",
       "datetime": "2026-08-30T22:26:25Z",
@@ -2883,6 +3018,32 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0158",
+      "shortname": "define-architecture-loomkeeper",
+      "datetime": "2026-08-30T22:40:54Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Run /define-architecture on Loomkeeper, starting with the credential/egress security model and task-class calibration (the two riskiest new surfaces).",
+      "summary": "Authored docs/architecture/loomkeeper.md (G Continuous Sentinel + D + H; projection-not-second-store; vertical phasing with a walking skeleton) composing existing ADR-0001/0002/0006/0007/0011/0016, and four new ADRs: 0017 observation projection, 0018 credential/DPAPI + egress-deny opt-in (extends 0011), 0019 advisory-evaluator calibration gates, 0020 trusted registrar + harness/model identity (extends 0007). Spikes S1-S4 named not fabricated. Gates green.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/architecture/loomkeeper.md",
+        "docs/adr/0018-credential-backed-grading-egress.md",
+        "docs/adr/0019-advisory-evaluator-calibration.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "architecture",
+        "egress",
+        "calibration"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-30T22:32:00Z",
+      "duration_seconds": 534.0
+    },
+    {
       "id": "al-0159",
       "shortname": "knowledge-chip-zero-generation-and-declared-class",
       "datetime": "2026-08-30T23:22:01Z",
@@ -2907,6 +3068,29 @@ window.AUDIT_DATA = {
         "branch": "session/phase3-pane-probes",
         "pushed": false
       }
+    },
+    {
+      "id": "al-0160",
+      "shortname": "design-implement-watcher-phase1",
+      "datetime": "2026-08-30T23:38:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Run /design on the Phase-1 walking-skeleton components, then /implement it.",
+      "summary": "Designed docs/design/watcher-phase1-skeleton.md (data model, contracts, patterns, failure modes, STRIDE, LINDDUN no-PII, telemetry, test plan) and implemented the deterministic core in src/AiDe.Core/Watcher/ (identity+capability, TrustedRegistrar, idempotent content-addressed span ingest, monotonic liveness projection, default-deny egress gate, IWatcherObservationStore seam + in-memory impl). 30 xUnit tests green (full suite 710/0); forgery + dedup oracles mutation-verified red. Proof Pack committed; DC-039 registered.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/design/watcher-phase1-skeleton.md",
+        "src/AiDe.Core/Watcher/TrustedRegistrar.cs",
+        "docs/proof/watcher-phase1-skeleton.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "phase-1"
+      ],
+      "outcome": "success"
     },
     {
       "id": "al-0161",
@@ -2996,6 +3180,30 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0165",
+      "shortname": "implement-watcher-sqlite-store",
+      "datetime": "2026-08-31T00:20:11Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Do the next action: /implement the SQLite observation store behind the IWatcherObservationStore seam.",
+      "summary": "Implemented SqliteWatcherObservationStore (src/AiDe.Core/Watcher/) reusing the ADR-0002 idiom: WAL, single writer, append-only observed_span_fact enforced by BEFORE UPDATE/DELETE triggers, content-addressed PK dedup via INSERT OR IGNORE, session/heartbeat/ended current-state tables mapping 1:1 to the in-memory maps. 11 new D4 real-engine tests (persistence across reopen, append-only rejection, contract fidelity); append-only trigger mutation-verified red. Full suite 721/0; build 0/0. Design + Proof Pack updated.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "tests/AiDe.Core.Tests/Watcher/SqliteWatcherObservationStoreTests.cs",
+        "docs/proof/watcher-phase1-skeleton.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "sqlite",
+        "phase-1"
+      ],
+      "outcome": "success"
+    },
+    {
       "id": "al-0166",
       "shortname": "implement-prompt-draft-foundation",
       "datetime": "2026-08-31T00:34:04Z",
@@ -3029,6 +3237,34 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0168",
+      "shortname": "spike-s1-and-ingest-wire",
+      "datetime": "2026-08-31T00:38:20Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Do the next best actions: run spike S1 (harness OTLP ingest shape), then /design the daemon ingest wire (and implement its deterministic core).",
+      "summary": "Ran spike S1 (spikes/watcher-otlp-ingest, PASS) establishing the OTel-span and registration mappings against the real Activity primitive, with GenAI attributes flagged Development-status and pinned. Designed docs/design/watcher-ingest-wire.md (dual-path adapter/ACL feeding TrustedRegistrar+SpanIngest; new ingest-boundary STRIDE; LINDDUN no-PII; pinned-schema A6 gate). Implemented the deterministic OtelSpanMapper (src/AiDe.Core/Watcher/) + LK-0004 MalformedEvent; 11 tests incl. the A6 pinned-schema gate (mutation-verified red). Full suite 732/0; build 0/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "spikes/watcher-otlp-ingest/FINDINGS.md",
+        "docs/design/watcher-ingest-wire.md",
+        "src/AiDe.Core/Watcher/OtelSpanMapper.cs",
+        "docs/proof/watcher-ingest-wire.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "otlp",
+        "ingest",
+        "phase-1"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-31T00:26:11Z",
+      "duration_seconds": 729.0
     },
     {
       "id": "al-0169",
@@ -3117,6 +3353,51 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0174",
+      "shortname": "design-implement-ingest-host",
+      "datetime": "2026-08-31T03:40:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "Execute the /design -> /implement loop until slice 1 (OTLP transport receiver + daemon host) is fully implemented.",
+      "summary": "Slice 1a: designed docs/design/watcher-ingest-host.md (sync register/heartbeat + async bounded span queue with DropOldest backpressure; forged->rejected, malformed->quarantined; counters answer the operator questions) and implemented IngestHost (src/AiDe.Core/Watcher/) reusing the repo Channel.CreateBounded idiom + TimeProvider. 9 tests incl. flood-drops-counted (compile-enforced counter), malformed-survives, concurrency reconcile. Full suite 741/0; build 0/0. Remaining slice 1b: OTLP network receiver adapter (needs encoding/transport spike).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/design/watcher-ingest-host.md",
+        "src/AiDe.Core/Watcher/IngestHost.cs",
+        "docs/proof/watcher-ingest-host.md"
+      ],
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "ingest",
+        "phase-1"
+      ],
+      "outcome": "success",
+      "started_at": "2026-08-31T03:28:46Z",
+      "duration_seconds": 701.0
+    },
+    {
+      "id": "al-0175",
+      "shortname": "implement-watcher-otlp-receiver",
+      "datetime": "2026-08-31T03:59:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "execute autonomously using our skills, the /design -> /implement loop until slice 1 is fully implemented",
+      "summary": "Slice 1b: OtlpHttpReceiver (OTLP/JSON, stdlib System.Text.Json, per-session token->capability, body cap, loopback). 13 tests incl. 2 real-loopback D4; suite 754/0. Completes Loomkeeper slice 1 (ingest). Proof docs/proof/watcher-otlp-receiver.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/OtlpReceiver.cs",
+        "tests/AiDe.Core.Tests/Watcher/OtlpReceiverTests.cs",
+        "docs/proof/watcher-otlp-receiver.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0176",
       "shortname": "define-architecture-class-diagram",
       "datetime": "2026-08-31T04:18:19Z",
@@ -3150,6 +3431,27 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0178",
+      "shortname": "implement-watcher-coordination-contract",
+      "datetime": "2026-08-31T04:30:34Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do these next steps to complete slice 2 autonomously over night",
+      "summary": "Slice 2: injected coordination contract - CoordContractParser (tolerant coord-core JSONL read, version pin, sort by at/seq) + InjectedContractIngest adapter (mints+holds capability, feeds same registrar/host; register+heartbeat for non-AI-Forward sessions, one ledger projected). Spike S4 PASS. 16 tests incl. E11 end-to-end; suite 770/0. Proof docs/proof/watcher-coordination-contract.md. Registered DC-040 (pre-existing daemon-reuse flake, observed not introduced).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/CoordinationContract.cs",
+        "tests/AiDe.Core.Tests/Watcher/CoordinationContractTests.cs",
+        "docs/proof/watcher-coordination-contract.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T04:09:56Z",
+      "duration_seconds": 1238.0
     },
     {
       "id": "al-0179",
@@ -3307,6 +3609,46 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0188",
+      "shortname": "implement-watcher-sessions-surface",
+      "datetime": "2026-08-31T13:19:02Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all next steps listed above (slice 3 WPF Sessions treegrid row)",
+      "summary": "Slice 3: sessions read model - store.AllSessions() + WatcherSessionsQuery fold + WatcherSessionsPaneViewModel (honest Not Recorded, no-colour-alone liveness badge, full state set, synchronous load avoids DC-011) + WPF 'sessions' surface kind in default layout. 10 Core tests + 3 STA render tests; Not-Recorded oracle mutation-verified. Core 780/0, App 135/0. Proof docs/proof/watcher-sessions-surface.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/WatcherSessionsPaneViewModel.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "tests/AiDe.Core.Tests/Watcher/WatcherSessionsPaneViewModelTests.cs",
+        "docs/proof/watcher-sessions-surface.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T13:06:31Z",
+      "duration_seconds": 751.0
+    },
+    {
+      "id": "al-0189",
+      "shortname": "implement-coord-contract-log",
+      "datetime": "2026-08-31T13:26:18Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all next steps listed above (slice-2 residual: session-side writer + log watcher)",
+      "summary": "Slice-2 residual closed: CoordContractWriter (atomic append + LOG-A + seq) + CoordContractLog.ReadDirectory + CoordContractLogPump feed InjectedContractIngest.ApplyAll (idempotent). 7 D4 real-filesystem tests; LOG-A anti-fusion mutation-verified. Full suite 787/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/CoordinationContractLog.cs",
+        "tests/AiDe.Core.Tests/Watcher/CoordinationContractLogTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0190",
       "shortname": "node-content-query-unblocks-the-code-viewer",
       "datetime": "2026-08-31T13:26:30Z",
@@ -3319,6 +3661,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Projections/NodeContent.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0191",
+      "shortname": "investigate-dc040-daemon-reuse-flake",
+      "datetime": "2026-08-31T13:34:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all next steps listed above (root-cause DC-040 daemon-reuse flake)",
+      "summary": "DC-040 controlled: root-caused the ShellBootstrap daemon-reuse flake to a system-wide AiDe.Daemon process count (category error - the daemon deliberately outlives its client, so sibling tests' lingering daemons polluted the counter). Replaced with a readiness barrier (observed answer) + workspace-scoped three-way epoch equality (WorkspaceLock invariant). Verified stable across 3 isolated runs + full 787-test suite. Register updated to controlled.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/ShellBootstrapTests.cs",
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
@@ -5188,6 +5548,27 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0271",
+      "shortname": "implement-watcher-work-episode",
+      "datetime": "2026-08-31T13:57:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 4 implemented; consider the recent ai-forward done_when structure and reflect on how it informs the design",
+      "summary": "Slice 4: Work Episode lifecycle. Domain (Goal/DoneCondition/EpisodeGeneration/EpisodeOutcome/WorkEpisode) mirrors the AI-Forward CT19 goal-state triple; capability-verified Open/Reframe/Close (forgery rejected); changing the goal starts a NEW episode (Superseded + next generation, immutable goal); EpisodeProjection binds only spans in the interval (endpoints inclusive). Store extended (episode dim + SpanCountInInterval; in-memory retains RecordedAt; SQLite work_episode_dim table). 20 tests incl. D4 SQLite + E11 composition; interval-endpoint oracle mutation-verified. Full suite 807/0. Proof docs/proof/watcher-work-episode.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WorkEpisode.cs",
+        "tests/AiDe.Core.Tests/Watcher/WorkEpisodeTests.cs",
+        "docs/proof/watcher-work-episode.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T13:41:28Z",
+      "duration_seconds": 963.0
+    },
+    {
       "id": "al-0272",
       "shortname": "handoff-panel-reorder-and-search",
       "datetime": "2026-08-31T13:59:28Z",
@@ -5208,6 +5589,27 @@ window.AUDIT_DATA = {
         "handoff"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0273",
+      "shortname": "implement-watcher-weave-score",
+      "datetime": "2026-08-31T14:51:25Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 5 implemented",
+      "summary": "Slice 5: deterministic Weave. WeaveScorer scores a closed Work Episode on the 4 deterministic dimensions (observed weight 70; 2 advisory dims excluded, not faked); hard floors (correctness/security/privacy/data-integrity/evaluator-integrity) trip Blocked + suppress the numeric headline; missing goal/done/verification or open episode -> Not Scored; Partial headline uses observed-weight denominator, never rescales to 0-100; Coverage separate from points. done_when made measurable (Focus drift + Outcome honest-completion = PACK-O faces). 27 tests incl. E11; no-rescale oracle mutation-verified. Full suite 834/0. Proof docs/proof/watcher-weave-score.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WeaveScore.cs",
+        "tests/AiDe.Core.Tests/Watcher/WeaveScorerTests.cs",
+        "docs/proof/watcher-weave-score.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T14:40:21Z",
+      "duration_seconds": 664.0
     },
     {
       "id": "al-0274",
@@ -5272,6 +5674,28 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0277",
+      "shortname": "implement-watcher-message-board",
+      "datetime": "2026-08-31T16:21:03Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 6 implemented",
+      "summary": "Slice 6: per-repo Message Board + cross-repo Fleet aggregator. Board (Question/Decision/Breadcrumb/KnowledgeCandidate + Reply/Acknowledgement) append-only, repo-scoped, provenance = session trust; reply/ack must reference an existing parent in the same repo (no orphan, no cross-repo); capability-verified; content quarantined untrusted data + grader-injection flagged (Confused Deputy); policy redaction tombstones payload keeps envelope. FleetAggregator builds repo->session map across >=2 sources. Store board table (both impls). 28 tests incl. D4 SQLite + E11; orphan-rejection oracle mutation-verified. Full suite 862/0. Proof docs/proof/watcher-message-board.md",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/MessageBoard.cs",
+        "src/AiDe.Core/Watcher/FleetAggregator.cs",
+        "tests/AiDe.Core.Tests/Watcher/MessageBoardTests.cs",
+        "docs/proof/watcher-message-board.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T16:07:58Z",
+      "duration_seconds": 785.0
+    },
+    {
       "id": "al-0278",
       "shortname": "new-view-opens-in-focused-stack",
       "datetime": "2026-08-31T16:37:25Z",
@@ -5292,6 +5716,29 @@ window.AUDIT_DATA = {
         "ux"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0279",
+      "shortname": "implement-watcher-advisory-grader",
+      "datetime": "2026-08-31T16:43:26Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps and lets get all of slice 7 implemented",
+      "summary": "Slice 7 (final): advisory grader + calibration + leaderboard + standing. QWK/stability/anti-Goodhart gates (ADR-0019), gated advisory fold that never overrides a floor (rule 8), leaderboard cohort>=5 + single-operator privacy suppression (rules 10-11, US-10) segmented by task/schema, AgentStanding with no single optimizable scalar (US-16). 27 new tests, full suite 889/0, cohort-minimum oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AdvisoryScoring.cs",
+        "src/AiDe.Core/Watcher/Leaderboard.cs",
+        "src/AiDe.Core/Watcher/WeaveScore.cs",
+        "docs/design/watcher-advisory-grader.md",
+        "docs/proof/watcher-advisory-grader.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T16:28:44Z",
+      "duration_seconds": 882.0
     },
     {
       "id": "al-0280",
@@ -5330,6 +5777,29 @@ window.AUDIT_DATA = {
         "ux"
       ],
       "outcome": "success"
+    },
+    {
+      "id": "al-0282",
+      "shortname": "implement-watcher-score-persistence",
+      "datetime": "2026-08-31T16:59:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 1: persist ScoredEpisode+Scorecard as a materialized derived cache (DM7) behind IWatcherObservationStore, in-memory + SQLite (scored_episode_cell + dimension/floor child cells, transactional upsert). AllScoredEpisodes feeds LeaderboardComposer. 9 tests, full suite 897/0, child-cleanup oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WatcherObservationStore.cs",
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "docs/design/watcher-score-persistence.md",
+        "docs/proof/watcher-score-persistence.md",
+        "tests/AiDe.Core.Tests/Watcher/ScorePersistenceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T16:46:52Z",
+      "duration_seconds": 784.0
     },
     {
       "id": "al-0283",
@@ -5371,6 +5841,28 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0285",
+      "shortname": "implement-watcher-board-leaderboard-surfaces",
+      "datetime": "2026-08-31T17:24:23Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 2: Board (US-4) + Leaderboard (US-14) WPF surfaces mirroring slice-3 Sessions; AllBoardMessages reader; factory board/leaderboard kinds + shared ListPane; default-layout seeding + v2->v3 migration (reachable, E10); WorkbenchShell opens the per-workspace watcher SQLite store and wires all three read queries so panes are live. 15 Core + 3 App + 1 migration test; Core 913/0, App 138/0; migration oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/WatcherBoardPaneViewModel.cs",
+        "src/AiDe.Core/Presentation/WatcherLeaderboardPaneViewModel.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-board-leaderboard-surfaces.md",
+        "docs/proof/watcher-board-leaderboard-surfaces.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0286",
       "shortname": "classdiagram-uml-members",
       "datetime": "2026-08-31T17:27:09Z",
@@ -5401,6 +5893,49 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/plans/extractor-roadmap.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0288",
+      "shortname": "implement-watcher-advisory-evaluator",
+      "datetime": "2026-08-31T17:34:00Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 3: LocalHeuristicAdvisoryEvaluator (deterministic, no egress, conservative defaults, refuses deterministic dims) + EgressGuardedAdvisoryEvaluator enforcing default-deny egress (LK-0003) then credential presence (LK-0002) before any cloud judge, inner never called on denial. 15 tests, suite 928/0, egress-first ordering mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AdvisoryEvaluators.cs",
+        "docs/design/watcher-advisory-evaluator.md",
+        "docs/proof/watcher-advisory-evaluator.md",
+        "tests/AiDe.Core.Tests/Watcher/AdvisoryEvaluatorsTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0289",
+      "shortname": "implement-watcher-score-dispute",
+      "datetime": "2026-08-31T17:45:06Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps so i can smoke test the ux with some agents working",
+      "summary": "Connective 4: operator dispute path (US-16/rule 12). ScoreDispute append-only fact (own table, append-only triggers, idempotent id) that never overwrites the Scorecard; DisputeProjection derives the Disputed state (DM7); Leaderboard surfaces disputed-episode count. 11 tests, suite 939/0, App 138/0; append-only/idempotent oracle mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/ScoreDispute.cs",
+        "src/AiDe.Core/Watcher/WatcherObservationStore.cs",
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "src/AiDe.Core/Presentation/WatcherLeaderboardPaneViewModel.cs",
+        "docs/design/watcher-score-dispute.md",
+        "docs/proof/watcher-score-dispute.md",
+        "tests/AiDe.Core.Tests/Watcher/ScoreDisputeTests.cs"
       ],
       "tags": [],
       "outcome": "success"
@@ -5441,6 +5976,29 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0292",
+      "shortname": "implement-watcher-host",
+      "datetime": "2026-08-31T20:56:55Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps",
+      "summary": "Connective 5: in-process WatcherHost composing store+registrar+IngestHost+InjectedContractIngest+CoordContractLogPump (+best-effort OTLP); runs in WorkbenchShell with a 2s background pump so the store fills live and liveness is exact (shared in-process monotonic clock, removes conn-2 caveat). 7 tests, Core 946/0, App 138/0; drain wiring mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-host.md",
+        "docs/proof/watcher-host.md",
+        "tests/AiDe.Core.Tests/Watcher/WatcherHostTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T20:41:27Z",
+      "duration_seconds": 928.0
+    },
+    {
       "id": "al-0293",
       "shortname": "graph-edge-filter-wt13-raw-sql-counted",
       "datetime": "2026-08-31T20:59:01Z",
@@ -5456,6 +6014,71 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0294",
+      "shortname": "implement-watcher-scoring-service",
+      "datetime": "2026-08-31T21:05:28Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps",
+      "summary": "Connective 6: EvidenceComposer (signals->tokens, conservative omission NG1) + ScoringService (deterministic Weave + gated advisory fold, persists ScoredEpisode so the leaderboard populates). 9 tests, suite 955/0; composer->evaluator mapping mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/ScoringService.cs",
+        "docs/design/watcher-scoring-service.md",
+        "docs/proof/watcher-scoring-service.md",
+        "tests/AiDe.Core.Tests/Watcher/ScoringServiceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0295",
+      "shortname": "implement-watcher-dispute-service",
+      "datetime": "2026-08-31T21:14:27Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do all of these next steps",
+      "summary": "Connective 7: DisputeService.RaiseDispute (mints id+timestamp, appends fact, requires trimmed reason); per-session Disputed state (DM7) + Sessions-row no-colour-alone badge + query computation; DelegatingAdvisoryEvaluator cloud-judge scaffold that delegates the rubric and sits behind the ADR-0018 egress guard. 12 tests, Core 967/0, App 138/0; per-session derivation mutation-verified.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DisputeService.cs",
+        "src/AiDe.Core/Watcher/ScoreDispute.cs",
+        "src/AiDe.Core/Presentation/WatcherSessionsPaneViewModel.cs",
+        "docs/design/watcher-dispute-service.md",
+        "docs/proof/watcher-dispute-service.md",
+        "tests/AiDe.Core.Tests/Watcher/DisputeServiceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0296",
+      "shortname": "investigate-terminal-cursor-crash",
+      "datetime": "2026-08-31T21:46:55Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "the application died with two sessions grounding in the repo",
+      "summary": "Root-caused (from Windows event log, reproduced deterministically) an unhandled IndexOutOfRangeException in TerminalView.DrawCursor: it read the char-under-cursor via the raw TerminalScreen indexer, but the cursor sits at the pending-wrap column (==Columns) after writing the last column; at the bottom row that is one past the cell array -> crash on the WPF UI thread. Fixed with a bounds-safe CellUnderCursor() the renderer uses. DC-041 registered; 3 tests, Core 970/0, App 138/0; guard mutation-verified to reproduce the exact crash. Also found: the watcher UX is inert at runtime (wired in the ctor, but AttachWorkspace drops it) - next step.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/TerminalScreen.cs",
+        "src/AiDe.App/Workbench/TerminalView.cs",
+        "tests/AiDe.Core.Tests/TerminalScreenTests.cs",
+        "docs/investigations/terminal-cursor-render-crash.md",
+        "docs/proof/terminal-cursor-render-crash.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T21:31:48Z",
+      "duration_seconds": 907.0
     },
     {
       "id": "al-0297",
@@ -5511,6 +6134,26 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0300",
+      "shortname": "fix-watcher-runtime-wiring",
+      "datetime": "2026-08-31T21:59:04Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "the application died with two sessions grounding in the repo",
+      "summary": "Second defect found while investigating the crash (DC-042): the watcher UX was inert at runtime - wired in the shell constructor (built with a null workspace) while AttachWorkspace rebuilt the factory without the watcher queries. Fixed: StartWatcher helper used by both the ctor and AttachWorkspace (pump off the UI thread via Task.Run), and Adapter.Invalidate rebuilds the already-realized watcher panes against the wired factory (never a terminal, DC-029). E11 test through the real composition root; App 139/0, Core 970/0.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "tests/AiDe.App.Tests/WorkbenchShellTests.cs",
+        "docs/proof/watcher-runtime-wiring.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0301",
       "shortname": "disclosures-folded-by-class",
       "datetime": "2026-08-31T22:33:15Z",
@@ -5546,6 +6189,51 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0303",
+      "shortname": "implement-watcher-session-emitter",
+      "datetime": "2026-08-31T22:51:55Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (conn-8: auto-emitting session wrapper so terminals appear in the watcher)",
+      "summary": "SessionCoordinationEmitter (Register/Heartbeat/HeartbeatAll/End/Reconcile) + WatcherHost.CreateEmitter seam + WorkbenchShell reconcile-and-pump loop wiring terminal panes into coordination sessions; closed DC-043 (session-end that never ended the session). 9 emitter tests (2 mutation-verified). Core 979/0, App 139/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs",
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "src/AiDe.Core/Watcher/IngestHost.cs",
+        "src/AiDe.Core/Watcher/CoordinationContract.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-session-emitter.md",
+        "docs/proof/watcher-session-emitter.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "started_at": "2026-08-31T22:33:15Z",
+      "duration_seconds": 1120.0
+    },
+    {
+      "id": "al-0304",
+      "shortname": "implement-watcher-live-refresh",
+      "datetime": "2026-08-31T23:01:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (conn-9: live pane auto-refresh)",
+      "summary": "WorkbenchShell watcher loop re-renders the sessions/board/leaderboard panes when a store fingerprint changes; the fingerprint's per-session liveness term catches an Ended transition with an unchanged count. 1 App test, mutation-verified. App 140/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tests/AiDe.App.Tests/WorkbenchWatcherRefreshTests.cs",
+        "docs/design/watcher-live-refresh.md",
+        "docs/proof/watcher-live-refresh.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0305",
       "shortname": "keep-layout-on-workspace-open",
       "datetime": "2026-08-31T23:05:14Z",
@@ -5559,6 +6247,23 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs",
         "docs/notes/workspace-open-layout-restore.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0306",
+      "shortname": "investigate-conn-10-11-blocker",
+      "datetime": "2026-08-31T23:07:53Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (conn-10 auto-score, conn-11 dispute)",
+      "summary": "Grounded in the scorer + spec and established that conn-10/conn-11 are blocked on a Work Episode lifecycle source (declared goal/done-when) + a verification-path telemetry convention that do not exist for terminal sessions; a signals deriver could only honestly return HasVerificationPath=false -> Not-Scored (spec L127). Recorded a decision note, deferred both behind an episode-capture slice rather than fabricating signals (NG1).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/conn-10-11-episode-source-blocker.md"
       ],
       "tags": [],
       "outcome": "success"
@@ -5581,6 +6286,46 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0308",
+      "shortname": "implement-watcher-episode-capture",
+      "datetime": "2026-08-31T23:18:43Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (unblock conn-10 via episode-lifecycle capture)",
+      "summary": "ep-capture core: AuditLogEpisodeSource parses AI-Forward audit entries with goal+done_when+session (AL5b) into imported closed WorkEpisodes (honest outcome mapping - only success is Completed; no goal-state -> not an episode); WatcherHost.ImportEpisodesFromAuditLog records them (upsert). 6 tests, outcome-mapping mutation-verified. Core 985/0. Shell auto-import + conn-10 scoring are the next increments.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AuditLogEpisodeSource.cs",
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "tests/AiDe.Core.Tests/Watcher/AuditLogEpisodeSourceTests.cs",
+        "docs/design/watcher-episode-capture.md",
+        "docs/proof/watcher-episode-capture.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Unblock scoring by supplying a real episode source",
+      "done_when": "Goal-state audit entries import as closed Work Episodes into the store, tested"
+    },
+    {
+      "id": "al-0309",
+      "shortname": "implement-ep-capture-shell-import",
+      "datetime": "2026-08-31T23:20:37Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "do the next steps (wire ep-capture live)",
+      "summary": "Shell one-shot import: the watcher loop imports the workspace's docs/audit/audit-log.jsonl declared-goal episodes once per attach (off the UI thread, guarded); the conn-9 fingerprint includes episode count so imported episodes trigger a live pane refresh. App 140/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0310",
       "shortname": "disclosure-kind-boundary-or-gap",
       "datetime": "2026-08-31T23:41:10Z",
@@ -5598,6 +6343,30 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0311",
+      "shortname": "implement-watcher-signals-derivation",
+      "datetime": "2026-08-31T23:44:25Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "/design -> /implement conn-10 (DeterministicSignalsDeriver deriving HasVerificationPath from committed Proof Pack artifacts; auto-score on import)",
+      "summary": "conn-10: DeterministicSignalsDeriver derives honest signals (proof-pack artifact -> HasVerificationPath/RequiredVerificationExecuted; acceptance null; rest conservative defaults); AuditLogEpisodeSource.ParseWithEvidence carries EpisodeEvidence; WatcherHost.ImportAndScoreEpisodesFromAuditLog records+scores (operatorId=session id, never a human; upsert); shell wires it. Proof-pack episode -> Partial, no-proof -> Not-Scored. 5 tests, HasVerificationPath mutation-verified. Core 990/0, App 140/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DeterministicSignalsDeriver.cs",
+        "src/AiDe.Core/Watcher/AuditLogEpisodeSource.cs",
+        "src/AiDe.Core/Watcher/WatcherHost.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "docs/design/watcher-signals-derivation.md",
+        "docs/proof/watcher-signals-derivation.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Auto-score imported episodes honestly",
+      "done_when": "A proof-pack episode scores Partial and a no-proof episode Not-Scored, no fabricated signal, wired into the shell"
+    },
+    {
       "id": "al-0312",
       "shortname": "diagnostics-panel",
       "datetime": "2026-08-31T23:49:49Z",
@@ -5613,6 +6382,30 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0313",
+      "shortname": "implement-watcher-dispute-command",
+      "datetime": "2026-09-01T00:00:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "/design -> /implement conn-11 (raise-dispute command against scored episodes + document the cloud judge)",
+      "summary": "conn-11: watcher.raiseDispute command (catalog + WorkbenchController + shell) raises an append-only dispute against the latest genuinely-scored episode via DisputeService (score unchanged; operatorId=loomkeeper-operator, never a human); a Not-Scored card is not disputable. Cloud judge (DelegatingAdvisoryEvaluator behind EgressGuardedAdvisoryEvaluator) documented as egress-opt-in + creds + calibration future work. Registered DC-044 (catalog/menu drift, caught by existing conformance tests). 3 tests, Not-Scored-filter mutation-verified. Core 990/0, App 143/0.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/WorkbenchCommands.cs",
+        "src/AiDe.App/Workbench/WorkbenchController.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.App/Workbench/MainMenuBuilder.cs",
+        "docs/design/watcher-dispute-command.md",
+        "docs/proof/watcher-dispute-command.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Give the operator an append-only score-dispute recourse",
+      "done_when": "A keyboard command disputes the latest scored episode append-only under a local operator id, Not-Scored not disputable, cloud judge documented"
     },
     {
       "id": "al-0314",
@@ -5648,6 +6441,27 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0316",
+      "shortname": "forward-integrate-main",
+      "datetime": "2026-09-01T01:28:13Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "re-base/forward-integrate to ensure you have the latest from the other sessions, then do the next steps",
+      "summary": "Forward-integrated origin/main (103 commits from the app-facelift + phase3-pane-probes sessions) into feature/agent-watcher-substrate. Resolved 11 conflicts: append-only logs union-merged; generated files (docs-index.js, audit-data.js) regenerated; code (WorkbenchShell/Controller/SurfaceContentFactory/MainMenuBuilder) union-merged (my watcher wiring + their new surfaces); menu-count test reconciled to 9. Both branches independently used DC-039..044 for different classes -> kept main's DC-039..059 canonical, renumbered mine to DC-060..065, updated references per-file disambiguated by meaning (registered DC-066 for the ID-collision class). Fixed my DC-042 watcher-wiring test's query double for main's new BindJoins FindAsync/EvidenceAsync path. Merge 1378f49. Core 1188/0, App 220/0, full solution builds clean.",
+      "kind": "manual",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tests/AiDe.App.Tests/WorkbenchShellTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Bring the watcher branch current with the other two sessions",
+      "done_when": "origin/main merged in, all conflicts resolved, full solution + suites green"
     },
     {
       "id": "al-0317",
@@ -5765,6 +6579,26 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0325",
+      "shortname": "merge-watcher-to-main",
+      "datetime": "2026-09-01T02:11:20Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "merge to main",
+      "summary": "Merged feature/agent-watcher-substrate to origin/main (25aecba..9543abf, fast-forward). Required a 3rd forward-integration first (13 incoming commits): unioned both branches' terminal cursor-crash fixes (mine CellUnderCursor + theirs clamping indexer + thread-safety - both test sets coexist), and reconciled the 3-way DC-id collision (mapped my cursor-crash class to main's canonical DC-061; appended my 6 net-new watcher classes as DC-064..069). Core 1202/0, App 220/0, full solution builds clean; register DC-001..069 OK.",
+      "kind": "commit",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DeterministicSignalsDeriver.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land the 19-slice Loomkeeper watcher on main",
+      "done_when": "origin/main fast-forwarded to the watcher branch, green, with all 3 sessions' work reconciled"
     }
   ],
   "changes": [
@@ -7948,6 +8782,509 @@ window.AUDIT_DATA = {
         "after": "4314a5efc2057dbca92d34e36b598cc74600931b",
         "branch": "session/phase3-pane-probes",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0092",
+      "datetime": "2026-08-30T21:44:42Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "knowledge",
+      "skill": "collectknowledge",
+      "title": "Establish agentic session observability and scoring evidence",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Established that Loomkeeper should join session-scoped traces, append-only coordination, multidimensional evaluation, and review-gated context evolution while remaining local-only and non-personnel.",
+      "rationale": "The watcher concept depends on contracts spanning observability, distributed coordination, evaluation validity, Goodhart risk, and memory safety.",
+      "artifacts": [
+        "docs/knowledge/agentic-session-observability/index.md"
+      ],
+      "tags": [
+        "watcher"
+      ],
+      "git": {
+        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0093",
+      "datetime": "2026-08-30T21:44:42Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "spec",
+      "skill": "specify",
+      "title": "Specify Loomkeeper and the Weave Score authority split",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Named Loomkeeper, defined the repo/worktree/terminal/session map, Message Board, six-dimension Weave Scorecard, Daydream promotion/retraction, and local-only privacy/security floors.",
+      "rationale": "Deterministic facts, advisory model judgments, and human-gated learning need separate authority so scoring cannot hide failed correctness or become surveillance.",
+      "artifacts": [
+        "docs/specs/agentic-watcher-substrate.md"
+      ],
+      "tags": [
+        "loomkeeper"
+      ],
+      "git": {
+        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0094",
+      "datetime": "2026-08-30T21:44:42Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "ui-design",
+      "title": "Adopt the evidence-led G6 Observatory direction",
+      "prompt": "ground yourslef in the repo\nthen\ncreate a new work tree\nthen\nregister with the other two active sessions to actively coordinate work and minimize collisions and contention\nthen\nstart the work we want for this session:\n\nI want to think about an agentic substrate that facilitates coordination, observation, continuous learning and agent scoring (the ability to determine how good an agent is performing on the tasks it is given)\n-----\nI want the substrate to be an agentic \"watcher\" of all terminal agentic sessions in the tool with each session \"registering\" with the \"watcher\"\nWe have to assume that it is potentially multiple different repos being worked on so we need to be able to map sessions by the repo they are related to... so there is some kind of map of repo-session-terminal\nI want a per-repo-message-board where agents can communicate and leave thoughts, breadcrumbs and shared knowledge with each other\nI want a ledger (based on the ai-forward-multi-agent-collaboration work that has already been put in place... but we have to assume some sessions may not be derived from the ai-forward pack so there must be a way when an agentic session is created where the coordination knowledge is \"injected\" and when an ai-forward enabled pack is created that it coordinates in a symbiotic way because the tool infra and ledger aligns with the ai-forward coordination impl\nI want a \"daydream\" protocol where the agent is watching the active sessions and observing mistakes, insights and learnings and much like the dream protocol is applying continuous learning to help improve the efficiency, correctness and rigor of the agents while miniimizing repeat mistakes. Unlike dreaming this should surface as knowledge for the agents to help eliminate repeat classes of errors and should surface as a daydream log which the dream protocol can leverage when it is run\nI want an \"agentic score\" which looks at the effectiveness of the running agents:\n- come up with a metric to rate the agent\n - how much time is used doing the correct task and ending when the goal is met vs. adding extra ceremony and tangents\n - how many mistakes are made or assumptions vs. facts are leveraged while achieving the goal\n - how much does the agent adhere to the repo guidance\n - how simple and pragmatic and, frankly, elegant is the solution vs. complex and cyclomatic ceremony\n - figure out a way to monitor the agent's line of reasoning and the actual outputs vs. the prompt's goal and success/finish criteria\n - figure out a way to give the agent \"feedback\" on how it scored so it will improve itself in the next turn\n------\n/collectknowledge\n- ground youself in the latest ai-forward cross-agent-collaboration work as it has evolved from this repo AND look at the evolutions in this actual repo as it too has evolved\n- look for state of the art for agentic workflows that can monitor multiple coding agent sessions\n- look at distributed systems that, although different, may provide inspiration like paxos algorithm impls, zookeeper coordination etc\n- think of any other related knowledge that would be useful to help baseline for this exercise\n------\n/specify the concept based on what i wrote above and create a proposal in html and come up with a clever name for the agent\n/ui-design the \"watcher ux\" effectively where we can see what is going on, how the watcher is scoring agents, what its learning from the agents, what agents are sharing with each other etc. Think of this where the user can \"watch the watcher\" provide a mockup for me to review",
+      "summary": "Selected a specialized G6 Multi-Panel Data Terminal and produced an attention-first Observatory with Sessions, Scorecard, Message Board, Daydreams, Privacy, and Watcher Health.",
+      "rationale": "The operator reads many concurrent threads in parallel and needs causal drill-down; a generic dashboard or chat surface would hide identity and evidence.",
+      "artifacts": [
+        "docs/mockups/watcher-observatory.html",
+        "DESIGN.md"
+      ],
+      "tags": [
+        "ui",
+        "observatory"
+      ],
+      "git": {
+        "before": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "after": "160a6a69319abb23c0713495d09d3a9c856eec85",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0096",
+      "datetime": "2026-08-30T22:26:01Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "spec",
+      "skill": "ui-design",
+      "title": "Loomkeeper scoring gains harness/model axes, a leaderboard, user credentials, and per-turn standing",
+      "prompt": "Add: harness+model as scoring/aggregation axes; a leaderboard by harness/model/harness-model; user-configurable watcher credentials (Claude Code / Copilot); leaderboard + why visible to the agent each turn.",
+      "summary": "Extended the watcher spec (US-13..16, domain model, NFR/governance), DESIGN.md, and the Observatory mockup with harness/model attribution, a task-class-calibrated non-personnel Leaderboard, a Configuration surface with local-secret credentials and an explicit egress opt-in, and a per-turn agent Standing view; also tightened prior gpt over-production (removed process residue, fixed nav/state gaps, replaced the false-precision score gauge).",
+      "rationale": "User requested the four capabilities; kept them inside the settled local-only/non-personnel/advisory floors.",
+      "artifacts": [],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "b326c18e75e6047944c7e650c0424ebaa843a995",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0098",
+      "datetime": "2026-08-30T22:40:54Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "architecture",
+      "skill": "define-architecture",
+      "title": "Loomkeeper architecture: a projection over the existing fact store, with a DPAPI/egress-opt-in credential model and calibrated advisory evaluators",
+      "prompt": "Define Loomkeeper's architecture, leading with the credential/egress model and evaluator calibration.",
+      "summary": "Loomkeeper is a projection layer composed into the AI-DE local authority core (reuses ADR-0001/0002/0006/0007/0011); adds ADR-0017 (watcher facts + harness/model dimensions, derived leaderboard/weave/liveness), ADR-0018 (DPAPI local-secret credentials, outbound-denied-by-default, per-path egress opt-in), ADR-0019 (evaluator qualification: stability + QWK>=0.75 + injection-invariance + anti-Goodhart, scoped comparability), ADR-0020 (trusted registrar + per-session capability + harness/model identity). Delivery phased vertically with a Phase-1 walking skeleton; spikes S1-S4 named as preconditions.",
+      "rationale": "Composing existing accepted ADRs keeps the watcher a single source of truth and makes the AI-Forward symbiosis structural; the two riskiest surfaces (S3 outbound denial, Phase-4 calibration) are isolated and provisional pending PoC.",
+      "artifacts": [
+        "docs/architecture/loomkeeper.md",
+        "docs/adr/0017-watcher-observation-projection.md",
+        "docs/adr/0018-credential-backed-grading-egress.md",
+        "docs/adr/0019-advisory-evaluator-calibration.md",
+        "docs/adr/0020-trusted-registrar-harness-model-identity.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "3314ead45d033d0e567263c7719f683609205fd7",
+        "after": "3314ead45d033d0e567263c7719f683609205fd7",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0100",
+      "datetime": "2026-08-30T23:38:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper Phase-1 deterministic core: capability-verified identity, content-addressed idempotent ingest, monotonic liveness, default-deny egress",
+      "prompt": "Design and implement the Phase-1 walking skeleton.",
+      "summary": "src/AiDe.Core/Watcher/ implements the T0 observation core over an IWatcherObservationStore seam (in-memory now, SQLite later): per-session capability (constant-time) with harness/model identity (ADR-0020), SHA256 content-addressed ObservedSpan with idempotent dedup (ADR-0006/0017), monotonic LivenessProjection resisting clock skew (US-2), and a default-deny EgressGate (ADR-0018). 30 tests, mutation-verified oracles.",
+      "rationale": "Reuses the codebase's sealed-record fact + SHA256 identity idiom (EvidenceAssertion) and the Facts/Projections/Store structure; smallest correct seam so the SQLite store and WPF row substitute later without redesign.",
+      "artifacts": [
+        "docs/design/watcher-phase1-skeleton.md",
+        "docs/proof/watcher-phase1-skeleton.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "d4b1727d3b4270d0a60383f4413e7a79c436e1bc",
+        "after": "d4b1727d3b4270d0a60383f4413e7a79c436e1bc",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0103",
+      "datetime": "2026-08-31T00:20:11Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper durable observation store: SQLite behind the IWatcherObservationStore seam, append-only enforced by triggers",
+      "prompt": "Implement the SQLite observation store behind the seam.",
+      "summary": "SqliteWatcherObservationStore substitutes the in-memory store on the same contract: reuses the ADR-0002 fact-store idiom (WAL, single writer, append-only via BEFORE UPDATE/DELETE triggers), content-addressed PK dedup (INSERT OR IGNORE never fires the update trigger), and current-state session/heartbeat/ended tables. Persistence proven across a real reopen; append-only invariant proven by a forbidden-update test and mutation-verified.",
+      "rationale": "Reuses the codebase's proven SQLite idiom rather than a new persistence pattern; INSERT OR IGNORE preserves append-only where INSERT OR REPLACE would bypass it; the seam contract is unchanged so both stores share tests (D7 fidelity).",
+      "artifacts": [
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "docs/proof/watcher-phase1-skeleton.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "896b3befb2cdb9dc59b100e19d2caee9183ad5dd",
+        "after": "896b3befb2cdb9dc59b100e19d2caee9183ad5dd",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0105",
+      "datetime": "2026-08-31T00:38:20Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper ingest wire: a dual-path anti-corruption mapper turns harness OTLP + registration events into observation",
+      "prompt": "Spike the harness OTLP ingest shape and design/implement the ingest wire.",
+      "summary": "Spike S1 established the contract (OTel span -> ObservedSpan; registration -> SessionBinding; service.name->harness, gen_ai.request.model->model; session.id is a claim, not authority). The ingest wire is an Adapter/ACL feeding the built TrustedRegistrar+SpanIngest; its deterministic core, OtelSpanMapper, is implemented and tested (11 tests). GenAI vocabulary is Development-status, pinned in OtelAttributes behind a mutation-verified A6 regression gate; malformed events raise LK-0004; unknown harness/model degrade to Not Recorded/Asserted.",
+      "rationale": "Isolate the preview OTel/GenAI vocabulary behind one ACL so upstream churn changes only the mapper + its gate; reuse the built registrar/ingest as the trust anchor rather than trusting a span's session.id; transport hosting deferred as OTLP/HTTP is stable.",
+      "artifacts": [
+        "spikes/watcher-otlp-ingest/FINDINGS.md",
+        "docs/design/watcher-ingest-wire.md",
+        "src/AiDe.Core/Watcher/OtelSpanMapper.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "860cb6c4357b8008fbf2eb59db53f26290a809f9",
+        "after": "860cb6c4357b8008fbf2eb59db53f26290a809f9",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0108",
+      "datetime": "2026-08-31T03:40:28Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper ingest host: sync control + async bounded span stream with drop-oldest backpressure",
+      "prompt": "Design and implement slice 1's ingest host.",
+      "summary": "Split registration/heartbeat (synchronous control) from the span stream (async, bounded Channel with DropOldest); the host drains to OtelSpanMapper+SpanIngest, rejecting forged spans and quarantining malformed ones without killing the loop, with IngestStats counters exposing every disposition. Transport is a substitutable IHarnessEventSource port; the OTLP network receiver is slice 1b.",
+      "rationale": "Registration must return a capability immediately while high-volume spans need bounded backpressure; reuse the repo Channel.CreateBounded+DropOldest idiom; keep the capability as the trust anchor and the transport behind a port so the receiver substitutes without redesign.",
+      "artifacts": [
+        "docs/design/watcher-ingest-host.md",
+        "src/AiDe.Core/Watcher/IngestHost.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "7c4755b88dcba32db809bc0a04fc9a2be7f80b0c",
+        "after": "7c4755b88dcba32db809bc0a04fc9a2be7f80b0c",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0109",
+      "datetime": "2026-08-31T03:59:43Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 1 ingest complete: OTLP/JSON receiver on stdlib, no protobuf dependency",
+      "prompt": "run /design then /implement on the OTLP receiver to complete slice 1",
+      "summary": "Receiver accepts OTLP/JSON at /v1/traces, resolves a per-session bearer token to the capability server-side (capability never on the wire), parses with System.Text.Json, enqueues onto the slice-1a host; loopback-only, body-capped, 200-on-drop. Decision: OTLP/JSON over protobuf removes the dependency; token-in-header binds spans to the registration capability.",
+      "rationale": "stdlib JSON keeps AiDe.Core dependency-free and the token seam aligns with ADR-0020 capability binding",
+      "artifacts": [
+        "docs/design/watcher-otlp-receiver.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "0929bda564595d8defa7f24673ceea656ac54b44",
+        "after": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": [
+          "5ed1dfa feat(watcher): OTLP/JSON receiver completes Loomkeeper slice 1 (ingest)"
+        ]
+      }
+    },
+    {
+      "id": "cl-0111",
+      "datetime": "2026-08-31T04:30:34Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 2: injected coordination contract over coord-core append (one ledger, projected)",
+      "prompt": "run /design then /implement on the injected coordination-contract adapter to complete slice 2",
+      "summary": "A versioned (loomkeeper/1) injected contract lets a non-AI-Forward session register+heartbeat over the existing coord-core append log; a pure CoordContractParser reads it tolerantly and an InjectedContractIngest adapter mints/holds the per-session capability (never on the forgeable file) and feeds the same TrustedRegistrar/IngestHost. Decision: reuse coord-core append + stdlib JSON, no second ledger, no new dependency; capability lives in the adapter (symmetric with the OTLP token).",
+      "rationale": "one ledger projected not duplicated (US-5); ADR-0020 capability binding holds for a file transport by keeping the capability adapter-side",
+      "artifacts": [
+        "docs/design/watcher-coordination-contract.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
+        "after": "5ed1dfa6781b898e186f62945476e6d0f63a1161",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0113",
+      "datetime": "2026-08-31T13:19:02Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 3: WPF Sessions surface closes the Phase-1 change-surface (compute reader)",
+      "prompt": "run /design then /implement on the WPF Sessions treegrid row to complete slice 3",
+      "summary": "A synchronous deterministic projection (store.AllSessions + liveness fold) feeds a testable WatcherSessionsPaneViewModel that renders sessions honestly (Not Recorded, no-colour-alone liveness badge, full state set), rendered by a 'sessions' surface kind in the default layout. Decision: synchronous local fold (not async) so the pane can never strand on Loading (DC-011); pane VM in AiDe.Core/Presentation for full unit-testability without WPF.",
+      "rationale": "closes the Phase-1 walking-skeleton compute reader (E7); honest Not Recorded (US-13) and no-colour-alone liveness (WCAG); a control in the default layout so it can actually fire (JoinSurface lesson)",
+      "artifacts": [
+        "docs/design/watcher-sessions-surface.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "76422e861aa5b3a44a25fb84263cf2d5c1569070",
+        "after": "76422e861aa5b3a44a25fb84263cf2d5c1569070",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0115",
+      "datetime": "2026-08-31T13:57:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 4: Work Episode mirrors the AI-Forward CT19 goal-state (symbiotic, one vocabulary)",
+      "prompt": "reflect on the ai-forward done_when structure and implement slice 4 (Work Episode lifecycle)",
+      "summary": "The Work Episode binds one immutable goal + done-condition to one bounded interval of one authenticated session; the unit scoring attaches to. Decision informed by the AI-Forward done_when work: the episode uses the SAME (Goal, DoneWhen, NotInScope) triple as CT19, so a Loomkeeper episode is the durable, scoreable projection of a turn's goal-state - making the substrate symbiotic with the audit ledger rather than a parallel structure. Outcome is the DECLARED lifecycle terminal state; the honesty/drift judgment (PACK-O's three faces) is the Weave (slice 5). Changing the goal starts a new episode generation (the aggregate invariant).",
+      "rationale": "one ledger/vocabulary projected not duplicated; deterministic facts separated from advisory judgment (spec Work Evaluation); capability-verified lifecycle (ADR-0020)",
+      "artifacts": [
+        "docs/design/watcher-work-episode.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "57c1e5eab0cb9d2283389c15609df2ef3c8e7c04",
+        "after": "57c1e5eab0cb9d2283389c15609df2ef3c8e7c04",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0116",
+      "datetime": "2026-08-31T14:51:25Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 5: deterministic Weave scores done_when (drift + honest completion), advisory excluded until calibrated",
+      "prompt": "implement slice 5: five deterministic dimensions, hard floors, Evidence Coverage, honest Scorecard",
+      "summary": "A pure WeaveScorer turns a closed episode's deterministic evidence into an honest Scorecard. Decision: the deterministic observed weight is 70 (Outcome 30, Focus 15, Guidance 15, Coordination 10); the two advisory dimensions (Evidence discipline, Solution economy = 30) are declared and EXCLUDED from points until the grader passes calibration + QWK (ADR-0019, slice 7) - matching the spec's own '58 / 70 observed' example. Floors trip Blocked and suppress the numeric; missing goal/done/verification -> Not Scored; Partial never rescales to 0-100; Coverage is separate from points. This is where the AI-Forward done_when becomes measured: Focus counts work-after-done (drift) and Outcome checks the honest completion claim - the PACK-O faces.",
+      "rationale": "separate deterministic facts from advisory judgment (spec Work Evaluation); advisory cannot raise a deterministic fail nor enter points before calibration (rules 8-9); honest Partial/Blocked/Not-Scored",
+      "artifacts": [
+        "docs/design/watcher-weave-score.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "2b75785294b530e434e1af09a8844fa523f7aa14",
+        "after": "2b75785294b530e434e1af09a8844fa523f7aa14",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0118",
+      "datetime": "2026-08-31T16:21:03Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 6: per-repo Message Board (quarantined, no-orphan) + cross-repo Fleet map",
+      "prompt": "implement slice 6: per-repo append-only board + cross-repo repo->session map",
+      "summary": "The Message Board is an append-only, per-repository communication surface with author/session/time/trust provenance; a reply/ack references an existing parent in the same repo (no orphan). Decision: board content is untrusted by construction and stored QUARANTINED - no API feeds it to a grader as instructions (Confused Deputy mitigation) and injection shapes are flagged; the injection-invariance guarantee comes from the scorer's typed-signal design (slice 5), not from detection. A policy redaction is the one allowed content mutation (tombstone; envelope append-only). The Fleet aggregator builds the repo->session map across >=2 per-workspace stores, grouped by the session's own repository identity.",
+      "rationale": "align with coord-core one-file-per-session append semantics; untrusted content cannot instruct a grader (spec security NFR); envelope append-only with redactable payload (spec line 210)",
+      "artifacts": [
+        "docs/design/watcher-message-board.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "4ddd278aba69220e95d4a2ea92eca3aa6ab0b1b2",
+        "after": "4ddd278aba69220e95d4a2ea92eca3aa6ab0b1b2",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0119",
+      "datetime": "2026-08-31T16:43:42Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice 7: advisory grader gated on ADR-0019 calibration; leaderboard cohort/privacy guards; no-scalar standing",
+      "prompt": "do the next steps and lets get all of slice 7 implemented",
+      "summary": "Advisory dimensions enter Weave points only after stability + QWK>=0.75 + anti-Goodhart gates pass; the fold never rescues a Blocked/NotScored verdict (rule 8); leaderboard is Not Comparable below cohort 5 or single-operator (rules 10-11, US-10), segmented by task/schema; AgentStanding carries rank+trend+per-dimension reasons but no single optimizable scalar (US-16), enforced by a reflection guard.",
+      "rationale": "A model-judged (probabilistic) dimension must not affect a score until calibrated against humans, and a public standing must not become a gameable target.",
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AdvisoryScoring.cs",
+        "src/AiDe.Core/Watcher/Leaderboard.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "67586a8bbc7132395d13be04c3da7017ee5e7703",
+        "after": "67586a8bbc7132395d13be04c3da7017ee5e7703",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0120",
+      "datetime": "2026-08-31T17:24:23Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper slice conn-2: Board + Leaderboard surfaces; watcher store wired into the running app",
+      "prompt": "do all of these next steps so i can smoke test the ux",
+      "summary": "WorkbenchShell opens <dataDir>/watcher.db and passes Sessions/Board/Leaderboard queries to the factory; panes render live and degrade to 'not available'; v2->v3 layout migration makes them reachable.",
+      "rationale": "Until the shell opened the store and passed the queries, even Sessions showed 'not available' - the read surfaces existed but nothing wired them to data.",
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "8ca0574d22fe4a3b47f5c8b9341ff7abb51fb691",
+        "after": "8ca0574d22fe4a3b47f5c8b9341ff7abb51fb691",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0121",
+      "datetime": "2026-08-31T17:45:06Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "Loomkeeper conn-4: dispute is an append-only fact, Disputed is derived, never overwrites the score (rule 12)",
+      "prompt": "operator dispute path",
+      "summary": "ScoreDispute in its own append-only table; a dispute writes a fact and touches no score, so prior scores are preserved (rule 12); Disputed is derived from the facts (DM7), never stored; Leaderboard surfaces the disputed count.",
+      "rationale": "Rule 12 forbids overwriting a disputed score; a separate append-only fact + a derived state is the only shape that keeps the prior score and the dissent both immutable.",
+      "artifacts": [
+        "src/AiDe.Core/Watcher/ScoreDispute.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "09c7dfee6a1c909dd8934ed142ca9a1b58b97923",
+        "after": "09c7dfee6a1c909dd8934ed142ca9a1b58b97923",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0122",
+      "datetime": "2026-08-31T20:56:56Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "architecture",
+      "skill": "implement",
+      "title": "Loomkeeper conn-5: ingest runs in-process in the WPF app; liveness now exact",
+      "prompt": "host the OTLP receiver + coordination ingest in a running process",
+      "summary": "WatcherHost composes and runs the ingest inside the app process; the registrar and liveness projection share one monotonic clock, so the cross-process liveness caveat recorded in conn-2 is removed. A 2s background coordination-log pump fills the shared store the panes read.",
+      "rationale": "Hosting the ingest beside the read surfaces is the only composition that makes monotonic liveness exact without a shared-epoch heartbeat, and it is the smallest runnable path from live-capable panes to live ones.",
+      "artifacts": [
+        "src/AiDe.Core/Watcher/WatcherHost.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "b08993ab4233f88d2b8a3498408666ba7f2d104f",
+        "after": "b08993ab4233f88d2b8a3498408666ba7f2d104f",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0123",
+      "datetime": "2026-08-31T22:52:10Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "conn-8: terminal panes auto-register as coordination sessions via a reconcile loop",
+      "prompt": "do the next steps (conn-8)",
+      "summary": "Chose a snapshot-reconcile driver (register/heartbeat/end from the set of live terminal panes) over precise per-pane start/close hooks, because the ConPTY session starts async and there is no clean close event; the reconcile reads only immutable Core layout data so it is safe off the UI thread. Also fixed DC-043 (coordination session-end must mark the store, not only drop the id mapping).",
+      "rationale": "A reconcile from the current terminal surfaces is robust to the async terminal lifecycle and matches the existing reconcile-not-rebuild philosophy (DC-029); ends are eventually-consistent (<=2s) which is acceptable for liveness.",
+      "artifacts": [
+        "src/AiDe.Core/Watcher/SessionCoordinationEmitter.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "git": {
+        "before": "77f25c3d37317881e27e4e158c421c8e70aef7c4",
+        "after": "77f25c3d37317881e27e4e158c421c8e70aef7c4",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0124",
+      "datetime": "2026-08-31T23:44:25Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "conn-10: auto-score imported episodes honestly; a committed Proof Pack is the one verification signal",
+      "prompt": "/design -> /implement conn-10",
+      "summary": "Derive DeterministicEpisodeSignals from observable audit evidence: a docs/proof artifact sets HasVerificationPath (honest, non-fuzzy); acceptance stays null (unknown, no floor trip); guidance/coordination 0 (Not-Recorded). Proof-pack -> Partial (Focus only); no proof -> Not-Scored. operatorId = session id.",
+      "rationale": "The spec forbids fabricating a missing signal (L127); the only honest verification signal in an audit entry is a committed Proof Pack, so scores are honestly Partial/Not-Scored until richer telemetry.",
+      "artifacts": [
+        "docs/design/watcher-signals-derivation.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "93c4eee87a21401981365a8dbee3c22925666972",
+        "after": "93c4eee87a21401981365a8dbee3c22925666972",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-0125",
+      "datetime": "2026-09-01T00:00:31Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "kind": "design",
+      "skill": "implement",
+      "title": "conn-11: operator raise-dispute command; cloud judge deferred behind egress opt-in + calibration",
+      "prompt": "/design -> /implement conn-11",
+      "summary": "A keyboard command raises an append-only dispute (rule 12) against the latest genuinely-scored episode; the score is never changed; a Not-Scored card is not disputable; operatorId is a fixed local constant (no human identity). The real cloud judge plugs into ScoreAndRecord's evaluator+registry, deferred behind an operator egress opt-in, credentials, and calibration.",
+      "rationale": "Disputes must be append-only recourse without mutating scores (rule 12); the cloud judge must not egress episode content without operator consent + calibration, so it stays documented-not-wired until those exist.",
+      "artifacts": [
+        "docs/design/watcher-dispute-command.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": "5865e971729385c7b4efa76165cbe4112d452cef",
+        "after": "5865e971729385c7b4efa76165cbe4112d452cef",
+        "branch": "feature/agent-watcher-substrate",
+        "pushed": null,
         "commits": []
       }
     },

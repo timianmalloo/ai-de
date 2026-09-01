@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using AiDe.App.Workbench;
 using AiDe.Core.Workbench;
+using AiDe.Testing;
 
 namespace AiDe.App.Tests;
 
@@ -169,5 +170,51 @@ public sealed class WorkbenchShellTests
         });
 
         Assert.Equal("explore", found);
+    }
+
+    /// <summary>A concrete no-op workspace read surface for attach tests (base defaults, nothing thrown).</summary>
+    private sealed class BareQueries : FakeWorkspaceQueries
+    {
+        // Main added BindJoins to AttachWorkspace, whose join Source calls FindAsync + EvidenceAsync during
+        // attach. This test's intent is an EMPTY store, so both return empty rather than the base's refusal.
+        public override Task<AiDe.Core.Projections.FindResult> FindAsync(
+            string term, int maxResults, CancellationToken cancellationToken) =>
+            Task.FromResult(new AiDe.Core.Projections.FindResult(
+                [], new AiDe.Core.Projections.ResultBounds(0, 0, 1024, 0, 0, 0, 0, false, null), "rev-empty"));
+
+        public override Task<AiDe.Core.Projections.EvidencePage> EvidenceAsync(
+            string? cursor, int maxAssertions, CancellationToken cancellationToken) =>
+            Task.FromResult(new AiDe.Core.Projections.EvidencePage([], null, "rev-empty"));
+    }
+
+    [Fact]
+    public void AttachWorkspace_WiresTheWatcher_SoTheSessionsPaneIsLive_NotUnavailable()
+    {
+        // E11 through the real composition root: the watcher wiring lives in AttachWorkspace (the runtime
+        // path), not only the constructor. Before this fix AttachWorkspace rebuilt the factory without
+        // the watcher queries, so the Sessions pane always read "not available" even after a workspace
+        // opened. With a real (empty) store wired, the pane shows its EMPTY state instead.
+        var dataDir = System.IO.Path.Combine(
+            System.IO.Path.GetTempPath(), $"aide-shell-watcher-{Guid.NewGuid():N}");
+        try
+        {
+            var status = WithShell((shell, _) =>
+            {
+                shell.AttachWorkspace(new BareQueries(), dataDir);
+                shell.Adapter.Render();
+
+                var content = shell.Adapter.ContentFor("sessions");
+                var unwrapped = content is System.Windows.Controls.Border { Child: FrameworkElement inner } ? inner : content;
+                var stack = Assert.IsType<StackPanel>(unwrapped);
+                return stack.Children.OfType<TextBlock>().Last().Text;
+            });
+
+            Assert.DoesNotContain("not available", status, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains("No sessions observed", status, StringComparison.OrdinalIgnoreCase);
+        }
+        finally
+        {
+            try { System.IO.Directory.Delete(dataDir, recursive: true); } catch (System.IO.IOException) { }
+        }
     }
 }

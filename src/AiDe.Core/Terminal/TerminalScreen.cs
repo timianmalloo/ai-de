@@ -159,6 +159,19 @@ public sealed class TerminalScreen
     /// </remarks>
     public object SyncRoot { get; } = new();
 
+    /// <summary>
+    /// The cell under the cursor, or <c>null</c> when the cursor is not on a real cell. The cursor
+    /// legitimately sits off the grid at the <b>pending-wrap</b> column (<c>CursorColumn == Columns</c>,
+    /// held after writing the last column until the next write wraps), and can be left outside the grid
+    /// by other sequences. The renderer MUST read the character-under-cursor through this, never through
+    /// the raw indexer: an out-of-bounds index in <c>OnRender</c> throws on the WPF UI thread, which is
+    /// unhandled and terminates the whole application (DC-061).
+    /// </summary>
+    public TerminalCell? CellUnderCursor() =>
+        CursorRow >= 0 && CursorRow < Rows && CursorColumn >= 0 && CursorColumn < Columns
+            ? _cells[(CursorRow * Columns) + CursorColumn]
+            : null;
+
     public void ClearDirty() => IsDirty = false;
 
     /// <summary>Writes text at the cursor, wrapping and scrolling as needed.</summary>

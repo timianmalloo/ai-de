@@ -11,6 +11,7 @@ using AiDe.Core.Upgrade;
 using AiDe.Core.Extraction;
 using AiDe.Core.Presentation;
 using AiDe.Core.Terminal;
+using AiDe.Core.Watcher;
 using AiDe.Core.Workbench;
 using AvalonDock;
 using AiDe.Core.Dispatch;
@@ -58,6 +59,22 @@ public sealed class WorkbenchShell : IDisposable
     // Cross-restart prompt drafts, keyed by the stable SurfaceId (off the Core layout model).
     private PromptDraftStore? _promptDraftStore;
 
+    // The per-workspace Loomkeeper host: it owns the observation store AND runs the ingest (the
+    // coordination-contract log pump, in-process, so liveness is exact). Null until a workspace with a
+    // data directory is attached; reset on each attach. The panes then show "not available".
+    private WatcherHost? _watcherHost;
+    private SessionCoordinationEmitter? _watcherEmitter;
+    private CancellationTokenSource? _watcherPump;
+
+    /// <summary>The stateless watcher read-pane kinds - rebuilt on refresh; never a terminal (DC-029).</summary>
+    private static readonly HashSet<string> WatcherPaneKinds = new(StringComparer.Ordinal) { "sessions", "board", "leaderboard" };
+
+    /// <summary>The last observed watcher-store fingerprint; the loop only re-renders the panes when it changes (conn-9).</summary>
+    private string? _watcherFingerprint;
+
+    /// <summary>Guards the one-shot import of the workspace's declared-goal episodes from its audit log (ep-capture).</summary>
+    private bool _episodesImported;
+
     public WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)
     {
         Service = new LayoutService();
@@ -75,7 +92,16 @@ public sealed class WorkbenchShell : IDisposable
         Announcer = new WorkbenchAnnouncer(LiveRegion);
 
         _queries = queries;
-        _factory = new SurfaceContentFactory(queries);
+
+        // Loomkeeper read surfaces (Sessions/Board/Leaderboard) read a per-workspace watcher store the
+        // in-process host also WRITES (the coordination-contract log pump). Wired both here (for a data
+        // directory supplied at construction) AND in AttachWorkspace (the real runtime path, where the
+        // directory arrives after the daemon resolves) - the shell is built with a null workspace and
+        // the workspace attaches later, so wiring only the constructor would leave the surfaces inert.
+        var watcher = StartWatcher(workspaceDataDirectory);
+
+        _factory = new SurfaceContentFactory(
+            queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes);
         Manager = new DockingManager();
         AutomationProperties.SetName(Manager, "Workbench");
 
@@ -148,6 +174,10 @@ public sealed class WorkbenchShell : IDisposable
             return result.Applied ? "Terminal opened." : result.Announcement;
         };
         Controller.PromptBarOpen = Prompt.Open;
+
+        // The operator's recourse against a score they disagree with (US rule 12): an append-only dispute
+        // against the latest scored episode. It records evidence for review; it never changes the score.
+        Controller.RaiseDisputeRequested = () => RaiseDisputeOnLatestScore();
 
         Controller.NewPromptDraftRequested = () =>
         {
@@ -364,7 +394,23 @@ public sealed class WorkbenchShell : IDisposable
         ArgumentNullException.ThrowIfNull(queries);
 
         _queries = queries;
-        _factory = new SurfaceContentFactory(queries);
+
+        // Wire the Loomkeeper watcher for THIS workspace's data directory (the real runtime path - the
+        // constructor was built with a null workspace). Without this the read surfaces would be inert:
+        // AttachWorkspace rebuilding the factory without the watcher queries is what left them showing
+        // "not available" even after a workspace opened.
+        var watcher = StartWatcher(dataDirectory);
+        _factory = new SurfaceContentFactory(
+            queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes);
+
+        // The watcher read panes may already have been realized (at construction) against a factory with
+        // no watcher queries - showing "not available". Mark them to rebuild on the next Render so they
+        // pick up the now-wired factory. Only the stateless watcher kinds - never a terminal (DC-029).
+        var watcherKinds = WatcherPaneKinds;
+        Adapter.Invalidate(Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => watcherKinds.Contains(s.Kind))
+            .Select(s => s.SurfaceId));
 
         // The palette's re-index command is inert until a workspace exists to re-index. Wiring it
         // here rather than at construction is what makes it act on THIS workspace.
@@ -1274,7 +1320,245 @@ public sealed class WorkbenchShell : IDisposable
             adapter.ContentFor(surfaceId) as TerminalSurface;
     }
 
-    public void Dispose() => Persistence?.Dispose();
+    /// <summary>
+    /// Opens (or re-opens) the per-workspace Loomkeeper host for a data directory and returns the read
+    /// queries the factory wires into the watcher surfaces. Called from the constructor AND from
+    /// <see cref="AttachWorkspace"/> - the latter is the real runtime path, where the data directory
+    /// arrives after the shell is built with a null workspace.
+    /// </summary>
+    /// <remarks>
+    /// The pump loop is started with <see cref="Task.Run(System.Action)"/> so that even its synchronous
+    /// first pump (a directory read + a SQLite fold) never runs on the UI thread during attach. A host
+    /// that cannot open degrades to null queries - the panes show "not available" and the workbench is
+    /// never blocked. A re-attach disposes the previous host first.
+    /// </remarks>
+    private (IWatcherSessionsQuery? Sessions, IWatcherBoardQuery? Board,
+             IWatcherLeaderboardQuery? Leaderboard, IWatcherDisputeQuery? Disputes) StartWatcher(string? dataDirectory)
+    {
+        // A re-attach (opening a different workspace) resets the host.
+        _watcherPump?.Cancel();
+        _watcherPump?.Dispose();
+        _watcherHost?.Dispose();
+        _watcherPump = null;
+        _watcherHost = null;
+        _watcherEmitter = null;
+        _episodesImported = false;
+        _watcherFingerprint = null;
+
+        if (string.IsNullOrEmpty(dataDirectory))
+        {
+            return (null, null, null, null);
+        }
+
+        try
+        {
+            var host = WatcherHost.Open(dataDirectory, Path.Combine(dataDirectory, "loomkeeper-coord"));
+            _watcherHost = host;
+            _watcherEmitter = host.CreateEmitter();
+            _watcherPump = new CancellationTokenSource();
+            var token = _watcherPump.Token;
+
+            // Off the UI thread: the loop's synchronous work (a directory read + a SQLite fold, and a
+            // snapshot of the layout's terminal surfaces) must not run on the caller's thread during
+            // construction/attach. The loop reconciles the terminal panes into coordination sessions so a
+            // terminal the user opens appears in the watcher, then pumps the coordination log into the store.
+            var emitter = _watcherEmitter;
+            _ = Task.Run(() => WatcherLoopAsync(host, emitter, token), token);
+
+            return (
+                new WatcherSessionsQuery(host.Store, host.Liveness),
+                new WatcherBoardQuery(host.Store),
+                new WatcherLeaderboardQuery(host.Store),
+                new WatcherDisputeQuery(host.Store));
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _watcherPump?.Cancel();
+            _watcherHost?.Dispose();
+            _watcherHost = null;
+            _watcherEmitter = null;
+            _watcherPump = null;
+            return (null, null, null, null);
+        }
+    }
+
+    /// <summary>
+    /// The watcher's background loop: every tick it reconciles the terminal panes that currently exist into
+    /// coordination sessions (a new pane registers, an existing one heartbeats, a closed one ends - conn-8),
+    /// then pumps the coordination log into the store. A hiccup on any tick is swallowed so the workbench is
+    /// never taken down by watcher work; cancellation ends the loop cleanly.
+    /// </summary>
+    private async Task WatcherLoopAsync(WatcherHost host, SessionCoordinationEmitter emitter, CancellationToken token)
+    {
+        var interval = TimeSpan.FromSeconds(2);
+        while (!token.IsCancellationRequested)
+        {
+            try
+            {
+                // One-shot: import the workspace's declared-goal episodes from its audit log so real Work
+                // Episodes exist to observe (ep-capture). Off the UI thread, guarded so it runs once per
+                // attach; a missing log imports nothing.
+                if (!_episodesImported && !string.IsNullOrEmpty(_workspaceRoot))
+                {
+                    _episodesImported = true;
+                    var auditLog = Path.Combine(_workspaceRoot, "docs", "audit", "audit-log.jsonl");
+                    host.ImportAndScoreEpisodesFromAuditLog(auditLog);
+                }
+
+                var terminals = TerminalSnapshot();
+                var ids = new HashSet<string>(terminals.Select(t => t.Id), StringComparer.Ordinal);
+                emitter.Reconcile(ids, id => IdentityFor(id, terminals));
+                host.PumpOnce();
+
+                // conn-9: re-render the open watcher panes only when the store actually changed, so a
+                // session registering/ending, a board post, or a new score shows up live without a manual
+                // reopen - and an idle watcher never gratuitously rebuilds a pane (no scroll reset/flicker).
+                var fingerprint = WatcherFingerprint(host);
+                if (!string.Equals(fingerprint, _watcherFingerprint, StringComparison.Ordinal))
+                {
+                    _watcherFingerprint = fingerprint;
+                    var dispatcher = Application.Current?.Dispatcher;
+                    if (dispatcher is not null && !token.IsCancellationRequested)
+                    {
+                        _ = dispatcher.BeginInvoke(RefreshWatcherPanesOnUi);
+                    }
+                }
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                // A reconcile/pump/refresh hiccup must never take down the workbench; skip this tick.
+            }
+
+            try { await Task.Delay(interval, token).ConfigureAwait(false); }
+            catch (OperationCanceledException) { break; }
+        }
+    }
+
+    /// <summary>A snapshot of the terminal surfaces (id + agent title) in the current layout.</summary>
+    private IReadOnlyList<(string Id, string Agent)> TerminalSnapshot()
+    {
+        var list = new List<(string, string)>();
+        foreach (var stack in Service.Current.AllStacks())
+        {
+            foreach (var surface in stack.Surfaces)
+            {
+                if (surface.Kind == "terminal")
+                {
+                    list.Add((surface.SurfaceId, surface.Title));
+                }
+            }
+        }
+
+        return list;
+    }
+
+    /// <summary>Builds the coordination identity a terminal pane presents when it registers.</summary>
+    private SessionCoordinationIdentity IdentityFor(string surfaceId, IReadOnlyList<(string Id, string Agent)> terminals)
+    {
+        var root = _workspaceRoot ?? string.Empty;
+        var display = string.IsNullOrEmpty(root) ? "workspace" : Path.GetFileName(root.TrimEnd('\\', '/'));
+        if (string.IsNullOrEmpty(display))
+        {
+            display = "workspace";
+        }
+
+        var agent = terminals.FirstOrDefault(t => t.Id == surfaceId).Agent;
+        if (string.IsNullOrEmpty(agent))
+        {
+            agent = "terminal";
+        }
+
+        var repoPath = string.IsNullOrEmpty(root) ? display : root;
+        return new SessionCoordinationIdentity(
+            RepoPath: repoPath,
+            RepoDisplay: display,
+            WorktreeBranch: "workspace",
+            WorktreePath: repoPath,
+            TerminalId: surfaceId,
+            AgentName: agent);
+    }
+
+    /// <summary>
+    /// A cheap fingerprint over what the watcher panes show - session count and each session's liveness
+    /// state (so a session going Stale/Ended is caught, not just a count change), plus episode, board and
+    /// scorecard counts. The loop re-renders the panes only when this changes (conn-9). Read on the loop
+    /// thread only; the panes are read on the UI thread when rendered.
+    /// </summary>
+    internal static string WatcherFingerprint(WatcherHost host)
+    {
+        var sessions = host.Store.AllSessions();
+        var builder = new System.Text.StringBuilder();
+        builder.Append(sessions.Count).Append('|');
+        foreach (var session in sessions)
+        {
+            builder.Append(session.SessionId).Append('=')
+                   .Append((int)host.Liveness.Evaluate(session.SessionId)).Append(';');
+        }
+
+        builder.Append('|').Append(host.Store.AllEpisodes().Count)
+               .Append('|').Append(host.Store.AllBoardMessages().Count)
+               .Append('|').Append(host.Store.AllScoredEpisodes().Count);
+        return builder.ToString();
+    }
+
+    /// <summary>
+    /// Marks the open watcher read panes to rebuild and renders. Runs on the UI thread (marshalled from
+    /// the loop). Only the stateless watcher kinds are invalidated - a terminal is reconciled, never
+    /// rebuilt (DC-029). A no-op if the host was reset since the tick was queued.
+    /// </summary>
+    private void RefreshWatcherPanesOnUi()
+    {
+        if (_watcherHost is null)
+        {
+            return;
+        }
+
+        Adapter.Invalidate(Service.Current.AllStacks()
+            .SelectMany(s => s.Surfaces)
+            .Where(s => WatcherPaneKinds.Contains(s.Kind))
+            .Select(s => s.SurfaceId));
+        Adapter.Render();
+    }
+
+    /// <summary>
+    /// Raises an append-only dispute against the latest genuinely-scored episode (conn-11 / US rule 12).
+    /// A no-op-with-message when the watcher is unavailable or nothing has been scored yet. The dispute
+    /// records the operator's disagreement as evidence; it never changes the score.
+    /// </summary>
+    internal string RaiseDisputeOnLatestScore(string reason = "Operator disputes this score.")
+        => _watcherHost is null
+            ? "The watcher is not available."
+            : RaiseDisputeOnLatest(_watcherHost.Store, TimeProvider.System, "loomkeeper-operator", reason);
+
+    /// <summary>
+    /// The pure dispute selection + append: dispute the most recently scored episode that carries a real
+    /// verdict (Not-Scored has no number to dispute), via the append-only <see cref="DisputeService"/>.
+    /// operatorId is a fixed local operator, never a human identity (privacy). Returns a status message.
+    /// </summary>
+    internal static string RaiseDisputeOnLatest(
+        IWatcherObservationStore store, TimeProvider time, string operatorId, string reason)
+    {
+        var disputable = store.AllScoredEpisodes()
+            .Where(s => s.Scorecard.Verdict != WeaveVerdict.NotScored)
+            .OrderByDescending(s => s.Scorecard.EvaluatedAt)
+            .FirstOrDefault();
+
+        if (disputable is null)
+        {
+            return "There is no scored episode to dispute yet.";
+        }
+
+        new DisputeService(store, time).RaiseDispute(disputable.EpisodeId, operatorId, reason);
+        return $"Dispute recorded against {disputable.EpisodeId} (append-only; the score is unchanged).";
+    }
+
+    public void Dispose()
+    {
+        Persistence?.Dispose();
+        _watcherPump?.Cancel();
+        _watcherPump?.Dispose();
+        _watcherHost?.Dispose();
+    }
 
     /// <summary>The command palette's rows: every keyboard-reachable layout command.</summary>
     public static IReadOnlyList<WorkbenchCommand> PaletteCommands(string search) =>

@@ -190,6 +190,16 @@ public static class WorkbenchCommandCatalog
             "Asks the daemon to re-read the repository. The current evidence keeps rendering until "
             + "a complete snapshot replaces it.",
             Menu: "_File"),
+
+        // The operator's recourse against a score they disagree with (US rule 12). Append-only: it
+        // records a dispute as evidence for review; it never changes the score. Keyboard-reachable for
+        // the same reason every other write is - an action available only by some other route is one a
+        // keyboard-first operator does not have.
+        new("watcher.raiseDispute", "Raise score dispute on the latest scored episode", "Ctrl+K, Ctrl+U",
+            OperationKind: "",   // an append to the dispute log, not a tree mutation
+            "Records an append-only operator dispute against the most recently scored episode. The score "
+            + "is never changed - the dispute is evidence for later review.",
+            Menu: "_View"),
     ];
 
     public static IEnumerable<WorkbenchCommand> Search(string term) =>

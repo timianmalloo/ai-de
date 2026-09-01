@@ -344,6 +344,63 @@ public sealed class TerminalScreenTests
         Assert.True(screen.IsDirty);
     }
 
+    // ---- cursor-under-render safety (regression: DC-061) --------------------
+    // A focused terminal renders a cursor block AND redraws the character under it. The character
+    // read used the raw indexer at (CursorRow, CursorColumn), but the cursor legitimately sits at
+    // the pending-wrap column (CursorColumn == Columns) after writing the last column, and at the
+    // bottom row that indexes exactly _cells.Length -> IndexOutOfRangeException, unhandled on the WPF
+    // UI thread -> the whole application is terminated. Agent CLIs that draw a full-width status line
+    // at the bottom hit this constantly. CellUnderCursor() is the safe read the renderer must use.
+
+    [Fact]
+    public void CellUnderCursor_InBounds_ReturnsTheCell()
+    {
+        var screen = Screen(columns: 4, rows: 2);
+        screen.Write("hi"); // cursor now at (0, 2), still in bounds
+
+        var cell = screen.CellUnderCursor();
+
+        Assert.NotNull(cell);
+        Assert.Equal(' ', cell!.Value.Character); // the not-yet-written cell under the cursor
+    }
+
+    [Fact]
+    public void CellUnderCursor_AtPendingWrapOnTheBottomRow_IsNull_NotThrowing()
+    {
+        // Reproduce the crash scenario deterministically: fill the last row so the cursor is left at
+        // the pending-wrap column (== Columns) on the bottom row. The raw indexer here is
+        // _cells[Rows*Columns] - one past the end. CellUnderCursor must return null, never throw.
+        var screen = Screen(columns: 4, rows: 2);
+        screen.Write("row0");     // fills row 0, cursor wraps to (1, 0)
+        screen.Write("row1");     // fills row 1, cursor left at pending-wrap (1, 4 == Columns)
+
+        Assert.Equal(1, screen.CursorRow);
+        Assert.Equal(screen.Columns, screen.CursorColumn); // pending wrap on the bottom row
+
+        var cell = screen.CellUnderCursor(); // must NOT throw
+
+        Assert.Null(cell);
+    }
+
+    [Fact]
+    public void Resize_Shrink_ClampsTheCursor_SoASubsequentWriteAndReadDoNotThrow()
+    {
+        // The sibling: Resize copied cells but did not clamp the cursor, so a stale cursor after a
+        // shrink could index out of bounds in Write and in the renderer. Drive the cursor to the far
+        // corner, then shrink; the cursor must land within the new bounds.
+        var screen = Screen(columns: 10, rows: 6);
+        screen.MoveCursor(5, 9); // bottom-right of the old grid
+
+        screen.Resize(columns: 4, rows: 3);
+
+        Assert.True(screen.CursorRow < screen.Rows, $"CursorRow {screen.CursorRow} must be < {screen.Rows}");
+        Assert.True(screen.CursorColumn < screen.Columns, $"CursorColumn {screen.CursorColumn} must be < {screen.Columns}");
+
+        // A write and a cursor read at the clamped position must not throw.
+        var ex = Record.Exception(() => { screen.Write("x"); _ = screen.CellUnderCursor(); });
+        Assert.Null(ex);
+    }
+
     // ---- reads are total: the renderer never crashes the screen (DC-061) -----
 
     [Fact]

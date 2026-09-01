@@ -15,10 +15,15 @@ namespace AiDe.App.Workbench;
 /// content are independent of where it is docked (US-9). This factory is the single place that
 /// mapping lives, so adding a surface kind never means touching the layout model.
 /// </remarks>
-public sealed class SurfaceContentFactory(IWorkspaceQueries? queries)
+public sealed class SurfaceContentFactory(
+    IWorkspaceQueries? queries,
+    IWatcherSessionsQuery? watcherSessions = null,
+    IWatcherBoardQuery? watcherBoard = null,
+    IWatcherLeaderboardQuery? watcherLeaderboard = null,
+    IWatcherDisputeQuery? watcherDisputes = null)
 {
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
-    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "prompt", "classdiagram", "codeviewer", "diagnostics"];
+    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "prompt", "classdiagram", "codeviewer", "diagnostics"];
 
     public FrameworkElement Create(Surface surface)
     {
@@ -29,6 +34,9 @@ public sealed class SurfaceContentFactory(IWorkspaceQueries? queries)
             "canvas" => new CanvasSurface(surface.SurfaceId, surface.Title),
             "contexts" => new ContextMapSurface(surface.Title),
             "joins" => new JoinSurface(surface.Title),
+            "sessions" => Sessions(surface),
+            "board" => Board(surface),
+            "leaderboard" => Leaderboard(surface),
             "prompt" => new PromptDraftSurface(surface.SurfaceId, surface.Title),
             "classdiagram" => new ClassDiagramSurface(surface.Title),
             "codeviewer" => new CodeViewerView(surface.Title),
@@ -140,6 +148,95 @@ public sealed class SurfaceContentFactory(IWorkspaceQueries? queries)
                 ? surface.SurfaceId["agent:".Length..].Split('#')[0]
                 : null,
         };
+
+    /// <summary>
+    /// The Loomkeeper Sessions surface: observed sessions with honest liveness and Not Recorded for
+    /// anything unproven. Its read model loads <b>synchronously</b> (a local store fold, no IPC), so -
+    /// unlike the evidence pane - there is no async construction-time binding to strand it on
+    /// "Loading…" (DC-011): the rows are present before the control is shown.
+    /// </summary>
+    private FrameworkElement Sessions(Surface surface)
+    {
+        var pane = new WatcherSessionsPaneViewModel(watcherSessions);
+        pane.Load();
+
+        var list = new ListBox
+        {
+            DisplayMemberPath = nameof(WatcherSessionRow.DisplayLabel),
+            ItemsSource = pane.Rows,
+            BorderThickness = new Thickness(0),
+            Background = null,
+        };
+        AutomationProperties.SetName(list, $"{surface.Title} sessions");
+
+        var status = new TextBlock
+        {
+            Text = pane.StatusMessage,
+            Margin = new Thickness(0, 8, 0, 0),
+            TextWrapping = TextWrapping.Wrap,
+        };
+        status.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+
+        var stack = new StackPanel { Margin = new Thickness(12) };
+        stack.Children.Add(list);
+        stack.Children.Add(status);
+        return stack;
+    }
+
+    /// <summary>
+    /// The Loomkeeper Message Board surface (US-4): posts across repositories with quarantined
+    /// untrusted content shown but never as instruction, injection flags visible, redactions as
+    /// tombstones. Synchronous local-store fold, like <see cref="Sessions"/> - never strands on
+    /// "Loading…" (DC-011).
+    /// </summary>
+    private FrameworkElement Board(Surface surface)
+    {
+        var pane = new WatcherBoardPaneViewModel(watcherBoard);
+        pane.Load();
+        return ListPane(surface, pane.Rows, nameof(WatcherBoardRow.DisplayLabel), pane.StatusMessage, "posts");
+    }
+
+    /// <summary>
+    /// The Loomkeeper Leaderboard surface (US-14): facet cells per (task class, score schema) segment,
+    /// a rank where comparable and "Not Comparable" with a reason where the cohort is too small or
+    /// single-operator (US-10/US-16). Synchronous local-store fold.
+    /// </summary>
+    private FrameworkElement Leaderboard(Surface surface)
+    {
+        var pane = new WatcherLeaderboardPaneViewModel(watcherLeaderboard, watcherDisputes);
+        pane.Load();
+        return ListPane(surface, pane.Rows, nameof(WatcherLeaderboardRow.DisplayLabel), pane.StatusMessage, "cells");
+    }
+
+    /// <summary>
+    /// The shared list-pane chrome for the honest read surfaces (sessions/board/leaderboard): a bound
+    /// ListBox over dense one-line rows plus the evidence status line. One place, so a new read
+    /// surface never re-derives the accessibility and status wiring.
+    /// </summary>
+    private static FrameworkElement ListPane(Surface surface, System.Collections.IEnumerable rows, string displayMember, string statusMessage, string itemNoun)
+    {
+        var list = new ListBox
+        {
+            DisplayMemberPath = displayMember,
+            ItemsSource = rows,
+            BorderThickness = new Thickness(0),
+            Background = null,
+        };
+        AutomationProperties.SetName(list, $"{surface.Title} {itemNoun}");
+
+        var status = new TextBlock
+        {
+            Text = statusMessage,
+            Margin = new Thickness(0, 8, 0, 0),
+            TextWrapping = TextWrapping.Wrap,
+        };
+        status.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+
+        var stack = new StackPanel { Margin = new Thickness(12) };
+        stack.Children.Add(list);
+        stack.Children.Add(status);
+        return stack;
+    }
 
     private static FrameworkElement Unavailable(Surface surface)
     {

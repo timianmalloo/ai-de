@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 31 · partially-controlled 29 · uncontrolled 3
+**Status counts:** controlled 37 · partially-controlled 31 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1872,7 +1872,7 @@ for both or split.*
   `TerminalScreenTests.ReadingTheCursorCell_AtDeferredWrapOnTheBottomRow_DoesNotThrow` and
   `TheIndexer_ClampsOutOfRangeCoordinates_AndNeverThrows` — **observed failing** on the un-fixed code
   (5 cases, all `IndexOutOfRangeException`) and green after the clamp.
-- **Status:** controlled — clamp landed Phase 1; regression tests observed red-then-green.
+- **Status:** `controlled` — clamp landed Phase 1; regression tests observed red-then-green.
 
 ### DC-062 — UI-thread render reads state a background thread mutates, behind a false single-thread invariant
 
@@ -1889,7 +1889,7 @@ for both or split.*
   so a frame never observes a half-applied write or a `Resize` array-swap. Guard test
   `TerminalScreenTests.ConcurrentWritesAndReads_UnderSyncRoot_DoNotThrow` exercises write+resize vs
   full-grid read under contention. A recurrence means a mutation or a read escaped the lock.
-- **Status:** controlled — SyncRoot coordination landed Phase 2.
+- **Status:** `controlled` — SyncRoot coordination landed Phase 2.
 
 ### DC-063 — A proportional-split-tree layout collapses single-child splits, relocating unrelated panes
 
@@ -1907,3 +1907,125 @@ for both or split.*
   soften the collapse (structural placeholder / don't reorient the survivor) + incremental view update;
   a characterization test on source-side collapse and a move-preserves-others test.
 - **Status:** `uncontrolled` (Phase 3 of the investigation — needs a model decision, awaiting approval)
+
+### DC-064 — A deterministic test double produces colliding output across instances
+
+- **Signature:** two independent instances of a "deterministic" fake (a capability, id, or token
+  factory seeded from a counter) emit identical values, so a negative test that forges a value from a
+  second instance accidentally matches the real one — the test then passes or fails for the wrong
+  reason rather than for the behaviour under test.
+- **Why it survives:** each factory is individually correct (unique *within its own sequence*); the
+  collision appears only when two instances are compared, which most tests never do. The suite is
+  green until a cross-instance negative test is written — and then it fails confusingly, looking like
+  a production bug rather than a test-double bug.
+- **Instances:** 2026-08-30 — `SequentialCapabilityFactory` in the Loomkeeper Phase-1 tests:
+  `Ingest_ForgedCapability_Rejected_AndNothingStored` forged a capability from a second factory whose
+  counter also started at 1, so `CryptographicOperations.FixedTimeEquals` matched and the forgery
+  test failed. Found on the first test run; the fix hardened the double and made the forgery explicit.
+- **Control:** the fake carries a per-instance salt (a `Guid`) so two instances cannot collide, and
+  the forgery is expressed as an explicit never-issued token (`WatcherFixtures.ForgedCapability`)
+  rather than a second instance's output. The generalisation: a negative test proves *rejection* only
+  if the rejected value is one nothing legitimate could have produced.
+- **Residual risk:** the salt makes the immediate collision impossible by construction, but no gate
+  prevents a future non-salted deterministic double from reintroducing the shape.
+- **Status:** `partially-controlled`
+
+### DC-065 — A real-process daemon-reuse test is timing-fragile under full-suite load
+
+- **Signature:** a test that starts a real out-of-process daemon (or reuses one over a named pipe /
+  workspace mutex) passes when run in isolation but **intermittently fails when the whole suite runs**,
+  even with test parallelism disabled — the failure is a startup/teardown *race*, not a logic error,
+  so re-running it green hides it.
+- **Why it survives:** parallelism is already disabled (DC-008's control), so the shape looks
+  impossible — but the contention is **sequential residue**, not concurrency: a daemon, named pipe, or
+  mutex from an *earlier* real-process test in the same run has not fully released when the reuse test
+  starts its own daemon, or the readiness poll is CPU-load-sensitive under a busy suite. In isolation
+  there is no prior daemon to contend with, so it is always green — which is exactly what makes it read
+  as a flake rather than a real teardown-ordering defect.
+- **Instances:** 2026-08-31 — `ShellBootstrapTests.ASecondShell_ReusesTheRunningDaemon_RatherThanStartingAnother`
+  failed once in the full `AiDe.Core.Tests` run (770 tests) during Loomkeeper slice 2, then passed in
+  isolation and on the next full run. Observed, **not introduced** by slice 2 — the slice's code
+  (`CoordinationContract.cs`) is pure in-process logic that touches no daemon, pipe, or process; the
+  slice added no daemon test. **Root-caused and fixed** 2026-08-31 (slice-3 follow-on): the assertion
+  was `DaemonsRunning() <= before`, a **system-wide `AiDe.Daemon` process count** — a category error,
+  because the daemon *deliberately* outlives its client (the idle grace holds warm state through a
+  shell restart, `ShellBootstrap` §"Launching is racy on purpose"), so other tests' lingering daemons
+  polluted a machine-global counter, and an ordinary load-induced-then-lock-resolved redundant launch
+  (harmless in production) could false-fail it. The counter measured the machine; the invariant is per
+  workspace.
+- **Control:** the reuse test now proves the **workspace-scoped** invariant deterministically — one
+  logical daemon (one store, one **epoch**) per workspace, enforced by `WorkspaceLock`: (1) a
+  **readiness barrier** (`await first.FindAsync(...)`) gates on an *observed answer*, not a delay, so
+  reuse is measured against a ready daemon; (2) **three-way epoch equality** (first == second ==
+  third, all overlapping in scope so the daemon cannot idle-shut-down between them) is the stable
+  oracle — even a momentary redundant launch loses the lock, exits, and the shell reconnects to the
+  incumbent, so the epoch it sees is the incumbent's. The machine-global `DaemonsRunning()` counter was
+  removed. Verified stable across three isolated runs and a full 787-test suite run. The generalisation
+  (a control): **a per-resource invariant must be measured against that resource, never a machine-global
+  count of a shared, deliberately-lingering process** (the pack's CI-ENV / RES-LEAK discipline — the
+  control supplies and observes its own state).
+- **Residual risk:** the fix removes the global-count dependency, but the underlying real-process
+  launcher remains environment-sensitive (a cold start still has a 30s deadline); the epoch oracle is
+  robust to that because lock-resolution makes epoch equality hold regardless of a transient redundant
+  launch.
+- **Status:** `controlled`
+
+### DC-066 — A workspace-dependent feature wired only in the constructor is dropped by the real composition root
+
+- **Signature:** a feature is wired into a shell/host in its **constructor**, but the object is built
+  before the thing it depends on exists (here: `MainWindow` builds `new WorkbenchShell(null)` before the
+  workspace resolves), and the **real runtime path** that supplies the dependency — an `AttachWorkspace`
+  / late-init method — **rebuilds the composition without the feature's wiring**. The feature is
+  therefore inert at runtime while every test passes, because the tests exercise the inner component
+  (the factory/pane) **directly**, never **through** the composition root that drops it.
+- **Why it survives:** it is a pure green-suite-broken-surface (E2E-C): the component's own tests are
+  correct and green, the constructor path even works when a dependency is passed directly (as a fixture
+  does), so nothing points at the one production path — the late attach — where the wiring is silently
+  discarded. A second reuse/reconcile layer can compound it: even after the composition root is fixed to
+  wire the feature, panes **already realized** against the un-wired factory are **reused, not rebuilt**
+  (DC-029), so the feature stays inert until the realized surfaces are explicitly invalidated.
+- **Instances:** 2026-08-31 — the Loomkeeper watcher read surfaces (Sessions/Board/Leaderboard) were
+  wired in `WorkbenchShell`'s constructor (conn-2/conn-5), but `MainWindow` builds the shell with a null
+  workspace and the real path, `WorkbenchShell.AttachWorkspace`, rebuilt the factory as
+  `new SurfaceContentFactory(queries)` — dropping the watcher queries and never opening the
+  `WatcherHost`. Every App test passed (they build the factory directly). Found while investigating the
+  DC-061 crash. **Fixed** the same day: a `StartWatcher(dataDirectory)` helper opens the host and returns
+  the queries, called from **both** the constructor and `AttachWorkspace`; the shell then
+  `Adapter.Invalidate(...)`s the stateless watcher surfaces so the next `Render` rebuilds them against
+  the wired factory (never a terminal — DC-029).
+- **Control:** an **E11 test through the real composition root** —
+  `WorkbenchShellTests.AttachWorkspace_WiresTheWatcher_SoTheSessionsPaneIsLive_NotUnavailable` — attaches
+  a workspace with a real data directory and asserts the Sessions pane the Adapter builds shows its live
+  empty state ("No sessions observed"), **not** "not available". Generalisation: **wire a
+  workspace/late-dependency feature in the method that receives the dependency, and prove it through the
+  composition root, not only the component** — a component tested in isolation says nothing about whether
+  the root that assembles it keeps the wiring (E11).
+- **Residual risk:** the panes still fold once on (re)build; live auto-refresh as new sessions register
+  is a separate follow-on (the pump keeps the store current; reopening a pane re-folds it). A session
+  only appears if it writes a coordination-contract log under `<dataDir>/loomkeeper-coord` — the
+  auto-emitting session wrapper is future work.
+- **Status:** `controlled`
+
+### DC-067 — A coordination session-end removed the mapping but never ended the session, so liveness kept lying "Alive"
+- **Signature:** an ingest handles a `session-end` (or close) event by forgetting the session's *external→internal id mapping*, but never marks the *internal* session ended in the store. Liveness is a projection over the store (Ended iff `IsEnded(sessionId)`, else Alive/Stale by heartbeat recency), so a closed session that was never marked ended keeps reporting **Alive** (or drifts to **Stale**) forever — the watcher shows a live session for a terminal that is gone.
+- **Why it survives:** the mapping removal is the *visible* half of "end the session" and it works — a subsequent heartbeat for that external id is correctly ignored — so the handler looks complete. Nothing in the end path reads liveness back, and a round-trip test that only checks "no new session on a stale heartbeat" passes. The lie only shows when something *evaluates liveness* after the end.
+- **Instances:** 2026-08-31 — `InjectedContractIngest.ContractSessionEnd` (conn-2/conn-5) removed `_byExternalId[externalId]` but never called into the store, so `SessionCoordinationEmitter.End` → coordination `session-end` → pump left the session `Alive`. Found by the conn-8 emitter test `End_WritesSessionEnd_AndStopsTracking` asserting `LivenessState.Ended` after end+pump. **Fixed** the same day: added `IngestHost.EndSession(sessionId) => _store.MarkEnded(sessionId)` and made the `ContractSessionEnd` case call it (via the external→internal lookup) *before* removing the mapping.
+- **Control:** `SessionCoordinationEmitterTests.End_WritesSessionEnd_AndStopsTracking` (end→pump→`Ended`) and `Reconcile_Registers_Heartbeats_AndEnds_FromASnapshot` (a snapshot that drops a session ends exactly that one, leaving it `Ended` while the survivor stays `Alive`) — both mutation-verified: neutralising the `_host.EndSession(...)` call reds the first, and neutralising the "end gone" branch reds the second. Generalisation: **an end/close handler must change the state the reader projects from, not only the lookup that routed the event — and prove it by reading the projection (liveness) back after the end, never only by asserting the routing stopped.**
+- **Residual risk:** the shell drives ends by *reconcile from the current terminal snapshot* (a closed pane disappears from the snapshot and is ended on the next tick, ≤2s later), not by a precise per-pane close event; a session whose pane vanishes without the loop running (e.g. process kill mid-tick) is ended only when the loop next runs, and on host dispose tracked sessions are dropped without an explicit end (they go Stale, then the host's DB is disposed). The async shell loop timing itself is not unit-tested (covered by the Core end-to-end reconcile test + manual smoke).
+- **Status:** `controlled`
+
+### DC-068 — A new workbench command must be wired into three coupled places or the menu drifts from the palette
+- **Signature:** a command added to the `WorkbenchCommandCatalog.All` list (so it appears in the Ctrl+K palette) but not to the **hard-coded** per-menu id lists in `MainMenuBuilder`, and/or not reflected in the hard-coded per-menu **count** assertions in `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders`. The palette is data-driven from the catalog; the menu bar is a parallel hand-maintained list. Add a command in one place and the two silently disagree - a command reachable by keyboard-palette but absent from the menu (or vice-versa).
+- **Why it survives:** the catalog edit alone builds clean and the command works from the palette, so nothing local points at the menu. The drift is only visible when a test that reflects over *both* sources runs.
+- **Instances:** 2026-08-31 — conn-11 added `watcher.raiseDispute` to the catalog with `Menu:"_View"`; the build was clean and the palette worked, but `MainMenuTests.TheMenuCoversEveryCatalogCommand` and `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders` both reded until the id was added to `MainMenuBuilder`'s `_View` list and the `_View` count bumped 4→5. **The control worked** — it caught the drift before merge.
+- **Control:** the two conformance tests, **already in place** — `MainMenuTests.TheMenuCoversEveryCatalogCommand` (every catalog command appears in exactly one menu) and `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders` (declared per-menu counts equal what the builder renders). They fail closed on any catalog/menu drift. Generalisation: **when two sources must agree (a data-driven list + a hand-maintained parallel list), a reflection-over-both conformance test is the control that makes the drift a red, not a production surprise** — and adding an item means updating every coupled source in the same change.
+- **Residual risk:** the coupling itself remains (the menu is not yet generated from the catalog's `Menu` field); a future refactor could make the builder data-driven and delete the parallel list. Until then the control holds the invariant.
+- **Status:** `controlled`
+
+### DC-069 — Parallel branches independently assign the same sequential IDs to different entries
+- **Signature:** two branches diverge from a common point in an append-only, sequentially-numbered register (defect classes, ADRs, migrations) and each appends new entries starting at the next free number. On merge, the same IDs (here DC-039..DC-044) denote **different** entries on each side, and every code/doc reference to those IDs is now ambiguous. A 3-way text merge cannot resolve it — both sides "added lines".
+- **Why it survives:** each branch is internally consistent and its gate passes in isolation; the collision only exists in the union, and a naive resolution (keep both, or take one side) either duplicates an ID (register gate fails) or silently drops a class. Worse, a blanket find-replace to renumber one side corrupts the *other* side's references to the same numbers.
+- **Instances:** 2026-08-31 — forward-integrating `feature/agent-watcher-substrate` (DC-039..044: test-double, daemon-flake, cursor-crash, watcher-wiring, session-end, menu-drift) into `origin/main` (DC-039..059, different classes). Resolved by keeping main's canonical DC-039..059 verbatim and **renumbering this branch's 6 classes to DC-064..065**, then updating references **per-file, disambiguated by meaning** (my crash ref in TerminalView → DC-061; main's "two kinds" ref in KnowledgeExtractor left as DC-041). A blanket replace was explicitly rejected as it would have corrupted main's same-numbered references.
+- **Control:** `verify-defect-register.py` (unbroken sequence + header counts) catches the duplicate-ID/miscount failure mode at the gate — it is what forces a renumber rather than a silent duplicate. Generalisation: **the integrating branch renumbers its own new entries to follow the trunk's highest, and updates references scoped by meaning, never by blanket replace.** A stronger future control would reserve per-branch ID ranges (or use content-hash ids) so the collision cannot arise.
+- **Residual risk:** reference updates are semantic, not mechanical, so a missed reference keeps an old number; prose references in generated/derived files (docs-index.js) are regenerated from source. The renumber breaks any *external* citation of this branch's pre-merge DC-041..044 (e.g. in commit messages), which are historical and left as-is.
+- **Status:** `partially-controlled`

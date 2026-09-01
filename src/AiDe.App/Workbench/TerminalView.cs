@@ -231,15 +231,22 @@ public sealed class TerminalView : FrameworkElement
             return; // An unfocused terminal showing a live cursor is claiming input it will not get.
         }
 
-        var rect = new Rect(
-            _screen.CursorColumn * CellWidth, _screen.CursorRow * CellHeight, CellWidth, CellHeight);
+        // Clamp the DRAWN column/row so a pending-wrap cursor (column == Columns, held after writing
+        // the last column) shows on the last cell rather than in the right margin, and a cursor left
+        // outside the grid still draws somewhere visible rather than far off-screen.
+        var column = Math.Clamp(_screen.CursorColumn, 0, Math.Max(0, _screen.Columns - 1));
+        var row = Math.Clamp(_screen.CursorRow, 0, Math.Max(0, _screen.Rows - 1));
+
+        var rect = new Rect(column * CellWidth, row * CellHeight, CellWidth, CellHeight);
 
         context.DrawRectangle(new SolidColorBrush(_palette.Cursor), null, rect);
 
-        // Redrawn over the block so the character under the cursor stays readable. Without this the
-        // cursor hides the very character the user is about to change.
-        var cell = _screen[_screen.CursorRow, _screen.CursorColumn];
-        if (cell.Character != ' ')
+        // Redrawn over the block so the character under the cursor stays readable. Read through
+        // CellUnderCursor, NOT the raw indexer: at the pending-wrap position (or any off-grid cursor)
+        // there is no cell, and indexing it would throw IndexOutOfRangeException on the WPF UI thread
+        // during OnRender - unhandled, terminating the whole application (DC-061). No cell => nothing
+        // to redraw, which is correct: the wrap position holds no character.
+        if (_screen.CellUnderCursor() is { } cell && cell.Character != ' ')
         {
             var text = new FormattedText(
                 cell.Character.ToString(),

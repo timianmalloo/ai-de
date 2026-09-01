@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Spike (slice 1b): establish the OTLP/HTTP receive contract for the ingest wire's transport, before
+    designing/building the receiver. It stands up a real System.Net.HttpListener, POSTs a representative
+    OTLP/JSON trace export to /v1/traces with a per-session bearer token header, and parses it with
+    System.Text.Json into HarnessSpan - proving the *stdlib* path works and no protobuf dependency
+    (Google.Protobuf / OpenTelemetry.Proto) is needed if the harness is configured http/json.
+
+    Committed and re-runnable. Zero new dependencies is the point (Solution-Selection Ladder: stdlib
+    beats a package). FINDINGS.md records the shape and the token-binding decision.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>WatcherOtlpReceiveSpike</AssemblyName>
+    <RootNamespace>WatcherOtlpReceiveSpike</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AiDe.Core\AiDe.Core.csproj" />
+  </ItemGroup>
+
+</Project>
