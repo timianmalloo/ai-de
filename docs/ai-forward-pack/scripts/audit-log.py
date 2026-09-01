@@ -370,8 +370,42 @@ def find_template():
     return None
 
 
+def _remote_project(root):
+    """The repository's name, taken from its origin URL. Stable across every worktree."""
+    try:
+        url = subprocess.run(
+            ["git", "-C", root, "config", "--get", "remote.origin.url"],
+            capture_output=True, encoding="utf-8", errors="replace").stdout.strip()
+    except OSError:
+        return None
+
+    if not url:
+        return None
+
+    name = url.rstrip("/").rsplit("/", 1)[-1]
+    return name[:-4] if name.endswith(".git") else name or None
+
+
 def project_name(root):
-    return os.path.basename(os.path.abspath(os.path.join(root, "..")))
+    """What this repository is called, decided by something that does not move.
+
+    It used to be the name of the directory two levels up — which in a worktree is the WORKTREE's
+    name, not the repository's. Every session therefore rendered a different `project` into the
+    derived view: `ai-de-facelift` when the design session regenerated, `ai-de-session-phase3-pane-probes`
+    when this one did. The value flipped back and forth on `main`, produced a spurious diff in a
+    generated artifact on every cross-session rebase, and would have made `verify-derived-views`
+    fail for a reason that has nothing to do with staleness — a control that cries wolf is one
+    people switch off.
+
+    Order: the value already recorded in the derived view (so an established name is never
+    renamed by a tool), then the origin URL, then the directory as a last resort.
+    """
+    # The remote FIRST, not the previous value. "Keep whatever is already there" is stable only
+    # until two sessions disagree, and then it is first-writer-wins with a diff every time the
+    # other one regenerates. The origin URL is the same string in every worktree, on every machine,
+    # forever — which is the only property that makes a generated artifact comparable.
+    return _remote_project(root) or os.path.basename(
+        os.path.abspath(os.path.join(root, "..")))
 
 
 def render(root, project=None):

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-facelift",
-  "generated": "2026-09-01T03:07:56Z",
+  "project": "ai-de",
+  "generated": "2026-09-01T03:11:56Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6656,6 +6656,23 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Enable richer honest scores + wire the advisory judge seam",
       "done_when": "An instrumented audit entry scores all deterministic dims; a qualified local evaluator folds advisory dims; absent signals stay conservative"
+    },
+    {
+      "id": "al-0328",
+      "shortname": "derived-views-were-not-deterministic",
+      "datetime": "2026-09-01T02:45:07Z",
+      "session": "phase3-pane-probes",
+      "prompt": "re-base validate and merge",
+      "summary": "Goal: rebase onto origin/main, validate, merge. Done when: build+tests+gates run on the combined state and main is green apart from the known ADR ambiguity. Found that the derived views on main were stale for a reason that was not staleness: audit-log.py stamped 'project' from the WORKTREE directory name, so the value oscillated between ai-de-facelift and ai-de-session-phase3-pane-probes and fed graphSha256. Identity now comes from the origin URL. Registered DC-071.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/ai-forward-pack/scripts/audit-log.py"
+      ],
+      "tags": [],
+      "outcome": "success"
     },
     {
       "id": "al-0329",
