@@ -73,6 +73,37 @@ Ranked by *what a user cannot currently ask*, not by what is missing in the abst
 | **3** | **Schema changed by raw SQL** | *Investigated 2026-08-31 and NOT built.* The EF reader cannot fold `migrationBuilder.Sql`, and the disclosure now says how much that costs: **4 of 23** raw statements in `Up` methods carry DDL. Measured further — the one raw statement that adds a column is followed by a raw statement dropping the same one, so the net effect on TheTerrace's graph is **zero and the schema shown is correct**. Worth building when a repository is found where raw SQL adds a column and keeps it; building it now would be a fold for a measured zero. | Medium, unproven |
 | **4** | **Bicep expression evaluation** | *SHIPPED 2026-08-31, and **this ranking was wrong** — see below.* A constant folder, not an interpreter: `param`-with-default and `var` are substituted, interpolation and four pure string functions are folded, everything else is refused and counted. 12 of 27 resource names recovered, verified against Azure's own what-if output. `guid(...)` and a `param` with no default remain correctly disclosed. | Was "Large, low value"; actually Medium, and a correctness item |
 
+### The finding that outranks the table: the gap has no edges
+
+Measured 2026-09-01 on the user's re-indexed TheTerrace store, after everything above shipped:
+
+| | |
+|---|---|
+| knowledge nodes | **878** |
+| relation edges touching a knowledge node | 1,009 of 11,094 |
+| of those, knowledge → **code** | **0** |
+| knowledge nodes with no relation edge at all | **569 of 878** |
+
+**Every edge the knowledge half has is to another document.** `depends-on`, `relates-to`, `refines`,
+`documents`, `links_to` — all of them are frontmatter typed-links between artifacts, and 65% of
+documents have none at all. `JoinProjection` was checked rather than assumed: it joins code, schema
+and infrastructure. Nothing anywhere joins a document to the code it describes.
+
+**This is the product's premise, unimplemented.** *"Docs hold intent, code holds reality, and the
+expensive defects live in the gap"* — and there is no edge that crosses the gap, so the gap cannot
+be inspected. The canvas draws two disconnected graphs sharing a viewport.
+
+It also explains three symptoms that were treated separately: knowledge has median degree **0**
+against 4 for everything else, so a most-connected-first cap drops ~620 of it; the Knowledge chip
+read 257 of 878; and the knowledge half looks thin no matter how much the extractors read. All three
+are the same missing mechanism.
+
+**This should be item 1.** The payload budget is a constraint on drawing a graph; this is about
+whether the graph is the one the product claims to build. A cheap first slice exists — a document
+that names a type, a file, or a table in its prose or frontmatter is a candidate `documents` edge to
+that node, `Inferred` and disclosed — and `KnowledgeBody` already extracts prose links, so the
+reader is in place and only its target resolution stops at the docs boundary.
+
 ### Why item 4's ranking was wrong, and what that says about ranking
 
 It was ranked *"Large, low value — correctly disclosed, and evaluating it means writing an

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T20:33:48Z",
+  "generated": "2026-09-01T21:18:53Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -4327,7 +4327,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "564f3121d2bb243a42b7eaea55132bd2351842773e88999920685e729f2746d3"
+      "sourceSha256": "861afc9d4143c581d7a03d000c35735c6d4b18ea0ea589cd5d301b74c75eb88f"
     },
     {
       "id": "proof-pack-phase-1-walking-skeleton",
@@ -9785,5 +9785,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "84dedb70b2686d65a4d6c9d40edeb7858b50a5d7050f7aef243da64bf40e12bf"
+  "graphSha256": "a88b4282ec2975aafe588106e5344737fefc074acd9c25684ddae9dbe80acbe0"
 };
