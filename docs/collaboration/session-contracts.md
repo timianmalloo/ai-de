@@ -1550,3 +1550,70 @@ where a file lives rather than what a surface renders.
 "say which tree you are writing into" check `coord worktree list` already performs for worktrees.
 Not written here: it is `docs/ai-forward-pack/` and therefore pack-managed, and Session 3 does not
 own it. Raised for whoever does.
+
+### 8.8 Decided: the stranding control is a repo-owned gate, not a pack patch
+
+The user decided this on 2026-09-01, after both Core and Session 3 had stopped at *"neither of us
+owns the file"*. Recorded with the rejected options, because the reason one of them was rejected is
+worth more than the choice.
+
+**Chosen: a new `tools/verify-stranded-audit.py`.** It walks `git worktree list --porcelain` and
+reports any tree — **including the primary** — holding an uncommitted `docs/audit/*.jsonl`. Core
+owns `tools/**` (§2) so it is Core's to build; the spec is below.
+
+**Why not the obvious fix — patching `audit-log.py` to refuse when its target is outside the
+caller's toplevel.** It is the better *place* for the check: write time is earlier than any
+after-the-fact gate. But `audit-log.py` is a **listed pack artifact**, and `/updatepack` "applies
+exactly the changed artifacts listed in the changelog" — it replaces them **wholesale**. A local
+patch there is one pack update from vanishing, silently, leaving a control everyone believes exists.
+
+That distinction corrects a claim made earlier in this register. §8.6 argued a **new** file in
+`.github/instructions/` survives a pack update because unlisted artifacts are untouched. True — and
+it does not generalise. **Adding an unlisted file is safe; modifying a listed one is not.** The two
+were being treated as one rule.
+
+The rejected patch would also have been the day's own defect class, at the level of our tooling: the
+fix succeeds, the tests pass, the log looks fine, and the control is gone. *"The operation succeeded
+and something honest is gone"* — §8.7's sentence, pointed at the thing meant to prevent §8.7.
+
+**Also rejected: document only.** §8.7 and the relay instructions already carry the rule, and that is
+where it would have stopped. *A lesson recorded as prose is a memoir* (CI6) — the repository's own
+continuous-improvement rule rejects exactly that resting place.
+
+**Deferred, not rejected: upstreaming it to the pack.** The real root cause is a pack-level
+inconsistency, not an `ai-de` one: `coord-core.py` has `repo_root()` and deliberately resolves
+`.agents/` to the **primary** checkout from any worktree, while `audit-log.py`'s `--root` defaults to
+the string `"docs"` — cwd-relative, with no repo-root resolution at all (`audit-log.py:769`). Two
+tools in one bundle disagreeing about what "the repo" means. Worth fixing upstream so every repo
+using the pack gets it; out of scope here, and it does not block the gate.
+
+#### The spec, for Core
+
+| | |
+|---|---|
+| **File** | `tools/verify-stranded-audit.py` — Core's, per §2 |
+| **Reads** | `git worktree list --porcelain` for every tree on the machine, then each tree's `docs/audit/*.jsonl` working-tree status |
+| **Fails when** | any tree holds an uncommitted or untracked `docs/audit/*.jsonl` |
+| **Message** | name the tree, say the log is **append-only so the dirty lines are probably the only copy**, and say *commit them in that tree* — explicitly **not** `git checkout --` |
+| **Exit** | non-zero on a finding, the way the other gates do |
+| **Runs** | pre-commit and on demand. **Not CI** — a runner has one checkout, so it structurally cannot see the hazard |
+
+**Two things that make it more than a dirty-file check**, both verified here rather than assumed:
+
+1. **It must inspect the primary checkout.** `coord-core.py`'s `worktree_safety()` short-circuits on
+   the primary — `return False, "primary checkout - the reference tree is never cleanup"` — **before**
+   any dirtiness test. Every other tree gets *"uncommitted or untracked changes - the only copy of
+   that work"*. So the one tree whose dirty state the existing tooling structurally cannot report is
+   exactly the tree a stranded write lands in, because a session that has not yet made its worktree
+   is standing in the primary. If the gate inherits that short-circuit it inherits the blind spot.
+2. **Distinguish a stranded entry from ordinary work in progress.** A session mid-turn legitimately
+   has a dirty audit log in its *own* tree. The finding that matters is a dirty log in a tree
+   **nobody is live in** — `.agents/log/*.jsonl` already carries `session-start` per worktree and
+   `coord worktree list` already computes an 8-hour staleness window, so the liveness signal exists
+   and does not need inventing. A gate that fires on every session's own working tree will be
+   muted within a week, which is the failure mode `verify-id-allocators` was already taught once
+   (*"a duplicate the trunk already carries is a note, not every branch's failure"*).
+
+**Current state, measured:** primary checkout `333` entries, `origin/main` `333` — clean. The
+hazard is dormant, has fired exactly once, and cost a manual rescue (`7cda687`). Building this is
+prevention, not firefighting.
