@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-01T23:12:45Z",
+  "generated": "2026-09-01T23:27:47Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1706,6 +1706,33 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1bfc5a5cc8753bb40d48d138284a196cd3610c4db6cc45ec31b96719fcacf9fb"
+    },
+    {
+      "id": "note-20260901-the-default-graph-is-a-map-of-the-code",
+      "path": "docs/notes/note-20260901-the-default-graph-is-a-map-of-the-code.md",
+      "title": "The default graph is a map of the code, and knowledge is reached by navigation",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-01",
+      "reviewSuggested": [],
+      "summary": "The default graph keeps the most-connected nodes and reserves no slots per category, so knowledge nodes — measured median relation degree 0, and 569 of 878 with no edge at all — are reached by search and drill-down rather than by a share of the node budget. The cut is stated rather than silent: DeclaredByKind carries the denominator, NotInView says when a hit was not drawn, and DescribeResult.KnowledgeIds lets the drill-down know what it is holding.",
+      "tags": [
+        "decision-note",
+        "graph",
+        "knowledge",
+        "node-budget",
+        "projection"
+      ],
+      "links": [
+        {
+          "to": "note-20260830-the-graph-carries-only-observable-links",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3e1a47c20b770cce124ca36a2397d39b7d9bbe7ccb76f58036b882e58fdace53"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -9858,5 +9885,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a6467a433de77d0232525e522b6f22a59706152dbc90970d4f5405d8a4bbb1fe"
+  "graphSha256": "fbd2e526657a3feb3259921616d62c7e7592ece22dd4c2e03feb4f76771157b4"
 };

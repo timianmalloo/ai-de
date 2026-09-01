@@ -649,6 +649,42 @@ public sealed class StoreReader : IDisposable
         => Command("SELECT display_label FROM node_dim WHERE node_id = $id AND valid_to_seq IS NULL;", ("$id", nodeId))
             .ExecuteScalar() as string;
 
+    /// <summary>
+    /// Which of <paramref name="nodeIds"/> the workspace classifies as knowledge.
+    /// </summary>
+    /// <remarks>
+    /// <para>Reads the same <c>node_class = knowledge</c> fact <c>GraphProjection</c> reads, rather
+    /// than deciding again from the kind. Two authorities on what counts as knowledge is the shape
+    /// of INV-0004 — where a hardcoded default rendered a table, a bicep resource and a class all as
+    /// "source" — and two definitions of one quantity is a defect signature in its own right.</para>
+    ///
+    /// <para>Bounded by the caller's id list, so it costs what the result costs rather than what the
+    /// graph costs (P1-PERF-02); an empty input reads nothing at all.</para>
+    /// </remarks>
+    public IReadOnlyCollection<string> ReadKnowledgeIds(IReadOnlyCollection<string> nodeIds)
+    {
+        if (nodeIds.Count == 0) return [];
+
+        var names = nodeIds.Select((_, i) => $"$n{i}").ToList();
+        var parameters = nodeIds
+            .Select((id, i) => ($"$n{i}", (object?)id))
+            .ToArray();
+
+        using var command = Command($"""
+            {LatestCte}
+            SELECT DISTINCT a.subject FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.predicate = 'node_class' AND a.object = 'knowledge'
+              AND a.subject IN ({string.Join(", ", names)});
+            """, parameters);
+
+        var found = new HashSet<string>(StringComparer.Ordinal);
+        using var rows = command.ExecuteReader();
+        while (rows.Read()) found.Add(rows.GetString(0));
+
+        return found;
+    }
+
     /// <summary>Reads the labelled cache. Provably equal to its derivation — see the rebuild test.</summary>
     public IReadOnlyList<(string Subject, string Predicate, string Object, string Status, int Count, string Revision)>
         ReadClaimCache()
