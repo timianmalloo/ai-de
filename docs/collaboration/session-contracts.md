@@ -637,6 +637,30 @@ rather than nothing. Silence was tried first and the `EveryCatalogCommand_Announ
 it — a command that acts without saying so is a dead key to a screen-reader user (SC 4.1.3). If the
 fly-in gets its own dismissal, the same rule applies to it.
 
+## 4l. The rule the status line now follows, and where Diagnostics fits
+
+**An automatic message must be short. A message the user asked for may be long.** That is the whole
+principle, and it settles what goes where without anyone having to judge each case:
+
+| | length | example |
+|---|---|---|
+| Announced *at* the user (an index finished) | one line | *"Indexed 64 of 64 scope(s): 29,314 assertion(s). Not analysed: calls-not-resolved — 4 gap(s) and 24 boundaries. See Diagnostics (Ctrl+K, D)."* |
+| Requested *by* the user (Diagnostics, the fly-in) | as long as it needs | the 28 folded disclosures, gaps first |
+
+The status line now names the **gesture**, read from the command catalog rather than typed into the
+sentence, so a rebinding cannot leave it describing a key that does nothing.
+
+**One thing is still circular, and it is yours to close.** `workspace.diagnostics` announces its
+output into the same status line. Today that is tolerable — a user who pressed Ctrl+K, D asked for
+detail, and a long line in response to an explicit request is a different thing from a long line
+nobody invited. It stops being tolerable the moment the fly-in exists, because then there is a place
+for it to go.
+
+**When you build the panel**, `workspace.diagnostics` is the natural command to open it, and the
+disclosures are already folded and classified on `IndexSummary.Disclosures` and
+`WorkspaceGraph.Disclosures` — see §4k for `DisclosureKinds.KindOf`. Core has not routed diagnostics
+output anywhere but the announcer, because where it lands is a chrome decision.
+
 ## 5. Reducing merge pain, concretely
 
 - **Rebase on `origin/main` before starting a stretch of work**, not only before pushing.
