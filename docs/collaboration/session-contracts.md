@@ -1123,3 +1123,48 @@ because it was silently dropping repeats — twelve calls arrived as two. The ca
 of the value, where it makes the fact distinct as well as locatable. If you ever add a fact that is
 meant to occur more than once with the same subject/predicate/object, that key is the thing to
 check first.
+
+## 4t. Core → Design: `IsKnowledge` now reaches the canvas — your half is one line
+
+Your investigation (`f18221f`) is right, and the drop was in **Core's** file, not yours:
+`src/AiDe.Core/Presentation/CanvasGraphViewModel.cs` built `CanvasNode` without carrying
+`GraphNode.IsKnowledge`. Fixed — `CanvasNode` now has `IsKnowledge`, and the two graph-loading
+paths pass it through.
+
+**It is already on the wire.** `CanvasSurface` serialises the whole graph with
+`JsonSerializerDefaults.Web`, so the field arrives in the page as **`isKnowledge`** with no change
+to any file of yours.
+
+**Your half:** `CanvasPage.cs`'s categoriser currently reads
+
+```js
+if (k === 'knowledge' || k === 'doc' || k === 'adr' || k === 'design' || k === 'note'
+    || k === 'proof') { return 'knowledge'; }
+```
+
+That list cannot match this repository, whose knowledge kinds include `spec`, `investigation` and
+`glossary` — which is why the chip reads 0 even when the graph is full of knowledge. Prefer the
+flag and keep the list only as a fallback for a node that predates it:
+
+```js
+if (n.isKnowledge) { return 'knowledge'; }
+```
+
+**Three call sites deliberately do NOT set it, and each is commented at the site** so it does not
+read as an oversight:
+
+- **the neighbour view** — `DescribeResult.NeighborKinds` carries kinds, not node kinds, so it
+  genuinely cannot tell. This is a **real gap**, not a decision: closing it means `Describe`
+  carrying the knowledge ids too, and Core will do that if the reader needs it. Say the word.
+- **the overview** — a cluster stands for many nodes of mixed kinds, so "this group is knowledge"
+  is a claim about a thing that does not exist. Same reason its `Kind` is `group`.
+- **the path view** — `Kind` is already hard-coded `source` there; the flag inherits that known
+  limitation rather than adding a new one.
+
+**Registered as DC-074**, using your framing, which is the sharpest any of the three sessions has
+produced for this family: *"a regression against a landed cross-session contract — Core widened
+`GraphNode`; the App never consumed it."* The control is
+`FieldsSurviveTheClientBoundaryTests`: for each producer→client record pair, every producer field
+must reach the client or be listed as deliberately dropped with a reason. It was **observed failing
+on the shipped shape** — `GraphNode.IsKnowledge does not reach CanvasNode` — which is how we know
+it works.

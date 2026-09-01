@@ -17,7 +17,8 @@ namespace AiDe.Core.Presentation;
 /// existing construction means what it always meant.
 /// </remarks>
 public sealed record CanvasNode(
-    string Id, string Label, string Kind, bool IsRoot, string? Context = null, int Count = 1);
+    string Id, string Label, string Kind, bool IsRoot, string? Context = null, int Count = 1,
+    bool IsKnowledge = false);
 
 /// <summary>One edge as the canvas draws it.</summary>
 public sealed record CanvasEdge(string From, string To, string Predicate, string Status)
@@ -153,7 +154,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
         }
 
         return new CanvasGraph(
-            [.. kept.Select(n => new CanvasNode(n.Id, n.Label, n.Kind, IsRoot: false, ContextOf(n.Id)))],
+            [.. kept.Select(n => new CanvasNode(n.Id, n.Label, n.Kind, IsRoot: false, ContextOf(n.Id), IsKnowledge: n.IsKnowledge))],
             [.. graph.Edges
                 .Where(e => visible.Contains(e.From) && visible.Contains(e.To))
                 .Select(e => new CanvasEdge(e.From, e.To, e.Predicate, e.Status.ToString()))],
@@ -228,6 +229,11 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
                             ? known
                             : "unknown";
 
+                    // IsKnowledge is NOT set here, and that is a gap rather than a decision.
+                    // `DescribeResult.NeighborKinds` carries each neighbour's kind and not its
+                    // node_kind, so this view genuinely cannot tell knowledge from source — and
+                    // `false` is the safe direction only in the sense that it under-counts rather
+                    // than mislabels. Closing it means Describe carrying the knowledge ids too.
                     nodes.Add(new CanvasNode(other, Shorten(other), otherKind, IsRoot: false, Context: otherContext));
                 }
 
@@ -302,6 +308,10 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
             // a member's kind would colour a group of 240 mixed types by its alphabetically first
             // one, which is a picture that means nothing and looks like it means something.
             var nodes = overview.Clusters
+                // IsKnowledge stays false, and here that IS the right answer: a cluster stands
+                // for many nodes of mixed kinds, so "this group is knowledge" is a claim about a
+                // thing that does not exist. The same reason its Kind is `group` rather than the
+                // alphabetically-first kind of its members.
                 .Select(c => new CanvasNode(
                     c.Id, c.Label, c.IsExternal ? "group-external" : "group",
                     IsRoot: false, Context: null, Count: c.NodeCount))
@@ -378,7 +388,7 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
                 : $"{kept.Count:N0} member(s) of {groupId}.";
 
             return new CanvasGraph(
-                [.. kept.Select(n => new CanvasNode(n.Id, n.Label, n.Kind, IsRoot: false, ContextOf(n.Id)))],
+                [.. kept.Select(n => new CanvasNode(n.Id, n.Label, n.Kind, IsRoot: false, ContextOf(n.Id), IsKnowledge: n.IsKnowledge))],
                 [.. graph.Edges
                     .Where(e => visible.Contains(e.From) && visible.Contains(e.To))
                     .Select(e => new CanvasEdge(e.From, e.To, e.Predicate, e.Status.ToString()))],
@@ -454,6 +464,9 @@ public sealed class CanvasGraphViewModel(IWorkspaceQueries? queries)
         {
             if (seen.Add(id))
             {
+                // Kind is already hard-coded "source" on this path — a path view shows the route,
+                // not what each stop is — so IsKnowledge inherits the same known limitation rather
+                // than introducing a new one.
                 nodes.Add(new CanvasNode(
                     id, Shorten(id), "source", IsRoot: isEndpoint, Context: ContextOf(id)));
             }

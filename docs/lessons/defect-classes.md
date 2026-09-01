@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 41 · partially-controlled 31 · uncontrolled 1
+**Status counts:** controlled 42 · partially-controlled 31 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2246,3 +2246,57 @@ for both or split.*
   already had to teach people to trust twice. A short human-maintained list, and the review it
   forces, is the cheaper correct thing.
 - **Status:** `controlled`
+
+### DC-074 — A field is dropped in transit between a producer record and its client record
+
+- **Shape:** a producer record is widened with a field that settles a question — an authoritative
+  flag, a bound, a count. A client record is built from it, field by field, and the new one is not
+  in the constructor call. Nothing fails: the client record is valid, the surface renders, and the
+  consumer falls back to whatever it did before the field existed — usually a guess that looks like
+  an answer.
+- **Signature:** a projection type and a presentation type with **almost** the same fields, built by
+  a hand-written `new Client(p.A, p.B, p.C)` that enumerates the producer's properties positionally.
+  Widening the producer compiles cleanly on both sides, because the client's constructor never
+  mentioned the field. The tell is a defaulted parameter on the client record whose value is never
+  set by anything: the default was written to avoid breaking existing calls, and then *every* call
+  took it. A second tell is a fallback that still exists downstream after the authority arrived.
+- **Why it survives:** it is invisible from both ends. The producer's tests pass — it emits the
+  field. The client's tests pass — it renders what it is given. A behavioural harness at the surface
+  passes too, because the surface faithfully rendered everything it received; the loss happened one
+  boundary upstream. Only a test that compares the two *shapes* can see it, and shapes are what
+  nobody tests.
+- **Instance:** 2026-09-01 — `GraphNode` was widened with `IsKnowledge`, read from `node_kind`,
+  which is the one dimension that separates knowledge from source (INV-0004: `has_type` is emitted
+  by six extractors and says nothing about which half of the graph a node is in). It was dropped in
+  the five `new CanvasNode(...)` calls, so the page fell back to guessing from a fixed list of
+  spellings — `knowledge|doc|adr|design|note|proof` — which cannot match a repository whose
+  knowledge kinds are `spec`, `investigation` and `glossary`. **The Knowledge chip read 0 for the
+  third time, by a third mechanism, after being fixed twice** (DC-044, a second reuse guard
+  defeating the generation bump; DC-045, no surface being told after an index).
+
+  Found by the design session while investigating the symptom, and framed by them in the sentence
+  that names the class better than this one does: *"a regression against a landed cross-session
+  contract — Core widened `GraphNode`; the App never consumed it."*
+- **Control:** `FieldsSurviveTheClientBoundaryTests`. For each declared producer→client pair, every
+  producer field must either appear on the client record **or** be listed as deliberately dropped
+  with a reason. Not a ban — `Degree` is a ranking statistic the canvas does not draw, and naming it
+  costs a line. It is a list where the unasked question gets asked, the same forcing-function shape
+  as `verify-standins.py` (DC-073). A second test fails a *stale* allowance, and a third asserts the
+  records still yield fields at all, so the comparison cannot pass by comparing two empty sets
+  (DC-016). **Observed failing 2026-09-01** on exactly the shipped shape:
+  *"GraphNode.IsKnowledge does not reach CanvasNode and is not listed as deliberately dropped."*
+
+  **Three ways to lose the truth, each hiding from the others' test**, which is why this is a third
+  control rather than an extension of either: *the bound was dropped* (a surface renders a payload
+  and not its `Truncated`); *the payload was never asked for* (DC-073); *the field was dropped in
+  transit* (this). The first is caught behaviourally at the surface, the second statically at the
+  wiring, the third structurally at the boundary between records.
+
+  **What the control cannot see:** it compares field NAMES, so a field that crosses and is then
+  ignored still passes. Three of the five `CanvasNode` call sites carry `IsKnowledge: false` because
+  the data genuinely is not available there — the neighbour view has kinds but not node kinds, a
+  cluster stands for many nodes of mixed kinds, and the path view hard-codes `source`. Each is
+  commented at the site rather than left to look like an oversight, and the first is a real gap:
+  closing it means `Describe` carrying the knowledge ids too.
+- **Status:** `controlled`
+
