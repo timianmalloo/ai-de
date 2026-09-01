@@ -323,3 +323,59 @@ the center".
 Same shape as §8.11 and §8.13's first lesson: the fix asserted about the case in front of it and
 not about the rule it was serving. `ZoneBackedLayoutService` is Core's under §2 — measured, raised,
 not taken.
+
+---
+
+## 7. MEASURED — "Graph centred on X." is announced before the centring, and the centring can silently not happen
+
+Core asked for one search rather than several bug reports: *is there a class of "reports success and
+names the wrong destination"?* There is, and the strongest instance is a step further than the class
+they described — **it announces success before attempting the work, and never looks at the result.**
+
+Three sites, identical shape (`WorkbenchShell.cs:913`, `:1044`, `:1447`):
+
+```csharp
+Announcer.Announce($"Graph centred on {nodeId}.");
+_ = canvas.RefreshAsync(nodeId);          // fire-and-forget
+```
+
+Two independent reasons the claim can be false:
+
+1. **`RefreshAsync` opens with `if (!Ready) return;`** — it silently no-ops while the WebView2 is
+   still initialising, which is the normal state immediately after a canvas opens.
+2. **The task is discarded** (`_ =`), so a fault inside it is never observed by anyone.
+
+**Observed, not read.** A probe constructed a real `CanvasSurface` outside a window:
+
+```
+canvas.Ready                      : False
+RefreshAsync completed            : True
+GraphSource was asked             : 0 time(s)
+```
+
+The refresh **did nothing at all** — the graph source was never even consulted — and in the shell
+the announcement has already been made. A screen-reader user is told the graph centred on a node it
+never looked up.
+
+### Why this is worth its own entry rather than a line in §8.3a
+
+Every earlier member of the family concerned a value that *existed* and did not reach the user. This
+one concerns a **statement about an action**, made before the action, about an action that may not
+occur. The information is not dropped in transit; **it was never true when it was said.**
+
+There is also a live interaction with the node-budget finding (§1a of the chip spec): the graph draws
+1,500 of 2,992 nodes, most-connected-first, and knowledge has median degree 0. So even when
+`RefreshAsync` does run, a search hit the user selected may not be in the drawn graph — and *"Graph
+centred on {label}"* is announced regardless. The two defects compound: the announcement is
+unconditional, and the thing it describes is a lower-bound view.
+
+### The fix shape
+
+Announce **after**, from the result — the same correction Core made to the drop announcement, which
+now names where the surface actually landed rather than where it was asked to go (verified: 20 of 20
+combinations correct in both placement and wording). Here that means awaiting the refresh and
+announcing what it achieved, including the honest negative: *"{label} is not in the current view"* is
+a better sentence than a centring that did not happen.
+
+`WorkbenchShell.cs` is Core's under §2. Measured, raised, not taken.
+
