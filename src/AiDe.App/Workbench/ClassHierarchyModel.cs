@@ -13,6 +13,12 @@ public enum ClassRelationKind
 
     /// <summary>`depends_on` — a using dependency (UML dependency, dashed line, open arrowhead).</summary>
     Dependency,
+
+    /// <summary>A field/property whose type is another drawn type (UML association, solid line, open arrow).</summary>
+    Association,
+
+    /// <summary>An association whose type is a collection of the target (UML aggregation, hollow diamond).</summary>
+    Aggregation,
 }
 
 /// <summary>A type in the class diagram — a class or interface. Members are not available yet (ADR-0020).</summary>
@@ -159,5 +165,107 @@ public static class ClassHierarchyModel
             .ToList();
 
         return new ClassHierarchy(kept, relations, external, deps);
+    }
+
+    /// <summary>
+    /// Derives UML association/aggregation relations from members: a field or property whose declared
+    /// type — or, for a collection, its element type — matches a drawn type is a structural "has-a".
+    /// A collection type is an aggregation (hollow diamond); a single-typed field is a plain
+    /// association. Methods are skipped (parameter/return types are usage, not structure). Pure, so it
+    /// is verifiable headlessly.
+    /// </summary>
+    public static IReadOnlyList<ClassRelation> DeriveAssociations(
+        IReadOnlyList<ClassTypeNode> types,
+        IReadOnlyDictionary<string, IReadOnlyList<string>> membersById)
+    {
+        var byLabel = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var t in types) { byLabel[Simple(t.Label)] = t.Id; }
+
+        var result = new List<ClassRelation>();
+        var seen = new HashSet<(string, string, ClassRelationKind)>();
+
+        foreach (var t in types)
+        {
+            if (!membersById.TryGetValue(t.Id, out var members)) { continue; }
+            foreach (var member in members)
+            {
+                if (!TryFieldType(member, out var typeText)) { continue; }
+                var (elem, isCollection) = ElementType(typeText);
+                if (!byLabel.TryGetValue(elem, out var toId)) { continue; }
+                if (toId == t.Id) { continue; } // a self-association adds noise, not information
+                var kind = isCollection ? ClassRelationKind.Aggregation : ClassRelationKind.Association;
+                if (seen.Add((t.Id, toId, kind)))
+                {
+                    result.Add(new ClassRelation(t.Id, toId, kind));
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static bool TryFieldType(string member, out string typeText)
+    {
+        typeText = string.Empty;
+        var colon = member.LastIndexOf(" : ", StringComparison.Ordinal);
+        if (colon < 0) { return false; }
+
+        var left = member[..colon];
+        if (left.Contains('(')) { return false; } // a method signature, not a field/property
+        typeText = member[(colon + 3)..].Trim();
+        return typeText.Length > 0;
+    }
+
+    private static (string Element, bool IsCollection) ElementType(string type)
+    {
+        var t = type.Trim().TrimEnd('?');
+        var collection = false;
+
+        if (t.EndsWith("[]", StringComparison.Ordinal)) { collection = true; t = t[..^2]; }
+
+        var lt = t.IndexOf('<');
+        if (lt >= 0 && t.EndsWith(">", StringComparison.Ordinal))
+        {
+            var wrapper = t[..lt];
+            var inner = t[(lt + 1)..^1];
+            var last = SplitTopLevel(inner)[^1];
+            var (e, c) = ElementType(last);
+            return (e, collection || c || IsCollectionWrapper(Simple(wrapper)));
+        }
+
+        return (Simple(t), collection);
+    }
+
+    private static bool IsCollectionWrapper(string w) => w is "List" or "IList" or "IReadOnlyList"
+        or "IEnumerable" or "ICollection" or "IReadOnlyCollection" or "HashSet" or "ISet" or "Collection"
+        or "IReadOnlyDictionary" or "Dictionary" or "IDictionary" or "Queue" or "Stack" or "ImmutableList"
+        or "ImmutableArray" or "ObservableCollection";
+
+    private static IReadOnlyList<string> SplitTopLevel(string generics)
+    {
+        var parts = new List<string>();
+        var depth = 0;
+        var start = 0;
+        for (var i = 0; i < generics.Length; i++)
+        {
+            if (generics[i] == '<') { depth++; }
+            else if (generics[i] == '>') { depth--; }
+            else if (generics[i] == ',' && depth == 0) { parts.Add(generics[start..i]); start = i + 1; }
+        }
+
+        parts.Add(generics[start..]);
+        return parts;
+    }
+
+    private static string Simple(string name)
+    {
+        var t = name.Trim();
+        var lt = t.IndexOf('<');
+        if (lt >= 0) { t = t[..lt]; }
+
+        var dot = t.LastIndexOf('.');
+        if (dot >= 0) { t = t[(dot + 1)..]; }
+
+        return t.Trim();
     }
 }

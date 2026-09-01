@@ -47,6 +47,7 @@ public sealed class ClassDiagramSurface : ContentControl
     private int _membersRequested;
     public int MembersRequestedCount => _membersRequested;
     private int _drawnDeps;
+    private int _drawnAssociations;
 
     // Member data per type id (attributes, operations, real declared count), fetched once per graph and
     // reused across re-renders (toggles). Variable-height boxes need members BEFORE layout, so we render
@@ -170,6 +171,9 @@ public sealed class ClassDiagramSurface : ContentControl
     internal void SetShowDependencies(bool on) => _showDeps.IsChecked = on;
     /// <summary>The number of UML dependency arrows drawn by the last render (for tests).</summary>
     internal int DrawnDependencyCount => _drawnDeps;
+
+    /// <summary>The number of UML association/aggregation connectors drawn by the last render (for tests).</summary>
+    internal int DrawnAssociationCount => _drawnAssociations;
     /// <summary>The disclosure/notes line currently shown (for tests).</summary>
     internal string DisclosureText => _disclosure.Text;
 
@@ -404,6 +408,26 @@ public sealed class ClassDiagramSurface : ContentControl
             canvas.Children.Add(box);
         }
 
+        // UML associations/aggregations derived from members (structural "has-a"): a field/property
+        // typed as another drawn type is an association; a collection of it is an aggregation. Members
+        // are fetched async, so these appear once the member cache is filled (the prefetch re-render).
+        _drawnAssociations = 0;
+        var membersById = drawn
+            .Where(t => _memberCache.ContainsKey(t.Id))
+            .ToDictionary(
+                t => t.Id,
+                t => (IReadOnlyList<string>)_memberCache[t.Id].Attributes,
+                StringComparer.Ordinal);
+
+        foreach (var a in ClassHierarchyModel.DeriveAssociations(drawn, membersById))
+        {
+            if (rects.TryGetValue(a.From, out var af) && rects.TryGetValue(a.To, out var at))
+            {
+                AddAssociationConnector(canvas, af, at, a.Kind == ClassRelationKind.Aggregation);
+                _drawnAssociations++;
+            }
+        }
+
         _scroller.Content = canvas;
 
         // Fill the member cache for any type we don't have yet, then re-render at the true heights. One
@@ -543,6 +567,66 @@ public sealed class ClassDiagramSurface : ContentControl
             };
             barb.SetResourceReference(Shape.StrokeProperty, "TextMutedBrush");
             canvas.Children.Add(barb);
+        }
+    }
+
+    // UML association (solid line, open arrowhead at the target) or aggregation (solid line with a
+    // hollow diamond at the owner/source end). Drawn edge-to-edge, off the ranking, so it adds no
+    // layout weight — the structural "has-a" over the inheritance skeleton.
+    private void AddAssociationConnector(Canvas canvas, Rect from, Rect to, bool aggregation)
+    {
+        var fromCentre = new Point(from.X + from.Width / 2, from.Y + from.Height / 2);
+        var toCentre = new Point(to.X + to.Width / 2, to.Y + to.Height / 2);
+        var start = EdgePoint(from, toCentre);
+        var end = EdgePoint(to, fromCentre);
+
+        var line = new Line
+        {
+            X1 = start.X, Y1 = start.Y, X2 = end.X, Y2 = end.Y,
+            StrokeThickness = 1.1,
+        };
+        line.SetResourceReference(Shape.StrokeProperty, "TextMutedBrush");
+        canvas.Children.Add(line);
+
+        var angle = Math.Atan2(end.Y - start.Y, end.X - start.X);
+
+        if (aggregation)
+        {
+            // Hollow diamond at the OWNER (source) end.
+            const double d = 7;
+            double ux = Math.Cos(angle), uy = Math.Sin(angle);
+            double px = -uy, py = ux;
+            var diamond = new System.Windows.Shapes.Polygon
+            {
+                Points = new System.Windows.Media.PointCollection
+                {
+                    start,
+                    new(start.X + (d * ux) + (d * px), start.Y + (d * uy) + (d * py)),
+                    new(start.X + (2 * d * ux), start.Y + (2 * d * uy)),
+                    new(start.X + (d * ux) - (d * px), start.Y + (d * uy) - (d * py)),
+                },
+                StrokeThickness = 1.1,
+            };
+            diamond.SetResourceReference(Shape.StrokeProperty, "TextMutedBrush");
+            diamond.SetResourceReference(Shape.FillProperty, "SurfaceBrush"); // background fill reads as "hollow"
+            canvas.Children.Add(diamond);
+        }
+        else
+        {
+            // Open arrowhead at the target end — the association's navigability.
+            const double size = 9;
+            foreach (var spread in new[] { angle - 0.5, angle + 0.5 })
+            {
+                var barb = new Line
+                {
+                    X1 = end.X, Y1 = end.Y,
+                    X2 = end.X - (size * Math.Cos(spread)),
+                    Y2 = end.Y - (size * Math.Sin(spread)),
+                    StrokeThickness = 1.1,
+                };
+                barb.SetResourceReference(Shape.StrokeProperty, "TextMutedBrush");
+                canvas.Children.Add(barb);
+            }
         }
     }
 
