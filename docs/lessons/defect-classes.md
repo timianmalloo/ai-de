@@ -1903,10 +1903,14 @@ for both or split.*
 - **Instance:** 2026-08-31 — moving the graph out of `split-columns` collapsed it to `workspace`,
   flipping workspace from the left column to the top row ("contents flipping from bottom to top").
   Compounded by `Adapter.Render()` rebuilding the entire dock view on every layout op.
-- **Control:** a decision between (A) named/absolute dock zones matching the mental model, or (B)
-  soften the collapse (structural placeholder / don't reorient the survivor) + incremental view update;
-  a characterization test on source-side collapse and a move-preserves-others test.
-- **Status:** `uncontrolled` (Phase 3 of the investigation — needs a model decision, awaiting approval)
+- **Control:** **Option A chosen** — named absolute dock zones (`adr-0021-named-dock-zones`,
+  `spec-named-dock-zones`): a fixed Left/Right/Bottom/Center frame where a move changes only source +
+  destination, splits are scoped within a zone, and an incremental per-zone adapter removes the
+  whole-view redraw. The **containment-on-move test** (AC-F1) is the control and must be seen failing
+  against a shim that reproduces the old single-child collapse. Design loop complete; lands with
+  `/implement` on ADR-0021 approval.
+- **Status:** in-design — model decided (ADR-0021 proposed); control (containment test) lands with
+  the layout-model rewrite.
 
 ### DC-064 — A deterministic test double produces colliding output across instances
 
