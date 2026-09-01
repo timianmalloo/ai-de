@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T23:36:19Z",
+  "generated": "2026-09-01T23:37:00Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7539,6 +7539,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/collaboration/session-contracts.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0373",
+      "shortname": "smoke91-phase-d-classdiagram-panzoom",
+      "datetime": "2026-09-01T23:26:21Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "lets start phase D",
+      "summary": "Phase D: class-diagram pan/zoom + type-box context menu. Pure DiagramZoom (cursor-anchored NextScale/Reanchor, 5 tests). ClassDiagramSurface: a ScaleTransform on the canvas LayoutTransform; PreviewMouseWheel = plain vertical scroll / Shift horizontal / Ctrl zoom-to-cursor; middle-drag pans; right-click a type box raises NodeContextMenuRequested. Shell BindClassDiagrams subscribes it to the Phase-C dispatcher (reuse). Method-level right-click->sequence deferred to E (members are strings, no method node ids). App 301 green; smoke passed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/ClassDiagramSurface.cs"
       ],
       "tags": [],
       "outcome": "success"
