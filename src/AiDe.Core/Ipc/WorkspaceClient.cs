@@ -159,6 +159,12 @@ public sealed class WorkspaceClient : IWorkspaceQueries, IWorkspaceCommands, IWo
         QueryAsync<FindResult>(
             WorkspaceOperations.Find, new FindRequest(term, maxResults), cancellationToken);
 
+    public Task<ContentSearchResult> SearchContentAsync(
+        string term, int maxMatches, CancellationToken cancellationToken) =>
+        QueryAsync<ContentSearchResult>(
+            WorkspaceOperations.SearchContent,
+            new SearchContentRequest(term, maxMatches), cancellationToken);
+
     public Task<KnowledgeResult> KnowledgeAsync(
         string? term, string? type, int maxResults, CancellationToken cancellationToken) =>
         QueryAsync<KnowledgeResult>(

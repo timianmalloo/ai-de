@@ -21,6 +21,9 @@ public sealed record ImpactRequest(string NodeId, int MaxNodes, int MaxEdges);
 /// <inheritdoc cref="DescribeRequest"/>
 public sealed record FindRequest(string Term, int MaxResults);
 
+/// <summary>Ask for lines of workspace files containing a term.</summary>
+public sealed record SearchContentRequest(string Term, int MaxMatches);
+
 /// <summary>Asks for one page of every current assertion.</summary>
 /// <param name="Cursor">Null for the first page; otherwise the previous page's NextCursor.</param>
 public sealed record EvidenceRequest(string? Cursor, int MaxAssertions);
@@ -125,6 +128,14 @@ public static class WorkspaceOperations
     public const string Describe = "describe";
     public const string Impact = "impact";
     public const string Find = "find";
+
+    /// <summary>Lines in the workspace's own files that contain a term.</summary>
+    /// <remarks>
+    /// Separate from <see cref="Find"/> because it answers a different question and costs a
+    /// different amount: Find reads the store, this opens files. A client should be able to offer
+    /// the cheap one on every keystroke and the expensive one on demand.
+    /// </remarks>
+    public const string SearchContent = "search-content";
     public const string Knowledge = "knowledge";
 
     /// <summary>One node's content, on demand (ADR-0018).</summary>
@@ -201,6 +212,10 @@ public static class WorkspaceOperations
 
         endpoint.Register(Find, (request, _) =>
             Refusable(() => Handle<FindRequest>(request, body => projections.Find(body.Term, body.MaxResults))));
+
+        endpoint.Register(SearchContent, (request, _) =>
+            Refusable(() => Handle<SearchContentRequest>(request, body =>
+                projections.SearchContent(body.Term, body.MaxMatches))));
 
         endpoint.Register(Knowledge, (request, _) =>
             Refusable(() => Handle<KnowledgeRequest>(request, body =>

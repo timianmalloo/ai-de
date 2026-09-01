@@ -889,6 +889,147 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
     /// <para><b>Bounded, and honest when it truncates.</b> Oversized content returns its first bytes
     /// and a shortfall saying what was left — never an oversized frame, never a silent half-file.</para>
     /// </remarks>
+    /// <summary>
+    /// Lines in the workspace's own files that contain a term.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this is Core's and not the client's.</b> The App must not read workspace files:
+    /// two authorities on what a file contains disagree the first time one resolves a path
+    /// differently (DC-022), and file access belongs on the side of the boundary that can confine it
+    /// to the workspace. This is the same rule that put <c>NodeContent</c> here, applied to the
+    /// corpus instead of to one node.</para>
+    ///
+    /// <para><b>It searches files the STORE knows about, not the directory tree.</b> Walking the
+    /// tree would read <c>node_modules</c>, <c>bin</c>, and every generated bundle the extractors
+    /// already decided not to index — and would return hits in files the graph cannot navigate to,
+    /// which is a result a person cannot act on. Every hit names the node that owns the file.</para>
+    ///
+    /// <para><b>Every bound is enforced, not declared.</b> Files, matches, bytes and per-file size
+    /// all cap, and the result says when a cap fired. A limit that cannot fire is the defect it was
+    /// written to prevent (DC-016), and a budget that is reported but not applied is how a 1.18 MB
+    /// payload crossed a 1 MiB frame (INV-0003).</para>
+    /// </remarks>
+    public ContentSearchResult SearchContent(string term, int maxMatches)
+    {
+        using var activity = Activity.StartActivity("aide.projection.query");
+        activity?.SetTag("projection", "content-search");
+
+        var limit = Clamp(maxMatches, 1, MaxContentMatches);
+        using var reader = store.BeginRead();
+
+        var matches = new List<ContentMatch>();
+        var searched = 0;
+        var skipped = 0;
+        var bytes = 0;
+        var truncated = false;
+
+        // An empty term would match every line of every file. Refused rather than served: the
+        // cheapest wrong answer here is the most expensive one to produce.
+        if (!string.IsNullOrWhiteSpace(term))
+        {
+            foreach (var (nodeId, scopeId, artifactPath) in reader.FilesToSearch(MaxContentFiles))
+            {
+                if (truncated) break;
+
+                var resolved = ResolveWithinWorkspace(reader, scopeId, artifactPath);
+
+                if (resolved is null)
+                {
+                    skipped++;
+                    continue;
+                }
+
+                long length;
+
+                try
+                {
+                    length = new FileInfo(resolved).Length;
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    skipped++;
+                    continue;
+                }
+
+                if (length > MaxContentBytes)
+                {
+                    // The same ceiling NodeContent uses. A file too large to serve whole is too
+                    // large to scan on a query a person is waiting on.
+                    skipped++;
+                    continue;
+                }
+
+                string text;
+
+                try
+                {
+                    text = ReadBounded(resolved, out _);
+                }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                {
+                    skipped++;
+                    continue;
+                }
+
+                searched++;
+
+                var line = 0;
+
+                foreach (var raw in text.Split('\n'))
+                {
+                    line++;
+
+                    if (raw.IndexOf(term, StringComparison.OrdinalIgnoreCase) < 0) continue;
+
+                    var snippet = raw.Trim('\r', ' ', '\t');
+
+                    if (snippet.Length > MaxContentLineCharacters)
+                    {
+                        snippet = snippet[..MaxContentLineCharacters];
+                    }
+
+                    var match = new ContentMatch(nodeId, artifactPath, line, snippet);
+
+                    var size = Encoding.UTF8.GetByteCount(match.NodeId)
+                        + Encoding.UTF8.GetByteCount(match.RelativePath)
+                        + Encoding.UTF8.GetByteCount(match.Text)
+                        + AssertionOverheadBytes;
+
+                    if (matches.Count > 0 && (bytes + size > MaxResponseBytes || matches.Count >= limit))
+                    {
+                        truncated = true;
+                        break;
+                    }
+
+                    matches.Add(match);
+                    bytes += size;
+                }
+            }
+        }
+
+        return new ContentSearchResult(
+            matches, searched, skipped, truncated,
+            new ResultBounds(
+                MaxNodes: limit, MaxEdges: 0, MaxBytes: MaxResponseBytes,
+                ReturnedNodes: matches.Count, OmittedNodes: 0,
+                ReturnedEdges: 0, OmittedEdges: 0,
+                ByteCapped: truncated, NextCursor: null),
+            reader.CurrentSourceRevision());
+    }
+
+    /// <summary>The most files one content search will open.</summary>
+    /// <remarks>
+    /// A person is waiting on this. TheTerrace has 1,178 indexed artifacts; reading all of them on
+    /// every keystroke is not a search box, it is a build step.
+    /// </remarks>
+    public const int MaxContentFiles = 600;
+
+    /// <summary>The most matches one content search will return.</summary>
+    public const int MaxContentMatches = 200;
+
+    /// <summary>How much of a matching line comes back.</summary>
+    private const int MaxContentLineCharacters = 200;
+
     public NodeContent NodeContent(string nodeId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(nodeId);

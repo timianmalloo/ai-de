@@ -55,7 +55,14 @@ public sealed class ScopeFingerprints
     // one — 10 of 27 resource names in every existing store are the text of an identifier
     // (`workspaceName`) rather than a name (`theterrace-s00-log`), and no store fixes itself until
     // this changes.
-    public const string ExtractorGeneration = "2026-09-01.6";
+    // 2026-09-01.7 — NO extraction change. A doc comment in `KnowledgeBody` was corrected (it
+    // argued against extracting headings partly because attribute text was unfindable, which
+    // stopped being true when `StoreReader.SearchNodes` began matching attribute values), and the
+    // generation gate cannot tell a comment from a behaviour change without parsing C#. Paying one
+    // re-index is the cheap side of that trade: the gate exists because a stale generation once made
+    // a repository of 2,343 knowledge nodes read as 0, and a gate taught to ignore "harmless"
+    // changes is a gate that will one day ignore the wrong one.
+    public const string ExtractorGeneration = "2026-09-01.7";
 
     private const string FileName = "scope-fingerprints.json";
 

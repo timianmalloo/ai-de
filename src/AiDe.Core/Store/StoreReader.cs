@@ -170,6 +170,43 @@ public sealed class StoreReader : IDisposable
     }
 
     /// <summary>
+    /// The distinct files the graph knows about, each with a node that is declared in it.
+    /// </summary>
+    /// <remarks>
+    /// <para>The corpus a content search may read. It is the set of files the EXTRACTORS chose to
+    /// index, not the directory tree: walking the tree would open <c>node_modules</c>, <c>bin</c>
+    /// and every generated bundle the readers already decided to skip, and would return hits in
+    /// files the graph cannot navigate to — a result nobody can act on.</para>
+    ///
+    /// <para>One representative node per file, chosen the same way <see cref="DeclaringAssertion"/>
+    /// chooses one: a declaration before a reference, then lowest id for determinism. A file holds
+    /// many nodes and the hit needs somewhere to go, not everywhere it could go.</para>
+    /// </remarks>
+    public IReadOnlyList<(string NodeId, string ScopeId, string ArtifactPath)> FilesToSearch(int limit)
+    {
+        using var command = Command($"""
+            {LatestCte}
+            SELECT a.scope_id, a.artifact_path_id, MIN(a.subject) AS node
+            FROM evidence_assertion_fact a
+            JOIN latest l ON l.scope_id = a.scope_id AND l.generation = a.generation
+            WHERE a.artifact_path_id <> '' AND a.predicate IN ('has_type', 'declared_in')
+            GROUP BY a.scope_id, a.artifact_path_id
+            ORDER BY a.scope_id, a.artifact_path_id
+            LIMIT $limit;
+            """, ("$limit", limit));
+
+        using var reader = command.ExecuteReader();
+        var files = new List<(string, string, string)>();
+
+        while (reader.Read())
+        {
+            files.Add((reader.GetString(2), reader.GetString(0), reader.GetString(1)));
+        }
+
+        return files;
+    }
+
+    /// <summary>
     /// Where a scope's files live, relative to the workspace root, or null when it never said.
     /// </summary>
     /// <remarks>

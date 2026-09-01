@@ -33,6 +33,9 @@ public abstract class FakeWorkspaceQueries : IWorkspaceQueries
     public virtual Task<FindResult> FindAsync(
         string term, int maxResults, CancellationToken cancellationToken) => Refuse<FindResult>();
 
+    public virtual Task<ContentSearchResult> SearchContentAsync(
+        string term, int maxMatches, CancellationToken cancellationToken) => Refuse<ContentSearchResult>();
+
     public virtual Task<KnowledgeResult> KnowledgeAsync(
         string? term, string? type, int maxResults, CancellationToken cancellationToken) => Refuse<KnowledgeResult>();
 

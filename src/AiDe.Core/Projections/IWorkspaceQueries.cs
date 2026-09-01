@@ -25,6 +25,17 @@ public interface IWorkspaceQueries
 
     Task<FindResult> FindAsync(string term, int maxResults, CancellationToken cancellationToken);
 
+    /// <summary>
+    /// Lines in the workspace's own files that contain a term.
+    /// </summary>
+    /// <remarks>
+    /// The App must not read workspace files: two authorities on what a file contains disagree the
+    /// first time one resolves a path differently (DC-022), and file access belongs on the side of
+    /// the boundary that can confine it to the workspace. Same rule that put NodeContentAsync here,
+    /// applied to the corpus rather than to one node.
+    /// </remarks>
+    Task<ContentSearchResult> SearchContentAsync(string term, int maxMatches, CancellationToken cancellationToken);
+
     Task<KnowledgeResult> KnowledgeAsync(string? term, string? type, int maxResults, CancellationToken cancellationToken);
 
     /// <summary>
@@ -102,6 +113,10 @@ public sealed class LocalWorkspaceQueries(ProjectionService projections) : IWork
     public Task<FindResult> FindAsync(
         string term, int maxResults, CancellationToken cancellationToken) =>
         Task.FromResult(projections.Find(term, maxResults));
+
+    public Task<ContentSearchResult> SearchContentAsync(
+        string term, int maxMatches, CancellationToken cancellationToken) =>
+        Task.FromResult(projections.SearchContent(term, maxMatches));
 
     public Task<KnowledgeResult> KnowledgeAsync(
         string? term, string? type, int maxResults, CancellationToken cancellationToken) =>

@@ -102,10 +102,16 @@ public sealed class EveryOperationFitsTheFrameTests : IDisposable
         [nameof(IWorkspaceQueries.GraphAsync)] =
             (p, _) => p.Graph(new GraphQuery(GraphProjection.DefaultMaxNodes)),
 
-        // The one operation here whose size comes from a FILE rather than from the fact table, which
-        // is exactly why it needs weighing: repository content is unbounded and a frame is not.
+        // The two operations here whose size comes from FILES rather than from the fact table, which
+        // is exactly why they need weighing: repository content is unbounded and a frame is not.
         [nameof(IWorkspaceQueries.NodeContentAsync)] =
             (p, hub) => p.NodeContent(hub),
+
+        // Worse than NodeContent on paper — that reads one file, this reads up to MaxContentFiles of
+        // them and may match every line of each. Weighed at both ceilings at once, because a bound
+        // that is only ever exercised one at a time is not the shape that overflows a frame.
+        [nameof(IWorkspaceQueries.SearchContentAsync)] =
+            (p, _) => p.SearchContent("e", ProjectionService.MaxContentMatches),
 
         [nameof(IWorkspaceQueries.PathsAsync)] =
             (p, hub) => p.Paths(new PathQuery(hub, hub, ProjectionService.MaxPathsCeiling, ProjectionService.MaxPathLengthCeiling)),
