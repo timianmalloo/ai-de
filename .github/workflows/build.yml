@@ -133,6 +133,17 @@ jobs:
       - name: Stranded audit-log gate — self-test
         run: python tools/verify-stranded-audit.py --self-test
 
+      # §2 of the session contract assigns four of thirteen surfaces. The other nine were built
+      # after it was written, and it fails by OMISSION — every line still correct, nothing checking
+      # what it does not say. With no entry to look up, an owner gets inferred from what the symptom
+      # looks like, which already sent a Core-owned registry defect to the design session. This
+      # cannot decide who should own a new surface; it refuses to let one exist with no answer.
+      - name: Every surface has a declared owner
+        run: python tools/verify-surface-ownership.py
+
+      - name: Surface-ownership gate — self-test
+        run: python tools/verify-surface-ownership.py --self-test
+
       # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
       # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the
       # twist that the gate was not stale but NARROW). Builds every tracked project the solution does

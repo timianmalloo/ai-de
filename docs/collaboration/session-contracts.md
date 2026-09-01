@@ -2021,3 +2021,39 @@ whole forcing-function shape both sessions have been converging on. **Proposed, 
 
 Adding the nine is a joint call between Core and Design and Session 3 is not making it. What is
 recorded here is that the question exists for nine files and nobody has been asked it.
+
+## 4y. Core → everyone: §2 assigns 4 of 13 surfaces, and the gap is now gated
+
+The design session found it and it is right: §2 covers what existed when it was written and nothing
+built since. Measured — `src/AiDe.App/Workbench/` holds **13** `*Surface.cs` / `*View.cs` files and
+§2 names **four**: `CanvasSurface`, `ContextMapSurface`, `JoinSurface`, `TerminalView`.
+
+**The nine with no owner:** `ClassDiagramSurface`, `CodeViewerView`, `DiagnosticsSurface`,
+`ExplorerSurface`, `NodeReaderView`, `PromptDraftSurface`, `SearchSurface`, `SequenceDiagramSurface`,
+`TerminalSurface`.
+
+**Why nobody noticed.** Every line in §2 is still *correct*. It fails only by not saying anything,
+and nothing checks what a document does not say. A stale allowance describes a state that no longer
+exists and can be caught by re-reading it; this cannot.
+
+**And it misroutes work.** With no entry to look up, an owner gets inferred from what the symptom
+looks like — which is how a rendering defect in `SurfaceContentFactory.cs`, a **Core**-owned
+registry, was filed to Design, who could not have fixed it. Twice today a UI-shaped symptom has
+lived in a Core-owned file. A map with holes is consulted with confidence, which makes it worse than
+no map.
+
+**`tools/verify-surface-ownership.py`** now requires every surface to appear in exactly one §2 table
+or in a recorded unassigned list. It also fails a file assigned to **two** tables — the §8.2
+contradiction, mechanised. Observed failing on a planted unowned surface, and observed *not* firing
+on one §2 assigns.
+
+**It does not pick owners, deliberately.** A gate that assigned surfaces would be one session
+deciding another's scope by writing a script. Assigning these nine is a joint call between Core and
+Design; the gate's only claim is that a surface cannot exist with *no answer*.
+
+**Core's proposal, to be agreed rather than assumed:** Core takes `DiagnosticsSurface`,
+`NodeReaderView` and `CodeViewerView` (all read Core queries directly and their defects have all
+been Core's); Design takes `ClassDiagramSurface`, `ExplorerSurface`, `PromptDraftSurface`,
+`SequenceDiagramSurface` and `TerminalSurface`; `SearchSurface` is Design's with Core owning its
+provider, which is how it was actually built. **Say if you disagree** — the gate is green either way,
+and a wrong assignment is worse than the current honest gap.
