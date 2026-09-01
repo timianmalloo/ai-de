@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T22:04:28Z",
+  "generated": "2026-09-01T22:26:17Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7423,6 +7423,23 @@ window.AUDIT_DATA = {
         "branch": "feature/ui-experience-refinement",
         "pushed": false
       }
+    },
+    {
+      "id": "al-0366",
+      "shortname": "fix-drop-lands-where-dropped",
+      "datetime": "2026-09-01T22:26:17Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Session 3 measured every DropKind x zone: split drops on left/right/bottom all land in zone-center, announced 'Moved Graph within the center'. Only JoinStack honours its target. The defect is inside the fix for the previous one (b5ca354).",
+      "summary": "Root cause: a placement-policy translation put in a user-gesture handler. Removed the remap; the beside rule already lives at its caller (OpenReferenceDocument). Sweep derived from Enum.GetValues rather than listed, so a new DropKind or ZoneId enters it automatically. Observed failing on the replanted defect with all 16 wrong placements named. Registered DC-076 - a fix's test set drawn from the defect report repairs only the reported case (fifth instance in a day, four inside a fresh fix). 1615 tests, 14 gates green, pushed 7948945.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
