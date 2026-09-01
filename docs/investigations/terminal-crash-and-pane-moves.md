@@ -150,19 +150,35 @@ crash. The crash was instead predicted by **two false documented invariants** (l
 
 ---
 
-## Phased repair plan (awaiting approval — nothing implemented)
+## Phased repair plan
 
-| Phase | Scope (code + tests) | Eliminates | Risk | Notes |
+**Phases 1 & 2 IMPLEMENTED** (approved 2026-08-31). Phase 3 awaits the model decision — the user
+chose **option A (named absolute dock zones)** and asked for a full `/specify → /ui-design →
+/define-architecture` loop before any implementation.
+
+| Phase | Scope (code + tests) | Eliminates | Risk | Status |
 |---|---|---|---|---|
-| **1 — Stop the crash (deterministic)** | Bounds-safe read: `DrawCursor` reads the cursor cell only when `CursorColumn < Columns && CursorRow < Rows` (skip the glyph redraw in deferred-wrap); or clamp the indexer / add a safe `CellAt`. **Test:** the deferred-wrap repro (bottom-right) — fails on today's code, passes after. | Root cause A; **stops the crash** | Low | Smallest correct fix; ship first. |
-| **2 — Make the screen safe to render concurrently** | Isolate the reader from the writer: either (a) marshal all `_parser.Consume` mutation to the UI dispatcher, or (b) have the pump publish an **immutable frame snapshot** the render reads, or (c) a lock around mutate/read. **Test:** a stress test writing on a background thread while reading `[cursor]`/cells on another, asserting no throw over N iterations. | Root cause B (the race under two sessions) | Med | Design choice (snapshot preferred — no UI-thread parsing cost). Data-race, so Distributed-Systems/Test-Architect review. |
-| **3 — Pane-move: decide the model** | **Product/architecture decision first.** Either (A) **named dock zones** so panes are contained in stable regions matching your mental model (bigger change), or (B) keep the split-tree but **soften collapse** (preserve a structural placeholder / don't reorient the survivor) + **incremental view update** instead of full `Adapter.Render()`. **Test:** characterization test on source-side collapse; a move-preserves-others test. | Root cause DC-063 (relocation + re-draw) | High | Needs your call on A vs B — it changes the layout model. |
+| **1 — Stop the crash (deterministic)** | Clamped the indexer (`TerminalScreen.this[row,column]` uses `Math.Clamp` on both coordinates), honouring the type's own "every coordinate is clamped" contract. **Tests:** `ReadingTheCursorCell_AtDeferredWrapOnTheBottomRow_DoesNotThrow` + `TheIndexer_ClampsOutOfRangeCoordinates_AndNeverThrows` — observed failing (5× `IndexOutOfRangeException`) then green. | Root cause A; **stops the crash** | Low | **Done** — landed. |
+| **2 — Make the screen safe to render concurrently** | Added `TerminalScreen.SyncRoot`; the pump holds it across `_parser.Consume` (`TerminalSurface.PumpAsync`) and the renderer holds it across the whole frame (`TerminalView.OnRender`), so a frame never sees a half-applied write or a `Resize` array-swap. Kept off-UI-thread parsing (the 1 MiB/s budget). **Test:** `ConcurrentWritesAndReads_UnderSyncRoot_DoNotThrow`. | Root cause B (the race under two sessions) | Med | **Done** — landed. Chose the lock over a snapshot: a per-write immutable grid would allocate under a megabyte-a-second producer. |
+| **3 — Pane-move: named absolute dock zones** | **Option A chosen.** Named zones (left / right / bottom / center-document) as stable containers; move between zones only changes those zones' contents; resize = splitter between zones; collapse = zone→rail (panes remembered); maximize = zone fills, reversible. Session/pump lifecycle stays independent of zone view lifecycle; the zone owns the pane visibility/priority signal (see the threading note below). **Running the full `/specify → /ui-design → /define-architecture` loop first.** | Root cause DC-063 (relocation + re-draw) | High | **In design** — spec + UI + architecture before any code. |
+
+### Threading × named zones (design input for Phase 3)
+The terminal threading model stays **pane/surface-local, not zone-local**: the race is inside one
+pane; WPF has one UI/Dispatcher thread per top-level window (so per-zone UI threads are not possible
+for docked panes — only a *floated* window can carry its own Dispatcher thread); and panes migrate
+between zones, so zone-scoped threading would churn on every layout op. What the zone model *does*
+change: (1) the zone becomes the authoritative owner of the "is this pane actually visible/active"
+signal the pane's existing coalescing gate consumes (richer than raw WPF `IsVisible`); (2) zones are
+the natural home for render prioritisation/backpressure policy on the single Dispatcher (active zone
+gets priority; collapsed/background zones coalesce harder). Principle for the spec: **the zone owns
+the visibility/priority signal; the pane owns its threading; the session lifecycle is independent of
+zone view lifecycle** (collapse/move must never stop a pump).
 
 ## Residual risk / what would change the diagnosis
-- Issue 1 is Verified (repro seen). If a fix only clamps the indexer but leaves the background/UI race,
-  a *different* torn-read crash remains possible under load — Phase 2 is not optional for robustness.
-- Issue 2's "flip" was traced, not reproduced in a harness; a characterization test in Phase 3 pins it.
-  If you want option A (fixed docks), that is an architecture change with its own `/design`.
+- Phases 1 & 2 landed with red-then-green tests; the crash the user hit is closed and the render/pump
+  race is coordinated through `SyncRoot`.
+- Issue 2's "flip" was traced, not reproduced in a harness; the Phase-3 design loop (option A) replaces
+  the split-tree model rather than patching it, and will carry its own characterization tests.
 
 ## Gate
 Adversarial review (self, Adversary Mode): the diagnosis explains **all** the evidence — the exact

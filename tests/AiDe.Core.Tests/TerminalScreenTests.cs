@@ -343,4 +343,102 @@ public sealed class TerminalScreenTests
 
         Assert.True(screen.IsDirty);
     }
+
+    // ---- reads are total: the renderer never crashes the screen (DC-061) -----
+
+    [Fact]
+    public void ReadingTheCursorCell_AtDeferredWrapOnTheBottomRow_DoesNotThrow()
+    {
+        // Write defers the wrap: after filling the last cell of the last row the cursor sits at
+        // (Rows-1, Columns) — one column past the grid. The renderer reads screen[CursorRow,
+        // CursorColumn] to repaint the glyph under the cursor, so an unbounded indexer throws
+        // IndexOutOfRangeException at exactly Rows*Columns. This is the crash the user hit.
+        var screen = Screen(columns: 10, rows: 4);
+        screen.Write(new string('a', 40));
+
+        Assert.Equal(3, screen.CursorRow);
+        Assert.Equal(10, screen.CursorColumn); // deferred wrap: == Columns, one past the last column
+
+        var cell = screen[screen.CursorRow, screen.CursorColumn]; // must not throw
+        Assert.Equal('a', cell.Character); // clamped back onto the last real cell
+    }
+
+    [Theory]
+    [InlineData(-5, -5)]
+    [InlineData(100, 100)]
+    [InlineData(0, 999)]
+    [InlineData(3, 10)]
+    public void TheIndexer_ClampsOutOfRangeCoordinates_AndNeverThrows(int row, int column)
+    {
+        // The type documents "every coordinate is clamped; nothing here throws on bad input" — the
+        // mutators honour it but the indexer did not. A read is as reachable from untrusted output
+        // as a write, so it must honour the same contract.
+        var screen = Screen(10, 4);
+        screen.Write("abc");
+
+        var cell = screen[row, column]; // must not throw for any coordinate
+
+        Assert.False(char.IsControl(cell.Character) && cell.Character != '\0');
+    }
+
+    // ---- writes and reads coordinate across threads (DC-062) ----------------
+
+    [Fact]
+    public async Task ConcurrentWritesAndReads_UnderSyncRoot_DoNotThrow()
+    {
+        // The pump mutates the screen (Write + the occasional Resize) on one thread while the
+        // renderer reads every cell on another. They coordinate through SyncRoot; without it a
+        // Resize swapping the cell array against a freshly-read column count indexes past the end.
+        // Both sides take the lock, exactly as PumpAsync and OnRender do.
+        var screen = new TerminalScreen(20, 8);
+        var errors = new System.Collections.Concurrent.ConcurrentQueue<Exception>();
+        using var stop = new CancellationTokenSource(TimeSpan.FromMilliseconds(250));
+
+        var writer = Task.Run(() =>
+        {
+            var rnd = new Random(1);
+            try
+            {
+                while (!stop.IsCancellationRequested)
+                {
+                    lock (screen.SyncRoot)
+                    {
+                        screen.Write("x");
+                        if (rnd.Next(48) == 0)
+                        {
+                            screen.Resize(rnd.Next(4, 40), rnd.Next(2, 20));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) { errors.Enqueue(ex); }
+        });
+
+        var reader = Task.Run(() =>
+        {
+            try
+            {
+                while (!stop.IsCancellationRequested)
+                {
+                    lock (screen.SyncRoot)
+                    {
+                        for (var r = 0; r < screen.Rows; r++)
+                        {
+                            for (var c = 0; c < screen.Columns; c++)
+                            {
+                                _ = screen[r, c].Character;
+                            }
+                        }
+
+                        _ = screen[screen.CursorRow, screen.CursorColumn].Character;
+                    }
+                }
+            }
+            catch (Exception ex) { errors.Enqueue(ex); }
+        });
+
+        await Task.WhenAll(writer, reader);
+
+        Assert.Empty(errors);
+    }
 }

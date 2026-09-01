@@ -1795,11 +1795,12 @@ for both or split.*
   `DrawCursor` read the cursor cell while the cursor was in the deferred-wrap position
   (`CursorColumn == Columns`) at the bottom row → index == `_cells.Length` → IndexOutOfRangeException.
   Verified by a bottom-right deferred-wrap repro (seen throwing).
-- **Control:** make the unguarded path honour the promise (clamp the indexer / a safe `CellAt`), and a
-  test that reads at the deferred-wrap boundary. A grep control: a type claiming "nothing throws"
-  whose indexer/reader does raw array indexing is a review flag.
-- **Status:** uncontrolled (fix is Phase 1 of docs/investigations/terminal-crash-and-pane-moves.md,
-  awaiting approval)
+- **Control:** the indexer now clamps both coordinates (`TerminalScreen.this[row,column]` uses
+  `Math.Clamp`), honouring the type's own "every coordinate is clamped" promise. Regression tests
+  `TerminalScreenTests.ReadingTheCursorCell_AtDeferredWrapOnTheBottomRow_DoesNotThrow` and
+  `TheIndexer_ClampsOutOfRangeCoordinates_AndNeverThrows` — **observed failing** on the un-fixed code
+  (5 cases, all `IndexOutOfRangeException`) and green after the clamp.
+- **Status:** controlled — clamp landed Phase 1; regression tests observed red-then-green.
 
 ### DC-062 — UI-thread render reads state a background thread mutates, behind a false single-thread invariant
 
@@ -1811,10 +1812,12 @@ for both or split.*
 - **Instance:** 2026-08-31 — `TerminalScreen` is mutated by `TerminalSurface.PumpAsync` (background)
   while `OnRender` reads it (UI); crash reproduced "with two sessions active". The documented "renderer
   reads … between writes" invariant is not enforced anywhere.
-- **Control:** put a real boundary between writer and reader — an immutable frame snapshot the render
-  consumes, or marshal all mutation to the UI dispatcher, or a lock; plus a concurrent write/read
-  stress test. A recurrence means the boundary leaked.
-- **Status:** uncontrolled (Phase 2 of the investigation, awaiting approval)
+- **Control:** `TerminalScreen.SyncRoot` — the pump holds it across `_parser.Consume`
+  (`TerminalSurface.PumpAsync`) and the renderer holds it across a whole frame (`TerminalView.OnRender`),
+  so a frame never observes a half-applied write or a `Resize` array-swap. Guard test
+  `TerminalScreenTests.ConcurrentWritesAndReads_UnderSyncRoot_DoNotThrow` exercises write+resize vs
+  full-grid read under contention. A recurrence means a mutation or a read escaped the lock.
+- **Status:** controlled — SyncRoot coordination landed Phase 2.
 
 ### DC-063 — A proportional-split-tree layout collapses single-child splits, relocating unrelated panes
 

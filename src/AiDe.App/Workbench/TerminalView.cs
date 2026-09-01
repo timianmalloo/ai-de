@@ -111,20 +111,27 @@ public sealed class TerminalView : FrameworkElement
 
     protected override void OnRender(DrawingContext context)
     {
-        // The whole area first: cells only paint their own background when it differs, so without
-        // this the gap below the last full row would show whatever was behind the control.
-        context.DrawRectangle(
-            new SolidColorBrush(_palette.Background), null, new Rect(RenderSize));
-
-        var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-
-        for (var row = 0; row < _screen.Rows; row++)
+        // Held for the whole frame so the parser (pump thread) cannot mutate the grid — or swap it
+        // during a Resize — while this frame is reading it. The frame is ~6.6 ms (Spike S3) and the
+        // pump simply batches more per chunk while it waits, which is exactly what a coalescing
+        // renderer wants.
+        lock (_screen.SyncRoot)
         {
-            DrawRow(context, row, pixelsPerDip);
-        }
+            // The whole area first: cells only paint their own background when it differs, so without
+            // this the gap below the last full row would show whatever was behind the control.
+            context.DrawRectangle(
+                new SolidColorBrush(_palette.Background), null, new Rect(RenderSize));
 
-        DrawCursor(context);
-        _screen.ClearDirty();
+            var pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+
+            for (var row = 0; row < _screen.Rows; row++)
+            {
+                DrawRow(context, row, pixelsPerDip);
+            }
+
+            DrawCursor(context);
+            _screen.ClearDirty();
+        }
     }
 
     private void DrawRow(DrawingContext context, int row, double pixelsPerDip)

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-09-01T01:41:56Z",
+  "generated": "2026-09-01T01:59:02Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5662,6 +5662,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/investigations/terminal-crash-and-pane-moves.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0320",
+      "shortname": "implement-terminal-crash-and-race-fixes",
+      "datetime": "2026-09-01T01:59:02Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "Approve Phase 1 (crash guard) and Phase 2 (render/pump race); Phase 3 = absolute dock zones, run full specify->ui-design->define-architecture loop",
+      "summary": "Phase 1: clamped TerminalScreen indexer (Math.Clamp both coords) honouring its own 'every coordinate is clamped' contract; regression tests observed red (5x IndexOutOfRangeException) then green. Phase 2: added TerminalScreen.SyncRoot; pump holds it across _parser.Consume and OnRender holds it across the whole frame, keeping off-UI-thread parsing; concurrent write/resize vs read guard test. Core 892 / App 209 green. Threading stays pane-local not zone-local (design input recorded for Phase 3).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/TerminalScreen.cs"
       ],
       "tags": [],
       "outcome": "success"
