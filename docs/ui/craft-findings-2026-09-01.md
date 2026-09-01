@@ -199,3 +199,48 @@ compounds.
 
 Archetype fit, information architecture, whether the hard states exist at all, and whether the copy
 is true — none of which the detector can see, and none of which were assessed here. This is a floor.
+
+---
+
+## 5. MEASURED — "new code viewer produced no tab" is not a model defect
+
+Core handed this over saying the discriminator is *what the status line said*, and that neither of
+its controls could see it. Driven through the **real `WorkbenchShell` and the real
+`WorkbenchController`** by a throwaway probe (scratchpad, not committed), because six inferences
+about runtime behaviour were wrong today:
+
+```
+DocumentPlacementPolicy.Decide  ->  tabInto=-  splitBeside=zone-center      (NOT null)
+Execute("workbench.newCodeViewer")  ->  True
+status line  ->  "Code viewer opened."
+layout after ->  [zone-center] active=5 -> codeviewer:Source
+                 canvas:Graph, view:Domain, sessions:Sessions, board:Board,
+                 leaderboard:Leaderboard, codeviewer:Source
+```
+
+**The status line says success, not failure.** The *"There is no pane to open a code viewer in"*
+branch requires `Decide` to return null, which happens only when `layout.AllStacks()` is empty —
+and `AssertInvariant` forbids empty stacks. **That message is near-unreachable and is not this
+symptom.**
+
+**The model is entirely correct:** the surface exists, is in a stack, and is the **active** tab
+(`ActiveIndex = 5`). So — stated as the conditional it is — *if a user saw no tab, the fault is at
+or below the dock adapter*, in the layout→AvalonDock reconcile, not in creation, placement or
+activation. `WorkbenchAdapter.cs` is Core's under §2.
+
+### 5a. A second, independent finding: the placement policy's decision is discarded
+
+`Decide` returned **`splitBeside=zone-center`** — rule 3, whose stated intent in its own comment is
+*"split one BESIDE the graph so the graph stays visible."* The surface was then **tabbed into**
+`zone-center` as its sixth tab, on top of the graph.
+
+So the policy computes a split, and the zone-backed layout service tabs instead. Whatever the right
+answer is, **the code viewer currently opens over the graph rather than beside it, and the code that
+exists to prevent exactly that has no effect.** Either the policy is dead in the zone-backed world
+and should be deleted, or its result is being dropped and should be honoured — but a policy whose
+output is computed and ignored is worse than no policy, because it reads as though the behaviour
+were considered.
+
+Owner: Core (`WorkbenchAdapter.cs`, `DocumentPlacement.cs` sits with the App-side placement Core
+routes). Raised, not taken.
+
