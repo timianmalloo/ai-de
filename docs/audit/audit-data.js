@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T22:26:17Z",
+  "generated": "2026-09-01T22:38:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7431,6 +7431,23 @@ window.AUDIT_DATA = {
       "session": "phase3-pane-probes",
       "prompt": "Session 3 measured every DropKind x zone: split drops on left/right/bottom all land in zone-center, announced 'Moved Graph within the center'. Only JoinStack honours its target. The defect is inside the fix for the previous one (b5ca354).",
       "summary": "Root cause: a placement-policy translation put in a user-gesture handler. Removed the remap; the beside rule already lives at its caller (OpenReferenceDocument). Sweep derived from Enum.GetValues rather than listed, so a new DropKind or ZoneId enters it automatically. Observed failing on the replanted defect with all 16 wrong placements named. Registered DC-076 - a fix's test set drawn from the defect report repairs only the reported case (fifth instance in a day, four inside a fresh fix). 1615 tests, 14 gates green, pushed 7948945.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0367",
+      "shortname": "fix-announce-after-the-work",
+      "datetime": "2026-09-01T22:38:18Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Design session: three sites announce 'Graph centred on X' then fire-and-forget RefreshAsync. Measured on a real surface - Ready false, task completed, graph source asked 0 times. Announces success BEFORE the work and never looks at the result.",
+      "summary": "Root cause: a prediction phrased as a report. RefreshAsync now returns CanvasRefresh(Outcome,Label) with the label taken from the drawn graph; a root requested while loading is held and applied on NavigationCompleted rather than dropped. Sweep found a fourth site (ExplorerSurface:69) the report did not name. Control uses a real WebView2 because the subject is the pre-Ready window; observed failing with the deferral removed. Registered DC-077. 1619 tests, 14 gates green.",
       "kind": "skill",
       "skill": "investigate",
       "tool": null,
