@@ -186,6 +186,8 @@ compounds.
 | 1 | `FilesSkipped`/`Truncated` shown as a **row**, where `DESIGN.md` §4a specifies a `count.lower-bound` **capped chip + tooltip**. (`Evidence`/`MatchedOn` retracted — they render via `Detail`) | **Major** — a correctness rule by `DESIGN.md`'s own words, now visible but in the wrong affordance | Design | small — the tokens are already specified |
 | 2 | The §8.3 behavioural harness | **Blocker**, promoted — two agents reading the same code reached opposite wrong conclusions about what reaches the screen. Only rendering answers it | Session 3 | medium |
 | 2a | Re-derive §8.3's nine-item list **by data flow or by the harness** | **Major** — the list was built by the method that produced the retraction above, so its count is unverified | Session 3 | small once the harness exists |
+| 2b | **`KnowledgeNodeView.HealthFindings` — zero consumption sites** | **Major**, and one of only two findings that survived every retraction | Design | small |
+| 2c | **`PathResult.Truncated` — zero consumption sites** | **Major**, the other survivor. A truncated path that reads as a complete route | Design | small |
 | 3 | Sequence-diagram message cap unreported | Major | Design | small |
 | 4 | Two near-miss hexes in `CanvasPage.cs` | Major | Design | trivial |
 | 5 | Six undeclared hexes in `CanvasPage.cs` | Major | Design | small — or declare them in `DESIGN.md` if they are real roles |

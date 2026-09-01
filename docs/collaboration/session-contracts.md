@@ -1480,6 +1480,68 @@ that hands a surface a live payload and reads the rendered tree fails the `// SA
 `tools/verify-standins.py` (Core, in CI) covers the second member statically. The harness covers
 both behaviourally. They are complements, not duplicates.
 
+### 8.3d The general form: a control sees only the language it parses
+
+Written at Core's suggestion, because the two specific holes named in §8.3a will be fixed and this
+will still be true.
+
+**Every verification method used in this repository today reads one language.** `verify-standins.py`
+parses C#. `FieldsSurviveTheClientBoundaryTests` reflects over .NET metadata. `BoundsReachTheSurface`
+walks a WPF visual tree. `ui-craft-gate.py` reads CSS and HTML. Each is sound inside its language and
+**silently returns "absent" for a consumer written outside it** — not "unknown", not "not checked",
+but a clean report indistinguishable from a real absence.
+
+That is R4 with a different cause. R4 says *a control that scanned nothing must not report free*.
+This says *a control that scanned the wrong language must not report free either*, and it is harder
+to notice, because the scan was not empty — it was full, and complete, and about the wrong thing.
+
+**Measured, 2026-09-01.** Both sessions independently classified `CanvasGraph.Disclosures`,
+`CanvasGraph.Message`, `WorkspaceGraph.Disclosures` and `WorkspaceOverview.Disclosures` as dropped.
+All four are rendered by `CanvasPage.cs:728` and `:739-754` — in JavaScript, embedded in a C# string
+literal, reached as `graph.disclosures` after `JsonSerializerDefaults.Web` lower-cased the first
+letter. Core's call-site check was **correct and complete for C#**. The consumer was three lines
+away in another language. The canvas turned out to hold the best implementation of the family in the
+codebase, and we had both written it off.
+
+**Three properties make this invisible, and all three were present at once:**
+
+| Property | Effect |
+|---|---|
+| the value crosses a **language** boundary | no single-language tool can follow it |
+| it crosses a **case-convention** boundary (`Disclosures` → `disclosures`) | even a cross-language text search fails on the exact name |
+| the consumer lives **inside a string literal** | it is invisible to any parser of the host language, including a compiler |
+
+#### The rule
+
+> **State the language a control reads, and treat any consumer outside it as NOT CHECKED rather
+> than as absent.** A control that cannot see a surface must say so — in the file, next to the
+> assertion — or it becomes an instance of the family it hunts: something that looks like a clean
+> result while the honest answer sits unread one layer down.
+
+Both controls now carry their holes in writing: `BoundsReachTheSurface` names the `MainWindow`
+status line and anything inside the WebView2; `FieldsSurviveTheClientBoundaryTests` names the
+rename it structurally cannot follow (`GraphCluster.NodeCount` → `CanvasNode.Count`).
+
+#### The corollary, which cost the most
+
+> **Two methods agreeing is corroboration only if they have different blind spots.**
+
+Core and Session 3 reached the same "dropped" verdict by two different methods and read the
+agreement as confirmation. It was two instruments with one shared limit — both stopped at the C#
+edge — so the agreement carried no information at all. **Convergence is evidence about the methods
+before it is evidence about the answer**, and the question to ask first is not *"do they agree?"*
+but *"could they both be wrong the same way?"*
+
+#### What this leaves uncovered, named rather than implied
+
+The `MainWindow` status line · anything inside the WebView2 · **any consumer in a language no
+control here parses**. The third is the general case and will outlive the first two. Nothing in this
+repository currently verifies a JavaScript consumer of a C# record, and until something does, every
+"dropped" verdict about canvas-fed data is **unverified**, not false — Core has bounded the exposure
+by confirming `CanvasPage.cs` is the only embedded page in `src/AiDe.App/`, and Session 3 confirmed
+independently that no camelCase consumer of `healthFindings` or `truncated` exists anywhere in the
+App. Bounded, written down, and still a hole.
+
 ### 8.4 What Session 3 needs
 
 | From | Ask |
