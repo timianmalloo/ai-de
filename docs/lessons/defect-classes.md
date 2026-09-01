@@ -1758,3 +1758,26 @@ for both or split.*
 - **The generalisation to apply elsewhere:** **a rule about one item is not a rule about the list.** Whenever something is emitted per unit — a warning, a log line, a health finding — ask what it looks like at a hundred units, and give the aggregate an owner. The signal-to-noise ratio of a diagnostic is a property of the collection, not of any member of it.
 - **Residual risk:** folding is textual. It assumes every scope emits the same sentence template for a class, which is true today and is not enforced anywhere; a reader that varied its wording per scope would fold into a total wearing one arbitrary explanation.
 - **Status:** `controlled`
+
+### DC-059 — A persistent per-frame render subscription that never lets the UI idle
+
+- **Signature:** a control subscribes to `CompositionTarget.Rendering` (or an always-running
+  `DispatcherTimer` that invalidates) for its whole lifetime and polls "is anything dirty?" every
+  frame. WPF is retained-mode and normally rests when nothing changes; a live per-frame subscription
+  defeats that — the UI thread does work ~60×/second forever, for every such control, even when
+  everything is idle. The window feels jittery because the compositor never settles. If the same
+  invalidation is not gated on visibility, a hidden/background pane invalidating also makes the docking
+  host activate it — a focus/tab steal that looks unrelated.
+- **Why it survives:** it works and looks correct; the cost is invisible in a single-control demo and
+  only bites with several instances and on an idle machine. No test fails — the behaviour is a runtime
+  dispatcher/visibility property, not a unit-observable one. The coalescing intent ("only redraw the
+  final state") is real and correct; the *mechanism* (a per-frame poll) is the defect.
+- **Instances:** 2026-08-31 — `TerminalView` per-frame `CompositionTarget.Rendering` poll; two agent
+  terminals made the window jittery and a background one writing stole focus. Fixed: event-driven,
+  coalesced (`Interlocked` gate + one `Dispatcher.BeginInvoke(Render)`), visibility-gated
+  `RequestRedraw`, called by the pump only when `_screen.IsDirty`. Idle → zero repaints.
+- **Control:** the systemic framework in `docs/investigations/redraw-isolation.md` (five principles:
+  event-driven / coalesced / visibility-gated / right-level-leaf-only / isolated islands). No
+  per-frame subscription outside a genuine animation. A grep control for `CompositionTarget.Rendering`
+  in review is the mechanical guard.
+- **Status:** controlled

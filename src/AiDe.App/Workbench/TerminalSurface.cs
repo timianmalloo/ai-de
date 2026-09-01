@@ -396,6 +396,14 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
                 {
                     _parser.Consume(chunk.Bytes.Span);
 
+                    // Event-driven repaint: ask the view to repaint (coalesced to one per frame) only
+                    // when output actually changed the screen. Replaces the old per-frame poll, so an
+                    // idle terminal causes zero repaints. RequestRedraw marshals to the UI thread.
+                    if (_screen.IsDirty)
+                    {
+                        _view?.RequestRedraw();
+                    }
+
                     // Fed from the SAME chunk the screen gets, so readiness cannot disagree with
                     // what the user is looking at. Only for an agent session — a shell's OSC 133 is
                     // stronger evidence and needs no pattern.

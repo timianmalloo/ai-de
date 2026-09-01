@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-facelift",
-  "generated": "2026-08-31T23:51:28Z",
+  "generated": "2026-09-01T01:14:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -5610,6 +5610,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/DiagnosticsSurface.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0314",
+      "shortname": "redraw-isolation-and-terminal-fixes",
+      "datetime": "2026-09-01T01:14:48Z",
+      "session": "4d24d94a-eee0-4d48-a40a-79238103a474",
+      "prompt": "two agent terminals: one writing to console steals focus; new agent terminal should say 'agent terminal' not 'claude'; on redraw the whole extent of surfaces redraws (jittery) - research/investigate redraw isolation systemically",
+      "summary": "Root-caused the jitter AND the focus-steal to ONE cause: every TerminalView held a persistent CompositionTarget.Rendering per-frame subscription (WPF anti-pattern that never lets the render thread idle) and invalidated regardless of visibility (a hidden terminal invalidating made AvalonDock activate its tab = focus steal). Fixed with event-driven, coalesced (Interlocked gate + one Dispatcher.BeginInvoke), visibility-gated RequestRedraw called by the pump only when the screen changed. Wrote docs/investigations/redraw-isolation.md (systemic 5-principle framework). Naming: new agent terminal titled 'Agent terminal' not the picked CLI. DC-059. App 209 green, smoke clean.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/redraw-isolation.md",
+        "src/AiDe.App/Workbench/TerminalView.cs"
       ],
       "tags": [],
       "outcome": "success"

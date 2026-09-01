@@ -107,8 +107,10 @@ public sealed class WorkbenchShell : IDisposable
             if (terminalStack is null) return "There is no terminal pane to open it beside.";
 
             var id = $"agent:{agent}#{Guid.NewGuid().ToString("N")[..6]}";
+            // Harness-neutral title: the tab says "Agent terminal", not the CLI we happened to pick off
+            // PATH — the user may drive a different harness, and presuming one in the label is wrong.
             var result = Service.Apply(new LayoutOperation.AddSurface(
-                terminalStack.Id, new Surface(id, "terminal", agent)));
+                terminalStack.Id, new Surface(id, "terminal", "Agent terminal")));
 
             Adapter.Render();
             BindCanvas();
@@ -118,7 +120,7 @@ public sealed class WorkbenchShell : IDisposable
         AnnounceEnvironmentHealth();
 
             return result.Applied
-                ? $"{agent} terminal opened. Dispatch is refused until it reaches its prompt."
+                ? "Agent terminal opened. Dispatch is refused until it reaches its prompt."
                 : result.Announcement;
         };
         Controller.NewTerminalRequested = () =>

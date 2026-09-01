@@ -49,7 +49,8 @@ public sealed class TerminalView : FrameworkElement
     private double[] _advances = new double[64];
 
     private TerminalScreen _screen;
-    private bool _rendering;
+    private int _redrawScheduled;      // 0/1 gate; coalesces redraw requests to one per dispatcher turn
+    private bool _dirtyWhileHidden;    // output arrived while off-screen; repaint once when shown
 
     public TerminalView(TerminalScreen screen, double fontSize = 13)
     {
@@ -64,8 +65,16 @@ public sealed class TerminalView : FrameworkElement
         Focusable = true;
         FocusVisualStyle = null; // The cursor and the focus ring below say it better than a dotted box.
 
-        Loaded += (_, _) => StartRendering();
-        Unloaded += (_, _) => StopRendering();
+        // A terminal that is not on screen (a background tab) must not repaint on output — repaint it
+        // once when it becomes visible again.
+        IsVisibleChanged += (_, _) =>
+        {
+            if (IsVisible && _dirtyWhileHidden)
+            {
+                _dirtyWhileHidden = false;
+                InvalidateVisual();
+            }
+        };
     }
 
     /// <summary>Raised when the user types. The surface forwards this to the session.</summary>
@@ -270,42 +279,42 @@ public sealed class TerminalView : FrameworkElement
         (cell.Attributes & CellAttributes.Underline) != 0,
         (cell.Attributes & CellAttributes.Inverse) != 0);
 
-    private void StartRendering()
-    {
-        if (_rendering)
-        {
-            return;
-        }
-
-        _rendering = true;
-        CompositionTarget.Rendering += OnFrame;
-    }
-
-    private void StopRendering()
-    {
-        if (!_rendering)
-        {
-            return;
-        }
-
-        _rendering = false;
-        CompositionTarget.Rendering -= OnFrame;
-    }
-
-    /// <summary>Presents at frame rate, and only when something changed.</summary>
+    /// <summary>
+    /// Requests a repaint, coalesced to at most once per dispatcher turn (≈ one frame). Called by the
+    /// session pump when output has changed the screen. This REPLACES a persistent
+    /// <c>CompositionTarget.Rendering</c> subscription, which ran a handler every frame for the life of
+    /// the control — the WPF anti-pattern that keeps the render thread from ever going idle and makes
+    /// the whole window feel jittery. Now nothing runs when the terminal is idle.
+    /// </summary>
     /// <remarks>
-    /// This is the coalescing policy in one line. A producer emitting a megabyte a second updates
-    /// the screen thousands of times between frames, and the user can only ever see the last of
-    /// them; redrawing per write would spend the entire budget rendering states nobody observes.
-    /// The dirty check is the other half — without it a motionless terminal would repaint sixty
-    /// times a second forever.
+    /// <para><b>Coalescing.</b> A producer emitting a megabyte a second updates the screen thousands
+    /// of times between frames; the user only ever sees the last. The atomic <c>_redrawScheduled</c>
+    /// gate collapses every request between dispatcher turns into a single <see cref="InvalidateVisual"/>.
+    /// Thread-safe because the pump raises this from a background thread.</para>
+    ///
+    /// <para><b>Isolation.</b> A background tab (not visible) does not repaint on output — it records
+    /// that it fell behind and repaints once when it is shown again. So one busy agent terminal cannot
+    /// drive repaints of a pane the user is not looking at.</para>
     /// </remarks>
-    private void OnFrame(object? sender, EventArgs e)
+    public void RequestRedraw()
     {
-        if (_screen.IsDirty)
+        if (Interlocked.Exchange(ref _redrawScheduled, 1) == 1)
         {
-            InvalidateVisual();
+            return; // a repaint is already queued for the next turn — fold this request into it
         }
+
+        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Render, () =>
+        {
+            Interlocked.Exchange(ref _redrawScheduled, 0);
+            if (IsVisible)
+            {
+                InvalidateVisual();
+            }
+            else
+            {
+                _dirtyWhileHidden = true;
+            }
+        });
     }
 
     protected override void OnTextInput(TextCompositionEventArgs e)

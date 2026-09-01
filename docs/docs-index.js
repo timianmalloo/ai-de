@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de-session-phase3-pane-probes",
-  "generated": "2026-08-31T23:41:10Z",
+  "generated": "2026-09-01T01:13:57Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2005,7 +2005,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "caaab3c5a388fe073b9e9296145b48415ee6111de245954b8adfbb34a788968a"
+      "sourceSha256": "171fe86dfe902b27fad8430282489ec3d23db33267b58096cea3a24828b9b468"
     },
     {
       "id": "domain-experts",
@@ -3005,6 +3005,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "24d9164538e3176c623194f377abb8f8b3a3d5c5c4a9397ef41c1da2c3de6ddf"
     },
     {
+      "id": "review-ui-status-strip",
+      "path": "docs/reviews/ui-status-strip.md",
+      "title": "UI review — workbench status strip / re-index diagnostics",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Review + elevate of the workbench status strip. Root cause of the \"wall of text eating the window\": the status strip (Grid.Row Auto) hosts a wrapping, uncapped TextBlock, and the re-index announcement is IndexResult.Describe() — a 200+ disclosure sentence. Fixed by making the strip a single ellipsised line with the full text on hover and still read in full by assistive tech.",
+      "tags": [
+        "ui-design",
+        "status-strip",
+        "diagnostics",
+        "workbench",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e2bec3a144c3dc7728bdc2e92e82044a5768b5645c2fa18d0544524270983def"
+    },
+    {
       "id": "review-ui-workbench",
       "path": "docs/reviews/ui-workbench.md",
       "title": "UI review — AI-DE dockable workbench",
@@ -3245,6 +3272,34 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "99a6c7f2d3ca7e12e5c0d8902df3508280fda1e3ce975c545d37922ff083a7dc"
+    },
+    {
+      "id": "investigation-redraw-isolation",
+      "path": "docs/investigations/redraw-isolation.md",
+      "title": "Investigation — redraw isolation and UI jitter",
+      "type": "investigation",
+      "status": "resolved",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The whole window felt jittery and a background agent terminal writing output stole focus/activated its tab. Root cause: every TerminalView held a persistent CompositionTarget.Rendering subscription — a per-frame callback that runs for the life of the control and never lets WPF's render thread go idle — and it invalidated regardless of whether the pane was visible. Fixed with event-driven, coalesced, visibility-gated invalidation. This note is also the systemic framework for redraw isolation across the app.",
+      "tags": [
+        "performance",
+        "rendering",
+        "wpf",
+        "terminal",
+        "jitter",
+        "redraw-isolation"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d0b5313c7f0ce996e387f26c5ffa4a5ba91e785db40974a220f8b5a5304862da"
     },
     {
       "id": "kb-ai-native-ide-shell",
@@ -6592,7 +6647,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de-session-phase3-pane-probes — Audit & Change Log",
+      "title": "ai-de-facelift — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -6686,5 +6741,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "45a642caa5acbb1474933ae3edba353f16a591e2f87b312642ff9d6c3e39341e"
+  "graphSha256": "2d2ce18f8c36cf231f7b1776466fff53339f1a87322ef3ac4378d282f8f86a4e"
 };
