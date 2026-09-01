@@ -41,11 +41,21 @@ from pathlib import Path
 
 TESTS = "tests"
 
-# A harness rethrow: a wrapper exception constructed FROM a captured failure variable. The captured
-# name is what separates a harness from a test fixture that throws to simulate an error — the latter
-# constructs its exception from a literal and is none of this gate's business.
+# A harness rethrow: a wrapper exception whose LAST argument is a bare identifier — the inner
+# exception. That is the structural signature of wrapping, and it is deliberately name-independent.
+#
+# THE FIRST VERSION OF THIS PATTERN NAMED THE VARIABLE (failure|caught|captured) and would have
+# missed a harness that called it `error` — two exist in this repository, both currently correct, so
+# the blind spot hid nothing today and would have hidden the next one. Found by reconciling this
+# gate's count against the number of files declaring an STA thread and chasing the three-file gap,
+# after the design session found the same narrowness in its own scan of the same subject. A checker
+# that looks through a smaller window than its subject reports a plausible number and says nothing
+# about the window (DC-079's lesson, arriving in the checker rather than in the code).
+#
+# A fixture that throws to SIMULATE an error passes only string literals, so it does not match and is
+# none of this gate's business.
 WRAPS = re.compile(
-    r"throw new \w*Exception\(\s*[^;]*?\b(failure|caught|captured)\b[^;]*?\)\s*;",
+    r"throw new \w*Exception\([^;]*?,\s*([A-Za-z_]\w*)\s*\)\s*;",
     re.DOTALL)
 
 GUARD = re.compile(r"is\s+(Xunit\.Sdk\.)?XunitException\s*\)?\s*throw")
@@ -135,6 +145,14 @@ def self_test() -> int:
             'if (failure is not null) throw new InvalidOperationException("STA work failed", failure);\n',
             encoding="utf-8")
 
+        # THE BLIND SPOT THE FIRST PATTERN HAD, kept as a fixture so the widening stays proven. This
+        # names the captured variable `error` — two real harnesses do, both currently correct — and
+        # the name-based pattern reported it clean. A widening that is not observed catching what the
+        # narrow version missed is indistinguishable from one that changed nothing.
+        (place / TESTS / "OtherNameTests.cs").write_text(
+            'if (error is not null) throw new InvalidOperationException("STA work failed", error);\n',
+            encoding="utf-8")
+
         # A fixture that throws to SIMULATE an error, built from a literal. Must not be reported —
         # a gate that fires on these would be muted, and then the real check goes with it.
         (place / TESTS / "FixtureTests.cs").write_text(
@@ -148,6 +166,13 @@ def self_test() -> int:
 
     if not any("UnguardedTests.cs" in p for p in problems):
         print("verify-harness-diagnostics: SELF-TEST FAILED — an unguarded harness was not reported.")
+        return 1
+
+    if not any("OtherNameTests.cs" in p for p in problems):
+        print("verify-harness-diagnostics: SELF-TEST FAILED — a harness whose captured variable is "
+              "not called `failure` was not reported. That was this gate's original blind spot: it "
+              "matched on the variable NAME, so it read a narrower window than its subject and said "
+              "nothing about the window.")
         return 1
 
     if any("GuardedTests.cs" in p for p in problems):

@@ -2534,6 +2534,20 @@ for both or split.*
   exists and is already referenced by both test projects — `tests/Shared/` (`namespace
   AiDe.Testing`) — so the duplication was never load-bearing; it accumulated because writing the
   helper again is always cheaper *for the file being written* than putting it somewhere shared.
+- **The class then arrived in the CHECKERS, both of them, on the same measurement.** The design
+  session's scan of this same subject reported **14 files and 2 names** against the 31 and 3 above;
+  its pattern required the return type to sit immediately before the helper name, so it missed
+  generic overloads and read a narrower window than its subject. It was found only because two
+  measurements disagreed and the disagreement was chased instead of resolved by picking. Auditing
+  this gate the same way — reconciling its count against the number of files declaring an STA thread,
+  and chasing the three-file gap — found the mirror flaw: `WRAPS` matched on the **variable name**
+  (`failure|caught|captured`) and would have missed a harness calling it `error`, of which two exist,
+  both currently correct. The blind spot hid nothing that day and would have hidden the next one.
+  Both are the register's own §8.3d corollary from the unfamiliar side: **agreement between two
+  methods is uninformative when they share a blind spot, and disagreement is always worth chasing** —
+  only one of those is comfortable. The pattern is now structural (a wrapper whose last argument is a
+  bare identifier) and the self-test carries an `error`-named fixture, so the widening stays observed
+  rather than asserted: the old pattern does not match it, the new one does.
 - **Control:** partial, and honestly so. `tools/verify-harness-diagnostics.py` (DC-078) closes the
   one divergence that caused a defect, which is the administrative fix: it stops this variant without
   removing the coin flip. **The systemic fix is to delete the choice** — one implementation in
