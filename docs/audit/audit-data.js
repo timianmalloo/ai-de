@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T04:36:22Z",
+  "generated": "2026-09-01T04:42:00Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6905,6 +6905,32 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0344",
+      "shortname": "watcher-telemetry-backlog",
+      "datetime": "2026-09-01T04:42:00Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "save the next steps as backlog so a new session picks them up then commit all, push merge and retire the work tree",
+      "summary": "Created docs/backlog/watcher-telemetry.md (type:doc, status:proposed) capturing the 3 remaining next steps (B1 advisory-dim activation [gated on calibration data], B2 live smoke, B3 extend emitter to /investigate) with seam pointers + acceptance; graph-linked to the spec + two designs, indexed (docs-graph derive), validated 0 defects/0 orphans.",
+      "kind": "manual",
+      "skill": null,
+      "tool": "Copilot CLI",
+      "actor": null,
+      "artifacts": [
+        "docs/backlog/watcher-telemetry.md"
+      ],
+      "tags": [
+        "watcher",
+        "backlog"
+      ],
+      "outcome": "success",
+      "goal": "Persist the watcher-telemetry next steps as a committed, discoverable backlog artifact for a future session",
+      "done_when": "docs/backlog/watcher-telemetry.md exists as an indexed, graph-linked type:doc with the 3 steps and lands on main",
+      "signals": {
+        "verification_path": true,
+        "acceptance_met": true
+      }
     }
   ],
   "changes": [
