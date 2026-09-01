@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-agent-watcher-substrate",
-  "generated": "2026-09-01T02:07:01Z",
+  "generated": "2026-09-01T02:11:20Z",
   "audit": [
     {
       "id": "al-0001",
@@ -6554,6 +6554,26 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0325",
+      "shortname": "merge-watcher-to-main",
+      "datetime": "2026-09-01T02:11:20Z",
+      "session": "e3c8ed7d-9bf0-42eb-ac6d-92f829998c48",
+      "prompt": "merge to main",
+      "summary": "Merged feature/agent-watcher-substrate to origin/main (25aecba..9543abf, fast-forward). Required a 3rd forward-integration first (13 incoming commits): unioned both branches' terminal cursor-crash fixes (mine CellUnderCursor + theirs clamping indexer + thread-safety - both test sets coexist), and reconciled the 3-way DC-id collision (mapped my cursor-crash class to main's canonical DC-061; appended my 6 net-new watcher classes as DC-064..069). Core 1202/0, App 220/0, full solution builds clean; register DC-001..069 OK.",
+      "kind": "commit",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DeterministicSignalsDeriver.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Land the 19-slice Loomkeeper watcher on main",
+      "done_when": "origin/main fast-forwarded to the watcher branch, green, with all 3 sessions' work reconciled"
     }
   ],
   "changes": [
