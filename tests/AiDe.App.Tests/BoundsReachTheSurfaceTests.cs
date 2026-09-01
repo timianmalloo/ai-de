@@ -99,26 +99,16 @@ public sealed class BoundsReachTheSurfaceTests
             // ADDED BY CORE, 2026-09-01, following this file's own instruction — the field is new
             // and the guard caught it within minutes of it being added, which is the guard working
             // rather than a gap in it.
-            ["EvidenceRow.Evidence/verified-dropped"] =
-                "VERIFIED DROPPED — Core opened this as UNVERIFIED and asked for a render check; " +
-                "here it is, and the answer is worse than the record suggested. " +
-                "SurfaceContentFactory.EvidenceContent (:70-78) builds the pane's ListBox with " +
-                "DisplayMemberPath = nameof(EvidenceRow.DisplayLabel) and NO ItemTemplate, no " +
-                "ItemContainerStyle, and no per-item AccessibleName binding. A ListBox with a " +
-                "DisplayMemberPath renders exactly that one property, so the pane shows the label " +
-                "and drops Evidence, NodeKind AND Confidence — three of the record's five fields. " +
-                "AutomationProperties.SetName is applied to the LIST, not to its items, so " +
-                "EvidenceRow.AccessibleName — which Core wrote specifically to carry the reason — " +
-                "is a computed property nothing reads. A screen reader gets the DisplayMemberPath " +
-                "text, same as the eye. " +
-                "SO: adding the field to the record could not have fixed it, and a reviewer " +
-                "reading EvidenceRow would conclude it had. The binding is the defect, one layer " +
-                "out from where it was looked for — this file's whole subject. " +
-                "NO RENDER ASSERTION IS ADDED YET, deliberately: it would land RED, and a red " +
-                "gate gets switched off (and a [Skip] reports green while proving nothing, " +
-                "DC-012). It converts to an assertion the moment the binding lands. " +
-                "OWNER: Design — SurfaceContentFactory is theirs under §2. Raised in " +
-                "docs/ui/craft-findings-2026-09-01.md.",
+            ["EvidenceRow.Evidence/closed"] =
+                "CLOSED. The design session checked the UNVERIFIED note above and found the cause " +
+                "one layer further out than the record: SurfaceContentFactory built the ListBox " +
+                "with DisplayMemberPath, which renders exactly ONE property, so the pane dropped " +
+                "Evidence, NodeKind AND Confidence — and AutomationProperties.SetName was on the " +
+                "list rather than its items, so EvidenceRow.AccessibleName was read by nothing. " +
+                "Adding the field could not have fixed it. Now an ItemTemplate with a per-item " +
+                "accessible name, and EvidencePaneRendersItsRowsTests walks the rendered tree for " +
+                "both paths — observed failing on the shipped DisplayMemberPath, all three red. " +
+                "Kept as an entry rather than deleted so the reasoning survives the fix.",
 
             ["EvidenceRead.Shortfall/global-and-transient"] =
                 "CORRECTION. This entry previously said the shortfall is announced and therefore " +

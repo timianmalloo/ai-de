@@ -54,6 +54,16 @@ public sealed record EvidenceRow(
     ConfidenceBadge Confidence,
     string? Evidence = null)
 {
+    /// <summary>The one line a list shows: the label, its kind, and why it matched.</summary>
+    /// <remarks>
+    /// Composed HERE rather than in the pane, so the visible text and the accessible name are built
+    /// from the same fields and cannot drift apart — the chip's two rendering paths drifting is what
+    /// made the same false claim twice in one surface.
+    /// </remarks>
+    public string ListLine => Evidence is null
+        ? $"{DisplayLabel}  ·  {NodeKind}"
+        : $"{DisplayLabel}  ·  {NodeKind}  ·  {Evidence}";
+
     public string AccessibleName => Evidence is null
         ? $"{DisplayLabel}, {NodeKind}, {Confidence.AccessibleName}"
         : $"{DisplayLabel}, {NodeKind}, matched on {Evidence}, {Confidence.AccessibleName}";

@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Data;
 using AiDe.Core.Presentation;
 using AiDe.Core.Projections;
 using AiDe.Core.Workbench;
@@ -69,9 +70,27 @@ public sealed class SurfaceContentFactory(
     {
         var pane = new EvidencePaneViewModel(queries!);
 
+        // A TEMPLATE, NOT A DisplayMemberPath.
+        //
+        // `DisplayMemberPath` renders exactly ONE property, so this pane showed DisplayLabel and
+        // silently dropped Evidence, NodeKind and Confidence — three fields the row computes and
+        // nothing displayed. Search now matches attribute VALUES, so a row can come back because one
+        // of its members matched; without the reason that is a correct hit which reads as a wrong
+        // one, the same defect already fixed on the search surface.
+        //
+        // The accessible name is set per ITEM. It was on the ListBox, so `EvidenceRow.AccessibleName`
+        // — written to carry exactly this reason — was a computed property nothing read, and a
+        // screen reader got the same one property the eye did.
+        var row = new DataTemplate(typeof(EvidenceRow));
+        var line = new FrameworkElementFactory(typeof(TextBlock));
+        line.SetBinding(TextBlock.TextProperty, new Binding(nameof(EvidenceRow.ListLine)));
+        line.SetValue(TextBlock.TextTrimmingProperty, TextTrimming.CharacterEllipsis);
+        line.SetBinding(AutomationProperties.NameProperty, new Binding(nameof(EvidenceRow.AccessibleName)));
+        row.VisualTree = line;
+
         var list = new ListBox
         {
-            DisplayMemberPath = nameof(EvidenceRow.DisplayLabel),
+            ItemTemplate = row,
             BorderThickness = new Thickness(0),
             Background = null,
         };
