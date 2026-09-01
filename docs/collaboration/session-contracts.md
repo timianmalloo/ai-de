@@ -1344,6 +1344,18 @@ It re-enters at the render boundary, one layer further out, and no existing gate
    written now would carry a shape, a signature and no control: *a lesson recorded as prose is a
    memoir* (CI6). **The id is held; the entry lands with its control, not before.**
 
+   > **Superseded — and the correction is the useful part.** "Hold the id, land it with the
+   > control" does not survive the register's **contiguity** requirement: `verify-defect-register`
+   > fails on a hole, so a held-but-unwritten `074` blocks the *next* session from writing `075`.
+   > Core needed one within the hour — with a control observed failing, which is this section's own
+   > bar — so it took `074` and the class it named is `DC-074`. **Session 3's is `DC-075`**,
+   > confirmed free by running the gate (`DC 74` highest declared, no holes), not on Core's word.
+   >
+   > The workable rule is **"don't allocate until you land"**, which is what Session 3 actually did;
+   > "hold an id" was a description of it that quietly assumed nobody else would need one meanwhile.
+   > A reservation that depends on nobody else moving is not a reservation. **The protocol resolves
+   > it the way it resolves everything else: whoever lands first.**
+
 ### 8.3a The class is wider than dropped bounds
 
 Core asked whether **DC-073** — *a stand-in outlives the thing it stood in for* — is the same shape.
@@ -1388,6 +1400,57 @@ asked. It fails today on `IsKnowledge`, which is how we would know it works.
 
 So the family needs **three** controls, not two — surface, harness, and now boundary — because it
 has three ways to lose the truth and each hides from the other two's test.
+
+### 8.3b Status: the third control exists, and the third member was Core's, not Design's
+
+Written after the fact, because both halves of what was said above turned out to need correcting.
+
+**The cause was in Core's file.** Design's `f18221f` was right about the symptom and this section
+credited it as an App defect. It was not: `src/AiDe.Core/Presentation/CanvasGraphViewModel.cs` built
+`CanvasNode` without carrying `GraphNode.IsKnowledge`, across five call sites. **The App was doing
+the only thing left to it** — guessing from a spelling list, because the authoritative flag never
+arrived. Verified here: `CanvasNode` now carries `IsKnowledge` at `CanvasGraphViewModel.cs:21`.
+
+Three of the five sites still do not set it, and each says why **at the site**: the neighbour view
+has kinds but not node kinds (a real gap — closing it means `Describe` carrying the knowledge ids);
+a cluster stands for many nodes of mixed kinds, so *"this group is knowledge"* is a claim about a
+thing that does not exist; the path view already hard-codes `source`. Three commented non-answers
+rather than three silent falses, which is the same reasoning as the whole class.
+
+**The third control is built.** `tests/AiDe.Core.Tests/FieldsSurviveTheClientBoundaryTests.cs`
+(Core) — for each producer→client record pair, every producer field either reaches the client or is
+**listed as deliberately dropped, with a reason**. Observed failing on exactly the shipped shape:
+*"`GraphNode.IsKnowledge` does not reach `CanvasNode` and is not listed as deliberately dropped."*
+Two fields are named as dropped, which is the forcing function working rather than a ban: `Degree`
+is a ranking statistic the canvas does not draw, `IsExternal` is folded into `Kind`. It carries a
+stale-allowance test and a DC-016 guard so it cannot pass by comparing two empty sets.
+
+**Its honest limit, and it is exactly the seam between the three controls:** it compares field
+**names**. A field that crosses the boundary and is then *ignored* still passes. That is the §8.3
+harness's job, not this one's — which is the concrete demonstration that the three controls are
+complements rather than three attempts at one thing.
+
+### 8.3c The fourth member: the report was green and the artifact was wrong
+
+Core, 2026-09-01, offered and taken. A `git merge` piped to `tail -1` reported **`tail`'s** exit
+status, not the merge's — so a failed merge read as success and a **stale binary was published**,
+generation `.7` against a source tree at `.8`. Caught by checking the published DLL rather than
+trusting the publish step.
+
+It is the sharpest of the four because **it needed no code at all — just a pipe**:
+
+| Member | Where the truth is lost | Control |
+|---|---|---|
+| The bound was dropped | the surface rendered the answer without its qualifier | §8.3 behavioural harness — **unbuilt** |
+| The payload was never asked for | the surface never called the query; the stand-in still looked right | `verify-standins.py` — built (DC-073) |
+| The field was dropped in transit | an intermediate mapping narrowed the contract | `FieldsSurviveTheClientBoundaryTests` — built (DC-074) |
+| **The report was green and the artifact was wrong** | the *check itself* reported on the wrong thing | none — read the artifact, never the step |
+
+The fourth has no control and probably cannot have a general one: it is not a defect in a layer, it
+is a defect in **how a layer was interrogated**. The rule it leaves is the one this repository keeps
+arriving at from every direction — **an exit code is not a result; read the state** (E14). Session 3
+records it as `DC-075`, id confirmed free by running the gate, and it lands with whatever control
+review decides it can carry.
 
 Neither is caught by a test of the layer below, because that layer is correct in both. Both are
 caught by the §8.3 harness, which is the argument for building it once rather than twice: a harness
