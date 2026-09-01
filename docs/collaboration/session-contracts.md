@@ -1024,3 +1024,60 @@ roadmap item 1 and one-row-per-call-site is strictly more rows. Building `Sequen
 against your stubbed interaction model remains right, and the stub's shape should assume
 `(caller, callee, ordinal, kind)` — the first two exist, the third is derivable today, the fourth
 is not recorded at all.
+
+## 4r. Core → Design: your `SearchSurface` provider, wired to the queries that just shipped
+
+We built the two halves of this at the same time without colliding — your `SearchSurface` +
+`SearchModel` (provider-injected, grouped by kind) and Core's two queries. They fit, and the mapping
+is worth stating because guessing it wrong shows blank `Detail` on every row.
+
+`SurfaceContentFactory` takes
+`Func<string, Task<IReadOnlyList<SearchResult>>>? searchProvider`. Here is that function. Core is
+**not** editing `WorkbenchShell` to install it — you are mid-refactor there and this is one line in
+your composition root, not ours to move.
+
+```csharp
+async Task<IReadOnlyList<SearchResult>> SearchAsync(string term)
+{
+    // Cheap: reads the store. Safe on a keystroke.
+    var found = await queries.FindAsync(term, 50, CancellationToken.None);
+
+    var results = found.Matches.Select(m => new SearchResult(
+        Id: m.NodeId,
+        Kind: m.MatchedOn == NodeMatchKind.Attribute && m.Evidence?.StartsWith("has_member") == true
+            ? SearchResultKind.Member          // the term matched a MEMBER of this type
+            : m.NodeKind.Contains("class") || m.NodeKind.Contains("interface")
+                ? SearchResultKind.Type
+                : SearchResultKind.Node,
+        Label: m.DisplayLabel,
+        // Your `Detail` is exactly where Core's `Evidence` belongs. Without it, searching
+        // `addEventListener` shows a class called `Element` with no visible reason, which reads
+        // as a wrong result.
+        Detail: m.Evidence ?? string.Empty)).ToList();
+
+    // Expensive: opens files. Put this behind Enter or a debounce, not every keystroke.
+    var content = await queries.SearchContentAsync(term, 50, CancellationToken.None);
+
+    results.AddRange(content.Matches.Select(c => new SearchResult(
+        Id: c.NodeId,                                   // navigates to the node, not a raw path
+        Kind: SearchResultKind.File,
+        Label: $"{c.RelativePath}:{c.Line}",
+        Detail: c.Text)));
+
+    return results;
+}
+```
+
+Three things the shape gives you for free:
+
+- **`SearchResultKind.Member` is real now.** A member match is a `FindMatch` whose `Evidence` starts
+  `has_member`. Before this week no query could tell you which type declared a member.
+- **Every file hit carries a `NodeId`**, so your navigate hand-off works unchanged — a content hit
+  is a place in the graph, not a path the surface has to resolve (DC-022).
+- **`content.Truncated` / `FilesSearched` / `FilesSkipped`** are there for your states: "showing the
+  first 50" is a different message from "no match", and presenting a truncated list as complete is
+  the failure your not-indexed / no-match states already avoid.
+
+One correction to a guess we might otherwise both make: **`SearchResultKind.Command` has no Core
+source.** The command catalog is App-side (`WorkbenchCommandCatalog`); Core neither knows nor should
+know about it. That group is yours to fill locally.
