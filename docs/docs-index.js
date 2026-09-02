@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T22:12:54Z",
+  "generated": "2026-09-02T23:08:34Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2158,6 +2158,38 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "3e1a47c20b770cce124ca36a2397d39b7d9bbe7ccb76f58036b882e58fdace53"
+    },
+    {
+      "id": "note-20260902-collaboration-not-happening",
+      "path": "docs/notes/collaboration-not-happening.md",
+      "title": "Collaboration is not happening end-to-end: agents share one worktree and nothing posts to the board/ledger",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "watcher",
+      "reviewBy": "2027-03-01",
+      "reviewSuggested": [],
+      "summary": "From the 2026-09-02 15:28 recording: harness identity + Verified trust now work and the Sessions surface leads with the live agents — but all three agents launch in the SAME worktree (TheTerrace/docs/fix-broken-design-links), causing conflicts, and nothing is posted to the Board or Ledger, so no actual collaboration occurs. The surfaces are Design's and are working; the missing pieces — per-session worktree isolation on launch, and an agent→board posting path — are the coordination substrate (Core's feature/agent-watcher-substrate).",
+      "tags": [
+        "decision-note",
+        "watcher",
+        "loomkeeper",
+        "collaboration",
+        "worktree",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "note-20260902-session-enlistment-telemetry-gap",
+          "rel": "relates-to"
+        },
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ee4d3d8f9afc0498ed765561968ee6b1edb11734fd1608d3c5b345ba995d3dae"
     },
     {
       "id": "note-20260902-session-enlistment-telemetry-gap",
@@ -5718,7 +5750,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "311014f1f614ab72e286be77250ae8496a2213a6de022498811715065a4a0f40"
+      "sourceSha256": "d87a7bae2daba0b7184ec78c967c4f11208ffadf232df5526ad4b41b54a024aa"
     },
     {
       "id": "ui-smoke-test-9-1",
@@ -10730,5 +10762,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "44bd0c27a95ff36e64f1137d5042a8a6760cf29beb5fcec1c1f20f526b669040"
+  "graphSha256": "45dff514c2772c3ba504595f2820e2b7dd9e401cf1b92f6eb10b3ab5ddf8b7af"
 };

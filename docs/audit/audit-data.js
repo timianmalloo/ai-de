@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T22:19:31Z",
+  "generated": "2026-09-02T23:09:05Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8269,6 +8269,23 @@ window.AUDIT_DATA = {
         "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
         "tests/AiDe.App.Tests/SurfaceContentTests.cs",
         "docs/reviews/ui-watcher-surfaces-9-3.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0411",
+      "shortname": "investigate-collaboration-gap",
+      "datetime": "2026-09-02T23:09:05Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "video (Recording 2026-09-02 152840): not convinced collab is happening; lots of conflicts as all three sessions kicked off in the same worktree and no updates in board or ledger",
+      "summary": "Analyzed the recording. WORKING now: harness identity (github-copilot/claude-code) + trust Verified are recorded; the Sessions surface leads with the 3 live agents (Design elevate). BROKEN (the collaboration gaps): (1) all agents launch in the SAME worktree (TheTerrace/docs/fix-broken-design-links) -> conflicts (WT1 violation; the app doesn't create a per-session worktree on launch); (2) nothing posts to the Board/Ledger despite the user asking Copilot to -> no agent->board posting path into the store the surface reads; (3) model + spans still Not Recorded. Design owns the surfaces (working); the substrate fixes (per-session worktree on launch, board-post path, model/span telemetry) are Core's feature/agent-watcher-substrate. Captured as a decision-note hand-off with the Design/Core boundary.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/collaboration-not-happening.md"
       ],
       "tags": [],
       "outcome": "success"
