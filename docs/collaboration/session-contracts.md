@@ -1583,6 +1583,36 @@ an STA thread (31) and requiring the categories to sum to it. That is why this t
 denominators rather than about instruments: two instruments are cheap to produce and easy to
 duplicate accidentally, whereas a second denominator has to come from somewhere else in the world.
 
+#### An exception to a control is a predicate, never a name
+
+> **When a control needs an exception, express what makes the case exceptional. Never list which
+> case it is.**
+
+Both sessions reached this from opposite directions on 2026-09-01 and it is the more general form of
+the allowance-list problem. A control that needs to let something through can do it two ways:
+
+| Form | What it says | How it fails |
+|---|---|---|
+| **a list** | "except `Sta.cs`" | silently correct forever, including after `Sta.cs` stops deserving it, and it hides the *next* file that should have been caught |
+| **a predicate** | "except files holding no `[Fact]`" | wrong loudly, because a file that gains a `[Fact]` re-enters the check by itself |
+
+A list has the catch-all property: **a category broad enough to absorb a miss cannot report it.** A
+predicate has to keep being true, so it is re-evaluated on every run against every file, and a case
+that stops being exceptional stops being excepted without anyone remembering.
+
+**The instance.** `verify-harness-diagnostics.py`'s granularity check fired on the shared STA harness
+itself, which legitimately stands up two threads whose failures funnel through one rethrow. Naming
+the file would have worked and been wrong; the check is instead scoped to files that contain a
+`[Fact]`, because the masking risk it exists for requires two harnesses each carrying their **own
+verdict** — which is a property of a file holding tests. The self-test's fixture then went red
+immediately, having no `[Fact]` and so no longer resembling its subject (DC-073) — a control
+catching a change to the control, which is the layer that went unguarded all day.
+
+**Where this bites in existing controls:** `verify-surface-ownership.py`'s `UNASSIGNED`,
+`verify-standins.py`'s recorded reasons, and DC-075's worktree exclusions are all lists today. Each
+is currently correct and each carries the property above. They are not wrong, and they are the first
+place to look when one of those gates reports clean about something it should have caught.
+
 **The mechanised form.** Where a control can state its denominator, it must: print the total, print
 each category, and **fail when they do not sum**. An unaccounted-for item is then a red gate rather
 than an invisible gap. `tools/verify-harness-diagnostics.py` was given exactly this reconciliation
