@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T17:13:10Z",
+  "generated": "2026-09-02T17:13:32Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7846,6 +7846,23 @@ window.AUDIT_DATA = {
         "focus",
         "docking"
       ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0388",
+      "shortname": "document-project-site",
+      "datetime": "2026-09-02T17:07:48Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "the project / i want a rich github pages presence for this project with a particular focus on two things: - the idea of the repo being a model with different design surfaces to help explore the model, where code is just one surface and where we assume because of code-gen the model is transient and editable through the agents not the surfaces - the gamification of collaboration with the whole idea of message board and leader board and ledger to foster multi-harness/multi-model collaboration while challenging them to be better than each other in terms of focus on goal-seeking and adherence to the repo guidelines",
+      "summary": "Built a three-page GitHub Pages presence in site/ on the two named themes, both grounded in counted figures from the source; added tools/api-reference.py (1,711 public symbols, 64.1 percent documented, gaps listed not filled) and tools/build-doc-viewer.py (docs/_site close-up view, 23 pages); wrote the four diagram families in docs/diagrams/ and the map of content at docs/index.md; added .github/workflows/pages.yml serving site/ at root and docs/ at /docs/. Fixed a cp1252 decode in ui-craft-gate.py that made the detector report nothing-scanned on Windows while it had in fact produced 10KB of findings; then ran it and took 20 of its 21 findings (21 to 1). Two gaps recorded not closed: nothing binds the site figures to their sources, nothing binds the JS demos to the C# they mirror.",
+      "kind": "skill",
+      "skill": "document",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/index.md"
+      ],
+      "tags": [],
       "outcome": "success"
     },
     {
