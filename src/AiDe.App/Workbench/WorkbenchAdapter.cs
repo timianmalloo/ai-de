@@ -91,6 +91,11 @@ public sealed class WorkbenchAdapter
 
     public void Render()
     {
+        // Preserve which surface is active across the layout swap. Replacing Manager.Layout wholesale
+        // otherwise drops AvalonDock's active-content tracking, so focus snaps to the first document
+        // (the Explorer) — the "opening/closing a pane stole focus to explore" reports (#3-focus, #11).
+        var preActive = ActiveSurfaceId;
+
         // Reconcile, do not rebuild (DC-029). Reuse the content element already realized for each
         // surface that still exists, so a mutation to ONE pane (opening a terminal, splitting,
         // restoring a layout) does not reconstruct — and thereby destroy the live state of — every
@@ -136,7 +141,67 @@ public sealed class WorkbenchAdapter
 
         var panel = BuildPanel(_service.Current.Root, reuse);
         Manager.Layout = new LayoutRoot { RootPanel = panel };
+        RestoreSelection();
+        RestoreActive(preActive);
         ApplyAccessibleNames();
+    }
+
+    // Selects each pane's active tab from the model AFTER the layout is attached — AvalonDock resets a
+    // pane's SelectedContentIndex when it joins the LayoutRoot, so setting it during construction does
+    // not survive. Without this the rebuilt pane shows its first document, hiding the tab the user was
+    // on when a close changed the active index ("both source tabs gone", #11). The zone's ActiveIndex
+    // is the source of truth (DM7); document order in a pane matches surface order in its stack.
+    private void RestoreSelection()
+    {
+        if (Manager.Layout is not { } root)
+        {
+            return;
+        }
+
+        foreach (var stack in _service.Current.AllStacks())
+        {
+            if (stack.Surfaces.Count == 0)
+            {
+                continue;
+            }
+
+            var activeId = stack.Surfaces[Math.Clamp(stack.ActiveIndex, 0, stack.Surfaces.Count - 1)].SurfaceId;
+            var doc = root.Descendents().OfType<LayoutDocument>()
+                .FirstOrDefault(d => string.Equals(d.ContentId, activeId, StringComparison.Ordinal));
+            if (doc?.Parent is LayoutDocumentPane pane)
+            {
+                pane.SelectedContentIndex = pane.Children.IndexOf(doc);
+            }
+        }
+    }
+
+    // Re-activates the surface that was active before the layout was replaced, so focus stays where
+    // the user had it rather than snapping to the first document. A surface that no longer exists
+    // (it was the one just closed) is ignored — RestoreSelection already surfaces the surviving tab.
+    private void RestoreActive(string? surfaceId)
+    {
+        if (surfaceId is null || Manager.Layout is not { } root)
+        {
+            return;
+        }
+
+        // Only re-focus the pre-render surface when the MODEL still considers it the active tab of its
+        // stack. When the model changed the active tab (the user activated another surface), that
+        // change wins — RestoreSelection has already applied it — and re-activating the stale one here
+        // would clobber it back (the "activate did nothing" desync).
+        var stack = _service.Current.FindStackOf(surfaceId);
+        if (stack is null || stack.Surfaces.Count == 0
+            || !string.Equals(stack.Active.SurfaceId, surfaceId, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        var doc = root.Descendents().OfType<LayoutDocument>()
+            .FirstOrDefault(d => string.Equals(d.ContentId, surfaceId, StringComparison.Ordinal));
+        if (doc is not null)
+        {
+            doc.IsActive = true;
+        }
     }
 
     /// <summary>
@@ -583,6 +648,8 @@ public sealed class WorkbenchAdapter
             });
         }
 
+        // The model's active tab is applied after the layout attaches (RestoreSelection) — AvalonDock
+        // resets a detached pane's selection on attach, so setting it here would not survive.
         return pane;
     }
 }

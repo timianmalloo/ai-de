@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T00:19:59Z",
+  "generated": "2026-09-02T01:01:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7658,6 +7658,27 @@ window.AUDIT_DATA = {
       "tags": [
         "sessions",
         "ui"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0382",
+      "shortname": "smoke91-f-focus-preservation",
+      "datetime": "2026-09-02T01:01:18Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "do the next steps now (F #11/#3-focus focus-preservation)",
+      "summary": "Fixed #11/#3-focus: Adapter.Render replaced Manager.Layout wholesale, losing AvalonDock active-content and resetting each pane's selection on attach so focus/tab snapped to the first document. Added RestoreSelection (re-apply model ActiveIndex per pane post-attach) + RestoreActive (re-focus pre-swap surface only when model still agrees). +2 adapter tests (315). Inspected #9: provenance rows already full TextBrush, not opacity - inferred cause absent.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "docs/reviews/ui-smoke-test-9-1.md"
+      ],
+      "tags": [
+        "docking",
+        "focus"
       ],
       "outcome": "success"
     }
