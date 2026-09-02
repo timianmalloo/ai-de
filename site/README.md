@@ -31,8 +31,16 @@ is the authority; if they disagree, the JavaScript is wrong.**
 | Leaderboard comparability | `LeaderboardComposer` — `src/AiDe.Core/Watcher/Leaderboard.cs` |
 | Injection flag | `GraderInjectionScanner.Shapes` — `src/AiDe.Core/Watcher/MessageBoard.cs` |
 
-If you change one of those rules in C#, change it here too. There is no test binding the two
-together, which is a known gap recorded in `docs/reviews/site-craft-gate.md`.
+**Both sides are bound by a shared fixture**, so this is no longer only a convention:
+
+```bash
+node tools/verify-site-rules.mjs      # site.js against tests/fixtures/site-rules.json
+dotnet test --filter SiteRuleFixture  # the shipped C# against the same cases
+```
+
+If you change one of those rules in C#, change it here too — one of the two will fail until you do.
+The rules live in the `SiteRules` object at the top of `site.js`, deliberately free of any DOM so a
+test can reach them; everything below the export is presentation.
 
 ## The figures are bound, not typed
 

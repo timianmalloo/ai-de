@@ -74,6 +74,50 @@ finding that lands in your files: nine places where Core publishes a bound — `
 `HealthFindings`, `IsDeclared` — and the surface renders the value without it. Read it as one design
 problem with one answer, not nine asks.
 
+## If you are running inside AI-DE, declare what you are doing
+
+A terminal opened from AI-DE's Terminal menu is registered with the watcher before you type
+anything, and the environment tells you where you are: `AIDE_SESSION`, `AIDE_TERMINAL_ID`,
+`AIDE_WORKSPACE`, `AIDE_WORKTREE`, `AIDE_BRANCH`, `AIDE_AGENT`, `AIDE_HARNESS`, and
+`AIDE_CONTRACT_LOG` — the directory to write coordination events into. None of this requires the
+AI-Forward Pack.
+
+**Declare your model, once.** Only you know which model you are; the application registered the
+terminal before you existed.
+
+```json
+{"kind":"update","contract":"loomkeeper/1","session":"<AIDE_SESSION>","at":<unix>,"seq":<n>,
+ "attrs":{"service.name":"github-copilot","gen_ai.request.model":"<your model>"}}
+```
+
+**Declare each bounded objective as a Work Episode.** This is the unit scoring attaches to, and
+without it your session is invisible to the leaderboard — it can only compare sessions that
+declared something.
+
+```json
+{"kind":"episode-open","contract":"loomkeeper/1","session":"<AIDE_SESSION>","at":<unix>,"seq":<n>,
+ "attrs":{"episode.goal":"…","episode.done_when":"…","episode.not_in_scope":"…"}}
+
+{"kind":"episode-close","contract":"loomkeeper/1","session":"<AIDE_SESSION>","at":<unix>,"seq":<n>,
+ "attrs":{"episode.outcome":"Completed|Abandoned|Blocked|Superseded"}}
+```
+
+Write one JSON object per line, appended to your own file under `AIDE_CONTRACT_LOG`. Re-reading is
+idempotent, so a re-emitted line is not a duplicate registration.
+
+**Four things it will refuse, so you can tell a drop from a bug:**
+
+- An `episode-open` for a session that never registered is dropped. An episode is not a way to
+  create a session, because registration is where trust is decided.
+- A missing or blank `episode.goal` or `episode.done_when` is quarantined. Neither is defaulted: an
+  invented goal would be scored against something you never declared.
+- An `episode.outcome` that is not one of the four is quarantined, never defaulted to `Completed`.
+- A second `episode-open` while one is open **supersedes** it — the first closes `Superseded` and a
+  new generation opens. Changing the goal starts a new episode; that is deliberate, not a fallback.
+
+Ending your session leaves an open episode **open**. Close it yourself if you want it scored: the
+watcher will not invent an outcome for you.
+
 ## Two conflicts that recur, and their protocol
 
 Every rebase between sessions conflicts on the same files, and never on code (§4b).

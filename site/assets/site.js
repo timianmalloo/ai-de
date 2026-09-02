@@ -4,15 +4,208 @@
  * GitHub Pages, which matters because the first reader of any change to this site is whoever wrote
  * it and they should not need a server to see it.
  *
- * Every rule below is a reimplementation of one that ships in the application, kept deliberately
+ * THE RULES ARE MIRRORED, AND THE MIRROR IS TESTED.
+ *
+ * `SiteRules` below reimplements three rules that ship in the application, kept deliberately
  * literal so the two can be read side by side:
  *   Weave scoring        src/AiDe.Core/Watcher/WeaveScore.cs   (WeaveScorer)
  *   Leaderboard cells    src/AiDe.Core/Watcher/Leaderboard.cs  (LeaderboardComposer)
  *   Injection shapes     src/AiDe.Core/Watcher/MessageBoard.cs (GraderInjectionScanner)
- * The C# is the authority. If they ever disagree, this file is the one that is wrong.
+ *
+ * The C# is the authority — and that is no longer only a claim in a comment. Both sides evaluate
+ * `tests/fixtures/site-rules.json`: `tools/verify-site-rules.mjs` runs this file against it under
+ * Node, and `SiteRuleFixtureTests` runs the shipped C# types against the same cases. A weight or a
+ * cohort rule that moves on one side and not the other fails one of them.
+ *
+ * That is why the rules are a separate object with no DOM in it. They were inline in the demo
+ * closures, which made them unreachable from a test — the shape a note about authority cannot fix.
  */
 (function () {
   'use strict';
+
+  /* ================================================================= the rules
+   * Pure. No document, no window, no closures over page state.
+   * ==============================================================================*/
+
+  // ScoreSchema.Weave1 — weights and posture, copied by value.
+  var WEAVE1 = [
+    { key: 'outcome',      label: 'Outcome integrity',       weight: 30, posture: 'Deterministic' },
+    { key: 'focus',        label: 'Focus & termination',     weight: 15, posture: 'Deterministic' },
+    { key: 'guidance',     label: 'Guidance adherence',      weight: 15, posture: 'Deterministic' },
+    { key: 'coordination', label: 'Coordination & learning', weight: 10, posture: 'Deterministic' },
+    { key: 'evidence',     label: 'Evidence discipline',     weight: 15, posture: 'Advisory' },
+    { key: 'economy',      label: 'Solution economy',        weight: 15, posture: 'Advisory' }
+  ];
+
+  // GraderInjectionScanner.Shapes — the literal list, in source order.
+  var SHAPES = [
+    'score 100', 'score: 100', 'give it 100', 'score 4', 'give a 4',
+    'ignore the rubric', 'ignore previous', 'ignore all previous', 'disregard the rubric',
+    'promote this lesson', 'promote this', 'override the floor', 'bypass the floor'
+  ];
+
+  function clamp(n) { return Math.max(0, Math.min(4, n)); }
+
+  // "0.#" — at most one decimal, trailing zero trimmed.
+  function fmt(n) { return (Math.round(n * 10) / 10).toString(); }
+
+  /** The Not-Scored gate. Returns the reason, or null when the episode is scoreable. */
+  function notScoredReason(s) {
+    if (!s.closed) {
+      return 'No goal, no done-condition, or the episode is not closed. An episode with nothing to '
+        + 'check gets no mark and the reason — not a bad one.';
+    }
+    if (!s.verifpath) {
+      return 'No minimum verification path. There is no way to tell whether the work holds, so '
+        + 'there is nothing honest to score.';
+    }
+    return null;
+  }
+
+  function assess(s) {
+    return WEAVE1.map(function (d) {
+      if (d.posture === 'Advisory') {
+        return {
+          key: d.key, label: d.label, weight: d.weight, posture: d.posture,
+          rubric: null, earned: null,
+          rationale: 'advisory — excluded from points until the grader passes calibration'
+        };
+      }
+      var rubric, why;
+      if (d.key === 'outcome') {
+        rubric = 4;
+        if (!s.completed) { rubric -= 2; }
+        if (!s.acceptance) { rubric -= 2; }
+        if (s.regression) { rubric -= 1; }
+        if (!s.verifrun) { rubric -= 1; }
+        why = 'declared close + acceptance + regression + verification';
+      } else if (d.key === 'focus') {
+        rubric = 4;
+        if (s.afterdone) { rubric -= 2; }
+        if (s.premature) { rubric -= 2; }
+        why = 'work-after-done and premature-completion counts';
+      } else if (d.key === 'guidance') {
+        rubric = Math.round(4 * s.guidanceSatisfied / s.guidanceRequired);
+        why = s.guidanceSatisfied + '/' + s.guidanceRequired + ' guidance triggers satisfied';
+      } else {
+        rubric = Math.round(4 * s.coordObserved / s.coordRequired);
+        why = s.coordObserved + '/' + s.coordRequired + ' coordination signals observed';
+      }
+      rubric = clamp(rubric);
+      return {
+        key: d.key, label: d.label, weight: d.weight, posture: d.posture,
+        rubric: rubric, earned: rubric / 4 * d.weight, rationale: why
+      };
+    });
+  }
+
+  /**
+   * The hard floors. Correctness trips on a failed acceptance criterion, a regression, or unrun
+   * required verification; the order matches FloorDomain so the list reads as the application's does.
+   */
+  function trippedFloors(s) {
+    var tripped = [];
+    if (!s.acceptance || s.regression || !s.verifrun) { tripped.push('Correctness'); }
+    if (s.security) { tripped.push('Security'); }
+    return tripped;
+  }
+
+  /** WeaveScorer.Score, in order: the Not-Scored gate, the floors, then the headline. */
+  function scoreEpisode(s) {
+    var reason = notScoredReason(s);
+    if (reason) {
+      return { verdict: 'NotScored', headline: 'Not Scored', explain: reason,
+               assessments: [], tripped: [], earned: 0, observedWeight: 0, totalWeight: 100 };
+    }
+
+    var assessments = assess(s);
+    var tripped = trippedFloors(s);
+    var total = assessments.reduce(function (t, a) { return t + a.weight; }, 0);
+
+    if (tripped.length) {
+      return {
+        verdict: 'Blocked', headline: 'Blocked', tripped: tripped, assessments: assessments,
+        earned: 0, observedWeight: 0, totalWeight: total,
+        explain: 'A hard floor tripped (' + tripped.join(', ') + ') and the numeric headline is '
+          + 'suppressed. The dimensions are still shown — what is withheld is the single number '
+          + 'that could be traded against the failure.'
+      };
+    }
+
+    var scored = assessments.filter(function (a) { return a.earned !== null; });
+    var earned = scored.reduce(function (t, a) { return t + a.earned; }, 0);
+    var observedWeight = scored.reduce(function (t, a) { return t + a.weight; }, 0);
+
+    if (scored.length === assessments.length) {
+      return { verdict: 'Scored', headline: fmt(earned) + ' / ' + total, tripped: [],
+               assessments: assessments, earned: earned, observedWeight: observedWeight,
+               totalWeight: total, explain: 'Every dimension carried a signal.' };
+    }
+
+    // No rescale to 0–100 when the card is partial: rescaling would make this indistinguishable
+    // from an episode measured on all six.
+    return {
+      verdict: 'Partial',
+      headline: 'Partial: ' + fmt(earned) + ' / ' + observedWeight + ' observed',
+      tripped: [], assessments: assessments, earned: earned,
+      observedWeight: observedWeight, totalWeight: total,
+      explain: (assessments.length - scored.length) + ' of ' + assessments.length
+        + ' dimensions are advisory and excluded from points. The headline is stated against the '
+        + 'observed weight and is never rescaled to 0–100.'
+    };
+  }
+
+  /**
+   * LeaderboardComposer, harness-model facet. A cell is comparable only with at least the minimum
+   * cohort AND more than one distinct operator; comparable cells rank by median, ties by label.
+   */
+  function leaderboard(cells, cohortMinimum) {
+    var evaluated = cells.map(function (c) {
+      var reason = null;
+      if (c.cohort < cohortMinimum) {
+        reason = 'cohort ' + c.cohort + ' < ' + cohortMinimum;
+      } else if (c.operators < 2) {
+        reason = 'single operator (privacy-protected small cohort)';
+      }
+      return {
+        label: c.label, cohort: c.cohort, operators: c.operators, median: c.median,
+        coverage: c.coverage, comparable: reason === null, reason: reason, rank: null
+      };
+    });
+
+    var ranked = evaluated.filter(function (c) { return c.comparable; })
+      .sort(function (a, b) { return b.median - a.median || a.label.localeCompare(b.label); })
+      .map(function (c, i) { c.rank = i + 1; return c; });
+
+    return ranked.concat(evaluated.filter(function (c) { return !c.comparable; }));
+  }
+
+  /** The matched shape, or null. A flag for a reader — never the boundary. */
+  function looksLikeInjection(text) {
+    if (!text) { return null; }
+    var lower = String(text).toLowerCase();
+    for (var i = 0; i < SHAPES.length; i++) {
+      if (lower.indexOf(SHAPES[i]) !== -1) { return SHAPES[i]; }
+    }
+    return null;
+  }
+
+  var SiteRules = {
+    weaveSchema: WEAVE1,
+    injectionShapes: SHAPES,
+    scoreEpisode: scoreEpisode,
+    leaderboard: leaderboard,
+    looksLikeInjection: looksLikeInjection,
+    format: fmt
+  };
+
+  if (typeof module !== 'undefined' && module.exports) { module.exports = SiteRules; }
+  if (typeof window !== 'undefined') { window.SiteRules = SiteRules; }
+
+  // Under Node there is no page to wire. Everything below is presentation.
+  if (typeof document === 'undefined') { return; }
+
+  /* ================================================================= the page */
 
   var $ = function (id) { return document.getElementById(id); };
 
@@ -53,21 +246,6 @@
 
   /* ------------------------------------------------------------------ Weave scorer */
 
-  // ScoreSchema.Weave1 — weights and posture, copied by value.
-  var WEAVE1 = [
-    { key: 'outcome',      label: 'Outcome integrity',      weight: 30, posture: 'Deterministic' },
-    { key: 'focus',        label: 'Focus & termination',    weight: 15, posture: 'Deterministic' },
-    { key: 'guidance',     label: 'Guidance adherence',     weight: 15, posture: 'Deterministic' },
-    { key: 'coordination', label: 'Coordination & learning', weight: 10, posture: 'Deterministic' },
-    { key: 'evidence',     label: 'Evidence discipline',    weight: 15, posture: 'Advisory' },
-    { key: 'economy',      label: 'Solution economy',       weight: 15, posture: 'Advisory' }
-  ];
-
-  function clamp(n) { return Math.max(0, Math.min(4, n)); }
-
-  // "0.#" — at most one decimal, trailing zero trimmed.
-  function fmt(n) { return (Math.round(n * 10) / 10).toString(); }
-
   (function weaveDemo() {
     var root = $('weave-demo');
     if (!root) { return; }
@@ -87,114 +265,33 @@
       return s;
     }
 
-    function assess(s) {
-      return WEAVE1.map(function (d) {
-        if (d.posture === 'Advisory') {
-          return Object.assign({}, d, {
-            rubric: null, earned: null,
-            rationale: 'advisory — excluded from points until the grader passes calibration'
-          });
-        }
-        var rubric, why;
-        if (d.key === 'outcome') {
-          rubric = 4;
-          if (!s.completed) { rubric -= 2; }
-          if (!s.acceptance) { rubric -= 2; }
-          if (s.regression) { rubric -= 1; }
-          if (!s.verifrun) { rubric -= 1; }
-          why = 'declared close + acceptance + regression + verification';
-        } else if (d.key === 'focus') {
-          rubric = 4;
-          if (s.afterdone) { rubric -= 2; }
-          if (s.premature) { rubric -= 2; }
-          why = 'work-after-done and premature-completion counts';
-        } else if (d.key === 'guidance') {
-          rubric = Math.round(4 * s.guidanceSatisfied / s.guidanceRequired);
-          why = s.guidanceSatisfied + '/' + s.guidanceRequired + ' guidance triggers satisfied';
-        } else {
-          rubric = Math.round(4 * s.coordObserved / s.coordRequired);
-          why = s.coordObserved + '/' + s.coordRequired + ' coordination signals observed';
-        }
-        rubric = clamp(rubric);
-        return Object.assign({}, d, { rubric: rubric, earned: rubric / 4 * d.weight, rationale: why });
-      });
-    }
-
-    function floors(s) {
-      var tripped = [];
-      // Correctness trips on a failed acceptance criterion, a regression, or unrun required
-      // verification. Order matches FloorDomain so the list reads the same as the application's.
-      if (!s.acceptance || s.regression || !s.verifrun) { tripped.push('Correctness'); }
-      if (s.security) { tripped.push('Security'); }
-      return tripped;
-    }
-
     function render() {
       var s = signals();
       $('w-guidance-out').textContent = s.guidanceSatisfied + ' / ' + s.guidanceRequired;
       $('w-coord-out').textContent = s.coordObserved + ' / ' + s.coordRequired;
 
+      var card = SiteRules.scoreEpisode(s);
       var headline = $('w-headline');
-      var explain = $('w-explain');
-      var dims = $('w-dims');
-      headline.className = 'verdict';
+      headline.className = 'verdict'
+        + (card.verdict === 'Blocked' ? ' is-blocked' : card.verdict === 'Partial' ? ' is-partial' : '');
+      headline.textContent = card.headline;
+      $('w-explain').textContent = card.explain;
 
-      // 1. The Not-Scored gate runs before anything is assessed.
-      if (!s.closed || !s.verifpath) {
-        headline.textContent = 'Not Scored';
-        explain.textContent = !s.closed
-          ? 'No goal, no done-condition, or the episode is not closed. An episode with nothing to check gets no mark and the reason — not a bad one.'
-          : 'No minimum verification path. There is no way to tell whether the work holds, so there is nothing honest to score.';
-        dims.innerHTML = '';
-        return;
-      }
-
-      var assessments = assess(s);
-      var tripped = floors(s);
-
-      dims.innerHTML = assessments.map(function (a) {
+      $('w-dims').innerHTML = card.assessments.map(function (a) {
         var pct = a.earned === null ? 0 : (a.earned / a.weight) * 100;
         var value = a.earned === null
           ? '<span class="chip chip--inferred">Not recorded</span>'
-          : '<span class="mono">' + fmt(a.earned) + ' / ' + a.weight + '</span>';
+          : '<span class="mono">' + SiteRules.format(a.earned) + ' / ' + a.weight + '</span>';
+        // scaleX rather than width: this redraws on every slider input, and animating width would
+        // relayout the row each frame.
         return '<div>'
           + '<div style="display:flex;justify-content:space-between;gap:var(--s-4);align-items:baseline;margin-bottom:var(--s-2)">'
           + '<span class="small">' + a.label + '</span>' + value + '</div>'
-          // scaleX rather than width: this redraws on every slider input, and animating width
-          // would relayout the row each frame.
           + '<div class="bar"><i class="' + (a.earned === null ? 'is-advisory' : '') + '" style="transform:scaleX('
           + (a.earned === null ? 1 : pct / 100) + ');' + (a.earned === null ? 'opacity:.22' : '') + '"></i></div>'
           + '<div class="small muted" style="font-size:var(--fs-micro);margin-top:var(--s-2)">' + a.rationale + '</div>'
           + '</div>';
       }).join('');
-
-      // 2. A tripped floor blocks the card and suppresses the numeric headline.
-      if (tripped.length) {
-        headline.className = 'verdict is-blocked';
-        headline.textContent = 'Blocked';
-        explain.innerHTML = 'A hard floor tripped (<strong>' + tripped.join(', ')
-          + '</strong>) and the numeric headline is suppressed. The dimensions are still shown — '
-          + 'what is withheld is the single number that could be traded against the failure.';
-        return;
-      }
-
-      // 3. Verdict and headline. No rescale to 0–100 when the card is partial.
-      var scored = assessments.filter(function (a) { return a.earned !== null; });
-      var earned = scored.reduce(function (t, a) { return t + a.earned; }, 0);
-      var observedWeight = scored.reduce(function (t, a) { return t + a.weight; }, 0);
-      var total = assessments.reduce(function (t, a) { return t + a.weight; }, 0);
-
-      if (scored.length === assessments.length) {
-        headline.textContent = fmt(earned) + ' / ' + total;
-        explain.textContent = 'Every dimension carried a signal.';
-      } else {
-        headline.className = 'verdict is-partial';
-        headline.textContent = 'Partial: ' + fmt(earned) + ' / ' + observedWeight + ' observed';
-        explain.innerHTML = (assessments.length - scored.length) + ' of ' + assessments.length
-          + ' dimensions are advisory and excluded from points. The headline is stated against the '
-          + '<strong>observed</strong> weight and is never rescaled to 0–100 — rescaling would make '
-          + 'this indistinguishable from an episode measured on all six.';
-      }
     }
 
     root.addEventListener('input', render);
@@ -204,24 +301,13 @@
 
   /* ------------------------------------------------------------------ injection scan */
 
-  // GraderInjectionScanner.Shapes — the literal list, in source order.
-  var SHAPES = [
-    'score 100', 'score: 100', 'give it 100', 'score 4', 'give a 4',
-    'ignore the rubric', 'ignore previous', 'ignore all previous', 'disregard the rubric',
-    'promote this lesson', 'promote this', 'override the floor', 'bypass the floor'
-  ];
-
   (function injectionDemo() {
     var input = $('inj-input');
     if (!input) { return; }
     var flag = $('inj-flag');
 
     function scan() {
-      var text = input.value.toLowerCase();
-      var hit = null;
-      for (var i = 0; i < SHAPES.length; i++) {
-        if (text.indexOf(SHAPES[i]) !== -1) { hit = SHAPES[i]; break; }
-      }
+      var hit = SiteRules.looksLikeInjection(input.value);
       flag.className = 'chip ' + (hit ? 'chip--blocked' : 'chip--verified');
       flag.textContent = hit ? 'Injection flagged: "' + hit + '"' : 'Injection flagged: no';
     }
@@ -253,24 +339,7 @@
       $('lb-ops-out').textContent = ops.value;
       $('lb-min-out').textContent = floor;
 
-      var evaluated = cells().map(function (c) {
-        var reason = null;
-        if (c.cohort < floor) {
-          reason = 'cohort ' + c.cohort + ' < ' + floor;
-        } else if (c.operators < 2) {
-          reason = 'single operator (privacy-protected small cohort)';
-        }
-        return Object.assign({}, c, { comparable: reason === null, reason: reason });
-      });
-
-      // Comparable cells rank by median Weave, best first, ties broken by label. Not-comparable
-      // cells keep their place in the table but never receive a rank.
-      var ranked = evaluated.filter(function (c) { return c.comparable; })
-        .sort(function (a, b) { return b.median - a.median || a.label.localeCompare(b.label); })
-        .map(function (c, i) { return Object.assign({}, c, { rank: i + 1 }); });
-      var rest = evaluated.filter(function (c) { return !c.comparable; });
-
-      rows.innerHTML = ranked.concat(rest).map(function (c) {
+      rows.innerHTML = SiteRules.leaderboard(cells(), floor).map(function (c) {
         if (!c.comparable) {
           return '<tr>'
             + '<td class="num muted">—</td>'

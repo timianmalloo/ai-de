@@ -11,6 +11,23 @@ public static class CoordContract
 {
     public const string Version = "loomkeeper/1";
     public const string VersionKey = "contract";
+
+    /// <summary>
+    /// The attribute keys an <c>episode-open</c> / <c>episode-close</c> line carries.
+    /// </summary>
+    /// <remarks>
+    /// Deliberately <b>not</b> in <see cref="OtelAttributes"/>. Those keys are OpenTelemetry
+    /// semantic conventions and are shared with the OTLP span path; a goal statement and a declared
+    /// outcome are this contract's own vocabulary, with no OTel convention behind them. Putting
+    /// them there would assert a standard that does not exist.
+    /// </remarks>
+    public static class EpisodeAttributes
+    {
+        public const string Goal = "episode.goal";
+        public const string DoneWhen = "episode.done_when";
+        public const string NotInScope = "episode.not_in_scope";
+        public const string Outcome = "episode.outcome";
+    }
 }
 
 /// <summary>
@@ -62,6 +79,48 @@ public sealed record ContractSessionEnd(string ExternalSessionId, double At, int
 /// unknown session is dropped and counted, exactly as a heartbeat for one is.</para>
 /// </remarks>
 public sealed record ContractUpdate(
+    string ExternalSessionId,
+    IReadOnlyDictionary<string, string?> Attributes,
+    double At,
+    int Seq) : CoordContractEvent(ExternalSessionId, At, Seq);
+
+/// <summary>
+/// A session declaring a bounded objective it is starting work on: the goal, the terminal condition
+/// it will be judged against, and optionally what it is not doing.
+/// </summary>
+/// <remarks>
+/// <para><b>Why the agent declares this and the shell cannot.</b> An episode is the unit scoring
+/// attaches to, and it needs a goal. The workbench knows a terminal exists; it does not know what
+/// the agent inside it is trying to do. Opening an episode per terminal with a placeholder goal
+/// would <i>fabricate</i> one (NG1), and the scorer already treats a missing goal honestly — Not
+/// Scored with the reason, never a low mark. So the declaration comes from the only party that has
+/// it.</para>
+///
+/// <para><b>Why this is the multi-harness unblock.</b> Before it,
+/// <see cref="AuditLogEpisodeSource"/> was the only producer of episodes, so an episode existed
+/// only where the AI-Forward pack had written an audit entry. A GitHub Copilot session or a plain
+/// shell produced none, and the leaderboard could not compare what it was built to compare.</para>
+///
+/// <para><b>A blank goal is malformed, not an empty episode.</b> Opening one with an empty
+/// statement would score as Not Scored and read as "the agent declared nothing", when in fact the
+/// declaration was invented here.</para>
+/// </remarks>
+public sealed record ContractEpisodeOpen(
+    string ExternalSessionId,
+    IReadOnlyDictionary<string, string?> Attributes,
+    double At,
+    int Seq) : CoordContractEvent(ExternalSessionId, At, Seq);
+
+/// <summary>
+/// A session closing its current episode with a declared outcome.
+/// </summary>
+/// <remarks>
+/// The outcome is the <b>declared</b> lifecycle terminal state, not a quality judgement. Whether a
+/// <c>Completed</c> claim is honest is the Weave's Outcome-integrity dimension, which reads
+/// deterministic evidence rather than this field — so an agent claiming Completed on unmet
+/// acceptance criteria is exactly the case the scorer already detects.
+/// </remarks>
+public sealed record ContractEpisodeClose(
     string ExternalSessionId,
     IReadOnlyDictionary<string, string?> Attributes,
     double At,
@@ -163,6 +222,8 @@ public static class CoordContractParser
             "heartbeat" => new ContractHeartbeat(session, at, seq),
             "session-end" => new ContractSessionEnd(session, at, seq),
             "update" => new ContractUpdate(session, ReadAttrs(root), at, seq),
+            "episode-open" => new ContractEpisodeOpen(session, ReadAttrs(root), at, seq),
+            "episode-close" => new ContractEpisodeClose(session, ReadAttrs(root), at, seq),
             _ => null, // a valid line of a kind this slice does not handle (e.g. a board post)
         };
     }
@@ -188,7 +249,7 @@ public static class CoordContractParser
 /// <summary>A snapshot of the adapter counters (IO1 operator questions).</summary>
 public sealed record CoordContractStats(
     long Registered, long Heartbeats, long Unknown, long DuplicateRegister, long Quarantined,
-    long Updated = 0);
+    long Updated = 0, long EpisodesOpened = 0, long EpisodesClosed = 0);
 
 /// <summary>
 /// The injected-contract ingest adapter: maps contract events onto the same
@@ -215,6 +276,12 @@ public sealed class InjectedContractIngest
     private long _duplicateRegister;
     private long _quarantined;
     private long _updated;
+    private long _episodesOpened;
+    private long _episodesClosed;
+
+    // The external session's currently open episode. An episode-close names no episode id - the
+    // agent knows it has one open, not what the registrar called it - so the adapter remembers.
+    private readonly Dictionary<string, string> _openEpisodeByExternalId = new(StringComparer.Ordinal);
 
     public InjectedContractIngest(IngestHost host)
     {
@@ -223,7 +290,8 @@ public sealed class InjectedContractIngest
     }
 
     public CoordContractStats Stats => new(
-        _registered, _heartbeats, _unknown, _duplicateRegister, _quarantined, _updated);
+        _registered, _heartbeats, _unknown, _duplicateRegister, _quarantined, _updated,
+        _episodesOpened, _episodesClosed);
 
     /// <summary>Applies a batch in order. Callers pass parser output, already sorted.</summary>
     public void ApplyAll(IEnumerable<CoordContractEvent> events)
@@ -251,6 +319,12 @@ public sealed class InjectedContractIngest
             case ContractUpdate update:
                 ApplyUpdate(update);
                 break;
+            case ContractEpisodeOpen open:
+                ApplyEpisodeOpen(open);
+                break;
+            case ContractEpisodeClose close:
+                ApplyEpisodeClose(close);
+                break;
             case ContractSessionEnd end:
                 if (_byExternalId.TryGetValue(end.ExternalSessionId, out var ending))
                 {
@@ -259,6 +333,12 @@ public sealed class InjectedContractIngest
                 }
 
                 _byExternalId.Remove(end.ExternalSessionId);
+
+                // An episode left open when the session ends stays open. Closing it here would
+                // invent an outcome, and EpisodeOutcome has no "unknown" member for a reason: the
+                // scorer's Not-Scored gate already reports an episode that never closed, honestly
+                // and with the reason. A fabricated Abandoned would score instead of abstaining.
+                _openEpisodeByExternalId.Remove(end.ExternalSessionId);
                 break;
         }
     }
@@ -298,6 +378,88 @@ public sealed class InjectedContractIngest
                 : new ModelIdentity(modelName, Attr(update.Attributes, OtelAttributes.GenAiModelVersion) ?? "unknown"));
 
         _updated++;
+    }
+
+    /// <summary>Opens a Work Episode a registered session declared over the contract log.</summary>
+    /// <remarks>
+    /// <para><b>An unregistered session is dropped, never auto-registered.</b> Registration is where
+    /// trust is decided and where the capability is minted; letting an episode create a session
+    /// would make it a side door into both.</para>
+    ///
+    /// <para><b>A second open supersedes through the service, not through logic here.</b> The
+    /// episode service already defines what a changed goal means — close the current one
+    /// <c>Superseded</c>, open the next generation — so this calls <c>Reframe</c> rather than
+    /// re-deciding it. A rule implemented twice is a rule that will disagree with itself.</para>
+    /// </remarks>
+    private void ApplyEpisodeOpen(ContractEpisodeOpen open)
+    {
+        if (!_byExternalId.TryGetValue(open.ExternalSessionId, out var known))
+        {
+            _unknown++;
+            return;
+        }
+
+        var goal = Attr(open.Attributes, CoordContract.EpisodeAttributes.Goal);
+        var doneWhen = Attr(open.Attributes, CoordContract.EpisodeAttributes.DoneWhen);
+        if (goal is null || doneWhen is null)
+        {
+            // Neither is defaulted. An episode with an invented goal or terminal condition would be
+            // scored against something no agent declared.
+            _quarantined++;
+            return;
+        }
+
+        var notInScope = Attr(open.Attributes, CoordContract.EpisodeAttributes.NotInScope);
+
+        try
+        {
+            var episode = _openEpisodeByExternalId.TryGetValue(open.ExternalSessionId, out var current)
+                ? _host.ReframeEpisode(current, known.Capability, new Goal(goal), new DoneCondition(doneWhen), notInScope)
+                : _host.OpenEpisode(known.Session.SessionId, known.Capability, new Goal(goal), new DoneCondition(doneWhen), notInScope);
+
+            _openEpisodeByExternalId[open.ExternalSessionId] = episode.EpisodeId;
+            _episodesOpened++;
+        }
+        catch (WatcherException)
+        {
+            // One bad event never kills the stream (US-11). Counted, so a sender getting it wrong
+            // shows up as a number rather than as silence.
+            _quarantined++;
+        }
+    }
+
+    /// <summary>Closes the session's open episode with the outcome it declared.</summary>
+    /// <remarks>
+    /// A close naming no known open episode is <c>Unknown</c>, and an unparseable outcome is
+    /// quarantined rather than defaulted to <c>Completed</c> — the one value it must never guess,
+    /// because Outcome-integrity reads it.
+    /// </remarks>
+    private void ApplyEpisodeClose(ContractEpisodeClose close)
+    {
+        if (!_byExternalId.TryGetValue(close.ExternalSessionId, out var known)
+            || !_openEpisodeByExternalId.TryGetValue(close.ExternalSessionId, out var episodeId))
+        {
+            _unknown++;
+            return;
+        }
+
+        var declared = Attr(close.Attributes, CoordContract.EpisodeAttributes.Outcome);
+        if (declared is null || !Enum.TryParse<EpisodeOutcome>(declared, ignoreCase: true, out var outcome))
+        {
+            _quarantined++;
+            return;
+        }
+
+        try
+        {
+            _host.CloseEpisode(episodeId, known.Capability, outcome);
+            _openEpisodeByExternalId.Remove(close.ExternalSessionId);
+            _episodesClosed++;
+        }
+        catch (WatcherException)
+        {
+            _quarantined++;
+        }
     }
 
     private static string? Attr(IReadOnlyDictionary<string, string?> attrs, string key)

@@ -65,6 +65,16 @@ jobs:
       - name: Verify the site's figures against their sources
         run: python3 tools/verify-site-figures.py
 
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+
+      # The site's demos reimplement WeaveScorer, LeaderboardComposer and GraderInjectionScanner in
+      # JavaScript so the page runs offline. Both sides evaluate tests/fixtures/site-rules.json —
+      # this is the JavaScript half; SiteRuleFixtureTests is the C# half, in the main build. A rule
+      # that moves on one side and not the other fails one of the two.
+      - name: Verify the site's rules against the C# they mirror
+        run: node tools/verify-site-rules.mjs
+
       - name: Rebuild the documentation bundle view
         run: python3 tools/build-doc-viewer.py
 

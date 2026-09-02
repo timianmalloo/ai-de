@@ -72,10 +72,7 @@ CD13/CD14: a clean run is a floor, never a verdict. Recorded here so nobody read
 
 - **Whether the copy is true.** Quotations are traced by hand and nothing gates them. The
   *figures* used to be in the same position and no longer are — see below.
-- **Whether the JavaScript still matches the C#.** `site/assets/site.js` reimplements `WeaveScorer`,
-  `LeaderboardComposer` and `GraderInjectionScanner` so the demos run offline. If a weight or a
-  cohort rule changes in C#, nothing fails. *Gap: no test binds the two.* The `README` in `site/`
-  says which file is the authority; that is a note, and a note is not a control.
+- ~~**Whether the JavaScript still matches the C#.**~~ **Closed** — see below.
 - **Whether the archetype fits.** The site is a reading surface, not a workbench, so the
   application's `Workbench` archetype does not govern it. That judgement was made by a person and
   is not mechanised.
@@ -108,5 +105,34 @@ same defect in a different costume), and it fails on a figure name it cannot com
 skipping it. Both were exercised: adding DC-082 to the register moved the defect-class count and
 the gate caught it on the next run, which is the shortest possible demonstration that it works.
 
-**Still open:** nothing binds `site/assets/site.js` to the C# it mirrors. That one has no cheap
-control — it needs a shared fixture both sides evaluate — and it is not claimed as covered.
+## The JavaScript-mirrors-C# gap is closed too
+
+`site/assets/site.js` reimplements `WeaveScorer`, `LeaderboardComposer` and
+`GraderInjectionScanner` so the published page runs offline. Its README said *"the C# is the
+authority; if they disagree, the JavaScript is wrong"* — which is the same memoir in a different
+file. A weight could move in C# and the site would go on publishing the old one, confidently.
+
+**Both sides now evaluate `tests/fixtures/site-rules.json`** — 23 cases covering the schema, the
+Not-Scored gate, both hard floors, the no-rescale headline, cohort and single-operator
+comparability, ranking order and tie-breaking, and the injection shapes.
+
+| Side | Runs | Where |
+|---|---|---|
+| C# | The shipped types against the fixture | `SiteRuleFixtureTests`, in the main build |
+| JavaScript | `site.js` against the same fixture, under Node | `tools/verify-site-rules.mjs`, in the Pages workflow |
+
+**The fixture is not the authority either.** Its `weaveSchema` is re-derived from
+`ScoreSchema.Weave1` on the C# side, so a fixture edited to agree with a broken implementation
+fails there. And the cases are indexed rather than inlined, so an emptied fixture fails instead of
+passing vacuously.
+
+**Observed failing in the direction that matters.** Changing one weight in `site.js` from 10 to 12
+produced 10 disagreements — the schema, the observed weight, and every case whose arithmetic
+depends on it — while the C# side stayed green, which is exactly the asymmetry the design claims:
+the JavaScript is the side that can be wrong.
+
+This also required moving the rules out of the demo closures into a `SiteRules` object with no DOM
+in it. That was the real obstacle: the logic was unreachable from any test, which is a shape no
+note about authority can fix.
+
+**Still open:** quotations from the source are still traced by hand and nothing gates them.

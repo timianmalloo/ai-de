@@ -39,6 +39,7 @@ public sealed class IngestHost
     private readonly SpanIngest _ingest;
     private readonly ITrustedRegistrar _registrar;
     private readonly IWatcherObservationStore _store;
+    private readonly IWorkEpisodeService _episodes;
     private readonly TimeProvider _time;
 
     private long _enqueued;
@@ -52,7 +53,8 @@ public sealed class IngestHost
         IWatcherObservationStore store,
         ITrustedRegistrar registrar,
         TimeProvider time,
-        int queueCapacity = 1024)
+        int queueCapacity = 1024,
+        IWorkEpisodeService? episodes = null)
     {
         ArgumentNullException.ThrowIfNull(store);
         ArgumentNullException.ThrowIfNull(registrar);
@@ -63,6 +65,10 @@ public sealed class IngestHost
         _time = time;
         _store = store;
         _ingest = new SpanIngest(store, registrar);
+        // Composed from the same three dependencies rather than required from the caller: every
+        // existing construction site would otherwise have to be edited to pass something it has no
+        // opinion about. Injectable for tests that need a controlled episode id.
+        _episodes = episodes ?? new WorkEpisodeService(store, registrar, time);
 
         // DropOldest keeps the freshest spans under load; the itemDropped callback makes every drop a
         // visible coverage-gap signal rather than a silent loss.
@@ -95,6 +101,29 @@ public sealed class IngestHost
     public void UpdateHarnessAndModel(
         string sessionId, SessionCapability capability, HarnessIdentity? harness, ModelIdentity? model)
         => _registrar.UpdateHarnessAndModel(sessionId, capability, harness, model);
+
+    /// <summary>
+    /// Opens a Work Episode for a verified session (US-6). Capability-gated like every other
+    /// post-registration write.
+    /// </summary>
+    /// <remarks>
+    /// The reason this exists on the host: before it, <see cref="AuditLogEpisodeSource"/> was the
+    /// only producer of episodes, so an episode existed only where the AI-Forward pack had written
+    /// an audit entry. Any harness can now declare one over the coordination log, which is what the
+    /// leaderboard's cross-harness comparison and the specified Daydream both depend on.
+    /// </remarks>
+    public WorkEpisode OpenEpisode(
+        string sessionId, SessionCapability capability, Goal goal, DoneCondition doneWhen, string? notInScope = null)
+        => _episodes.Open(sessionId, capability, goal, doneWhen, notInScope);
+
+    /// <summary>Reframes an open episode: the current one closes Superseded and a new generation opens.</summary>
+    public WorkEpisode ReframeEpisode(
+        string episodeId, SessionCapability capability, Goal goal, DoneCondition doneWhen, string? notInScope = null)
+        => _episodes.Reframe(episodeId, capability, goal, doneWhen, notInScope);
+
+    /// <summary>Closes an episode with its declared outcome. The declaration is not a quality judgement.</summary>
+    public WorkEpisode CloseEpisode(string episodeId, SessionCapability capability, EpisodeOutcome outcome)
+        => _episodes.Close(episodeId, capability, outcome);
 
     /// <summary>
     /// Marks a session ended (its terminal closed / it reported session-end). Liveness then reads Ended

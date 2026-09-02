@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T18:11:07Z",
+  "generated": "2026-09-02T18:39:50Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1605,7 +1605,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 119 types, 204 members, 56% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 122 types, 211 members, 56% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1618,7 +1618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a612f0893a8ad58a04bf7720cccf5d0a0f9a9a4cdede1bafb659d77403883458"
+      "sourceSha256": "e6cc364b57af874dcb9aa09f37e8d47c28efd0ff889dca1bd97f4adddfdf577e"
     },
     {
       "id": "api-aide-core-workbench",
@@ -5242,7 +5242,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "009dcf0bdbdf2377012fe8dc9f5a9f15e4cc572bffa2712302a3580bafb7a427"
+      "sourceSha256": "e7bdc4db38f5d414540e2b130d7f285d11d4ba842c279fcace67bd445512a100"
     },
     {
       "id": "review-ui-activity-rail",
@@ -10672,5 +10672,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "87919571e2b2806a376b84dda8e9545a2a1365da6ad5b48e217dd3f49f49b93a"
+  "graphSha256": "af9e0d4b46fca7ffe4f5513e1abb956c8188d7cb1dd7e4025a8ae9072a98b110"
 };

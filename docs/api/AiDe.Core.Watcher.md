@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 119 types, 204 members, 56% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 122 types, 211 members, 56% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**119 public types · 204 public members · 56% documented.**
+**122 public types · 211 public members · 56% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -205,6 +205,24 @@ deliberate, gated change guarded by the version regression test.
 | `string Version = "loomkeeper/1"` | **(gap)** |
 | `string VersionKey = "contract"` | **(gap)** |
 
+## `EpisodeAttributes`
+
+*class* — `CoordinationContract.cs`
+
+The attribute keys an `episode-open` / `episode-close` line carries.
+
+**Remarks.** Deliberately **not** in `telAttributes`. Those keys are OpenTelemetry
+semantic conventions and are shared with the OTLP span path; a goal statement and a declared
+outcome are this contract's own vocabulary, with no OTel convention behind them. Putting
+them there would assert a standard that does not exist.
+
+| Member | Summary |
+|---|---|
+| `string Goal = "episode.goal"` | **(gap)** |
+| `string DoneWhen = "episode.done_when"` | **(gap)** |
+| `string NotInScope = "episode.not_in_scope"` | **(gap)** |
+| `string Outcome = "episode.outcome"` | **(gap)** |
+
 ## `CoordContractEvent`
 
 *record* — `CoordinationContract.cs`
@@ -270,6 +288,48 @@ that safe rather than a hope.
 **It cannot mint or alter identity.** Only the attributes an update may carry are
 merged; repository, worktree, terminal and agent are fixed at registration. An update naming an
 unknown session is dropped and counted, exactly as a heartbeat for one is.
+
+## `ContractEpisodeOpen`
+
+*record* — `CoordinationContract.cs`
+
+A session declaring a bounded objective it is starting work on: the goal, the terminal condition
+it will be judged against, and optionally what it is not doing.
+
+**Remarks.** **Why the agent declares this and the shell cannot.** An episode is the unit scoring
+attaches to, and it needs a goal. The workbench knows a terminal exists; it does not know what
+the agent inside it is trying to do. Opening an episode per terminal with a placeholder goal
+would *fabricate* one (NG1), and the scorer already treats a missing goal honestly — Not
+Scored with the reason, never a low mark. So the declaration comes from the only party that has
+it.
+
+
+
+
+
+**Why this is the multi-harness unblock.** Before it,
+`uditLogEpisodeSource` was the only producer of episodes, so an episode existed
+only where the AI-Forward pack had written an audit entry. A GitHub Copilot session or a plain
+shell produced none, and the leaderboard could not compare what it was built to compare.
+
+
+
+
+
+**A blank goal is malformed, not an empty episode.** Opening one with an empty
+statement would score as Not Scored and read as "the agent declared nothing", when in fact the
+declaration was invented here.
+
+## `ContractEpisodeClose`
+
+*record* — `CoordinationContract.cs`
+
+A session closing its current episode with a declared outcome.
+
+**Remarks.** The outcome is the **declared** lifecycle terminal state, not a quality judgement. Whether a
+`Completed` claim is honest is the Weave's Outcome-integrity dimension, which reads
+deterministic evidence rather than this field — so an agent claiming Completed on unmet
+acceptance criteria is exactly the case the scorer already detects.
 
 ## `CoordContractParseStats`
 
@@ -537,6 +597,9 @@ Pattern: bounded producer/consumer (LOA Channel<T> backpressure) - the repo's
 | `RegisteredSession Register(HarnessRegistration registration)` | Maps and registers a session synchronously, returning its capability (LK-0004/LK-0002). |
 | `void Heartbeat(string sessionId, SessionCapability capability)` | Records a heartbeat after verifying the capability (LK-0001). |
 | `void UpdateHarnessAndModel(` | Records a harness and/or model learned after registration, capability-verified. |
+| `WorkEpisode OpenEpisode(` | Opens a Work Episode for a verified session (US-6). Capability-gated like every other post-registration write. |
+| `WorkEpisode ReframeEpisode(` | Reframes an open episode: the current one closes Superseded and a new generation opens. |
+| `WorkEpisode CloseEpisode(string episodeId, SessionCapability capability, EpisodeOutcome outcome)` | Closes an episode with its declared outcome. The declaration is not a quality judgement. |
 | `void EndSession(string sessionId)` | Marks a session ended (its terminal closed / it reported session-end). Liveness then reads Ended rather than lingering Alive/Stale. Called by the coordination ingest on a session-end event; the registrar's re-registra… |
 | `void Enqueue(HarnessSpanEvent spanEvent)` | Enqueues a span event. Never blocks: under load the bounded queue drops its oldest item (counted), so a flood degrades to a coverage gap rather than unbounded growth. |
 | `int DrainAvailable()` | Processes every span currently queued and returns the count. Deterministic (no waiting), so tests drain exactly what they enqueued. |
@@ -551,6 +614,16 @@ Records a harness and/or model learned after registration, capability-verified.
 and the model is knowable only by the agent. Without a post-registration path the model can
 never be recorded for any AI-DE-launched session, because a repeat `register` discards
 its attributes rather than merging them (observed).
+
+### `WorkEpisode OpenEpisode(`
+
+Opens a Work Episode for a verified session (US-6). Capability-gated like every other
+post-registration write.
+
+**Remarks.** The reason this exists on the host: before it, `uditLogEpisodeSource` was the
+only producer of episodes, so an episode existed only where the AI-Forward pack had written
+an audit entry. Any harness can now declare one over the coordination log, which is what the
+leaderboard's cross-harness comparison and the specified Daydream both depend on.
 
 ## `ScoredEpisode`
 

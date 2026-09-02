@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T18:37:42Z",
+  "generated": "2026-09-02T18:41:04Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7984,6 +7984,74 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0395",
+      "shortname": "capture-mitigation",
+      "datetime": "2026-09-02T18:30:53Z",
+      "session": "dream-job",
+      "prompt": "dream.py capture-mitigation",
+      "summary": "Captured mit-0001 (red-green): The craft detector ran and produced 10KB of findings, and the wrapper reported 'nothing was scanned ",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0396",
+      "shortname": "capture-mitigation",
+      "datetime": "2026-09-02T18:31:02Z",
+      "session": "dream-job",
+      "prompt": "dream.py capture-mitigation",
+      "summary": "Captured mit-0002 (red-green): The API extractor reported 508 public symbols and members=0 for all 17 namespaces, while claiming 90",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0397",
+      "shortname": "capture-mitigation",
+      "datetime": "2026-09-02T18:31:07Z",
+      "session": "dream-job",
+      "prompt": "dream.py capture-mitigation",
+      "summary": "Captured mit-0003 (red-green): A second episode-open on the coordination contract forked a session into two simultaneously-active W",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0398",
+      "shortname": "capture-mitigation",
+      "datetime": "2026-09-02T18:31:16Z",
+      "session": "dream-job",
+      "prompt": "dream.py capture-mitigation",
+      "summary": "Captured mit-0004 (red-green): The public site's counted figures went stale three times in one session - once when a rebase raised ",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0399",
       "shortname": "implement-empty-state-message",
       "datetime": "2026-09-02T18:31:16Z",
@@ -8017,6 +8085,23 @@ window.AUDIT_DATA = {
         "src/AiDe.App/Workbench/CanvasSurface.cs",
         "tests/AiDe.App.Tests/NodeContextMenuWireContractTests.cs",
         "docs/reviews/ui-smoke-test-9-2.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0401",
+      "shortname": "live-episodes-and-rule-fixture",
+      "datetime": "2026-09-02T18:39:45Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "do these next steps",
+      "summary": "Three next actions landed. (1) Live episode capture: the seam was NOT the shell - the shell does not know the agent's goal and a placeholder would fabricate one - so episode-open/episode-close are new additive kinds on loomkeeper/1, applied through the capability-gated ingest. Any harness writing to AIDE_CONTRACT_LOG now produces real episodes; before this AuditLogEpisodeSource was the only producer, so only pack-instrumented sessions had any. Four refusals, all tested: an episode never creates a session, goal and done_when are never defaulted, an outcome is never defaulted to Completed, and a session-end leaves an open episode open because Abandoned would be INFERRED where Superseded is OBSERVED. Core caught a real defect in review - a second open through Open forks the session into two active episodes because Open closes nothing - so it routes through Reframe, and the test named for that failure was observed failing on the forking shape. (2) Four MitigationRecords captured, all red-green with observed evidence, so dream.py's promotion oracle is no longer empty. (3) The JS-mirrors-C# gap is closed: tests/fixtures/site-rules.json is evaluated by both SiteRuleFixtureTests and tools/verify-site-rules.mjs, 23 cases each; drifting one weight in site.js produced 10 disagreements while the C# stayed green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/fixtures/site-rules.json"
       ],
       "tags": [],
       "outcome": "success"
