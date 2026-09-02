@@ -359,6 +359,16 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
             var executable = System.IO.Path.GetFileNameWithoutExtension(launch);
             AgentReadiness = Profiles.WatcherFor(executable);
 
+            var environment = EnvironmentFor?.Invoke(sessionId);
+
+            // The launch DECISION, recorded before it is acted on. AgentReadiness being null is the
+            // single value that chooses shell-mode over hosted-agent mode, and nothing downstream
+            // says which was chosen.
+            WorkbenchDiagnostics.TerminalStart(
+                SurfaceId, Executable,
+                AgentReadiness is null ? "PowerShell" : "PowerShellHostedAgent",
+                AgentReadiness is not null, CommandLine, environment?.Count ?? 0);
+
             _session = await ConPtyTerminalSession.StartAsync(
                 new TerminalSessionRequest(
                     SessionId: sessionId,
@@ -387,11 +397,18 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
                     // registration already happens without it, and this is what lets a session
                     // participate rather than merely be observed. Null when nothing supplies it, so
                     // the child inherits exactly as before.
-                    Environment: EnvironmentFor?.Invoke(sessionId)),
+                    Environment: environment),
                 _shutdown.Token);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
+            // Recorded as well as shown: the pane's failure text is gone the moment the pane is
+            // closed, and a user reporting "it just opened a terminal" has no way to send it.
+            WorkbenchDiagnostics.TerminalStart(
+                SurfaceId, Executable,
+                AgentReadiness is null ? "PowerShell" : "PowerShellHostedAgent",
+                AgentReadiness is not null, CommandLine, 0, ex.ToString());
+
             await _dispatcher.InvokeAsync(() => ShowFailure(ex));
             return;
         }
