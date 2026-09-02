@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T01:22:28Z",
+  "generated": "2026-09-02T16:43:05Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7761,6 +7761,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0385",
+      "shortname": "agent-launch-cancelled-by-integration",
+      "datetime": "2026-09-02T16:43:05Z",
+      "session": "phase3-pane-probes",
+      "prompt": "i ran your build / screenshots at C:\\Users\\malla\\Downloads\\smoke test 9-2 / focus on the fact that the workflow for wiring up a session for collaboration is still broken",
+      "summary": "Root cause found from the user's screenshot, which showed PowerShell disabling PSReadLine under the product's ConPTY. The integration script declines with a bare return at script top level, and the agent invocation was appended to the same script, so it never ran; -NoExit left a plain shell while the status bar reported the session opened. Measured against the shipped binary: agent ran=True with PSReadLine present, False when absent. One cause explained all three reported symptoms - no agent, so never Ready, so the prompt-draft dropdown was empty. Fixed by scoping the integration in a scriptblock; three tests including a DC-016 guard that the integration is still attempted; observed failing on the shipped shape. Registered DC-081.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/ShellIntegration.cs"
       ],
       "tags": [],
       "outcome": "success"
