@@ -22,7 +22,7 @@ summary: >-
 # AI-DE documentation — map of content
 
 This is a **route**, not an inventory. The complete, typed, machine-navigable form of everything
-below is the **[Docs Explorer](index.html)** — 279 artifacts with their links, health and review
+below is the **[Docs Explorer](index.html)** — 303 artifacts with their links, health and review
 state. Start here if you are a person; start there if you are looking for something specific.
 
 The public presence over this material is the **project site**, authored in `site/` and published
@@ -60,9 +60,9 @@ board, compared on evidence, and remembered in a ledger.
 
 | Read | Why |
 |---|---|
-| [API reference](_site/index.html) | The public C# surface with its own doc comments. 1,711 public symbols; members without a comment are listed as gaps. |
+| [API reference](_site/index.html) | The public C# surface with its own doc comments. 1,715 public symbols; members without a comment are listed as gaps. |
 | [Class diagram](diagrams/class.md) · [sequence diagrams](diagrams/sequence.md) | The scoring types, and the two flows the product turns on. |
-| [Defect classes](lessons/defect-classes.md) | Eighty classes of mistake this project has produced, each converted into a test or a gate. The cheapest hour you can spend here. |
+| [Defect classes](lessons/defect-classes.md) | 81 classes of mistake this project has produced, each converted into a test or a gate. The cheapest hour you can spend here. |
 | [Testing strategy](../.claude/knowledge/testing-strategy.md) | What counts as proof. |
 | [Audit &amp; change ledger](audit/index.html) | What was done, why, and by which prompt. |
 

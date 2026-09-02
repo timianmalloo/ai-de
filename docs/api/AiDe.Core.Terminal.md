@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Terminal: 21 types, 81 members, 71% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Terminal: 21 types, 83 members, 71% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Terminal`
 
-**21 public types · 81 public members · 71% documented.**
+**21 public types · 83 public members · 71% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -718,6 +718,8 @@ half-applied. See `yncRoot` for why the dirty flag alone is not enough.
 | `bool IsDirty { get; private set; } = true` | Has anything changed since `learDirty`? |
 | `TerminalCell this[int row, int column]` | **(gap)** |
 | `object SyncRoot { get; } = new()` | The monitor that coordinates mutation and reads across threads. |
+| `bool ApplicationCursorKeys { get; private set; }` | Whether the child has enabled **application cursor key mode** (DECCKM, `ESC [ ? 1 h`). |
+| `void SetApplicationCursorKeys(bool enabled)` | Sets or clears application cursor key mode (DECCKM). Display is unaffected, so no repaint. |
 | `TerminalCell? CellUnderCursor()` | The cell under the cursor, or `null` when the cursor is not on a real cell. The cursor legitimately sits off the grid at the **pending-wrap** column (`CursorColumn == Columns`, held after writing the last column until… |
 | `void ClearDirty()` | **(gap)** |
 | `void Write(string text)` | Writes text at the cursor, wrapping and scrolling as needed. |
@@ -753,6 +755,16 @@ synchronization primitive: a `esize` swaps `_cells` and updates
 `olumns` as two separate writes, and a reader that observes the new column count
 against the old array indexes past its end. A writer holds this lock across a mutation; the
 renderer holds it across a whole frame, so a frame never sees a half-applied change.
+
+### `bool ApplicationCursorKeys { get; private set; }`
+
+Whether the child has enabled **application cursor key mode** (DECCKM, `ESC [ ? 1 h`).
+
+**Remarks.** A full-screen TUI (Claude Code's menus, vim, less) turns this on and then expects the cursor
+keys as **SS3** (`ESC O A`) rather than CSI (`ESC [ A`). A terminal that ignores
+the mode and always sends CSI leaves the arrows dead in exactly those programs — the reported
+"arrow keys don't work in the Claude Code session" (smoke 9-2). Input encoding is the reader
+of this flag (`erminalInput`); the parser is its writer.
 
 ### `void LineFeed()`
 

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T17:07:15Z",
+  "generated": "2026-09-02T17:08:22Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1230,7 +1230,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App: 2 types, 2 members, 25% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App: 2 types, 3 members, 20% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1243,7 +1243,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a0da671854eaf73c51a5c12502f18d10310c2e53d8e263775a7ae278b5f62c56"
+      "sourceSha256": "8a9145020ebc341504a12748381e4109c1c26e0409e90dc75aa4fe9626f3d265"
     },
     {
       "id": "api-aide-app-viewmodels",
@@ -1280,7 +1280,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 74 types, 305 members, 68% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 74 types, 306 members, 68% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1293,7 +1293,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "903885e7761f96b5c0b91d7216b0b6671cf430bc064f8db14259e3f7bbe63b2a"
+      "sourceSha256": "020f362721835dc0d7cb3a51cc95b6ba3538c389370a3cec95261f7e530cffdb"
     },
     {
       "id": "api-aide-core",
@@ -1555,7 +1555,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Terminal: 21 types, 81 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Terminal: 21 types, 83 members, 71% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1568,7 +1568,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "833e50f02ae7f3c6d76009193d729b569c3849571b05e3caef576976abb64158"
+      "sourceSha256": "9daeaa433d719b93497378508cd5fb1475386a5207bc9a44f5d337a475056786"
     },
     {
       "id": "api-aide-core-upgrade",
@@ -4214,7 +4214,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b08204cae4c6109c6d99a04e98352cfb8ed691eb53f3a7682fcae171a4d03c4e"
+      "sourceSha256": "a8bd68873d129788f13264cc029e4b9b9866d8dc013d13a51ef94ba5f9e0b3c1"
     },
     {
       "id": "domain-experts",
@@ -10622,5 +10622,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "4dc42fdb7e9d7275ab98c9d6dfcd6c36be0a415eb480345339012300253a35fa"
+  "graphSha256": "ef96006e246cb5a7c24a56c2123ade61bc772731b07e1106295ae907a8dbc57e"
 };

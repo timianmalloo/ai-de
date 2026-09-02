@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 74 types, 305 members, 68% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 74 types, 306 members, 68% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**74 public types · 305 public members · 68% documented.**
+**74 public types · 306 public members · 68% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1066,8 +1066,14 @@ mistype one.
 
 | Member | Summary |
 |---|---|
-| `ReadOnlyMemory<byte> ForKey(Key key, ModifierKeys modifiers)` | The bytes for a key press, or empty when the key sends nothing. |
+| `ReadOnlyMemory<byte> ForKey(Key key, ModifierKeys modifiers, bool applicationCursorKeys = false)` | The bytes for a key press, or empty when the key sends nothing. |
 | `ReadOnlyMemory<byte> ForText(string text)` | The bytes for composed text input. |
+
+### `ReadOnlyMemory<byte> ForKey(Key key, ModifierKeys modifiers, bool applicationCursorKeys = false)`
+
+The bytes for a key press, or empty when the key sends nothing.
+
+- **`applicationCursorKeys`** — When the child has enabled DECCKM (application cursor key mode), the cursor keys are encoded as SS3 (`ESC O A`) rather than CSI (`ESC [ A`) — which is what a full-screen TUI expects.
 
 ## `TerminalPalette`
 
@@ -1296,7 +1302,7 @@ tick, and only when `IsDirty` says something changed.
 | `void OnRender(DrawingContext context)` | **(gap)** |
 | `void RequestRedraw()` | Requests a repaint, coalesced to at most once per dispatcher turn (≈ one frame). Called by the session pump when output has changed the screen. This REPLACES a persistent `CompositionTarget.Rendering` subscription, wh… |
 | `void OnTextInput(TextCompositionEventArgs e)` | **(gap)** |
-| `void OnKeyDown(KeyEventArgs e)` | **(gap)** |
+| `void OnPreviewKeyDown(KeyEventArgs e)` | **(gap)** |
 | `void OnMouseDown(MouseButtonEventArgs e)` | **(gap)** |
 | `void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)` | **(gap)** |
 | `void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)` | **(gap)** |
@@ -1354,15 +1360,13 @@ view mutations — that is what keeps the keyboard path and the drag path provab
 | `DockingManager Manager { get; }` | **(gap)** |
 | `void Invalidate(IEnumerable<string> surfaceIds)` | Projects the current model into AvalonDock and names everything for assistive tech.  Marks surfaces to be REBUILT (not reused) on the next `ender`. Used by the shell when a workspace attaches and the watcher read pane… |
 | `void Render()` | **(gap)** |
-| `void ApplyAccessibleNames()` | Names every realized tab from the `Title` it is bound to. |
+| `void ApplyAccessibleNames()` | **(gap)** |
 | `FrameworkElement? ContentFor(string surfaceId)` | The content element currently hosting , or null. |
 | `T? SurfaceContent<T>(string surfaceId) where T : class` | The inner surface content of type  for , looking THROUGH the island chrome (`WrapAsIsland`) that non-windowed panes are wrapped in. |
 | `string? ActiveSurfaceId` | The surface id of the document the user is currently focused in, or null. Read from AvalonDock's own active-content tracking so a "new pane" command can open where the user is looking rather than in a fixed corner of … |
 | `Layout? ReadLayoutFromView()` | Reads the CURRENT AvalonDock arrangement back into the owned model, so a native pane drag or a splitter resize the user performed is captured before the next `ender` would rebuild from a stale model and revert it. Ret… |
 
 ### `void ApplyAccessibleNames()`
-
-Names every realized tab from the `Title` it is bound to.
 
 **Remarks.** Without this, AvalonDock reports each tab's **.NET type name** — `AvalonDock.Layout.LayoutDocument`
 — as its accessible name, so every surface sounds identical to a screen reader
@@ -1611,6 +1615,25 @@ path swallows its own failure.
 | `ActivitySource Source = new("aide.workbench")` | **(gap)** |
 | `Action<string>? Sink { get; set; }` | Test seam: when set, records go here instead of the log file (headless assertion). |
 | `void LayoutMutation(` | Records a layout mutation and the resulting stack/surface topology. |
+| `void Crash(string origin, Exception exception)` | Records an unhandled exception, with the context that says which gesture produced it. |
+
+### `void Crash(string origin, Exception exception)`
+
+Records an unhandled exception, with the context that says which gesture produced it.
+
+**Remarks.** **Why this exists.** The shell crashed on "New Claude Code session" and left
+**nothing** — no Windows Error Reporting entry, no event-log record, and nothing in this
+log, which until now recorded only layout mutations. A user could say only that the .exe
+closed. The whole diagnosis had to start from a screenshot.
+
+
+
+
+
+A crash is the one moment when the product knows the most and reports the least. This
+does not change what happens next — the process still fails — it only makes the failure
+legible, which is the difference between "it crashed" and a stack trace pointing at a
+line.
 
 ## `WorkbenchShell`
 
