@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T01:01:41Z",
+  "generated": "2026-09-02T01:22:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7746,6 +7746,23 @@ window.AUDIT_DATA = {
         "docking",
         "focus"
       ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0383",
+      "shortname": "env-limits-bisected",
+      "datetime": "2026-09-02T01:22:28Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do the next actions here",
+      "summary": "Bisected the environment limits, which was the stated precondition for section 3. (1) cmd's limit is on NAME=VALUE as a whole at 8,190, identical across four name lengths - so the scan comparing value.Length > 8151 called a dropped variable healthy for names over 39 chars, a false clean in DC-027's own control. Fixed to compare the pair; two of four tests observed failing on the old comparison. (2) There is NO total-block limit: a 60,000-char non-PATH variable survives a PowerShell-hosted launch while a 33,000-char PATH breaks it, because PowerShell resolves its command through PATH. Confirmed by two independently written probes each with a floor check. My first conclusion was measured on paths the product does not take and was withdrawn as unsupported; withdrawing was right, since asserting it would have been luck. Registered DC-080 - the measurement was real and the noun was wrong, four instances in one day, uncontrolled because it is semantic. Also answered the decidability question: 42 classes already cited across 48 docs are extractable, flagging a doc that SHOULD cite one is not. Cleared a stale testhost of mine that was holding the App DLLs. 1667 tests, 15 gates.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
       "outcome": "success"
     }
   ],
