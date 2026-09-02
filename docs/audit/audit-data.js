@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T01:48:26Z",
+  "generated": "2026-09-02T16:53:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7783,6 +7783,29 @@ window.AUDIT_DATA = {
       "tags": [
         "docking",
         "investigate"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0386",
+      "shortname": "smoke92-terminal-arrows-and-legibility",
+      "datetime": "2026-09-02T16:53:31Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "smoke test 9-2: ui-design review, investigate windowing gaps, full plan for terminal native integrity, then design+implement each fix",
+      "summary": "Investigated 9-2 screenshots; full plan in review doc. Fixed #1 arrows-dead-in-Claude-Code: VtParser now tracks DECCKM (ESC[?1h/l), TerminalInput sends SS3 vs CSI, TerminalView captures special keys on OnPreviewKeyDown. Fixed #4 dark-on-dark list text: global ListBoxItem TextBrush foreground. +10 tests (App 325, Core 1364). Registered TERM-INPUT-MODE + UI-LISTITEM-FG classes.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/reviews/ui-smoke-test-9-2.md",
+        "src/AiDe.Core/Terminal/VtParser.cs",
+        "src/AiDe.App/Workbench/TerminalInput.cs"
+      ],
+      "tags": [
+        "terminal",
+        "docking",
+        "legibility"
       ],
       "outcome": "success"
     }

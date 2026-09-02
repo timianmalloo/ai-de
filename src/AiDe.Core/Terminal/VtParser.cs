@@ -271,9 +271,18 @@ public sealed class VtParser
     {
         if (_privateSequence)
         {
-            // DEC private modes (cursor visibility, alternate screen, bracketed paste). Ignoring
-            // them wholesale is honest: acting on some and not others is how a terminal ends up in a
-            // state no program asked for.
+            // DEC private modes. Only the ones that change how INPUT must be encoded (or that a common
+            // TUI depends on) are acted on; the rest are ignored as a unit, because acting on some and
+            // not others is how a terminal ends up in a state no program asked for. `h` sets, `l` resets.
+            if (final is 'h' or 'l')
+            {
+                var count = Math.Max(_parameterCount, 1);
+                for (var i = 0; i < count; i++)
+                {
+                    DispatchPrivateMode(Parameter(i, 0), set: final == 'h');
+                }
+            }
+
             return;
         }
 
@@ -335,6 +344,23 @@ public sealed class VtParser
             default:
                 // Unknown finals are dropped. A terminal that guessed would apply an effect no
                 // program requested, which is worse than a missing one.
+                break;
+        }
+    }
+
+    private void DispatchPrivateMode(int mode, bool set)
+    {
+        switch (mode)
+        {
+            case 1:
+                // DECCKM — application cursor keys. The one mode that changes INPUT encoding, so
+                // ignoring it leaves the arrows dead in a full-screen TUI (smoke 9-2). Others
+                // (alt screen 1049, bracketed paste 2004, mouse 1000/1002/1006) are follow-on slices.
+                _screen.SetApplicationCursorKeys(set);
+                break;
+
+            default:
+                // Unhandled private mode — ignored as a unit (a half-applied mode is worse than none).
                 break;
         }
     }

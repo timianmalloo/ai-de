@@ -365,4 +365,41 @@ public sealed class VtParserTests
 
         Assert.Equal("bcdef ", RowText(screen, 0));
     }
+
+    // ---- DEC private modes: application cursor keys (DECCKM), the #arrow-keys fix ----
+
+    [Fact]
+    public void ApplicationCursorKeys_DefaultsOff()
+    {
+        var (screen, _) = New();
+        Assert.False(screen.ApplicationCursorKeys);
+    }
+
+    [Fact]
+    public void Decckm_Set_EnablesApplicationCursorKeys()
+    {
+        var (screen, parser) = New();
+        Feed(parser, $"{Esc}[?1h");   // DECCKM set
+
+        Assert.True(screen.ApplicationCursorKeys);
+    }
+
+    [Fact]
+    public void Decckm_Reset_DisablesApplicationCursorKeys()
+    {
+        var (screen, parser) = New();
+        Feed(parser, $"{Esc}[?1h");
+        Feed(parser, $"{Esc}[?1l");   // DECCKM reset
+
+        Assert.False(screen.ApplicationCursorKeys);
+    }
+
+    [Fact]
+    public void AnUnhandledPrivateMode_IsIgnored_AndDoesNotTouchCursorKeys()
+    {
+        var (screen, parser) = New();
+        Feed(parser, $"{Esc}[?25l");  // hide cursor — unhandled, must not throw or flip DECCKM
+
+        Assert.False(screen.ApplicationCursorKeys);
+    }
 }

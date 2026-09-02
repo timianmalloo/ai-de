@@ -53,6 +53,18 @@
         </Style>
 
         <!--
+            LIST ITEM LEGIBILITY. Without this, a ListBox item's text falls back to the default
+            ListBoxItem foreground (a dark system colour), so the honest-read surfaces — provenance,
+            board, leaderboard, search — rendered near-black text on the near-black surface and were
+            effectively unreadable (smoke 9-2: "black font on dark background"). The window's TextBrush
+            is the readable foreground; the default template's selection trigger still swaps to the
+            highlight text colour when a row is selected, so this only fixes the unselected default.
+        -->
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        </Style>
+
+        <!--
             MENU TEMPLATES. The default WPF MenuItem/ContextMenu popups keep the system chrome —
             a thick square border and a heavy shadow — which read as clunky against the soft
             facelift. These retemplate the four MenuItem roles and the ContextMenu so every dropdown

@@ -45,6 +45,20 @@ public sealed class TerminalInputTests
     }
 
     [Theory]
+    [InlineData(Key.Up, "<1B>OA")]
+    [InlineData(Key.Down, "<1B>OB")]
+    [InlineData(Key.Right, "<1B>OC")]
+    [InlineData(Key.Left, "<1B>OD")]
+    [InlineData(Key.Home, "<1B>OH")]
+    [InlineData(Key.End, "<1B>OF")]
+    public void InApplicationCursorMode_ArrowsAndHomeEnd_SendSs3_NotCsi(Key key, string expected)
+    {
+        // DECCKM (ESC [ ? 1 h): a full-screen TUI turns this on and then only recognises SS3 arrows.
+        // Sending CSI here is what leaves the arrows dead in the Claude Code menu (smoke 9-2).
+        Assert.Equal(expected, Bytes(TerminalInput.ForKey(key, ModifierKeys.None, applicationCursorKeys: true)));
+    }
+
+    [Theory]
     [InlineData(Key.Insert, "<1B>[2~")]
     [InlineData(Key.Delete, "<1B>[3~")]
     [InlineData(Key.PageUp, "<1B>[5~")]

@@ -2733,3 +2733,41 @@ for both or split.*
   of re-measurement will surface.
 - **Status:** `uncontrolled` — recorded, with the habit above as the only defence and a second reader
   as the only thing observed to work
+
+### TERM-INPUT-MODE — input encoded without honouring the mode the child enabled
+- **Signature:** a key produces a correctly-formed escape sequence that the program still does not
+  recognise — the classic tell is "arrows work in the shell but do nothing in a full-screen TUI
+  (Claude Code menu, vim, less)". The bytes are right for *normal* mode and wrong for the *application*
+  mode the child turned on with a DEC private sequence the terminal ignored.
+- **Why it survives:** the shell (normal cursor mode) works perfectly, so typing and history feel
+  fine; only a program that sends `ESC [ ? 1 h` (DECCKM) and then expects `ESC O A` exposes it, and
+  unit tests that assert one variant of the sequence pass. A parser that ignores DEC private modes
+  "as a unit" looks principled while silently dropping the one mode that changes input encoding.
+- **Instances:** 2026-09-02 — smoke 9-2 #1: arrows dead in the Claude Code session; DECCKM never
+  tracked, `ForKey` always sent CSI. (Related, same subsystem: WPF `OnKeyDown` let directional focus
+  navigation consume an arrow before it reached ConPTY — captured by moving to `OnPreviewKeyDown`.)
+- **Control:** the parser tracks every **input-affecting** mode (DECCKM now; DECKPAM, bracketed
+  paste, mouse next) and the input encoder is **parameterized by that state**, with a test asserting
+  **both** variants of each mode-sensitive key (`VtParserTests` DECCKM set/reset; `TerminalInputTests`
+  CSI-vs-SS3). A mode-sensitive key with a test for only one variant is the gap.
+- **Status:** `partially-controlled` — DECCKM controlled; the remaining input-affecting modes are
+  the T-T2…T-T5 slices.
+
+### UI-LISTITEM-FG — list rows fall back to the default control foreground, not the theme's
+- **Signature:** text in a `ListBox`/`ListView` renders near-invisible (dark-on-dark in a dark theme)
+  while hand-built panels beside it are legible. The rows inherit the default `ListBoxItem`
+  foreground (a system control colour), not the window's text brush, because no `ListBoxItem` style
+  sets it.
+- **Why it survives:** structure tests pass (the right rows are present), the panel *has* a theme,
+  and a developer who built the adjacent surface by hand (setting `TextBrush` explicitly) never sees
+  the ListBox path — the contrast failure is only visible in the rendered app, which no headless test
+  exercises. It was mis-diagnosed once *from the code* as "already uses TextBrush" (an E11/E15
+  violation: inferred instead of proven) and only the screenshot settled it.
+- **Instances:** 2026-09-02 — smoke 9-2 #4: provenance/evidence, board, leaderboard, search all
+  dark-on-dark; contexts legible because it builds its own `TextBrush` TextBlocks.
+- **Control:** a global `ListBoxItem` foreground style keyed to the theme's `TextBrush`; and, at the
+  rung above, the `ui-craft-gate.py` `low-contrast` rule run against the **rendered** surface (a
+  code-only linter cannot see an inherited foreground). Prove the rendered surface, never infer text
+  colour from the DataTemplate (E11).
+- **Status:** `partially-controlled` — the global style holds it; the rendered-contrast gate is the
+  remaining rung.
