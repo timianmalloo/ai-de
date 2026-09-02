@@ -508,6 +508,11 @@ public sealed class WorkbenchShell : IDisposable
         _workspaceRoot = workspaceRoot;
         if (!string.IsNullOrEmpty(workspaceRoot)) TerminalSurface.WorkingDirectory = workspaceRoot;
 
+        // The environment contract (docs/design/ux-agent-session-registration.md §3). Set here
+        // because this is where the git facts and the harness choice already live; computing them
+        // in the terminal would be a second definition of the same quantities.
+        TerminalSurface.EnvironmentFor = AgentEnvironmentFor;
+
         // Prompt dispatch: the shell owns the terminal, the daemon owns the receipt (D1), so the
         // choreography runs here with the two durable phases supplied by whoever holds the store.
         // Stored on fields so the focused-terminal path (here) and the named-session path
@@ -2058,6 +2063,65 @@ public sealed class WorkbenchShell : IDisposable
             // git missing, not a repository, or blocked: the caller substitutes an honest unknown.
             return null;
         }
+    }
+
+    /// <summary>
+    /// The environment contract (spec §3): what a terminal's child is told about being inside AI-DE.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>`AIDE_SESSION` is the presence signal and the only thing anything should branch on.</b>
+    /// Unset means not an AI-DE terminal, which is what makes an agent started from an ordinary shell
+    /// do nothing — there is no false participation to suppress.</para>
+    ///
+    /// <para><b>An undeterminable value is OMITTED, never guessed.</b> An agent seeing no
+    /// <c>AIDE_BRANCH</c> knows the branch is unknown; one seeing a placeholder would believe a false
+    /// branch, which is the defect this session already removed from the watcher identity.</para>
+    ///
+    /// <para><b>Every value is short, deliberately.</b> The limit is on the SUM
+    /// (<see cref="AiDe.Core.Terminal.EnvironmentHealth.BlockLimit"/>, measured at 32,647), so a
+    /// large value costs what several small ones do and what gets dropped is something else
+    /// entirely. Nothing here is serialised, accumulated, or a list.</para>
+    /// </remarks>
+    private IReadOnlyDictionary<string, string> AgentEnvironmentFor(string sessionId)
+    {
+        var root = _workspaceRoot ?? string.Empty;
+        if (_gitFacts is null || !string.Equals(_gitFactsFor, root, StringComparison.Ordinal))
+        {
+            _gitFacts = ResolveGitFacts(root);
+            _gitFactsFor = root;
+        }
+
+        var env = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["AIDE_SESSION"] = sessionId,
+            ["AIDE_TERMINAL_ID"] = sessionId,
+            ["AIDE_CONTRACT_VERSION"] = AiDe.Core.Watcher.CoordContract.Version,
+        };
+
+        if (!string.IsNullOrEmpty(root)) { env["AIDE_WORKSPACE"] = root; }
+
+        // The address of the channel. Without it an agent can know it is inside AI-DE and still have
+        // nowhere to say anything — which is what the first version of this shipped: every variable
+        // needed to identify the session, and none saying where the session is observed.
+        var coordLog = _watcherHost?.CoordLogDirectory;
+        if (!string.IsNullOrEmpty(coordLog)) { env["AIDE_CONTRACT_LOG"] = coordLog; }
+        if (!string.IsNullOrEmpty(_gitFacts.WorktreePath)) { env["AIDE_WORKTREE"] = _gitFacts.WorktreePath; }
+
+        // Omitted rather than sent as "(unknown)": the identity record must send SOMETHING because
+        // the attribute is required there, but an environment variable can simply be absent — and
+        // absent is the honest form.
+        if (!string.Equals(_gitFacts.Branch, GitFacts.BranchUnknown, StringComparison.Ordinal))
+        {
+            env["AIDE_BRANCH"] = _gitFacts.Branch;
+        }
+
+        if (_harnessBySurface.TryGetValue(sessionId, out var profile))
+        {
+            env["AIDE_AGENT"] = profile.Agent;
+            if (!string.IsNullOrEmpty(profile.HarnessId)) { env["AIDE_HARNESS"] = profile.HarnessId; }
+        }
+
+        return env;
     }
 
     private SessionCoordinationIdentity IdentityFor(string surfaceId, IReadOnlyList<(string Id, string Agent)> terminals)

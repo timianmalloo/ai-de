@@ -1615,7 +1615,33 @@ neither session made when it was set up, and which nobody should assume is free.
 
 **A concrete gap this names:** the defect register's classes are not nodes in the docs graph, so a
 spec cannot declare `relates-to DC-027` and nothing can flag a spec that touches a registered
-hazard without citing it. That is buildable and is not built.
+hazard without citing it.
+
+**Is it decidable? The question splits, and only one half is (measured 2026-09-01):**
+
+| | Count | Decidable? |
+|---|---|---|
+| classes declared in the register | 79 | — |
+| classes that are graph nodes | **0** | — |
+| distinct classes already cited **by name** in other documents | **42**, across 48 files | **yes — extractable** |
+| "this document *should* cite a class and does not" | unknown by construction | **no** |
+
+The first half needs no judgement at all. Forty-two classes are already named in prose across
+forty-eight documents; turning those citations into typed edges is **extraction**, the same
+provenance as a resolved symbol reference. It closes *addressability* — a spec becomes able to say
+`relates-to DC-027`, and the graph shows which ones do.
+
+The second half is not decidable by any mechanism available, because it requires knowing what a
+document is *about*. Attempting it produces `INFERRED` edges sitting beside `EXTRACTED` ones and
+looking equally authoritative, which the knowledge-visualization standard names as provenance
+laundering. The temptation for whoever builds this is to add the relation and let authors fill it in;
+that is the version that degrades the graph rather than extending it.
+
+**And the honest caveat, which matters more than the plan:** the case that motivated all of this sits
+in the *undecidable* half. §3 of the session-registration spec did not cite DC-027 until a session
+went and looked it up — the citation was added at `028d774`, after the connection was found by
+reading, not before. **So building the extractable half would not have caught it.** It is worth
+building on its own merits, and it should not be sold as a fix for the thing that prompted it.
 
 #### An exception to a control is a predicate, never a name
 

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 47 · partially-controlled 31 · uncontrolled 1
+**Status counts:** controlled 47 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -979,8 +979,83 @@ for both or split.*
   exactly the limit nothing measures, and the symptom would be indistinguishable from this class's
   original instance: a child process whose PATH is simply gone.
 
-  The exact per-variable cut-off was still never bisected, so the message says "may be dropped"
-  rather than asserting a number nobody measured.
+  **BISECTED 2026-09-01, and both halves came back different from what was argued.** A child was
+  handed a controlled environment and asked what it received — the parent's copy is not evidence,
+  which is this class's own rule turned on itself.
+
+  **(1) The limit is on `NAME=VALUE`, not on the value.** Identical at four name lengths:
+
+  | name length | largest value that survives | name + 1 + value |
+  |---|---|---|
+  | 3 | 8,186 | **8,190** |
+  | 13 | 8,176 | **8,190** |
+  | 40 | 8,149 | **8,190** |
+  | 120 | 8,069 | **8,190** |
+
+  The control compared the **value** against 8,151, so for any name longer than 39 characters it
+  reported healthy on a variable cmd.exe drops — an 8,150-char value under a 40-char name passes and
+  disappears. **A false clean, in the control that exists to catch this class.** Latent on the
+  measured machine (longest name: 34 of 76 variables) and it stops being latent the moment something
+  adds longer names, which is what §3 of the session-registration spec proposes. Fixed to compare the
+  pair against the measured 8,190; two tests observed failing on the old comparison.
+
+  **(2) There is NO total-block limit. It is a PATH limit — and the route to that answer is the
+  point.** Confirmed 2026-09-01 by two independently written probes, each with a floor check:
+
+  | padding | 20,000 | 32,000 | 33,000 | 40,000 | 60,000 |
+  |---|---|---|---|---|---|
+  | into **PATH** | ran | ran | **failed** | **failed** | **failed** |
+  | into a **non-PATH** variable | ran | ran | ran | ran | **ran** |
+
+  A 60,000-character non-PATH variable survives a PowerShell-hosted launch intact; a 33,000-character
+  PATH breaks it. PowerShell resolves the command it was handed **through PATH**, so an oversized
+  PATH stops it finding anything — the earlier ~32,650 "block limit" was a PATH property read as a
+  block property, because the probe put all of its padding into PATH.
+
+  **The history is worth keeping, because the discipline and the answer pointed opposite ways.** This
+  entry first claimed the hazard "does not bind", on the strength of direct `CreateProcess` and
+  `cmd.exe /c` — **paths the product does not take**, since it uses `PowerShellHostedAgent`. That
+  claim was withdrawn as unsupported, correctly: three attempts to measure the real path failed **in
+  the instrument** (a one-hop probe that structurally cannot see a second-hop loss, then a two-hop
+  probe returning zero output at every size including one variable — a broken probe reporting
+  itself). The conclusion happens to be right, and the only way to know that was to fill the one cell
+  neither session had: a **large non-PATH variable** on the PowerShell path. **Withdrawing was still
+  correct — asserting it beforehand would have been luck**, and a lucky claim that stands is
+  indistinguishable from a measured one until it matters.
+
+  So: no size guard was added. A block-size check would refuse launches that work, and a control that
+  fires on correct behaviour gets switched off, taking the real check with it. What survives is "keep
+  every added value short" — no longer a defence against a block limit, now what keeps the addition
+  irrelevant to any limit found later — and the rule that **nothing may be added to PATH**, which is
+  the variable that actually binds.
+
+  **(2b) Superseded, kept visible: the WRONG-PATHS reasoning.** Direct
+  `CreateProcess` and `cmd.exe /c` show no total limit below **13,010,087 wide characters**, and on
+  that evidence this entry briefly said the hazard "does not bind". **It does not follow.** The
+  product does not use either path: `ShellIntegrationMode.PowerShellHostedAgent` hosts the agent
+  under PowerShell, and the design session measured a total-block cut-off at **~32,650** on
+  parent → PowerShell → child, consistent with the documented 32,767 `CreateProcess` block. Its
+  failure mode is worse than the shim's: `Process.Start` does not throw, the process starts, and it
+  produces nothing.
+
+  Three attempts to reproduce that here failed **in the instrument** — a one-hop probe that cannot
+  see a loss occurring at the second hop, then a two-hop probe returning zero output at every size
+  including one variable, which is a broken probe reporting itself. So this entry records the design
+  session's number as theirs, unconfirmed by a second method, rather than restating it as agreed.
+  Two measurements are one measurement when the second one did not run.
+
+  The withdrawn claim is left visible on purpose: **a hazard measured away on a path the product does
+  not take is more dangerous than one never measured**, because it retires an argument that was
+  correct.
+
+  **The instrument was wrong first, twice.** Its two readers returned different shapes and the shared
+  parser measured the length of a length, reporting a per-variable limit of "1 character" that looked
+  like a finding; and its search ceiling was returned silently as though it were an answer, which is
+  why the ceiling case now prints "NOT a measurement". Both were caught by a number being absurd
+  rather than by review.
+
+  So the message still says "may be dropped", now because the drop depends on the name rather than
+  because the number is unmeasured.
 - **Status:** `partially-controlled`
 
 ### DC-028 — A synthetic benchmark measures the benchmark
@@ -2612,3 +2687,49 @@ for both or split.*
   right answer when consolidation is expensive, precisely because no amount of reading the directory
   would have told the reader which form to copy.
 - **Status:** `partially-controlled`
+
+### DC-080 — The measurement was real and the noun was wrong
+
+- **Shape:** a number is obtained correctly, by a probe that ran, against a real system — and then
+  recorded, compared or acted on as a **different quantity** than the one measured. Nothing about the
+  number is false. The reading, the instrument and the arithmetic are all sound. What is wrong is the
+  label, and a label is not something a re-run can check.
+- **Signature:** the units in the variable name do not match the units of what produced it. A probe
+  that varies one input and a conclusion stated about a different one — *"PATH chars"* measured,
+  *"block size"* written; a `.NET` exe exercised, a `.cmd` shim claimed; the value's length compared
+  against a limit that governs `NAME=VALUE`; a *count of files containing a guard* reported as a
+  *count of files needing one*. The tell is a sentence of the form "so the limit is X" where the
+  probe never varied X.
+- **Why it survives:** every check that exists is pointed at the number. Re-running reproduces it.
+  A second instrument agrees, if it shares the mislabelling — and it usually does, because the second
+  instrument is written from the first one's conclusion. Review reads the value and the code that
+  produced it, both of which are correct. **The defect lives in the gap between the probe and the
+  prose, and nothing in the toolchain reads both.**
+- **Instances, all 2026-09-01, all within one day:**
+  1. **Evidence vs Detail** — a count of one rendered quantity reported as another.
+  2. **`.NET` exe vs `.cmd` shim** — DC-027 declared "does not reproduce" after testing a path that
+     was never the one in the report. cmd passing a block through to a child is not cmd expanding a
+     variable inside a batch file.
+  3. **PATH vs block** — a probe that padded PATH, whose result was written into the code as
+     `PowerShellHostedBlockLimit` and compared against a computed block size. Two different
+     quantities, one named with the other's units, producing a guard that would have **refused
+     launches that work** — and a control that fires on correct behaviour gets switched off, taking
+     the real check with it.
+  4. **Guard-carrying vs guard-needing** — 19 files reported as the count of wrapping harnesses when
+     17 wrapped; the two extra carried a guard they did not need.
+- **Control:** none mechanised, and the reason is the class itself: a gate can compare a number to a
+  number, and this is a number matched to the wrong *name*, which is a semantic property. What
+  demonstrably worked, four times out of four, is **a second party asking what the probe actually
+  varied** — every one of these was caught by the other session, never by the author, and never by a
+  re-run.
+
+  The cheapest defence found so far, and it is a habit rather than a gate: **state the manipulated
+  variable in the sentence that reports the result** — "padding PATH failed at 33,000" cannot be
+  mistaken for a block limit, while "the limit is 32,650" can. A number that carries its own
+  independent variable is much harder to relabel.
+
+  Related: `session-contracts.md` §8.3d's corollary. Two methods agreeing is corroboration only if
+  they have different blind spots — and a shared *mislabelling* is a shared blind spot that no amount
+  of re-measurement will surface.
+- **Status:** `uncontrolled` — recorded, with the habit above as the only defence and a second reader
+  as the only thing observed to work

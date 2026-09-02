@@ -84,6 +84,19 @@ public sealed class IngestHost
         => _registrar.Heartbeat(sessionId, capability);
 
     /// <summary>
+    /// Records a harness and/or model learned after registration, capability-verified.
+    /// </summary>
+    /// <remarks>
+    /// The reason this exists at all: AI-DE registers a terminal before knowing what runs inside it,
+    /// and the model is knowable only by the agent. Without a post-registration path the model can
+    /// never be recorded for any AI-DE-launched session, because a repeat <c>register</c> discards
+    /// its attributes rather than merging them (observed).
+    /// </remarks>
+    public void UpdateHarnessAndModel(
+        string sessionId, SessionCapability capability, HarnessIdentity? harness, ModelIdentity? model)
+        => _registrar.UpdateHarnessAndModel(sessionId, capability, harness, model);
+
+    /// <summary>
     /// Marks a session ended (its terminal closed / it reported session-end). Liveness then reads Ended
     /// rather than lingering Alive/Stale. Called by the coordination ingest on a session-end event; the
     /// registrar's re-registration path clears the ended mark for a fresh generation.

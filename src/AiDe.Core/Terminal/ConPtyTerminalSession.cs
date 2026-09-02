@@ -17,7 +17,8 @@ public sealed record TerminalSessionRequest(
     int Rows,
     SessionProcessingClass ProcessingClass,
     ShellIntegrationMode Integration = ShellIntegrationMode.None,
-    string ShellPath = "powershell.exe");
+    string ShellPath = "powershell.exe",
+    IReadOnlyDictionary<string, string>? Environment = null);
 
 /// <summary>Whether the runtime installs its OSC shell integration into the session's shell.</summary>
 /// <remarks>
@@ -245,7 +246,7 @@ public sealed class ConPtyTerminalSession : ITerminalSession
         try
         {
             process = ConPtyInterop.StartAttachedProcess(
-                console, commandLine, request.WorkingDirectory);
+                console, commandLine, request.WorkingDirectory, request.Environment);
         }
         catch
         {

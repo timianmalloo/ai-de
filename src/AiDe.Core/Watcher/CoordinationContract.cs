@@ -35,6 +35,38 @@ public sealed record ContractHeartbeat(string ExternalSessionId, double At, int 
 public sealed record ContractSessionEnd(string ExternalSessionId, double At, int Seq)
     : CoordContractEvent(ExternalSessionId, At, Seq);
 
+/// <summary>
+/// Later-known attributes for an already-registered session: the harness, the model.
+/// </summary>
+/// <remarks>
+/// <para><b>Why a distinct kind rather than a second <c>register</c>.</b> A repeat registration is
+/// dropped entirely — <c>ApplyRegister</c> returns before reaching the registrar, so the richer
+/// attributes never arrive (observed:
+/// <c>Apply_DuplicateRegister_DiscardsTheSecondAttributes_ItDoesNotMerge</c>). That is correct for a
+/// duplicate: the first registration's capability must stand, or an external id could be used to
+/// re-mint one. Enrichment is a different intent and needs its own verb.</para>
+///
+/// <para><b>Which is the whole reason it exists.</b> AI-DE registers a terminal before knowing what
+/// runs inside it, and the model is knowable only by the agent — chosen inside the session and
+/// changeable mid-session. Without this the model can never be recorded for any AI-DE-launched
+/// session, no matter what anyone builds.</para>
+///
+/// <para><b>Additive within <c>loomkeeper/1</c>, deliberately.</b> The parser already skips a
+/// syntactically valid line whose <c>kind</c> it does not handle, so an older reader ignores this
+/// where a version bump would have made it reject the whole log. A schema change is a contract
+/// change — but this adds a kind rather than altering one, and the existing tolerance is what makes
+/// that safe rather than a hope.</para>
+///
+/// <para><b>It cannot mint or alter identity.</b> Only the attributes an update may carry are
+/// merged; repository, worktree, terminal and agent are fixed at registration. An update naming an
+/// unknown session is dropped and counted, exactly as a heartbeat for one is.</para>
+/// </remarks>
+public sealed record ContractUpdate(
+    string ExternalSessionId,
+    IReadOnlyDictionary<string, string?> Attributes,
+    double At,
+    int Seq) : CoordContractEvent(ExternalSessionId, At, Seq);
+
 /// <summary>Parse-layer counters (IO1): how many lines were malformed or rejected on version.</summary>
 public sealed record CoordContractParseStats(long Parsed, long Malformed, long VersionRejected);
 
@@ -130,6 +162,7 @@ public static class CoordContractParser
             "register" => new ContractRegister(session, ReadAttrs(root), at, seq),
             "heartbeat" => new ContractHeartbeat(session, at, seq),
             "session-end" => new ContractSessionEnd(session, at, seq),
+            "update" => new ContractUpdate(session, ReadAttrs(root), at, seq),
             _ => null, // a valid line of a kind this slice does not handle (e.g. a board post)
         };
     }
@@ -154,7 +187,8 @@ public static class CoordContractParser
 
 /// <summary>A snapshot of the adapter counters (IO1 operator questions).</summary>
 public sealed record CoordContractStats(
-    long Registered, long Heartbeats, long Unknown, long DuplicateRegister, long Quarantined);
+    long Registered, long Heartbeats, long Unknown, long DuplicateRegister, long Quarantined,
+    long Updated = 0);
 
 /// <summary>
 /// The injected-contract ingest adapter: maps contract events onto the same
@@ -180,6 +214,7 @@ public sealed class InjectedContractIngest
     private long _unknown;
     private long _duplicateRegister;
     private long _quarantined;
+    private long _updated;
 
     public InjectedContractIngest(IngestHost host)
     {
@@ -188,7 +223,7 @@ public sealed class InjectedContractIngest
     }
 
     public CoordContractStats Stats => new(
-        _registered, _heartbeats, _unknown, _duplicateRegister, _quarantined);
+        _registered, _heartbeats, _unknown, _duplicateRegister, _quarantined, _updated);
 
     /// <summary>Applies a batch in order. Callers pass parser output, already sorted.</summary>
     public void ApplyAll(IEnumerable<CoordContractEvent> events)
@@ -212,6 +247,10 @@ public sealed class InjectedContractIngest
             case ContractHeartbeat heartbeat:
                 ApplyHeartbeat(heartbeat);
                 break;
+
+            case ContractUpdate update:
+                ApplyUpdate(update);
+                break;
             case ContractSessionEnd end:
                 if (_byExternalId.TryGetValue(end.ExternalSessionId, out var ending))
                 {
@@ -223,6 +262,46 @@ public sealed class InjectedContractIngest
                 break;
         }
     }
+
+    /// <summary>Merges later-known harness/model onto a session this adapter already registered.</summary>
+    /// <remarks>
+    /// An update for a session this adapter did not register is counted as <c>Unknown</c> and
+    /// dropped, exactly as a heartbeat for one is — the capability lives here and was never minted
+    /// for it, so there is nothing to authorise the write.
+    /// </remarks>
+    private void ApplyUpdate(ContractUpdate update)
+    {
+        if (!_byExternalId.TryGetValue(update.ExternalSessionId, out var known))
+        {
+            _unknown++;
+            return;
+        }
+
+        var harnessName = Attr(update.Attributes, OtelAttributes.ServiceName);
+        var modelName = Attr(update.Attributes, OtelAttributes.GenAiModel);
+        if (harnessName is null && modelName is null)
+        {
+            // Nothing this event is allowed to carry. Counted rather than ignored, so a sender
+            // writing the wrong keys shows up as a number instead of as silence.
+            _unknown++;
+            return;
+        }
+
+        _host.UpdateHarnessAndModel(
+            known.Session.SessionId,
+            known.Capability,
+            harnessName is null
+                ? null
+                : new HarnessIdentity(harnessName, Attr(update.Attributes, OtelAttributes.ServiceVersion) ?? "unknown"),
+            modelName is null
+                ? null
+                : new ModelIdentity(modelName, Attr(update.Attributes, OtelAttributes.GenAiModelVersion) ?? "unknown"));
+
+        _updated++;
+    }
+
+    private static string? Attr(IReadOnlyDictionary<string, string?> attrs, string key)
+        => attrs.TryGetValue(key, out var v) && !string.IsNullOrWhiteSpace(v) ? v : null;
 
     private void ApplyRegister(ContractRegister register)
     {
