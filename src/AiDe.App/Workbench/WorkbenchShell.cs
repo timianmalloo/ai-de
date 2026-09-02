@@ -2158,7 +2158,53 @@ public sealed class WorkbenchShell : IDisposable
             if (!string.IsNullOrEmpty(profile.HarnessId)) { env["AIDE_HARNESS"] = profile.HarnessId; }
         }
 
+        // The AI-Forward Pack's identity, for repositories that use it. AI-DE requires nothing of
+        // the pack and this changes nothing where it is absent — but where it IS present, an agent
+        // without AGENT_SESSION is not merely unregistered.
+        //
+        // `coord-core.py` reads this variable to know who is acting. Without it `check` reports
+        // "AGENT_SESSION is unset, so this session has no identity to check", and — the part that
+        // costs work — the precommit guard prints an advisory and RETURNS 0. The boundary that
+        // stops one session committing over another's files silently becomes a notice. That is a
+        // deliberate trade in the pack (a floor refusing every hand-made commit gets deleted rather
+        // than adopted), which is exactly why it rests on the launcher supplying the identity.
+        //
+        // Observed the day this was added: a squash merge swept another session's entire pack
+        // refresh into a commit describing only the merger's work, and nothing objected.
+        env["AGENT_SESSION"] = PackSessionId(sessionId);
+        env["AGENT_NAME"] = _harnessBySurface.TryGetValue(sessionId, out var named)
+            ? named.DisplayName ?? named.Agent
+            : "aide-terminal";
+
         return env;
+    }
+
+    /// <summary>
+    /// A path-safe identity for the pack's coordination record, derived from the surface id.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>It cannot be the surface id verbatim.</b> An agent pane's id is
+    /// <c>agent:claude#a90b5c</c>, and <c>coord-core.py</c> writes its log as
+    /// <c>logdir / "{}.jsonl".format(session)</c> and reads it back with <c>glob("*.jsonl")</c>. On
+    /// Windows that colon makes the write an NTFS alternate data stream the glob cannot see —
+    /// precisely DC-086, which was just fixed in this product's own writer. Handing the raw id
+    /// across would have reintroduced the same defect inside the pack, where we do not own the fix.
+    /// </para>
+    ///
+    /// <para><b>Derived rather than random</b> so the pack's <c>.agents</c> record and Loomkeeper's
+    /// watcher record describe the same session. A GUID would be path-safe and correlate with
+    /// nothing, which defeats the point of bridging them at all.</para>
+    /// </remarks>
+    internal static string PackSessionId(string surfaceId)
+    {
+        var safe = new char[surfaceId.Length];
+        for (var i = 0; i < surfaceId.Length; i++)
+        {
+            var c = surfaceId[i];
+            safe[i] = char.IsAsciiLetterOrDigit(c) || c is '.' or '_' or '-' ? c : '-';
+        }
+
+        return "aide-" + new string(safe);
     }
 
     private SessionCoordinationIdentity IdentityFor(string surfaceId, IReadOnlyList<(string Id, string Agent)> terminals)

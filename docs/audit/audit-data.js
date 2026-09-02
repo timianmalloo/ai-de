@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T23:13:35Z",
+  "generated": "2026-09-02T23:17:46Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8286,6 +8286,40 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/notes/collaboration-not-happening.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0412",
+      "shortname": "capture-mitigation",
+      "datetime": "2026-09-02T23:10:30Z",
+      "session": "dream-job",
+      "prompt": "dream.py capture-mitigation",
+      "summary": "Captured mit-0007 (red-green): AI-DE handed agent terminals nine AIDE_* variables and not AGENT_SESSION, which coord-core.py reads.",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0413",
+      "shortname": "agent-session-bridge-dc087",
+      "datetime": "2026-09-02T23:10:42Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "(from theterrace-36's escalation) an agent launched inside AI-DE receives no AGENT_SESSION, so coord-core's pre-commit boundary degrades to advisory and returns 0",
+      "summary": "AI-DE now hands agent terminals AGENT_SESSION and AGENT_NAME. The consequence was worse than the invisibility I first reported: coord-core.py's precommit path prints an advisory and returns 0 when AGENT_SESSION is unset, so the control that stops one session committing over another's files was off for every IDE-launched agent - with same-day evidence of a squash merge sweeping another session's pack refresh into a commit describing only the merger's work. The value could not be the surface id verbatim: coord-core writes logdir/{session}.jsonl and globs *.jsonl, so agent:claude#a90b5c would have recreated DC-086 inside the pack. PackSessionId derives a path-safe, pane-correlated id instead. Registered DC-087.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
       ],
       "tags": [],
       "outcome": "success"

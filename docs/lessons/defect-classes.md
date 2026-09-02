@@ -3175,4 +3175,43 @@ for both or split.*
 - **The generalisation:** *an empty state may say what it is waiting for; it may name a cause only
   when it has observed one.* "Nothing to show" is complete. "Nothing to show because X" is a claim,
   and a surface that has not looked at X is not entitled to make it.
+### DC-088 — A launcher omits an identity, and a downstream guard degrades to advisory rather than refusing
+
+- **Shape:** process A launches process B and hands it an environment. A capability B depends on is
+  keyed on one variable A does not set. B's *reads* fail visibly enough — "no identity to check" —
+  but somewhere downstream a **guard** that also reads it is written to degrade gracefully rather
+  than block, because it runs on paths a hard refusal would make unusable. So the missing variable
+  does not surface as a failure at all: it surfaces as a control that prints a notice and returns
+  success.
+- **Signature:** an `if (not identity): print(advisory); return 0` in a hook, gate or pre-commit
+  path, plus a launcher that composes the environment somewhere else entirely and has no test
+  asserting the two agree. The degradation is usually **correct in isolation** — the comment above
+  it explains a real trade — which is why reading either side alone finds nothing.
+- **Why it survives:** the trade is deliberate and documented on the guard's side, and the omission
+  is invisible on the launcher's side, so **each half looks right to whoever owns it**. The
+  advisory is printed into output nobody reads, and the guarantee is gone without anything failing.
+  The symptom people eventually notice — a session invisible in the registry — is the mild one;
+  the disabled boundary is what costs work.
+- **Instance:** 2026-09-02 — AI-DE handed agent terminals nine `AIDE_*` variables and **not**
+  `AGENT_SESSION`, which the AI-Forward Pack's `coord-core.py` reads. `check` reported no identity;
+  the **pre-commit boundary printed an advisory and returned 0**, so the control that stops one
+  session committing over another's files was off for every agent launched from the IDE. Observed
+  the same day in a consuming repository: a squash merge swept another session's entire pack
+  refresh into a commit describing only the merger's work, and nothing objected. Three sessions
+  then spent an afternoon tracing an "unreachable" fourth session that had never been given an
+  identity to register with.
+- **The trap inside the fix:** the obvious value is the launcher's own session id. AI-DE's is
+  `agent:claude#a90b5c`, and `coord-core.py` writes `logdir / "{}.jsonl".format(session)` then reads
+  it back with `glob("*.jsonl")` — so on Windows that colon would have made every write an NTFS
+  alternate data stream the glob cannot see. That is **DC-086 reintroduced inside the pack**, where
+  this repository does not own the fix. Caught by reading the consumer before choosing the value.
+- **Control:** `WorkbenchShell.PackSessionId` derives a path-safe id from the surface id, and
+  `AgentCarriesThePacksIdentityTests` asserts it survives `Path.GetInvalidFileNameChars()`, that
+  distinct panes stay distinct, and — the one that matters — that the variable **reaches the
+  environment a terminal is launched with**, through the shell's own hook rather than by calling the
+  helper twice. **Observed failing on the shipped shape.** A correct id that never reaches the child
+  is the whole defect, and a helper-only test would have passed while the environment stayed empty.
+- **The generalisation worth keeping:** *a guard that degrades to advisory moves its guarantee to
+  whoever supplies its input.* When you find one, the question is not whether the degradation is
+  reasonable — it usually is — but whether anything tests that the input is actually supplied.
 - **Status:** `controlled`
