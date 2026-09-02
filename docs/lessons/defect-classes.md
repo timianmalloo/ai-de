@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 48 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 49 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2814,4 +2814,43 @@ for both or split.*
   cancel what it was preparing for.* Where two concerns share a script, the optional one belongs in
   its own scope — not because its logic is wrong, but because "I could not help" and "stop" must not
   be the same statement.
+- **Status:** `controlled`
+
+### DC-082 — A published figure is copied from a source that keeps moving, and nothing binds it back
+
+- **Shape:** a document states a count — artifacts indexed, tests that must execute, entries in a
+  log, symbols on a public surface. The count was **correct when it was written**, taken from the
+  source by hand. The source then changes, as it is supposed to, and the document keeps stating the
+  old number with exactly the same authority. Nothing errors, nothing renders as missing, and the
+  page still says the numbers were counted rather than estimated — which was true once.
+- **Signature:** a literal quantity in prose or markup whose only tie to its source is that a person
+  once read them together. The tell is a document that *advertises* its rigour with figures: the
+  more a page leans on "counted, not estimated", the more a stale count costs it. A second tell is a
+  figure that moves for reasons unrelated to the document — another session's commit, a rebase, a
+  test added elsewhere.
+- **Why it survives:** it is invisible at the moment of writing, because the number is right then.
+  Every review reads the page and not the source, so a reviewer confirms internal consistency and
+  cannot detect drift at all. And the fix everyone reaches for — "remember to update it" — is a
+  procedure, which is what CI6 means by a memoir: it has no failure mode, so it cannot be observed
+  not working.
+- **Instance:** 2026-09-02 — the public site's six landing figures. Written from measurements, then
+  stale **three times inside one session**: once when a rebase raised the App test floor from 319 to
+  330, again when a later rebase brought another session's audit entries, and again when both moved
+  together (five of nine bound figures wrong at once: test floor 1,697→1,728, ledger 499→503,
+  symbols 1,715→1,733, audit entries 371→375, artifacts 303→304). Each time the page was corrected
+  by hand and each time the correction was itself immediately stale. The site's own craft review had
+  **already recorded this as an open gap** while it was still being maintained by hand — a recorded
+  gap is not a control.
+- **Control:** every figure in `site/*.html` carries `data-figure="<name>"`, and
+  `tools/verify-site-figures.py` computes each name from its source of record and compares.
+  `--update` rewrites them; the Pages workflow runs it **without** `--update`, so a stale page fails
+  the build rather than publishing. **Observed failing on the shipped shape** — its first run
+  reported all five stale figures with both values, before any of them were fixed. Two DC-016
+  guards: the run fails when no `data-figure` element is found at all (dropping the annotations
+  would otherwise pass silently, which is the same defect wearing a different hat), and it fails on
+  a `data-figure` name the script cannot compute rather than skipping it.
+- **The generalisation worth keeping:** *a number you publish is a claim, and a claim with no path
+  back to its source decays without telling anyone.* Either bind it to what it counts, or do not
+  state it — because the page cannot say "counted, not estimated" on its own authority once the
+  counting was a one-off.
 - **Status:** `controlled`

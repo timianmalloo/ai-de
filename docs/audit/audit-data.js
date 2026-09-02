@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T18:07:26Z",
+  "generated": "2026-09-02T18:11:02Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7962,6 +7962,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/design/watcher-daydream-dream-seam.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0394",
+      "shortname": "control-site-figures-dc082",
+      "datetime": "2026-09-02T18:11:02Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "(continuation of the daydream up-level) the site figures went stale a third time in one session; converting the instance into a class and a control",
+      "summary": "Registered DC-082 (a published figure copied from a moving source with nothing binding it back) and built its control: every counted number in site/*.html carries data-figure, tools/verify-site-figures.py computes each from its source of record and compares, --update rewrites, and the Pages workflow runs it WITHOUT --update so a stale page fails the build. Observed failing on the shipped shape before any fix - first run named all five stale figures with both values. Two DC-016 guards: fails when no data-figure element exists at all, and fails on an uncomputable figure name rather than skipping it. Both exercised - adding DC-082 moved the defect-class count and the gate caught it on the next run. Closed the figures half of the gap the site craft review had recorded; the JS-mirrors-C# gap stays open and is not claimed as covered.",
+      "kind": "script",
+      "skill": "document",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-site-figures.py"
       ],
       "tags": [],
       "outcome": "success"

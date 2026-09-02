@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Terminal: 21 types, 83 members, 71% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Terminal: 22 types, 92 members, 74% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Terminal`
 
-**21 public types · 83 public members · 71% documented.**
+**22 public types · 92 public members · 74% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -665,6 +665,12 @@ The style subsequent writes are drawn in — the terminal's current pen.
 
 How much of a line or screen an erase covers.
 
+## `MouseTracking`
+
+*enum* — `TerminalScreen.cs`
+
+How the child wants pointer events reported.
+
 ## `TerminalScreen`
 
 *class* — `TerminalScreen.cs`
@@ -720,6 +726,15 @@ half-applied. See `yncRoot` for why the dirty flag alone is not enough.
 | `object SyncRoot { get; } = new()` | The monitor that coordinates mutation and reads across threads. |
 | `bool ApplicationCursorKeys { get; private set; }` | Whether the child has enabled **application cursor key mode** (DECCKM, `ESC [ ? 1 h`). |
 | `void SetApplicationCursorKeys(bool enabled)` | Sets or clears application cursor key mode (DECCKM). Display is unaffected, so no repaint. |
+| `bool BracketedPaste { get; private set; }` | Whether the child has enabled **bracketed paste** (`ESC [ ? 2004 h`). When on, pasted text is wrapped in `ESC [ 200~ … ESC [ 201~` so the program can tell a paste from typing and does not run each pasted line as it ar… |
+| `void SetBracketedPaste(bool enabled)` | Sets or clears bracketed paste mode. Display is unaffected, so no repaint. |
+| `bool AltScreen { get; private set; }` | Whether the alternate screen buffer is currently active (a full-screen TUI is drawing). |
+| `MouseTracking MouseMode { get; private set; }` | How the child wants mouse events reported (xterm `?1000`/`?1002`/`?1003`). |
+| `bool MouseSgr { get; private set; }` | Whether the child asked for SGR extended mouse encoding (`?1006`) — the modern form. |
+| `void SetMouseMode(MouseTracking mode)` | Sets the mouse tracking level (or turns it off). Display is unaffected. |
+| `void SetMouseSgr(bool enabled)` | Sets or clears SGR extended mouse encoding. |
+| `void EnterAltScreen(bool saveCursor, bool clear)` | Switches to the alternate screen buffer (xterm `?1049h`/`?47h`/`?1047h`). The main buffer is set aside untouched and restored on `eaveAltScreen`, so a TUI never scribbles on the shell's scrollback.  (the `?1049` varia… |
+| `void LeaveAltScreen(bool restoreCursor)` | Switches back to the main screen buffer (xterm `?1049l`/`?47l`/`?1047l`), restoring the shell's scrollback exactly.  (the `?1049` variant) puts the cursor back where it was when the alt screen was entered. |
 | `TerminalCell? CellUnderCursor()` | The cell under the cursor, or `null` when the cursor is not on a real cell. The cursor legitimately sits off the grid at the **pending-wrap** column (`CursorColumn == Columns`, held after writing the last column until… |
 | `void ClearDirty()` | **(gap)** |
 | `void Write(string text)` | Writes text at the cursor, wrapping and scrolling as needed. |

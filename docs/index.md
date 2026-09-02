@@ -61,7 +61,7 @@ board, compared on evidence, and remembered in a ledger.
 
 | Read | Why |
 |---|---|
-| [API reference](_site/index.html) | The public C# surface with its own doc comments. 1,715 public symbols; members without a comment are listed as gaps. |
+| [API reference](_site/index.html) | The public C# surface with its own doc comments. 1,733 public symbols; members without a comment are listed as gaps. |
 | [Class diagram](diagrams/class.md) · [sequence diagrams](diagrams/sequence.md) | The scoring types, and the two flows the product turns on. |
 | [Defect classes](lessons/defect-classes.md) | 81 classes of mistake this project has produced, each converted into a test or a gate. The cheapest hour you can spend here. |
 | [Testing strategy](../.claude/knowledge/testing-strategy.md) | What counts as proof. |

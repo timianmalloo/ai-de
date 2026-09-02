@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Workbench: 63 types, 118 members, 49% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Workbench: 63 types, 119 members, 49% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Workbench`
 
-**63 public types · 118 public members · 49% documented.**
+**63 public types · 119 public members · 49% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -615,6 +615,7 @@ persistence or shell wiring, all of which speak `LayoutService`.
 | `Layout Current` | **(gap)** |
 | `bool IsLocked { get; set; }` | **(gap)** |
 | `void Restore(Layout layout)` | **(gap)** |
+| `bool ReconcileFromView(Layout layout)` | Reconciles a native drag from the VIEW's fixed-frame tree by POSITION only. Returns true when it mapped confidently and applied; returns **false without touching the model** when it cannot — so an unmappable drag reve… |
 | `LayoutResult Apply(LayoutOperation operation)` | **(gap)** |
 
 ## `ZoneId`

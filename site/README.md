@@ -34,6 +34,21 @@ is the authority; if they disagree, the JavaScript is wrong.**
 If you change one of those rules in C#, change it here too. There is no test binding the two
 together, which is a known gap recorded in `docs/reviews/site-craft-gate.md`.
 
+## The figures are bound, not typed
+
+Every counted number on these pages carries `data-figure="<name>"`, and each name is computed from
+its source of record:
+
+```bash
+python tools/verify-site-figures.py            # check; fails when a figure is stale
+python tools/verify-site-figures.py --update   # rewrite them from source
+```
+
+**Do not edit a bound figure by hand** — run `--update`. The Pages workflow runs the check without
+`--update`, so a stale page fails the build rather than publishing. The reason is DC-082: these
+numbers went stale three times in the session that wrote them, and "remember to update it" is a
+procedure with no failure mode.
+
 ## Craft
 
 The deterministic craft detector runs over this folder:

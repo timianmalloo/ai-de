@@ -70,10 +70,8 @@ the pack's script bundle at the time of writing.
 CD13/CD14: a clean run is a floor, never a verdict. Recorded here so nobody reads "1 finding" as
 "reviewed".
 
-- **Whether the copy is true.** Every number and quotation on the site was traced to a file in this
-  repository, but that was done by hand and is not gated by anything. A count that drifts — the
-  fifteen surface kinds, the seven extractor families, the 1,663-test floor — will go stale
-  silently. *Gap: no control binds the site's figures to their sources.*
+- **Whether the copy is true.** Quotations are traced by hand and nothing gates them. The
+  *figures* used to be in the same position and no longer are — see below.
 - **Whether the JavaScript still matches the C#.** `site/assets/site.js` reimplements `WeaveScorer`,
   `LeaderboardComposer` and `GraderInjectionScanner` so the demos run offline. If a weight or a
   cohort rule changes in C#, nothing fails. *Gap: no test binds the two.* The `README` in `site/`
@@ -82,5 +80,33 @@ CD13/CD14: a clean run is a floor, never a verdict. Recorded here so nobody read
   application's `Workbench` archetype does not govern it. That judgement was made by a person and
   is not mechanised.
 
-Both gaps are the same shape as CI6 — *a lesson recorded as prose is a memoir*. They are recorded
-as gaps rather than closed, and neither is claimed as covered.
+The remaining gaps are the same shape as CI6 — *a lesson recorded as prose is a memoir* — and
+neither is claimed as covered.
+
+## The figures gap closed itself by recurring — DC-082
+
+The gap recorded above as "no control binds the site's figures to their sources" was, at the time
+of writing, exactly the memoir CI6 warns about. It then proved the point three times in one
+session:
+
+| When | What moved |
+|---|---|
+| First rebase | App test floor 319 → 330 |
+| Second rebase | Another session's audit entries; artifact count 303 → 304 |
+| Third | Five of nine figures at once — test floor 1,697 → 1,728, ledger 499 → 503, symbols 1,715 → 1,733, audit entries 371 → 375 |
+
+Each correction was itself stale within the turn. That is a class, not an incident, and it is now
+**DC-082** with a control: every figure carries `data-figure="<name>"`, and
+`tools/verify-site-figures.py` computes each name from its source and compares. `--update` rewrites
+them; the Pages workflow runs it **without** `--update`, so a stale page fails the build instead of
+publishing.
+
+**Observed failing on the shipped shape** before anything was fixed — its first run named all five
+stale figures with both values. It carries two DC-016 guards of its own: it fails when no
+`data-figure` element exists at all (dropping the annotations would otherwise pass silently, the
+same defect in a different costume), and it fails on a figure name it cannot compute rather than
+skipping it. Both were exercised: adding DC-082 to the register moved the defect-class count and
+the gate caught it on the next run, which is the shortest possible demonstration that it works.
+
+**Still open:** nothing binds `site/assets/site.js` to the C# it mirrors. That one has no cheap
+control — it needs a shared fixture both sides evaluate — and it is not claimed as covered.

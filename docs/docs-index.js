@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T18:07:31Z",
+  "generated": "2026-09-02T18:11:07Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1280,7 +1280,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 74 types, 306 members, 68% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 76 types, 311 members, 68% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1293,7 +1293,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "020f362721835dc0d7cb3a51cc95b6ba3538c389370a3cec95261f7e530cffdb"
+      "sourceSha256": "b2e0a58ba7b986da19e63aada3c15797dcdc784dbc3d628134e6c35d0ff92fb4"
     },
     {
       "id": "api-aide-core",
@@ -1555,7 +1555,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Terminal: 21 types, 83 members, 71% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Terminal: 22 types, 92 members, 74% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1568,7 +1568,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9daeaa433d719b93497378508cd5fb1475386a5207bc9a44f5d337a475056786"
+      "sourceSha256": "01c5104ab7572eb516c877273a12a1c377c2815dbd231c83a436a198834a6893"
     },
     {
       "id": "api-aide-core-upgrade",
@@ -1630,7 +1630,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 63 types, 118 members, 49% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 63 types, 119 members, 49% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1643,7 +1643,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bf974e3521e698156af28763e48e0ce5483e1be5c491e0eeb49be8d7395bd85a"
+      "sourceSha256": "d88343d7e132d9b4929e3ef5e0d49086edb5d356ba91c03ee9b56e2bd1dbadfa"
     },
     {
       "id": "architecture",
@@ -4058,7 +4058,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "31b61fe1e2b1c8b183ab26ca6237754231e3161f29b0d00efac31d308f87e843"
+      "sourceSha256": "673070c6126dc4ecdc58c47984ca3118af30bf3443a33532f19ebcb6847a0fc9"
     },
     {
       "id": "diagram-class",
@@ -4264,7 +4264,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "007b26c8b6cc738606ee693044ca1c696892066844e01eeca12c5630280c4595"
+      "sourceSha256": "3e4d48769f2fcd812b6bd64c70c89c25616634e4dc9360160179d7c83103b9ca"
     },
     {
       "id": "domain-experts",
@@ -5242,7 +5242,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dc789bb23dea4229edb8e04269c312c9dd2bf59ff16d44990e94aed256c993a0"
+      "sourceSha256": "009dcf0bdbdf2377012fe8dc9f5a9f15e4cc572bffa2712302a3580bafb7a427"
     },
     {
       "id": "review-ui-activity-rail",
@@ -10672,5 +10672,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "fdafa2e5026a142c717f0115549d95d8e09bfd6e645408f0d53d98b2a6d32ee7"
+  "graphSha256": "87919571e2b2806a376b84dda8e9545a2a1365da6ad5b48e217dd3f49f49b93a"
 };

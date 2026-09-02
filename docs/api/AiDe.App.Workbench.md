@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 74 types, 306 members, 68% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 76 types, 311 members, 68% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**74 public types · 306 public members · 68% documented.**
+**76 public types · 311 public members · 68% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1068,12 +1068,35 @@ mistype one.
 |---|---|
 | `ReadOnlyMemory<byte> ForKey(Key key, ModifierKeys modifiers, bool applicationCursorKeys = false)` | The bytes for a key press, or empty when the key sends nothing. |
 | `ReadOnlyMemory<byte> ForText(string text)` | The bytes for composed text input. |
+| `ReadOnlyMemory<byte> ForPaste(string text, bool bracketed)` | The bytes for pasted text. When  (the child enabled bracketed paste), the text is wrapped in `ESC [ 200~ … ESC [ 201~` so the program treats it as one paste rather than running each line as it arrives. Carriage return… |
 
 ### `ReadOnlyMemory<byte> ForKey(Key key, ModifierKeys modifiers, bool applicationCursorKeys = false)`
 
 The bytes for a key press, or empty when the key sends nothing.
 
 - **`applicationCursorKeys`** — When the child has enabled DECCKM (application cursor key mode), the cursor keys are encoded as SS3 (`ESC O A`) rather than CSI (`ESC [ A`) — which is what a full-screen TUI expects.
+
+## `TerminalMouseButton`
+
+*enum* — `TerminalMouse.cs`
+
+The pointer button a mouse report names.
+
+## `TerminalMouse`
+
+*class* — `TerminalMouse.cs`
+
+Encodes a pointer event into the bytes a terminal expects when the child has enabled mouse tracking.
+
+**Remarks.** Kept separate from the view so the wire format is testable without a window — every case is a
+lookup with an exact right answer, and a wrong byte is a click that lands on the wrong cell or does
+nothing. Two encodings exist: **SGR** (`ESC [ < b ; col ; row M/m`, xterm `?1006`),
+which is unbounded and distinguishes press from release; and the **legacy** form
+(`ESC [ M b col row`, each byte offset by 32), which cannot address past column/row 223.
+
+| Member | Summary |
+|---|---|
+| `ReadOnlyMemory<byte> Encode(` | Encodes a button press/release (or a wheel notch) at a 0-based cell. Returns empty for an off-grid coordinate, or one the legacy form cannot represent. |
 
 ## `TerminalPalette`
 
@@ -1304,6 +1327,8 @@ tick, and only when `IsDirty` says something changed.
 | `void OnTextInput(TextCompositionEventArgs e)` | **(gap)** |
 | `void OnPreviewKeyDown(KeyEventArgs e)` | **(gap)** |
 | `void OnMouseDown(MouseButtonEventArgs e)` | **(gap)** |
+| `void OnMouseUp(MouseButtonEventArgs e)` | **(gap)** |
+| `void OnMouseWheel(MouseWheelEventArgs e)` | **(gap)** |
 | `void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)` | **(gap)** |
 | `void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)` | **(gap)** |
 | `AutomationPeer OnCreateAutomationPeer()` | **(gap)** |
@@ -1615,7 +1640,33 @@ path swallows its own failure.
 | `ActivitySource Source = new("aide.workbench")` | **(gap)** |
 | `Action<string>? Sink { get; set; }` | Test seam: when set, records go here instead of the log file (headless assertion). |
 | `void LayoutMutation(` | Records a layout mutation and the resulting stack/surface topology. |
+| `void TerminalStart(` | Records the decision a terminal launch made, and how it ended. |
 | `void Crash(string origin, Exception exception)` | Records an unhandled exception, with the context that says which gesture produced it. |
+
+### `void TerminalStart(`
+
+Records the decision a terminal launch made, and how it ended.
+
+**Remarks.** **Why.** "New Claude Code session" opened a plain PowerShell prompt, twice, across
+two different root causes. Nothing about the launch was recorded — the log carried only layout
+mutations — so each round of diagnosis was static reading plus a screenshot, and the second
+round confirmed a fix that then did not change what the user saw.
+
+
+
+
+
+These are the INPUTS to the launch decision, not a narration of it: which executable was
+resolved, whether a readiness profile was found (that single value chooses between hosting the
+agent and running the command line as a shell), and whether the environment contract was
+attached. A wrong value here explains the symptom immediately; reading the code cannot, because
+the code is correct for the values it was written against.
+
+
+
+
+
+Terminal BYTES are never recorded (spec privacy). This is the launch decision only.
 
 ### `void Crash(string origin, Exception exception)`
 

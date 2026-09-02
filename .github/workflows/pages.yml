@@ -59,6 +59,12 @@ jobs:
       - name: Regenerate the API reference
         run: python3 tools/api-reference.py --src src --out docs/api
 
+      # Every counted figure on the site must still equal the thing it counts. Without this the
+      # page keeps looking authoritative while its numbers drift - which it did, three times in one
+      # session, twice after a rebase brought in another session's work.
+      - name: Verify the site's figures against their sources
+        run: python3 tools/verify-site-figures.py
+
       - name: Rebuild the documentation bundle view
         run: python3 tools/build-doc-viewer.py
 
