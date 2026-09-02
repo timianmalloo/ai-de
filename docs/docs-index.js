@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T20:25:59Z",
+  "generated": "2026-09-02T20:59:47Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2160,6 +2160,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "3e1a47c20b770cce124ca36a2397d39b7d9bbe7ccb76f58036b882e58fdace53"
     },
     {
+      "id": "note-20260902-session-enlistment-telemetry-gap",
+      "path": "docs/notes/session-enlistment-telemetry-gap.md",
+      "title": "Sessions register but do not enlist with telemetry — the harness/model/spans/liveness gap is Core's, not the App's",
+      "type": "decision-note",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "watcher",
+      "reviewBy": "2027-03-01",
+      "reviewSuggested": [],
+      "summary": "A running agent session shows in the Sessions surface but as a generic ended terminal (harness/model Not Recorded, trust Asserted, 0 spans, liveness Ended/Stale). The App threads the harness into the coordination identity correctly; the missing model/spans/Verified/Alive is harness-telemetry the watcher substrate must receive and record — Core's domain.",
+      "tags": [
+        "decision-note",
+        "watcher",
+        "loomkeeper",
+        "sessions",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b3c1be4081228acc177673fdffe9301467a6836a31654424ba505a61e348fbad"
+    },
+    {
       "id": "note-ai-native-ide-architecture-review-depth",
       "path": "docs/notes/ai-native-ide-architecture-review-depth.md",
       "title": "Decision note — AI-native IDE architecture review depth",
@@ -4058,7 +4085,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cdf2aab775762f22ebf6ff2992eaf1860df0e8530edfe1c05da2fb84f4a60e65"
+      "sourceSha256": "a7db48e30a123095b01cf5c102c1871e0197c264f9e21b43afcf80fd6f9fd082"
     },
     {
       "id": "diagram-class",
@@ -10672,5 +10699,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3b3f8686d08127c1f64e86c8b226a9ad5f7daaebbf05f1e553d6145df9e5b1d8"
+  "graphSha256": "ee6c589cda2ebe01d4bacc00dcca76d4422aa3175eabab13ff5c2be77540b0a5"
 };

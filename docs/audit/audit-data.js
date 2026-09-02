@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T20:54:35Z",
+  "generated": "2026-09-02T21:00:02Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8159,6 +8159,23 @@ window.AUDIT_DATA = {
         "src/AiDe.Core/Workbench/LayoutModel.cs",
         "src/AiDe.Core/Workbench/LayoutMigrations.cs",
         "src/AiDe.Core/Workbench/LayoutStore.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0405",
+      "shortname": "note-enlistment-telemetry-gap",
+      "datetime": "2026-09-02T21:00:02Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "what i cant tell is if they are enlisted in collaboration with loomkeeper (screenshot: sessions show Terminal / Not Recorded / Asserted / 0 spans / Ended)",
+      "summary": "Diagnosed the enlistment gap: the App threads harness into the coordination identity correctly (IdentityFor -> Harness: profile.HarnessId); the Not Recorded rows are historical/plain terminals (honest). The real gap -- model identity, spans, Verified trust, Alive liveness -- is harness telemetry the watcher substrate must receive/record (Core's feature/agent-watcher-substrate). Captured as a decision note hand-off for the Core session.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/session-enlistment-telemetry-gap.md"
       ],
       "tags": [],
       "outcome": "success"
