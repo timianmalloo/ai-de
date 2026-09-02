@@ -347,11 +347,24 @@ public sealed class TerminalView : FrameworkElement
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
+        var mods = Keyboard.Modifiers;
+
+        // Paste (Ctrl+V or Shift+Insert) is intercepted here — the GUI-terminal expectation — and
+        // wrapped for bracketed paste when the child asked for it, so a multi-line paste lands as one
+        // paste rather than running line by line.
+        if ((e.Key == Key.V && mods == ModifierKeys.Control) ||
+            (e.Key == Key.Insert && mods == ModifierKeys.Shift))
+        {
+            PasteFromClipboard();
+            e.Handled = true;
+            return;
+        }
+
         // Special/control keys are handled at the TUNNELING stage, before WPF's own directional focus
         // navigation can consume an arrow or Tab and move focus out of the terminal — the "arrow keys
         // don't work in the session" failure (smoke 9-2). Regular text keys return empty here and fall
         // through to OnTextInput, so every keyboard layout, dead keys and IME still work.
-        var bytes = TerminalInput.ForKey(e.Key, Keyboard.Modifiers, _screen.ApplicationCursorKeys);
+        var bytes = TerminalInput.ForKey(e.Key, mods, _screen.ApplicationCursorKeys);
         if (!bytes.IsEmpty)
         {
             Input?.Invoke(this, bytes);
@@ -359,6 +372,25 @@ public sealed class TerminalView : FrameworkElement
         }
 
         base.OnPreviewKeyDown(e);
+    }
+
+    private void PasteFromClipboard()
+    {
+        string text;
+        try
+        {
+            text = Clipboard.GetText();
+        }
+        catch
+        {
+            return; // the clipboard can be locked by another app; a failed paste is a no-op, not a crash
+        }
+
+        var bytes = TerminalInput.ForPaste(text, _screen.BracketedPaste);
+        if (!bytes.IsEmpty)
+        {
+            Input?.Invoke(this, bytes);
+        }
     }
 
     protected override void OnMouseDown(MouseButtonEventArgs e)

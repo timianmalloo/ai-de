@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Windows.Input;
 
@@ -32,6 +33,7 @@ public static class TerminalInput
     public static ReadOnlyMemory<byte> ForKey(Key key, ModifierKeys modifiers, bool applicationCursorKeys = false)
     {
         var control = (modifiers & ModifierKeys.Control) != 0;
+        var shift = (modifiers & ModifierKeys.Shift) != 0;
 
         if (control && key is >= Key.A and <= Key.Z)
         {
@@ -40,9 +42,18 @@ public static class TerminalInput
             return new[] { (byte)(key - Key.A + 1) };
         }
 
-        // Cursor keys (arrows, Home, End) switch encoding with DECCKM: SS3 in application mode, CSI
-        // in normal mode. Sending CSI unconditionally is what leaves the arrows dead in a TUI that
-        // asked for application mode (smoke 9-2).
+        // Shift+Tab is back-tab (CBT, ESC [ Z), the standard "focus/selection backward" a TUI reads —
+        // not a literal tab.
+        if (key == Key.Tab && shift)
+        {
+            return Csi('Z');
+        }
+
+        // Cursor keys (arrows, Home, End). A MODIFIED cursor key is the CSI form with a modifier
+        // parameter (ESC [ 1 ; mod X) regardless of DECCKM — this is how a TUI reads Ctrl+arrow for
+        // word navigation and Shift+arrow for selection. An UNMODIFIED cursor key follows DECCKM: SS3
+        // in application mode, CSI otherwise. Sending CSI unconditionally is what leaves the arrows
+        // dead in a TUI that asked for application mode (smoke 9-2).
         var cursorFinal = key switch
         {
             Key.Up => 'A',
@@ -55,6 +66,12 @@ public static class TerminalInput
         };
         if (cursorFinal != '\0')
         {
+            var mod = ModifierParameter(modifiers);
+            if (mod > 1)
+            {
+                return CsiModified(cursorFinal, mod);
+            }
+
             return applicationCursorKeys ? Ss3(cursorFinal) : Csi(cursorFinal);
         }
 
@@ -74,6 +91,21 @@ public static class TerminalInput
             Key.PageUp => CsiTilde(5),
             Key.PageDown => CsiTilde(6),
 
+            // Function keys. F1–F4 are SS3 (ESC O P..S); F5–F12 are the tilde forms, whose numbers
+            // (15,17–21,23,24) carry the historical xterm gaps that every TUI still matches on.
+            Key.F1 => Ss3('P'),
+            Key.F2 => Ss3('Q'),
+            Key.F3 => Ss3('R'),
+            Key.F4 => Ss3('S'),
+            Key.F5 => CsiTilde(15),
+            Key.F6 => CsiTilde(17),
+            Key.F7 => CsiTilde(18),
+            Key.F8 => CsiTilde(19),
+            Key.F9 => CsiTilde(20),
+            Key.F10 => CsiTilde(21),
+            Key.F11 => CsiTilde(23),
+            Key.F12 => CsiTilde(24),
+
             _ => ReadOnlyMemory<byte>.Empty,
         };
     }
@@ -82,10 +114,69 @@ public static class TerminalInput
     public static ReadOnlyMemory<byte> ForText(string text) =>
         string.IsNullOrEmpty(text) ? ReadOnlyMemory<byte>.Empty : Encoding.UTF8.GetBytes(text);
 
+    /// <summary>
+    /// The bytes for pasted text. When <paramref name="bracketed"/> (the child enabled bracketed paste),
+    /// the text is wrapped in <c>ESC [ 200~ … ESC [ 201~</c> so the program treats it as one paste rather
+    /// than running each line as it arrives. Carriage returns in the paste are normalized to CR so a
+    /// multi-line paste lands as the child expects.
+    /// </summary>
+    public static ReadOnlyMemory<byte> ForPaste(string text, bool bracketed)
+    {
+        if (string.IsNullOrEmpty(text)) { return ReadOnlyMemory<byte>.Empty; }
+
+        // Normalize Windows CRLF / lone LF to CR — a terminal submits lines on CR.
+        var normalized = text.Replace("\r\n", "\r").Replace('\n', '\r');
+        var body = Encoding.UTF8.GetBytes(normalized);
+        if (!bracketed) { return body; }
+
+        var start = "\u001b[200~"u8;
+        var end = "\u001b[201~"u8;
+        var buffer = new byte[start.Length + body.Length + end.Length];
+        start.CopyTo(buffer);
+        body.CopyTo(buffer.AsSpan(start.Length));
+        end.CopyTo(buffer.AsSpan(start.Length + body.Length));
+        return buffer;
+    }
+
+    // xterm modifier encoding: 1 + Shift(1) + Alt(2) + Ctrl(4). 1 means "no modifier".
+    private static int ModifierParameter(ModifierKeys modifiers)
+    {
+        var code = 0;
+        if ((modifiers & ModifierKeys.Shift) != 0) { code += 1; }
+        if ((modifiers & ModifierKeys.Alt) != 0) { code += 2; }
+        if ((modifiers & ModifierKeys.Control) != 0) { code += 4; }
+        return code + 1;
+    }
+
     private static byte[] Csi(char final) => [Escape, (byte)'[', (byte)final];
 
     private static byte[] Ss3(char final) => [Escape, (byte)'O', (byte)final];
 
-    private static byte[] CsiTilde(int number) =>
-        [Escape, (byte)'[', (byte)('0' + number), (byte)'~'];
+    // ESC [ 1 ; <mod> <final> — the modified cursor-key form.
+    private static byte[] CsiModified(char final, int mod)
+    {
+        var digits = mod.ToString(CultureInfo.InvariantCulture);
+        var bytes = new byte[4 + digits.Length + 1];
+        var i = 0;
+        bytes[i++] = Escape;
+        bytes[i++] = (byte)'[';
+        bytes[i++] = (byte)'1';
+        bytes[i++] = (byte)';';
+        foreach (var d in digits) { bytes[i++] = (byte)d; }
+        bytes[i] = (byte)final;
+        return bytes;
+    }
+
+    // ESC [ <number> ~ — handles multi-digit numbers (F5 is 15, F12 is 24).
+    private static byte[] CsiTilde(int number)
+    {
+        var digits = number.ToString(CultureInfo.InvariantCulture);
+        var bytes = new byte[2 + digits.Length + 1];
+        var i = 0;
+        bytes[i++] = Escape;
+        bytes[i++] = (byte)'[';
+        foreach (var d in digits) { bytes[i++] = (byte)d; }
+        bytes[i] = (byte)'~';
+        return bytes;
+    }
 }

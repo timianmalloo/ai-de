@@ -354,9 +354,35 @@ public sealed class VtParser
         {
             case 1:
                 // DECCKM — application cursor keys. The one mode that changes INPUT encoding, so
-                // ignoring it leaves the arrows dead in a full-screen TUI (smoke 9-2). Others
-                // (alt screen 1049, bracketed paste 2004, mouse 1000/1002/1006) are follow-on slices.
+                // ignoring it leaves the arrows dead in a full-screen TUI (smoke 9-2).
                 _screen.SetApplicationCursorKeys(set);
+                break;
+
+            case 2004:
+                // Bracketed paste. Ignoring it makes a pasted multi-line prompt run line-by-line.
+                _screen.SetBracketedPaste(set);
+                break;
+
+            case 47:
+                // Alternate screen (legacy) — no cursor save, no clear.
+                if (set) { _screen.EnterAltScreen(saveCursor: false, clear: false); }
+                else { _screen.LeaveAltScreen(restoreCursor: false); }
+
+                break;
+
+            case 1047:
+                // Alternate screen — clear on entry, no cursor save.
+                if (set) { _screen.EnterAltScreen(saveCursor: false, clear: true); }
+                else { _screen.LeaveAltScreen(restoreCursor: false); }
+
+                break;
+
+            case 1049:
+                // Alternate screen (modern) — save cursor + clear on entry, restore cursor on exit.
+                // The one a full-screen TUI uses; without it the TUI overwrites the shell scrollback.
+                if (set) { _screen.EnterAltScreen(saveCursor: true, clear: true); }
+                else { _screen.LeaveAltScreen(restoreCursor: true); }
+
                 break;
 
             default:

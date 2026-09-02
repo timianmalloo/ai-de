@@ -1,0 +1,602 @@
+/* AI-DE — public site.
+ *
+ * The tokens below are DESIGN.md's, copied by value rather than re-invented: a public site that
+ * looked nothing like the product would be the first thing a reader could catch us on. Three
+ * deliberate extensions are marked EXTENSION — a desktop design language has no display sizes,
+ * no reading measure and no page background, because a desktop app has no page. They are additions
+ * to the scale, not replacements of it: body text is still 15px and metadata is still 12px.
+ *
+ * Dark-committed rather than dark-adaptive. The product is Color:DarkAdaptive and its own surfaces
+ * are dark; a light variant here would be a second design nobody is maintaining.
+ */
+
+:root {
+  /* Surfaces & lines — DESIGN.md colors */
+  --surface: #12151A;
+  --surface-raised: #1A1F26;
+  --surface-sunken: #0D1014;
+  --border: #2A313B;
+  --text: #E4E9EF;
+  --text-muted: #98A3B2;
+  --accent: #5B9DD9;
+  --accent-contrast: #0D1014;
+  --verified: #5FB98F;
+  --inferred: #D8A650;
+  --unverified: #98A3B2;
+  --danger: #E07A6F;
+  --focus: #8FC0EA;
+  --locked: #D8A650;
+
+  /* Syntax palette — DESIGN.md keeps this a separate system; chrome never colours code. */
+  --syntax-keyword: #C792EA;
+  --syntax-type: #82AAFF;
+  --syntax-comment: #5A6472;
+  --syntax-string: #C3E88D;
+
+  /* Type — DESIGN.md scale [11,12,13,15,18,22] */
+  --font-ui: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "Cascadia Mono", "Consolas", ui-monospace, "SF Mono", Menlo, monospace;
+  --fs-micro: 11px;
+  --fs-meta: 12px;
+  --fs-small: 13px;
+  --fs-body: 15px;
+  --fs-lead: 18px;
+  --fs-head: 22px;
+  /* EXTENSION: display sizes. A desktop pane never needs a headline; a page does. */
+  --fs-title: 30px;
+  --fs-display: 46px;
+
+  --weight-normal: 400;
+  --weight-medium: 600;
+
+  /* Radius, spacing, elevation, motion — DESIGN.md */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 10px;
+  --r-island: 12px;
+  --s-1: 2px; --s-2: 4px; --s-3: 6px; --s-4: 8px;
+  --s-5: 12px; --s-6: 16px; --s-7: 24px; --s-8: 32px;
+  /* EXTENSION: page rhythm. The desktop scale tops out at 32px because a pane is not a page. */
+  --s-9: 48px; --s-10: 72px;
+  --elev-resting: 0 1px 3px rgba(0, 0, 0, 0.28);
+  --elev-raised: 0 4px 12px rgba(0, 0, 0, 0.34);
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* EXTENSION: reading measure. */
+  --measure: 68ch;
+  --page: 1120px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--fs-body);
+  line-height: 1.62;
+  font-weight: var(--weight-normal);
+  /* No decorative background. A hairline grid was here and the craft detector was right about it:
+     a two-axis gradient grid tiled at a fixed cell is a recognised generated-UI signature, and
+     "it reads as graph paper" was a rationalisation for ornament this page does not need. The
+     structure comes from the content. */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------- skip + focus */
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: var(--s-4);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  padding: var(--s-3) var(--s-5);
+  border-radius: var(--r-sm);
+  font-weight: var(--weight-medium);
+  z-index: 50;
+}
+.skip:focus { left: var(--s-4); }
+/* The generic `a:hover` colour would otherwise apply here and put --focus text on an --accent
+   background: 1.5:1, and the only place on the site where a link sits on a filled surface. */
+.skip:hover, .skip:focus { color: var(--accent-contrast); }
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* ---------------------------------------------------------------- shell */
+
+.page {
+  max-width: var(--page);
+  margin: 0 auto;
+  padding: 0 var(--s-7);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(13, 16, 20, 0.86);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar .page {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  height: 52px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-4);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.06em;
+  color: var(--text);
+  text-decoration: none;
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+}
+
+.brand svg { display: block; }
+
+.nav {
+  margin-left: auto;
+  display: flex;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: var(--fs-small);
+  padding: var(--s-2) var(--s-4);
+  border-radius: var(--r-sm);
+  border: 1px solid transparent;
+  transition: color var(--motion-fast) var(--ease), border-color var(--motion-fast) var(--ease);
+}
+.nav a:hover { color: var(--text); border-color: var(--border); }
+.nav a[aria-current="page"] { color: var(--text); border-color: var(--border); background: var(--surface-raised); }
+
+/* ---------------------------------------------------------------- type */
+
+h1, h2, h3, h4 {
+  font-weight: var(--weight-medium);
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--fs-display); letter-spacing: -0.03em; }
+h2 { font-size: var(--fs-title); margin-top: var(--s-10); }
+h3 { font-size: var(--fs-head); margin-top: var(--s-8); }
+h4 { font-size: var(--fs-lead); margin-top: var(--s-7); }
+
+p { margin: var(--s-5) 0; max-width: var(--measure); }
+.lead { font-size: var(--fs-lead); color: var(--text); line-height: 1.55; }
+.muted { color: var(--text-muted); }
+.small { font-size: var(--fs-small); }
+
+a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: var(--focus); }
+
+code, kbd, samp, .mono { font-family: var(--font-mono); font-size: 0.92em; }
+
+code {
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 0.05em 0.35em;
+}
+
+kbd {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: var(--r-sm);
+  padding: 0.1em 0.4em;
+  font-size: var(--fs-meta);
+}
+
+/* The one label style that carries meaning: the pack's confidence vocabulary. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 var(--s-4);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-micro);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px var(--s-3);
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.chip::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.chip--verified { color: var(--verified); border-color: rgba(95, 185, 143, 0.36); }
+.chip--inferred { color: var(--inferred); border-color: rgba(216, 166, 80, 0.36); }
+.chip--blocked  { color: var(--danger);   border-color: rgba(224, 122, 111, 0.36); }
+.chip--neutral  { color: var(--text-muted); }
+
+/* ---------------------------------------------------------------- hero */
+
+.hero { padding: var(--s-10) 0 var(--s-9); border-bottom: 1px solid var(--border); }
+.hero h1 { max-width: 20ch; }
+.hero .lead { max-width: 62ch; margin-top: var(--s-6); color: var(--text-muted); }
+.hero .lead strong { color: var(--text); font-weight: var(--weight-medium); }
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: var(--s-9) 0;
+}
+
+/* Figures — the counted facts. Not a "3 feature cards" grid: these are readings. */
+.readings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-island);
+  overflow: hidden;
+  background: var(--surface-raised);
+  margin: var(--s-8) 0;
+}
+
+.reading {
+  padding: var(--s-5) var(--s-6);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.reading:last-child { border-right: 0; }
+
+.reading dt {
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  margin-bottom: var(--s-2);
+}
+.reading dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-head);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  line-height: 1.1;
+}
+.reading dd small { font-size: var(--fs-meta); color: var(--text-muted); font-family: var(--font-ui); }
+
+/* ---------------------------------------------------------------- doors */
+
+.doors { display: grid; gap: var(--s-6); grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); margin: var(--s-8) 0; }
+
+.door {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-island);
+  padding: var(--s-7);
+  transition: border-color var(--motion-base) var(--ease), transform var(--motion-base) var(--ease);
+}
+.door:hover { border-color: var(--accent); transform: translateY(-2px); }
+.door h3 { margin: var(--s-4) 0 var(--s-3); font-size: var(--fs-head); color: var(--text); }
+.door p { margin: 0; color: var(--text-muted); font-size: var(--fs-small); max-width: none; }
+.door .go {
+  display: inline-block;
+  margin-top: var(--s-5);
+  font-size: var(--fs-small);
+  color: var(--accent);
+  font-weight: var(--weight-medium);
+}
+
+/* ---------------------------------------------------------------- panels & tables */
+
+.panel {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-island);
+  padding: var(--s-7);
+  margin: var(--s-7) 0;
+}
+.panel > :first-child { margin-top: 0; }
+.panel > :last-child { margin-bottom: 0; }
+
+.panel--sunken { background: var(--surface-sunken); }
+
+.panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-5);
+  flex-wrap: wrap;
+  margin-bottom: var(--s-5);
+  padding-bottom: var(--s-4);
+  border-bottom: 1px solid var(--border);
+}
+.panel__head h3, .panel__head h4 { margin: 0; }
+
+.scroll-x { overflow-x: auto; margin: var(--s-6) 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-small);
+}
+th, td {
+  text-align: left;
+  padding: var(--s-4) var(--s-5);
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+th {
+  font-size: var(--fs-meta);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: 0; }
+td.num, th.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
+
+/* A quote from the source. The site's strongest evidence device: the code's own words.
+   No left accent bar — it is the most recognisable tell of a generated interface, and the
+   citation line already does the work of marking this as quoted rather than written. */
+.source {
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--s-5) var(--s-6);
+  margin: var(--s-6) 0;
+  font-size: var(--fs-small);
+}
+.source p { margin: 0 0 var(--s-4); max-width: none; }
+.source p:last-child { margin-bottom: 0; }
+.source cite {
+  display: block;
+  margin-top: var(--s-4);
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+  font-style: normal;
+  color: var(--text-muted);
+}
+
+pre {
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--s-5) var(--s-6);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  line-height: 1.6;
+  margin: var(--s-6) 0;
+}
+pre code { background: none; border: 0; padding: 0; }
+.tok-k { color: var(--syntax-keyword); }
+.tok-t { color: var(--syntax-type); }
+.tok-c { color: var(--syntax-comment); }
+.tok-s { color: var(--syntax-string); }
+
+ul.plain { list-style: none; padding: 0; margin: var(--s-5) 0; max-width: var(--measure); }
+ul.plain li {
+  padding: var(--s-3) 0 var(--s-3) var(--s-6);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+ul.plain li:last-child { border-bottom: 0; }
+ul.plain li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 1.05em;
+  width: var(--s-4); height: 1px;
+  background: var(--accent);
+}
+
+/* ---------------------------------------------------------------- diagram */
+
+figure { margin: var(--s-8) 0; }
+figure svg { display: block; width: 100%; height: auto; }
+figcaption {
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+  margin-top: var(--s-4);
+  max-width: var(--measure);
+}
+
+.diagram {
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--r-island);
+  padding: var(--s-6);
+  overflow-x: auto;
+}
+
+/* ---------------------------------------------------------------- interactive */
+
+.demo { margin: var(--s-8) 0; }
+
+.demo__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-5);
+  align-items: flex-end;
+  padding-bottom: var(--s-5);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--s-6);
+}
+
+.field { display: flex; flex-direction: column; gap: var(--s-2); }
+.field label { font-size: var(--fs-meta); color: var(--text-muted); letter-spacing: 0.04em; }
+.field input[type="range"] { width: 190px; accent-color: var(--accent); }
+.field output { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--text); font-size: var(--fs-small); }
+
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; flex-wrap: wrap; }
+.seg button {
+  appearance: none;
+  background: var(--surface-sunken);
+  border: 0;
+  border-right: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: var(--fs-small);
+  padding: var(--s-3) var(--s-5);
+  cursor: pointer;
+  transition: background var(--motion-fast) var(--ease), color var(--motion-fast) var(--ease);
+}
+.seg button:last-child { border-right: 0; }
+.seg button:hover { color: var(--text); background: var(--surface-raised); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-contrast); font-weight: var(--weight-medium); }
+
+.toggle { display: inline-flex; align-items: center; gap: var(--s-3); font-size: var(--fs-small); color: var(--text-muted); cursor: pointer; }
+.toggle input { accent-color: var(--accent); width: 15px; height: 15px; }
+
+textarea {
+  width: 100%;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--fs-small);
+  padding: var(--s-5);
+  resize: vertical;
+  min-height: 76px;
+}
+textarea:focus-visible { border-color: var(--accent); }
+
+/* The surface viewport — the site's one piece of theatre, and it is a real one:
+   the SAME node rendered through different surface kinds. */
+.viewport {
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  min-height: 268px;
+  padding: var(--s-6);
+  font-size: var(--fs-small);
+}
+.viewport h4 {
+  margin: 0 0 var(--s-5);
+  font-size: var(--fs-meta);
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: var(--weight-normal);
+}
+.viewport h5 {
+  margin: 0 0 var(--s-5);
+  font-size: var(--fs-meta);
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: var(--weight-normal);
+}
+.viewport dl { display: grid; grid-template-columns: max-content 1fr; gap: var(--s-3) var(--s-6); margin: 0; }
+.viewport dt { color: var(--text-muted); font-size: var(--fs-meta); }
+.viewport dd { margin: 0; font-family: var(--font-mono); font-size: var(--fs-meta); }
+
+.tree { font-family: var(--font-mono); font-size: var(--fs-meta); line-height: 1.9; white-space: pre; color: var(--text-muted); }
+.tree b { color: var(--text); font-weight: var(--weight-normal); }
+
+.bar {
+  height: 6px;
+  background: var(--surface);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+/* Scaled, not resized: animating width thrashes layout on every frame, and this bar redraws on
+   every slider input. transform-origin puts the growth on the left, where a meter grows. */
+.bar i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--accent);
+  transform-origin: left center;
+  transition: transform var(--motion-base) var(--ease);
+}
+.bar i.is-advisory { background: var(--inferred); }
+
+.verdict {
+  font-family: var(--font-mono);
+  font-size: var(--fs-head);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.verdict.is-blocked { color: var(--danger); }
+.verdict.is-partial { color: var(--inferred); }
+
+.notice {
+  border: 1px solid rgba(216, 166, 80, 0.36);
+  background: rgba(216, 166, 80, 0.07);
+  border-radius: var(--r-md);
+  padding: var(--s-5) var(--s-6);
+  font-size: var(--fs-small);
+  margin: var(--s-6) 0;
+}
+.notice strong { color: var(--inferred); }
+
+.notice--danger { border-color: rgba(224, 122, 111, 0.36); background: rgba(224, 122, 111, 0.07); }
+.notice--danger strong { color: var(--danger); }
+
+/* ---------------------------------------------------------------- footer */
+
+.foot {
+  border-top: 1px solid var(--border);
+  margin-top: var(--s-10);
+  padding: var(--s-8) 0 var(--s-9);
+  color: var(--text-muted);
+  font-size: var(--fs-small);
+}
+.foot .cols { display: grid; gap: var(--s-7); grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.foot h2 { font-size: var(--fs-meta); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin: 0 0 var(--s-4); font-weight: var(--weight-medium); }
+.foot ul { list-style: none; margin: 0; padding: 0; }
+.foot li { margin-bottom: var(--s-3); }
+.foot a { color: var(--text); text-decoration: none; }
+.foot a:hover { color: var(--accent); text-decoration: underline; }
+.foot .colophon { margin-top: var(--s-8); padding-top: var(--s-6); border-top: 1px solid var(--border); font-size: var(--fs-meta); max-width: var(--measure); }
+
+@media (max-width: 720px) {
+  :root { --fs-display: 34px; --fs-title: 25px; }
+  .page { padding: 0 var(--s-5); }
+  .hero { padding: var(--s-8) 0 var(--s-7); }
+  .panel { padding: var(--s-6); }
+}

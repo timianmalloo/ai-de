@@ -147,4 +147,20 @@ public sealed class ZoneWorkbenchAdapterTests
             return true;
         });
     }
+
+    [Fact]
+    public void ActivateInView_FocusesTheNamedSurface_ForTheDeliberateOpenCase()
+    {
+        WithZoneWorkbench((adapter, service) =>
+        {
+            // Open a terminal in the Bottom and focus it, as the session-open path does.
+            service.Apply(new LayoutOperation.AddSurface(
+                ZonesToTree.BottomStackId, new Surface("agent:claude#abc", "terminal", "Claude")));
+            adapter.Render();
+            adapter.ActivateInView("agent:claude#abc");
+
+            Assert.Equal("agent:claude#abc", adapter.ActiveSurfaceId); // focus landed on the new session
+            return true;
+        });
+    }
 }

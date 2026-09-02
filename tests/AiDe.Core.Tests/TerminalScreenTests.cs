@@ -451,6 +451,42 @@ public sealed class TerminalScreenTests
         Assert.Equal("abcd  ", RowText(screen, 0));
     }
 
+    // ---- alternate screen buffer: a TUI never scribbles on the shell scrollback (T-T4) ----
+
+    [Fact]
+    public void AltScreen_PreservesTheMainBuffer_AndRestoresItOnLeave()
+    {
+        var screen = Screen(columns: 10, rows: 3);
+        screen.Write("main");
+        screen.MoveCursor(0, 4);
+        Assert.Equal("main      ", RowText(screen, 0));
+
+        screen.EnterAltScreen(saveCursor: true, clear: true);
+        Assert.True(screen.AltScreen);
+        Assert.Equal("          ", RowText(screen, 0)); // the alt buffer starts blank
+        screen.MoveCursor(1, 0);
+        screen.Write("alt");
+        Assert.Equal("alt       ", RowText(screen, 1));
+
+        screen.LeaveAltScreen(restoreCursor: true);
+        Assert.False(screen.AltScreen);
+        Assert.Equal("main      ", RowText(screen, 0)); // the shell's screen is back, untouched
+        Assert.Equal(0, screen.CursorRow);
+        Assert.Equal(4, screen.CursorColumn);           // and the cursor is where it was
+    }
+
+    [Fact]
+    public void AltScreen_EnterWhileAlreadyInAlt_IsANoOpOnTheMainBuffer()
+    {
+        var screen = Screen(columns: 6, rows: 2);
+        screen.Write("keep");
+        screen.EnterAltScreen(saveCursor: true, clear: true);
+        screen.EnterAltScreen(saveCursor: true, clear: false); // a second enter must not overwrite the saved main
+
+        screen.LeaveAltScreen(restoreCursor: false);
+        Assert.Equal("keep  ", RowText(screen, 0));
+    }
+
     // ---- reads are total: the renderer never crashes the screen (DC-061) -----
 
     [Fact]

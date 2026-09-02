@@ -111,6 +111,14 @@ public sealed class TerminalScreen
 
     private TerminalCell[] _cells;
 
+    // The alternate screen buffer (ADR-free; xterm ?1049/?47/?1047). While the alt screen is active,
+    // this holds the MAIN buffer; while it is not, it holds the last alt buffer (or null). A full-screen
+    // TUI draws on the alt screen and the shell's scrollback is restored untouched on exit — without it,
+    // the TUI's output overwrites the shell history ("it's just a terminal / see the output", smoke 9-2).
+    private TerminalCell[]? _inactiveCells;
+    private int _savedCursorRow;
+    private int _savedCursorColumn;
+
     public TerminalScreen(int columns, int rows)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(columns, 1);
@@ -173,6 +181,79 @@ public sealed class TerminalScreen
 
     /// <summary>Sets or clears application cursor key mode (DECCKM). Display is unaffected, so no repaint.</summary>
     public void SetApplicationCursorKeys(bool enabled) => ApplicationCursorKeys = enabled;
+
+    /// <summary>
+    /// Whether the child has enabled <b>bracketed paste</b> (<c>ESC [ ? 2004 h</c>). When on, pasted
+    /// text is wrapped in <c>ESC [ 200~ … ESC [ 201~</c> so the program can tell a paste from typing and
+    /// does not run each pasted line as it arrives — the behaviour Claude Code and every modern shell
+    /// rely on for a multi-line prompt.
+    /// </summary>
+    public bool BracketedPaste { get; private set; }
+
+    /// <summary>Sets or clears bracketed paste mode. Display is unaffected, so no repaint.</summary>
+    public void SetBracketedPaste(bool enabled) => BracketedPaste = enabled;
+
+    /// <summary>Whether the alternate screen buffer is currently active (a full-screen TUI is drawing).</summary>
+    public bool AltScreen { get; private set; }
+
+    /// <summary>
+    /// Switches to the alternate screen buffer (xterm <c>?1049h</c>/<c>?47h</c>/<c>?1047h</c>). The main
+    /// buffer is set aside untouched and restored on <see cref="LeaveAltScreen"/>, so a TUI never
+    /// scribbles on the shell's scrollback. <paramref name="saveCursor"/> (the <c>?1049</c> variant)
+    /// remembers the cursor to restore on exit; <paramref name="clear"/> blanks the alt buffer on entry.
+    /// </summary>
+    public void EnterAltScreen(bool saveCursor, bool clear)
+    {
+        if (AltScreen)
+        {
+            if (clear) { FillRows(0, Rows - 1); IsDirty = true; }
+            return;
+        }
+
+        if (saveCursor)
+        {
+            _savedCursorRow = CursorRow;
+            _savedCursorColumn = CursorColumn;
+        }
+
+        var main = _cells;
+        // Reuse the prior alt buffer only if it still fits the current grid; otherwise start fresh.
+        _cells = _inactiveCells is { } prior && prior.Length == main.Length
+            ? prior
+            : NewGrid(Columns, Rows, TerminalCell.Blank);
+        _inactiveCells = main;
+        AltScreen = true;
+
+        if (clear) { FillRows(0, Rows - 1); }
+        IsDirty = true;
+    }
+
+    /// <summary>
+    /// Switches back to the main screen buffer (xterm <c>?1049l</c>/<c>?47l</c>/<c>?1047l</c>), restoring
+    /// the shell's scrollback exactly. <paramref name="restoreCursor"/> (the <c>?1049</c> variant) puts
+    /// the cursor back where it was when the alt screen was entered.
+    /// </summary>
+    public void LeaveAltScreen(bool restoreCursor)
+    {
+        if (!AltScreen) { return; }
+
+        var alt = _cells;
+        // The saved main buffer must still fit; a resize while in the alt screen makes it stale, in
+        // which case a fresh cleared main is the safe degrade rather than an out-of-bounds restore.
+        _cells = _inactiveCells is { } main && main.Length == alt.Length
+            ? main
+            : NewGrid(Columns, Rows, TerminalCell.Blank);
+        _inactiveCells = alt;
+        AltScreen = false;
+
+        if (restoreCursor)
+        {
+            CursorRow = Math.Clamp(_savedCursorRow, 0, Rows - 1);
+            CursorColumn = Math.Clamp(_savedCursorColumn, 0, Columns - 1);
+        }
+
+        IsDirty = true;
+    }
 
     /// <summary>
     /// The cell under the cursor, or <c>null</c> when the cursor is not on a real cell. The cursor

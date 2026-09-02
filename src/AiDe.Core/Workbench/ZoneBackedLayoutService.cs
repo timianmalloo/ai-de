@@ -52,6 +52,28 @@ public sealed class ZoneBackedLayoutService : ILayoutService
     }
 
     /// <summary>
+    /// Reconciles a native drag from the VIEW's fixed-frame tree by POSITION only. Returns true when it
+    /// mapped confidently and applied; returns <b>false without touching the model</b> when it cannot —
+    /// so an unmappable drag reverts (the dragged pane snaps back) rather than falling through to the
+    /// kind-based conversion, which re-seats <i>every</i> stack and moved a bystander zone on a single
+    /// drag ("I moved joins and contexts moved too", smoke 9-2 #3). Kind conversion belongs only to the
+    /// persistence/migration path (<see cref="Restore"/>), never to a live drag.
+    /// </summary>
+    public bool ReconcileFromView(Layout layout)
+    {
+        ArgumentNullException.ThrowIfNull(layout);
+
+        var mapped = TryMapByPosition(layout, _zones);
+        if (mapped is null)
+        {
+            return false; // not confident — leave the model as it is; the next Render reverts the drag
+        }
+
+        Set(mapped);
+        return true;
+    }
+
+    /// <summary>
     /// Maps a fixed-frame tree back to zones by POSITION, using the current occupancy to disambiguate
     /// which columns are present. Returns null for any shape that is not the expected frame — the caller
     /// then falls back to kind-based conversion. This is what makes a native tab drag between zones

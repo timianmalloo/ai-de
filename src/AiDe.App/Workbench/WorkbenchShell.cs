@@ -190,6 +190,7 @@ public sealed class WorkbenchShell : IDisposable
                 terminalStack.Id, new Surface(id, "terminal", title)));
 
             Adapter.Render();
+            Adapter.ActivateInView(id); // opening a session focuses it — you open it to type in it (#2)
             BindCanvas();
             BindContexts();
             BindJoins();
@@ -216,6 +217,7 @@ public sealed class WorkbenchShell : IDisposable
                 terminalStack.Id, new Surface(id, "terminal", "Terminal")));
 
             Adapter.Render();
+            Adapter.ActivateInView(id); // focus the new terminal — you open it to type in it (#2)
             BindCanvas();
             BindContexts();
             BindJoins();
@@ -1430,7 +1432,17 @@ public sealed class WorkbenchShell : IDisposable
     {
         if (Adapter.ReadLayoutFromView() is { } reconciled)
         {
-            Service.Restore(reconciled);
+            // A live drag is reconciled by POSITION only — never the kind-based conversion, which
+            // re-seats every stack and moved a bystander zone on a single drag (smoke 9-2 #3). An
+            // unmappable drag is left for the next Render to revert. Persistence still uses Restore.
+            if (Service is ZoneBackedLayoutService zones)
+            {
+                zones.ReconcileFromView(reconciled);
+            }
+            else
+            {
+                Service.Restore(reconciled);
+            }
         }
     }
 

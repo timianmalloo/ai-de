@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A model with many surfaces — AI-DE</title>
+<meta name="description" content="AI-DE indexes a repository into one append-only fact model and renders it through fifteen surfaces. Code is one of them, and it is the transient one.">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%2312151A'/><path d='M3 3v10M6.5 3v10M10 3v10M13.5 3v10M2 6h12M2 10h12' stroke='%235B9DD9' stroke-width='1.2'/></svg>">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="page">
+    <a class="brand" href="index.html">
+      <svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M3 2v12M6.5 2v12M10 2v12M13.5 2v12M1.5 5.5h13M1.5 10.5h13" stroke="#5B9DD9" stroke-width="1.2" fill="none"/>
+      </svg>
+      AI-DE
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="model.html" aria-current="page">The model</a>
+      <a href="collaboration.html">Collaboration</a>
+      <a href="docs/index.html">Docs explorer</a>
+      <a href="docs/audit/index.html">Ledger</a>
+      <a href="https://github.com/timianmalloo/ai-de">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="page">
+
+  <section class="hero">
+    <h1>A model with many surfaces</h1>
+    <p class="lead">
+      An IDE is organised around files because, historically, a file was expensive to produce and
+      expensive to change. Generation inverts that. When a file can be rewritten on request, the
+      file is the <em>cheap</em> part, and organising the whole tool around it means organising it
+      around the one thing that no longer holds still.
+    </p>
+    <p class="lead">
+      AI-DE puts the model at the centre instead. A repository is indexed into an append-only store
+      of attributed facts; every view is a projection over those facts; and the code viewer is one
+      projection among fifteen, with no more claim to being the real thing than the class diagram
+      or the search index.
+    </p>
+  </section>
+
+  <h2>The pipeline</h2>
+  <p>
+    Seven extractor families read a repository. Each emits immutable
+    <em>evidence assertions</em> of the form subject, predicate, object, against a scope snapshot pinned to
+    the exact source revision it read. Nothing is written in place. Projections are built from
+    those facts and can be deleted and rebuilt at any time; a test does exactly that on every run,
+    rebuilding every current projection from an empty cache and comparing it to the stored one.
+  </p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 920 300" role="img" aria-labelledby="pipe-title pipe-desc" style="min-width:760px">
+        <title id="pipe-title">The AI-DE extraction pipeline</title>
+        <desc id="pipe-desc">Seven extractor families write evidence assertions into an append-only fact store, pinned by a scope snapshot. Projections are derived from the store, and fifteen surface kinds render the projections. Agents write back through the store, never through a surface.</desc>
+
+        <defs>
+          <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#5B9DD9"/>
+          </marker>
+          <marker id="arrow-muted" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#98A3B2"/>
+          </marker>
+        </defs>
+
+        <g font-family="Cascadia Mono, Consolas, ui-monospace, monospace" font-size="11" fill="#98A3B2">
+
+          <!-- column 1: extractors -->
+          <text x="16" y="24" letter-spacing="1.4">EXTRACTORS</text>
+          <g>
+            <rect x="16" y="38" width="150" height="182" rx="8" fill="#1A1F26" stroke="#2A313B"/>
+            <text x="32" y="62" fill="#E4E9EF">C#</text>
+            <text x="32" y="84" fill="#E4E9EF">TypeScript</text>
+            <text x="32" y="106" fill="#E4E9EF">Python</text>
+            <text x="32" y="128" fill="#E4E9EF">Bicep</text>
+            <text x="32" y="150" fill="#E4E9EF">EF schema</text>
+            <text x="32" y="172" fill="#E4E9EF">SQL schema</text>
+            <text x="32" y="194" fill="#E4E9EF">Knowledge docs</text>
+            <text x="32" y="212" font-size="10">7 families</text>
+          </g>
+
+          <!-- column 2: store -->
+          <line x1="170" y1="129" x2="206" y2="129" stroke="#5B9DD9" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <text x="210" y="24" letter-spacing="1.4">APPEND-ONLY STORE</text>
+          <rect x="210" y="38" width="176" height="182" rx="8" fill="#1A1F26" stroke="#2A313B"/>
+          <text x="226" y="62" fill="#E4E9EF">evidence_assertion_fact</text>
+          <text x="226" y="80" font-size="10">subject · predicate · object</text>
+          <line x1="226" y1="94" x2="370" y2="94" stroke="#2A313B"/>
+          <text x="226" y="114" fill="#E4E9EF">scope_snapshot_committed</text>
+          <text x="226" y="132" font-size="10">pinned to a source revision</text>
+          <line x1="226" y1="146" x2="370" y2="146" stroke="#2A313B"/>
+          <text x="226" y="166" fill="#E07A6F">UPDATE → ABORT</text>
+          <text x="226" y="184" fill="#E07A6F">DELETE → ABORT</text>
+          <text x="226" y="206" font-size="10">a correction is a new fact</text>
+
+          <!-- column 3: projections -->
+          <line x1="390" y1="129" x2="426" y2="129" stroke="#5B9DD9" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <text x="430" y="24" letter-spacing="1.4">PROJECTIONS · REBUILDABLE</text>
+          <rect x="430" y="38" width="176" height="182" rx="8" fill="#1A1F26" stroke="#2A313B"/>
+          <text x="446" y="62" fill="#E4E9EF">graph</text>
+          <text x="446" y="84" fill="#E4E9EF">paths &amp; impact</text>
+          <text x="446" y="106" fill="#E4E9EF">node content</text>
+          <text x="446" y="128" fill="#E4E9EF">content search</text>
+          <text x="446" y="150" fill="#E4E9EF">context map</text>
+          <text x="446" y="172" fill="#E4E9EF">joins</text>
+          <text x="446" y="194" fill="#E4E9EF">interaction / sequence</text>
+          <text x="446" y="212" font-size="10">deletable; replayed from facts</text>
+
+          <!-- column 4: surfaces -->
+          <line x1="610" y1="129" x2="646" y2="129" stroke="#5B9DD9" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <text x="650" y="24" letter-spacing="1.4">SURFACES</text>
+          <rect x="650" y="38" width="254" height="182" rx="8" fill="#1A1F26" stroke="#2A313B"/>
+          <text x="666" y="62" fill="#E4E9EF">code viewer · graph canvas</text>
+          <text x="666" y="84" fill="#E4E9EF">class diagram · sequence</text>
+          <text x="666" y="106" fill="#E4E9EF">context map · joins · search</text>
+          <text x="666" y="128" fill="#E4E9EF">evidence · inspector · terminal</text>
+          <text x="666" y="150" fill="#E4E9EF">sessions · board · leaderboard</text>
+          <text x="666" y="172" fill="#E4E9EF">prompt · diagnostics</text>
+          <text x="666" y="196" font-size="10">15 kinds · read-only over the model</text>
+
+          <!-- feedback: agents write to the store, not the surface -->
+          <path d="M777 226 L777 262 L298 262 L298 226" fill="none" stroke="#98A3B2" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow-muted)"/>
+          <text x="452" y="282" fill="#98A3B2">agents change the repository → re-extraction → new facts</text>
+          <text x="452" y="252" fill="#98A3B2" font-size="10">never: a surface edit writing back into the model</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>
+      The dashed return path is the whole argument of this page. A surface is a lens, and a lens
+      that could be written through would make the model editable in two places at once, which
+      this repository classifies as a defect, not a feature.
+    </figcaption>
+  </figure>
+
+  <hr class="rule">
+
+  <h2>One node, seven surfaces</h2>
+  <p>
+    Below is a single node from this codebase, the class <code>WeaveScorer</code>, rendered the
+    way each surface would ask about it. Nothing about the node changes. What changes is the
+    question the surface is asking.
+  </p>
+
+  <div class="demo panel">
+    <div class="panel__head">
+      <h3 style="font-size:var(--fs-lead)"><code>AiDe.Core.Watcher.WeaveScorer</code></h3>
+      <span class="chip chip--neutral">7 of 15 surface kinds</span>
+    </div>
+
+    <div role="tablist" aria-label="Surface" class="seg" id="surface-tabs">
+      <button role="tab" id="tab-code" aria-controls="p-code" aria-selected="true" data-panel="code">Code viewer</button>
+      <button role="tab" id="tab-evidence" aria-controls="p-evidence" aria-selected="false" tabindex="-1" data-panel="evidence">Evidence</button>
+      <button role="tab" id="tab-graph" aria-controls="p-graph" aria-selected="false" tabindex="-1" data-panel="graph">Graph canvas</button>
+      <button role="tab" id="tab-class" aria-controls="p-class" aria-selected="false" tabindex="-1" data-panel="class">Class diagram</button>
+      <button role="tab" id="tab-seq" aria-controls="p-seq" aria-selected="false" tabindex="-1" data-panel="seq">Sequence</button>
+      <button role="tab" id="tab-search" aria-controls="p-search" aria-selected="false" tabindex="-1" data-panel="search">Search</button>
+      <button role="tab" id="tab-context" aria-controls="p-context" aria-selected="false" tabindex="-1" data-panel="context">Context map</button>
+    </div>
+
+    <div class="viewport" style="margin-top:var(--s-6)">
+
+      <div role="tabpanel" id="p-code" aria-labelledby="tab-code" data-panel="code">
+        <h4>Code viewer: “show me the text”</h4>
+<pre><code><span class="tok-c">/// The deterministic Weave scorer. Pure, model-free: it turns a closed</span>
+<span class="tok-c">/// Work Episode's deterministic evidence into an honest Scorecard.</span>
+<span class="tok-k">public sealed class</span> <span class="tok-t">WeaveScorer</span>
+{
+    <span class="tok-k">public</span> <span class="tok-t">Scorecard</span> Score(
+        <span class="tok-t">WorkEpisode</span> episode,
+        <span class="tok-t">DeterministicEpisodeSignals</span> signals,
+        <span class="tok-t">ScoreSchema</span> schema,
+        <span class="tok-t">TimeProvider</span> time)
+    {
+        <span class="tok-c">// 1. Not Scored gate: no goal, no done-condition,</span>
+        <span class="tok-c">//    not closed, or no verification path.</span>
+        <span class="tok-k">var</span> notScored = NotScoredReason(episode, signals);
+        ...
+    }
+}</code></pre>
+        <p class="small muted" style="margin-bottom:0">
+          The only surface that shows the characters on disk, and the only one a generator can
+          invalidate wholesale. <code>src/AiDe.Core/Watcher/WeaveScore.cs</code>
+        </p>
+      </div>
+
+      <div role="tabpanel" id="p-evidence" aria-labelledby="tab-evidence" data-panel="evidence" hidden>
+        <h4>Evidence inspector: “what is asserted about it, and by whom”</h4>
+        <div class="scroll-x" style="margin:0">
+        <table>
+          <thead><tr><th>Predicate</th><th>Object</th><th>Kind</th><th>Confidence</th></tr></thead>
+          <tbody>
+            <tr><td><code>node_class</code></td><td>type</td><td>identity</td><td><span class="chip chip--verified">Verified</span></td></tr>
+            <tr><td><code>has_type</code></td><td>class (sealed)</td><td>attribute</td><td><span class="chip chip--verified">Verified</span></td></tr>
+            <tr><td><code>declared_in</code></td><td>AiDe.Core.Watcher</td><td>attribute</td><td><span class="chip chip--verified">Verified</span></td></tr>
+            <tr><td><code>has_member</code></td><td>Score : Scorecard</td><td>attribute</td><td><span class="chip chip--verified">Verified</span></td></tr>
+            <tr><td><code>calls</code></td><td>ScoreSchema</td><td>relation</td><td><span class="chip chip--verified">Verified</span></td></tr>
+            <tr><td><code>calls</code></td><td>WorkEpisode</td><td>relation</td><td><span class="chip chip--verified">Verified</span></td></tr>
+            <tr><td><code>calls_at</code></td><td>WeaveScorer#Score</td><td>attribute</td><td><span class="chip chip--verified">Verified</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="small muted" style="margin-bottom:0">
+          <strong>Attribute or relation is a decision, not a convention.</strong> Both are stored at
+          the same grain, <code>(subject, predicate, object)</code>, but only relations become
+          things you can navigate to. The list is explicit because a naming convention silently
+          misclassifies the first predicate that breaks it, and a misclassification here puts junk
+          in the graph rather than failing. It was found by indexing a real repository, where
+          <code>api_version</code> put <code>2020-02-02</code> in the graph as a peer of a type.
+        </p>
+      </div>
+
+      <div role="tabpanel" id="p-graph" aria-labelledby="tab-graph" data-panel="graph" hidden>
+        <h4>Graph canvas: “what is it near”</h4>
+        <svg viewBox="0 0 620 210" role="img" aria-label="WeaveScorer at the centre of a small neighbourhood: it calls ScoreSchema, WorkEpisode, DeterministicEpisodeSignals and Scorecard; ScoredEpisode reads Scorecard and the LeaderboardComposer reads ScoredEpisode." style="max-width:620px">
+          <g font-family="Cascadia Mono, Consolas, ui-monospace, monospace" font-size="10.5">
+            <g stroke="#2A313B" stroke-width="1.2">
+              <line x1="230" y1="105" x2="120" y2="42"/>
+              <line x1="230" y1="105" x2="120" y2="105"/>
+              <line x1="230" y1="105" x2="120" y2="168"/>
+              <line x1="318" y1="105" x2="404" y2="105"/>
+              <line x1="490" y1="105" x2="404" y2="105"/>
+            </g>
+            <g fill="#1A1F26" stroke="#2A313B">
+              <rect x="16" y="28" width="104" height="26" rx="5"/>
+              <rect x="16" y="92" width="104" height="26" rx="5"/>
+              <rect x="16" y="155" width="104" height="26" rx="5"/>
+              <rect x="404" y="92" width="86" height="26" rx="5"/>
+              <rect x="490" y="92" width="114" height="26" rx="5"/>
+            </g>
+            <rect x="146" y="88" width="172" height="34" rx="6" fill="#12151A" stroke="#5B9DD9" stroke-width="1.6"/>
+            <g fill="#98A3B2">
+              <text x="26" y="45">ScoreSchema</text>
+              <text x="26" y="109">WorkEpisode</text>
+              <text x="26" y="172">…Signals</text>
+              <text x="414" y="109">Scorecard</text>
+              <text x="500" y="109">ScoredEpisode</text>
+            </g>
+            <text x="160" y="109" fill="#E4E9EF" font-size="12">WeaveScorer</text>
+            <text x="150" y="146" fill="#5A6472" font-size="10">4 in · 1 out · bounded to 50 rows per node</text>
+          </g>
+        </svg>
+        <p class="small muted" style="margin-bottom:0">
+          Bounded on purpose. A node's facts are capped, and the cap was measured against real
+          content: 12 of 877 knowledge documents were already over the 50-row ceiling before
+          anything was added to them. Identity facts, meaning what a thing <em>is</em>, are read first, so
+          a well-connected node never loses its own type to its own links.
+        </p>
+      </div>
+
+      <div role="tabpanel" id="p-class" aria-labelledby="tab-class" data-panel="class" hidden>
+        <h4>Class diagram: “what shape is it”</h4>
+        <svg viewBox="0 0 420 196" role="img" aria-label="UML class box for WeaveScorer showing a public Score method with two overloads and an internal static ComposeScoredCard." style="max-width:420px">
+          <g font-family="Cascadia Mono, Consolas, ui-monospace, monospace" font-size="11">
+            <rect x="8" y="8" width="404" height="180" rx="6" fill="#1A1F26" stroke="#2A313B"/>
+            <rect x="8" y="8" width="404" height="34" rx="6" fill="#12151A" stroke="#2A313B"/>
+            <text x="24" y="30" fill="#E4E9EF" font-size="12.5">«sealed class» WeaveScorer</text>
+            <line x1="8" y1="42" x2="412" y2="42" stroke="#2A313B"/>
+            <text x="24" y="66" fill="#98A3B2">+ Score(WorkEpisode, …Signals, TimeProvider)</text>
+            <text x="36" y="84" fill="#5A6472">: Scorecard</text>
+            <text x="24" y="108" fill="#98A3B2">+ Score(WorkEpisode, …Signals, ScoreSchema,</text>
+            <text x="36" y="126" fill="#98A3B2">TimeProvider) : Scorecard</text>
+            <line x1="8" y1="140" x2="412" y2="140" stroke="#2A313B"/>
+            <text x="24" y="162" fill="#5A6472">~ ComposeScoredCard(…) : Scorecard</text>
+            <text x="24" y="180" fill="#5A6472">members read from has_member facts</text>
+          </g>
+        </svg>
+        <p class="small muted" style="margin-bottom:0">
+          The member compartment is filled from <code>has_member</code>, an attribute and never an
+          edge. Drawing members as nodes was measured against a real repository and would have
+          added tens of thousands of nodes to serve a card layout.
+        </p>
+      </div>
+
+      <div role="tabpanel" id="p-seq" aria-labelledby="tab-seq" data-panel="seq" hidden>
+        <h4>Sequence: “in what order does it happen”</h4>
+        <svg viewBox="0 0 620 214" role="img" aria-label="Sequence: the caller invokes Score; the scorer checks the not-scored gate against the episode, assesses each dimension against the schema, checks hard floors against the signals, and returns a Scorecard." style="max-width:620px">
+          <g font-family="Cascadia Mono, Consolas, ui-monospace, monospace" font-size="10.5">
+            <g fill="#98A3B2">
+              <text x="18" y="20">caller</text>
+              <text x="150" y="20" fill="#E4E9EF">WeaveScorer</text>
+              <text x="320" y="20">WorkEpisode</text>
+              <text x="470" y="20">ScoreSchema</text>
+            </g>
+            <g stroke="#2A313B" stroke-dasharray="3 4">
+              <line x1="40" y1="30" x2="40" y2="200"/>
+              <line x1="190" y1="30" x2="190" y2="200"/>
+              <line x1="356" y1="30" x2="356" y2="200"/>
+              <line x1="506" y1="30" x2="506" y2="200"/>
+            </g>
+            <rect x="184" y="46" width="12" height="132" fill="#1A1F26" stroke="#2A313B"/>
+            <g stroke="#5B9DD9" stroke-width="1.2" marker-end="url(#seq-arrow)">
+              <line x1="40" y1="52" x2="182" y2="52"/>
+              <line x1="198" y1="82" x2="354" y2="82"/>
+              <line x1="198" y1="118" x2="504" y2="118"/>
+            </g>
+            <defs>
+              <marker id="seq-arrow" markerWidth="8" markerHeight="8" refX="7" refY="2.6" orient="auto">
+                <path d="M0,0 L0,5.2 L7,2.6 z" fill="#5B9DD9"/>
+              </marker>
+            </defs>
+            <g fill="#98A3B2">
+              <text x="52" y="46">Score(episode, signals, schema, time)</text>
+              <text x="210" y="76">Goal / DoneWhen / State · the Not-Scored gate</text>
+              <text x="210" y="112">Dimensions · weight and posture per dimension</text>
+              <text x="210" y="152" fill="#D8A650">floors tripped? → Blocked, headline suppressed</text>
+            </g>
+            <line x1="182" y1="182" x2="42" y2="182" stroke="#98A3B2" stroke-width="1.1" stroke-dasharray="4 3"/>
+            <text x="52" y="176" fill="#98A3B2">Scorecard (Scored · Partial · Blocked · NotScored)</text>
+          </g>
+        </svg>
+        <p class="small muted" style="margin-bottom:0">
+          Built from <code>calls_at</code>: every call <em>site</em>, stored as an attribute so it
+          is never drawn on the graph. <code>calls</code> already carries the deduplicated
+          relationship; drawing one arrow per site produced seven identical arrows against 1,492
+          edges when it was measured.
+        </p>
+      </div>
+
+      <div role="tabpanel" id="p-search" aria-labelledby="tab-search" data-panel="search" hidden>
+        <h4>Search: “why did this come back”</h4>
+        <div class="panel panel--sunken" style="margin:0 0 var(--s-5); padding:var(--s-5)">
+          <div class="mono small muted">query: <span style="color:var(--text)">floor</span></div>
+        </div>
+        <div class="scroll-x" style="margin:0">
+        <table>
+          <thead><tr><th>Node</th><th>Kind</th><th>Matched on</th></tr></thead>
+          <tbody>
+            <tr><td><code>WeaveScorer</code></td><td>type</td><td class="muted">doc: “a tripped floor suppresses the numeric headline”</td></tr>
+            <tr><td><code>FloorDomain</code></td><td>enum</td><td class="muted">name</td></tr>
+            <tr><td><code>TrippedFloors</code></td><td>member</td><td class="muted">member name of <code>WeaveScorer</code></td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p class="small muted" style="margin-bottom:0">
+          Search matches attribute <em>values</em>, not just names, so a row can come back because
+          one of its members matched. Without showing the reason, a correct hit reads as a wrong
+          one. The same defect was fixed twice: once on this surface, once on the evidence pane,
+          which had been rendering exactly one property and silently dropping the other three.
+        </p>
+      </div>
+
+      <div role="tabpanel" id="p-context" aria-labelledby="tab-context" data-panel="context" hidden>
+        <h4>Context map: “whose language is it in”</h4>
+        <div class="tree">Work Coordination <b>(bounded context)</b>
+├── Work Episode        <b>aggregate: goal, done-when, close</b>
+├── Scorecard           <b>value: one evaluation, one schema version</b>
+│   └── <b>WeaveScorer</b>   ← the node in view
+├── ScoredEpisode       <b>episode + harness / model attribution</b>
+└── Leaderboard         <b>ranks harness and model, never a person</b>
+
+Audit Reading <b>(bounded context)</b>
+└── Work Episode        <b>same words, different authority</b></div>
+        <p class="small muted" style="margin-bottom:0">
+          The same term can be honest in two contexts and mean different things in each. The map is
+          how you find out before you have merged them by accident.
+        </p>
+      </div>
+
+    </div>
+
+    <p class="small muted" style="margin-top:var(--s-6)">
+      <strong>An illustration, not a screenshot.</strong> The node, its file, its members, and the
+      predicate vocabulary are read from this repository. The layout is drawn for the web; the
+      application renders these in docked panes.
+    </p>
+  </div>
+
+  <hr class="rule">
+
+  <h2>The fifteen surfaces</h2>
+  <p>
+    A surface's identity, state and content are independent of where it is docked. One factory maps
+    a surface kind to its content, so adding a kind never means touching the layout model, and an
+    unknown kind still gets an honest pane rather than a blank one.
+  </p>
+
+  <div class="scroll-x">
+    <table>
+      <thead><tr><th>Kind</th><th>The question it answers</th><th>Reads</th></tr></thead>
+      <tbody>
+        <tr><td><code>codeviewer</code></td><td>What does the text say?</td><td>node content projection</td></tr>
+        <tr><td><code>canvas</code></td><td>What is this near, and what reaches it?</td><td>graph + paths projections</td></tr>
+        <tr><td><code>classdiagram</code></td><td>What shape is this type, and what does it inherit?</td><td><code>has_member</code>, <code>has_type</code></td></tr>
+        <tr><td><code>sequence</code></td><td>In what order do these components talk?</td><td><code>calls_at</code> interaction projection</td></tr>
+        <tr><td><code>contexts</code></td><td>Which bounded context owns this language?</td><td>context projection</td></tr>
+        <tr><td><code>joins</code></td><td>Where do two models meet, and on what key?</td><td>join projection</td></tr>
+        <tr><td><code>search</code></td><td>Where does this string live, and why did it match?</td><td>content search projection</td></tr>
+        <tr><td><code>view</code> / <code>inspector</code></td><td>What is asserted about this node, and how confident is it?</td><td>evidence read</td></tr>
+        <tr><td><code>terminal</code></td><td>What is the agent doing right now?</td><td>ConPTY session</td></tr>
+        <tr><td><code>prompt</code></td><td>What am I about to send, and to which session?</td><td>prompt drafts</td></tr>
+        <tr><td><code>sessions</code></td><td>Which agents are alive, in which repositories?</td><td>watcher liveness</td></tr>
+        <tr><td><code>board</code></td><td>What have the agents told each other?</td><td>message board</td></tr>
+        <tr><td><code>leaderboard</code></td><td>Which harness and model does better here?</td><td>scored episodes</td></tr>
+        <tr><td><code>diagnostics</code></td><td>Is the machinery itself healthy?</td><td>daemon, health, MCP</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">
+    Fourteen rows for fifteen kinds: <code>view</code> and <code>inspector</code> share a row
+    because they share a reader. The list is a published constant the application checks itself
+    against, so a surface cannot exist without appearing here.
+  </p>
+
+  <hr class="rule">
+
+  <h2>Why the model is edited through agents, not surfaces</h2>
+
+  <p>
+    The temptation with a diagram tool is to make the diagram editable. Drag a box, rename a class,
+    and have the code follow. It is the feature everyone asks for, and it is the one this project
+    refuses.
+  </p>
+
+  <p>
+    A derived view that can be written through is a second source of truth. The moment two places
+    can define the same thing, they disagree, and the disagreement is silent, because both look
+    authoritative. The repository carries this as a standing rule with its own architecture
+    decision record, and the modelling reviewer holds a veto over any editable derived view.
+  </p>
+
+  <div class="source">
+    <p>
+      Fact tables reject <code>UPDATE</code> and <code>DELETE</code> through
+      <code>BEFORE UPDATE</code> / <code>BEFORE DELETE</code> <code>RAISE(ABORT)</code> triggers,
+      and the writer forbids <code>INSERT OR REPLACE</code> / upsert conflict resolution on fact
+      tables. This is required, not optional: with the default
+      <code>recursive_triggers=0</code>, <code>INSERT OR REPLACE</code> silently
+      deletes-and-replaces a fact row <em>without firing the delete trigger</em>.
+    </p>
+    <cite>docs/design/conceptual-model.md · verified by spike <code>sqlite-fact-store</code>, case S4</cite>
+  </div>
+
+  <p>
+    So the write path runs the other way. You direct an agent; the agent changes the repository; the
+    extractors observe the change and append new facts; the projections rebuild; every surface
+    updates because every surface was only ever a question asked of the same store. The model is
+    <em>transient</em> in the sense that any particular state of it can be thrown away and
+    reconstructed, and durable in the sense that the facts, and the record of how they got there,
+    are the thing that is kept.
+  </p>
+
+  <ul class="plain">
+    <li><strong>A correction is a superseding fact.</strong> Nothing is rewritten, so the history of what was believed, and when, survives the correction.</li>
+    <li><strong>Extraction is pinned.</strong> Every assertion carries the scope snapshot and source revision it was read at, so a stale answer is detectable rather than merely wrong.</li>
+    <li><strong>Coverage is declared.</strong> When an extractor cannot analyse a language, the graph says so rather than looking complete. A graph that silently omits package types looks finished and gives the reader no way to know it is not.</li>
+    <li><strong>Rebuild is tested, not assumed.</strong> A fixture replay rebuilds every current projection from an empty cache and compares it to the stored one. If projections could drift, that test fails.</li>
+  </ul>
+
+  <div class="panel">
+    <div class="panel__head"><h3 style="font-size:var(--fs-lead)">Read further</h3></div>
+    <ul class="plain" style="max-width:none">
+      <li><a href="https://github.com/timianmalloo/ai-de/blob/main/docs/design/conceptual-model.md">Conceptual domain model</a>: bounded contexts, aggregate invariants, the declared grain of every fact, and the history rule per attribute.</li>
+      <li><a href="docs/_site/index.html#architecture">Architecture</a>: the component map, the trust boundaries, the command protocol and the delivery semantics.</li>
+      <li><a href="docs/_site/index.html#diagram-component">Component</a> · <a href="docs/_site/index.html#diagram-layers">layered</a> · <a href="docs/_site/index.html#diagram-sequence">sequence</a> · <a href="docs/_site/index.html#diagram-class">class</a> diagrams, every node and edge traced to a declaration.</li>
+      <li><a href="docs/specs/ai-native-ide.html">Spec — AI-native IDE</a>: the functional, UX and UI layers of the workbench.</li>
+      <li><a href="docs/index.html">Docs explorer</a>: all 303 artifacts as a navigable typed graph.</li>
+    </ul>
+  </div>
+
+</div>
+</main>
+
+<footer class="foot">
+  <div class="page">
+    <div class="cols">
+      <div>
+        <h2>The two ideas</h2>
+        <ul>
+          <li><a href="model.html">A model with many surfaces</a></li>
+          <li><a href="collaboration.html">Collaboration you can score</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Explore the model</h2>
+        <ul>
+          <li><a href="docs/index.html">Docs explorer</a></li>
+          <li><a href="docs/audit/index.html">Audit &amp; change ledger</a></li>
+          <li><a href="docs/_site/index.html#api-aide-core-watcher">API reference</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Source</h2>
+        <ul>
+          <li><a href="https://github.com/timianmalloo/ai-de">github.com/timianmalloo/ai-de</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T17:30:41Z",
+  "generated": "2026-09-02T17:30:53Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1219,6 +1219,431 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "e5c3f2c93a80886ef7f10800277ea20756361e8f917d645c625873630a3dbc76"
+    },
+    {
+      "id": "api-aide-app",
+      "path": "docs/api/AiDe.App.md",
+      "title": "API: AiDe.App",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App: 2 types, 3 members, 20% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8a9145020ebc341504a12748381e4109c1c26e0409e90dc75aa4fe9626f3d265"
+    },
+    {
+      "id": "api-aide-app-viewmodels",
+      "path": "docs/api/AiDe.App.ViewModels.md",
+      "title": "API: AiDe.App.ViewModels",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.ViewModels: 1 types, 14 members, 60% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0acbdb3b170ac537d9bce545bfb3e99f76e7ae222e4c962ab2acfa01673325ad"
+    },
+    {
+      "id": "api-aide-app-workbench",
+      "path": "docs/api/AiDe.App.Workbench.md",
+      "title": "API: AiDe.App.Workbench",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Workbench: 74 types, 306 members, 68% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "020f362721835dc0d7cb3a51cc95b6ba3538c389370a3cec95261f7e530cffdb"
+    },
+    {
+      "id": "api-aide-core",
+      "path": "docs/api/AiDe.Core.md",
+      "title": "API: AiDe.Core",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core: 2 types, 14 members, 50% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1f74bbf8c344058ff45cbf608aa6099a967e23a89378bfbc0237956b2517a17a"
+    },
+    {
+      "id": "api-aide-core-dispatch",
+      "path": "docs/api/AiDe.Core.Dispatch.md",
+      "title": "API: AiDe.Core.Dispatch",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Dispatch: 12 types, 17 members, 76% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "10545f7c8d465001bdb5f651a67e443e33e24544fb7db3d64a8f9a81347f41ba"
+    },
+    {
+      "id": "api-aide-core-extraction",
+      "path": "docs/api/AiDe.Core.Extraction.md",
+      "title": "API: AiDe.Core.Extraction",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Extraction: 40 types, 104 members, 75% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "83a4de87d07ac4148093c7a65b93a534c5fcc4fbb426884841e13676ef287e70"
+    },
+    {
+      "id": "api-aide-core-facts",
+      "path": "docs/api/AiDe.Core.Facts.md",
+      "title": "API: AiDe.Core.Facts",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Facts: 14 types, 10 members, 96% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "3c08d92f0d17ce042752520f8c3c940d70f3df8eb644e1b89f21cc97ef1fc9c5"
+    },
+    {
+      "id": "api-aide-core-health",
+      "path": "docs/api/AiDe.Core.Health.md",
+      "title": "API: AiDe.Core.Health",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Health: 5 types, 7 members, 42% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8531721cf2bb1215b9cda5aa35a6bc0825834e3b84be460bb3854856b73e56c7"
+    },
+    {
+      "id": "api-aide-core-ipc",
+      "path": "docs/api/AiDe.Core.Ipc.md",
+      "title": "API: AiDe.Core.Ipc",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Ipc: 51 types, 120 members, 64% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "77b8fe4070f0d5c53ba405fc06760ad30a4f2af8218b44748bc0c94602babae6"
+    },
+    {
+      "id": "api-aide-core-mcp",
+      "path": "docs/api/AiDe.Core.Mcp.md",
+      "title": "API: AiDe.Core.Mcp",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Mcp: 6 types, 6 members, 42% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ef89604b85283ded93fae1f8b04957a9bfcc864a24340560b097c2eb647e5f5c"
+    },
+    {
+      "id": "api-aide-core-presentation",
+      "path": "docs/api/AiDe.Core.Presentation.md",
+      "title": "API: AiDe.Core.Presentation",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Presentation: 28 types, 65 members, 65% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "599d3f535e3b10a1ea392fb4a3b11d54caa8ae1f0a020e284b36eee58413eff8"
+    },
+    {
+      "id": "api-aide-core-projections",
+      "path": "docs/api/AiDe.Core.Projections.md",
+      "title": "API: AiDe.Core.Projections",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Projections: 47 types, 66 members, 65% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f92db31bb5332fdc640ffe1b3cf8d3b9074594704e7f7380d26d7d59a5277501"
+    },
+    {
+      "id": "api-aide-core-store",
+      "path": "docs/api/AiDe.Core.Store.md",
+      "title": "API: AiDe.Core.Store",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Store: 10 types, 52 members, 69% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a07514700b6950bbfa298fa2263013ef9af12d249b1c8344ce031f6231e383ee"
+    },
+    {
+      "id": "api-aide-core-terminal",
+      "path": "docs/api/AiDe.Core.Terminal.md",
+      "title": "API: AiDe.Core.Terminal",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Terminal: 21 types, 83 members, 71% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "9daeaa433d719b93497378508cd5fb1475386a5207bc9a44f5d337a475056786"
+    },
+    {
+      "id": "api-aide-core-upgrade",
+      "path": "docs/api/AiDe.Core.Upgrade.md",
+      "title": "API: AiDe.Core.Upgrade",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Upgrade: 13 types, 18 members, 90% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a3711b1f367a8d11f70b311240a34da359ee60730df4862b7e17fd59db312572"
+    },
+    {
+      "id": "api-aide-core-watcher",
+      "path": "docs/api/AiDe.Core.Watcher.md",
+      "title": "API: AiDe.Core.Watcher",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 119 types, 204 members, 56% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a612f0893a8ad58a04bf7720cccf5d0a0f9a9a4cdede1bafb659d77403883458"
+    },
+    {
+      "id": "api-aide-core-workbench",
+      "path": "docs/api/AiDe.Core.Workbench.md",
+      "title": "API: AiDe.Core.Workbench",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 63 types, 118 members, 49% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bf974e3521e698156af28763e48e0ce5483e1be5c491e0eeb49be8d7395bd85a"
     },
     {
       "id": "architecture",
@@ -3586,6 +4011,212 @@ window.DOCS_INDEX = {
       "sourceSha256": "31b61fe1e2b1c8b183ab26ca6237754231e3161f29b0d00efac31d308f87e843"
     },
     {
+      "id": "diagram-class",
+      "path": "docs/diagrams/class.md",
+      "title": "Class diagram — scoring and coordination types",
+      "type": "doc",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "The types behind the Weave score and the leaderboard, drawn from the declarations in WeaveScore.cs and Leaderboard.cs, including the two fields the design deliberately does not have.",
+      "tags": [
+        "diagram",
+        "class",
+        "uml",
+        "watcher",
+        "scoring"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "diagram-sequence",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "class",
+          "title": "Class diagram — scoring and coordination",
+          "mermaid": "classDiagram\n  direction LR\n\n  class WeaveScorer {\n    +Score(WorkEpisode, DeterministicEpisodeSignals, TimeProvider) Scorecard\n    +Score(WorkEpisode, DeterministicEpisodeSignals, ScoreSchema, TimeProvider) Scorecard\n    ~ComposeScoredCard(...) Scorecard\n    note: pure and model-free\n  }\n\n  class ScoreSchema {\n    +string Version\n    +IReadOnlyList~DimensionWeight~ Dimensions\n    +int TotalWeight\n    +ScoreSchema Weave1$\n  }\n\n  class DimensionWeight {\n    +ScoreDimension Dimension\n    +int Weight\n    +AssessmentPosture Posture\n  }\n\n  class DimensionAssessment {\n    +ScoreDimension Dimension\n    +int Weight\n    +int? Rubric0to4\n    +double? EarnedPoints\n    +AssessmentPosture Posture\n    +string Rationale\n  }\n\n  class Scorecard {\n    +string EpisodeId\n    +string SchemaVersion\n    +WeaveVerdict Verdict\n    +IReadOnlyList~DimensionAssessment~ Assessments\n    +IReadOnlyList~FloorDomain~ TrippedFloors\n    +EvidenceCoverage? Coverage\n    +string Headline\n    +DateTimeOffset EvaluatedAt\n  }\n\n  class EvidenceCoverage {\n    +int Observed\n    +int Required\n  }\n\n  class DeterministicEpisodeSignals {\n    +bool HasVerificationPath\n    +bool? AcceptanceCriteriaMet\n    +bool RequiredVerificationExecuted\n    +bool RegressionPresent\n    +IReadOnlySet~FloorDomain~ UnresolvedFloorBlockers\n    +int ActionsAfterDoneCondition\n    +bool PrematureCompletion\n    +bool CoverageCalibrated\n  }\n\n  class ScoredEpisode {\n    +string EpisodeId\n    +string? Harness\n    +string? Model\n    +string OperatorId\n    +string TaskClass\n    +Scorecard Scorecard\n    +double Weave\n    +double? CoverageRatio\n    +bool IsScoreable\n  }\n\n  class LeaderboardComposer {\n    +Compose(episodes, taskClass, schemaVersion, cohortMinimum) Leaderboard\n  }\n\n  class Leaderboard {\n    +string TaskClass\n    +string SchemaVersion\n    +IReadOnlyList~LeaderboardCell~ Cells\n    +Cell(LeaderboardFacet, string) LeaderboardCell\n  }\n\n  class LeaderboardCell {\n    +LeaderboardFacet Facet\n    +string Label\n    +int Cohort\n    +double? MedianWeave\n    +double? Coverage\n    +int? Rank\n    +bool Comparable\n    +string? NotComparableReason\n  }\n\n  class AgentStanding {\n    +int? Rank\n    +int? Cohort\n    +int Trend\n    +bool RankComparable\n    +IReadOnlyList~DimensionReason~ Reasons\n    note: no aggregate scalar, by design\n  }\n\n  WeaveScorer ..> ScoreSchema : reads\n  WeaveScorer ..> DeterministicEpisodeSignals : consumes\n  WeaveScorer --> Scorecard : produces\n  ScoreSchema *-- DimensionWeight\n  Scorecard *-- DimensionAssessment\n  Scorecard o-- EvidenceCoverage\n  ScoredEpisode *-- Scorecard\n  LeaderboardComposer ..> ScoredEpisode : segments\n  LeaderboardComposer --> Leaderboard : composes\n  Leaderboard *-- LeaderboardCell\n  StandingComposer ..> Leaderboard : reads\n  StandingComposer --> AgentStanding : produces"
+        }
+      ],
+      "sourceSha256": "08abcea16c2e2df99bf62aef8aa5726d4857353d53a31fc4ea75c2c5e825c584"
+    },
+    {
+      "id": "diagram-component",
+      "path": "docs/diagrams/component.md",
+      "title": "Component diagram — AI-DE",
+      "type": "doc",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "The real assembly and namespace dependency edges of AI-DE, read from the composition roots rather than from the architecture prose, with the external systems at the boundary.",
+      "tags": [
+        "diagram",
+        "component",
+        "c4",
+        "architecture"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "diagram-layers",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Component diagram — AI-DE",
+          "mermaid": "flowchart TB\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef core fill:#1A1F26,stroke:#2A313B,color:#E4E9EF\n\n  subgraph shell[\"AiDe.App — WPF shell\"]\n    WorkbenchShell[\"WorkbenchShell<br/>composition + watcher loop\"]\n    SurfaceFactory[\"SurfaceContentFactory<br/>15 surface kinds\"]\n    MainMenu[\"MainMenuBuilder<br/>derives menu from the command catalog\"]\n  end\n\n  subgraph corelib[\"AiDe.Core\"]\n    WorkspaceCore[\"WorkspaceCore<br/>in-process authority core\"]\n    Store[\"Store<br/>WorkspaceStore · schema · reader/writer\"]\n    Extraction[\"Extraction<br/>7 extractor families\"]\n    Projections[\"ProjectionService<br/>graph · paths · content · search · joins\"]\n    Dispatch[\"DispatchService<br/>prompt delivery receipts\"]\n    Mcp[\"McpToolGateway<br/>bounded read tools\"]\n    Health[\"HealthIncidentSidecar\"]\n    Ipc[\"Ipc<br/>pipe · framing · capability registry\"]\n    Terminal[\"Terminal<br/>ConPTY sessions\"]\n    Watcher[\"WatcherHost<br/>registrar · ingest · board · scoring\"]\n    Upgrade[\"Upgrade<br/>preflight and rollback state\"]\n  end\n\n  Daemon[\"AiDe.Daemon<br/>one process · one workspace · one pipe\"]\n\n  Repo[(\"Repository files\")]\n  Sqlite[(\"SQLite<br/>workspace store\")]\n  WatcherDb[(\"SQLite<br/>watcher observations\")]\n  Agent[\"Agent process<br/>any harness\"]\n  Otlp[\"OTLP HTTP receiver<br/>loopback, optional\"]\n\n  WorkbenchShell --> SurfaceFactory\n  WorkbenchShell --> MainMenu\n  WorkbenchShell --> WorkspaceCore\n  WorkbenchShell --> Watcher\n  SurfaceFactory --> Projections\n  SurfaceFactory --> Terminal\n  SurfaceFactory --> Watcher\n\n  WorkspaceCore --> Store\n  WorkspaceCore --> Extraction\n  WorkspaceCore --> Projections\n  WorkspaceCore --> Dispatch\n  WorkspaceCore --> Mcp\n  WorkspaceCore --> Health\n  Mcp --> Projections\n  Projections --> Store\n  Extraction --> Store\n  Dispatch --> Store\n\n  Daemon --> WorkspaceCore\n  Daemon --> Ipc\n  Daemon --> Upgrade\n  Ipc --> WorkspaceCore\n\n  Extraction -.reads.-> Repo\n  Store -.writes.-> Sqlite\n  Watcher -.writes.-> WatcherDb\n  Terminal -.ConPTY.-> Agent\n  Agent -.coordination log / OTLP.-> Otlp\n  Otlp -.spans.-> Watcher\n  Agent -.contract log.-> Watcher\n\n  class shell,WorkbenchShell,SurfaceFactory,MainMenu app\n  class Repo,Sqlite,WatcherDb,Agent,Otlp ext"
+        }
+      ],
+      "sourceSha256": "5bd9c5b4e30711a6b057c1177fa03cc9e8d3ff972b0f4901b4a055c9bffff5b3"
+    },
+    {
+      "id": "diagram-layers",
+      "path": "docs/diagrams/layers.md",
+      "title": "Layered architecture — capability tiers",
+      "type": "doc",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Where each AI-DE capability sits in the LOA tier ladder, and the single rule that governs the boundary: a model may explain a bounded, already-selected result, and may never select it.",
+      "tags": [
+        "diagram",
+        "layers",
+        "loa",
+        "tiers",
+        "architecture"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "diagram-component",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "Layered architecture — capability tiers",
+          "mermaid": "flowchart TB\n  classDef t0 fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef t12 fill:#1A1F26,stroke:#D8A650,color:#E4E9EF,stroke-dasharray:4 3\n  classDef t3 fill:#1A1F26,stroke:#98A3B2,color:#98A3B2,stroke-dasharray:4 3\n  classDef gate fill:#0D1014,stroke:#E07A6F,color:#E07A6F\n\n  subgraph T3[\"T3 — cognition, opt-in and disclosed\"]\n    Explain[\"Agent explanation / synthesis<br/>bounded, cited, budgeted\"]\n  end\n\n  subgraph T12[\"T1 / T2 — later, only on a measured need\"]\n    Rank[\"Local reorder-only ranking<br/>within a T0-selected, T0-truncated set\"]\n  end\n\n  Gate{{\"Capability gate<br/>governs everything above T0\"}}\n\n  subgraph T0[\"T0 — deterministic floor\"]\n    Identity[\"Workspace membership · path validation<br/>session binding · dispatch receipts\"]\n    Facts[\"Extractor scope replacement · evidence ingestion<br/>fact constraints · impact traversal\"]\n    Render[\"Layout · filtering · diagram rendering<br/>accessibility alternatives\"]\n    Tools[\"MCP tool schema validation · authorization<br/>result truncation and byte-bounding\"]\n    Score[\"Weave scoring · leaderboard composition<br/>liveness · coordination fold\"]\n  end\n\n  Explain --> Gate\n  Rank --> Gate\n  Gate --> T0\n  Explain -. \"may never mutate facts<br/>or dispatch prompts\" .-> Facts\n\n  class Identity,Facts,Render,Tools,Score t0\n  class Rank t12\n  class Explain t3\n  class Gate gate"
+        }
+      ],
+      "sourceSha256": "70f8d4f6f7b2979c7bcfe2fcc1efdece5f8476b3601600521101cd648474fc69"
+    },
+    {
+      "id": "diagram-sequence",
+      "path": "docs/diagrams/sequence.md",
+      "title": "Sequence diagrams — extraction and agent registration",
+      "type": "doc",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "The two flows the product turns on: repository change to rendered surface, and terminal launch to a scored, attributed episode — with the failure and refusal paths drawn, not only the happy one.",
+      "tags": [
+        "diagram",
+        "sequence",
+        "extraction",
+        "watcher",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "diagram-component",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "sequence",
+          "title": "1 — A repository change reaches a surface",
+          "mermaid": "sequenceDiagram\n  autonumber\n  participant FS as Repository\n  participant Sched as Ingestion scheduler\n  participant Ex as Extractor adapter\n  participant Store as Fact store (SQLite)\n  participant Proj as ProjectionService\n  participant UI as Surface\n\n  FS->>Sched: file/event signal\n  Sched->>Sched: debounce; pin artifact revision\n  Sched->>Ex: ExtractionRequest(scope, revision, trigger)\n  activate Ex\n  Ex->>Ex: parse — C# · TS · Python · Bicep · EF · SQL · knowledge\n  Ex-->>Sched: evidence assertions + scope snapshot\n  deactivate Ex\n\n  Sched->>Store: one writer transaction\n  activate Store\n  Note over Store: validates epoch, scope generation AND artifact revision;<br/>UPDATE/DELETE abort by trigger; no REPLACE/UPSERT\n  alt stale generation or revision\n    Store-->>Sched: rejected atomically\n  else accepted\n    Store->>Store: append facts; update labelled rebuildable projections\n  end\n  deactivate Store\n\n  UI->>Proj: bounded query (node / graph / search)\n  Proj->>Store: read connection, query_only=1\n  Store-->>Proj: rows\n  Proj-->>UI: result + limits, returned/omitted counts,<br/>source revision, provenance, confidence\n  Note over UI: renders Verified vs Inferred distinctly;<br/>an omitted count is shown, never swallowed"
+        },
+        {
+          "kind": "sequence",
+          "title": "2 — A terminal becomes an attributed, scored session",
+          "mermaid": "sequenceDiagram\n  autonumber\n  actor User\n  participant Shell as WorkbenchShell\n  participant Term as ConPTY session\n  participant Agent as Agent (any harness)\n  participant Log as Coordination log\n  participant Host as WatcherHost\n  participant Reg as TrustedRegistrar\n  participant Scorer as WeaveScorer\n\n  User->>Shell: New Claude Code session (Ctrl+K, A)\n  Shell->>Term: start with AIDE_* environment\n  Note over Shell,Term: AIDE_SESSION · TERMINAL_ID · WORKSPACE · WORKTREE<br/>BRANCH · AGENT · HARNESS · CONTRACT_LOG\n  Term->>Agent: launch\n\n  Shell->>Host: Reconcile(identity)\n  Host->>Reg: Register(binding)\n  Reg-->>Host: RegisteredSession + capability\n  Note over Reg: harness present → Verified; absent → Asserted\n\n  loop while alive\n    Agent->>Log: heartbeat\n    Host->>Log: PumpOnce — re-reading is idempotent\n    Log-->>Host: events, parsed and ordered\n    Host->>Reg: Heartbeat(sessionId, capability)\n  end\n\n  Agent->>Log: update { harness, model }\n  Host->>Reg: UpdateHarnessAndModel(...)\n  alt capability does not match\n    Reg-->>Host: LK-0001 forgery rejected\n  else accepted\n    Reg->>Reg: merge harness/model only\n    Note over Reg: identity cannot be restated;<br/>trust never rises — the log is a forgeable file\n  end\n\n  Agent->>Log: session-end\n  Host->>Scorer: Score(episode, deterministic signals)\n  alt no goal / no done-condition / not closed / no verification path\n    Scorer-->>Host: Not Scored + the reason\n  else a hard floor tripped\n    Scorer-->>Host: Blocked — numeric headline suppressed\n  else\n    Scorer-->>Host: Partial or Scored + per-dimension evidence\n  end"
+        }
+      ],
+      "sourceSha256": "3316f29bb297d1c61cb4b384b0b91496ca35b98f17708f59fccde456d15e7e61"
+    },
+    {
+      "id": "docs-map-of-content",
+      "path": "docs/index.md",
+      "title": "AI-DE documentation — map of content",
+      "type": "doc",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "A curated route into the AI-DE documentation for four different readers, rather than a mirror of the folder tree. The machine-navigable form is the Docs Explorer.",
+      "tags": [
+        "moc",
+        "index",
+        "documentation",
+        "navigation"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        },
+        {
+          "to": "diagram-component",
+          "rel": "relates-to"
+        },
+        {
+          "to": "diagram-layers",
+          "rel": "relates-to"
+        },
+        {
+          "to": "diagram-sequence",
+          "rel": "relates-to"
+        },
+        {
+          "to": "diagram-class",
+          "rel": "relates-to"
+        },
+        {
+          "to": "knowledge-hub",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a8bd68873d129788f13264cc029e4b9b9866d8dc013d13a51ef94ba5f9e0b3c1"
+    },
+    {
       "id": "domain-experts",
       "path": "docs/domain-experts.md",
       "title": "AI-DE Domain Experts — the project's subject-matter lenses",
@@ -4533,6 +5164,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "93530824cad8aa85f88148cf8dbd63ddf813e1358e5b9417e81170e2eb95a71f"
     },
     {
+      "id": "review-site-craft-gate",
+      "path": "docs/reviews/site-craft-gate.md",
+      "title": "Craft-gate review — the public site",
+      "type": "doc",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-03-02",
+      "reviewSuggested": [],
+      "summary": "The deterministic craft detector run over site/, its 21 findings, what was changed, and the one finding accepted with a reason — plus the two gaps the detector cannot see and neither can I.",
+      "tags": [
+        "review",
+        "craft",
+        "ui",
+        "site",
+        "github-pages"
+      ],
+      "links": [
+        {
+          "to": "docs-map-of-content",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "dc789bb23dea4229edb8e04269c312c9dd2bf59ff16d44990e94aed256c993a0"
+    },
+    {
       "id": "review-ui-activity-rail",
       "path": "docs/reviews/ui-activity-rail.md",
       "title": "UI review — activity rail (elevate)",
@@ -5280,7 +5942,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a4ed3a2a59b6fa47fd62fdac993acd8e482e289755d427a2967f425e313151ed"
+      "sourceSha256": "e48788ba7dc45e57b9a9536e35702bdab9ea94fb82c0ab7db7b35aad0ebdc654"
     },
     {
       "id": "ui-unbacked-affordances",
@@ -9841,6 +10503,13 @@ window.DOCS_INDEX = {
       "artifactId": "audit-log"
     },
     {
+      "id": "surface-site-index",
+      "path": "docs/_site/index.html",
+      "title": "AI-DE — Documentation",
+      "kind": "documentation",
+      "description": "Open the generated documentation bundle."
+    },
+    {
       "id": "surface-mockups-activity-rail",
       "path": "docs/mockups/activity-rail.html",
       "title": "Activity rail — elevate mockup",
@@ -9953,5 +10622,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "effae77489212286c1f5a76f3d9b53c6b400eb67f18ce2df2f5f29733de1f7f6"
+  "graphSha256": "8967cd2cf8ac432788fd4e43378a3ef4d55cf074dbaa85326e851c3ce126d21c"
 };
