@@ -51,6 +51,18 @@ VIEWS = [
         "command": ["docs/ai-forward-pack/scripts/audit-log.py", "render"],
         "from": "docs/audit/audit-log.jsonl and docs/audit/change-log.jsonl",
     },
+    {
+        # A DIRECTORY of 17 files, added 2026-09-02 after it went stale unnoticed. The API reference
+        # is derived from the `///` comments in src/, so ANY change to a doc comment - or adding a
+        # public type - makes every committed page here a claim about a source that has moved.
+        #
+        # It was already stale when this entry was written: the committed pages said 76 types where
+        # the source had 79, from a merge minutes earlier. Nothing reported it, because the two
+        # views this gate knew about were both single files and this one was neither of them.
+        "glob": "docs/api/*.md",
+        "command": ["tools/api-reference.py"],
+        "from": "the /// comments on every public type and member in src/",
+    },
 ]
 
 # A timestamp stamped at generation time. It differs on every run by construction — comparing it
@@ -86,13 +98,16 @@ def check(root: Path) -> list[str]:
     findings: list[str] = []
 
     for view in VIEWS:
-        path = root / view["path"]
+        # A view is one file or a directory of them. The set is captured BEFORE regenerating, so a
+        # generator that stops emitting a page is reported as a difference rather than ignored.
+        paths = sorted((root).glob(view["glob"])) if "glob" in view else [root / view["path"]]
+        label = view.get("glob", view.get("path"))
 
-        if not path.exists():
-            findings.append(f"{view['path']} is missing — it is derived from {view['from']}")
+        if not paths or not all(p.exists() for p in paths):
+            findings.append(f"{label} is missing — it is derived from {view['from']}")
             continue
 
-        committed = path.read_bytes()
+        committed = {p: p.read_bytes() for p in paths}
 
         error = regenerate(root, view)
 
@@ -100,23 +115,25 @@ def check(root: Path) -> list[str]:
             findings.append(error)
             continue
 
-        produced = path.read_bytes()
+        stale = sorted(
+            p.relative_to(root).as_posix() for p in paths
+            if not p.exists() or comparable(committed[p]) != comparable(p.read_bytes()))
 
-        if comparable(committed) == comparable(produced):
-            # Put the committed bytes back so a clean run leaves the tree exactly as it was —
-            # only the volatile timestamp would differ, and a gate must not create a diff.
-            path.write_bytes(committed)
+        # Restore before reporting, and before returning clean. A control that leaves the working
+        # tree rewritten makes the next command's output a lie about what is committed.
+        for path, blob in committed.items():
+            path.write_bytes(blob)
+
+        if not stale:
             continue
 
-        # Restore before reporting. A failing control that leaves the working tree rewritten
-        # makes the next command's output a lie about what is committed.
-        path.write_bytes(committed)
-
+        fix = " ".join(view["command"])
         findings.append(
-            f"{view['path']} is not what its generator produces — it is derived from "
-            f"{view['from']} and is stale or was merged by hand. This is the shape a rebase "
-            f"leaves behind: valid JSON, no conflict marker, and wrong (DC-060). "
-            f"Fix: run `python {view['command'][0]} {view['command'][1]}` and commit the result.")
+            f"{len(stale)} of {len(paths)} file(s) under {label} are not what the generator "
+            f"produces — derived from {view['from']}, so they are stale or were merged by hand. "
+            f"This is the shape a rebase leaves behind: no conflict marker, and wrong (DC-060). "
+            f"Stale: {', '.join(stale[:4])}{' …' if len(stale) > 4 else ''}. "
+            f"Fix: run `python {fix}` and commit the result.")
 
     return findings
 

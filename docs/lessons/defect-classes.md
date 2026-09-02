@@ -3067,4 +3067,17 @@ for both or split.*
 - **The generalisation:** *make the whole optional thing optional.* A prefix is `(?:X:)?`, never
   `X:?` — the second says "the letter is required and the colon is a nicety", which is never what
   anyone means.
+
+  **A SECOND DEFECT IN THE SAME ARTIFACT, found by asking what else was unchecked.** `docs/api` is
+  derived from the `///` comments in `src/`, and `verify-derived-views` — the gate whose entire
+  subject is committed derived views being stale — did not cover it. It was **already stale when
+  this entry was written**: the committed pages said 76 public types where the source had 79, from a
+  merge minutes earlier, and nothing reported it.
+
+  The reason it was uncovered is worth more than the fix: the gate understood a view as **one file**,
+  because both views it was built from were single files. `docs/api` is a directory of seventeen, so
+  it was not a view it could hold — not excluded by a judgement, just unrepresentable. **A coverage
+  list takes the shape of the examples it was built from**, and an artifact of a different shape is
+  invisible rather than skipped. The gate now takes a `glob` and reports "n of 17", observed catching
+  a planted hand-edit and naming the file.
 - **Status:** `controlled`

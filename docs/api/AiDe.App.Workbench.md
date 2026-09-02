@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 76 types, 311 members, 68% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 79 types, 315 members, 68% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**76 public types · 311 public members · 68% documented.**
+**79 public types · 315 public members · 68% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -994,7 +994,7 @@ mapping lives, so adding a surface kind never means touching the layout model.
 
 | Member | Summary |
 |---|---|
-| `IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"]` | Surface kinds this factory can build. An unknown kind still gets an honest pane. |
+| `IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "ledger", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"]` | Surface kinds this factory can build. An unknown kind still gets an honest pane. |
 | `FrameworkElement Create(Surface surface)` | **(gap)** |
 
 ## `TerminalColorScheme`
@@ -1416,6 +1416,40 @@ tokens so it reads as part of the shell rather than a bare Windows dialog.
 | Member | Summary |
 |---|---|
 | `string? Show(string title, string initial, Window? owner)` | Shows the prompt modally and returns the text, or null if cancelled. |
+
+## `IWatcherLedgerQuery`
+
+*interface* — `WatcherLedger.cs`
+
+The Ledger read: every work episode the watcher has recorded, newest first. Where the Leaderboard
+RANKS scored episodes and the Board shows breadcrumb messages, the Ledger is the raw append-only
+record — "what work has this workspace seen", scored or not — the third view over the same
+`IWatcherObservationStore` the Board and Leaderboard read.
+
+## `WatcherLedgerQuery`
+
+*class* — `WatcherLedger.cs`
+
+Reads the work-episode ledger straight off the observation store (its append-only fact table).
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<WorkEpisode> GetEpisodes()` | **(gap)** |
+
+## `LedgerRow`
+
+*record* — `WatcherLedger.cs`
+
+One dense line in the Ledger: what the episode was for, when it opened, and whether it closed.
+
+**Remarks.** Pure and dependency-free so the label mapping is unit-tested off the UI thread, the same discipline
+as `SessionRowPresenter` and the leaderboard row.
+
+| Member | Summary |
+|---|---|
+| `LedgerRow From(WorkEpisode episode)` | **(gap)** |
+| `IReadOnlyList<LedgerRow> Rows(IReadOnlyList<WorkEpisode> episodes)` | Newest first — a ledger reads top-down as most-recent-first. |
+| `string StatusFor(IWatcherLedgerQuery? query)` | The honest status line: whether observation is wired, and how much it has recorded. |
 
 ## `WorkbenchAdapter`
 
