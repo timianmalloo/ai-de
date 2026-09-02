@@ -188,7 +188,7 @@ The response is larger than one frame can carry.
 
 **Remarks.** INV-0003. Without this code an oversized response threw out of the write path, the serve loop
 did not catch that exception type, and the connection closed with no reply — which the client
-can only report as `ransportClosed`. "The daemon vanished" and "the answer is too
+can only report as `TransportClosed`. "The daemon vanished" and "the answer is too
 big to send" need different things from a user, and rendering the second as the first sends
 them to look at the daemon.
 
@@ -230,7 +230,7 @@ protocol neither side chose, and the failure appears far from its cause.
 serialised and the resulting TEXT was placed in a string field, so the transport re-escaped
 every quote in it — MEASURED at 1.56-1.57x, which is how a 727,244-byte graph became 1,137,104
 bytes on the wire and was refused (DC-047). A peer speaking 2 is still understood, because
-`pcPayload` reads either form.
+`IpcPayload` reads either form.
 
 ## `IpcPayload`
 
@@ -404,7 +404,7 @@ lane.`
 
 Writes one framed message.
 
-**Throws `ArgumentException`.** The message exceeds `axFrameBytes`.
+**Throws `ArgumentException`.** The message exceeds `MaxFrameBytes`.
 
 ### `Task<string?> ReadAsync(Stream stream, CancellationToken cancellationToken)`
 
@@ -562,7 +562,7 @@ loses warm state — and short enough that a forgotten daemon is not resident in
 The named-pipe transport: establishes who the peer is, and hands bytes to the endpoint.
 
 **Remarks.** **This layer decides nothing about authorization.** Version acceptance, capability
-binding and the order of the checks all live in `aemonEndpoint`, which is why they
+binding and the order of the checks all live in `DaemonEndpoint`, which is why they
 were testable long before this existed. What belongs here is only what cannot be known without a
 connection: who the peer is, how many of them there are, and how fast they are asking.
 
@@ -581,7 +581,7 @@ is what a test can observe — a control that nothing verifies is one nobody not
 
 **The daemon exits when nobody needs it.** A workspace daemon outliving every shell is
 an orphan holding a store lock, and the user has no way to see it or reason about it. So
-`unAsync` returns — rather than looping forever — once the grace period passes with
+`RunAsync` returns — rather than looping forever — once the grace period passes with
 no client attached.
 
 | Member | Summary |
@@ -674,7 +674,7 @@ The full list is still in the result, unchanged, for a surface that can hold it.
 
 The write surface applied by a core in this process.
 
-**Remarks.** Takes the refresh as a delegate rather than a `orkspaceCore` so that what the
+**Remarks.** Takes the refresh as a delegate rather than a `WorkspaceCore` so that what the
 in-process mode reports — a completed count, or a failure with its reason — is decided in one
 place and testable without a store.
 
@@ -689,7 +689,7 @@ place and testable without a store.
 
 The two durable phases of prompt dispatch, as a caller sees them.
 
-**Remarks.** Separate from `WorkspaceCommands` because it is a different obligation: a
+**Remarks.** Separate from `IWorkspaceCommands` because it is a different obligation: a
 workspace can answer projections and re-index without being able to record a dispatch, and a
 shell that cannot dispatch should discover that by the capability being absent rather than by a
 call failing.
@@ -714,7 +714,7 @@ Where a scope refresh has got to.
 
 What a caller learns about a refresh.
 
-**Remarks.** `ailure` is populated on `Failed` and states why. A
+**Remarks.** `Failure` is populated on `Failed` and states why. A
 refresh that failed silently would leave the last good snapshot rendering with nothing to say it
 is now stale — which is the "clean empty success over rotting evidence" this product exists to
 avoid.
@@ -785,7 +785,7 @@ would be discarded, having cost a full budget.
 
 
 **Nothing here re-implements ingestion.** The generation fence, the incomplete-result
-handling and the snapshot commit all stay in `orkspaceCore`; this decides only what
+handling and the snapshot commit all stay in `WorkspaceCore`; this decides only what
 crossing the boundary means.
 
 | Member | Summary |
@@ -799,7 +799,7 @@ crossing the boundary means.
 
 ### `ScopeRefreshService(Func<string, string, CancellationToken, Task<int>> refresh)`
 
-- **`refresh`** — Runs the extraction and returns the assertion count. Injected rather than taking a `orkspaceCore` so the boundary's behaviour — idempotency, retention, what a failure looks like — is testable without standing up a store and an extractor.
+- **`refresh`** — Runs the extraction and returns the assertion count. Injected rather than taking a `WorkspaceCore` so the boundary's behaviour — idempotency, retention, what a failure looks like — is testable without standing up a store and an extractor.
 
 ### `ScopeRefreshStatus? Status(string commandId)`
 
@@ -834,7 +834,7 @@ Why a shell could not reach a daemon.
 Gets the shell a daemon: reach the one that is running, or start one and wait for it.
 
 **Remarks.** **Connect first, launch second, and that order is the whole design.** A workspace has at
-most one daemon — enforced by `orkspaceLock` — so launching first would mean the
+most one daemon — enforced by `WorkspaceLock` — so launching first would mean the
 second shell on a workspace starts a process whose only job is to discover it is redundant and
 exit. Trying the pipe costs a few milliseconds and is right in the common case.
 
@@ -889,7 +889,7 @@ caller can decide without parsing prose.
 
 The core's read surface, over the boundary, in the same shapes the in-process caller uses.
 
-**Remarks.** **The result types are the core's own** — `escribeResult` and its
+**Remarks.** **The result types are the core's own** — `DescribeResult` and its
 siblings — rather than a parallel set of wire types. A second definition of one result is two
 things to keep in step, and the first divergence would appear as a field that is present in
 process and missing across the pipe.
@@ -1092,7 +1092,7 @@ registering a handler that half-implements it.
 
 
 
-**The projections are already bounded** (`rojectionService` clamps every
+**The projections are already bounded** (`ProjectionService` clamps every
 limit and reports what it omitted), which is what makes them safe to expose to a caller who
 chooses the numbers. Nothing here re-validates: doing so would create a second definition of the
 bound, and two definitions of one quantity is a defect signature.
@@ -1122,7 +1122,7 @@ bound, and two definitions of one quantity is a defect signature.
 
 Lines in the workspace's own files that contain a term.
 
-**Remarks.** Separate from `ind` because it answers a different question and costs a
+**Remarks.** Separate from `Find` because it answers a different question and costs a
 different amount: Find reads the store, this opens files. A client should be able to offer
 the cheap one on every keystroke and the expensive one on demand.
 
@@ -1149,7 +1149,7 @@ Turns a domain refusal into a stable error response instead of letting it escape
 Registers the workspace-wide C# index on .
 
 **Remarks.** **Found by a test, and it was worse than it looked.** A stale-epoch dispatch threw a
-`orkspaceStoreException` out of the handler, past `andle{TRequest}`
+`WorkspaceStoreException` out of the handler, past `Handle{TRequest}`
 — which deliberately guards only decoding — and out of the server's listen loop. One client
 holding a stale epoch would have taken the daemon down for *every* shell attached to the
 workspace.
@@ -1162,5 +1162,5 @@ workspace.
 stands: a projection that throws is a defect in us and must not be swallowed. But a stale
 epoch is not a defect — it is the expected answer when the core was replaced under a caller,
 and the design requires it to come back as a stable denial code. Only
-`orkspaceStoreException` is mapped, because it is the type that carries one;
+`WorkspaceStoreException` is mapped, because it is the type that carries one;
 everything else still escapes.

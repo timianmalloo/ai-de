@@ -140,11 +140,11 @@ A pane as the resolver sees it: its id, its bounds, and where its tab strip is.
 
 *class* — `DropTargetResolver.cs`
 
-Turns a pointer position into the `ropTarget` a drop would use.
+Turns a pointer position into the `DropTarget` a drop would use.
 
-**Remarks.** This is the other half of SC 2.5.7. The keyboard already produces a `ropTarget`;
+**Remarks.** This is the other half of SC 2.5.7. The keyboard already produces a `DropTarget`;
 this makes the pointer produce one too, so both paths converge on the same
-`ayoutOperation` and the equivalence test compares two real paths rather than one
+`LayoutOperation` and the equivalence test compares two real paths rather than one
 path against itself.
 
 It is also what makes "show the destination before release" honest: the preview and the commit
@@ -181,7 +181,7 @@ destination while the drop performs another.
 
 *record* — `LayoutMigrations.cs`
 
-One step up the schema ladder: transforms a layout written at `romVersion` into the
+One step up the schema ladder: transforms a layout written at `FromVersion` into the
 shape the next version expects.
 
 **Remarks.** Migrations operate on the **DTO**, not the domain model, deliberately. A migration's whole job is
@@ -238,7 +238,7 @@ the step is safe to re-run.
 
 *enum* — `LayoutModel.cs`
 
-How a stack is currently presented. Only `loating` may overlap.
+How a stack is currently presented. Only `Floating` may overlap.
 
 ## `Surface`
 
@@ -425,7 +425,7 @@ that mutates the layout without telling assistive technology is not expressible 
 The single mutation path for the workbench arrangement.
 
 **Remarks.** Pattern: Command + immutable aggregate. Every gesture — pointer drag, keyboard command, palette
-entry — is funnelled through `pply`, which validates, applies, re-checks the tiling
+entry — is funnelled through `Apply`, which validates, applies, re-checks the tiling
 invariant and produces the announcement. Refusals are values, not exceptions: hitting a minimum
 size is an ordinary outcome the UI reports, not an error path.
 
@@ -532,7 +532,7 @@ that are actually connected.
 
 *class* — `TreeToZones.cs`
 
-Converts a legacy proportional split-tree `ayout` into a `orkbenchLayout`
+Converts a legacy proportional split-tree `Layout` into a `WorkbenchLayout`
 of named zones. The Expand step of the ADR-0021 migration: existing saved `layout.json` trees
 are read through this so no surface is lost and every surface lands in a deterministic zone (AC-F9).
 
@@ -600,12 +600,12 @@ layout captured on entry.
 
 *class* — `ZoneBackedLayoutService.cs`
 
-An `LayoutService` whose real state is a `orkbenchLayout` of named zones,
-projected to a fixed-shape `ayout` tree for the existing adapter/persistence to render
+An `ILayoutService` whose real state is a `WorkbenchLayout` of named zones,
+projected to a fixed-shape `Layout` tree for the existing adapter/persistence to render
 (ADR-0021). Every tree-shaped operation is translated to a zone-scoped one, so an operation on one
 pane changes only the zone(s) it names — the frame cannot "flip" (defect class DC-063). This is the
 Strangler that lets the layout logic become zone-based without touching the adapter, controller,
-persistence or shell wiring, all of which speak `LayoutService`.
+persistence or shell wiring, all of which speak `ILayoutService`.
 
 | Member | Summary |
 |---|---|
@@ -623,7 +623,7 @@ persistence or shell wiring, all of which speak `LayoutService`.
 *enum* — `ZoneLayout.cs`
 
 The four named, absolute regions of the workbench frame. Unlike the proportional split tree
-(`ayout`), these are **stable containers**: the frame never restructures, so an
+(`Layout`), these are **stable containers**: the frame never restructures, so an
 operation on a pane can only change the zone(s) that pane belongs to — never relocate or reorient
 an unrelated pane (defect class DC-063). See `adr-0021-named-dock-zones`.
 
@@ -633,11 +633,11 @@ an unrelated pane (defect class DC-063). See `adr-0021-named-dock-zones`.
 
 What a zone holds: either a single tab stack or, within the Center, a split into editor groups.
 
-**Remarks.** The load-bearing rule is that a `oneSplit`'s children never leave the zone — a split
+**Remarks.** The load-bearing rule is that a `ZoneSplit`'s children never leave the zone — a split
 is *scoped to its zone*. That is what keeps the top-level frame from being a tree: there is
 no operation that restructures the relationship *between* zones. A zone with no content is
 represented by a null `Content` (a rail for a tool zone; a placeholder for
-the Center), not by an empty stack — an empty `oneStack` is not constructible.
+the Center), not by an empty stack — an empty `ZoneStack` is not constructible.
 
 | Member | Summary |
 |---|---|
@@ -677,7 +677,7 @@ zone content, so a group can be a stack or a nested split — but always inside 
 *record* — `ZoneLayout.cs`
 
 One zone's state: what it holds, its cross-axis size relative to the Center, and whether it is
-collapsed to a rail. The Center is never collapsed and its `xtent` is ignored (it
+collapsed to a rail. The Center is never collapsed and its `Extent` is ignored (it
 takes the remaining space).
 
 | Member | Summary |
@@ -697,9 +697,9 @@ The arrangement to restore a maximized zone or pane back to.
 *record* — `ZoneLayout.cs`
 
 The whole workbench arrangement as named zones: a fixed frame plus the floating stacks held
-outside it. Replaces the proportional split tree (`ayout`).
+outside it. Replaces the proportional split tree (`Layout`).
 
-**Remarks.** All four zones are **always present** in `ones` — an empty zone has null content,
+**Remarks.** All four zones are **always present** in `Zones` — an empty zone has null content,
 it is never removed. That is what makes "the Center is always there" and "moving a pane cannot
 delete a zone" structural rather than rules to remember. Floating stacks live outside the frame,
 unchanged from the tree model (only docked layout changes in ADR-0021).
@@ -725,12 +725,12 @@ The outcome of a zone-layout operation, carrying the accessibility announcement 
 
 *class* — `ZoneLayoutService.cs`
 
-The zone-scoped layout operations. Every operation names a `oneId`, and its effect is
+The zone-scoped layout operations. Every operation names a `ZoneId`, and its effect is
 confined to that zone (and, for a move, the destination zone) — the other zones come through
 reference-identical via `WithZone`. That confinement is the structural
 remedy for DC-063: there is no operation that restructures the relationship between zones.
 
-**Remarks.** Pure functions over an immutable `orkbenchLayout`; no shell/UI dependency.
+**Remarks.** Pure functions over an immutable `WorkbenchLayout`; no shell/UI dependency.
 
 | Member | Summary |
 |---|---|
@@ -742,7 +742,7 @@ remedy for DC-063: there is no operation that restructures the relationship betw
 | `ZoneLayoutResult ExpandZone(WorkbenchLayout layout, ZoneId zoneId)` | Re-expands a collapsed tool zone, restoring the same panes and active tab. |
 | `ZoneLayoutResult ResizeZone(WorkbenchLayout layout, ZoneId zoneId, double extent)` | Resizes a tool zone. Only that zone changes size; the Center absorbs the difference (AC-F6). |
 | `ZoneLayoutResult Maximize(WorkbenchLayout layout, ZoneId zoneId)` | Maximizes a zone (others collapse to rails), snapshotting the arrangement for an exact restore. |
-| `ZoneLayoutResult Restore(WorkbenchLayout layout)` | Restores the arrangement captured at the last `aximize` — exactly (AC-F5). |
+| `ZoneLayoutResult Restore(WorkbenchLayout layout)` | Restores the arrangement captured at the last `Maximize` — exactly (AC-F5). |
 
 ## `ZoneEnvelope`
 
@@ -784,7 +784,7 @@ remedy for DC-063: there is no operation that restructures the relationship betw
 
 *class* — `ZoneLayoutStore.cs`
 
-Saves and restores a `orkbenchLayout` of named zones as JSON (ADR-0021 dz-persist),
+Saves and restores a `WorkbenchLayout` of named zones as JSON (ADR-0021 dz-persist),
 preserving what the projected tree cannot: collapsed-zone content, per-zone extent, and exact
 placement. Restore filters out surfaces the app can no longer provide, so a saved terminal whose
 process is gone (or a surface kind the build dropped) does not resurrect — an empty zone simply
@@ -801,8 +801,8 @@ becomes a placeholder, never a broken pane.
 
 *class* — `ZonesToTree.cs`
 
-Projects a `orkbenchLayout` of named zones into a **fixed-shape** legacy
-`ayout` tree, so the existing AvalonDock adapter, persistence and controller render
+Projects a `WorkbenchLayout` of named zones into a **fixed-shape** legacy
+`Layout` tree, so the existing AvalonDock adapter, persistence and controller render
 zones without change (the Strangler-Fig step of ADR-0021). The projected tree is always the same
 frame — `Vertical[ Horizontal[left, center, right], bottom ]` — so rendering it can never
 "flip": closing or opening a pane changes only which surfaces a zone's pane holds, never the frame.

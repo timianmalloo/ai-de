@@ -263,7 +263,7 @@ which is why a snapshot exists at all rather than a decision to proceed.
 
 
 
-**Recovery is a separate entry point** (`ecoverIfIncomplete`) because the
+**Recovery is a separate entry point** (`RecoverIfIncomplete`) because the
 case it handles is the one where this class never got to finish. Nothing in the failure path can
 be relied on to run at the moment of a power loss, so the next start reads the journal and
 completes the sentence.

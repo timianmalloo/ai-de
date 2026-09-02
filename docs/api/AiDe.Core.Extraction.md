@@ -554,7 +554,7 @@ frontmatter and disclosed `knowledge-body-not-analysed` on every scope — 877 d
 TheTerrace present in the graph as their own metadata. A markdown hyperlink to another document
 is the one thing in a body that is a DECLARATION: the author wrote a path, and the path either
 resolves to a file this scope read or it does not. Everything else a body contains was measured
-and left unread on purpose; `nowledgeBody` carries the numbers and the reasons, and
+and left unread on purpose; `KnowledgeBody` carries the numbers and the reasons, and
 each one is disclosed with a count rather than skipped in silence.
 
 
@@ -588,7 +588,7 @@ shipped (DC-051).
 
 
 **So the two jobs are separated instead of traded.** RESOLUTION reads the whole
-workspace — `orkspaceKnowledge`, built once per revision by `WorkspaceCore` and
+workspace — `WorkspaceKnowledge`, built once per revision by `WorkspaceCore` and
 handed to every scope, exactly as `WorkspaceModules` already is for Python and TypeScript.
 EMISSION covers only the markdown directly in this scope's directory, so each document is
 extracted by exactly one scope. Measured on TheTerrace: 878 documents preserved, `node_class`
@@ -627,7 +627,7 @@ file the path lands on.
 `*` recursively with no exclusions — pointed at a real checkout it would walk
 `node_modules`, `bin` and `.git`. It also stamps `fixture-extractor` into
 provenance, which would be a lie on a real document. The parsing is shared
-(`nowledgeFrontmatter`); only the walking and the identity differ.
+(`KnowledgeFrontmatter`); only the walking and the identity differ.
 
 **Keyed by PATH, never by name.** The map is what makes cross-directory resolution
 possible without inference: a link is followed to a file, and the id is whatever that file says
@@ -879,7 +879,7 @@ other extractors do not need.
 
 Node.js's own built-in module names — the runtime this product does not index.
 
-**Remarks.** **Why this exists.** The sibling of `ythonStandardLibrary`, added for the
+**Remarks.** **Why this exists.** The sibling of `PythonStandardLibrary`, added for the
 same reason and against the same measurement. DC-050 is registered for a disclosure that merges
 what the product *will not* read with what it *could not* read, and its residual-risk
 line named this reader as the next place it would appear: *"TypeScript discloses 11 unresolved
@@ -1260,7 +1260,7 @@ new observation. The guard was the symptom; the key was the cause.
 
 `simplify: the generation is carried in the revision STRING rather than its own column in
 the natural key; ceiling is that a stored revision is no longer the caller's literal text, so
-anything showing one to a person calls `ase` first; upgrade trigger = the store
+anything showing one to a person calls `Base` first; upgrade trigger = the store
 gains migration machinery, at which point extractor_generation becomes a real column and this
 type collapses to nothing.`
 
@@ -1343,7 +1343,7 @@ repository. Every measurement before it came from a codebase that happened to us
 
 
 
-**Same node shape as `fSchemaExtractor`, deliberately.** A table is
+**Same node shape as `EfSchemaExtractor`, deliberately.** A table is
 `table:Name` with `has_type table` and `has_column`, because the join projection
 already reads that vocabulary — a second spelling for the same thing would be DC-022 with two
 producers of one predicate, and the joins would silently see half the tables.
@@ -1510,7 +1510,7 @@ the same reason.
 
 
 
-**A `yntaxTree` is immutable**, so sharing one between compilations and
+**A `SyntaxTree` is immutable**, so sharing one between compilations and
 threads is safe by construction rather than by convention.
 
 | Member | Summary |
@@ -1781,7 +1781,7 @@ depending which entry point you asked.
 
 
 **And the hand-written form is easy to get wrong quietly.** The same spike passed its
-extractors POSITIONALLY, which put `icepExtractor` in the `fallback` slot and
+extractors POSITIONALLY, which put `BicepExtractor` in the `fallback` slot and
 routed every `bicep:` scope to the schema extractor. Both scopes failed, and the write-up
 concluded the repository had no Bicep in it. It had two templates and 24 resource declarations.
 A composition nobody can mis-order is worth more than a comment asking them not to.

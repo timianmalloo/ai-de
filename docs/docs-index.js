@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T20:10:14Z",
+  "generated": "2026-09-02T20:25:59Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1268,7 +1268,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0acbdb3b170ac537d9bce545bfb3e99f76e7ae222e4c962ab2acfa01673325ad"
+      "sourceSha256": "4f28aaddad560ff7e749be0c28296a69dc1e9dde0fc38bc26c456847020a233e"
     },
     {
       "id": "api-aide-app-workbench",
@@ -1293,7 +1293,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9bba8207d80362c07fdbbede15bfab0e1b41a8df9258a9e2fe105c915dc6c998"
+      "sourceSha256": "e494ae338b4ea71f2168fdf467f5beb90ab89b25d7143fb66132043eb0fe264e"
     },
     {
       "id": "api-aide-core",
@@ -1343,7 +1343,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "10545f7c8d465001bdb5f651a67e443e33e24544fb7db3d64a8f9a81347f41ba"
+      "sourceSha256": "2e31a00a6d344294935b401244c8cbef5a759284221b16898895ce4d8988e0ca"
     },
     {
       "id": "api-aide-core-extraction",
@@ -1368,7 +1368,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "83a4de87d07ac4148093c7a65b93a534c5fcc4fbb426884841e13676ef287e70"
+      "sourceSha256": "df3afcffd68a2bba5fd00162ca45a0180d527e36f5d50e761e3d219305a5c6a2"
     },
     {
       "id": "api-aide-core-facts",
@@ -1393,7 +1393,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3c08d92f0d17ce042752520f8c3c940d70f3df8eb644e1b89f21cc97ef1fc9c5"
+      "sourceSha256": "b2a3a41766f82548750a9b3020d42d4226f75a45e0243f6ba6625556671d8aed"
     },
     {
       "id": "api-aide-core-health",
@@ -1443,7 +1443,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "77b8fe4070f0d5c53ba405fc06760ad30a4f2af8218b44748bc0c94602babae6"
+      "sourceSha256": "64045c3c04e90125cfda6cc3011b9a885c692e8bdcd2c1a8faff00e7032715ac"
     },
     {
       "id": "api-aide-core-mcp",
@@ -1493,7 +1493,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "599d3f535e3b10a1ea392fb4a3b11d54caa8ae1f0a020e284b36eee58413eff8"
+      "sourceSha256": "05ce8c7afaa5e9a5660841adb9290f4c21f73a0ec722314ebc9901fac6b26dff"
     },
     {
       "id": "api-aide-core-projections",
@@ -1518,7 +1518,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f92db31bb5332fdc640ffe1b3cf8d3b9074594704e7f7380d26d7d59a5277501"
+      "sourceSha256": "81b76950c602968aad2574211baed53370d40887daee19083dbdd839930f790d"
     },
     {
       "id": "api-aide-core-store",
@@ -1543,7 +1543,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a07514700b6950bbfa298fa2263013ef9af12d249b1c8344ce031f6231e383ee"
+      "sourceSha256": "1037958b2aeb2ce11acdf117e8510d915797da3cb67546908c0db04801d921ff"
     },
     {
       "id": "api-aide-core-terminal",
@@ -1568,7 +1568,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "01c5104ab7572eb516c877273a12a1c377c2815dbd231c83a436a198834a6893"
+      "sourceSha256": "d86ab0f8e2d101aad3312250b8c93808e5a3ce20cc900b4a061577280310070d"
     },
     {
       "id": "api-aide-core-upgrade",
@@ -1593,7 +1593,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a3711b1f367a8d11f70b311240a34da359ee60730df4862b7e17fd59db312572"
+      "sourceSha256": "7cf8b89e41c8c2d1f465b6b4056935ad8a04eed42e17806ce65f61bcd2d3e9ee"
     },
     {
       "id": "api-aide-core-watcher",
@@ -1618,7 +1618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e6cc364b57af874dcb9aa09f37e8d47c28efd0ff889dca1bd97f4adddfdf577e"
+      "sourceSha256": "0dc216065a309e09975433052a107253b08f2469ca89ca76a52154fa784c790c"
     },
     {
       "id": "api-aide-core-workbench",
@@ -1643,7 +1643,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d88343d7e132d9b4929e3ef5e0d49086edb5d356ba91c03ee9b56e2bd1dbadfa"
+      "sourceSha256": "fca9e5c93581bd31d1af67bfbfc2f346265ff44d53c368c928eadb1af6676bfc"
     },
     {
       "id": "architecture",
@@ -4058,7 +4058,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "afe5464b8b0fdc38dd3c56a7908ab8a34eea0cfc943152f3c8607ff2b31d97f9"
+      "sourceSha256": "cdf2aab775762f22ebf6ff2992eaf1860df0e8530edfe1c05da2fb84f4a60e65"
     },
     {
       "id": "diagram-class",
@@ -10672,5 +10672,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "658b000e5df9180df6ced2b908fafe579d5f34ec315a1f80ac31db3ee59d04c2"
+  "graphSha256": "3b3f8686d08127c1f64e86c8b226a9ad5f7daaebbf05f1e553d6145df9e5b1d8"
 };

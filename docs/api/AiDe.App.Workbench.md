@@ -26,7 +26,7 @@ summary: >-
 
 *class* — `CanvasFocusTarget.cs`
 
-`CanvasFocusTarget` over the WPF `WebView2`, which is an `wndHost`.
+`ICanvasFocusTarget` over the WPF `WebView2`, which is an `HwndHost`.
 
 **Remarks.** **Win32, because the managed route does not exist.** `CoreWebView2Controller.MoveFocus`
 is the documented way to hand focus to web content, and the WPF control exposes no controller at
@@ -207,7 +207,7 @@ the surface says so rather than implying empty classes.
 
 *class* — `ClassHierarchyModel.cs`
 
-Builds a `lassHierarchy` from graph nodes and edges (ADR-0020 Phase 1).
+Builds a `ClassHierarchy` from graph nodes and edges (ADR-0020 Phase 1).
 
 | Member | Summary |
 |---|---|
@@ -220,9 +220,9 @@ Builds a `lassHierarchy` from graph nodes and edges (ADR-0020 Phase 1).
 *class* — `CodeViewerView.cs`
 
 The read-only code viewer (spec-editor-surfaces US-ED1–ED4; ADR-0019). A native AvalonEdit
-`extEditor` in read-only mode with syntax highlighting picked from the content's
+`TextEditor` in read-only mode with syntax highlighting picked from the content's
 language tag — a pure WPF control, so none of ADR-0015's WebView2 airspace concerns. Renders a
-`odeContent`: code (highlighted), text (plain), a shortfall banner when the content was
+`NodeContent`: code (highlighted), text (plain), a shortfall banner when the content was
 bounded (US-ED3), and an honest fallback when there is no inline content (US-ED8).
 
 | Member | Summary |
@@ -295,7 +295,7 @@ that refuses and says why.
 
 The real content source: Core's `NodeContentAsync`, behind the client seam.
 
-**Remarks.** **The substitution the seam was built for.** `ockNodeContentSource` was
+**Remarks.** **The substitution the seam was built for.** `MockNodeContentSource` was
 written to stand in "until Core ships `NodeContentAsync`" — and Core shipped it, after which
 nothing swapped the field, so the code viewer went on showing a labelled SAMPLE against a fully
 indexed workspace. A stand-in is only honest while the thing it stands in for is missing; once it
@@ -328,7 +328,7 @@ in a syntax-highlighted control and claim it was source.
 
 *record* — `DiagnosticsSurface.cs`
 
-The report a `iagnosticsSurface` renders. Built by the shell from the last re-index
+The report a `DiagnosticsSurface` renders. Built by the shell from the last re-index
 (`IndexSummary`, its disclosures folded by `DisclosureSummary.Fold`) plus the daemon
 diagnostics. A plain record so the surface is verifiable headlessly.
 
@@ -364,7 +364,7 @@ diagram canvas and to the `ScrollViewer` offsets.
 |---|---|
 | `double Min = 0.3` | **(gap)** |
 | `double Max = 3.0` | **(gap)** |
-| `double NextScale(double current, int wheelDelta)` | One wheel notch's next zoom level, clamped to [`in`, `ax`]. |
+| `double NextScale(double current, int wheelDelta)` | One wheel notch's next zoom level, clamped to [`Min`, `Max`]. |
 | `double Reanchor(double oldScale, double newScale, double oldOffset, double cursorViewport)` | The scroll offset that keeps the point under the cursor fixed as the scale changes. With a LayoutTransform on the canvas the ScrollViewer's extent is in scaled pixels, so the content point under the cursor is `(offset… |
 
 ## `DockRoundedTabs`
@@ -387,7 +387,7 @@ title — are removed so the title shows in the palette's text colour.
 The workbench docks every surface in a `LayoutDocumentPane`, so all its tabs are
 `LayoutDocumentTabItem` (a `ContentControl`), which is
 why a plain `ContentPresenter` shows the title safely. Merged AFTER the theme so the
-implicit style wins; the accent/surface retokenisation (`ockThemeAccents`) still
+implicit style wins; the accent/surface retokenisation (`DockThemeAccents`) still
 supplies the tab background brushes this template binds to.
 
 | Member | Summary |
@@ -406,7 +406,7 @@ accent, and the theme's background/border grays to our surface/border tokens.
 (`DocumentWellTabSelectedActiveBackground`, `ToolWindowCaptionActiveBackground`,
 `ControlAccentBrushKey`, …). Rather than name each key — which risks missing one and
 leaving a stray blue — this recolours every themed brush whose *colour* is in that
-family. The key set was established by enumerating a themed `ockingManager` at
+family. The key set was established by enumerating a themed `DockingManager` at
 runtime, not guessed (E15).
 
 
@@ -459,13 +459,13 @@ How the Explorer arranges its two panes for the available width (US-E8).
 *class* — `ExplorerSurface.cs`
 
 The full-window Explorer surface (spec-knowledge-explorer-mode; design D2): a graph region and a
-reader region split by a draggable gutter. The graph is a dedicated `anvasSurface`
+reader region split by a draggable gutter. The graph is a dedicated `CanvasSurface`
 (its own instance — the workbench's canvas is never reparented across visual trees), and the reader
 follows the graph's selection through the `NodeSelected` seam (D3), while
 activating a reader edge walks the graph (US-E4/E5). Created once and retained by the mode
 controller, so a round-trip does not rebuild it.
 
-**Remarks.** **Responsive (US-E8).** Above `tackBelowWidth` the panes sit side by side; below it
+**Remarks.** **Responsive (US-E8).** Above `StackBelowWidth` the panes sit side by side; below it
 they stack (graph over reader), so both halves stay usable on one narrow single-monitor window
 rather than the reader being squeezed to its minimum. The layout is recomputed on size change and
 is a pure function of width, so it is testable without rendering.
@@ -571,8 +571,8 @@ client guess.
 *record* — `NodeContentSource.cs`
 
 One node's content for the reader/viewer — the client mirror of ADR-0018's `NodeContent`. Bounded:
-oversized content returns a `hortfall` ("first N — open the source"), never an oversized
-frame. `anguage` is the authority's language tag (e.g. "csharp"), used to pick highlighting.
+oversized content returns a `Shortfall` ("first N — open the source"), never an oversized
+frame. `Language` is the authority's language tag (e.g. "csharp"), used to pick highlighting.
 
 ## `INodeContentSource`
 
@@ -580,7 +580,7 @@ frame. `anguage` is the authority's language tag (e.g. "csharp"), used to pick h
 
 The client seam the reader uses to fetch a selected node's content on demand (ADR-0018). Core's
 future `IWorkspaceQueries.NodeContentAsync` is the real implementation; until it ships,
-`ockNodeContentSource` stands in behind this interface so the viewer is buildable and
+`MockNodeContentSource` stands in behind this interface so the viewer is buildable and
 testable and the eventual wiring is a one-line substitution, not a redesign.
 
 ## `MockNodeContentSource`
@@ -615,7 +615,7 @@ no selection it shows an explicit empty state (US-E7).
 | `event EventHandler<CanvasFocusDirection>? FocusLeaveRequested` | Raised when keyboard focus should leave the reader and return to the graph, so the Explorer can complete the graph↔reader cycle (spec US-E7/E8). The direction says which boundary was crossed (Forward = Tab off the las… |
 | `IReadOnlyList<UIElement> FocusStops` | The reader's ordered focus stops: the region itself (the entry) followed by its walkable edge buttons. Exposed so the cycle boundary is testable without a rendered visual tree. |
 | `CanvasFocusDirection? BoundaryLeave(object? focused, bool shift)` | Given the focused element and whether Shift is held, returns the direction focus should leave the reader — or null when the Tab stays inside the reader. Shift+Tab at the first stop leaves Backward; Tab at the last sto… |
-| `bool HandleTabKey(object? focused, bool shift)` | Handles a Tab keypress at the reader boundary: raises `ocusLeaveRequested` and returns true (the caller marks the event handled) when the Tab crosses a boundary; false when it stays inside the reader. |
+| `bool HandleTabKey(object? focused, bool shift)` | Handles a Tab keypress at the reader boundary: raises `FocusLeaveRequested` and returns true (the caller marks the event handled) when the Tab crosses a boundary; false when it stays inside the reader. |
 | `bool FocusReader()` | Moves keyboard focus into the reader region so a Tab off the graph canvas lands here rather than being swallowed by the canvas's keyboard trap (design D3/Phase-3 interim). From the reader — a normal WPF region — Tab t… |
 | `bool FocusReaderLast()` | Moves keyboard focus to the reader's LAST stop — used when the graph is left Backward (Shift+Tab off the graph's first node), so the cycle lands the user on the reader's end rather than its start (spec US-E7/E8 cycle). |
 | `void Clear()` | **(gap)** |
@@ -688,7 +688,7 @@ prompt — the idempotency key protects a RETRY of the same command, not a user 
 *class* — `PromptDraftStore.cs`
 
 Persists prompt-draft bodies (spec-editor-surfaces US-ED5) keyed by the stable layout
-`SurfaceId`, in a JSON sidecar beside the layout. Mirrors `erminalCustomizationStore`:
+`SurfaceId`, in a JSON sidecar beside the layout. Mirrors `TerminalCustomizationStore`:
 it lives off the Core layout model deliberately, so it needs no schema change, and it is
 best-effort — a missing or corrupt sidecar starts clean, and a failed write never crashes the UI.
 
@@ -705,8 +705,8 @@ best-effort — a missing or corrupt sidecar starts clean, and a failed write ne
 The prompt-draft surface (spec-editor-surfaces US-ED5–ED8): a staged compose pane whose draft is
 never sent by editing (US-ED5), and whose one explicit **Transfer** delivers it to a chosen
 ready terminal session (US-ED6) one-way (US-ED7). The transfer rules live in
-`romptDraftViewModel`; this control renders them and persists the body across restart
-via an injected save (US-ED5). The shell calls `onfigure` after render to supply the
+`PromptDraftViewModel`; this control renders them and persists the body across restart
+via an injected save (US-ED5). The shell calls `Configure` after render to supply the
 live ready-target list and the dispatch, exactly as it wires the canvas graph source.
 
 | Member | Summary |
@@ -756,7 +756,7 @@ without a terminal.
 
 *class* — `RelayCommand.cs`
 
-A minimal always-executable `Command` for wiring a button to an action.
+A minimal always-executable `ICommand` for wiring a button to an action.
 
 | Member | Summary |
 |---|---|
@@ -774,7 +774,7 @@ What kind of thing a search hit points at. Governs grouping order in the results
 
 *record* — `SearchModel.cs`
 
-One breadth-search hit. `d` is opaque and belongs to the provider (a node id, a
+One breadth-search hit. `Id` is opaque and belongs to the provider (a node id, a
 file path, a command id) — the surface hands it back verbatim to the navigate action so the
 provider decides what "go there" means.
 
@@ -794,11 +794,11 @@ returned them.
 
 **Remarks.** **Scaffold.** The hits themselves come from a Core search index that does not exist yet; this
 model shapes whatever a provider returns. Kept pure and dependency-free so it is unit-testable
-off the UI thread, mirroring `equenceModel` and `lassHierarchyModel`.
+off the UI thread, mirroring `SequenceModel` and `ClassHierarchyModel`.
 
 | Member | Summary |
 |---|---|
-| `IReadOnlyList<SearchGroup> Group(IReadOnlyList<SearchResult>? results)` | Groups  by kind in `rder`, dropping empty groups and preserving each provider's order within a group. A null or empty input yields no groups. |
+| `IReadOnlyList<SearchGroup> Group(IReadOnlyList<SearchResult>? results)` | Groups  by kind in `Order`, dropping empty groups and preserving each provider's order within a group. A null or empty input yields no groups. |
 | `int Count(IReadOnlyList<SearchResult>? results)` | Total hit count across a set of results (null-safe). |
 
 ## `SearchSurface`
@@ -807,11 +807,11 @@ off the UI thread, mirroring `equenceModel` and `lassHierarchyModel`.
 
 The breadth-search surface (app-search-breadth): one query box over the whole workspace, whose
 grouped hits (types, members, files, graph nodes, commands) each navigate into the graph or a
-diagram when activated. Dependency-free native WPF, mirroring `lassDiagramSurface`
-and `equenceDiagramSurface`.
+diagram when activated. Dependency-free native WPF, mirroring `ClassDiagramSurface`
+and `SequenceDiagramSurface`.
 
 **Remarks.** **Scaffold.** The hits come from a Core search index that does not exist yet, so the surface
-takes an injectable `rovider` and, with none wired, shows an explicit
+takes an injectable `Provider` and, with none wired, shows an explicit
 "not indexed yet" state. Everything the App owns — the box, the debounced query, the grouped
 results, keyboard activation, and the navigate hand-off — is done and tested now; wiring the
 provider to the real index is the only remaining step.
@@ -826,8 +826,8 @@ provider to the real index is the only remaining step.
 | `int ResultCount` | Hits currently shown (test hook). |
 | `bool IsIdle` | True when no query has produced results — the idle/empty state (test hook). |
 | `string StatusText` | The status line the user sees (test hook). |
-| `Task SearchAsync(string query)` | Runs a query through the `rovider` and renders grouped results. Whitespace clears the surface; a null provider shows the "not indexed" state. Stale answers (a newer keystroke arrived first) are dropped so results neve… |
-| `void ShowResults(IReadOnlyList<SearchResult> hits)` | Renders a result set directly (the render half of `earchAsync`; test hook). |
+| `Task SearchAsync(string query)` | Runs a query through the `Provider` and renders grouped results. Whitespace clears the surface; a null provider shows the "not indexed" state. Stale answers (a newer keystroke arrived first) are dropped so results nev… |
+| `void ShowResults(IReadOnlyList<SearchResult> hits)` | Renders a result set directly (the render half of `SearchAsync`; test hook). |
 
 ## `SequenceDiagramSurface`
 
@@ -836,10 +836,10 @@ provider to the real index is the only remaining step.
 The UML sequence-diagram surface (uml-sequence-diagram): participants as header boxes atop vertical
 dashed lifelines, and ordered messages as horizontal arrows drawn top-to-bottom — solid/filled for
 calls, dashed/open for returns, a loop for self-messages. Dependency-free native WPF, no WebView2,
-mirroring `lassDiagramSurface`.
+mirroring `ClassDiagramSurface`.
 
 **Remarks.** **Scaffold.** A faithful sequence diagram needs ordered call data the graph does not yet emit
-(Core ask `session-contracts §4k`). This surface renders any `equenceModel` it is
+(Core ask `session-contracts §4k`). This surface renders any `SequenceModel` it is
 given and shows an explicit empty state otherwise, so it is ready to wire to the real feed when it
 lands — the rendering and layout are done and tested now.
 
@@ -870,7 +870,7 @@ A participant (object/actor) in a sequence diagram — a header box atop a verti
 
 *record* — `SequenceModel.cs`
 
-One message between participants, in wire order. `rder` is the position in the
+One message between participants, in wire order. `Order` is the position in the
 interaction (0-based), which is what a sequence diagram draws top-to-bottom.
 
 ## `SequenceModel`
@@ -878,11 +878,11 @@ interaction (0-based), which is what a sequence diagram draws top-to-bottom.
 *record* — `SequenceModel.cs`
 
 The sequence-diagram view model (UML interaction): the participants and the ordered messages
-between them. A pure projection so it is verifiable headlessly, mirroring `lassHierarchy`.
+between them. A pure projection so it is verifiable headlessly, mirroring `ClassHierarchy`.
 
 **Remarks.** **Data source (scaffold).** A faithful sequence diagram needs *ordered* call data — which
 method calls which, in what order along a trace — which the graph does not yet emit (the Core ask
-is `session-contracts §4k`). Until then `uild` projects from whatever ordered
+is `session-contracts §4k`). Until then `Build` projects from whatever ordered
 call tuples it is handed (a test stub today; the Core feed when it lands), and the surface shows an
 explicit empty state rather than implying an interaction that was not captured.
 
@@ -897,7 +897,7 @@ explicit empty state rather than implying an interaction that was not captured.
 *class* — `SessionRowPresenter.cs`
 
 Pure presentation policy for the Sessions surface (smoke 9-1 #15). The read model
-(`atcherSessionRow`) is honest but its `DisplayLabel` is a flat, undifferentiated
+(`WatcherSessionRow`) is honest but its `DisplayLabel` is a flat, undifferentiated
 line, so five sessions read as five identical blobs and the answer to "what is this and why is it
 here" is buried. This turns a row into a legible two-line shape — a stable identity above muted
 metadata — with a colour-plus-glyph liveness chip, and it states a telemetry gap the whole list
@@ -906,7 +906,7 @@ headless.
 
 | Member | Summary |
 |---|---|
-| `string ChipBrushKey(LivenessBadge liveness)` | The theme brush key that colours a liveness chip. Colour is the third signal only — the glyph and text carry the meaning (WCAG 2.2 AA, not colour alone), matching `ivenessBadge`. |
+| `string ChipBrushKey(LivenessBadge liveness)` | The theme brush key that colours a liveness chip. Colour is the third signal only — the glyph and text carry the meaning (WCAG 2.2 AA, not colour alone), matching `LivenessBadge`. |
 | `string ChipText(LivenessBadge liveness)` | The chip's text: the glyph and word together, e.g. "✓ Alive". |
 | `string Identity(WatcherSessionRow row)` | The primary line — who and where: the stable human identity a session is recognised by. |
 | `string Details(WatcherSessionRow row)` | The muted secondary line — harness, model, trust, spans: metadata, subordinate to identity. |
@@ -922,7 +922,7 @@ The shell's primary view mode (ADR-0017).
 
 *class* — `ShellModeController.cs`
 
-Owns the shell's primary `hellViewMode` and the body-content swap that realises it
+Owns the shell's primary `ShellViewMode` and the body-content swap that realises it
 (ADR-0017). Switching mode only changes what fills the body region; it never disposes the
 workbench.
 
@@ -968,13 +968,13 @@ surface, composited or windowed.
 
 **How it reads as raised.** The card is `SurfaceRaised` (#1A1F26); the docking
 chrome behind the gap is retokenised to `surface`/`sunken` (darker) by
-`ockThemeAccents`, so the lighter card sits proud of the darker gap.
+`DockThemeAccents`, so the lighter card sits proud of the darker gap.
 
 
 
 
 
-**Windowed children.** A rounded `order` does not clip a child HWND to its
+**Windowed children.** A rounded `Border` does not clip a child HWND to its
 corners (airspace), so a small inset keeps the square-cornered WebView2/terminal off the rounded
 edge rather than poking through it — the frame still softens the pane.
 
@@ -1004,7 +1004,7 @@ mapping lives, so adding a surface kind never means touching the layout model.
 A named terminal colour scheme: the sixteen ANSI colours plus background, foreground and cursor.
 Chosen per session so a user can tell two terminals apart by how their content reads, not only by
 the tab caption. The ANSI sixteen are a vocabulary programs address by index (see
-`erminalPalette`), so a scheme re-maps the vocabulary — it never renames it.
+`TerminalPalette`), so a scheme re-maps the vocabulary — it never renames it.
 
 | Member | Summary |
 |---|---|
@@ -1013,7 +1013,7 @@ the tab caption. The ANSI sixteen are a vocabulary programs address by index (se
 | `TerminalColorScheme Cool { get; } = new(` | A cool teal/blue-leaning scheme. |
 | `TerminalColorScheme HighContrast { get; } = new(` | Maximum legibility: pure black ground, bright ink and brights. |
 | `IReadOnlyList<TerminalColorScheme> Presets { get; } =` | The presets offered in the colour-scheme menu, in order. |
-| `TerminalColorScheme ByName(string? name)` | The preset with this name, or `efault` if none matches. |
+| `TerminalColorScheme ByName(string? name)` | The preset with this name, or `Default` if none matches. |
 
 ## `TerminalCustomization`
 
@@ -1052,7 +1052,7 @@ these would be verified by pressing keys.
 
 
 
-**Text goes through `orText`, not through this table.** Composed input,
+**Text goes through `ForText`, not through this table.** Composed input,
 dead keys and IME sequences all produce text rather than key presses, so mapping characters from
 key codes would break every non-US keyboard.
 
@@ -1102,7 +1102,7 @@ which is unbounded and distinguishes press from release; and the **legacy** form
 
 *class* — `TerminalPalette.cs`
 
-Resolves a `erminalColor` to something the renderer can draw with.
+Resolves a `TerminalColor` to something the renderer can draw with.
 
 **Remarks.** This is the one place the terminal model meets the theme, and the split is deliberate: the
 screen model records what the *wire* said ("palette index 4"), and only here is that turned
@@ -1131,7 +1131,7 @@ would ever notice.
 | Member | Summary |
 |---|---|
 | `TerminalPalette()` | **(gap)** |
-| `TerminalPalette(TerminalColorScheme scheme)` | A palette from an explicit per-session `erminalColorScheme` rather than the global resources, so two terminals can render with different schemes at once. |
+| `TerminalPalette(TerminalColorScheme scheme)` | A palette from an explicit per-session `TerminalColorScheme` rather than the global resources, so two terminals can render with different schemes at once. |
 | `Color Background { get; }` | **(gap)** |
 | `Color Foreground { get; }` | **(gap)** |
 | `Color Cursor { get; }` | **(gap)** |
@@ -1143,7 +1143,7 @@ would ever notice.
 
 One terminal pane: a live session, a screen, and the view that draws it.
 
-**Remarks.** The joins live here rather than in `erminalView` so the view stays a renderer.
+**Remarks.** The joins live here rather than in `TerminalView` so the view stays a renderer.
 A control that also owned a process would be untestable without one, and ADR-0005 is explicit
 that session state does not belong to the renderer.
 
@@ -1169,7 +1169,7 @@ indistinguishable from a broken feature).
 |---|---|
 | `TerminalSurface(` | **(gap)** |
 | `string SurfaceId { get; }` | The layout surface id this pane renders — stable across restart, so it keys the customization store. |
-| `string? DisplayName` | The user-chosen tab caption, or null to use the model title. See `HasDisplayName`. |
+| `string? DisplayName` | The user-chosen tab caption, or null to use the model title. See `IHasDisplayName`. |
 | `event EventHandler? DisplayNameChanged` | Raised when the user renames this terminal, so the shell can refresh the tab caption. |
 | `event EventHandler? CustomizationChanged` | Raised on any customization change (name, scheme, tab colour), so it can be persisted. |
 | `TerminalColorScheme Scheme` | The scheme this session renders with. |
@@ -1177,7 +1177,7 @@ indistinguishable from a broken feature).
 | `Brush? TabColour` | **(gap)** |
 | `void Rename(string? name)` | Renames the terminal. An empty name is rejected so a tab is never nameless (US-4). |
 | `void ApplyScheme(TerminalColorScheme scheme)` | Applies a per-session colour scheme to the live view. |
-| `ContextMenu CreateContextMenu()` | Builds a fresh customization menu (Rename / Colour scheme / Tab colour). Fresh because a `ontextMenu` has one parent — the surface owns one for right-click in the body, and the tab owns another (where users look first… |
+| `ContextMenu CreateContextMenu()` | Builds a fresh customization menu (Rename / Colour scheme / Tab colour). Fresh because a `ContextMenu` has one parent — the surface owns one for right-click in the body, and the tab owns another (where users look firs… |
 | `void PromptRename()` | Opens the rename prompt for this terminal. |
 | `SessionActivity Activity` | What the session is doing, as the runtime understands it. |
 | `ITerminalSession? Session` | The live session, or null before it starts. Exposed so prompt dispatch can write to the terminal this pane owns. |
@@ -1195,7 +1195,7 @@ indistinguishable from a broken feature).
 
 ### `TerminalSurface(`
 
-- **`executable`** — The CLI this pane runs, or null for a plain shell. A parameter rather than a settable property because the constructor starts the session and therefore needs the value already — see `xecutable`.
+- **`executable`** — The CLI this pane runs, or null for a plain shell. A parameter rather than a settable property because the constructor starts the session and therefore needs the value already — see `Executable`.
 
 ### `ITerminalSession? Session`
 
@@ -1222,7 +1222,7 @@ upgrade trigger = a shell hosts two workspaces at once.`
 Extra environment for a session, by its id. Null (the default) means the child inherits
 exactly as it always has.
 
-**Remarks.** A function rather than a value because `orkingDirectory`'s shape does not
+**Remarks.** A function rather than a value because `WorkingDirectory`'s shape does not
 fit here: the workspace is one value for every terminal, and a session's identity is not —
 `AIDE_SESSION` and `AIDE_HARNESS` differ per surface.
 
@@ -1233,6 +1233,31 @@ fit here: the workspace is one value for every terminal, and a session's identit
 **The shell supplies this, not this class.** The values come from the git facts and
 the harness choice, both of which the shell already resolves; computing them here would be a
 second definition of the same quantities.
+
+
+
+
+
+**Do not give this a default (DC-084).** Every candidate — an empty dictionary, a
+no-op function — reproduces the defect it would appear to prevent: an agent launched with an
+empty environment is exactly the failure, and a non-null hook returning nothing hides it
+better than null does. The other hooks on this class are safe *because* their defaults
+work (`Profiles` falls back to the built-ins, `CommandLine` to the
+shell); this one has no working value to fall back to, so null is the honest state and the
+guarantee has to live at the assignment instead.
+
+
+
+
+
+**Which is why it is assigned in the `WorkbenchShell` constructor** rather than
+in `AttachWorkspace`, and why `EnvironmentContractSurvivesNoWorkspaceTests` builds
+a shell with no workspace and asserts the contract arrives anyway. That test is the control,
+and it is **immune to whatever default anyone adds here**: it sets this property to null
+before constructing the shell, so only an assignment that actually runs can satisfy it. Adding
+a default and dropping the constructor line fails it on the null. *Verified by doing exactly
+that* — the first version of this paragraph claimed it would fail on a missing
+`AIDE_SESSION` instead, which was a plausible account of a test that had not been run.
 
 ### `AgentReadinessWatcher? AgentReadiness { get; private set; }`
 
@@ -1264,7 +1289,7 @@ restart.
 **A CONSTRUCTOR PARAMETER, and it must stay one.** This was
 `{ get; init; }`, set by an object initializer at the one construction site. An object
 initializer runs AFTER the constructor body, and the constructor starts the session — so
-`tartAsync` read this property while it was still `null`, every time, for
+`StartAsync` read this property while it was still `null`, every time, for
 every pane. Measured: 243 `terminal.start` records across two days, `executable`
 null in all 243, including a surface whose id was `agent:claude#aa8dcb` (DC-083).
 
@@ -1290,7 +1315,7 @@ built-ins so a shell with no configuration behaves exactly as before.
 
 Agent executables this build can watch for readiness AND that exist on PATH.
 
-**Remarks.** Read through `rofiles` rather than the static built-ins, so an agent added by
+**Remarks.** Read through `Profiles` rather than the static built-ins, so an agent added by
 configuration is offered — otherwise configuring a marker would set up a watcher for an agent
 no menu would ever open.
 
@@ -1308,7 +1333,7 @@ safety question on the user's behalf is exactly what that gate exists to prevent
 
 *class* — `TerminalView.cs`
 
-Draws a `erminalScreen` and turns key presses into input bytes.
+Draws a `TerminalScreen` and turns key presses into input bytes.
 
 **Remarks.** **The draw path is binding, not a preference.** Spike S3 measured three ways of putting
 a 200×50 screen on the display: `GlyphRun` per line at 6.64 ms p95, `FormattedText` per
@@ -1369,7 +1394,7 @@ the whole window feel jittery. Now nothing runs when the terminal is idle.
 
 **Remarks.** **Coalescing.** A producer emitting a megabyte a second updates the screen thousands
 of times between frames; the user only ever sees the last. The atomic `_redrawScheduled`
-gate collapses every request between dispatcher turns into a single `nvalidateVisual`.
+gate collapses every request between dispatcher turns into a single `InvalidateVisual`.
 Thread-safe because the pump raises this from a background thread.
 
 
@@ -1396,11 +1421,11 @@ tokens so it reads as part of the shell rather than a bare Windows dialog.
 
 *class* — `WorkbenchAdapter.cs`
 
-Renders the owned `ayout` model into AvalonDock, and supplies the accessibility the
+Renders the owned `Layout` model into AvalonDock, and supplies the accessibility the
 library does not (ADR-0012).
 
 **Remarks.** The adapter is deliberately **one-way**: model → view. Pointer gestures enter as
-`ayoutOperation` requests through `Apply`, never as direct
+`LayoutOperation` requests through `Apply`, never as direct
 view mutations — that is what keeps the keyboard path and the drag path provably identical
 (SC 2.5.7). The view is a projection; it is never the source of truth.
 
@@ -1409,13 +1434,13 @@ view mutations — that is what keeps the keyboard path and the drag path provab
 | `string LeakedNamePrefix = "AvalonDock."` | Automation names starting with this prefix are the library's type names leaking through as accessible names — the defect the UIA probe found (spikes/avalondock-a11y). |
 | `WorkbenchAdapter(` | **(gap)** |
 | `DockingManager Manager { get; }` | **(gap)** |
-| `void Invalidate(IEnumerable<string> surfaceIds)` | Projects the current model into AvalonDock and names everything for assistive tech.  Marks surfaces to be REBUILT (not reused) on the next `ender`. Used by the shell when a workspace attaches and the watcher read pane… |
+| `void Invalidate(IEnumerable<string> surfaceIds)` | Projects the current model into AvalonDock and names everything for assistive tech.  Marks surfaces to be REBUILT (not reused) on the next `Render`. Used by the shell when a workspace attaches and the watcher read pan… |
 | `void Render()` | **(gap)** |
 | `void ApplyAccessibleNames()` | **(gap)** |
 | `FrameworkElement? ContentFor(string surfaceId)` | The content element currently hosting , or null. |
 | `T? SurfaceContent<T>(string surfaceId) where T : class` | The inner surface content of type  for , looking THROUGH the island chrome (`WrapAsIsland`) that non-windowed panes are wrapped in. |
 | `string? ActiveSurfaceId` | The surface id of the document the user is currently focused in, or null. Read from AvalonDock's own active-content tracking so a "new pane" command can open where the user is looking rather than in a fixed corner of … |
-| `Layout? ReadLayoutFromView()` | Reads the CURRENT AvalonDock arrangement back into the owned model, so a native pane drag or a splitter resize the user performed is captured before the next `ender` would rebuild from a stale model and revert it. Ret… |
+| `Layout? ReadLayoutFromView()` | Reads the CURRENT AvalonDock arrangement back into the owned model, so a native pane drag or a splitter resize the user performed is captured before the next `Render` would rebuild from a stale model and revert it. Re… |
 
 ### `void ApplyAccessibleNames()`
 
@@ -1438,18 +1463,18 @@ The inner surface content of type  for ,
 looking THROUGH the island chrome (`WrapAsIsland`) that non-windowed
 panes are wrapped in.
 
-**Remarks.** A wrapped pane's `ontentFor` returns the framing `order`, not the
+**Remarks.** A wrapped pane's `ContentFor` returns the framing `Border`, not the
 surface, so `ContentFor(id).OfType<ClassDiagramSurface>()` silently finds nothing and
 the pane never populates — the exact defect that left the class diagram (and every other wrapped
 surface bound by type) empty over a fully indexed workspace. Canvas and terminal are returned
 UNWRAPPED (airspace), so the direct-cast branch finds them; everything else is a
-`order` whose `Child` is the real surface. Both are handled here
+`Border` whose `Child` is the real surface. Both are handled here
 so no caller has to know which, and so a future wrapped kind cannot reintroduce the same silence.
 
 ### `Layout? ReadLayoutFromView()`
 
 Reads the CURRENT AvalonDock arrangement back into the owned model, so a native pane drag or a
-splitter resize the user performed is captured before the next `ender` would rebuild
+splitter resize the user performed is captured before the next `Render` would rebuild
 from a stale model and revert it. Returns null when the view cannot be mapped confidently.
 
 **Remarks.** **Fail-safe by construction.** The model is the source of truth and a wrong reconcile
@@ -1463,9 +1488,9 @@ pre-existing revert-on-rebuild, never to a lost or duplicated pane.
 
 
 
-**Surface identity comes from the model, not the view.** A `ayoutDocument`
+**Surface identity comes from the model, not the view.** A `LayoutDocument`
 carries only its `ContentId` (the surface id); the Kind and Title live on the model's
-`urface` record, looked up here, so a reconciled surface keeps the identity the rest
+`Surface` record, looked up here, so a reconciled surface keeps the identity the rest
 of the system routes on. Node ids are freshly minted — they are internal and need not be stable.
 
 ## `IWorkbenchAnnouncer`
@@ -1522,7 +1547,7 @@ A headless announcer for tests and for any host without a live region yet.
 Routes every keyboard layout command through the model and announces the outcome.
 
 **Remarks.** This is where SC 2.5.7 and SC 4.1.3 stop being design intent and become behaviour: a command
-produces a `ayoutOperation` — the same type a pointer drag produces — applies it via
+produces a `LayoutOperation` — the same type a pointer drag produces — applies it via
 the single mutation path, and announces whatever came back, including a refusal. A refused
 operation is announced too, because "nothing happened" is information the user needs and silence
 is indistinguishable from a broken key.
@@ -1538,7 +1563,7 @@ is indistinguishable from a broken key.
 | `bool Execute(string commandId)` | Runs a catalog command by id. Returns false when the id is unknown. |
 | `bool Move(string surfaceId, DropTarget target)` | Applies a move produced either by a keyboard destination choice or by a drop. |
 | `DropTarget? HoveredTarget { get; private set; }` | The destination the in-flight drag currently points at, or null for none. |
-| `LayoutRect? HoveredPreview { get; private set; }` | The rectangle the UI should highlight for `overedTarget`. |
+| `LayoutRect? HoveredPreview { get; private set; }` | The rectangle the UI should highlight for `HoveredTarget`. |
 | `event Action<bool>? DragStateChanged` | Reports pointer movement during a drag. Resolves the destination and its preview from the SAME call, so the highlight the user sees and the drop that follows cannot disagree.  Raised when a drag starts and when it end… |
 | `DropTarget? DragOver(IReadOnlyList<PaneHitBox> panes, LayoutPoint pointer)` | **(gap)** |
 | `bool Drop(string surfaceId)` | Commits the drag at the hovered destination. Returns false when there is none. |
@@ -1656,7 +1681,7 @@ so there is no later opportunity to say which harness this session is running.
 
 Structured trace for workbench layout behaviour — pane placement, adds and closes. The workbench
 had NO instrumentation, so a "my pane disappeared" report was untraceable after the fact. Each
-event emits an OpenTelemetry-aligned `ctivity` (via the `aide.workbench` source)
+event emits an OpenTelemetry-aligned `Activity` (via the `aide.workbench` source)
 AND appends a compact JSON line to `%LOCALAPPDATA%/AiDe/logs/workbench-YYYYMMDD.log` so the
 behaviour can be read back. Best-effort: diagnostics must never break the workbench, so every sink
 path swallows its own failure.
@@ -1724,7 +1749,7 @@ the window still showed the superseded fixed grid, so a user could not touch any
 capability nobody can open is not delivered.
 
 Composition happens in one place on purpose: the live region, the controller and the adapter must
-share the same `LayoutService` instance, or the keyboard would mutate one layout
+share the same `ILayoutService` instance, or the keyboard would mutate one layout
 while the view rendered another.
 
 | Member | Summary |
@@ -1732,7 +1757,7 @@ while the view rendered another.
 | `WorkbenchShell(IWorkspaceQueries? queries, string? workspaceDataDirectory = null)` | **(gap)** |
 | `ILayoutService Service { get; }` | **(gap)** |
 | `DockingManager Manager { get; }` | **(gap)** |
-| `FrameworkElement WorkbenchRoot` | The docking host wrapped in collapse-to-rail edge strips (ADR-0021). Host this instead of `anager` so a collapsed tool zone shows a one-click rail back. Falls back to the bare manager when the layout is not zone-based. |
+| `FrameworkElement WorkbenchRoot` | The docking host wrapped in collapse-to-rail edge strips (ADR-0021). Host this instead of `Manager` so a collapsed tool zone shows a one-click rail back. Falls back to the bare manager when the layout is not zone-based. |
 | `WorkbenchAdapter Adapter { get; }` | **(gap)** |
 | `WorkbenchController Controller { get; }` | **(gap)** |
 | `IWorkbenchAnnouncer Announcer { get; }` | **(gap)** |
@@ -1759,7 +1784,7 @@ after the workspace opened is worse than one that never claimed anything.
 
 *class* — `WpfHostFocusScope.cs`
 
-`HostFocusScope` over WPF's own focus system — the half of the crossing that WPF
+`IHostFocusScope` over WPF's own focus system — the half of the crossing that WPF
 *can* do.
 
 **Remarks.** Only the canvas is unreachable by traversal. Once focus is back on the WPF side, moving it on is
@@ -1777,7 +1802,7 @@ traversal — it hands the direction to WPF and lets the normal tab order apply.
 *class* — `ZoneRails.cs`
 
 Edge rails for collapsed tool zones (ADR-0021 collapse-to-rail). Wraps the docking host in a
-`ockPanel` and shows a thin, clickable strip on the Left, Right or Bottom edge
+`DockPanel` and shows a thin, clickable strip on the Left, Right or Bottom edge
 whenever that tool zone is collapsed — the panes are retained in the model, and the rail is the
 one-click way back (AC-F4). When a zone is expanded its rail is hidden and the dock host reclaims
 the space. This is custom chrome around AvalonDock (which renders documents, not auto-hiding

@@ -61,7 +61,7 @@ Opens over any read surface — in this process or a daemon's.
 Opens the workspace the app was launched against, over its daemon.
 
 **Remarks.** **This is where the process split stops being a test and starts being the product.**
-The shell asks `hellBootstrap` for a daemon — reaching the one already serving
+The shell asks `ShellBootstrap` for a daemon — reaching the one already serving
 the workspace, or starting one — and every projection it renders is then answered across the
 trust boundary.
 
@@ -86,7 +86,7 @@ workspace.
 
 Opens the workspace rooted at , launching its daemon if needed.
 
-**Remarks.** Split out from `penDefaultAsync` so a workspace can be CHOSEN rather than only
+**Remarks.** Split out from `OpenDefaultAsync` so a workspace can be CHOSEN rather than only
 inherited from an environment variable. Until this existed the daemon path was reachable
 only by setting AIDE_WORKSPACE_ROOT before launch, which made every command that needs a
 workspace — indexing especially — untestable by anyone who did not already know that.

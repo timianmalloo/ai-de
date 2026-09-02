@@ -52,7 +52,7 @@ signals (a token list like `"verification=executed; coverage=9/10; actions_after
 premature=false; reuse=high"`) and maps it to a 0-4 rubric by fixed rules - never a guess: an
 absent token scores conservatively (low), never optimistically.
 
-**Remarks.** Because it is deterministic, its `valuatorStability` trivially passes (every repeat
+**Remarks.** Because it is deterministic, its `EvaluatorStability` trivially passes (every repeat
 is identical), but it still only folds into Weave points after the ADR-0019 calibration gates qualify
 its `(version, taskClass, schemaVersion)` in the registry (slice 7) - the local heuristic is a
 transparent proxy an operator can inspect, not a licence to score advisory dimensions unbounded.
@@ -73,11 +73,11 @@ dimension is the deterministic scorer's job, never an evaluator's (spec rule 8).
 *class* — `AdvisoryEvaluators.cs`
 
 The **egress + credential guard** (ADR-0018) around any advisory evaluator that would call out to a
-model over the network. Before delegating it enforces, in order: the `gressGate` has an
+model over the network. Before delegating it enforces, in order: the `EgressGate` has an
 explicit per-path opt-in for this evaluator's path (else `EgressDenied`,
 LK-0003 - default-deny), and a credential is present (else `InvalidBinding`,
 LK-0002). Only then does the inner evaluator run. This is the boundary a real cloud judge sits behind;
-the `ocalHeuristicAdvisoryEvaluator` needs no guard because it never egresses.
+the `LocalHeuristicAdvisoryEvaluator` needs no guard because it never egresses.
 
 | Member | Summary |
 |---|---|
@@ -177,12 +177,12 @@ tripped floor stands; an advisory judgment can never raise a deterministic faile
 
 Reads committed AI-Forward audit-log entries that declare a goal-state (a top-level `goal` +
 `done_when` + `session`, AL5b / front-matter CT19) and turns each into an **imported,
-closed** `orkEpisode`. This is the episode source that makes real Work Episodes exist
+closed** `WorkEpisode`. This is the episode source that makes real Work Episodes exist
 for the watcher: an audit entry is a durable, human/agent-committed record of a bounded goal that was
 worked and closed, so importing it reads a *fact* - it does not fabricate a goal (spec L127, no
 guessing NG1), and it does not forge a live operation (these are historical facts recorded directly
 via `RecordEpisode`, the same way the coordination pump imports
-registrations - the live, capability-verified path is `WorkEpisodeService` for real-time
+registrations - the live, capability-verified path is `IWorkEpisodeService` for real-time
 sessions). Entries without all three fields are skipped: not every audit entry is an episode.
 
 | Member | Summary |
@@ -211,7 +211,7 @@ deliberate, gated change guarded by the version regression test.
 
 The attribute keys an `episode-open` / `episode-close` line carries.
 
-**Remarks.** Deliberately **not** in `telAttributes`. Those keys are OpenTelemetry
+**Remarks.** Deliberately **not** in `OtelAttributes`. Those keys are OpenTelemetry
 semantic conventions and are shared with the OTLP span path; a goal statement and a declared
 outcome are this contract's own vocabulary, with no OTel convention behind them. Putting
 them there would assert a standard that does not exist.
@@ -228,14 +228,14 @@ them there would assert a standard that does not exist.
 *record* — `CoordinationContract.cs`
 
 A single injected-contract event emitted by a non-AI-Forward session over the `coord-core`
-append log (spike S4). `xternalSessionId` is the session's own id; the registrar mints
+append log (spike S4). `ExternalSessionId` is the session's own id; the registrar mints
 its own internal id, so the adapter owns the external->internal map.
 
 ## `ContractRegister`
 
 *record* — `CoordinationContract.cs`
 
-A registration: carries the same `telAttributes` keys as the OTLP path.
+A registration: carries the same `OtelAttributes` keys as the OTLP path.
 
 ## `ContractHeartbeat`
 
@@ -308,7 +308,7 @@ it.
 
 
 **Why this is the multi-harness unblock.** Before it,
-`uditLogEpisodeSource` was the only producer of episodes, so an episode existed
+`AuditLogEpisodeSource` was the only producer of episodes, so an episode existed
 only where the AI-Forward pack had written an audit entry. A GitHub Copilot session or a plain
 shell produced none, and the leaderboard could not compare what it was built to compare.
 
@@ -366,11 +366,11 @@ A snapshot of the adapter counters (IO1 operator questions).
 *class* — `CoordinationContract.cs`
 
 The injected-contract ingest adapter: maps contract events onto the same
-`rustedRegistrar`/`ngestHost` as the OTLP path, so a non-AI-Forward session
+`TrustedRegistrar`/`IngestHost` as the OTLP path, so a non-AI-Forward session
 appears identically in the fact store (one ledger, projected, not duplicated - US-5).
 
 The append log is a local, forgeable surface (ADR-0007), so - symmetrically with the OTLP token -
-the `essionCapability` is never read from the file: this adapter **mints** it at
+the `SessionCapability` is never read from the file: this adapter **mints** it at
 `register` and holds `external-id -> RegisteredSession`, verifying every `heartbeat`
 against the held capability. A heartbeat for a session never registered here has no capability and is
 dropped and counted; a duplicate register is ignored (the first capability stands); a register whose
@@ -393,12 +393,12 @@ Writes injected-contract events for one or more non-AI-Forward sessions to a coo
 append log (spike S4): one file per session (`<dir>/<session>.jsonl`), one JSON object
 per line, `seq` auto-assigned, an atomic single-write append, and the **LOG-A** guard - a
 leading newline when the file did not already end in one, so a fused line is impossible to express.
-This is the session-side half of the contract; `njectedContractIngest` is the ingest half.
+This is the session-side half of the contract; `InjectedContractIngest` is the ingest half.
 
 | Member | Summary |
 |---|---|
 | `CoordContractWriter(string logDir, TimeProvider? time = null)` | **(gap)** |
-| `void WriteRegister(string externalSessionId, IReadOnlyDictionary<string, string?> attributes)` | Writes a registration with the same `telAttributes` keys as the OTLP path. |
+| `void WriteRegister(string externalSessionId, IReadOnlyDictionary<string, string?> attributes)` | Writes a registration with the same `OtelAttributes` keys as the OTLP path. |
 | `void WriteHeartbeat(string externalSessionId)` | **(gap)** |
 | `void WriteSessionEnd(string externalSessionId)` | **(gap)** |
 
@@ -410,13 +410,13 @@ Reads a coord-core append log directory into ordered contract events (stdlib, to
 
 | Member | Summary |
 |---|---|
-| `IReadOnlyList<CoordContractEvent> ReadDirectory(string logDir)` | Reads every `*.jsonl` in  and parses them into one ordered event stream (`oordContractParser` sorts by `(at, session, seq)`). A missing directory yields an empty list; a malformed line in any file is skipped and count… |
+| `IReadOnlyList<CoordContractEvent> ReadDirectory(string logDir)` | Reads every `*.jsonl` in  and parses them into one ordered event stream (`CoordContractParser` sorts by `(at, session, seq)`). A missing directory yields an empty list; a malformed line in any file is skipped and coun… |
 
 ## `CoordContractLogPump`
 
 *class* — `CoordinationContractLog.cs`
 
-Reads a contract log directory and applies it to an `njectedContractIngest`. Re-running
+Reads a contract log directory and applies it to an `InjectedContractIngest`. Re-running
 is safe: the adapter is idempotent (a duplicate register is ignored, a heartbeat merely refreshes
 liveness), so a whole-directory re-read never double-registers - which is why a naive "read it all"
 pump is correct here without tracking file offsets.
@@ -442,7 +442,7 @@ current entry simply omits it and scores conservatively. See
 *record* — `DeterministicSignalsDeriver.cs`
 
 The observable audit-entry evidence a signal derivation grounds on (conn-10). At minimum a committed
-Proof Pack artifact (a `docs/proof/` path); optionally the explicit `uditSignals` an
+Proof Pack artifact (a `docs/proof/` path); optionally the explicit `AuditSignals` an
 instrumented turn recorded. Absent signals never fabricate a value - the deriver falls back to the
 conservative default (spec L127, NG1).
 
@@ -456,7 +456,7 @@ An imported closed Work Episode paired with the audit evidence a signal derivati
 
 *class* — `DeterministicSignalsDeriver.cs`
 
-Derives a `eterministicEpisodeSignals` for an imported closed episode from what is
+Derives a `DeterministicEpisodeSignals` for an imported closed episode from what is
 **honestly observable** - a committed Proof Pack (the only verification signal an audit entry
 carries), the declared close outcome, and any spans recorded after the close. Everything not observable
 is a conservative default that the scorer renders as Not-Recorded or Not-Scored, never a fabricated
@@ -473,7 +473,7 @@ Pure and deterministic. See `docs/design/watcher-signals-derivation.md`.
 *class* — `DisputeService.cs`
 
 The operator-facing entry point for raising a dispute (US-16 / rule 12). It mints the dispute id and
-timestamp and appends the `coreDispute` fact - the append-only, never-overwrites
+timestamp and appends the `ScoreDispute` fact - the append-only, never-overwrites
 guarantee lives in the store (conn-4). This is the API a UI command binds to; it exists so a caller
 never hand-builds a dispute id or reaches past the store's append-only contract.
 
@@ -485,10 +485,10 @@ never hand-builds a dispute id or reaches past the store's append-only contract.
 
 *class* — `DisputeService.cs`
 
-The cloud-judge scaffold: an `AdvisoryEvaluator` that delegates the actual 0-4 rubric to
+The cloud-judge scaffold: an `IAdvisoryEvaluator` that delegates the actual 0-4 rubric to
 an injected model call. A real integration supplies the delegate (a call to a provider, grounded on
 the quarantined evidence, returning a rubric), and this evaluator is placed **inside** an
-`gressGuardedAdvisoryEvaluator` so the network call only happens after the ADR-0018
+`EgressGuardedAdvisoryEvaluator` so the network call only happens after the ADR-0018
 egress opt-in and credential check pass. It exists so the seam is concrete and testable without a
 provider: the deterministic parts (guarding, folding, calibration) are proven around it, and the one
 undetermined piece - the model call - is a single injected function.
@@ -584,7 +584,7 @@ how many spans came in, were dropped under load, stored, deduped, rejected as fo
 *class* — `IngestHost.cs`
 
 Hosts the ingest path: synchronous registration/heartbeat, plus an async, bounded span stream drained
-into `telSpanMapper` + `panIngest`. A span flood is absorbed by the bounded
+into `OtelSpanMapper` + `SpanIngest`. A span flood is absorbed by the bounded
 queue (drop-oldest), a forged span is rejected, and a malformed one is quarantined - one bad event can
 never kill the drain loop, and every disposition increments a visible counter (US-11 fail honestly).
 
@@ -620,7 +620,7 @@ its attributes rather than merging them (observed).
 Opens a Work Episode for a verified session (US-6). Capability-gated like every other
 post-registration write.
 
-**Remarks.** The reason this exists on the host: before it, `uditLogEpisodeSource` was the
+**Remarks.** The reason this exists on the host: before it, `AuditLogEpisodeSource` was the
 only producer of episodes, so an episode existed only where the AI-Forward pack had written
 an audit entry. Any harness can now declare one over the coordination log, which is what the
 leaderboard's cross-harness comparison and the specified Daydream both depend on.
@@ -630,7 +630,7 @@ leaderboard's cross-harness comparison and the specified Daydream both depend on
 *record* — `Leaderboard.cs`
 
 A scored episode with its harness/model/operator attribution - the input to the leaderboard and
-standing. `eave` is the sum of the scored dimensions' earned points (there is no single
+standing. `Weave` is the sum of the scored dimensions' earned points (there is no single
 stored score; it is derived, DM7).
 
 | Member | Summary |
@@ -728,10 +728,10 @@ Acknowledgement reference a parent message and cannot create an orphan thread.
 *record* — `MessageBoard.cs`
 
 One append event on a repository's Message Board (spec line 233). The envelope, order, and thread
-references are append-only; only a policy redaction may null the `ontent` and set
-`ombstoned`, leaving the immutable envelope (spec line 210). `ontent` is
+references are append-only; only a policy redaction may null the `Content` and set
+`Tombstoned`, leaving the immutable envelope (spec line 210). `Content` is
 **quarantined untrusted data** - it can never instruct a grader (US-4 #4); grader-injection
-shapes are additionally `njectionFlagged` (US-4 #5).
+shapes are additionally `InjectionFlagged` (US-4 #5).
 
 ## `GraderInjectionScanner`
 
@@ -783,7 +783,7 @@ defect class TEST-CLOCK). Abstracted so a test can drive time deterministically.
 
 *class* — `MonotonicClock.cs`
 
-The production clock, backed by the high-resolution monotonic `topwatch`.
+The production clock, backed by the high-resolution monotonic `Stopwatch`.
 
 | Member | Summary |
 |---|---|
@@ -852,14 +852,14 @@ spans to the capability issued at registration (ADR-0020), so the mapper mints n
 
 | Member | Summary |
 |---|---|
-| `ObservedSpan MapSpan(HarnessSpan span, DateTimeOffset recordedAt)` | Maps an OTel span to an `bservedSpan`.  is stamped by the wire at ingest, never trusted from the span (clock-skew prevention). Throws `atcherException` (LK-0004) when the span carries no `session.id`. |
-| `SessionBinding MapRegistration(HarnessRegistration registration)` | Maps a registration event to a `essionBinding`. Harness and model are absent when their attributes are absent (rendered Not Recorded, spec US-13); trust is `Verified` only when the harness names itself via `service.na… |
+| `ObservedSpan MapSpan(HarnessSpan span, DateTimeOffset recordedAt)` | Maps an OTel span to an `ObservedSpan`.  is stamped by the wire at ingest, never trusted from the span (clock-skew prevention). Throws `WatcherException` (LK-0004) when the span carries no `session.id`. |
+| `SessionBinding MapRegistration(HarnessRegistration registration)` | Maps a registration event to a `SessionBinding`. Harness and model are absent when their attributes are absent (rendered Not Recorded, spec US-13); trust is `Verified` only when the harness names itself via `service.n… |
 
 ## `OtlpJsonParser`
 
 *class* — `OtlpReceiver.cs`
 
-Parses an OTLP/HTTP export in JSON encoding into `arnessSpan`s, stdlib only (no protobuf
+Parses an OTLP/HTTP export in JSON encoding into `HarnessSpan`s, stdlib only (no protobuf
 dependency - the harness is configured `OTEL_EXPORTER_OTLP_PROTOCOL=http/json`; slice-1b spike).
 Resource and span attributes are merged per span. Malformed JSON yields an empty list, never throws.
 
@@ -917,8 +917,8 @@ raising a dispute NEVER overwrites the prior Scorecard - "a dispute appends a su
 record; prior scores are not overwritten" (spec rule 12). The episode then reads as **Disputed**,
 a first-class state that must stay distinguishable from Scored/Blocked/Not Scored (spec §10).
 
-**Remarks.** A dispute may target one `isputedDimension` (the operator contests one dimension's
-assessment) or the whole score (`null`). The `eason` is the operator's own words -
+**Remarks.** A dispute may target one `DisputedDimension` (the operator contests one dimension's
+assessment) or the whole score (`null`). The `Reason` is the operator's own words -
 non-secret, retained as the audit trail of why a score was contested. Resolution (deterministic
 evidence or a human disposition producing a new Scorecard version) is a separate, later step; this
 records the dispute itself, honestly and immutably.
@@ -942,8 +942,8 @@ folds the store's disputes into an episode-keyed view the Sessions/Leaderboard s
 
 *class* — `ScoringService.cs`
 
-Composes a closed episode's `eterministicEpisodeSignals` into the quarantined evidence
-token string the `ocalHeuristicAdvisoryEvaluator` grounds on (the
+Composes a closed episode's `DeterministicEpisodeSignals` into the quarantined evidence
+token string the `LocalHeuristicAdvisoryEvaluator` grounds on (the
 `key=value; key=value` vocabulary). It maps only the signals we actually capture; a dimension the
 local heuristic looks for but we do not observe (e.g. `reuse`) is simply omitted, so the
 evaluator scores it conservatively rather than optimistically (NG1). Deterministic and pure.
@@ -956,13 +956,13 @@ evaluator scores it conservatively rather than optimistically (NG1). Determinist
 
 *class* — `ScoringService.cs`
 
-Turns a closed Work Episode + its deterministic signals into a persisted `coredEpisode`,
+Turns a closed Work Episode + its deterministic signals into a persisted `ScoredEpisode`,
 so a scored episode appears on the Leaderboard/Standing surfaces (US-14/US-16). It scores the four
 deterministic dimensions always, and folds the two advisory dimensions ONLY when the supplied
 evaluator's `(version, taskClass, schemaVersion)` has qualified in the calibration registry
 (ADR-0019, rule 8) - otherwise they stay excluded exactly as the deterministic scorer left them.
 
-**Remarks.** Advisory evaluation grounds on `videnceComposer`'s token string. Where no evaluator
+**Remarks.** Advisory evaluation grounds on `EvidenceComposer`'s token string. Where no evaluator
 is supplied (the safe default), only the deterministic Weave is recorded - which is enough to populate
 the Leaderboard. The classification (harness/model/operator/taskClass) is supplied by the caller: it
 comes from the session binding + the episode, which this pure service does not re-derive.
@@ -971,7 +971,7 @@ comes from the session binding + the episode, which this pure service does not r
 
 
 It never overrides a floor or a Not Scored verdict - that guarantee lives in
-`dvisoryWeaveScorer` (rule 8) and is exercised here end to end.
+`AdvisoryWeaveScorer` (rule 8) and is exercised here end to end.
 
 | Member | Summary |
 |---|---|
@@ -1026,12 +1026,12 @@ optional (a plain shell has neither); everything else is required for a well-for
 
 Writes the coordination-contract log a session opts in with so it appears in the watcher (US-4): a
 register on start, periodic heartbeats while alive (so liveness stays Alive rather than going Stale),
-and a session-end on close. This is the app-side WRITER; the `atcherHost`'s pump is the
+and a session-end on close. This is the app-side WRITER; the `WatcherHost`'s pump is the
 reader. Running both in one process is what makes a terminal launched in the app show up live.
 
 **Remarks.** Pure and explicit (Register / Heartbeat / HeartbeatAll / End) - no timer of its own, so it is
 fully testable; the caller (the shell) drives heartbeats on whatever timer it already runs. It tracks
-the live session ids so `eartbeatAll` can keep them all alive with one call.
+the live session ids so `HeartbeatAll` can keep them all alive with one call.
 
 
 
@@ -1071,9 +1071,9 @@ facts) and then appending idempotently by content-addressed id (ADR-0006 / ADR-0
 
 *class* — `SqliteWatcherObservationStore.cs`
 
-The durable `WatcherObservationStore` on one SQLite file, reusing the ADR-0002 fact-store
+The durable `IWatcherObservationStore` on one SQLite file, reusing the ADR-0002 fact-store
 idiom (WAL, append-only facts enforced by triggers, a single writer). It substitutes for
-`nMemoryWatcherObservationStore` behind the same seam - the same contract, now persisted
+`InMemoryWatcherObservationStore` behind the same seam - the same contract, now persisted
 across a restart. Spans are an append-only fact (dedup by content-addressed primary key); sessions,
 heartbeats, and the ended flag are current-state cells (upsert), mirroring the in-memory maps.
 
@@ -1124,7 +1124,7 @@ store, so the secret never reaches the durable facts.
 
 *class* — `TrustedRegistrar.cs`
 
-The default in-process registrar. See `TrustedRegistrar`.
+The default in-process registrar. See `ITrustedRegistrar`.
 
 | Member | Summary |
 |---|---|
@@ -1166,13 +1166,13 @@ enough to edit a session.
 
 *class* — `WatcherException.cs`
 
-A watcher-core failure carrying a stable `ode` (Observability Standard O7). The
+A watcher-core failure carrying a stable `Code` (Observability Standard O7). The
 message is for humans and may change; the code is for machines and search and does not.
 
 | Member | Summary |
 |---|---|
 | `WatcherException(string code, string message) : base(message)` | **(gap)** |
-| `string Code { get; }` | A stable `atcherErrorCodes` value. |
+| `string Code { get; }` | A stable `WatcherErrorCodes` value. |
 
 ## `WatcherHost`
 
@@ -1193,8 +1193,8 @@ exists and is tested in isolation (slices 1, 2, 3). The host wires them and owns
 
 **Two ingest paths, one store.** The **coordination-contract log** (file-based, the
 symbiotic path a non-AI-Forward session opts into by writing a register/heartbeat/session-end log
-via `oordContractWriter`) is drained by `umpOnce` / `unAsync`;
-the **OTLP span** path (network) is drained by the same host when `ryStartOtlp`
+via `CoordContractWriter`) is drained by `PumpOnce` / `RunAsync`;
+the **OTLP span** path (network) is drained by the same host when `TryStartOtlp`
 started a receiver. Re-reading the whole coordination log directory is idempotent (registration is
 keyed by external id), so a periodic pump never double-registers.
 
@@ -1204,7 +1204,7 @@ keyed by external id), so a periodic pump never double-registers.
 | `string CoordLogDirectory` | The coordination-contract log directory a session opts in by writing to. |
 | `SessionCoordinationEmitter CreateEmitter()` | A writer for the coordination log this host reads - a terminal/agent session in the same process registers and heartbeats through it, and the pump ingests it, so the session appears live (US-4). |
 | `int ImportEpisodesFromAuditLog(string auditLogPath)` | Imports the closed Work Episodes declared in a repo's AI-Forward audit log (the goal-state entries, AL5b) into the store, so real episodes exist to observe and score. Idempotent by episode id (a re-import of the same … |
-| `int ImportAndScoreEpisodesFromAuditLog(` | Imports the workspace's declared-goal episodes (ep-capture) AND auto-scores each one (conn-10). Derives its `eterministicEpisodeSignals` from the observable audit evidence (a committed Proof Pack, plus any explicit te… |
+| `int ImportAndScoreEpisodesFromAuditLog(` | Imports the workspace's declared-goal episodes (ep-capture) AND auto-scores each one (conn-10). Derives its `DeterministicEpisodeSignals` from the observable audit evidence (a committed Proof Pack, plus any explicit t… |
 | `IWatcherObservationStore Store` | The observation store, for the read surfaces (the app builds its queries from this). |
 | `LivenessProjection Liveness` | The liveness projection sharing the host's monotonic clock (exact in-process). |
 | `IngestHost Ingest` | The ingest host, exposed so an in-process source can enqueue spans directly. |
@@ -1244,8 +1244,8 @@ Observed liveness of a session. Computed from heartbeats, never stored (ADR-0001
 
 *record* — `WatcherIdentity.cs`
 
-A repository identity. `anonicalPath` disambiguates two repositories that share a
-folder `isplayName`, so the fleet map never collapses them (spec US-1).
+A repository identity. `CanonicalPath` disambiguates two repositories that share a
+folder `DisplayName`, so the fleet map never collapses them (spec US-1).
 
 ## `WorktreeIdentity`
 
@@ -1292,7 +1292,7 @@ generation that cannot inherit the prior generation's liveness, capability, or c
 
 *record* — `WatcherIdentity.cs`
 
-The identity a session is bound to at registration. `arness` and `odel`
+The identity a session is bound to at registration. `Harness` and `Model`
 are nullable: when unknown they render Not Recorded, and the session is still observable (US-13).
 
 ## `SessionRecord`
@@ -1320,7 +1320,7 @@ The result of a successful registration: the identity, its generation, and its c
 The persistence seam for watcher observations. This is the mock-substitutable contract the
 architecture names (§4): the in-memory implementation serves the Phase-1 walking skeleton; the
 SQLite implementation (extending the existing `Store/`, ADR-0002) replaces it later as a
-substitution, not a redesign. It holds non-secret facts only - never a `essionCapability`.
+substitution, not a redesign. It holds non-secret facts only - never a `SessionCapability`.
 
 ## `InMemoryWatcherObservationStore`
 
@@ -1413,7 +1413,7 @@ from points until the grader passes its calibration gates (ADR-0019, slice 7).
 
 *record* — `WeaveScore.cs`
 
-One dimension's assessment. `arnedPoints` is null unless the dimension was scored.
+One dimension's assessment. `EarnedPoints` is null unless the dimension was scored.
 
 ## `EvidenceCoverage`
 
@@ -1439,7 +1439,7 @@ One evaluation of one closed episode under one schema version at one evaluation 
 *class* — `WeaveScore.cs`
 
 The deterministic Weave scorer. Pure, model-free: it turns a closed Work Episode's deterministic
-evidence into an honest `corecard` - per-dimension 0-4 normalized to weight, the tripped
+evidence into an honest `Scorecard` - per-dimension 0-4 normalized to weight, the tripped
 hard floors, Evidence Coverage, and a verdict. Advisory dimensions are declared-and-excluded, never
 stubbed with fake numbers; a tripped floor suppresses the numeric headline; a missing
 goal/done/verification path is Not Scored; a Partial headline never rescales to 0-100 (spec rules 1-9).
@@ -1481,7 +1481,7 @@ An episode's ordinal within its session's sequential episode chain (1, 2, 3 …)
 *enum* — `WorkEpisode.cs`
 
 The DECLARED lifecycle terminal state of an episode - not a quality score. Whether a
-`ompleted` claim is *honest* (the goal was actually met vs. drifted past the
+`Completed` claim is *honest* (the goal was actually met vs. drifted past the
 done-condition) is the Weave's Outcome-integrity dimension (slice 5), deliberately not decided here.
 
 ## `EpisodeState`
@@ -1509,14 +1509,14 @@ turn's goal-state, not a parallel structure.
 
 The Work Episode lifecycle. Only the authenticated session may open, reframe, or close *its*
 episodes - every call presents the session capability and is verified (LK-0001 forgery on mismatch,
-ADR-0020). Times use the wall-clock `imeProvider` - the same base as span
+ADR-0020). Times use the wall-clock `TimeProvider` - the same base as span
 `RecordedAt` - because an episode binds *recorded* activity, not a *live* condition.
 
 ## `WorkEpisodeService`
 
 *class* — `WorkEpisode.cs`
 
-The default in-process episode service. See `WorkEpisodeService`.
+The default in-process episode service. See `IWorkEpisodeService`.
 
 | Member | Summary |
 |---|---|

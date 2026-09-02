@@ -175,7 +175,7 @@ How one node reaches another, rendered as the same graph the canvas already draw
 unimportant, and colouring it as though it belonged somewhere would be the inference
 ADR-0016 refuses.
 
-**Deliberately returns `anvasGraph` rather than a route type.** A route
+**Deliberately returns `CanvasGraph` rather than a route type.** A route
 IS a subgraph, and giving it its own shape would mean a second renderer, a second set of
 bindings and a second place for the two sessions to disagree about what a node looks like.
 The design session binds what it already binds; only the caption changes.
@@ -386,7 +386,7 @@ Folds the store's append-only disputes into the disputed-episode set (US-16 / ru
 
 The Loomkeeper Leaderboard surface view model - the comparative view of agent effectiveness
 (US-14). It discovers the distinct (task class, score schema) segments present in the scored
-episodes and composes one leaderboard per segment through `eaderboardComposer` (never
+episodes and composes one leaderboard per segment through `LeaderboardComposer` (never
 comparing across segments - rule 11), flattening the cells into honest rows: a rank where
 comparable, "Not Comparable" with a reason where the cohort is too small or single-operator
 (US-10). Synchronous load; degrades to an explicit state (DC-011).
@@ -405,7 +405,7 @@ comparable, "Not Comparable" with a reason where the cohort is too small or sing
 
 A liveness badge that never relies on colour. Glyph and text carry the meaning; colour is the third
 signal (token), so the badge reads correctly in high-contrast and for a colour-blind operator
-(WCAG 2.2 AA, "not colour alone" - mirrors `onfidenceBadge`).
+(WCAG 2.2 AA, "not colour alone" - mirrors `ConfidenceBadge`).
 
 | Member | Summary |
 |---|---|
@@ -467,7 +467,7 @@ Folds the observation store + liveness into session snapshots - the deterministi
 
 The Loomkeeper Sessions surface view model - the compute reader that closes the Phase-1
 change-surface. It renders observed sessions honestly: Not Recorded for an unproven harness/model,
-a no-colour-alone liveness badge, and the full state set. Mirrors `videncePaneViewModel`,
+a no-colour-alone liveness badge, and the full state set. Mirrors `EvidencePaneViewModel`,
 but its load is **synchronous** (a local store fold, no I/O) - so it can never strand on a
 "Loading…" message the way an async construction-time binding did (DC-011).
 

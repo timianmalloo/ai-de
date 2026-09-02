@@ -37,7 +37,7 @@ The durable half of dispatch, split so it can be answered across the daemon boun
 **Remarks.** **Why this split exists.** D1 settled that terminal processes live in the shell while the
 store lives in the daemon, so the two halves of a two-phase delivery are now in *different
 processes*: only the shell can write to the pty, and only the daemon can make the attempt
-durable. `ispatchService` does both in one call and remains correct in-process; this
+durable. `DispatchService` does both in one call and remains correct in-process; this
 is the same choreography with the side effect lifted out.
 
 
@@ -65,7 +65,7 @@ Phase 1 — make the attempt durable. Runs where the STORE is.
 
 **Remarks.** The session-binding check deliberately does **not** happen here: this process has no
 session to check against. It is the caller's obligation, asserted in
-`eginAndWriteAsync` before this is ever called, because a check performed against
+`BeginAndWriteAsync` before this is ever called, because a check performed against
 a value the caller also supplied would prove nothing.
 
 ### `DispatchReceipt Finalize(string dispatchKey, DispatchState state, string? errorCode)`
@@ -117,7 +117,7 @@ A user-confirmed request to transfer one immutable prompt revision to one sessio
 
 | Member | Summary |
 |---|---|
-| `string DispatchKey { get; } = Convert.ToHexStringLower(` | Derived from `ommandId`, so the command and dispatch idempotency namespaces are one. Two namespaces would let a retry miss the receipt it was meant to find. |
+| `string DispatchKey { get; } = Convert.ToHexStringLower(` | Derived from `CommandId`, so the command and dispatch idempotency namespaces are one. Two namespaces would let a retry miss the receipt it was meant to find. |
 
 ## `DispatchService`
 
@@ -144,7 +144,7 @@ prompt lands in the agent session. Committing the attempt first turns that windo
 
 One read of the session's output, and whether anything was dropped to produce it.
 
-**Remarks.** `runcated` rides on the chunk rather than being a session-level flag on purpose: it
+**Remarks.** `Truncated` rides on the chunk rather than being a session-level flag on purpose: it
 says "bytes were dropped immediately before this chunk", which is where a renderer needs to draw
 its gap marker. A session-level flag would say only that loss happened at some point, which
 cannot be rendered anywhere in particular.
@@ -160,7 +160,7 @@ agreed to anything, only that a process is or is not producing output.
 
 *record* — `ITerminalSession.cs`
 
-How a session ended. `xitCode` is null when the process was killed.
+How a session ended. `ExitCode` is null when the process was killed.
 
 ## `ITerminalSession`
 
@@ -172,7 +172,7 @@ runtime behind this same contract, so the swap is a substitution rather than a r
 **Remarks.** **Phase-2 amendment.** The Phase-1 shape was **write-only**, because the fixture
 recorded bytes and returned and nothing ever needed to read. A real terminal's output is the
 entire point — the renderer subscribes to it, the OSC parser reads it, and the resource budget is
-defined over it. `riteAsync` and the generation fence are unchanged, so the
+defined over it. `WriteAsync` and the generation fence are unchanged, so the
 write-ahead dispatch built on them is untouched.
 
 

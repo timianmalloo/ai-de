@@ -215,7 +215,7 @@ files the graph cannot navigate to — a result nobody can act on.
 
 
 
-One representative node per file, chosen the same way `eclaringAssertion`
+One representative node per file, chosen the same way `DeclaringAssertion`
 chooses one: a declaration before a reference, then lowest id for determinism. A file holds
 many nodes and the hit needs somewhere to go, not everywhere it could go.
 

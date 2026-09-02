@@ -97,8 +97,8 @@ where the last bytes are wherever the cursor went, not what the user is looking 
 
 
 
-**Through the SAME screen the pane renders** — `erminalScreen` driven by
-`tParser`. A second screen model was written for this and then deleted: two models
+**Through the SAME screen the pane renders** — `TerminalScreen` driven by
+`VtParser`. A second screen model was written for this and then deleted: two models
 of one terminal disagree the first time either is fixed, and readiness disagreeing with what the
 user is looking at is the whole defect this was built to close.
 
@@ -125,7 +125,7 @@ screen, not an edge case.
 | `AgentReadinessWatcher(string readyPattern, string? attentionPattern = null,` | **(gap)** |
 | `bool IsReady { get; private set; }` | True when the marker is on the last drawn line of the screen. |
 | `bool NeedsAttention { get; private set; }` | True when the screen is waiting on a person rather than on the agent. |
-| `string AttentionLine { get; private set; } = string.Empty` | The line that matched `eedsAttention`, for showing the user. |
+| `string AttentionLine { get; private set; } = string.Empty` | The line that matched `NeedsAttention`, for showing the user. |
 | `string LastJudged { get; private set; } = string.Empty` | The screen this watcher last judged. |
 | `string Pattern` | The pattern being tested, so a refusal can name the marker that did not match. |
 | `void Observe(ReadOnlySpan<char> text)` | Feeds output through the screen, then re-judges it. |
@@ -168,7 +168,7 @@ What a caller must supply to start a real terminal session.
 
 Whether the runtime installs its OSC shell integration into the session's shell.
 
-**Remarks.** Opt-in per session rather than always-on: `ommandLine` may be any executable, and
+**Remarks.** Opt-in per session rather than always-on: `CommandLine` may be any executable, and
 decorating an arbitrary command with PowerShell arguments would corrupt it.
 
 ## `ConPtyTerminalSession`
@@ -196,7 +196,7 @@ interesting output and stalling the process to preserve scrollback would be the 
 
 
 
-**Terminal bytes never leave this object except through `utput`.** They are
+**Terminal bytes never leave this object except through `Output`.** They are
 not logged, traced, or attached to telemetry, per the spec's privacy rule. The telemetry below
 counts bytes; it never carries them.
 
@@ -316,7 +316,7 @@ session-registration spec proposes.
 
 
 
-`mdVariableLimit` is kept for the PATH message, where it reads as the
+`CmdVariableLimit` is kept for the PATH message, where it reads as the
 budget a user has to get under.
 
 ### `IReadOnlyList<string> Inspect(string? path = null)`
@@ -380,7 +380,7 @@ on this record for a byte of the child's output to sit.
 *class* — `OscParser.cs`
 
 Reads OSC sequences out of a terminal byte stream and turns the authenticated ones into advisory
-`essionActivity` claims.
+`SessionActivity` claims.
 
 **Remarks.** **Everything here is a claim from an untrusted process.** The child in a terminal is
 often the thing being investigated, and it chooses every byte. So the parser's job is not to
@@ -508,7 +508,7 @@ heuristic rather than getting a half-loop.
 
 The integration script for one session.
 
-- **`nonce`** — This session's `scParser` nonce. Must be plain lowercase hex.
+- **`nonce`** — This session's `OscParser` nonce. Must be plain lowercase hex.
 
 **Throws `ArgumentException`.** The nonce is not plain hex.
 
@@ -558,7 +558,7 @@ path with a space runs, and a name with an apostrophe cannot end the string earl
 
 *class* — `TerminalActivityState.cs`
 
-Decides which of the session's competing signals owns `essionActivity`.
+Decides which of the session's competing signals owns `SessionActivity`.
 
 **Remarks.** There are three signals and they routinely disagree. **Output arriving** is a coarse
 heuristic — bytes appeared, so something is presumably working. **An authenticated OSC claim**
@@ -614,7 +614,7 @@ A cell colour, as the wire expresses it.
 
 **Remarks.** Deliberately not a rendering type. Keeping the model in *terminal* terms — "palette index 4",
 not "this shade of blue" — is what lets the theme decide what index 4 looks like, and what keeps
-the whole screen model free of a UI framework. `efault` is a distinct case rather
+the whole screen model free of a UI framework. `Default` is a distinct case rather
 than a magic index because "whatever the theme's foreground is" is not a colour.
 
 | Member | Summary |
@@ -709,9 +709,9 @@ honours the same clamp.
 
 
 One screen belongs to one session's parser, which writes it on the pump thread while the
-renderer reads it on the UI thread. They coordinate through `yncRoot`: a mutation
+renderer reads it on the UI thread. They coordinate through `SyncRoot`: a mutation
 is made under the lock, and a frame is drawn under the lock, so neither observes the other
-half-applied. See `yncRoot` for why the dirty flag alone is not enough.
+half-applied. See `SyncRoot` for why the dirty flag alone is not enough.
 
 | Member | Summary |
 |---|---|
@@ -721,7 +721,7 @@ half-applied. See `yncRoot` for why the dirty flag alone is not enough.
 | `int CursorRow { get; private set; }` | **(gap)** |
 | `int CursorColumn { get; private set; }` | **(gap)** |
 | `TerminalPen Pen { get; set; } = TerminalPen.Default` | The style applied to subsequent writes and erases. |
-| `bool IsDirty { get; private set; } = true` | Has anything changed since `learDirty`? |
+| `bool IsDirty { get; private set; } = true` | Has anything changed since `ClearDirty`? |
 | `TerminalCell this[int row, int column]` | **(gap)** |
 | `object SyncRoot { get; } = new()` | The monitor that coordinates mutation and reads across threads. |
 | `bool ApplicationCursorKeys { get; private set; }` | Whether the child has enabled **application cursor key mode** (DECCKM, `ESC [ ? 1 h`). |
@@ -733,7 +733,7 @@ half-applied. See `yncRoot` for why the dirty flag alone is not enough.
 | `bool MouseSgr { get; private set; }` | Whether the child asked for SGR extended mouse encoding (`?1006`) — the modern form. |
 | `void SetMouseMode(MouseTracking mode)` | Sets the mouse tracking level (or turns it off). Display is unaffected. |
 | `void SetMouseSgr(bool enabled)` | Sets or clears SGR extended mouse encoding. |
-| `void EnterAltScreen(bool saveCursor, bool clear)` | Switches to the alternate screen buffer (xterm `?1049h`/`?47h`/`?1047h`). The main buffer is set aside untouched and restored on `eaveAltScreen`, so a TUI never scribbles on the shell's scrollback.  (the `?1049` varia… |
+| `void EnterAltScreen(bool saveCursor, bool clear)` | Switches to the alternate screen buffer (xterm `?1049h`/`?47h`/`?1047h`). The main buffer is set aside untouched and restored on `LeaveAltScreen`, so a TUI never scribbles on the shell's scrollback.  (the `?1049` vari… |
 | `void LeaveAltScreen(bool restoreCursor)` | Switches back to the main screen buffer (xterm `?1049l`/`?47l`/`?1047l`), restoring the shell's scrollback exactly.  (the `?1049` variant) puts the cursor back where it was when the alt screen was entered. |
 | `TerminalCell? CellUnderCursor()` | The cell under the cursor, or `null` when the cursor is not on a real cell. The cursor legitimately sits off the grid at the **pending-wrap** column (`CursorColumn == Columns`, held after writing the last column until… |
 | `void ClearDirty()` | **(gap)** |
@@ -753,7 +753,7 @@ half-applied. See `yncRoot` for why the dirty flag alone is not enough.
 
 ### `bool IsDirty { get; private set; } = true`
 
-Has anything changed since `learDirty`?
+Has anything changed since `ClearDirty`?
 
 **Remarks.** The renderer presents on a timer to coalesce a fast producer into frames. Without this flag
 it would redraw a motionless screen at frame rate forever — the cost the coalescing policy
@@ -766,8 +766,8 @@ The monitor that coordinates mutation and reads across threads.
 **Remarks.** The parser writes this screen on the session's pump thread while the renderer reads it on the
 UI thread (the two differ by three orders of magnitude in rate, so marshalling every write to
 the UI thread is not affordable — see the surface). "Joined only by the dirty flag" is not a
-synchronization primitive: a `esize` swaps `_cells` and updates
-`olumns` as two separate writes, and a reader that observes the new column count
+synchronization primitive: a `Resize` swaps `_cells` and updates
+`Columns` as two separate writes, and a reader that observes the new column count
 against the old array indexes past its end. A writer holds this lock across a mutation; the
 renderer holds it across a whole frame, so a frame never sees a half-applied change.
 
@@ -779,7 +779,7 @@ Whether the child has enabled **application cursor key mode** (DECCKM, `ESC [ ? 
 keys as **SS3** (`ESC O A`) rather than CSI (`ESC [ A`). A terminal that ignores
 the mode and always sends CSI leaves the arrows dead in exactly those programs — the reported
 "arrow keys don't work in the Claude Code session" (smoke 9-2). Input encoding is the reader
-of this flag (`erminalInput`); the parser is its writer.
+of this flag (`TerminalInput`); the parser is its writer.
 
 ### `void LineFeed()`
 
@@ -837,7 +837,7 @@ upgrade trigger = the model gains wrapped-line provenance.
 
 Turns a session's output bytes into screen state: the display half of reading a terminal stream.
 
-**Remarks.** **Separate from `scParser`, and the two are not redundant.** That one reads
+**Remarks.** **Separate from `OscParser`, and the two are not redundant.** That one reads
 the stream for *authenticated state claims* and is a security control whose value depends on
 staying small enough to reason about. This one reads the same bytes for *what to draw*. Two
 passes cost nothing worth counting — S3 measured a scanner at 2361× the architecture's 1 MiB/s

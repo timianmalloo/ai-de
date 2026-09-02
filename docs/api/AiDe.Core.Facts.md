@@ -143,8 +143,8 @@ a connection-scoped identity would void receipt dedup across the crash window it
 
 *enum* — `Dispatch.cs`
 
-The folded state of one dispatch key. `ending` is durable and written *before* the
-terminal write; recovery resolves an unresolved attempt to `eliveryUnknown`.
+The folded state of one dispatch key. `Pending` is durable and written *before* the
+terminal write; recovery resolves an unresolved attempt to `DeliveryUnknown`.
 
 ## `DispatchReceipt`
 
@@ -166,13 +166,13 @@ What a terminal write actually proved.
 
 *enum* — `EvidenceAssertion.cs`
 
-How the evidence was acquired. Never collapsed with `erificationStatus`.
+How the evidence was acquired. Never collapsed with `VerificationStatus`.
 
 ## `VerificationStatus`
 
 *enum* — `EvidenceAssertion.cs`
 
-How well the evidence is established. Deliberately separate from `videnceOrigin`:
+How well the evidence is established. Deliberately separate from `EvidenceOrigin`:
 the spec forbids collapsing acquisition and validation into one confidence word.
 
 ## `Provenance`
@@ -230,7 +230,7 @@ instead of failing.
 |---|---|
 | `IReadOnlySet<string> Attributes { get; } = new HashSet<string>(StringComparer.Ordinal)` | Predicates whose object is a value, not a node. |
 | `IReadOnlySet<string> Identity { get; } = new HashSet<string>(StringComparer.Ordinal)` | The few facts that say WHAT A NODE IS, as opposed to what it is connected to. |
-| `string IdentitySqlList { get; } =` | The SQL literal list for `dentity`, generated from the same set. |
+| `string IdentitySqlList { get; } =` | The SQL literal list for `Identity`, generated from the same set. |
 | `string SqlList { get; } =` | The SQL literal list for an `IN` clause. Built from the same set. |
 
 ### `IReadOnlySet<string> Identity { get; } = new HashSet<string>(StringComparer.Ordinal)`

@@ -155,6 +155,17 @@ jobs:
       - name: Harness-diagnostics gate — self-test
         run: python tools/verify-harness-diagnostics.py --self-test
 
+      # api-reference.py stripped the XML-doc prefix with `[A-Za-z]:?` — colon optional, letter
+      # mandatory — so a cref with no prefix lost its first character. `Profiles` rendered as
+      # `rofiles`, and worse, `IAdvisoryEvaluator` rendered as `AdvisoryEvaluator`, which looks
+      # entirely legitimate. 13 committed files, and nothing compared a generated doc against the
+      # source it documents.
+      - name: Generated API docs name real identifiers
+        run: python tools/verify-api-crefs.py
+
+      - name: API-cref gate — self-test
+        run: python tools/verify-api-crefs.py --self-test
+
       # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
       # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the
       # twist that the gate was not stale but NARROW). Builds every tracked project the solution does

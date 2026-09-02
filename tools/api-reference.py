@@ -37,7 +37,11 @@ TAG = re.compile(
     r'<(?P<tag>summary|remarks|returns|value|param|typeparam|exception)(?P<attrs>[^>]*)>'
     r'(?P<body>.*?)</(?P=tag)>', re.S)
 NAME_ATTR = re.compile(r'(?:name|cref)\s*=\s*"([^"]+)"')
-SEE = re.compile(r'<see(?:also)?\s+cref\s*=\s*"[A-Za-z]:?([^"]+)"\s*/?>')
+# The XML-doc prefix (T:, P:, M:, F:, E:) is optional AS A UNIT. Written as `[A-Za-z]:?` the LETTER
+# was mandatory and only the colon optional, so a cref with no prefix — `cref="Profiles"` — had its
+# first character eaten and rendered as `rofiles`. Silent: the output is still a plausible code span,
+# and nothing compares a generated doc against the identifiers it names.
+SEE = re.compile(r'<see(?:also)?\s+cref\s*=\s*"(?:[A-Za-z]:)?([^"]+)"\s*/?>')
 PARA = re.compile(r'</?para>')
 XML_ANY = re.compile(r'<[^>]+>')
 

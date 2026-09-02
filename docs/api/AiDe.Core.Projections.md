@@ -56,7 +56,7 @@ One relationship between contexts, and how much traffic it carries.
 check, act on, or disagree with; the 47 edges are the thing they came for, and until the count
 can be opened it is an assertion about their code that they have to take on trust. Capped
 because a crossing can run to thousands and a pane that renders all of them is a pane that
-stops responding — `eight` stays the true total, so the cap never becomes a
+stops responding — `Weight` stays the true total, so the cap never becomes a
 quieter wrong number.
 
 | Member | Summary |
@@ -65,7 +65,7 @@ quieter wrong number.
 | `double DominanceShare = 0.5` | The share of listed members one object must reach before the crossing is called dominated. |
 | `int Undisclosed` | How many edges exist beyond the ones listed. |
 | `CrossingMember? DominantTarget` | The single object most of this crossing points at, or null when no one object dominates. |
-| `int DominantCount` | How many listed members point at `ominantTarget`. |
+| `int DominantCount` | How many listed members point at `DominantTarget`. |
 
 ### `double DominanceShare = 0.5`
 
@@ -90,7 +90,7 @@ list. A signal a person has to notice is a signal that gets noticed once.
 
 
 Computed over the LISTED members, so a capped crossing reports the share of what it
-actually examined rather than extrapolating to the full weight. `ndisclosed`
+actually examined rather than extrapolating to the full weight. `Undisclosed`
 stays beside it, because a majority of 200 out of 4,000 is a different statement.
 
 ## `UncoveredGroup`
@@ -170,7 +170,7 @@ bound they cannot allow for.
 
 
 **It degrades to "not known", never to a plausible wrong number.** When the read is
-complete `hortfall` is null and nothing is said; when it is not, it names which cap
+complete `Shortfall` is null and nothing is said; when it is not, it names which cap
 bit and by how much.
 
 | Member | Summary |
@@ -292,7 +292,7 @@ The weakest evidence anywhere on the route.
 
 **Remarks.** A chain is only as good as its worst link: one Inferred edge in a run of Verified ones makes
 the whole claim inferred, and presenting the route without saying so would launder a guess
-into a fact. `erificationStatus` is ordered strongest-first, so the weakest is
+into a fact. `VerificationStatus` is ordered strongest-first, so the weakest is
 the maximum.
 
 ## `PathResult`
@@ -543,7 +543,7 @@ present one way and missing the other.
 
 *class* — `IWorkspaceQueries.cs`
 
-The read surface answered by a `rojectionService` in this process.
+The read surface answered by a `ProjectionService` in this process.
 
 **Remarks.** Completed tasks rather than `Task.Run`: the projections are synchronous and fast, and moving
 them to a thread pool thread would add a context switch and a scheduling hop to hide latency that
@@ -606,7 +606,7 @@ same assertions every other projection reads.
 How a node's content should be rendered — the authority's call, not the reader's guess.
 
 **Remarks.** ADR-0018. The reader branches on this rather than inspecting the content or the node id, so a
-diagram, a proof or a binary comes back as `one` and gets the metadata-and-edges
+diagram, a proof or a binary comes back as `None` and gets the metadata-and-edges
 fallback instead of being mis-rendered as text that happens not to be text.
 
 ## `NodeContent`
@@ -804,7 +804,7 @@ counts ITEMS and the transport limit is in BYTES, and node labels, subjects and 
 from repository content — so a count-only cap admits an unbounded payload. That is not a
 hypothetical: MEASURED on a real repository, an evidence page of 2,000 assertions serialises
 to **1,004,397 bytes**, which is 95.8% of the frame and fifteen times the
-`axResultBytes` its own documentation claimed it stayed "comfortably inside".
+`MaxResultBytes` its own documentation claimed it stayed "comfortably inside".
 
 
 
@@ -859,7 +859,7 @@ How many times a shrunk graph may probe upward for the size it overshot.
 
 **Remarks.** Each probe halves the remaining gap. MEASURED on the calibrated fixture: none returns 868
 nodes where 1,281 fit, two returns 1,193, four returns 1,274, and six returns 1,274 again —
-by then `inRecoveryGap` stops it. Four is where the curve flattens, and every
+by then `MinRecoveryGap` stops it. Four is where the curve flattens, and every
 probe is a full recompute of the graph, which is the expensive half.
 
 ### `int MinRecoveryGap = 50`
@@ -876,7 +876,7 @@ each probe redoes work that does not change. That is the upgrade, and it is not 
 
 The ceiling on a SEARCH, which is a different question from a neighbour list.
 
-**Remarks.** **Find used to borrow `axNeighborsCeiling`, and 50 is the wrong number
+**Remarks.** **Find used to borrow `MaxNeighborsCeiling`, and 50 is the wrong number
 for it by two orders of magnitude.** The workbench asks for 20,000 matches to build the
 context and join panes; it received 50. Those panes were computing crossing counts, join
 counts and coverage from roughly three percent of a real workspace, and presenting the result
@@ -889,7 +889,7 @@ disagreed with the product for days.
 
 A search returns identity columns only — id, kind, label — so the payload per row is
 small and bounded, which is why this ceiling can be large where the neighbour one cannot.
-`axResultBytes` still applies underneath.
+`MaxResultBytes` still applies underneath.
 
 ### `int MaxClustersCeiling = 500`
 
@@ -916,7 +916,7 @@ everything if you allow enough steps.
 Assertions per evidence page.
 
 **Remarks.** **A COUNT ceiling, and it does not bound the payload.** This used to say the page was
-"sized so it stays comfortably inside `axResultBytes` once serialised". MEASURED:
+"sized so it stays comfortably inside `MaxResultBytes` once serialised". MEASURED:
 2,000 assertions serialise to 1,004,397 bytes, which is fifteen times that constant and 95.8%
 of an IPC frame. The sentence was written, believed, and never checked.
 
@@ -924,8 +924,8 @@ of an IPC frame. The sentence was written, believed, and never checked.
 
 
 
-What actually bounds the page is `axResponseBytes`, applied row by row in
-`vidence`; this count is the coarser of the two limits and usually is not the one
+What actually bounds the page is `MaxResponseBytes`, applied row by row in
+`Evidence`; this count is the coarser of the two limits and usually is not the one
 that fires. An assertion carries its provenance, so it is far heavier per row than a search
 match — which is the reason a count could never have been the bound.
 
@@ -934,7 +934,7 @@ match — which is the reason a count could never have been the bound.
 One page of every current assertion, for a caller that wants the whole set.
 
 **Remarks.** The panes want all of it and were rebuilding it node by node through
-`escribe`, which bounds neighbours at 50 and dropped two join edges of 124 doing
+`Describe`, which bounds neighbours at 50 and dropped two join edges of 124 doing
 so. This asks the question they were actually asking.
 
 
@@ -968,7 +968,7 @@ same repository viewed in Obsidian.
 
 The workspace at a distance: groups rather than nodes, for a graph too large to draw.
 
-**Remarks.** Built over the same `raph` projection the canvas uses, so an overview can never
+**Remarks.** Built over the same `Graph` projection the canvas uses, so an overview can never
 summarise a node the detailed view would not show. Two answers to one question is the defect
 signature this codebase has already paid for.
 

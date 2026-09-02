@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 51 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 52 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2981,4 +2981,40 @@ for both or split.*
   depends on the thing being set up.* Where it does not, it belongs at construction — the setup
   method is a convenient place, not a correct one, and convenience is how a capability ends up
   conditional on something it has nothing to do with.
+- **Status:** `controlled`
+
+### DC-085 — A prefix-stripping pattern eats the first character when the prefix is absent
+
+- **Shape:** a generator strips an optional prefix from a value with a pattern that makes the
+  **separator** optional but the **prefix character** mandatory. When the prefix is present the
+  result is correct; when it is absent the first character of the payload is consumed as though it
+  were the prefix. The output is still well-formed, still plausible, and wrong by exactly one
+  character.
+- **Signature:** an optionality marker attached to part of a prefix rather than to the whole of it —
+  `[A-Za-z]:?`, `\w?-`, `(v)?\.` — anywhere a prefix is genuinely optional. The tell is that the
+  pattern was written from examples that all had the prefix. The second tell is in the output: a
+  name one character shorter than a real one, which looks like a different valid name.
+- **Why it survives:** nothing downstream can tell. A decapitated identifier is still a legal
+  identifier, so it renders as an ordinary code span, and the reader has no reason to doubt it unless
+  they go looking for what it names. **The worst instances are invisible even to the author:**
+  `Profiles` → `rofiles` looks broken, but `IAdvisoryEvaluator` → `AdvisoryEvaluator` looks
+  completely legitimate — the eaten character was the interface `I`, and the result is a name a
+  reader would accept without hesitation.
+- **Instance:** 2026-09-02 — `tools/api-reference.py:40` rendered `<see cref="..."/>` with
+  `cref\s*=\s*"[A-Za-z]:?([^"]+)"`. Same-type references are written without a prefix
+  (`cref="Profiles"`), which is most of them, so the first character was eaten across **13 committed
+  files**. Found by eye in a diff, while reviewing something else — `` `rofiles` `` and
+  `` `ommandLine` `` in a doc comment. The interface cases were only found afterwards, by the gate.
+- **Control:** `tools/verify-api-crefs.py`, in CI with its self-test. It reads every capitalised code
+  span in `docs/api/*.md` and, for any that is not a declared name in `src/`, asks whether restoring
+  a single capital letter makes it one — which is precisely this defect's signature and nothing
+  else's. **Observed failing on the original generator**, where it reported the three interface cases
+  that eye-reading had missed.
+
+  It deliberately ignores lowercase-initial spans (parameter names, JSON keys, JavaScript), and that
+  blind spot is stated in the file rather than left to be discovered: a decapitated `Profiles` IS
+  lowercase. The decapitation test is what catches those, not the capitalisation rule.
+- **The generalisation:** *make the whole optional thing optional.* A prefix is `(?:X:)?`, never
+  `X:?` — the second says "the letter is required and the colon is a nicety", which is never what
+  anyone means.
 - **Status:** `controlled`
