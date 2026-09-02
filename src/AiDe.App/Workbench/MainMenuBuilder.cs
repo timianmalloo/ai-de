@@ -80,7 +80,15 @@ internal static class MainMenuBuilder
                    "workbench.newCodeViewer", "workbench.newDiagnostics", "workbench.clearStatus"]),
         ("_Window", ["workbench.floatPane", "workbench.collapsePane", "workbench.maximizePane",
                      "workbench.closeSurface", "workbench.toggleLock", "workbench.resetLayout"]),
-        ("_Terminal", ["terminal.new", "terminal.newAgent", "workbench.dispatchPrompt", "workbench.newPromptDraft"]),
+        // The agent entries are DERIVED from the same profile set the catalog derives from, so the
+        // menu and the catalog cannot disagree about which harnesses exist. Listing them here would
+        // be the second list this arrangement exists to remove.
+        ("_Terminal", ["terminal.new",
+                       .. AiDe.Core.Terminal.AgentReadinessProfiles.BuiltIn.All
+                            .Where(profile => profile.Launchable)
+                            .OrderBy(profile => profile.DisplayName, StringComparer.Ordinal)
+                            .Select(profile => profile.CommandId),
+                       "workbench.dispatchPrompt", "workbench.newPromptDraft"]),
         ("_Help", ["workspace.diagnostics"]),
     ];
 

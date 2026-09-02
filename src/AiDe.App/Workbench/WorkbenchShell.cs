@@ -150,16 +150,27 @@ public sealed class WorkbenchShell : IDisposable
         Palette = new CommandPalette(Controller, Announcer);
         Prompt = new PromptBar(Announcer);
 
-        Controller.NewAgentTerminalRequested = () =>
+        Controller.NewAgentTerminalRequested = agent =>
         {
             ReconcileViewIntoModel();
-            var agent = TerminalSurface.AvailableAgents.FirstOrDefault();
-            if (agent is null)
+
+            // The harness is CHOSEN, not discovered. The previous command took whatever was first on
+            // PATH, so it could not say which harness it had started — and a session's harness cannot
+            // be added afterwards, because a second coordination register for a known session
+            // discards its attributes rather than merging them.
+            var profile = TerminalSurface.Profiles.All
+                .FirstOrDefault(p => string.Equals(p.Agent, agent, StringComparison.OrdinalIgnoreCase));
+
+            if (profile is null)
             {
-                // Named rather than a generic failure: the fix is to install one, and the user
-                // cannot act on "not available".
-                return "No agent CLI was found on PATH. Looked for: "
-                    + string.Join(", ", TerminalSurface.Profiles.All.Select(p => p.Agent)) + ".";
+                return $"No profile is configured for '{agent}'.";
+            }
+
+            if (!TerminalSurface.AvailableAgents.Contains(agent, StringComparer.OrdinalIgnoreCase))
+            {
+                // Named rather than a generic failure: the fix is to install it, and the user cannot
+                // act on "not available".
+                return $"{profile.DisplayName ?? agent} was not found on PATH.";
             }
 
             var terminalStack = Service.Current.AllStacks()
@@ -168,10 +179,15 @@ public sealed class WorkbenchShell : IDisposable
             if (terminalStack is null) return "There is no terminal pane to open it beside.";
 
             var id = $"agent:{agent}#{Guid.NewGuid().ToString("N")[..6]}";
-            // Harness-neutral title: the tab says "Agent terminal", not the CLI we happened to pick off
-            // PATH — the user may drive a different harness, and presuming one in the label is wrong.
+
+            // The tab now names the harness, because the user chose it. The previous title was
+            // deliberately harness-neutral ("Agent terminal") for the honest reason that the CLI had
+            // been picked off PATH and naming it would have presumed one — that reason is gone.
+            var title = profile.DisplayName ?? "Agent terminal";
+            _harnessBySurface[id] = profile;
+
             var result = Service.Apply(new LayoutOperation.AddSurface(
-                terminalStack.Id, new Surface(id, "terminal", "Agent terminal")));
+                terminalStack.Id, new Surface(id, "terminal", title)));
 
             Adapter.Render();
             BindCanvas();
@@ -181,7 +197,7 @@ public sealed class WorkbenchShell : IDisposable
         AnnounceEnvironmentHealth();
 
             return result.Applied
-                ? "Agent terminal opened. Dispatch is refused until it reaches its prompt."
+                ? $"{title} session opened. Dispatch is refused until it reaches its prompt."
                 : result.Announcement;
         };
         Controller.NewTerminalRequested = () =>
@@ -1929,6 +1945,19 @@ public sealed class WorkbenchShell : IDisposable
     private string? _gitFactsFor;
 
     /// <summary>
+    /// The harness a terminal surface was launched as, by surface id.
+    /// </summary>
+    /// <remarks>
+    /// Recorded at launch and never inferred later, because there is no later: a second coordination
+    /// register for a known session DISCARDS its attributes rather than merging them (observed —
+    /// <c>CoordinationContractTests.Apply_DuplicateRegister_DiscardsTheSecondAttributes_ItDoesNotMerge</c>).
+    /// A session registered without its harness stays without one for its whole life, so the value
+    /// has to be in hand before the first register — which is why the harness is chosen from the
+    /// menu rather than discovered from PATH.
+    /// </remarks>
+    private readonly Dictionary<string, AiDe.Core.Terminal.AgentReadinessProfile> _harnessBySurface = new(StringComparer.Ordinal);
+
+    /// <summary>
     /// Resolves the repository, worktree and branch for <paramref name="root"/>, once.
     /// </summary>
     /// <remarks>
@@ -2048,13 +2077,18 @@ public sealed class WorkbenchShell : IDisposable
             agent = "terminal";
         }
 
+        // Harness only when this surface was launched AS one. Absent stays absent — never a guess
+        // from the executable name, which is the same rule ToAttributes already applies (US-13).
+        _harnessBySurface.TryGetValue(surfaceId, out var profile);
+
         return new SessionCoordinationIdentity(
             RepoPath: facts.RepoPath,
             RepoDisplay: facts.RepoDisplay,
             WorktreeBranch: facts.Branch,
             WorktreePath: facts.WorktreePath,
             TerminalId: surfaceId,
-            AgentName: agent);
+            AgentName: agent,
+            Harness: profile?.HarnessId);
     }
 
     /// <summary>

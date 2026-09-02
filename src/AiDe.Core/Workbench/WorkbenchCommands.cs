@@ -1,4 +1,5 @@
 using System.Globalization;
+using AiDe.Core.Terminal;
 
 namespace AiDe.Core.Workbench;
 
@@ -137,14 +138,31 @@ public static class WorkbenchCommandCatalog
             "Opens a plain shell terminal beside the others. Never launches an agent.",
             Menu: "_Terminal"),
 
-        // The command that makes agent dispatch reachable at all. An agent session gets a readiness
-        // watcher instead of shell integration, so it can be dispatched to rather than only refused.
-        new("terminal.newAgent", "New agent terminal…", "Ctrl+K, A",
-            // AddSurface's keyboard equivalent (SC 2.5.7). Declared rather than left empty: the
-            // conformance test reflects over the operation union, and it caught this immediately.
-            nameof(LayoutOperation.AddSurface),
-            "Opens a terminal running an installed agent CLI. Prompts can be dispatched to it once it reaches its prompt.",
-            Menu: "_Terminal"),
+        // One command per launchable harness, DERIVED from the readiness profiles rather than listed
+        // here. Adding a harness is then a profile, not an edit in three files — and there is no
+        // second list to keep in step by memory, which is the failure this repository has hit
+        // repeatedly. The menu (`MainMenuBuilder`) derives from the same set, so catalog and menu
+        // cannot disagree about which harnesses exist.
+        //
+        // This REPLACES `terminal.newAgent`, which opened whichever agent happened to be first on
+        // PATH. That command could not say which harness it had started, and a session's harness
+        // cannot be added afterwards: a second coordination register for a known session DISCARDS
+        // its attributes rather than merging them (observed —
+        // CoordinationContractTests.Apply_DuplicateRegister_DiscardsTheSecondAttributes_ItDoesNotMerge).
+        // So the harness must be known at launch, which is exactly what choosing the entry supplies.
+        ..AgentReadinessProfiles.BuiltIn.All
+            .Where(profile => profile.Launchable)
+            .OrderBy(profile => profile.DisplayName, StringComparer.Ordinal)
+            .Select(profile => new WorkbenchCommand(
+                profile.CommandId,
+                $"New {profile.DisplayName} session",
+                profile.Gesture!,
+                // AddSurface's keyboard equivalent (SC 2.5.7). Declared rather than left empty: the
+                // conformance test reflects over the operation union, and it caught this immediately.
+                nameof(LayoutOperation.AddSurface),
+                $"Opens a terminal running {profile.DisplayName}. Prompts can be dispatched to it once "
+                + "it reaches its prompt, and the session registers with its harness named.",
+                Menu: "_Terminal")),
 
         new("workbench.dispatchPrompt", "Dispatch prompt to terminal…", "Ctrl+K, P",
             string.Empty,

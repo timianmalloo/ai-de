@@ -15,8 +15,36 @@ namespace AiDe.Core.Terminal;
 /// are different situations with different correct responses, and collapsing them leaves a pane that
 /// refuses without ever saying why.
 /// </param>
+/// <param name="HarnessId">
+/// The harness this executable is, as <c>service.name</c> on the session's coordination record —
+/// <c>claude-code</c>, <c>github-copilot</c>. Null when unknown, and then the session registers with
+/// no harness rather than a guessed one.
+/// </param>
+/// <param name="DisplayName">
+/// The menu label, e.g. <c>Claude Code</c>. A profile with a display name AND a gesture gets its own
+/// <c>New … session</c> entry; one without gets none. **The menu is derived from this set rather than
+/// listed beside it** — a second hand-maintained list is the defect shape this repository has hit
+/// repeatedly (a list kept in step by memory).
+/// </param>
+/// <param name="Gesture">
+/// The keyboard chord for that entry. Required alongside <paramref name="DisplayName"/> because
+/// every command must declare one (<c>WorkbenchCommandTests</c>) and every rendered menu item must
+/// show one (<c>MainMenuTests</c>) — so a derived command with no gesture would fail both. It cannot
+/// be generated: chords are a finite, human-chosen space, and an invented one would collide.
+/// </param>
 public sealed record AgentReadinessProfile(
-    string Agent, string Pattern, string Origin, string? AttentionPattern = null);
+    string Agent, string Pattern, string Origin, string? AttentionPattern = null,
+    string? HarnessId = null, string? DisplayName = null, string? Gesture = null)
+{
+    /// <summary>Whether this profile can offer its own "New … session" command.</summary>
+    public bool Launchable => !string.IsNullOrWhiteSpace(DisplayName) && !string.IsNullOrWhiteSpace(Gesture);
+
+    /// <summary>The command id for this harness's session, derived from the executable name.</summary>
+    public string CommandId => CommandIdFor(Agent);
+
+    /// <summary>The one place the id is spelled, so the catalog, the menu and the controller agree.</summary>
+    public static string CommandIdFor(string agent) => "terminal.new." + agent.ToLowerInvariant();
+}
 
 /// <summary>
 /// Per-agent readiness markers, built in and user-supplied.
@@ -59,9 +87,37 @@ public sealed class AgentReadinessProfiles
     public IReadOnlyCollection<AgentReadinessProfile> All => _byAgent.Values;
 
     /// <summary>The built-in markers, with no file involved.</summary>
+    /// <summary>
+    /// Harness identity and launch affordance per known executable.
+    /// </summary>
+    /// <remarks>
+    /// Beside <see cref="AgentReadinessWatcher.KnownAgents"/> rather than inside it because that map
+    /// answers "how do I know this agent is ready", which is a different question with a different
+    /// lifetime — a readiness pattern is tuned against a rendered screen, a harness id is a fixed
+    /// fact about the product. Keyed by the same executable name, so the two cannot drift apart in
+    /// membership even though they are separate maps: a profile is only built for a key present in
+    /// <see cref="AgentReadinessWatcher.KnownAgents"/>.
+    /// </remarks>
+    private static readonly IReadOnlyDictionary<string, (string HarnessId, string Display, string Gesture)> KnownHarness =
+        new Dictionary<string, (string, string, string)>(StringComparer.OrdinalIgnoreCase)
+        {
+            // Ctrl+K, A is inherited from the removed `terminal.newAgent`, so the chord a user has
+            // in their fingers still opens an agent session — it now opens a NAMED one.
+            ["claude"] = ("claude-code", "Claude Code", "Ctrl+K, A"),
+            ["copilot"] = ("github-copilot", "GitHub Copilot", "Ctrl+K, G"),
+        };
+
     public static AgentReadinessProfiles BuiltIn { get; } = new(
-        AgentReadinessWatcher.KnownAgents.Select(kv => new AgentReadinessProfile(
-            kv.Key, kv.Value, "built-in", AgentReadinessWatcher.KnownAttention.GetValueOrDefault(kv.Key))),
+        AgentReadinessWatcher.KnownAgents.Select(kv =>
+        {
+            var harness = KnownHarness.TryGetValue(kv.Key, out var h) ? h : default;
+            return new AgentReadinessProfile(
+                kv.Key, kv.Value, "built-in",
+                AgentReadinessWatcher.KnownAttention.GetValueOrDefault(kv.Key),
+                HarnessId: harness.HarnessId,
+                DisplayName: harness.Display,
+                Gesture: harness.Gesture);
+        }),
         []);
 
     /// <summary>Loads the overrides beside the built-ins. A missing file is the ordinary case.</summary>
