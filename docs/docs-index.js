@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T00:22:51Z",
+  "generated": "2026-09-02T00:25:05Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3465,6 +3465,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "2bac1a5909ea830ac927bcc96331d68c2354106d48ec904a498373597adeda12"
     },
     {
+      "id": "ux-agent-session-registration",
+      "path": "docs/design/ux-agent-session-registration.md",
+      "title": "Agent session registration — the environment contract and harness-scripted launch",
+      "type": "design",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "Spec for making an agent terminal self-registering with Loomkeeper without the agent's cooperation, the AI-Forward pack, or any repo directive. Registration already works and is harness-agnostic; the gap is that four identity fields are never filled, two more are placeholders, and nothing is passed to the child process. Adds a documented environment contract that any harness can read, and harness-scripted launch entries (New Claude Code session / New Copilot session) that supply the harness identity AI-DE cannot otherwise know.",
+      "tags": [
+        "ux",
+        "terminal",
+        "loomkeeper",
+        "watcher",
+        "agent",
+        "environment-contract",
+        "session-3"
+      ],
+      "links": [
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2a6d8699ef43ac695be7e09d77695a420bc122d1517d256c0cb6fce40af2c9aa"
+    },
+    {
       "id": "audit-log",
       "path": "docs/audit/audit-log.md",
       "title": "Audit & Change Log",
@@ -4952,7 +4989,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5ce3ec68d79da709881554a9027d255beacc22bd0d1dceac4d9d1825cf656ad6"
+      "sourceSha256": "728fbca5ed24e8dd996eee3f00d1b58a53a4eb9621ccd79c24be559ad904844f"
     },
     {
       "id": "kb-agentic-session-observability-glossary",
@@ -9885,5 +9922,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "410457259215fa36211ceb24cd3508905f74ee3a72a7e715ff91c8865f1686f2"
+  "graphSha256": "eea84a3be3eb57e856bde9004308802d868d240c0d9216c206a360c6faac5a21"
 };

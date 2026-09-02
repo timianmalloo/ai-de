@@ -1,6 +1,8 @@
 # AI-DE
 
-AI-DE is a Windows desktop starter built with C# and WPF on .NET 10. The repository includes a small MVVM seam, unit tests, CI, and the AI-Forward Pack for agent-assisted engineering workflows.
+AI-DE is a tooling framework for experimenting with agent-to-agent coding scenarios with an assumption of spec-first, TDD.
+It assumes, generated code is transient, but you still need to be able to navigate it at scale so it goes back to exploring the entire repo as a model then viewers over the different types of data in the model.
+It is built with C# and WPF on .NET 10. The repository includes a small MVVM seam, unit tests, CI, and the AI-Forward Pack for agent-assisted engineering workflows.
 
 ## Prerequisites
 

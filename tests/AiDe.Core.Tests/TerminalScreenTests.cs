@@ -401,6 +401,56 @@ public sealed class TerminalScreenTests
         Assert.Null(ex);
     }
 
+    // ---- in-place line editing: the sequences a TUI redraws with (#16) -------
+
+    [Fact]
+    public void EraseCharacters_ClearsASpanInPlace_WithoutShiftingTheRest()
+    {
+        var screen = Screen(columns: 10);
+        screen.Write("abcdefghij");
+        screen.MoveCursor(0, 2);
+
+        screen.EraseCharacters(3); // erase c,d,e in place
+
+        Assert.Equal("ab   fghij", RowText(screen, 0)); // fghij did NOT move left
+    }
+
+    [Fact]
+    public void DeleteCharacters_ShiftsTheRestLeft_AndBlanksTheTail()
+    {
+        var screen = Screen(columns: 10);
+        screen.Write("abcdefghij");
+        screen.MoveCursor(0, 2);
+
+        screen.DeleteCharacters(3); // delete c,d,e; fghij shifts left
+
+        Assert.Equal("abfghij   ", RowText(screen, 0));
+    }
+
+    [Fact]
+    public void InsertCharacters_ShiftsTheRestRight_AndOpensBlanks()
+    {
+        var screen = Screen(columns: 10);
+        screen.Write("abcdefghij");
+        screen.MoveCursor(0, 2);
+
+        screen.InsertCharacters(2); // open 2 blanks at col 2; cd..ij shift right, hij fall off
+
+        Assert.Equal("ab  cdefgh", RowText(screen, 0));
+    }
+
+    [Fact]
+    public void EraseCharacters_PastTheEnd_ClampsToTheLineWidth()
+    {
+        var screen = Screen(columns: 6);
+        screen.Write("abcdef");
+        screen.MoveCursor(0, 4);
+
+        screen.EraseCharacters(100); // more than remains
+
+        Assert.Equal("abcd  ", RowText(screen, 0));
+    }
+
     // ---- reads are total: the renderer never crashes the screen (DC-061) -----
 
     [Fact]

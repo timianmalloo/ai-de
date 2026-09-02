@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T00:24:46Z",
+  "generated": "2026-09-02T00:25:04Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7595,6 +7595,69 @@ window.AUDIT_DATA = {
       "tags": [
         "ui",
         "sequence-diagram"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0376",
+      "shortname": "smoke91-phase-f-dock-investigate",
+      "datetime": "2026-09-01T23:58:58Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "do F->G->H (phase F: docking drag/close/focus)",
+      "summary": "Phase F: root-caused #4 (empty tool zones never floored extent -> sliver); fixed via UsableExtentFor floor on OpenPane+MovePane (+3 Core tests, 1326). #10/#11/#12/#3-focus root-caused at model/render boundary and designed (need WPF repro), documented in review §5a.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneLayoutService.cs",
+        "docs/reviews/ui-smoke-test-9-1.md"
+      ],
+      "tags": [
+        "docking",
+        "investigate"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0377",
+      "shortname": "smoke91-phase-g-terminal-render",
+      "datetime": "2026-09-02T00:11:27Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "phase G: terminal render/refresh #16",
+      "summary": "Phase G: root-caused #16 stale-glyph-on-cursor-move to VtParser dropping in-place line-editing CSI finals (ECH X, ICH @, DCH P); implemented EraseCharacters/InsertCharacters/DeleteCharacters on TerminalScreen and wired X/@/P; verified renderer/model/pump race-safe. +8 Core tests (1339).",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/TerminalScreen.cs",
+        "src/AiDe.Core/Terminal/VtParser.cs"
+      ],
+      "tags": [
+        "terminal",
+        "investigate"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0378",
+      "shortname": "smoke91-phase-h-sessions-surface",
+      "datetime": "2026-09-02T00:19:59Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "phase H: sessions surface #15",
+      "summary": "Phase H: replaced flat DisplayLabel sessions rows with legible two-line rows (identity above muted metadata) + colour+glyph liveness chip; SharedTelemetryNote states an all-rows gap once not per row. Pure SessionRowPresenter, +8 App tests (313).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SessionRowPresenter.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs"
+      ],
+      "tags": [
+        "sessions",
+        "ui"
       ],
       "outcome": "success"
     },

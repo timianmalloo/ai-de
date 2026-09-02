@@ -146,6 +146,45 @@ public sealed class ZoneLayoutServiceTests
         Assert.Same(before.Zone(ZoneId.Right), after.Zone(ZoneId.Right));
     }
 
+    // ---- #4: a pane arriving into an empty tool zone lands at a usable width ----
+
+    [Fact]
+    public void OpenPane_IntoAShrunkEmptyZone_FloorsWidthToUsable()
+    {
+        // Right starts empty; a prior resize shrank it to the 8% minimum.
+        var layout = ZoneLayoutService.ResizeZone(WorkbenchLayout.Default(), ZoneId.Right, 0.08).Layout;
+        Assert.True(layout.Zone(ZoneId.Right).IsEmpty);
+        Assert.Equal(0.08, layout.Zone(ZoneId.Right).Extent, precision: 6);
+
+        var after = ZoneLayoutService.OpenPane(layout, S("src", "codeviewer"), ZoneId.Right).Layout;
+
+        Assert.Equal(ZoneId.Right, after.FindZoneOf("src"));
+        Assert.Equal(ZoneState.DefaultExtent, after.Zone(ZoneId.Right).Extent, precision: 6); // floored, not a sliver
+    }
+
+    [Fact]
+    public void OpenPane_IntoAPopulatedZone_KeepsTheUserChosenWidth()
+    {
+        var layout = ZoneLayoutService.OpenPane(WorkbenchLayout.Default(), S("a", "codeviewer"), ZoneId.Right).Layout;
+        layout = ZoneLayoutService.ResizeZone(layout, ZoneId.Right, 0.5).Layout; // user widens deliberately
+
+        var after = ZoneLayoutService.OpenPane(layout, S("b", "codeviewer"), ZoneId.Right).Layout;
+
+        Assert.Equal(0.5, after.Zone(ZoneId.Right).Extent, precision: 6); // not reset — the zone already had content
+    }
+
+    [Fact]
+    public void MovePane_IntoAShrunkEmptyZone_FloorsWidthToUsable()
+    {
+        var layout = ZoneLayoutService.ResizeZone(WorkbenchLayout.Default(), ZoneId.Right, 0.08).Layout;
+        Assert.True(layout.Zone(ZoneId.Right).IsEmpty);
+
+        var after = ZoneLayoutService.MovePane(layout, "terminal-1", ZoneId.Right).Layout;
+
+        Assert.Equal(ZoneId.Right, after.FindZoneOf("terminal-1"));
+        Assert.Equal(ZoneState.DefaultExtent, after.Zone(ZoneId.Right).Extent, precision: 6);
+    }
+
     [Fact]
     public void MovePane_UnknownSurface_IsRefused()
     {

@@ -316,6 +316,18 @@ public sealed class VtParser
                 _screen.EraseInLine(Extent(Parameter(0, 0)));
                 break;
 
+            case 'X':
+                _screen.EraseCharacters(Parameter(0, 1));
+                break;
+
+            case '@':
+                _screen.InsertCharacters(Parameter(0, 1));
+                break;
+
+            case 'P':
+                _screen.DeleteCharacters(Parameter(0, 1));
+                break;
+
             case 'm':
                 ApplyGraphicRendition();
                 break;

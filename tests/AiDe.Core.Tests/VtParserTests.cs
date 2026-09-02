@@ -322,4 +322,47 @@ public sealed class VtParserTests
 
         Assert.Equal('é', screen[0, 0].Character);
     }
+
+    // ---- in-place line editing (ECH/ICH/DCH) — the #16 stale-glyph fix -------
+
+    [Fact]
+    public void EraseCharacters_CsiX_ClearsInPlace()
+    {
+        var (screen, parser) = New(columns: 10);
+        Feed(parser, "abcdefghij");
+        Feed(parser, $"{Esc}[3G");   // cursor to column 3 (1-based) == index 2
+        Feed(parser, $"{Esc}[3X");   // ECH 3
+
+        Assert.Equal("ab   fghij", RowText(screen, 0));
+    }
+
+    [Fact]
+    public void DeleteCharacters_CsiP_ShiftsLeft()
+    {
+        var (screen, parser) = New(columns: 10);
+        Feed(parser, "abcdefghij");
+        Feed(parser, $"{Esc}[3G{Esc}[3P");  // to col 3, delete 3
+
+        Assert.Equal("abfghij   ", RowText(screen, 0));
+    }
+
+    [Fact]
+    public void InsertCharacters_CsiAt_ShiftsRight()
+    {
+        var (screen, parser) = New(columns: 10);
+        Feed(parser, "abcdefghij");
+        Feed(parser, $"{Esc}[3G{Esc}[2@");  // to col 3, insert 2 blanks
+
+        Assert.Equal("ab  cdefgh", RowText(screen, 0));
+    }
+
+    [Fact]
+    public void EraseInsertDelete_WithNoParameter_DefaultToOne()
+    {
+        var (screen, parser) = New(columns: 6);
+        Feed(parser, "abcdef");
+        Feed(parser, $"{Esc}[1G{Esc}[P");   // to col 1, DCH default 1 -> delete 'a'
+
+        Assert.Equal("bcdef ", RowText(screen, 0));
+    }
 }

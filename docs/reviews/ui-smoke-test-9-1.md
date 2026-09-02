@@ -35,7 +35,7 @@ Severity: **S3** blocks a core task · **S2** major friction · **S1** polish.
 | 1 | "select a node to view source but nothing updates in any source tab" | Source viewer | **V** — `BindCanvas` never routed `CanvasSurface.NodeSelected` into the code viewers; §4s left it as "Design's call" | **Fixed this run** — follow selection | ✅ landed |
 | 2 | "source worked with no workspace open" | Source viewer | **V** — `PopulateCodeViewersAsync` showed the mock sample when `_queries is null` | **Fixed this run** — no fake source; honest empty state | ✅ landed |
 | 3 | "code viewer opened but no source tab; focus moved graph→explore" | Source viewer + focus | **V** (source) / **I** (focus) — viewer opened after a selection was blank; opening a surface re-renders and lands focus on the container | Source half fixed (opened viewer now shows the last-selected node); **focus-steal → investigate** (same class as the terminal focus-steal) | ◐ partial |
-| 4 | "source may have been created but hidden in the container till I widened it" | Docking | **I** — a new codeviewer surface was added to a narrow stack; the tab existed but the pane had ~0 width | Design: new reference documents open at a **minimum usable width**, or focus+reveal the new tab | ▢ planned |
+| 4 | "source may have been created but hidden in the container till I widened it" | Docking | **V** — `OpenPane`/`MovePane` never floored the destination zone's extent, so a pane into a shrunk/empty tool zone rendered as a sliver | **Fixed this run (F)** — `UsableExtentFor` floors an empty tool zone to `DefaultExtent` on open + drag-in | ✅ landed (F) |
 | 5 | "right-click a node → open class diagram / view source / read md / metadata by type" | **Contextual UX** | **V** — no context menu exists on graph nodes | **Design below (§3)** + implement | ▢ planned |
 | 6 | "scroll-pan-zoom in class diagram (mouse+trackpad); right-click a method → sequence diagram" | Class diagram | **V** — class diagram has scrollbars only, no pan/zoom; no method context menu | **Design below (§3)** + implement | ▢ planned |
 | 7 | "contexts hard to read — and I should go context → class diagram / metadata / graph" | Legibility + nav | **V** — muted body text with compounding `Opacity` (0.6–0.85) on the card descriptions; and no navigation affordance off a context | Legibility fix (§4) + contextual nav (§3) | ▢ planned |
@@ -46,8 +46,8 @@ Severity: **S3** blocks a core task · **S2** major friction · **S1** polish.
 | 12 | "view post workspace reload — TheTerrace" | Docking | **I** — layout after opening a workspace (prior complaint: opening should keep the arrangement) | **Investigate** — confirm restore-on-open holds for this path | ▢ planned |
 | 13 | "graph on the correct side — where I wanted it" | Docking | positive confirmation | none | ✅ ok |
 | 14 | "sequence diagram — no context" | Sequence diagram | **V** — the sequence surface is a scaffold with no real ordered-call feed (Core `Interaction.cs` just landed; not yet wired) | Wire the real feed (§3, depends on Core) | ✅ landed (E) |
-| 15 | "what sessions are surfacing in this list" | Sessions | **V** — five near-identical `Terminal — pwsh · Not Recorded · Stale` rows; the list is unclear about what a "session" is and why these appear | **Design** — clearer session identity/labels/empty-vs-stale | ▢ planned |
-| 16 | Claude-Code terminal: "moving the cursor paints characters without proper refresh" | Terminal render | **I** — the terminal render path coalesces dirty regions; a cursor move that only invalidates the old/new cell may leave stale glyphs when the app repaints a region the view considers clean | **Investigate** (terminal render/refresh — distinct from DC-072 input routing) | ▢ planned |
+| 15 | "what sessions are surfacing in this list" | Sessions | **V** — five near-identical `Terminal — pwsh · Not Recorded · Stale` rows; the list is unclear about what a "session" is and why these appear | **Fixed this run (H)** — legible two-line rows (identity above muted metadata) + colour+glyph liveness chip; a shared telemetry gap stated once, not per row | ✅ landed (H) |
+| 16 | Claude-Code terminal: "moving the cursor paints characters without proper refresh" | Terminal render | **V** — the VtParser had no case for the in-place line-editing CSI finals **ECH (`X`), ICH (`@`), DCH (`P`)**; they hit `default: unknown finals dropped`, so a TUI's line rewrite left stale glyphs in the model that the full-repaint renderer then faithfully drew | **Fixed this run (G)** — implemented `EraseCharacters`/`InsertCharacters`/`DeleteCharacters` on `TerminalScreen` + wired `X`/`@`/`P`; 8 tests | ✅ landed (G) |
 
 **Landed this run:** #1, #2, and the source half of #3.
 
@@ -143,6 +143,25 @@ distinct `TextBodyBrush` (lighter than muted, e.g. ~#C2CAD6) for card/edge body 
 mockup harness before landing (DX11). Deliberately **not shipped blind this run** — it must be
 measured on the rendered surface, not guessed at headless.
 
+## 5a. Phase F investigation — docking drag / close / focus (#4, #10, #11, #12, #3-focus)
+
+The zone model (ADR-0021) makes every operation **zone-confined** — `ZoneLayoutService` changes only
+the source/destination zone, and `WorkbenchLayout.AssertInvariant` refuses a duplicated or lost
+surface. So the frame *model* cannot flip. The remaining smoke complaints are at the **model↔render
+boundary** (extent, re-render focus), not in the zone algebra:
+
+| # | Root cause | Confidence | Disposition |
+|---|---|---|---|
+| **4** | `OpenPane`/`MovePane` set `Collapsed=false` on the destination but never floored the **extent** — a pane arriving into an empty tool zone that a prior resize/collapse had shrunk to the 8% minimum rendered as a sliver ("created but hidden till I widened it") | **V** (code path) | **Fixed this run** — `UsableExtentFor` floors an empty tool zone to `DefaultExtent` (22%) on open *and* on drag-in; 3 tests |
+| **10** | A native tab drag reconciles via `ILayoutService.Restore` → `TryMapByPosition`; when the dropped tree is a shape position-mapping cannot confidently resolve (an extra/nested column, an emptied column) it **returns null and falls back to kind-based `TreeToZones.Convert`**, which re-seats surfaces by *kind* — so the graph snaps to its kind-zone ("the graph moved"). The **strong guard** already prevents the duplicate-surface half; a "two tabs there and one on left" is the kind-fallback + the guard refusing a lossy map | **I** (fallback path) | **Investigate→design**: make `TryMapByPosition` resolve the extra-column case rather than revert; needs a WPF drag repro to confirm which branch fires. Not fixed blind. |
+| **11** | Closing the last tab in a zone empties it; `Adapter.Render()` rebuilds the visual tree and WPF lands keyboard focus on the first focusable zone (the Left/Explorer) — "explorer took focus". "Both source tabs gone" is the same re-render not re-activating the surviving tab | **I** (re-render focus) | **Design**: capture `ActiveSurfaceId` before `Render()` and restore focus/activation after. WPF-layer; needs functional verification. |
+| **3-focus** | Same mechanism as #11 — opening a surface calls `Render()`, which re-seats focus on the first focusable element rather than the just-opened/last-active surface | **I** (re-render focus) | **Design** (bundled with #11): a focus-preservation pass around `Render()`. |
+| **12** | Restore-on-open is exercised by `LayoutPersistence`; no defect reproduced in the model. The complaint reads as a consequence of #10/#11 during the same session, not a separate restore bug | **I** | **Confirm** after #10/#11 land; no separate fix identified. |
+
+**Landed for F:** the #4 extent floor (verified, tested). #10/#11/#3-focus are re-render/reconcile
+concerns at the WPF layer that need a functional drag/close repro to fix without guessing — they are
+**designed, not implemented blind** (the methodology's "stop before implementing the unverified half").
+
 ## 5. Sessions surface (#15)
 
 Five rows all read `TheTerrace/workspace · Terminal — pwsh · Not Recorded · Not Recorded · ~ Stale ·
@@ -160,9 +179,9 @@ state, not repeat five times.
 | **C ✅** | `NodeViewMenu` — type-driven right-click "Open as source/class-diagram/sequence/metadata/reveal"; wired JS→CanvasSurface event→shell menu→actions | #5, #7-nav | App | landed (needs user functional verification) |
 | **D ✅** | Class-diagram pan/zoom — wheel scrolls, Shift+wheel horizontal, Ctrl+wheel zoom-to-cursor, middle-drag pans; right-click a **type box** → `NodeViewMenu` "Open as…". Method-level right-click → sequence is unlocked by **E** | #6 | App | landed |
 | **E ✅** | Wire `SequenceModel.Build` to Core `Interaction.cs` (`ShowNodeInSequenceDiagramsAsync` → `InteractionAsync` ordered feed → `SequenceModel.Build` → `ShowFor`); Sequence added to a **type's** `NodeViewMenu` options and routed via `OpenNodeView`; `BindSequenceDiagrams` re-fills open panes | #14, #6-seq | App + Core | landed (needs user functional verification of the render + method entry) |
-| **F** | Investigate dock drag/close focus+visibility (new-pane min width, close→re-render, reveal new tab) | #4, #10, #11, #12, #3-focus | App | — |
-| **G** | Investigate terminal render/refresh (stale glyphs on cursor move) | #16 | App/Core | — |
-| **H** | Sessions surface identity/labels/empty-state | #15 | App | — |
+| **F ◐** | Investigated dock drag/close/focus (§5a). **#4 fixed** — empty tool zones floor to a usable width on open + drag-in (`UsableExtentFor`, 3 tests). #10 (native-drag kind-fallback), #11/#3-focus (re-render focus-steal), #12 (confirm) **designed, need a WPF repro** to implement without guessing | #4 (fixed), #10/#11/#12/#3-focus (designed) | App+Core | landed the tested half |
+| **G ✅** | Terminal render #16 root-caused: the VtParser **dropped** the in-place line-editing CSI finals (ECH `X`, ICH `@`, DCH `P`) a TUI redraws with, leaving stale glyphs the full-repaint renderer drew. Implemented the three ops on `TerminalScreen` + wired them; 8 tests. The renderer/model/pump were verified race-safe (full repaint under `SyncRoot`; `IsDirty=false` only after a full draw) — the fix was the missing parser cases, not coalescing | #16 | Core | landed |
+| **H ✅** | Sessions surface #15: replaced the flat `·`-joined `DisplayLabel` with a legible **two-line row** — a stable identity (agent · repo/worktree) above muted metadata (harness · model · trust · spans) — and a **colour+glyph liveness chip** (Verified/Inferred/Unverified brush, glyph+text so it's never colour-alone). A telemetry gap the whole list shares is stated **once** (`SessionRowPresenter.SharedTelemetryNote`), not repeated per row. Pure presenter, 8 tests | #15 | App | landed |
 
 **Recommended next:** **B** (legibility — highest visible-quality-per-effort, affects every
 analytical surface) and **C** (the contextual menu — the centerpiece the user asked for), then **D/E**
@@ -172,6 +191,7 @@ analytical surface) and **C** (the contextual menu — the centerpiece the user 
 
 | | |
 |---|---|
-| **Completed** | Phases **A, B, C, D** landed — source-follows-selection; contexts/joins legibility; the `NodeViewMenu` contextual "Open as…" on graph nodes; and class-diagram **pan/zoom** (wheel / Shift+wheel / Ctrl+wheel-to-cursor / middle-drag) + right-click type-box menu |
-| **Remaining** | F/G (docking + terminal-render investigations), H (sessions), provenance legibility (XAML) |
-| **Best next action** | The F/G investigations (docking pane-move flakiness + terminal render), then H (sessions surface) |
+| **Completed** | Phases **A–H** landed. A/B/C/D (source-follows-selection; legibility; `NodeViewMenu` "Open as…"; class-diagram pan/zoom); **E** (sequence diagram → Core interaction feed); **F** (empty-zone width floor #4 fixed; #10/#11/#12/#3-focus root-caused + designed); **G** (terminal ECH/ICH/DCH #16 fixed); **H** (sessions surface #15 — legible chipped rows + shared-gap note) |
+| **Remaining** | The **designed-not-implemented** re-render/reconcile half of F — #10 (native-drag kind-fallback), #11/#3-focus (Render() focus-preservation), #12 (confirm) — all need a **WPF drag/close functional repro**; and provenance legibility (#9, XAML `EvidencePaneViewModel`) |
+| **Best next action** | A functional pass on the running app to repro #10/#11/#3-focus, then implement the focus-preservation-around-Render fix designed in §5a |
+| **Needs user functional verification** | The **rendered** sequence diagram (E), class-diagram pan/zoom + right-click menus (C/D), terminal glyph refresh in Claude Code (G), and the sessions chip legibility (H) — all beyond headless testing |
