@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T17:21:21Z",
+  "generated": "2026-09-02T17:28:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7904,6 +7904,27 @@ window.AUDIT_DATA = {
       "tags": [
         "terminal",
         "paste"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0391",
+      "shortname": "smoke92-alt-screen",
+      "datetime": "2026-09-02T17:28:48Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "smoke 9-2: alternate screen buffer (T-T4)",
+      "summary": "T-T4: TerminalScreen gains an alternate screen buffer; parser wires ?1049/?47/?1047 (enter/leave with cursor save/restore + clear). A full-screen TUI draws on the alt buffer and the shell scrollback is restored exactly on exit. +3 Core tests (1374). Renderer needs no change (draws current _cells; swap is under SyncRoot).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/TerminalScreen.cs",
+        "src/AiDe.Core/Terminal/VtParser.cs"
+      ],
+      "tags": [
+        "terminal",
+        "altscreen"
       ],
       "outcome": "success"
     }

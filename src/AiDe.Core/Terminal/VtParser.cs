@@ -363,6 +363,28 @@ public sealed class VtParser
                 _screen.SetBracketedPaste(set);
                 break;
 
+            case 47:
+                // Alternate screen (legacy) — no cursor save, no clear.
+                if (set) { _screen.EnterAltScreen(saveCursor: false, clear: false); }
+                else { _screen.LeaveAltScreen(restoreCursor: false); }
+
+                break;
+
+            case 1047:
+                // Alternate screen — clear on entry, no cursor save.
+                if (set) { _screen.EnterAltScreen(saveCursor: false, clear: true); }
+                else { _screen.LeaveAltScreen(restoreCursor: false); }
+
+                break;
+
+            case 1049:
+                // Alternate screen (modern) — save cursor + clear on entry, restore cursor on exit.
+                // The one a full-screen TUI uses; without it the TUI overwrites the shell scrollback.
+                if (set) { _screen.EnterAltScreen(saveCursor: true, clear: true); }
+                else { _screen.LeaveAltScreen(restoreCursor: true); }
+
+                break;
+
             default:
                 // Unhandled private mode — ignored as a unit (a half-applied mode is worse than none).
                 break;

@@ -425,4 +425,16 @@ public sealed class VtParserTests
         Assert.True(screen.ApplicationCursorKeys);
         Assert.True(screen.BracketedPaste);
     }
+
+    [Fact]
+    public void AltScreen_1049_EntersAndLeavesViaTheParser()
+    {
+        var (screen, parser) = New();
+
+        Feed(parser, $"{Esc}[?1049h");
+        Assert.True(screen.AltScreen);
+
+        Feed(parser, $"{Esc}[?1049l");
+        Assert.False(screen.AltScreen);
+    }
 }
