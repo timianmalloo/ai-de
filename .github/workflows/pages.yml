@@ -1,0 +1,94 @@
+# GitHub Pages — the public presence for AI-DE.
+#
+# WHY A WORKFLOW AND NOT "DEPLOY FROM /docs". Serving the docs folder directly would make
+# docs/index.html — the Docs Explorer — the landing page of the site. The Explorer is the MAP of
+# the knowledge graph and the pack standard pins it to that path; it is not an introduction to the
+# project. Assembling here lets the site have a front door at / while the Explorer keeps its
+# address at /docs/.
+#
+# WHAT IS PUBLISHED
+#   site/   -> /            the three-page presence (landing, the model, collaboration)
+#   docs/   -> /docs/       the Explorer, the audit timeline, the rendered specs, the bundle view
+#
+# The documentation bundle is REGENERATED here before publishing, so the published copy is never
+# stale relative to the source it describes. There is deliberately no byte-equality gate against
+# the committed copy: the generator stamps the build date and the documented commit, so equality
+# would fail on every run for a reason that has nothing to do with drift. The committed copy exists
+# so the bundle opens from a file:// path without a build.
+
+name: pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'docs/**'
+      - 'src/**'
+      - 'tools/api-reference.py'
+      - 'tools/build-doc-viewer.py'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; a queued run supersedes a waiting one but never cancels a run that is
+# already publishing.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.x' }
+
+      # The derived index must agree with the frontmatter it came from before anything is
+      # published. A site built on a stale index is a site that documents a repository that does
+      # not exist.
+      - name: Validate the knowledge graph
+        run: python3 docs/ai-forward-pack/scripts/docs-graph.py validate
+
+      - name: Regenerate the API reference
+        run: python3 tools/api-reference.py --src src --out docs/api
+
+      - name: Rebuild the documentation bundle view
+        run: python3 tools/build-doc-viewer.py
+
+      - name: Assemble the site
+        run: |
+          set -euo pipefail
+          mkdir -p _pages
+          cp -r site/. _pages/
+          mkdir -p _pages/docs
+          cp -r docs/. _pages/docs/
+          # Underscore-prefixed paths (docs/_site, docs/_meta.json) are served only with this file.
+          touch _pages/.nojekyll
+          # A publish step that shipped an empty directory would look exactly like a success.
+          test -f _pages/index.html
+          test -f _pages/docs/index.html
+          test -f _pages/docs/_site/index.html
+          echo "assembled $(find _pages -type f | wc -l) files"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _pages
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,1466 @@
+---
+id: api-aide-core-watcher
+title: "API: AiDe.Core.Watcher"
+type: api
+status: current
+owner: "@timianmalloo"
+phase: "0"
+tags: [api, reference, generated]
+links:
+  - { to: architecture, rel: documents }
+review-by: 2027-09-02
+summary: >-
+  Extracted public surface of AiDe.Core.Watcher: 119 types, 204 members, 56% carrying a summary doc comment.
+---
+
+# API: `AiDe.Core.Watcher`
+
+**119 public types · 204 public members · 56% documented.**
+
+> Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
+> `///` comment, never written for the reference; a member with no comment is listed as a
+> gap rather than given invented text. The extractor is a lexical reader, not a compiler:
+> it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `IAdvisoryCredentialSource`
+
+*interface* — `AdvisoryEvaluators.cs`
+
+A presence-only check that a credential exists for a would-egress evaluator (ADR-0018). It never
+exposes the secret itself - the watcher store holds non-secret facts only (architecture §4), so the
+gate authorises on **presence**, and the secret is resolved elsewhere, at the call, by the
+credential-backed transport. Absent by default.
+
+## `NoCredential`
+
+*class* — `AdvisoryEvaluators.cs`
+
+A credential source that never has a credential - the safe default (local-only operation).
+
+| Member | Summary |
+|---|---|
+| `bool HasCredential` | **(gap)** |
+
+## `LocalHeuristicAdvisoryEvaluator`
+
+*class* — `AdvisoryEvaluators.cs`
+
+The deterministic, **local-only** advisory evaluator - the safe default that lets the advisory
+dimensions (Evidence discipline, Solution economy) be judged without any model call, credential, or
+egress. It grounds only on the quarantined evidence string the caller composes from deterministic
+signals (a token list like `"verification=executed; coverage=9/10; actions_after_done=0;
+premature=false; reuse=high"`) and maps it to a 0-4 rubric by fixed rules - never a guess: an
+absent token scores conservatively (low), never optimistically.
+
+**Remarks.** Because it is deterministic, its `valuatorStability` trivially passes (every repeat
+is identical), but it still only folds into Weave points after the ADR-0019 calibration gates qualify
+its `(version, taskClass, schemaVersion)` in the registry (slice 7) - the local heuristic is a
+transparent proxy an operator can inspect, not a licence to score advisory dimensions unbounded.
+
+
+
+
+It judges ONLY the two advisory dimensions; asked for any other it throws, because a deterministic
+dimension is the deterministic scorer's job, never an evaluator's (spec rule 8).
+
+| Member | Summary |
+|---|---|
+| `string EvaluatorVersion` | **(gap)** |
+| `AdvisoryAssessment Evaluate(ScoreDimension dimension, WorkEpisode episode, string evidence)` | **(gap)** |
+
+## `EgressGuardedAdvisoryEvaluator`
+
+*class* — `AdvisoryEvaluators.cs`
+
+The **egress + credential guard** (ADR-0018) around any advisory evaluator that would call out to a
+model over the network. Before delegating it enforces, in order: the `gressGate` has an
+explicit per-path opt-in for this evaluator's path (else `EgressDenied`,
+LK-0003 - default-deny), and a credential is present (else `InvalidBinding`,
+LK-0002). Only then does the inner evaluator run. This is the boundary a real cloud judge sits behind;
+the `ocalHeuristicAdvisoryEvaluator` needs no guard because it never egresses.
+
+| Member | Summary |
+|---|---|
+| `string EvaluatorVersion` | **(gap)** |
+| `AdvisoryAssessment Evaluate(ScoreDimension dimension, WorkEpisode episode, string evidence)` | **(gap)** |
+
+## `QuadraticWeightedKappa`
+
+*class* — `AdvisoryScoring.cs`
+
+Quadratic Weighted Kappa - the human-agreement gate (spec rule 9b, ADR-0019). Measures agreement
+between two 0..K-1 rating vectors, correcting for chance and penalising disagreement by the squared
+band distance. 1 is perfect agreement; 0 is chance; negative is worse than chance.
+
+| Member | Summary |
+|---|---|
+| `double Floor = 0.75` | **(gap)** |
+| `double Compute(IReadOnlyList<int> a, IReadOnlyList<int> b, int categories = 5)` | **(gap)** |
+
+## `EvaluatorStability`
+
+*record* — `AdvisoryScoring.cs`
+
+Evaluator stability over repeated runs of the same item - the reproducibility gate (spec rule 9a):
+the ratings must stay in the same discrete 0-4 band at least 95% of the time and never differ by
+more than one band.
+
+| Member | Summary |
+|---|---|
+| `bool Passes` | **(gap)** |
+| `EvaluatorStability Of(IReadOnlyList<int> repeats)` | **(gap)** |
+
+## `CalibrationVerdict`
+
+*record* — `AdvisoryScoring.cs`
+
+The outcome of the ADR-0019 calibration gates for one advisory evaluator version.
+
+## `AdvisoryCalibration`
+
+*class* — `AdvisoryScoring.cs`
+
+The advisory-evaluator calibration gates (spec rules 9, 14; ADR-0019). An evaluator version qualifies
+to contribute score points only when ALL hold: (a) it is stable across repeats; (b) its agreement
+with human labels reaches QWK >= 0.75; and (c) the anti-Goodhart counter-metrics (held-out outcome
+integrity, regression rate, rework, dispute overturns) did not worsen - otherwise it is rejected as
+score gaming or miscalibration.
+
+| Member | Summary |
+|---|---|
+| `CalibrationVerdict Qualify(` | **(gap)** |
+
+## `CalibrationRegistry`
+
+*class* — `AdvisoryScoring.cs`
+
+Records which advisory evaluator versions have qualified to contribute points, per
+`(evaluatorVersion, taskClass, schemaVersion)` - because a change to any of the evaluator,
+task class, or schema requires re-qualification (spec rules 10/13).
+
+| Member | Summary |
+|---|---|
+| `void Qualify(string evaluatorVersion, string taskClass, string schemaVersion)` | **(gap)** |
+| `bool IsQualified(string evaluatorVersion, string taskClass, string schemaVersion)` | **(gap)** |
+
+## `AdvisoryAssessment`
+
+*record* — `AdvisoryScoring.cs`
+
+One advisory (model-judge) assessment of a dimension. Carries its evaluator version and evidence.
+
+## `IAdvisoryEvaluator`
+
+*interface* — `AdvisoryScoring.cs`
+
+The model-judge seam (spec rule 8). A real implementation grounds on quarantined evidence and runs a
+local model behind the credential/egress policy (ADR-0018, Phase 4/5); slice 7 depends only on the
+interface, so the deterministic gate + fold are fully testable without a model.
+
+## `AdvisoryWeaveScorer`
+
+*class* — `AdvisoryScoring.cs`
+
+Folds calibrated advisory assessments into a deterministic Weave scorecard (spec rule 9). An advisory
+dimension earns points ONLY when its `(evaluatorVersion, taskClass, schemaVersion)` has qualified
+in the registry; otherwise it stays excluded, exactly as the deterministic scorer left it. Advisory
+never overrides a deterministic result: a Not Scored or Blocked base card is returned unchanged (a
+tripped floor stands; an advisory judgment can never raise a deterministic failed dimension - rule 8).
+
+| Member | Summary |
+|---|---|
+| `Scorecard Score(` | **(gap)** |
+
+## `AuditLogEpisodeSource`
+
+*class* — `AuditLogEpisodeSource.cs`
+
+Reads committed AI-Forward audit-log entries that declare a goal-state (a top-level `goal` +
+`done_when` + `session`, AL5b / front-matter CT19) and turns each into an **imported,
+closed** `orkEpisode`. This is the episode source that makes real Work Episodes exist
+for the watcher: an audit entry is a durable, human/agent-committed record of a bounded goal that was
+worked and closed, so importing it reads a *fact* - it does not fabricate a goal (spec L127, no
+guessing NG1), and it does not forge a live operation (these are historical facts recorded directly
+via `RecordEpisode`, the same way the coordination pump imports
+registrations - the live, capability-verified path is `WorkEpisodeService` for real-time
+sessions). Entries without all three fields are skipped: not every audit entry is an episode.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<WorkEpisode> Parse(IEnumerable<string> jsonlLines)` | Parses JSONL audit-log lines into imported closed episodes; malformed lines are skipped. |
+| `IReadOnlyList<WorkEpisode> ReadFile(string path)` | Reads a repo's `audit-log.jsonl` into imported episodes; a missing file yields none. |
+| `IReadOnlyList<ImportedEpisode> ParseWithEvidence(IEnumerable<string> jsonlLines)` | Parses lines into imported episodes paired with the observable audit evidence a signal derivation needs (conn-10) - currently whether the entry shipped a committed Proof Pack artifact. |
+| `IReadOnlyList<ImportedEpisode> ReadFileWithEvidence(string path)` | Reads a repo's `audit-log.jsonl` into imported episodes + evidence; missing file → none. |
+
+## `CoordContract`
+
+*class* — `CoordinationContract.cs`
+
+Pins the injected coordination-contract version. A record whose `contract` differs is rejected,
+not re-parsed (Testing Strategy A6 - a schema change is a contract change). Bumping this is a
+deliberate, gated change guarded by the version regression test.
+
+| Member | Summary |
+|---|---|
+| `string Version = "loomkeeper/1"` | **(gap)** |
+| `string VersionKey = "contract"` | **(gap)** |
+
+## `CoordContractEvent`
+
+*record* — `CoordinationContract.cs`
+
+A single injected-contract event emitted by a non-AI-Forward session over the `coord-core`
+append log (spike S4). `xternalSessionId` is the session's own id; the registrar mints
+its own internal id, so the adapter owns the external->internal map.
+
+## `ContractRegister`
+
+*record* — `CoordinationContract.cs`
+
+A registration: carries the same `telAttributes` keys as the OTLP path.
+
+## `ContractHeartbeat`
+
+*record* — `CoordinationContract.cs`
+
+A liveness heartbeat for an already-registered external session.
+
+## `ContractSessionEnd`
+
+*record* — `CoordinationContract.cs`
+
+A voluntary session end (minimal in slice 2: drops the external->internal mapping).
+
+## `ContractUpdate`
+
+*record* — `CoordinationContract.cs`
+
+Later-known attributes for an already-registered session: the harness, the model.
+
+**Remarks.** **Why a distinct kind rather than a second `register`.** A repeat registration is
+dropped entirely — `ApplyRegister` returns before reaching the registrar, so the richer
+attributes never arrive (observed:
+`Apply_DuplicateRegister_DiscardsTheSecondAttributes_ItDoesNotMerge`). That is correct for a
+duplicate: the first registration's capability must stand, or an external id could be used to
+re-mint one. Enrichment is a different intent and needs its own verb.
+
+
+
+
+
+**Which is the whole reason it exists.** AI-DE registers a terminal before knowing what
+runs inside it, and the model is knowable only by the agent — chosen inside the session and
+changeable mid-session. Without this the model can never be recorded for any AI-DE-launched
+session, no matter what anyone builds.
+
+
+
+
+
+**Additive within `loomkeeper/1`, deliberately.** The parser already skips a
+syntactically valid line whose `kind` it does not handle, so an older reader ignores this
+where a version bump would have made it reject the whole log. A schema change is a contract
+change — but this adds a kind rather than altering one, and the existing tolerance is what makes
+that safe rather than a hope.
+
+
+
+
+
+**It cannot mint or alter identity.** Only the attributes an update may carry are
+merged; repository, worktree, terminal and agent are fixed at registration. An update naming an
+unknown session is dropped and counted, exactly as a heartbeat for one is.
+
+## `CoordContractParseStats`
+
+*record* — `CoordinationContract.cs`
+
+Parse-layer counters (IO1): how many lines were malformed or rejected on version.
+
+## `CoordContractParser`
+
+*class* — `CoordinationContract.cs`
+
+Reads a `coord-core` append log tolerantly into ordered contract events, stdlib only. One JSON
+object per line; a blank line (including the LOG-A leading newline), a CRLF terminator, and
+surrounding whitespace are tolerated; a malformed line is skipped and counted; a line whose
+`contract` version is not `Version` is rejected and counted. Events are
+returned sorted `(at, externalSessionId, seq)` so replay is deterministic (mirrors coord-core fold).
+
+A syntactically valid line whose `kind` is not one this slice handles (e.g. a future board post
+sharing the same log) is silently skipped - it is not this parser's event, not an error.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<CoordContractEvent> Parse(string jsonl)` | **(gap)** |
+| `IReadOnlyList<CoordContractEvent> Parse(string jsonl, out CoordContractParseStats stats)` | **(gap)** |
+
+## `CoordContractStats`
+
+*record* — `CoordinationContract.cs`
+
+A snapshot of the adapter counters (IO1 operator questions).
+
+## `InjectedContractIngest`
+
+*class* — `CoordinationContract.cs`
+
+The injected-contract ingest adapter: maps contract events onto the same
+`rustedRegistrar`/`ngestHost` as the OTLP path, so a non-AI-Forward session
+appears identically in the fact store (one ledger, projected, not duplicated - US-5).
+
+The append log is a local, forgeable surface (ADR-0007), so - symmetrically with the OTLP token -
+the `essionCapability` is never read from the file: this adapter **mints** it at
+`register` and holds `external-id -> RegisteredSession`, verifying every `heartbeat`
+against the held capability. A heartbeat for a session never registered here has no capability and is
+dropped and counted; a duplicate register is ignored (the first capability stands); a register whose
+identity is incomplete is quarantined (LK-0004) without stopping the stream (US-11 fail honestly).
+
+Pattern: Adapter over the ingest host's port (DDD ACL), keyed by the external session id.
+
+| Member | Summary |
+|---|---|
+| `InjectedContractIngest(IngestHost host)` | **(gap)** |
+| `CoordContractStats Stats` | **(gap)** |
+| `void ApplyAll(IEnumerable<CoordContractEvent> events)` | Applies a batch in order. Callers pass parser output, already sorted. |
+| `void Apply(CoordContractEvent evt)` | Applies one contract event. Never throws on a bad event; every disposition is counted. |
+
+## `CoordContractWriter`
+
+*class* — `CoordinationContractLog.cs`
+
+Writes injected-contract events for one or more non-AI-Forward sessions to a coord-core-shaped
+append log (spike S4): one file per session (`<dir>/<session>.jsonl`), one JSON object
+per line, `seq` auto-assigned, an atomic single-write append, and the **LOG-A** guard - a
+leading newline when the file did not already end in one, so a fused line is impossible to express.
+This is the session-side half of the contract; `njectedContractIngest` is the ingest half.
+
+| Member | Summary |
+|---|---|
+| `CoordContractWriter(string logDir, TimeProvider? time = null)` | **(gap)** |
+| `void WriteRegister(string externalSessionId, IReadOnlyDictionary<string, string?> attributes)` | Writes a registration with the same `telAttributes` keys as the OTLP path. |
+| `void WriteHeartbeat(string externalSessionId)` | **(gap)** |
+| `void WriteSessionEnd(string externalSessionId)` | **(gap)** |
+
+## `CoordContractLog`
+
+*class* — `CoordinationContractLog.cs`
+
+Reads a coord-core append log directory into ordered contract events (stdlib, tolerant).
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<CoordContractEvent> ReadDirectory(string logDir)` | Reads every `*.jsonl` in  and parses them into one ordered event stream (`oordContractParser` sorts by `(at, session, seq)`). A missing directory yields an empty list; a malformed line in any file is skipped and count… |
+
+## `CoordContractLogPump`
+
+*class* — `CoordinationContractLog.cs`
+
+Reads a contract log directory and applies it to an `njectedContractIngest`. Re-running
+is safe: the adapter is idempotent (a duplicate register is ignored, a heartbeat merely refreshes
+liveness), so a whole-directory re-read never double-registers - which is why a naive "read it all"
+pump is correct here without tracking file offsets.
+
+| Member | Summary |
+|---|---|
+| `int PumpOnce()` | Reads the log directory once and applies every event; returns the count applied. |
+
+## `AuditSignals`
+
+*record* — `DeterministicSignalsDeriver.cs`
+
+The optional, explicit deterministic signals an instrumented AI-Forward turn may record on its audit
+entry (a `signals` object - the watcher telemetry convention). Every field is nullable by design:
+a harness emits only what it actually observed, and the watcher falls back to a conservative default for
+anything absent - never a fabricated value (spec L127, NG1). This is the reader-side data shape; the
+writer half (audit-log.py emitting a `signals` object) is a future AI-Forward enhancement, so a
+current entry simply omits it and scores conservatively. See
+`docs/design/watcher-signals-telemetry.md`.
+
+## `EpisodeEvidence`
+
+*record* — `DeterministicSignalsDeriver.cs`
+
+The observable audit-entry evidence a signal derivation grounds on (conn-10). At minimum a committed
+Proof Pack artifact (a `docs/proof/` path); optionally the explicit `uditSignals` an
+instrumented turn recorded. Absent signals never fabricate a value - the deriver falls back to the
+conservative default (spec L127, NG1).
+
+## `ImportedEpisode`
+
+*record* — `DeterministicSignalsDeriver.cs`
+
+An imported closed Work Episode paired with the audit evidence a signal derivation needs.
+
+## `DeterministicSignalsDeriver`
+
+*class* — `DeterministicSignalsDeriver.cs`
+
+Derives a `eterministicEpisodeSignals` for an imported closed episode from what is
+**honestly observable** - a committed Proof Pack (the only verification signal an audit entry
+carries), the declared close outcome, and any spans recorded after the close. Everything not observable
+is a conservative default that the scorer renders as Not-Recorded or Not-Scored, never a fabricated
+value: acceptance stays null (unknown, not "met"), regression false (not "no regression exists"),
+guidance/coordination requirements 0 (those dimensions render Not-Recorded), coverage uncalibrated.
+Pure and deterministic. See `docs/design/watcher-signals-derivation.md`.
+
+| Member | Summary |
+|---|---|
+| `DeterministicEpisodeSignals Derive(` | **(gap)** |
+
+## `DisputeService`
+
+*class* — `DisputeService.cs`
+
+The operator-facing entry point for raising a dispute (US-16 / rule 12). It mints the dispute id and
+timestamp and appends the `coreDispute` fact - the append-only, never-overwrites
+guarantee lives in the store (conn-4). This is the API a UI command binds to; it exists so a caller
+never hand-builds a dispute id or reaches past the store's append-only contract.
+
+| Member | Summary |
+|---|---|
+| `ScoreDispute RaiseDispute(string episodeId, string operatorId, string reason, ScoreDimension? dimension = null)` | Raises a dispute against a scored episode with the operator's reason, optionally targeting one dimension (null = the whole score). Appends the fact and returns it. The reason is required - a dispute with no stated rea… |
+
+## `DelegatingAdvisoryEvaluator`
+
+*class* — `DisputeService.cs`
+
+The cloud-judge scaffold: an `AdvisoryEvaluator` that delegates the actual 0-4 rubric to
+an injected model call. A real integration supplies the delegate (a call to a provider, grounded on
+the quarantined evidence, returning a rubric), and this evaluator is placed **inside** an
+`gressGuardedAdvisoryEvaluator` so the network call only happens after the ADR-0018
+egress opt-in and credential check pass. It exists so the seam is concrete and testable without a
+provider: the deterministic parts (guarding, folding, calibration) are proven around it, and the one
+undetermined piece - the model call - is a single injected function.
+
+**Remarks.** The delegate returns only a rubric (0-4); the evaluator clamps it and wraps it with the version and a
+rationale. It never egresses by itself - egress is the guard's job. A production call would validate
+the model's structured output (LOA A1-A3) before returning the rubric.
+
+| Member | Summary |
+|---|---|
+| `string EvaluatorVersion { get; } =` | **(gap)** |
+| `AdvisoryAssessment Evaluate(ScoreDimension dimension, WorkEpisode episode, string evidence)` | **(gap)** |
+
+## `EgressDecision`
+
+*enum* — `EgressGate.cs`
+
+Whether an egress path may be used.
+
+## `EgressGate`
+
+*class* — `EgressGate.cs`
+
+The default-deny egress gateway (ADR-0018, extends ADR-0011). Outbound is blocked until an explicit
+per-path opt-in enables exactly that path; every other path stays blocked. The gate ships in Phase 1,
+before any component that could egress, so the local-only default is enforced from the start.
+
+| Member | Summary |
+|---|---|
+| `EgressDecision Decide(string pathId)` | Blocked unless this exact path was opted in. |
+| `void OptIn(string pathId)` | Enables exactly one path. Every other path remains blocked. |
+| `void Revoke(string pathId)` | Revokes a previously opted-in path; it returns to blocked. |
+
+## `RepositorySessions`
+
+*record* — `FleetAggregator.cs`
+
+One repository's sessions in the fleet map.
+
+## `FleetView`
+
+*record* — `FleetAggregator.cs`
+
+The cross-repository fleet: the `repository -> sessions` map (spec item 3, US-3).
+
+| Member | Summary |
+|---|---|
+| `int RepositoryCount` | **(gap)** |
+| `int SessionCount` | **(gap)** |
+
+## `FleetAggregator`
+
+*class* — `FleetAggregator.cs`
+
+Builds the cross-repository fleet map from one or more session sources - each store/daemon is per
+workspace, so a fleet view is an aggregation over >=2 sources, grouped by the session's own
+repository identity (its canonical path). Deterministic order: repositories by display name then
+canonical path, sessions by id. Pure - it reads the slice-3 session read model, adds no store.
+
+| Member | Summary |
+|---|---|
+| `FleetView Aggregate(IEnumerable<IWatcherSessionsQuery> sources)` | **(gap)** |
+| `FleetView Aggregate(params IWatcherSessionsQuery[] sources)` | **(gap)** |
+
+## `HarnessEvent`
+
+*record* — `IngestHost.cs`
+
+A harness event. Registration/heartbeat are handled synchronously; spans are queued.
+
+## `HarnessSpanEvent`
+
+*record* — `IngestHost.cs`
+
+An observed span plus the capability the emitting process presented for its session.
+
+## `IHarnessEventSource`
+
+*interface* — `IngestHost.cs`
+
+The transport port. An OTLP network receiver (slice 1b) or an in-process source implements this and
+feeds `Enqueue`. Defined here as the seam; the host itself is transport-neutral.
+
+## `IngestStats`
+
+*record* — `IngestHost.cs`
+
+A snapshot of the ingest counters - the operator questions answerable without a debugger (IO1):
+how many spans came in, were dropped under load, stored, deduped, rejected as forged, or quarantined.
+
+## `IngestHost`
+
+*class* — `IngestHost.cs`
+
+Hosts the ingest path: synchronous registration/heartbeat, plus an async, bounded span stream drained
+into `telSpanMapper` + `panIngest`. A span flood is absorbed by the bounded
+queue (drop-oldest), a forged span is rejected, and a malformed one is quarantined - one bad event can
+never kill the drain loop, and every disposition increments a visible counter (US-11 fail honestly).
+
+Pattern: bounded producer/consumer (LOA Channel<T> backpressure) - the repo's
+`Channel.CreateBounded` + `DropOldest` idiom (ConPtyTerminalSession).
+
+| Member | Summary |
+|---|---|
+| `IngestHost(` | **(gap)** |
+| `RegisteredSession Register(HarnessRegistration registration)` | Maps and registers a session synchronously, returning its capability (LK-0004/LK-0002). |
+| `void Heartbeat(string sessionId, SessionCapability capability)` | Records a heartbeat after verifying the capability (LK-0001). |
+| `void UpdateHarnessAndModel(` | Records a harness and/or model learned after registration, capability-verified. |
+| `void EndSession(string sessionId)` | Marks a session ended (its terminal closed / it reported session-end). Liveness then reads Ended rather than lingering Alive/Stale. Called by the coordination ingest on a session-end event; the registrar's re-registra… |
+| `void Enqueue(HarnessSpanEvent spanEvent)` | Enqueues a span event. Never blocks: under load the bounded queue drops its oldest item (counted), so a flood degrades to a coverage gap rather than unbounded growth. |
+| `int DrainAvailable()` | Processes every span currently queued and returns the count. Deterministic (no waiting), so tests drain exactly what they enqueued. |
+| `Task RunAsync(CancellationToken ct)` | The production loop: wait for spans, then drain, until cancelled. |
+| `IngestStats Stats` | A point-in-time snapshot of the counters. |
+
+### `void UpdateHarnessAndModel(`
+
+Records a harness and/or model learned after registration, capability-verified.
+
+**Remarks.** The reason this exists at all: AI-DE registers a terminal before knowing what runs inside it,
+and the model is knowable only by the agent. Without a post-registration path the model can
+never be recorded for any AI-DE-launched session, because a repeat `register` discards
+its attributes rather than merging them (observed).
+
+## `ScoredEpisode`
+
+*record* — `Leaderboard.cs`
+
+A scored episode with its harness/model/operator attribution - the input to the leaderboard and
+standing. `eave` is the sum of the scored dimensions' earned points (there is no single
+stored score; it is derived, DM7).
+
+| Member | Summary |
+|---|---|
+| `double Weave` | **(gap)** |
+| `double? CoverageRatio` | **(gap)** |
+| `bool IsScoreable` | **(gap)** |
+
+## `LeaderboardFacet`
+
+*enum* — `Leaderboard.cs`
+
+The three leaderboard axes (spec US-14). There is deliberately no per-operator facet.
+
+## `LeaderboardCell`
+
+*record* — `Leaderboard.cs`
+
+One leaderboard cell. A cell below the cohort minimum or one that resolves to a single operator
+renders Not Comparable, never a rank (spec US-14/US-10). Every comparable cell carries its cohort
+size and Evidence Coverage.
+
+## `Leaderboard`
+
+*record* — `Leaderboard.cs`
+
+A leaderboard for one task class and score schema version (comparisons never cross either).
+
+| Member | Summary |
+|---|---|
+| `LeaderboardCell? Cell(LeaderboardFacet facet, string label)` | **(gap)** |
+
+## `LeaderboardComposer`
+
+*class* — `Leaderboard.cs`
+
+Composes the harness / model / harness-model leaderboard within one task class and score schema
+version (spec US-14, rules 10-11). A facet cell is Comparable only with a cohort of at least the
+minimum (default 5) AND more than one distinct operator (a single-operator cell is a privacy proxy
+for one human - US-10); comparable cells rank by median Weave. Deterministic and non-identifying.
+
+| Member | Summary |
+|---|---|
+| `Leaderboard Compose(IReadOnlyList<ScoredEpisode> episodes, string taskClass, string schemaVersion, int cohortMinimum = 5)` | **(gap)** |
+
+## `DimensionReason`
+
+*record* — `Leaderboard.cs`
+
+One evidence-backed reason for one dimension (spec US-16 - one reason per dimension).
+
+## `AgentStanding`
+
+*record* — `Leaderboard.cs`
+
+An agent's per-turn standing (spec US-16). It carries the harness-model rank, the recent trend, and
+one evidence-backed reason per dimension - and **deliberately no single aggregate scalar** to
+optimize (the anti-Goodhart stance: there is no `Score` field, only a relative rank, a trend
+direction, and per-dimension evidence).
+
+## `StandingComposer`
+
+*class* — `Leaderboard.cs`
+
+Turns a scored episode + the leaderboard into per-turn standing (spec US-16). The rank is shown only
+when the harness-model cell is comparable (else RankComparable is false and only trend + reasons
+render); the reasons are one per dimension from the scorecard; no single optimizable number is exposed.
+
+| Member | Summary |
+|---|---|
+| `AgentStanding Compose(ScoredEpisode subject, Leaderboard board, int trend)` | **(gap)** |
+
+## `LivenessProjection`
+
+*class* — `LivenessProjection.cs`
+
+Computes a session's liveness from its heartbeats and the monotonic clock - a derived view, never
+stored (ADR-0001, DM7). Because it uses monotonic elapsed duration, a wall-clock change cannot flip
+a session's state (spec US-2).
+
+| Member | Summary |
+|---|---|
+| `LivenessProjection(IWatcherObservationStore store, IMonotonicClock clock, TimeSpan staleAfter)` | **(gap)** |
+| `LivenessState Evaluate(string sessionId)` | Ended if the session was ended or has no heartbeat (an unknown or never-alive session collapses to Ended per the spec); otherwise Alive within the stale threshold, else Stale. |
+
+## `BoardMessageKind`
+
+*enum* — `MessageBoard.cs`
+
+The kinds of Message Board entry (spec US-4). The first four are top-level posts; Reply and
+Acknowledgement reference a parent message and cannot create an orphan thread.
+
+## `BoardMessage`
+
+*record* — `MessageBoard.cs`
+
+One append event on a repository's Message Board (spec line 233). The envelope, order, and thread
+references are append-only; only a policy redaction may null the `ontent` and set
+`ombstoned`, leaving the immutable envelope (spec line 210). `ontent` is
+**quarantined untrusted data** - it can never instruct a grader (US-4 #4); grader-injection
+shapes are additionally `njectionFlagged` (US-4 #5).
+
+## `GraderInjectionScanner`
+
+*class* — `MessageBoard.cs`
+
+A deterministic scanner for grader/learning-promoter injection shapes in untrusted board content
+(US-4 #5). It is a **flag**, not a safety boundary: the invariance guarantee (an injection
+fixture never changes a score) comes from the scorer consuming typed deterministic signals rather
+than board text (slice 5), not from perfect detection here. A small pattern list, deliberately not
+an ML classifier (Simplifier).
+
+| Member | Summary |
+|---|---|
+| `bool LooksLikeInjection(string? content)` | **(gap)** |
+
+## `IMessageBoard`
+
+*interface* — `MessageBoard.cs`
+
+The per-repository, append-only Message Board (spec US-4).
+
+## `MessageBoardService`
+
+*class* — `MessageBoard.cs`
+
+The default in-process Message Board. Every write is capability-verified (only the authenticated
+session posts as itself - LK-0001 on a forged capability); the message carries the session's own
+trust as provenance (US-4 #1). A reply/acknowledgement must reference an existing parent **in the
+same repository** or it is rejected as an orphan (US-4 #2). Content is stored quarantined and
+injection-flagged (US-4 #4/#5). A policy redaction tombstones the payload (US-4 #6).
+
+| Member | Summary |
+|---|---|
+| `MessageBoardService(` | **(gap)** |
+| `BoardMessage Post(string repositoryKey, string sessionId, SessionCapability capability, BoardMessageKind kind, string content)` | **(gap)** |
+| `BoardMessage Reply(string repositoryKey, string sessionId, SessionCapability capability, string parentMessageId, string content)` | **(gap)** |
+| `BoardMessage Acknowledge(string repositoryKey, string sessionId, SessionCapability capability, string parentMessageId)` | **(gap)** |
+| `void Redact(string messageId)` | **(gap)** |
+
+## `IMonotonicClock`
+
+*interface* — `MonotonicClock.cs`
+
+A monotonic time source. Liveness uses elapsed monotonic duration, never the wall clock, so a
+wall-clock change (NTP step, timezone, manual set) cannot flip a session's state (spec US-2;
+defect class TEST-CLOCK). Abstracted so a test can drive time deterministically.
+
+## `SystemMonotonicClock`
+
+*class* — `MonotonicClock.cs`
+
+The production clock, backed by the high-resolution monotonic `topwatch`.
+
+| Member | Summary |
+|---|---|
+| `long Ticks` | **(gap)** |
+| `long TicksPerSecond` | **(gap)** |
+
+## `ObservedSpan`
+
+*record* — `ObservedSpan.cs`
+
+The observation fact grain: one row is exactly one observed operation emitted by one authenticated
+session generation, identified by its source span identity, recorded at ingest. Immutable and
+append-only (ADR-0017). Phase 1 carries operation metadata only - no prompt/code/transcript
+content (that is Phase 5, behind the governance gate).
+
+| Member | Summary |
+|---|---|
+| `string SpanId { get; } = ComputeId(SessionId, TraceId, SourceSpanId)` | Deterministic content-addressed identity: the same (session, trace, source span) yields the same id, so a redelivered span is a duplicate to ignore rather than a second row. Computed, never supplied. Pattern: LOA 5.3 … |
+
+## `HarnessSpan`
+
+*record* — `OtelSpanMapper.cs`
+
+Transport-neutral harness span. An OTLP receiver or an in-process `ActivityListener`
+constructs this, so the mapper is coupled to no single transport (spike S1: the mapping is the
+contract, not the wire).
+
+## `HarnessRegistration`
+
+*record* — `OtelSpanMapper.cs`
+
+A harness registration / session-start event, as a bag of attributes.
+
+## `OtelAttributes`
+
+*class* — `OtelSpanMapper.cs`
+
+The pinned OpenTelemetry / GenAI attribute snapshot the ingest wire consumes. The GenAI keys are
+marked **Development** upstream, so a change here is a contract change guarded by a regression
+test (Testing Strategy A6) rather than silent drift (spike S1 finding 5).
+
+| Member | Summary |
+|---|---|
+| `string SessionId = "session.id"` | **(gap)** |
+| `string ServiceName = "service.name";          // -> Harness name` | **(gap)** |
+| `string ServiceVersion = "service.version"` | **(gap)** |
+| `string GenAiModel = "gen_ai.request.model";   // -> Model name` | **(gap)** |
+| `string GenAiModelVersion = "gen_ai.model.version"` | **(gap)** |
+| `string RepoPath = "repo.canonical_path"` | **(gap)** |
+| `string RepoDisplay = "repo.display_name"` | **(gap)** |
+| `string WorktreeBranch = "worktree.branch"` | **(gap)** |
+| `string WorktreePath = "worktree.path"` | **(gap)** |
+| `string TerminalId = "terminal.id"` | **(gap)** |
+| `string AgentName = "agent.name"` | **(gap)** |
+
+## `OtelSpanMapper`
+
+*class* — `OtelSpanMapper.cs`
+
+Maps harness telemetry into the watcher domain. Pure, deterministic, stateless.
+
+Pattern: Anti-Corruption Layer + Adapter (DDD) - it is the one seam that keeps the preview
+OTel/GenAI vocabulary out of the domain, so upstream schema churn changes only this type and its
+regression test. It treats a span's `session.id` as a claim, never authority: the wire binds
+spans to the capability issued at registration (ADR-0020), so the mapper mints no trust.
+
+| Member | Summary |
+|---|---|
+| `ObservedSpan MapSpan(HarnessSpan span, DateTimeOffset recordedAt)` | Maps an OTel span to an `bservedSpan`.  is stamped by the wire at ingest, never trusted from the span (clock-skew prevention). Throws `atcherException` (LK-0004) when the span carries no `session.id`. |
+| `SessionBinding MapRegistration(HarnessRegistration registration)` | Maps a registration event to a `essionBinding`. Harness and model are absent when their attributes are absent (rendered Not Recorded, spec US-13); trust is `Verified` only when the harness names itself via `service.na… |
+
+## `OtlpJsonParser`
+
+*class* — `OtlpReceiver.cs`
+
+Parses an OTLP/HTTP export in JSON encoding into `arnessSpan`s, stdlib only (no protobuf
+dependency - the harness is configured `OTEL_EXPORTER_OTLP_PROTOCOL=http/json`; slice-1b spike).
+Resource and span attributes are merged per span. Malformed JSON yields an empty list, never throws.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<HarnessSpan> Parse(string otlpJson)` | **(gap)** |
+
+## `ISessionTokenResolver`
+
+*interface* — `OtlpReceiver.cs`
+
+Resolves a per-session bearer token to the session's capability. Unknown token => null.
+
+## `SessionTokenRegistry`
+
+*class* — `OtlpReceiver.cs`
+
+An in-memory token->capability registry the registration flow populates.
+
+| Member | Summary |
+|---|---|
+| `void Register(string token, SessionCapability capability)` | **(gap)** |
+| `SessionCapability? Resolve(string token)` | **(gap)** |
+
+## `OtlpReceiverStats`
+
+*record* — `OtlpReceiver.cs`
+
+A snapshot of the receiver counters (IO1 operator questions).
+
+## `OtlpHttpReceiver`
+
+*class* — `OtlpReceiver.cs`
+
+A loopback-only OTLP/HTTP receiver: it accepts OTLP/JSON exports at `/v1/traces`, resolves the
+per-session bearer token to a capability, parses spans, and enqueues them into the ingest host. A
+bad body, oversize body, or unknown token is counted and dropped - never enqueued, never fatal
+(the exporter is answered 200 so it does not retry a permanent error).
+
+Pattern: Adapter over the ingest host's port. The capability never travels; only the opaque token does.
+
+| Member | Summary |
+|---|---|
+| `OtlpHttpReceiver(IngestHost host, ISessionTokenResolver tokens, string loopbackPrefix, int maxBodyBytes = 4 * 1024 * 1024)` | **(gap)** |
+| `OtlpReceiverStats Stats` | **(gap)** |
+| `Task RunAsync(CancellationToken ct)` | Accepts exports until cancelled. One export per POST; one bad request never stops the loop. |
+| `void Dispose()` | **(gap)** |
+
+## `ScoreDispute`
+
+*record* — `ScoreDispute.cs`
+
+An operator's dispute of a scored episode (spec US-16 / rule 12). It is an **append-only fact**:
+raising a dispute NEVER overwrites the prior Scorecard - "a dispute appends a superseding evaluation
+record; prior scores are not overwritten" (spec rule 12). The episode then reads as **Disputed**,
+a first-class state that must stay distinguishable from Scored/Blocked/Not Scored (spec §10).
+
+**Remarks.** A dispute may target one `isputedDimension` (the operator contests one dimension's
+assessment) or the whole score (`null`). The `eason` is the operator's own words -
+non-secret, retained as the audit trail of why a score was contested. Resolution (deterministic
+evidence or a human disposition producing a new Scorecard version) is a separate, later step; this
+records the dispute itself, honestly and immutably.
+
+## `DisputeProjection`
+
+*class* — `ScoreDispute.cs`
+
+The deterministic read over disputes: which episodes are Disputed and how many disputes each carries
+(spec §10 - Disputed is derived from the append-only dispute facts, never a stored flag, DM7). Pure;
+folds the store's disputes into an episode-keyed view the Sessions/Leaderboard surfaces consult.
+
+| Member | Summary |
+|---|---|
+| `bool IsDisputed(string episodeId)` | Whether an episode has at least one dispute (its derived Disputed state). |
+| `int DisputeCount(string episodeId)` | The number of disputes raised against an episode (an additive count). |
+| `IReadOnlySet<string> DisputedEpisodeIds()` | The distinct episode ids that carry at least one dispute. |
+| `bool IsSessionDisputed(string sessionId)` | Whether a session has any disputed episode - the session's derived Disputed state for the Sessions surface (US-16 "discoverable from the Sessions view"). A session is disputed iff any of its episodes carries a dispute… |
+
+## `EvidenceComposer`
+
+*class* — `ScoringService.cs`
+
+Composes a closed episode's `eterministicEpisodeSignals` into the quarantined evidence
+token string the `ocalHeuristicAdvisoryEvaluator` grounds on (the
+`key=value; key=value` vocabulary). It maps only the signals we actually capture; a dimension the
+local heuristic looks for but we do not observe (e.g. `reuse`) is simply omitted, so the
+evaluator scores it conservatively rather than optimistically (NG1). Deterministic and pure.
+
+| Member | Summary |
+|---|---|
+| `string Compose(DeterministicEpisodeSignals signals)` | **(gap)** |
+
+## `ScoringService`
+
+*class* — `ScoringService.cs`
+
+Turns a closed Work Episode + its deterministic signals into a persisted `coredEpisode`,
+so a scored episode appears on the Leaderboard/Standing surfaces (US-14/US-16). It scores the four
+deterministic dimensions always, and folds the two advisory dimensions ONLY when the supplied
+evaluator's `(version, taskClass, schemaVersion)` has qualified in the calibration registry
+(ADR-0019, rule 8) - otherwise they stay excluded exactly as the deterministic scorer left them.
+
+**Remarks.** Advisory evaluation grounds on `videnceComposer`'s token string. Where no evaluator
+is supplied (the safe default), only the deterministic Weave is recorded - which is enough to populate
+the Leaderboard. The classification (harness/model/operator/taskClass) is supplied by the caller: it
+comes from the session binding + the episode, which this pure service does not re-derive.
+
+
+
+
+It never overrides a floor or a Not Scored verdict - that guarantee lives in
+`dvisoryWeaveScorer` (rule 8) and is exercised here end to end.
+
+| Member | Summary |
+|---|---|
+| `ScoredEpisode ScoreAndRecord(` | Scores the episode and persists the result. When  and are supplied, the advisory dimensions are evaluated from the composed evidence and folded only if qualified; otherwise only the deterministic Weave is recorded. |
+
+## `SessionCapability`
+
+*class* — `SessionCapability.cs`
+
+The unforgeable per-session secret. A process must present the matching capability on every event
+(spec US-1). The raw token is never logged or emitted (O11), and comparison is constant-time to
+deny a timing side-channel.
+
+Pattern: Capability-based security. The capability is the authority; possessing the session id is
+not (ADR-0007 / ADR-0020 - terminal output is forgeable).
+
+| Member | Summary |
+|---|---|
+| `bool Matches(SessionCapability presented)` | Constant-time equality. Length is compared first only to size the fixed-time compare; the comparison itself does not short-circuit on content. |
+
+## `ICapabilityFactory`
+
+*interface* — `SessionCapability.cs`
+
+Issues session capabilities. Abstracted so a test can inject a deterministic source.
+
+## `CapabilityFactory`
+
+*class* — `SessionCapability.cs`
+
+The production factory: a 256-bit token from a cryptographic RNG.
+
+| Member | Summary |
+|---|---|
+| `SessionCapability Create()` | **(gap)** |
+
+## `SessionCoordinationIdentity`
+
+*record* — `SessionCoordinationEmitter.cs`
+
+The non-secret identity a terminal/agent session presents when it registers with the watcher - the
+attributes the coordination-contract register event carries (US-4/US-6). Harness and model are
+optional (a plain shell has neither); everything else is required for a well-formed registration.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyDictionary<string, string?> ToAttributes()` | Maps the identity onto the OTel attribute keys the register event uses. |
+
+## `SessionCoordinationEmitter`
+
+*class* — `SessionCoordinationEmitter.cs`
+
+Writes the coordination-contract log a session opts in with so it appears in the watcher (US-4): a
+register on start, periodic heartbeats while alive (so liveness stays Alive rather than going Stale),
+and a session-end on close. This is the app-side WRITER; the `atcherHost`'s pump is the
+reader. Running both in one process is what makes a terminal launched in the app show up live.
+
+**Remarks.** Pure and explicit (Register / Heartbeat / HeartbeatAll / End) - no timer of its own, so it is
+fully testable; the caller (the shell) drives heartbeats on whatever timer it already runs. It tracks
+the live session ids so `eartbeatAll` can keep them all alive with one call.
+
+
+
+
+Re-reading the whole coordination log directory is idempotent on the reader side (registration
+is keyed by external id), so a duplicate register is harmless; the emitter still guards against
+re-registering an id it already tracks, to keep the log clean.
+
+| Member | Summary |
+|---|---|
+| `int LiveCount` | The number of sessions currently registered and not yet ended. |
+| `void Register(string externalSessionId, SessionCoordinationIdentity identity)` | Registers a session (once) and writes its register event with the identity's attributes. |
+| `void Heartbeat(string externalSessionId)` | Writes a heartbeat for one registered session; a no-op for an unknown/ended session. |
+| `void HeartbeatAll()` | Heartbeats every live session - the shell calls this on its refresh tick. |
+| `void End(string externalSessionId)` | Writes a session-end for a session and stops tracking it; a no-op if unknown. |
+| `void Reconcile(IReadOnlySet<string> currentSessionIds, Func<string, SessionCoordinationIdentity> identityFor)` | Reconciles the live set against the sessions that currently exist: registers a new one, heartbeats one already live, and ends one that has gone. This lets the caller drive the emitter from a simple periodic snapshot o… |
+
+## `IngestOutcome`
+
+*enum* — `SpanIngest.cs`
+
+The outcome of attempting to ingest one span.
+
+## `SpanIngest`
+
+*class* — `SpanIngest.cs`
+
+Ingests observed spans, verifying the session capability first (so a forged session cannot write
+facts) and then appending idempotently by content-addressed id (ADR-0006 / ADR-0017).
+
+| Member | Summary |
+|---|---|
+| `SpanIngest(IWatcherObservationStore store, ITrustedRegistrar registrar)` | **(gap)** |
+| `IngestOutcome Ingest(string sessionId, SessionCapability capability, ObservedSpan span)` | Verifies the capability, then appends the span. A redelivered or out-of-order span is safe: duplicates return `DuplicateIgnored`, and facts are order-independent. |
+
+## `SqliteWatcherObservationStore`
+
+*class* — `SqliteWatcherObservationStore.cs`
+
+The durable `WatcherObservationStore` on one SQLite file, reusing the ADR-0002 fact-store
+idiom (WAL, append-only facts enforced by triggers, a single writer). It substitutes for
+`nMemoryWatcherObservationStore` behind the same seam - the same contract, now persisted
+across a restart. Spans are an append-only fact (dedup by content-addressed primary key); sessions,
+heartbeats, and the ended flag are current-state cells (upsert), mirroring the in-memory maps.
+
+simplify: one connection guarded by a lock. Ceiling: fine at the reference scale for the skeleton.
+Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write connection split.
+
+| Member | Summary |
+|---|---|
+| `string DatabasePath { get; }` | The backing database file. Exposed so a test can open a raw connection against it. |
+| `SqliteWatcherObservationStore Open(string databasePath)` | **(gap)** |
+| `bool TryAppendSpan(ObservedSpan span)` | **(gap)** |
+| `int SpanCount(string sessionId)` | **(gap)** |
+| `int SpanCountInInterval(string sessionId, DateTimeOffset from, DateTimeOffset toInclusive)` | **(gap)** |
+| `void UpsertHeartbeat(string sessionId, long monotonicTicks)` | **(gap)** |
+| `long? LastHeartbeat(string sessionId)` | **(gap)** |
+| `void RecordSession(SessionRecord session)` | **(gap)** |
+| `SessionRecord? FindSession(string sessionId)` | **(gap)** |
+| `IReadOnlyList<SessionRecord> AllSessions()` | **(gap)** |
+| `void RecordEpisode(WorkEpisode episode)` | **(gap)** |
+| `WorkEpisode? FindEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId)` | **(gap)** |
+| `IReadOnlyList<WorkEpisode> AllEpisodes()` | **(gap)** |
+| `void AppendBoardMessage(BoardMessage message)` | **(gap)** |
+| `IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)` | **(gap)** |
+| `IReadOnlyList<BoardMessage> AllBoardMessages()` | **(gap)** |
+| `BoardMessage? FindBoardMessage(string messageId)` | **(gap)** |
+| `void RedactBoardMessage(string messageId)` | **(gap)** |
+| `void MarkEnded(string sessionId)` | **(gap)** |
+| `void ClearEnded(string sessionId)` | **(gap)** |
+| `bool IsEnded(string sessionId)` | **(gap)** |
+| `void RecordScorecard(ScoredEpisode scored)` | **(gap)** |
+| `ScoredEpisode? FindScoredEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<ScoredEpisode> AllScoredEpisodes()` | **(gap)** |
+| `void AppendScoreDispute(ScoreDispute dispute)` | **(gap)** |
+| `IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<ScoreDispute> AllDisputes()` | **(gap)** |
+| `void Dispose()` | **(gap)** |
+
+## `ITrustedRegistrar`
+
+*interface* — `TrustedRegistrar.cs`
+
+Binds session identity and issues a per-session capability verified on every event (ADR-0020,
+extends ADR-0007). Capabilities are held in-process and are never persisted to the observation
+store, so the secret never reaches the durable facts.
+
+## `TrustedRegistrar`
+
+*class* — `TrustedRegistrar.cs`
+
+The default in-process registrar. See `TrustedRegistrar`.
+
+| Member | Summary |
+|---|---|
+| `TrustedRegistrar(` | **(gap)** |
+| `RegisteredSession Register(SessionBinding binding)` | **(gap)** |
+| `RegisteredSession RegisterNextGeneration(string sessionId, SessionBinding binding)` | **(gap)** |
+| `bool Verify(string sessionId, SessionCapability presented)` | **(gap)** |
+| `void Heartbeat(string sessionId, SessionCapability capability)` | **(gap)** |
+| `void End(string sessionId, SessionCapability capability)` | **(gap)** |
+| `void UpdateHarnessAndModel(` | Records a harness and/or model learned after registration. Identity and trust are untouched. |
+
+### `void UpdateHarnessAndModel(`
+
+Records a harness and/or model learned after registration. Identity and trust are untouched.
+
+**Remarks.** **Only these two fields, and deliberately.** Repository, worktree, terminal and agent
+are established at registration and an update cannot restate them — otherwise a session could
+migrate itself into another repository's view after the fact.
+
+
+
+
+
+**Trust never rises.** A registration carrying a harness is classified
+`Verified`; one without is `Asserted`. It would be natural to promote a session
+that later supplies its harness, and it is exactly wrong: the coordination log is a local,
+forgeable FILE (ADR-0007, and the design doc says so in as many words), so an update arriving
+on it is evidence about the harness and not about the trustworthiness of the claim. A session
+that registers `Asserted` stays `Asserted` with its model filled in.
+
+
+
+
+
+Capability-gated like every other post-registration write, so knowing an id is not
+enough to edit a session.
+
+## `WatcherException`
+
+*class* — `WatcherException.cs`
+
+A watcher-core failure carrying a stable `ode` (Observability Standard O7). The
+message is for humans and may change; the code is for machines and search and does not.
+
+| Member | Summary |
+|---|---|
+| `WatcherException(string code, string message) : base(message)` | **(gap)** |
+| `string Code { get; }` | A stable `atcherErrorCodes` value. |
+
+## `WatcherHost`
+
+*class* — `WatcherHost.cs`
+
+The in-process watcher host: it composes the observation store, the trusted registrar, the ingest
+host, the injected coordination-contract ingest + its log pump, and (best-effort) the OTLP network
+receiver into one running unit. Running it **in the same process as the read surfaces** is
+deliberate: liveness compares monotonic ticks, which are process-relative, so hosting the ingest
+beside the panes makes liveness exact - the cross-process caveat conn-2 recorded simply does not
+arise here (a heartbeat and the liveness projection read one process's Stopwatch).
+
+**Remarks.** This is composition, not new behaviour (Solution-Selection Ladder rung 2): every part already
+exists and is tested in isolation (slices 1, 2, 3). The host wires them and owns their lifetime.
+
+
+
+
+**Two ingest paths, one store.** The **coordination-contract log** (file-based, the
+symbiotic path a non-AI-Forward session opts into by writing a register/heartbeat/session-end log
+via `oordContractWriter`) is drained by `umpOnce` / `unAsync`;
+the **OTLP span** path (network) is drained by the same host when `ryStartOtlp`
+started a receiver. Re-reading the whole coordination log directory is idempotent (registration is
+keyed by external id), so a periodic pump never double-registers.
+
+| Member | Summary |
+|---|---|
+| `WatcherHost Open(` | Opens the host: the SQLite watcher store at `<dataDirectory>/watcher.db`, and the coordination-contract log pump over . The registrar and the liveness projection share one monotonic clock so liveness is consistent in-… |
+| `string CoordLogDirectory` | The coordination-contract log directory a session opts in by writing to. |
+| `SessionCoordinationEmitter CreateEmitter()` | A writer for the coordination log this host reads - a terminal/agent session in the same process registers and heartbeats through it, and the pump ingests it, so the session appears live (US-4). |
+| `int ImportEpisodesFromAuditLog(string auditLogPath)` | Imports the closed Work Episodes declared in a repo's AI-Forward audit log (the goal-state entries, AL5b) into the store, so real episodes exist to observe and score. Idempotent by episode id (a re-import of the same … |
+| `int ImportAndScoreEpisodesFromAuditLog(` | Imports the workspace's declared-goal episodes (ep-capture) AND auto-scores each one (conn-10). Derives its `eterministicEpisodeSignals` from the observable audit evidence (a committed Proof Pack, plus any explicit te… |
+| `IWatcherObservationStore Store` | The observation store, for the read surfaces (the app builds its queries from this). |
+| `LivenessProjection Liveness` | The liveness projection sharing the host's monotonic clock (exact in-process). |
+| `IngestHost Ingest` | The ingest host, exposed so an in-process source can enqueue spans directly. |
+| `IngestStats Stats` | A snapshot of the ingest counters (IO1 - answerable without a debugger). |
+| `int PumpOnce()` | Pumps the coordination-contract log once and drains any queued spans; returns the number of coordination events applied. Idempotent across calls (register is keyed by external id). |
+| `Task RunAsync(TimeSpan interval, CancellationToken ct)` | The background loop: pump + drain every  until cancelled. A transient read failure (a log file mid-write) is absorbed and retried next tick - one bad read never kills the loop (US-11 fail honestly), and the store degr… |
+| `bool TryStartOtlp(string loopbackPrefix, ISessionTokenResolver tokens, CancellationToken ct)` | Best-effort start of the OTLP HTTP receiver on a loopback prefix (the network span path). Returns false and leaves the host fully functional (coordination path only) when the prefix cannot bind - on Windows an `HttpLi… |
+| `void Dispose()` | **(gap)** |
+
+## `WatcherErrorCodes`
+
+*class* — `WatcherIdentity.cs`
+
+Stable, machine-readable error codes for the Loomkeeper observation core. The human-readable
+message may change; these codes do not (Observability Standard O7).
+
+| Member | Summary |
+|---|---|
+| `string ForgeryRejected = "LK-0001"` | A process presented a wrong, absent, or superseded session capability. |
+| `string InvalidBinding = "LK-0002"` | A registration binding was missing a required identity field. |
+| `string EgressDenied = "LK-0003"` | An egress path was denied because no explicit opt-in enabled it. |
+| `string MalformedEvent = "LK-0004"` | A harness event could not be mapped to the domain (missing session or identity attribute). |
+
+## `TrustClassification`
+
+*enum* — `WatcherIdentity.cs`
+
+How well a session's identity is established. Asserted identity cannot clear a floor.
+
+## `LivenessState`
+
+*enum* — `WatcherIdentity.cs`
+
+Observed liveness of a session. Computed from heartbeats, never stored (ADR-0001).
+
+## `RepositoryIdentity`
+
+*record* — `WatcherIdentity.cs`
+
+A repository identity. `anonicalPath` disambiguates two repositories that share a
+folder `isplayName`, so the fleet map never collapses them (spec US-1).
+
+## `WorktreeIdentity`
+
+*record* — `WatcherIdentity.cs`
+
+A worktree of a repository.
+
+## `TerminalIdentity`
+
+*record* — `WatcherIdentity.cs`
+
+A terminal hosting an agent session.
+
+## `AgentIdentity`
+
+*record* — `WatcherIdentity.cs`
+
+The coding agent occupying a terminal.
+
+## `HarnessIdentity`
+
+*record* — `WatcherIdentity.cs`
+
+The agent harness (Claude Code, GitHub Copilot, ...). A scoring/aggregation axis.
+
+## `ModelIdentity`
+
+*record* — `WatcherIdentity.cs`
+
+The model behind the harness (Opus 4.8, GPT-5.6 Terra, ...). A scoring/aggregation axis.
+
+## `struct`
+
+*record* — `WatcherIdentity.cs`
+
+A monotonically increasing generation for one session identity. A terminal restart yields a new
+generation that cannot inherit the prior generation's liveness, capability, or claims (spec US-1).
+
+| Member | Summary |
+|---|---|
+| `SessionGeneration Next()` | **(gap)** |
+
+## `SessionBinding`
+
+*record* — `WatcherIdentity.cs`
+
+The identity a session is bound to at registration. `arness` and `odel`
+are nullable: when unknown they render Not Recorded, and the session is still observable (US-13).
+
+## `SessionRecord`
+
+*record* — `WatcherIdentity.cs`
+
+Non-secret session metadata. The capability is deliberately NOT stored here (§Security).
+
+## `RegisteredSession`
+
+*record* — `WatcherIdentity.cs`
+
+The result of a successful registration: the identity, its generation, and its capability.
+
+| Member | Summary |
+|---|---|
+| `string SessionId` | **(gap)** |
+| `SessionGeneration Generation` | **(gap)** |
+| `SessionBinding Binding` | **(gap)** |
+
+## `IWatcherObservationStore`
+
+*interface* — `WatcherObservationStore.cs`
+
+The persistence seam for watcher observations. This is the mock-substitutable contract the
+architecture names (§4): the in-memory implementation serves the Phase-1 walking skeleton; the
+SQLite implementation (extending the existing `Store/`, ADR-0002) replaces it later as a
+substitution, not a redesign. It holds non-secret facts only - never a `essionCapability`.
+
+## `InMemoryWatcherObservationStore`
+
+*class* — `WatcherObservationStore.cs`
+
+In-memory observation store for the walking skeleton. Thread-safe under a single lock: writes
+serialize through the daemon queue in production (ADR-0002), but a concurrent caller must still
+never corrupt the store or double-append a span.
+
+simplify: unbounded in memory. Ceiling: fine at the reference scale for the skeleton. Upgrade
+trigger: the SQLite store lands (remaining Phase-1 task), which bounds and persists these facts.
+
+| Member | Summary |
+|---|---|
+| `bool TryAppendSpan(ObservedSpan span)` | **(gap)** |
+| `int SpanCount(string sessionId)` | **(gap)** |
+| `int SpanCountInInterval(string sessionId, DateTimeOffset from, DateTimeOffset toInclusive)` | **(gap)** |
+| `void UpsertHeartbeat(string sessionId, long monotonicTicks)` | **(gap)** |
+| `long? LastHeartbeat(string sessionId)` | **(gap)** |
+| `void RecordSession(SessionRecord session)` | **(gap)** |
+| `SessionRecord? FindSession(string sessionId)` | **(gap)** |
+| `IReadOnlyList<SessionRecord> AllSessions()` | **(gap)** |
+| `void RecordEpisode(WorkEpisode episode)` | **(gap)** |
+| `WorkEpisode? FindEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId)` | **(gap)** |
+| `IReadOnlyList<WorkEpisode> AllEpisodes()` | **(gap)** |
+| `void AppendBoardMessage(BoardMessage message)` | **(gap)** |
+| `IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)` | **(gap)** |
+| `IReadOnlyList<BoardMessage> AllBoardMessages()` | **(gap)** |
+| `BoardMessage? FindBoardMessage(string messageId)` | **(gap)** |
+| `void RedactBoardMessage(string messageId)` | **(gap)** |
+| `void MarkEnded(string sessionId)` | **(gap)** |
+| `void RecordScorecard(ScoredEpisode scored)` | **(gap)** |
+| `ScoredEpisode? FindScoredEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<ScoredEpisode> AllScoredEpisodes()` | **(gap)** |
+| `void AppendScoreDispute(ScoreDispute dispute)` | **(gap)** |
+| `IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)` | **(gap)** |
+| `IReadOnlyList<ScoreDispute> AllDisputes()` | **(gap)** |
+| `void ClearEnded(string sessionId)` | **(gap)** |
+| `bool IsEnded(string sessionId)` | **(gap)** |
+
+## `ScoreDimension`
+
+*enum* — `WeaveScore.cs`
+
+The six Weave dimensions (spec §"Weave Score"). Four carry deterministic signals; two are advisory.
+
+## `FloorDomain`
+
+*enum* — `WeaveScore.cs`
+
+The canonical hard floors (spec rule 6). A trip in any of these produces a Blocked verdict.
+
+## `AssessmentPosture`
+
+*enum* — `WeaveScore.cs`
+
+How a dimension was assessed. An advisory or un-signalled dimension is NotRecorded, never a fake 0.
+
+## `WeaveVerdict`
+
+*enum* — `WeaveScore.cs`
+
+The honest verdict of a Scorecard.
+
+## `DimensionWeight`
+
+*record* — `WeaveScore.cs`
+
+One dimension's weight and posture within a versioned score schema.
+
+## `ScoreSchema`
+
+*class* — `WeaveScore.cs`
+
+A versioned score schema (spec rule 1/13; A6 - a change is a gated contract change). `weave/1`
+pins the four deterministic dimensions (Outcome 30 · Focus 15 · Guidance 15 · Coordination 10 =
+observed weight 70) and the two advisory ones (Evidence 15 · Economy 15 = 30), which are excluded
+from points until the grader passes its calibration gates (ADR-0019, slice 7).
+
+| Member | Summary |
+|---|---|
+| `string Weave1Version = "weave/1"` | **(gap)** |
+| `string Version { get; }` | **(gap)** |
+| `IReadOnlyList<DimensionWeight> Dimensions { get; }` | **(gap)** |
+| `int TotalWeight` | **(gap)** |
+| `ScoreSchema Weave1 { get; } = new(Weave1Version,` | **(gap)** |
+
+## `DimensionAssessment`
+
+*record* — `WeaveScore.cs`
+
+One dimension's assessment. `arnedPoints` is null unless the dimension was scored.
+
+## `EvidenceCoverage`
+
+*record* — `WeaveScore.cs`
+
+Evidence Coverage - observed required signals / required signals (spec rule 3). Not a multiplier.
+
+## `DeterministicEpisodeSignals`
+
+*record* — `WeaveScore.cs`
+
+The deterministic evidence gathered about a closed episode - the scorer's pure input. Populating this
+from the store / coordination log / verification ingest is the wiring follow-on; the engine is pure.
+
+## `Scorecard`
+
+*record* — `WeaveScore.cs`
+
+One evaluation of one closed episode under one schema version at one evaluation time (spec line 236).
+
+## `WeaveScorer`
+
+*class* — `WeaveScore.cs`
+
+The deterministic Weave scorer. Pure, model-free: it turns a closed Work Episode's deterministic
+evidence into an honest `corecard` - per-dimension 0-4 normalized to weight, the tripped
+hard floors, Evidence Coverage, and a verdict. Advisory dimensions are declared-and-excluded, never
+stubbed with fake numbers; a tripped floor suppresses the numeric headline; a missing
+goal/done/verification path is Not Scored; a Partial headline never rescales to 0-100 (spec rules 1-9).
+
+This is where `done_when` becomes measured: Focus-and-termination counts work after the done
+condition, and Outcome-integrity checks the honest completion claim - the PACK-O drift / under-
+validation faces (the AI-Forward goal-state work).
+
+| Member | Summary |
+|---|---|
+| `Scorecard Score(WorkEpisode episode, DeterministicEpisodeSignals signals, TimeProvider time)` | **(gap)** |
+| `Scorecard Score(WorkEpisode episode, DeterministicEpisodeSignals signals, ScoreSchema schema, TimeProvider time)` | **(gap)** |
+
+## `Goal`
+
+*record* — `WorkEpisode.cs`
+
+A session-authored objective. Immutable; a change starts a new episode (spec line 211).
+
+## `DoneCondition`
+
+*record* — `WorkEpisode.cs`
+
+The done-condition - the **terminal condition** against which the episode's outcome is judged
+(the AI-Forward `done_when`: "point at a result and say whether it is met", CT19). Immutable.
+
+## `struct`
+
+*record* — `WorkEpisode.cs`
+
+An episode's ordinal within its session's sequential episode chain (1, 2, 3 …).
+
+| Member | Summary |
+|---|---|
+| `SessionGeneration Next()` | **(gap)** |
+
+## `EpisodeOutcome`
+
+*enum* — `WorkEpisode.cs`
+
+The DECLARED lifecycle terminal state of an episode - not a quality score. Whether a
+`ompleted` claim is *honest* (the goal was actually met vs. drifted past the
+done-condition) is the Weave's Outcome-integrity dimension (slice 5), deliberately not decided here.
+
+## `EpisodeState`
+
+*enum* — `WorkEpisode.cs`
+
+Whether an episode is still open or has closed (derived from `ClosedAt`).
+
+## `WorkEpisode`
+
+*record* — `WorkEpisode.cs`
+
+One Work Episode: one immutable goal + done-condition over one bounded interval of one session
+(spec US-6, lines 201-234). The **unit scoring attaches to**. It mirrors the AI-Forward CT19
+goal-state triple (Goal / DoneWhen / NotInScope) so it is the durable, scoreable projection of a
+turn's goal-state, not a parallel structure.
+
+| Member | Summary |
+|---|---|
+| `EpisodeState State` | Active until closed; Closed carries the interval end and the declared outcome. |
+
+## `IWorkEpisodeService`
+
+*interface* — `WorkEpisode.cs`
+
+The Work Episode lifecycle. Only the authenticated session may open, reframe, or close *its*
+episodes - every call presents the session capability and is verified (LK-0001 forgery on mismatch,
+ADR-0020). Times use the wall-clock `imeProvider` - the same base as span
+`RecordedAt` - because an episode binds *recorded* activity, not a *live* condition.
+
+## `WorkEpisodeService`
+
+*class* — `WorkEpisode.cs`
+
+The default in-process episode service. See `WorkEpisodeService`.
+
+| Member | Summary |
+|---|---|
+| `WorkEpisodeService(` | **(gap)** |
+| `WorkEpisode Open(string sessionId, SessionCapability capability, Goal goal, DoneCondition doneWhen, string? notInScope = null)` | **(gap)** |
+| `WorkEpisode Reframe(string episodeId, SessionCapability capability, Goal goal, DoneCondition doneWhen, string? notInScope = null)` | **(gap)** |
+| `WorkEpisode Close(string episodeId, SessionCapability capability, EpisodeOutcome outcome)` | **(gap)** |
+
+## `EpisodeProjection`
+
+*class* — `WorkEpisode.cs`
+
+The deterministic read projection over episodes (ADR-0001; DM7 derive-don't-store). It computes an
+episode's state and the observable activity bound to its interval - spans whose `RecordedAt`
+falls in `[OpenedAt, ClosedAt ?? now]` - never a stored tally.
+
+| Member | Summary |
+|---|---|
+| `int ObservedSpanCount(WorkEpisode episode)` | The spans observed inside the episode's interval (an open episode uses `now` as the end). |
+| `IReadOnlyList<WorkEpisode> ForSession(string sessionId)` | The session's episodes in generation order (its sequential episode chain). |

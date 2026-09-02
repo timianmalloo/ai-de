@@ -1,0 +1,26 @@
+{
+  "generated": "2026-09-02",
+  "documented_sha": "764a01746ed86c392049f8a0ef20391ff0cf16cd",
+  "bundle_pages": 23,
+  "api": {
+    "files_scanned": 184,
+    "public_symbols": 1711,
+    "documented": 1097,
+    "coverage_pct": 64.1
+  },
+  "diagram_families": [
+    "component",
+    "layers",
+    "sequence",
+    "class"
+  ],
+  "confidence": {
+    "api_reference": "Verified \u2014 extracted from source doc comments; gaps listed, never filled.",
+    "diagrams": "Verified \u2014 every node and edge traced to a declaration or composition root.",
+    "architecture_overview": "Pre-existing artifact, reviewed against the code for this run."
+  },
+  "known_gaps": [
+    "The API reference is lexical, not compiled: generics, partial classes across files and conditional compilation are not resolved.",
+    "Coverage counts a summary doc comment, not its quality."
+  ]
+}

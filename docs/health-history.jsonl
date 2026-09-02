@@ -1,1 +1,2 @@
 {"on": "2026-08-23", "artifacts": 75, "by_type": {"architecture": 1, "doc": 3, "knowledge": 71}, "orphans": 0, "stale": 0, "flagged": 12, "notes": 0, "problems": 0}
+{"on": "2026-09-02", "artifacts": 302, "by_type": {"adr": 25, "api": 17, "architecture": 2, "doc": 51, "design": 32, "investigation": 8, "knowledge": 110, "glossary": 1, "decision-note": 20, "proof-pack": 25, "privacy-review": 1, "threat-model": 1, "spec": 9}, "orphans": 0, "stale": 0, "flagged": 32, "notes": 20, "problems": 0}

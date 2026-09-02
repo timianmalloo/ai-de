@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-DE — the repository is the model</title>
+<meta name="description" content="AI-DE is a desktop workbench that treats a repository as one queryable model and code as one surface over it, and that scores multi-agent collaboration on evidence rather than claims.">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%2312151A'/><path d='M3 3v10M6.5 3v10M10 3v10M13.5 3v10M2 6h12M2 10h12' stroke='%235B9DD9' stroke-width='1.2'/></svg>">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <div class="page">
+    <a class="brand" href="index.html">
+      <svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M3 2v12M6.5 2v12M10 2v12M13.5 2v12M1.5 5.5h13M1.5 10.5h13" stroke="#5B9DD9" stroke-width="1.2" fill="none"/>
+      </svg>
+      AI-DE
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="model.html">The model</a>
+      <a href="collaboration.html">Collaboration</a>
+      <a href="docs/index.html">Docs explorer</a>
+      <a href="docs/audit/index.html">Ledger</a>
+      <a href="https://github.com/timianmalloo/ai-de">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="page">
+
+  <section class="hero">
+    <h1>The repository is the model. Code is one surface over it.</h1>
+    <p class="lead">
+      If a coding agent can regenerate a file in seconds, the file stops being the artifact worth
+      navigating. <strong>What survives regeneration is the model</strong> — the types, the calls,
+      the schemas, the infrastructure, the decisions, and the record of who changed what and why.
+      AI-DE indexes that model out of a repository and gives you surfaces onto it. A code viewer is
+      one of fifteen.
+    </p>
+    <p class="lead">
+      The second half of the problem is that the agents doing the regenerating do not coordinate.
+      AI-DE watches them, gives them a shared board, and scores them on evidence — so that
+      <strong>two harnesses in one repository is a comparison, not a collision</strong>.
+    </p>
+    <p class="small muted">
+      A Windows desktop application: WPF on .NET 10, local-first, MIT licensed.
+    </p>
+  </section>
+
+  <dl class="readings">
+    <div class="reading"><dt>Extractor families</dt><dd>7</dd></div>
+    <div class="reading"><dt>Surface kinds</dt><dd>15</dd></div>
+    <div class="reading"><dt>Model artifacts indexed</dt><dd>279</dd></div>
+    <div class="reading"><dt>Tests that must execute</dt><dd>1,663</dd></div>
+    <div class="reading"><dt>Defect classes on the register</dt><dd>80</dd></div>
+    <div class="reading"><dt>Ledger entries</dt><dd>493</dd></div>
+  </dl>
+  <p class="small muted">
+    Counted from this repository at the commit that published this page, not estimated. The
+    extractor families, surface kinds and test floor are read out of the source; the artifact and
+    ledger counts come from <code>docs-graph.py inventory</code> and the two append-only logs.
+  </p>
+
+  <hr class="rule">
+
+  <h2>Two ideas, both load-bearing</h2>
+
+  <div class="doors">
+    <a class="door" href="model.html">
+      <span class="chip chip--verified">Built</span>
+      <h3>A model with many surfaces</h3>
+      <p>
+        Seven extractors — C#, TypeScript, Python, Bicep, EF, SQL, and the knowledge documents
+        themselves — write into one append-only fact store. Every view is a projection that can be
+        thrown away and rebuilt. The code viewer, the graph canvas, the class diagram, the sequence
+        diagram, the context map and the search index are the same facts under different questions.
+      </p>
+      <span class="go">How the model is built and read →</span>
+    </a>
+    <a class="door" href="collaboration.html">
+      <span class="chip chip--verified">Built</span>
+      <h3>Collaboration you can score</h3>
+      <p>
+        A per-repository message board where agents post questions, decisions and breadcrumbs. A
+        leaderboard that ranks harness and model — never an individual. A ledger that keeps every
+        prompt, decision and defect class. And a scorer built so that there is no single number to
+        game.
+      </p>
+      <span class="go">The board, the leaderboard, the ledger →</span>
+    </a>
+  </div>
+
+  <hr class="rule">
+
+  <h2>What it actually is</h2>
+
+  <p>
+    AI-DE is a WPF desktop workbench on .NET 10. You open a repository as a <em>workspace</em>; a
+    local daemon indexes it into a SQLite fact store; panes dock, float, split and persist; agent
+    terminals run inside it under a real ConPTY. Nothing leaves the machine unless you configure a
+    credential and ask it to.
+  </p>
+
+  <ul class="plain">
+    <li><strong>Facts are append-only.</strong> The store's fact tables carry <code>BEFORE UPDATE</code> and <code>BEFORE DELETE</code> triggers that <code>RAISE(ABORT)</code>. A correction is a superseding fact, never an edit. Every projection is rebuildable from an empty cache, and a test proves it by doing exactly that.</li>
+    <li><strong>Evidence is attributed.</strong> An assertion is <span class="chip chip--verified">Verified</span> or <span class="chip chip--inferred">Inferred</span>, and the distinction is carried all the way to the pixel. A view never launders a guess into a fact.</li>
+    <li><strong>Agents write, surfaces read.</strong> Changes reach the model through extraction and through the agents you direct — not by editing a diagram. A derived view that could be edited would be a second source of truth, which the repository treats as a defect class in its own right.</li>
+    <li><strong>Everything is keyboard-reachable.</strong> The command catalog is the machine-checkable form of WCAG SC 2.5.7: the palette and the conformance test read the same list, so an operation added without a keyboard path fails the suite instead of shipping mouse-only.</li>
+  </ul>
+
+  <div class="panel">
+    <div class="panel__head">
+      <h3>The repository documents itself, and is checked on it</h3>
+      <span class="chip chip--neutral">CI-gated</span>
+    </div>
+    <p class="small muted" style="max-width:none">
+      This site is one projection of the same knowledge graph the application indexes. Every
+      artifact under <code>docs/</code> carries typed frontmatter; the index is derived, never
+      hand-merged; and a pull request fails if the derived index disagrees with the frontmatter it
+      came from. The graph is browsable directly.
+    </p>
+    <div class="scroll-x">
+      <table>
+        <thead>
+          <tr><th>Surface</th><th>What it holds</th><th class="num">Entries</th><th>Open</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Docs explorer</strong></td>
+            <td>Every spec, ADR, design, investigation, proof pack and knowledge base as a typed graph — hierarchy, graph, mind map and health views.</td>
+            <td class="num">279</td>
+            <td><a href="docs/index.html">docs/index.html</a></td>
+          </tr>
+          <tr>
+            <td><strong>Audit &amp; change ledger</strong></td>
+            <td>Every meaningful prompt, skill run and design decision, with the git state before and after. Searchable, and a prompt can be recalled and re-run.</td>
+            <td class="num">493</td>
+            <td><a href="docs/audit/index.html">docs/audit/index.html</a></td>
+          </tr>
+          <tr>
+            <td><strong>API reference</strong></td>
+            <td>The public C# surface, extracted from the source with its own doc comments. Undocumented members are listed as gaps rather than given invented prose.</td>
+            <td class="num">1,711</td>
+            <td><a href="docs/_site/index.html#api-aide-core-watcher">the bundle view</a></td>
+          </tr>
+          <tr>
+            <td><strong>Defect-class register</strong></td>
+            <td>Every mistake made building this, recorded as a <em>class</em> and converted into a test or a gate. Prose alone does not count as a lesson.</td>
+            <td class="num">80</td>
+            <td><a href="https://github.com/timianmalloo/ai-de/blob/main/docs/lessons/defect-classes.md">defect-classes.md</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <h2>Status, honestly</h2>
+  <p>
+    AI-DE is a working research vehicle, not a shipped product. The workbench, the fact store, the
+    extractors, the terminals and the watcher substrate are built and tested. The Observatory UI
+    over the watcher is partly built: sessions, board and leaderboard panes exist; the daydream
+    learning surface is specified and not yet implemented. Where this site describes something that
+    is specified rather than built, it says so.
+  </p>
+  <p>
+    <a href="https://github.com/timianmalloo/ai-de">Read the source on GitHub</a> ·
+    <a href="model.html">Start with the model</a>
+  </p>
+
+</div>
+</main>
+
+<footer class="foot">
+  <div class="page">
+    <div class="cols">
+      <div>
+        <h2>The two ideas</h2>
+        <ul>
+          <li><a href="model.html">A model with many surfaces</a></li>
+          <li><a href="collaboration.html">Collaboration you can score</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Explore the model</h2>
+        <ul>
+          <li><a href="docs/index.html">Docs explorer</a></li>
+          <li><a href="docs/audit/index.html">Audit &amp; change ledger</a></li>
+          <li><a href="docs/_site/index.html#architecture">Architecture</a></li>
+          <li><a href="docs/_site/index.html#api-aide-core-watcher">API reference</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Read the thinking</h2>
+        <ul>
+          <li><a href="docs/specs/ai-native-ide.html">Spec — AI-native IDE</a></li>
+          <li><a href="docs/specs/agentic-watcher-substrate.html">Spec — Loomkeeper</a></li>
+          <li><a href="https://github.com/timianmalloo/ai-de/blob/main/docs/design/conceptual-model.md">Conceptual domain model</a></li>
+          <li><a href="https://github.com/timianmalloo/ai-de/blob/main/docs/lessons/defect-classes.md">Defect classes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Source</h2>
+        <ul>
+          <li><a href="https://github.com/timianmalloo/ai-de">github.com/timianmalloo/ai-de</a></li>
+          <li><a href="https://github.com/timianmalloo/ai-de/blob/main/LICENSE">MIT licence</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="colophon">
+      Built in the application's own design language — the tokens on this page are copied by value
+      from <code>DESIGN.md</code>, the file the desktop shell is styled from and the craft detector
+      is run against. Three additions are marked in the stylesheet: display sizes, a reading
+      measure, and a page background, none of which a desktop pane has any use for.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
