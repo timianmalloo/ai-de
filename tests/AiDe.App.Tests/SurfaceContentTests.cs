@@ -355,6 +355,50 @@ public sealed class SurfaceContentTests
         Assert.DoesNotContain("Loading", status, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void TheSessionsSurface_LeadsWithLiveSessions_AndCollapsesTheEndedHistory()
+    {
+        // The graveyard fix (UX-SESSIONS-GRAVEYARD, smoke video 2026-09-02): one Alive session must be
+        // visible up top while a pile of Ended terminals is collapsed behind a count, not rendered as a
+        // wall that buries the live one.
+        var view = OnStaThread(() =>
+        {
+            WatcherSessionSnapshot Snap(string id, LivenessState liveness) => new(
+                id,
+                new SessionBinding(
+                    new RepositoryIdentity("C:/repos/ai-de", "ai-de"),
+                    new WorktreeIdentity(new RepositoryIdentity("C:/repos/ai-de", "ai-de"), "main", "C:/repos/ai-de"),
+                    new TerminalIdentity(id),
+                    new AgentIdentity(id),
+                    new HarnessIdentity("Claude Code", "1.0"),
+                    new ModelIdentity("Opus 5", "2026-09"),
+                    TrustClassification.Verified),
+                liveness,
+                liveness == LivenessState.Alive ? 3 : 0);
+
+            var query = new StubSessionsQuery(
+                Snap("live-1", LivenessState.Alive),
+                Snap("dead-1", LivenessState.Ended),
+                Snap("dead-2", LivenessState.Ended),
+                Snap("dead-3", LivenessState.Ended));
+
+            var content = new SurfaceContentFactory(null, query).Create(new Surface("sessions", "sessions", "Sessions"));
+            var stack = Assert.IsType<StackPanel>(Unwrap(content));
+
+            // The live session is in a visible ScrollViewer at the top.
+            var liveScroller = stack.Children.OfType<ScrollViewer>().First();
+            var liveRows = Assert.IsType<StackPanel>(liveScroller.Content);
+
+            // The ended history is collapsed inside an Expander whose header states the count.
+            var expander = stack.Children.OfType<System.Windows.Controls.Expander>().Single();
+            return (LiveCount: liveRows.Children.Count, Expanded: expander.IsExpanded, Header: expander.Header?.ToString() ?? "");
+        });
+
+        Assert.Equal(1, view.LiveCount);                                   // one live row, up top
+        Assert.False(view.Expanded);                                       // ended history collapsed by default
+        Assert.Contains("3 ended", view.Header, StringComparison.OrdinalIgnoreCase);
+    }
+
     /// <summary>A watcher read that answers immediately with a fixed set of sessions.</summary>
     private sealed class StubSessionsQuery(params WatcherSessionSnapshot[] sessions) : IWatcherSessionsQuery
     {

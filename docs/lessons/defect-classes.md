@@ -2844,6 +2844,29 @@ for both or split.*
 - **Status:** `controlled` for the watcher-refresh path (in-place); `partially-controlled` overall
   until mouse tab-selection is synced into the model so any `Render()` preserves the user's tab.
 
+### UX-SESSIONS-GRAVEYARD — a live-status list dominated by dead history buries the live state
+- **Signature:** a surface whose job is "what is happening **now**" (a session/status list) renders
+  every record it has ever seen in flat store order, so a long-running workspace fills it with
+  **ended/historical rows** — often near-identical — and the one live item that matters is buried and
+  effectively invisible. The rows are individually well-formatted; the *list* has no ordering or
+  grouping by liveness, so quantity of dead history wins over relevance.
+- **Why it survives:** each row is correct and legible (the per-row presenter was the thing that got
+  attention), the empty and single-row cases test fine, and the failure only appears once *many*
+  ended records accumulate — which a fresh test fixture never has and only a long real session shows.
+  Amplified exactly when the product starts working (agents actually launch and end, piling up
+  history). In the 2026-09-02 smoke video: 15 identical `× Ended` rows, one `~ Stale`, zero `✓ Alive`.
+- **Instances:** 2026-09-02 — the Sessions surface (`SurfaceContentFactory.Sessions`) iterated
+  `pane.Rows` in store order with no liveness partition; the live collaboration the user was testing
+  was invisible under the ended terminals.
+- **Control:** `SessionRowPresenter.Partition(rows)` (pure, tested) splits **Live (Alive→Stale)** from
+  **Ended**; the renderer **leads with the live rows** and **collapses the ended history** behind a
+  keyboard-operable Expander ("N ended session(s)", collapsed by default); the empty case shows a
+  teaching state naming the first action. A surface test asserts the live row is up top and the ended
+  pile is collapsed. The wider rung: a status/live surface orders by relevance (liveness/recency), not
+  by store order, and de-emphasises or collapses history.
+- **Status:** `controlled` for Sessions; the pattern (order-by-relevance, collapse-history) should be
+  applied to any future live/status list.
+
 ### DC-081 — A setup step declines, and its `return` cancels the work it was preparing for
 
 - **Shape:** a script does setup, then the real work. The setup is written to **give up gracefully**

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T21:43:55Z",
+  "generated": "2026-09-02T22:12:03Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8195,6 +8195,26 @@ window.AUDIT_DATA = {
         "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
         "src/AiDe.App/Workbench/WorkbenchShell.cs",
         "tests/AiDe.App.Tests/ZoneWorkbenchAdapterTests.cs",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0409",
+      "shortname": "ui-design-sessions-surface",
+      "datetime": "2026-09-02T22:12:03Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "/ui-design review and then elevate based on the current video (Recording 2026-09-02 145559.mp4)",
+      "summary": "Reviewed the 4.5-min recording (frame extraction). Measured + rubric-critiqued the watcher surfaces. Top finding: the Sessions surface is a wall of undifferentiated ended terminals (15 Ended, 1 Stale, 0 Alive, all identical) that buries the live collaboration. ELEVATE (landed): SessionRowPresenter.Partition (pure, tested) splits Live(Alive->Stale) from Ended; the renderer leads with live rows and collapses the ended history behind a keyboard-operable Expander; teaching empty state names the first action. 4 new tests. Review doc docs/reviews/ui-watcher-surfaces-9-3.md with measurements/rubric/scorecard/ranked-plan (should-fix-next: empty states for Board/Leaderboard/Ledger, graph legend condensation in narrow panes). Registered UX-SESSIONS-GRAVEYARD. App 374 green; app smoke-launches. Telemetry gap (harness/model/liveness) is Core's, noted not fixed.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SessionRowPresenter.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "docs/reviews/ui-watcher-surfaces-9-3.md",
         "docs/lessons/defect-classes.md"
       ],
       "tags": [],

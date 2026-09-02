@@ -187,28 +187,81 @@ public sealed class SurfaceContentFactory(
         var pane = new WatcherSessionsPaneViewModel(watcherSessions);
         pane.Load();
 
-        var rowsPanel = new StackPanel();
-        foreach (var row in pane.Rows)
-        {
-            rowsPanel.Children.Add(SessionRow(row));
-        }
-
-        AutomationProperties.SetName(rowsPanel, $"{surface.Title} sessions");
+        // Lead with the LIVE sessions (Alive then Stale); collapse the ended history out of the way.
+        // The Sessions surface is a live-status list, but a long-running workspace piles up ended
+        // terminals that otherwise bury the one collaborating now (UX-SESSIONS-GRAVEYARD, smoke video).
+        var (live, ended) = SessionRowPresenter.Partition(pane.Rows);
 
         var stack = new StackPanel { Margin = new Thickness(12) };
 
         if (pane.Rows.Count == 0)
         {
-            // Honest empty/unavailable state — the status line below already says which.
+            // Teaching empty state — leads to the first action instead of an empty pane (U9/DX9). Only
+            // when observation is available; the status line below handles the not-available case.
+            if (watcherSessions is not null)
+            {
+                var hint = new TextBlock
+                {
+                    Text = "No sessions yet. Open a Claude Code or GitHub Copilot session from the "
+                        + "Terminal menu, and it appears here — live, with its harness and activity.",
+                    TextWrapping = TextWrapping.Wrap,
+                };
+                hint.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+                stack.Children.Add(hint);
+            }
         }
         else
         {
-            stack.Children.Add(new ScrollViewer
+            if (live.Count > 0)
             {
-                Content = rowsPanel,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-            });
+                var liveRows = new StackPanel();
+                foreach (var row in live)
+                {
+                    liveRows.Children.Add(SessionRow(row));
+                }
+
+                AutomationProperties.SetName(liveRows, $"{surface.Title} live sessions");
+                stack.Children.Add(new ScrollViewer
+                {
+                    Content = liveRows,
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                });
+            }
+            else
+            {
+                // Every session has ended — say so plainly rather than showing nothing above the history.
+                var none = new TextBlock { Text = "No live sessions right now.", TextWrapping = TextWrapping.Wrap };
+                none.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+                stack.Children.Add(none);
+            }
+
+            // The ended history is collapsed behind its count — available on demand, out of the way.
+            if (ended.Count > 0)
+            {
+                var endedRows = new StackPanel();
+                foreach (var row in ended)
+                {
+                    endedRows.Children.Add(SessionRow(row));
+                }
+
+                var expander = new Expander
+                {
+                    Header = SessionRowPresenter.EndedHeader(ended.Count),
+                    IsExpanded = false,
+                    Margin = new Thickness(0, 10, 0, 0),
+                    Content = new ScrollViewer
+                    {
+                        Content = endedRows,
+                        MaxHeight = 260,
+                        VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                        HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                    },
+                };
+                expander.SetResourceReference(Control.ForegroundProperty, "TextMutedBrush");
+                AutomationProperties.SetName(expander, SessionRowPresenter.EndedHeader(ended.Count));
+                stack.Children.Add(expander);
+            }
 
             // A telemetry gap the whole list shares is stated ONCE here, not repeated per row (#15).
             var shared = SessionRowPresenter.SharedTelemetryNote(pane.Rows);

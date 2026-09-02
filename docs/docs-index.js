@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T21:35:03Z",
+  "generated": "2026-09-02T22:11:40Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -4085,7 +4085,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "aeb695006bf0f845d98e8ea39d26c5275e41679eef752328476a326739b742e5"
+      "sourceSha256": "fa783a1238c1e8add4f0cc65d162704eb9b08b9fcf7906f4d07f157131987f1b"
     },
     {
       "id": "diagram-class",
@@ -5688,6 +5688,37 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4cd3f297ac37a5b81be47a3404f3e2ba027a5321ccc6ae58ea9d287e24fbe6f8"
+    },
+    {
+      "id": "ui-review-watcher-surfaces-9-3",
+      "path": "docs/reviews/ui-watcher-surfaces-9-3.md",
+      "title": "UI review — watcher surfaces (Sessions / Board / Leaderboard / Ledger) + graph-in-narrow-pane",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "watcher",
+      "reviewBy": "2027-03-01",
+      "reviewSuggested": [],
+      "summary": "/ui-design review + elevate driven by the 2026-09-02 14:55 screen recording. The Sessions surface is a wall of undifferentiated ended terminals that buries the live collaboration; the watcher empty states are a single muted line in a vast pane; the graph is unusable in a narrow column. The elevate lands the Sessions fix (live-first + collapsed history + teaching empty state).",
+      "tags": [
+        "ui-design",
+        "review",
+        "watcher",
+        "sessions",
+        "empty-states"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-20260902-session-enlistment-telemetry-gap",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "311014f1f614ab72e286be77250ae8496a2213a6de022498811715065a4a0f40"
     },
     {
       "id": "ui-smoke-test-9-1",
@@ -10699,5 +10730,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "887de917d58cda93fcd2dba2d509d5a3003dcf0b65d85421cc2dd8a64cbf159a"
+  "graphSha256": "fa8e1a3bbb467aece17c99656b570d8a45ec71edb7f95105063dfa3e3e91832c"
 };

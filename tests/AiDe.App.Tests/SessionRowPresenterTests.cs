@@ -100,4 +100,47 @@ public sealed class SessionRowPresenterTests
     public void SharedTelemetryNote_IsNull_ForASingleRow()
         => Assert.Null(SessionRowPresenter.SharedTelemetryNote(
             new List<WatcherSessionRow> { NoTelemetry("a", "w1", LivenessState.Stale) }));
+
+    [Fact]
+    public void Partition_LeadsWithLive_AndSeparatesTheEndedHistory()
+    {
+        // The graveyard problem (smoke video 2026-09-02): a long-running workspace piles up ended
+        // terminals that bury the one collaborating now. Live (Alive+Stale) must come out separately
+        // from Ended so the surface can lead with it and collapse the rest.
+        var rows = new List<WatcherSessionRow>
+        {
+            NoTelemetry("t1", "w1", LivenessState.Ended),
+            Row("Claude Code", "TheTerrace", "main", LivenessState.Alive),
+            NoTelemetry("t2", "w2", LivenessState.Ended),
+            NoTelemetry("t3", "w3", LivenessState.Stale),
+            NoTelemetry("t4", "w4", LivenessState.Ended),
+        };
+
+        var (live, ended) = SessionRowPresenter.Partition(rows);
+
+        Assert.Equal(2, live.Count);   // the Alive + the Stale
+        Assert.Equal(3, ended.Count);  // the three Ended, collapsed
+        Assert.Equal("Alive", live[0].Liveness.Text);   // Alive leads
+        Assert.Equal("Stale", live[1].Liveness.Text);   // then Stale
+        Assert.All(ended, r => Assert.Equal("Ended", r.Liveness.Text));
+    }
+
+    [Fact]
+    public void Partition_WhenEveryoneHasEnded_LeavesLiveEmpty()
+    {
+        var rows = new List<WatcherSessionRow>
+        {
+            NoTelemetry("t1", "w1", LivenessState.Ended),
+            NoTelemetry("t2", "w2", LivenessState.Ended),
+        };
+
+        var (live, ended) = SessionRowPresenter.Partition(rows);
+
+        Assert.Empty(live);
+        Assert.Equal(2, ended.Count);
+    }
+
+    [Fact]
+    public void EndedHeader_CountsTheCollapsedHistory()
+        => Assert.Equal("14 ended session(s)", SessionRowPresenter.EndedHeader(14));
 }
