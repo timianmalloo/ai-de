@@ -3080,4 +3080,40 @@ for both or split.*
   list takes the shape of the examples it was built from**, and an artifact of a different shape is
   invisible rather than skipped. The gate now takes a `glob` and reports "n of 17", observed catching
   a planted hand-edit and naming the file.
+### DC-086 — An identifier is used as a file name, and the filesystem reinterprets it
+
+- **Signature:** an id that is unique, stable and perfectly valid *as an id* is concatenated into a
+  path. Somewhere in it is a character the filesystem treats as syntax rather than as text, so the
+  path the code composed is not the path the OS creates. On Windows the character is `:` and the
+  reinterpretation is an **NTFS alternate data stream**: `dir\agent:claude#fb96e3.jsonl` becomes the
+  file `agent` carrying the stream `claude#fb96e3.jsonl`. Elsewhere it is `/`, a trailing dot, a
+  reserved name (`CON`, `NUL`), or a length limit.
+- **Why it survives every test:** the write **succeeds**. The directory is created, the handle
+  opens, the bytes land, nothing throws, and the data is not even lost. It is simply somewhere no
+  reader looks: `Directory.EnumerateFiles(dir, "*.jsonl")` cannot enumerate a stream, and neither
+  can a listing, a backup, a sync, or a copy to any non-NTFS target. And **fixture ids are plain
+  words**, so the whole suite exercises the one shape that works.
+- **The tell:** a zero-byte file whose name is a *prefix* of an identifier — the part before the
+  first `:`. It looks like debris. It is the entire log.
+- **Instance:** 2026-09-02 — `CoordContractWriter` used the external session id verbatim as a file
+  name. Agent panes are `agent:<name>#<hex>`, so **no agent session was ever registered with the
+  watcher**: no liveness, no harness/model `update`, no `episode-open`. Found on the owner's machine
+  as one zero-byte file named `agent` holding **seven streams and 41 KB of coordination events**,
+  beside `terminal-1.jsonl` as a real 442 KB file. Plain terminals had worked throughout. It went
+  unnoticed through the two launch defects above it (DC-083, DC-084) because those kept any agent
+  from launching at all; fixing them is what made this one reachable — and it would have made the
+  whole `update`/`episode` contract inert on the first build where it could have worked.
+- **Control:** `CoordContractWriter.FileNameFor` maps a session id to a safe name, replacing invalid
+  characters and appending a digest of the *original* id so two ids that sanitise alike stay two
+  files. `CoordLogSurvivesASessionIdWithAColonTests` asserts through
+  `EnumerateFiles("*.jsonl")` — the step a stream defeats — rather than by reading the path back,
+  which would have passed on the broken code. **Observed failing on the shipped shape**: 4 of 6.
+- **What the suite caught that the fix had not:** the first version rewrote **every** name, which
+  orphaned every log already on disk and changed the case that was never broken. Two existing tests
+  failed on it. Now only a name the filesystem would mangle is rewritten, with an assertion pinning
+  that an already-valid id is returned untouched.
+- **The generalisation worth keeping:** *an identifier is not a file name, and a path that composes
+  cleanly in code is not a path the OS agrees with.* Where an id reaches a filesystem, a network
+  route, a URL or a shell, it crosses into a grammar it was never designed for — and the failure
+  mode is not an error but a **successful write to somewhere else**.
 - **Status:** `controlled`
