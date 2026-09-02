@@ -396,7 +396,63 @@ public sealed class TerminalView : FrameworkElement
     protected override void OnMouseDown(MouseButtonEventArgs e)
     {
         Focus(); // Clicking a terminal is how everyone expects to start typing into it.
+
+        if (_screen.MouseMode != MouseTracking.None && TryButton(e.ChangedButton, out var button))
+        {
+            SendMouse(button, release: false, e.GetPosition(this));
+            e.Handled = true;
+        }
+
         base.OnMouseDown(e);
+    }
+
+    protected override void OnMouseUp(MouseButtonEventArgs e)
+    {
+        if (_screen.MouseMode != MouseTracking.None && TryButton(e.ChangedButton, out var button))
+        {
+            SendMouse(button, release: true, e.GetPosition(this));
+            e.Handled = true;
+        }
+
+        base.OnMouseUp(e);
+    }
+
+    protected override void OnMouseWheel(MouseWheelEventArgs e)
+    {
+        // While a TUI is tracking the mouse, the wheel scrolls IT (button 64/65), not the pane.
+        if (_screen.MouseMode != MouseTracking.None)
+        {
+            var button = e.Delta > 0 ? TerminalMouseButton.WheelUp : TerminalMouseButton.WheelDown;
+            SendMouse(button, release: false, e.GetPosition(this));
+            e.Handled = true;
+        }
+
+        base.OnMouseWheel(e);
+    }
+
+    private static bool TryButton(MouseButton changed, out TerminalMouseButton button)
+    {
+        button = changed switch
+        {
+            MouseButton.Left => TerminalMouseButton.Left,
+            MouseButton.Middle => TerminalMouseButton.Middle,
+            MouseButton.Right => TerminalMouseButton.Right,
+            _ => (TerminalMouseButton)(-1),
+        };
+        return (int)button >= 0;
+    }
+
+    private void SendMouse(TerminalMouseButton button, bool release, System.Windows.Point position)
+    {
+        if (CellWidth <= 0 || CellHeight <= 0) { return; }
+
+        var column = (int)(position.X / CellWidth);
+        var row = (int)(position.Y / CellHeight);
+        var bytes = TerminalMouse.Encode(button, release, column, row, _screen.MouseSgr);
+        if (!bytes.IsEmpty)
+        {
+            Input?.Invoke(this, bytes);
+        }
     }
 
     protected override void OnGotKeyboardFocus(KeyboardFocusChangedEventArgs e)

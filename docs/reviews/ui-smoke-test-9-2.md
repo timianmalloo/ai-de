@@ -69,7 +69,7 @@ selection trigger still swaps to the highlight text colour when a row is selecte
 | **T-T2 ✅** | More keys: **F1–F12** (SS3/tilde), **Shift+Tab** (`ESC [ Z` back-tab), **Ctrl/Shift+arrows** (modified CSI `ESC [ 1 ; mod X` for word-nav and selection) | Full hotkey/keystroke fidelity | App |
 | **T-T3 ✅** | **Bracketed paste** (`ESC [ ? 2004 h`): parser tracks the mode; `TerminalInput.ForPaste` wraps pasted text in `ESC [ 200~ … ESC [ 201~` when on (CRLF→CR normalized); Ctrl+V / Shift+Insert intercepted in the view as paste | Multi-line paste into Claude Code without each line executing | App+Core |
 | **T-T4 ✅** | **Alternate screen buffer** (`?1049`/`?47`/`?1047`) + cursor save/restore: the main buffer is set aside and restored exactly on exit, so a full-screen TUI never scribbles on the shell's scrollback | Full-screen TUIs render on their own buffer; the shell is restored on exit | Core |
-| **T-T5** | **Mouse tracking** (`?1000` click, `?1002` drag, `?1003` any-motion, `?1006` SGR): mouse events → `ESC [ < b;x;y M/m`; wire WPF mouse down/up/move/wheel to encode when a mode is on | Mouse fidelity — clicking/scrolling inside a TUI | App+Core |
+| **T-T5 ✅** | **Mouse tracking** (`?1000` press/release, `?1002` button-motion, `?1003` any-motion, `?1006` SGR): parser tracks the modes; `TerminalMouse.Encode` produces the SGR (`ESC [ < b;x;y M/m`) or legacy form; the view wires click/release/wheel → cell coords → bytes when a mode is on | Mouse fidelity — click to position, wheel to scroll, inside a TUI | App+Core |
 | **T-T6** | **DECKPAM** application keypad, **DA/DSR** device-status replies (`ESC [ c`, `ESC [ 6 n`), **DECSTBM** scroll region + IL/DL | Programs that probe the terminal or scroll a region behave | Core |
 
 ### Windowing (T-W*)
@@ -86,7 +86,7 @@ selection trigger still swaps to the highlight text colour when a row is selecte
 
 | | |
 |---|---|
-| **Completed** | T-T1 (arrow keys / DECCKM + preview-key capture) and Slice 2 (list legibility) — landed with tests |
-| **Remaining** | T-T2…T-T6 (terminal fidelity), T-W1…T-W5 (windowing/focus/sizing/sessions) |
-| **Best next action** | T-T2 (function keys + modified/meta keys) or T-W3 (graph canvas fill — a clean, high-visibility win) |
-| **Needs user functional verification** | Arrow keys in Claude Code (T-T1), provenance legibility (Slice 2), and the felt docking/focus behaviour — all beyond headless testing |
+| **Completed** | Terminal: **T-T1** arrows/DECCKM, **T-T2** function/modifier keys, **T-T3** bracketed paste, **T-T4** alternate screen, **T-T5** mouse tracking. Windowing: **Slice 2** list legibility (#4), **T-W1** focus-on-session-open (#2), **T-W2** drag no-scatter (#3), **T-W3** graph canvas fill (#5). Sessions (#7) is Core's DC-081 (controlled) |
+| **Remaining** | **T-T6** (DA/DSR device-status replies, DECSTBM scroll region + IL/DL — for programs that probe the terminal or scroll a region), **T-W4** (confirm the node right-click viewer menu #6 end-to-end — `NodeViewMenu` is built and wired; needs functional confirmation), and mouse **motion** reporting (`?1002`/`?1003` drag, beyond click/wheel) |
+| **Best next action** | Functionally verify the terminal against Claude Code (arrows/menu, paste, full-screen render, mouse) in a fresh build; then T-T6 if a program needs device-status/scroll-region |
+| **Needs user functional verification** | The rendered terminal fidelity (arrows/keys/paste/alt-screen/mouse — beyond headless unit tests), the graph canvas fill, and the felt docking/focus behaviour |

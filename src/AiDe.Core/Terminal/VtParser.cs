@@ -385,6 +385,22 @@ public sealed class VtParser
 
                 break;
 
+            case 1000:
+                _screen.SetMouseMode(set ? MouseTracking.Normal : MouseTracking.None);
+                break;
+
+            case 1002:
+                _screen.SetMouseMode(set ? MouseTracking.ButtonMotion : MouseTracking.None);
+                break;
+
+            case 1003:
+                _screen.SetMouseMode(set ? MouseTracking.AnyMotion : MouseTracking.None);
+                break;
+
+            case 1006:
+                _screen.SetMouseSgr(set);
+                break;
+
             default:
                 // Unhandled private mode — ignored as a unit (a half-applied mode is worse than none).
                 break;

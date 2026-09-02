@@ -437,4 +437,32 @@ public sealed class VtParserTests
         Feed(parser, $"{Esc}[?1049l");
         Assert.False(screen.AltScreen);
     }
+
+    [Theory]
+    [InlineData("1000", MouseTracking.Normal)]
+    [InlineData("1002", MouseTracking.ButtonMotion)]
+    [InlineData("1003", MouseTracking.AnyMotion)]
+    public void MouseModes_SetTheTrackingLevel_AndResetTurnsItOff(string mode, MouseTracking expected)
+    {
+        var (screen, parser) = New();
+
+        Feed(parser, $"{Esc}[?{mode}h");
+        Assert.Equal(expected, screen.MouseMode);
+
+        Feed(parser, $"{Esc}[?{mode}l");
+        Assert.Equal(MouseTracking.None, screen.MouseMode);
+    }
+
+    [Fact]
+    public void SgrMouseMode_1006_TogglesTheExtendedEncoding()
+    {
+        var (screen, parser) = New();
+        Assert.False(screen.MouseSgr);
+
+        Feed(parser, $"{Esc}[?1006h");
+        Assert.True(screen.MouseSgr);
+
+        Feed(parser, $"{Esc}[?1006l");
+        Assert.False(screen.MouseSgr);
+    }
 }

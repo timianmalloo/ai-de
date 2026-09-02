@@ -77,6 +77,22 @@ public enum EraseExtent
     All,
 }
 
+/// <summary>How the child wants pointer events reported.</summary>
+public enum MouseTracking
+{
+    /// <summary>No mouse reporting — the pointer is the shell's own (select/copy).</summary>
+    None,
+
+    /// <summary>Button press and release only (xterm <c>?1000</c>).</summary>
+    Normal,
+
+    /// <summary>Press/release plus motion while a button is held (xterm <c>?1002</c>).</summary>
+    ButtonMotion,
+
+    /// <summary>Press/release plus all pointer motion (xterm <c>?1003</c>).</summary>
+    AnyMotion,
+}
+
 /// <summary>
 /// What a terminal is, once the bytes have been interpreted: a grid of styled cells and a cursor.
 /// </summary>
@@ -195,6 +211,18 @@ public sealed class TerminalScreen
 
     /// <summary>Whether the alternate screen buffer is currently active (a full-screen TUI is drawing).</summary>
     public bool AltScreen { get; private set; }
+
+    /// <summary>How the child wants mouse events reported (xterm <c>?1000</c>/<c>?1002</c>/<c>?1003</c>).</summary>
+    public MouseTracking MouseMode { get; private set; }
+
+    /// <summary>Whether the child asked for SGR extended mouse encoding (<c>?1006</c>) — the modern form.</summary>
+    public bool MouseSgr { get; private set; }
+
+    /// <summary>Sets the mouse tracking level (or turns it off). Display is unaffected.</summary>
+    public void SetMouseMode(MouseTracking mode) => MouseMode = mode;
+
+    /// <summary>Sets or clears SGR extended mouse encoding.</summary>
+    public void SetMouseSgr(bool enabled) => MouseSgr = enabled;
 
     /// <summary>
     /// Switches to the alternate screen buffer (xterm <c>?1049h</c>/<c>?47h</c>/<c>?1047h</c>). The main

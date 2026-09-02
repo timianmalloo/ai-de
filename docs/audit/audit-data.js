@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T17:28:48Z",
+  "generated": "2026-09-02T17:36:28Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7925,6 +7925,27 @@ window.AUDIT_DATA = {
       "tags": [
         "terminal",
         "altscreen"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0392",
+      "shortname": "smoke92-mouse-tracking",
+      "datetime": "2026-09-02T17:36:28Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "smoke 9-2: mouse tracking (T-T5)",
+      "summary": "T-T5: parser tracks mouse modes (?1000/1002/1003/1006); TerminalMouse.Encode produces SGR/legacy mouse reports; view wires click/release/wheel to cell coords when a mode is on. +12 tests (App 350, Core 1378). Completes the terminal native-integrity set: arrows, keys, paste, alt-screen, mouse.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/TerminalMouse.cs",
+        "src/AiDe.App/Workbench/TerminalView.cs"
+      ],
+      "tags": [
+        "terminal",
+        "mouse"
       ],
       "outcome": "success"
     }
