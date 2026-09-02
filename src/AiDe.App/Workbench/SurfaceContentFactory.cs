@@ -32,6 +32,7 @@ public sealed class SurfaceContentFactory(
         var content = surface.Kind switch
         {
             "view" or "inspector" when queries is not null => EvidenceContent(surface),
+            "view" or "inspector" => WorkspaceNeeded(surface),
             "terminal" => Terminal(surface),
             "canvas" => new CanvasSurface(surface.SurfaceId, surface.Title),
             "contexts" => new ContextMapSurface(surface.Title),
@@ -340,6 +341,23 @@ public sealed class SurfaceContentFactory(
         var text = new TextBlock
         {
             Text = $"“{surface.Title}” is not available in this build.",
+            Margin = new Thickness(12),
+            TextWrapping = TextWrapping.Wrap,
+        };
+        text.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        return text;
+    }
+
+    // An evidence "view"/"inspector" surface (Explore, Domain, Provenance …) has nothing to read
+    // until a workspace is open. Before, it fell through to Unavailable() and read "… is not
+    // available in this build" — which points a user at a build/packaging defect for what is
+    // actually the ordinary empty state of "no workspace open". This says the true thing, in the
+    // same voice as the graph pane's "No workspace is open. Open one to see its graph." (UI-EMPTY-STATE).
+    private static FrameworkElement WorkspaceNeeded(Surface surface)
+    {
+        var text = new TextBlock
+        {
+            Text = $"No workspace is open. Open one to see {surface.Title}.",
             Margin = new Thickness(12),
             TextWrapping = TextWrapping.Wrap,
         };

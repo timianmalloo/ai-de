@@ -142,15 +142,21 @@ public sealed class SurfaceContentTests
     }
 
     [Fact]
-    public void WithNoWorkspace_TheSurfaceSaysWhatIsUnavailable()
+    public void WithNoWorkspace_TheEvidenceSurface_SaysToOpenAWorkspace_NotThatItIsUnavailableInThisBuild()
     {
+        // "… is not available in this build" points the user at a build/packaging defect for what
+        // is actually the ordinary "no workspace open" empty state — the exact confusion the Explore
+        // pane showed in smoke-test 9-2. The message must name the real cause and the real action,
+        // in the same voice as the graph pane ("No workspace is open. Open one to see …").
         var text = OnStaThread(() =>
         {
             var content = new SurfaceContentFactory(null).Create(new Surface("view-1", "view", "Explore"));
             return Assert.IsType<TextBlock>(Unwrap(content)).Text;
         });
 
-        Assert.Contains("not available", text, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("workspace", text, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Explore", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("not available in this build", text, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

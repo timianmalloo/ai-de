@@ -2772,6 +2772,28 @@ for both or split.*
 - **Status:** `partially-controlled` — the global style holds it; the rendered-contrast gate is the
   remaining rung.
 
+### UI-EMPTY-STATE-BUILD — an ordinary "no data yet" empty state accuses the build
+- **Signature:** a surface that simply has nothing to show until a precondition is met (a workspace
+  is opened, a store is attached) renders a message that names a *build* defect — "… is not available
+  in **this build**" — so a user reads a routine empty state as a packaging/version failure and
+  reports the product as broken. In smoke 9-2 the Explore pane said *"'Explore' is not available in
+  this build."* while the graph pane beside it correctly said *"No workspace is open. Open one to see
+  its graph."* — two messages, one cause (no workspace), one of them lying about the cause.
+- **Why it survives:** the surface genuinely returns *something* (a legible TextBlock), so
+  structure/legibility tests pass; and the message is factually true in the narrow sense that the
+  surface isn't showing — nothing asserts that an empty state names the **real cause and the real
+  action** rather than the worst-sounding one. A shared `Unavailable()` fallback used for both
+  "unknown surface kind" (correct) and "no workspace yet" (wrong) hides the conflation.
+- **Instances:** 2026-09-02 — smoke 9-2: the `"view"/"inspector"` evidence surfaces (Explore, Domain,
+  Provenance) fell through to `SurfaceContentFactory.Unavailable` when `queries` was null.
+- **Control:** a dedicated `WorkspaceNeeded()` empty state ("No workspace is open. Open one to see
+  {Title}.") for the workspace-dependent kinds, in the same voice as the graph pane; a test asserts
+  the no-workspace surface says *workspace* and **not** "not available in this build". The wider rung:
+  an empty state names its cause and its next action, and "not available in this build" is reserved
+  for a genuinely unbuilt surface kind.
+- **Status:** `controlled` — the `WorkspaceNeeded` split + the flipped assertion in
+  `SurfaceContentTests` hold it.
+
 ### DC-081 — A setup step declines, and its `return` cancels the work it was preparing for
 
 - **Shape:** a script does setup, then the real work. The setup is written to **give up gracefully**

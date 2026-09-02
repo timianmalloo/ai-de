@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T18:11:02Z",
+  "generated": "2026-09-02T18:31:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7979,6 +7979,25 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tools/verify-site-figures.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0399",
+      "shortname": "implement-empty-state-message",
+      "datetime": "2026-09-02T18:31:16Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "what are the next tasks for the ui workstream (screenshot: Explore 'not available in this build', Claude Code = plain shell)",
+      "summary": "Fixed UI-EMPTY-STATE-BUILD: workspace-dependent view/inspector surfaces now say 'No workspace is open. Open one to see {Title}.' instead of the misleading '... is not available in this build.' Flipped SurfaceContentTests assertion (red-first); registered defect class. App tests green (12).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "tests/AiDe.App.Tests/SurfaceContentTests.cs",
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
