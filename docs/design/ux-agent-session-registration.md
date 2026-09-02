@@ -165,6 +165,63 @@ having.
 **Read §3 and DC-027 together, not as separate items.** They are the same seam from opposite sides:
 DC-027 is what the child failed to receive, §3 is what we now want it to receive.
 
+### 3.1b The bisect, done — the number §3 was waiting on
+
+§3.1a set a precondition: *bisect the block limit first, the way the PATH one never was; then the
+check is worth having.* Done. Measured through `ProcessStartInfo.Environment`, because that is the
+mechanism §3 would use and measuring a different path would answer a different question.
+
+**Method.** A parent spawns a child with `PATH` padded to a target size with syntactically valid
+entries, plus a canary variable that must survive — DC-027's failure is that something *other* than
+what you added goes missing, so a probe checking only its own additions cannot see it. The child
+reports what it actually received. Three launch paths, because §3's first rule is a claim that only
+one of them is safe.
+
+| Path | Result |
+|---|---|
+| `ProcessStartInfo` → child (**what §3 proposes**) | **no loss to 64,000** |
+| → `cmd.exe /c` → child (what a `.cmd` shim does) | **no loss to 64,000** |
+| → `powershell.exe -Command` → child (**what AI-DE's hosted-agent mode does**) | **intact at 32,647, lost at 32,659** |
+
+**So the limit exists, it is a TOTAL-BLOCK limit, and it is ~32,650** — consistent with the
+documented 32,767-character `CreateProcess` environment block. The PowerShell path reaches it first
+because the invocation adds to the block, and **that is the path AI-DE uses**
+(`ShellIntegrationMode.PowerShellHostedAgent`).
+
+#### The failure is silent, and it is the worst shape in this document
+
+At the limit, `Process.Start` **does not throw**. The process starts. It produces **nothing**. No
+exception, no exit code to read, no message.
+
+Translated into the product: **the agent terminal appears to open and the agent never starts, with
+nothing said.** That is worse than DC-027's original symptom — a shim with an empty `PATH` at least
+runs and fails visibly. This one looks like it worked.
+
+#### What this changes for §3
+
+1. **The nine variables are not free.** They add roughly 300–400 characters to a block whose ceiling
+   is ~32,650. On a machine already near it — and the machine this session opened on had a
+   **22,297-character `PATH` alone** — nine additions can be the difference between a terminal that
+   opens and one that silently does not.
+2. **Measure the block before adding to it, and refuse loudly rather than truncate.** DC-027's
+   control already refuses to rewrite `PATH`; the same reasoning says do not silently drop an
+   `AIDE_*` variable either. If the block cannot take them, say so.
+3. **`EnvironmentHealth` needs a total.** It scans every variable against the per-variable limit and
+   sums nothing — confirmed by reading it. Per-variable, nine short values each pass; against a
+   total limit they are nine short values and what gets dropped is something else. **The number to
+   check against now exists, so the check is worth having** — which is exactly the precondition
+   §3.1a named, now satisfied.
+
+#### One thing that did NOT reproduce, stated rather than buried
+
+**`cmd.exe` carried a 22,297-character `PATH` intact** — DC-027's exact reported figure — on all
+sizes to 64,000. The recorded instance says cmd dropped it. The conditions differ in ways that could
+each account for it and were not controlled: that child was a `.cmd` **shim** and this one is a .NET
+executable; that `PATH` was the machine's real one and this is synthetic padding; that was a
+different machine. **This is not a claim that DC-027 is wrong** — it is a measurement that did not
+reproduce it, recorded so the next person does not assume the mechanism is settled. The failure
+found here is real, is on a different path, and is the one §3 has to survive.
+
 ### 3.2 Enrichment, for a harness that chooses to
 
 An agent that wants its harness and model on the record appends **one line** to a file in
