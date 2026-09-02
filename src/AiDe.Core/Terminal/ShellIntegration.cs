@@ -160,10 +160,27 @@ public static class ShellIntegration
 
         var quoted = "'" + agent.Replace("'", "''", StringComparison.Ordinal) + "'";
 
-        // The integration script FIRST, so the prompt marker and the OSC nonce are installed before
-        // the agent takes the screen; then the agent itself. -NoExit keeps the shell after the agent
-        // exits, so a crashed agent leaves a usable terminal rather than a closed pane.
-        var script = PowerShellScript(nonce) + Environment.NewLine + "& " + quoted;
+        // THE INTEGRATION RUNS IN ITS OWN SCOPE, and that is the whole point of the `& { }`.
+        //
+        // The integration script gives up with a bare `return` when it cannot install the full
+        // report loop. At the top level of an -EncodedCommand script that `return` ends the SCRIPT,
+        // so an agent invocation appended after it never ran — and -NoExit then left a working
+        // PowerShell prompt, which looks exactly like a terminal that was asked for.
+        //
+        // OBSERVED, in the product: PowerShell inside this ConPTY prints "PowerShell detected that
+        // you might be using a screen reader and has disabled PSReadLine for compatibility
+        // purposes", so `Set-PSReadLineKeyHandler` is genuinely absent and the guard fires EVERY
+        // TIME. Opening a Claude Code session produced a plain shell at the workspace root while the
+        // status bar said "Claude Code session opened".
+        //
+        // The same test run from an ordinary console finds PSReadLine present and the bug invisible,
+        // which is why this needs the scope rather than a fixed guard: the integration is allowed to
+        // decline, and declining must never be able to cancel the agent.
+        var script =
+            "& {" + Environment.NewLine
+            + PowerShellScript(nonce) + Environment.NewLine
+            + "}" + Environment.NewLine
+            + "& " + quoted;
         var encoded = Convert.ToBase64String(Encoding.Unicode.GetBytes(script));
 
         return $"\"{shellPath}\" -NoLogo -NoExit -EncodedCommand {encoded}";
