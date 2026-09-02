@@ -18,20 +18,8 @@ namespace AiDe.App.Tests;
 /// </remarks>
 public sealed class MainMenuTests
 {
-    private static void OnSta(Action work)
-    {
-        Exception? failure = null;
-        var thread = new Thread(() =>
-        {
-            try { work(); }
-            catch (Exception ex) { failure = ex; }
-        });
-
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        Assert.True(thread.Join(TimeSpan.FromSeconds(60)));
-        if (failure is not null) throw failure;
-    }
+    private static void OnSta(Action work) =>
+        Sta.Run(work, 60);
 
     private static (Menu Menu, RecordingAnnouncer Announcer) Build()
     {

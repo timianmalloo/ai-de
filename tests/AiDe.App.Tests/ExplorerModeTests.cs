@@ -12,17 +12,8 @@ namespace AiDe.App.Tests;
 /// </summary>
 public sealed class ExplorerModeTests
 {
-    private static void OnSta(Action work)
-    {
-        Exception? failure = null;
-        var thread = new Thread(() => { try { work(); } catch (Exception ex) { failure = ex; } });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        Assert.True(thread.Join(TimeSpan.FromSeconds(30)), "STA thread did not finish");
-        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
-
-        if (failure is not null) { throw new InvalidOperationException("STA work failed", failure); }
-    }
+    private static void OnSta(Action work) =>
+        Sta.Run(work, 30);
 
     // T1 — the retain-not-rebuild control (ADR-0017's load-bearing invariant, reference-level). The
     // workbench object is the SAME instance across an Explorer round-trip: the swap only unparented

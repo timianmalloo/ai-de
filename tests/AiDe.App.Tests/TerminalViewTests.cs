@@ -23,36 +23,8 @@ namespace AiDe.App.Tests;
 /// </remarks>
 public sealed class TerminalViewTests
 {
-    private static T OnStaThread<T>(Func<T> work)
-    {
-        var result = default(T);
-        Exception? failure = null;
-
-        var thread = new Thread(() =>
-        {
-            try
-            {
-                result = work();
-            }
-            catch (Exception ex)
-            {
-                failure = ex;
-            }
-        });
-
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
-
-        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
-
-        if (failure is not null)
-        {
-            throw new InvalidOperationException("the STA body threw", failure);
-        }
-
-        return result!;
-    }
+    private static T OnStaThread<T>(Func<T> work) =>
+        Sta.Run<T>(work, 60);
 
     /// <summary>Lays the view out and rasterises it, which is what forces the real draw work.</summary>
     private static RenderTargetBitmap Rasterise(TerminalView view, int width, int height)

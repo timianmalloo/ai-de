@@ -171,22 +171,6 @@ public sealed class TerminalCustomizationTests
         ShowActivated = false,
     };
 
-    private static void OnSta(Action work)
-    {
-        Exception? failure = null;
-        var thread = new Thread(() =>
-        {
-            try { work(); }
-            catch (Exception ex) { failure = ex; }
-        });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        Assert.True(thread.Join(TimeSpan.FromSeconds(60)), "STA thread did not finish");
-        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
-
-        if (failure is not null)
-        {
-            throw new InvalidOperationException("STA work failed", failure);
-        }
-    }
+    private static void OnSta(Action work) =>
+        Sta.Run(work, 60);
 }

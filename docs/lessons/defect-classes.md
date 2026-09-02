@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 46 · partially-controlled 32 · uncontrolled 1
+**Status counts:** controlled 47 · partially-controlled 31 · uncontrolled 1
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -87,7 +87,8 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
   a captured `RESULT.md` and a one-command re-run line), and all three spikes are now committed and
   green. **Rung honestly reached: knowledge doc + convention** — there is no automated check that a
   Verified row resolves to a committed spike path. Adding one to `docs-graph.py` would raise it.
-- **Status:** `partially-controlled`
+- **Status:** `controlled` for the STA harness — one implementation, no second form to copy; the
+  general shape (two conventions coexisting anywhere) stays `open`
 
 ### DC-003 — A durable-store invariant is enforced by a mechanism that does not cover every write path
 - **Signature:** an append-only or uniqueness invariant is enforced by one mechanism (a trigger, a
@@ -2566,8 +2567,28 @@ for both or split.*
   one divergence that caused a defect, which is the administrative fix: it stops this variant without
   removing the coin flip. **The systemic fix is to delete the choice** — one implementation in
   `tests/Shared/`, the 31 call sites migrated, after which there is no second form to copy. That is
-  a real piece of work across 31 files and is **not** done; it is recorded here with its measurement
-  so the decision is sized rather than remembered.
+  a real piece of work across 31 files. **Done 2026-09-01**, and the measurement is how it is known
+  to be done: **32 files declaring their own STA thread became 2** — `Sta.cs`, which is the harness,
+  and one test whose caught exception is its own subject and therefore was never a harness at all.
+  There is no longer a second form to copy.
+
+  **What the consolidation preserved, and the one thing it changed.** Every migrated file keeps its
+  own timeout, passed through rather than unified: a test that waited 30 seconds and one that waited
+  60 were making different bets about what they were driving, and collapsing them would be a
+  behaviour change wearing a refactor's clothes. Twenty-eight matched exactly. **Three did change** —
+  `SurfaceContentTests`, `TerminalViewTests` and `DockThemeAccentsTests` joined with **no timeout at
+  all**, so a hang there hung the whole suite with nothing to read; they are now bounded at 60s.
+  Stated rather than folded into "no behaviour change", because that is the sentence a reader would
+  otherwise trust.
+
+  **And it corrected the control that had just been written.** The granularity check added hours
+  earlier fired on `Sta.cs` itself: the shared harness legitimately stands up two threads — a plain
+  one and a dispatcher-pumping one — whose failures funnel through a single rethrow, so nothing can
+  mask. The rule was imprecise rather than the file wrong, and it is now scoped to files that hold
+  `[Fact]`s, since the masking risk needs two harnesses each carrying their own verdict. Scoped by
+  that property rather than by naming the harness file, because an allowance list has the catch-all
+  property that hides a miss. The self-test's fixture caught the change immediately by going red —
+  it had no `[Fact]`, so it no longer resembled its subject.
 
   **The derived rule, which is the part that generalises:** when you find two forms of one thing
   coexisting and one is wrong, correcting the instances is not the fix — *the coexistence* is the

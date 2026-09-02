@@ -23,23 +23,8 @@ public sealed class PromptBarTests
     /// Every case here builds WPF elements, which require STA. Matches CommandPaletteTests rather
     /// than introducing a second convention for the same constraint.
     /// </summary>
-    private static void OnSta(Action work)
-    {
-        Exception? failure = null;
-        var thread = new Thread(() =>
-        {
-            try { work(); }
-            catch (Exception ex) { failure = ex; }
-        });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        Assert.True(thread.Join(TimeSpan.FromSeconds(60)));
-        // No XunitException guard here: this harness already rethrows unwrapped, so a guard would
-        // be a line that can never fire. The bulk sweep added one because the FILE contained a
-        // wrapper string — in a fixture that throws a literal to simulate an error, not in the
-        // harness. Removed once the gate could tell the two apart.
-        if (failure is not null) throw failure;
-    }
+    private static void OnSta(Action work) =>
+        Sta.Run(work, 60);
 
     [Fact]
     public void ADeliveredPromptIsReportedAsDelivered()

@@ -62,17 +62,6 @@ public sealed class CodeViewerFollowsSelectionTests
         t.GetAwaiter().GetResult();
     }
 
-    private static void OnSta(System.Action body)
-    {
-        System.Exception? error = null;
-        var th = new Thread(() =>
-        {
-            try { body(); }
-            catch (System.Exception e) { error = e; }
-        });
-        th.SetApartmentState(ApartmentState.STA);
-        th.Start();
-        th.Join(System.TimeSpan.FromSeconds(30));
-        if (error is not null) throw error;
-    }
+    private static void OnSta(System.Action body) =>
+        Sta.Run(body, 30);
 }

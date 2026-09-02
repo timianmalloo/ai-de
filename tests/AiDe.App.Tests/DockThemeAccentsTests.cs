@@ -19,21 +19,8 @@ public sealed class DockThemeAccentsTests
     private static readonly Color Accent = (Color)ColorConverter.ConvertFromString("#5B9DD9")!;
     private static readonly Color VsBlue = (Color)ColorConverter.ConvertFromString("#007ACC")!;
 
-    private static T OnSta<T>(Func<T> work)
-    {
-        T result = default!;
-        Exception? failure = null;
-        var thread = new Thread(() =>
-        {
-            try { result = work(); }
-            catch (Exception ex) { failure = ex; }
-        });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
-        if (failure is not null) throw failure;
-        return result;
-    }
+    private static T OnSta<T>(Func<T> work) =>
+        Sta.Run<T>(work, 60);
 
     [Fact]
     public void Retokenise_TurnsTheSelectedTabAccent_FromVsBlue_ToPalette() => OnSta(() =>
