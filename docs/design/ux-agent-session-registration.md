@@ -244,15 +244,51 @@ corresponds to roughly a 40-character surround, which is a sound conservative ch
 variable empty. Whether anyone sees it depends entirely on whether the shim's stderr is shown —
 which is why DC-027 presented as "my tools are missing" rather than as an error message.
 
-#### So there are TWO limits, both real, and §3 has to clear both
+#### CORRECTED — there is no block limit. The ~32,650 is PATH.
 
-| Mechanism | Cut-off | How it fails |
+The version of this section published an hour ago said there were two limits and that the second was
+a **total environment block** ceiling of ~32,650 that §3's nine variables ate into. **That was
+wrong, and it was wrong the same way the `cmd` claim before it was wrong: the measurement was real
+and the quantity was mis-named.** The first probe padded **`PATH`** and I recorded the result as a
+property of the block.
+
+Re-measured, same hop, `PATH` against a non-`PATH` variable at identical sizes:
+
+| size | padding **`PATH`** | padding **another variable** |
 |---|---|---|
-| cmd expanding a variable inside a `.cmd` shim | **8,172** for a 19-char surround; generally `8,191 − surround` | stderr message, variable empty, shim continues |
-| **total environment block**, PowerShell-hosted launch | **~32,650** | **fully silent** — process starts, produces nothing |
+| 20,000 | ran | ran |
+| 32,000 | ran | ran |
+| **33,000** | **fails** | ran |
+| 40,000 | fails | ran |
+| 60,000 | fails | **ran** |
 
-The first is per-variable and already has a control. **The second is the one §3 introduces risk
-into, has no control, and fails without a word** — and it is the path AI-DE actually uses.
+And padding to a **40,000-character total block** with a non-`PATH` variable: **no failure at any
+size.**
+
+**So the limit is on `PATH`, not on the block.** PowerShell resolves the command it was handed
+*through* `PATH`; an oversized one stops it finding anything, and the launch dies silently. A
+60,000-character variable that is not `PATH` is carried without complaint.
+
+#### What that means for §3, which is now simpler
+
+1. **The nine variables are safe.** They add under 512 characters to the block — which has no
+   measured ceiling — and **nothing at all to `PATH`**, which is the variable that matters.
+2. **No size guard was added, and one was deliberately removed.** An earlier commit put a refusal at
+   32,647 into the block builder. It would have refused launches that work, and *a check that fires
+   on correct behaviour gets switched off, taking the real check with it.*
+3. **"Keep every value short" survives with a different justification.** It is no longer defence
+   against a block limit; it is what keeps the addition irrelevant to whatever limit someone later
+   finds. A serialised payload here would deserve a fresh measurement.
+4. **The real limits are elsewhere and already covered.** `cmd`'s `NAME=VALUE` pair limit at 8,190
+   (Core's bisection) and its ~8,191 command-line limit after expansion in a shim. Both are reported
+   by `EnvironmentHealth`, at thresholds far below the PowerShell `PATH` figure.
+
+#### The failure mode this leaves, stated because it is the one that survives
+
+A `PATH` past ~32,650 kills a PowerShell-hosted launch **silently** — `Process.Start` does not throw,
+the process starts, it produces nothing. That is a real hazard and it is **not one §3 creates or
+worsens**; it is the same oversized-`PATH` problem DC-027 records, one shell further along, and any
+`PATH` large enough to trigger it is already reported at 8,151.
 
 ### 3.2 Enrichment, for a harness that chooses to
 
