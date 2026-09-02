@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T23:59:36Z",
+  "generated": "2026-09-02T00:11:27Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7615,6 +7615,27 @@ window.AUDIT_DATA = {
       ],
       "tags": [
         "docking",
+        "investigate"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0377",
+      "shortname": "smoke91-phase-g-terminal-render",
+      "datetime": "2026-09-02T00:11:27Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "phase G: terminal render/refresh #16",
+      "summary": "Phase G: root-caused #16 stale-glyph-on-cursor-move to VtParser dropping in-place line-editing CSI finals (ECH X, ICH @, DCH P); implemented EraseCharacters/InsertCharacters/DeleteCharacters on TerminalScreen and wired X/@/P; verified renderer/model/pump race-safe. +8 Core tests (1339).",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Terminal/TerminalScreen.cs",
+        "src/AiDe.Core/Terminal/VtParser.cs"
+      ],
+      "tags": [
+        "terminal",
         "investigate"
       ],
       "outcome": "success"

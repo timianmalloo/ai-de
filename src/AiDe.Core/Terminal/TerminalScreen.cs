@@ -298,6 +298,71 @@ public sealed class TerminalScreen
         IsDirty = true;
     }
 
+    /// <summary>
+    /// Erases <paramref name="count"/> cells from the cursor <b>in place</b>, without shifting the
+    /// rest of the line (ECH, <c>CSI n X</c>).
+    /// </summary>
+    /// <remarks>
+    /// A TUI (Claude Code, less, a shell's line editor) clears a span this way when it repaints a
+    /// line. Dropping it — as an unhandled final was — leaves the old glyphs in the grid, and the
+    /// full-repaint renderer then faithfully draws them: the "characters painted without proper
+    /// refresh" report (smoke 9-1 #16). Erases to the current background, like every other erase.
+    /// </remarks>
+    public void EraseCharacters(int count)
+    {
+        var to = Math.Min(CursorColumn + Math.Max(count, 1), Columns);
+        for (var column = CursorColumn; column < to; column++)
+        {
+            _cells[(CursorRow * Columns) + column] = Erased();
+        }
+
+        IsDirty = true;
+    }
+
+    /// <summary>
+    /// Inserts <paramref name="count"/> blank cells at the cursor, shifting the rest of the line right
+    /// and dropping what falls off the end (ICH, <c>CSI n @</c>).
+    /// </summary>
+    /// <remarks>Typing into the middle of an existing line uses this; ignoring it overwrites instead of inserting.</remarks>
+    public void InsertCharacters(int count)
+    {
+        var n = Math.Clamp(count, 1, Columns - CursorColumn);
+        var rowStart = CursorRow * Columns;
+        for (var column = Columns - 1; column >= CursorColumn + n; column--)
+        {
+            _cells[rowStart + column] = _cells[rowStart + column - n];
+        }
+
+        for (var column = CursorColumn; column < CursorColumn + n; column++)
+        {
+            _cells[rowStart + column] = Erased();
+        }
+
+        IsDirty = true;
+    }
+
+    /// <summary>
+    /// Deletes <paramref name="count"/> cells at the cursor, shifting the rest of the line left and
+    /// blanking the tail (DCH, <c>CSI n P</c>).
+    /// </summary>
+    /// <remarks>Deleting a character mid-line uses this; ignoring it leaves the deleted glyph on screen.</remarks>
+    public void DeleteCharacters(int count)
+    {
+        var n = Math.Clamp(count, 1, Columns - CursorColumn);
+        var rowStart = CursorRow * Columns;
+        for (var column = CursorColumn; column < Columns - n; column++)
+        {
+            _cells[rowStart + column] = _cells[rowStart + column + n];
+        }
+
+        for (var column = Columns - n; column < Columns; column++)
+        {
+            _cells[rowStart + column] = Erased();
+        }
+
+        IsDirty = true;
+    }
+
     /// <summary>Resizes the grid, keeping the content that still fits.</summary>
     /// <remarks>
     /// Content is preserved by position rather than reflowed. Reflowing is what a user expects when
