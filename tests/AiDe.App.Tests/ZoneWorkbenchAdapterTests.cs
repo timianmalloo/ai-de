@@ -2,6 +2,7 @@ using System.Windows;
 using AiDe.App.Workbench;
 using AiDe.Core.Workbench;
 using AvalonDock;
+using AvalonDock.Layout;
 
 namespace AiDe.App.Tests;
 
@@ -100,6 +101,49 @@ public sealed class ZoneWorkbenchAdapterTests
             Assert.Null(adapter.ContentFor("domain")); // gone from the view
             Assert.Equal(leftBefore, service.Zones.Zone(ZoneId.Left).Surfaces().Select(s => s.SurfaceId).ToList());
             Assert.Equal(bottomBefore, service.Zones.Zone(ZoneId.Bottom).Surfaces().Select(s => s.SurfaceId).ToList());
+            return true;
+        });
+    }
+
+    // ---- #11 / #3-focus: a re-render keeps the model's active tab and the user's focus ----
+
+    [Fact]
+    public void Render_SelectsTheModelsActiveTab_NotTheFirstDocument()
+    {
+        WithZoneWorkbench((adapter, service) =>
+        {
+            // The center starts on the graph (index 0). Activate a later tab in the model.
+            service.Apply(new LayoutOperation.ActivateSurface("sessions"));
+            adapter.Render();
+
+            var pane = adapter.Manager.Layout!.Descendents().OfType<LayoutDocumentPane>()
+                .First(p => p.Children.OfType<LayoutDocument>().Any(d => d.ContentId == "sessions"));
+            var selected = pane.SelectedContent as LayoutDocument;
+
+            // The rebuilt pane shows the model's active tab, not its first document (the desync
+            // that hid the surviving tab after a close, #11).
+            Assert.Equal("sessions", selected?.ContentId);
+            return true;
+        });
+    }
+
+    [Fact]
+    public void Render_PreservesTheActiveSurface_WhenAnotherPaneOpens()
+    {
+        WithZoneWorkbench((adapter, service) =>
+        {
+            // The user is focused in the graph document.
+            var graph = adapter.Manager.Layout!.Descendents().OfType<LayoutDocument>()
+                .First(d => d.ContentId == "graph");
+            graph.IsActive = true;
+            Assert.Equal("graph", adapter.ActiveSurfaceId); // setup: focus is on the graph
+
+            // Opening a reference document elsewhere must not snap focus to another pane (#3-focus).
+            service.Apply(new LayoutOperation.AddSurface(
+                ZonesToTree.RightStackId, new Surface("src-1", "codeviewer", "Source")));
+            adapter.Render();
+
+            Assert.Equal("graph", adapter.ActiveSurfaceId); // focus preserved across the layout swap
             return true;
         });
     }
