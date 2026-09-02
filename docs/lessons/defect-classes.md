@@ -979,8 +979,53 @@ for both or split.*
   exactly the limit nothing measures, and the symptom would be indistinguishable from this class's
   original instance: a child process whose PATH is simply gone.
 
-  The exact per-variable cut-off was still never bisected, so the message says "may be dropped"
-  rather than asserting a number nobody measured.
+  **BISECTED 2026-09-01, and both halves came back different from what was argued.** A child was
+  handed a controlled environment and asked what it received — the parent's copy is not evidence,
+  which is this class's own rule turned on itself.
+
+  **(1) The limit is on `NAME=VALUE`, not on the value.** Identical at four name lengths:
+
+  | name length | largest value that survives | name + 1 + value |
+  |---|---|---|
+  | 3 | 8,186 | **8,190** |
+  | 13 | 8,176 | **8,190** |
+  | 40 | 8,149 | **8,190** |
+  | 120 | 8,069 | **8,190** |
+
+  The control compared the **value** against 8,151, so for any name longer than 39 characters it
+  reported healthy on a variable cmd.exe drops — an 8,150-char value under a 40-char name passes and
+  disappears. **A false clean, in the control that exists to catch this class.** Latent on the
+  measured machine (longest name: 34 of 76 variables) and it stops being latent the moment something
+  adds longer names, which is what §3 of the session-registration spec proposes. Fixed to compare the
+  pair against the measured 8,190; two tests observed failing on the old comparison.
+
+  **(2) The total-block limit: measured on the WRONG PATHS, and the claim is withdrawn.** Direct
+  `CreateProcess` and `cmd.exe /c` show no total limit below **13,010,087 wide characters**, and on
+  that evidence this entry briefly said the hazard "does not bind". **It does not follow.** The
+  product does not use either path: `ShellIntegrationMode.PowerShellHostedAgent` hosts the agent
+  under PowerShell, and the design session measured a total-block cut-off at **~32,650** on
+  parent → PowerShell → child, consistent with the documented 32,767 `CreateProcess` block. Its
+  failure mode is worse than the shim's: `Process.Start` does not throw, the process starts, and it
+  produces nothing.
+
+  Three attempts to reproduce that here failed **in the instrument** — a one-hop probe that cannot
+  see a loss occurring at the second hop, then a two-hop probe returning zero output at every size
+  including one variable, which is a broken probe reporting itself. So this entry records the design
+  session's number as theirs, unconfirmed by a second method, rather than restating it as agreed.
+  Two measurements are one measurement when the second one did not run.
+
+  The withdrawn claim is left visible on purpose: **a hazard measured away on a path the product does
+  not take is more dangerous than one never measured**, because it retires an argument that was
+  correct.
+
+  **The instrument was wrong first, twice.** Its two readers returned different shapes and the shared
+  parser measured the length of a length, reporting a per-variable limit of "1 character" that looked
+  like a finding; and its search ceiling was returned silently as though it were an answer, which is
+  why the ceiling case now prints "NOT a measurement". Both were caught by a number being absurd
+  rather than by review.
+
+  So the message still says "may be dropped", now because the drop depends on the name rather than
+  because the number is unmeasured.
 - **Status:** `partially-controlled`
 
 ### DC-028 — A synthetic benchmark measures the benchmark

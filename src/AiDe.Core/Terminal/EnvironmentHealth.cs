@@ -40,6 +40,30 @@ public static class EnvironmentHealth
     public const int CmdVariableLimit = 8151;
 
     /// <summary>
+    /// The measured cut-off, on <c>NAME=VALUE</c> as a whole — not on the value.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Bisected 2026-09-01</b>, by handing a child a controlled environment and asking the
+    /// CHILD what it received (the parent's copy is not evidence — DC-027's own rule). The boundary
+    /// is exact and identical at four name lengths:</para>
+    /// <code>
+    /// name len   max value   name + 1 + value
+    ///        3       8,186              8,190
+    ///       13       8,176              8,190
+    ///       40       8,149              8,190
+    ///      120       8,069              8,190
+    /// </code>
+    /// <para><b>So the limit is on the PAIR</b>, and comparing the value alone is wrong for any name
+    /// longer than 39 characters: an 8,150-char value under a 40-char name passes a value-only check
+    /// and is dropped by cmd.exe. Latent here — the longest name on the measured machine is 34 — and
+    /// it stops being latent the moment something adds longer names, which is exactly what §3 of the
+    /// session-registration spec proposes.</para>
+    /// <para><see cref="CmdVariableLimit"/> is kept for the PATH message, where it reads as the
+    /// budget a user has to get under.</para>
+    /// </remarks>
+    public const int CmdPairLimit = 8190;
+
+    /// <summary>
     /// Findings about the whole environment, in words a user can act on. Empty when healthy.
     /// </summary>
     /// <remarks>
@@ -58,7 +82,7 @@ public static class EnvironmentHealth
         var oversized = Environment.GetEnvironmentVariables()
             .Cast<System.Collections.DictionaryEntry>()
             .Select(e => (Name: e.Key?.ToString() ?? string.Empty, Length: e.Value?.ToString()?.Length ?? 0))
-            .Where(v => v.Length > CmdVariableLimit
+            .Where(v => v.Name.Length + 1 + v.Length > CmdPairLimit
                 && !string.Equals(v.Name, "PATH", StringComparison.OrdinalIgnoreCase))
             .OrderByDescending(v => v.Length)
             .ToList();
