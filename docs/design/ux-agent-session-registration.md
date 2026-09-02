@@ -137,12 +137,30 @@ the child starts missing **something it was given**, not necessarily the thing y
 | **Never rewrite or trim `PATH`** to make room | DC-027's own control refuses to: *"a tool that silently rewrites PATH to make itself work has hidden the problem from the only person who can fix it"* |
 | **Verify by asking the child, not the parent** | DC-027's generalisation verbatim: *"when a child process misbehaves, ask the child what it received before theorising about what was sent. The parent's copy is not evidence."* An acceptance test must read the variables from **inside** a spawned session |
 
-**And the residual risk is live.** DC-027 is `partially-controlled`: `EnvironmentHealth.Inspect`
-checks **only PATH**, and only against cmd's documented limit. *"Any other oversized variable fails
-identically and is unchecked."* Nine new variables are nine unchecked ones. Whoever builds §3 should
-decide whether the inspection widens with it — adding variables to an environment whose only
-health check ignores them is how the next instance of DC-027 gets built by the code written to
-avoid it.
+**Correction, and the corrected version is sharper.** This section first said DC-027's inspection
+covers *"only PATH … any other oversized variable fails identically and is unchecked"*, citing the
+register. **That claim is stale** — Core checked the code rather than the entry, and
+`EnvironmentHealth.Inspect` has scanned **every** environment variable against `CmdVariableLimit`
+since `192fb3d` (`EnvironmentHealth.cs:58-72`; `PATH` is excluded from that list only because it is
+reported separately). Verified here. The register described a gap that had already been closed, and
+this spec repeated it — the day's own family, arriving in the file where the family is recorded.
+
+**The gap that IS there is on a different axis, and it is the one this section needs.** The
+inspection is **per-variable**. There is no total-block check — no sum anywhere in
+`EnvironmentHealth`, confirmed by reading it. Which is exactly the axis §3 sits on:
+
+> Per-variable, nine short values each pass. Against a **total** limit, nine short values are nine
+> short values — and what gets dropped is something else entirely. Individually fine, and gone.
+
+**So "keep every value short" is not hygiene, it is the only lever there is** against a limit
+nothing measures. Of the four rules above, it is the one with no control behind it.
+
+**Deliberately not proposed here: adding a total-block check.** A total limit needs a *measured*
+number, and DC-027's own entry admits the per-variable cut-off was never bisected — its message says
+"may be dropped" rather than asserting a figure nobody measured. Building a second unmeasured limit
+into the control that exists to catch unmeasured limits would be the class again, one layer in. **If
+§3 is built, bisect the block limit first**, the way the PATH one never was; then the check is worth
+having.
 
 **Read §3 and DC-027 together, not as separate items.** They are the same seam from opposite sides:
 DC-027 is what the child failed to receive, §3 is what we now want it to receive.
