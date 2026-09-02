@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 50 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 51 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2916,4 +2916,49 @@ for both or split.*
   the shipped shape.**
 - **The generalisation:** *a constructor that starts work must receive everything that work needs, as
   arguments.* Anything set after construction is not available to it, however it is spelled.
+- **Status:** `controlled`
+
+### DC-084 — A capability that does not depend on X is wired only on the path that has X
+
+- **Shape:** a hook, a callback or a registration is assigned inside the method that sets up some
+  larger thing — a workspace, a connection, a document — because that is where the code that fills
+  it lives. The hook itself needs none of that: it reads current state on every call and degrades
+  honestly when the state is absent. But the setup method is **conditional**, so every run that
+  skips it leaves the hook null and every consumer silently gets nothing.
+- **Signature:** an assignment to a long-lived hook sitting inside a method guarded by `if (x is
+  not null)` at its call sites, where the assigned thing does not mention `x`. The tell in the code
+  is a hook whose body already handles the absent case — that handling is evidence it was never
+  meant to be gated. The tell in behaviour is that **the failure is per-RUN, not per-instance**: the
+  same surface works in one launch and not the next, with no difference between them.
+- **Why it survives:** the setup method is the *usual* path, so it runs in development, in every
+  test that builds a full app, and in every session anyone demonstrates. Nothing errors when it is
+  skipped — the consumer's null-conditional call returns null and the feature is simply absent, so
+  the run looks entirely normal. And the neighbouring code often contains the **inverse** of the
+  same mistake with a comment explaining it, which reads as the pattern being understood.
+- **Instance:** 2026-09-02 — `TerminalSurface.EnvironmentFor` was assigned only in
+  `WorkbenchShell.AttachWorkspace`, and both `MainWindow` call sites skip it when the view model
+  returns no queries (daemon unreachable, no default workspace, a failed open). Terminals still
+  open in those runs and every one launched with an **empty environment**: no `AIDE_SESSION`, and
+  critically no `AIDE_CONTRACT_LOG`, so the model `update` event and the `episode-open` /
+  `episode-close` kinds had nowhere to be written. Registration still happened, so the session
+  appeared in the watcher and nothing looked broken — the agent was observed and could not
+  participate. Twelve lines above the bug, the watcher wiring carries a comment explaining why it is
+  done in *both* the constructor and `AttachWorkspace`; the environment contract had the inverse
+  error directly beneath it.
+- **How it was found:** not by reading. The launch record showed `environmentCount: 0` on an agent
+  pane, which looked pane-specific. **Ordering the records across runs** showed `env=5` on either
+  side and `env=0` for every pane in the runs between — including a plain terminal eleven seconds
+  before the agent pane. A pane-level cause cannot produce that. The correction came from a second
+  session sorting the log rather than reading the one record that looked interesting.
+- **Control:** the assignment moved to the constructor, where nothing gates it, and
+  `EnvironmentContractSurvivesNoWorkspaceTests` builds a shell with `queries: null` and asserts the
+  hook is present and returns the session variables. **Observed failing on the shipped shape** —
+  both tests fail with the constructor line removed. A second test asserts the variables that would
+  have to be invented (`AIDE_WORKSPACE`, `AIDE_WORKTREE`, `AIDE_BRANCH`) are **absent** rather than
+  filled with `ResolveGitFacts`'s fallback, guarding the fix against the wrong version of itself:
+  always-present is only correct while what it returns stays truthful.
+- **The generalisation worth keeping:** *ask of every assignment whether the thing being assigned
+  depends on the thing being set up.* Where it does not, it belongs at construction — the setup
+  method is a convenient place, not a correct one, and convenience is how a capability ends up
+  conditional on something it has nothing to do with.
 - **Status:** `controlled`

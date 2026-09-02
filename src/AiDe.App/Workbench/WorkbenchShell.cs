@@ -127,6 +127,19 @@ public sealed class WorkbenchShell : IDisposable
         _factory = new SurfaceContentFactory(
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
             queries is not null ? SearchWorkspaceAsync : null);
+
+        // The environment contract does not depend on a workspace, so it must not be gated behind
+        // one. It was assigned ONLY in AttachWorkspace, which both call sites skip when the daemon
+        // does not hand back queries — and a run that never attaches a workspace still opens
+        // terminals. MEASURED in the launch log: env=5 in runs on either side, env=0 for every pane
+        // in the runs between, including a plain terminal-1 eleven seconds before an agent pane.
+        // The symptom is per-RUN, not per-pane, which is what says the gate is the cause.
+        //
+        // This is the inverse of the mistake the watcher wiring above avoids: wiring only the
+        // constructor leaves surfaces inert until a workspace arrives, and wiring only
+        // AttachWorkspace leaves them inert when one never does. The hook reads current state on
+        // every call, so assigning it here is enough — AttachWorkspace no longer needs to.
+        TerminalSurface.EnvironmentFor = AgentEnvironmentFor;
         Manager = new DockingManager();
         AutomationProperties.SetName(Manager, "Workbench");
 
@@ -510,10 +523,10 @@ public sealed class WorkbenchShell : IDisposable
         _workspaceRoot = workspaceRoot;
         if (!string.IsNullOrEmpty(workspaceRoot)) TerminalSurface.WorkingDirectory = workspaceRoot;
 
-        // The environment contract (docs/design/ux-agent-session-registration.md §3). Set here
-        // because this is where the git facts and the harness choice already live; computing them
-        // in the terminal would be a second definition of the same quantities.
-        TerminalSurface.EnvironmentFor = AgentEnvironmentFor;
+        // The environment contract (docs/design/ux-agent-session-registration.md §3) is assigned in
+        // the CONSTRUCTOR, not here. It used to be assigned only here, and both call sites skip
+        // AttachWorkspace when the daemon hands back no queries — so a run without a workspace gave
+        // every terminal an empty environment while looking entirely normal.
 
         // Prompt dispatch: the shell owns the terminal, the daemon owns the receipt (D1), so the
         // choreography runs here with the two durable phases supplied by whoever holds the store.
@@ -2117,7 +2130,15 @@ public sealed class WorkbenchShell : IDisposable
         // needed to identify the session, and none saying where the session is observed.
         var coordLog = _watcherHost?.CoordLogDirectory;
         if (!string.IsNullOrEmpty(coordLog)) { env["AIDE_CONTRACT_LOG"] = coordLog; }
-        if (!string.IsNullOrEmpty(_gitFacts.WorktreePath)) { env["AIDE_WORKTREE"] = _gitFacts.WorktreePath; }
+
+        // Only when there is a real root to have resolved it from. With no workspace,
+        // ResolveGitFacts returns the display name "workspace" as its fallback path — a value the
+        // IDENTITY record must send because the attribute is required there, and one an environment
+        // variable must not, because an agent would take AIDE_WORKTREE=workspace for a path.
+        if (!string.IsNullOrEmpty(root) && !string.IsNullOrEmpty(_gitFacts.WorktreePath))
+        {
+            env["AIDE_WORKTREE"] = _gitFacts.WorktreePath;
+        }
 
         // Omitted rather than sent as "(unknown)": the identity record must send SOMETHING because
         // the attribute is required there, but an environment variable can simply be absent — and

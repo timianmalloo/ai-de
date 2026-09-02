@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T18:41:04Z",
+  "generated": "2026-09-02T20:03:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8102,6 +8102,40 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tests/fixtures/site-rules.json"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0402",
+      "shortname": "capture-mitigation",
+      "datetime": "2026-09-02T20:03:06Z",
+      "session": "dream-job",
+      "prompt": "dream.py capture-mitigation",
+      "summary": "Captured mit-0005 (red-green): TerminalSurface.EnvironmentFor was assigned only inside AttachWorkspace, and both MainWindow call si",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0403",
+      "shortname": "fix-environment-contract-run-level",
+      "datetime": "2026-09-02T20:03:16Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "yes do next steps",
+      "summary": "Fixed the environment contract never reaching terminals in runs where no workspace attaches (DC-084). TerminalSurface.EnvironmentFor was assigned only in AttachWorkspace, which both MainWindow call sites skip when the view model returns no queries; moved to the WorkbenchShell constructor where nothing gates it. Also stopped AIDE_WORKTREE taking ResolveGitFacts's fallback display name when there is no root - absent is the honest form, matching AIDE_BRANCH. Two tests, both observed failing with the constructor line removed. The finding was corrected mid-investigation by ai-de-a7, who ordered the launch records across runs and showed env=0 was per-RUN not per-pane - a plain terminal had env=0 eleven seconds before the agent pane that drew attention. Deleted my own duplicate test file: Core had already landed the Executable init-property fix (DC-083) that my first two tests covered, found from the log record I sent them.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
