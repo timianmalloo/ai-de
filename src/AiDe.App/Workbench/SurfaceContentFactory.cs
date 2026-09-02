@@ -165,12 +165,14 @@ public sealed class SurfaceContentFactory(
         // An "agent:<exe>" surface id carries which executable this pane runs, so the layout — which
         // is persisted — remembers it. Storing it anywhere else would restore an agent pane as a
         // shell after a restart.
-        new TerminalSurface(surface.SurfaceId, surface.Title)
-        {
-            Executable = surface.SurfaceId.StartsWith("agent:", StringComparison.Ordinal)
+        // PASSED IN, not set afterwards. As an object initializer this ran after the constructor,
+        // and the constructor starts the session — so the session always launched with a null
+        // executable and every agent pane became a plain shell.
+        new TerminalSurface(
+            surface.SurfaceId, surface.Title,
+            executable: surface.SurfaceId.StartsWith("agent:", StringComparison.Ordinal)
                 ? surface.SurfaceId["agent:".Length..].Split('#')[0]
-                : null,
-        };
+                : null);
 
     /// <summary>
     /// The Loomkeeper Sessions surface: observed sessions with honest liveness and Not Recorded for

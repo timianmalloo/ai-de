@@ -1167,7 +1167,7 @@ indistinguishable from a broken feature).
 
 | Member | Summary |
 |---|---|
-| `TerminalSurface(string sessionId, string title, int columns = 80, int rows = 24)` | **(gap)** |
+| `TerminalSurface(` | **(gap)** |
 | `string SurfaceId { get; }` | The layout surface id this pane renders — stable across restart, so it keys the customization store. |
 | `string? DisplayName` | The user-chosen tab caption, or null to use the model title. See `HasDisplayName`. |
 | `event EventHandler? DisplayNameChanged` | Raised when the user renames this terminal, so the shell can refresh the tab caption. |
@@ -1185,13 +1185,17 @@ indistinguishable from a broken feature).
 | `Func<string, IReadOnlyDictionary<string, string>>? EnvironmentFor { get; set; }` | Extra environment for a session, by its id. Null (the default) means the child inherits exactly as it always has. |
 | `AgentReadinessWatcher? AgentReadiness { get; private set; }` | Watches for an agent's prompt marker, when this session runs one. |
 | `string CommandLine { get; set; } = "powershell.exe"` | What this pane runs. PowerShell unless a caller asks for something else. |
-| `string? Executable { get; init; }` | Which executable THIS pane runs, chosen when it is created. |
+| `string? Executable { get; }` | Which executable THIS pane runs, chosen when it is created. |
 | `AgentReadinessProfiles Profiles { get; set; } = AgentReadinessProfiles.BuiltIn` | The readiness markers in force, built in plus whatever the workspace configured. |
 | `IReadOnlyList<string> AvailableAgents` | Agent executables this build can watch for readiness AND that exist on PATH. |
 | `event EventHandler<string>? AttentionRequired` | Raised the first time this pane starts waiting on a person. |
 | `string? AwaitingUser` | What this pane is waiting for, in words, or null when nothing is. |
 | `ReadinessEvidence ReadinessEvidence` | How this session's readiness is established, for the dispatch policy to consult. |
 | `void Dispose()` | **(gap)** |
+
+### `TerminalSurface(`
+
+- **`executable`** — The CLI this pane runs, or null for a plain shell. A parameter rather than a settable property because the constructor starts the session and therefore needs the value already — see `xecutable`.
 
 ### `ITerminalSession? Session`
 
@@ -1245,12 +1249,34 @@ What this pane runs. PowerShell unless a caller asks for something else.
 **Remarks.** An agent CLI named here gets a readiness watcher and can therefore be dispatched to; a shell
 gets OSC 133 integration instead, which is stronger.
 
-### `string? Executable { get; init; }`
+### `string? Executable { get; }`
 
 Which executable THIS pane runs, chosen when it is created.
 
-**Remarks.** Per surface rather than the static default: an agent terminal and a shell terminal coexist,
-and a single global would make opening one silently change the other on its next restart.
+**Remarks.** Per surface rather than the static default: an agent terminal and a shell terminal
+coexist, and a single global would make opening one silently change the other on its next
+restart.
+
+
+
+
+
+**A CONSTRUCTOR PARAMETER, and it must stay one.** This was
+`{ get; init; }`, set by an object initializer at the one construction site. An object
+initializer runs AFTER the constructor body, and the constructor starts the session — so
+`tartAsync` read this property while it was still `null`, every time, for
+every pane. Measured: 243 `terminal.start` records across two days, `executable`
+null in all 243, including a surface whose id was `agent:claude#aa8dcb` (DC-083).
+
+
+
+
+
+The consequence ran the whole way down: null executable → the launch fell back to the
+shell → no readiness profile matched `powershell` → `ShellIntegrationMode.PowerShell`
+instead of `PowerShellHostedAgent` → `AgentCommandLine` was never called at all. A
+fix to that method was verified correct in isolation and could not have changed anything a
+user saw, because the branch reaching it was never taken.
 
 ### `AgentReadinessProfiles Profiles { get; set; } = AgentReadinessProfiles.BuiltIn`
 

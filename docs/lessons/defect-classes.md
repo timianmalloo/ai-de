@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 49 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 50 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2875,4 +2875,45 @@ for both or split.*
   back to its source decays without telling anyone.* Either bind it to what it counts, or do not
   state it — because the page cannot say "counted, not estimated" on its own authority once the
   counting was a one-off.
+- **Status:** `controlled`
+
+### DC-083 — Work started in a constructor reads a property the object initializer has not set yet
+
+- **Shape:** a type takes a value as `{ get; init; }`, and its one construction site supplies that
+  value in an **object initializer**. The constructor also *starts something* — a session, a timer, a
+  load — which reads the property. The initializer runs **after** the constructor body, so the
+  started work always sees the default. The object is correct a microsecond later, and forever after;
+  only the thing that mattered ran too early.
+- **Signature:** a constructor whose body contains `_ = SomethingAsync(…)`, `Task.Run`, or an event
+  subscription that fires immediately, in a type with `init` properties that the started work reads.
+  `async` is not protection: the method body runs synchronously up to its first `await`, and the read
+  is usually in the first three lines. The tell in review is that the property's own documentation
+  says *"chosen when it is created"* while the value arrives after creation.
+- **Why it survives:** every part is individually correct and reads correctly. The factory sets the
+  property; the property is used; the constructor starts the work; the object ends up fully
+  populated. Nothing is null by the time any test that inspects the object looks at it — which is
+  why unit tests over the constructed instance pass. Only a record of what the *started work saw*
+  distinguishes it, and that record did not exist for two days.
+- **Instance:** 2026-09-02 — `TerminalSurface.Executable` was `{ get; init; }`, set by an object
+  initializer at `SurfaceContentFactory`'s single call. The constructor's last statement is
+  `_ = StartAsync(...)`, and `StartAsync`'s first statement is `var launch = Executable ?? CommandLine`.
+  **Measured: 243 `terminal.start` records across two days, `executable` null in all 243** —
+  including the one whose surface id was `agent:claude#aa8dcb` and whose tab read "Claude Code".
+
+  **It defeated two rounds of reading because every step downstream is correct for a null input:**
+  null executable → the launch falls back to the shell → no readiness profile matches `powershell` →
+  `ShellIntegrationMode.PowerShell` rather than `PowerShellHostedAgent` → **`AgentCommandLine` is
+  never called**. A real defect in `AgentCommandLine` (DC-081) was found, fixed, proven correct in
+  isolation, and could not change anything the user saw — because the branch that reaches it was
+  never taken. **A correct fix to unreachable code is indistinguishable from no fix**, and only the
+  recorded launch decision told the two apart.
+- **Control:** the value is a **constructor parameter**. Not "set it earlier" — an initializer cannot
+  be set earlier — but a shape in which the omission does not compile into a silent default. Three
+  tests assert the recorded launch decision: the executable resolves from the surface id, the agent
+  pane selects hosted-agent mode, and a plain terminal is still a plain shell (a DC-016 guard that is
+  not hypothetical — hardcoding hosted mode would satisfy the first two while turning the default
+  layout's terminal, 231 of the 243 measured records, into an agent launch). **Observed failing on
+  the shipped shape.**
+- **The generalisation:** *a constructor that starts work must receive everything that work needs, as
+  arguments.* Anything set after construction is not available to it, however it is spelled.
 - **Status:** `controlled`

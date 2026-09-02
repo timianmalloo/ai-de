@@ -40,8 +40,16 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
     private TerminalView? _view;
     private bool _disposed;
 
-    public TerminalSurface(string sessionId, string title, int columns = 80, int rows = 24)
+    /// <param name="executable">
+    /// The CLI this pane runs, or null for a plain shell. A parameter rather than a settable
+    /// property because the constructor starts the session and therefore needs the value already —
+    /// see <see cref="Executable"/>.
+    /// </param>
+    public TerminalSurface(
+        string sessionId, string title, int columns = 80, int rows = 24, string? executable = null)
     {
+        Executable = executable;
+
         _screen = new TerminalScreen(columns, rows);
         _parser = new VtParser(_screen);
         _dispatcher = Dispatcher;
@@ -252,10 +260,24 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
     /// Which executable THIS pane runs, chosen when it is created.
     /// </summary>
     /// <remarks>
-    /// Per surface rather than the static default: an agent terminal and a shell terminal coexist,
-    /// and a single global would make opening one silently change the other on its next restart.
+    /// <para>Per surface rather than the static default: an agent terminal and a shell terminal
+    /// coexist, and a single global would make opening one silently change the other on its next
+    /// restart.</para>
+    ///
+    /// <para><b>A CONSTRUCTOR PARAMETER, and it must stay one.</b> This was
+    /// <c>{ get; init; }</c>, set by an object initializer at the one construction site. An object
+    /// initializer runs AFTER the constructor body, and the constructor starts the session — so
+    /// <see cref="StartAsync"/> read this property while it was still <c>null</c>, every time, for
+    /// every pane. Measured: 243 <c>terminal.start</c> records across two days, <c>executable</c>
+    /// null in all 243, including a surface whose id was <c>agent:claude#aa8dcb</c> (DC-083).</para>
+    ///
+    /// <para>The consequence ran the whole way down: null executable → the launch fell back to the
+    /// shell → no readiness profile matched <c>powershell</c> → <c>ShellIntegrationMode.PowerShell</c>
+    /// instead of <c>PowerShellHostedAgent</c> → <c>AgentCommandLine</c> was never called at all. A
+    /// fix to that method was verified correct in isolation and could not have changed anything a
+    /// user saw, because the branch reaching it was never taken.</para>
     /// </remarks>
-    public string? Executable { get; init; }
+    public string? Executable { get; }
 
     private string? _lastAnnouncedAttention;
 
