@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T00:25:04Z",
+  "generated": "2026-09-02T00:47:02Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7674,6 +7674,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tests/AiDe.App.Tests/Sta.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0380",
+      "shortname": "closing-captures",
+      "datetime": "2026-09-02T00:47:02Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Cross-session close: DC-027 vs section 3 of the session-registration spec, and what the controls cannot see.",
+      "summary": "Three durable captures. (1) An exception to a control is a predicate over what makes the case exceptional, never an identifier - a list is silently correct after the case stops deserving it and hides the next miss; named the three list-shaped controls in this repo without converting them. (2) DC-027's residual risk was STALE - per-variable oversize has been checked for every variable since 192fb3d; the real unchecked axis is total block size, which is where adding nine variables would bite. Did NOT add a total-block check: it needs a measured limit and the per-variable cut-off was never bisected, so building a second unmeasured limit into the control that catches unmeasured limits would be the class again. (3) Nothing counts an absent cross-reference - verified 79 declared classes, 0 graph nodes, 0 links able to name one, so a spec cannot link to a hazard even if its author wants to. Recorded the honest tally: artifact properties caught everything countable, the other session caught what could not be counted, reading one's own work caught nothing all day.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/collaboration/session-contracts.md"
       ],
       "tags": [],
       "outcome": "success"
