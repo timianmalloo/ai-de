@@ -76,7 +76,9 @@ they will show.
   most improves the surface the user's collaboration goal depends on.**
 
 **Should-fix next:**
-- Teaching/centered empty states for **Board / Leaderboard / Ledger** (mirror the Sessions hint).
+- ✅ **DONE:** Teaching/centered empty states for **Board / Leaderboard / Ledger** — `ListPane` now
+  renders a single centred, width-constrained message host for the empty case instead of a stray line
+  top-left; the status text carries the teaching copy.
 - **Graph legend condensation** under a width threshold + a canvas height floor, so the graph is usable
   in a narrow column.
 

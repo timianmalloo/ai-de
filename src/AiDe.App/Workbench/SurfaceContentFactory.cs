@@ -379,10 +379,35 @@ public sealed class SurfaceContentFactory(
     /// </summary>
     private static FrameworkElement ListPane(Surface surface, System.Collections.IEnumerable rows, string displayMember, string statusMessage, string itemNoun)
     {
+        var rowList = rows.Cast<object>().ToList();
+
+        // Empty state: a single centred, width-constrained message that reads as an intentional
+        // "nothing here yet" with a focal point — not a stray muted line top-left in a vast pane
+        // (U9/DX9, smoke video 2026-09-02). The status message already carries the teaching text.
+        if (rowList.Count == 0)
+        {
+            var empty = new TextBlock
+            {
+                Text = statusMessage,
+                TextWrapping = TextWrapping.Wrap,
+                TextAlignment = TextAlignment.Center,
+                MaxWidth = 380,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(24),
+            };
+            empty.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+
+            var host = new Grid { MinHeight = 120 };
+            host.Children.Add(empty);
+            AutomationProperties.SetName(host, $"{surface.Title} — {statusMessage}");
+            return host;
+        }
+
         var list = new ListBox
         {
             DisplayMemberPath = displayMember,
-            ItemsSource = rows,
+            ItemsSource = rowList,
             BorderThickness = new Thickness(0),
             Background = null,
         };

@@ -277,8 +277,9 @@ public sealed class SurfaceContentTests
         var status = OnStaThread(() =>
         {
             var content = new SurfaceContentFactory(null).Create(new Surface("board", "board", "Board"));
-            var stack = Assert.IsType<StackPanel>(Unwrap(content));
-            return stack.Children.OfType<TextBlock>().Single().Text;
+            // Empty state is now a centred message host (Grid), not a top-left line in a StackPanel.
+            var host = Assert.IsType<Grid>(Unwrap(content));
+            return host.Children.OfType<TextBlock>().Single().Text;
         });
 
         Assert.Contains("not available", status, StringComparison.OrdinalIgnoreCase);
@@ -347,8 +348,8 @@ public sealed class SurfaceContentTests
         var status = OnStaThread(() =>
         {
             var content = new SurfaceContentFactory(null).Create(new Surface("ledger", "ledger", "Ledger"));
-            var stack = Assert.IsType<StackPanel>(Unwrap(content));
-            return stack.Children.OfType<TextBlock>().Single().Text;
+            var host = Assert.IsType<Grid>(Unwrap(content));
+            return host.Children.OfType<TextBlock>().Single().Text;
         });
 
         Assert.Contains("not available", status, StringComparison.OrdinalIgnoreCase);

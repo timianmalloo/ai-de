@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T22:12:53Z",
+  "generated": "2026-09-02T22:19:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8250,6 +8250,25 @@ window.AUDIT_DATA = {
         "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
         "docs/reviews/ui-watcher-surfaces-9-3.md",
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0410",
+      "shortname": "ui-design-empty-states",
+      "datetime": "2026-09-02T22:19:31Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "do next steps (should-fix-next: teaching empty states for watcher list surfaces)",
+      "summary": "Elevated the watcher list-surface empty states (Board/Leaderboard/Ledger): ListPane now renders a single centred, width-constrained message host for the empty case (a focal point) instead of a stray muted line top-left in a vast pane (U9/DX9). Updated 2 empty-state tests to the new Grid structure. App 378 green.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "tests/AiDe.App.Tests/SurfaceContentTests.cs",
+        "docs/reviews/ui-watcher-surfaces-9-3.md"
       ],
       "tags": [],
       "outcome": "success"
