@@ -2957,6 +2957,26 @@ for both or split.*
   have to be invented (`AIDE_WORKSPACE`, `AIDE_WORKTREE`, `AIDE_BRANCH`) are **absent** rather than
   filled with `ResolveGitFacts`'s fallback, guarding the fix against the wrong version of itself:
   always-present is only correct while what it returns stays truthful.
+- **The sweep (CI2), prompted by a reviewer asking whether anything else in that pair is
+  single-sited.** Measured rather than reasoned: the whole codebase holds **three** static settable
+  hooks with no default, and the discriminator turned out not to be how many places assign them.
+
+  | Hook | Default | Verdict |
+  |---|---|---|
+  | `TerminalSurface.EnvironmentFor` | `null` | **The defect.** Consumer null-conditionals it, so absent reads as "no environment wanted". |
+  | `TerminalSurface.WorkingDirectory` | `null` | Correct. It genuinely depends on a workspace, and the consumer falls back to the current directory. |
+  | `WorkbenchDiagnostics.Sink` | `null` | Correct. Null *is* the production value — it means "write to the log file"; only tests set it. |
+
+  So the rule is not "assign it in both places", which is what the neighbouring comment models and
+  what a gate would have enforced. It is: **a hook is safe when its own default is a working value.**
+  `Profiles` defaults to `AgentReadinessProfiles.BuiltIn` and `CommandLine` to `powershell.exe`, and
+  neither can be broken by a skipped setup no matter where it is assigned. The one hook that was
+  wrong was wrong *structurally* — null default, plus a consumer that treats null as "skip".
+
+  **No gate.** Three sites, one of which was the defect and is now fixed at the structure rather than
+  the assignment: a scanner enforcing "assign in both places" would pass the two correct hooks for the
+  wrong reason and could not have caught this one any earlier than the constructor line does.
+
 - **The generalisation worth keeping:** *ask of every assignment whether the thing being assigned
   depends on the thing being set up.* Where it does not, it belongs at construction — the setup
   method is a convenient place, not a correct one, and convenience is how a capability ends up
