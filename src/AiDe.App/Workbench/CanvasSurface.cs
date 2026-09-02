@@ -308,7 +308,10 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         FocusLeaveRequested?.Invoke(this, direction);
     }
 
-    private sealed record CanvasMessage(
+    // internal (not private) so the JS↔C# wire contract for node.contextmenu is provable headlessly
+    // without a live WebView2 — the property names here must match what CanvasPage.Html posts, and a
+    // drift silently strips NodeKind/IsKnowledge and offers the wrong viewer menu (E2E-A / T-W4).
+    internal sealed record CanvasMessage(
         string Kind, string? Direction, string? NodeId, string? NodeKind = null, bool IsKnowledge = false);
 
     /// <summary>

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T18:31:16Z",
+  "generated": "2026-09-02T18:37:42Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7998,6 +7998,25 @@ window.AUDIT_DATA = {
         "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
         "tests/AiDe.App.Tests/SurfaceContentTests.cs",
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0400",
+      "shortname": "implement-tw4-node-menu-wire-contract",
+      "datetime": "2026-09-02T18:37:42Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "do the next tasks (T-W4: confirm node right-click viewer menu end-to-end)",
+      "summary": "T-W4 confirmed: node right-click 'Open as...' menu is fully wired on BOTH the graph canvas and the class diagram, dispatches to Source/Class/Sequence/Metadata viewers per NodeViewMenu.OptionsFor (IntelliJ grammar: type->class diagram, method->sequence, doc->read). Closed the one headless gap with a JS<->C# wire-contract test pinning the node.contextmenu payload (nodeKind/isKnowledge) against the real CanvasMessage record (made internal) so drift cannot silently strip the fields (E2E-A/E12). 11 menu/wire tests green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/CanvasSurface.cs",
+        "tests/AiDe.App.Tests/NodeContextMenuWireContractTests.cs",
+        "docs/reviews/ui-smoke-test-9-2.md"
       ],
       "tags": [],
       "outcome": "success"

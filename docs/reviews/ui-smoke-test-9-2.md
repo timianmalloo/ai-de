@@ -79,14 +79,14 @@ selection trigger still swaps to the highlight text colour when a row is selecte
 | **T-W1 ✅** | Preserve/route focus on a **session/terminal open**: `Adapter.ActivateInView` focuses the newly-opened terminal (you open it to type in it), so focus lands on the session rather than snapping to seq-diagrams or leaving a stale selection | #2 |
 | **T-W2 ✅** | Native-drag reconcile no longer falls back to the destructive kind-reclassify: `ReconcileFromView` maps by **position only** and **reverts an unmappable drag** (dragged pane snaps back) instead of re-seating bystander zones. Kind conversion is now persistence-only | #3 |
 | **T-W3 ✅** | Graph canvas **fills its pane**: a `ResizeObserver` on the stage re-frames the settled layout (`fit`+`place`) when the pane grows — cheap (view transform only, no re-layout) | #5 |
-| **T-W4** | Confirm/repair the **node right-click** viewer menu end-to-end | #6 |
+| **T-W4 ✅** | Confirm/repair the **node right-click** viewer menu end-to-end | #6 |
 | **T-W5** | **Loomwatcher session registration** for agent terminals (coordinate with Core) so the Sessions surface + status reflect a running Claude Code session | #7 |
 
 ## 4. Status
 
 | | |
 |---|---|
-| **Completed** | Terminal: **T-T1** arrows/DECCKM, **T-T2** function/modifier keys, **T-T3** bracketed paste, **T-T4** alternate screen, **T-T5** mouse tracking. Windowing: **Slice 2** list legibility (#4), **T-W1** focus-on-session-open (#2), **T-W2** drag no-scatter (#3), **T-W3** graph canvas fill (#5). Sessions (#7) is Core's DC-081 (controlled) |
-| **Remaining** | **T-T6** (DA/DSR device-status replies, DECSTBM scroll region + IL/DL — for programs that probe the terminal or scroll a region), **T-W4** (confirm the node right-click viewer menu #6 end-to-end — `NodeViewMenu` is built and wired; needs functional confirmation), and mouse **motion** reporting (`?1002`/`?1003` drag, beyond click/wheel) |
-| **Best next action** | Functionally verify the terminal against Claude Code (arrows/menu, paste, full-screen render, mouse) in a fresh build; then T-T6 if a program needs device-status/scroll-region |
+| **Completed** | Terminal: **T-T1** arrows/DECCKM, **T-T2** function/modifier keys, **T-T3** bracketed paste, **T-T4** alternate screen, **T-T5** mouse tracking. Windowing: **Slice 2** list legibility (#4), **T-W1** focus-on-session-open (#2), **T-W2** drag no-scatter (#3), **T-W3** graph canvas fill (#5), **T-W4** node right-click viewer menu (#6 — confirmed wired on the graph canvas *and* the class diagram; dispatches to Source/Class/Sequence/Metadata; a JS↔C# wire-contract test now pins the `node.contextmenu` payload so `nodeKind`/`isKnowledge` cannot silently drift). Plus **UI-EMPTY-STATE-BUILD** — workspace-dependent surfaces say "Open a workspace" not "not available in this build". Sessions (#7) is Core's DC-081 (controlled) |
+| **Remaining** | **T-T6** (DA/DSR device-status replies, DECSTBM scroll region + IL/DL — for programs that probe the terminal or scroll a region), and mouse **motion** reporting (`?1002`/`?1003` drag, beyond click/wheel) |
+| **Best next action** | Functionally verify the terminal against Claude Code (arrows/menu, paste, full-screen render, mouse) in a fresh build — **gated on the agent actually launching** (DC-081 landed+tested; confirm the running build isn't stale); then T-T6 if a program needs device-status/scroll-region |
 | **Needs user functional verification** | The rendered terminal fidelity (arrows/keys/paste/alt-screen/mouse — beyond headless unit tests), the graph canvas fill, and the felt docking/focus behaviour |
