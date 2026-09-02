@@ -962,9 +962,25 @@ for both or split.*
   received** before theorising about what was sent. The parent's copy is not evidence. The cheap
   decisive probe is to run the same thing with no part of your product involved: if it fails there
   too, the investigation moves out of your codebase in one step instead of three.
-- **Residual risk:** only PATH is inspected, and only against cmd's documented limit. Any other
-  oversized variable fails identically and is unchecked; the exact cut-off was never bisected, so the
-  message says "may be dropped" rather than asserting a number nobody measured.
+- **Residual risk — CORRECTED 2026-09-01, and the correction is itself an instance.** This entry
+  read *"only PATH is inspected … any other oversized variable fails identically and is unchecked"*.
+  That stopped being true at `192fb3d`: `EnvironmentHealth.Inspect` now scans **every** environment
+  variable against `CmdVariableLimit` and names the oversized ones. The control was widened and the
+  register was not, so the register described a weaker control than the one that shipped — and the
+  design session, reading it carefully and citing it correctly, reported the gap as live while
+  planning §3 of the session-registration spec. **The narrative and the artifact disagreed and the
+  narrative was trusted**, which is the day's own family pointed at this file.
+
+  **What IS still unchecked, and it is a different axis than the one recorded.** The inspection is
+  **per-variable**. There is no check on the **total size of the environment block** — no sum
+  anywhere in `EnvironmentHealth` — and that is the axis where a *total* limit makes one large value
+  cost what several small ones do, so the loss lands on an unrelated variable that is individually
+  fine. Anything that ADDS variables (§3 of the session-registration spec proposes nine) pushes on
+  exactly the limit nothing measures, and the symptom would be indistinguishable from this class's
+  original instance: a child process whose PATH is simply gone.
+
+  The exact per-variable cut-off was still never bisected, so the message says "may be dropped"
+  rather than asserting a number nobody measured.
 - **Status:** `partially-controlled`
 
 ### DC-028 — A synthetic benchmark measures the benchmark
