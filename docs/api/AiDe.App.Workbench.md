@@ -838,10 +838,12 @@ dashed lifelines, and ordered messages as horizontal arrows drawn top-to-bottom 
 calls, dashed/open for returns, a loop for self-messages. Dependency-free native WPF, no WebView2,
 mirroring `ClassDiagramSurface`.
 
-**Remarks.** **Scaffold.** A faithful sequence diagram needs ordered call data the graph does not yet emit
-(Core ask `session-contracts §4k`). This surface renders any `SequenceModel` it is
-given and shows an explicit empty state otherwise, so it is ready to wire to the real feed when it
-lands — the rendering and layout are done and tested now.
+**Remarks.** **No longer a scaffold.** This said the ordered call data was something "the graph does not yet
+emit". It does: `calls_at` assertions carry the callee, the member and the call site, and
+`WorkbenchShell.ShowNodeInSequenceDiagramsAsync` feeds them here through
+`InteractionAsync`. Measured on the workspace where this surface was reported empty:
+**4,967** of them. The remark outlived its subject and kept asserting a gap that had closed,
+which is how the empty state below came to blame an extractor that had already done the work.
 
 | Member | Summary |
 |---|---|
@@ -852,7 +854,7 @@ lands — the rendering and layout are done and tested now.
 | `int MessageCount` | Messages drawn by the last render (test hook). |
 | `string? NodeId { get; private set; }` | The node whose interactions are shown, or null when nothing has been loaded (Phase E). |
 | `void ShowFor(string nodeId, SequenceModel model)` | Shows a specific node's interactions and records which node, so a re-render does not re-fetch. |
-| `void Show(SequenceModel model)` | Renders the interaction, or the empty state when it has no participants. |
+| `void Show(SequenceModel model, string? nodeId = null)` | Renders the interaction, or the empty state when it has no participants. |
 
 ## `SequenceMessageKind`
 

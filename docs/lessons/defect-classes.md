@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 53 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 54 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3118,4 +3118,38 @@ for both or split.*
   cleanly in code is not a path the OS agrees with.* Where an id reaches a filesystem, a network
   route, a URL or a shell, it crosses into a grammar it was never designed for — and the failure
   mode is not an error but a **successful write to somewhere else**.
+- **Status:** `controlled`
+
+### DC-087 — An empty state explains itself with a cause it never checked
+
+- **Shape:** a surface has nothing to render and says so, and then adds *why*. The explanation is
+  written once, when one reason is the only reason there is. Later the surface acquires other ways of
+  being empty — the ordinary one, usually — and the single explanation is shown for all of them. It
+  is confidently wrong exactly when a user is most likely to act on it, because a person reading
+  "nothing here, and here is why" investigates the why.
+- **Signature:** an empty-state string containing a **causal clause** — *needs X · waiting for Y ·
+  not yet emitted · renders as soon as Z lands* — held in one field and rendered from more than one
+  path. The tell is that the surface names a subsystem it has never queried. A second tell: the
+  explanation describes a gap that has since closed, because prose about "not yet" has no expiry.
+- **Why it survives:** it reads as helpfulness and it is true when written. Nothing in a test suite
+  objects to a string. And the wrongness is invisible from inside the surface — the surface has no
+  idea whether the claim holds, which is the defect itself.
+- **Instance:** 2026-09-02 — `SequenceDiagramSurface` showed *"Sequence diagrams need ordered call
+  data from the extractor — this surface renders it as soon as that lands"* on a freshly opened tab,
+  before any node was selected. **Measured in the reported workspace: 4,967 `calls_at` assertions.**
+  The extractor had done its job and the feed was wired
+  (`ShowNodeInSequenceDiagramsAsync` → `InteractionAsync`). The owner read it, concluded the call
+  data had not landed, and reported an extractor gap — a correct inference from a confident and
+  wrong statement, costing a round trip.
+
+  **The class remark above it carried the same false claim**, describing the surface as a "scaffold"
+  awaiting data "the graph does not yet emit". The prose outlived its subject in two places, and the
+  one users see is the one that did damage.
+- **Control:** the empty state is chosen per case — a prompt when nothing is selected, a statement
+  about the node when that node returned nothing. Four tests, including one asserting the word
+  *extractor* never appears before a selection, and a guard that a populated model still renders (an
+  unconditional empty state would satisfy the rest). **Observed failing on the shipped message.**
+- **The generalisation:** *an empty state may say what it is waiting for; it may name a cause only
+  when it has observed one.* "Nothing to show" is complete. "Nothing to show because X" is a claim,
+  and a surface that has not looked at X is not entitled to make it.
 - **Status:** `controlled`
