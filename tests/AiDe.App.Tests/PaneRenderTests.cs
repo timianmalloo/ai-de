@@ -26,23 +26,8 @@ namespace AiDe.App.Tests;
 /// </remarks>
 public sealed class PaneRenderTests
 {
-    private static T OnSta<T>(Func<T> work)
-    {
-        T result = default!;
-        Exception? failure = null;
-
-        var thread = new Thread(() =>
-        {
-            try { result = work(); }
-            catch (Exception ex) { failure = ex; }
-        });
-
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        Assert.True(thread.Join(TimeSpan.FromSeconds(60)), "the STA thread did not finish");
-        if (failure is not null) throw failure;
-        return result;
-    }
+    private static T OnSta<T>(Func<T> work) =>
+        Sta.Run<T>(work, 60);
 
     /// <summary>Every readable string in a pane, in render order.</summary>
     /// <remarks>

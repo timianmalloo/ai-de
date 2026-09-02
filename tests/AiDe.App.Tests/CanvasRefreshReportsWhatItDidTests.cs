@@ -51,76 +51,27 @@ public sealed class CanvasRefreshReportsWhatItDidTests
         }
     }
 
+    /// <summary>
+    /// One shared harness (<see cref="Sta.Pump"/>), not a private copy.
+    /// </summary>
+    /// <remarks>
+    /// This file's own subject is what a copied harness costs: it was written by copying another
+    /// file's helper, and inherited a wrapper that reported assertion failures as a broken machine.
+    /// Keeping a private copy here after consolidating the other thirty would be the same mistake
+    /// with the lesson already written down (DC-079).
+    /// </remarks>
     private static void OnUiThread(Func<CanvasSurface, CountingSource, Task> work)
     {
-        Exception? failure = null;
+        var source = new CountingSource();
 
-        var thread = new Thread(() =>
-        {
-            try
+        Sta.Pump<CanvasSurface>(
+            create: () =>
             {
                 var canvas = new CanvasSurface("canvas-1", "Graph");
-                var source = new CountingSource();
                 canvas.GraphSource = source.Get;
-
-                var window = new Window
-                {
-                    Content = canvas, Width = 640, Height = 480,
-                    Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false,
-                };
-
-                window.Show();
-
-                var dispatcher = Dispatcher.CurrentDispatcher;
-                SynchronizationContext.SetSynchronizationContext(
-                    new DispatcherSynchronizationContext(dispatcher));
-
-                var done = false;
-                _ = Task.Run(() => { }).ContinueWith(async _ =>
-                {
-                    try { await work(canvas, source); }
-                    catch (Exception ex) { failure = ex; }
-                    finally { done = true; }
-                }, TaskScheduler.FromCurrentSynchronizationContext());
-
-                var deadline = DateTime.UtcNow + Timeout;
-                while (!done && DateTime.UtcNow < deadline)
-                {
-                    dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
-                    Thread.Sleep(10);
-                }
-
-                if (!done) failure ??= new TimeoutException("the canvas refresh test did not complete");
-
-                window.Close();
-                canvas.Dispose();
-                Dispatcher.CurrentDispatcher.InvokeShutdown();
-            }
-            catch (Exception ex)
-            {
-                failure = ex;
-            }
-        });
-
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        Assert.True(thread.Join(Timeout + TimeSpan.FromSeconds(30)), "the canvas UI thread did not finish");
-
-        // A FAILED ASSERTION IS RETHROWN AS ITSELF. Wrapping everything in "requires the WebView2
-        // runtime" — as the harness this was modelled on does — reports a real defect as a broken
-        // machine, which is the same shape as the defect this file is about: a message naming a
-        // cause that is not the cause. Only an environment failure gets the environment message.
-        if (failure is Xunit.Sdk.XunitException) throw failure;
-
-        if (failure is not null)
-        {
-            // Not a skip, for the reason CanvasFocusIntegrationTests states: a missing WebView2
-            // runtime is a broken environment, and a quiet pass here would restore exactly the
-            // false-success this file exists to prevent.
-            throw new InvalidOperationException(
-                "the canvas refresh test requires a real window and the WebView2 runtime. "
-                + failure.Message, failure);
-        }
+                return canvas;
+            },
+            body: (_, canvas) => work(canvas, source));
     }
 
     private static async Task<bool> WaitForReady(CanvasSurface canvas)

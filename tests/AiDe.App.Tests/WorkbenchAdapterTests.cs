@@ -15,24 +15,8 @@ namespace AiDe.App.Tests;
 public sealed class WorkbenchAdapterTests
 {
     /// <summary>Runs WPF work on a dedicated STA thread and returns its result.</summary>
-    private static T OnStaThread<T>(Func<T> work)
-    {
-        T result = default!;
-        Exception? failure = null;
-        var thread = new Thread(() =>
-        {
-            try { result = work(); }
-            catch (Exception ex) { failure = ex; }
-        });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        // Generous: the first WPF window in a process pays for framework initialisation.
-        Assert.True(thread.Join(TimeSpan.FromSeconds(60)), "STA thread did not finish");
-        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
-
-        if (failure is not null) { throw new InvalidOperationException("STA work failed", failure); }
-        return result;
-    }
+    private static T OnStaThread<T>(Func<T> work) =>
+        Sta.Run<T>(work, 60);
 
     /// <summary>Realizes the workbench offscreen and hands the caller the live tree.</summary>
     private static T WithRealizedWorkbench<T>(Func<WorkbenchAdapter, T> assert) => OnStaThread(() =>

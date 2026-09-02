@@ -60,8 +60,10 @@ public sealed class MenuTemplateTests
     [Fact]
     public void ATopLevelMenu_OpensItsSubmenu_AndTheItemsRender()
     {
-        Exception? failure = null;
-        var thread = new Thread(() =>
+        // The shared harness (Sta.Run), not an inlined thread. This one joined with NO
+        // timeout, so a hang here hung the whole suite with nothing to read; the shared
+        // form bounds it and rethrows an assertion failure as itself (DC-078/DC-079).
+        Sta.Run(() =>
         {
             Window? window = null;
             try
@@ -93,13 +95,8 @@ public sealed class MenuTemplateTests
                     .Where(s => !string.IsNullOrEmpty(s)).ToList();
                 Assert.Contains(texts, s => s.Contains("New workspace", StringComparison.Ordinal));
             }
-            catch (Exception ex) { failure = ex; }
             finally { window?.Close(); }
         });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
-        if (failure is not null) throw failure;
     }
 
     private static string KeyOf(ResourceDictionary d, object value)

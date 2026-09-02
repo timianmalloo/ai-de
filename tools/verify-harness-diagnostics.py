@@ -132,7 +132,17 @@ def check(root: Path) -> tuple[list[str], int]:
             # rather than standing up its own thread - one harness with two entry points, benign,
             # and the reason a count of declarations (29) and a count of creations (31) disagree
             # without either being wrong. One creation per file is the invariant that matters.
-            if threads > 1:
+            #
+            # SCOPED TO TEST FILES, and the consolidation is what taught this. A shared harness
+            # library legitimately stands up two threads - a plain one and a dispatcher-pumping one -
+            # whose failures funnel through ONE rethrow. Nothing can mask there, because there is a
+            # single verdict by construction. The masking risk needs two harnesses each carrying
+            # their own verdict, which is a property of a file holding TESTS.
+            #
+            # Scoping by "does this file contain [Fact]" rather than by naming the harness file: an
+            # allowance list has the catch-all property that hides a miss, which is the trap the
+            # reconciliation below already fell into once.
+            if threads > 1 and ("[Fact]" in text or "[Theory]" in text):
                 problems.append(
                     f"{path.relative_to(root).as_posix()} stands up {threads} separate STA threads, "
                     "so it holds more than one harness - but this gate reaches one verdict per FILE. "
@@ -268,6 +278,10 @@ def self_test() -> int:
         # None exists in the repository today, so without this fixture the check would never be seen
         # to fire at all.
         (place / TESTS / "TwoHarnessTests.cs").write_text(
+            # [Fact] because the check is scoped to files holding TESTS. A fixture that does not look
+            # like its subject proves nothing — and this one caught the scoping change the moment it
+            # was made, by going red rather than by being reasoned about.
+            "[Fact] public void T() { }\n"
             "thread.SetApartmentState(ApartmentState.STA);\n"
             "if (failure is not null) throw failure;\n"
             "other.SetApartmentState(ApartmentState.STA);\n"

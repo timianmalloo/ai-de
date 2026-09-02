@@ -26,36 +26,8 @@ namespace AiDe.App.Tests;
 /// </remarks>
 public sealed class SurfaceContentTests
 {
-    private static T OnStaThread<T>(Func<T> work)
-    {
-        var result = default(T);
-        Exception? failure = null;
-
-        var thread = new Thread(() =>
-        {
-            try
-            {
-                result = work();
-            }
-            catch (Exception ex)
-            {
-                failure = ex;
-            }
-        });
-
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
-
-        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
-
-        if (failure is not null)
-        {
-            throw new InvalidOperationException("the STA body threw", failure);
-        }
-
-        return result!;
-    }
+    private static T OnStaThread<T>(Func<T> work) =>
+        Sta.Run<T>(work, 60);
 
     /// <summary>Unwraps the SurfaceChrome island frame the factory puts around non-windowed panes.</summary>
     private static FrameworkElement Unwrap(FrameworkElement content) =>

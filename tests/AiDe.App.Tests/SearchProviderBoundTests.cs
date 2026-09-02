@@ -53,25 +53,8 @@ public sealed class SearchProviderBoundTests
             return shell.SearchWorkspaceAsync("marker").GetAwaiter().GetResult();
         });
 
-    private static T OnStaThread<T>(Func<T> body)
-    {
-        T result = default!;
-        Exception? failure = null;
-
-        var thread = new Thread(() =>
-        {
-            try { result = body(); }
-            catch (Exception ex) { failure = ex; }
-        });
-
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        Assert.True(thread.Join(TimeSpan.FromSeconds(60)));
-
-        if (failure is not null) throw failure;
-
-        return result;
-    }
+    private static T OnStaThread<T>(Func<T> body) =>
+        Sta.Run<T>(body, 60);
 
     [Fact]
     public void SkippedFilesReachTheSurfaceAsANumber()

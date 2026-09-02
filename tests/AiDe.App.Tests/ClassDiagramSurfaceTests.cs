@@ -10,17 +10,8 @@ namespace AiDe.App.Tests;
 /// </summary>
 public sealed class ClassDiagramSurfaceTests
 {
-    private static void OnSta(Action work)
-    {
-        Exception? failure = null;
-        var thread = new Thread(() => { try { work(); } catch (Exception ex) { failure = ex; } });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        Assert.True(thread.Join(TimeSpan.FromSeconds(30)), "STA thread did not finish");
-        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
-
-        if (failure is not null) { throw new InvalidOperationException("STA work failed", failure); }
-    }
+    private static void OnSta(Action work) =>
+        Sta.Run(work, 30);
 
     private static CanvasNode N(string id, string kind) => new(id, id.Split('.')[^1], kind, false, null);
     private static CanvasEdge Edge(string from, string to, string pred) => new(from, to, pred, "Verified");

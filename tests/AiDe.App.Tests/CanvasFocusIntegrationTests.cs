@@ -29,88 +29,36 @@ public sealed class CanvasFocusIntegrationTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(60);
 
-    /// <summary>Runs <paramref name="work"/> on an STA thread with a pumping dispatcher.</summary>
-    private static void OnUiThread(Func<Window, CanvasSurface, Task> work)
-    {
-        Exception? failure = null;
-
-        var thread = new Thread(() =>
-        {
-            try
+    /// <summary>
+    /// Runs <paramref name="work"/> on the shared pumping harness (<see cref="Sta.Pump"/>).
+    /// </summary>
+    /// <remarks>
+    /// <para>The canvas sits BETWEEN two focusable buttons, which is what gives Tab somewhere to go
+    /// — a focus-boundary test with nothing on either side cannot tell "left the canvas" from
+    /// "nowhere to leave to".</para>
+    ///
+    /// <para>The window is on-screen and activated, unlike the shared default: <c>SendInput</c>
+    /// goes to the FOREGROUND window, so an off-screen or background one would swallow every
+    /// synthesized key and the test would fail for a reason with nothing to do with the page.</para>
+    /// </remarks>
+    private static void OnUiThread(Func<Window, CanvasSurface, Task> work) =>
+        Sta.Pump<CanvasSurface>(
+            create: () => new CanvasSurface("canvas-1", "Graph"),
+            body: work,
+            content: canvas =>
             {
-                var canvas = new CanvasSurface("canvas-1", "Graph");
-                var before = new Button { Content = "before", Focusable = true };
-                var after = new Button { Content = "after", Focusable = true };
-
                 var panel = new StackPanel();
-                panel.Children.Add(before);
+                panel.Children.Add(new Button { Content = "before", Focusable = true });
                 panel.Children.Add(canvas);
-                panel.Children.Add(after);
-
-                var window = new Window
-                {
-                    Content = panel,
-                    Width = 640,
-                    Height = 480,
-                    // On-screen and activated: SendInput goes to the FOREGROUND window, so an
-                    // off-screen or background window would swallow every synthesized key and the
-                    // test would fail for a reason that has nothing to do with the page.
-                    Left = 0,
-                    Top = 0,
-                    ShowActivated = true,
-                };
-
-                window.Show();
-
-                // WebView2 initialisation and the page's message pump both need a RUNNING
-                // dispatcher, and the awaits inside the test body must resume on it — so the
-                // context is installed before any of them is created.
-                var dispatcher = Dispatcher.CurrentDispatcher;
-                SynchronizationContext.SetSynchronizationContext(
-                    new DispatcherSynchronizationContext(dispatcher));
-
-                var done = false;
-                _ = Task.Run(() => { }).ContinueWith(async _ =>
-                {
-                    try { await work(window, canvas); }
-                    catch (Exception ex) { failure = ex; }
-                    finally { done = true; }
-                }, TaskScheduler.FromCurrentSynchronizationContext());
-
-                var deadline = DateTime.UtcNow + Timeout;
-                while (!done && DateTime.UtcNow < deadline)
-                {
-                    dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
-                    Thread.Sleep(10);
-                }
-
-                if (!done) failure ??= new TimeoutException("the canvas test did not complete");
-
-                window.Close();
-                canvas.Dispose();
-                Dispatcher.CurrentDispatcher.InvokeShutdown();
-            }
-            catch (Exception ex)
+                panel.Children.Add(new Button { Content = "after", Focusable = true });
+                return panel;
+            },
+            configure: window =>
             {
-                failure = ex;
-            }
-        });
-
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        Assert.True(thread.Join(Timeout + TimeSpan.FromSeconds(30)), "the canvas UI thread did not finish");
-
-        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
-
-        if (failure is not null)
-        {
-            // Deliberately not Skip. A missing WebView2 runtime is a broken environment, and a
-            // keyboard-trap test that quietly passes is worse than one that fails (DC-012/DC-016).
-            throw new InvalidOperationException(
-                "P2-FOCUS-03 could not run. This is a FAILURE, not a skip: the canvas keyboard-trap " +
-                "test requires a real window and the WebView2 runtime. " + failure.Message, failure);
-        }
-    }
+                window.Left = 0;
+                window.Top = 0;
+                window.ShowActivated = true;
+            });
 
     private static async Task<bool> WaitForReady(CanvasSurface canvas)
     {

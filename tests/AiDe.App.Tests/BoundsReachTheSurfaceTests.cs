@@ -526,15 +526,6 @@ public sealed class BoundsReachTheSurfaceTests
     /// A genuine infrastructure failure — a thread that never finishes, a real exception from the
     /// code under test — still gets its wrapper, because there the wrapper is the true statement.
     /// </remarks>
-    private static void OnSta(System.Action work)
-    {
-        System.Exception? failure = null;
-        var thread = new Thread(() => { try { work(); } catch (System.Exception ex) { failure = ex; } });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        Assert.True(thread.Join(System.TimeSpan.FromSeconds(30)), "STA thread did not finish");
-
-        if (failure is Xunit.Sdk.XunitException) { throw failure; }   // the assertion, verbatim
-        if (failure is not null) { throw new System.InvalidOperationException("STA work failed", failure); }
-    }
+    private static void OnSta(System.Action work) =>
+        Sta.Run(work, 30);
 }

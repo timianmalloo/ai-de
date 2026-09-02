@@ -22,23 +22,8 @@ public sealed class DpiAndResizeTests
 
     private static readonly IntPtr PerMonitorAwareV2 = new(-4);
 
-    private static T OnSta<T>(Func<T> work)
-    {
-        T result = default!;
-        Exception? failure = null;
-        var thread = new Thread(() =>
-        {
-            try { result = work(); }
-            catch (Exception ex) { failure = ex; }
-        });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        Assert.True(thread.Join(TimeSpan.FromSeconds(60)));
-        if (failure is Xunit.Sdk.XunitException) throw failure;   // the message IS the finding (DC-078)
-
-        if (failure is not null) { throw new InvalidOperationException("STA work failed", failure); }
-        return result;
-    }
+    private static T OnSta<T>(Func<T> work) =>
+        Sta.Run<T>(work, 60);
 
     private static T WithWindow<T>(Func<Window, T> assert) => OnSta(() =>
     {

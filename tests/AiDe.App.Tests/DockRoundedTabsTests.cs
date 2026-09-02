@@ -23,8 +23,10 @@ public sealed class DockRoundedTabsTests
     [Fact]
     public void TheDocumentTab_IsRounded_AndStillShowsItsTitle()
     {
-        Exception? failure = null;
-        var thread = new Thread(() =>
+        // The shared harness (Sta.Run), not an inlined thread. This one joined with NO
+        // timeout, so a hang here hung the whole suite with nothing to read; the shared
+        // form bounds it and rethrows an assertion failure as itself (DC-078/DC-079).
+        Sta.Run(() =>
         {
             Window? window = null;
             try
@@ -58,13 +60,8 @@ public sealed class DockRoundedTabsTests
                     .ToList();
                 Assert.Contains(titles, s => s.Contains("RoundedTabTitle", StringComparison.Ordinal));
             }
-            catch (Exception ex) { failure = ex; }
             finally { window?.Close(); }
         });
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
-        if (failure is not null) throw failure;
     }
 
     private static IEnumerable<T> FindDescendants<T>(DependencyObject root) where T : DependencyObject

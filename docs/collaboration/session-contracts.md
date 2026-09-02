@@ -1583,6 +1583,70 @@ an STA thread (31) and requiring the categories to sum to it. That is why this t
 denominators rather than about instruments: two instruments are cheap to produce and easy to
 duplicate accidentally, whereas a second denominator has to come from somewhere else in the world.
 
+#### Nothing counts an absent cross-reference
+
+Every control in this repository works by **comparison** — a count against a count, a denominator
+against a category, a guard against a wrap. That is why they caught what they caught on 2026-09-01,
+and it is also the shape of what they cannot reach.
+
+**There is no denominator for "connections that should exist."** §3 of the session-registration spec
+proposes adding nine environment variables to a child process. DC-027 is the class where a child
+loses the environment it was given because a limit applies in between — and its recorded instance is
+this repository's own agent terminals losing a 22,297-character PATH. The two documents are the same
+seam from opposite ends. **Both were correct, both were current, and neither pointed at the other.**
+No gate could have noticed: a missing link has no numerator and no denominator, so there is nothing
+for a count to disagree with.
+
+It was found because a session mentioned an unrelated detail in passing and the other session went
+and looked it up.
+
+**The honest form of what worked, then:**
+
+| Mechanism | Caught | Scales without a second agent? |
+|---|---|---|
+| an artifact property (a printed count, a reconciliation, a guard with no wrap) | everything countable | **yes** |
+| the other session | the connection nothing counts | no |
+| reading one's own work carefully | **nothing, all day** | — |
+
+The third row is not modesty; it is the measured result of a day in which every correction came from
+one of the first two. **Build the first row wherever the thing is countable, and know that the second
+row is doing work the first cannot** — which is an argument for the two-session arrangement that
+neither session made when it was set up, and which nobody should assume is free.
+
+**A concrete gap this names:** the defect register's classes are not nodes in the docs graph, so a
+spec cannot declare `relates-to DC-027` and nothing can flag a spec that touches a registered
+hazard without citing it. That is buildable and is not built.
+
+#### An exception to a control is a predicate, never a name
+
+> **When a control needs an exception, express what makes the case exceptional. Never list which
+> case it is.**
+
+Both sessions reached this from opposite directions on 2026-09-01 and it is the more general form of
+the allowance-list problem. A control that needs to let something through can do it two ways:
+
+| Form | What it says | How it fails |
+|---|---|---|
+| **a list** | "except `Sta.cs`" | silently correct forever, including after `Sta.cs` stops deserving it, and it hides the *next* file that should have been caught |
+| **a predicate** | "except files holding no `[Fact]`" | wrong loudly, because a file that gains a `[Fact]` re-enters the check by itself |
+
+A list has the catch-all property: **a category broad enough to absorb a miss cannot report it.** A
+predicate has to keep being true, so it is re-evaluated on every run against every file, and a case
+that stops being exceptional stops being excepted without anyone remembering.
+
+**The instance.** `verify-harness-diagnostics.py`'s granularity check fired on the shared STA harness
+itself, which legitimately stands up two threads whose failures funnel through one rethrow. Naming
+the file would have worked and been wrong; the check is instead scoped to files that contain a
+`[Fact]`, because the masking risk it exists for requires two harnesses each carrying their **own
+verdict** — which is a property of a file holding tests. The self-test's fixture then went red
+immediately, having no `[Fact]` and so no longer resembling its subject (DC-073) — a control
+catching a change to the control, which is the layer that went unguarded all day.
+
+**Where this bites in existing controls:** `verify-surface-ownership.py`'s `UNASSIGNED`,
+`verify-standins.py`'s recorded reasons, and DC-075's worktree exclusions are all lists today. Each
+is currently correct and each carries the property above. They are not wrong, and they are the first
+place to look when one of those gates reports clean about something it should have caught.
+
 **The mechanised form.** Where a control can state its denominator, it must: print the total, print
 each category, and **fail when they do not sum**. An unaccounted-for item is then a red gate rather
 than an invisible gap. `tools/verify-harness-diagnostics.py` was given exactly this reconciliation
@@ -1625,6 +1689,36 @@ string literal is opaque to the host language's own compiler — no amount of C#
 seen `graph.disclosures` inside it. That is not a gap in our methods; it is a property of the
 medium. Which is exactly the case for *render it and look*: the only observer that does not care
 what language the consumer was written in is the running program.
+
+
+#### The buildable gap, measured
+
+Core's finding that a spec *cannot* declare `relates-to DC-027` — that the link is inexpressible
+rather than forgotten — checked and quantified:
+
+| | |
+|---|---|
+| defect classes declared in the register | **79** |
+| of those that are nodes in the docs graph | **0** |
+| nodes for the register **file** | **1** (`defect-classes`, type `doc`) |
+| typed links anywhere pointing at a DC class | **0** — and none can, there is nothing to point at |
+
+**Seventy-nine hazards collapse into one graph node.** A spec can link to the register; it cannot
+link to a hazard. So `docs/design/ux-agent-session-registration.md` and `DC-027` were both correct,
+both current, and mutually invisible — and every orphan check, every review-suggested flag, every
+inbound-neighbour sweep the graph performs was working exactly as built while unable to see the one
+connection that mattered.
+
+That is a different failure from the ones catalogued above. Those were controls that *could* have
+seen something and did not. This is a link that **cannot be written**, so no control could ever have
+flagged its absence: there is no denominator for connections that are not expressible.
+
+**Not built, and the reason is the reason to be careful with it.** Whether "this spec touches a
+registered hazard" is even decidable is an open question, and a relation added without answering it
+would produce a graph full of plausible edges nobody can verify — `INFERRED` links presented beside
+`EXTRACTED` ones, which the knowledge-graph standard names as provenance laundering. The measurement
+above is what the next session needs to decide whether it is worth doing; **79 and 0 are the numbers
+that make it a decision rather than an intention.**
 
 #### What this leaves uncovered, named rather than implied
 

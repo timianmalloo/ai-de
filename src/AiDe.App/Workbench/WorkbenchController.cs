@@ -100,8 +100,12 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
             case "workspace.open":
                 return OpenWorkspace();
 
-            case "terminal.newAgent":
-                return NewAgentTerminal();
+            // One case for every harness, matched by the id the profile itself spells
+            // (AgentReadinessProfile.CommandIdFor), so adding a harness never needs a case here.
+            // Replaces `terminal.newAgent`, which opened whichever agent was first on PATH and
+            // could not report which harness it had started.
+            case var id when id.StartsWith("terminal.new.", StringComparison.Ordinal):
+                return NewAgentTerminal(id["terminal.new.".Length..]);
 
             case "terminal.new":
                 return NewTerminal();
@@ -429,7 +433,13 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     public Func<Task<string>>? WorkspaceOpen { get; set; }
 
     /// <summary>Opens a terminal running an agent CLI. Set by the shell that can create surfaces.</summary>
-    public Func<string>? NewAgentTerminalRequested { get; set; }
+    /// <remarks>
+    /// Takes the agent because a session's harness must be known AT LAUNCH: a second coordination
+    /// register for a known session discards its attributes rather than merging them (observed —
+    /// <c>CoordinationContractTests.Apply_DuplicateRegister_DiscardsTheSecondAttributes_ItDoesNotMerge</c>),
+    /// so there is no later opportunity to say which harness this session is running.
+    /// </remarks>
+    public Func<string, string>? NewAgentTerminalRequested { get; set; }
 
     /// <summary>Opens a plain shell terminal (never an agent). Set by the shell that can create surfaces.</summary>
     public Func<string>? NewTerminalRequested { get; set; }
@@ -464,11 +474,11 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     /// <summary>Opens the workspace diagnostics surface. Set by the shell that can create surfaces.</summary>
     public Func<string>? NewDiagnosticsRequested { get; set; }
 
-    private bool NewAgentTerminal()
+    private bool NewAgentTerminal(string agent)
     {
         announcer.Announce(NewAgentTerminalRequested is null
             ? "Agent terminals are not available in this build."
-            : NewAgentTerminalRequested());
+            : NewAgentTerminalRequested(agent));
 
         return true;
     }
