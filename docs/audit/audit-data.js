@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T00:11:27Z",
+  "generated": "2026-09-02T00:19:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7637,6 +7637,27 @@ window.AUDIT_DATA = {
       "tags": [
         "terminal",
         "investigate"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0378",
+      "shortname": "smoke91-phase-h-sessions-surface",
+      "datetime": "2026-09-02T00:19:59Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "phase H: sessions surface #15",
+      "summary": "Phase H: replaced flat DisplayLabel sessions rows with legible two-line rows (identity above muted metadata) + colour+glyph liveness chip; SharedTelemetryNote states an all-rows gap once not per row. Pure SessionRowPresenter, +8 App tests (313).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SessionRowPresenter.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs"
+      ],
+      "tags": [
+        "sessions",
+        "ui"
       ],
       "outcome": "success"
     }

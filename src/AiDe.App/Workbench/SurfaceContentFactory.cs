@@ -182,14 +182,43 @@ public sealed class SurfaceContentFactory(
         var pane = new WatcherSessionsPaneViewModel(watcherSessions);
         pane.Load();
 
-        var list = new ListBox
+        var rowsPanel = new StackPanel();
+        foreach (var row in pane.Rows)
         {
-            DisplayMemberPath = nameof(WatcherSessionRow.DisplayLabel),
-            ItemsSource = pane.Rows,
-            BorderThickness = new Thickness(0),
-            Background = null,
-        };
-        AutomationProperties.SetName(list, $"{surface.Title} sessions");
+            rowsPanel.Children.Add(SessionRow(row));
+        }
+
+        AutomationProperties.SetName(rowsPanel, $"{surface.Title} sessions");
+
+        var stack = new StackPanel { Margin = new Thickness(12) };
+
+        if (pane.Rows.Count == 0)
+        {
+            // Honest empty/unavailable state — the status line below already says which.
+        }
+        else
+        {
+            stack.Children.Add(new ScrollViewer
+            {
+                Content = rowsPanel,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            });
+
+            // A telemetry gap the whole list shares is stated ONCE here, not repeated per row (#15).
+            var shared = SessionRowPresenter.SharedTelemetryNote(pane.Rows);
+            if (shared is not null)
+            {
+                var note = new TextBlock
+                {
+                    Text = shared,
+                    Margin = new Thickness(0, 10, 0, 0),
+                    TextWrapping = TextWrapping.Wrap,
+                };
+                note.SetResourceReference(TextBlock.ForegroundProperty, "InferredBrush");
+                stack.Children.Add(note);
+            }
+        }
 
         var status = new TextBlock
         {
@@ -199,10 +228,56 @@ public sealed class SurfaceContentFactory(
         };
         status.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
 
-        var stack = new StackPanel { Margin = new Thickness(12) };
-        stack.Children.Add(list);
         stack.Children.Add(status);
         return stack;
+    }
+
+    // One session as a legible two-line row: a colour+glyph liveness chip, a primary identity line,
+    // and a muted metadata line beneath it (#15). Presentation strings/brush come from the pure,
+    // headlessly-tested SessionRowPresenter.
+    private static FrameworkElement SessionRow(WatcherSessionRow row)
+    {
+        var chip = new Border
+        {
+            CornerRadius = new CornerRadius(4),
+            BorderThickness = new Thickness(1),
+            Padding = new Thickness(6, 1, 6, 1),
+            VerticalAlignment = VerticalAlignment.Top,
+            Margin = new Thickness(0, 1, 10, 0),
+        };
+        var chipBrushKey = SessionRowPresenter.ChipBrushKey(row.Liveness);
+        chip.SetResourceReference(Border.BorderBrushProperty, chipBrushKey);
+        var chipText = new TextBlock { Text = SessionRowPresenter.ChipText(row.Liveness), FontSize = 11 };
+        chipText.SetResourceReference(TextBlock.ForegroundProperty, chipBrushKey);
+        chip.Child = chipText;
+
+        var identity = new TextBlock
+        {
+            Text = SessionRowPresenter.Identity(row),
+            FontWeight = FontWeights.SemiBold,
+            TextTrimming = TextTrimming.CharacterEllipsis,
+        };
+        identity.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
+
+        var details = new TextBlock
+        {
+            Text = SessionRowPresenter.Details(row),
+            FontSize = 11,
+            Margin = new Thickness(0, 1, 0, 0),
+            TextTrimming = TextTrimming.CharacterEllipsis,
+        };
+        details.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+
+        var textCol = new StackPanel();
+        textCol.Children.Add(identity);
+        textCol.Children.Add(details);
+
+        var rowPanel = new StackPanel { Orientation = System.Windows.Controls.Orientation.Horizontal, Margin = new Thickness(0, 4, 0, 4) };
+        rowPanel.Children.Add(chip);
+        rowPanel.Children.Add(textCol);
+
+        AutomationProperties.SetName(rowPanel, row.AccessibleName);
+        return rowPanel;
     }
 
     /// <summary>

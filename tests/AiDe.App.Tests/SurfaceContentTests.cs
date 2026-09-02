@@ -218,7 +218,7 @@ public sealed class SurfaceContentTests
     public void TheSessionsSurface_ShowsAnObservedSessionRow()
     {
         // The Loomkeeper Sessions surface renders honestly and synchronously - one observed session
-        // reaches the ListBox, and the status is not a Loading message (the load is a local fold).
+        // reaches a legible row (#15), and the status is not a Loading message (the load is a local fold).
         var view = OnStaThread(() =>
         {
             var query = new StubSessionsQuery(new WatcherSessionSnapshot(
@@ -236,11 +236,10 @@ public sealed class SurfaceContentTests
 
             var content = new SurfaceContentFactory(null, query).Create(new Surface("sessions", "sessions", "Sessions"));
             var stack = Assert.IsType<StackPanel>(Unwrap(content));
-            var list = stack.Children.OfType<ListBox>().Single();
-            var status = stack.Children.OfType<TextBlock>().Single();
-            return new SurfaceView(
-                list.ItemsSource?.Cast<object>().Count() ?? 0,
-                status.Text);
+            var scroller = stack.Children.OfType<ScrollViewer>().Single();
+            var rows = Assert.IsType<StackPanel>(scroller.Content);
+            var status = stack.Children.OfType<TextBlock>().Last();
+            return new SurfaceView(rows.Children.Count, status.Text);
         });
 
         Assert.Equal(1, view.ItemCount);

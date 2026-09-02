@@ -46,7 +46,7 @@ Severity: **S3** blocks a core task · **S2** major friction · **S1** polish.
 | 12 | "view post workspace reload — TheTerrace" | Docking | **I** — layout after opening a workspace (prior complaint: opening should keep the arrangement) | **Investigate** — confirm restore-on-open holds for this path | ▢ planned |
 | 13 | "graph on the correct side — where I wanted it" | Docking | positive confirmation | none | ✅ ok |
 | 14 | "sequence diagram — no context" | Sequence diagram | **V** — the sequence surface is a scaffold with no real ordered-call feed (Core `Interaction.cs` just landed; not yet wired) | Wire the real feed (§3, depends on Core) | ✅ landed (E) |
-| 15 | "what sessions are surfacing in this list" | Sessions | **V** — five near-identical `Terminal — pwsh · Not Recorded · Stale` rows; the list is unclear about what a "session" is and why these appear | **Design** — clearer session identity/labels/empty-vs-stale | ▢ planned |
+| 15 | "what sessions are surfacing in this list" | Sessions | **V** — five near-identical `Terminal — pwsh · Not Recorded · Stale` rows; the list is unclear about what a "session" is and why these appear | **Fixed this run (H)** — legible two-line rows (identity above muted metadata) + colour+glyph liveness chip; a shared telemetry gap stated once, not per row | ✅ landed (H) |
 | 16 | Claude-Code terminal: "moving the cursor paints characters without proper refresh" | Terminal render | **V** — the VtParser had no case for the in-place line-editing CSI finals **ECH (`X`), ICH (`@`), DCH (`P`)**; they hit `default: unknown finals dropped`, so a TUI's line rewrite left stale glyphs in the model that the full-repaint renderer then faithfully drew | **Fixed this run (G)** — implemented `EraseCharacters`/`InsertCharacters`/`DeleteCharacters` on `TerminalScreen` + wired `X`/`@`/`P`; 8 tests | ✅ landed (G) |
 
 **Landed this run:** #1, #2, and the source half of #3.
@@ -181,7 +181,7 @@ state, not repeat five times.
 | **E ✅** | Wire `SequenceModel.Build` to Core `Interaction.cs` (`ShowNodeInSequenceDiagramsAsync` → `InteractionAsync` ordered feed → `SequenceModel.Build` → `ShowFor`); Sequence added to a **type's** `NodeViewMenu` options and routed via `OpenNodeView`; `BindSequenceDiagrams` re-fills open panes | #14, #6-seq | App + Core | landed (needs user functional verification of the render + method entry) |
 | **F ◐** | Investigated dock drag/close/focus (§5a). **#4 fixed** — empty tool zones floor to a usable width on open + drag-in (`UsableExtentFor`, 3 tests). #10 (native-drag kind-fallback), #11/#3-focus (re-render focus-steal), #12 (confirm) **designed, need a WPF repro** to implement without guessing | #4 (fixed), #10/#11/#12/#3-focus (designed) | App+Core | landed the tested half |
 | **G ✅** | Terminal render #16 root-caused: the VtParser **dropped** the in-place line-editing CSI finals (ECH `X`, ICH `@`, DCH `P`) a TUI redraws with, leaving stale glyphs the full-repaint renderer drew. Implemented the three ops on `TerminalScreen` + wired them; 8 tests. The renderer/model/pump were verified race-safe (full repaint under `SyncRoot`; `IsDirty=false` only after a full draw) — the fix was the missing parser cases, not coalescing | #16 | Core | landed |
-| **H** | Sessions surface identity/labels/empty-state | #15 | App | — |
+| **H ✅** | Sessions surface #15: replaced the flat `·`-joined `DisplayLabel` with a legible **two-line row** — a stable identity (agent · repo/worktree) above muted metadata (harness · model · trust · spans) — and a **colour+glyph liveness chip** (Verified/Inferred/Unverified brush, glyph+text so it's never colour-alone). A telemetry gap the whole list shares is stated **once** (`SessionRowPresenter.SharedTelemetryNote`), not repeated per row. Pure presenter, 8 tests | #15 | App | landed |
 
 **Recommended next:** **B** (legibility — highest visible-quality-per-effort, affects every
 analytical surface) and **C** (the contextual menu — the centerpiece the user asked for), then **D/E**
@@ -191,6 +191,7 @@ analytical surface) and **C** (the contextual menu — the centerpiece the user 
 
 | | |
 |---|---|
-| **Completed** | Phases **A, B, C, D** landed — source-follows-selection; contexts/joins legibility; the `NodeViewMenu` contextual "Open as…" on graph nodes; and class-diagram **pan/zoom** (wheel / Shift+wheel / Ctrl+wheel-to-cursor / middle-drag) + right-click type-box menu |
-| **Remaining** | F/G (docking + terminal-render investigations), H (sessions), provenance legibility (XAML) |
-| **Best next action** | The F/G investigations (docking pane-move flakiness + terminal render), then H (sessions surface) |
+| **Completed** | Phases **A–H** landed. A/B/C/D (source-follows-selection; legibility; `NodeViewMenu` "Open as…"; class-diagram pan/zoom); **E** (sequence diagram → Core interaction feed); **F** (empty-zone width floor #4 fixed; #10/#11/#12/#3-focus root-caused + designed); **G** (terminal ECH/ICH/DCH #16 fixed); **H** (sessions surface #15 — legible chipped rows + shared-gap note) |
+| **Remaining** | The **designed-not-implemented** re-render/reconcile half of F — #10 (native-drag kind-fallback), #11/#3-focus (Render() focus-preservation), #12 (confirm) — all need a **WPF drag/close functional repro**; and provenance legibility (#9, XAML `EvidencePaneViewModel`) |
+| **Best next action** | A functional pass on the running app to repro #10/#11/#3-focus, then implement the focus-preservation-around-Render fix designed in §5a |
+| **Needs user functional verification** | The **rendered** sequence diagram (E), class-diagram pan/zoom + right-click menus (C/D), terminal glyph refresh in Claude Code (G), and the sessions chip legibility (H) — all beyond headless testing |
