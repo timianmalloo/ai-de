@@ -52,6 +52,38 @@ public static class WorkbenchDiagnostics
         });
     }
 
+    /// <summary>
+    /// Records an unhandled exception, with the context that says which gesture produced it.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this exists.</b> The shell crashed on "New Claude Code session" and left
+    /// <b>nothing</b> — no Windows Error Reporting entry, no event-log record, and nothing in this
+    /// log, which until now recorded only layout mutations. A user could say only that the .exe
+    /// closed. The whole diagnosis had to start from a screenshot.</para>
+    ///
+    /// <para>A crash is the one moment when the product knows the most and reports the least. This
+    /// does not change what happens next — the process still fails — it only makes the failure
+    /// legible, which is the difference between "it crashed" and a stack trace pointing at a
+    /// line.</para>
+    /// </remarks>
+    public static void Crash(string origin, Exception exception)
+    {
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "crash",
+            origin,
+            type = exception.GetType().FullName,
+            message = exception.Message,
+
+            // The inner exception is where a wrapped fault actually happened; reporting only the
+            // outer one is how a real defect reads as an infrastructure complaint (DC-078).
+            inner = exception.InnerException?.GetType().FullName,
+            innerMessage = exception.InnerException?.Message,
+            stack = exception.ToString(),
+        });
+    }
+
     private static void Write(object record)
     {
         string line;
