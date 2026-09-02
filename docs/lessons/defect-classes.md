@@ -2817,6 +2817,33 @@ for both or split.*
 - **Status:** `partially-controlled` — new surfaces reach fresh installs and tree layouts (migration);
   existing zone layouts need Reset layout until the zone store gains a migration chain.
 
+### WATCHER-REFRESH-FULL-RENDER — a periodic content refresh does a full layout render, disturbing every other pane
+- **Signature:** a pane whose content updates on a timer (a live read surface) refreshes by calling
+  the workbench's **full re-render**, which swaps the whole docking layout wholesale. Every *other*
+  pane is re-parented as a side effect: a hosted child (a WebView2 graph canvas) re-fires its
+  `ResizeObserver` and visibly **re-fits/re-draws**, and each stack's active tab is **re-seated from
+  the model** — so a user sitting on a non-default tab is snapped back to the default. The more often
+  the refresh fires (live agents heartbeating → the watcher fingerprint churns every ~2s), the more
+  the screen "keeps refreshing" and the less the user can stay on the tab they chose.
+- **Why it survives:** each piece is individually correct — the refresh *does* update the rows, the
+  re-render *does* preserve surfaces (nothing is lost), and RestoreSelection *does* restore the
+  model's active tab. Nothing is broken in isolation; the defect is that a *content* refresh reached
+  for a *layout* operation, and the cost is only visible in the running app with live activity (no
+  headless test rendered a page or watched a tab over time). Amplified precisely when the product
+  started working (agents launch → they heartbeat → the fingerprint churns).
+- **Instances:** 2026-09-02 — smoke video: after Reset layout, the graph re-fit continuously and the
+  active tab snapped back to Graph whenever the user clicked Sessions/Leaderboard, once Claude Code +
+  Copilot were live. `RefreshWatcherPanesOnUi` called `Adapter.Invalidate + Adapter.Render()`.
+- **Control:** `WorkbenchAdapter.RefreshInPlace(ids)` — rebuilds only the named panes' `Content`
+  without swapping `Manager.Layout`, so no other pane is re-parented and selection/focus are
+  untouched; the watcher refresh calls it instead of `Render()`. Two STA adapter tests assert the
+  layout root is **not** swapped (graph content identical) and the active tab is **preserved** across
+  a refresh — both would fail against the old `Render()` path. Related root cause not yet fixed: a
+  **mouse tab-click does not update the model's active index** (no `ActiveContentChanged` handler), so
+  a full `Render()` from *other* events can still snap the tab back — see the follow-up below.
+- **Status:** `controlled` for the watcher-refresh path (in-place); `partially-controlled` overall
+  until mouse tab-selection is synced into the model so any `Render()` preserves the user's tab.
+
 ### DC-081 — A setup step declines, and its `return` cancels the work it was preparing for
 
 - **Shape:** a script does setup, then the real work. The setup is written to **give up gracefully**

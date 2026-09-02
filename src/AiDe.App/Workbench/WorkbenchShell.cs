@@ -2227,11 +2227,10 @@ public sealed class WorkbenchShell : IDisposable
             return;
         }
 
-        Adapter.Invalidate(Service.Current.AllStacks()
+        Adapter.RefreshInPlace(Service.Current.AllStacks()
             .SelectMany(s => s.Surfaces)
             .Where(s => WatcherPaneKinds.Contains(s.Kind))
             .Select(s => s.SurfaceId));
-        Adapter.Render();
     }
 
     /// <summary>

@@ -17,6 +17,78 @@ public sealed class ZoneWorkbenchAdapterTests
     private static T OnStaThread<T>(Func<T> work) =>
         Sta.Run<T>(work, 60);
 
+    // A content factory that returns a fresh, identifiable element each call, so a rebuild is
+    // observable by reference and a build count. Raw (unwrapped) so ContentFor returns it directly.
+    private sealed class CountingFactory
+    {
+        public int Builds { get; private set; }
+        public System.Windows.FrameworkElement Create(Surface s)
+        {
+            Builds++;
+            return new System.Windows.Controls.TextBlock { Text = $"{s.SurfaceId}#{Builds}" };
+        }
+    }
+
+    private static T WithCountingWorkbench<T>(Func<WorkbenchAdapter, ZoneBackedLayoutService, CountingFactory, T> assert) =>
+        OnStaThread(() =>
+        {
+            var manager = new DockingManager();
+            var service = new ZoneBackedLayoutService();
+            var factory = new CountingFactory();
+            var adapter = new WorkbenchAdapter(manager, service, factory.Create);
+            var window = new Window
+            {
+                Content = manager, Width = 900, Height = 600,
+                WindowStartupLocation = WindowStartupLocation.Manual, Left = -10000, Top = -10000,
+                ShowInTaskbar = false, ShowActivated = false,
+            };
+            window.Show();
+            adapter.Render();
+            window.UpdateLayout();
+            manager.UpdateLayout();
+            try { return assert(adapter, service, factory); }
+            finally { window.Close(); }
+        });
+
+    [Fact]
+    public void RefreshInPlace_RebuildsOnlyTheNamedPane_LeavingEveryOtherPaneUntouched()
+    {
+        // The watcher refresh must not re-parent the OTHER panes. A full Render() swaps the whole
+        // layout, re-firing the graph canvas's ResizeObserver (it re-fits) — the "graph keeps
+        // refreshing" in the 2026-09-02 smoke video. In place, only the named surface is rebuilt.
+        WithCountingWorkbench((adapter, service, factory) =>
+        {
+            var layoutBefore = adapter.Manager.Layout;
+            var graphBefore = adapter.ContentFor("graph");
+            var sessionsBefore = adapter.ContentFor("sessions");
+
+            adapter.RefreshInPlace(["sessions"]);
+
+            Assert.Same(layoutBefore, adapter.Manager.Layout);              // layout root NOT swapped → no re-parent
+            Assert.Same(graphBefore, adapter.ContentFor("graph"));          // untouched — no re-fit
+            Assert.NotSame(sessionsBefore, adapter.ContentFor("sessions")); // rebuilt against the store
+            return true;
+        });
+    }
+
+    [Fact]
+    public void RefreshInPlace_LeavesTheActiveTabWhereTheUserPutIt()
+    {
+        // The reported regression: sitting on a watcher tab, the periodic Render() snapped the active
+        // tab back to the default (graph) because RestoreSelection reads the model, which a mouse
+        // tab-click never updated. An in-place refresh does not touch selection, so the user stays put.
+        WithCountingWorkbench((adapter, service, factory) =>
+        {
+            adapter.ActivateInView("leaderboard");
+            Assert.Equal("leaderboard", adapter.ActiveSurfaceId);
+
+            adapter.RefreshInPlace(["sessions", "board", "leaderboard", "ledger"]);
+
+            Assert.Equal("leaderboard", adapter.ActiveSurfaceId);  // NOT snapped back to graph
+            return true;
+        });
+    }
+
     private static T WithZoneWorkbench<T>(Func<WorkbenchAdapter, ZoneBackedLayoutService, T> assert) =>
         OnStaThread(() =>
         {

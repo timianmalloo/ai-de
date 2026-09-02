@@ -89,6 +89,66 @@ public sealed class WorkbenchAdapter
         }
     }
 
+    /// <summary>
+    /// Rebuilds the content of specific surfaces <b>in place</b> — replacing each
+    /// <see cref="LayoutDocument"/>'s <c>Content</c> without swapping <see cref="DockingManager.Layout"/>
+    /// — so refreshing one set of panes never disturbs the others.
+    /// </summary>
+    /// <remarks>
+    /// <para>This exists because the watcher-pane refresh used to call the full <see cref="Render"/> on
+    /// every ~2s tick (a session heartbeat, a board post, a new score). A full render swaps
+    /// <c>Manager.Layout</c> wholesale, which <b>re-parents every pane</b> — re-firing the graph
+    /// canvas's <c>ResizeObserver</c> so it re-fits, and re-seating every tab from the model so a user
+    /// sitting on Sessions/Leaderboard is snapped back to the default tab. With live agents heartbeating
+    /// that made the graph "keep refreshing" and the watcher tabs impossible to stay on (smoke video
+    /// 2026-09-02). Only the named surfaces are rebuilt here; layout, selection, focus and every other
+    /// pane are left exactly as the user left them.</para>
+    /// <para>Safe for the watcher read surfaces because they own no live process (unlike a terminal,
+    /// whose ConPTY a rebuild would kill — DC-029): the old content is dropped and the factory
+    /// reconstructs it against the current store.</para>
+    /// </remarks>
+    public void RefreshInPlace(IEnumerable<string> surfaceIds)
+    {
+        ArgumentNullException.ThrowIfNull(surfaceIds);
+        if (Manager.Layout is not { } root)
+        {
+            return;
+        }
+
+        var ids = surfaceIds.Where(id => !string.IsNullOrEmpty(id)).ToHashSet(StringComparer.Ordinal);
+        if (ids.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var doc in root.Descendents().OfType<LayoutDocument>().ToList())
+        {
+            if (doc.ContentId is not { } id || !ids.Contains(id))
+            {
+                continue;
+            }
+
+            var surface = _service.Current.AllStacks()
+                .SelectMany(s => s.Surfaces)
+                .FirstOrDefault(s => string.Equals(s.SurfaceId, id, StringComparison.Ordinal));
+            if (surface is null || _contentFactory is null)
+            {
+                continue;
+            }
+
+            var rebuilt = _contentFactory.Invoke(surface);
+            if (doc.Content is IDisposable old)
+            {
+                old.Dispose();
+            }
+
+            doc.Content = rebuilt;
+            doc.Title = (rebuilt as IHasDisplayName)?.DisplayName is { Length: > 0 } displayName
+                ? displayName
+                : surface.Title;
+        }
+    }
+
     public void Render()
     {
         // Preserve which surface is active across the layout swap. Replacing Manager.Layout wholesale

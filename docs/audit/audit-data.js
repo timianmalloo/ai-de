@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T21:00:02Z",
+  "generated": "2026-09-02T21:43:55Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8176,6 +8176,26 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/notes/session-enlistment-telemetry-gap.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0408",
+      "shortname": "investigate-watcher-refresh-loop",
+      "datetime": "2026-09-02T21:43:55Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "video analysis: screen redrawing + pulling focus back to graph, if graph focused it keeps refreshing; launched agent sessions",
+      "summary": "Analyzed the smoke video (extracted frames): confirmed Ledger tab present, Knowledge 257 (not 0), and BOTH Claude Code + GitHub Copilot launch (Opus 5 / Opus 4.8). Root-caused the refresh loop: RefreshWatcherPanesOnUi called a full Adapter.Render() on every ~2s watcher tick (frequent now that live agents heartbeat), which swaps Manager.Layout wholesale -> re-parents the graph WebView2 (ResizeObserver re-fits = 'keeps refreshing') and re-seats tabs from the model (RestoreSelection snaps the active tab back to Graph). Fix: new WorkbenchAdapter.RefreshInPlace(ids) rebuilds only the named panes' Content without swapping Manager.Layout; watcher refresh calls it instead of Render(). 2 STA adapter tests assert the layout root is not swapped (graph untouched) and the active tab is preserved. Registered WATCHER-REFRESH-FULL-RENDER. App 370 green; app smoke-launches.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "tests/AiDe.App.Tests/ZoneWorkbenchAdapterTests.cs",
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
