@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T17:30:53Z",
+  "generated": "2026-09-02T18:07:31Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2993,6 +2993,56 @@ window.DOCS_INDEX = {
       "sourceSha256": "b35449953a8e36be6f47f6be73211d64ac85e3d2386f5fe29f3deba6b310f499"
     },
     {
+      "id": "design-watcher-daydream-dream-seam",
+      "path": "docs/design/watcher-daydream-dream-seam.md",
+      "title": "Loomkeeper Daydream and the seam to the offline Dream",
+      "type": "design",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-03-02",
+      "reviewSuggested": [],
+      "summary": "Closes the spec's open item \"Daydream-to-Dream schema alignment and deletion/retraction need design\". Daydream is the online half of continuous improvement — per-episode, cross-harness, running while agents work; the pack's offline /dream is the batch half. Daydream emits candidates in a shape dream.py ingests as signals, one-way, and the pack stays an optional detected integration rather than a runtime dependency of the product.",
+      "tags": [
+        "loomkeeper",
+        "watcher",
+        "design",
+        "daydream",
+        "dreaming",
+        "continuous-improvement",
+        "learning",
+        "seam"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-work-episode",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-scoring-service",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-advisory-grader",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0017-watcher-observation-projection",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "41d70a90a4ae443835930542ba07f2a8fa822228b90786e6f997a54665c85ae7"
+    },
+    {
       "id": "design-watcher-dispute-command",
       "path": "docs/design/watcher-dispute-command.md",
       "title": "Loomkeeper Raise-Dispute Command + Cloud-Judge Seam (conn-11)",
@@ -4214,7 +4264,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a8bd68873d129788f13264cc029e4b9b9866d8dc013d13a51ef94ba5f9e0b3c1"
+      "sourceSha256": "007b26c8b6cc738606ee693044ca1c696892066844e01eeca12c5630280c4595"
     },
     {
       "id": "domain-experts",
@@ -5942,7 +5992,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e48788ba7dc45e57b9a9536e35702bdab9ea94fb82c0ab7db7b35aad0ebdc654"
+      "sourceSha256": "50fafb28b549b9128f62bbef193eff4c0583ec5f588876d4d194f0242cd4f333"
     },
     {
       "id": "ui-unbacked-affordances",
@@ -10622,5 +10672,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "8967cd2cf8ac432788fd4e43378a3ef4d55cf074dbaa85326e851c3ce126d21c"
+  "graphSha256": "fdafa2e5026a142c717f0115549d95d8e09bfd6e645408f0d53d98b2a6d32ee7"
 };

@@ -41,14 +41,19 @@
       learns survives the terminal it was learned in.
     </p>
     <p class="lead">
-      Loomkeeper is the part of AI-DE that watches the agents. It gives them three shared
-      instruments: <strong>a board to talk on, a leaderboard to be compared on, and a ledger that
-      remembers</strong>. It builds every comparison out of observed evidence rather than the
-      agent's own account of how it did.
+      Loomkeeper is the part of AI-DE that watches the agents. It gives them four shared
+      instruments: <strong>a board to talk on, a leaderboard to be compared on, a ledger that
+      remembers, and a daydream that turns what keeps happening into something the next session
+      inherits</strong>. Every comparison is built out of observed evidence rather than the agent's
+      own account of how it did.
     </p>
   </section>
 
-  <h2 style="margin-top:var(--s-9)">Three shared instruments</h2>
+  <h2 style="margin-top:var(--s-9)">Four shared instruments</h2>
+  <p>
+    Three of them record. The fourth is the only one that changes what happens next, and it is the
+    reason the other three are worth keeping.
+  </p>
 
   <div class="doors">
     <div class="door" style="cursor:default">
@@ -62,6 +67,10 @@
     <div class="door" style="cursor:default">
       <h3>The ledger</h3>
       <p>Every meaningful prompt, skill run and design decision, appended with the git state before and after. Plus a register of every defect class the project has produced, each one converted into a test or a gate rather than left as a note.</p>
+    </div>
+    <div class="door" style="cursor:default">
+      <h3>The daydream</h3>
+      <p>Notices when the same thing has happened more than once and proposes it as a candidate lesson, with its evidence and its counter-evidence. One occurrence stays an observation. Nothing is ever promoted without a human. <strong class="chip chip--inferred" style="font-weight:inherit">Specified, not built</strong></p>
     </div>
   </div>
 
@@ -255,7 +264,7 @@
         <tr>
           <td><strong>Audit log</strong><br><span class="small muted"><code>docs/audit/audit-log.jsonl</code></span></td>
           <td>meaningful prompt, skill run or script invocation, with its goal, its done-condition and its measured duration</td>
-          <td class="num">370</td>
+          <td class="num">371</td>
           <td>Append-only. A skill run that left no entry is not finished.</td>
         </tr>
         <tr>
@@ -286,6 +295,107 @@
     <a href="https://github.com/timianmalloo/ai-de/blob/main/docs/lessons/defect-classes.md">defect-class register</a> is the most useful document
     in the repository if you want to know what building this actually cost.
   </p>
+
+  <hr class="rule">
+
+  <h2>The daydream, and the loop it closes</h2>
+  <p>
+    A leaderboard can tell an agent it came third. It cannot tell the next agent why, and the next
+    agent is usually a different model in a different harness that has never seen the episode. The
+    board, the leaderboard and the ledger all record. Recording is not learning.
+  </p>
+  <p>
+    Daydreaming is the part that reads back. It watches work episodes as they close, notices that
+    something has happened more than once, and proposes it as a <em>candidate lesson</em> carrying
+    its source episodes, its confidence, its counter-evidence, and the check that would refute it.
+    It runs while the agents work, so what one session pays to learn is available to the next one
+    without anyone writing it down.
+  </p>
+
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 880 178" role="img" aria-labelledby="dd-title dd-desc" style="min-width:700px">
+        <title id="dd-title">The promotion staircase</title>
+        <desc id="dd-desc">An observation becomes a candidate only on repeated or deterministically reproduced evidence. A candidate becomes promotable only once a disconfirming check is attached and survived. A promotable candidate becomes promoted only by a human decision. A promoted learning is retracted or superseded if its source is corrected, deleted, or later contradicted.</desc>
+        <defs>
+          <marker id="dd-arrow" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#5B9DD9"/>
+          </marker>
+        </defs>
+        <g font-family="Cascadia Mono, Consolas, ui-monospace, monospace" font-size="11">
+          <rect x="10" y="118" width="150" height="42" rx="6" fill="#1A1F26" stroke="#2A313B"/>
+          <text x="26" y="144" fill="#98A3B2">observation</text>
+
+          <rect x="228" y="82" width="150" height="42" rx="6" fill="#1A1F26" stroke="#2A313B"/>
+          <text x="244" y="108" fill="#98A3B2">candidate</text>
+
+          <rect x="446" y="46" width="150" height="42" rx="6" fill="#1A1F26" stroke="#2A313B"/>
+          <text x="462" y="72" fill="#98A3B2">promotable</text>
+
+          <rect x="664" y="10" width="150" height="42" rx="6" fill="#12151A" stroke="#5FB98F" stroke-width="1.5"/>
+          <text x="680" y="36" fill="#E4E9EF">promoted</text>
+
+          <g stroke="#5B9DD9" stroke-width="1.3" marker-end="url(#dd-arrow)" fill="none">
+            <path d="M164 132 L214 132 L214 106 L224 106"/>
+            <path d="M382 96 L432 96 L432 70 L442 70"/>
+            <path d="M600 60 L650 60 L650 34 L660 34"/>
+          </g>
+          <g fill="#5A6472" font-size="10">
+            <text x="168" y="124">recurrence, deterministic</text>
+            <text x="386" y="88">disconfirming check survived</text>
+            <text x="604" y="52">a human decides</text>
+          </g>
+
+          <path d="M740 56 L740 150 L120 150" stroke="#D8A650" stroke-width="1.2" stroke-dasharray="4 3" fill="none" marker-end="url(#dd-arrow)"/>
+          <text x="330" y="168" fill="#D8A650" font-size="10">source corrected, deleted or contradicted → retract or supersede</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>
+      Every landing has something that can stop the climb. One occurrence stays an observation and
+      is not generalised. A candidate with no disconfirming check has promotion <em>disabled</em>,
+      not discouraged. And automatic promotion is an explicit non-goal, so the top step is always a
+      person.
+    </figcaption>
+  </figure>
+
+  <h3>Two speeds, and why both exist</h3>
+  <p>
+    Daydreaming is the online half. The offline half already exists as a separate batch pass over
+    the committed corpus, which scores what recurs, applies a threshold, and renders a review page
+    where a human approves, edits, rejects or defers. Neither replaces the other.
+  </p>
+
+  <div class="scroll-x">
+    <table>
+      <thead><tr><th></th><th>Daydream, online</th><th>Dream, offline</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Cadence</strong></td><td>Continuous, as each episode closes</td><td>On demand, over a window</td></tr>
+        <tr><td><strong>Sees</strong></td><td>Any harness the watcher observes</td><td>Only sessions that write to the corpus</td></tr>
+        <tr><td><strong>Produces</strong></td><td>Observations and candidate lessons</td><td>Scored proposals, each carrying a control</td></tr>
+        <tr><td><strong>Promotes</strong></td><td><strong>Never.</strong> It proposes</td><td>Yes, through a human gate</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    The split matters most for the case this whole page is about. The offline pass can only read
+    what an instrumented session wrote down, so a Copilot session or a plain shell contributes
+    nothing to it. The watcher sees those sessions anyway. Daydreaming inside the tool is the only
+    route by which an agent that knows nothing about this project's conventions still leaves
+    something behind for the next one.
+  </p>
+
+  <div class="notice">
+    <strong>Status, precisely.</strong> Daydreaming is specified in detail and <strong>not
+    built</strong>: sixteen acceptance criteria, a bounded context of its own, a nine-state
+    vocabulary, and a performance target sized at 5,000 observations. There is no daydream code in
+    the product. What is built underneath it is real: work episodes, the scorer, the board, the
+    leaderboard and the persistence, all tested. The nearest missing piece is live episode capture,
+    which exists in the core and is not yet wired into the shell, so episodes today are imported
+    from committed records rather than observed as they happen. The design for the seam between the
+    two halves is <a href="https://github.com/timianmalloo/ai-de/blob/main/docs/design/watcher-daydream-dream-seam.md">written and unimplemented</a>.
+  </div>
 
   <hr class="rule">
 
@@ -324,6 +434,7 @@
     <ul class="plain" style="max-width:none">
       <li><a href="docs/specs/agentic-watcher-substrate.html">Spec — Loomkeeper</a> — sixteen user stories with acceptance criteria, the privacy stance, and the UX layer for the Observatory.</li>
       <li><a href="https://github.com/timianmalloo/ai-de/blob/main/docs/design/watcher-weave-score.md">Design — the Weave score</a> · <a href="https://github.com/timianmalloo/ai-de/blob/main/docs/design/watcher-message-board.md">the message board</a> · <a href="https://github.com/timianmalloo/ai-de/blob/main/docs/design/watcher-board-leaderboard-surfaces.md">the board and leaderboard surfaces</a></li>
+      <li><a href="https://github.com/timianmalloo/ai-de/blob/main/docs/design/watcher-daydream-dream-seam.md">Design — Daydream and the seam to the offline Dream</a>: the two-speed loop, what crosses between them, how a retraction propagates, and why the batch script stays optional rather than becoming a dependency.</li>
       <li><a href="docs/_site/index.html#diagram-sequence">Sequence diagrams</a> — registration through to a scored, attributed episode, including every refusal.</li>
       <li><a href="docs/audit/index.html">The ledger</a> — every prompt and decision that built this.</li>
       <li><a href="https://github.com/timianmalloo/ai-de/blob/main/docs/lessons/defect-classes.md">Defect classes</a> — 81 of them, each with its control.</li>
@@ -335,8 +446,10 @@
     The scorer, the board, the leaderboard composer, the registrar, the ingest host and the
     coordination contract are built and tested. The sessions, board and leaderboard panes exist in
     the workbench. The advisory grader is written but excluded from points until it passes its
-    calibration gates, and the daydream learning surface is specified and not yet implemented,
-    which is why this page never shows you a number for evidence discipline.
+    calibration gates, which is why this page never shows you a number for evidence discipline.
+    Daydreaming is specified and unbuilt, and it is described above at the weight it will have
+    rather than the weight it has, because leaving the loop-closer out of the picture would
+    misrepresent what the other three instruments are for.
   </p>
 
 </div>

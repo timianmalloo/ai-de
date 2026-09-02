@@ -22,7 +22,7 @@ summary: >-
 # AI-DE documentation — map of content
 
 This is a **route**, not an inventory. The complete, typed, machine-navigable form of everything
-below is the **[Docs Explorer](index.html)** — 303 artifacts with their links, health and review
+below is the **[Docs Explorer](index.html)** — 304 artifacts with their links, health and review
 state. Start here if you are a person; start there if you are looking for something specific.
 
 The public presence over this material is the **project site**, authored in `site/` and published
@@ -53,6 +53,7 @@ board, compared on evidence, and remembered in a ledger.
 - [Spec — Loomkeeper, the agentic watcher substrate](specs/agentic-watcher-substrate.md) · [rendered](specs/agentic-watcher-substrate.html)
 - [Architecture — Loomkeeper](architecture/loomkeeper.md)
 - Designs: [Weave score](design/watcher-weave-score.md) · [message board](design/watcher-message-board.md) · [board and leaderboard surfaces](design/watcher-board-leaderboard-surfaces.md) · [scoring service](design/watcher-scoring-service.md) · [score dispute](design/watcher-score-dispute.md)
+- [Daydream and the seam to the offline Dream](design/watcher-daydream-dream-seam.md) — the online half of continuous improvement, what crosses to the batch pass, how a retraction propagates, and why the pack's script stays an optional integration rather than a runtime dependency. **Proposed; nothing built.**
 - [ADR-0020 — trusted registrar, harness and model identity](adr/0020-trusted-registrar-harness-model-identity.md) · [ADR-0019 — advisory evaluator calibration](adr/0019-advisory-evaluator-calibration.md)
 - [Session contracts](collaboration/session-contracts.md) — the single ownership register for concurrent agent sessions.
 
