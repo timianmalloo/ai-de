@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 52 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 53 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3080,6 +3080,8 @@ for both or split.*
   list takes the shape of the examples it was built from**, and an artifact of a different shape is
   invisible rather than skipped. The gate now takes a `glob` and reports "n of 17", observed catching
   a planted hand-edit and naming the file.
+- **Status:** `controlled`
+
 ### DC-086 — An identifier is used as a file name, and the filesystem reinterprets it
 
 - **Signature:** an id that is unique, stable and perfectly valid *as an id* is concatenated into a
