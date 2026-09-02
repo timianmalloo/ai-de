@@ -215,6 +215,21 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
     public static string? WorkingDirectory { get; set; }
 
     /// <summary>
+    /// Extra environment for a session, by its id. Null (the default) means the child inherits
+    /// exactly as it always has.
+    /// </summary>
+    /// <remarks>
+    /// <para>A function rather than a value because <see cref="WorkingDirectory"/>'s shape does not
+    /// fit here: the workspace is one value for every terminal, and a session's identity is not —
+    /// <c>AIDE_SESSION</c> and <c>AIDE_HARNESS</c> differ per surface.</para>
+    ///
+    /// <para><b>The shell supplies this, not this class.</b> The values come from the git facts and
+    /// the harness choice, both of which the shell already resolves; computing them here would be a
+    /// second definition of the same quantities.</para>
+    /// </remarks>
+    public static Func<string, IReadOnlyDictionary<string, string>>? EnvironmentFor { get; set; }
+
+    /// <summary>
     /// Watches for an agent's prompt marker, when this session runs one.
     /// </summary>
     /// <remarks>
@@ -366,7 +381,13 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
                     Integration: AgentReadiness is null
                         ? ShellIntegrationMode.PowerShell
                         : ShellIntegrationMode.PowerShellHostedAgent,
-                    ShellPath: CommandLine),
+                    ShellPath: CommandLine,
+
+                    // An agent cannot otherwise know it is inside AI-DE, which is the whole point:
+                    // registration already happens without it, and this is what lets a session
+                    // participate rather than merely be observed. Null when nothing supplies it, so
+                    // the child inherits exactly as before.
+                    Environment: EnvironmentFor?.Invoke(sessionId)),
                 _shutdown.Token);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)

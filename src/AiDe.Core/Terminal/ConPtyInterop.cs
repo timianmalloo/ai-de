@@ -169,8 +169,60 @@ internal static partial class ConPtyInterop
     /// buffer purely to learn the size it wants, then again to fill it. Its first call FAILS and
     /// sets <c>ERROR_INSUFFICIENT_BUFFER</c>, which is success for that call.
     /// </remarks>
+    /// <summary>
+    /// Builds the child's environment block: this process's, plus <paramref name="extra"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>Sorted case-insensitively by name, which is the documented block convention, and
+    /// terminated by a second null. Returns null when there is nothing extra to add, so the child
+    /// inherits exactly as before and the common path is untouched.</para>
+    ///
+    /// <para><b>There is deliberately no total-size guard here, and the reason is measured.</b> An
+    /// earlier version of this method refused past 32,647 characters, from a bisection that had
+    /// measured <c>PATH</c> length and been written down as a block size — two different quantities,
+    /// one named with the other's units. Re-measured properly: a <b>60,000-character non-PATH
+    /// variable passes through a PowerShell-hosted launch intact</b>, while a <b>33,000-character
+    /// PATH breaks it</b>. So the limit is not on the block at all; it is on <c>PATH</c>
+    /// specifically, because PowerShell uses <c>PATH</c> to resolve the command it was asked to run.
+    /// </para>
+    ///
+    /// <para><b>A guard here would refuse launches that work.</b> That is worse than no guard: a
+    /// check that fires on correct behaviour gets switched off, and takes the real check with it.
+    /// Oversized <c>PATH</c> is already reported by <c>EnvironmentHealth</c>, at a threshold far
+    /// below the one that breaks PowerShell.</para>
+    /// </remarks>
+    internal static char[]? BuildEnvironmentBlock(IReadOnlyDictionary<string, string>? extra)
+    {
+        if (extra is null || extra.Count == 0) { return null; }
+
+        var merged = new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (System.Collections.DictionaryEntry e in Environment.GetEnvironmentVariables())
+        {
+            var name = e.Key?.ToString();
+            if (!string.IsNullOrEmpty(name)) { merged[name] = e.Value?.ToString() ?? string.Empty; }
+        }
+
+        foreach (var (name, value) in extra)
+        {
+            if (!string.IsNullOrEmpty(name)) { merged[name] = value ?? string.Empty; }
+        }
+
+        var builder = new System.Text.StringBuilder();
+        foreach (var (name, value) in merged)
+        {
+            builder.Append(name).Append('=').Append(value).Append('\0');
+        }
+
+        builder.Append('\0');
+
+        var block = new char[builder.Length];
+        builder.CopyTo(0, block, 0, builder.Length);
+        return block;
+    }
+
     internal static ProcessInformation StartAttachedProcess(
-        IntPtr console, string commandLine, string? workingDirectory)
+        IntPtr console, string commandLine, string? workingDirectory,
+        IReadOnlyDictionary<string, string>? extraEnvironment = null)
     {
         var size = IntPtr.Zero;
         InitializeProcThreadAttributeList(IntPtr.Zero, 1, 0, ref size);
@@ -202,16 +254,33 @@ internal static partial class ConPtyInterop
             // Passing a literal is a documented way to corrupt memory that usually appears to work.
             var mutable = $"{commandLine}\0".ToCharArray();
 
-            if (!CreateProcess(
-                    null, ref mutable[0], IntPtr.Zero, IntPtr.Zero, false,
-                    EXTENDED_STARTUPINFO_PRESENT | CREATE_UNICODE_ENVIRONMENT,
-                    IntPtr.Zero, workingDirectory, ref startup, out var process))
+            // Null means inherit, which is what every caller did before an environment could be
+            // supplied — so a session that adds nothing behaves exactly as it always has.
+            var block = BuildEnvironmentBlock(extraEnvironment);
+            var environment = IntPtr.Zero;
+            if (block is not null)
             {
-                throw new Win32Exception(Marshal.GetLastWin32Error(),
-                    $"CreateProcess('{commandLine}') failed");
+                environment = Marshal.AllocHGlobal(block.Length * sizeof(char));
+                Marshal.Copy(block, 0, environment, block.Length);
             }
 
-            return process;
+            try
+            {
+                if (!CreateProcess(
+                        null, ref mutable[0], IntPtr.Zero, IntPtr.Zero, false,
+                        EXTENDED_STARTUPINFO_PRESENT | CREATE_UNICODE_ENVIRONMENT,
+                        environment, workingDirectory, ref startup, out var process))
+                {
+                    throw new Win32Exception(Marshal.GetLastWin32Error(),
+                        $"CreateProcess('{commandLine}') failed");
+                }
+
+                return process;
+            }
+            finally
+            {
+                if (environment != IntPtr.Zero) { Marshal.FreeHGlobal(environment); }
+            }
         }
         finally
         {
