@@ -1643,6 +1643,31 @@ went and looked it up — the citation was added at `028d774`, after the connect
 reading, not before. **So building the extractable half would not have caught it.** It is worth
 building on its own merits, and it should not be sold as a fix for the thing that prompted it.
 
+#### Review the diff, not the description
+
+> **If a premise cannot be checked against a tree, it is not a premise — it is a story.**
+
+A design review conducted from a message reviews the message. On 2026-09-02 a session sent four
+premises about the episode contract; three were claims about code, each with a `file:line`, and all
+three were true. The fourth was its own account of what it was building — *"a second episode-open
+will close the previous one Superseded through your existing service"* — and it was **false**, both
+about the service (`WorkEpisode.Open` closes nothing; it records a new generation and returns) and
+about the sender's own working tree, which by then already called `Reframe` explicitly.
+
+**The failure mode is not "wrong claim".** Had the reviewer agreed, the sign-off would have attached
+to code nobody had read, and would later have been cited for it. The reviewer *did* catch the
+service claim — by opening `WorkEpisode.cs` instead of trusting the sentence — and still reviewed the
+design from prose rather than from the diff, which is the half that went wrong.
+
+**The cheap discriminator**, and it is why this is stated as a test rather than an exhortation: a
+premise carrying a `file:line` can be checked in seconds and either survives or does not. A premise
+about intent, plan or "what it will do" has nothing to check it against. **Ask of each premise in a
+review: what would I open to falsify this?** The ones with no answer are the ones to open the diff
+for.
+
+This is the review-facing sibling of **DC-080** — there, a real measurement carried the wrong noun;
+here, a real intention carries the wrong tense.
+
 #### An exception to a control is a predicate, never a name
 
 > **When a control needs an exception, express what makes the case exceptional. Never list which
