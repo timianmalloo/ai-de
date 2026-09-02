@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T17:04:42Z",
+  "generated": "2026-09-02T17:13:10Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7844,6 +7844,27 @@ window.AUDIT_DATA = {
       "tags": [
         "graph",
         "focus",
+        "docking"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0389",
+      "shortname": "smoke92-more-keys-and-drag-no-scatter",
+      "datetime": "2026-09-02T17:13:10Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "smoke 9-2: terminal fidelity (function keys, modified arrows) + docking drag no-scatter",
+      "summary": "T-T2: F1-F12, Shift+Tab (ESC[Z), Ctrl/Shift+arrows (ESC[1;modX). T-W2 (#3 fixed): ReconcileFromView maps a live drag by position only and reverts an unmappable drag instead of the kind-based Convert that re-seated bystander zones. +12 tests (App 340, Core 1369).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/TerminalInput.cs",
+        "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs"
+      ],
+      "tags": [
+        "terminal",
         "docking"
       ],
       "outcome": "success"

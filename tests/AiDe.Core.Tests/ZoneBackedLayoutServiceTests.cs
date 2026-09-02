@@ -260,6 +260,51 @@ public sealed class ZoneBackedLayoutServiceTests
         Assert.Equal(ZoneId.Center, svc.Zones.FindZoneOf("graph"));   // Center untouched
     }
 
+    [Fact]
+    public void ReconcileFromView_WhenPositionMappingFails_LeavesTheModelUnchanged_NoScatter()
+    {
+        var svc = new ZoneBackedLayoutService(WorkbenchLayout.Default());
+        var before = svc.Zones.Shape();
+
+        // An unmappable shape (surfaces the model does not know). Restore would kind-convert and could
+        // move a bystander zone; ReconcileFromView must instead leave the model exactly as it was.
+        var a = new StackNode("a", [new Surface("x", "view", "X")]);
+        var b = new StackNode("b", [new Surface("y", "canvas", "Y")]);
+        var weird = new Layout(
+            new SplitNode("cols", Orientation.Horizontal, [a, b], [0.5, 0.5]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+
+        var applied = svc.ReconcileFromView(weird);
+
+        Assert.False(applied);
+        Assert.Equal(before, svc.Zones.Shape()); // every bystander zone is exactly where it was — no scatter
+    }
+
+    [Fact]
+    public void ReconcileFromView_WhenPositionMappingSucceeds_Applies()
+    {
+        var svc = new ZoneBackedLayoutService(WorkbenchLayout.Default());
+        var tree = svc.Current;
+        var left = tree.AllStacks().Single(s => s.Id == ZonesToTree.LeftStackId);
+        var center = tree.AllStacks().Single(s => s.Id == ZonesToTree.CenterStackId);
+        var bottom = tree.AllStacks().Single(s => s.Id == ZonesToTree.BottomStackId);
+        var domain = center.Surfaces.Single(s => s.SurfaceId == "domain");
+
+        var center2 = new StackNode("c", center.Surfaces.Remove(domain));
+        var bottom2 = new StackNode("b", bottom.Surfaces.Add(domain));
+        var post = new Layout(
+            new SplitNode("root", Orientation.Vertical,
+                [new SplitNode("cols", Orientation.Horizontal, [left, center2], [0.3, 0.7]), bottom2],
+                [0.7, 0.3]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+
+        var applied = svc.ReconcileFromView(post);
+
+        Assert.True(applied);
+        Assert.Equal(ZoneId.Bottom, svc.Zones.FindZoneOf("domain"));
+        Assert.Equal(ZoneId.Left, svc.Zones.FindZoneOf("explore")); // bystander untouched
+    }
+
     private static IReadOnlyList<string> StackSurfaces(ILayoutService svc, string stackId) =>
         svc.Current.AllStacks().FirstOrDefault(s => s.Id == stackId)?.Surfaces.Select(s => s.SurfaceId).ToList()
         ?? new List<string>();

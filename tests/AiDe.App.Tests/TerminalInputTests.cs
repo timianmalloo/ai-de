@@ -93,6 +93,37 @@ public sealed class TerminalInputTests
         Assert.True(TerminalInput.ForKey(Key.F13, ModifierKeys.None).IsEmpty);
     }
 
+    [Theory]
+    [InlineData(Key.F1, "<1B>OP")]
+    [InlineData(Key.F4, "<1B>OS")]
+    [InlineData(Key.F5, "<1B>[15~")]
+    [InlineData(Key.F10, "<1B>[21~")]
+    [InlineData(Key.F12, "<1B>[24~")]
+    public void FunctionKeys_SendTheirSs3OrTildeForms(Key key, string expected)
+    {
+        Assert.Equal(expected, Bytes(TerminalInput.ForKey(key, ModifierKeys.None)));
+    }
+
+    [Fact]
+    public void ShiftTab_SendsBackTab_NotATab()
+    {
+        // CBT (ESC [ Z). A literal tab here would move forward, the opposite of what Shift+Tab means.
+        Assert.Equal("<1B>[Z", Bytes(TerminalInput.ForKey(Key.Tab, ModifierKeys.Shift)));
+    }
+
+    [Theory]
+    [InlineData(Key.Right, ModifierKeys.Control, "<1B>[1;5C")]   // Ctrl+Right — word forward
+    [InlineData(Key.Left, ModifierKeys.Control, "<1B>[1;5D")]    // Ctrl+Left — word back
+    [InlineData(Key.Up, ModifierKeys.Shift, "<1B>[1;2A")]       // Shift+Up — selection
+    [InlineData(Key.End, ModifierKeys.Shift, "<1B>[1;2F")]      // Shift+End — select to end
+    public void ModifiedCursorKeys_SendTheCsiModifierForm(Key key, ModifierKeys modifiers, string expected)
+    {
+        // Modified cursor keys are CSI-with-modifier regardless of DECCKM — a TUI reads these for word
+        // navigation and selection.
+        Assert.Equal(expected, Bytes(TerminalInput.ForKey(key, modifiers)));
+        Assert.Equal(expected, Bytes(TerminalInput.ForKey(key, modifiers, applicationCursorKeys: true)));
+    }
+
     [Fact]
     public void PlainLetters_AreNotMappedHere_BecauseTheyArriveAsText()
     {
