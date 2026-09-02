@@ -1583,6 +1583,40 @@ an STA thread (31) and requiring the categories to sum to it. That is why this t
 denominators rather than about instruments: two instruments are cheap to produce and easy to
 duplicate accidentally, whereas a second denominator has to come from somewhere else in the world.
 
+#### Nothing counts an absent cross-reference
+
+Every control in this repository works by **comparison** — a count against a count, a denominator
+against a category, a guard against a wrap. That is why they caught what they caught on 2026-09-01,
+and it is also the shape of what they cannot reach.
+
+**There is no denominator for "connections that should exist."** §3 of the session-registration spec
+proposes adding nine environment variables to a child process. DC-027 is the class where a child
+loses the environment it was given because a limit applies in between — and its recorded instance is
+this repository's own agent terminals losing a 22,297-character PATH. The two documents are the same
+seam from opposite ends. **Both were correct, both were current, and neither pointed at the other.**
+No gate could have noticed: a missing link has no numerator and no denominator, so there is nothing
+for a count to disagree with.
+
+It was found because a session mentioned an unrelated detail in passing and the other session went
+and looked it up.
+
+**The honest form of what worked, then:**
+
+| Mechanism | Caught | Scales without a second agent? |
+|---|---|---|
+| an artifact property (a printed count, a reconciliation, a guard with no wrap) | everything countable | **yes** |
+| the other session | the connection nothing counts | no |
+| reading one's own work carefully | **nothing, all day** | — |
+
+The third row is not modesty; it is the measured result of a day in which every correction came from
+one of the first two. **Build the first row wherever the thing is countable, and know that the second
+row is doing work the first cannot** — which is an argument for the two-session arrangement that
+neither session made when it was set up, and which nobody should assume is free.
+
+**A concrete gap this names:** the defect register's classes are not nodes in the docs graph, so a
+spec cannot declare `relates-to DC-027` and nothing can flag a spec that touches a registered
+hazard without citing it. That is buildable and is not built.
+
 #### An exception to a control is a predicate, never a name
 
 > **When a control needs an exception, express what makes the case exceptional. Never list which
