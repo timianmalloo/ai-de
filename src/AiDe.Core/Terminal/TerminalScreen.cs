@@ -160,6 +160,21 @@ public sealed class TerminalScreen
     public object SyncRoot { get; } = new();
 
     /// <summary>
+    /// Whether the child has enabled <b>application cursor key mode</b> (DECCKM, <c>ESC [ ? 1 h</c>).
+    /// </summary>
+    /// <remarks>
+    /// A full-screen TUI (Claude Code's menus, vim, less) turns this on and then expects the cursor
+    /// keys as <b>SS3</b> (<c>ESC O A</c>) rather than CSI (<c>ESC [ A</c>). A terminal that ignores
+    /// the mode and always sends CSI leaves the arrows dead in exactly those programs — the reported
+    /// "arrow keys don't work in the Claude Code session" (smoke 9-2). Input encoding is the reader
+    /// of this flag (<see cref="TerminalInput"/>); the parser is its writer.
+    /// </remarks>
+    public bool ApplicationCursorKeys { get; private set; }
+
+    /// <summary>Sets or clears application cursor key mode (DECCKM). Display is unaffected, so no repaint.</summary>
+    public void SetApplicationCursorKeys(bool enabled) => ApplicationCursorKeys = enabled;
+
+    /// <summary>
     /// The cell under the cursor, or <c>null</c> when the cursor is not on a real cell. The cursor
     /// legitimately sits off the grid at the <b>pending-wrap</b> column (<c>CursorColumn == Columns</c>,
     /// held after writing the last column until the next write wraps), and can be left outside the grid

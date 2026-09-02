@@ -345,16 +345,20 @@ public sealed class TerminalView : FrameworkElement
         base.OnTextInput(e);
     }
 
-    protected override void OnKeyDown(KeyEventArgs e)
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
-        var bytes = TerminalInput.ForKey(e.Key, Keyboard.Modifiers);
+        // Special/control keys are handled at the TUNNELING stage, before WPF's own directional focus
+        // navigation can consume an arrow or Tab and move focus out of the terminal — the "arrow keys
+        // don't work in the session" failure (smoke 9-2). Regular text keys return empty here and fall
+        // through to OnTextInput, so every keyboard layout, dead keys and IME still work.
+        var bytes = TerminalInput.ForKey(e.Key, Keyboard.Modifiers, _screen.ApplicationCursorKeys);
         if (!bytes.IsEmpty)
         {
             Input?.Invoke(this, bytes);
             e.Handled = true;
         }
 
-        base.OnKeyDown(e);
+        base.OnPreviewKeyDown(e);
     }
 
     protected override void OnMouseDown(MouseButtonEventArgs e)

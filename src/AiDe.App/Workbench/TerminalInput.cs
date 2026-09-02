@@ -25,7 +25,11 @@ public static class TerminalInput
     private const byte Escape = 0x1B;
 
     /// <summary>The bytes for a key press, or empty when the key sends nothing.</summary>
-    public static ReadOnlyMemory<byte> ForKey(Key key, ModifierKeys modifiers)
+    /// <param name="applicationCursorKeys">
+    /// When the child has enabled DECCKM (application cursor key mode), the cursor keys are encoded as
+    /// SS3 (<c>ESC O A</c>) rather than CSI (<c>ESC [ A</c>) — which is what a full-screen TUI expects.
+    /// </param>
+    public static ReadOnlyMemory<byte> ForKey(Key key, ModifierKeys modifiers, bool applicationCursorKeys = false)
     {
         var control = (modifiers & ModifierKeys.Control) != 0;
 
@@ -34,6 +38,24 @@ public static class TerminalInput
             // Ctrl+A is 1, Ctrl+C is 3, Ctrl+Z is 26 — the letter's position in the alphabet. This
             // is the definition of a control character, not a convention we chose.
             return new[] { (byte)(key - Key.A + 1) };
+        }
+
+        // Cursor keys (arrows, Home, End) switch encoding with DECCKM: SS3 in application mode, CSI
+        // in normal mode. Sending CSI unconditionally is what leaves the arrows dead in a TUI that
+        // asked for application mode (smoke 9-2).
+        var cursorFinal = key switch
+        {
+            Key.Up => 'A',
+            Key.Down => 'B',
+            Key.Right => 'C',
+            Key.Left => 'D',
+            Key.Home => 'H',
+            Key.End => 'F',
+            _ => '\0',
+        };
+        if (cursorFinal != '\0')
+        {
+            return applicationCursorKeys ? Ss3(cursorFinal) : Csi(cursorFinal);
         }
 
         return key switch
@@ -45,13 +67,6 @@ public static class TerminalInput
             // BS rather than DEL. Windows consoles expect 0x08, and sending DEL puts a `^?` on the
             // line in the shells this product launches.
             Key.Back => new byte[] { 0x08 },
-
-            Key.Up => Csi('A'),
-            Key.Down => Csi('B'),
-            Key.Right => Csi('C'),
-            Key.Left => Csi('D'),
-            Key.Home => Csi('H'),
-            Key.End => Csi('F'),
 
             // The tilde forms, which is what these four actually are on the wire.
             Key.Insert => CsiTilde(2),
@@ -68,6 +83,8 @@ public static class TerminalInput
         string.IsNullOrEmpty(text) ? ReadOnlyMemory<byte>.Empty : Encoding.UTF8.GetBytes(text);
 
     private static byte[] Csi(char final) => [Escape, (byte)'[', (byte)final];
+
+    private static byte[] Ss3(char final) => [Escape, (byte)'O', (byte)final];
 
     private static byte[] CsiTilde(int number) =>
         [Escape, (byte)'[', (byte)('0' + number), (byte)'~'];
