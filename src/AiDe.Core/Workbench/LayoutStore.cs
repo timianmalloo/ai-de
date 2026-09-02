@@ -88,7 +88,7 @@ public sealed class LayoutStore(
     /// workbench. Adding a pane to <see cref="Layout.Default"/> alone reaches only people with no
     /// saved layout, which is nobody who has used the product.
     /// </remarks>
-    public const int CurrentSchemaVersion = 3;
+    public const int CurrentSchemaVersion = 4;
 
     private static readonly JsonSerializerOptions Json = new()
     {

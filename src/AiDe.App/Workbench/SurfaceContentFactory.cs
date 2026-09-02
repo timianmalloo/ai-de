@@ -22,10 +22,11 @@ public sealed class SurfaceContentFactory(
     IWatcherBoardQuery? watcherBoard = null,
     IWatcherLeaderboardQuery? watcherLeaderboard = null,
     IWatcherDisputeQuery? watcherDisputes = null,
+    IWatcherLedgerQuery? watcherLedger = null,
     System.Func<string, System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SearchResult>>>? searchProvider = null)
 {
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
-    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"];
+    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "ledger", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"];
 
     public FrameworkElement Create(Surface surface)
     {
@@ -40,6 +41,7 @@ public sealed class SurfaceContentFactory(
             "sessions" => Sessions(surface),
             "board" => Board(surface),
             "leaderboard" => Leaderboard(surface),
+            "ledger" => Ledger(surface),
             "prompt" => new PromptDraftSurface(surface.SurfaceId, surface.Title),
             "classdiagram" => new ClassDiagramSurface(surface.Title),
             "sequence" => new SequenceDiagramSurface(),
@@ -306,6 +308,15 @@ public sealed class SurfaceContentFactory(
         var pane = new WatcherLeaderboardPaneViewModel(watcherLeaderboard, watcherDisputes);
         pane.Load();
         return ListPane(surface, pane.Rows, nameof(WatcherLeaderboardRow.DisplayLabel), pane.StatusMessage, "cells");
+    }
+
+    // The Ledger: the append-only record of every work episode, newest first — the third watcher read
+    // beside Board and Leaderboard, over the same observation store (US: "the ledger viewable too").
+    private FrameworkElement Ledger(Surface surface)
+    {
+        var episodes = watcherLedger?.GetEpisodes() ?? [];
+        return ListPane(surface, LedgerRow.Rows(episodes), nameof(LedgerRow.DisplayLabel),
+            LedgerRow.StatusFor(watcherLedger), "episodes");
     }
 
     /// <summary>

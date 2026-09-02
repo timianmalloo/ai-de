@@ -313,6 +313,48 @@ public sealed class SurfaceContentTests
         Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces), s => s.Kind == "leaderboard");
     }
 
+    [Fact]
+    public void TheLedgerSurface_ShowsAnEpisode_AndIsInTheDefaultLayout()
+    {
+        // The Ledger (US: "the ledger viewable too") renders honestly and synchronously — one recorded
+        // work episode reaches the ListBox as a row, and the status is not a Loading message (the load
+        // is a local read off the observation store).
+        var view = OnStaThread(() =>
+        {
+            var store = new AiDe.Core.Watcher.InMemoryWatcherObservationStore();
+            store.RecordEpisode(new AiDe.Core.Watcher.WorkEpisode(
+                "e1", "s1", new AiDe.Core.Watcher.EpisodeGeneration(1),
+                new AiDe.Core.Watcher.Goal("Ship the ledger"), new AiDe.Core.Watcher.DoneCondition("done"),
+                null, DateTimeOffset.UnixEpoch, null, null));
+            var query = new WatcherLedgerQuery(store);
+
+            var content = new SurfaceContentFactory(null, null, null, null, null, query)
+                .Create(new Surface("ledger", "ledger", "Ledger"));
+            var stack = Assert.IsType<StackPanel>(Unwrap(content));
+            var list = stack.Children.OfType<ListBox>().Single();
+            var status = stack.Children.OfType<TextBlock>().Single();
+            return new SurfaceView(list.ItemsSource?.Cast<object>().Count() ?? 0, status.Text);
+        });
+
+        Assert.Equal(1, view.ItemCount);
+        Assert.DoesNotContain("Loading", view.StatusText, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(Layout.Default().AllStacks().SelectMany(s => s.Surfaces), s => s.Kind == "ledger");
+    }
+
+    [Fact]
+    public void TheLedgerSurface_WithNoWatcherStore_SaysUnavailable_NotBlank()
+    {
+        var status = OnStaThread(() =>
+        {
+            var content = new SurfaceContentFactory(null).Create(new Surface("ledger", "ledger", "Ledger"));
+            var stack = Assert.IsType<StackPanel>(Unwrap(content));
+            return stack.Children.OfType<TextBlock>().Single().Text;
+        });
+
+        Assert.Contains("not available", status, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Loading", status, StringComparison.OrdinalIgnoreCase);
+    }
+
     /// <summary>A watcher read that answers immediately with a fixed set of sessions.</summary>
     private sealed class StubSessionsQuery(params WatcherSessionSnapshot[] sessions) : IWatcherSessionsQuery
     {

@@ -137,6 +137,7 @@ public sealed record WorkbenchLayout(
             new Surface("sessions", "sessions", "Sessions"),
             new Surface("board", "board", "Board"),
             new Surface("leaderboard", "leaderboard", "Leaderboard"),
+            new Surface("ledger", "ledger", "Ledger"),
         ]);
 
         var left = new ZoneStack(

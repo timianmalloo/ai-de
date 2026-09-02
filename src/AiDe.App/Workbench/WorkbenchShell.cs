@@ -68,7 +68,7 @@ public sealed class WorkbenchShell : IDisposable
     private CancellationTokenSource? _watcherPump;
 
     /// <summary>The stateless watcher read-pane kinds - rebuilt on refresh; never a terminal (DC-029).</summary>
-    private static readonly HashSet<string> WatcherPaneKinds = new(StringComparer.Ordinal) { "sessions", "board", "leaderboard" };
+    private static readonly HashSet<string> WatcherPaneKinds = new(StringComparer.Ordinal) { "sessions", "board", "leaderboard", "ledger" };
 
     /// <summary>
     /// Every pane kind whose content depends on a workspace being open.
@@ -89,7 +89,7 @@ public sealed class WorkbenchShell : IDisposable
     /// content is a pure function of the queries belong here.</para>
     /// </remarks>
     private static readonly HashSet<string> WorkspaceDependentPaneKinds =
-        new(StringComparer.Ordinal) { "sessions", "board", "leaderboard", "view", "inspector" };
+        new(StringComparer.Ordinal) { "sessions", "board", "leaderboard", "ledger", "view", "inspector" };
 
     /// <summary>The last observed watcher-store fingerprint; the loop only re-renders the panes when it changes (conn-9).</summary>
     private string? _watcherFingerprint;
@@ -126,6 +126,7 @@ public sealed class WorkbenchShell : IDisposable
 
         _factory = new SurfaceContentFactory(
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
+            watcher.Ledger,
             queries is not null ? SearchWorkspaceAsync : null);
 
         // The environment contract does not depend on a workspace, so it must not be gated behind
@@ -487,6 +488,7 @@ public sealed class WorkbenchShell : IDisposable
         var watcher = StartWatcher(dataDirectory);
         _factory = new SurfaceContentFactory(
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
+            watcher.Ledger,
             SearchWorkspaceAsync);
 
         // Panes realized at construction were built against a factory with no queries and render
@@ -1824,7 +1826,8 @@ public sealed class WorkbenchShell : IDisposable
     /// never blocked. A re-attach disposes the previous host first.
     /// </remarks>
     private (IWatcherSessionsQuery? Sessions, IWatcherBoardQuery? Board,
-             IWatcherLeaderboardQuery? Leaderboard, IWatcherDisputeQuery? Disputes) StartWatcher(string? dataDirectory)
+             IWatcherLeaderboardQuery? Leaderboard, IWatcherDisputeQuery? Disputes,
+             IWatcherLedgerQuery? Ledger) StartWatcher(string? dataDirectory)
     {
         // A re-attach (opening a different workspace) resets the host.
         _watcherPump?.Cancel();
@@ -1838,7 +1841,7 @@ public sealed class WorkbenchShell : IDisposable
 
         if (string.IsNullOrEmpty(dataDirectory))
         {
-            return (null, null, null, null);
+            return (null, null, null, null, null);
         }
 
         try
@@ -1860,7 +1863,8 @@ public sealed class WorkbenchShell : IDisposable
                 new WatcherSessionsQuery(host.Store, host.Liveness),
                 new WatcherBoardQuery(host.Store),
                 new WatcherLeaderboardQuery(host.Store),
-                new WatcherDisputeQuery(host.Store));
+                new WatcherDisputeQuery(host.Store),
+                new WatcherLedgerQuery(host.Store));
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -1869,7 +1873,7 @@ public sealed class WorkbenchShell : IDisposable
             _watcherHost = null;
             _watcherEmitter = null;
             _watcherPump = null;
-            return (null, null, null, null);
+            return (null, null, null, null, null);
         }
     }
 

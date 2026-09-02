@@ -147,6 +147,7 @@ public sealed record Layout(
                 new Surface("sessions", "sessions", "Sessions"),
                 new Surface("board", "board", "Board"),
                 new Surface("leaderboard", "leaderboard", "Leaderboard"),
+                new Surface("ledger", "ledger", "Ledger"),
             ]);
 
         var terminal = new StackNode("stack-terminal",

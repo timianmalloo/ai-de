@@ -39,6 +39,12 @@ public static class LayoutMigrations
                 AddSurfaceBeside(dto, "sessions", new SurfaceDto("board", "board", "Board")),
                 "sessions",
                 new SurfaceDto("leaderboard", "leaderboard", "Leaderboard"))),
+
+        // v3 → v4: the Ledger pane was added beside the Leaderboard — the append-only record of every
+        // work episode, the third watcher read after Board and Leaderboard. Same reason as v2→v3: a
+        // layout arranged before it shipped otherwise never shows it.
+        new(3, dto =>
+            AddSurfaceBeside(dto, "leaderboard", new SurfaceDto("ledger", "ledger", "Ledger"))),
     ];
 
     /// <summary>

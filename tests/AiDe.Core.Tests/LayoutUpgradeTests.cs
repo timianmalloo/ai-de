@@ -180,6 +180,27 @@ public sealed class LayoutUpgradeTests : IDisposable
         migrated.AssertInvariant();
     }
 
+    [Fact]
+    public void TheV3ToV4Migration_AddsLedgerBesideLeaderboard()
+    {
+        // A layout arranged before the Ledger shipped has Board/Leaderboard but not Ledger. The
+        // v3→v4 step must add it beside Leaderboard, or the Ledger is invisible to the operators who
+        // arranged their workbench first (the same visibility lesson as Board/Leaderboard/Joins).
+        var withoutLedger = LayoutService.Detach(Layout.Default(), "ledger")!;
+        var start = new LayoutDto(LayoutStore.ToDto(withoutLedger.Root), []);
+        Assert.DoesNotContain(start.Root.Surfaces ?? [], s => s.SurfaceId == "ledger");
+
+        var step = LayoutMigrations.Default.Single(m => m.FromVersion == 3);
+        var migrated = new Layout(LayoutStore.FromDto(step.Apply(start).Root), [],
+            System.Collections.Immutable.ImmutableDictionary<string, StackState>.Empty);
+
+        var surfaces = migrated.AllStacks().SelectMany(s => s.Surfaces).ToList();
+        var leaderboardStack = migrated.AllStacks().Single(s => s.Surfaces.Any(x => x.SurfaceId == "leaderboard"));
+        Assert.Contains(leaderboardStack.Surfaces, s => s.SurfaceId == "ledger");
+        Assert.Single(surfaces, s => s.SurfaceId == "ledger");
+        migrated.AssertInvariant();
+    }
+
     // The upgrade path: an old file, a new app, and a surface that was renamed between them.
     [Fact]
     public void AnOlderLayout_IsMigratedRatherThanSilentlyLosingRenamedSurfaces()

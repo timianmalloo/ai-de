@@ -2794,6 +2794,29 @@ for both or split.*
 - **Status:** `controlled` — the `WorkspaceNeeded` split + the flipped assertion in
   `SurfaceContentTests` hold it.
 
+### ZONE-LAYOUT-NO-MIGRATION — a new default surface never reaches operators who arranged their workbench
+- **Signature:** a surface added to the default layout appears for fresh installs but is **invisible**
+  to every user who has ever arranged their workbench — because the persisted layout on disk does not
+  contain it and nothing upgrades it. The tree `LayoutStore` solved this with a versioned migration
+  chain (`CurrentSchemaVersion` + `LayoutMigrations`, adding a surface *beside an anchor*); the live
+  `ZoneLayoutStore` did **not** — it only compares `SchemaVersion != CurrentSchemaVersion` and, on any
+  mismatch, **discards the whole saved layout and resets to default**. So the zone store has two modes
+  and no third: keep the old arrangement (and never show the new surface), or nuke the arrangement.
+- **Why it survives:** every test passes (the default *does* contain the surface; a fresh load *does*
+  show it); the gap only bites a user with a pre-existing on-disk layout, which no headless test has.
+  It is the exact "invisible to the operators who arranged their workbench first" lesson the tree
+  migration comments call out — but the zone store, added later, never grew the same mechanism.
+- **Instances:** 2026-09-02 — the Ledger surface (US: "the ledger viewable too") was added to both
+  defaults + a tree v3→v4 migration, but existing **zone** users get it only via the **Reset layout**
+  button, because the zone store cannot add a surface to a saved arrangement.
+- **Control:** for now, additive-only — a new watcher/read surface is a **restorable kind**
+  (`SurfaceContentFactory.KnownKinds`, so it survives load) and is documented as reachable via Reset
+  layout. The real fix (the higher rung, not yet built): give `ZoneLayoutStore` a migration chain like
+  the tree store's — a versioned `AddSurfaceBeside` that upgrades a saved zone layout in place instead
+  of discarding it. Until then this is `partially-controlled`.
+- **Status:** `partially-controlled` — new surfaces reach fresh installs and tree layouts (migration);
+  existing zone layouts need Reset layout until the zone store gains a migration chain.
+
 ### DC-081 — A setup step declines, and its `return` cancels the work it was preparing for
 
 - **Shape:** a script does setup, then the real work. The setup is written to **give up gracefully**

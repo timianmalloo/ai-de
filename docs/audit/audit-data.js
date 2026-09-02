@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T20:03:16Z",
+  "generated": "2026-09-02T20:54:35Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8136,6 +8136,29 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0404",
+      "shortname": "implement-ledger-surface",
+      "datetime": "2026-09-02T20:54:35Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "also we should have the ledger be viewable as well not just message board and leader board",
+      "summary": "Added the Ledger surface: the chronological (newest-first) append-only record of every work episode, over IWatcherObservationStore.AllEpisodes() -- the third watcher read beside Board and Leaderboard. App-side IWatcherLedgerQuery+WatcherLedgerQuery+LedgerRow; factory ctor param/case/renderer/KnownKinds; StartWatcher 5-tuple + wiring; WatcherPaneKinds; ledger added to both layout defaults (zone=live, tree) + a tree v3->v4 migration (CurrentSchemaVersion 3->4). Existing zone users get it via Reset layout (registered defect ZONE-LAYOUT-NO-MIGRATION: the zone store has no migration chain). 9 new tests (7 unit + 2 surface) + v3->v4 migration test. App 368, Core 1416 green.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WatcherLedger.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs",
+        "src/AiDe.App/Workbench/WorkbenchShell.cs",
+        "src/AiDe.Core/Workbench/ZoneLayout.cs",
+        "src/AiDe.Core/Workbench/LayoutModel.cs",
+        "src/AiDe.Core/Workbench/LayoutMigrations.cs",
+        "src/AiDe.Core/Workbench/LayoutStore.cs"
       ],
       "tags": [],
       "outcome": "success"
