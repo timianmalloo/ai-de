@@ -402,4 +402,27 @@ public sealed class VtParserTests
 
         Assert.False(screen.ApplicationCursorKeys);
     }
+
+    [Fact]
+    public void BracketedPaste_SetAndReset_TracksTheMode()
+    {
+        var (screen, parser) = New();
+        Assert.False(screen.BracketedPaste);
+
+        Feed(parser, $"{Esc}[?2004h");
+        Assert.True(screen.BracketedPaste);
+
+        Feed(parser, $"{Esc}[?2004l");
+        Assert.False(screen.BracketedPaste);
+    }
+
+    [Fact]
+    public void MultiplePrivateModes_InOneSequence_AreAllApplied()
+    {
+        var (screen, parser) = New();
+        Feed(parser, $"{Esc}[?1;2004h");   // DECCKM + bracketed paste together
+
+        Assert.True(screen.ApplicationCursorKeys);
+        Assert.True(screen.BracketedPaste);
+    }
 }

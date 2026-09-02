@@ -354,9 +354,13 @@ public sealed class VtParser
         {
             case 1:
                 // DECCKM — application cursor keys. The one mode that changes INPUT encoding, so
-                // ignoring it leaves the arrows dead in a full-screen TUI (smoke 9-2). Others
-                // (alt screen 1049, bracketed paste 2004, mouse 1000/1002/1006) are follow-on slices.
+                // ignoring it leaves the arrows dead in a full-screen TUI (smoke 9-2).
                 _screen.SetApplicationCursorKeys(set);
+                break;
+
+            case 2004:
+                // Bracketed paste. Ignoring it makes a pasted multi-line prompt run line-by-line.
+                _screen.SetBracketedPaste(set);
                 break;
 
             default:

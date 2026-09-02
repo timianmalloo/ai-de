@@ -114,6 +114,30 @@ public static class TerminalInput
     public static ReadOnlyMemory<byte> ForText(string text) =>
         string.IsNullOrEmpty(text) ? ReadOnlyMemory<byte>.Empty : Encoding.UTF8.GetBytes(text);
 
+    /// <summary>
+    /// The bytes for pasted text. When <paramref name="bracketed"/> (the child enabled bracketed paste),
+    /// the text is wrapped in <c>ESC [ 200~ … ESC [ 201~</c> so the program treats it as one paste rather
+    /// than running each line as it arrives. Carriage returns in the paste are normalized to CR so a
+    /// multi-line paste lands as the child expects.
+    /// </summary>
+    public static ReadOnlyMemory<byte> ForPaste(string text, bool bracketed)
+    {
+        if (string.IsNullOrEmpty(text)) { return ReadOnlyMemory<byte>.Empty; }
+
+        // Normalize Windows CRLF / lone LF to CR — a terminal submits lines on CR.
+        var normalized = text.Replace("\r\n", "\r").Replace('\n', '\r');
+        var body = Encoding.UTF8.GetBytes(normalized);
+        if (!bracketed) { return body; }
+
+        var start = "\u001b[200~"u8;
+        var end = "\u001b[201~"u8;
+        var buffer = new byte[start.Length + body.Length + end.Length];
+        start.CopyTo(buffer);
+        body.CopyTo(buffer.AsSpan(start.Length));
+        end.CopyTo(buffer.AsSpan(start.Length + body.Length));
+        return buffer;
+    }
+
     // xterm modifier encoding: 1 + Shift(1) + Alt(2) + Ctrl(4). 1 means "no modifier".
     private static int ModifierParameter(ModifierKeys modifiers)
     {

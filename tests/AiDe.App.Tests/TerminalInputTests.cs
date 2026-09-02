@@ -133,6 +133,25 @@ public sealed class TerminalInputTests
     }
 
     [Fact]
+    public void ForPaste_WhenBracketed_WrapsInPasteMarkers()
+    {
+        // ESC [ 200~ … ESC [ 201~ so a multi-line paste is one paste, not N submitted lines.
+        Assert.Equal("<1B>[200~line1<0D>line2<1B>[201~",
+            Bytes(TerminalInput.ForPaste("line1\r\nline2", bracketed: true)));
+    }
+
+    [Fact]
+    public void ForPaste_WhenNotBracketed_SendsTheTextWithCrNewlines()
+    {
+        // No markers, but CRLF/LF still normalized to CR so each line submits as the child expects.
+        Assert.Equal("line1<0D>line2", Bytes(TerminalInput.ForPaste("line1\nline2", bracketed: false)));
+    }
+
+    [Fact]
+    public void ForPaste_Empty_SendsNothing()
+        => Assert.True(TerminalInput.ForPaste("", bracketed: true).IsEmpty);
+
+    [Fact]
     public void Text_IsSentAsUtf8()
     {
         Assert.Equal(

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T17:13:32Z",
+  "generated": "2026-09-02T17:21:21Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7883,6 +7883,27 @@ window.AUDIT_DATA = {
       "tags": [
         "terminal",
         "docking"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0390",
+      "shortname": "smoke92-bracketed-paste",
+      "datetime": "2026-09-02T17:21:21Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "smoke 9-2: bracketed paste (T-T3)",
+      "summary": "T-T3: parser tracks bracketed paste (ESC[?2004h); TerminalInput.ForPaste wraps pasted text in ESC[200~/201~ when on with CRLF->CR; Ctrl+V/Shift+Insert intercepted as paste. +7 tests (App 343, Core 1371).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/TerminalInput.cs",
+        "src/AiDe.Core/Terminal/VtParser.cs"
+      ],
+      "tags": [
+        "terminal",
+        "paste"
       ],
       "outcome": "success"
     }

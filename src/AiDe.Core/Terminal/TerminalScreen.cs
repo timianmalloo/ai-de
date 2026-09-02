@@ -175,6 +175,17 @@ public sealed class TerminalScreen
     public void SetApplicationCursorKeys(bool enabled) => ApplicationCursorKeys = enabled;
 
     /// <summary>
+    /// Whether the child has enabled <b>bracketed paste</b> (<c>ESC [ ? 2004 h</c>). When on, pasted
+    /// text is wrapped in <c>ESC [ 200~ … ESC [ 201~</c> so the program can tell a paste from typing and
+    /// does not run each pasted line as it arrives — the behaviour Claude Code and every modern shell
+    /// rely on for a multi-line prompt.
+    /// </summary>
+    public bool BracketedPaste { get; private set; }
+
+    /// <summary>Sets or clears bracketed paste mode. Display is unaffected, so no repaint.</summary>
+    public void SetBracketedPaste(bool enabled) => BracketedPaste = enabled;
+
+    /// <summary>
     /// The cell under the cursor, or <c>null</c> when the cursor is not on a real cell. The cursor
     /// legitimately sits off the grid at the <b>pending-wrap</b> column (<c>CursorColumn == Columns</c>,
     /// held after writing the last column until the next write wraps), and can be left outside the grid
