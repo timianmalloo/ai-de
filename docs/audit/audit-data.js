@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T23:09:05Z",
+  "generated": "2026-09-02T23:13:35Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8286,6 +8286,24 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/notes/collaboration-not-happening.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0414",
+      "shortname": "ui-sessions-alive-only-leads",
+      "datetime": "2026-09-02T23:13:35Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "refine Sessions partition after video showed ~13 Stale terminals cluttering the live section",
+      "summary": "Refined SessionRowPresenter.Partition: only Alive leads; Stale AND Ended collapse together as inactive history (was Alive+Stale=live, which let ~13 stale terminals clutter the live view per the 2026-09-02 15:28 video). Renamed EndedHeader->InactiveHeader ('N inactive session(s)'). Updated 3 tests. App 378 green; verified after the user's in-tool sessions completed and the app closed.",
+      "kind": "skill",
+      "skill": "ui-design",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/SessionRowPresenter.cs",
+        "src/AiDe.App/Workbench/SurfaceContentFactory.cs"
       ],
       "tags": [],
       "outcome": "success"

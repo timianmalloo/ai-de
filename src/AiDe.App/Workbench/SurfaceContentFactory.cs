@@ -187,10 +187,10 @@ public sealed class SurfaceContentFactory(
         var pane = new WatcherSessionsPaneViewModel(watcherSessions);
         pane.Load();
 
-        // Lead with the LIVE sessions (Alive then Stale); collapse the ended history out of the way.
-        // The Sessions surface is a live-status list, but a long-running workspace piles up ended
-        // terminals that otherwise bury the one collaborating now (UX-SESSIONS-GRAVEYARD, smoke video).
-        var (live, ended) = SessionRowPresenter.Partition(pane.Rows);
+        // Lead with the LIVE sessions (Alive only); collapse the inactive history (Stale + Ended) out
+        // of the way. The Sessions surface is a live-status list, but a long-running workspace piles up
+        // stale/ended terminals that otherwise bury the ones collaborating now (UX-SESSIONS-GRAVEYARD).
+        var (live, inactive) = SessionRowPresenter.Partition(pane.Rows);
 
         var stack = new StackPanel { Margin = new Thickness(12) };
 
@@ -230,24 +230,24 @@ public sealed class SurfaceContentFactory(
             }
             else
             {
-                // Every session has ended — say so plainly rather than showing nothing above the history.
+                // Every session is inactive — say so plainly rather than showing nothing above the history.
                 var none = new TextBlock { Text = "No live sessions right now.", TextWrapping = TextWrapping.Wrap };
                 none.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
                 stack.Children.Add(none);
             }
 
-            // The ended history is collapsed behind its count — available on demand, out of the way.
-            if (ended.Count > 0)
+            // The inactive history (stale + ended) is collapsed behind its count — available on demand.
+            if (inactive.Count > 0)
             {
                 var endedRows = new StackPanel();
-                foreach (var row in ended)
+                foreach (var row in inactive)
                 {
                     endedRows.Children.Add(SessionRow(row));
                 }
 
                 var expander = new Expander
                 {
-                    Header = SessionRowPresenter.EndedHeader(ended.Count),
+                    Header = SessionRowPresenter.InactiveHeader(inactive.Count),
                     IsExpanded = false,
                     Margin = new Thickness(0, 10, 0, 0),
                     Content = new ScrollViewer
@@ -259,7 +259,7 @@ public sealed class SurfaceContentFactory(
                     },
                 };
                 expander.SetResourceReference(Control.ForegroundProperty, "TextMutedBrush");
-                AutomationProperties.SetName(expander, SessionRowPresenter.EndedHeader(ended.Count));
+                AutomationProperties.SetName(expander, SessionRowPresenter.InactiveHeader(inactive.Count));
                 stack.Children.Add(expander);
             }
 

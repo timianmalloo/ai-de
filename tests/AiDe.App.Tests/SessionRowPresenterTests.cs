@@ -102,11 +102,11 @@ public sealed class SessionRowPresenterTests
             new List<WatcherSessionRow> { NoTelemetry("a", "w1", LivenessState.Stale) }));
 
     [Fact]
-    public void Partition_LeadsWithLive_AndSeparatesTheEndedHistory()
+    public void Partition_LeadsWithLive_AndCollapsesStaleAndEndedAsInactive()
     {
-        // The graveyard problem (smoke video 2026-09-02): a long-running workspace piles up ended
-        // terminals that bury the one collaborating now. Live (Alive+Stale) must come out separately
-        // from Ended so the surface can lead with it and collapse the rest.
+        // The graveyard problem (smoke video 2026-09-02): a long-running workspace piles up stale/ended
+        // terminals that bury the ones collaborating now. Only Alive is live; Stale and Ended both
+        // collapse into the inactive history so the live agents lead cleanly.
         var rows = new List<WatcherSessionRow>
         {
             NoTelemetry("t1", "w1", LivenessState.Ended),
@@ -116,31 +116,31 @@ public sealed class SessionRowPresenterTests
             NoTelemetry("t4", "w4", LivenessState.Ended),
         };
 
-        var (live, ended) = SessionRowPresenter.Partition(rows);
+        var (live, inactive) = SessionRowPresenter.Partition(rows);
 
-        Assert.Equal(2, live.Count);   // the Alive + the Stale
-        Assert.Equal(3, ended.Count);  // the three Ended, collapsed
-        Assert.Equal("Alive", live[0].Liveness.Text);   // Alive leads
-        Assert.Equal("Stale", live[1].Liveness.Text);   // then Stale
-        Assert.All(ended, r => Assert.Equal("Ended", r.Liveness.Text));
+        Assert.Single(live);                             // only the Alive one leads
+        Assert.Equal("Alive", live[0].Liveness.Text);
+        Assert.Equal(4, inactive.Count);                 // the Stale + the three Ended, collapsed
+        Assert.Equal("Stale", inactive[0].Liveness.Text); // stale-before-ended within the history
+        Assert.All(inactive.Skip(1), r => Assert.Equal("Ended", r.Liveness.Text));
     }
 
     [Fact]
-    public void Partition_WhenEveryoneHasEnded_LeavesLiveEmpty()
+    public void Partition_WhenNoneAreAlive_LeavesLiveEmpty()
     {
         var rows = new List<WatcherSessionRow>
         {
-            NoTelemetry("t1", "w1", LivenessState.Ended),
+            NoTelemetry("t1", "w1", LivenessState.Stale),
             NoTelemetry("t2", "w2", LivenessState.Ended),
         };
 
-        var (live, ended) = SessionRowPresenter.Partition(rows);
+        var (live, inactive) = SessionRowPresenter.Partition(rows);
 
         Assert.Empty(live);
-        Assert.Equal(2, ended.Count);
+        Assert.Equal(2, inactive.Count);
     }
 
     [Fact]
-    public void EndedHeader_CountsTheCollapsedHistory()
-        => Assert.Equal("14 ended session(s)", SessionRowPresenter.EndedHeader(14));
+    public void InactiveHeader_CountsTheCollapsedHistory()
+        => Assert.Equal("14 inactive session(s)", SessionRowPresenter.InactiveHeader(14));
 }

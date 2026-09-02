@@ -357,10 +357,10 @@ public sealed class SurfaceContentTests
     }
 
     [Fact]
-    public void TheSessionsSurface_LeadsWithLiveSessions_AndCollapsesTheEndedHistory()
+    public void TheSessionsSurface_LeadsWithLiveSessions_AndCollapsesTheInactiveHistory()
     {
         // The graveyard fix (UX-SESSIONS-GRAVEYARD, smoke video 2026-09-02): one Alive session must be
-        // visible up top while a pile of Ended terminals is collapsed behind a count, not rendered as a
+        // visible up top while the stale/ended history is collapsed behind a count, not rendered as a
         // wall that buries the live one.
         var view = OnStaThread(() =>
         {
@@ -380,7 +380,7 @@ public sealed class SurfaceContentTests
             var query = new StubSessionsQuery(
                 Snap("live-1", LivenessState.Alive),
                 Snap("dead-1", LivenessState.Ended),
-                Snap("dead-2", LivenessState.Ended),
+                Snap("dead-2", LivenessState.Stale),
                 Snap("dead-3", LivenessState.Ended));
 
             var content = new SurfaceContentFactory(null, query).Create(new Surface("sessions", "sessions", "Sessions"));
@@ -390,14 +390,14 @@ public sealed class SurfaceContentTests
             var liveScroller = stack.Children.OfType<ScrollViewer>().First();
             var liveRows = Assert.IsType<StackPanel>(liveScroller.Content);
 
-            // The ended history is collapsed inside an Expander whose header states the count.
+            // The stale+ended history is collapsed inside an Expander whose header states the count.
             var expander = stack.Children.OfType<System.Windows.Controls.Expander>().Single();
             return (LiveCount: liveRows.Children.Count, Expanded: expander.IsExpanded, Header: expander.Header?.ToString() ?? "");
         });
 
         Assert.Equal(1, view.LiveCount);                                   // one live row, up top
-        Assert.False(view.Expanded);                                       // ended history collapsed by default
-        Assert.Contains("3 ended", view.Header, StringComparison.OrdinalIgnoreCase);
+        Assert.False(view.Expanded);                                       // inactive history collapsed by default
+        Assert.Contains("3 inactive", view.Header, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>A watcher read that answers immediately with a fixed set of sessions.</summary>
