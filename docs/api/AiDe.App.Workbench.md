@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 79 types, 315 members, 68% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 79 types, 316 members, 68% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**79 public types · 315 public members · 68% documented.**
+**79 public types · 316 public members · 68% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1469,12 +1469,35 @@ view mutations — that is what keeps the keyboard path and the drag path provab
 | `WorkbenchAdapter(` | **(gap)** |
 | `DockingManager Manager { get; }` | **(gap)** |
 | `void Invalidate(IEnumerable<string> surfaceIds)` | Projects the current model into AvalonDock and names everything for assistive tech.  Marks surfaces to be REBUILT (not reused) on the next `Render`. Used by the shell when a workspace attaches and the watcher read pan… |
+| `void RefreshInPlace(IEnumerable<string> surfaceIds)` | Rebuilds the content of specific surfaces **in place** — replacing each `LayoutDocument`'s `Content` without swapping `Layout` — so refreshing one set of panes never disturbs the others. |
 | `void Render()` | **(gap)** |
 | `void ApplyAccessibleNames()` | **(gap)** |
 | `FrameworkElement? ContentFor(string surfaceId)` | The content element currently hosting , or null. |
 | `T? SurfaceContent<T>(string surfaceId) where T : class` | The inner surface content of type  for , looking THROUGH the island chrome (`WrapAsIsland`) that non-windowed panes are wrapped in. |
 | `string? ActiveSurfaceId` | The surface id of the document the user is currently focused in, or null. Read from AvalonDock's own active-content tracking so a "new pane" command can open where the user is looking rather than in a fixed corner of … |
 | `Layout? ReadLayoutFromView()` | Reads the CURRENT AvalonDock arrangement back into the owned model, so a native pane drag or a splitter resize the user performed is captured before the next `Render` would rebuild from a stale model and revert it. Re… |
+
+### `void RefreshInPlace(IEnumerable<string> surfaceIds)`
+
+Rebuilds the content of specific surfaces **in place** — replacing each
+`LayoutDocument`'s `Content` without swapping `Layout`
+— so refreshing one set of panes never disturbs the others.
+
+**Remarks.** This exists because the watcher-pane refresh used to call the full `Render` on
+every ~2s tick (a session heartbeat, a board post, a new score). A full render swaps
+`Manager.Layout` wholesale, which **re-parents every pane** — re-firing the graph
+canvas's `ResizeObserver` so it re-fits, and re-seating every tab from the model so a user
+sitting on Sessions/Leaderboard is snapped back to the default tab. With live agents heartbeating
+that made the graph "keep refreshing" and the watcher tabs impossible to stay on (smoke video
+2026-09-02). Only the named surfaces are rebuilt here; layout, selection, focus and every other
+pane are left exactly as the user left them.
+
+
+
+
+Safe for the watcher read surfaces because they own no live process (unlike a terminal,
+whose ConPTY a rebuild would kill — DC-029): the old content is dropped and the factory
+reconstructs it against the current store.
 
 ### `void ApplyAccessibleNames()`
 
