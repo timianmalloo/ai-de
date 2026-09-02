@@ -1,7 +1,7 @@
 {
   "_comment": "Minimum tests that must EXECUTE per project. The control for defect class DC-012: a crashed test host reports success with a smaller count, and nothing else notices. Raise these with `python tools/verify-test-run.py --update` when you add tests; never lower one to make a run pass.",
   "minimumExecuted": {
-    "AiDe.App.Tests": 326,
+    "AiDe.App.Tests": 330,
     "AiDe.Core.Tests": 1367
   }
 }
