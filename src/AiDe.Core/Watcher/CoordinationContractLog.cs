@@ -33,11 +33,74 @@ public sealed class CoordContractWriter
 
     public void WriteSessionEnd(string externalSessionId) => Append(externalSessionId, "session-end", null);
 
+    /// <summary>
+    /// A filesystem-safe, deterministic file name for one external session id.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The session id was used verbatim, and on Windows that silently created an alternate
+    /// data stream.</b> An agent pane's id is <c>agent:claude#fb96e3</c>; <c>Path.Combine(dir,
+    /// "agent:claude#fb96e3.jsonl")</c> is not a file called <c>agent:claude#fb96e3.jsonl</c> — NTFS
+    /// reads it as the file <c>agent</c> with the stream <c>claude#fb96e3.jsonl</c>. The write
+    /// succeeds. The bytes are there. And <c>Directory.EnumerateFiles(dir, "*.jsonl")</c> — which is
+    /// how the pump finds logs — cannot see a stream, so <b>no agent session was ever
+    /// registered</b>.</para>
+    ///
+    /// <para><b>Observed:</b> one zero-byte file named <c>agent</c> holding seven streams and 41 KB
+    /// of coordination events, against <c>terminal-1.jsonl</c> as a real 442 KB file. Plain
+    /// terminals worked; every agent pane was invisible. Nothing failed, nothing was logged, and the
+    /// data was not even lost — just unreachable by every reader, backup and sync that lists files.
+    /// </para>
+    ///
+    /// <para><b>The hash is not decoration.</b> Replacing invalid characters alone maps
+    /// <c>agent:claude</c> and <c>agent-claude</c> onto one file, which would interleave two
+    /// sessions' events into a single stream and fold them into one identity. The suffix is derived
+    /// from the original id, so distinct sessions stay distinct and the same session always resolves
+    /// to the same file.</para>
+    ///
+    /// <para>The name need not be reversible: every record carries its own <c>session</c> field, and
+    /// the pump reads that rather than the file name.</para>
+    ///
+    /// <para><b>An id that is already safe is left exactly alone</b>, digest and all. Renaming
+    /// <c>terminal-1.jsonl</c> would orphan every log already on disk and change the file name for
+    /// the case that was never broken — the existing suite caught the first version of this doing
+    /// precisely that. Only a name the filesystem would have mangled is rewritten, so the two forms
+    /// cannot collide: a rewritten name always carries the digest suffix, and an untouched one
+    /// contained no invalid character to have been rewritten from.</para>
+    /// </remarks>
+    internal static string FileNameFor(string session)
+    {
+        var invalid = Path.GetInvalidFileNameChars();
+        var safe = new char[session.Length];
+        var mangled = false;
+        for (var i = 0; i < session.Length; i++)
+        {
+            if (Array.IndexOf(invalid, session[i]) >= 0)
+            {
+                safe[i] = '-';
+                mangled = true;
+            }
+            else
+            {
+                safe[i] = session[i];
+            }
+        }
+
+        if (!mangled)
+        {
+            return session + ".jsonl";
+        }
+
+        var digest = System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes(session));
+
+        return new string(safe) + "-" + Convert.ToHexString(digest.AsSpan(0, 4)).ToLowerInvariant() + ".jsonl";
+    }
+
     private void Append(string session, string kind, IReadOnlyDictionary<string, string?>? attributes)
     {
         ArgumentException.ThrowIfNullOrEmpty(session);
         Directory.CreateDirectory(_logDir);
-        var file = Path.Combine(_logDir, session + ".jsonl");
+        var file = Path.Combine(_logDir, FileNameFor(session));
 
         var payload = new Dictionary<string, object?>(StringComparer.Ordinal)
         {

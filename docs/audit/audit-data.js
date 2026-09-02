@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T22:12:03Z",
+  "generated": "2026-09-02T22:12:53Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8176,6 +8176,40 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/notes/session-enlistment-telemetry-gap.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0406",
+      "shortname": "capture-mitigation",
+      "datetime": "2026-09-02T21:39:11Z",
+      "session": "dream-job",
+      "prompt": "dream.py capture-mitigation",
+      "summary": "Captured mit-0006 (red-green): CoordContractWriter used the external session id verbatim as a file name. Agent panes are agent:<nam",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0407",
+      "shortname": "fix-coord-log-ads",
+      "datetime": "2026-09-02T21:40:51Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "the agent launch is now fixed in the UI session",
+      "summary": "Confirmed the launch fix from the log (executable=claude/copilot, integration=PowerShellHostedAgent, readinessProfile=true, environmentCount=9 vs 7 for a plain terminal - exactly the two agent-only variables). Then found a THIRD silent failure in the same chain: CoordContractWriter used the session id verbatim as a file name, and an agent pane's id contains a colon, so on Windows every agent coordination log went into an NTFS alternate data stream. Seven streams and 41 KB of events on a zero-byte file named 'agent'; EnumerateFiles('*.jsonl') cannot see them, so no agent session was ever registered - no liveness, no update, no episode. Registered DC-085 and fixed with FileNameFor. The existing suite caught the first version renaming every log including already-valid ones; narrowed so only a name the filesystem would mangle is rewritten.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/CoordinationContractLog.cs"
       ],
       "tags": [],
       "outcome": "success"

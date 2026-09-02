@@ -82,11 +82,30 @@ public sealed class ZoneWorkbenchAdapterTests
             adapter.ActivateInView("leaderboard");
             Assert.Equal("leaderboard", adapter.ActiveSurfaceId);
 
-            adapter.RefreshInPlace(["sessions", "board", "leaderboard", "ledger"]);
+            // DERIVED from the shell's own set, not restated. Written out, this list disagreed
+            // with the product the moment a fifth watcher pane was added — which is DC-021, and
+            // the gate caught it on the merge that added "ledger".
+            adapter.RefreshInPlace([.. WatcherPaneKinds()]);
 
             Assert.Equal("leaderboard", adapter.ActiveSurfaceId);  // NOT snapped back to graph
             return true;
         });
+    }
+
+    /// <summary>The shell's own watcher-pane set, read from the field rather than repeated.</summary>
+    /// <remarks>
+    /// A hand-written copy is a second authority on which panes the watcher owns. It agreed with the
+    /// product until "ledger" was added, and a fixture that has to be remembered is one that will
+    /// eventually be wrong quietly (DC-021).
+    /// </remarks>
+    private static IReadOnlySet<string> WatcherPaneKinds()
+    {
+        var field = typeof(WorkbenchShell).GetField(
+            "WatcherPaneKinds",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+
+        Assert.NotNull(field);
+        return (IReadOnlySet<string>)field!.GetValue(null)!;
     }
 
     private static T WithZoneWorkbench<T>(Func<WorkbenchAdapter, ZoneBackedLayoutService, T> assert) =>

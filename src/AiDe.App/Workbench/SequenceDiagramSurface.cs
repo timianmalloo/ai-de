@@ -13,10 +13,12 @@ namespace AiDe.App.Workbench;
 /// mirroring <see cref="ClassDiagramSurface"/>.
 /// </summary>
 /// <remarks>
-/// <b>Scaffold.</b> A faithful sequence diagram needs ordered call data the graph does not yet emit
-/// (Core ask <c>session-contracts §4k</c>). This surface renders any <see cref="SequenceModel"/> it is
-/// given and shows an explicit empty state otherwise, so it is ready to wire to the real feed when it
-/// lands — the rendering and layout are done and tested now.
+/// <b>No longer a scaffold.</b> This said the ordered call data was something "the graph does not yet
+/// emit". It does: <c>calls_at</c> assertions carry the callee, the member and the call site, and
+/// <c>WorkbenchShell.ShowNodeInSequenceDiagramsAsync</c> feeds them here through
+/// <c>InteractionAsync</c>. Measured on the workspace where this surface was reported empty:
+/// <b>4,967</b> of them. The remark outlived its subject and kept asserting a gap that had closed,
+/// which is how the empty state below came to blame an extractor that had already done the work.
 /// </remarks>
 public sealed class SequenceDiagramSurface : ContentControl, IHasDisplayName
 {
@@ -52,8 +54,9 @@ public sealed class SequenceDiagramSurface : ContentControl, IHasDisplayName
             TextAlignment = TextAlignment.Center,
             MaxWidth = 420,
             TextWrapping = TextWrapping.Wrap,
-            Text = "No interaction to show yet.\nSequence diagrams need ordered call data from the "
-                 + "extractor — this surface renders it as soon as that lands.",
+            // Set per state by ShowEmpty. The one thing this must never do again is name a cause
+            // the surface has not checked — see the remark on ShowEmpty.
+            Text = WaitingForSelection,
         };
         _empty.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
 
@@ -93,15 +96,57 @@ public sealed class SequenceDiagramSurface : ContentControl, IHasDisplayName
     /// <summary>The node whose interactions are shown, or null when nothing has been loaded (Phase E).</summary>
     public string? NodeId { get; private set; }
 
+    /// <summary>The empty state before any node has been chosen — a prompt, not a diagnosis.</summary>
+    internal const string WaitingForSelection =
+        "Select a node in the graph to see its calls in order.";
+
     /// <summary>Shows a specific node's interactions and records which node, so a re-render does not re-fetch.</summary>
     public void ShowFor(string nodeId, SequenceModel model)
     {
         NodeId = nodeId;
-        Show(model);
+        Show(model, nodeId);
+    }
+
+    /// <summary>
+    /// The empty state, saying WHICH emptiness this is.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>What this replaces.</b> One message covered every empty case: <i>"Sequence diagrams
+    /// need ordered call data from the extractor - this surface renders it as soon as that
+    /// lands."</i> It was shown before any node had been selected, which is the ordinary state of a
+    /// freshly opened tab, and it named a cause the surface had never checked.</para>
+    ///
+    /// <para><b>It was false when it mattered.</b> The workspace it was reported against held
+    /// <b>4,967</b> <c>calls_at</c> assertions. The extractor had done its job; nothing had been
+    /// selected. The owner read the message, concluded the call data had not landed, and reported it
+    /// as an extractor gap - a correct inference from a confident and wrong statement.</para>
+    ///
+    /// <para><b>The rule this encodes:</b> an empty state may say what it is waiting for, and may
+    /// name a cause only when it has observed one. "Nothing to show" plus a guess at why is worse
+    /// than "nothing to show", because the guess is the part that gets acted on (DC-087).</para>
+    /// </remarks>
+    private void ShowEmpty(string? nodeId)
+    {
+        IsEmpty = true;
+
+        _empty.Text = nodeId is null
+            ? WaitingForSelection
+            : $"{Shorten(nodeId)} has no recorded calls." + System.Environment.NewLine
+              + "Only calls the extractor could resolve appear here, so a node that calls only into "
+              + "external packages shows none.";
+
+        _scroller.Content = _empty;
+        _title.Text = "Sequence diagram";
+    }
+
+    private static string Shorten(string nodeId)
+    {
+        var cut = nodeId.LastIndexOf('.');
+        return cut > 0 && cut < nodeId.Length - 1 ? nodeId[(cut + 1)..] : nodeId;
     }
 
     /// <summary>Renders the interaction, or the empty state when it has no participants.</summary>
-    public void Show(SequenceModel model)
+    public void Show(SequenceModel model, string? nodeId = null)
     {
         ArgumentNullException.ThrowIfNull(model);
 
@@ -110,9 +155,7 @@ public sealed class SequenceDiagramSurface : ContentControl, IHasDisplayName
 
         if (model.IsEmpty)
         {
-            IsEmpty = true;
-            _scroller.Content = _empty;
-            _title.Text = "Sequence diagram";
+            ShowEmpty(nodeId);
             return;
         }
 

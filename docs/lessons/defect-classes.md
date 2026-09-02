@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 52 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 54 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3103,4 +3103,76 @@ for both or split.*
   list takes the shape of the examples it was built from**, and an artifact of a different shape is
   invisible rather than skipped. The gate now takes a `glob` and reports "n of 17", observed catching
   a planted hand-edit and naming the file.
+- **Status:** `controlled`
+
+### DC-086 — An identifier is used as a file name, and the filesystem reinterprets it
+
+- **Signature:** an id that is unique, stable and perfectly valid *as an id* is concatenated into a
+  path. Somewhere in it is a character the filesystem treats as syntax rather than as text, so the
+  path the code composed is not the path the OS creates. On Windows the character is `:` and the
+  reinterpretation is an **NTFS alternate data stream**: `dir\agent:claude#fb96e3.jsonl` becomes the
+  file `agent` carrying the stream `claude#fb96e3.jsonl`. Elsewhere it is `/`, a trailing dot, a
+  reserved name (`CON`, `NUL`), or a length limit.
+- **Why it survives every test:** the write **succeeds**. The directory is created, the handle
+  opens, the bytes land, nothing throws, and the data is not even lost. It is simply somewhere no
+  reader looks: `Directory.EnumerateFiles(dir, "*.jsonl")` cannot enumerate a stream, and neither
+  can a listing, a backup, a sync, or a copy to any non-NTFS target. And **fixture ids are plain
+  words**, so the whole suite exercises the one shape that works.
+- **The tell:** a zero-byte file whose name is a *prefix* of an identifier — the part before the
+  first `:`. It looks like debris. It is the entire log.
+- **Instance:** 2026-09-02 — `CoordContractWriter` used the external session id verbatim as a file
+  name. Agent panes are `agent:<name>#<hex>`, so **no agent session was ever registered with the
+  watcher**: no liveness, no harness/model `update`, no `episode-open`. Found on the owner's machine
+  as one zero-byte file named `agent` holding **seven streams and 41 KB of coordination events**,
+  beside `terminal-1.jsonl` as a real 442 KB file. Plain terminals had worked throughout. It went
+  unnoticed through the two launch defects above it (DC-083, DC-084) because those kept any agent
+  from launching at all; fixing them is what made this one reachable — and it would have made the
+  whole `update`/`episode` contract inert on the first build where it could have worked.
+- **Control:** `CoordContractWriter.FileNameFor` maps a session id to a safe name, replacing invalid
+  characters and appending a digest of the *original* id so two ids that sanitise alike stay two
+  files. `CoordLogSurvivesASessionIdWithAColonTests` asserts through
+  `EnumerateFiles("*.jsonl")` — the step a stream defeats — rather than by reading the path back,
+  which would have passed on the broken code. **Observed failing on the shipped shape**: 4 of 6.
+- **What the suite caught that the fix had not:** the first version rewrote **every** name, which
+  orphaned every log already on disk and changed the case that was never broken. Two existing tests
+  failed on it. Now only a name the filesystem would mangle is rewritten, with an assertion pinning
+  that an already-valid id is returned untouched.
+- **The generalisation worth keeping:** *an identifier is not a file name, and a path that composes
+  cleanly in code is not a path the OS agrees with.* Where an id reaches a filesystem, a network
+  route, a URL or a shell, it crosses into a grammar it was never designed for — and the failure
+  mode is not an error but a **successful write to somewhere else**.
+- **Status:** `controlled`
+
+### DC-087 — An empty state explains itself with a cause it never checked
+
+- **Shape:** a surface has nothing to render and says so, and then adds *why*. The explanation is
+  written once, when one reason is the only reason there is. Later the surface acquires other ways of
+  being empty — the ordinary one, usually — and the single explanation is shown for all of them. It
+  is confidently wrong exactly when a user is most likely to act on it, because a person reading
+  "nothing here, and here is why" investigates the why.
+- **Signature:** an empty-state string containing a **causal clause** — *needs X · waiting for Y ·
+  not yet emitted · renders as soon as Z lands* — held in one field and rendered from more than one
+  path. The tell is that the surface names a subsystem it has never queried. A second tell: the
+  explanation describes a gap that has since closed, because prose about "not yet" has no expiry.
+- **Why it survives:** it reads as helpfulness and it is true when written. Nothing in a test suite
+  objects to a string. And the wrongness is invisible from inside the surface — the surface has no
+  idea whether the claim holds, which is the defect itself.
+- **Instance:** 2026-09-02 — `SequenceDiagramSurface` showed *"Sequence diagrams need ordered call
+  data from the extractor — this surface renders it as soon as that lands"* on a freshly opened tab,
+  before any node was selected. **Measured in the reported workspace: 4,967 `calls_at` assertions.**
+  The extractor had done its job and the feed was wired
+  (`ShowNodeInSequenceDiagramsAsync` → `InteractionAsync`). The owner read it, concluded the call
+  data had not landed, and reported an extractor gap — a correct inference from a confident and
+  wrong statement, costing a round trip.
+
+  **The class remark above it carried the same false claim**, describing the surface as a "scaffold"
+  awaiting data "the graph does not yet emit". The prose outlived its subject in two places, and the
+  one users see is the one that did damage.
+- **Control:** the empty state is chosen per case — a prompt when nothing is selected, a statement
+  about the node when that node returned nothing. Four tests, including one asserting the word
+  *extractor* never appears before a selection, and a guard that a populated model still renders (an
+  unconditional empty state would satisfy the rest). **Observed failing on the shipped message.**
+- **The generalisation:** *an empty state may say what it is waiting for; it may name a cause only
+  when it has observed one.* "Nothing to show" is complete. "Nothing to show because X" is a claim,
+  and a surface that has not looked at X is not entitled to make it.
 - **Status:** `controlled`
