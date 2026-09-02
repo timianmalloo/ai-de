@@ -506,13 +506,13 @@ silently dropped surface.
 
 | Member | Summary |
 |---|---|
-| `int CurrentSchemaVersion = 3` | Bumped to 2 when the Joins pane was added. |
+| `int CurrentSchemaVersion = 4` | Bumped to 2 when the Joins pane was added. |
 | `string BackupPath` | **(gap)** |
 | `void Save(Layout layout)` | **(gap)** |
 | `RestoreResult Load(` | Restores the layout, reconciling it against the surfaces that actually exist and the displays that are actually connected. |
 | `RestoreResult Load(` | **(gap)** |
 
-### `int CurrentSchemaVersion = 3`
+### `int CurrentSchemaVersion = 4`
 
 Bumped to 2 when the Joins pane was added.
 
