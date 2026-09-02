@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 55 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 56 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3216,4 +3216,39 @@ for both or split.*
 - **The generalisation worth keeping:** *a guard that degrades to advisory moves its guarantee to
   whoever supplies its input.* When you find one, the question is not whether the degradation is
   reasonable — it usually is — but whether anything tests that the input is actually supplied.
+- **Status:** `controlled`
+
+### DC-089 — A capability is built, tested and rendered, and nothing can reach it
+
+- **Shape:** a service exists with a full implementation, its own unit tests, and a UI surface that
+  renders its results. Every part is correct. What does not exist is any **caller** — no ingest
+  path, no tool, no command, no affordance. The surface shows its honest empty state forever,
+  because the store behind it can only ever be empty.
+- **Signature:** a public service type whose only references are its own file and its own tests. The
+  surface says something true and useless ("No board posts yet"); the pane's read model has a query
+  interface and no write; and somewhere a comment refers to the missing half as *future* work in the
+  present tense. The tell in review is a feature that passes every test it has and cannot be
+  demonstrated end to end.
+- **Why it survives:** every slice was individually complete and each one shipped green. Unit tests
+  pass because they construct the service directly, which is exactly the call site production
+  lacks. The specification describes the capability, the design describes the capability, the code
+  implements the capability — so **reading any single artifact confirms it exists**. Only using it
+  reveals that nothing invokes it.
+- **Instance:** 2026-09-02 — `MessageBoardService` had zero call sites outside its own file for
+  three slices. The coordination contract had no board kind (its parser comment said "a *future*
+  board post"), the MCP gateway exposed one read tool, and the pane was read-only. Found when the
+  owner asked an agent to "send a message to the loomkeeper board": the agent searched the
+  repository for a mechanism, found none, and the pane went on saying "No board posts yet". **The
+  agent behaved correctly and the product was reported as broken**, which is the honest reading —
+  the collaboration surface every other feature was justified by had never been reachable.
+- **What made it visible:** a user driving the product end to end, and a recording of it. No gate
+  caught it, and it is not obvious one could: every component was present and passing.
+- **Control:** `board-post` on the coordination contract, applied through the capability-gated
+  ingest — `ContractBoardPostTests` covers the path and its four refusals, and
+  `verify-surface-ownership` already fails a surface with no backing implementation. The stronger
+  control is the standing question rather than a script: **for each surface, name the caller that
+  puts data behind it.** A surface whose only writer is a test is a mock in production.
+- **The generalisation worth keeping:** *a component with no caller is not an unfinished feature, it
+  is an absent one — and it looks finished from every angle except use.* Completeness is a property
+  of the path, never of the parts.
 - **Status:** `controlled`

@@ -28,6 +28,20 @@ public static class CoordContract
         public const string NotInScope = "episode.not_in_scope";
         public const string Outcome = "episode.outcome";
     }
+
+    /// <summary>The attribute keys a <c>board-post</c> line carries.</summary>
+    /// <remarks>
+    /// There is deliberately no repository key. The board is per-repository and a session's
+    /// repository is fixed at registration, so it is <b>derived from the binding</b> rather than
+    /// supplied — an attribute would let a session post onto another repository's board by naming
+    /// it, which is the same class of hole as an update restating identity.
+    /// </remarks>
+    public static class BoardAttributes
+    {
+        public const string Kind = "board.kind";
+        public const string Content = "board.content";
+        public const string Parent = "board.parent";
+    }
 }
 
 /// <summary>
@@ -121,6 +135,34 @@ public sealed record ContractEpisodeOpen(
 /// acceptance criteria is exactly the case the scorer already detects.
 /// </remarks>
 public sealed record ContractEpisodeClose(
+    string ExternalSessionId,
+    IReadOnlyDictionary<string, string?> Attributes,
+    double At,
+    int Seq) : CoordContractEvent(ExternalSessionId, At, Seq);
+
+/// <summary>
+/// A session posting to its repository's Message Board: a question, a decision, a breadcrumb, a
+/// knowledge candidate, or a reply or acknowledgement of an existing message.
+/// </summary>
+/// <remarks>
+/// <para><b>Why this kind exists.</b> The Message Board was implemented, tested and rendered, and
+/// <see cref="MessageBoardService"/> had <b>no callers anywhere in the product</b> — no ingest path,
+/// no MCP tool, no UI affordance. It was a read surface over a store nothing wrote to. An agent
+/// asked to "post to the loomkeeper board" searched the repository for how, found nothing, and the
+/// pane went on saying "No board posts yet". The agent was right; the mechanism did not exist. The
+/// parser's own comment had been calling this "a future board post" since slice 2.</para>
+///
+/// <para><b>The repository is not the sender's to choose.</b> It is read from the registered
+/// session's binding. Accepting it as an attribute would let a session post onto another
+/// repository's board by naming it — the same hole as an update restating identity, and the board
+/// is precisely where a forged origin would be most persuasive to a reader.</para>
+///
+/// <para><b>Content stays untrusted.</b> The service quarantines every post and flags
+/// grader-injection shapes; this kind changes none of that. What arrives over a file anything can
+/// append to is data, and the scorer reads typed signals rather than board prose, which is what
+/// makes that guarantee hold rather than depend on the flag being accurate.</para>
+/// </remarks>
+public sealed record ContractBoardPost(
     string ExternalSessionId,
     IReadOnlyDictionary<string, string?> Attributes,
     double At,
@@ -224,6 +266,7 @@ public static class CoordContractParser
             "update" => new ContractUpdate(session, ReadAttrs(root), at, seq),
             "episode-open" => new ContractEpisodeOpen(session, ReadAttrs(root), at, seq),
             "episode-close" => new ContractEpisodeClose(session, ReadAttrs(root), at, seq),
+            "board-post" => new ContractBoardPost(session, ReadAttrs(root), at, seq),
             _ => null, // a valid line of a kind this slice does not handle (e.g. a board post)
         };
     }
@@ -249,7 +292,7 @@ public static class CoordContractParser
 /// <summary>A snapshot of the adapter counters (IO1 operator questions).</summary>
 public sealed record CoordContractStats(
     long Registered, long Heartbeats, long Unknown, long DuplicateRegister, long Quarantined,
-    long Updated = 0, long EpisodesOpened = 0, long EpisodesClosed = 0);
+    long Updated = 0, long EpisodesOpened = 0, long EpisodesClosed = 0, long BoardPosts = 0);
 
 /// <summary>
 /// The injected-contract ingest adapter: maps contract events onto the same
@@ -278,6 +321,7 @@ public sealed class InjectedContractIngest
     private long _updated;
     private long _episodesOpened;
     private long _episodesClosed;
+    private long _boardPosts;
 
     // The external session's currently open episode. An episode-close names no episode id - the
     // agent knows it has one open, not what the registrar called it - so the adapter remembers.
@@ -291,7 +335,7 @@ public sealed class InjectedContractIngest
 
     public CoordContractStats Stats => new(
         _registered, _heartbeats, _unknown, _duplicateRegister, _quarantined, _updated,
-        _episodesOpened, _episodesClosed);
+        _episodesOpened, _episodesClosed, _boardPosts);
 
     /// <summary>Applies a batch in order. Callers pass parser output, already sorted.</summary>
     public void ApplyAll(IEnumerable<CoordContractEvent> events)
@@ -324,6 +368,9 @@ public sealed class InjectedContractIngest
                 break;
             case ContractEpisodeClose close:
                 ApplyEpisodeClose(close);
+                break;
+            case ContractBoardPost post:
+                ApplyBoardPost(post);
                 break;
             case ContractSessionEnd end:
                 if (_byExternalId.TryGetValue(end.ExternalSessionId, out var ending))
@@ -458,6 +505,76 @@ public sealed class InjectedContractIngest
         }
         catch (WatcherException)
         {
+            _quarantined++;
+        }
+    }
+
+    /// <summary>Applies a Message Board post from a registered session.</summary>
+    /// <remarks>
+    /// <para><b>The repository comes from the binding, never the wire.</b> A session's repository is
+    /// fixed at registration; accepting it as an attribute would let any writer put a message on
+    /// another repository's board by naming it. The board is exactly where a forged origin would be
+    /// most persuasive, because its whole purpose is that another agent reads and believes it.</para>
+    ///
+    /// <para><b>Nothing is defaulted.</b> An unrecognised kind is quarantined rather than treated as
+    /// a Question, and a post with no content is quarantined rather than posted empty — an empty
+    /// message on a board is indistinguishable from one whose text was lost.</para>
+    ///
+    /// <para><b>The service keeps its own guarantees.</b> Capability verification, the orphan refusal
+    /// on a reply or acknowledgement, quarantining and grader-injection flagging all still happen
+    /// there; this method routes and refuses, it does not re-decide.</para>
+    /// </remarks>
+    private void ApplyBoardPost(ContractBoardPost post)
+    {
+        if (!_byExternalId.TryGetValue(post.ExternalSessionId, out var known))
+        {
+            _unknown++;
+            return;
+        }
+
+        var declared = Attr(post.Attributes, CoordContract.BoardAttributes.Kind);
+        if (declared is null
+            || !Enum.TryParse<BoardMessageKind>(declared.Replace("-", ""), ignoreCase: true, out var kind))
+        {
+            _quarantined++;
+            return;
+        }
+
+        var content = Attr(post.Attributes, CoordContract.BoardAttributes.Content);
+        var parent = Attr(post.Attributes, CoordContract.BoardAttributes.Parent);
+
+        // An acknowledgement carries no content by design; everything else must say something.
+        if (kind != BoardMessageKind.Acknowledgement && content is null)
+        {
+            _quarantined++;
+            return;
+        }
+
+        if (kind is BoardMessageKind.Reply or BoardMessageKind.Acknowledgement && parent is null)
+        {
+            _quarantined++;
+            return;
+        }
+
+        var repository = known.Session.Binding.Repository.CanonicalPath;
+
+        try
+        {
+            _ = kind switch
+            {
+                BoardMessageKind.Reply =>
+                    _host.ReplyOnBoard(repository, known.Session.SessionId, known.Capability, parent!, content!),
+                BoardMessageKind.Acknowledgement =>
+                    _host.AcknowledgeOnBoard(repository, known.Session.SessionId, known.Capability, parent!),
+                _ => _host.PostToBoard(repository, known.Session.SessionId, known.Capability, kind, content!),
+            };
+
+            _boardPosts++;
+        }
+        catch (WatcherException)
+        {
+            // A reply naming a parent that does not exist in this repository is refused by the
+            // service as an orphan. Counted, never fatal: one bad line must not stop the stream.
             _quarantined++;
         }
     }

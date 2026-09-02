@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 122 types, 211 members, 56% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 124 types, 217 members, 56% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**122 public types · 211 public members · 56% documented.**
+**124 public types · 217 public members · 56% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -223,6 +223,23 @@ them there would assert a standard that does not exist.
 | `string NotInScope = "episode.not_in_scope"` | **(gap)** |
 | `string Outcome = "episode.outcome"` | **(gap)** |
 
+## `BoardAttributes`
+
+*class* — `CoordinationContract.cs`
+
+The attribute keys a `board-post` line carries.
+
+**Remarks.** There is deliberately no repository key. The board is per-repository and a session's
+repository is fixed at registration, so it is **derived from the binding** rather than
+supplied — an attribute would let a session post onto another repository's board by naming
+it, which is the same class of hole as an update restating identity.
+
+| Member | Summary |
+|---|---|
+| `string Kind = "board.kind"` | **(gap)** |
+| `string Content = "board.content"` | **(gap)** |
+| `string Parent = "board.parent"` | **(gap)** |
+
 ## `CoordContractEvent`
 
 *record* — `CoordinationContract.cs`
@@ -330,6 +347,38 @@ A session closing its current episode with a declared outcome.
 `Completed` claim is honest is the Weave's Outcome-integrity dimension, which reads
 deterministic evidence rather than this field — so an agent claiming Completed on unmet
 acceptance criteria is exactly the case the scorer already detects.
+
+## `ContractBoardPost`
+
+*record* — `CoordinationContract.cs`
+
+A session posting to its repository's Message Board: a question, a decision, a breadcrumb, a
+knowledge candidate, or a reply or acknowledgement of an existing message.
+
+**Remarks.** **Why this kind exists.** The Message Board was implemented, tested and rendered, and
+`MessageBoardService` had **no callers anywhere in the product** — no ingest path,
+no MCP tool, no UI affordance. It was a read surface over a store nothing wrote to. An agent
+asked to "post to the loomkeeper board" searched the repository for how, found nothing, and the
+pane went on saying "No board posts yet". The agent was right; the mechanism did not exist. The
+parser's own comment had been calling this "a future board post" since slice 2.
+
+
+
+
+
+**The repository is not the sender's to choose.** It is read from the registered
+session's binding. Accepting it as an attribute would let a session post onto another
+repository's board by naming it — the same hole as an update restating identity, and the board
+is precisely where a forged origin would be most persuasive to a reader.
+
+
+
+
+
+**Content stays untrusted.** The service quarantines every post and flags
+grader-injection shapes; this kind changes none of that. What arrives over a file anything can
+append to is data, and the scorer reads typed signals rather than board prose, which is what
+makes that guarantee hold rather than depend on the flag being accurate.
 
 ## `CoordContractParseStats`
 
@@ -600,6 +649,9 @@ Pattern: bounded producer/consumer (LOA Channel<T> backpressure) - the repo's
 | `WorkEpisode OpenEpisode(` | Opens a Work Episode for a verified session (US-6). Capability-gated like every other post-registration write. |
 | `WorkEpisode ReframeEpisode(` | Reframes an open episode: the current one closes Superseded and a new generation opens. |
 | `WorkEpisode CloseEpisode(string episodeId, SessionCapability capability, EpisodeOutcome outcome)` | Closes an episode with its declared outcome. The declaration is not a quality judgement. |
+| `BoardMessage PostToBoard(` | Posts to a repository's Message Board on behalf of a verified session (US-4). |
+| `BoardMessage ReplyOnBoard(` | Replies to an existing message. The service refuses an orphan. |
+| `BoardMessage AcknowledgeOnBoard(` | Acknowledges an existing message. Carries no content by design. |
 | `void EndSession(string sessionId)` | Marks a session ended (its terminal closed / it reported session-end). Liveness then reads Ended rather than lingering Alive/Stale. Called by the coordination ingest on a session-end event; the registrar's re-registra… |
 | `void Enqueue(HarnessSpanEvent spanEvent)` | Enqueues a span event. Never blocks: under load the bounded queue drops its oldest item (counted), so a flood degrades to a coverage gap rather than unbounded growth. |
 | `int DrainAvailable()` | Processes every span currently queued and returns the count. Deterministic (no waiting), so tests drain exactly what they enqueued. |
@@ -624,6 +676,16 @@ post-registration write.
 only producer of episodes, so an episode existed only where the AI-Forward pack had written
 an audit entry. Any harness can now declare one over the coordination log, which is what the
 leaderboard's cross-harness comparison and the specified Daydream both depend on.
+
+### `BoardMessage PostToBoard(`
+
+Posts to a repository's Message Board on behalf of a verified session (US-4).
+
+**Remarks.** The reason these exist on the host: `MessageBoardService` had **no callers
+anywhere in the product**. It was implemented, tested and rendered as a pane, and nothing
+could write to it — a read surface over an empty store. An agent asked to post to the board
+searched the repository for how, found nothing, and the pane went on saying "No board posts
+yet". These are the ingest half of that path.
 
 ## `ScoredEpisode`
 

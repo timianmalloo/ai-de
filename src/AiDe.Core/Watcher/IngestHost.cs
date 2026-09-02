@@ -40,6 +40,7 @@ public sealed class IngestHost
     private readonly ITrustedRegistrar _registrar;
     private readonly IWatcherObservationStore _store;
     private readonly IWorkEpisodeService _episodes;
+    private readonly IMessageBoard _board;
     private readonly TimeProvider _time;
 
     private long _enqueued;
@@ -54,7 +55,8 @@ public sealed class IngestHost
         ITrustedRegistrar registrar,
         TimeProvider time,
         int queueCapacity = 1024,
-        IWorkEpisodeService? episodes = null)
+        IWorkEpisodeService? episodes = null,
+        IMessageBoard? board = null)
     {
         ArgumentNullException.ThrowIfNull(store);
         ArgumentNullException.ThrowIfNull(registrar);
@@ -69,6 +71,7 @@ public sealed class IngestHost
         // existing construction site would otherwise have to be edited to pass something it has no
         // opinion about. Injectable for tests that need a controlled episode id.
         _episodes = episodes ?? new WorkEpisodeService(store, registrar, time);
+        _board = board ?? new MessageBoardService(store, registrar, time);
 
         // DropOldest keeps the freshest spans under load; the itemDropped callback makes every drop a
         // visible coverage-gap signal rather than a silent loss.
@@ -124,6 +127,30 @@ public sealed class IngestHost
     /// <summary>Closes an episode with its declared outcome. The declaration is not a quality judgement.</summary>
     public WorkEpisode CloseEpisode(string episodeId, SessionCapability capability, EpisodeOutcome outcome)
         => _episodes.Close(episodeId, capability, outcome);
+
+    /// <summary>
+    /// Posts to a repository's Message Board on behalf of a verified session (US-4).
+    /// </summary>
+    /// <remarks>
+    /// The reason these exist on the host: <see cref="MessageBoardService"/> had <b>no callers
+    /// anywhere in the product</b>. It was implemented, tested and rendered as a pane, and nothing
+    /// could write to it — a read surface over an empty store. An agent asked to post to the board
+    /// searched the repository for how, found nothing, and the pane went on saying "No board posts
+    /// yet". These are the ingest half of that path.
+    /// </remarks>
+    public BoardMessage PostToBoard(
+        string repositoryKey, string sessionId, SessionCapability capability, BoardMessageKind kind, string content)
+        => _board.Post(repositoryKey, sessionId, capability, kind, content);
+
+    /// <summary>Replies to an existing message. The service refuses an orphan.</summary>
+    public BoardMessage ReplyOnBoard(
+        string repositoryKey, string sessionId, SessionCapability capability, string parentMessageId, string content)
+        => _board.Reply(repositoryKey, sessionId, capability, parentMessageId, content);
+
+    /// <summary>Acknowledges an existing message. Carries no content by design.</summary>
+    public BoardMessage AcknowledgeOnBoard(
+        string repositoryKey, string sessionId, SessionCapability capability, string parentMessageId)
+        => _board.Acknowledge(repositoryKey, sessionId, capability, parentMessageId);
 
     /// <summary>
     /// Marks a session ended (its terminal closed / it reported session-end). Liveness then reads Ended

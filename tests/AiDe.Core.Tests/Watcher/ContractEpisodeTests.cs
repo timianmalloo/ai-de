@@ -282,10 +282,22 @@ public sealed class ContractEpisodeTests
     /// the parser already returns null for a kind it does not handle. Asserted here so that
     /// removing that tolerance fails a test instead of silently making the contract breaking.
     /// </remarks>
+    /// <remarks>
+    /// <para><b>The example moved once already.</b> This was written with <c>board-post</c> as the
+    /// unhandled kind, and <c>board-post</c> was then implemented — so the test failed, correctly,
+    /// the moment its example stopped being an example. The fix is a different future kind, not a
+    /// weaker assertion: <c>daydream-observation</c> is specified (US-9) and unbuilt, so it is
+    /// genuinely unhandled today.</para>
+    ///
+    /// <para>If it too becomes real, this test will fail again and should be re-pointed again. That
+    /// is the test working: the tolerance it pins is what lets every one of these kinds be added
+    /// without a version bump, and it can only be demonstrated with a kind that is actually absent.
+    /// </para>
+    /// </remarks>
     [Fact]
     public void AnUnhandledKindIsSkipped_NotTreatedAsMalformed()
     {
-        var unknown = "{\"kind\":\"board-post\",\"contract\":\"" + CoordContract.Version
+        var unknown = "{\"kind\":\"daydream-observation\",\"contract\":\"" + CoordContract.Version
             + "\",\"session\":\"ext-1\",\"at\":1,\"seq\":2}";
 
         var events = CoordContractParser.Parse(unknown, out var stats);

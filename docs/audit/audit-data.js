@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T23:17:46Z",
+  "generated": "2026-09-02T23:53:54Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8338,6 +8338,40 @@ window.AUDIT_DATA = {
       "artifacts": [
         "src/AiDe.App/Workbench/SessionRowPresenter.cs",
         "src/AiDe.App/Workbench/SurfaceContentFactory.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0415",
+      "shortname": "capture-mitigation",
+      "datetime": "2026-09-02T23:53:54Z",
+      "session": "dream-job",
+      "prompt": "dream.py capture-mitigation",
+      "summary": "Captured mit-0008 (red-green): MessageBoardService had zero call sites outside its own file for three slices: no ingest kind, no MC",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0416",
+      "shortname": "board-post-contract-kind",
+      "datetime": "2026-09-02T23:53:54Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "do the board-post",
+      "summary": "Added the board-post kind to loomkeeper/1 so an agent can reach the Message Board, which had no writer of any sort. Routes to MessageBoardService.Post/Reply/Acknowledge through the capability-gated ingest. The repository is read from the session binding and has no wire attribute - a session cannot post onto another repository's board, observed failing when the wire was allowed to name it. Nothing is defaulted: an unrecognised kind is quarantined rather than filed as a Question, empty content is quarantined, an orphan reply is refused by the service. An injection shape is flagged and still posted, because refusing it would hide it from the humans most interested. Registered DC-089: a capability built, tested and rendered with nothing able to reach it. Also re-pointed my own earlier tolerance test, which had used board-post as its example of an unhandled kind.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/CoordinationContract.cs"
       ],
       "tags": [],
       "outcome": "success"
