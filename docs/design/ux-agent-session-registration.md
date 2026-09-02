@@ -212,15 +212,47 @@ runs and fails visibly. This one looks like it worked.
    check against now exists, so the check is worth having** — which is exactly the precondition
    §3.1a named, now satisfied.
 
-#### One thing that did NOT reproduce, stated rather than buried
+#### Correction: it DOES reproduce — I had used the wrong child
 
-**`cmd.exe` carried a 22,297-character `PATH` intact** — DC-027's exact reported figure — on all
-sizes to 64,000. The recorded instance says cmd dropped it. The conditions differ in ways that could
-each account for it and were not controlled: that child was a `.cmd` **shim** and this one is a .NET
-executable; that `PATH` was the machine's real one and this is synthetic padding; that was a
-different machine. **This is not a claim that DC-027 is wrong** — it is a measurement that did not
-reproduce it, recorded so the next person does not assume the mechanism is settled. The failure
-found here is real, is on a different path, and is the one §3 has to survive.
+The first version of this section said `cmd.exe` carried a 22,297-character `PATH` intact and that
+DC-027 "did not reproduce". **That was measuring the wrong thing.** The probe's child was a .NET
+executable; DC-027's was a **`.cmd` shim**, and those are different mechanisms — cmd *passing a block
+through* to a new process is not cmd *expanding a variable inside a batch file*.
+
+Re-run against a real `.cmd` shim, and it reproduces immediately:
+
+| `PATH` set to | the shim receives |
+|---|---|
+| 8,000 | 8,001 ✓ |
+| **8,172** | **8,173 ✓ — the last intact size** |
+| **8,173** | **1 — gone** |
+| 12,000 · 22,297 | 1 — gone |
+
+**Bisected: intact at 8,172, lost at 8,173.** The residual risk DC-027 records — *"the exact cut-off
+was never bisected, so the message says 'may be dropped' rather than asserting a number nobody
+measured"* — is now closed for this path.
+
+**And the mechanism is sharper than "cmd drops a large variable".** cmd emits
+`The input line is too long.` — its ~8,191-character **command-line** limit, applied *after*
+expansion. So the cut-off is not a property of the variable at all; it is
+`8,191 − (length of the rest of the line)`. The same `PATH` therefore fails in one shim and survives
+in another depending on what the surrounding batch line looks like. `CmdVariableLimit = 8151`
+corresponds to roughly a 40-character surround, which is a sound conservative choice — and it is a
+*heuristic about a typical line*, not a constant of the environment.
+
+**It is also not perfectly silent.** cmd prints that error to **stderr**, then carries on with the
+variable empty. Whether anyone sees it depends entirely on whether the shim's stderr is shown —
+which is why DC-027 presented as "my tools are missing" rather than as an error message.
+
+#### So there are TWO limits, both real, and §3 has to clear both
+
+| Mechanism | Cut-off | How it fails |
+|---|---|---|
+| cmd expanding a variable inside a `.cmd` shim | **8,172** for a 19-char surround; generally `8,191 − surround` | stderr message, variable empty, shim continues |
+| **total environment block**, PowerShell-hosted launch | **~32,650** | **fully silent** — process starts, produces nothing |
+
+The first is per-variable and already has a control. **The second is the one §3 introduces risk
+into, has no control, and fails without a word** — and it is the path AI-DE actually uses.
 
 ### 3.2 Enrichment, for a harness that chooses to
 
