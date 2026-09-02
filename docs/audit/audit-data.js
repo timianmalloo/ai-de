@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-01T23:43:25Z",
+  "generated": "2026-09-02T00:24:46Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7596,6 +7596,23 @@ window.AUDIT_DATA = {
         "ui",
         "sequence-diagram"
       ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0379",
+      "shortname": "sta-harness-consolidation",
+      "datetime": "2026-09-02T00:24:46Z",
+      "session": "phase3-pane-probes",
+      "prompt": "do the STA harness consolidation",
+      "summary": "DC-079's systemic fix, done: 32 files declaring their own STA harness became 2 (Sta.cs, plus one test whose caught exception is its own subject). One Run, one Pump, one Rethrow; each file keeps its local name as a one-line delegate so no call sites changed. Timeouts passed through - 28 matched exactly, 3 that joined with NO timeout are now bounded at 60s, stated rather than folded into 'no behaviour change'. The granularity check written hours earlier fired on the shared harness; the rule was imprecise and is now scoped to files holding [Fact]s, its fixture caught the change by going red. 1633 tests, 15 gates.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.App.Tests/Sta.cs"
+      ],
+      "tags": [],
       "outcome": "success"
     }
   ],
