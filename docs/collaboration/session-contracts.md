@@ -1690,6 +1690,36 @@ seen `graph.disclosures` inside it. That is not a gap in our methods; it is a pr
 medium. Which is exactly the case for *render it and look*: the only observer that does not care
 what language the consumer was written in is the running program.
 
+
+#### The buildable gap, measured
+
+Core's finding that a spec *cannot* declare `relates-to DC-027` — that the link is inexpressible
+rather than forgotten — checked and quantified:
+
+| | |
+|---|---|
+| defect classes declared in the register | **79** |
+| of those that are nodes in the docs graph | **0** |
+| nodes for the register **file** | **1** (`defect-classes`, type `doc`) |
+| typed links anywhere pointing at a DC class | **0** — and none can, there is nothing to point at |
+
+**Seventy-nine hazards collapse into one graph node.** A spec can link to the register; it cannot
+link to a hazard. So `docs/design/ux-agent-session-registration.md` and `DC-027` were both correct,
+both current, and mutually invisible — and every orphan check, every review-suggested flag, every
+inbound-neighbour sweep the graph performs was working exactly as built while unable to see the one
+connection that mattered.
+
+That is a different failure from the ones catalogued above. Those were controls that *could* have
+seen something and did not. This is a link that **cannot be written**, so no control could ever have
+flagged its absence: there is no denominator for connections that are not expressible.
+
+**Not built, and the reason is the reason to be careful with it.** Whether "this spec touches a
+registered hazard" is even decidable is an open question, and a relation added without answering it
+would produce a graph full of plausible edges nobody can verify — `INFERRED` links presented beside
+`EXTRACTED` ones, which the knowledge-graph standard names as provenance laundering. The measurement
+above is what the next session needs to decide whether it is worth doing; **79 and 0 are the numbers
+that make it a decision rather than an intention.**
+
 #### What this leaves uncovered, named rather than implied
 
 The `MainWindow` status line · anything inside the WebView2 · **any consumer in a language no
