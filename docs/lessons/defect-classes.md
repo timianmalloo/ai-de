@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 47 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 48 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -2771,3 +2771,47 @@ for both or split.*
   colour from the DataTemplate (E11).
 - **Status:** `partially-controlled` — the global style holds it; the rendered-contrast gate is the
   remaining rung.
+
+### DC-081 — A setup step declines, and its `return` cancels the work it was preparing for
+
+- **Shape:** a script does setup, then the real work. The setup is written to **give up gracefully**
+  when it cannot complete — a correct and deliberate design — and it gives up with a `return`. The
+  work is appended to the same script, so the graceful decline silently cancels it. Nothing errors:
+  the setup did what it said, the host exits its script normally, and whatever keeps the session
+  alive afterwards leaves something that looks like a plausible result.
+- **Signature:** two concerns concatenated into one script, one of which has an early exit, and a
+  host flag that hides the truncation (`-NoExit`, `|| true`, a `finally` that reopens a shell). The
+  tell in review is a **bare `return` at the top level of generated source** — inside a function it
+  scopes, at the top of a script it terminates. The tell in use is that the feature is *entirely*
+  absent rather than broken: no error, no partial behaviour, just the environment it was launched in.
+- **Why it survives:** the decline is conditional on the environment, so it does not reproduce where
+  it is developed. Here the condition is PowerShell's own screen-reader detection — inside the
+  product's ConPTY the host prints *"detected that you might be using a screen reader and has
+  disabled PSReadLine"*, so `Set-PSReadLineKeyHandler` is genuinely absent and the guard fires
+  **every time**; from an ordinary console PSReadLine loads and the bug is **invisible**. A
+  hypothesis naming this exact line was raised and **wrongly dismissed** hours earlier because the
+  check was run from a normal shell and reported `PSREADLINE-PRESENT` — DC-080 in the diagnosis of
+  DC-081.
+- **Instance:** 2026-09-02 — "New Claude Code session" opened a plain PowerShell prompt at the
+  workspace root while the status bar reported *"Claude Code session opened."* Found from a user's
+  screenshot, in which the terminal was printing the reason the whole time. Measured against the
+  shipped binary, running the generated command with `PSModulePath` empty to reproduce the condition:
+
+      PSReadLine PRESENT : agent ran = True
+      PSReadLine ABSENT  : agent ran = False
+
+  Every downstream symptom followed from it: the session never reached an agent prompt, so it never
+  became `Ready`, so `ReadyPromptTargets()` excluded it and the prompt-draft dropdown was empty. **One
+  cause, reported as three unrelated complaints.**
+- **Control:** `AgentCommandLine` wraps the integration in `& { … }`, so its `return` scopes to the
+  block and the agent invocation is unreachable-from-it by construction. Three tests in
+  `AgentLaunchSurvivesIntegrationTests`: the agent runs with the integration declining, the agent
+  runs with it installing (so "delete the integration" does not pass), and the integration is still
+  *attempted* — a DC-016 guard, since dropping it would satisfy both behavioural tests while removing
+  the OSC-133 reporting that readiness, dispatch and the target list all depend on. **Observed
+  failing on the shipped shape**, with the message naming the cause.
+- **The generalisation worth keeping:** *a step that is allowed to decline must not be able to
+  cancel what it was preparing for.* Where two concerns share a script, the optional one belongs in
+  its own scope — not because its logic is wrong, but because "I could not help" and "stop" must not
+  be the same statement.
+- **Status:** `controlled`
