@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T16:43:05Z",
+  "generated": "2026-09-02T16:43:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7763,6 +7763,27 @@ window.AUDIT_DATA = {
         "docs/lessons/defect-classes.md"
       ],
       "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0384",
+      "shortname": "smoke91-10-drag-reconcile-anchored",
+      "datetime": "2026-09-02T01:48:03Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "windowing still flaky: created prompt draft in lower dock, moved to top-right, ended up top-left",
+      "summary": "Fixed #10: native-drag reconcile TryMapByPosition mapped columns to zones by RAW INDEX (first=Left,last=Right) with a set-only guard, so an inserted column mis-identified a real zone (explorers->Center, dragged pane->Left). Rewrote to content-ANCHORED: each zone's anchor is the column holding the majority of its prior surfaces; a split-off/new column is placed by position relative to the Center anchor. Right-drop->Right (even when empty), left-drop keeps explorers in Left. +3 Core tests (1346).",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/ZoneBackedLayoutService.cs",
+        "docs/reviews/ui-smoke-test-9-1.md"
+      ],
+      "tags": [
+        "docking",
+        "investigate"
+      ],
       "outcome": "success"
     },
     {

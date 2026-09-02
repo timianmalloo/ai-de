@@ -71,43 +71,80 @@ public sealed class ZoneBackedLayoutService : ILayoutService
             bottom = rootKids[1];
         }
 
-        // The columns row holds [Left?, Center, Right?] in order. A native side-drop can add or nest
-        // columns; rather than revert, map the FIRST column to Left and the LAST to Right (when those
-        // zones are rendered) and merge everything in between into the Center. This lets a tab dragged
-        // to a zone's pane — even one that created an extra split — resolve to a zone.
+        // The columns row holds the side and center zones. A native drag can INSERT a column (a new
+        // side pane) or REORDER them, so the column's zone is identified by its CONTENT — which zone's
+        // surfaces it already holds — never by its raw index. Index-based mapping ("first is Left, last
+        // is Right") scatters a real zone the moment a dragged pane reads first or last: the reported
+        // bug where a pane dropped near the right landed in the Left zone and pushed the explorers into
+        // the Center (smoke 9-1 #10).
         var colChildren = columns is SplitNode { Orientation: Orientation.Horizontal } split
             ? split.Children.ToList()
             : [columns];
 
-        var wantLeft = Rendered(ZoneId.Left);
-        var wantRight = Rendered(ZoneId.Right);
-        var minColumns = 1 + (wantLeft ? 1 : 0) + (wantRight ? 1 : 0);
-        if (colChildren.Count < minColumns)
+        // Each side/center zone's ANCHOR is the column holding the most of that zone's prior surfaces —
+        // the column that IS that zone. A column that is nobody's anchor is a dragged pane (it split off,
+        // or arrived new), placed by its position relative to the Center anchor. Anchoring by majority —
+        // not by "a surface once lived here" — is what lets a pane dragged OUT of the Center into its own
+        // column stay where it was dropped instead of snapping back to the Center.
+        int? AnchorFor(ZoneId z)
         {
-            return null; // a column collapsed away (emptied drag) — not confident, let the caller revert
+            var owned = current.Zone(z).Surfaces().Select(s => s.SurfaceId).ToHashSet(StringComparer.Ordinal);
+            if (owned.Count == 0)
+            {
+                return null;
+            }
+
+            var best = -1;
+            var bestCount = 0;
+            for (var i = 0; i < colChildren.Count; i++)
+            {
+                var count = SurfacesUnder(colChildren[i]).Count(s => owned.Contains(s.SurfaceId));
+                if (count > bestCount)
+                {
+                    bestCount = count;
+                    best = i;
+                }
+            }
+
+            return best >= 0 ? best : null;
         }
 
-        var assigned = new Dictionary<ZoneId, IReadOnlyList<Surface>>();
-        var lo = 0;
-        var hi = colChildren.Count - 1;
-        if (wantLeft)
+        var centerAnchor = AnchorFor(ZoneId.Center);
+        if (centerAnchor is not { } centerIndex)
         {
-            assigned[ZoneId.Left] = SurfacesUnder(colChildren[lo++]);
+            return null; // no column carries the Center's content — not our frame; let the caller revert
         }
 
-        if (wantRight)
+        var anchorZone = new Dictionary<int, ZoneId>();
+        if (AnchorFor(ZoneId.Left) is { } li)
         {
-            assigned[ZoneId.Right] = SurfacesUnder(colChildren[hi--]);
+            anchorZone[li] = ZoneId.Left;
         }
 
-        // Everything between (inclusive) is the Center — merges any extra middle columns.
-        var center = new List<Surface>();
-        for (var i = lo; i <= hi; i++)
+        if (AnchorFor(ZoneId.Right) is { } ri)
         {
-            center.AddRange(SurfacesUnder(colChildren[i]));
+            anchorZone[ri] = ZoneId.Right;
         }
 
-        assigned[ZoneId.Center] = center;
+        anchorZone[centerIndex] = ZoneId.Center; // the Center anchor wins any tie with a side
+
+        var assigned = new Dictionary<ZoneId, IReadOnlyList<Surface>>
+        {
+            [ZoneId.Left] = new List<Surface>(),
+            [ZoneId.Center] = new List<Surface>(),
+            [ZoneId.Right] = new List<Surface>(),
+        };
+
+        for (var i = 0; i < colChildren.Count; i++)
+        {
+            var target = anchorZone.TryGetValue(i, out var z)
+                ? z
+                // A dragged column with no anchor joins the side it now sits on relative to the Center:
+                // a drop to the right lands in the Right zone even when it was empty, a drop to the left
+                // lands in Left — never merged into the Center or swapped to the wrong side.
+                : i < centerIndex ? ZoneId.Left : ZoneId.Right;
+            ((List<Surface>)assigned[target]).AddRange(SurfacesUnder(colChildren[i]));
+        }
 
         if (bottom is not null)
         {

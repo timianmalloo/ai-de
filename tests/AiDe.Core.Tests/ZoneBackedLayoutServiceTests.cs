@@ -168,7 +168,7 @@ public sealed class ZoneBackedLayoutServiceTests
     }
 
     [Fact]
-    public void Restore_AfterASideDropCreatingAnExtraColumn_MergesItIntoTheCenter_NotReverts()
+    public void Restore_AfterASideDropCreatingAnExtraRightColumn_LandsInTheRightZone_NotTheCenter()
     {
         var svc = new ZoneBackedLayoutService(WorkbenchLayout.Default());
         var tree = svc.Current;
@@ -178,7 +178,7 @@ public sealed class ZoneBackedLayoutServiceTests
         var bottom = tree.AllStacks().Single(s => s.Id == ZonesToTree.BottomStackId);
         var sessions = center.Surfaces.Single(s => s.SurfaceId == "sessions");
 
-        // Simulate a native side-drop that split "sessions" out into its own extra column.
+        // A native side-drop split "sessions" out into its own extra column on the RIGHT.
         var center2 = new StackNode("c", center.Surfaces.Remove(sessions));
         var extra = new StackNode("extra", [sessions]);
         var post = new Layout(
@@ -189,9 +189,75 @@ public sealed class ZoneBackedLayoutServiceTests
 
         svc.Restore(post);
 
-        // The extra column merges into the Center rather than reverting the whole drag.
-        Assert.Equal(ZoneId.Center, svc.Zones.FindZoneOf("sessions"));
-        Assert.Equal(ZoneId.Left, svc.Zones.FindZoneOf("explore")); // Left untouched
+        // Content-anchored: the extra column sits right of the Center, so it lands in the Right zone —
+        // not merged into the Center as the old index-based mapper did.
+        Assert.Equal(ZoneId.Right, svc.Zones.FindZoneOf("sessions"));
+        Assert.Equal(ZoneId.Left, svc.Zones.FindZoneOf("explore"));  // Left untouched
+        Assert.Equal(ZoneId.Center, svc.Zones.FindZoneOf("graph"));  // Center kept its documents
+    }
+
+    [Fact]
+    public void Restore_WhenTheDraggedColumnReadsLeftmost_KeepsTheExplorersInLeft_NoScatter()
+    {
+        // The reported bug: a pane dropped near the right landed in the Left zone AND pushed the Left
+        // explorers into the Center — because the old mapper called column[0] "Left" by raw index. With
+        // anchor identification the explorers keep the Left identity no matter the dragged column's position.
+        var svc = new ZoneBackedLayoutService(WorkbenchLayout.Default());
+        var prompt = new Surface("prompt-1", "prompt", "Prompt");
+        svc.Apply(new LayoutOperation.AddSurface(ZonesToTree.BottomStackId, prompt)); // prompt starts in the Bottom
+
+        var tree = svc.Current;
+        var left = tree.AllStacks().Single(s => s.Id == ZonesToTree.LeftStackId);
+        var center = tree.AllStacks().Single(s => s.Id == ZonesToTree.CenterStackId);
+        var bottom = tree.AllStacks().Single(s => s.Id == ZonesToTree.BottomStackId);
+
+        // AvalonDock placed the dragged prompt column FIRST (leftmost), ahead of the real Left column;
+        // the prompt left the Bottom.
+        var promptCol = new StackNode("p", [prompt]);
+        var bottom2 = new StackNode("b", bottom.Surfaces.RemoveAll(s => s.SurfaceId == "prompt-1"));
+        var post = new Layout(
+            new SplitNode("root", Orientation.Vertical,
+                [new SplitNode("cols", Orientation.Horizontal, [promptCol, left, center], [0.2, 0.2, 0.6]), bottom2],
+                [0.7, 0.3]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+
+        svc.Restore(post);
+
+        // The explorers stayed in Left (no scatter into Center); the prompt joined the Left side.
+        Assert.Equal(ZoneId.Left, svc.Zones.FindZoneOf("explore"));
+        Assert.Equal(ZoneId.Left, svc.Zones.FindZoneOf("joins"));
+        Assert.Equal(ZoneId.Center, svc.Zones.FindZoneOf("graph")); // Center kept its documents
+        Assert.Equal(ZoneId.Left, svc.Zones.FindZoneOf("prompt-1"));
+    }
+
+    [Fact]
+    public void Restore_DraggingABottomPaneToANewRightColumn_LandsInTheRightZone()
+    {
+        // The exact report: a prompt draft created in the Bottom, dragged up to the top-right, must land
+        // in the Right zone — not the Center (old index mapper) and not the Left (the scatter bug).
+        var svc = new ZoneBackedLayoutService(WorkbenchLayout.Default());
+        var prompt = new Surface("prompt-1", "prompt", "Prompt");
+        svc.Apply(new LayoutOperation.AddSurface(ZonesToTree.BottomStackId, prompt));
+
+        var tree = svc.Current;
+        var left = tree.AllStacks().Single(s => s.Id == ZonesToTree.LeftStackId);
+        var center = tree.AllStacks().Single(s => s.Id == ZonesToTree.CenterStackId);
+        var bottom = tree.AllStacks().Single(s => s.Id == ZonesToTree.BottomStackId);
+
+        // Dropped as a new RIGHTMOST column; removed from the Bottom.
+        var promptCol = new StackNode("p", [prompt]);
+        var bottom2 = new StackNode("b", bottom.Surfaces.RemoveAll(s => s.SurfaceId == "prompt-1"));
+        var post = new Layout(
+            new SplitNode("root", Orientation.Vertical,
+                [new SplitNode("cols", Orientation.Horizontal, [left, center, promptCol], [0.2, 0.6, 0.2]), bottom2],
+                [0.7, 0.3]),
+            [], ImmutableDictionary<string, StackState>.Empty);
+
+        svc.Restore(post);
+
+        Assert.Equal(ZoneId.Right, svc.Zones.FindZoneOf("prompt-1")); // where the user dropped it
+        Assert.Equal(ZoneId.Left, svc.Zones.FindZoneOf("explore"));   // explorers untouched
+        Assert.Equal(ZoneId.Center, svc.Zones.FindZoneOf("graph"));   // Center untouched
     }
 
     private static IReadOnlyList<string> StackSurfaces(ILayoutService svc, string stackId) =>
