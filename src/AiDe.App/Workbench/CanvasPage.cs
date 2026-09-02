@@ -577,6 +577,23 @@ internal static class CanvasPage
               });
             }
 
+            // Re-frame the settled layout when the pane resizes, so the graph fills the space the
+            // user gives it instead of staying the size it was first drawn at (smoke 9-2 #5). Only the
+            // view transform changes (fit re-centres/re-scales, place repositions) — never a re-layout,
+            // so it is cheap and does not disturb reading. Debounced to one animation frame.
+            var resizeRaf = 0;
+            if (typeof ResizeObserver !== 'undefined') {
+              new ResizeObserver(function () {
+                if (resizeRaf) { return; }
+                resizeRaf = requestAnimationFrame(function () {
+                  resizeRaf = 0;
+                  if (!records.length) { return; }
+                  if (mode === '2d') { fit(); }
+                  place();
+                });
+              }).observe(stage);
+            }
+
             function render(graph) {
               lastGraph = graph;
               var svg = document.getElementById('edges');

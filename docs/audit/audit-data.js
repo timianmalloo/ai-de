@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T16:53:56Z",
+  "generated": "2026-09-02T17:04:42Z",
   "audit": [
     {
       "id": "al-0001",
@@ -7823,6 +7823,28 @@ window.AUDIT_DATA = {
         "terminal",
         "docking",
         "legibility"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0387",
+      "shortname": "smoke92-graph-fill-and-focus-on-open",
+      "datetime": "2026-09-02T17:04:42Z",
+      "session": "copilot-design-4d24d94a",
+      "prompt": "smoke 9-2: fix graph canvas fill and session-open focus",
+      "summary": "T-W3: ResizeObserver refits the graph to its pane on resize (#5). T-W1: Adapter.ActivateInView focuses the newly-opened terminal/session so focus lands on it not seq-diagrams (#2). +1 adapter test (App 326).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/CanvasPage.cs",
+        "src/AiDe.App/Workbench/WorkbenchAdapter.cs"
+      ],
+      "tags": [
+        "graph",
+        "focus",
+        "docking"
       ],
       "outcome": "success"
     }

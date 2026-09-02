@@ -190,6 +190,7 @@ public sealed class WorkbenchShell : IDisposable
                 terminalStack.Id, new Surface(id, "terminal", title)));
 
             Adapter.Render();
+            Adapter.ActivateInView(id); // opening a session focuses it — you open it to type in it (#2)
             BindCanvas();
             BindContexts();
             BindJoins();
@@ -216,6 +217,7 @@ public sealed class WorkbenchShell : IDisposable
                 terminalStack.Id, new Surface(id, "terminal", "Terminal")));
 
             Adapter.Render();
+            Adapter.ActivateInView(id); // focus the new terminal — you open it to type in it (#2)
             BindCanvas();
             BindContexts();
             BindJoins();

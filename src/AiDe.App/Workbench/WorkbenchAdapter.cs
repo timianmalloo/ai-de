@@ -205,8 +205,25 @@ public sealed class WorkbenchAdapter
     }
 
     /// <summary>
-    /// Names every realized tab from the <see cref="LayoutContent.Title"/> it is bound to.
+    /// Focuses a specific surface in the view — used right after opening a surface the user expects to
+    /// interact with immediately (a terminal/agent session: you open it to type in it). This overrides
+    /// the focus-preservation in <see cref="Render"/> for the deliberate open case, so focus lands on
+    /// the new session rather than staying on — or snapping to — some other pane (smoke 9-2 #2).
     /// </summary>
+    internal void ActivateInView(string surfaceId)
+    {
+        if (Manager.Layout is not { } root)
+        {
+            return;
+        }
+
+        var doc = root.Descendents().OfType<LayoutDocument>()
+            .FirstOrDefault(d => string.Equals(d.ContentId, surfaceId, StringComparison.Ordinal));
+        if (doc is not null)
+        {
+            doc.IsActive = true;
+        }
+    }
     /// <remarks>
     /// Without this, AvalonDock reports each tab's **.NET type name** — `AvalonDock.Layout.LayoutDocument`
     /// — as its accessible name, so every surface sounds identical to a screen reader

@@ -76,9 +76,9 @@ selection trigger still swaps to the highlight text colour when a row is selecte
 
 | Phase | Scope | Addresses |
 |---|---|---|
-| **T-W1** | Preserve active surface across a **session/terminal open** (extend the Phase-F focus-preservation to the agent-terminal path) | #2 |
+| **T-W1 ✅** | Preserve/route focus on a **session/terminal open**: `Adapter.ActivateInView` focuses the newly-opened terminal (you open it to type in it), so focus lands on the session rather than snapping to seq-diagrams or leaving a stale selection | #2 |
 | **T-W2** | Shrink the reconcile **fallback blast radius**: when `TryMapByPosition` returns null, fall back to a **per-pane** kind reconcile that only moves the dragged surface, never re-seats bystander zones; or capture the drag through the deterministic `DropTargetResolver` instead of the native reconcile | #3 |
-| **T-W3** | Make the graph canvas **fill its pane** (stretch the HwndHost/WebView2 host to available size) | #5 |
+| **T-W3 ✅** | Graph canvas **fills its pane**: a `ResizeObserver` on the stage re-frames the settled layout (`fit`+`place`) when the pane grows — cheap (view transform only, no re-layout) | #5 |
 | **T-W4** | Confirm/repair the **node right-click** viewer menu end-to-end | #6 |
 | **T-W5** | **Loomwatcher session registration** for agent terminals (coordinate with Core) so the Sessions surface + status reflect a running Claude Code session | #7 |
 
