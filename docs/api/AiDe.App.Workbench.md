@@ -913,20 +913,21 @@ headless.
 | `string Identity(WatcherSessionRow row)` | The primary line — who and where: the stable human identity a session is recognised by. |
 | `string Details(WatcherSessionRow row)` | The muted secondary line — harness, model, trust, spans: metadata, subordinate to identity. |
 | `int LivenessRank(WatcherSessionRow row)` | Liveness ordering rank — Alive (0) leads, then Stale (1), then Ended (2). The session actually collaborating right now belongs at the top, not buried in store order. |
-| `(IReadOnlyList<WatcherSessionRow> Live, IReadOnlyList<WatcherSessionRow> Ended) Partition(` | Splits the sessions into the ones worth leading with — **Live** (Alive then Stale, each in store order) — and the **Ended** history to collapse out of the way. |
-| `string EndedHeader(int count)` | The collapsed-section header for the ended history, e.g. "14 ended session(s)". |
+| `(IReadOnlyList<WatcherSessionRow> Live, IReadOnlyList<WatcherSessionRow> Inactive) Partition(` | Splits the sessions into the ones **actively collaborating** — **Live** (Alive only) — and the **Inactive** history to collapse (Stale then Ended). Only a heartbeating session is live; a stale one (heartbeat aged out)… |
+| `string InactiveHeader(int count)` | The collapsed-section header for the inactive history, e.g. "14 inactive session(s)". |
 | `string? SharedTelemetryNote(IReadOnlyList<WatcherSessionRow> rows)` | One line stating a telemetry gap the whole list shares, so it is said once instead of repeated on every row (#15 — "an all-'Not Recorded' row is a telemetry gap the list should state, not repeat five times"). Null whe… |
 
-### `(IReadOnlyList<WatcherSessionRow> Live, IReadOnlyList<WatcherSessionRow> Ended) Partition(`
+### `(IReadOnlyList<WatcherSessionRow> Live, IReadOnlyList<WatcherSessionRow> Inactive) Partition(`
 
-Splits the sessions into the ones worth leading with — **Live** (Alive then Stale, each in
-store order) — and the **Ended** history to collapse out of the way.
+Splits the sessions into the ones **actively collaborating** — **Live** (Alive only) — and
+the **Inactive** history to collapse (Stale then Ended). Only a heartbeating session is live;
+a stale one (heartbeat aged out) and an ended one (closed) are both history.
 
-**Remarks.** The Sessions surface is a LIVE-STATUS list, but a long-running workspace accumulates many ended
-terminals that otherwise bury the one session collaborating now — smoke video 2026-09-02 showed
-~15 identical "× Ended" rows, one "~ Stale", and zero "✓ Alive", so the live state was
-invisible. Leading with the live rows and collapsing the ended ones is the whole fix. Pure and
-dependency-free, so the ordering is verified headless (UX-SESSIONS-GRAVEYARD).
+**Remarks.** The Sessions surface is a LIVE-STATUS list, but a long-running workspace accumulates many
+stale/ended terminals that otherwise bury the sessions collaborating now — the 2026-09-02 video
+showed 3 "✓ Alive" agents leading but ~13 "~ Stale" terminals cluttering the same section
+(partitioning Stale as live was too generous). Leading with Alive and collapsing everything else
+is the fix. Pure and dependency-free (UX-SESSIONS-GRAVEYARD).
 
 ## `ShellViewMode`
 

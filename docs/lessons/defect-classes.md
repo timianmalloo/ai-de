@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 54 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 55 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3175,6 +3175,8 @@ for both or split.*
 - **The generalisation:** *an empty state may say what it is waiting for; it may name a cause only
   when it has observed one.* "Nothing to show" is complete. "Nothing to show because X" is a claim,
   and a surface that has not looked at X is not entitled to make it.
+- **Status:** `controlled`
+
 ### DC-088 — A launcher omits an identity, and a downstream guard degrades to advisory rather than refusing
 
 - **Shape:** process A launches process B and hands it an environment. A capability B depends on is
