@@ -234,6 +234,23 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
     /// <para><b>The shell supplies this, not this class.</b> The values come from the git facts and
     /// the harness choice, both of which the shell already resolves; computing them here would be a
     /// second definition of the same quantities.</para>
+    ///
+    /// <para><b>Do not give this a default (DC-084).</b> Every candidate — an empty dictionary, a
+    /// no-op function — reproduces the defect it would appear to prevent: an agent launched with an
+    /// empty environment is exactly the failure, and a non-null hook returning nothing hides it
+    /// better than null does. The other hooks on this class are safe <i>because</i> their defaults
+    /// work (<see cref="Profiles"/> falls back to the built-ins, <see cref="CommandLine"/> to the
+    /// shell); this one has no working value to fall back to, so null is the honest state and the
+    /// guarantee has to live at the assignment instead.</para>
+    ///
+    /// <para><b>Which is why it is assigned in the <c>WorkbenchShell</c> constructor</b> rather than
+    /// in <c>AttachWorkspace</c>, and why <c>EnvironmentContractSurvivesNoWorkspaceTests</c> builds
+    /// a shell with no workspace and asserts the contract arrives anyway. That test is the control,
+    /// and it is <b>immune to whatever default anyone adds here</b>: it sets this property to null
+    /// before constructing the shell, so only an assignment that actually runs can satisfy it. Adding
+    /// a default and dropping the constructor line fails it on the null. <i>Verified by doing exactly
+    /// that</i> — the first version of this paragraph claimed it would fail on a missing
+    /// <c>AIDE_SESSION</c> instead, which was a plausible account of a test that had not been run.</para>
     /// </remarks>
     public static Func<string, IReadOnlyDictionary<string, string>>? EnvironmentFor { get; set; }
 
