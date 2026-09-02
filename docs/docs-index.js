@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T17:01:45Z",
+  "generated": "2026-09-02T17:30:41Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3583,7 +3583,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "29603559051f9ba99fde51ad60e74c60f6b5ab5cc76e38e5c9dbd8363742a0ef"
+      "sourceSha256": "31b61fe1e2b1c8b183ab26ca6237754231e3161f29b0d00efac31d308f87e843"
     },
     {
       "id": "domain-experts",
@@ -5250,6 +5250,37 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "3fc3a35a0c53cd24bf536642e930ef7177e6108d8d64eca78d6bae1b3e93542e"
+    },
+    {
+      "id": "ui-smoke-test-9-2",
+      "path": "docs/reviews/ui-smoke-test-9-2.md",
+      "title": "Smoke test 9-2 — windowing gaps + terminal native integrity",
+      "type": "investigation",
+      "status": "in-progress",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "Triage + verified root causes for the 9-2 smoke screenshots: dead arrow keys in the Claude Code session (DECCKM), a dark-on-dark provenance/list legibility bug, a docking move that relocates a second pane, focus-steal on opening a session, graph-canvas sizing, and missing Loomwatcher session registration. Carries the full terminal native-integrity plan (input encoding, alt screen, bracketed paste, mouse).",
+      "tags": [
+        "ui",
+        "ux",
+        "windowing",
+        "docking",
+        "terminal",
+        "conpty",
+        "legibility",
+        "sessions",
+        "review"
+      ],
+      "links": [
+        {
+          "to": "ui-smoke-test-9-1",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a4ed3a2a59b6fa47fd62fdac993acd8e482e289755d427a2967f425e313151ed"
     },
     {
       "id": "ui-unbacked-affordances",
@@ -9922,5 +9953,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7d12443cb7225dfeca333d90ab31d97b14544211f033514647557f6f60d8cdac"
+  "graphSha256": "effae77489212286c1f5a76f3d9b53c6b400eb67f18ce2df2f5f29733de1f7f6"
 };

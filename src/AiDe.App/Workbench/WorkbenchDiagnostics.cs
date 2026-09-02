@@ -53,6 +53,41 @@ public static class WorkbenchDiagnostics
     }
 
     /// <summary>
+    /// Records the decision a terminal launch made, and how it ended.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why.</b> "New Claude Code session" opened a plain PowerShell prompt, twice, across
+    /// two different root causes. Nothing about the launch was recorded — the log carried only layout
+    /// mutations — so each round of diagnosis was static reading plus a screenshot, and the second
+    /// round confirmed a fix that then did not change what the user saw.</para>
+    ///
+    /// <para>These are the INPUTS to the launch decision, not a narration of it: which executable was
+    /// resolved, whether a readiness profile was found (that single value chooses between hosting the
+    /// agent and running the command line as a shell), and whether the environment contract was
+    /// attached. A wrong value here explains the symptom immediately; reading the code cannot, because
+    /// the code is correct for the values it was written against.</para>
+    ///
+    /// <para>Terminal BYTES are never recorded (spec privacy). This is the launch decision only.</para>
+    /// </remarks>
+    public static void TerminalStart(
+        string surfaceId, string? executable, string integration, bool hasReadinessProfile,
+        string shellPath, int environmentCount, string? failure = null)
+    {
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "terminal.start",
+            surface = surfaceId,
+            executable,
+            integration,
+            readinessProfile = hasReadinessProfile,
+            shellPath,
+            environmentCount,
+            failure,
+        });
+    }
+
+    /// <summary>
     /// Records an unhandled exception, with the context that says which gesture produced it.
     /// </summary>
     /// <remarks>
