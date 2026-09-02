@@ -218,6 +218,56 @@ public sealed class CoordinationContractTests
         Assert.Equal(1, adapter.Stats.DuplicateRegister);
     }
 
+    /// <summary>
+    /// A duplicate register is dropped ENTIRELY — its attributes are discarded, not merged.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this exists beside the test above.</b>
+    /// <see cref="Apply_DuplicateRegister_IsIgnoredAndCounted"/> passes the SAME attributes twice, so
+    /// it proves the counters and cannot distinguish "ignored" from "merged" — it would pass
+    /// identically if a second register enriched the first. That is DC-016: a control that cannot
+    /// fail for the reason it matters.</para>
+    ///
+    /// <para><b>The question it answers.</b> AI-DE registers a terminal before knowing which harness
+    /// or model runs inside it (<c>WorkbenchShell.IdentityFor</c> leaves both null). The obvious
+    /// enrichment — let the agent re-register with <c>service.name</c> and
+    /// <c>gen_ai.request.model</c> once it knows them — depends entirely on whether a second
+    /// register merges.</para>
+    ///
+    /// <para><b>OBSERVED, 2026-09-01: it does not merge. The second register's attributes are
+    /// discarded.</b> Recorded as an observation rather than a reading because this test is a
+    /// genuine discriminator — it asserts <c>Harness</c> and <c>Model</c> are STILL null after an
+    /// enriching re-register, so it <i>fails</i> if the behaviour is ever changed to merge. Run
+    /// against the shipped implementation, both assertions held.</para>
+    ///
+    /// <para><b>Consequence, and it is load-bearing.</b> Enrichment-by-re-register cannot work, so
+    /// the harness must be known at FIRST registration — which is why
+    /// <c>docs/design/ux-agent-session-registration.md</c> makes the per-harness launch entry the
+    /// only mechanism that can supply it, rather than one convenient option among several. §3.2 of
+    /// that spec was written the other way round and this test corrected it.</para>
+    /// </remarks>
+    [Fact]
+    public void Apply_DuplicateRegister_DiscardsTheSecondAttributes_ItDoesNotMerge()
+    {
+        var (adapter, store, _, _) = NewAdapter();
+
+        // First: the shape AI-DE can emit — identity known, harness and model NOT known.
+        adapter.Apply(new ContractRegister("ext-1", RegisterAttrs(harness: null, model: null), 1000, 1));
+
+        var before = store.FindSession("session-1")!.Binding;
+        Assert.Null(before.Harness);
+        Assert.Null(before.Model);
+
+        // Then: the enrichment an agent would send once it knows what it is.
+        adapter.Apply(new ContractRegister("ext-1", RegisterAttrs(harness: "claude-code", model: "opus-4-8"), 1005, 2));
+
+        var after = store.FindSession("session-1")!.Binding;
+        Assert.Null(after.Harness);      // still null — the second register never reached the registrar
+        Assert.Null(after.Model);
+        Assert.Equal(1, adapter.Stats.Registered);
+        Assert.Equal(1, adapter.Stats.DuplicateRegister);
+    }
+
     [Fact]
     public void Apply_RegisterMissingRequiredIdentity_IsQuarantined_AndTheStreamSurvives()
     {

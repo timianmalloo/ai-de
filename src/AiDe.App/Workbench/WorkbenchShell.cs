@@ -1898,14 +1898,149 @@ public sealed class WorkbenchShell : IDisposable
     }
 
     /// <summary>Builds the coordination identity a terminal pane presents when it registers.</summary>
+    /// <summary>
+    /// The repository facts a session's identity carries, resolved once per workspace.
+    /// </summary>
+    /// <param name="Branch">
+    /// The real branch, <c>HEAD</c> when detached, or <see cref="GitFacts.BranchUnknown"/> when git
+    /// cannot answer. Never a value that could be mistaken for a branch name.
+    /// </param>
+    internal sealed record GitFacts(string RepoPath, string RepoDisplay, string WorktreePath, string Branch)
+    {
+        /// <summary>
+        /// What the branch reads as when it could not be determined.
+        /// </summary>
+        /// <remarks>
+        /// The parenthesised form is deliberate: <c>WorktreeBranch</c> is a required attribute the
+        /// contract cannot omit (<c>SessionCoordinationIdentity.ToAttributes</c> always emits it, and
+        /// a register with incomplete identity is QUARANTINED, so a missing value would delete the
+        /// session from the watcher rather than annotate it). Since some string must be sent, it must
+        /// be one no reader can mistake for a branch. The previous value was the literal
+        /// <c>"workspace"</c> — a plausible branch name, sent for every session in every repository.
+        /// </remarks>
+        internal const string BranchUnknown = "(unknown)";
+    }
+
+    /// <summary>
+    /// Cached per workspace: <see cref="IdentityFor"/> runs once PER TERMINAL on a 2-second loop, so
+    /// resolving git on each call would spawn a process per terminal every two seconds forever.
+    /// </summary>
+    private GitFacts? _gitFacts;
+    private string? _gitFactsFor;
+
+    /// <summary>
+    /// Resolves the repository, worktree and branch for <paramref name="root"/>, once.
+    /// </summary>
+    /// <remarks>
+    /// <b>Worktree and repository are asked for separately and deliberately.</b> They were previously
+    /// the same variable, so a linked worktree could not be distinguished from its repository by
+    /// construction — the watcher could never show two worktrees of one repo as different sessions,
+    /// which is precisely what the field exists to do. <c>--show-toplevel</c> gives the worktree;
+    /// <c>--git-common-dir</c>'s parent gives the repository, and they differ exactly when the tree is
+    /// linked.
+    /// </remarks>
+    internal static GitFacts ResolveGitFacts(string root)
+    {
+        var display = string.IsNullOrEmpty(root) ? "workspace" : Path.GetFileName(root.TrimEnd('\\', '/'));
+        if (string.IsNullOrEmpty(display)) { display = "workspace"; }
+
+        var fallbackPath = string.IsNullOrEmpty(root) ? display : root;
+        if (string.IsNullOrEmpty(root) || !Directory.Exists(root))
+        {
+            return new GitFacts(fallbackPath, display, fallbackPath, GitFacts.BranchUnknown);
+        }
+
+        var worktree = Git(root, "rev-parse", "--show-toplevel") ?? fallbackPath;
+        var branch = Git(root, "rev-parse", "--abbrev-ref", "HEAD") ?? GitFacts.BranchUnknown;
+
+        // The repository is the common dir's PARENT: from a linked worktree --git-common-dir is the
+        // primary .git (absolute); from the primary checkout it is a relative ".git". Its parent is
+        // the repository in both cases — the same primitive coord-core resolves the record with.
+        var repo = worktree;
+        var common = Git(root, "rev-parse", "--git-common-dir");
+        if (!string.IsNullOrEmpty(common))
+        {
+            try
+            {
+                var full = Path.IsPathRooted(common) ? common : Path.Combine(worktree, common);
+                var parent = Directory.GetParent(Path.GetFullPath(full))?.FullName;
+                if (!string.IsNullOrEmpty(parent)) { repo = parent; }
+            }
+            catch (Exception ex) when (ex is ArgumentException or IOException or NotSupportedException)
+            {
+                // Keep the worktree as the repository rather than inventing one.
+            }
+        }
+
+        var repoDisplay = Path.GetFileName(repo.TrimEnd('\\', '/'));
+        if (string.IsNullOrEmpty(repoDisplay)) { repoDisplay = display; }
+
+        return new GitFacts(Canonical(repo), repoDisplay, Canonical(worktree), branch);
+    }
+
+    /// <summary>One spelling per directory, so two sessions in one repository group together.</summary>
+    /// <remarks>
+    /// git answers with forward slashes and .NET's path APIs answer with backslashes, so the same
+    /// directory arrives spelled two ways depending on which resolved it — and the fallback path
+    /// (the workspace root) uses a third. <c>RepoPath</c> is what groups sessions in the watcher, so
+    /// two spellings of one repository would present as two repositories. Normalised here rather
+    /// than at each comparison, because a comparison somebody forgets is the defect.
+    /// </remarks>
+    private static string Canonical(string path)
+    {
+        if (string.IsNullOrEmpty(path)) { return path; }
+        try
+        {
+            return Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
+        }
+        catch (Exception ex) when (ex is ArgumentException or IOException or NotSupportedException)
+        {
+            return path;
+        }
+    }
+
+    /// <summary>One git query. Any failure returns null — never a guessed value.</summary>
+    private static string? Git(string workingDirectory, params string[] args)
+    {
+        try
+        {
+            var info = new System.Diagnostics.ProcessStartInfo("git")
+            {
+                WorkingDirectory = workingDirectory,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            };
+            foreach (var a in args) { info.ArgumentList.Add(a); }
+
+            using var process = System.Diagnostics.Process.Start(info);
+            if (process is null) { return null; }
+
+            var output = process.StandardOutput.ReadToEnd();
+            if (!process.WaitForExit(3000)) { try { process.Kill(true); } catch { /* best effort */ } return null; }
+            if (process.ExitCode != 0) { return null; }
+
+            var trimmed = output.Trim();
+            return string.IsNullOrEmpty(trimmed) ? null : trimmed;
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            // git missing, not a repository, or blocked: the caller substitutes an honest unknown.
+            return null;
+        }
+    }
+
     private SessionCoordinationIdentity IdentityFor(string surfaceId, IReadOnlyList<(string Id, string Agent)> terminals)
     {
         var root = _workspaceRoot ?? string.Empty;
-        var display = string.IsNullOrEmpty(root) ? "workspace" : Path.GetFileName(root.TrimEnd('\\', '/'));
-        if (string.IsNullOrEmpty(display))
+        if (_gitFacts is null || !string.Equals(_gitFactsFor, root, StringComparison.Ordinal))
         {
-            display = "workspace";
+            _gitFacts = ResolveGitFacts(root);
+            _gitFactsFor = root;
         }
+
+        var facts = _gitFacts;
 
         var agent = terminals.FirstOrDefault(t => t.Id == surfaceId).Agent;
         if (string.IsNullOrEmpty(agent))
@@ -1913,12 +2048,11 @@ public sealed class WorkbenchShell : IDisposable
             agent = "terminal";
         }
 
-        var repoPath = string.IsNullOrEmpty(root) ? display : root;
         return new SessionCoordinationIdentity(
-            RepoPath: repoPath,
-            RepoDisplay: display,
-            WorktreeBranch: "workspace",
-            WorktreePath: repoPath,
+            RepoPath: facts.RepoPath,
+            RepoDisplay: facts.RepoDisplay,
+            WorktreeBranch: facts.Branch,
+            WorktreePath: facts.WorktreePath,
             TerminalId: surfaceId,
             AgentName: agent);
     }
