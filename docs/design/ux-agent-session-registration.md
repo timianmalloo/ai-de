@@ -115,6 +115,38 @@ no file format, no repo dependency** — readable by any harness, any language, 
    overwritten, because the agent's own configuration (`ANTHROPIC_*`, `PATH`, proxy settings) is the
    user's and AI-DE has no business editing it.
 
+### 3.1a HAZARD — this is the outbound half of DC-027, and it can reintroduce it
+
+**Read before implementing §3.** Core supplied the connection and it changes the risk profile of
+this section entirely.
+
+This session's original report was *"the agent sessions do not have my profile or my environment
+variables"*. That is **DC-027**, whose recorded instance is this machine: a **22,297-character
+PATH**, which `cmd.exe` silently drops at its cap, so every `.cmd` shim — which is every
+npm-installed CLI — started with an **empty PATH**. The fix was to host the agent in PowerShell
+(`ShellIntegrationMode.PowerShellHostedAgent`) rather than launch it beside one.
+
+**§3 proposes adding nine variables to that same environment.** The class is *"the environment a
+parent hands a child is not the one the child receives"* — a limit applies somewhere in between and
+the child starts missing **something it was given**, not necessarily the thing you added. So:
+
+| Rule | Because |
+|---|---|
+| **Set the variables on the ProcessStartInfo's environment block, never by shell hop, `set`, or command-line assignment** | Every intermediate shell is a place a cap applies. The hosted-agent mode exists precisely because a `cmd` hop lost PATH entirely |
+| **Keep every value short.** Paths, ids, one token each — no serialised JSON, no accumulated lists | The failure is a *total size* limit, so a large value costs the same as several small ones and the loss lands on an unrelated variable |
+| **Never rewrite or trim `PATH`** to make room | DC-027's own control refuses to: *"a tool that silently rewrites PATH to make itself work has hidden the problem from the only person who can fix it"* |
+| **Verify by asking the child, not the parent** | DC-027's generalisation verbatim: *"when a child process misbehaves, ask the child what it received before theorising about what was sent. The parent's copy is not evidence."* An acceptance test must read the variables from **inside** a spawned session |
+
+**And the residual risk is live.** DC-027 is `partially-controlled`: `EnvironmentHealth.Inspect`
+checks **only PATH**, and only against cmd's documented limit. *"Any other oversized variable fails
+identically and is unchecked."* Nine new variables are nine unchecked ones. Whoever builds §3 should
+decide whether the inspection widens with it — adding variables to an environment whose only
+health check ignores them is how the next instance of DC-027 gets built by the code written to
+avoid it.
+
+**Read §3 and DC-027 together, not as separate items.** They are the same seam from opposite sides:
+DC-027 is what the child failed to receive, §3 is what we now want it to receive.
+
 ### 3.2 Enrichment, for a harness that chooses to
 
 An agent that wants its harness and model on the record appends **one line** to a file in
