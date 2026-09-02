@@ -2099,6 +2099,12 @@ public sealed class WorkbenchShell : IDisposable
         };
 
         if (!string.IsNullOrEmpty(root)) { env["AIDE_WORKSPACE"] = root; }
+
+        // The address of the channel. Without it an agent can know it is inside AI-DE and still have
+        // nowhere to say anything — which is what the first version of this shipped: every variable
+        // needed to identify the session, and none saying where the session is observed.
+        var coordLog = _watcherHost?.CoordLogDirectory;
+        if (!string.IsNullOrEmpty(coordLog)) { env["AIDE_CONTRACT_LOG"] = coordLog; }
         if (!string.IsNullOrEmpty(_gitFacts.WorktreePath)) { env["AIDE_WORKTREE"] = _gitFacts.WorktreePath; }
 
         // Omitted rather than sent as "(unknown)": the identity record must send SOMETHING because

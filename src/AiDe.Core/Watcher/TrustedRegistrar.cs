@@ -17,6 +17,17 @@ public interface ITrustedRegistrar
     /// </summary>
     RegisteredSession RegisterNextGeneration(string sessionId, SessionBinding binding);
 
+    /// <summary>
+    /// Records a harness and/or model learned after registration. Identity and trust are untouched.
+    /// </summary>
+    /// <remarks>
+    /// Additive to the interface because the alternative — letting a repeat registration merge — is
+    /// the path that must NOT work: the first registration's capability has to stand, or an external
+    /// id becomes a way to re-mint authority.
+    /// </remarks>
+    void UpdateHarnessAndModel(
+        string sessionId, SessionCapability capability, HarnessIdentity? harness, ModelIdentity? model);
+
     /// <summary>True only when the presented capability matches the session's current capability.</summary>
     bool Verify(string sessionId, SessionCapability presented);
 
@@ -106,6 +117,44 @@ public sealed class TrustedRegistrar : ITrustedRegistrar
     {
         RequireCapability(sessionId, capability);
         _store.MarkEnded(sessionId);
+    }
+
+    /// <summary>
+    /// Records a harness and/or model learned after registration. Identity and trust are untouched.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Only these two fields, and deliberately.</b> Repository, worktree, terminal and agent
+    /// are established at registration and an update cannot restate them — otherwise a session could
+    /// migrate itself into another repository's view after the fact.</para>
+    ///
+    /// <para><b>Trust never rises.</b> A registration carrying a harness is classified
+    /// <c>Verified</c>; one without is <c>Asserted</c>. It would be natural to promote a session
+    /// that later supplies its harness, and it is exactly wrong: the coordination log is a local,
+    /// forgeable FILE (ADR-0007, and the design doc says so in as many words), so an update arriving
+    /// on it is evidence about the harness and not about the trustworthiness of the claim. A session
+    /// that registers <c>Asserted</c> stays <c>Asserted</c> with its model filled in.</para>
+    ///
+    /// <para>Capability-gated like every other post-registration write, so knowing an id is not
+    /// enough to edit a session.</para>
+    /// </remarks>
+    public void UpdateHarnessAndModel(
+        string sessionId, SessionCapability capability, HarnessIdentity? harness, ModelIdentity? model)
+    {
+        RequireCapability(sessionId, capability);
+
+        var existing = _store.FindSession(sessionId);
+        if (existing is null || (harness is null && model is null))
+        {
+            return;
+        }
+
+        var binding = existing.Binding with
+        {
+            Harness = harness ?? existing.Binding.Harness,
+            Model = model ?? existing.Binding.Model,
+        };
+
+        _store.RecordSession(existing with { Binding = binding });
     }
 
     private void RequireCapability(string sessionId, SessionCapability capability)
