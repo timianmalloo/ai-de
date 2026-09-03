@@ -73,8 +73,15 @@ def gate_files(root: Path) -> list[Path]:
     return sorted(p for p in found if p.name != Path(__file__).name)
 
 
-def check(root: Path) -> tuple[list[str], int, int]:
+def check(root: Path, frozen: set[str] | None = None) -> tuple[list[str], int, int]:
+    """
+    The frozen set is a parameter so the self-test can exercise the STALE direction without editing
+    a live gate. Verifying that direction by appending a self-test to a real tool would mean the
+    check is only ever proven by a run that modifies the repository, which is a worse trade than one
+    argument.
+    """
     problems: list[str] = []
+    frozen = KNOWN_WITHOUT_SELF_TEST if frozen is None else frozen
     gates = gate_files(root)
 
     if not gates:
@@ -85,20 +92,20 @@ def check(root: Path) -> tuple[list[str], int, int]:
         if not OFFERS_SELF_TEST.search(p.read_text(encoding="utf-8", errors="replace"))
     }
 
-    for name in sorted(without - KNOWN_WITHOUT_SELF_TEST):
+    for name in sorted(without - frozen):
         problems.append(
             f"{name} is a gate with no --self-test, and is not on the frozen list. A control that "
             "has never been observed failing has not been observed (DC-104): four controls were "
             "wrong on their first run today, and each was found by making the code wrong and "
             "watching what stayed quiet. Add a --self-test that proves this gate fires.")
 
-    for name in sorted(KNOWN_WITHOUT_SELF_TEST - without):
+    for name in sorted(frozen - without):
         problems.append(
             f"{name} now HAS a --self-test but is still on the frozen list. Remove it: a debt list "
             "that keeps names it no longer owns stops describing the debt, and the next reader "
             "cannot tell which entries are real.")
 
-    missing_files = KNOWN_WITHOUT_SELF_TEST - {p.name for p in gates}
+    missing_files = frozen - {p.name for p in gates}
     for name in sorted(missing_files):
         problems.append(
             f"{name} is on the frozen list but is not a gate any more. Remove it — the list must "
@@ -108,7 +115,14 @@ def check(root: Path) -> tuple[list[str], int, int]:
 
 
 def self_test(root: Path) -> int:
-    """Prove this gate fires: a new gate with no self-test must be refused."""
+    """Prove BOTH directions fire.
+
+    The first version proved only the new-debt direction. A ratchet shown to catch additions and
+    never shown to catch stale entries is half a control, and the untested half is the one that lets
+    the frozen list quietly stop describing the debt. Found by the concurrent session running the
+    direction this function did not cover — DC-104 aimed at a self-test rather than at a gate.
+    """
+    # DIRECTION 1: new debt. A gate that cannot prove it can fail must be refused.
     intruder = root / "tools" / "verify-_selftest_probe.py"
     intruder.write_text(
         '"""A gate that cannot prove it can fail."""\n'
@@ -125,14 +139,30 @@ def self_test(root: Path) -> int:
         print("self-test FAILED: a new gate with no --self-test was not reported", file=sys.stderr)
         return 1
 
-    print("self-test OK — a new gate without a --self-test is refused")
+    # DIRECTION 2: a stale entry. A gate that HAS a self-test must not stay on the frozen list.
+    # Exercised by passing a frozen set that names a gate known to have one, rather than by appending
+    # a self-test to a live tool — a control provable only by a run that edits the repository is a
+    # control nobody will run.
+    stale = "verify-cited-controls.py"
+
+    if not OFFERS_SELF_TEST.search((root / "tools" / stale).read_text(encoding="utf-8")):
+        print(f"self-test FAILED: {stale} was expected to have a --self-test", file=sys.stderr)
+        return 1
+
+    problems, _, _ = check(root, frozen={stale})
+
+    if not any(stale in problem and "still on the frozen list" in problem for problem in problems):
+        print("self-test FAILED: a stale frozen entry was not reported", file=sys.stderr)
+        return 1
+
+    print("self-test OK — new debt is refused, and a stale frozen entry is reported")
     return 0
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--self-test", action="store_true",
-                        help="prove the control fires on a new gate that offers no self-test")
+                        help="prove both directions fire: new debt refused, stale frozen entry reported")
     args = parser.parse_args()
 
     root = repo_root()
