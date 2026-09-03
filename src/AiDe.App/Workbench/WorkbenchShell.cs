@@ -1883,6 +1883,44 @@ public sealed class WorkbenchShell : IDisposable
     /// then pumps the coordination log into the store. A hiccup on any tick is swallowed so the workbench is
     /// never taken down by watcher work; cancellation ends the loop cleanly.
     /// </summary>
+    /// <summary>
+    /// Writes each session's latest scored episode as a standing the agent can read (US-16).
+    /// </summary>
+    /// <remarks>
+    /// <para>The LATEST scored episode, not all of them: a standing is a per-turn statement, and an
+    /// agent reading a file wants the current one rather than a history it has to sort.</para>
+    ///
+    /// <para>Sessions with no scored episode publish nothing at all. An empty standing would read as
+    /// "you have no rank and no reasons" — a claim about the agent rather than about the absence of a
+    /// score (DC-087).</para>
+    /// </remarks>
+    private static void PublishStandings(WatcherHost host)
+    {
+        try
+        {
+            var scored = host.Store.AllScoredEpisodes();
+            if (scored.Count == 0) { return; }
+
+            var byEpisode = scored.ToDictionary(e => e.EpisodeId, StringComparer.Ordinal);
+
+            foreach (var session in host.Store.AllSessions())
+            {
+                var latest = host.Store.EpisodesForSession(session.SessionId)
+                    .Where(e => byEpisode.ContainsKey(e.EpisodeId))
+                    .OrderByDescending(e => byEpisode[e.EpisodeId].Scorecard.EvaluatedAt)
+                    .ThenByDescending(e => e.EpisodeId, StringComparer.Ordinal)
+                    .FirstOrDefault();
+
+                StandingPublisher.Publish(
+                    host.CoordLogDirectory, session.SessionId, scored, latest?.EpisodeId);
+            }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // Never let delivery break observation: the pump is what every watcher surface reads.
+        }
+    }
+
     private async Task WatcherLoopAsync(WatcherHost host, SessionCoordinationEmitter emitter, CancellationToken token)
     {
         var interval = TimeSpan.FromSeconds(2);
@@ -1908,6 +1946,15 @@ public sealed class WorkbenchShell : IDisposable
                 // conn-9: re-render the open watcher panes only when the store actually changed, so a
                 // session registering/ending, a board post, or a new score shows up live without a manual
                 // reopen - and an idle watcher never gratuitously rebuilds a pane (no scroll reset/flicker).
+                // US-16's delivery half. The agent is handed AIDE_CONTRACT_LOG and can read its own
+                // standing from a file beside it — the MCP `standing` tool is correct and unreachable,
+                // because the gateway has no transport (ADR-0004 records it as spiked, never built).
+                //
+                // Published on the same tick that already runs, so a standing appears when a score
+                // does. Failures are swallowed deliberately: an agent not receiving a standing must
+                // never stop the watcher pump that everything else depends on.
+                PublishStandings(host);
+
                 var fingerprint = WatcherFingerprint(host);
                 if (!string.Equals(fingerprint, _watcherFingerprint, StringComparison.Ordinal))
                 {

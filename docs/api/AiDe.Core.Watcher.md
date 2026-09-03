@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 135 types, 231 members, 57% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 136 types, 234 members, 58% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**135 public types · 231 public members · 57% documented.**
+**136 public types · 234 public members · 58% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1406,6 +1406,72 @@ Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write 
 | `IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)` | **(gap)** |
 | `IReadOnlyList<ScoreDispute> AllDisputes()` | **(gap)** |
 | `void Dispose()` | **(gap)** |
+
+## `StandingPublisher`
+
+*class* — `StandingPublisher.cs`
+
+Delivers a session's per-turn standing to the agent, as a file beside the contract log (US-16).
+
+**Remarks.** **Why a file.** US-16's deliverable is that the agent **receives** its standing.
+C1 added a `standing` tool to `McpToolGateway` — correct, tested, and
+unreachable: the gateway has no caller and no transport, and ADR-0004 records the transport as
+spiked and never built. Adding a tool nothing can call does not deliver a story about receiving.
+`AIDE_CONTRACT_LOG` is the channel that already exists in both directions; the agent is
+handed the directory, and the ingest proves the path works.
+
+
+
+
+
+**It is still a pull.** Nothing is injected into the agent's context — the file sits
+there and the agent chooses to read it. That distinction is what ADR-0019's anti-Goodhart section
+turns on: an agent shown its score every turn regardless is a different decision from one that
+asks.
+
+
+
+
+
+**The subdirectory and the extension are both load-bearing.**
+`CoordinationContractLog` reads `Directory.EnumerateFiles(logDir, "*.jsonl")` with no
+`SearchOption` — top-directory-only. A standing written as `.jsonl` in the root would be
+parsed by the contract pump every tick and counted MALFORMED, so this feature would work while
+the ingest counters filled with corruption that was not corruption. Two independent properties
+keep it invisible, and both are asserted by tests rather than assumed.
+
+
+
+
+
+**No new environment variable.** One address for the channel, with the direction legible
+from the path.
+
+| Member | Summary |
+|---|---|
+| `string DirectoryName = "standing"` | The subdirectory of the coordination log that carries outbound standings. |
+| `string? Publish(` | Writes the standing for , or returns null when there is none. |
+| `string FileNameFor(string sessionId)` | A session id turned into a file name the filesystem will not reinterpret. |
+
+### `string? Publish(`
+
+Writes the standing for , or returns null when there is none.
+
+**Returns.** The path written, or `null` when the session has no scored episode.
+
+**Remarks.** Returns null rather than writing an empty standing: an empty one reads as "you have no rank
+and no reasons", which is a claim about the agent rather than about the absence of a score
+(DC-087). No file is the honest state, and the agent can tell the two apart.
+
+### `string FileNameFor(string sessionId)`
+
+A session id turned into a file name the filesystem will not reinterpret.
+
+**Remarks.** An agent session id is `agent:<name>#<hex>`, and on NTFS a colon opens an
+**alternate data stream**: `Path.Combine(dir, "agent:claude#ab.json")` writes the file
+"agent" carrying the stream "claude#ab.json". The write succeeds, the bytes are there, and
+nothing enumerating the directory can see them. That is DC-086, found in the coordination log
+this afternoon; this is the same id reaching the same filesystem by a different route.
 
 ## `ITrustedRegistrar`
 
