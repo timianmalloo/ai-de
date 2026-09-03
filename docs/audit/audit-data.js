@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T17:34:54Z",
+  "generated": "2026-09-03T18:06:22Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8763,6 +8763,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Watcher/DeclaredEpisodeArtifact.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0442",
+      "shortname": "daydream-measured-against-real-corpus",
+      "datetime": "2026-09-03T18:06:22Z",
+      "session": "e9679dd2",
+      "prompt": "do next steps",
+      "summary": "Measured the Daydream vertical against this repository's real audit log rather than reasoning about it: 111 episodes scored, 7 clean, 103 carrying nothing to assess, 1 observation written. The vertical works end to end and has almost nothing to work with. Recurrence needs 2 distinct episodes so 1 observation can never become a candidate — Daydream's output over the whole recorded history is zero. It is a capture gap, not a code gap: docs/proof exists and 27 of 421 entries name one, so the reader finds what is there. Also refreshed the design doc, which still said 'Nothing in this design is built yet' through six landings.",
+      "kind": "prompt",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/watcher-daydream-dream-seam.md"
       ],
       "tags": [],
       "outcome": "success"

@@ -1150,7 +1150,17 @@ Quarantined, Stale, and Retracted.
   human agreement, prompt-injection invariance, and anti-Goodhart outcome counter-metrics.
 - Access to observable rationale varies by agent tool; hidden chain-of-thought is excluded.
 - The Message Board event contract must align with one-file-per-session append semantics.
-- Daydream-to-Dream schema alignment and deletion/retraction need design.
+- ~~Daydream-to-Dream schema alignment and deletion/retraction need design.~~ **Closed 2026-09-03**
+  by `design-watcher-daydream-dream-seam`, and closed differently than this item assumed. There is no
+  schema to align: Daydream's record is per-repository and lives IN the repository, so it does not
+  push into `dream.py`'s corpus at all. Retraction is a superseding row, and evidence folds before
+  events so a promoted learning whose source episodes disappear falls back to Observation.
+- **Opened by closing it:** the corpus is nearly empty and that is a capture gap, not a code one.
+  Measured against this repository's own audit log on 2026-09-03 — 111 episodes scored, 103 carrying
+  nothing to assess, **one** observation recorded. Recurrence needs two distinct episodes, so
+  Daydream's output over the whole recorded history is zero and would be zero however good the engine
+  is. A turn that does not record its Proof Pack or its signals is one Daydream can never learn from,
+  and capture only accumulates forward.
 - The reference cohort and evaluator thresholds are initial safety floors; the design must record
   their statistical power and may tighten, not silently relax, them.
 - Existing AI-DE accessibility posture includes a prior best-effort ADR; this new spec sets WCAG

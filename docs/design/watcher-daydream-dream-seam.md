@@ -2,7 +2,7 @@
 id: design-watcher-daydream-dream-seam
 title: "Loomkeeper Daydream and the seam to the offline Dream"
 type: design
-status: proposed
+status: accepted
 owner: "@timianmalloo"
 phase: "3"
 tags: [loomkeeper, watcher, design, daydream, dreaming, continuous-improvement, learning, seam]
@@ -33,8 +33,16 @@ The spec records, in its own residual list:
 > Daydream-to-Dream schema alignment and deletion/retraction need design.
 > — `spec-agentic-watcher-substrate`, residual unknowns
 
-Both halves are answered here. Nothing in this design is built yet; it is a proposal, and its
-status stays `proposed` until a slice implements it.
+Both halves are answered here.
+
+**Built as of 2026-09-03**, which this section said it was not: the observation engine, the
+promotion staircase, the repository record, the recorder, the reach probe, the pane, and the
+`episode.artifacts` evidence channel. What is NOT built is the path verifier that turns a declared
+artifact into an observed one, and no candidate has ever been promoted.
+
+*This paragraph used to read "Nothing in this design is built yet". It stayed there through six
+landings. An artifact describes the tree it is in (DC-094), and a status field is the first thing a
+reader trusts and the last thing anyone updates.*
 
 ## 1. Responsibility and boundary
 
@@ -362,6 +370,33 @@ half we have. The order that makes it worth building:
    The oracle only accumulates forward, so every week without capture is a week the offline half has
    nothing to consolidate.
 3. Then Daydream observations, then candidates, then the seam.
+
+### MEASURED 2026-09-03, against this repository's own audit log
+
+The vertical works end to end. It has almost nothing to work with, and that is a **capture** gap
+rather than a code one:
+
+| | |
+|---|---|
+| Episodes imported and scored | **111** |
+| Assessed, and clean | 7 |
+| **Carried nothing to assess** | **103** |
+| Would be recorded as a pattern | **1** |
+| Observations actually written | 1 |
+
+`docs/proof/` exists and holds real Proof Packs; 27 of 421 audit entries name one and 10 carry a
+`signals` object. So the reader is finding what is there — most turns simply never recorded
+evidence in their audit entry.
+
+**The consequence is sharper than the ratio.** The recurrence threshold is two distinct episodes, so
+**one observation can never become a candidate**. Daydream's output over this repository's entire
+recorded history is *zero*, and it would be zero however good the engine is.
+
+Which reframes item 2 above and generalises it. That item said to start capturing mitigations for
+`dream.py`'s oracle. The same is true one level down for the product's own signals: **a turn that
+does not record its Proof Pack or its signals is a turn Daydream cannot learn from, permanently and
+retroactively.** `episode.artifacts` opens the channel for agent episodes going forward; it cannot
+reach the 103 already written. Capture only accumulates forward.
 
 ## 12. Open questions
 

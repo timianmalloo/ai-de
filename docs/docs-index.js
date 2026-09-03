@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T17:37:30Z",
+  "generated": "2026-09-03T18:06:22Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3116,7 +3116,7 @@ window.DOCS_INDEX = {
       "path": "docs/design/watcher-daydream-dream-seam.md",
       "title": "Loomkeeper Daydream and the seam to the offline Dream",
       "type": "design",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "3",
       "reviewBy": "2027-03-02",
@@ -3159,7 +3159,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bf218c17d92b26e1194275a958850a6dca53a8acda333316f360787742fe82be"
+      "sourceSha256": "66dfee2b3391fcf63b869cfe5cfcf609017864a4ebdb527137a60d0534d53011"
     },
     {
       "id": "design-watcher-dispute-command",
@@ -10266,7 +10266,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A([Open Leaderboard]) --> B{Task class and score schema selected?}\n  B -->|no| C[Require task class + score schema version] --> B\n  B -->|yes| D[Gather comparable episodes in that class + version]\n  D --> E{Cohort >= minimum and not a single-human proxy?}\n  E -->|no| F[Show Not Comparable with reason; no rank]\n  E -->|yes| G[Rank by harness, model, and harness-model]\n  G --> H[Show rank, cohort size, Evidence Coverage, and trend per cell]\n  H --> I{Open a cell?}\n  I -->|yes| J[Open the episodes and Scorecards behind the rank]\n  I -->|no| K([Return to Leaderboard])\n  H --> L{Rubric/schema/model version changed?}\n  L -->|yes| M[Segment versions; do not trend incompatible results into one rank]\n  L -->|no| K"
         }
       ],
-      "sourceSha256": "835df96d89a3ed0442dd6cb4df83b9c1dfeac8c5aa182aa62eebb0715b243c2f"
+      "sourceSha256": "5a3f2a4cc29bb663d4adbd8654a158a70f8d3152776a6410da29f86abf6fa290"
     },
     {
       "id": "spec-ai-native-ide",
@@ -10862,5 +10862,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "55e985f6e61ac6cd8318ebf1d3d118a0c751e8dd71b5989476b5dcc12aaf5213"
+  "graphSha256": "a50cc969378e271632b5726473521c9b0209e4f9ca0fb4b5124f5fb89cc087c4"
 };
