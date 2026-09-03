@@ -19,6 +19,7 @@ public sealed class WorkspaceCore : IDisposable
     private static readonly ActivitySource Activity = new("aide.workspace.command");
 
     private readonly IExtractor _extractor;
+    private readonly IDisposable? _watcherStore;
     private long _generation;
 
     /// <param name="scoredEpisodes">
@@ -30,7 +31,8 @@ public sealed class WorkspaceCore : IDisposable
     private WorkspaceCore(
         string workspaceId, WorkspaceStore store, IExtractor extractor,
         HealthIncidentSidecar incidents, string rootPath,
-        AiDe.Core.Presentation.IWatcherLeaderboardQuery? scoredEpisodes)
+        AiDe.Core.Presentation.IWatcherLeaderboardQuery? scoredEpisodes,
+        IDisposable? watcherStore = null)
     {
         WorkspaceId = workspaceId;
         Store = store;
@@ -40,6 +42,13 @@ public sealed class WorkspaceCore : IDisposable
         Projections = new ProjectionService(store, rootPath);
         Dispatch = new DispatchService(store);
         Mcp = new McpToolGateway(Projections, workspaceId, scoredEpisodes);
+
+        // Held so Dispose can close it. C1 opened this store and did not: every workspace open
+        // leaked a SQLite connection and three file handles for the process lifetime, and the
+        // privacy probe caught it by REFUSING to pass — it could not read watcher.db, watcher.db-wal
+        // or watcher.db-shm to scan them, and reported "NOT COVERED" rather than a clean sweep over
+        // files it never opened. A pass there would have been an absence over an empty set.
+        _watcherStore = watcherStore;
     }
 
     public string WorkspaceId { get; }
@@ -81,7 +90,7 @@ public sealed class WorkspaceCore : IDisposable
 
         var core = new WorkspaceCore(
             workspaceId, store, extractor ?? new FixtureExtractor(), incidents, rootPath,
-            new AiDe.Core.Presentation.WatcherLeaderboardQuery(watcher))
+            new AiDe.Core.Presentation.WatcherLeaderboardQuery(watcher), watcher)
         {
             DataDirectory = dataDirectory,
         };
@@ -559,7 +568,19 @@ public sealed class WorkspaceCore : IDisposable
     /// <summary>The path compaction operates on. Compaction requires the store to be closed.</summary>
     public string DatabasePath => Path.Combine(DataDirectory, "workspace.db");
 
-    public void Dispose() => Store.Dispose();
+    /// <summary>
+    /// Closes what this object opened — both stores.
+    /// </summary>
+    /// <remarks>
+    /// The watcher store is disposed here because <c>Open</c> created it. Whoever opens a handle
+    /// owns closing it, and the alternative — taking the store as a constructor parameter so the
+    /// caller owns its lifetime — would move that ownership rather than remove it.
+    /// </remarks>
+    public void Dispose()
+    {
+        Store.Dispose();
+        _watcherStore?.Dispose();
+    }
     private readonly System.Threading.Lock _modulesGate = new();
     private string? _modulesRevision;
     private IReadOnlySet<string>? _modules;

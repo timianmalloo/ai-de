@@ -43,7 +43,58 @@ public enum LivenessState
 /// A repository identity. <see cref="CanonicalPath"/> disambiguates two repositories that share a
 /// folder <see cref="DisplayName"/>, so the fleet map never collapses them (spec US-1).
 /// </summary>
-public sealed record RepositoryIdentity(string CanonicalPath, string DisplayName);
+/// <remarks>
+/// <para><b>The path is canonicalised on construction, because the field is called
+/// CanonicalPath.</b> It used to be a plain string that nothing normalised — a name asserting an
+/// invariant no code enforced — while <c>FleetAggregator</c> grouped by it with
+/// <c>StringComparer.Ordinal</c>. One repository therefore became several: git reports forward
+/// slashes where .NET reports backslashes, Windows paths are case-insensitive, and a trailing
+/// separator is indistinguishable from its absence. That is US-3's second clause failing — an
+/// aliased worktree appearing as a duplicate Repository.</para>
+///
+/// <para><b>Fixed on the type rather than in the aggregator</b> because the same field is the
+/// grouping key in <c>FleetAggregator</c>, the persisted column in the store, the registration guard
+/// in <c>TrustedRegistrar</c> and the lookup key in the coordination contract. Normalising one
+/// consumer leaves the other three disagreeing about whether two sessions share a repository — and
+/// because it normalises on the way in AND on the way back out of the store, rows written before
+/// this compare equal to rows written after without a migration.</para>
+///
+/// <para><b>Case folding is platform-conditional, deliberately.</b> Windows paths are
+/// case-insensitive and the shipped product is Windows desktop; POSIX paths are not, and folding
+/// there would merge two genuinely distinct repositories — which is the exact collapse
+/// <c>CanonicalPath</c> exists to prevent.</para>
+/// </remarks>
+public sealed record RepositoryIdentity
+{
+    public RepositoryIdentity(string canonicalPath, string displayName)
+    {
+        CanonicalPath = Canonicalise(canonicalPath);
+        DisplayName = displayName;
+    }
+
+    public string CanonicalPath { get; init; }
+
+    public string DisplayName { get; init; }
+
+    /// <summary>Two spellings of one path become one string; two paths stay two.</summary>
+    private static string Canonicalise(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return path ?? string.Empty;
+        }
+
+        var normalised = path.Replace('/', '\\');
+
+        // Trailing separator, except on a bare root ("C:\") where it is part of the path.
+        if (normalised.Length > 3 && normalised.EndsWith('\\'))
+        {
+            normalised = normalised.TrimEnd('\\');
+        }
+
+        return OperatingSystem.IsWindows() ? normalised.ToLowerInvariant() : normalised;
+    }
+}
 
 /// <summary>A worktree of a repository.</summary>
 public sealed record WorktreeIdentity(RepositoryIdentity Repository, string Branch, string Path);

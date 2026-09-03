@@ -56,7 +56,12 @@ public sealed class OtelSpanMapperTests
     {
         var binding = OtelSpanMapper.MapRegistration(new HarnessRegistration(FullRegistration()));
 
-        Assert.Equal("C:/repos/ai-de", binding.Repository.CanonicalPath);
+        // Compared against the product's own canonicalisation, not a spelling. RepositoryIdentity
+        // normalises its path on construction (C2), so asserting the raw literal would be asserting
+        // that the identity does NOT canonicalise — the opposite of what the type promises.
+        Assert.Equal(
+            new RepositoryIdentity("C:/repos/ai-de", "ai-de").CanonicalPath,
+            binding.Repository.CanonicalPath);
         Assert.Equal("claude-code", binding.Harness!.Name);
         Assert.Equal("1.0.0", binding.Harness.Version);
         Assert.Equal("claude-opus-4-8", binding.Model!.Name);

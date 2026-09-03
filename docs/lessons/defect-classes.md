@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 57 · partially-controlled 32 · uncontrolled 2
+**Status counts:** controlled 58 · partially-controlled 32 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3329,3 +3329,45 @@ for both or split.*
 - **The generalisation:** *a criterion that can be satisfied without touching anything new is
   suspicious when the deliverable describes something that does not yet happen.*
 - **Status:** `partially-controlled` — a question in P0, no automated check
+
+### DC-092 — A field named for an invariant that nothing enforces
+
+- **Shape:** a value object carries a field whose **name is a promise** — `CanonicalPath`,
+  `NormalisedId`, `SanitisedInput`, `UtcTimestamp` — and the type accepts whatever it is handed. The
+  name then does the work the code does not: every consumer reads it and reasonably assumes the
+  invariant already holds, so nobody canonicalises, normalises, sanitises or converts. The value is
+  wrong only when two spellings of one thing meet, which is later and somewhere else.
+- **Signature:** a `record` or DTO field whose name contains a past participle or an adjective
+  asserting a transformation, with a plain auto-property and no constructor logic. The second tell is
+  a consumer comparing it with `StringComparer.Ordinal` — ordinal comparison of something called
+  "canonical" is the code saying it trusts the name.
+- **Why it survives:** it reads correctly at every site. Producers pass what they have; consumers
+  compare what they are given; nothing looks wrong in isolation. The defect only appears when two
+  producers spell the same thing differently, and until then the type is indistinguishable from a
+  correct one. Fixing it in the consumer that noticed leaves the others still trusting the name.
+- **Instance:** 2026-09-02, C2 (US-3). `RepositoryIdentity.CanonicalPath` was a plain string that
+  nothing canonicalised, and `FleetAggregator` grouped by it with `StringComparer.Ordinal`. One
+  repository split into several: git reports forward slashes where .NET reports backslashes, Windows
+  paths are case-insensitive, and a trailing separator is indistinguishable from its absence. That is
+  US-3's second clause — *"a worktree path aliasing an already watched repository appears as a
+  Worktree under that Repository, not as a duplicate Repository"* — failing.
+
+  **It had already been hit once, at one producer.** The slash-direction case was found in session
+  identity that morning and normalised *there*, because that was where it hurt. The key itself stayed
+  ordinal, so every other route into the store — another producer, an older row, a manual
+  registration — still split. **Fixing the producer that hurt is not fixing the invariant.**
+- **Control:** the type canonicalises on construction, so the name is true by the only mechanism that
+  makes a name true. Five tests: slash direction, case, trailing separator, an aliased worktree
+  landing under its repository, and a guard that genuinely different repositories stay apart —
+  which is not hypothetical, since canonicalising too hard would merge repositories that share only
+  a display name, the exact collapse the field exists to prevent. **Observed failing on the shipped
+  type: four of the five red.**
+
+  Case folding is platform-conditional. Windows paths are case-insensitive and the shipped product
+  is Windows desktop; POSIX paths are not, and folding there would merge two distinct repositories.
+- **What the fix surfaced, which is the general lesson:** three tests then failed because they
+  asserted a *spelling* rather than an identity — comparing the stored key against a raw literal. A
+  string-keyed lookup sitting beside an identity type invites exactly that, in tests and in callers.
+  They now derive the key through the product's own canonicaliser: **a test that restates the
+  normalised form has copied the rule rather than checked it.**
+- **Status:** `controlled`

@@ -98,7 +98,11 @@ public sealed class ContractUpdateTests
         }, At + 5, 2));
 
         var binding = store.FindSession("session-1")!.Binding;
-        Assert.Equal("C:/repos/app", binding.Repository.CanonicalPath);
+        // The identity is unchanged by the update — compared through the canonicaliser, since the
+        // stored key is canonical and the literal here is one of several spellings of it.
+        Assert.Equal(
+            new RepositoryIdentity("C:/repos/app", "app").CanonicalPath,
+            binding.Repository.CanonicalPath);
         Assert.Equal("main", binding.Worktree.Branch);
         Assert.Equal("some-model", binding.Model!.Name);   // the one field it may carry
     }

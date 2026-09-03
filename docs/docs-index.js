@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T00:40:41Z",
+  "generated": "2026-09-03T01:02:41Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1305,7 +1305,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core: 2 types, 14 members, 50% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core: 2 types, 14 members, 56% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1318,7 +1318,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1f74bbf8c344058ff45cbf608aa6099a967e23a89378bfbc0237956b2517a17a"
+      "sourceSha256": "055608a444176535cc17473985a62186acadc2bc3f2a89f23bccdcfd6092c9c9"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -1605,7 +1605,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 135 types, 228 members, 58% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 135 types, 231 members, 57% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1618,7 +1618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "186b7e9b525d1a134a2947d72dc092a8add3e7af0951d68e1084c43549aa83f6"
+      "sourceSha256": "753f422671d457a51cecfa42fbf5ff3f4b3a7c8c9327897b6473602a11e55fb0"
     },
     {
       "id": "api-aide-core-workbench",
@@ -4117,7 +4117,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fc45d94b538e773faf5b9b5febfcf50baf2fac752369ff9b54c03e40a7fd9c2f"
+      "sourceSha256": "46addd1a48da66ad972ebad907b3cb190d23cb3258b7da3231deff6352f7a2f9"
     },
     {
       "id": "diagram-class",
@@ -10802,5 +10802,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7079f62911435d66bc48ac9219003205d558c0127ba5dcd7e3d1b6dc7f72c964"
+  "graphSha256": "3ba4a83334db82832f2b1aa45131ea67c0c9672ec9b72c4616eb6284815e8c54"
 };

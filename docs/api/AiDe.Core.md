@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core: 2 types, 14 members, 50% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core: 2 types, 14 members, 56% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core`
 
-**2 public types · 14 public members · 50% documented.**
+**2 public types · 14 public members · 56% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -45,7 +45,7 @@ substitution rather than a redesign.
 | `Task<IndexResult> IndexCSharpAsync(` | Discovers every C# scope under the workspace root and refreshes each one. |
 | `IReadOnlyList<(string ScopeId, int Generations)> CheckCompactionNeeded(` | Raises a health incident for any scope whose generation count has passed the compaction threshold. |
 | `string DatabasePath` | The path compaction operates on. Compaction requires the store to be closed. |
-| `void Dispose()` | **(gap)** |
+| `void Dispose()` | Closes what this object opened — both stores. |
 
 ### `Task<ExtractionResult> RefreshScopeAsync(`
 
@@ -84,6 +84,14 @@ problem people stop reporting and start working around.
 
 This reports; it does not compact. Compaction replaces the database file, so it belongs to a
 deliberate maintenance moment, not to a background timer that could fire mid-session.
+
+### `void Dispose()`
+
+Closes what this object opened — both stores.
+
+**Remarks.** The watcher store is disposed here because `Open` created it. Whoever opens a handle
+owns closing it, and the alternative — taking the store as a constructor parameter so the
+caller owns its lifetime — would move that ownership rather than remove it.
 
 ## `IndexResult`
 

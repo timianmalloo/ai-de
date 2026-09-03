@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 135 types, 228 members, 58% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 135 types, 231 members, 57% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**135 public types · 228 public members · 58% documented.**
+**135 public types · 231 public members · 57% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1541,6 +1541,40 @@ Observed liveness of a session. Computed from heartbeats, never stored (ADR-0001
 
 A repository identity. `CanonicalPath` disambiguates two repositories that share a
 folder `DisplayName`, so the fleet map never collapses them (spec US-1).
+
+**Remarks.** **The path is canonicalised on construction, because the field is called
+CanonicalPath.** It used to be a plain string that nothing normalised — a name asserting an
+invariant no code enforced — while `FleetAggregator` grouped by it with
+`StringComparer.Ordinal`. One repository therefore became several: git reports forward
+slashes where .NET reports backslashes, Windows paths are case-insensitive, and a trailing
+separator is indistinguishable from its absence. That is US-3's second clause failing — an
+aliased worktree appearing as a duplicate Repository.
+
+
+
+
+
+**Fixed on the type rather than in the aggregator** because the same field is the
+grouping key in `FleetAggregator`, the persisted column in the store, the registration guard
+in `TrustedRegistrar` and the lookup key in the coordination contract. Normalising one
+consumer leaves the other three disagreeing about whether two sessions share a repository — and
+because it normalises on the way in AND on the way back out of the store, rows written before
+this compare equal to rows written after without a migration.
+
+
+
+
+
+**Case folding is platform-conditional, deliberately.** Windows paths are
+case-insensitive and the shipped product is Windows desktop; POSIX paths are not, and folding
+there would merge two genuinely distinct repositories — which is the exact collapse
+`CanonicalPath` exists to prevent.
+
+| Member | Summary |
+|---|---|
+| `RepositoryIdentity(string canonicalPath, string displayName)` | **(gap)** |
+| `string CanonicalPath { get; init; }` | **(gap)** |
+| `string DisplayName { get; init; }` | **(gap)** |
 
 ## `WorktreeIdentity`
 
