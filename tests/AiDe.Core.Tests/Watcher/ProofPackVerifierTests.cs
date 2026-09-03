@@ -165,13 +165,75 @@ public sealed class ProofPackVerifierTests : IDisposable
     }
 
     [Fact]
+    public void ASiblingWhoseNameEXTENDSTheRootIsRefused()
+    {
+        // THE CASE CONTAINMENT ACTUALLY PREVENTS, and the one the other sibling test does NOT reach.
+        //
+        // Mutation replay found this: removing the separator from the containment comparison
+        // reddened nothing, because in the neighbouring-directory test the escaped path's remainder
+        // ("-other/docs/proof/...") fails the docs/proof check anyway. So that test passes for a
+        // reason it does not name.
+        //
+        // Here the sibling is named <root>docs, so the remainder after a PLAIN prefix strip is
+        // exactly "docs/proof/x.md" — it passes the directory check, the file exists, and a plain
+        // StartsWith would return Verified for another directory's file. Only the appended separator
+        // stops it.
+        var sibling = _repository + "docs";
+
+        try
+        {
+            var proof = Path.Combine(sibling, "proof");
+            Directory.CreateDirectory(proof);
+            File.WriteAllText(Path.Combine(proof, "x.md"), "not this repository's evidence");
+
+            Assert.Equal(
+                ProofPackVerdict.NotFound,
+                ProofPackVerifier.Verify(_repository, Path.Combine(sibling, "proof", "x.md")));
+        }
+        finally
+        {
+            Delete(sibling);
+        }
+    }
+
+    [Fact]
+    public void ADirectoryUNDERTheProofFolderIsNotAProofPack()
+    {
+        // The sibling of TheProofDirectoryItselfIsNotAProofPack, and the one that actually exercises
+        // the File.Exists check: "docs/proof" alone is rejected earlier, by the trailing-separator in
+        // ProofDirectory, so it never reaches the existence test. A directory INSIDE docs/proof does.
+        Directory.CreateDirectory(Path.Combine(_repository, "docs", "proof", "run-1"));
+
+        Assert.Equal(
+            ProofPackVerdict.NotFound,
+            ProofPackVerifier.Verify(_repository, "docs/proof/run-1"));
+    }
+
+    [Fact]
+    public void TheProofDirectoryMatchIgnoresCase()
+    {
+        // Windows paths are case-insensitive, so the file the agent named IS the file on disk. A
+        // case-sensitive directory match would reject real evidence for how the agent spelled it,
+        // which is a claim about the agent's typing rather than about its work.
+        GivenProofPack("docs/proof/ep-1.md");
+
+        Assert.Equal(
+            ProofPackVerdict.Verified,
+            ProofPackVerifier.Verify(_repository, "DOCS/PROOF/ep-1.md"));
+    }
+
+    [Fact]
     public void AnUnusablePathIsNotFound_RatherThanThrowing()
     {
         // Something the filesystem refuses to evaluate is not evidence, and must not travel as an
         // exception through the scoring path.
+        //
+        // A 400-character segment was the first attempt and it does NOT throw on modern .NET, so the
+        // catch was never exercised and disabling it reddened nothing. A NUL byte does throw, which
+        // is what makes this a test of the handler rather than of a long string.
         Assert.Equal(
             ProofPackVerdict.NotFound,
-            ProofPackVerifier.Verify(_repository, "docs/proof/" + new string('x', 400) + "/a.md"));
+            ProofPackVerifier.Verify(_repository, "docs/proof/a\0b.md"));
     }
 
     private static string NewDirectory()
