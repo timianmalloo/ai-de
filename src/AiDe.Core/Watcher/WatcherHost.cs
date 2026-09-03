@@ -114,6 +114,7 @@ public sealed class WatcherHost : IDisposable
     /// </summary>
     public int ImportAndScoreEpisodesFromAuditLog(
         string auditLogPath,
+        WorkspaceKey? workspace,
         string taskClass = "audit-import",
         IAdvisoryEvaluator? evaluator = null,
         CalibrationRegistry? registry = null)
@@ -129,11 +130,22 @@ public sealed class WatcherHost : IDisposable
             var signals = DeterministicSignalsDeriver.Derive(episode, evidence, _store);
             scoring.ScoreAndRecord(
                 episode, signals, operatorId: episode.SessionId, taskClass: taskClass,
-                evaluator: evaluator, registry: registry);
+                workspace: workspace, evaluator: evaluator, registry: registry);
         }
 
         return imported.Count;
     }
+
+    /// <summary>
+    /// Scores every closed episode of a registered session that has no scorecard yet, and returns how
+    /// many were newly scored (US-16's missing link). Delegates to <see cref="ClosedEpisodeScoring"/>,
+    /// which is where the reasoning lives.
+    /// </summary>
+    public int ScoreClosedEpisodes(
+        string taskClass = ScoreSegment.Unclassified,
+        IAdvisoryEvaluator? evaluator = null,
+        CalibrationRegistry? registry = null)
+        => ClosedEpisodeScoring.Run(_store, _time, taskClass, evaluator, registry);
 
     /// <summary>The observation store, for the read surfaces (the app builds its queries from this).</summary>
     public IWatcherObservationStore Store => _store;

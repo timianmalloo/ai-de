@@ -1,35 +1,40 @@
+using System.Text.Json;
 using AiDe.Core.Watcher;
 
 namespace AiDe.Core.Tests.Watcher;
 
 /// <summary>
-/// The whole agent loop as ONE chain, and the exact link where it currently ends.
+/// The whole agent loop as ONE chain, end to end.
 /// </summary>
 /// <remarks>
 /// <para><b>Why this exists.</b> Every link in the collaboration loop is tested at its own seam and
-/// passes. Three capabilities were nonetheless found this evening that nothing could reach —
+/// passes. Three capabilities were nonetheless found that nothing could reach —
 /// <c>MessageBoardService</c>, <c>StandingComposer</c>, <c>McpToolGateway</c> — because a seam test
 /// asks "does this component work" and never "can anything get here from there". A chain of correct
 /// components is not a working chain, and the only thing that distinguishes them is a test that
 /// walks the whole thing.</para>
 ///
 /// <para><b>What is proven here:</b> an agent registers through the contract log, receives a
-/// capability, declares an episode, and closes it — all through the channel an agent actually has,
-/// with no shell and no UI.</para>
+/// capability, declares an episode, closes it, <b>is scored</b>, and <b>receives a standing</b> — all
+/// through the channel an agent actually has, with no shell and no UI.</para>
 ///
-/// <para><b>And where the chain ends.</b> A closed episode is <b>never scored</b>. Scoring has
-/// exactly one producer, <c>WatcherHost.ImportAndScoreEpisodesFromAuditLog</c>, which reads AI-DE's
-/// own audit log — and an audit-imported episode takes its <c>SessionId</c> from the log's
-/// <c>session</c> field, while <c>TrustedRegistrar</c> mints a fresh id for a registered agent. The
-/// two identifier spaces never meet. So an agent that registers and declares work produces a closed
+/// <para><b>Where the chain used to end.</b> A closed episode was never scored. Scoring had exactly
+/// one producer, <c>WatcherHost.ImportAndScoreEpisodesFromAuditLog</c>, which reads AI-DE's own audit
+/// log — and an audit-imported episode takes its <c>SessionId</c> from the log's <c>session</c>
+/// field, while <see cref="TrustedRegistrar"/> mints a fresh id for a registered agent. The two
+/// identifier spaces never met, so an agent that registered and declared work produced a closed
 /// episode, no scorecard, and therefore no standing, forever.</para>
 ///
-/// <para><b>These assertions are deliberately written to FAIL when the gap closes.</b> The last two
-/// pin an absence, and the day someone wires scoring to the agent path they will go red and say so
-/// — which is the point. An absence nobody has pinned is indistinguishable from an absence nobody
-/// has noticed, and this one is a decision waiting to be made rather than a defect to patch: where a
-/// contract-closed episode's deterministic signals come from is a design question, not a wiring
-/// one.</para>
+/// <para><b>Two tests here pinned that absence and were written to fail the day it closed. They
+/// did.</b> <see cref="ClosedEpisodeScoring"/> now runs on the watcher tick, and they are rewritten
+/// to assert the standing rather than deleted — which is what the previous version of this remark
+/// instructed whoever closed the gap to do.</para>
+///
+/// <para><b>What the agent receives is Not Scored, and that is the honest answer.</b> A
+/// contract-declared episode carries no Proof Pack, so there is no verification path to observe, and
+/// the conservative defaults produce a verdict of Not Scored <i>with its reason</i>. That is not a
+/// low score and must never become one: a low score is a claim about the agent, and nothing observed
+/// here is evidence for one.</para>
 /// </remarks>
 public sealed class TheAgentCollaborationCircuitTests
 {
@@ -47,6 +52,12 @@ public sealed class TheAgentCollaborationCircuitTests
         [OtelAttributes.ServiceName] = "claude-code",
     };
 
+    private static Dictionary<string, string?> EpisodeAttrs() => new(StringComparer.Ordinal)
+    {
+        [CoordContract.EpisodeAttributes.Goal] = "close the collaboration loop",
+        [CoordContract.EpisodeAttributes.DoneWhen] = "an agent receives a standing",
+    };
+
     private static (InjectedContractIngest Adapter, InMemoryWatcherObservationStore Store) Circuit()
     {
         var store = new InMemoryWatcherObservationStore();
@@ -56,6 +67,19 @@ public sealed class TheAgentCollaborationCircuitTests
         var host = new IngestHost(store, registrar, new FixedTimeProvider(DateTimeOffset.UnixEpoch.AddSeconds(At)));
 
         return (new InjectedContractIngest(host), store);
+    }
+
+    private static void CloseOneEpisode(InjectedContractIngest adapter)
+    {
+        adapter.Apply(new ContractRegister("ext-1", RegisterAttrs(), At, 1));
+        adapter.Apply(new ContractEpisodeOpen("ext-1", EpisodeAttrs(), At + 1, 2));
+        adapter.Apply(new ContractEpisodeClose(
+            "ext-1",
+            new Dictionary<string, string?>(StringComparer.Ordinal)
+            {
+                [CoordContract.EpisodeAttributes.Outcome] = "completed",
+            },
+            At + 2, 3));
     }
 
     [Fact]
@@ -69,14 +93,7 @@ public sealed class TheAgentCollaborationCircuitTests
 
         var session = Assert.Single(store.AllSessions());
 
-        adapter.Apply(new ContractEpisodeOpen(
-            "ext-1",
-            new Dictionary<string, string?>(StringComparer.Ordinal)
-            {
-                [CoordContract.EpisodeAttributes.Goal] = "close the collaboration loop",
-                [CoordContract.EpisodeAttributes.DoneWhen] = "an agent receives a standing",
-            },
-            At + 1, 2));
+        adapter.Apply(new ContractEpisodeOpen("ext-1", EpisodeAttrs(), At + 1, 2));
 
         var episode = Assert.Single(store.EpisodesForSession(session.SessionId));
         Assert.Equal(EpisodeState.Active, episode.State);
@@ -94,59 +111,102 @@ public sealed class TheAgentCollaborationCircuitTests
     }
 
     [Fact]
-    public void ACompletedAgentEpisodeIsNeverScored_WhichIsWhereTheLoopEnds()
+    public void ACompletedAgentEpisodeIsScored_AndTheVerdictIsHonestlyNotScored()
     {
-        // THE BREAK, pinned. Scoring has one producer — ImportAndScoreEpisodesFromAuditLog — and it
-        // is not on the agent's path. Nothing closes an episode INTO a scorecard.
-        //
-        // This assertion is meant to fail the day that changes. If it does, the loop closed and this
-        // test should be rewritten to assert the standing rather than deleted.
+        // THE LINK THAT WAS MISSING. This assertion was Assert.Empty(store.AllScoredEpisodes()),
+        // pinning the break; it is now the proof that the break closed.
+        var (adapter, store) = Circuit();
+        CloseOneEpisode(adapter);
+
+        var newlyScored = ClosedEpisodeScoring.Run(store, TimeProvider.System);
+
+        Assert.Equal(1, newlyScored);
+        var scored = Assert.Single(store.AllScoredEpisodes());
+
+        // Not Scored, because nothing observed amounts to evidence of outcome — never a low score,
+        // which would be a claim about the agent rather than about the evidence.
+        Assert.Equal(WeaveVerdict.NotScored, scored.Scorecard.Verdict);
+        Assert.NotEmpty(scored.Scorecard.Headline);
+
+        // Keyed to the REPOSITORY the session was bound to, which is what makes the score mean
+        // anything: how an agent works is partly a product of that repository's directives.
+        Assert.Equal(WorkspaceKey.From(Repo), scored.Segment.Workspace);
+
+        // And not comparable, because the contract carries no task class. Scored and delivered, but
+        // ranked nowhere — rather than pooled into a cohort that does not exist.
+        Assert.Equal(ScoreSegment.Unclassified, scored.Segment.TaskClass);
+        Assert.False(scored.Segment.IsComparable);
+    }
+
+    [Fact]
+    public void ScoringTheSameClosedEpisodeTwiceScoresItOnce()
+    {
+        // The pass runs on every watcher tick, so idempotence is not a nicety: a second scoring would
+        // replace the card, and a re-scored episode that became its own predecessor would report a
+        // trend against itself.
+        var (adapter, store) = Circuit();
+        CloseOneEpisode(adapter);
+
+        Assert.Equal(1, ClosedEpisodeScoring.Run(store, TimeProvider.System));
+        Assert.Equal(0, ClosedEpisodeScoring.Run(store, TimeProvider.System));
+        Assert.Single(store.AllScoredEpisodes());
+    }
+
+    [Fact]
+    public void AnOpenEpisodeIsNotScored()
+    {
+        // Closing is the declaration that the work is done. Scoring an open episode would judge work
+        // that is still happening.
         var (adapter, store) = Circuit();
 
         adapter.Apply(new ContractRegister("ext-1", RegisterAttrs(), At, 1));
-        adapter.Apply(new ContractEpisodeOpen(
-            "ext-1",
-            new Dictionary<string, string?>(StringComparer.Ordinal)
-            {
-                [CoordContract.EpisodeAttributes.Goal] = "g",
-                [CoordContract.EpisodeAttributes.DoneWhen] = "d",
-            },
-            At + 1, 2));
-        adapter.Apply(new ContractEpisodeClose(
-            "ext-1",
-            new Dictionary<string, string?>(StringComparer.Ordinal)
-            {
-                [CoordContract.EpisodeAttributes.Outcome] = "completed",
-            },
-            At + 2, 3));
+        adapter.Apply(new ContractEpisodeOpen("ext-1", EpisodeAttrs(), At + 1, 2));
 
+        Assert.Equal(0, ClosedEpisodeScoring.Run(store, TimeProvider.System));
         Assert.Empty(store.AllScoredEpisodes());
     }
 
     [Fact]
-    public void AndSoNoStandingIsPublished_ForTheRightReason()
+    public void AndTheStandingReachesTheAgent_SayingWhyItHasNoRank()
     {
-        // The distinction that matters to whoever reads this next: the standing is absent because
-        // there is no SCORE, not because delivery is broken. StandingPublisher works — proven in
-        // StandingReachesTheAgentTests against a scored episode — and correctly writes nothing when
-        // there is nothing to say (DC-087).
+        // THE LAST LINK. This asserted Assert.Null(published) — no standing, because there was no
+        // score. There is a score now, so there is a standing, and the agent can read it from the
+        // directory it was handed as AIDE_CONTRACT_LOG.
         var (adapter, store) = Circuit();
-        adapter.Apply(new ContractRegister("ext-1", RegisterAttrs(), At, 1));
+        CloseOneEpisode(adapter);
+        ClosedEpisodeScoring.Run(store, TimeProvider.System);
 
         var session = Assert.Single(store.AllSessions());
+        var scored = store.AllScoredEpisodes();
+        var episode = Assert.Single(store.EpisodesForSession(session.SessionId));
+
         var directory = Path.Combine(Path.GetTempPath(), "aide-circuit-" + Guid.NewGuid().ToString("N")[..8]);
         Directory.CreateDirectory(directory);
 
         try
         {
-            var scored = store.AllScoredEpisodes();
-            var latest = store.EpisodesForSession(session.SessionId)
-                .FirstOrDefault(e => scored.Any(s => s.EpisodeId == e.EpisodeId));
+            var published = StandingPublisher.Publish(directory, session.SessionId, scored, episode.EpisodeId);
 
-            var published = StandingPublisher.Publish(directory, session.SessionId, scored, latest?.EpisodeId);
+            Assert.NotNull(published);
+            Assert.True(File.Exists(published), "nothing was written at " + published);
 
-            Assert.Null(published);
-            Assert.Empty(store.AllScoredEpisodes());
+            var standing = JsonDocument.Parse(File.ReadAllText(published!)).RootElement;
+
+            Assert.Equal(episode.EpisodeId, standing.GetProperty("episodeId").GetString());
+            Assert.False(standing.GetProperty("rankComparable").GetBoolean());
+
+            // The reason travels with the absence. "No rank" alone is an empty state naming nothing,
+            // and the two causes want opposite responses from the agent: an undeclared task class it
+            // can fix, an unresolvable repository it cannot.
+            var reason = standing.GetProperty("notComparableReason").GetString();
+            Assert.False(string.IsNullOrWhiteSpace(reason));
+            Assert.Contains("kind of work", reason, StringComparison.Ordinal);
+
+            // And the product says it wrote this, so an agent or a human editing the directory can
+            // tell what it may maintain — provenance, not permission.
+            Assert.Equal(
+                StandingPublisher.GeneratedBy,
+                standing.GetProperty(StandingPublisher.GeneratedByField).GetString());
         }
         finally
         {

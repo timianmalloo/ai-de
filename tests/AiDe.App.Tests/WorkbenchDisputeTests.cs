@@ -23,7 +23,7 @@ public sealed class WorkbenchDisputeTests
         store.RecordEpisode(episode);
         var signals = DeterministicSignalsDeriver.Derive(episode, new EpisodeEvidence(hasProofPack), store);
         new ScoringService(store, TimeProvider.System)
-            .ScoreAndRecord(episode, signals, operatorId: episode.SessionId, taskClass: "audit-import");
+            .ScoreAndRecord(episode, signals, operatorId: episode.SessionId, taskClass: "audit-import", TestWorkspaces.Repo);
     }
 
     [Fact]

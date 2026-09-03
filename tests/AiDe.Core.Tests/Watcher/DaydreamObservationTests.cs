@@ -35,7 +35,7 @@ public sealed class DaydreamObservationTests
     private static ScoredEpisode Episode(
         string id, Scorecard card, string harness = "claude-code", string model = "opus",
         string op = "op-1", string taskClass = "implement") =>
-        new(id, harness, model, op, taskClass, ScoreSchema.Weave1Version, card);
+        new(id, harness, model, op, new ScoreSegment(TestWorkspaces.Repo, taskClass, ScoreSchema.Weave1Version), card);
 
     private static DaydreamObservation Observed(ScoredEpisode e) =>
         new("obs-" + e.EpisodeId, DaydreamSignature.For(e), e.EpisodeId, DateTimeOffset.UnixEpoch);

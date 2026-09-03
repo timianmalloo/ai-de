@@ -1897,6 +1897,33 @@ public sealed class WorkbenchShell : IDisposable
     /// "you have no rank and no reasons" — a claim about the agent rather than about the absence of a
     /// score (DC-087).</para>
     /// </remarks>
+    /// <summary>
+    /// The repository a score is keyed to, or null when it could not be resolved.
+    /// </summary>
+    /// <remarks>
+    /// Deliberately not <c>facts.RepoPath</c> directly: that field falls back to the checkout when
+    /// git cannot report the common dir, and a checkout used as a workspace key splits one
+    /// repository's cohort across its worktrees - shrinking every cell until the de-anonymisation
+    /// guard fires for a reason that is not privacy. An absent key excludes the episode from ranking
+    /// instead, which is visible.
+    /// </remarks>
+    private WorkspaceKey? ScoringWorkspace()
+        => CurrentGitFacts() is { RepoResolved: true } facts ? WorkspaceKey.From(facts.RepoPath) : null;
+
+    /// <summary>The git facts for the current workspace root, resolved once per root.</summary>
+    private GitFacts CurrentGitFacts()
+    {
+        var root = _workspaceRoot ?? string.Empty;
+        if (_gitFactsCache is { } cached && string.Equals(cached.Root, root, StringComparison.Ordinal))
+        {
+            return cached.Facts;
+        }
+
+        var facts = ResolveGitFacts(root);
+        _gitFactsCache = (root, facts);
+        return facts;
+    }
+
     private static void PublishStandings(WatcherHost host)
     {
         try
@@ -1938,13 +1965,20 @@ public sealed class WorkbenchShell : IDisposable
                 {
                     _episodesImported = true;
                     var auditLog = Path.Combine(_workspaceRoot, "docs", "audit", "audit-log.jsonl");
-                    host.ImportAndScoreEpisodesFromAuditLog(auditLog);
+                    host.ImportAndScoreEpisodesFromAuditLog(auditLog, ScoringWorkspace());
                 }
 
                 var terminals = TerminalSnapshot();
                 var ids = new HashSet<string>(terminals.Select(t => t.Id), StringComparer.Ordinal);
                 emitter.Reconcile(ids, id => IdentityFor(id, terminals));
                 host.PumpOnce();
+
+                // The link the collaboration loop was missing: an agent registers, declares an
+                // episode and closes it through the contract log, and until now nothing ever turned
+                // that closed episode into a score - so no standing could ever be delivered. Scoring
+                // on the tick rather than at close keeps the declaration and the judgement separate,
+                // and the pass is idempotent, so a re-run scores nothing twice.
+                host.ScoreClosedEpisodes();
 
                 // conn-9: re-render the open watcher panes only when the store actually changed, so a
                 // session registering/ending, a board post, or a new score shows up live without a manual
@@ -2005,7 +2039,17 @@ public sealed class WorkbenchShell : IDisposable
     /// The real branch, <c>HEAD</c> when detached, or <see cref="GitFacts.BranchUnknown"/> when git
     /// cannot answer. Never a value that could be mistaken for a branch name.
     /// </param>
-    internal sealed record GitFacts(string RepoPath, string RepoDisplay, string WorktreePath, string Branch)
+    /// <param name="RepoResolved">
+    /// Whether <paramref name="RepoPath"/> is the repository git reported, or a fallback. False means
+    /// git answered for the worktree but not for <c>--git-common-dir</c>, so the repository is
+    /// genuinely unknown and <paramref name="RepoPath"/> is the checkout standing in for it. The
+    /// fleet map is content with that; <b>scoring is not</b> — a checkout used as a workspace key
+    /// splits one repository's cohort across its worktrees, and the split would be indistinguishable
+    /// from working (see <c>WorkspaceKey</c>). A non-git folder is NOT this case: it is its own
+    /// workspace, and resolves true.
+    /// </param>
+    internal sealed record GitFacts(
+        string RepoPath, string RepoDisplay, string WorktreePath, string Branch, bool RepoResolved = true)
     {
         /// <summary>
         /// What the branch reads as when it could not be determined.
@@ -2025,8 +2069,14 @@ public sealed class WorkbenchShell : IDisposable
     /// Cached per workspace: <see cref="IdentityFor"/> runs once PER TERMINAL on a 2-second loop, so
     /// resolving git on each call would spawn a process per terminal every two seconds forever.
     /// </summary>
-    private GitFacts? _gitFacts;
-    private string? _gitFactsFor;
+    /// <summary>The resolved git facts and the root they were resolved for, as ONE reference.</summary>
+    /// <remarks>
+    /// Two fields, because the cache is now read from the watcher loop (a background thread) as well
+    /// as the UI thread: a reader could otherwise observe a new <c>GitFacts</c> paired with the
+    /// previous root. One reference assignment cannot be seen half-applied. The resolution itself is
+    /// pure and idempotent, so a concurrent double-resolve costs a git call and yields the same value.
+    /// </remarks>
+    private (string Root, GitFacts Facts)? _gitFactsCache;
 
     /// <summary>
     /// The harness a terminal surface was launched as, by surface id.
@@ -2060,35 +2110,52 @@ public sealed class WorkbenchShell : IDisposable
         var fallbackPath = string.IsNullOrEmpty(root) ? display : root;
         if (string.IsNullOrEmpty(root) || !Directory.Exists(root))
         {
-            return new GitFacts(fallbackPath, display, fallbackPath, GitFacts.BranchUnknown);
+            return new GitFacts(fallbackPath, display, fallbackPath, GitFacts.BranchUnknown, RepoResolved: false);
         }
 
-        var worktree = Git(root, "rev-parse", "--show-toplevel") ?? fallbackPath;
+        var toplevel = Git(root, "rev-parse", "--show-toplevel");
+        var worktree = toplevel ?? fallbackPath;
         var branch = Git(root, "rev-parse", "--abbrev-ref", "HEAD") ?? GitFacts.BranchUnknown;
 
         // The repository is the common dir's PARENT: from a linked worktree --git-common-dir is the
         // primary .git (absolute); from the primary checkout it is a relative ".git". Its parent is
         // the repository in both cases — the same primitive coord-core resolves the record with.
+        //
+        // Three cases, and only the last is a guess:
+        //   not a git repository        -> the folder IS the workspace, resolved
+        //   git answered the common dir -> the repository, resolved
+        //   git answered neither        -> the worktree stands in, NOT resolved
+        // The third keeps the fleet map working while telling scoring not to key on it.
         var repo = worktree;
-        var common = Git(root, "rev-parse", "--git-common-dir");
-        if (!string.IsNullOrEmpty(common))
+        var resolved = true;
+
+        if (toplevel is not null)
         {
-            try
+            resolved = false;
+            var common = Git(root, "rev-parse", "--git-common-dir");
+            if (!string.IsNullOrEmpty(common))
             {
-                var full = Path.IsPathRooted(common) ? common : Path.Combine(worktree, common);
-                var parent = Directory.GetParent(Path.GetFullPath(full))?.FullName;
-                if (!string.IsNullOrEmpty(parent)) { repo = parent; }
-            }
-            catch (Exception ex) when (ex is ArgumentException or IOException or NotSupportedException)
-            {
-                // Keep the worktree as the repository rather than inventing one.
+                try
+                {
+                    var full = Path.IsPathRooted(common) ? common : Path.Combine(worktree, common);
+                    var parent = Directory.GetParent(Path.GetFullPath(full))?.FullName;
+                    if (!string.IsNullOrEmpty(parent))
+                    {
+                        repo = parent;
+                        resolved = true;
+                    }
+                }
+                catch (Exception ex) when (ex is ArgumentException or IOException or NotSupportedException)
+                {
+                    // Keep the worktree as the repository rather than inventing one - and say so.
+                }
             }
         }
 
         var repoDisplay = Path.GetFileName(repo.TrimEnd('\\', '/'));
         if (string.IsNullOrEmpty(repoDisplay)) { repoDisplay = display; }
 
-        return new GitFacts(Canonical(repo), repoDisplay, Canonical(worktree), branch);
+        return new GitFacts(Canonical(repo), repoDisplay, Canonical(worktree), branch, resolved);
     }
 
     /// <summary>One spelling per directory, so two sessions in one repository group together.</summary>
@@ -2164,11 +2231,7 @@ public sealed class WorkbenchShell : IDisposable
     private IReadOnlyDictionary<string, string> AgentEnvironmentFor(string sessionId)
     {
         var root = _workspaceRoot ?? string.Empty;
-        if (_gitFacts is null || !string.Equals(_gitFactsFor, root, StringComparison.Ordinal))
-        {
-            _gitFacts = ResolveGitFacts(root);
-            _gitFactsFor = root;
-        }
+        var facts = CurrentGitFacts();
 
         var env = new Dictionary<string, string>(StringComparer.Ordinal)
         {
@@ -2189,17 +2252,17 @@ public sealed class WorkbenchShell : IDisposable
         // ResolveGitFacts returns the display name "workspace" as its fallback path — a value the
         // IDENTITY record must send because the attribute is required there, and one an environment
         // variable must not, because an agent would take AIDE_WORKTREE=workspace for a path.
-        if (!string.IsNullOrEmpty(root) && !string.IsNullOrEmpty(_gitFacts.WorktreePath))
+        if (!string.IsNullOrEmpty(root) && !string.IsNullOrEmpty(facts.WorktreePath))
         {
-            env["AIDE_WORKTREE"] = _gitFacts.WorktreePath;
+            env["AIDE_WORKTREE"] = facts.WorktreePath;
         }
 
         // Omitted rather than sent as "(unknown)": the identity record must send SOMETHING because
         // the attribute is required there, but an environment variable can simply be absent — and
         // absent is the honest form.
-        if (!string.Equals(_gitFacts.Branch, GitFacts.BranchUnknown, StringComparison.Ordinal))
+        if (!string.Equals(facts.Branch, GitFacts.BranchUnknown, StringComparison.Ordinal))
         {
-            env["AIDE_BRANCH"] = _gitFacts.Branch;
+            env["AIDE_BRANCH"] = facts.Branch;
         }
 
         if (_harnessBySurface.TryGetValue(sessionId, out var profile))
@@ -2259,14 +2322,7 @@ public sealed class WorkbenchShell : IDisposable
 
     private SessionCoordinationIdentity IdentityFor(string surfaceId, IReadOnlyList<(string Id, string Agent)> terminals)
     {
-        var root = _workspaceRoot ?? string.Empty;
-        if (_gitFacts is null || !string.Equals(_gitFactsFor, root, StringComparison.Ordinal))
-        {
-            _gitFacts = ResolveGitFacts(root);
-            _gitFactsFor = root;
-        }
-
-        var facts = _gitFacts;
+        var facts = CurrentGitFacts();
 
         var agent = terminals.FirstOrDefault(t => t.Id == surfaceId).Agent;
         if (string.IsNullOrEmpty(agent))

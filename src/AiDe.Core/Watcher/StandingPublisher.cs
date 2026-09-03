@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace AiDe.Core.Watcher;
@@ -33,6 +34,26 @@ public static class StandingPublisher
 {
     /// <summary>The subdirectory of the coordination log that carries outbound standings.</summary>
     public const string DirectoryName = "standing";
+
+    /// <summary>
+    /// The provenance marker every product-written artifact carries, under the one field name used in
+    /// every format.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The boundary is provenance, not permission.</b> The product and its agents are one
+    /// experience to the user and agents write into the repository continuously, so "who may write"
+    /// was the wrong question. It is <b>who maintains what they wrote</b>: agent-generated is
+    /// agent-maintained, product-generated is product-owned. A reader has to be able to tell, and
+    /// this is how - present means the product wrote it, absent means an agent or a human did.</para>
+    ///
+    /// <para><b>One spelling, everywhere.</b> <c>generated-by</c> literally, in JSON as in markdown
+    /// frontmatter - a marker with a per-format spelling is a marker every consumer has to know two
+    /// forms of, and a grep for one of them silently misses the other.</para>
+    /// </remarks>
+    public const string GeneratedByField = "generated-by";
+
+    /// <summary>This component's provenance value.</summary>
+    public const string GeneratedBy = "ai-de/standing-publisher";
 
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web)
     {
@@ -72,7 +93,7 @@ public static class StandingPublisher
             return null;
         }
 
-        var board = new LeaderboardComposer().Compose(scoredEpisodes, subject.TaskClass, subject.SchemaVersion);
+        var board = new LeaderboardComposer().Compose(scoredEpisodes, subject.Segment);
         var standing = new StandingComposer().Compose(subject, board, scoredEpisodes);
 
         var directory = Path.Combine(coordLogDirectory, DirectoryName);
@@ -87,8 +108,14 @@ public static class StandingPublisher
         // Via a temp file and a move so a reader never observes a half-written document — the file
         // is read by another process on its own schedule, so "in the middle of a write" is a state
         // that will occur rather than one that might.
+        // The marker is inserted into the serialised standing rather than modelled as a wrapper: a
+        // wrapper would nest the document one level and a parallel record would be a second
+        // definition of the same shape, free to drift from AgentStanding.
+        var document = JsonSerializer.SerializeToNode(standing, Json)!.AsObject();
+        document.Insert(0, GeneratedByField, JsonValue.Create(GeneratedBy));
+
         var temporary = path + ".tmp";
-        File.WriteAllText(temporary, JsonSerializer.Serialize(standing, Json));
+        File.WriteAllText(temporary, document.ToJsonString(Json));
         File.Move(temporary, path, overwrite: true);
 
         return path;

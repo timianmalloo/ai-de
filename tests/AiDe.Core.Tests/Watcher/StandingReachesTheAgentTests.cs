@@ -29,7 +29,7 @@ namespace AiDe.Core.Tests.Watcher;
 public sealed class StandingReachesTheAgentTests
 {
     private static ScoredEpisode Episode(string episodeId, double earned, DateTimeOffset at) =>
-        new(episodeId, "claude-code", "opus", "operator-1", "refactor", "weave/1",
+        new(episodeId, "claude-code", "opus", "operator-1", new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"),
             new Scorecard(
                 episodeId, "weave/1", WeaveVerdict.Scored,
                 [

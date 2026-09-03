@@ -169,7 +169,7 @@ public sealed class DeterministicSignalsDeriverTests
         {
             using var host = WatcherHost.Open(data, coord);
 
-            var imported = host.ImportAndScoreEpisodesFromAuditLog(auditPath);
+            var imported = host.ImportAndScoreEpisodesFromAuditLog(auditPath, TestWorkspaces.Repo);
             Assert.Equal(2, imported);
 
             var scored = host.Store.AllScoredEpisodes();
@@ -181,7 +181,7 @@ public sealed class DeterministicSignalsDeriverTests
             Assert.Equal("sess-p", scored.Single(s => s.EpisodeId == "ep:al-proof").OperatorId);
 
             // Idempotent: a re-run re-scores, it does not duplicate.
-            host.ImportAndScoreEpisodesFromAuditLog(auditPath);
+            host.ImportAndScoreEpisodesFromAuditLog(auditPath, TestWorkspaces.Repo);
             Assert.Equal(2, host.Store.AllScoredEpisodes().Count);
         }
         finally
@@ -213,7 +213,7 @@ public sealed class DeterministicSignalsDeriverTests
             // Deterministic-only (the safe default): the two advisory dimensions stay excluded.
             using (var host = WatcherHost.Open(data, coord))
             {
-                host.ImportAndScoreEpisodesFromAuditLog(auditPath);
+                host.ImportAndScoreEpisodesFromAuditLog(auditPath, TestWorkspaces.Repo);
                 var card = host.Store.AllScoredEpisodes().Single().Scorecard;
                 Assert.DoesNotContain(card.Assessments, a =>
                     a.Dimension is ScoreDimension.EvidenceDiscipline or ScoreDimension.SolutionEconomy
@@ -227,7 +227,7 @@ public sealed class DeterministicSignalsDeriverTests
                 var registry = new CalibrationRegistry();
                 registry.Qualify(evaluator.EvaluatorVersion, "audit-import", ScoreSchema.Weave1.Version);
 
-                host.ImportAndScoreEpisodesFromAuditLog(auditPath, "audit-import", evaluator, registry);
+                host.ImportAndScoreEpisodesFromAuditLog(auditPath, TestWorkspaces.Repo, "audit-import", evaluator, registry);
 
                 var card = host.Store.AllScoredEpisodes().Single().Scorecard;
                 Assert.Contains(card.Assessments, a =>

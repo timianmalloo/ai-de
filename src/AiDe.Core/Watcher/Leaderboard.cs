@@ -1,14 +1,90 @@
 namespace AiDe.Core.Watcher;
 
 /// <summary>
+/// The partition a Weave score is comparable within: one workspace, one task class, one score schema
+/// version. A comparison never crosses any of the three (spec US-14, rule 10).
+/// </summary>
+/// <param name="Workspace">
+/// The repository the work happened in - see <see cref="WorkspaceKey"/> for why it is the repository
+/// and not the checkout. <c>null</c> for a score recorded before segmentation existed, or where the
+/// repository could not be resolved; such an episode is excluded from every cell rather than pooled
+/// with other unknowns into a cohort that does not exist.
+/// </param>
+/// <remarks>
+/// <para><b>One type rather than three adjacent strings.</b> <c>TaskClass</c> and
+/// <c>SchemaVersion</c> already sat side by side in this record, in <see cref="Leaderboard"/>, and in
+/// the standing's trend filter; adding a third string of the same type would have made a reordered
+/// triple compile and pass, in the values that reach a surface and are read as meaning something.
+/// With one type the two filter predicates collapse into one equality, and the day a fourth axis
+/// arrives every call site breaks at once instead of silently accepting the wrong order.</para>
+///
+/// <para><b>The schema version is not the caller's to supply.</b> It comes from the scorecard the
+/// scorer produced, so <see cref="ScoringService"/> composes the segment rather than accepting one -
+/// two definitions of one quantity is a defect signature (DM7).</para>
+/// </remarks>
+public sealed record ScoreSegment(WorkspaceKey? Workspace, string TaskClass, string SchemaVersion)
+{
+    /// <summary>
+    /// The task class of an episode whose kind of work was never declared.
+    /// </summary>
+    /// <remarks>
+    /// The coordination contract carries a goal and a done-condition but <b>no task class</b> - an
+    /// agent declares what it is trying to do, not what kind of work it is. So the class is genuinely
+    /// absent, and this names the absence rather than inventing a kind. It is not a category anyone
+    /// can be ranked in: see <see cref="IsComparable"/>.
+    /// </remarks>
+    public const string Unclassified = "unclassified";
+
+    /// <summary>
+    /// Whether this segment is a cohort at all, and therefore whether a rank in it would mean anything.
+    /// </summary>
+    /// <remarks>
+    /// <para>Two conditions, both absences rather than values. <b>No workspace</b> - the repository
+    /// could not be resolved, or the row predates segmentation, so the directives the work happened
+    /// under are unknown. <b>No task class</b> - pooling every undeclared episode would compare a
+    /// spike against a refactor and read the difference as an agent improving, which is the exact
+    /// error segmentation exists to prevent.</para>
+    ///
+    /// <para>An incomparable segment still gets <b>scored</b> and still yields a standing; what it
+    /// does not get is a rank. That distinction is the whole point - Not Comparable is a statement
+    /// about the cohort, and a low score would be a statement about the agent.</para>
+    ///
+    /// <para>The rule lives here rather than in the composer because two consumers already ask it
+    /// (the board and the standing's trend), and a rule spelled twice is a rule that drifts.</para>
+    /// </remarks>
+    public bool IsComparable => IncomparableReason is null;
+
+    /// <summary>
+    /// Why this segment is not a cohort, or <c>null</c> when it is one.
+    /// </summary>
+    /// <remarks>
+    /// The reason travels with the verdict because the agent reading its standing sees only that it
+    /// has no rank. "No rank" with no cause is an empty state naming nothing (DC-087), and the two
+    /// causes want opposite responses: an undeclared task class is something the agent can fix, an
+    /// unresolvable repository is not.
+    /// </remarks>
+    public string? IncomparableReason
+        => Workspace is null ? "the repository this work happened in could not be resolved"
+            : string.Equals(TaskClass, Unclassified, StringComparison.Ordinal)
+                ? "the kind of work was not declared, so there is no cohort to rank within"
+                : null;
+}
+
+/// <summary>
 /// A scored episode with its harness/model/operator attribution - the input to the leaderboard and
 /// standing. <see cref="Weave"/> is the sum of the scored dimensions' earned points (there is no single
 /// stored score; it is derived, DM7).
 /// </summary>
 public sealed record ScoredEpisode(
     string EpisodeId, string? Harness, string? Model, string OperatorId,
-    string TaskClass, string SchemaVersion, Scorecard Scorecard)
+    ScoreSegment Segment, Scorecard Scorecard)
 {
+    /// <summary>The kind of work, from <see cref="Segment"/>.</summary>
+    public string TaskClass => Segment.TaskClass;
+
+    /// <summary>The score schema version, from <see cref="Segment"/>.</summary>
+    public string SchemaVersion => Segment.SchemaVersion;
+
     public double Weave => Scorecard.Assessments.Where(a => a.EarnedPoints is not null).Sum(a => a.EarnedPoints!.Value);
 
     public double? CoverageRatio => Scorecard.Coverage is { Required: > 0 } c ? (double)c.Observed / c.Required : null;
@@ -28,9 +104,15 @@ public sealed record LeaderboardCell(
     LeaderboardFacet Facet, string Label, int Cohort, double? MedianWeave, double? Coverage,
     int? Rank, bool Comparable, string? NotComparableReason);
 
-/// <summary>A leaderboard for one task class and score schema version (comparisons never cross either).</summary>
-public sealed record Leaderboard(string TaskClass, string SchemaVersion, IReadOnlyList<LeaderboardCell> Cells)
+/// <summary>A leaderboard for one <see cref="ScoreSegment"/> (comparisons never cross it).</summary>
+public sealed record Leaderboard(ScoreSegment Segment, IReadOnlyList<LeaderboardCell> Cells)
 {
+    /// <summary>The kind of work this board covers, from <see cref="Segment"/>.</summary>
+    public string TaskClass => Segment.TaskClass;
+
+    /// <summary>The score schema version this board covers, from <see cref="Segment"/>.</summary>
+    public string SchemaVersion => Segment.SchemaVersion;
+
     public LeaderboardCell? Cell(LeaderboardFacet facet, string label)
         => Cells.FirstOrDefault(c => c.Facet == facet && string.Equals(c.Label, label, StringComparison.Ordinal));
 }
@@ -43,16 +125,22 @@ public sealed record Leaderboard(string TaskClass, string SchemaVersion, IReadOn
 /// </summary>
 public sealed class LeaderboardComposer
 {
-    public Leaderboard Compose(IReadOnlyList<ScoredEpisode> episodes, string taskClass, string schemaVersion, int cohortMinimum = 5)
+    public Leaderboard Compose(IReadOnlyList<ScoredEpisode> episodes, ScoreSegment segment, int cohortMinimum = 5)
     {
         ArgumentNullException.ThrowIfNull(episodes);
+        ArgumentNullException.ThrowIfNull(segment);
 
-        // Segmentation (rule 10): never compare across task class or score schema version.
-        var scoped = episodes
-            .Where(e => e.IsScoreable
-                && string.Equals(e.TaskClass, taskClass, StringComparison.Ordinal)
-                && string.Equals(e.SchemaVersion, schemaVersion, StringComparison.Ordinal))
-            .ToList();
+        // A board for an incomparable segment is a board of a cohort that does not exist. Returning
+        // it empty is the honest answer: no cell, therefore no rank, rather than a rank derived from
+        // episodes that were never alike (see ScoreSegment.IsComparable).
+        if (!segment.IsComparable)
+        {
+            return new Leaderboard(segment, []);
+        }
+
+        // Segmentation (rule 10): never compare across workspace, task class, or score schema version.
+        // One value equality, because the segment is one value.
+        var scoped = episodes.Where(e => e.IsScoreable && e.Segment == segment).ToList();
 
         var cells = new List<LeaderboardCell>();
         cells.AddRange(FacetCells(scoped, LeaderboardFacet.Harness, e => e.Harness, cohortMinimum));
@@ -60,7 +148,7 @@ public sealed class LeaderboardComposer
         cells.AddRange(FacetCells(scoped, LeaderboardFacet.HarnessModel,
             e => e.Harness is null || e.Model is null ? null : $"{e.Harness} / {e.Model}", cohortMinimum));
 
-        return new Leaderboard(taskClass, schemaVersion, cells);
+        return new Leaderboard(segment, cells);
     }
 
     private static IEnumerable<LeaderboardCell> FacetCells(
@@ -140,10 +228,15 @@ public sealed record DimensionReason(ScoreDimension Dimension, string Reason);
 /// "every displayed evaluation or learning claim has evidence/confidence, or renders Not Recorded",
 /// and no-history is exactly that case.
 /// </remarks>
+/// <param name="NotComparableReason">
+/// Why no rank is shown, or <c>null</c> when one is. Present whenever <c>RankComparable</c> is false,
+/// so the agent is never told only that it has no rank (DC-087).
+/// </param>
 public sealed record AgentStanding(
     string EpisodeId, string? Harness, string? Model,
     int? Rank, int? Cohort, int? Trend, bool RankComparable,
-    IReadOnlyList<DimensionReason> Reasons);
+    IReadOnlyList<DimensionReason> Reasons,
+    string? NotComparableReason = null);
 
 /// <summary>
 /// Turns a scored episode + the leaderboard into per-turn standing (spec US-16). The rank is shown only
@@ -169,7 +262,10 @@ public sealed class StandingComposer
         ArgumentNullException.ThrowIfNull(board);
         ArgumentNullException.ThrowIfNull(history);
 
-        var trend = TrendFor(subject, history);
+        // No trend within an incomparable segment: two episodes that merely both lack a workspace or
+        // a task class are not the same cohort, and a movement derived from them would read as
+        // improvement. Null here means "nothing to compare against", which is what is true.
+        var trend = subject.Segment.IsComparable ? TrendFor(subject, history) : null;
 
         LeaderboardCell? cell = subject.Harness is not null && subject.Model is not null
             ? board.Cell(LeaderboardFacet.HarnessModel, $"{subject.Harness} / {subject.Model}")
@@ -180,20 +276,31 @@ public sealed class StandingComposer
             .Select(a => new DimensionReason(a.Dimension, a.Rationale))
             .ToList();
 
+        // The cause, in the order it becomes decidable: the segment is not a cohort at all; or it is,
+        // but this episode has no harness/model to place in a facet; or it has one and the cell itself
+        // is protected (too small, or a single operator).
+        var notComparable = comparable
+            ? null
+            : subject.Segment.IncomparableReason
+                ?? (cell is null
+                    ? "no harness and model were recorded for this session, so there is no facet to rank in"
+                    : cell.NotComparableReason);
+
         return new AgentStanding(
             subject.EpisodeId, subject.Harness, subject.Model,
             comparable ? cell!.Rank : null,
             comparable ? cell!.Cohort : null,
             trend,
             comparable,
-            reasons);
+            reasons,
+            notComparable);
     }
 
     /// <summary>
     /// Movement in Weave points against the previous episode of the same cohort, or null.
     /// </summary>
     /// <remarks>
-    /// <para><b>The cohort is harness + model + task class + schema</b> — the same partition the
+    /// <para><b>The cohort is harness + model + the score segment</b> - the same partition the
     /// leaderboard compares within (rule 11). A trend across task classes would compare a refactor
     /// against a spike and call the difference improvement.</para>
     ///
@@ -210,8 +317,7 @@ public sealed class StandingComposer
             .Where(e => !string.Equals(e.EpisodeId, subject.EpisodeId, StringComparison.Ordinal))
             .Where(e => string.Equals(e.Harness, subject.Harness, StringComparison.Ordinal)
                 && string.Equals(e.Model, subject.Model, StringComparison.Ordinal)
-                && string.Equals(e.TaskClass, subject.TaskClass, StringComparison.Ordinal)
-                && string.Equals(e.SchemaVersion, subject.SchemaVersion, StringComparison.Ordinal))
+                && e.Segment == subject.Segment)
             .Where(e => e.Scorecard.EvaluatedAt <= subject.Scorecard.EvaluatedAt)
             .OrderByDescending(e => e.Scorecard.EvaluatedAt)
             .ThenByDescending(e => e.EpisodeId, StringComparer.Ordinal)

@@ -185,13 +185,13 @@ public sealed class SiteRuleFixtureTests
             {
                 episodes.Add(new ScoredEpisode(
                     $"{label}-{i}", parts[0], parts[1], $"op-{label}-{i % operators}",
-                    "task", ScoreSchema.Weave1Version,
+                    new ScoreSegment(TestWorkspaces.Repo, "task", ScoreSchema.Weave1Version),
                     Card($"{label}-{i}", median)));
             }
         }
 
         var board = new LeaderboardComposer().Compose(
-            episodes, "task", ScoreSchema.Weave1Version, cohortMinimum);
+            episodes, new ScoreSegment(TestWorkspaces.Repo, "task", ScoreSchema.Weave1Version), cohortMinimum);
 
         foreach (var expected in kase.GetProperty("expect").EnumerateArray())
         {

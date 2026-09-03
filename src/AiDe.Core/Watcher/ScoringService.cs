@@ -55,11 +55,17 @@ public sealed class ScoringService(IWatcherObservationStore store, TimeProvider 
     /// <paramref name="registry"/> are supplied, the advisory dimensions are evaluated from the composed
     /// evidence and folded only if qualified; otherwise only the deterministic Weave is recorded.
     /// </summary>
+    /// <param name="workspace">
+    /// The repository the work happened in, or <c>null</c> when it could not be resolved. Required
+    /// rather than defaulted so every caller decides: a default here would silently record every
+    /// score into the unknown cohort, which reads as a working leaderboard with no rows.
+    /// </param>
     public ScoredEpisode ScoreAndRecord(
         WorkEpisode episode,
         DeterministicEpisodeSignals signals,
         string operatorId,
         string taskClass,
+        WorkspaceKey? workspace,
         string? harness = null,
         string? model = null,
         IAdvisoryEvaluator? evaluator = null,
@@ -84,8 +90,11 @@ public sealed class ScoringService(IWatcherObservationStore store, TimeProvider 
             card = new WeaveScorer().Score(episode, signals, _time);
         }
 
+        // The segment is composed here rather than accepted: the schema version belongs to the card
+        // the scorer just produced, and a caller-supplied one would be a second definition of it.
         var scored = new ScoredEpisode(
-            episode.EpisodeId, harness, model, operatorId, taskClass, card.SchemaVersion, card);
+            episode.EpisodeId, harness, model, operatorId,
+            new ScoreSegment(workspace, taskClass, card.SchemaVersion), card);
         _store.RecordScorecard(scored);
         return scored;
     }

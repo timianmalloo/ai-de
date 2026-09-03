@@ -115,17 +115,20 @@ public sealed class WatcherLeaderboardPaneViewModel(IWatcherLeaderboardQuery? qu
         {
             var episodes = query.GetScoredEpisodes();
 
-            // Segment by (task class, score schema) - a comparison never crosses either (rule 11).
+            // Segment by (workspace, task class, score schema) - a comparison never crosses any of
+            // the three (rule 11). Discovered from the episodes rather than enumerated, so a segment
+            // that is not comparable simply contributes no cells instead of an empty row.
             var segments = episodes
-                .Select(e => (e.TaskClass, e.SchemaVersion))
+                .Select(e => e.Segment)
                 .Distinct()
-                .OrderBy(s => s.TaskClass, StringComparer.Ordinal)
+                .OrderBy(s => s.Workspace?.Value ?? string.Empty, StringComparer.Ordinal)
+                .ThenBy(s => s.TaskClass, StringComparer.Ordinal)
                 .ThenBy(s => s.SchemaVersion, StringComparer.Ordinal);
 
             var rows = new List<WatcherLeaderboardRow>();
-            foreach (var (taskClass, schemaVersion) in segments)
+            foreach (var segment in segments)
             {
-                var board = _composer.Compose(episodes, taskClass, schemaVersion);
+                var board = _composer.Compose(episodes, segment);
                 rows.AddRange(board.Cells.Select(c => WatcherLeaderboardRow.From(board, c)));
             }
 

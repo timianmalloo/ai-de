@@ -65,7 +65,7 @@ public sealed class ScoringServiceTests
         var store = new InMemoryWatcherObservationStore();
         var svc = new ScoringService(store, Clock);
 
-        var scored = svc.ScoreAndRecord(Episode(), CleanSignals(), "op1", "refactor", "Claude Code", "Opus 4.8");
+        var scored = svc.ScoreAndRecord(Episode(), CleanSignals(), "op1", "refactor", TestWorkspaces.Repo, "Claude Code", "Opus 4.8");
 
         Assert.Single(store.AllScoredEpisodes());
         Assert.Equal(WeaveVerdict.Partial, scored.Scorecard.Verdict);
@@ -84,7 +84,7 @@ public sealed class ScoringServiceTests
         var registry = new CalibrationRegistry();
         registry.Qualify(evaluator.EvaluatorVersion, "refactor", "weave/1");
 
-        var scored = svc.ScoreAndRecord(Episode(), CleanSignals(), "op1", "refactor", "Claude Code", "Opus 4.8", evaluator, registry);
+        var scored = svc.ScoreAndRecord(Episode(), CleanSignals(), "op1", "refactor", TestWorkspaces.Repo, "Claude Code", "Opus 4.8", evaluator, registry);
 
         var evidence = scored.Scorecard.Assessments.Single(x => x.Dimension == ScoreDimension.EvidenceDiscipline);
         Assert.NotNull(evidence.EarnedPoints);                          // folded in (points earned)
@@ -99,7 +99,7 @@ public sealed class ScoringServiceTests
         var evaluator = new LocalHeuristicAdvisoryEvaluator();
         var registry = new CalibrationRegistry(); // nothing qualified
 
-        var scored = svc.ScoreAndRecord(Episode(), CleanSignals(), "op1", "refactor", "H", "M", evaluator, registry);
+        var scored = svc.ScoreAndRecord(Episode(), CleanSignals(), "op1", "refactor", TestWorkspaces.Repo, "H", "M", evaluator, registry);
 
         var evidence = scored.Scorecard.Assessments.Single(x => x.Dimension == ScoreDimension.EvidenceDiscipline);
         Assert.Equal(AssessmentPosture.Advisory, evidence.Posture);      // not qualified -> excluded
@@ -112,7 +112,7 @@ public sealed class ScoringServiceTests
         var store = new InMemoryWatcherObservationStore();
         var svc = new ScoringService(store, Clock);
 
-        var scored = svc.ScoreAndRecord(Episode(), CleanSignals(), "op7", "bugfix", "Codex", "GPT");
+        var scored = svc.ScoreAndRecord(Episode(), CleanSignals(), "op7", "bugfix", TestWorkspaces.Repo, "Codex", "GPT");
 
         Assert.Equal("op7", scored.OperatorId);
         Assert.Equal("bugfix", scored.TaskClass);
@@ -128,10 +128,10 @@ public sealed class ScoringServiceTests
         var svc = new ScoringService(store, Clock);
         for (var i = 0; i < 5; i++)
         {
-            svc.ScoreAndRecord(Episode($"ep-{i}"), CleanSignals(), i % 2 == 0 ? "op1" : "op2", "refactor", "Claude Code", "Opus 4.8");
+            svc.ScoreAndRecord(Episode($"ep-{i}"), CleanSignals(), i % 2 == 0 ? "op1" : "op2", "refactor", TestWorkspaces.Repo, "Claude Code", "Opus 4.8");
         }
 
-        var board = new LeaderboardComposer().Compose(store.AllScoredEpisodes(), "refactor", "weave/1");
+        var board = new LeaderboardComposer().Compose(store.AllScoredEpisodes(), new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"));
 
         var cell = board.Cell(LeaderboardFacet.HarnessModel, "Claude Code / Opus 4.8");
         Assert.NotNull(cell);
@@ -144,11 +144,11 @@ public sealed class ScoringServiceTests
     {
         var store = new InMemoryWatcherObservationStore();
         var svc = new ScoringService(store, Clock);
-        svc.ScoreAndRecord(Episode(), CleanSignals(), "op1", "refactor");
+        svc.ScoreAndRecord(Episode(), CleanSignals(), "op1", "refactor", TestWorkspaces.Repo);
 
         // Re-score the same episode with a floor tripped -> the persisted card is replaced (a cache refresh).
         var blocked = CleanSignals() with { UnresolvedFloorBlockers = new HashSet<FloorDomain> { FloorDomain.Correctness } };
-        var second = svc.ScoreAndRecord(Episode(), blocked, "op1", "refactor");
+        var second = svc.ScoreAndRecord(Episode(), blocked, "op1", "refactor", TestWorkspaces.Repo);
 
         Assert.Single(store.AllScoredEpisodes());
         Assert.Equal(WeaveVerdict.Blocked, second.Scorecard.Verdict);

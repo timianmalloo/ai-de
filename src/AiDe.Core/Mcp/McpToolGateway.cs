@@ -127,7 +127,7 @@ public sealed class McpToolGateway(
                 return (null, "none", new ResultBounds(0, 0, 0, 0, 0, 0, 0, false, null));
             }
 
-            var board = new LeaderboardComposer().Compose(episodes, subject.TaskClass, subject.SchemaVersion);
+            var board = new LeaderboardComposer().Compose(episodes, subject.Segment);
             var standing = new StandingComposer().Compose(subject, board, episodes);
 
             // One node (the subject), one "edge" per reason: the bounds a caller degraded to

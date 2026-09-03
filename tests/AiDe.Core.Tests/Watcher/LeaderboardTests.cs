@@ -19,7 +19,7 @@ public sealed class LeaderboardTests
         var card = new Scorecard(id, schema, WeaveVerdict.Partial,
             [new DimensionAssessment(ScoreDimension.OutcomeIntegrity, 30, 4, weave, AssessmentPosture.Deterministic, $"reason {id}")],
             [], new EvidenceCoverage(9, 10), $"Partial: {weave} / 30 observed", At);
-        return new ScoredEpisode(id, harness, model, op, "refactor", schema, card);
+        return new ScoredEpisode(id, harness, model, op, new ScoreSegment(TestWorkspaces.Repo, "refactor", schema), card);
     }
 
     // Five episodes for a harness/model across two operators, at a given median weave.
@@ -35,7 +35,7 @@ public sealed class LeaderboardTests
             .Concat(Cohort("Copilot", "GPT-5.6", 60, 62, 64, 66, 68))          // median 64
             .ToList();
 
-        var board = Composer.Compose(episodes, "refactor", "weave/1");
+        var board = Composer.Compose(episodes, new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"));
 
         var claude = board.Cell(LeaderboardFacet.Harness, "Claude Code")!;
         var copilot = board.Cell(LeaderboardFacet.Harness, "Copilot")!;
@@ -51,7 +51,7 @@ public sealed class LeaderboardTests
     {
         var episodes = Cohort("Claude Code", "Opus 4.8", 80, 82, 84, 86).ToList(); // only 4
 
-        var cell = Composer.Compose(episodes, "refactor", "weave/1").Cell(LeaderboardFacet.Harness, "Claude Code")!;
+        var cell = Composer.Compose(episodes, new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1")).Cell(LeaderboardFacet.Harness, "Claude Code")!;
 
         Assert.False(cell.Comparable);
         Assert.Null(cell.Rank);
@@ -66,7 +66,7 @@ public sealed class LeaderboardTests
             .Select(i => Ep($"m-{i}", "Claude Code", "Opus 4.8", "only-op", 80 + i))
             .ToList();
 
-        var cell = Composer.Compose(episodes, "refactor", "weave/1").Cell(LeaderboardFacet.Harness, "Claude Code")!;
+        var cell = Composer.Compose(episodes, new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1")).Cell(LeaderboardFacet.Harness, "Claude Code")!;
 
         Assert.False(cell.Comparable);
         Assert.Contains("single operator", cell.NotComparableReason);
@@ -79,7 +79,7 @@ public sealed class LeaderboardTests
             .Concat(Enumerable.Range(0, 5).Select(i => Ep($"v2-{i}", "Claude Code", "Opus 4.8", i % 2 == 0 ? "op1" : "op2", 10, schema: "weave/2")))
             .ToList();
 
-        var cell = Composer.Compose(episodes, "refactor", "weave/1").Cell(LeaderboardFacet.Harness, "Claude Code")!;
+        var cell = Composer.Compose(episodes, new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1")).Cell(LeaderboardFacet.Harness, "Claude Code")!;
 
         Assert.Equal(5, cell.Cohort);       // only the weave/1 episodes
         Assert.Equal(84, cell.MedianWeave); // the weave/2 (10) episodes did not drag it down
@@ -90,7 +90,7 @@ public sealed class LeaderboardTests
     {
         var episodes = Cohort("Claude Code", "Opus 4.8", 80, 82, 84, 86, 88).ToList();
 
-        var cell = Composer.Compose(episodes, "refactor", "weave/1").Cell(LeaderboardFacet.HarnessModel, "Claude Code / Opus 4.8")!;
+        var cell = Composer.Compose(episodes, new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1")).Cell(LeaderboardFacet.HarnessModel, "Claude Code / Opus 4.8")!;
 
         Assert.True(cell.Comparable);
         Assert.Equal(1, cell.Rank);
@@ -105,13 +105,13 @@ public sealed class LeaderboardTests
         var signals = new DeterministicEpisodeSignals(true, true, true, false,
             new HashSet<FloorDomain>(), 0, false, 3, 3, 2, 2, true, 10, 9);
         var card = new WeaveScorer().Score(episode, signals, new FixedTimeProvider(At));
-        return new ScoredEpisode("ep-subject", harness, model, "op1", "refactor", "weave/1", card);
+        return new ScoredEpisode("ep-subject", harness, model, "op1", new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"), card);
     }
 
     [Fact]
     public void Standing_ComparableCell_ShowsRankTrend_AndOneReasonPerDimension()
     {
-        var board = Composer.Compose(Cohort("Claude Code", "Opus 4.8", 80, 82, 84, 86, 88).ToList(), "refactor", "weave/1");
+        var board = Composer.Compose(Cohort("Claude Code", "Opus 4.8", 80, 82, 84, 86, 88).ToList(), new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"));
         var subject = SixDimensionSubject();
 
         // A HISTORY, not a trend. These tests used to pass `trend: 3` — a number nothing in the
@@ -130,7 +130,7 @@ public sealed class LeaderboardTests
     [Fact]
     public void Standing_InsufficientCohort_RankNotComparable_ButReasonsAndTrendPresent()
     {
-        var board = Composer.Compose(Cohort("Claude Code", "Opus 4.8", 80, 82, 84).ToList(), "refactor", "weave/1"); // cohort 3
+        var board = Composer.Compose(Cohort("Claude Code", "Opus 4.8", 80, 82, 84).ToList(), new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1")); // cohort 3
         var subject = SixDimensionSubject();
 
         var earlier = Ep("ep-earlier", "Claude Code", "Opus 4.8", "op1", subject.Weave + 1);

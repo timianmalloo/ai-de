@@ -77,7 +77,12 @@ public sealed record RepositoryIdentity
     public string DisplayName { get; init; }
 
     /// <summary>Two spellings of one path become one string; two paths stay two.</summary>
-    private static string Canonicalise(string path)
+    /// <remarks>
+    /// Public because <see cref="WorkspaceKey"/> keys the same directories and two implementations of
+    /// one canonicalisation is the shape that drifts apart — a repository grouping one way in the
+    /// fleet map and another on the leaderboard would be invisible until the cohorts disagreed.
+    /// </remarks>
+    public static string Canonicalise(string path)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -94,6 +99,51 @@ public sealed record RepositoryIdentity
 
         return OperatingSystem.IsWindows() ? normalised.ToLowerInvariant() : normalised;
     }
+}
+
+/// <summary>
+/// The workspace a Weave score is keyed to: the <b>repository</b>, never the checkout.
+/// </summary>
+/// <remarks>
+/// <para><b>Why the repository and not the checkout.</b> A score is workspace-keyed because how an
+/// agent works is partly a product of the repository's directives, conventions and gates. Two
+/// worktrees of one repository <i>share</i> all three, so keying on the checkout would segment on the
+/// one axis that carries no difference in what is being measured.</para>
+///
+/// <para><b>And the failure would have been quiet.</b> Splitting a cohort shrinks every leaderboard
+/// cell; a cell under the minimum renders Not Comparable — which is the de-anonymisation guard. The
+/// privacy protection would have fired correctly for a reason that was not privacy, and the surface
+/// would have looked right while meaning something else.</para>
+///
+/// <para><b>The repository is already what the product resolves.</b>
+/// <c>WorkbenchShell.ResolveGitFacts</c> takes <c>--git-common-dir</c>'s parent, so a linked worktree
+/// and its primary checkout both answer with the primary path — measured in this repository's own two
+/// trees. Nothing <i>enforces</i> it, though: an externally registering agent composes its own
+/// <c>repo.path</c>, so <see cref="From(string?)"/> is the one place that decides, and
+/// <c>TheWorkspaceKeyIsTheRepositoryNotTheCheckout</c> is the control.</para>
+///
+/// <para><b>Absence is stated, never defaulted.</b> An unresolvable workspace yields <c>null</c>, and a
+/// null-workspace episode is excluded from every leaderboard cell rather than placed in a cohort of
+/// unknowns. Falling back to the checkout path here would silently reintroduce the split and be
+/// indistinguishable from working.</para>
+/// </remarks>
+public sealed record WorkspaceKey
+{
+    private WorkspaceKey(string value) => Value = value;
+
+    /// <summary>The canonicalised repository path.</summary>
+    public string Value { get; }
+
+    /// <summary>The key for a repository, or <c>null</c> when there is no path to key on.</summary>
+    public static WorkspaceKey? From(string? canonicalPath)
+        => string.IsNullOrWhiteSpace(canonicalPath)
+            ? null
+            : new WorkspaceKey(RepositoryIdentity.Canonicalise(canonicalPath));
+
+    /// <summary>The key for a bound session's repository.</summary>
+    public static WorkspaceKey? From(RepositoryIdentity? repository) => From(repository?.CanonicalPath);
+
+    public override string ToString() => Value;
 }
 
 /// <summary>A worktree of a repository.</summary>

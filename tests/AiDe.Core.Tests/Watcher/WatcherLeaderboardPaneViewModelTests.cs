@@ -31,7 +31,7 @@ public sealed class WatcherLeaderboardPaneViewModelTests
         var card = new Scorecard(id, schema, WeaveVerdict.Partial,
             [new DimensionAssessment(ScoreDimension.OutcomeIntegrity, 30, 4, weave, AssessmentPosture.Deterministic, $"reason {id}")],
             [], new EvidenceCoverage(9, 10), $"Partial: {weave} / 30 observed", At);
-        return new ScoredEpisode(id, harness, model, op, task, schema, card);
+        return new ScoredEpisode(id, harness, model, op, new ScoreSegment(TestWorkspaces.Repo, task, schema), card);
     }
 
     private static IEnumerable<ScoredEpisode> Cohort(string harness, string model, string task, params double[] weaves)

@@ -14,7 +14,7 @@ namespace AiDe.Core.Watcher;
 /// </summary>
 public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, IDisposable
 {
-    private const int SchemaVersion = 3;
+    private const int SchemaVersion = 4;
 
     private readonly SqliteConnection _connection;
     private readonly object _gate = new();
@@ -609,12 +609,13 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
                 """
                 INSERT INTO scored_episode_cell
                     (episode_id, harness, model, operator_id, task_class, schema_version,
-                     verdict, headline, coverage_observed, coverage_required, evaluated_at)
-                VALUES ($id, $harness, $model, $op, $task, $schema, $verdict, $headline, $covObs, $covReq, $at)
+                     verdict, headline, coverage_observed, coverage_required, evaluated_at, workspace)
+                VALUES ($id, $harness, $model, $op, $task, $schema, $verdict, $headline, $covObs, $covReq, $at, $ws)
                 ON CONFLICT(episode_id) DO UPDATE SET
                     harness = $harness, model = $model, operator_id = $op, task_class = $task,
                     schema_version = $schema, verdict = $verdict, headline = $headline,
-                    coverage_observed = $covObs, coverage_required = $covReq, evaluated_at = $at;
+                    coverage_observed = $covObs, coverage_required = $covReq, evaluated_at = $at,
+                    workspace = $ws;
                 """,
                 tx,
                 ("$id", scored.EpisodeId),
@@ -627,7 +628,8 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
                 ("$headline", card.Headline),
                 ("$covObs", card.Coverage is { } c1 ? c1.Observed : (object?)null),
                 ("$covReq", card.Coverage is { } c2 ? c2.Required : (object?)null),
-                ("$at", card.EvaluatedAt.ToUniversalTime().ToString("O")));
+                ("$at", card.EvaluatedAt.ToUniversalTime().ToString("O")),
+                ("$ws", scored.Segment.Workspace?.Value));
 
             ExecuteNonQuery(_connection, "DELETE FROM score_dimension_cell WHERE episode_id = $id;", tx, ("$id", scored.EpisodeId));
             ExecuteNonQuery(_connection, "DELETE FROM score_tripped_floor_cell WHERE episode_id = $id;", tx, ("$id", scored.EpisodeId));
@@ -690,14 +692,14 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
     private const string ScoredEpisodeSelect =
         """
         SELECT episode_id, harness, model, operator_id, task_class, schema_version,
-               verdict, headline, coverage_observed, coverage_required, evaluated_at
+               verdict, headline, coverage_observed, coverage_required, evaluated_at, workspace
         FROM scored_episode_cell
         """;
 
     private IReadOnlyList<ScoredEpisode> ReadScoredEpisodes(SqliteCommand command)
     {
         var rows = new List<(string Id, string? Harness, string? Model, string Op, string Task, string Schema,
-            WeaveVerdict Verdict, string Headline, EvidenceCoverage? Coverage, DateTimeOffset At)>();
+            WeaveVerdict Verdict, string Headline, EvidenceCoverage? Coverage, DateTimeOffset At, string? Workspace)>();
 
         using (var reader = command.ExecuteReader())
         {
@@ -716,7 +718,11 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
                     Enum.Parse<WeaveVerdict>(reader.GetString(6)),
                     reader.GetString(7),
                     coverage,
-                    DateTimeOffset.Parse(reader.GetString(10), null, System.Globalization.DateTimeStyles.RoundtripKind)));
+                    DateTimeOffset.Parse(reader.GetString(10), null, System.Globalization.DateTimeStyles.RoundtripKind),
+                    // NULL for a row written before segmentation existed. Read back as an absent
+                    // workspace, never as a path - a backfill here would be a guess (DM: a backfill
+                    // never guesses), and the row is excluded from cells rather than mis-compared.
+                    reader.IsDBNull(11) ? null : reader.GetString(11)));
             }
         }
 
@@ -726,7 +732,9 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             var assessments = ReadDimensions(row.Id);
             var floors = ReadTrippedFloors(row.Id);
             var card = new Scorecard(row.Id, row.Schema, row.Verdict, assessments, floors, row.Coverage, row.Headline, row.At);
-            result.Add(new ScoredEpisode(row.Id, row.Harness, row.Model, row.Op, row.Task, row.Schema, card));
+            result.Add(new ScoredEpisode(
+                row.Id, row.Harness, row.Model, row.Op,
+                new ScoreSegment(WorkspaceKey.From(row.Workspace), row.Task, row.Schema), card));
         }
 
         return result;
@@ -862,7 +870,8 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
     /// rewrites or drops. So there is no backfill to get wrong and nothing to roll back.</para>
     ///
     /// <para><b>And idempotent, which this comment claimed before it was true.</b> The DDL uses
-    /// <c>IF NOT EXISTS</c>, so a database that already holds part of a later shape — a shortcut
+    /// <c>IF NOT EXISTS</c> and a column add is guarded by <see cref="ColumnExists"/> (SQLite
+    /// has no conditional ADD COLUMN), so a database that already holds part of a later shape — a shortcut
     /// during a repair, an interrupted run, a hand edit — heals instead of refusing to open. The
     /// first version said "re-running is safe" while a re-run would have thrown; a test rewinding a
     /// version without dropping everything that came after it is what found the gap between the
@@ -891,13 +900,36 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         }
 
         using var tx = connection.BeginTransaction();
-        foreach (var (version, ddl) in Migrations.Where(m => m.Version > current).OrderBy(m => m.Version))
+        foreach (var (version, ddl, addsColumn) in Migrations.Where(m => m.Version > current).OrderBy(m => m.Version))
         {
-            ExecuteNonQuery(connection, ddl, tx);
+            // SQLite has no "ADD COLUMN IF NOT EXISTS", so the guard is explicit rather than in the
+            // DDL. Without it the idempotency this method claims would be false for exactly one
+            // migration shape, and the claim is load-bearing: a database that already holds part of
+            // a later shape must heal rather than refuse to open.
+            if (addsColumn is { } add && !ColumnExists(connection, tx, add.Table, add.Column))
+            {
+                ExecuteNonQuery(connection, $"ALTER TABLE {add.Table} ADD COLUMN {add.Column} {add.Declaration};", tx);
+            }
+
+            if (!string.IsNullOrWhiteSpace(ddl))
+            {
+                ExecuteNonQuery(connection, ddl, tx);
+            }
+
             RecordVersion(connection, tx, version);
         }
 
         tx.Commit();
+    }
+
+    /// <summary>Whether a column is already present, so an ADD COLUMN can be skipped rather than throw.</summary>
+    private static bool ColumnExists(SqliteConnection connection, SqliteTransaction tx, string table, string column)
+    {
+        using var command = connection.CreateCommand();
+        command.Transaction = tx;
+        command.CommandText = $"SELECT count(*) FROM pragma_table_info('{table}') WHERE name = $c;";
+        command.Parameters.AddWithValue("$c", column);
+        return Convert.ToInt64(command.ExecuteScalar() ?? 0L) > 0;
     }
 
     private static void RecordVersion(SqliteConnection connection, SqliteTransaction tx, int version)
@@ -913,10 +945,12 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
     /// </summary>
     /// <remarks>
     /// Each entry must also appear in <see cref="SchemaSql"/>, so a fresh database and a migrated
-    /// one end up identical. <c>SchemaMatchesAfterMigrationTests</c> asserts exactly that by
-    /// comparing the two, because two definitions of one schema is the shape that drifts.
+    /// one end up identical. <c>DaydreamPersistenceTests.AFreshDatabaseAndAMigratedOneHaveTheSameSchema</c>
+    /// asserts exactly that by comparing <c>sqlite_master</c>, because two definitions of one schema
+    /// is the shape that drifts. (This previously named a class that has never existed - a comment
+    /// asserting a control by a name nothing resolves is the prose form of an unenforced invariant.)
     /// </remarks>
-    private static readonly (int Version, string Ddl)[] Migrations =
+    private static readonly (int Version, string Ddl, (string Table, string Column, string Declaration)? AddsColumn)[] Migrations =
     [
         (2, """
             CREATE TABLE IF NOT EXISTS daydream_observation_fact (
@@ -930,7 +964,7 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
                 observed_at     TEXT NOT NULL
             );
             CREATE INDEX IF NOT EXISTS ix_daydream_observation_episode ON daydream_observation_fact (episode_id);
-            """),
+            """, null),
         (3, """
             CREATE TABLE IF NOT EXISTS daydream_event_fact (
                 event_id        TEXT    NOT NULL PRIMARY KEY,
@@ -947,7 +981,12 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
                 sequence        INTEGER NOT NULL
             );
             CREATE INDEX IF NOT EXISTS ix_daydream_event_sequence ON daydream_event_fact (sequence);
-            """),
+            """, null),
+
+        // v4: the score segment gains its workspace. Expand-only and nullable - existing rows keep a
+        // NULL workspace and read back as an absent one, because the repository a past score was
+        // earned in is not recoverable from the row and inventing it would be a backfill that guessed.
+        (4, "", ("scored_episode_cell", "workspace", "TEXT NULL")),
     ];
 
     private const string SchemaSql =
@@ -1053,7 +1092,12 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             headline          TEXT    NOT NULL,
             coverage_observed INTEGER NULL,
             coverage_required INTEGER NULL,
-            evaluated_at      TEXT    NOT NULL
+            evaluated_at      TEXT    NOT NULL,
+            -- The REPOSITORY the work happened in, not the checkout (see WorkspaceKey). NULL for a
+            -- row written before v4; such a row is excluded from leaderboard cells rather than
+            -- backfilled with a path nobody observed. Declared LAST so a fresh database and one
+            -- migrated by ALTER TABLE ADD COLUMN produce the same sqlite_master text.
+            workspace         TEXT    NULL
         );
         CREATE INDEX ix_scored_episode_task ON scored_episode_cell (task_class, schema_version);
 

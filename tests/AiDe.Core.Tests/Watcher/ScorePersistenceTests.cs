@@ -30,7 +30,7 @@ public sealed class ScorePersistenceTests
         var signals = new DeterministicEpisodeSignals(true, true, true, false,
             new HashSet<FloorDomain>(), 0, false, 3, 3, 2, 2, true, 10, 9);
         var derived = new WeaveScorer().Score(episode, signals, new FixedTimeProvider(At));
-        return (new ScoredEpisode(id, harness, model, op, "refactor", "weave/1", derived), derived);
+        return (new ScoredEpisode(id, harness, model, op, new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"), derived), derived);
     }
 
     private static void AssertSameCard(ScoredEpisode expected, ScoredEpisode actual)
@@ -122,7 +122,7 @@ public sealed class ScorePersistenceTests
     {
         using var store = SqliteWatcherObservationStore.Open(NewDbPath());
         // First card: a hand-built two-dimension card with a tripped floor.
-        var first = new ScoredEpisode("ep-1", "H", "M", "op1", "refactor", "weave/1",
+        var first = new ScoredEpisode("ep-1", "H", "M", "op1", new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"),
             new Scorecard("ep-1", "weave/1", WeaveVerdict.Blocked,
                 [
                     new DimensionAssessment(ScoreDimension.OutcomeIntegrity, 30, 0, null, AssessmentPosture.Deterministic, "floored"),
@@ -132,7 +132,7 @@ public sealed class ScorePersistenceTests
         store.RecordScorecard(first);
 
         // Recompute: a single-dimension Partial card with no floors. The upsert must replace children.
-        var second = new ScoredEpisode("ep-1", "H", "M", "op1", "refactor", "weave/1",
+        var second = new ScoredEpisode("ep-1", "H", "M", "op1", new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"),
             new Scorecard("ep-1", "weave/1", WeaveVerdict.Partial,
                 [new DimensionAssessment(ScoreDimension.OutcomeIntegrity, 30, 4, 30, AssessmentPosture.Deterministic, "clean")],
                 [], new EvidenceCoverage(3, 3), "Partial: 30 / 30 observed", At.AddMinutes(1)));
@@ -149,7 +149,7 @@ public sealed class ScorePersistenceTests
     public void Sqlite_NullCoverage_RoundTripsAsNull_NotZero()
     {
         using var store = SqliteWatcherObservationStore.Open(NewDbPath());
-        var scored = new ScoredEpisode("ep-nc", "H", "M", "op1", "refactor", "weave/1",
+        var scored = new ScoredEpisode("ep-nc", "H", "M", "op1", new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"),
             new Scorecard("ep-nc", "weave/1", WeaveVerdict.NotScored,
                 [], [], Coverage: null, "Not Scored: no goal", At));
 
@@ -169,7 +169,7 @@ public sealed class ScorePersistenceTests
             store.RecordScorecard(scored);
         }
 
-        var board = new LeaderboardComposer().Compose(store.AllScoredEpisodes(), "refactor", "weave/1");
+        var board = new LeaderboardComposer().Compose(store.AllScoredEpisodes(), new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"));
 
         var cell = board.Cell(LeaderboardFacet.HarnessModel, "Claude Code / Opus 4.8");
         Assert.NotNull(cell);

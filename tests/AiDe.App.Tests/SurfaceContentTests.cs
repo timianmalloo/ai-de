@@ -298,7 +298,7 @@ public sealed class SurfaceContentTests
                 var card = new Scorecard($"ep-{i}", "weave/1", WeaveVerdict.Partial,
                     [new DimensionAssessment(ScoreDimension.OutcomeIntegrity, 30, 4, 80 + i, AssessmentPosture.Deterministic, "r")],
                     [], new EvidenceCoverage(9, 10), $"Partial: {80 + i} / 30 observed", DateTimeOffset.UnixEpoch);
-                return new ScoredEpisode($"ep-{i}", "Claude Code", "Opus 4.8", i % 2 == 0 ? "op1" : "op2", "refactor", "weave/1", card);
+                return new ScoredEpisode($"ep-{i}", "Claude Code", "Opus 4.8", i % 2 == 0 ? "op1" : "op2", new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"), card);
             }).ToArray();
             var query = new StubLeaderboardQuery(episodes);
 

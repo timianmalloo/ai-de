@@ -39,7 +39,7 @@ public sealed class AnAgentCanPullItsOwnStandingTests
 
     /// <summary>A scored episode for one harness/model, at a given point in the sequence.</summary>
     private static ScoredEpisode Episode(string id, string harness, string model, double earned) =>
-        new(id, harness, model, "operator-1", "refactor", "weave/1",
+        new(id, harness, model, "operator-1", new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"),
             new Scorecard(
                 id, "weave/1", WeaveVerdict.Scored,
                 [

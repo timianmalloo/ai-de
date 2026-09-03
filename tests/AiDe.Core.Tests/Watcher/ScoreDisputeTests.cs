@@ -32,7 +32,7 @@ public sealed class ScoreDisputeTests
         var card = new Scorecard(id, "weave/1", WeaveVerdict.Partial,
             [new DimensionAssessment(ScoreDimension.OutcomeIntegrity, 30, 4, weave, AssessmentPosture.Deterministic, "r")],
             [], new EvidenceCoverage(9, 10), $"Partial: {weave} / 30 observed", At);
-        return new ScoredEpisode(id, "Claude Code", "Opus 4.8", "op1", "refactor", "weave/1", card);
+        return new ScoredEpisode(id, "Claude Code", "Opus 4.8", "op1", new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"), card);
     }
 
     [Fact]
@@ -178,7 +178,7 @@ public sealed class ScoreDisputeTests
             var card = new Scorecard($"ep-{i}", "weave/1", WeaveVerdict.Partial,
                 [new DimensionAssessment(ScoreDimension.OutcomeIntegrity, 30, 4, 80 + i, AssessmentPosture.Deterministic, "r")],
                 [], new EvidenceCoverage(9, 10), $"Partial: {80 + i} / 30 observed", At);
-            store.RecordScorecard(new ScoredEpisode($"ep-{i}", "Claude Code", "Opus 4.8", i % 2 == 0 ? "op1" : "op2", "refactor", "weave/1", card));
+            store.RecordScorecard(new ScoredEpisode($"ep-{i}", "Claude Code", "Opus 4.8", i % 2 == 0 ? "op1" : "op2", new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"), card));
         }
         store.AppendScoreDispute(Dispute(id: "d1", episode: "ep-0"));
         store.AppendScoreDispute(Dispute(id: "d2", episode: "ep-3"));
@@ -197,7 +197,7 @@ public sealed class ScoreDisputeTests
         var card = new Scorecard("ep-0", "weave/1", WeaveVerdict.Partial,
             [new DimensionAssessment(ScoreDimension.OutcomeIntegrity, 30, 4, 80, AssessmentPosture.Deterministic, "r")],
             [], new EvidenceCoverage(9, 10), "Partial: 80 / 30 observed", At);
-        store.RecordScorecard(new ScoredEpisode("ep-0", "H", "M", "op1", "refactor", "weave/1", card));
+        store.RecordScorecard(new ScoredEpisode("ep-0", "H", "M", "op1", new ScoreSegment(TestWorkspaces.Repo, "refactor", "weave/1"), card));
 
         var pane = new WatcherLeaderboardPaneViewModel(new WatcherLeaderboardQuery(store));
         pane.Load();
