@@ -652,7 +652,7 @@ True when nothing fell short and no floor tripped — a clean episode.
 *record* — `DaydreamObservation.cs`
 
 One observed occurrence of one candidate pattern in one Work Episode at one observation time
-(spec line 237 — the declared grain).
+(the spec's grain table, `Daydream Observation` row — the declared grain).
 
 **Remarks.** Append-only. An observation is never edited; a re-observation of the same episode is a new row
 and the fold deduplicates by episode, so replay is deterministic and a correction is a

@@ -244,6 +244,13 @@ public sealed class WatcherDaydreamPaneTests
     /// "No patterns observed yet" from a pane that never opened a repository is a claim about the
     /// repository it did not look at (DC-025, DC-087).
     /// </remarks>
+    /// <remarks>
+    /// <b>OBSERVED RED</b> on 2026-09-02 by removing the pre-read absence check from <c>Load</c>:
+    /// the pane then asks an unavailable record for candidates, the stub throws, and it reports
+    /// <c>Error</c> — "the record could not be read" — instead of "no repository is open". Replayed
+    /// rather than assumed, because a test written at the same moment as its fix has never been
+    /// shown capable of failing, and one that cannot fail is decoration (DC-016).
+    /// </remarks>
     [Fact]
     public void NoRepositorySaysSoRatherThanReportingNoPatterns()
     {
@@ -269,6 +276,12 @@ public sealed class WatcherDaydreamPaneTests
     /// The case most likely to be missed: with no rows the pane takes the empty branch, and an
     /// empty branch that drops the caveat reports "nothing has happened here" about a file it could
     /// not finish reading.
+    /// </remarks>
+    /// <remarks>
+    /// <b>OBSERVED RED</b> on 2026-09-02 by dropping <c>+ caveat</c> from the empty branch alone —
+    /// the populated branch kept it, and this test went red while every other pane test stayed
+    /// green. That specificity is the point: it fails for the branch it is about, and would not
+    /// have caught a regression it does not cover.
     /// </remarks>
     [Fact]
     public void AnEmptyButPartlyUnreadableRecordStillSaysSo()

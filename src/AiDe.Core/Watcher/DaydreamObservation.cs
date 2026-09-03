@@ -70,7 +70,7 @@ public sealed record DaydreamSignature(
 
 /// <summary>
 /// One observed occurrence of one candidate pattern in one Work Episode at one observation time
-/// (spec line 237 — the declared grain).
+/// (the spec's grain table, <c>Daydream Observation</c> row — the declared grain).
 /// </summary>
 /// <remarks>
 /// Append-only. An observation is never edited; a re-observation of the same episode is a new row
