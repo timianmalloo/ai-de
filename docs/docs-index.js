@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T03:02:36Z",
+  "generated": "2026-09-03T03:25:14Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1480,7 +1480,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 78 members, 65% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 80 members, 63% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1493,7 +1493,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "562b030c4230f3d2320b4214e74300a821c6fc74cddb2735355149f6c0961cbd"
+      "sourceSha256": "04bf396dbd005849202091b92b89390fd815753a785a2568083121ef0da73c40"
     },
     {
       "id": "api-aide-core-projections",
@@ -1605,7 +1605,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 138 types, 241 members, 58% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 141 types, 253 members, 59% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1618,7 +1618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d11160699847cb06baa5a7d55d0632e35aa5c715eb52c5e88d493c3eb3a65c9f"
+      "sourceSha256": "9f797fd818398d802a6dd63a42f50f5032907a1c2ef35b53f4937982fd1baba5"
     },
     {
       "id": "api-aide-core-workbench",
@@ -3089,7 +3089,7 @@ window.DOCS_INDEX = {
       "phase": "3",
       "reviewBy": "2027-03-02",
       "reviewSuggested": [],
-      "summary": "Closes the spec's open item \"Daydream-to-Dream schema alignment and deletion/retraction need design\". Daydream is the online half of continuous improvement — per-episode, cross-harness, running while agents work; the pack's offline /dream is the batch half. Daydream emits candidates in a shape dream.py ingests as signals, one-way, and the pack stays an optional detected integration rather than a runtime dependency of the product.",
+      "summary": "Closes the spec's open item \"Daydream-to-Dream schema alignment and deletion/retraction need design\". Daydream is per-repository and its record lives IN that repository, written by the product and marked with its provenance; Dream is learning across repositories and stays the pack's. Revised twice: a spike falsified the original emit direction, and the owner then answered the boundary question the first revision was built around — so the seam is no longer a pipeline Daydream pushes into, and the pack stays an optional detected read.",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -3127,7 +3127,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "69e769a78d66881703c7744a6b5303c1bd14b44b41596cdcb7d077f4799f104b"
+      "sourceSha256": "de0788f954b4f8df7f4ffb9e66030a9ae04e29db85f069c804e84e3bf90eaee3"
     },
     {
       "id": "design-watcher-dispute-command",
@@ -4145,7 +4145,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8dd245f119d9eca1bf19ad7ab25df457c7d87fce889568b9ad42a260db78e5d2"
+      "sourceSha256": "c947ed65e78c45c4e1d9aa6ec6b34c5b59321a7f4658dc42e1cb0e086ac9ab82"
     },
     {
       "id": "diagram-class",
@@ -10830,5 +10830,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "62c2c1ec95f4748cbf99578d834be4b2c13988742e59f30be08c21650161e715"
+  "graphSha256": "224841696637599e0b19c267cf8f47318ad5b16bf3232d886797e683545a7fe6"
 };

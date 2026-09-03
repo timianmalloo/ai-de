@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation: 32 types, 78 members, 65% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation: 32 types, 80 members, 63% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation`
 
-**32 public types · 78 public members · 65% documented.**
+**32 public types · 80 public members · 63% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -374,14 +374,27 @@ The read seam the Daydreams pane consumes. A null query means no watcher store i
 
 *class* — `WatcherDaydreamPaneViewModel.cs`
 
-Folds the observation store's daydream facts into the pane's read (US-9).
+Folds the repository's Daydream record into the pane's read (US-9).
 
-**Remarks.** The fold runs here rather than in the view model, so the pane renders a decision it did not make.
-Every state — including whether promotion is possible — comes from
+**Remarks.** The fold runs here rather than in the view model, so the pane renders a decision it did not
+make. Every state — including whether promotion is possible — comes from
 `DaydreamFold`, which is where the acceptance criteria are tested.
+
+
+
+
+
+**The repository is the record, not the store.** This read used to fold
+`IWatcherObservationStore`'s `daydream_*_fact` tables. Those tables still exist —
+deleting a shipped migration is worse than leaving one unused — but they are no longer
+authoritative, and nothing reads them. Two definitions of one quantity is a defect signature
+(DM7), so there is deliberately no parallel copy to fall back to.
+(`design-watcher-daydream-dream-seam` §4a.)
 
 | Member | Summary |
 |---|---|
+| `string? Unavailable` | **(gap)** |
+| `int UnreadableLines` | **(gap)** |
 | `IReadOnlyList<DaydreamCandidate> GetCandidates()` | **(gap)** |
 
 ## `WatcherDaydreamPaneViewModel`

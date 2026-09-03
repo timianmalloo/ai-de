@@ -122,7 +122,9 @@ public sealed class WorkbenchShell : IDisposable
         // directory supplied at construction) AND in AttachWorkspace (the real runtime path, where the
         // directory arrives after the daemon resolves) - the shell is built with a null workspace and
         // the workspace attaches later, so wiring only the constructor would leave the surfaces inert.
-        var watcher = StartWatcher(workspaceDataDirectory);
+        // No repository root at construction — the shell is built before a workspace attaches, so
+        // Daydream is correctly Absent here and says so rather than showing an empty record.
+        var watcher = StartWatcher(workspaceDataDirectory, repositoryRoot: null);
 
         _factory = new SurfaceContentFactory(
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
@@ -486,7 +488,7 @@ public sealed class WorkbenchShell : IDisposable
         // constructor was built with a null workspace). Without this the read surfaces would be inert:
         // AttachWorkspace rebuilding the factory without the watcher queries is what left them showing
         // "not available" even after a workspace opened.
-        var watcher = StartWatcher(dataDirectory);
+        var watcher = StartWatcher(dataDirectory, workspaceRoot);
         _factory = new SurfaceContentFactory(
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
             watcher.Ledger,
@@ -1829,7 +1831,8 @@ public sealed class WorkbenchShell : IDisposable
     /// </remarks>
     private (IWatcherSessionsQuery? Sessions, IWatcherBoardQuery? Board,
              IWatcherLeaderboardQuery? Leaderboard, IWatcherDisputeQuery? Disputes,
-             IWatcherLedgerQuery? Ledger, IWatcherDaydreamQuery? Daydreams) StartWatcher(string? dataDirectory)
+             IWatcherLedgerQuery? Ledger, IWatcherDaydreamQuery? Daydreams) StartWatcher(
+        string? dataDirectory, string? repositoryRoot)
     {
         // A re-attach (opening a different workspace) resets the host.
         _watcherPump?.Cancel();
@@ -1867,7 +1870,13 @@ public sealed class WorkbenchShell : IDisposable
                 new WatcherLeaderboardQuery(host.Store),
                 new WatcherDisputeQuery(host.Store),
                 new WatcherLedgerQuery(host.Store),
-                new WatcherDaydreamQuery(host.Store));
+
+                // The REPOSITORY, not the store: a lesson about this repository is maintained in it
+                // (design-watcher-daydream-dream-seam §4a). Passed in rather than read from
+                // _workspaceRoot, because AttachWorkspace assigns that field AFTER this call — the
+                // field would be null on the one path that has a workspace, which is DC-084's shape
+                // and is the third time it would have been built here.
+                new WatcherDaydreamQuery(DaydreamRepositoryRecord.For(repositoryRoot)));
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {

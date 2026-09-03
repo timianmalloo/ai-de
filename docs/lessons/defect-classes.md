@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 58 · partially-controlled 32 · uncontrolled 3
+**Status counts:** controlled 58 · partially-controlled 32 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3412,3 +3412,42 @@ for both or split.*
 - **The generalisation:** *before adding what is missing, find out what made it missing.* An absence
   in careful work is evidence about a constraint, and the constraint is still there.
 - **Status:** `uncontrolled` — a question at diagnosis time, no automated check
+
+### DC-094 — A doc comment that UNDERSTATES the code, read as if it were the code
+
+- **Shape:** you need to know what a type or a value actually holds, so you read its doc comment
+  instead of its producer. The comment is not wrong — it describes a real property — but the code
+  has since gone **further** than the comment claims. Reasoning from it produces a confident,
+  well-argued conclusion about a defect that does not exist.
+- **Signature:** a finding whose entire evidence chain terminates in prose you did not write and did
+  not check against a caller. The tell is grammatical: *"the comment says it normalises aliases, so
+  it cannot be doing X"* — an absence inferred from documentation. Also: citing a `file:line` that
+  points at a `<remarks>` block rather than at an assignment.
+- **Why this direction is the dangerous one.** Every instance of "never assert the shape of our own
+  code from memory" in this repository has been the comment claiming **more** than the code does,
+  which produces a false clearance — you believe a guarantee that is not there, and reality corrects
+  you later. This is the mirror: the comment claims **less**, so you produce a false **defect**. It
+  survives review better, because a defect report gets scrutinised for whether the consequence is
+  bad rather than for whether the premise is true, and the premise is a quotation. It costs a peer a
+  measurement to refute, and it can talk a team into changing correct code.
+- **Instance (one, and said to be one):** 2026-09-02 — arguing that keying a leaderboard segment on
+  `RepositoryIdentity.CanonicalPath` would split one repository across its worktrees, because the
+  type's `<remarks>` describes canonicalisation as fixing **aliased spellings** of a path. The
+  producer had already gone further: `WorkbenchShell.ResolveGitFacts` takes `--git-common-dir`'s
+  PARENT and passes that as `repo.path`, carrying the worktree separately, so the value already IS
+  the repository. The concurrent session ran `git rev-parse` in both trees and refuted it in one
+  message. The finding underneath survived for a different reason — nothing *enforces* it, and an
+  externally-registering agent composes its own attributes (DC-092) — but that was luck, not method.
+- **Control:** none mechanised, and a gate cannot have one: no check can tell a comment that
+  understates from one that is complete. What works is a rule about **which artifact answers which
+  question**. A doc comment answers *what is this for*; only the producer answers *what does this
+  hold*. So: **to learn what a value contains, read the code that assigns it, never the code that
+  describes it** — and where the producer is not at hand, label the claim Inferred rather than
+  citing the comment as evidence. A citation is not a promotion, and a citation of prose is not even
+  a citation.
+- **Cheapest disconfirmation, since there was one available and it was not taken:** the claim was
+  about two directories on this machine, and `git rev-parse --git-common-dir` in each answers it in
+  seconds. Before publishing a finding about a runtime value, ask whether the value can simply be
+  **printed** — this is IO1 pointed at one's own reasoning, and the tell for skipping it is arguing
+  from a type's documentation about a path that exists on disk right now.
+- **Status:** `uncontrolled` — a sourcing rule at reading time, no automated check

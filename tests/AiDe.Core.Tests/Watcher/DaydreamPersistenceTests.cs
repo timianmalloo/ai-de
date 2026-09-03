@@ -17,6 +17,20 @@ namespace AiDe.Core.Tests.Watcher;
 /// <para>Found by reading the method rather than trusting that a table named
 /// <c>watcher_schema_version</c> implied a version was being checked. It stored one and compared
 /// nothing.</para>
+///
+/// <para><b>THESE TABLES ARE NO LONGER THE DAYDREAM RECORD.</b> The owner's decision on 2026-09-02
+/// put the record in the repository (<c>docs/daydream/*.jsonl</c>, see
+/// <c>DaydreamRepositoryRecordTests</c> and <c>design-watcher-daydream-dream-seam</c> §4a), and
+/// nothing reads <c>daydream_observation_fact</c> or <c>daydream_event_fact</c> any more — two
+/// definitions of one quantity is a defect signature (DM7), so there is deliberately no parallel
+/// copy.</para>
+///
+/// <para><b>Why the tests stay.</b> Schema version 3 shipped, so an installed store may already be
+/// at it; rolling the version back would make a user's database newer than the code that reads it.
+/// The migration must therefore remain correct on upgrade, and these tests are what keeps it so.
+/// They prove the MIGRATION PATH, which is still live — not that the tables are authoritative,
+/// which they are not. Written here so the next reader does not conclude from a tested schema that
+/// the store is the record.</para>
 /// </remarks>
 public sealed class DaydreamPersistenceTests : IDisposable
 {

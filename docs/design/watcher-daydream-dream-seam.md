@@ -17,10 +17,11 @@ review-by: 2027-03-02
 review-suggested: []
 summary: >-
   Closes the spec's open item "Daydream-to-Dream schema alignment and deletion/retraction need
-  design". Daydream is the online half of continuous improvement — per-episode, cross-harness,
-  running while agents work; the pack's offline /dream is the batch half. Daydream emits candidates
-  in a shape dream.py ingests as signals, one-way, and the pack stays an optional detected
-  integration rather than a runtime dependency of the product.
+  design". Daydream is per-repository and its record lives IN that repository, written by the
+  product and marked with its provenance; Dream is learning across repositories and stays the
+  pack's. Revised twice: a spike falsified the original emit direction, and the owner then answered
+  the boundary question the first revision was built around — so the seam is no longer a pipeline
+  Daydream pushes into, and the pack stays an optional detected read.
 ---
 
 # Design: Loomkeeper Daydream and the seam to the offline Dream
@@ -55,7 +56,7 @@ They are not competitors and neither subsumes the other:
 | Sees | Any harness Loomkeeper observes | Only pack-instrumented sessions |
 | Produces | Observations and Candidate Lessons | Scored proposals with controls |
 | Promotes | **Never** — proposes only | Yes, through a human gate |
-| Lives in | AI-DE (this product) | `dream.py` (the AI-Forward Pack) |
+| Written by | AI-DE (this product), **into the repository** — §4a | `dream.py` (the AI-Forward Pack) |
 
 The line between them is the line the whole system already draws: **observation is deterministic
 and continuous; promotion is batched, adversarial, and human.** Daydream inherits the spec's
@@ -101,95 +102,166 @@ One occurrence stays an Observation and is **not** generalised — that is US-9'
 criterion and it is the rule most likely to be quietly relaxed under pressure to show the feature
 doing something. A candidate with no disconfirming check has promotion *disabled*, not discouraged.
 
-## 4. The seam — REVISED after the spike falsified it
+## 4. The seam — REVISED TWICE, and the second revision is larger than the first
 
-> **The original design was wrong, and the `Inferred` label was doing real work.** §12 recorded
-> that the proposed shape's acceptance by `dream.py`'s stager was inferred from the script's
-> behaviour rather than from a specification, and that a spike must confirm it. The spike was run on
-> 2026-09-02 and **falsified it**.
+> **Revision 1 (spike, 2026-09-02) — the emit direction was falsified.** §12 recorded that the
+> proposed shape's acceptance by `dream.py`'s stager was *inferred* from the script's behaviour
+> rather than read from a specification, and that a spike must confirm it. The spike ran and
+> **falsified it**. `load_corpus` (`dream.py:147`) reads exactly five fixed paths; `cmd_run` accepts
+> `--root`, `--session` and `--days`. **No inbox, no discovery, no extension point.** An emitted
+> `docs/dreams/inbox/*.jsonl` would have been written and never read — DC-089's shape, a producer
+> with no consumer, built deliberately.
 >
-> `load_corpus` (`dream.py:147`) reads exactly five fixed paths — the audit log, the change log,
-> `mitigations.jsonl`, `defect-classes.md`, and `simplify:`/`assume:` markers grepped from source.
-> `cmd_run` accepts `--root`, `--session` and `--days`. **There is no inbox, no discovery, and no
-> extension point.** An emitted `docs/dreams/inbox/*.jsonl` would have been written and never read,
-> which is DC-089's shape — a producer with no consumer — built deliberately.
+> **Revision 2 (owner decision, 2026-09-02) — the question the first revision answered was the
+> wrong question.** Revision 1 narrowed the seam to "only a promoted learning crosses" because
+> writing into the user's repository looked like a boundary the product should not cross. The owner
+> answered that boundary differently and more broadly
+> (`note-20260902-two-decisions-the-loop-waits-on`):
 >
-> What follows replaces the original. The corrected seam is *narrower and stronger*: a candidate
-> does not cross at all, and only a **promoted** learning does.
+> > "day dreaming is specific to a repo and should be maintained in the repo … i.e the product
+> > should write to the repo … dreaming is the act of learning across repos"
+>
+> So the narrow seam is no longer the constraint this design was built around. **Daydream is not a
+> producer feeding a pipeline. It is a per-repository record the product maintains, in the
+> repository.**
 
-### What crosses, and why only that
+### The split, named correctly
 
-`dream.py`'s corpus is evidence of things that **happened**. A Daydream candidate is a **proposal**,
-and proposals are what its own review gate exists to filter. Pushing candidates into that corpus
-would put unreviewed material into the input of the process whose job is reviewing — and into
-`mitigations.jsonl` specifically, it would corrupt the **promotion oracle**, the one signal meaning
-*this fix is proven*. That refusal is the important half of this design.
+| | **Daydream** | **Dream** |
+|---|---|---|
+| Scope | One repository | Across repositories |
+| Lives | **In that repository** | The pack's fleet store |
+| Written by | **The product** | The offline pass, human-gated |
+| Cadence | Continuous, per closed episode | On demand, over a window |
+| Sees | Any harness Loomkeeper observes | Only pack-instrumented sessions |
+| Promotes | Never — proposes only | Yes, through a human gate |
 
-A **promoted** Daydream learning is different. Promotion requires a surviving disconfirming check
-and a human decision, which is exactly what `capture-mitigation --oracle human-validated` means:
-*you approved a change*. So a promoted learning satisfies the oracle's real meaning rather than
-abusing its shape.
+A lesson about *this* repository belongs *with* that repository, for the same reason
+`defect-classes.md` is committed rather than kept in a tool's private store: it survives a machine
+change, it travels with a clone, and it is reviewable in a pull request. A learning locked in an
+AppData database is a learning the next clone does not have.
+
+### What still crosses to the pack, and what no longer needs to
+
+The **refusal in revision 1 stands and is still the important half**: a Daydream *candidate* never
+enters `dream.py`'s corpus. That corpus is evidence of things that **happened**; a candidate is a
+proposal, and proposals are what the pack's own review gate exists to filter. Into
+`mitigations.jsonl` specifically it would corrupt the **promotion oracle** — the one signal meaning
+*this fix is proven*.
+
+What changes is that **there is no longer an emit problem to solve**. Daydream's output is its own
+committed record, in the repository, which `dream.py` can read or ignore. It is not pushing into
+someone else's pipeline, so it needs no inbox and no schema alignment with a stager.
 
 | Direction | What moves | When |
 |---|---|---|
-| **Out** | A promoted learning, as a `MitigationRecord` with the `human-validated` oracle | Only after the full staircase |
-| **In** | `defect-classes.md` and `mitigations.jsonl`, read | Any time; marks a candidate already-known so it stops being re-proposed |
+| **Out** | Nothing is *pushed*. Daydream writes its own record into the repository | Continuously, as episodes close |
+| **In** | `defect-classes.md` and `mitigations.jsonl`, read (`DreamCorpusReader`) | Any time; marks a candidate already-known so it stops being re-proposed |
+| **Optional** | A promoted learning captured as a `MitigationRecord` with the `human-validated` oracle | Only after the full staircase, and only where the pack is present |
 
-### What is NOT built yet, and why
+The last row survives revision 1 unchanged and stays **optional**: promotion requires a surviving
+disconfirming check and a human decision, which is exactly what `--oracle human-validated` means,
+so it satisfies the oracle's meaning rather than abusing its shape. But it is now a convenience for
+pack-using repositories, not the mechanism by which Daydream output becomes durable.
 
-The **outbound** half writes into the repository the user is working on. That is a material change
-in what the product does — AI-DE reads repositories and, so far, writes only into its own workspace
-store. Making it a writer of repository content is a decision for the owner, not one to take while
-they are away. **The inbound half is built** (it only reads, and degrades to "not recorded" when the
-pack is absent); the outbound half is specified here and deliberately unbuilt.
+## 4a. Where Daydream state lives — and the cost this imposes on what is already built
 
-## 4a. The original seam (superseded, kept for the record)
-
-Daydream writes Candidate Lessons into a **signal file** that `dream.py` can read as corpus input,
-in the shape its stager already consumes. That is the whole of the "schema alignment" the spec
-asked for.
+**The repository is the record.** Two append-only logs, a sibling of the audit log they sit beside:
 
 ```
-AI-DE / Loomkeeper                         AI-Forward Pack (optional)
-──────────────────                         ─────────────────────────
-Work Episodes (any harness)
-      │
-      ├─> Daydream Observations ──> Candidate Lessons
-      │                                   │
-      │                                   ▼
-      │                          docs/dreams/inbox/*.jsonl     one-way
-      │                                   │
-      │                                   ▼
-      │                          dream.py run  ──>  review view  ──> apply-decisions
-      │                                                                    │
-      └─< Promoted Learning read back as a fact <──────────────────────────┘
-                  (link only; the register stays the pack's)
+docs/daydream/observations.jsonl    one line per observed occurrence
+docs/daydream/events.jsonl          one line per candidate state event
+docs/daydream/index.md              the graph artifact — frontmatter, and the human-facing read
 ```
 
-**One-way, deliberately.** Daydream emits; it never invokes. The reverse direction is a *read* —
-AI-DE reads the promoted register to mark a candidate as already-known, so it stops re-proposing
-something the human already accepted. That read is the whole integration, and it degrades to
-"not recorded" when the pack is absent rather than to a wrong answer.
+**Every line carries its own provenance**, not a header:
 
-**Both sides already read the same file.** `WatcherHost` sources episodes from
-`docs/audit/audit-log.jsonl` via `AuditLogEpisodeSource`, and that is `dream.py`'s corpus too. The
-alignment is therefore much smaller than the residual item implies: the two systems already agree
-on what an episode is and where the record lives. What is missing is only the candidate shape.
+```json
+{"generated-by":"ai-de/daydream", "signature":"…", "episode":"…", "observedAt":…}
+```
 
-### Deletion and retraction — the second half of the open item
+Per-record rather than per-file because these logs merge by **content union** across sessions and
+worktrees (`tools/merge-append-only-log.py`, the DC-026 control). A header line would be merged,
+duplicated, or lost; a field on each record survives every one of those.
 
-The rule is one sentence: **a retraction propagates forward along the same one-way seam, and a
-deletion upstream invalidates everything derived from it.**
+`docs/daydream/index.md` carries `generated-by: ai-de/daydream` in its frontmatter. **Verified**:
+`docs-graph.py` treats `REQUIRED` as a required-key list and not an allowlist
+(`docs-graph.py:746`), and `derive` appends the whole frontmatter dict as the index entry
+(`docs-graph.py:738`) — so the field reaches `docs/docs-index.js` and the Docs Explorer with no
+script change.
+
+### The cost, stated rather than buried
+
+**D2 built these as SQLite tables** — `daydream_observation_fact` and `daydream_event_fact`, schema
+version 3, in the per-workspace store under AppData. Under this decision the store is no longer the
+record. Two definitions of one quantity is a defect signature (DM7), so the store does not keep a
+parallel copy: `DaydreamFold` is a pure function over two lists and reading two JSONL files is as
+cheap as reading two tables. The tables stay — deleting a shipped migration is worse than an unused
+table — and the reader stops using them, which is recorded here so the next reader does not
+conclude the schema is authoritative because it exists.
+
+**Daydream requires a repository.** A workspace with no repository root has nowhere to write, and
+that is reported as a **stated absence** — "no repository, so nothing is recorded" — never as an
+empty Daydream. This is the same rule `DreamCorpusReader` already keeps for an absent pack.
+
+## 4b. The provenance rule this is the first instance of
+
+The owner's third answer draws the boundary somewhere other than where this design assumed:
+
+> "the difference is that we want to make sure that things generated by the agents are always
+> updated by the agents … but things generated by the product can also be written to a repo /
+> workspace"
+
+Not *who may write* — the product and its agents are one experience to the user, and agents write
+into the repository continuously. **It is who maintains what they wrote.**
+
+- Generated by an **agent** → updated by an **agent**. The product must not silently rewrite it.
+- Generated by the **product** → the product owns it, and may write it into the repository.
+
+Which makes the obligation **marking provenance**, agreed with the `ai-de-a7` session as one field:
+
+| Format | Marker |
+|---|---|
+| Markdown | `generated-by: ai-de/<component>` in frontmatter, plus the human-readable "do not hand-edit" line |
+| JSON / JSONL | `"generated-by": "ai-de/<component>"` — the **same literal spelling**, so one grep finds every instance in every format |
+
+**Presence means product-generated; absence means agent- or human-generated.** Mark the rarer
+thing. Every artifact in this repository today is agent- or human-written, so the inverse rule —
+every artifact carries the field — would be thousands of lines of ceremony encoding the default.
+
+**The gate is producer-side, not artifact-side.** A sweep over `docs/` cannot tell a product-written
+unmarked file from an agent-written one, which is the whole problem it would be trying to solve. The
+check is over the **writers**: every code path that writes into a repository emits the field. It is
+not built here — the `ai-de-a7` session marks the standing file as the first instance, and the gate
+lands with the second producer, which is this design.
+
+## 4c. Deletion and retraction — the second half of the spec's open item
+
+One sentence: **a retraction is a superseding row, and a deletion upstream invalidates everything
+derived from it.**
 
 | Event | Daydream | The pack's register |
 |---|---|---|
-| An episode is deleted under retention policy | Its observations are invalidated by a superseding row; any candidate whose occurrence count falls below the threshold returns to Observation | Unaffected until the next run; a re-run sees fewer signals |
-| A candidate is disconfirmed | A superseding row marks it Disconfirmed; promotion stays blocked | Never received it — only promotable candidates cross the seam |
+| An episode is deleted under retention policy | Its observations are invalidated by a superseding row; a candidate whose distinct-episode count falls below the threshold returns to Observation | Unaffected until the next run |
+| A candidate is disconfirmed | A superseding row marks it Disconfirmed; promotion stays blocked | Never received it — candidates do not cross |
 | A promoted learning is retracted in the pack | Read back; the candidate loses its already-known mark and becomes eligible again | The pack's own supersession record is authoritative |
-| A repository is deleted | All Daydream rows go with the workspace database | Untouched — the register is repository-local or fleet, and the pack owns its own lifecycle |
+| **A repository is deleted** | **Its Daydream record goes with it — because the record is in it.** Under the old design the rows outlived the repository in an AppData store, which was the wrong lifetime | Untouched; the pack owns its own |
 
-Nothing is deleted in place on either side. This is the same append-only discipline the fact store
-already enforces with `RAISE(ABORT)` triggers, and Daydream gets no exemption from it.
+Nothing is deleted in place on either side. `DaydreamFold` already implements exactly this: evidence
+folds **before** events, so a promoted learning whose source episodes disappear falls back to
+Observation without anything being rewritten.
+
+## 4d. The two superseded seam designs, kept for the record
+
+**Original.** Daydream writes candidates into `docs/dreams/inbox/*.jsonl` for `dream.py` to ingest
+as corpus input. Falsified by the spike: there is no inbox and no extension point, so the file would
+have been written and never read.
+
+**Revision 1.** Nothing crosses but a *promoted* learning, as a `MitigationRecord`, because writing
+into the user's repository was a boundary the product should not cross uninvited. Superseded by the
+owner's answer: the product may write to the repository, provided what it writes is marked as its
+own. Revision 1's **refusal** — a candidate never enters the pack's corpus — survives; only its
+premise about the boundary does not.
 
 ## 5. Why the script is not lifted into the product
 
@@ -296,9 +368,10 @@ half we have. The order that makes it worth building:
 - **The recurrence threshold N.** The spec says "repeated evidence or a deterministic reproduction"
   without a number. It should be a declared safety floor with its statistical basis recorded, and it
   may tighten but never silently relax — the same treatment the cohort minimum gets.
-- **Where the signal file lives when the pack is absent.** `docs/dreams/inbox/` assumes a pack
-  directory. A pack-free repository needs a neutral location, and choosing one is a small decision
-  that should not be made implicitly by the first implementation.
+- ~~**Where the signal file lives when the pack is absent.**~~ **Answered by §4a**, and the question
+  dissolved rather than being decided: there is no signal file, because Daydream no longer emits into
+  someone else's pipeline. Its record is `docs/daydream/`, which is neutral by construction — it
+  belongs to the repository, not to the pack.
 - **The pack's dreaming authority is not in this repository.** The `/dream` skill cites
   `spec-dreaming`, `architecture-dreaming` and `docs/knowledge/continuous-improvement-and-dreaming/`
   as its design authority; none of the three is present here. The script and skill shipped, the
@@ -315,8 +388,20 @@ half we have. The order that makes it worth building:
 | The Simplifier | Accepts rung-2 reuse of `dream.py`; would reject any second consolidation engine. |
 | Documentation Steward | Closes the spec's residual item; the residual list should be updated when a slice lands. |
 
-**Confidence.** Verified: the current implementation state (`WatcherHost.cs:95`, `WorkEpisode.cs:63`,
-the absence of `daydream` in `src/`, the absence of `docs/dreams/`). Verified: the spec's
-requirements and non-goals, quoted. Inferred: that `dream.py`'s stager will accept the proposed
-signal shape without change — this was read from the script's behaviour, not from a specification,
-and must be confirmed by a spike before a slice depends on it.
+**Confidence.** Verified: the spec's requirements and non-goals, quoted. Verified by spike
+(2026-09-02): `dream.py`'s `load_corpus` reads five fixed paths and `cmd_run` takes only
+`--root/--session/--days` — there is no inbox and no extension point. Verified by reading:
+`docs-graph.py` accepts an unknown frontmatter key (`:746` checks REQUIRED as a required-list) and
+`derive` carries the whole dict into the index (`:738`), so `generated-by` needs no script change.
+Verified: `DaydreamFold` folds evidence before events, which is what §4c relies on.
+
+**The Inferred label that was doing real work has been discharged.** The previous revision recorded
+that `dream.py`'s acceptance of the proposed signal shape was inferred from behaviour rather than
+read from a specification. The spike falsified it. That is the label working as intended, and it is
+the reason the emit direction was never built — DC-089 avoided rather than registered.
+
+**Still Inferred, and named so it is not mistaken for settled:** that two JSONL files are as cheap
+to fold as two SQLite tables at the volumes this will see. Not measured — no Daydream record exists
+yet to measure — and the model is that `DaydreamFold` already reads every row on every fold, so the
+store buys no selectivity. If a repository's record grows past the point where that holds, the fix
+is a derived `*_cell` cache with the JSONL still the record, not a return to the store as source.
