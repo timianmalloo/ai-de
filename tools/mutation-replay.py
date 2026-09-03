@@ -34,10 +34,24 @@ TWO GUARDS, BOTH LEARNED BY LOSING THEM.
    mutation LIVE, everything still compiles, and every later measurement is silently about the wrong
    code. The reason found in use, within a day, is that this tool restores with `git checkout --` —
    so on a dirty tree it would not merely confuse a measurement, it would **destroy uncommitted
-   work**. Restoration can always be skipped; inherited damage can always be detected. So: refuse
-   first, restore from git second, and never from a copy in memory.
+   work**. Restoration can always be skipped; inherited damage can always be detected.
 
    Commit or set aside your work before running this. That is not a courtesy to the tool.
+
+3. A MARKER FILE, because guards 1 and 2 both protect the NEXT run and neither survives the kill.
+   This was found the hard way, in the other session, twenty minutes after we agreed guard 2 was
+   sufficient: a 10-minute CI-style cap SIGTERMed a replay, `finally` never ran, and a mutation was
+   left live in the tree with everything still compiling.
+
+   A kill can skip a `finally`. It cannot un-write a file that already exists. So the marker is
+   written BEFORE the edit and deleted AFTER the restore, and a run that finds one on start heals
+   the named path before doing anything else. That turns the previous run's damage from *detectable*
+   into *self-healing*, and it is what makes this safe to gate on every push — without it, the first
+   cancelled CI job leaves a live mutation, which is a defect INTRODUCED by the verification and
+   strictly worse than the one it exists to catch.
+
+   It also sharpens guard 2, which alone cannot tell "someone is working" from "a killed run left a
+   mutation": a marker names the path, so named dirt is restored and unnamed dirt is still refused.
 
 USAGE
     python tools/mutation-replay.py --set tools/mutation-sets/daydream-seam.json
@@ -76,6 +90,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SETS = ROOT / "tools" / "mutation-sets"
 
+# Written before an edit, deleted after the restore. The one guard that survives a kill, because a
+# kill cannot un-write a file that already exists. Git-ignored: it is machine-local crash state, and
+# committing it would make one machine's interrupted run everyone else's problem.
+MARKER = ROOT / ".mutation-in-progress"
+
 # Encoding pinned both ways. Reading a tool's output as cp1252 raised UnicodeDecodeError inside a
 # reader thread once and presented as "the detector scanned nothing"; printing U+FFFD to a narrow
 # console raises UnicodeEncodeError and kills the run. Third and fourth instances of one class.
@@ -98,6 +117,44 @@ def git(*args: str) -> subprocess.CompletedProcess:
 
 def dirty() -> str:
     return git("status", "--short").stdout.strip()
+
+
+def heal_from_marker() -> str | None:
+    """Restore a path a killed run left mutated. Returns the path healed, or None.
+
+    Runs BEFORE the dirty check, so a previous run's damage is self-healing rather than a refusal
+    the operator has to diagnose. A marker naming a path this tool can restore is not "someone is
+    working" — it is crash state, and the difference is exactly what guard 2 alone cannot see.
+    """
+    if not MARKER.exists():
+        return None
+
+    try:
+        path = json.loads(MARKER.read_text(encoding="utf-8")).get("path")
+    except (OSError, json.JSONDecodeError):
+        path = None
+
+    if not path:
+        # A marker we cannot read still means a run died. Say so and refuse rather than guess which
+        # file to restore — a wrong `git checkout --` discards real work.
+        print("mutation-replay: a marker from an interrupted run exists but names no path.")
+        print(f"  Inspect {MARKER.name} and `git status` by hand, then delete it.")
+        return "?"
+
+    print(f"mutation-replay: an interrupted run left {path} mutated. Restoring it.")
+    git("checkout", "--", path)
+    MARKER.unlink(missing_ok=True)
+    return path
+
+
+def mark(path: str) -> None:
+    MARKER.write_text(
+        json.dumps({"path": path, "started": _now()}), encoding="utf-8")
+
+
+def _now() -> str:
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
 
 
 def run_tests(project: str, test_filter: str) -> tuple[set[str], int, str]:
@@ -168,9 +225,15 @@ def main() -> int:
         if not mutations:
             raise SystemExit(f"mutation-replay: no mutation label contains {args.only!r}")
 
+    # GUARD 3 FIRST, because it is the one that survives a kill and it makes guard 1 answerable.
+    # A marker names the file a dead run left mutated, so that dirt is healed rather than refused.
+    if heal_from_marker() == "?":
+        return 2
+
     # GUARD 1. Two reasons, and the second is the one that makes it non-negotiable: this tool
     # restores with `git checkout --`, so running it on a dirty tree DESTROYS uncommitted work.
-    # (The first reason is that a previous run killed mid-mutation leaves the mutation live.)
+    # (The first reason is that a previous run killed mid-mutation leaves the mutation live — which
+    # guard 3 above has now already handled, so anything still dirty here is a person's work.)
     if (d := dirty()):
         print("mutation-replay: REFUSING TO START — the tree is dirty.")
         print("This tool restores with `git checkout --`, so running it here would DISCARD the")
@@ -212,6 +275,9 @@ def main() -> int:
         crossed = bool(scope)
 
         try:
+            # Marker BEFORE the edit, never after. Between these two statements is the only window
+            # where a kill loses information, and it is one filesystem write wide.
+            mark(rel)
             path.write_text(original.replace(m["old"], m["new"], 1), encoding="utf-8", newline="")
             fails, total, err = run_tests(project, test_filter)
 
@@ -229,7 +295,9 @@ def main() -> int:
         finally:
             # GUARD 2. From git, never from `original` — a restore that trusts memory cannot be
             # verified, and this is the step that runs while something is already going wrong.
+            # The marker is cleared only AFTER the restore, so a kill in between still heals.
             git("checkout", "--", rel)
+            MARKER.unlink(missing_ok=True)
 
     print()
     if (d := dirty()):
@@ -245,9 +313,21 @@ def main() -> int:
         print(f"  NOT MEASURED: {label}")
 
     if uncovered or unmeasured:
-        print("\nAn uncovered mutation is not automatically a missing test. Ask what the mutated")
-        print("line is FOR: sometimes the answer is that the behaviour was never modelled, which is")
-        print("a finding about the design rather than about the suite.")
+        print()
+        print("NO TEST FAILED is two different findings and this tool cannot tell them apart:")
+        print()
+        print("  UNCOVERED   the behaviour is real and nothing checks it. Write the test.")
+        print("  EQUIVALENT  the mutation cannot change behaviour, so no test could ever redden.")
+        print("              Then the LINE is the defect, not the suite — a branch nothing can")
+        print("              reach is not defence in depth, it is a permanent false entry that")
+        print("              trains the next reader to ignore one. Delete it.")
+        print()
+        print("Deciding which is the author's judgement and it is the point of the run. Silently")
+        print("excluding an equivalent is how a mutation set stops meaning anything — if one is")
+        print("genuinely equivalent, remove the CODE and the mutation with it, never just the")
+        print("mutation. (Both kinds were found in one sweep on 2026-09-03: a fixture whose two")
+        print("paths were equal so a fallback produced the identical answer, and a `Directory.Exists")
+        print("(p) || !File.Exists(p)` whose first half can never change the outcome.)")
         return 1
 
     return 0
