@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T03:56:09Z",
+  "generated": "2026-09-03T04:00:01Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2217,6 +2217,38 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "b3c1be4081228acc177673fdffe9301467a6836a31654424ba505a61e348fbad"
+    },
+    {
+      "id": "note-20260902-the-repo-path-contract",
+      "path": "docs/notes/note-20260902-the-repo-path-contract.md",
+      "title": "What happens when a registrant's repo.path names a worktree",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-02",
+      "reviewSuggested": [],
+      "summary": "A registrant supplies its own repo.path, and nothing checks that it names a repository rather than a linked worktree. Two sessions argued reject-versus-normalise and both were wrong; the resolution is three cases, not two. Recorded because the argument turned on two premises that were checkable in seconds and neither side had checked its own.",
+      "tags": [
+        "decision-note",
+        "watcher",
+        "registration",
+        "collaboration",
+        "message-board",
+        "scoring"
+      ],
+      "links": [
+        {
+          "to": "note-20260902-two-decisions-the-loop-waits-on",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-daydream-dream-seam",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2020d09e1a7b0862e95b700d79cae71db4f2de243f764e0d295f1e572eacba48"
     },
     {
       "id": "note-20260902-two-decisions-the-loop-waits-on",
@@ -10830,5 +10862,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ed8bd9cdada01d5bdb17dc2630bf54d18ae74a119fb4c8775cd74ec09dbb83ad"
+  "graphSha256": "0029bf3d7e4340821019f0b198121d189a7d46012c3a709b63a1b13c966a4bb2"
 };

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T03:56:03Z",
+  "generated": "2026-09-03T04:00:01Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8593,6 +8593,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Watcher/DaydreamRecorder.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0431",
+      "shortname": "repo-path-contract-decided",
+      "datetime": "2026-09-03T04:00:01Z",
+      "session": "e9679dd2",
+      "prompt": "Core disagreed on reject-vs-normalise for a worktree-shaped repo.path; verify the premises and settle it",
+      "summary": "Conceded: detection and correction are the same .git read, so rejection fires only where normalisation would have worked and is silent in the case invoked to argue for it. Verified on disk. Blast radius is worse than reported — MessageBoard.RequireParent REFUSES a reply across repository keys, so a worktree-registering agent has every reply rejected as cross-repository. Resolution is three cases, not two, plus a registration diagnostic channel that does not exist yet.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260902-the-repo-path-contract.md"
       ],
       "tags": [],
       "outcome": "success"
