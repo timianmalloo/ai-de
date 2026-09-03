@@ -118,6 +118,15 @@ public sealed class DaydreamRecorder(
             // the two must not report alike. Asked of the RUBRICS rather than of the verdict: a
             // shortfall is a low rubric, so a card with no rubric anywhere is one this signature can
             // never key on, whatever its verdict says.
+            //
+            // TODAY THOSE TWO QUESTIONS HAVE THE SAME ANSWER, which is the reason to be explicit
+            // rather than to relax. WeaveScorer returns NotScored with an EMPTY assessment list, so
+            // "no rubric anywhere" and "verdict is NotScored" coincide for everything it emits —
+            // measured 2026-09-02: swapping this line for a verdict test passed all 87 Daydream
+            // tests. The rubric form is kept because it depends on the property this branch actually
+            // needs (could a shortfall exist?) rather than on a verdict that happens to correlate.
+            // If the scorer ever emits NotScored WITH rubrics, or Scored with none, the verdict form
+            // inverts silently. TheDiscriminatorAsksTheRubricsNotTheVerdict pins both crossed states.
             return episode.Scorecard.Assessments.Any(a => a.Rubric0to4 is not null)
                 ? DaydreamObservationOutcome.NothingWentWrong
                 : DaydreamObservationOutcome.NothingWasAssessed;

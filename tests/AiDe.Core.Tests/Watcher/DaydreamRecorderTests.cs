@@ -128,6 +128,42 @@ public sealed class DaydreamRecorderTests : IDisposable
     }
 
     /// <summary>
+    /// The discriminator asks the rubrics, not the verdict — in both crossed states.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Found by mutation, and it was UNCOVERED.</b> Swapping the discriminator for
+    /// <c>Verdict != NotScored</c> passed all 87 Daydream tests on 2026-09-02. The comment claimed
+    /// the rubric form was stronger "whatever its verdict says"; nothing tested the claim.</para>
+    ///
+    /// <para><b>Why it was uncovered, which is the honest part.</b> <c>WeaveScorer</c> returns
+    /// <c>NotScored</c> with an <b>empty</b> assessment list, so today the two questions have the
+    /// same answer for everything it emits. No test built from scorer output could separate them.
+    /// Both cards below are therefore constructed by hand and are states the scorer does not
+    /// currently produce — this pins the discriminator's own contract, not the scorer's behaviour,
+    /// and says so rather than implying the states are reachable.</para>
+    ///
+    /// <para><b>What it protects.</b> If the scorer ever emits <c>NotScored</c> carrying rubrics, or
+    /// <c>Scored</c> carrying none, a verdict-based discriminator inverts silently — reporting an
+    /// assessed episode as unobserved, or an unobserved one as clean, which is the DC-025 this enum
+    /// exists to prevent, reintroduced from the other side of the boundary.</para>
+    /// </remarks>
+    [Fact]
+    public void TheDiscriminatorAsksTheRubricsNotTheVerdict()
+    {
+        // NotScored, but a dimension WAS assessed: something was looked at, so this is not "nothing
+        // was assessed" however the verdict reads.
+        Assert.Equal(
+            DaydreamObservationOutcome.NothingWentWrong,
+            Recorder().Observe(Episode("ep-1", WeaveVerdict.NotScored, floors: [], rubric: 3)));
+
+        // Scored, but nothing carried a rubric: no shortfall was possible, so the signature could
+        // never have keyed on this episode — whatever the verdict claims.
+        Assert.Equal(
+            DaydreamObservationOutcome.NothingWasAssessed,
+            Recorder().Observe(Episode("ep-2", WeaveVerdict.Scored, floors: [], rubric: null)));
+    }
+
+    /// <summary>
     /// And the real evidence-free path, scored by the real scorer, is the unassessed one.
     /// </summary>
     /// <remarks>
