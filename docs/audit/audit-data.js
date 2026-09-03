@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T18:48:20Z",
+  "generated": "2026-09-03T18:55:00Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8936,6 +8936,31 @@ window.AUDIT_DATA = {
       ],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-0450",
+      "shortname": "proof-pack-capture-ratchet",
+      "datetime": "2026-09-03T18:55:00Z",
+      "session": "e9679dd2",
+      "prompt": "i stipulated in the other session we need proof pack capture",
+      "summary": "Measured before building: 292 skill entries, only 33 with goal+done_when, so 259 can never become episodes at all — the larger of the two gaps and the one AL5b already mandates in prose. Of the 111 episode-shaped entries, 14 carry evidence. The CLI flags for signals have existed the whole time and were used once. Built a two-condition ratchet frozen at al-0449: a new skill entry must carry goal+done_when, and must carry signals or a docs/proof artifact. An honest --signal-verification-path false counts, because forcing a Proof Pack on a turn that verified nothing is the false positive that gets a gate switched off.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-audit-capture.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Make Proof Pack capture enforced, as the owner stipulated, rather than mandated in prose",
+      "done_when": "a gate refuses a new skill entry that records no goal or no evidence, with its own self-test, and this entry passes it",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
     }
   ],
   "changes": [

@@ -80,6 +80,20 @@ jobs:
           python tools/verify-gate-self-tests.py --self-test
           python tools/verify-gate-self-tests.py
 
+      # The owner stipulated Proof Pack capture. MEASURED first: of 292 skill entries only 33 carry
+      # goal + done_when, so 259 never become Work Episodes at all — nothing can score or observe
+      # them. Of the 111 that do, 14 carry evidence. AL5b already requires the first half in prose,
+      # and 259 entries are what prose is worth (CI6).
+      #
+      # A RATCHET frozen at al-0449, because the log is append-only and those goals are gone. An
+      # honest --signal-verification-path false counts as capture: forcing a Proof Pack onto a turn
+      # that verified nothing is the false positive that gets a gate switched off (DC-104). What is
+      # refused is silence.
+      - name: Audit capture ratchet — a skill run says what it was for
+        run: |
+          python tools/verify-audit-capture.py --self-test
+          python tools/verify-audit-capture.py
+
       # DC-099: a test written in the same edit as its fix has never been shown capable of failing.
       # Breaks the code on purpose and requires a test to notice. The four CROSS-BOUNDARY/CROSS-AUTHOR
       # mutations are the ones no single-sided sweep can find: each component's own sweep mutates only
