@@ -187,6 +187,61 @@ def run_tests(project: str, test_filter: str) -> tuple[set[str], int, str]:
     return {f"{m[1]}.{m[2]}" for m in FAIL_RE.findall(out)}, total, ""
 
 
+def scope_gaps(mutations: list[dict], test_filter: str) -> list[tuple[str, str, str]]:
+    """Test files that exercise a mutated type but sit OUTSIDE the filter.
+
+    DC-103: a verification whose scope is NAMED rather than derived drifts out of date silently, and
+    its report does not say so. This set's filter was `FullyQualifiedName~Daydream`; a new test class
+    called `WhatTheRealCorpusCanProduceTests` was therefore outside the sweep whose entire job is
+    proving controls can fail — while the report still read "18 mutations, 0 uncovered". The newest
+    and least-proven code was the part not covered, and nothing warned.
+
+    The obvious fix is to drop the filter and run everything, which is what the sibling harness does.
+    MEASURED here rather than assumed: an unfiltered Core run is 71s, so 18 mutations would take ~21
+    minutes against the filtered 74s. That is not an every-push gate, and the cheapest minute is the
+    one never billed (CE). So the filter stays and the SILENCE goes: for every type this set mutates,
+    any test file naming that type must be selectable by the filter.
+
+    Derived from the mutated files, not from a second list to keep in step — restating the list is
+    the defect one level down (DC-021).
+    """
+    tokens = [t.strip() for t in re.findall(r"FullyQualifiedName~([^|&]+)", test_filter)]
+    if not tokens:
+        return []
+
+    gaps: list[tuple[str, str, str]] = []
+    seen: set[tuple[str, str]] = set()
+
+    for m in mutations:
+        # A mutation with an explicit `tests` scope has CHOSEN to run something other than its own
+        # file's tests — that is the whole cross-boundary mode. Checking it against the default
+        # filter would flag every test of the mutated component as a gap, which is the opposite of
+        # true: those belong to that component's own sweep. Observed doing exactly that on the
+        # WeaveScore mutation before this line existed.
+        if m.get("tests"):
+            continue
+
+        type_name = Path(m["file"]).stem
+        for test_file in (ROOT / "tests").rglob(f"*{'Tests'}.cs"):
+            if "bin" in test_file.parts or "obj" in test_file.parts:
+                continue
+            try:
+                if type_name not in test_file.read_text(encoding="utf-8", errors="replace"):
+                    continue
+            except OSError:
+                continue
+
+            cls = test_file.stem
+            if any(tok in cls for tok in tokens):
+                continue
+            if (cls, type_name) in seen:
+                continue
+            seen.add((cls, type_name))
+            gaps.append((cls, type_name, str(test_file.relative_to(ROOT))))
+
+    return gaps
+
+
 def load_set(path: Path) -> dict:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -251,6 +306,17 @@ def main() -> int:
             print(f"  {m['file']} no longer contains the text this mutation replaces.")
             print("  Update the set; do not let it run and report the control as covered.")
             return 2
+
+    # DC-103. Before measuring anything, check the sweep is aimed at everything it should be.
+    if (gaps := scope_gaps(mutations, default_filter)):
+        print("mutation-replay: SCOPE GAP — a test exercises mutated code and the filter excludes it.")
+        print(f"  filter: {default_filter}")
+        for cls, type_name, path in gaps:
+            print(f"  {cls} names {type_name} but is not selected  ({path})")
+        print()
+        print("These tests sit outside the sweep that proves controls can fail, and the report would")
+        print("still have said '0 uncovered'. Widen the set's filter, or move the mutation.")
+        return 2
 
     print("baseline:", end=" ", flush=True)
     fails, total, err = run_tests(default_project, default_filter)

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T18:33:33Z",
+  "generated": "2026-09-03T18:39:05Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8865,6 +8865,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0446",
+      "shortname": "mutation-scope-gap-control",
+      "datetime": "2026-09-03T18:39:05Z",
+      "session": "e9679dd2",
+      "prompt": "do next steps",
+      "summary": "DC-103's control. Measured the peer's suggestion (drop the filter, run everything) rather than accepting it: 71s unfiltered means 18 mutations take ~21 minutes against the filtered 74s — not an every-push gate. So the filter stays and the SILENCE goes: a preflight derives, from the mutated files, every test naming a mutated type and fails when the filter excludes one. Replayed against the original defect (exit 2, naming exactly the three real gaps). First version was over-eager and flagged the cross-boundary mutation, whose whole point is a different scope; fixed by skipping mutations that declare their own tests scope.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/mutation-replay.py"
       ],
       "tags": [],
       "outcome": "success"
