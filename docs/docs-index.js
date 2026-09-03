@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T03:02:36Z",
+  "generated": "2026-09-03T03:09:30Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -3089,7 +3089,7 @@ window.DOCS_INDEX = {
       "phase": "3",
       "reviewBy": "2027-03-02",
       "reviewSuggested": [],
-      "summary": "Closes the spec's open item \"Daydream-to-Dream schema alignment and deletion/retraction need design\". Daydream is the online half of continuous improvement — per-episode, cross-harness, running while agents work; the pack's offline /dream is the batch half. Daydream emits candidates in a shape dream.py ingests as signals, one-way, and the pack stays an optional detected integration rather than a runtime dependency of the product.",
+      "summary": "Closes the spec's open item \"Daydream-to-Dream schema alignment and deletion/retraction need design\". Daydream is per-repository and its record lives IN that repository, written by the product and marked with its provenance; Dream is learning across repositories and stays the pack's. Revised twice: a spike falsified the original emit direction, and the owner then answered the boundary question the first revision was built around — so the seam is no longer a pipeline Daydream pushes into, and the pack stays an optional detected read.",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -3127,7 +3127,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "69e769a78d66881703c7744a6b5303c1bd14b44b41596cdcb7d077f4799f104b"
+      "sourceSha256": "de0788f954b4f8df7f4ffb9e66030a9ae04e29db85f069c804e84e3bf90eaee3"
     },
     {
       "id": "design-watcher-dispute-command",
@@ -10830,5 +10830,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "62c2c1ec95f4748cbf99578d834be4b2c13988742e59f30be08c21650161e715"
+  "graphSha256": "46db1710111549ae2319b3dc8a7db182b58c523b05850f1017d6d5c38e73f36b"
 };
