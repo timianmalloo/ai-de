@@ -831,36 +831,44 @@ does not yet hold would put a pattern in the record whose evidence a reader cann
 
 
 
-**NO CALLER ON THIS BRANCH.** Verified by grep, not remembered: nothing under
-`src/` constructs this type. A previous revision of this paragraph asserted a call site in
-`ScoringService.ScoreAndRecord`, which was true of a concurrent session's branch and false
-of the tree the comment shipped in — DC-094 committed in the file whose author registered the
-class, and worse than the instance that named it, because the source was a peer's unpushed work
-rather than a stale comment. **An artifact describes the tree it is in.**
+**The caller is `ScoringService.ScoreAndRecord`**, immediately after
+`RecordScorecard` — verified by grep on the merged tree, not remembered. One level below
+where this class originally proposed it, because `ScoringService` is the single place a
+`ScoredEpisode` comes into existence and both producers pass through it; on the tick
+pass there would be two call sites and the audit-import one would be the forgotten one. Injected
+as an optional dependency, so a host that wants no Daydream record gets none.
 
 
 
 
 
-**Where it belongs when that branch lands:** `ScoringService.ScoreAndRecord`,
-immediately after `RecordScorecard` — one level below where this class originally proposed
-it, because `ScoringService` is the single place a `ScoredEpisode` comes into
-existence and both producers pass through it. On the tick pass instead there would be two call
-sites, and the audit-import one would be the forgotten one. Until then this class is exercised
-only by its tests, which is DC-089's shape: a unit test is a caller, just not one that
-ships.
+**This paragraph has now been wrong in both directions, which is the reason it is worded
+as it is.** It first asserted this call site while it existed only on a concurrent session's
+unpushed branch (DC-094, committed in the file whose author registered the class). It was then
+corrected to "no caller on this branch" — true when written, and made false the moment that
+branch landed. An artifact describes the tree it is in, and a claim about what does not exist
+yet decays exactly as fast as one about what does.
 
 
 
 
 
-**What it will see, measured rather than assumed.** An agent's episode carries no Proof
-Pack, so it scores `NotScored` with **no assessments** and no tripped floors, and this
-class declines it as `NothingWasAssessed`. The producer
-that will actually feed the record is therefore **audit-import**, whose episodes read
-committed Proof Packs and do trip floors. That is not a defect to fix here — it is an
-instrumentation gap upstream, and the outcome enum exists so it reports as a gap rather than as
-a quiet day.
+**What it sees now that the loop is closed, measured rather than assumed.** An agent's
+episode carries no Proof Pack, so it scores `NotScored` with **no assessments** and no
+tripped floors, and this class declines it as
+`NothingWasAssessed` — so the closed agent path, though
+wired, feeds the record *nothing*. The producer that actually fills it is
+**audit-import**, whose episodes read committed Proof Packs and do trip floors. That is not a
+defect to fix here: it is an instrumentation gap upstream, and the outcome enum exists so it
+reports as a gap rather than as a quiet day.
+
+
+
+
+
+`WhatDaydreamSeesInAnAgentEpisodeTests` pins that emptiness, and its assertions are
+written to fail the day an agent episode carries evidence — so the red is the signal that this
+paragraph has expired.
 
 
 
