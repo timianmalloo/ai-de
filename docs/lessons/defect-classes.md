@@ -3441,7 +3441,7 @@ for both or split.*
   survives review better, because a defect report gets scrutinised for whether the consequence is
   bad rather than for whether the premise is true, and the premise is a quotation. It costs a peer a
   measurement to refute, and it can talk a team into changing correct code.
-- **Instance (one, and said to be one):** 2026-09-02 — arguing that keying a leaderboard segment on
+- **Instance 1 — a comment that understated (the class as named):** 2026-09-02 — arguing that keying a leaderboard segment on
   `RepositoryIdentity.CanonicalPath` would split one repository across its worktrees, because the
   type's `<remarks>` describes canonicalisation as fixing **aliased spellings** of a path. The
   producer had already gone further: `WorkbenchShell.ResolveGitFacts` takes `--git-common-dir`'s
@@ -3449,6 +3449,22 @@ for both or split.*
   the repository. The concurrent session ran `git rev-parse` in both trees and refuted it in one
   message. The finding underneath survived for a different reason — nothing *enforces* it, and an
   externally-registering agent composes its own attributes (DC-092) — but that was luck, not method.
+- **Instance 2 — the same rule broken in the OTHER role: I wrote the misleading comment.** Hours
+  after registering this class, I committed a `<para>` in `DaydreamRecorder` asserting *"the one call
+  site is `ScoringService.ScoreAndRecord`"*. There was no such call site in the tree the comment
+  shipped in. The claim was true of a **concurrent session's unpushed branch** and I wrote it into a
+  committed artifact as present tense. Found by grepping `src/` before building on my own comment —
+  the check the class prescribes, applied for once to my own writing rather than to someone else's.
+- **Why instance 2 is worse than instance 1, and belongs in the same class:** instance 1 cost me a
+  wrong argument that a peer refuted in one message. Instance 2 would have cost **the next reader**,
+  who has no peer and no reason to doubt a specific `file.method` citation — and it manufactures
+  exactly the artifact instance 1 was fooled by. The class is not "do not trust comments"; it is
+  **an artifact describes the tree it is in**, which binds the reader and the writer symmetrically.
+  A peer's branch is not this tree. Neither is a plan I have not pushed, which is the same mistake I
+  had already made once this week in the other medium.
+- **The writing-side rule, since the reading-side one was not enough:** before committing a claim
+  about code, ask *would this be true of a fresh clone of this branch?* If it depends on work that
+  exists somewhere else, write the dependency (*"when X lands"*), never the destination.
 - **Control:** none mechanised, and a gate cannot have one: no check can tell a comment that
   understates from one that is complete. What works is a rule about **which artifact answers which
   question**. A doc comment answers *what is this for*; only the producer answers *what does this

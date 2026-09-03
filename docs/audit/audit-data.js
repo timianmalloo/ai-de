@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T02:11:14Z",
+  "generated": "2026-09-03T03:56:03Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8576,6 +8576,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0430",
+      "shortname": "daydream-quiet-not-healthy",
+      "datetime": "2026-09-03T03:56:03Z",
+      "session": "e9679dd2",
+      "prompt": "Core reported the Not-Scored prediction refuted; verify independently and act on it",
+      "summary": "Measured the evidence-free episode through the real deriver and scorer: verdict=NotScored floors=[] rubrics=[] — Assessments EMPTY, not all-null. My prediction was inverted. Exposed DC-025 in DaydreamRecorder: bool Observe collapsed 'assessed, nothing wrong' with 'nothing assessed at all', so a repository with no evidence would read as healthy permanently. Fixed with DaydreamObservationOutcome, discriminating on rubrics rather than verdict. Then found DC-094 instance 2 in my own file: the doc comment asserted a call site that exists only on a peer's unpushed branch.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DaydreamRecorder.cs"
       ],
       "tags": [],
       "outcome": "success"

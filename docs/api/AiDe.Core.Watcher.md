@@ -736,22 +736,36 @@ does not yet hold would put a pattern in the record whose evidence a reader cann
 
 
 
-**The one call site is `ScoringService.ScoreAndRecord`, immediately after
-`RecordScorecard`** — one level below where this class originally proposed it, because
-`ScoringService` is the single place a `ScoredEpisode` comes into existence and
-both producers pass through it. Placing it on the tick pass instead would have made two call
-sites, and the audit-import one would have been the forgotten one.
+**NO CALLER ON THIS BRANCH.** Verified by grep, not remembered: nothing under
+`src/` constructs this type. A previous revision of this paragraph asserted a call site in
+`ScoringService.ScoreAndRecord`, which was true of a concurrent session's branch and false
+of the tree the comment shipped in — DC-094 committed in the file whose author registered the
+class, and worse than the instance that named it, because the source was a peer's unpushed work
+rather than a stale comment. **An artifact describes the tree it is in.**
 
 
 
 
 
-**What it actually sees today, measured rather than assumed.** An agent's episode
-carries no Proof Pack, so it scores `NotScored` with no assessments and no tripped floors,
-and this class declines it as `NothingWasAssessed`. The
-producer feeding the record today is therefore **audit-import**, whose episodes read committed
-Proof Packs and do trip floors. That is not a defect to fix here — it is the instrumentation gap
-upstream, and the outcome enum exists so it reports as a gap rather than as a quiet day.
+**Where it belongs when that branch lands:** `ScoringService.ScoreAndRecord`,
+immediately after `RecordScorecard` — one level below where this class originally proposed
+it, because `ScoringService` is the single place a `ScoredEpisode` comes into
+existence and both producers pass through it. On the tick pass instead there would be two call
+sites, and the audit-import one would be the forgotten one. Until then this class is exercised
+only by its tests, which is DC-089's shape: a unit test is a caller, just not one that
+ships.
+
+
+
+
+
+**What it will see, measured rather than assumed.** An agent's episode carries no Proof
+Pack, so it scores `NotScored` with **no assessments** and no tripped floors, and this
+class declines it as `NothingWasAssessed`. The producer
+that will actually feed the record is therefore **audit-import**, whose episodes read
+committed Proof Packs and do trip floors. That is not a defect to fix here — it is an
+instrumentation gap upstream, and the outcome enum exists so it reports as a gap rather than as
+a quiet day.
 
 
 
