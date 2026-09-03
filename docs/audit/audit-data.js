@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T01:55:36Z",
+  "generated": "2026-09-03T02:03:26Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8542,6 +8542,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tools/regenerate-derived.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0427",
+      "shortname": "published-docs-gated",
+      "datetime": "2026-09-03T02:03:26Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Design session: docs/_meta.json and docs/_site/index.html have no gate at all, and the blocker is one volatile field your gate already solves.",
+      "summary": "Gated the published documentation. They were ungated because documented_sha differs on every run by construction - it names the commit generated FROM, so it is always the parent of the commit carrying it - so a naive comparison always fails and the absence read as a scope decision. Added it to VOLATILE and the two files as ONE view, since one generator writes both and checking them separately would leave a sibling rewritten. Observed both directions: a hand-edited count fails and names the file, a changed sha alone passes. My first probe was wrong - it rewrote the JSON and changed formatting - so the instrument was checked before the result was believed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-derived-views.py"
       ],
       "tags": [],
       "outcome": "success"

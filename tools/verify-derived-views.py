@@ -52,6 +52,23 @@ VIEWS = [
         "from": "docs/audit/audit-log.jsonl and docs/audit/change-log.jsonl",
     },
     {
+        # THE PUBLISHED DOCUMENTATION, added 2026-09-02. These two had NO gate at all, which is why
+        # a session could go a whole day never running build-doc-viewer.py and nothing said so —
+        # found when a single entry point regenerated them and produced a diff its author did not
+        # expect.
+        #
+        # They are ONE view because one generator writes both: checking them separately would
+        # regenerate the pair, restore one, and leave the other rewritten in the working tree.
+        #
+        # And the reason they were ungated is worth keeping: `documented_sha` differs on every run,
+        # so a naive comparison always fails, so nobody added them — and the absence then looked
+        # like a scope decision rather than a gap. The volatile-field mechanism below is exactly the
+        # answer; it simply had not been pointed at this.
+        "paths": ["docs/_meta.json", "docs/_site/index.html"],
+        "command": ["tools/build-doc-viewer.py"],
+        "from": "the doc bundle: the API reference, the diagrams and the docs graph",
+    },
+    {
         # A DIRECTORY of 17 files, added 2026-09-02 after it went stale unnoticed. The API reference
         # is derived from the `///` comments in src/, so ANY change to a doc comment - or adding a
         # public type - makes every committed page here a claim about a source that has moved.
@@ -67,7 +84,13 @@ VIEWS = [
 
 # A timestamp stamped at generation time. It differs on every run by construction — comparing it
 # would make this control fail always, which is how a control gets switched off.
-VOLATILE = re.compile(rb'"generated":\s*"[^"]*"')
+# Stamped at generation time and different on every run BY CONSTRUCTION — comparing them would make
+# this control fail always, which is how a control gets switched off.
+#
+# `documented_sha` names the commit the docs were generated FROM, so it can only ever be the parent
+# of the commit that carries it: it is never equal to its own commit and never will be. That is a
+# correct record and a permanently-changing field, which is precisely what this pattern is for.
+VOLATILE = re.compile(rb'"(?:generated|documented_sha)":\s*"[^"]*"')
 
 
 def repo_root() -> Path:
@@ -100,8 +123,17 @@ def check(root: Path) -> list[str]:
     for view in VIEWS:
         # A view is one file or a directory of them. The set is captured BEFORE regenerating, so a
         # generator that stops emitting a page is reported as a difference rather than ignored.
-        paths = sorted((root).glob(view["glob"])) if "glob" in view else [root / view["path"]]
-        label = view.get("glob", view.get("path"))
+        if "glob" in view:
+            paths = sorted(root.glob(view["glob"]))
+            label = view["glob"]
+        elif "paths" in view:
+            # One generator, several files. They travel together or the restore leaves a sibling
+            # rewritten in the working tree.
+            paths = [root / p for p in view["paths"]]
+            label = ", ".join(view["paths"])
+        else:
+            paths = [root / view["path"]]
+            label = view["path"]
 
         if not paths or not all(p.exists() for p in paths):
             findings.append(f"{label} is missing — it is derived from {view['from']}")
@@ -164,6 +196,26 @@ def self_test(root: Path) -> int:
         # And the volatile field alone must NOT fail, or the gate is red on every clean run.
         path.write_bytes(VOLATILE.sub(b'"generated": "1999-01-01T00:00:00Z"', original))
         timestamp_only = check(root)
+        path.write_bytes(original)
+
+        # documented_sha is the second volatile field, and the reason the published docs were
+        # UNGATED until 2026-09-02: it names the commit generated FROM, so it can only ever be the
+        # parent of the commit carrying it. A naive comparison fails on every clean run, so nobody
+        # added those views — and the absence then read as a scope decision rather than a gap.
+        # Pinned here so the pattern cannot narrow back and re-create the reason.
+        meta = root / "docs" / "_meta.json"
+        sha_only: list[str] = []
+
+        if meta.exists():
+            before = meta.read_bytes()
+            try:
+                meta.write_bytes(re.sub(
+                    rb'"documented_sha": "[0-9a-f]+"',
+                    b'"documented_sha": "' + b"0" * 40 + b'"',
+                    before))
+                sha_only = check(root)
+            finally:
+                meta.write_bytes(before)
     finally:
         path.write_bytes(original)
 
@@ -179,7 +231,14 @@ def self_test(root: Path) -> int:
               "alone was reported; this gate would be red on every clean run.")
         return 1
 
-    print("verify-derived-views: self-test OK — a stale view fails, a changed timestamp does not.")
+    if sha_only:
+        print("verify-derived-views: SELF-TEST FAILED — a difference in documented_sha alone was "
+              "reported. That field is the parent commit by construction, so this gate would be red "
+              "on every clean run — which is exactly why the published docs went ungated.")
+        return 1
+
+    print("verify-derived-views: self-test OK — a stale view fails; a changed timestamp and a "
+          "changed documented_sha do not.")
     return 0
 
 
