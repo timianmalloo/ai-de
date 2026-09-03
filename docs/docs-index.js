@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T01:34:45Z",
+  "generated": "2026-09-03T01:40:11Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2217,6 +2217,34 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "b3c1be4081228acc177673fdffe9301467a6836a31654424ba505a61e348fbad"
+    },
+    {
+      "id": "note-20260902-two-decisions-the-loop-waits-on",
+      "path": "docs/notes/note-20260902-two-decisions-the-loop-waits-on.md",
+      "title": "One question the agent loop waits on, asked twice",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-02",
+      "reviewSuggested": [],
+      "summary": "The agent collaboration loop is complete except for one link, and the Daydream vertical is complete except for one, and both are the same question: how far outside its own store does this product reach. Written down unchosen, with the options and what each costs, because choosing while the owner was away would have been choosing for them and calling it wiring.",
+      "tags": [
+        "decision-note",
+        "watcher",
+        "daydream",
+        "collaboration",
+        "scoring",
+        "scope"
+      ],
+      "links": [
+        {
+          "to": "adr-0019-advisory-evaluator-calibration",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fe75394f35e166234a78cbca63049a88267eb30b681627fe8f46ebcadce0b88d"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -10802,5 +10830,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3158523d22ec2355277b395fde4418a3887c5bb3c5be1ffa43e1cead27e648e7"
+  "graphSha256": "d35dd69f722fcfb76b6514f883cad19a92bc51d89846cece29b6b6ba527cf8d4"
 };
