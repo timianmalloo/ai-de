@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T02:11:15Z",
+  "generated": "2026-09-03T03:02:36Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2244,7 +2244,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fe75394f35e166234a78cbca63049a88267eb30b681627fe8f46ebcadce0b88d"
+      "sourceSha256": "530512f8af69cc524d31832be294776eb9def8d021f7fc631cabfc05050e22ff"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -10830,5 +10830,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d28fbedd69b7156aa339cd576f44399baba71bed2135326395bf135ccb074578"
+  "graphSha256": "62c2c1ec95f4748cbf99578d834be4b2c13988742e59f30be08c21650161e715"
 };
