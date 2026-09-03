@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T18:57:18Z",
+  "generated": "2026-09-03T19:03:13Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8980,6 +8980,29 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Proof Pack capture reaches every harness that reads this repository, not only the one whose instruction file happened to carry it",
       "done_when": "CLAUDE.md and AGENTS.md carry the capture obligation outside the pack's managed block, and a gate fails when any declared harness root stops carrying it or a new harness root appears without it",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      }
+    },
+    {
+      "id": "al-0452",
+      "shortname": "instruction-gap-vs-discipline-gap",
+      "datetime": "2026-09-03T19:03:13Z",
+      "session": "ai-de-a7",
+      "prompt": "yes we need proof pack capture ... across all harnesses (claude code, gh copilot, gemini cli... which we will add shortly)",
+      "summary": "The concurrent session corrected my framing and I verified it against git rather than accepting it. Pre-fix CLAUDE.md line 85 DID carry goal + done_when (AL5b), cited by identifier, in the always-loaded file - and compliance was 33 of 292 skill entries. The evidence half was absent from that file entirely (grep count 0), living only in GitHub Copilot's instructions directory. So the two halves have OPPOSITE diagnoses and opposite fixes: one was never stated to the harness doing the work, the other was stated in the most-read file in the repository and ignored 89% of the time. My commit message asserted the first for both. The second half is CI6 with a number attached, and it was only measurable because both rules sat in one file with opposite outcomes.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Record the measured distinction between an instruction gap and a discipline gap, because my own commit message asserted the wrong one for half the problem",
+      "done_when": "DC-105 carries both halves with their compliance numbers, verified against the pre-fix CLAUDE.md rather than recalled, and names the opposite fixes each half needs",
       "signals": {
         "verification_path": true,
         "verification_executed": true

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 62 · partially-controlled 38 · uncontrolled 4
+**Status counts:** controlled 63 · partially-controlled 38 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3857,3 +3857,45 @@ for both or split.*
   newest and least-proven tool is the part missing its proof.
 - **Status:** `controlled` — self-test present and CI-invoked for `mutation-replay`; the
   convention itself is unenforced
+
+### DC-105 — Calling non-compliance "discipline" without checking whether the rule was ever stated
+
+- **Shape:** a rule is not being followed, and the diagnosis reached for is that people are not
+  following it. The prior question — *was this ever stated to the audience that is not following
+  it?* — goes unasked, because the rule is obviously written down **somewhere**, and the person
+  diagnosing is the person who knows where.
+- **Signature:** any sentence of the form "we need more discipline about X", or a fix that consists
+  of restating X. The tell is that the speaker can quote the rule from memory: they have read the
+  file it lives in, which is precisely the evidence that does not generalise to the audience.
+- **Why it matters:** the two diagnoses have **opposite fixes**, and picking wrongly wastes the
+  effort entirely. An unstated rule needs stating, where it is read. A stated-and-ignored rule needs
+  a control, and restating it does nothing — it has already been tried by definition.
+- **Instance, and it was BOTH at once, which is what makes the class worth having.** 2026-09-03 —
+  Proof Pack capture was running at one observation per 111 episodes, and both concurrent sessions
+  had been calling it a discipline problem. Measured against the pre-fix `CLAUDE.md`:
+
+  | Rule | Stated in the always-loaded file? | Compliance |
+  |---|---|---|
+  | `goal` + `done_when` (AL5b) | **yes** — line 85, cited by ID | 33 of 292 skill entries |
+  | `episode.artifacts` / `AIDE_CONTRACT_LOG` | **no** — absent entirely (grep count 0) | 14 of 111 episodes |
+
+  The evidence half had never been stated for that harness at all: it lived only in
+  `.github/instructions/session-collaboration.instructions.md`, which is **GitHub Copilot's**
+  convention, so the harness doing most of the work could not have known. *A practice nobody was
+  asked to follow is not a practice problem.* The goal half was the exact opposite and is the
+  controlled experiment: stated in the most-read file in the repository, cited by identifier, and it
+  produced **11% compliance**.
+- **So the second half is CI6 with a number attached.** Not "prose is weak" as a slogan, but: prose
+  in the most-read file in the repository achieved 33 out of 292. That is the strongest local
+  evidence for *a lesson recorded as prose is a memoir* that this register contains, and it was only
+  available because the two halves sat side by side in one file with opposite outcomes.
+- **Control:** before treating non-compliance as discipline, **grep the audience's own entry point**
+  for the rule — the file that harness actually loads, not the file you read. It is one command and
+  it selects between two fixes that share no work. Then, whichever half it is, the remedy is a
+  control rather than better wording: `verify-capture-instruction.py` for the stated-nowhere half,
+  and `verify-audit-capture.py` for the stated-and-ignored half.
+- **The generalisation:** *an instruction's reach is a property of where it lives, not of how well it
+  is written* — and with multiple harnesses reading different entry points, "written down" is no
+  longer a single fact about the repository. It is one fact per audience, and it is measurable.
+- **Status:** `controlled` — both halves now have gates; the diagnosis rule itself is a one-command
+  check with no gate, because there is nothing to check until someone makes the claim
