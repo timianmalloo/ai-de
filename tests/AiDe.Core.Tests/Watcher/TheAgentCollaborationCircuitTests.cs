@@ -30,6 +30,19 @@ namespace AiDe.Core.Tests.Watcher;
 /// to assert the standing rather than deleted — which is what the previous version of this remark
 /// instructed whoever closed the gap to do.</para>
 ///
+/// <para><b>Replayed against the defects they claim to catch (DC-099).</b> Mutating the product and
+/// running all 1,557 Core tests: dropping the already-scored guard reddens
+/// <c>ScoringTheSameClosedEpisodeTwiceScoresItOnce</c> alone; dropping the closed-state guard
+/// reddens <c>AnOpenEpisodeIsNotScored</c> alone; passing a null workspace reddens
+/// <c>ACompletedAgentEpisodeIsScored_AndTheVerdictIsHonestlyNotScored</c> and
+/// <c>AndTheStandingReachesTheAgent_SayingWhyItHasNoRank</c>; suppressing
+/// <c>ScoreSegment.IncomparableReason</c> reddens the standing test alone. Each fails for the branch
+/// it is about and would not catch a regression it does not cover, which is the property worth
+/// having and the one that cannot be got by reasoning.</para>
+///
+/// <para><b>Not replayed:</b> <c>AnAgentRegistersDeclaresAndClosesWorkThroughTheContractAlone</c>,
+/// which predates this work.</para>
+///
 /// <para><b>What the agent receives is Not Scored, and that is the honest answer.</b> A
 /// contract-declared episode carries no Proof Pack, so there is no verification path to observe, and
 /// the conservative defaults produce a verdict of Not Scored <i>with its reason</i>. That is not a

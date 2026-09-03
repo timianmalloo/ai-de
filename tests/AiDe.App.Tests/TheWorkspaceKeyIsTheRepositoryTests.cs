@@ -20,6 +20,20 @@ namespace AiDe.App.Tests;
 /// while the meaning was wrong, which is the shape nobody investigates because the surface looks
 /// right.</para>
 ///
+/// <para><b>Replayed, because green from birth is not evidence (DC-099).</b> Each assertion below
+/// was shown RED against the defect it claims to catch, by mutating the product and running the
+/// whole 388-test suite:</para>
+/// <list type="bullet">
+/// <item><description><c>ResolveGitFacts</c> keeping the checkout instead of the common dir's
+/// parent — reddens <c>TwoWorktreesOfOneRepositoryResolveToOneWorkspace</c> and nothing
+/// else.</description></item>
+/// <item><description><c>RepositoryIdentity.Canonicalise</c> dropping its case fold — reddens
+/// <c>TwoSpellingsOfOnePathAreOneKey_AndTwoRepositoriesStayTwo</c> and nothing else.</description></item>
+/// </list>
+/// <para><b>Not replayed, and said so:</b> <c>ADirectoryThatIsNotARepositoryIsItsOwnWorkspace</c>.
+/// No mutation targeted the three-way distinction it guards, so it remains green-from-birth and
+/// should be treated as unproven until someone mutates the non-git branch.</para>
+///
 /// <para><b>Why a real repository and a real worktree.</b> The resolution being tested IS git's
 /// answer to <c>--git-common-dir</c>; a fake would test the fake. This repository is itself developed
 /// across several worktrees, so the case is the working condition rather than a hypothetical.</para>

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 61 · partially-controlled 35 · uncontrolled 4
+**Status counts:** controlled 61 · partially-controlled 36 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3651,3 +3651,36 @@ for both or split.*
   known debt rather than an oversight.
 - **Status:** `partially-controlled` — code citations converted and swept to zero; spec-line
   citations outstanding
+
+### DC-101 — A tool that edits the tree and is only safe when it finishes
+
+- **Shape:** a tool deliberately modifies working files and restores them afterwards — a mutation
+  harness, a bisect script, a formatter check, anything that answers "what happens if this were
+  different". Restoration lives in a `finally`, an `atexit`, or a trailing line. All of them assume
+  the process **reaches** them. A timeout, a Ctrl-C, an OOM kill or a harness cap ends the process
+  where it stands, and the modification is left live in the tree.
+- **Why the leftover is worse than the interruption:** the tree still compiles and the tests still
+  run. The next command measures mutated code and reports its results as real, and the person
+  reading them has no signal that anything is wrong — the run looks like every other run. A killed
+  job that leaves *nothing* behind is an inconvenience; one that leaves a silent edit behind poisons
+  every subsequent verdict until someone happens to check `git status`.
+- **Signature:** a script that writes to a tracked path and holds the original in memory. The tell is
+  a `finally` that restores from a variable rather than from source control, and the absence of any
+  refusal to start on a dirty tree — because without that refusal, the second run inherits the first
+  run's damage and cannot tell.
+- **Instance:** 2026-09-02 — a mutation harness replaying tonight's new tests against the defects
+  they claim to catch. The foreground run hit a 10-minute cap, was SIGTERMed mid-`dotnet test`,
+  `finally` never executed, and `WorkbenchShell` was left keying the workspace on the **checkout**
+  instead of the repository — the exact defect the slice existed to prevent, sitting live in the
+  tree. Found by checking `git status` rather than by anything failing.
+- **Control:** two rules, both cheap:
+  1. **Restore from source control, never from memory** — `git checkout -- <path>` in the `finally`.
+     It is correct even if the in-memory copy is stale, and it is what a human would do to clean up.
+  2. **Refuse to start on a dirty tree**, naming what is dirty. This is the half that survives a kill:
+     restoration can always be skipped, but a run that inherits damage can always be *detected*.
+  Neither makes the kill impossible; together they make its consequence recoverable and visible.
+- **The generalisation worth keeping:** *a tool that edits the tree must be safe when it is KILLED,
+  not merely when it finishes.* Correctness on the happy path is the easy half of a destructive tool
+  and it is the half everyone writes.
+- **Status:** `partially-controlled` — both rules implemented in the harness; no gate, because the
+  harness is a one-off analysis tool rather than committed tooling

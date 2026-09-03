@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T04:12:16Z",
+  "generated": "2026-09-03T04:40:52Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8621,6 +8621,23 @@ window.AUDIT_DATA = {
       "session": "ai-de-a7",
       "prompt": "(continuation) close the end-to-end agent collaboration loop in collaboration with the other session",
       "summary": "Swept src/ and tests/ for line-number citations after the peer found four in their own artifacts. Found one ALREADY ROTTED: CanvasProbe cited CanvasSurface.cs:267 for a string that is at line 366, where 267 is a bare closing brace - the claim true, the citation false, nothing failing. Converted all four code-line citations to symbol citations, which a symbol scan covers for free; zero remain. Registered DC-099 (a detector keyed on the shape of a CORRECT input is blind to a name whose shape is the defect; the test of a new gate is red-on-the-replayed-original, not green-on-the-fixed-tree) and DC-100 (a citation that rots without failing; cite the symbol, spec-line citations recorded as outstanding debt).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0434",
+      "shortname": "replay-tests-against-their-defects",
+      "datetime": "2026-09-03T04:40:52Z",
+      "session": "ai-de-a7",
+      "prompt": "(continuation) close the end-to-end agent collaboration loop in collaboration with the other session",
+      "summary": "Applied DC-099 to my own tests: every one added tonight was written in the same edit as its fix and had never been shown able to fail. Replayed 7 mutations; each reddened exactly the tests about that behaviour, zero uncovered. The headline claim is now proven - keying the workspace on the checkout reddens TwoWorktreesOfOneRepositoryResolveToOneWorkspace and nothing else out of 388. Recorded what reddens what in the tests' own remarks, including two tests NOT replayed. Two harness defects found on the way: the first version used shell=True where dotnet is not on cmd.exe's PATH and read 'no failures parsed' as 'no test failed' - seven false uncovered verdicts, with no guard that a run had happened; and a 10-minute cap SIGTERMed the second version mid-run so its finally never ran, leaving the checkout-keyed mutation live in the tree. DC-101 registered.",
       "kind": "skill",
       "skill": "implement",
       "tool": null,

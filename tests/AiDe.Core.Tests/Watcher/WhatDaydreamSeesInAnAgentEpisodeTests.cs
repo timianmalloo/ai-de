@@ -25,6 +25,11 @@ namespace AiDe.Core.Tests.Watcher;
 /// different defect from the one anticipated and a worse one to discover later — a green suite plus
 /// a live call site reads as a closed vertical.</para>
 ///
+/// <para><b>Replayed (DC-099).</b> Making an unevidenced episode acquire a tripped floor reddens
+/// both tests here AND four of the concurrent session's Daydream tests — the crossover is the useful
+/// part, because it shows this honesty invariant and that recorder are load-bearing on each other
+/// rather than merely adjacent.</para>
+///
 /// <para><b>These assertions are written to fail when that changes.</b> The day an agent episode
 /// carries verification evidence — a task class on the contract, a Proof Pack, an observed
 /// regression — a floor or a shortfall appears, the signature becomes remarkable, and the first
