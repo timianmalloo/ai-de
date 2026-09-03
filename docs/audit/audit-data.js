@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T17:02:56Z",
+  "generated": "2026-09-03T17:15:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8729,6 +8729,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Watcher/DaydreamReachProbe.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0439",
+      "shortname": "mutation-replay-tool",
+      "datetime": "2026-09-03T17:15:36Z",
+      "session": "e9679dd2",
+      "prompt": "Write up cross-boundary mutation as a practice",
+      "summary": "Landed as a tool rather than prose (CI6): tools/mutation-replay.py plus a declared mutation set. 18 mutations over the Daydream seam, 0 uncovered, 74s measured — cheap enough to gate every push. The CROSS-BOUNDARY mode mutates a component this vertical only depends on and runs this vertical's tests, which is invisible to both components' own sweeps. Carries both guards learned by losing them: an unparseable run is a harness failure not a pass, and a dirty tree is refused because the tool restores with git checkout and would destroy uncommitted work.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/mutation-replay.py"
       ],
       "tags": [],
       "outcome": "success"
