@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T00:38:53Z",
+  "generated": "2026-09-03T00:40:19Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8440,6 +8440,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Mcp/McpToolGateway.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0421",
+      "shortname": "daydream-d3-candidate-lifecycle",
+      "datetime": "2026-09-03T00:39:43Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "keep on with D3",
+      "summary": "Daydream D3 (candidate lifecycle) complete. The promotion staircase as an append-only event fold: Observation to NeedsDisconfirm to Promotable to Promoted, with Disconfirmed, Deferred, Rejected and Retracted. All five US-9 acceptance criteria map to tests, four of which are refusals. Promotion is UNREACHABLE rather than refused - the guard lives in the transition, so a Promoted event written by any path including a hand-edited store cannot promote something unpromotable. Evidence is folded BEFORE events, so a promoted learning whose source episodes disappear falls back to Observation: a lesson must not outlive the evidence for it. Evidence is split derived (episodes, confidence) from authored (counter-evidence, expected effect, check), and nothing derives the authored parts because a generated expected effect is a guess wearing the costume of evidence. Confidence is never Verified however often a pattern recurs. A failing test surfaced a real design question about Deferred: the spec lists it as its own state and says defer means remain-candidate, so it now persists through later events but re-opens on new evidence. 17 tests; four refusals observed failing with the human-gate guard removed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DaydreamCandidate.cs"
       ],
       "tags": [],
       "outcome": "success"

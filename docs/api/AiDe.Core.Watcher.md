@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 128 types, 225 members, 57% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 135 types, 228 members, 58% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**128 public types · 225 public members · 57% documented.**
+**135 public types · 228 public members · 58% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -473,6 +473,121 @@ pump is correct here without tracking file offsets.
 | Member | Summary |
 |---|---|
 | `int PumpOnce()` | Reads the log directory once and applies every event; returns the count applied. |
+
+## `DaydreamState`
+
+*enum* — `DaydreamCandidate.cs`
+
+Where a Daydream item stands on the promotion staircase (spec §"Daydream item" state vocabulary).
+
+**Remarks.** Every landing has something that can stop the climb, and each is an acceptance criterion of US-9
+rather than a design preference:
+
+Observation ──(recurrence)──> NeedsDisconfirm ──(check survived)──> Promotable
+│                                    │
+(check refuted)                        (a human decides)
+▼                                    ▼
+Disconfirmed              Promoted · Deferred · Rejected
+│
+(source corrected/deleted/contradicted)
+▼
+Retracted
+
+## `DisconfirmingOutcome`
+
+*enum* — `DaydreamCandidate.cs`
+
+What a completed disconfirming check found.
+
+## `CandidateEvidence`
+
+*record* — `DaydreamCandidate.cs`
+
+The evidence a Candidate Lesson must carry before anyone may act on it (US-9, second criterion:
+source episodes, confidence, counter-evidence, expected effect, and the disconfirming check).
+
+**Remarks.** **Split into derived and authored, deliberately.** Source episodes and confidence are
+computed from observations — the system knows them. Counter-evidence, expected effect and the
+check are **authored**, and are null until someone supplies them. Nothing derives them,
+because a generated "expected effect" is a guess wearing the costume of evidence.
+
+
+
+
+
+A candidate missing any authored part is `NeedsDisconfirm`, which
+is a state and not a warning: promotion is unreachable from it rather than discouraged.
+
+| Member | Summary |
+|---|---|
+| `bool IsComplete` | True only when every authored part is present and the check has been run. |
+
+## `DaydreamEvent`
+
+*record* — `DaydreamCandidate.cs`
+
+One append-only event in a candidate's life. The state is folded from these, never stored.
+
+**Remarks.** The same discipline as every other fact in this store: a correction is a superseding event,
+so the history of what was believed — and when, and by whom — survives the correction. A stored
+state would be a second definition of a quantity the events already determine (DM7).
+
+
+
+
+
+`Actor` is who caused it: the system for an observation or a threshold
+crossing, and a named operator for anything requiring the human gate. It is recorded because
+"who promoted this" is the first question anyone asks about a lesson they disagree with.
+
+## `DaydreamEventKind`
+
+*enum* — `DaydreamCandidate.cs`
+
+The kinds of thing that happen to a candidate.
+
+## `DaydreamCandidate`
+
+*record* — `DaydreamCandidate.cs`
+
+A candidate's current standing, folded from its events and its surviving evidence.
+
+| Member | Summary |
+|---|---|
+| `bool CanPromote` | Whether a human may promote this now. |
+
+### `bool CanPromote`
+
+Whether a human may promote this now.
+
+**Remarks.** Read by the surface to decide whether a promote affordance exists **at all** — not whether
+it is enabled and shows an error on click. A control the user can press and be refused by
+teaches that the refusal is negotiable.
+
+## `DaydreamFold`
+
+*class* — `DaydreamCandidate.cs`
+
+Folds observations and candidate events into current standing. Pure: no store, no clock, no I/O.
+
+**Remarks.** **Promotion is unreachable rather than refused.** There is no `Promote()` method
+that validates and throws. A `Promoted` event on a candidate that was not
+`Promotable` does not move it — the guard is in the transition, so an
+event written by any path, including a hand-edited store, cannot promote something unpromotable.
+
+
+
+
+
+
+**Evidence can be withdrawn.** Fold order is observations first, then events: if
+episodes disappear — retention, correction, a purged workspace — a candidate that no longer
+recurs falls back to `Observation` whatever its event history says.
+A lesson outliving the evidence for it is the failure this ordering prevents.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<DaydreamCandidate> Fold(` | Every pattern currently known, with its standing. |
 
 ## `DaydreamSignature`
 
