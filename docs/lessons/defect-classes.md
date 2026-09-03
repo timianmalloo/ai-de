@@ -3779,12 +3779,25 @@ for both or split.*
   `FullyQualifiedName~Daydream`, which does not match `WhatTheRealCorpusCanProduceTests`. The newest
   and least-proven test sat outside the sweep whose entire job is proving that controls can fail.
   Found only by going looking for whether the new test *could* fail, rather than by any report.
-- **Control:** prefer **no selector** — run the whole suite per mutation and let the mutation, not
-  the filter, do the selecting; it costs wall-clock and buys the property that a new test is inside
-  the sweep the moment it exists. Where a selector is unavoidable, make its *coverage* the thing
-  asserted: fail when a subject file has tests the selector does not reach. This repository's other
-  replay harnesses run unfiltered for exactly this reason, which is why the shape appeared on one
-  side and not the other.
+- **Control, and the first version of this entry got it wrong.** It said *prefer no selector* — run
+  the whole suite per mutation and let the mutation do the selecting. Measured rather than assumed,
+  that does not survive at suite scale: **74s filtered for 18 mutations against ~71s each
+  unfiltered, or about 21 minutes**. A gate that slow is not run, and an unrun gate is worse than a
+  narrow one. The unfiltered form is right only for a harness whose subject is already one slice,
+  which is why the shape appeared on the side with the whole Core suite as its subject and not on
+  the side replaying a single file.
+- **So the control is to make the selector's coverage the thing asserted**, not to remove it:
+  a preflight **derives**, from the types each mutation touches, every test file naming one, and
+  fails when the filter cannot select it. Derived from the mutation set rather than from a second
+  list, because a scope check needing its own manual maintenance has the defect it is checking for.
+  `tools/mutation-replay.py` does this, verified by narrowing the filter back to the value that
+  actually shipped and watching it name the three real gaps.
+- **A cross-boundary mutation must be exempt**, and this was found by running the check rather than
+  reasoning about it: the first version flagged five scoring tests against a mutation whose entire
+  purpose is to change a component this vertical merely depends on. Those tests are not a gap, they
+  belong to another sweep. Five false positives on a push gate would have had it switched off within
+  a day, taking the real finding with it — the same failure mode as a mutation detector reporting
+  its own blind spots (DC-099), reached by a different route.
 - **The general form, worth more than the instance:** *a verification whose scope is named rather
   than derived will drift out of date silently, and its report will not say so.* The same argument as
   deriving a fixture from the product rather than restating its list (DC-021), applied to which

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T18:39:05Z",
+  "generated": "2026-09-03T18:41:47Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8882,6 +8882,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tools/mutation-replay.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0447",
+      "shortname": "dc103-control-corrected-by-measurement",
+      "datetime": "2026-09-03T18:41:39Z",
+      "session": "ai-de-a7",
+      "prompt": "yes do next steps",
+      "summary": "DC-103's control said 'prefer no selector - run the whole suite per mutation'. The peer measured it: 74s filtered for 18 mutations against ~71s each unfiltered, about 21 minutes. A gate that slow is not run, and an unrun gate is worse than a narrow one. Corrected: the control is to assert the SELECTOR'S COVERAGE, via a preflight that derives from the mutation set which test files should be selectable and fails when the filter cannot reach them. Also recorded that a cross-boundary mutation must be exempt - their first version produced five false positives on a push gate, which would have had it switched off within a day.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
