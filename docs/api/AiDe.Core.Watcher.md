@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 151 types, 278 members, 62% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 153 types, 280 members, 62% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**151 public types · 278 public members · 62% documented.**
+**153 public types · 280 public members · 62% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1645,6 +1645,84 @@ Pattern: Adapter over the ingest host's port. The capability never travels; only
 | `OtlpReceiverStats Stats` | **(gap)** |
 | `Task RunAsync(CancellationToken ct)` | Accepts exports until cancelled. One export per POST; one bad request never stops the loop. |
 | `void Dispose()` | **(gap)** |
+
+## `ProofPackVerdict`
+
+*enum* — `ProofPackVerifier.cs`
+
+What could be established about one declared Proof Pack path.
+
+**Remarks.** **Three states, not a bool**, because a bool is the defect this exists to fix.
+`HasProofPack: false` was hardcoded on the agent scoring path, which collapsed
+*we looked and there was none* — a fact about the episode — into
+*there was nowhere to look*, a fact about the product. The scorecard then made a statement
+about the agent when the true statement was about a missing channel. Reintroducing a bool here
+would rebuild that collapse one layer down.
+
+## `ProofPackVerifier`
+
+*class* — `ProofPackVerifier.cs`
+
+Checks whether a path an agent declared is really a committed Proof Pack in its repository.
+
+**Remarks.** **Why this makes agent-declared evidence admissible.** The owner's decision is that the
+watcher *derives* — it observes rather than accepts testimony, which is why an
+`episode-close` carrying its own `acceptance_met` stays refused. A declared path is
+different in exactly the way that matters: **the agent names a file and the product checks
+whether the file is there**. The agent cannot make the check pass by asserting harder. That is
+an observation about a claim, not a claim accepted.
+
+
+
+
+
+**Why not simply scan the repository for Proof Packs.** Because nothing links one to an
+episode, and crediting an episode with any `docs/proof/` file found in the tree would
+fabricate *presence* — an agent scored for someone else's evidence. That is strictly worse
+than the bug being fixed: today's value is an honest zero about the wrong subject, where that
+would be a wrong number that looks like a right one.
+
+
+
+
+
+**The containment check is a security boundary, not tidiness.** The declared path
+arrives from outside the product, verbatim and uninspected by the ingest half — absolute paths,
+traversal, and escaping are all recorded exactly as sent, deliberately, so that this layer
+decides what is true. A path escaping the repository would let a session point at another
+repository's evidence, or at any file on the machine whose existence then becomes a score.
+
+
+
+
+
+**NO PRODUCTION CALLER ON THIS BRANCH.** Stated rather than left to be found (DC-089).
+The caller is `ClosedEpisodeScoring`, which will read declared artifacts from the
+store once the contract half lands, and it is deliberately not written yet because the store
+method it needs does not exist here. This claim is a negative and negatives decay when someone
+else acts (DC-094), so it is tied to something that fails: the day
+`ClosedEpisodeScoring` calls this, `WhatDaydreamSeesInAnAgentEpisodeTests` goes red,
+because an evidenced episode stops being unremarkable.
+
+| Member | Summary |
+|---|---|
+| `string ProofDirectory = "docs/proof/"` | The committed location a Proof Pack lives in, matching the audit-log convention. |
+| `ProofPackVerdict Verify(string? repositoryRoot, string? declaredPath)` | The verdict for one declared path, relative to the repository the session is bound to. |
+
+### `string ProofDirectory = "docs/proof/"`
+
+The committed location a Proof Pack lives in, matching the audit-log convention.
+
+**Remarks.** The same substring `AuditLogEpisodeSource` looks for in an audit entry's artifacts, so
+the two evidence paths agree on what a Proof Pack IS. Two definitions of that would let an
+episode be evidenced on one path and unevidenced on the other.
+
+### `ProofPackVerdict Verify(string? repositoryRoot, string? declaredPath)`
+
+The verdict for one declared path, relative to the repository the session is bound to.
+
+- **`repositoryRoot`** — The session's repository — the corrected one, so a worktree-registered agent is checked against the repository its evidence is actually committed in.
+- **`declaredPath`** — The path exactly as the agent sent it, unmodified by the ingest.
 
 ## `RegistrationNotice`
 

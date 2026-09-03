@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T17:10:31Z",
+  "generated": "2026-09-03T17:33:35Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8729,6 +8729,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Watcher/RepositoryCorrection.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0440",
+      "shortname": "proof-pack-verifier",
+      "datetime": "2026-09-03T17:33:35Z",
+      "session": "ai-de-a7",
+      "prompt": "then next steps",
+      "summary": "Built the Proof Pack verifier - my half of closing the hardcoded HasProofPack:false. Three verdicts not a bool: Verified, NotFound, Unverifiable, because collapsing 'we looked and it is not there' into 'we could not look' is the exact defect being fixed one layer up. Containment is a security boundary: declared paths arrive verbatim from outside the product, so traversal and a sibling repository with a matching prefix are both refused, and the separator is appended before comparing because a plain StartsWith admits C:/repos/app-other as inside C:/repos/app. Scanning the repository for any docs/proof file was rejected - crediting an episode with someone else's evidence fabricates presence, strictly worse than an honest zero about the wrong subject.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/ProofPackVerifier.cs"
       ],
       "tags": [],
       "outcome": "success"
