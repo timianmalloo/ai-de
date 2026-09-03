@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T00:30:46Z",
+  "generated": "2026-09-03T00:38:53Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8423,6 +8423,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0420",
+      "shortname": "c1-agent-standing",
+      "datetime": "2026-09-03T00:38:53Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Collaboration track C1 — wire the per-turn standing (US-16, US-8).",
+      "summary": "P0 found the slice's criterion did not reach its deliverable: P1 said a standing is produced, satisfiable while the agent received nothing. Built the MCP standing tool as a pull. Found trend had no producer and that AgentStanding.Trend was int so a first episode reported 0; now derived from history and nullable. Guard learned about absent subjects once for every tool. Wired at the composition root as a constructor parameter. 385 App + 1464 Core, all gates. Registered DC-091; third instance added to DC-089.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Mcp/McpToolGateway.cs"
       ],
       "tags": [],
       "outcome": "success"
