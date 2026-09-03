@@ -94,6 +94,19 @@ jobs:
           python tools/verify-audit-capture.py --self-test
           python tools/verify-audit-capture.py
 
+      # 111 episodes scored, 1 observation written, and the recurrence threshold is two — so the
+      # learning corpus could only ever be empty. The cause was not the engine: the instruction that
+      # makes scoring possible lived only in Copilot's instructions directory, so the harness doing
+      # most of the work was never told and could not have known.
+      #
+      # The channel is harness-neutral by construction; being TOLD is not. This fails when a harness
+      # root stops carrying the capture instruction, and catches the next harness the moment its
+      # root appears without it.
+      - name: Proof Pack capture instruction gate
+        run: |
+          python tools/verify-capture-instruction.py --self-test
+          python tools/verify-capture-instruction.py
+
       # DC-099: a test written in the same edit as its fix has never been shown capable of failing.
       # Breaks the code on purpose and requires a test to notice. The four CROSS-BOUNDARY/CROSS-AUTHOR
       # mutations are the ones no single-sided sweep can find: each component's own sweep mutates only

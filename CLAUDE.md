@@ -246,3 +246,31 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   gates, the loop), Persona Catalog, LOA, and Engineering Governance live in `.claude/knowledge/`
   — the constitution all of the above rests on.
 <!-- AI-FORWARD-PACK:END -->
+
+## Proof Pack capture — every harness, every episode
+
+**If your work produced evidence, name it when you close the episode.** This is the only thing you
+may say about your own quality, and it is deliberately not a claim: you name files, the product goes
+and looks, and you cannot make a path exist by asserting it harder.
+
+```
+{"kind":"episode-close","contract":"loomkeeper/1","session":"<AIDE_SESSION>","at":<unix>,"seq":<n>,
+ "attrs":{"episode.outcome":"Completed|Abandoned|Blocked|Superseded",
+          "episode.artifacts":"docs/proof/pp-0001.md\ndocs/proof/pp-0002.md"}}
+```
+
+Newline-separated, repository-relative paths, written to `$AIDE_CONTRACT_LOG`. Full contract and the
+refusals it enforces: **`.github/instructions/session-collaboration.instructions.md`**.
+
+**Why this is a standing obligation and not a nicety.** Measured over this repository's entire
+recorded history: **111 episodes, 1 observation**. The recurrence threshold is two, so the learning
+corpus can only be empty — an engine that is correct, verified end to end, and producing nothing,
+because almost nothing ever recorded its evidence. Capture only accumulates *forward*: episodes that
+closed without naming their evidence are unreachable, permanently. Every turn that skips this makes
+the gap one episode larger and cannot be repaired later.
+
+**Applies to every harness** — Claude Code, GitHub Copilot, Gemini CLI, and whatever is added next.
+The channel is deliberately harness-neutral: an environment variable and a JSONL line, so anything
+that can write a file can participate. What is *not* automatic is that each harness's own
+instruction root says so, which is why this section exists in each of them rather than in one.
+`tools/verify-capture-instruction.py` fails when a harness root stops carrying it.

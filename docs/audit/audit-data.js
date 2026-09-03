@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T18:55:00Z",
+  "generated": "2026-09-03T18:57:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8960,6 +8960,29 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true,
         "regression": false
+      }
+    },
+    {
+      "id": "al-0451",
+      "shortname": "capture-instruction-reaches-every-harness",
+      "datetime": "2026-09-03T18:57:11Z",
+      "session": "ai-de-a7",
+      "prompt": "yes we need proof pack capture ... across all harnesses (claude code, gh copilot, gemini cli... which we will add shortly)",
+      "summary": "MEASURED the cause rather than treating 1-in-111 as a practice problem: the instruction that makes scoring possible lived ONLY in .github/instructions/session-collaboration.instructions.md, which is GitHub Copilot's convention. CLAUDE.md and AGENTS.md did not mention episode.artifacts or AIDE_CONTRACT_LOG at all, so the harness doing most of the work was never told and could not have known. A practice nobody was asked to follow is not a practice problem. Added the obligation to both roots, after the AI-FORWARD-PACK managed block so a pack update cannot wipe it, and built verify-capture-instruction.py - observed failing on the REAL pre-fix CLAUDE.md, not a synthetic. A declared harness with no root yet is PENDING rather than failed, so Gemini CLI is caught the moment GEMINI.md appears without the instruction.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-capture-instruction.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Proof Pack capture reaches every harness that reads this repository, not only the one whose instruction file happened to carry it",
+      "done_when": "CLAUDE.md and AGENTS.md carry the capture obligation outside the pack's managed block, and a gate fails when any declared harness root stops carrying it or a new harness root appears without it",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
       }
     }
   ],
