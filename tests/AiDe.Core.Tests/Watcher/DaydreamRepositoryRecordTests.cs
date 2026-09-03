@@ -14,6 +14,25 @@ namespace AiDe.Core.Tests.Watcher;
 /// <para>The tests below are about the properties that make a committed, hand-inspectable,
 /// union-merged file trustworthy: round-trip, per-record provenance, order independence, and the
 /// difference between a line that is missing and one that could not be read.</para>
+///
+/// <para><b>OBSERVED RED — mutation replay, 2026-09-02.</b> Every test here was written in the same
+/// edit as the code it covers, so none had ever been shown capable of failing. A test that has only
+/// been green is not evidence (DC-099). Each row below is a mutation applied to the production code,
+/// with the tests that went red against a baseline of 87 green:</para>
+///
+/// <list type="table">
+///   <item><description>enum written as an ordinal → <c>EnumsAreWrittenAsNames…</c>, <c>AnEventRoundTrips…</c>, <c>AnUnknownOutcome…</c></description></item>
+///   <item><description>events not sorted by sequence → <c>EventsAreOrderedBySequenceNotByLinePosition</c>, alone</description></item>
+///   <item><description>unknown outcome silently defaulted → <c>AnUnknownOutcomeIsUnreadableRatherThanTreatedAsAbsent</c>, alone</description></item>
+///   <item><description>unreadable lines not counted → <c>AnUnreadableLineIsSkippedAndCounted</c> + <c>AnUnknownOutcome…</c></description></item>
+///   <item><description>index rewritten on every append → <c>AnExistingIndexIsNeverRewritten</c>, alone</description></item>
+///   <item><description>provenance marker misspelled → <c>EveryWrittenLineCarries…</c>, <c>TheIndexUsesTheSameMarkerSpelling…</c></description></item>
+///   <item><description>append reports success with nowhere to write → <c>WritingToAnUnavailableRecord…</c> + the recorder's</description></item>
+/// </list>
+///
+/// <para>Zero uncovered. The couplings are real rather than accidental: counting no unreadable lines
+/// also reddens the unknown-outcome test, because that test asserts the count — which is the two
+/// controls sharing one claim, not one of them being redundant.</para>
 /// </remarks>
 public sealed class DaydreamRepositoryRecordTests : IDisposable
 {

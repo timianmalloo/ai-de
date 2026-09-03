@@ -6,9 +6,21 @@ namespace AiDe.Core.Tests.Watcher;
 /// D5 — the one call site that turns a scored episode into a Daydream observation.
 /// </summary>
 /// <remarks>
-/// The whole vertical folds from what this writes, so its refusals matter more than its writes: a
-/// clean episode must not become a pattern, and an unavailable record must not report a write it
-/// did not make.
+/// <para>The whole vertical folds from what this writes, so its refusals matter more than its
+/// writes: a clean episode must not become a pattern, and an unavailable record must not report a
+/// write it did not make.</para>
+///
+/// <para><b>OBSERVED RED — mutation replay, 2026-09-02</b> (DC-099: a test that has only ever been
+/// green is not evidence). Making the observation id non-deterministic reddens
+/// <c>ReObservingOneEpisodeProducesTheSameId</c> alone; making <c>Append</c> report success with
+/// nowhere to write reddens <c>AnUnavailableRecordIsReportedAsNoWrite</c> and the record's own.</para>
+///
+/// <para><b>And four tests here are load-bearing on the scorer, not merely adjacent to it.</b> The
+/// concurrent session's mutation sweep found that making an unevidenced episode trip a floor reddens
+/// <c>ACleanEpisodeIsNotObservedAtAll</c>, <c>AnUnassessedEpisodeIsDistinguishedFromACleanOne</c> and
+/// <c>TheRealEvidenceFreeEpisodeReportsAsUnassessed</c> here. <see cref="DaydreamObservationOutcome"/>'s
+/// whole distinction rests on the scorer refusing to fabricate a floor it did not observe — a
+/// coupling neither session would have described that way before measuring it.</para>
 /// </remarks>
 public sealed class DaydreamRecorderTests : IDisposable
 {

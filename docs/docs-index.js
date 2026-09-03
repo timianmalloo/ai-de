@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T04:40:53Z",
+  "generated": "2026-09-03T04:49:23Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1618,7 +1618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d3dbaf06b946a834c27ec4d9ac24d4982c41128a16b5eab5e02935a324ddaafb"
+      "sourceSha256": "e282729e2ec477f93e32c83db00965004f3bf043c2d668b32d2a07beacdbe87d"
     },
     {
       "id": "api-aide-core-workbench",
@@ -2217,6 +2217,38 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "b3c1be4081228acc177673fdffe9301467a6836a31654424ba505a61e348fbad"
+    },
+    {
+      "id": "note-20260902-the-repo-path-contract",
+      "path": "docs/notes/note-20260902-the-repo-path-contract.md",
+      "title": "What happens when a registrant's repo.path names a worktree",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-02",
+      "reviewSuggested": [],
+      "summary": "A registrant supplies its own repo.path, and nothing checks that it names a repository rather than a linked worktree. Two sessions argued reject-versus-normalise and both were wrong; the resolution is three cases, not two. Recorded because the argument turned on two premises that were checkable in seconds and neither side had checked its own.",
+      "tags": [
+        "decision-note",
+        "watcher",
+        "registration",
+        "collaboration",
+        "message-board",
+        "scoring"
+      ],
+      "links": [
+        {
+          "to": "note-20260902-two-decisions-the-loop-waits-on",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-daydream-dream-seam",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7f73d1de320ee0bae1301f03f827d76a5b5fcb8af3e9a6e986087d6c1debadea"
     },
     {
       "id": "note-20260902-two-decisions-the-loop-waits-on",
@@ -3127,7 +3159,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "de0788f954b4f8df7f4ffb9e66030a9ae04e29db85f069c804e84e3bf90eaee3"
+      "sourceSha256": "bf218c17d92b26e1194275a958850a6dca53a8acda333316f360787742fe82be"
     },
     {
       "id": "design-watcher-dispute-command",
@@ -4145,7 +4177,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "867e17666b6ed853c4cb0254dc40641e62c6603adc96b1700a66857fd74bd44d"
+      "sourceSha256": "61502f38a5c96547abe4efc04b4ec0fa757a451fb9869f838317469c0b751108"
     },
     {
       "id": "diagram-class",
@@ -10830,5 +10862,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7b792cd93b2999c8dadd939fcf233c778d4f72fa591dcfb5a28316123c6ec1e8"
+  "graphSha256": "d07db303301aa494a7a9c9e2aebd533b29b57c2c215dc9b6d959c4b632eef499"
 };

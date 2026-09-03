@@ -259,6 +259,28 @@ evidence is warranted, and it would be indistinguishable from a real failure.
 
 
 
+**Another component depends on this refusal, and the damage would start HERE.**
+`DaydreamObservationOutcome` distinguishes "nothing went wrong" from "nothing was
+assessed", and that distinction rests entirely on this path not fabricating a floor or a
+rubric it did not observe. Relax the honesty above - default a rubric to zero, trip a
+verification floor because none was seen - and the signature stops being unremarkable, the
+recorder stops being able to tell a clean episode from an unassessed one, and a permanently
+deaf Daydream reports as a healthy repository. Nothing in that component would change and
+nothing there would fail.
+
+
+
+
+
+Found by mutation across the boundary rather than by reading either side: making an
+unevidenced episode trip a floor reddens this repository's Daydream tests as well as the
+scoring ones. Recorded here rather than only there, because the person who would cause it is
+editing this file.
+
+
+
+
+
 **The task class is absent, not invented.** The coordination contract carries a goal
 and a done-condition but no task class, so the segment is
 `Unclassified` and therefore not comparable: the episode is scored
@@ -725,7 +747,7 @@ True when nothing fell short and no floor tripped — a clean episode.
 *record* — `DaydreamObservation.cs`
 
 One observed occurrence of one candidate pattern in one Work Episode at one observation time
-(spec line 237 — the declared grain).
+(the spec's grain table, `Daydream Observation` row — the declared grain).
 
 **Remarks.** Append-only. An observation is never edited; a re-observation of the same episode is a new row
 and the fold deduplicates by episode, so replay is deterministic and a correction is a
@@ -809,22 +831,36 @@ does not yet hold would put a pattern in the record whose evidence a reader cann
 
 
 
-**The one call site is `ScoringService.ScoreAndRecord`, immediately after
-`RecordScorecard`** — one level below where this class originally proposed it, because
-`ScoringService` is the single place a `ScoredEpisode` comes into existence and
-both producers pass through it. Placing it on the tick pass instead would have made two call
-sites, and the audit-import one would have been the forgotten one.
+**NO CALLER ON THIS BRANCH.** Verified by grep, not remembered: nothing under
+`src/` constructs this type. A previous revision of this paragraph asserted a call site in
+`ScoringService.ScoreAndRecord`, which was true of a concurrent session's branch and false
+of the tree the comment shipped in — DC-094 committed in the file whose author registered the
+class, and worse than the instance that named it, because the source was a peer's unpushed work
+rather than a stale comment. **An artifact describes the tree it is in.**
 
 
 
 
 
-**What it actually sees today, measured rather than assumed.** An agent's episode
-carries no Proof Pack, so it scores `NotScored` with no assessments and no tripped floors,
-and this class declines it as `NothingWasAssessed`. The
-producer feeding the record today is therefore **audit-import**, whose episodes read committed
-Proof Packs and do trip floors. That is not a defect to fix here — it is the instrumentation gap
-upstream, and the outcome enum exists so it reports as a gap rather than as a quiet day.
+**Where it belongs when that branch lands:** `ScoringService.ScoreAndRecord`,
+immediately after `RecordScorecard` — one level below where this class originally proposed
+it, because `ScoringService` is the single place a `ScoredEpisode` comes into
+existence and both producers pass through it. On the tick pass instead there would be two call
+sites, and the audit-import one would be the forgotten one. Until then this class is exercised
+only by its tests, which is DC-089's shape: a unit test is a caller, just not one that
+ships.
+
+
+
+
+
+**What it will see, measured rather than assumed.** An agent's episode carries no Proof
+Pack, so it scores `NotScored` with **no assessments** and no tripped floors, and this
+class declines it as `NothingWasAssessed`. The producer
+that will actually feed the record is therefore **audit-import**, whose episodes read
+committed Proof Packs and do trip floors. That is not a defect to fix here — it is an
+instrumentation gap upstream, and the outcome enum exists so it reports as a gap rather than as
+a quiet day.
 
 
 

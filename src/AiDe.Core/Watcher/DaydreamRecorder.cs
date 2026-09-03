@@ -56,18 +56,28 @@ public enum DaydreamObservationOutcome
 /// <para><b>Called after a scorecard is recorded, not before.</b> Observing an episode the store
 /// does not yet hold would put a pattern in the record whose evidence a reader cannot follow.</para>
 ///
-/// <para><b>The one call site is <c>ScoringService.ScoreAndRecord</c>, immediately after
-/// <c>RecordScorecard</c></b> — one level below where this class originally proposed it, because
-/// <c>ScoringService</c> is the single place a <see cref="ScoredEpisode"/> comes into existence and
-/// both producers pass through it. Placing it on the tick pass instead would have made two call
-/// sites, and the audit-import one would have been the forgotten one.</para>
+/// <para><b>NO CALLER ON THIS BRANCH.</b> Verified by grep, not remembered: nothing under
+/// <c>src/</c> constructs this type. A previous revision of this paragraph asserted a call site in
+/// <c>ScoringService.ScoreAndRecord</c>, which was true of a concurrent session's branch and false
+/// of the tree the comment shipped in — DC-094 committed in the file whose author registered the
+/// class, and worse than the instance that named it, because the source was a peer's unpushed work
+/// rather than a stale comment. <b>An artifact describes the tree it is in.</b></para>
 ///
-/// <para><b>What it actually sees today, measured rather than assumed.</b> An agent's episode
-/// carries no Proof Pack, so it scores <c>NotScored</c> with no assessments and no tripped floors,
-/// and this class declines it as <see cref="DaydreamObservationOutcome.NothingWasAssessed"/>. The
-/// producer feeding the record today is therefore <b>audit-import</b>, whose episodes read committed
-/// Proof Packs and do trip floors. That is not a defect to fix here — it is the instrumentation gap
-/// upstream, and the outcome enum exists so it reports as a gap rather than as a quiet day.</para>
+/// <para><b>Where it belongs when that branch lands:</b> <c>ScoringService.ScoreAndRecord</c>,
+/// immediately after <c>RecordScorecard</c> — one level below where this class originally proposed
+/// it, because <c>ScoringService</c> is the single place a <see cref="ScoredEpisode"/> comes into
+/// existence and both producers pass through it. On the tick pass instead there would be two call
+/// sites, and the audit-import one would be the forgotten one. Until then this class is exercised
+/// only by its tests, which is DC-089's shape: a unit test is a caller, just not one that
+/// ships.</para>
+///
+/// <para><b>What it will see, measured rather than assumed.</b> An agent's episode carries no Proof
+/// Pack, so it scores <c>NotScored</c> with <b>no assessments</b> and no tripped floors, and this
+/// class declines it as <see cref="DaydreamObservationOutcome.NothingWasAssessed"/>. The producer
+/// that will actually feed the record is therefore <b>audit-import</b>, whose episodes read
+/// committed Proof Packs and do trip floors. That is not a defect to fix here — it is an
+/// instrumentation gap upstream, and the outcome enum exists so it reports as a gap rather than as
+/// a quiet day.</para>
 ///
 /// <para><b>Suppression is deliberately NOT here.</b> <see cref="DreamCorpusReader"/> marks a
 /// pattern already-known so it stops being re-<i>proposed</i>; it must never stop it being

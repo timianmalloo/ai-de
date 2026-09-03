@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T04:40:52Z",
+  "generated": "2026-09-03T04:49:22Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8593,6 +8593,40 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/notes/note-20260902-two-decisions-the-loop-waits-on.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0430",
+      "shortname": "daydream-quiet-not-healthy",
+      "datetime": "2026-09-03T03:56:03Z",
+      "session": "e9679dd2",
+      "prompt": "Core reported the Not-Scored prediction refuted; verify independently and act on it",
+      "summary": "Measured the evidence-free episode through the real deriver and scorer: verdict=NotScored floors=[] rubrics=[] — Assessments EMPTY, not all-null. My prediction was inverted. Exposed DC-025 in DaydreamRecorder: bool Observe collapsed 'assessed, nothing wrong' with 'nothing assessed at all', so a repository with no evidence would read as healthy permanently. Fixed with DaydreamObservationOutcome, discriminating on rubrics rather than verdict. Then found DC-094 instance 2 in my own file: the doc comment asserted a call site that exists only on a peer's unpushed branch.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DaydreamRecorder.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0431",
+      "shortname": "repo-path-contract-decided",
+      "datetime": "2026-09-03T04:00:01Z",
+      "session": "e9679dd2",
+      "prompt": "Core disagreed on reject-vs-normalise for a worktree-shaped repo.path; verify the premises and settle it",
+      "summary": "Conceded: detection and correction are the same .git read, so rejection fires only where normalisation would have worked and is silent in the case invoked to argue for it. Verified on disk. Blast radius is worse than reported — MessageBoard.RequireParent REFUSES a reply across repository keys, so a worktree-registering agent has every reply rejected as cross-repository. Resolution is three cases, not two, plus a registration diagnostic channel that does not exist yet.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260902-the-repo-path-contract.md"
       ],
       "tags": [],
       "outcome": "success"
