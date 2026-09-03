@@ -29,8 +29,46 @@ public static class SessionRowPresenter
     /// <summary>The chip's text: the glyph and word together, e.g. "✓ Alive".</summary>
     public static string ChipText(LivenessBadge liveness) => $"{liveness.Glyph} {liveness.Text}";
 
-    /// <summary>The primary line — who and where: the stable human identity a session is recognised by.</summary>
-    public static string Identity(WatcherSessionRow row) => $"{row.Agent} · {row.Repository}/{row.Worktree}";
+    /// <summary>
+    /// The primary line — who, where, and WHICH: the identity a session is recognised by.
+    /// </summary>
+    /// <remarks>
+    /// <para>Two defects reported from the running product, in one line of text.</para>
+    ///
+    /// <para><b>It read as a path.</b> <c>{Repository}/{Worktree}</c> rendered
+    /// <c>TheTerrace/docs/fix-broken-design-links</c>, and the reporter reasonably asked why sessions
+    /// were not at the repository root. They were — that is a repo and a branch whose name contains
+    /// a slash, which is the dominant convention rather than an edge case.</para>
+    ///
+    /// <para><b>It did not identify anything.</b> Three live sessions rendered as three identical
+    /// strings, because agent, repository and branch were the same for all three. The session id was
+    /// on the record the whole time and never shown.</para>
+    /// </remarks>
+    public static string Identity(WatcherSessionRow row) => Identity(row, null);
+
+    /// <summary>
+    /// The identity line, preferring the name the operator gave this terminal.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The name is a presentation concern, resolved here rather than stored on the
+    /// session.</b> A terminal can already be renamed and the name already survives a restart, in
+    /// <c>TerminalCustomizationStore</c>, keyed by surface id — and a session's
+    /// <c>Terminal.TerminalId</c> IS that surface id. So the name needed carrying to this line, not
+    /// a column in the watcher store, a schema migration and a contract attribute to move it
+    /// there.</para>
+    ///
+    /// <para><b>The harness is kept, not replaced.</b> A row named "refactor the parser" that no
+    /// longer says which harness is running has traded one missing fact for another; the operator
+    /// named the session to tell it apart from its siblings, not to hide what it is.</para>
+    /// </remarks>
+    public static string Identity(WatcherSessionRow row, string? name)
+    {
+        ArgumentNullException.ThrowIfNull(row);
+
+        return string.IsNullOrWhiteSpace(name)
+            ? $"{row.Agent} · {row.Location} · {row.ShortId}"
+            : $"{name.Trim()} · {row.Agent} · {row.Location} · {row.ShortId}";
+    }
 
     /// <summary>The muted secondary line — harness, model, trust, spans: metadata, subordinate to identity.</summary>
     public static string Details(WatcherSessionRow row)

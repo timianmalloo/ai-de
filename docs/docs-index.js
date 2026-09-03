@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T22:47:21Z",
+  "generated": "2026-09-03T23:05:50Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1280,7 +1280,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 79 types, 319 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 79 types, 320 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1293,7 +1293,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "20299248ee5c828068dc577fa350943f6ab17b7e3e9938d4776cc926bbf2c7f5"
+      "sourceSha256": "70111ae4d0ed774a6e3784caa39d5d4193d0576847aa5237d26a637c9b47975c"
     },
     {
       "id": "api-aide-core",
@@ -1480,7 +1480,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 81 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 83 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1493,7 +1493,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "14b29968b28ccf9a4be7ac58f6033377a872450880eaa14ea52ee1caab97aa3a"
+      "sourceSha256": "7000558540508ecc26119ac8c9242f689e0dd0614b2564a132dff92adb0f45aa"
     },
     {
       "id": "api-aide-core-projections",
@@ -10862,5 +10862,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "3c447919314fb73474f992c1d20a24eab047450de7fe676be5c576427eb1f105"
+  "graphSha256": "45a207e042537d485b513bc47f0729efc8ef7bab0fe07436d1b0ebbab4d674bc"
 };

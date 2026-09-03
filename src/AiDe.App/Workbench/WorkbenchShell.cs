@@ -130,7 +130,8 @@ public sealed class WorkbenchShell : IDisposable
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
             watcher.Ledger,
             queries is not null ? SearchWorkspaceAsync : null,
-            watcher.Daydreams);
+            watcher.Daydreams,
+            TerminalNameFor);
 
         // The environment contract does not depend on a workspace, so it must not be gated behind
         // one. It was assigned ONLY in AttachWorkspace, which both call sites skip when the daemon
@@ -517,7 +518,8 @@ public sealed class WorkbenchShell : IDisposable
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
             watcher.Ledger,
             SearchWorkspaceAsync,
-            watcher.Daydreams);
+            watcher.Daydreams,
+            TerminalNameFor);
 
         // Panes realized at construction were built against a factory with no queries and render
         // "not available". Mark every workspace-dependent kind to rebuild on the next Render so they
@@ -834,6 +836,45 @@ public sealed class WorkbenchShell : IDisposable
     // BuildPane reads from the surface's DisplayName, reflects it. Reconcile makes this cheap and
     // leaves every live session untouched.
     private void OnTerminalRenamed(object? sender, EventArgs e) => Adapter.Render();
+
+    /// <summary>
+    /// The operator's name for a terminal, or <c>null</c> when they have not given one.
+    /// </summary>
+    /// <remarks>
+    /// <para>The Sessions surface leads with this so a row is recognisable as the thing the operator
+    /// named, rather than as one of three identical "Claude Code · repo@branch" lines.</para>
+    ///
+    /// <para><b>A terminal id IS a surface id</b>, which is what makes this a lookup rather than a
+    /// schema change: the name is already persisted per surface and already survives a restart, so
+    /// carrying it into the watcher store would have been a second copy of a fact the shell holds.
+    /// </para>
+    ///
+    /// <para>Reads the LIVE terminal first and the persisted store second. The live pane has the
+    /// current name during a session; the store has it for a session whose pane is gone, which is
+    /// most of the inactive list.</para>
+    /// </remarks>
+    private string? TerminalNameFor(string terminalId)
+    {
+        if (string.IsNullOrEmpty(terminalId))
+        {
+            return null;
+        }
+
+        foreach (var terminal in TerminalSurfaces())
+        {
+            if (string.Equals(terminal.SurfaceId, terminalId, StringComparison.Ordinal))
+            {
+                return terminal.DisplayName;
+            }
+        }
+
+        return _customizationStore is not null
+            && _customizationStore.TryGet(terminalId, out var saved)
+            && saved is not null
+            && !string.IsNullOrWhiteSpace(saved.Name)
+                ? saved.Name
+                : null;
+    }
 
     // Persist any customization change (name, scheme, tab colour) keyed by the surface id, so it
     // survives a restart. Best-effort inside the store; a write failure never reaches here.

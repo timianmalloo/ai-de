@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T22:47:20Z",
+  "generated": "2026-09-03T23:05:49Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9052,6 +9052,32 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Let a terminal or agent session open when every terminal has been closed",
       "done_when": "both launch paths open into the Bottom zone with no terminal present, proven by tests observed failing against the original refusal",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-0455",
+      "shortname": "session-identity-q1-q2-q4",
+      "datetime": "2026-09-03T23:05:49Z",
+      "session": "e9679dd2",
+      "prompt": "do Q1-Q4 for now",
+      "summary": "Q1: Repository/Worktree rendered TheTerrace/docs/fix-broken-design-links and read as a path; the separator now cannot occur in a git ref. Q2: three live rows were identical strings because agent, repo and branch matched, and the session id was on the record unshown; an eight-character ShortId discriminates. Q4: terminals could already be renamed and the name already survived restart in TerminalCustomizationStore keyed by surface id, and a session's TerminalId IS that surface id — so the name is resolved at render rather than copied into the watcher store behind a migration. The old Identity test used a branch with no slash, so it could not have caught Q1.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/WatcherSessionsPaneViewModel.cs",
+        "src/AiDe.App/Workbench/SessionRowPresenter.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Make a session row readable and identifiable: no path ambiguity, a discriminator, and the operator's own name",
+      "done_when": "a branch containing a slash cannot read as a path, two otherwise-identical sessions differ on screen, and a renamed terminal leads its row — each pinned by a test",
       "signals": {
         "verification_path": true,
         "verification_executed": true,

@@ -41,20 +41,61 @@ public sealed record WatcherSessionRow(
     LivenessBadge Liveness,
     string Trust,
     int SpanCount,
-    bool Disputed = false)
+    bool Disputed = false,
+    string WorktreePath = "",
+    string TerminalId = "")
 {
+    /// <summary>
+    /// A short, stable handle for one session — the thing that tells two otherwise identical rows
+    /// apart.
+    /// </summary>
+    /// <remarks>
+    /// <para>Reported from the running product: three live sessions rendered as three IDENTICAL
+    /// strings, because every visible field (agent, repository, branch) was the same for all of
+    /// them. Nothing on the surface said WHICH session a row was, and the session id was on the
+    /// record the whole time without being shown.</para>
+    ///
+    /// <para>Eight characters, not the whole id. A full <c>Guid.ToString("n")</c> is 32 characters of
+    /// noise that pushes the readable part off the line — and the job here is discrimination between
+    /// the handful of sessions on screen, not global uniqueness, which the id itself still carries.
+    /// </para>
+    /// </remarks>
+    public string ShortId => SessionId.Length <= 8 ? SessionId : SessionId[..8];
+
+    /// <summary>
+    /// Repository and branch, separated so a branch name cannot be mistaken for a path.
+    /// </summary>
+    /// <remarks>
+    /// <para>This used to be <c>{Repository}/{Worktree}</c>, which rendered
+    /// <c>TheTerrace/docs/fix-broken-design-links</c> — read, reasonably, as a directory path, and
+    /// the reporter asked why sessions were not at the repository root. They were: that is the repo
+    /// <c>TheTerrace</c> on branch <c>docs/fix-broken-design-links</c>.</para>
+    ///
+    /// <para>A <c>/</c> separator collides with the dominant branch-naming convention — <c>docs/</c>,
+    /// <c>feature/</c>, <c>fix/</c> — so the ambiguity was not an edge case but the common case.
+    /// <c>@</c> cannot appear alone in a git ref, so it can never be confused for part of either
+    /// side.</para>
+    /// </remarks>
+    public string Location => $"{Repository}@{Worktree}";
+
     /// <summary>The prefix a session with a disputed episode carries (US-16 discoverability, no colour-alone).</summary>
     public const string DisputedText = "⚠ Disputed";
 
     /// <summary>The dense one-line label (G6 Multi-Panel Data Terminal density).</summary>
     public string DisplayLabel =>
-        $"{Repository}/{Worktree} · {Agent} · {Harness} · {Model} · " +
+        $"{Agent} · {Location} · {ShortId} · {Harness} · {Model} · " +
         $"{Liveness.Glyph} {Liveness.Text} · {SpanCount} span(s) · {Trust}" +
         (Disputed ? $" · {DisputedText}" : string.Empty);
 
     /// <summary>The full row a screen reader announces (WCAG 2.2 AA).</summary>
+    /// <remarks>
+    /// Spoken as "on branch" rather than read as <c>@</c>: the symbol removes a VISUAL ambiguity and
+    /// would introduce an audible one, since a screen reader says "at" and a listener has no way to
+    /// know it separates two fields.
+    /// </remarks>
     public string AccessibleName =>
-        $"Agent {Agent} in {Repository}/{Worktree}, harness {Harness}, model {Model}, " +
+        $"Agent {Agent}, session {ShortId}, in {Repository} on branch {Worktree}, " +
+        $"harness {Harness}, model {Model}, " +
         $"{Liveness.Text}, {SpanCount} span(s), trust {Trust}" +
         (Disputed ? ", has a disputed score." : ".");
 
@@ -72,7 +113,9 @@ public sealed record WatcherSessionRow(
             LivenessBadge.For(snapshot.Liveness),
             b.Trust.ToString(),
             snapshot.SpanCount,
-            snapshot.Disputed);
+            snapshot.Disputed,
+            b.Worktree.Path,
+            b.Terminal.TerminalId);
     }
 }
 
