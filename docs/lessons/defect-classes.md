@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 61 · partially-controlled 36 · uncontrolled 4
+**Status counts:** controlled 61 · partially-controlled 38 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3723,3 +3723,71 @@ for both or split.*
   and it is the half everyone writes.
 - **Status:** `partially-controlled` — both rules implemented in the harness; no gate, because the
   harness is a one-off analysis tool rather than committed tooling
+
+### DC-102 — A control that passes for a reason other than the one it names
+
+- **Shape:** a test asserts the right outcome and passes, and the mechanism it was written to prove
+  is never exercised, because some *other* check reached the same verdict first. The test is green,
+  the assertion is correct, and the guarantee it claims to establish has no coverage at all. Removing
+  the mechanism it names changes nothing.
+- **Signature:** a test whose name or comment credits one guard, in code where several guards can
+  produce the same answer for the same input. The tell is a defensive check standing *behind* a
+  broader one — validation ordered from general to specific, where the specific check is the
+  interesting one and the general check quietly does all the work.
+- **Why it is worse than an uncovered line:** an uncovered line is visibly uncovered. This reads as
+  covered, is cited as covered, and the strongest claim in the file — usually a security or
+  correctness boundary, because that is what earns a dedicated test — is the part with nothing behind
+  it. It also survives review perfectly: a reviewer checks that the assertion is right, and it is.
+- **Distinct from DC-016.** DC-016 is a control that *cannot* fail. This one fails readily — just
+  never for the reason claimed. The fix is different too: DC-016 wants the assertion strengthened,
+  this wants a **new input** that only the named mechanism can reject.
+- **Instance:** 2026-09-03 — `ProofPackVerifierTests.ASiblingRepositoryWithAMatchingPrefixIsRefused`,
+  written to prove that containment appends a path separator before comparing, so that
+  `C:\repos\app-other` is not treated as inside `C:\repos\app`. Mutating containment to a plain
+  prefix comparison **reddened nothing**: the escaped path's remainder (`-other/docs/proof/...`)
+  fails the `docs/proof/` check anyway, so that check was rejecting it, not containment. The case
+  containment actually prevents had no test: a sibling whose name *extends* the root
+  (`…/appdocs/proof/x.md`) leaves a plain-prefix remainder of exactly `docs/proof/x.md`, which passes
+  the directory check with a file that really exists — another directory's file admitted as this
+  repository's evidence.
+- **Three of four survivors in that same replay were this shape or its cousin**, in security code
+  written and described confidently minutes earlier. Reading found none of them.
+- **Control:** **mutation on the boundary, not review of it.** Delete the mechanism a test names and
+  require *that* test to redden; if a different test reddens, or none does, the naming is wrong and
+  the input is not discriminating. No static check can do this — whether two guards overlap for a
+  given input is a property of the input, so it has to be executed. `tools/mutation-replay.py` is
+  where this lives, and a survivor must be triaged as uncovered / equivalent / **misnamed**, which is
+  a third category the tool cannot infer.
+- **Status:** `partially-controlled` — caught by mutation replay where a set exists; no gate can find
+  it in code the set does not cover
+
+### DC-103 — A test selector that silently stops covering new tests
+
+- **Shape:** a verification set selects its subjects by name — a filter, a glob, a namespace, a
+  suffix convention. New work that does not match the pattern is excluded, silently. The set keeps
+  reporting a healthy number, and the code least likely to be proven — the newest — is the part
+  outside it.
+- **Signature:** any `FullyQualifiedName~Foo`, `*Tests.cs`, `--filter`, or directory glob standing
+  between a verification tool and its subjects. The tell is that adding a test can never make the
+  report worse: a coverage number that only goes up when you *also* remember to update the selector
+  is measuring the selector.
+- **Why it survives:** every signal points the right way. The suite is green, the mutation set has
+  zero survivors, and the excluded tests pass too — they are simply never *challenged*. Nothing in
+  the output distinguishes "18 mutations, 0 uncovered" over the whole subject from the same numbers
+  over half of it.
+- **Instance:** 2026-09-03 — the concurrent session's mutation set filtered on
+  `FullyQualifiedName~Daydream`, which does not match `WhatTheRealCorpusCanProduceTests`. The newest
+  and least-proven test sat outside the sweep whose entire job is proving that controls can fail.
+  Found only by going looking for whether the new test *could* fail, rather than by any report.
+- **Control:** prefer **no selector** — run the whole suite per mutation and let the mutation, not
+  the filter, do the selecting; it costs wall-clock and buys the property that a new test is inside
+  the sweep the moment it exists. Where a selector is unavoidable, make its *coverage* the thing
+  asserted: fail when a subject file has tests the selector does not reach. This repository's other
+  replay harnesses run unfiltered for exactly this reason, which is why the shape appeared on one
+  side and not the other.
+- **The general form, worth more than the instance:** *a verification whose scope is named rather
+  than derived will drift out of date silently, and its report will not say so.* The same argument as
+  deriving a fixture from the product rather than restating its list (DC-021), applied to which
+  subjects get verified at all.
+- **Status:** `partially-controlled` — the unfiltered default is stated and used; no gate asserts a
+  selector's coverage

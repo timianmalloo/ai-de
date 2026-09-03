@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T18:28:18Z",
+  "generated": "2026-09-03T18:33:33Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8848,6 +8848,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tests/AiDe.Core.Tests/Watcher/WhatTheRealCorpusCanProduceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0445",
+      "shortname": "register-two-verification-classes",
+      "datetime": "2026-09-03T18:33:32Z",
+      "session": "ai-de-a7",
+      "prompt": "yes do next steps",
+      "summary": "Registered DC-102 (a control that passes for a reason other than the one it names - distinct from DC-016, which cannot fail; this one fails readily but never for the claimed reason, so its strongest guarantee has no coverage; instance is the sibling-prefix containment test) and DC-103 (a test selector that silently stops covering new tests - the peer's mutation set filtered on a name that did not match their newest test, so the least-proven code sat outside the sweep whose job is proving controls can fail).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
