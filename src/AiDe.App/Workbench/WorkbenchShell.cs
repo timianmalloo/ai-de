@@ -1916,6 +1916,28 @@ public sealed class WorkbenchShell : IDisposable
     /// guard fires for a reason that is not privacy. An absent key excludes the episode from ranking
     /// instead, which is visible.
     /// </remarks>
+    /// <summary>
+    /// The Daydream recorder for the open workspace - the record lives IN the repository.
+    /// </summary>
+    /// <remarks>
+    /// <para>Daydream is repo-local: a lesson about <i>this</i> repository belongs with it, for the
+    /// same reason the defect-class register is committed rather than kept in a tool's private store.
+    /// It survives a machine change, travels with a clone, and is reviewable in a pull request - and
+    /// two worktrees read the same committed record for free, because git already solved that.</para>
+    ///
+    /// <para><b>Constructed per call rather than cached.</b> The workspace can change under a running
+    /// shell, and a recorder pinned to the previous repository would write this repository's lessons
+    /// into the last one - silently, since the write would succeed.</para>
+    ///
+    /// <para><b>It writes nothing today for an agent's episode</b>, and that is measured rather than
+    /// assumed (<c>WhatDaydreamSeesInAnAgentEpisodeTests</c>): with no Proof Pack nothing is
+    /// observed, so no floor trips and no rubric falls short, and the recorder correctly declines an
+    /// unremarkable episode. The audit-import producer, which does see committed Proof Packs, is the
+    /// one that currently feeds it.</para>
+    /// </remarks>
+    private DaydreamRecorder DaydreamRecorderForWorkspace()
+        => new(AiDe.Core.Watcher.DaydreamRepositoryRecord.For(_workspaceRoot));
+
     private WorkspaceKey? ScoringWorkspace()
         => CurrentGitFacts() is { RepoResolved: true } facts ? WorkspaceKey.From(facts.RepoPath) : null;
 
@@ -1974,7 +1996,7 @@ public sealed class WorkbenchShell : IDisposable
                 {
                     _episodesImported = true;
                     var auditLog = Path.Combine(_workspaceRoot, "docs", "audit", "audit-log.jsonl");
-                    host.ImportAndScoreEpisodesFromAuditLog(auditLog, ScoringWorkspace());
+                    host.ImportAndScoreEpisodesFromAuditLog(auditLog, ScoringWorkspace(), daydream: DaydreamRecorderForWorkspace());
                 }
 
                 var terminals = TerminalSnapshot();
@@ -1987,7 +2009,7 @@ public sealed class WorkbenchShell : IDisposable
                 // that closed episode into a score - so no standing could ever be delivered. Scoring
                 // on the tick rather than at close keeps the declaration and the judgement separate,
                 // and the pass is idempotent, so a re-run scores nothing twice.
-                host.ScoreClosedEpisodes();
+                host.ScoreClosedEpisodes(daydream: DaydreamRecorderForWorkspace());
 
                 // conn-9: re-render the open watcher panes only when the store actually changed, so a
                 // session registering/ending, a board post, or a new score shows up live without a manual

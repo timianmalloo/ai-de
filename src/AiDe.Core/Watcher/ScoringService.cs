@@ -40,10 +40,18 @@ public static class EvidenceComposer
 /// <para>It never overrides a floor or a Not Scored verdict - that guarantee lives in
 /// <see cref="AdvisoryWeaveScorer"/> (rule 8) and is exercised here end to end.</para>
 /// </remarks>
-public sealed class ScoringService(IWatcherObservationStore store, TimeProvider time)
+/// <param name="daydream">
+/// Optional. When supplied, every recorded scorecard is offered to the repository's Daydream record.
+/// Here rather than at the two producers because this is the ONE place a scored episode comes into
+/// existence, and a rule spelled at two call sites is a rule that drifts apart. The recorder decides
+/// for itself whether an episode is worth recording, and writes nothing when it is not.
+/// </param>
+public sealed class ScoringService(
+    IWatcherObservationStore store, TimeProvider time, DaydreamRecorder? daydream = null)
 {
     private readonly IWatcherObservationStore _store = store ?? throw new ArgumentNullException(nameof(store));
     private readonly TimeProvider _time = time ?? throw new ArgumentNullException(nameof(time));
+    private readonly DaydreamRecorder? _daydream = daydream;
     private readonly AdvisoryWeaveScorer _advisoryScorer = new();
 
     /// <summary>The two advisory dimensions the local evaluator may judge (rule 8 owns the rest).</summary>
@@ -96,6 +104,13 @@ public sealed class ScoringService(IWatcherObservationStore store, TimeProvider 
             episode.EpisodeId, harness, model, operatorId,
             new ScoreSegment(workspace, taskClass, card.SchemaVersion), card);
         _store.RecordScorecard(scored);
+
+        // After the scorecard is stored, never before: an observation whose evidence the store does
+        // not yet hold is a pattern a reader cannot follow back. Offered, not forced - the recorder
+        // declines a clean episode, and an agent's Not-Scored episode is currently one of those
+        // (nothing was observed, so no floor tripped and no rubric fell short).
+        _daydream?.Observe(scored);
+
         return scored;
     }
 }

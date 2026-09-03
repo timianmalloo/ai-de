@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 141 types, 253 members, 59% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 144 types, 269 members, 61% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**141 public types · 253 public members · 59% documented.**
+**144 public types · 269 public members · 61% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -191,6 +191,79 @@ sessions). Entries without all three fields are skipped: not every audit entry i
 | `IReadOnlyList<WorkEpisode> ReadFile(string path)` | Reads a repo's `audit-log.jsonl` into imported episodes; a missing file yields none. |
 | `IReadOnlyList<ImportedEpisode> ParseWithEvidence(IEnumerable<string> jsonlLines)` | Parses lines into imported episodes paired with the observable audit evidence a signal derivation needs (conn-10) - currently whether the entry shipped a committed Proof Pack artifact. |
 | `IReadOnlyList<ImportedEpisode> ReadFileWithEvidence(string path)` | Reads a repo's `audit-log.jsonl` into imported episodes + evidence; missing file → none. |
+
+## `ClosedEpisodeScoring`
+
+*class* — `ClosedEpisodeScoring.cs`
+
+Turns a contract-closed Work Episode into a scored one - the link the agent collaboration loop was
+missing (US-16).
+
+**Remarks.** **The break this closes.** An agent registers through the coordination contract, declares
+an episode, and closes it; every one of those steps worked and was tested at its seam. Scoring had
+exactly one producer - `WatcherHost.ImportAndScoreEpisodesFromAuditLog` - which reads AI-DE's
+own audit log, and takes its session id from the log's `session` field while
+`TrustedRegistrar` mints a fresh one. The two identifier spaces could never meet, so a
+registered agent produced a closed episode, no scorecard, and therefore no standing, forever. No
+seam test could show that; only a test that walks the whole chain.
+
+
+
+
+
+**Why a pass and not a hook on close.** Closing an episode is a *declaration*;
+scoring it is a *judgement*. Coupling them would make the agent's own `episode-close`
+line the thing that produced its score, and the two would fail together. An idempotent sweep over
+closed-but-unscored is the shape every other watcher pass already has, so re-running it is free.
+
+
+
+
+
+**Registered sessions only**, which keeps the two scoring producers disjoint: an
+audit-imported episode has no `SessionRecord`, so this never re-scores one under a
+different task class and the upsert can never flip-flop between the two.
+
+
+
+
+
+**A pure function of the store**, deliberately: the host has a database, a pump and a
+receiver, and none of them are involved in deciding whether an episode should be scored.
+
+| Member | Summary |
+|---|---|
+| `int Run(` | Scores every closed episode of a registered session that has no scorecard, and returns the number newly scored. |
+
+### `int Run(`
+
+Scores every closed episode of a registered session that has no scorecard, and returns the
+number newly scored.
+
+**Remarks.** **The evidence is honestly empty.** A contract-declared episode carries no Proof
+Pack - the watcher observed spans and a declared outcome, and neither is evidence of outcome
+*quality*. So `EpisodeEvidence` is built with `HasProofPack: false` and
+`DeterministicSignalsDeriver`'s conservative defaults apply: no verification path,
+acceptance unknown, requirements zero. What falls out is **Not Scored, with the reason** -
+which is true, and is the honest first thing an agent can receive.
+
+
+
+
+
+It is emphatically **not a low score**. A derived-signals path that returned 0 for
+"nothing was observed" would be a statement about the agent where only a statement about the
+evidence is warranted, and it would be indistinguishable from a real failure.
+
+
+
+
+
+**The task class is absent, not invented.** The coordination contract carries a goal
+and a done-condition but no task class, so the segment is
+`Unclassified` and therefore not comparable: the episode is scored
+and delivered, and ranks nowhere. Supplying a placeholder class to make a leaderboard row
+appear would put a value on a surface that reads as meaning something.
 
 ## `CoordContract`
 
@@ -712,13 +785,24 @@ does not yet hold would put a pattern in the record whose evidence a reader cann
 
 
 
-**NO PRODUCTION CALLER YET, and this is stated rather than left to be discovered.** The
-one call site is wherever a scorecard is recorded for an agent's episode — the tick-based scoring
-pass being built on the collaboration track — and it is one line:
-`recorder.Observe(scored);` immediately after `RecordScorecard`. Until that lands, this
-class is exercised only by its tests, which is DC-089's shape: a unit test is a caller, just not
-one that ships. It is written here so nobody concludes from a green suite that the vertical is
-closed.
+**The production call site is `ScoringService`**, immediately after the
+scorecard is recorded — one site rather than one per scoring producer, because that is the single
+place a `ScoredEpisode` comes into existence. The shell supplies a recorder built on
+the open workspace, so the record is written into the repository the work happened in.
+
+
+
+
+
+**It writes nothing for an agent&apos;s episode today, and that is measured.** A
+contract-declared episode carries no Proof Pack, so nothing is observed: no floor trips, every
+dimension is Not-Recorded, and a Not-Recorded dimension has a null rubric and so cannot fall
+short. The signature is therefore unremarkable and `Observe` declines it. The concern
+before wiring was the opposite — that every agent episode would carry the SAME Not-Scored
+signature and one useless pattern would dominate the recurrence report — and
+`WhatDaydreamSeesInAnAgentEpisodeTests` refutes it and is written to fail the day an agent
+episode does carry evidence. The audit-import producer, which reads committed Proof Packs, is
+what feeds this today.
 
 
 
@@ -1087,6 +1171,77 @@ could write to it — a read surface over an empty store. An agent asked to post
 searched the repository for how, found nothing, and the pane went on saying "No board posts
 yet". These are the ingest half of that path.
 
+## `ScoreSegment`
+
+*record* — `Leaderboard.cs`
+
+The partition a Weave score is comparable within: one workspace, one task class, one score schema
+version. A comparison never crosses any of the three (spec US-14, rule 10).
+
+**Remarks.** **One type rather than three adjacent strings.** `TaskClass` and
+`SchemaVersion` already sat side by side in this record, in `Leaderboard`, and in
+the standing's trend filter; adding a third string of the same type would have made a reordered
+triple compile and pass, in the values that reach a surface and are read as meaning something.
+With one type the two filter predicates collapse into one equality, and the day a fourth axis
+arrives every call site breaks at once instead of silently accepting the wrong order.
+
+
+
+
+
+**The schema version is not the caller's to supply.** It comes from the scorecard the
+scorer produced, so `ScoringService` composes the segment rather than accepting one -
+two definitions of one quantity is a defect signature (DM7).
+
+| Member | Summary |
+|---|---|
+| `string Unclassified = "unclassified"` | The task class of an episode whose kind of work was never declared. |
+| `bool IsComparable` | Whether this segment is a cohort at all, and therefore whether a rank in it would mean anything. |
+| `string? IncomparableReason` | Why this segment is not a cohort, or `null` when it is one. |
+
+### `string Unclassified = "unclassified"`
+
+The task class of an episode whose kind of work was never declared.
+
+**Remarks.** The coordination contract carries a goal and a done-condition but **no task class** - an
+agent declares what it is trying to do, not what kind of work it is. So the class is genuinely
+absent, and this names the absence rather than inventing a kind. It is not a category anyone
+can be ranked in: see `IsComparable`.
+
+### `bool IsComparable`
+
+Whether this segment is a cohort at all, and therefore whether a rank in it would mean anything.
+
+**Remarks.** Two conditions, both absences rather than values. **No workspace** - the repository
+could not be resolved, or the row predates segmentation, so the directives the work happened
+under are unknown. **No task class** - pooling every undeclared episode would compare a
+spike against a refactor and read the difference as an agent improving, which is the exact
+error segmentation exists to prevent.
+
+
+
+
+
+An incomparable segment still gets **scored** and still yields a standing; what it
+does not get is a rank. That distinction is the whole point - Not Comparable is a statement
+about the cohort, and a low score would be a statement about the agent.
+
+
+
+
+
+The rule lives here rather than in the composer because two consumers already ask it
+(the board and the standing's trend), and a rule spelled twice is a rule that drifts.
+
+### `string? IncomparableReason`
+
+Why this segment is not a cohort, or `null` when it is one.
+
+**Remarks.** The reason travels with the verdict because the agent reading its standing sees only that it
+has no rank. "No rank" with no cause is an empty state naming nothing (DC-087), and the two
+causes want opposite responses: an undeclared task class is something the agent can fix, an
+unresolvable repository is not.
+
 ## `ScoredEpisode`
 
 *record* — `Leaderboard.cs`
@@ -1097,6 +1252,8 @@ stored score; it is derived, DM7).
 
 | Member | Summary |
 |---|---|
+| `string TaskClass` | The kind of work, from `Segment`. |
+| `string SchemaVersion` | The score schema version, from `Segment`. |
 | `double Weave` | **(gap)** |
 | `double? CoverageRatio` | **(gap)** |
 | `bool IsScoreable` | **(gap)** |
@@ -1119,10 +1276,12 @@ size and Evidence Coverage.
 
 *record* — `Leaderboard.cs`
 
-A leaderboard for one task class and score schema version (comparisons never cross either).
+A leaderboard for one `ScoreSegment` (comparisons never cross it).
 
 | Member | Summary |
 |---|---|
+| `string TaskClass` | The kind of work this board covers, from `Segment`. |
+| `string SchemaVersion` | The score schema version this board covers, from `Segment`. |
 | `LeaderboardCell? Cell(LeaderboardFacet facet, string label)` | **(gap)** |
 
 ## `LeaderboardComposer`
@@ -1136,7 +1295,7 @@ for one human - US-10); comparable cells rank by median Weave. Deterministic and
 
 | Member | Summary |
 |---|---|
-| `Leaderboard Compose(IReadOnlyList<ScoredEpisode> episodes, string taskClass, string schemaVersion, int cohortMinimum = 5)` | **(gap)** |
+| `Leaderboard Compose(IReadOnlyList<ScoredEpisode> episodes, ScoreSegment segment, int cohortMinimum = 5)` | **(gap)** |
 
 ## `DimensionReason`
 
@@ -1455,6 +1614,14 @@ It never overrides a floor or a Not Scored verdict - that guarantee lives in
 |---|---|
 | `ScoredEpisode ScoreAndRecord(` | Scores the episode and persists the result. When  and are supplied, the advisory dimensions are evaluated from the composed evidence and folded only if qualified; otherwise only the deterministic Weave is recorded. |
 
+### `ScoredEpisode ScoreAndRecord(`
+
+Scores the episode and persists the result. When  and
+are supplied, the advisory dimensions are evaluated from the composed
+evidence and folded only if qualified; otherwise only the deterministic Weave is recorded.
+
+- **`workspace`** — The repository the work happened in, or `null` when it could not be resolved. Required rather than defaulted so every caller decides: a default here would silently record every score into the unknown cohort, which reads as a working leaderboard with no rows.
+
 ## `SessionCapability`
 
 *class* — `SessionCapability.cs`
@@ -1637,8 +1804,29 @@ from the path.
 | Member | Summary |
 |---|---|
 | `string DirectoryName = "standing"` | The subdirectory of the coordination log that carries outbound standings. |
+| `string GeneratedByField = "generated-by"` | The provenance marker every product-written artifact carries, under the one field name used in every format. |
+| `string GeneratedBy = "ai-de/standing-publisher"` | This component's provenance value. |
 | `string? Publish(` | Writes the standing for , or returns null when there is none. |
 | `string FileNameFor(string sessionId)` | A session id turned into a file name the filesystem will not reinterpret. |
+
+### `string GeneratedByField = "generated-by"`
+
+The provenance marker every product-written artifact carries, under the one field name used in
+every format.
+
+**Remarks.** **The boundary is provenance, not permission.** The product and its agents are one
+experience to the user and agents write into the repository continuously, so "who may write"
+was the wrong question. It is **who maintains what they wrote**: agent-generated is
+agent-maintained, product-generated is product-owned. A reader has to be able to tell, and
+this is how - present means the product wrote it, absent means an agent or a human did.
+
+
+
+
+
+**One spelling, everywhere.** `generated-by` literally, in JSON as in markdown
+frontmatter - a marker with a per-format spelling is a marker every consumer has to know two
+forms of, and a grep for one of them silently misses the other.
 
 ### `string? Publish(`
 
@@ -1753,6 +1941,7 @@ keyed by external id), so a periodic pump never double-registers.
 | `SessionCoordinationEmitter CreateEmitter()` | A writer for the coordination log this host reads - a terminal/agent session in the same process registers and heartbeats through it, and the pump ingests it, so the session appears live (US-4). |
 | `int ImportEpisodesFromAuditLog(string auditLogPath)` | Imports the closed Work Episodes declared in a repo's AI-Forward audit log (the goal-state entries, AL5b) into the store, so real episodes exist to observe and score. Idempotent by episode id (a re-import of the same … |
 | `int ImportAndScoreEpisodesFromAuditLog(` | Imports the workspace's declared-goal episodes (ep-capture) AND auto-scores each one (conn-10). Derives its `DeterministicEpisodeSignals` from the observable audit evidence (a committed Proof Pack, plus any explicit t… |
+| `int ScoreClosedEpisodes(` | Scores every closed episode of a registered session that has no scorecard yet, and returns how many were newly scored (US-16's missing link). Delegates to `ClosedEpisodeScoring`, which is where the reasoning lives. |
 | `IWatcherObservationStore Store` | The observation store, for the read surfaces (the app builds its queries from this). |
 | `LivenessProjection Liveness` | The liveness projection sharing the host's monotonic clock (exact in-process). |
 | `IngestHost Ingest` | The ingest host, exposed so an in-process source can enqueue spans directly. |
@@ -1828,6 +2017,62 @@ there would merge two genuinely distinct repositories — which is the exact col
 | `RepositoryIdentity(string canonicalPath, string displayName)` | **(gap)** |
 | `string CanonicalPath { get; init; }` | **(gap)** |
 | `string DisplayName { get; init; }` | **(gap)** |
+| `string Canonicalise(string path)` | Two spellings of one path become one string; two paths stay two. |
+
+### `string Canonicalise(string path)`
+
+Two spellings of one path become one string; two paths stay two.
+
+**Remarks.** Public because `WorkspaceKey` keys the same directories and two implementations of
+one canonicalisation is the shape that drifts apart — a repository grouping one way in the
+fleet map and another on the leaderboard would be invisible until the cohorts disagreed.
+
+## `WorkspaceKey`
+
+*record* — `WatcherIdentity.cs`
+
+The workspace a Weave score is keyed to: the **repository**, never the checkout.
+
+**Remarks.** **Why the repository and not the checkout.** A score is workspace-keyed because how an
+agent works is partly a product of the repository's directives, conventions and gates. Two
+worktrees of one repository *share* all three, so keying on the checkout would segment on the
+one axis that carries no difference in what is being measured.
+
+
+
+
+
+**And the failure would have been quiet.** Splitting a cohort shrinks every leaderboard
+cell; a cell under the minimum renders Not Comparable — which is the de-anonymisation guard. The
+privacy protection would have fired correctly for a reason that was not privacy, and the surface
+would have looked right while meaning something else.
+
+
+
+
+
+**The repository is already what the product resolves.**
+`WorkbenchShell.ResolveGitFacts` takes `--git-common-dir`'s parent, so a linked worktree
+and its primary checkout both answer with the primary path — measured in this repository's own two
+trees. Nothing *enforces* it, though: an externally registering agent composes its own
+`repo.path`, so `From(string?)` is the one place that decides, and
+`TheWorkspaceKeyIsTheRepositoryNotTheCheckout` is the control.
+
+
+
+
+
+**Absence is stated, never defaulted.** An unresolvable workspace yields `null`, and a
+null-workspace episode is excluded from every leaderboard cell rather than placed in a cohort of
+unknowns. Falling back to the checkout path here would silently reintroduce the split and be
+indistinguishable from working.
+
+| Member | Summary |
+|---|---|
+| `string Value { get; }` | The canonicalised repository path. |
+| `WorkspaceKey? From(string? canonicalPath)` | The key for a repository, or `null` when there is no path to key on. |
+| `WorkspaceKey? From(RepositoryIdentity? repository)` | The key for a bound session's repository. |
+| `string ToString()` | **(gap)** |
 
 ## `WorktreeIdentity`
 

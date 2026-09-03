@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 58 · partially-controlled 32 · uncontrolled 4
+**Status counts:** controlled 60 · partially-controlled 34 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3451,3 +3451,110 @@ for both or split.*
   **printed** — this is IO1 pointed at one's own reasoning, and the tell for skipping it is arguing
   from a type's documentation about a path that exists on disk right now.
 - **Status:** `uncontrolled` — a sourcing rule at reading time, no automated check
+
+### DC-095 — A comment names a control by a name nothing resolves
+
+- **Shape:** a doc comment states that a property is enforced and names the test that enforces it.
+  The property may even hold. But the named class does not exist under that name, so a reader who
+  checks finds nothing, and a reader who does not check inherits a guarantee nobody can locate.
+- **Signature:** a `<c>SomethingTests</c>` or `<see cref="..."/>` in prose naming a test, gate or
+  script, where a repo-wide search for that identifier returns only the comment itself. The tell is
+  a *confident* naming — "X asserts exactly that" — because a vague "this is tested somewhere" gets
+  checked and a specific citation does not.
+- **Why it survives:** compilers do not resolve names inside `<c>` tags, and a `<see cref>` to a test
+  class in another assembly does not resolve either, so nothing fails. The claim reads as the
+  strongest kind of evidence — a named, locatable control — while being the weakest, an unverified
+  assertion about the repository's own contents. It is DC-094's sibling: there the comment
+  understated the code, here it overstates the *test suite*.
+- **Instance:** 2026-09-02 — `SqliteWatcherObservationStore.EnsureSchema` stated that
+  "`SchemaMatchesAfterMigrationTests` asserts exactly that by comparing the two". No such class has
+  ever existed. The control was real but lived in
+  `DaydreamPersistenceTests.AFreshDatabaseAndAMigratedOneHaveTheSameSchema`; found only while
+  checking whether the fresh-vs-migrated comparison would survive an `ALTER TABLE ADD COLUMN`, which
+  is the one reason anyone went looking for it.
+- **Control:** `tools/verify-api-crefs.py` already checks `<see cref>` targets in docs; extend the
+  same idea to **prose identifiers that name a test or a tool** — a `<c>` span ending in `Tests`,
+  `.py`, or `Gate` must resolve to a file or a declared type. Cheap, mechanical, and it fails on the
+  un-fixed comment. Until then the reading rule is DC-094's: a citation is evidence only if it
+  resolves, and one naming our own repository is the cheapest of all to check.
+- **Status:** `partially-controlled` — the naming rule is stated; the identifier check is specified
+  and not yet built
+
+### DC-096 — An invariant that holds only because every instance so far happened to be shaped alike
+
+- **Shape:** a mechanism documents a property — idempotent, order-independent, safe to re-run — and
+  the property is genuinely true. It is true because every case fed to it so far shares an
+  incidental shape, not because the mechanism enforces it. The first case with a different shape
+  breaks the documented property, and it breaks inside the mechanism everyone trusts.
+- **Signature:** a claim of a general property whose proof is *"look at the existing entries"*. The
+  tell is a comment reasoning from the data rather than from the code: "the DDL uses
+  `IF NOT EXISTS`, so re-running is safe" — true of the three migrations present, and a statement
+  about them rather than about the runner.
+- **Why it survives:** it is not a latent bug. There is nothing to find, no failing case, and a test
+  that re-runs the mechanism passes honestly. The defect is created by the *next* author, who reads
+  a true claim, relies on it, and adds the first case that violates it — and the claim's own
+  confidence is what stops them checking.
+- **Instance:** 2026-09-02 — `EnsureSchema`'s remark said a database holding part of a later shape
+  "heals instead of refusing to open", because the DDL uses `IF NOT EXISTS`. Adding v4's
+  `ALTER TABLE scored_episode_cell ADD COLUMN workspace` would have falsified it: SQLite has no
+  conditional `ADD COLUMN`, so a re-run throws *duplicate column name* and the database refuses to
+  open — in the repair path the sentence exists to promise. Caught while writing the migration,
+  precisely because the comment made a promise specific enough to test the new case against.
+- **Control:** the runner now takes an explicit `AddsColumn` guard and skips the `ALTER` when
+  `pragma_table_info` already lists the column, so idempotence is **enforced by the mechanism** for
+  the shape that cannot express it in DDL. Generally: when a mechanism's documented property rests
+  on a property of its *inputs*, either constrain the inputs by type or enforce the property in the
+  runner — a property maintained by the diligence of everyone who ever adds an entry has no owner.
+- **Status:** `controlled` — the column guard makes the claim true by construction for the case that
+  would have broken it
+
+### DC-097 — A lazily-cached pair of fields, later read from a second thread
+
+- **Shape:** a value is cached with a companion field recording what it was computed for
+  (`_value` + `_valueFor`). Correct on one thread. A later feature reads the same cache from another
+  thread, and now a reader can observe the new value paired with the previous key — two writes, no
+  ordering, and the pair is the invariant.
+- **Signature:** two adjacent fields only ever meaningful together, assigned in sequence outside a
+  lock, with at least one reader on a different thread from the writer. Aggravated when the
+  lazy-resolve block is **copy-pasted** into more than one method: the duplication is what hides
+  that a second caller arrived, and each copy looks locally fine.
+- **Why it survives:** the resolution is usually pure and idempotent, so the worst observable outcome
+  is a redundant recomputation — nothing crashes, nothing is wrong on screen, and no test can see
+  it. It is a correctness claim that decays silently when a caller moves threads.
+- **Instance:** 2026-09-02 — `WorkbenchShell._gitFacts` / `_gitFactsFor`, with the resolve block
+  duplicated in `AgentEnvironmentFor` and `IdentityFor`, both on the UI thread. Wiring the scoring
+  workspace added a third reader on the watcher loop. Collapsed to a single
+  `(string Root, GitFacts Facts)?` — one reference assignment cannot be seen half-applied — and the
+  duplicated block became one `CurrentGitFacts()`.
+- **Control:** the shape rule — **a cache and its key are one value, not two fields** — plus the
+  standing one that a lazy-resolve block appearing twice is a missing method. Both are mechanically
+  greppable (two fields sharing a prefix where one ends `For` or `Key`) and neither is gated yet.
+- **Status:** `partially-controlled` — fixed at the instance and stated as a shape; no gate
+
+### DC-098 — Scoring an absence as a zero
+
+- **Shape:** a derivation produces a numeric or ranked result from evidence. Where evidence is
+  missing it returns the neutral element — 0, empty, false — and downstream code cannot distinguish
+  "we looked and it was bad" from "there was nothing to look at". The output becomes a claim about
+  the subject where only a claim about the evidence is warranted.
+- **Signature:** a default that is also a legal value. `?? 0`, `?? false`, an empty list that ranks
+  last, a rank computed from a cohort of one. The tell is a rendered value that is *worst* rather
+  than *absent*, for a subject nobody observed.
+- **Why it matters here:** a leaderboard is the acute case, because the neutral element is a
+  position. An agent whose episode carried no evidence would appear at the bottom — a statement
+  about the agent, indistinguishable from a real failure, and the exact result ADR-0019's
+  anti-Goodhart section exists to prevent.
+- **Instance (prevented, not fixed):** 2026-09-02 — wiring contract-closed episodes to scoring. The
+  available shortcut was a placeholder task class so a leaderboard row would appear. Instead:
+  `ScoreSegment.Unclassified` is not comparable, the verdict is **Not Scored with its reason**, and
+  `AgentStanding.NotComparableReason` carries the cause so "no rank" never arrives bare.
+  `DeterministicSignalsDeriver` already held this line — acceptance stays null rather than "met",
+  requirements stay 0 so the dimension renders Not-Recorded — and the wiring had to preserve it
+  rather than invent it.
+- **Control:** `WhatDaydreamSeesInAnAgentEpisodeTests` and
+  `TheAgentCollaborationCircuitTests.ACompletedAgentEpisodeIsScored_AndTheVerdictIsHonestlyNotScored`
+  both fail if an unevidenced episode ever acquires a rank, a rubric, or a tripped floor. The
+  general rule: **an absence must be representable in the type**, so the neutral element is never
+  reachable by accident — nullable rank, nullable trend, and a reason string that is non-null
+  exactly when the value is null.
+- **Status:** `controlled` — held by tests at both the score and the standing

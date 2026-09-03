@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T02:11:14Z",
+  "generated": "2026-09-03T03:48:34Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8576,6 +8576,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0429",
+      "shortname": "close-agent-collaboration-loop",
+      "datetime": "2026-09-03T03:48:34Z",
+      "session": "ai-de-a7",
+      "prompt": "I need to step away keep working on the next action(s) in collaboration with the other session to try and complete the end-to-end of the entire agent collaboration loop",
+      "summary": "Closed the last link of the agent collaboration loop: ClosedEpisodeScoring scores contract-closed episodes of registered sessions on the watcher tick, and the standing reaches the agent. Verdict is Not Scored with its reason, never a low score - a contract-declared episode carries no Proof Pack, so nothing is observed. Scores are keyed to the REPOSITORY not the checkout (measured across this repo's own two worktrees); ScoreSegment(Workspace, TaskClass, SchemaVersion) is one type so a reordered triple cannot compile; AgentStanding gained NotComparableReason. watcher.db v3->v4 expand-only nullable workspace, with a column guard that makes the migration runner's idempotency claim true by construction. DaydreamRecorder wired at ScoringService - measured to write nothing for agent episodes, refuting the predicted flooding. Core 1555, App 388, 17 gates green. DC-095..098 registered.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260902-two-decisions-the-loop-waits-on.md"
       ],
       "tags": [],
       "outcome": "success"

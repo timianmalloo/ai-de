@@ -16,13 +16,20 @@ namespace AiDe.Core.Watcher;
 /// <para><b>Called after a scorecard is recorded, not before.</b> Observing an episode the store
 /// does not yet hold would put a pattern in the record whose evidence a reader cannot follow.</para>
 ///
-/// <para><b>NO PRODUCTION CALLER YET, and this is stated rather than left to be discovered.</b> The
-/// one call site is wherever a scorecard is recorded for an agent's episode — the tick-based scoring
-/// pass being built on the collaboration track — and it is one line:
-/// <c>recorder.Observe(scored);</c> immediately after <c>RecordScorecard</c>. Until that lands, this
-/// class is exercised only by its tests, which is DC-089's shape: a unit test is a caller, just not
-/// one that ships. It is written here so nobody concludes from a green suite that the vertical is
-/// closed.</para>
+/// <para><b>The production call site is <see cref="ScoringService"/></b>, immediately after the
+/// scorecard is recorded — one site rather than one per scoring producer, because that is the single
+/// place a <see cref="ScoredEpisode"/> comes into existence. The shell supplies a recorder built on
+/// the open workspace, so the record is written into the repository the work happened in.</para>
+///
+/// <para><b>It writes nothing for an agent&apos;s episode today, and that is measured.</b> A
+/// contract-declared episode carries no Proof Pack, so nothing is observed: no floor trips, every
+/// dimension is Not-Recorded, and a Not-Recorded dimension has a null rubric and so cannot fall
+/// short. The signature is therefore unremarkable and <see cref="Observe"/> declines it. The concern
+/// before wiring was the opposite — that every agent episode would carry the SAME Not-Scored
+/// signature and one useless pattern would dominate the recurrence report — and
+/// <c>WhatDaydreamSeesInAnAgentEpisodeTests</c> refutes it and is written to fail the day an agent
+/// episode does carry evidence. The audit-import producer, which reads committed Proof Packs, is
+/// what feeds this today.</para>
 ///
 /// <para><b>Suppression is deliberately NOT here.</b> <see cref="DreamCorpusReader"/> marks a
 /// pattern already-known so it stops being re-<i>proposed</i>; it must never stop it being

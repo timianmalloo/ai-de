@@ -54,13 +54,14 @@ public static class ClosedEpisodeScoring
         TimeProvider time,
         string taskClass = ScoreSegment.Unclassified,
         IAdvisoryEvaluator? evaluator = null,
-        CalibrationRegistry? registry = null)
+        CalibrationRegistry? registry = null,
+        DaydreamRecorder? daydream = null)
     {
         ArgumentNullException.ThrowIfNull(store);
         ArgumentNullException.ThrowIfNull(time);
         ArgumentException.ThrowIfNullOrEmpty(taskClass);
 
-        var scoring = new ScoringService(store, time);
+        var scoring = new ScoringService(store, time, daydream);
         var scored = 0;
 
         foreach (var episode in store.AllEpisodes())

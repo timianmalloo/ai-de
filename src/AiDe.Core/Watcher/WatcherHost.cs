@@ -117,13 +117,14 @@ public sealed class WatcherHost : IDisposable
         WorkspaceKey? workspace,
         string taskClass = "audit-import",
         IAdvisoryEvaluator? evaluator = null,
-        CalibrationRegistry? registry = null)
+        CalibrationRegistry? registry = null,
+        DaydreamRecorder? daydream = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(auditLogPath);
         ArgumentException.ThrowIfNullOrEmpty(taskClass);
 
         var imported = AuditLogEpisodeSource.ReadFileWithEvidence(auditLogPath);
-        var scoring = new ScoringService(_store, _time);
+        var scoring = new ScoringService(_store, _time, daydream);
         foreach (var (episode, evidence) in imported)
         {
             _store.RecordEpisode(episode);
@@ -144,8 +145,9 @@ public sealed class WatcherHost : IDisposable
     public int ScoreClosedEpisodes(
         string taskClass = ScoreSegment.Unclassified,
         IAdvisoryEvaluator? evaluator = null,
-        CalibrationRegistry? registry = null)
-        => ClosedEpisodeScoring.Run(_store, _time, taskClass, evaluator, registry);
+        CalibrationRegistry? registry = null,
+        DaydreamRecorder? daydream = null)
+        => ClosedEpisodeScoring.Run(_store, _time, taskClass, evaluator, registry, daydream);
 
     /// <summary>The observation store, for the read surfaces (the app builds its queries from this).</summary>
     public IWatcherObservationStore Store => _store;

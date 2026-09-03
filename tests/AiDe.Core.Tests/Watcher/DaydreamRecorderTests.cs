@@ -45,7 +45,8 @@ public sealed class DaydreamRecorderTests : IDisposable
                 ScoreDimension.OutcomeIntegrity, 30, rubric, 0, AssessmentPosture.Deterministic, "…")];
 
         return new ScoredEpisode(
-            id, "claude-code", "opus", "operator-1", "implement", ScoreSchema.Weave1Version,
+            id, "claude-code", "opus", "operator-1",
+            new ScoreSegment(TestWorkspaces.Repo, "implement", ScoreSchema.Weave1Version),
             new Scorecard(
                 id, ScoreSchema.Weave1Version, verdict, assessments,
                 floors ?? [FloorDomain.Correctness], Coverage: null, "…", At));

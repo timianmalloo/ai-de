@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T03:25:14Z",
+  "generated": "2026-09-03T03:48:39Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1605,7 +1605,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 141 types, 253 members, 59% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 144 types, 269 members, 61% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1618,7 +1618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9f797fd818398d802a6dd63a42f50f5032907a1c2ef35b53f4937982fd1baba5"
+      "sourceSha256": "f62649d32d6c2f8a7d9ae6dcf5dfdd143191defd1900c6c5b55013f6ccf43a7a"
     },
     {
       "id": "api-aide-core-workbench",
@@ -2223,7 +2223,7 @@ window.DOCS_INDEX = {
       "path": "docs/notes/note-20260902-two-decisions-the-loop-waits-on.md",
       "title": "One question the agent loop waits on, asked twice",
       "type": "decision-note",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "phase-3",
       "reviewBy": "2027-03-02",
@@ -2244,7 +2244,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "530512f8af69cc524d31832be294776eb9def8d021f7fc631cabfc05050e22ff"
+      "sourceSha256": "f8d64364b6d6c8f2b91779efe828ec428062142ea5b34345bdb8ae6a95d4697a"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -4145,7 +4145,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "c947ed65e78c45c4e1d9aa6ec6b34c5b59321a7f4658dc42e1cb0e086ac9ab82"
+      "sourceSha256": "add41111ccdbd048b5b8c7e652df11689367417d6f13a00ef3897fb33220c519"
     },
     {
       "id": "diagram-class",
@@ -10830,5 +10830,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "224841696637599e0b19c267cf8f47318ad5b16bf3232d886797e683545a7fe6"
+  "graphSha256": "876577f38abe803820142a42ead1c238cd81847458985c451ed403da93b77caf"
 };
