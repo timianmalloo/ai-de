@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 61 · partially-controlled 33 · uncontrolled 4
+**Status counts:** controlled 61 · partially-controlled 35 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3584,3 +3584,70 @@ for both or split.*
   reachable by accident — nullable rank, nullable trend, and a reason string that is non-null
   exactly when the value is null.
 - **Status:** `controlled` — held by tests at both the score and the standing
+
+### DC-099 — A detector keyed on the shape of a CORRECT input
+
+- **Shape:** you build a check for a class of wrong things, and you recognise candidates by what a
+  *right* one looks like — a naming convention, a suffix, a well-formed prefix, an expected schema.
+  Every input whose wrongness is precisely that it does not look right is filtered out before the
+  check runs. The detector is blind to exactly its own subject.
+- **Signature:** a candidate filter written in terms of a convention (`endswith("Tests")`,
+  `startswith("test_")`, "must match `DC-NNN`", "only files under `docs/`"), guarding a check for
+  whether that thing is *valid*. The tell is that the filter and the check ask the same question at
+  different strengths — if a candidate must already look correct to be examined, the examination has
+  nothing left to find.
+- **Why it survives, and why it is worse than a check that is simply absent:** it runs, it is green,
+  and it reports a number. Worse, it can pass its own emptiness guard: the first version of
+  `verify-cited-controls.py` reported *"no cited controls found at all"* — which its DC-016 guard
+  correctly flagged as "this gate examined nothing" — and that flag was indistinguishable from the
+  gate being newly written and finding nothing to examine yet. **The guard fired and the result
+  still meant nothing**, because a guard against examining nothing cannot tell you *why* nothing was
+  examined.
+- **Instance:** 2026-09-02 — the DC-095 gate, first version, keyed candidates on identifiers ending
+  in `Tests`, `Gate` or `.py`. It could not have caught the instance it was written for
+  (`TheWorkspaceKeyIsTheRepositoryNotTheCheckout`), because the **missing `Tests` suffix was the
+  defect**. Found by replaying the gate against the original commit rather than by running it on the
+  fixed tree, where it passed.
+- **Control:** key the detector on the **claim**, never on the candidate's conformity — what makes a
+  comment checkable is that it says *asserts / pins / proves / guards / is the control*, not that
+  the name beside it is spelled like a test class. Generally: **the trigger must be a property the
+  defective input still has.** And the test of a new detector is not that it is green on the fixed
+  tree — it is that it is **red on the original defect, replayed from the commit that contained
+  it**. That replay is cheap, it is available for every defect that has a commit, and it is the only
+  thing that distinguishes a control from a decoration.
+- **Status:** `partially-controlled` — stated as a construction rule, and the replay discipline is
+  now used; no gate can check another gate's blind spot
+
+### DC-100 — A citation that rots without failing
+
+- **Shape:** a comment cites a location that is correct when written and becomes wrong when anything
+  above it changes — a line number, an ordinal position, "the third case", a byte offset. Nothing
+  detects the drift, because the file still exists, the line still exists, and only the *claim* is
+  false. The reader who follows it lands somewhere real and plausible.
+- **Signature:** `File.ext:NNN`, "verified at line NNN", "spec line NNN", "lines N–M". Aggravated
+  when the cited file is one the project itself edits, which is where drift is not a risk but a
+  schedule.
+- **Why it is worse than a fabricated name:** a fabricated identifier is mechanically catchable — a
+  token scan for it returns nothing, which is what DC-095's gate does. A rotted line number is
+  catchable by **nothing**, even in principle: checking the file exists and the line is in range
+  fires only on deletion and truncation, and whether the cited line *says what was claimed* is not
+  mechanisable at all. So the fix cannot be a gate.
+- **Instances:** 2026-09-02 — four line citations in the concurrent session's committed artifacts
+  (`docs-graph.py:746`, `:738`, `dream.py:147`, `MessageBoard.cs:151`), all correct at the time and
+  all fixed at `ef5e81a`. And one **already rotted, found by sweeping for it**:
+  `AiDe.App.CanvasProbe/Program.cs` cited `CanvasSurface.cs:267` for the string
+  `"(evaluate failed: …)"`; that code is at line 366, and 267 is a bare closing brace. The claim was
+  true, the citation was false, and nothing failed for however long it had been drifting.
+- **Control:** **cite the symbol; a line number is a convenience that must never carry the claim.** A
+  symbol does not move when the file is edited, it tells the reader what it means without opening
+  the file, and — the part that makes this more than a style rule — **it is a token, so
+  `verify-cited-controls.py` already covers it**. The ungateable citation form is converted into the
+  gated one rather than given a gate of its own that could not work. Swept: zero `File.cs:NNN`
+  citations remain in `src/` or `tests/`.
+- **Residual, stated rather than quietly excluded:** *spec line NNN* citations (spec lines 210, 211,
+  233, 236, 237 and US-6's 201–234) are the same class pointed at a document, and rot identically
+  when the spec is edited. They are a pre-existing convention across many files, and converting them
+  needs the spec's own anchors — a separate piece of work, not a sweep. Registered here so it is a
+  known debt rather than an oversight.
+- **Status:** `partially-controlled` — code citations converted and swept to zero; spec-line
+  citations outstanding

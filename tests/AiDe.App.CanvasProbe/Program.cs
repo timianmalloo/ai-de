@@ -158,7 +158,7 @@ internal static class Program
         //
         // The failure string is checked FIRST, and separately, because `EvaluateAsync` swallows its
         // own exception and returns "(evaluate failed: …)" as an ordinary string
-        // (CanvasSurface.cs:267). That is neither "0" nor "", so the count guard below waves it
+        // (CanvasSurface.EvaluateAsync). That is neither "0" nor "", so the count guard below waves it
         // through — a page that never loaded would report `nodes rendered: (evaluate failed: …)`
         // and this probe would carry on as though the canvas were full. A control that cannot tell
         // "nothing rendered" from "I could not ask" is the shape it exists to prevent (DC-016).

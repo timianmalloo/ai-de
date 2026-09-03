@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T04:03:41Z",
+  "generated": "2026-09-03T04:12:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8610,6 +8610,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tools/verify-cited-controls.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0433",
+      "shortname": "citations-cite-symbols",
+      "datetime": "2026-09-03T04:12:16Z",
+      "session": "ai-de-a7",
+      "prompt": "(continuation) close the end-to-end agent collaboration loop in collaboration with the other session",
+      "summary": "Swept src/ and tests/ for line-number citations after the peer found four in their own artifacts. Found one ALREADY ROTTED: CanvasProbe cited CanvasSurface.cs:267 for a string that is at line 366, where 267 is a bare closing brace - the claim true, the citation false, nothing failing. Converted all four code-line citations to symbol citations, which a symbol scan covers for free; zero remain. Registered DC-099 (a detector keyed on the shape of a CORRECT input is blind to a name whose shape is the defect; the test of a new gate is red-on-the-replayed-original, not green-on-the-fixed-tree) and DC-100 (a citation that rots without failing; cite the symbol, spec-line citations recorded as outstanding debt).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"

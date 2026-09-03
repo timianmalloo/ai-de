@@ -18,8 +18,8 @@ namespace AiDe.Core.Tests.Watcher;
 /// ADR-0019 cares about: nothing is injected into the agent's context, the agent chooses to read.</para>
 ///
 /// <para><b>The subdirectory is not tidiness.</b> <c>CoordinationContractLog</c> enumerates
-/// <c>Directory.EnumerateFiles(logDir, "*.jsonl")</c> — verified at line 185, with no
-/// <c>SearchOption</c>, so top-directory-only. A standing file written as <c>*.jsonl</c> in the root
+/// <c>Directory.EnumerateFiles(logDir, "*.jsonl")</c> in <c>ReadDirectory</c> — read, not assumed,
+/// with no <c>SearchOption</c>, so top-directory-only. A standing file written as <c>*.jsonl</c> in the root
 /// would be read by the contract pump on every tick and every line counted MALFORMED: the feature
 /// would work while the ingest counters filled with corruption that was not corruption, and the
 /// first person to read parse statistics would be debugging a fiction. Two independent properties
@@ -84,7 +84,7 @@ public sealed class StandingReachesTheAgentTests
             var published = StandingPublisher.Publish(
                 coord, "session-1", [Episode("ep-1", 3, DateTimeOffset.UnixEpoch)], "ep-1");
 
-            // The pump's exact call: CoordinationContractLog.cs:185.
+            // The pump's exact call: CoordinationContractLog.ReadDirectory.
             var pumpSees = Directory.EnumerateFiles(coord, "*.jsonl").ToList();
 
             Assert.Empty(pumpSees);

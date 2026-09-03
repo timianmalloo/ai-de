@@ -265,7 +265,7 @@ public sealed class BoundsReachTheSurfaceTests
     /// <see cref="JoinResult.Disclosures"/> — "what could not be joined" — must reach the screen.
     /// </summary>
     /// <remarks>
-    /// Taken over from Core, whose verdict on this was a reading of JoinSurface.cs:86,92 and the
+    /// Taken over from Core, whose verdict on this was a reading of JoinSurface.Render and the
     /// last item on either session's list still resting on one agent's word. This harness reaches
     /// JoinSurface and Core's does not, so it was cheaper here.
     /// <para>
