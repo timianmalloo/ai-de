@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T18:04:45Z",
+  "generated": "2026-09-03T18:20:21Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1480,7 +1480,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 80 members, 63% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 81 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1493,7 +1493,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "04bf396dbd005849202091b92b89390fd815753a785a2568083121ef0da73c40"
+      "sourceSha256": "14b29968b28ccf9a4be7ac58f6033377a872450880eaa14ea52ee1caab97aa3a"
     },
     {
       "id": "api-aide-core-projections",
@@ -1605,7 +1605,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 153 types, 280 members, 62% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 157 types, 297 members, 63% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1618,7 +1618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "da4d0116f17171c8c937f1c30d499121f34816a0791caf27e73b7b8acb77ee5a"
+      "sourceSha256": "7a4705d919d4e45462bf070dda05eb3aed25d404fb2aa52c32881cfc2011c050"
     },
     {
       "id": "api-aide-core-workbench",
@@ -3116,7 +3116,7 @@ window.DOCS_INDEX = {
       "path": "docs/design/watcher-daydream-dream-seam.md",
       "title": "Loomkeeper Daydream and the seam to the offline Dream",
       "type": "design",
-      "status": "proposed",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "3",
       "reviewBy": "2027-03-02",
@@ -3159,7 +3159,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "bf218c17d92b26e1194275a958850a6dca53a8acda333316f360787742fe82be"
+      "sourceSha256": "66dfee2b3391fcf63b869cfe5cfcf609017864a4ebdb527137a60d0534d53011"
     },
     {
       "id": "design-watcher-dispute-command",
@@ -10266,7 +10266,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A([Open Leaderboard]) --> B{Task class and score schema selected?}\n  B -->|no| C[Require task class + score schema version] --> B\n  B -->|yes| D[Gather comparable episodes in that class + version]\n  D --> E{Cohort >= minimum and not a single-human proxy?}\n  E -->|no| F[Show Not Comparable with reason; no rank]\n  E -->|yes| G[Rank by harness, model, and harness-model]\n  G --> H[Show rank, cohort size, Evidence Coverage, and trend per cell]\n  H --> I{Open a cell?}\n  I -->|yes| J[Open the episodes and Scorecards behind the rank]\n  I -->|no| K([Return to Leaderboard])\n  H --> L{Rubric/schema/model version changed?}\n  L -->|yes| M[Segment versions; do not trend incompatible results into one rank]\n  L -->|no| K"
         }
       ],
-      "sourceSha256": "835df96d89a3ed0442dd6cb4df83b9c1dfeac8c5aa182aa62eebb0715b243c2f"
+      "sourceSha256": "5a3f2a4cc29bb663d4adbd8654a158a70f8d3152776a6410da29f86abf6fa290"
     },
     {
       "id": "spec-ai-native-ide",
@@ -10862,5 +10862,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "21b7465ebf73198203c54189435e5da998b5b581f583b45bd0f0690664fc4769"
+  "graphSha256": "e685b392a293d2783b3fe42496d2f048ff1553e78cb68e5ad42ab639d78f27dd"
 };

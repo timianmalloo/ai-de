@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T17:33:35Z",
+  "generated": "2026-09-03T18:19:54Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8717,6 +8717,23 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0437",
+      "shortname": "daydream-reach-probe",
+      "datetime": "2026-09-03T17:02:56Z",
+      "session": "e9679dd2",
+      "prompt": "Build the freshness probe: is Daydream seeing anything",
+      "summary": "DaydreamReachProbe derives from the store's scorecards and compares against the repository record — two sources, neither the writer, following FreshnessProber's lesson that a self-referential staleness metric let a dead watcher read as fresh. Shares DeclineReason with the recorder so there is one definition. Distinguishes nothing-scored-yet, everything-clean and nothing-assessable, of which only the last is a gap. Mutation replay found the Missing clamp uncovered, which turned out to hide a real state (a fresh clone) — now Unaccounted. Wired to the Daydreams pane so the finding displaces the reassuring empty message.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DaydreamReachProbe.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0438",
       "shortname": "registration-correction-channel",
       "datetime": "2026-09-03T17:10:31Z",
@@ -8734,6 +8751,23 @@ window.AUDIT_DATA = {
       "outcome": "success"
     },
     {
+      "id": "al-0439",
+      "shortname": "mutation-replay-tool",
+      "datetime": "2026-09-03T17:15:36Z",
+      "session": "e9679dd2",
+      "prompt": "Write up cross-boundary mutation as a practice",
+      "summary": "Landed as a tool rather than prose (CI6): tools/mutation-replay.py plus a declared mutation set. 18 mutations over the Daydream seam, 0 uncovered, 74s measured — cheap enough to gate every push. The CROSS-BOUNDARY mode mutates a component this vertical only depends on and runs this vertical's tests, which is invisible to both components' own sweeps. Carries both guards learned by losing them: an unparseable run is a harness failure not a pass, and a dirty tree is refused because the tool restores with git checkout and would destroy uncommitted work.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/mutation-replay.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
       "id": "al-0440",
       "shortname": "proof-pack-verifier",
       "datetime": "2026-09-03T17:33:35Z",
@@ -8746,6 +8780,57 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Watcher/ProofPackVerifier.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0441",
+      "shortname": "episode-artifacts-channel",
+      "datetime": "2026-09-03T17:34:54Z",
+      "session": "e9679dd2",
+      "prompt": "Close the instrumentation gap the probe reports",
+      "summary": "The gap was not that agents produce no evidence — ClosedEpisodeScoring hardcoded HasProofPack:false, an absence asserted with nowhere to look. Built the channel: episode.artifacts on episode-close, newline-separated, bounded, stored DECLARED and never verified so the scoring side can later distinguish a lying agent from a moved file. watcher.db v5. The fresh-vs-migrated guard caught a real bug (migration created the table, SchemaSql did not). A test caught Attr() collapsing present-but-blank into null, which would have made a lost value read as deliberate silence.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DeclaredEpisodeArtifact.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0442",
+      "shortname": "daydream-measured-against-real-corpus",
+      "datetime": "2026-09-03T18:06:22Z",
+      "session": "e9679dd2",
+      "prompt": "do next steps",
+      "summary": "Measured the Daydream vertical against this repository's real audit log rather than reasoning about it: 111 episodes scored, 7 clean, 103 carrying nothing to assess, 1 observation written. The vertical works end to end and has almost nothing to work with. Recurrence needs 2 distinct episodes so 1 observation can never become a candidate — Daydream's output over the whole recorded history is zero. It is a capture gap, not a code gap: docs/proof exists and 27 of 421 entries name one, so the reader finds what is there. Also refreshed the design doc, which still said 'Nothing in this design is built yet' through six landings.",
+      "kind": "prompt",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/watcher-daydream-dream-seam.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0443",
+      "shortname": "hasproofpack-is-observed",
+      "datetime": "2026-09-03T18:19:54Z",
+      "session": "ai-de-a7",
+      "prompt": "yes do next steps",
+      "summary": "Wired the Proof Pack verifier into ClosedEpisodeScoring: HasProofPack is now derived from declared artifacts verified against the session's repository, replacing a hardcoded false that asserted an absence without looking. An agent declaring a real committed Proof Pack is now scored on it. A path that fails verification means the evidence was not there and never makes the episode unscoreable. The Unverifiable case is pinned rather than hidden - EpisodeEvidence has no third state, so the tri-state collapses at that boundary, which is honest only while a registered session's repository is a local path this process just read.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/ClosedEpisodeScoring.cs"
       ],
       "tags": [],
       "outcome": "success"

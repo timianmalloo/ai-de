@@ -511,3 +511,4 @@ graphify-out/
 # code executed. They are the OUTPUT of a run, regenerated every time; RESULT-raw.txt is the
 # committed evidence.
 spikes/msbuild-task-execution/fixture/markers/
+.mutation-in-progress

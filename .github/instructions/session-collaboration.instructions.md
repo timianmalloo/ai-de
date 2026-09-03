@@ -99,8 +99,32 @@ declared something.
  "attrs":{"episode.goal":"…","episode.done_when":"…","episode.not_in_scope":"…"}}
 
 {"kind":"episode-close","contract":"loomkeeper/1","session":"<AIDE_SESSION>","at":<unix>,"seq":<n>,
- "attrs":{"episode.outcome":"Completed|Abandoned|Blocked|Superseded"}}
+ "attrs":{"episode.outcome":"Completed|Abandoned|Blocked|Superseded",
+          "episode.artifacts":"docs/proof/pp-0001.md\ndocs/proof/pp-0002.md"}}
 ```
+
+**`episode.artifacts` is how you get scored at all.** Optional, and until you send it your episode
+scores **Not Scored — no verification path**, which is honest and is worth nothing to you. It is
+newline-separated, repository-relative paths to the evidence for this episode.
+
+It is the *only* thing you may say about your own quality, and it is deliberately not a claim: you
+name files, and the product goes and looks. There is no `episode.acceptance_met` and there never will
+be — a verdict you assert about yourself is the thing the scoring design exists to refuse, while a
+pointer is something anyone can check. You cannot make a path exist by asserting it harder.
+
+Three refusals:
+
+- **Present but blank is quarantined**, where absent is fine. Sending the key means you meant to say
+  something, and a value lost in transit must not read as a deliberate silence.
+- **More than 32 paths, or one longer than 512 characters, is refused whole** — never truncated to
+  the cap, because a shortened evidence list reads as a complete one.
+- A malformed list **quarantines the whole close**. The episode stays open and a corrected re-close
+  works. Closing while dropping your evidence would leave you believing you declared it and the
+  product silently disagreeing.
+
+Paths are stored exactly as you send them and verified separately. A path that does not exist, sits
+outside `docs/proof/`, or escapes your repository is recorded and then refused by the verifier — so
+declaring one costs you the evidence, not your episode.
 
 Write one JSON object per line, appended to your own file under `AIDE_CONTRACT_LOG`. Re-reading is
 idempotent, so a re-emitted line is not a duplicate registration.

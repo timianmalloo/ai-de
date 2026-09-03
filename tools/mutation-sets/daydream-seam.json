@@ -1,0 +1,136 @@
+{
+  "description": "The Daydream vertical and its seam to scoring — including the couplings that are invisible to a single-sided sweep.",
+  "project": "tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj",
+  "filter": "FullyQualifiedName~Daydream",
+  "_note": [
+    "Every mutation here reddened at least one test when it was added, on the commit that added it.",
+    "CROSS-AUTHOR mutations change this session's files and redden the OTHER session's tests - the",
+    "ownership boundary, not the test scope.",
+    "CROSS-BOUNDARY mutations change a component this vertical only DEPENDS on, and run this",
+    "vertical's tests. That case is invisible to both components' own sweeps, because each mutates",
+    "only its own code, and every real instance in this repository was found exactly this way."
+  ],
+  "mutations": [
+    {
+      "label": "the record's provenance marker is misspelled",
+      "file": "src/AiDe.Core/Watcher/DaydreamRepositoryRecord.cs",
+      "old": "public const string GeneratedBy = \"ai-de/daydream\";",
+      "new": "public const string GeneratedBy = \"ai-de\";"
+    },
+    {
+      "label": "enums written as ordinals, so an enum reorder rewrites history",
+      "file": "src/AiDe.Core/Watcher/DaydreamRepositoryRecord.cs",
+      "old": "w.WriteString(\"outcome\", e.Outcome.Value.ToString());",
+      "new": "w.WriteNumber(\"outcome\", (int)e.Outcome.Value);"
+    },
+    {
+      "label": "events folded in line order, so a union merge desynchronises two clones",
+      "file": "src/AiDe.Core/Watcher/DaydreamRepositoryRecord.cs",
+      "old": "events.Sort((a, b) => a.Sequence.CompareTo(b.Sequence));",
+      "new": "// sort removed by mutation"
+    },
+    {
+      "label": "unreadable lines not counted, so a partial record reads as a whole one",
+      "file": "src/AiDe.Core/Watcher/DaydreamRepositoryRecord.cs",
+      "old": "return new DaydreamRecordRead(observations, events, unreadable);",
+      "new": "return new DaydreamRecordRead(observations, events, 0);"
+    },
+    {
+      "label": "the human-facing index is rewritten on every append",
+      "file": "src/AiDe.Core/Watcher/DaydreamRepositoryRecord.cs",
+      "old": "        if (File.Exists(path))\n        {\n            return;\n        }",
+      "new": "        // existence guard removed by mutation"
+    },
+    {
+      "label": "append reports success with nowhere to write",
+      "file": "src/AiDe.Core/Watcher/DaydreamRepositoryRecord.cs",
+      "old": "        if (Directory is null)\n        {\n            return false;\n        }\n\n        lock (_write)",
+      "new": "        if (Directory is null)\n        {\n            return true;\n        }\n\n        lock (_write)"
+    },
+    {
+      "label": "observation ids made non-deterministic, so every merge grows the record",
+      "file": "src/AiDe.Core/Watcher/DaydreamRecorder.cs",
+      "old": "            episodeId, signature.TaskClass, signature.SchemaVersion,",
+      "new": "            Guid.NewGuid().ToString(), signature.TaskClass, signature.SchemaVersion,"
+    },
+    {
+      "label": "the decline rule loses the unassessed case, so deaf reads as clean",
+      "file": "src/AiDe.Core/Watcher/DaydreamRecorder.cs",
+      "old": "            return episode.Scorecard.Assessments.Any(a => a.Rubric0to4 is not null)\n                ? DaydreamObservationOutcome.NothingWentWrong\n                : DaydreamObservationOutcome.NothingWasAssessed;",
+      "new": "            return DaydreamObservationOutcome.NothingWentWrong;"
+    },
+    {
+      "label": "the decline rule asks the verdict instead of the rubrics",
+      "file": "src/AiDe.Core/Watcher/DaydreamRecorder.cs",
+      "old": "            return episode.Scorecard.Assessments.Any(a => a.Rubric0to4 is not null)",
+      "new": "            return episode.Scorecard.Verdict != WeaveVerdict.NotScored"
+    },
+    {
+      "label": "nothing-scored-yet reported as deafness, so the warning fires for everyone",
+      "file": "src/AiDe.Core/Watcher/DaydreamReachProbe.cs",
+      "old": "public bool Deaf => EpisodesScored > 0 && WouldRecord == 0 && NothingWasAssessed > 0;",
+      "new": "public bool Deaf => WouldRecord == 0;"
+    },
+    {
+      "label": "the probe counts rows, so a duplicate masks a missing observation",
+      "file": "src/AiDe.Core/Watcher/DaydreamReachProbe.cs",
+      "old": ".Select(o => o.EpisodeId).Distinct(StringComparer.Ordinal).Count()",
+      "new": ".Count"
+    },
+    {
+      "label": "a clone's record read as missing observations rather than unaccounted ones",
+      "file": "src/AiDe.Core/Watcher/DaydreamReachProbe.cs",
+      "old": "public int Missing => Math.Max(0, WouldRecord - ObservationsInRecord);",
+      "new": "public int Missing => WouldRecord - ObservationsInRecord;"
+    },
+    {
+      "label": "an unavailable record no longer outranks a write failure",
+      "file": "src/AiDe.Core/Watcher/DaydreamReachProbe.cs",
+      "old": "        RecordUnavailable is { Length: > 0 } why ? why\n        : Missing > 0",
+      "new": "        Missing > 0"
+    },
+    {
+      "label": "the probe re-implements the decline rule instead of sharing it",
+      "file": "src/AiDe.Core/Watcher/DaydreamReachProbe.cs",
+      "old": "            switch (DaydreamRecorder.DeclineReason(episode, signature))",
+      "new": "            switch (signature.IsUnremarkable ? DaydreamObservationOutcome.NothingWentWrong : (DaydreamObservationOutcome?)null)"
+    },
+    {
+      "label": "CROSS-AUTHOR: the signature keys on prose, so board text reaches a lesson",
+      "file": "src/AiDe.Core/Watcher/DaydreamObservation.cs",
+      "old": "        return new DaydreamSignature(\n            episode.TaskClass, episode.SchemaVersion, card.Verdict, floors, shortfalls);",
+      "new": "        return new DaydreamSignature(\n            episode.TaskClass, episode.SchemaVersion, card.Verdict, floors, shortfalls + card.Headline);"
+    },
+    {
+      "label": "CROSS-AUTHOR: a clean episode becomes a pattern, filling the record with 'work went well'",
+      "file": "src/AiDe.Core/Watcher/DaydreamObservation.cs",
+      "old": "    public bool IsUnremarkable => Floors.Length == 0 && Shortfalls.Length == 0;",
+      "new": "    public bool IsUnremarkable => false;"
+    },
+    {
+      "label": "CROSS-AUTHOR: one occurrence is generalised, against US-9's first criterion",
+      "file": "src/AiDe.Core/Watcher/DaydreamObservation.cs",
+      "old": "public sealed class RecurrenceDetector(int minimumDistinctEpisodes = 2)",
+      "new": "public sealed class RecurrenceDetector(int minimumDistinctEpisodes = 1)"
+    },
+    {
+      "label": "CROSS-BOUNDARY: the scorer fabricates a floor it did not observe",
+      "_why": [
+        "This is the dependency that started the practice. DaydreamObservationOutcome's whole",
+        "distinction between 'nothing went wrong' and 'nothing was assessed' rests on the scorer",
+        "refusing to invent a floor for an episode it could not assess. Relax that and Daydream",
+        "silently stops distinguishing them - with nothing in Daydream changing and nothing in",
+        "Daydream's own sweep noticing, because its sweep only mutates its own code.",
+        "The warning lives in ClosedEpisodeScoring, on the side that would cause the damage.",
+        "This is the executable half of that warning."
+      ],
+      "file": "src/AiDe.Core/Watcher/WeaveScore.cs",
+      "old": "return new Scorecard(episode.EpisodeId, schema.Version, WeaveVerdict.NotScored, [], [], null, $\"Not Scored — {notScored}\", at);",
+      "new": "return new Scorecard(episode.EpisodeId, schema.Version, WeaveVerdict.NotScored, [], [FloorDomain.Correctness], null, $\"Not Scored — {notScored}\", at);",
+      "tests": {
+        "project": "tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj",
+        "filter": "FullyQualifiedName~Daydream"
+      }
+    }
+  ]
+}

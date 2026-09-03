@@ -14,7 +14,7 @@ namespace AiDe.Core.Watcher;
 /// </summary>
 public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, IDisposable
 {
-    private const int SchemaVersion = 4;
+    private const int SchemaVersion = 5;
 
     private readonly SqliteConnection _connection;
     private readonly object _gate = new();
@@ -329,6 +329,57 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         DateTimeOffset.Parse(reader.GetString(6), null, System.Globalization.DateTimeStyles.RoundtripKind),
         reader.IsDBNull(7) ? null : DateTimeOffset.Parse(reader.GetString(7), null, System.Globalization.DateTimeStyles.RoundtripKind),
         reader.IsDBNull(8) ? null : Enum.Parse<EpisodeOutcome>(reader.GetString(8)));
+
+    public void AppendDeclaredArtifact(DeclaredEpisodeArtifact artifact)
+    {
+        ArgumentNullException.ThrowIfNull(artifact);
+        lock (_gate)
+        {
+            // OR IGNORE on (episode, path, sequence): a redelivered contract line is a no-op rather
+            // than a duplicate claim. The coordination log is re-read from the start on every pump,
+            // so idempotent ingest is the norm here and not a defensive extra.
+            ExecuteNonQuery(
+                _connection,
+                """
+                INSERT OR IGNORE INTO declared_artifact_fact (episode_id, path, declared_at, sequence)
+                VALUES ($episode, $path, $declared, $sequence);
+                """,
+                null,
+                ("$episode", artifact.EpisodeId),
+                ("$path", artifact.Path),
+                ("$declared", artifact.DeclaredAt.ToString("O")),
+                ("$sequence", artifact.Sequence));
+        }
+    }
+
+    public IReadOnlyList<DeclaredEpisodeArtifact> DeclaredArtifactsFor(string episodeId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(episodeId);
+        lock (_gate)
+        {
+            var rows = new List<DeclaredEpisodeArtifact>();
+            using var command = _connection.CreateCommand();
+            command.CommandText =
+                """
+                SELECT episode_id, path, declared_at, sequence
+                FROM declared_artifact_fact
+                WHERE episode_id = $episode
+                ORDER BY sequence, path;
+                """;
+            command.Parameters.AddWithValue("$episode", episodeId);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                rows.Add(new DeclaredEpisodeArtifact(
+                    reader.GetString(0),
+                    reader.GetString(1),
+                    DateTimeOffset.Parse(reader.GetString(2), System.Globalization.CultureInfo.InvariantCulture),
+                    reader.GetInt64(3)));
+            }
+
+            return rows;
+        }
+    }
 
     public void AppendDaydreamObservation(DaydreamObservation observation)
     {
@@ -987,6 +1038,22 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         // NULL workspace and read back as an absent one, because the repository a past score was
         // earned in is not recoverable from the row and inventing it would be a backfill that guessed.
         (4, "", ("scored_episode_cell", "workspace", "TEXT NULL")),
+
+        // v5: the evidence channel. Until this, ClosedEpisodeScoring passed HasProofPack as the
+        // literal false — an absence asserted without looking, and with nowhere to look. This is
+        // where an agent's declared path lands. DECLARED, never verified: the row is what was said,
+        // and whether it is true is a separate answer the scoring side derives, because merging the
+        // two loses the only evidence that separates a lying agent from a file that moved.
+        (5, """
+            CREATE TABLE IF NOT EXISTS declared_artifact_fact (
+                episode_id   TEXT    NOT NULL,
+                path         TEXT    NOT NULL,
+                declared_at  TEXT    NOT NULL,
+                sequence     INTEGER NOT NULL,
+                PRIMARY KEY (episode_id, path, sequence)
+            );
+            CREATE INDEX IF NOT EXISTS ix_declared_artifact_episode ON declared_artifact_fact (episode_id);
+            """, null),
     ];
 
     private const string SchemaSql =
@@ -1167,6 +1234,20 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             sequence        INTEGER NOT NULL
         );
         CREATE INDEX ix_daydream_event_sequence ON daydream_event_fact (sequence);
+
+        -- The evidence channel (v5). Grain: one path one agent named for one episode at one
+        -- declaration time. DECLARED, never verified — whether the path exists, sits under
+        -- docs/proof/ and is inside the session's repository is a separate answer derived at
+        -- scoring time, and the two must not share a column or nobody can afterwards tell an
+        -- agent that lied from a file that moved.
+        CREATE TABLE declared_artifact_fact (
+            episode_id   TEXT    NOT NULL,
+            path         TEXT    NOT NULL,
+            declared_at  TEXT    NOT NULL,
+            sequence     INTEGER NOT NULL,
+            PRIMARY KEY (episode_id, path, sequence)
+        );
+        CREATE INDEX ix_declared_artifact_episode ON declared_artifact_fact (episode_id);
 
         CREATE TRIGGER score_dispute_fact_no_update BEFORE UPDATE ON score_dispute_fact
         BEGIN SELECT RAISE(ABORT, 'score_dispute_fact is append-only'); END;

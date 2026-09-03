@@ -185,6 +185,35 @@ public sealed class IngestHost
         => _episodes.Close(episodeId, capability, outcome);
 
     /// <summary>
+    /// Records the evidence paths an agent named for an episode — as declared, never as verified.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>A separate verb from <see cref="CloseEpisode"/> on purpose.</b> Closing declares an
+    /// outcome; this declares where to look. Folding them into one call would make the episode's
+    /// close depend on the evidence write, and the close is the thing that must not be lost.</para>
+    ///
+    /// <para><b>Capability-verified like every other write.</b> An unregistered session cannot
+    /// declare evidence for an episode, for the same reason it cannot open one: registration is
+    /// where trust is decided, and evidence attributed to a session that was never admitted is
+    /// evidence with no one behind it.</para>
+    ///
+    /// <para><b>Nothing here inspects the paths.</b> An absolute path, one that escapes the
+    /// repository, and one that does not exist are all recorded exactly as sent. Verification is a
+    /// separate answer derived at scoring time, and merging the two would destroy the only evidence
+    /// that separates an agent that lied from a file that moved.</para>
+    /// </remarks>
+    /// <returns>How many paths were recorded. Zero when none were declared — not a failure.</returns>
+    public int DeclareEpisodeArtifacts(
+        string episodeId, SessionCapability capability, IReadOnlyList<string> paths)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(episodeId);
+        ArgumentNullException.ThrowIfNull(capability);
+        ArgumentNullException.ThrowIfNull(paths);
+
+        return _episodes.DeclareArtifacts(episodeId, capability, paths);
+    }
+
+    /// <summary>
     /// Posts to a repository's Message Board on behalf of a verified session (US-4).
     /// </summary>
     /// <remarks>

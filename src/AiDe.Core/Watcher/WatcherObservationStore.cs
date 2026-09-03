@@ -115,6 +115,25 @@ public interface IWatcherObservationStore
     IReadOnlyList<DaydreamObservation> AllDaydreamObservations();
 
     /// <summary>
+    /// Records one evidence path an agent DECLARED when closing an episode.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Declared, never verified.</b> This stores what the agent said, exactly as it said
+    /// it. Whether the path exists, sits under <c>docs/proof/</c>, and is inside that session's
+    /// repository is decided by the verifier on the scoring side — and the two must not share a
+    /// column, or nobody can afterwards tell a lying agent from a file that moved.</para>
+    ///
+    /// <para><b>Its own grain, not a field on the episode.</b> A Work Episode is "one immutable goal
+    /// and done condition over one bounded interval"; evidence is a different grain, and the spec's
+    /// own table names it — one claim about one episode from one named source at one observation
+    /// time. So a re-close is a new row and a correction supersedes rather than rewrites.</para>
+    /// </remarks>
+    void AppendDeclaredArtifact(DeclaredEpisodeArtifact artifact);
+
+    /// <summary>Every path declared for one episode, in declaration order.</summary>
+    IReadOnlyList<DeclaredEpisodeArtifact> DeclaredArtifactsFor(string episodeId);
+
+    /// <summary>
     /// Appends one event in a candidate's life - proposed, evidence attached, check completed,
     /// promoted, deferred, rejected, retracted (US-9).
     /// </summary>
@@ -158,6 +177,7 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
     // A LIST, not a dictionary keyed by id: an observation is append-only, so two rows for one
     // episode must both survive. Keying by id would silently collapse a re-observation, which is
     // exactly the deduplication the recurrence fold is supposed to do on READ.
+    private readonly List<DeclaredEpisodeArtifact> _declaredArtifacts = [];
     private readonly List<DaydreamObservation> _daydreamObservations = [];
     private readonly List<DaydreamEvent> _daydreamEvents = [];
     private readonly Dictionary<string, ScoredEpisode> _scored = new();
@@ -292,6 +312,29 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         lock (_gate)
         {
             _boardMessages[message.MessageId] = message;
+        }
+    }
+
+    public void AppendDeclaredArtifact(DeclaredEpisodeArtifact artifact)
+    {
+        ArgumentNullException.ThrowIfNull(artifact);
+        lock (_gate)
+        {
+            // A list, not a dictionary keyed by path: the same path declared twice is two claims at
+            // two times, and collapsing them would lose the second declaration's timestamp — which
+            // is the only thing distinguishing a re-close from a correction.
+            _declaredArtifacts.Add(artifact);
+        }
+    }
+
+    public IReadOnlyList<DeclaredEpisodeArtifact> DeclaredArtifactsFor(string episodeId)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(episodeId);
+        lock (_gate)
+        {
+            return [.. _declaredArtifacts
+                .Where(a => string.Equals(a.EpisodeId, episodeId, StringComparison.Ordinal))
+                .OrderBy(a => a.Sequence)];
         }
     }
 

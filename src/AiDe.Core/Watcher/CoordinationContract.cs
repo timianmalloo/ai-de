@@ -27,6 +27,26 @@ public static class CoordContract
         public const string DoneWhen = "episode.done_when";
         public const string NotInScope = "episode.not_in_scope";
         public const string Outcome = "episode.outcome";
+
+        /// <summary>
+        /// Newline-separated repository-relative paths to the evidence for this episode.
+        /// </summary>
+        /// <remarks>
+        /// <para><b>The one thing an agent may say about its own quality, and it is not a claim.</b>
+        /// It names files; the product goes and looks. An agent cannot make a path exist by
+        /// asserting it harder, which is what keeps this observation rather than testimony — and it
+        /// is why <c>episode.acceptance_met</c> is deliberately absent and will stay absent.
+        /// ADR-0019's anti-Goodhart concern is about accepting a verdict, not a pointer.</para>
+        ///
+        /// <para><b>Optional.</b> An agent that never sends it loses nothing it had before: the
+        /// episode still closes and still scores Not Scored, which was already the honest answer.
+        /// </para>
+        ///
+        /// <para>Newline-separated because a path may contain spaces, commas and semicolons on a real
+        /// filesystem but never a newline. A separator that can occur inside a value is a parser that
+        /// silently splits one path into two.</para>
+        /// </remarks>
+        public const string Artifacts = "episode.artifacts";
     }
 
     /// <summary>The attribute keys a <c>board-post</c> line carries.</summary>
@@ -292,7 +312,8 @@ public static class CoordContractParser
 /// <summary>A snapshot of the adapter counters (IO1 operator questions).</summary>
 public sealed record CoordContractStats(
     long Registered, long Heartbeats, long Unknown, long DuplicateRegister, long Quarantined,
-    long Updated = 0, long EpisodesOpened = 0, long EpisodesClosed = 0, long BoardPosts = 0);
+    long Updated = 0, long EpisodesOpened = 0, long EpisodesClosed = 0, long BoardPosts = 0,
+    long ArtifactsDeclared = 0);
 
 /// <summary>
 /// The injected-contract ingest adapter: maps contract events onto the same
@@ -321,6 +342,7 @@ public sealed class InjectedContractIngest
     private long _updated;
     private long _episodesOpened;
     private long _episodesClosed;
+    private long _artifactsDeclared;
     private long _boardPosts;
 
     // The external session's currently open episode. An episode-close names no episode id - the
@@ -335,7 +357,7 @@ public sealed class InjectedContractIngest
 
     public CoordContractStats Stats => new(
         _registered, _heartbeats, _unknown, _duplicateRegister, _quarantined, _updated,
-        _episodesOpened, _episodesClosed, _boardPosts);
+        _episodesOpened, _episodesClosed, _boardPosts, _artifactsDeclared);
 
     /// <summary>Applies a batch in order. Callers pass parser output, already sorted.</summary>
     public void ApplyAll(IEnumerable<CoordContractEvent> events)
@@ -497,11 +519,38 @@ public sealed class InjectedContractIngest
             return;
         }
 
+        // A malformed OPTIONAL attribute quarantines the whole line rather than being dropped so the
+        // close can proceed. Dropping it would close the episode while discarding what the agent said
+        // about its evidence — the agent believes it declared a Proof Pack, the product silently
+        // disagrees, and nothing tells either of them. Quarantine is loud, it is counted, and the
+        // episode stays open so a corrected re-close still works.
+        // The RAW value, not Attr(). Attr collapses present-but-blank into null, which is right for
+        // every required attribute here — a blank goal and a missing goal are both "no goal". It is
+        // wrong for this one: absent means "I declare no evidence" and blank means "I meant to say
+        // something", and those want opposite answers. Reading through Attr would have made a value
+        // lost in transit indistinguishable from a deliberate silence, which is the two-states-one-
+        // rendering shape this whole channel exists to remove. Caught by a test, not by review.
+        var rawArtifacts = close.Attributes.TryGetValue(
+            CoordContract.EpisodeAttributes.Artifacts, out var declaredArtifacts) ? declaredArtifacts : null;
+
+        if (!DeclaredArtifactBounds.TryParse(rawArtifacts, out var artifacts))
+        {
+            _quarantined++;
+            return;
+        }
+
         try
         {
+            // Declared BEFORE the close, deliberately. If the declaration failed after a successful
+            // close we would have an episode whose evidence was silently lost; failing the other way
+            // leaves rows whose episode never closed, which is detectable. Between a silent loss and
+            // a visible orphan, take the orphan.
+            _host.DeclareEpisodeArtifacts(episodeId, known.Capability, artifacts);
+
             _host.CloseEpisode(episodeId, known.Capability, outcome);
             _openEpisodeByExternalId.Remove(close.ExternalSessionId);
             _episodesClosed++;
+            _artifactsDeclared += artifacts.Count;
         }
         catch (WatcherException)
         {

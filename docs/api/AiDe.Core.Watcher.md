@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 153 types, 280 members, 62% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 157 types, 297 members, 63% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**153 public types · 280 public members · 62% documented.**
+**157 public types · 297 public members · 63% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -317,6 +317,33 @@ them there would assert a standard that does not exist.
 | `string DoneWhen = "episode.done_when"` | **(gap)** |
 | `string NotInScope = "episode.not_in_scope"` | **(gap)** |
 | `string Outcome = "episode.outcome"` | **(gap)** |
+| `string Artifacts = "episode.artifacts"` | Newline-separated repository-relative paths to the evidence for this episode. |
+
+### `string Artifacts = "episode.artifacts"`
+
+Newline-separated repository-relative paths to the evidence for this episode.
+
+**Remarks.** **The one thing an agent may say about its own quality, and it is not a claim.**
+It names files; the product goes and looks. An agent cannot make a path exist by
+asserting it harder, which is what keeps this observation rather than testimony — and it
+is why `episode.acceptance_met` is deliberately absent and will stay absent.
+ADR-0019's anti-Goodhart concern is about accepting a verdict, not a pointer.
+
+
+
+
+
+**Optional.** An agent that never sends it loses nothing it had before: the
+episode still closes and still scores Not Scored, which was already the honest answer.
+
+
+
+
+
+
+Newline-separated because a path may contain spaces, commas and semicolons on a real
+filesystem but never a newline. A separator that can occur inside a value is a parser that
+silently splits one path into two.
 
 ## `BoardAttributes`
 
@@ -784,6 +811,112 @@ tighten; it must never silently relax.
 |---|---|
 | `IReadOnlyList<DaydreamRecurrence> Recurring(IEnumerable<DaydreamObservation> observations)` | The patterns that recur, ordered deterministically for replay. |
 
+## `DaydreamReach`
+
+*record* — `DaydreamReachProbe.cs`
+
+What Daydream actually reached, over the episodes the product has scored.
+
+**Remarks.** Counts, and one finding derived from them. Nothing here is stored: every number folds from
+the scorecards and the repository record on read, because two definitions of one quantity is a
+defect signature (DM7).
+
+| Member | Summary |
+|---|---|
+| `bool NothingScoredYet` | Nothing has been scored, so there is nothing to say about what Daydream saw. |
+| `bool Deaf` | Every scored episode was declined for want of anything to assess. |
+| `int Missing` | Observations the classification expected that the record does not hold. |
+| `int Unaccounted` | Observations the record holds that this store cannot account for. |
+| `string? Finding` | One sentence for an operator, or `null` when there is nothing to report. |
+
+### `bool NothingScoredYet`
+
+Nothing has been scored, so there is nothing to say about what Daydream saw.
+
+**Remarks.** Distinct from every other state below. A repository nobody has scored in is not a repository
+with an instrumentation gap, and reporting it as one would make the gap meaningless on the
+day it is real.
+
+### `bool Deaf`
+
+Every scored episode was declined for want of anything to assess.
+
+**Remarks.** **The finding this probe exists for.** Daydream is not quiet because the work is clean —
+it is quiet because nothing it can key on was ever observed, and it will stay quiet for every
+future episode of the same kind. Without this the surface reports "no patterns observed yet",
+which is true and reads as reassurance (DC-025).
+
+### `int Missing`
+
+Observations the classification expected that the record does not hold.
+
+**Remarks.** The independent half. Comparing what the writer *reported* doing against what it did
+would be self-referential — `FreshnessProber` was built because a staleness metric
+measured against the daemon's own last event, so a dead watcher read as perfectly fresh.
+This compares a classification of the store against the file on disk, which are two sources.
+
+### `int Unaccounted`
+
+Observations the record holds that this store cannot account for.
+
+**Remarks.** **Found because clamping `Missing` at zero was uncovered by mutation.**
+Removing the clamp reddened nothing, which said the negative case had never been thought
+about — and it is not an impossible state. It is the *normal* one for a fresh clone: the
+Daydream record is committed and travels with the repository, while the scorecards live in a
+per-workspace store that starts empty. Retention deletion produces it too.
+
+
+
+
+
+**Deliberately not a finding.** It fires for every clone, and a warning that fires
+for everyone warns no one. It is exposed as a count because clamping it away was the same
+mistake this probe exists to correct — a state folded into "fine" because nobody named
+it.
+
+### `string? Finding`
+
+One sentence for an operator, or `null` when there is nothing to report.
+
+**Remarks.** Ordered by what a reader must act on first: a record it cannot write beats a gap in what it
+would write, which beats an absence of evidence. Each names only what was counted.
+
+## `DaydreamReachProbe`
+
+*class* — `DaydreamReachProbe.cs`
+
+Answers the operator question the Daydream design named: *is Daydream seeing anything?*
+
+**Remarks.** **Why a probe and not a counter.** The obvious build is to tally
+`DaydreamObservationOutcome` as `Observe` returns them.
+That fails twice: the shell constructs a fresh recorder per scoring pass so nothing accumulates,
+and — more importantly — a tally is the writer reporting on itself. `FreshnessProber` exists
+because exactly that shape let a dead watcher read as perfectly fresh. This derives the expected
+answer from the **store's scorecards** and compares it against the **file on disk**: two
+sources, neither of them the writer.
+
+
+
+
+
+**It shares the writer's judgement rather than copying it.**
+`DeclineReason` is the single definition of what gets declined and
+why. A probe with its own copy would drift, and it would drift into reporting the wrong
+silence.
+
+
+
+
+
+**A silence is not a finding on its own.** Nothing scored yet, everything clean, and
+nothing assessable are three different states that all produce an empty Daydream, and only the
+last is a gap. Collapsing them is DC-025 — which is the defect this whole vertical was corrected
+for once already.
+
+| Member | Summary |
+|---|---|
+| `DaydreamReach Probe()` | Classifies every scored episode and compares the result with the record. |
+
 ## `DaydreamObservationOutcome`
 
 *enum* — `DaydreamRecorder.cs`
@@ -883,12 +1016,31 @@ unrecoverable, since the occurrences it needed were never kept.
 | Member | Summary |
 |---|---|
 | `DaydreamObservationOutcome Observe(ScoredEpisode episode)` | Records one episode as an observation, and says what it did. |
+| `DaydreamObservationOutcome? DeclineReason(ScoredEpisode episode, DaydreamSignature signature)` | Why this episode would not be observed, or `null` when it would be. |
 
 ### `DaydreamObservationOutcome Observe(ScoredEpisode episode)`
 
 Records one episode as an observation, and says what it did.
 
 **Returns.** Which of the four `DaydreamObservationOutcome` cases applied. Nothing here reports a write it did not make, and **nothing collapses "nothing went wrong" into "nothing was assessed"** — see the enum for why those two must not render alike.
+
+### `DaydreamObservationOutcome? DeclineReason(ScoredEpisode episode, DaydreamSignature signature)`
+
+Why this episode would not be observed, or `null` when it would be.
+
+**Remarks.** **Shared with `DaydreamReachProbe`, deliberately.** The probe answers
+"is Daydream seeing anything" by classifying the store's scored episodes the way this class
+would. If it re-implemented that judgement, the two would be two definitions of one quantity
+(DM7) — and they would drift in the direction that matters, because the probe exists to
+report a silence and a probe that disagrees with the writer reports the wrong silence.
+
+
+
+
+
+Pure and static: no clock, no record, no instance state. That is what lets the probe
+derive the answer from stored scorecards rather than from counters — which it must, because
+the shell builds a fresh recorder per scoring pass, so nothing accumulates on an instance.
 
 ## `DaydreamRecordRead`
 
@@ -972,6 +1124,82 @@ Opens the record for a repository root, or reports why it cannot be opened.
 
 **Remarks.** The root is not created and not probed for a `.git` directory: the caller decides what a
 repository is, and this class only needs somewhere that exists to write into.
+
+## `DeclaredEpisodeArtifact`
+
+*record* — `DeclaredEpisodeArtifact.cs`
+
+One evidence path an agent named when it closed an episode — as declared, not as verified.
+
+**Remarks.** **Why this exists.** `ClosedEpisodeScoring` passed `HasProofPack: false` as a
+literal, which collapsed two states that want opposite responses: *we looked for evidence and
+there was none* (a fact about this episode) and *there is nowhere to look* (a fact about
+the product). It was always the second, spelled as the first — so a scorecard made a statement
+about an agent when the true statement was about a missing channel. This is the channel.
+
+
+
+
+
+**The agent names a file; the product checks whether the file is there.** That is what
+keeps this observation rather than testimony, and it is why an `episode.acceptance_met`
+attribute stays refused while this one is admitted: an agent cannot make a path exist by
+asserting it harder. ADR-0019's anti-Goodhart concern is about accepting a claim; this accepts a
+pointer and then goes and looks.
+
+
+
+
+
+**Nothing here is verified.** The path is stored exactly as sent, including one that is
+absolute, escapes the repository, or does not exist. Verification is a separate step with a
+separate answer, and merging the two would destroy the only evidence that distinguishes an agent
+that lied from a file that moved.
+
+## `DeclaredArtifactBounds`
+
+*class* — `DeclaredEpisodeArtifact.cs`
+
+The bounds an `episode.artifacts` attribute must respect to be ingested.
+
+**Remarks.** The contract log is written by agents, so an unbounded list is an unbounded write into the
+product's store from outside it. Both bounds are **declared** rather than implicit, and a line
+that exceeds either is quarantined rather than truncated — a silently shortened evidence list is
+a partial record rendered as a whole one, which is the shape this whole vertical keeps being
+corrected for.
+
+
+
+
+
+The numbers are safety floors with no statistical basis: **not recorded**. A Proof Pack
+per episode is the expected shape and 32 is far above it, so the cap is a resource bound rather
+than a modelling claim. It may tighten; it must never silently relax.
+
+| Member | Summary |
+|---|---|
+| `int MaxPaths = 32` | Most paths one episode-close may declare. |
+| `int MaxPathLength = 512` | Longest single path, in characters. |
+| `bool TryParse(string? value, out IReadOnlyList<string> paths)` | Splits the wire value into paths, or reports that it cannot be ingested. |
+
+### `bool TryParse(string? value, out IReadOnlyList<string> paths)`
+
+Splits the wire value into paths, or reports that it cannot be ingested.
+
+**Returns.** `true` when the value is usable; `paths` holds what it declared.
+
+**Remarks.** Newline-separated, because a coordination attribute is a JSON string and a path may
+contain spaces, commas and semicolons on a real filesystem but never a newline. A separator
+that can appear inside a value is a parser that silently splits one path into two.
+
+
+
+
+
+**An absent attribute is not a malformed one.** Most agents will never send this,
+and that must cost them nothing — so absence returns an empty list and succeeds, while
+present-and-unusable fails. Those are different facts and the caller renders them
+differently.
 
 ## `AuditSignals`
 
@@ -1200,6 +1428,7 @@ Pattern: bounded producer/consumer (LOA Channel<T> backpressure) - the repo's
 | `WorkEpisode OpenEpisode(` | Opens a Work Episode for a verified session (US-6). Capability-gated like every other post-registration write. |
 | `WorkEpisode ReframeEpisode(` | Reframes an open episode: the current one closes Superseded and a new generation opens. |
 | `WorkEpisode CloseEpisode(string episodeId, SessionCapability capability, EpisodeOutcome outcome)` | Closes an episode with its declared outcome. The declaration is not a quality judgement. |
+| `int DeclareEpisodeArtifacts(` | Records the evidence paths an agent named for an episode — as declared, never as verified. |
 | `BoardMessage PostToBoard(` | Posts to a repository's Message Board on behalf of a verified session (US-4). |
 | `BoardMessage ReplyOnBoard(` | Replies to an existing message. The service refuses an orphan. |
 | `BoardMessage AcknowledgeOnBoard(` | Acknowledges an existing message. Carries no content by design. |
@@ -1261,6 +1490,34 @@ post-registration write.
 only producer of episodes, so an episode existed only where the AI-Forward pack had written
 an audit entry. Any harness can now declare one over the coordination log, which is what the
 leaderboard's cross-harness comparison and the specified Daydream both depend on.
+
+### `int DeclareEpisodeArtifacts(`
+
+Records the evidence paths an agent named for an episode — as declared, never as verified.
+
+**Returns.** How many paths were recorded. Zero when none were declared — not a failure.
+
+**Remarks.** **A separate verb from `CloseEpisode` on purpose.** Closing declares an
+outcome; this declares where to look. Folding them into one call would make the episode's
+close depend on the evidence write, and the close is the thing that must not be lost.
+
+
+
+
+
+**Capability-verified like every other write.** An unregistered session cannot
+declare evidence for an episode, for the same reason it cannot open one: registration is
+where trust is decided, and evidence attributed to a session that was never admitted is
+evidence with no one behind it.
+
+
+
+
+
+**Nothing here inspects the paths.** An absolute path, one that escapes the
+repository, and one that does not exist are all recorded exactly as sent. Verification is a
+separate answer derived at scoring time, and merging the two would destroy the only evidence
+that separates an agent that lied from a file that moved.
 
 ### `BoardMessage PostToBoard(`
 
@@ -2085,6 +2342,8 @@ Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write 
 | `WorkEpisode? FindEpisode(string episodeId)` | **(gap)** |
 | `IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId)` | **(gap)** |
 | `IReadOnlyList<WorkEpisode> AllEpisodes()` | **(gap)** |
+| `void AppendDeclaredArtifact(DeclaredEpisodeArtifact artifact)` | **(gap)** |
+| `IReadOnlyList<DeclaredEpisodeArtifact> DeclaredArtifactsFor(string episodeId)` | **(gap)** |
 | `void AppendDaydreamObservation(DaydreamObservation observation)` | **(gap)** |
 | `IReadOnlyList<DaydreamObservation> AllDaydreamObservations()` | **(gap)** |
 | `void AppendDaydreamEvent(DaydreamEvent daydreamEvent)` | **(gap)** |
@@ -2520,6 +2779,8 @@ trigger: the SQLite store lands (remaining Phase-1 task), which bounds and persi
 | `IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId)` | **(gap)** |
 | `IReadOnlyList<WorkEpisode> AllEpisodes()` | **(gap)** |
 | `void AppendBoardMessage(BoardMessage message)` | **(gap)** |
+| `void AppendDeclaredArtifact(DeclaredEpisodeArtifact artifact)` | **(gap)** |
+| `IReadOnlyList<DeclaredEpisodeArtifact> DeclaredArtifactsFor(string episodeId)` | **(gap)** |
 | `void AppendDaydreamObservation(DaydreamObservation observation)` | **(gap)** |
 | `IReadOnlyList<DaydreamObservation> AllDaydreamObservations()` | **(gap)** |
 | `void AppendDaydreamEvent(DaydreamEvent daydreamEvent)` | **(gap)** |
@@ -2700,6 +2961,26 @@ The default in-process episode service. See `IWorkEpisodeService`.
 | `WorkEpisode Open(string sessionId, SessionCapability capability, Goal goal, DoneCondition doneWhen, string? notInScope = null)` | **(gap)** |
 | `WorkEpisode Reframe(string episodeId, SessionCapability capability, Goal goal, DoneCondition doneWhen, string? notInScope = null)` | **(gap)** |
 | `WorkEpisode Close(string episodeId, SessionCapability capability, EpisodeOutcome outcome)` | **(gap)** |
+| `int DeclareArtifacts(string episodeId, SessionCapability capability, IReadOnlyList<string> paths)` | Records declared evidence paths against an episode. |
+
+### `int DeclareArtifacts(string episodeId, SessionCapability capability, IReadOnlyList<string> paths)`
+
+Records declared evidence paths against an episode.
+
+**Remarks.** **Against the episode, open or closed.** Unlike every other verb here this does not
+call `RequireActive`: the declaration arrives on the close line, and the contract
+adapter records it before closing, so requiring an OPEN episode would work today and break
+the moment anyone reordered those two calls. It requires the episode to EXIST, which is the
+property actually needed.
+
+
+
+
+
+**Nothing here inspects a path.** Absolute, escaping the repository, non-existent —
+all recorded exactly as sent. Verification is a separate answer derived at scoring time, and
+merging the two destroys the only evidence separating an agent that lied from a file that
+moved.
 
 ## `EpisodeProjection`
 

@@ -91,7 +91,7 @@ public static class ClosedEpisodeScoring
                 continue;
             }
 
-            var signals = DeterministicSignalsDeriver.Derive(episode, new EpisodeEvidence(HasProofPack: false), store);
+            var signals = DeterministicSignalsDeriver.Derive(episode, EvidenceFor(episode, session, store), store);
 
             scoring.ScoreAndRecord(
                 episode,
@@ -108,5 +108,45 @@ public static class ClosedEpisodeScoring
         }
 
         return scored;
+    }
+
+    /// <summary>
+    /// What the product could actually observe about this episode's evidence.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>This replaced a hardcoded <c>HasProofPack: false</c></b>, which asserted an absence
+    /// without looking. That literal collapsed two states wanting opposite responses: <i>we looked
+    /// and there was none</i>, a fact about the episode, and <i>there was nowhere to look</i>, a fact
+    /// about the product. It was always the second, spelled as the first — a scorecard making a
+    /// statement about the agent when the true statement was about a missing channel.</para>
+    ///
+    /// <para><b>Now it looks.</b> The agent declares paths on <c>episode-close</c>, the store keeps
+    /// them verbatim and unverified, and <see cref="ProofPackVerifier"/> decides which are real. The
+    /// agent names a file and the product checks whether the file is there, so it cannot make the
+    /// check pass by asserting harder — which is what makes declared evidence admissible where a
+    /// self-reported <c>acceptance_met</c> stays refused.</para>
+    ///
+    /// <para><b>A failed path never makes the episode unscoreable.</b> A declaration that does not
+    /// verify means the evidence was not there — a fact about the evidence. Treating it as a
+    /// malformed line would make a moved file look like a protocol error, which is a claim about the
+    /// agent's formatting instead, and a worse one because it is wrong.</para>
+    ///
+    /// <para><b>The Unverifiable case is the one to watch.</b> When the repository is not reachable
+    /// from here, no verdict is possible, and <c>HasProofPack</c> is false because the type has no
+    /// third state — so the collapse the tri-state exists to prevent is reintroduced AT THIS
+    /// BOUNDARY, deliberately and visibly rather than silently. It is honest today only because a
+    /// registered session's repository is a local path this process just read; the day a remote
+    /// registrant appears, this is the line that starts lying and
+    /// <c>AnUnverifiableRepositoryIsNotEvidenceOfAbsence</c> is the test that says so.</para>
+    /// </remarks>
+    private static EpisodeEvidence EvidenceFor(
+        WorkEpisode episode, SessionRecord session, IWatcherObservationStore store)
+    {
+        var repository = session.Binding.Repository.CanonicalPath;
+
+        var verified = store.DeclaredArtifactsFor(episode.EpisodeId)
+            .Any(a => ProofPackVerifier.Verify(repository, a.Path) is ProofPackVerdict.Verified);
+
+        return new EpisodeEvidence(HasProofPack: verified);
     }
 }
