@@ -170,8 +170,30 @@ to reject something else. What ADR-0019 defers is the **evaluators**, and standi
 them: four deterministic dimensions score today and the two advisory ones render *Not Recorded*,
 which is exactly what the ADR prescribes.
 
-- **P1** — a standing is produced for a scored episode; a non-comparable harness-model cell yields
-  trend and reasons with **no rank**; no aggregate scalar is exposed anywhere.
+**The delivery half, which this plan originally missed.** US-16 is written from the agent's seat —
+*"As an agent, I want to see how my harness and model are scoring and why, each turn"*, and its
+acceptance criterion is that the agent **receives** its standing. The first version of this slice's
+P1 said only that a standing is *produced*, which `WatcherLeaderboardPaneViewModel` could satisfy in
+an hour while the agent still received nothing and the operator saw it instead. **That is DC-089 one
+layer up: not a service with no caller, but an acceptance criterion that does not reach its own
+deliverable.** Found by Core in C1's P0, against the spec line rather than against the plan.
+
+The agent's only channels are the five MCP tools (`announce_claim`, `describe`, `find`,
+`record_decision`, `record_note`) — of which `describe` and `find` are pulls — and
+`AIDE_CONTRACT_LOG`, which is inbound only. So the standing needs an **MCP `standing` tool the agent
+pulls at a turn boundary**: it fits the existing `Guarded(caller, name, read)` shape beside two
+precedents, inherits the capability check rather than adding one, and keeps the standing a **pull**.
+A push would put the scorer's output into the agent's context every turn whether or not it asked,
+which is the precise thing ADR-0019's anti-Goodhart section is careful about.
+
+This changes C1's scope from "wire an existing composer" to "add an MCP tool", and adds
+`Mcp/McpToolGateway.cs` to the files it touches. That file is Core's alone, so the shared-file table
+is unaffected.
+
+- **P1** — an **agent** receives its standing through the tool; a non-comparable harness-model cell
+  yields trend and reasons with **no rank**; no aggregate scalar is exposed anywhere; an operator
+  view over the same composer is a separate later slice, because US-14's pane already has a shape
+  and the agent channel does not exist at all.
 
 ## C2 — Cross-repository fleet map (US-3)
 
@@ -225,6 +247,17 @@ D1 and D3 touch nothing shared. C1 is small and touches the store lightly. So:
 
 The first phase of each track is deliberately the one with no shared file, so the split is real from
 the first minute rather than after a coordination round trip.
+
+## One coupling between the tracks, recorded because it is not obvious
+
+C1 ships an agent its own rank. D1 excludes harness and model from a pattern signature so Daydream
+cannot produce "this harness tends to…". **Those two are consistent only together.** The leaderboard
+protects comparison with a cohort minimum and a single-operator refusal; standing shows an agent a
+rank that passed those checks, and Daydream avoids making the comparison at all. If either side
+changed — standing exposing something the cohort rule would have blocked, or Daydream keying on
+attribution — the pair would stop agreeing and neither change would look wrong on its own.
+
+Whichever session changes one must say so to the other. Noted by Core while reading D1.
 
 ## What would make this plan wrong
 

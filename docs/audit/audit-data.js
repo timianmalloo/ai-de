@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-02T23:53:54Z",
+  "generated": "2026-09-03T00:20:34Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8372,6 +8372,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Watcher/CoordinationContract.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0417",
+      "shortname": "daydream-d1-observation-engine",
+      "datetime": "2026-09-03T00:20:34Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "lets split things: core works collaboration, this session focuses on daydream impl; get clear on slices and phases, dispatch, work in parallel",
+      "summary": "Daydream D1 (observation engine, pure) complete. P0 changed the design: DeterministicEpisodeSignals is never persisted - only ScoredEpisode is - so a signature computed from the scorer's raw inputs could be produced once and never again from the store. It derives from the recorded scorecard instead. Three exclusions: prose (Rationale/Headline are generated sentences, so a wording change would look like a new pattern and the scorer's phrasing would sit between an agent and a lesson), attribution (harness/model/operator would produce 'this harness tends to' claims bypassing the leaderboard's cohort and single-operator protections), and clean episodes (a register full of 'work went well' is true, recurrent and useless). Recurrence threshold ships as a declared floor of two distinct episodes with its statistical basis recorded as ABSENT. 16 tests; the attribution and re-observation refusals both observed failing on weakened implementations.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DaydreamObservation.cs"
       ],
       "tags": [],
       "outcome": "success"
