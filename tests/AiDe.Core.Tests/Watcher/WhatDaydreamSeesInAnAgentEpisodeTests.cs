@@ -94,11 +94,15 @@ public sealed class WhatDaydreamSeesInAnAgentEpisodeTests
         // No floor tripped: a floor is an OBSERVED failure, and nothing was observed.
         Assert.Empty(signature.Floors);
 
-        // No shortfall either: every dimension is Not-Recorded, and a Not-Recorded dimension has a
-        // null rubric, so it is absent from the shortfall list rather than counted as a zero. That
-        // is the same refusal to read absence as a low value that produces the verdict.
+        // No shortfall either — and the reason is stronger than "every rubric is null". There are
+        // NO ASSESSMENTS AT ALL: nothing was evaluated, so there is no dimension to fall short.
+        //
+        // Asserted as Empty rather than with Assert.All over the rubrics, because Assert.All passes
+        // vacuously on an empty collection: the weaker assertion was green for a reason that was not
+        // the reason it named, and would have stayed green if assessments later appeared with null
+        // rubrics — a different state entirely.
         Assert.Empty(signature.Shortfalls);
-        Assert.All(scored.Scorecard.Assessments, a => Assert.Null(a.Rubric0to4));
+        Assert.Empty(scored.Scorecard.Assessments);
 
         Assert.True(signature.IsUnremarkable);
     }

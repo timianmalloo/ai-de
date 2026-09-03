@@ -873,6 +873,17 @@ for both or split.*
     finds less — indistinguishable from a smaller file. This is the state a developer is in most
     often. Fixed with `ExtractionDisclosures.SourceDidNotParse`, which names the files and their
     count while still contributing what did parse.
+  - 2026-09-02 — **written by the author of this entry's own summary, two hours after quoting it at
+    a peer.** `DaydreamRecorder.Observe` returned `bool`, and `false` covered two states that are
+    opposites: *assessed, and nothing fell short* (the system working) and *nothing was assessed at
+    all* (the system seeing nothing). Both produce an empty `DaydreamSignature`, both write nothing,
+    and both would have rendered as a quiet Daydream — so a repository whose agent episodes carry no
+    evidence at all would have read as one where work is going well, permanently. Found by a peer
+    wiring a test before the call site rather than after, and confirmed by MEASUREMENT: an episode
+    with no Proof Pack scores `NotScored` with `floors=[] rubrics=[]` — a floor is an *observed*
+    failure, so nothing can trip when nothing is observed. Fixed with `DaydreamObservationOutcome`,
+    whose `NothingWasAssessed` is exactly this class's prescribed shape: a field that distinguishes
+    "none" from "not looked at".
 - **Control:** each fix carries the same shape — **a field that distinguishes "none" from "not
   looked at"**, and a test for BOTH directions, because a disclosure that fires on every workspace is
   noise and one that never fires is decoration. `spikes/joins-on-a-real-repo` runs the panes over a
