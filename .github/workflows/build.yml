@@ -73,7 +73,9 @@ jobs:
       # its own code, so a dependency that runs A -> B is invisible from both ends. MEASURED at 74s
       # for 18 mutations on this machine, which is why it is an every-push gate and not a nightly.
       - name: Mutation replay — the controls can actually fail
-        run: python tools/mutation-replay.py --set tools/mutation-sets/daydream-seam.json
+        run: |
+          python tools/mutation-replay.py --self-test
+          python tools/mutation-replay.py --set tools/mutation-sets/daydream-seam.json
 
       # DC-021: a fixture that restates a list the product declares. Three occurrences before it was
       # registered, because each repair was cheap enough that nobody asked why. The register recorded

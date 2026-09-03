@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T18:41:47Z",
+  "generated": "2026-09-03T18:45:17Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8894,6 +8894,23 @@ window.AUDIT_DATA = {
       "prompt": "yes do next steps",
       "summary": "DC-103's control said 'prefer no selector - run the whole suite per mutation'. The peer measured it: 74s filtered for 18 mutations against ~71s each unfiltered, about 21 minutes. A gate that slow is not run, and an unrun gate is worse than a narrow one. Corrected: the control is to assert the SELECTOR'S COVERAGE, via a preflight that derives from the mutation set which test files should be selectable and fails when the filter cannot reach them. Also recorded that a cross-boundary mutation must be exempt - their first version produced five false positives on a push gate, which would have had it switched off within a day.",
       "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0448",
+      "shortname": "dc-104-registered",
+      "datetime": "2026-09-03T18:45:17Z",
+      "session": "e9679dd2",
+      "prompt": "do next steps",
+      "summary": "Registered DC-104: a new control's first run is a test of the control, not of the code. Four instances from today, all found by executing rather than reviewing — including mutation-replay's own --self-test, which failed on its first run because the assertion was wrong and the code right. Fixed the live instance: mutation-replay.py was wired into build.yml with no self-test, which is this class committed by the session registering it. Residual stated honestly: 10 of 18 gates have no self-test and nothing enforces the convention.",
+      "kind": "prompt",
       "skill": "implement",
       "tool": null,
       "actor": null,

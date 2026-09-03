@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 61 · partially-controlled 38 · uncontrolled 4
+**Status counts:** controlled 61 · partially-controlled 39 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3804,3 +3804,46 @@ for both or split.*
   subjects get verified at all.
 - **Status:** `partially-controlled` — the unfiltered default is stated and used; no gate asserts a
   selector's coverage
+
+### DC-104 — A new control's first run is a test of the control, not of the code
+
+- **Shape:** a verifier, gate or harness is written, run, and reports something about the codebase.
+  The report is treated as a finding. But nothing has yet established that the control works, so the
+  first run is evidence about **two** things at once and the far likelier defect is in the control —
+  which is also the one nobody is looking for, because the control is the thing they just reasoned
+  carefully about.
+- **Signature:** a brand-new control returning a *surprising* result on its first execution. Seven
+  coverage gaps at once, five false positives, a clean sweep of a directory nobody has swept. The
+  tell is the shape of the number rather than its value: **an implausible result from an unproven
+  instrument is a fact about the instrument.** Also: a control that has only ever been run on the
+  fixed tree, where a defect in it is invisible by construction.
+- **Instances, all 2026-09-03, all found by executing rather than reviewing:**
+
+  | The control | Its first run said | What was actually wrong |
+  |---|---|---|
+  | a cited-controls detector keyed on the *shape of a correct name* | "no cited controls found at all" | it could never catch the instance it was written for — the malformed name **was** the defect |
+  | the same detector, second version, parsing declarations | two identifiers fabricated | its regex modelled only `void` and `Task` returns; both findings were its own blind spot |
+  | `mutation-replay`'s scope preflight | five scoring tests uncovered | a cross-boundary mutation must be exempt: those tests belong to another sweep |
+  | `mutation-replay --self-test`, written to demonstrate *this class* | one guard not firing | the assertion was wrong and the code right — on the very first execution of the self-test |
+
+- **Why it survives review:** every one of these was reviewed by its author immediately before
+  running, and the reasoning was sound. A control is the artifact people most expect to be correct,
+  because writing one is an act of care. And its output arrives dressed as a finding about something
+  else, so attention goes there.
+- **The cost is asymmetric and that is what makes it a class.** A false negative wastes a run. A
+  false positive on a gate wired into every push gets the gate **switched off within a day**, taking
+  the real finding with it — so the control ends up worse than never having been written.
+- **Control:** a new gate ships with a `--self-test` that proves each of its refusals can fire, run
+  in CI immediately before the gate itself. The convention already existed here (8 of 18 gates carry
+  one) and `mutation-replay.py` was wired into `build.yml` without one — this class committed by the
+  session registering it. Now added, and it failed on its first run, which is the class demonstrating
+  itself one level further in.
+- **The rule, which is cheaper than the control:** *run a new control against the ORIGINAL defect,
+  replayed from the commit that contained it* (DC-099's rule pointed at the control rather than the
+  code). If it cannot go red on the thing it was written for, nothing else it says is evidence.
+- **Residual:** 10 of 18 gates in `build.yml` have no `--self-test`, and no gate asserts the
+  convention. Enforcing it would fail the build on pre-existing tools that are not the author's to
+  rewrite, so it is recorded here rather than mechanised, and the honest reading is that the
+  convention is followed where someone remembered.
+- **Status:** `partially-controlled` — self-test present and CI-invoked for `mutation-replay`; the
+  convention itself is unenforced

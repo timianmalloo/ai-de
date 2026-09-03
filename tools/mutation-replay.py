@@ -169,8 +169,16 @@ def run_tests(project: str, test_filter: str) -> tuple[set[str], int, str]:
     except (OSError, subprocess.SubprocessError) as exc:
         return set(), 0, f"could not run dotnet test — {exc}"
 
-    out = (proc.stdout or "") + (proc.stderr or "")
+    return parse_run((proc.stdout or "") + (proc.stderr or ""))
 
+
+def parse_run(out: str) -> tuple[set[str], int, str]:
+    """Read a dotnet-test transcript. Separated so `--self-test` can exercise it without a build.
+
+    THE GUARD THIS EXISTS FOR: absence of a summary is a HARNESS FAILURE, never "no test failed".
+    Its own first version was written the other way and reported seven coverage gaps that did not
+    exist.
+    """
     if "error CS" in out:
         first = next((l.strip() for l in out.splitlines() if "error CS" in l), "")
         return set(), 0, f"did not compile — {first[:160]}"
@@ -185,6 +193,73 @@ def run_tests(project: str, test_filter: str) -> tuple[set[str], int, str]:
         return set(), 0, "the summary reported 0 tests executed — the filter matched nothing"
 
     return {f"{m[1]}.{m[2]}" for m in FAIL_RE.findall(out)}, total, ""
+
+
+def self_test() -> int:
+    """Prove this tool's own guards can fire, without building anything.
+
+    DC-104: a new control's first run is not a verification, it is the first test of the CONTROL —
+    and three times in one day here, the first run found a defect in the control rather than in the
+    code. This tool was wired into build.yml with no self-test at all, which is that class committed
+    by the author who registered it.
+
+    Each case below is a transcript or input that MUST be refused. A tool that cannot demonstrate its
+    own refusals is asking to be trusted on the strength of never having complained.
+    """
+    failures: list[str] = []
+
+    def check(label: str, condition: bool) -> None:
+        print(f"  {'ok  ' if condition else 'FAIL'}  {label}")
+        if not condition:
+            failures.append(label)
+
+    # 1. The guard whose absence produced seven imaginary coverage gaps.
+    _, _, err = parse_run("")
+    check("empty output is a harness failure, not a clean run", "NO TEST SUMMARY" in err)
+
+    _, _, err = parse_run("dotnet: command not found")
+    check("a missing runner is a harness failure", "NO TEST SUMMARY" in err)
+
+    # 2. A run that happened and executed nothing is also not a pass.
+    _, _, err = parse_run("Passed!  - Failed: 0, Passed: 0, Skipped: 0, Total: 0, Duration: 1 ms")
+    check("zero executed tests is refused", "0 tests executed" in err)
+
+    # 3. A compile break is named as itself rather than as a passing sweep.
+    _, _, err = parse_run("Foo.cs(1,1): error CS1002: ; expected")
+    check("a compile error is reported as one", "did not compile" in err)
+
+    # 4. A real transcript parses, and failures are attributed to their class.
+    fails, total, err = parse_run(
+        "    AiDe.Core.Tests.Watcher.ThingTests.ItWorks [FAIL]\n"
+        "Failed!  - Failed: 1, Passed: 9, Skipped: 0, Total: 10, Duration: 5 ms")
+    check("a real transcript parses", err == "" and total == 10 and "ThingTests.ItWorks" in fails)
+
+    # 5. DC-103's preflight fires when a covering test sits outside the filter, and is quiet when it
+    #    does not. Both directions: a check that only ever passes is decoration (DC-016).
+    real = [{"file": "src/AiDe.Core/Watcher/DaydreamReachProbe.cs", "old": "", "new": ""}]
+    check("a filter that excludes a covering test is a gap",
+          len(scope_gaps(real, "FullyQualifiedName~NothingMatchesThis")) > 0)
+    # Both tokens, which is the filter the set actually carries. Written first with only ~Daydream,
+    # and it FAILED on this tool's very first self-test run — correctly, because
+    # WhatTheRealCorpusCanProduceTests names the probe and does not contain "Daydream", so it is a
+    # real gap under that filter. The code was right and the assertion was wrong. DC-104 arriving
+    # inside the self-test written to demonstrate DC-104, on its first execution.
+    check("a filter that reaches its tests is not a gap",
+          scope_gaps(real, "FullyQualifiedName~Daydream|FullyQualifiedName~WhatTheRealCorpus") == [])
+
+    # 6. And a cross-boundary mutation is exempt — the false positive that would have got this gate
+    #    switched off inside a day, found only by running it.
+    crossed = [dict(real[0], tests={"project": "x", "filter": "y"})]
+    check("a cross-boundary mutation is exempt from the scope check",
+          scope_gaps(crossed, "FullyQualifiedName~NothingMatchesThis") == [])
+
+    print()
+    if failures:
+        print(f"mutation-replay --self-test: {len(failures)} guard(s) did not fire.")
+        return 1
+
+    print("mutation-replay --self-test: every guard fires, and the scope check is quiet when clean.")
+    return 0
 
 
 def scope_gaps(mutations: list[dict], test_filter: str) -> list[tuple[str, str, str]]:
@@ -258,7 +333,12 @@ def main() -> int:
     ap.add_argument("--set", dest="set_path", help="path to a mutation set (JSON)")
     ap.add_argument("--only", help="run only mutations whose label contains this text")
     ap.add_argument("--list-sets", action="store_true", help="list the declared mutation sets")
+    ap.add_argument("--self-test", action="store_true",
+                    help="prove this tool's own guards can fire; builds nothing")
     args = ap.parse_args()
+
+    if args.self_test:
+        return self_test()
 
     if args.list_sets:
         for f in sorted(SETS.glob("*.json")):
