@@ -60,8 +60,15 @@ public sealed class FileSystemRepositoryLocator : IRepositoryLocator
         {
             var dotGit = Path.Combine(checkoutPath, ".git");
 
-            // A repository root has a .git DIRECTORY. Nothing to correct.
-            if (Directory.Exists(dotGit) || !File.Exists(dotGit))
+            // A repository root has a .git DIRECTORY, and a linked worktree has a .git FILE, so
+            // "is not a file" already covers both the directory case and the absent case.
+            //
+            // This was written as `Directory.Exists(dotGit) || !File.Exists(dotGit)`, which reads
+            // better and is EQUIVALENT — mutation replay reported the directory check as uncovered,
+            // and it was uncovered because no behaviour can distinguish it. A branch no test can
+            // ever redden is not defence in depth, it is a permanent false entry on the coverage
+            // report that trains the next reader to ignore one.
+            if (!File.Exists(dotGit))
             {
                 return null;
             }

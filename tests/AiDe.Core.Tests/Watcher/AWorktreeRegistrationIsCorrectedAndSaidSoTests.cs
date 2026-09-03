@@ -141,7 +141,14 @@ public sealed class AWorktreeRegistrationIsCorrectedAndSaidSoTests
         var store = new InMemoryWatcherObservationStore();
         var host = HostWith(new StubLocator(Worktree, repository: null), store);
 
-        host.Register(new HarnessRegistration(Attrs(Worktree)));
+        // The worktree path is made DIFFERENT from the claimed repository, deliberately. The first
+        // version of this test used the same value for both (the Attrs helper sets them equal), so a
+        // fallback of "guess the worktree path" produced the identical answer and the test passed
+        // while the guess ran. Mutation replay found it: removing the null guard reddened nothing.
+        var attrs = Attrs(Worktree);
+        attrs[OtelAttributes.WorktreePath] = @"C:epospp-somewhere-else";
+
+        host.Register(new HarnessRegistration(attrs));
 
         var session = Assert.Single(store.AllSessions());
         Assert.Equal(new RepositoryIdentity(Worktree, "x").CanonicalPath, session.Binding.Repository.CanonicalPath);
