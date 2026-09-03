@@ -1925,9 +1925,20 @@ public sealed class WorkbenchShell : IDisposable
     /// It survives a machine change, travels with a clone, and is reviewable in a pull request - and
     /// two worktrees read the same committed record for free, because git already solved that.</para>
     ///
-    /// <para><b>Constructed per call rather than cached.</b> The workspace can change under a running
-    /// shell, and a recorder pinned to the previous repository would write this repository's lessons
-    /// into the last one - silently, since the write would succeed.</para>
+    /// <para><b>Cached per workspace root, not per call.</b> The correctness reason for building it
+    /// fresh still holds - the workspace can change under a running shell, and a recorder pinned to
+    /// the previous repository would write this repository's lessons into the last one, silently,
+    /// because the write would succeed. Keying the cache on the root preserves that: a different root
+    /// yields a different recorder.</para>
+    ///
+    /// <para><b>Why the lifetime is now load-bearing.</b> This is called on every watcher tick, so a
+    /// per-call recorder discarded any state it accumulated roughly every two seconds. Anything that
+    /// wants to answer "how many episodes did Daydream decline, and why" from the recorder itself was
+    /// therefore impossible without this, and impossible in a way that is invisible from the Core
+    /// side - the seam is here, in the App shell, not in <c>DaydreamRecorder</c>.</para>
+    ///
+    /// <para>One reference for the pair, and read from the watcher thread as well as the UI thread,
+    /// so a reader can never observe a new recorder paired with the previous root (DC-097).</para>
     ///
     /// <para><b>It writes nothing today for an agent's episode</b>, and that is measured rather than
     /// assumed (<c>WhatDaydreamSeesInAnAgentEpisodeTests</c>): with no Proof Pack nothing is
@@ -1936,7 +1947,20 @@ public sealed class WorkbenchShell : IDisposable
     /// one that currently feeds it.</para>
     /// </remarks>
     private DaydreamRecorder DaydreamRecorderForWorkspace()
-        => new(AiDe.Core.Watcher.DaydreamRepositoryRecord.For(_workspaceRoot));
+    {
+        var root = _workspaceRoot ?? string.Empty;
+        if (_daydreamRecorderCache is { } cached && string.Equals(cached.Root, root, StringComparison.Ordinal))
+        {
+            return cached.Recorder;
+        }
+
+        var recorder = new DaydreamRecorder(AiDe.Core.Watcher.DaydreamRepositoryRecord.For(_workspaceRoot));
+        _daydreamRecorderCache = (root, recorder);
+        return recorder;
+    }
+
+    /// <summary>The Daydream recorder and the workspace root it was built for, as ONE reference.</summary>
+    private (string Root, DaydreamRecorder Recorder)? _daydreamRecorderCache;
 
     private WorkspaceKey? ScoringWorkspace()
         => CurrentGitFacts() is { RepoResolved: true } facts ? WorkspaceKey.From(facts.RepoPath) : null;

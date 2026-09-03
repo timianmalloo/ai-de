@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T16:42:13Z",
+  "generated": "2026-09-03T16:55:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8695,6 +8695,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0436",
+      "shortname": "daydream-recorder-outlives-the-tick",
+      "datetime": "2026-09-03T16:55:17Z",
+      "session": "ai-de-a7",
+      "prompt": "(continuation) unblock the peer's freshness probe",
+      "summary": "The peer expected not to need my files for the Daydream freshness probe. Wrong, and invisible from Core: ScoringService discards Observe's outcome, and WorkbenchShell built a NEW DaydreamRecorder on every watcher tick, so any state a recorder accumulated died every two seconds. Cached per workspace root instead - the correctness reason for building it fresh (a recorder pinned to the previous repository writes this repo's lessons into the last one) is preserved by keying on the root, and the pair is one reference because it is read from the watcher thread as well as the UI thread (DC-097). Either probe design now works without touching Core scoring.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
       ],
       "tags": [],
       "outcome": "success"
