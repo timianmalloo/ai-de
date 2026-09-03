@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-02T23:55:23Z",
+  "generated": "2026-09-03T00:12:47Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -5101,6 +5101,46 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
+    },
+    {
+      "id": "plan-daydream-and-collaboration-slices",
+      "path": "docs/plans/daydream-and-collaboration-slices.md",
+      "title": "Delivery plan — Daydream and Collaboration, split across two sessions",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "3",
+      "reviewBy": "2027-03-02",
+      "reviewSuggested": [],
+      "summary": "The two remaining Loomkeeper tracks split between two concurrent sessions — Daydream to the UI/Experience session, Collaboration to the Core session — with the slice and phase breakdown for each, the shared files that force sequencing, and the rule for which session touches them when.",
+      "tags": [
+        "plan",
+        "execution-graph",
+        "loomkeeper",
+        "daydream",
+        "collaboration",
+        "parallel-sessions"
+      ],
+      "links": [
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "design-watcher-daydream-dream-seam",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "relates-to"
+        },
+        {
+          "to": "session-contracts",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "633d54027b0fc711ba52d0dc3837fde1c6532a552df364232138491b5c708b4f"
     },
     {
       "id": "plan-extractor-roadmap",
@@ -10762,5 +10802,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "853ed8ecc1de595236442465decdb61f3441228d69b4540e789fe2308a3cff47"
+  "graphSha256": "9a79c9fa0005f0c08edaa06e4bb9bd9a559ce5a9a129a2a4c39497b1d099927d"
 };
