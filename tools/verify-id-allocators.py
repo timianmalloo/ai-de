@@ -68,6 +68,19 @@ FAMILIES = [
         "signature": "shortname",
     },
     {
+        # Declared 2026-09-02, on the gate's own report. Eight mit- ids existed with no allocator,
+        # which is the DC- collision shape one family over: two sessions hand out mit-0009 within a
+        # minute, both files are valid JSONL, and the merge is clean. That happened twice today with
+        # DC- ids and was caught both times only because DC- WAS declared.
+        "prefix": "mit",
+        "path": "docs/lessons/mitigations.jsonl",
+        "kind": "jsonl",
+        "field": "id",
+        "what": "mitigation records",
+        "contiguous": False,   # re-issue on collision leaves gaps, as with al- and cl-
+        "signature": "shortname",
+    },
+    {
         "prefix": "DC",
         "path": "docs/lessons/defect-classes.md",
         "kind": "heading",
