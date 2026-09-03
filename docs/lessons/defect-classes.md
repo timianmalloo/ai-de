@@ -2948,6 +2948,17 @@ for both or split.*
   back to its source decays without telling anyone.* Either bind it to what it counts, or do not
   state it — because the page cannot say "counted, not estimated" on its own authority once the
   counting was a one-off.
+- **WHEN it drifts, which turns four recurrences into one rule (2026-09-02).** The gate fired four
+  times in one afternoon on the same author, and every time the cause was **ordering inside a single
+  commit**, not neglect: regenerate the derived views, then append the audit entry — and the audit
+  entry changes the very count the figures report. The figures were correct at the moment they were
+  written and stale by the time the commit closed, by construction, on every commit that carries an
+  audit entry.
+
+  The gate catches it on the NEXT run, which is usually somebody else's push, so the person who
+  fixes it is not the person who caused it. **The rule is that derived views regenerate LAST, after
+  the append-only logs are written** — a derived view produced before its source finishes moving was
+  never current, and no amount of care at the regeneration step can fix an order.
 - **Status:** `controlled`
 
 ### DC-083 — Work started in a constructor reads a property the object initializer has not set yet

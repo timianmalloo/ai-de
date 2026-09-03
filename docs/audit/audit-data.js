@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T01:42:58Z",
+  "generated": "2026-09-03T01:48:47Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8508,6 +8508,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/notes/note-20260902-two-decisions-the-loop-waits-on.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0425",
+      "shortname": "figures-drift-ordering",
+      "datetime": "2026-09-03T01:48:47Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Design session: three site figures went stale on your commits; fourth time that control has earned itself today.",
+      "summary": "Recorded WHY the figures drift rather than that they do: it is ordering inside a single commit. Regenerating derived views and then appending the audit entry makes the figures stale by construction, since the append changes the count they report. The gate catches it on the next run, so the person who fixes it is never the person who caused it. Rule: derived views regenerate LAST, after the append-only logs are written.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"
