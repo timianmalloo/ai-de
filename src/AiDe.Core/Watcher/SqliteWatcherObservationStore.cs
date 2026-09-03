@@ -14,7 +14,7 @@ namespace AiDe.Core.Watcher;
 /// </summary>
 public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, IDisposable
 {
-    private const int SchemaVersion = 1;
+    private const int SchemaVersion = 2;
 
     private readonly SqliteConnection _connection;
     private readonly object _gate = new();
@@ -329,6 +329,63 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         DateTimeOffset.Parse(reader.GetString(6), null, System.Globalization.DateTimeStyles.RoundtripKind),
         reader.IsDBNull(7) ? null : DateTimeOffset.Parse(reader.GetString(7), null, System.Globalization.DateTimeStyles.RoundtripKind),
         reader.IsDBNull(8) ? null : Enum.Parse<EpisodeOutcome>(reader.GetString(8)));
+
+    public void AppendDaydreamObservation(DaydreamObservation observation)
+    {
+        ArgumentNullException.ThrowIfNull(observation);
+        lock (_gate)
+        {
+            ExecuteNonQuery(
+                _connection,
+                """
+                INSERT INTO daydream_observation_fact
+                    (observation_id, task_class, schema_version, verdict, floors, shortfalls,
+                     episode_id, observed_at)
+                VALUES ($id, $task, $schema, $verdict, $floors, $shortfalls, $episode, $observed);
+                """,
+                null,
+                ("$id", observation.ObservationId),
+                ("$task", observation.Signature.TaskClass),
+                ("$schema", observation.Signature.SchemaVersion),
+                ("$verdict", observation.Signature.Verdict.ToString()),
+                ("$floors", observation.Signature.Floors),
+                ("$shortfalls", observation.Signature.Shortfalls),
+                ("$episode", observation.EpisodeId),
+                ("$observed", observation.ObservedAt.ToString("O")));
+        }
+    }
+
+    public IReadOnlyList<DaydreamObservation> AllDaydreamObservations()
+    {
+        lock (_gate)
+        {
+            var rows = new List<DaydreamObservation>();
+            using var command = _connection.CreateCommand();
+            command.CommandText =
+                """
+                SELECT observation_id, task_class, schema_version, verdict, floors, shortfalls,
+                       episode_id, observed_at
+                FROM daydream_observation_fact
+                ORDER BY observed_at, observation_id;
+                """;
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                rows.Add(new DaydreamObservation(
+                    reader.GetString(0),
+                    new DaydreamSignature(
+                        reader.GetString(1),
+                        reader.GetString(2),
+                        Enum.Parse<WeaveVerdict>(reader.GetString(3)),
+                        reader.GetString(4),
+                        reader.GetString(5)),
+                    reader.GetString(6),
+                    DateTimeOffset.Parse(reader.GetString(7), System.Globalization.CultureInfo.InvariantCulture)));
+            }
+
+            return rows;
+        }
+    }
 
     public void AppendBoardMessage(BoardMessage message)
     {
@@ -725,26 +782,86 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         SqliteConnection.ClearAllPools();
     }
 
+    /// <summary>
+    /// Creates the schema on a new database, and applies pending additive migrations to an existing
+    /// one.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The migration half did not exist.</b> This method returned early whenever
+    /// <c>watcher_schema_version</c> was present, so <see cref="SchemaSql"/> only ever ran against a
+    /// FRESH database. Adding a table to it would have given that table to new workspaces and to no
+    /// existing one — and the failure would have surfaced as "no such table" at the first read, in
+    /// whichever workspace had been opened longest. Found in D2's P0 by reading the method rather
+    /// than trusting that a versioned schema implied a version check.</para>
+    ///
+    /// <para><b>Expand only.</b> Every migration here creates something that did not exist; none
+    /// rewrites or drops. So there is no backfill to get wrong and nothing to roll back — an
+    /// interrupted run leaves either the old shape or the new one, and re-running is safe.</para>
+    /// </remarks>
     private static void EnsureSchema(SqliteConnection connection)
     {
         var exists = Convert.ToInt64(ExecuteScalar(
             connection,
             "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='watcher_schema_version';")) > 0;
-        if (exists)
+
+        if (!exists)
+        {
+            using var create = connection.BeginTransaction();
+            ExecuteNonQuery(connection, SchemaSql, create);
+            RecordVersion(connection, create, SchemaVersion);
+            create.Commit();
+            return;
+        }
+
+        var current = Convert.ToInt64(ExecuteScalar(
+            connection, "SELECT max(version) FROM watcher_schema_version;") ?? 0L);
+        if (current >= SchemaVersion)
         {
             return;
         }
 
         using var tx = connection.BeginTransaction();
-        ExecuteNonQuery(connection, SchemaSql, tx);
-        ExecuteNonQuery(
+        foreach (var (version, ddl) in Migrations.Where(m => m.Version > current).OrderBy(m => m.Version))
+        {
+            ExecuteNonQuery(connection, ddl, tx);
+            RecordVersion(connection, tx, version);
+        }
+
+        tx.Commit();
+    }
+
+    private static void RecordVersion(SqliteConnection connection, SqliteTransaction tx, int version)
+        => ExecuteNonQuery(
             connection,
             "INSERT INTO watcher_schema_version (version, applied_at) VALUES ($v, $t);",
             tx,
-            ("$v", SchemaVersion),
+            ("$v", version),
             ("$t", DateTimeOffset.UtcNow.ToString("O")));
-        tx.Commit();
-    }
+
+    /// <summary>
+    /// Additive DDL to bring an existing database up to <see cref="SchemaVersion"/>.
+    /// </summary>
+    /// <remarks>
+    /// Each entry must also appear in <see cref="SchemaSql"/>, so a fresh database and a migrated
+    /// one end up identical. <c>SchemaMatchesAfterMigrationTests</c> asserts exactly that by
+    /// comparing the two, because two definitions of one schema is the shape that drifts.
+    /// </remarks>
+    private static readonly (int Version, string Ddl)[] Migrations =
+    [
+        (2, """
+            CREATE TABLE daydream_observation_fact (
+                observation_id  TEXT NOT NULL PRIMARY KEY,
+                task_class      TEXT NOT NULL,
+                schema_version  TEXT NOT NULL,
+                verdict         TEXT NOT NULL,
+                floors          TEXT NOT NULL,
+                shortfalls      TEXT NOT NULL,
+                episode_id      TEXT NOT NULL,
+                observed_at     TEXT NOT NULL
+            );
+            CREATE INDEX ix_daydream_observation_episode ON daydream_observation_fact (episode_id);
+            """),
+    ];
 
     private const string SchemaSql =
         """
@@ -884,6 +1001,23 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             raised_at         TEXT NOT NULL
         );
         CREATE INDEX ix_score_dispute_episode ON score_dispute_fact (episode_id);
+
+        -- Daydream observations (US-9): one occurrence of one pattern in one episode at one time.
+        -- A _fact, not a _dim: an observation is never edited, and a re-observation is a NEW row.
+        -- The recurrence count is derived on read (DM7) and never stored, so there is exactly one
+        -- definition of "how many times". No PRIMARY KEY on episode_id for the same reason - two
+        -- rows for one episode must both survive, and the fold deduplicates.
+        CREATE TABLE daydream_observation_fact (
+            observation_id  TEXT NOT NULL PRIMARY KEY,
+            task_class      TEXT NOT NULL,
+            schema_version  TEXT NOT NULL,
+            verdict         TEXT NOT NULL,
+            floors          TEXT NOT NULL,
+            shortfalls      TEXT NOT NULL,
+            episode_id      TEXT NOT NULL,
+            observed_at     TEXT NOT NULL
+        );
+        CREATE INDEX ix_daydream_observation_episode ON daydream_observation_fact (episode_id);
 
         CREATE TRIGGER score_dispute_fact_no_update BEFORE UPDATE ON score_dispute_fact
         BEGIN SELECT RAISE(ABORT, 'score_dispute_fact is append-only'); END;

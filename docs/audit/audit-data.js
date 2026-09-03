@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T00:20:34Z",
+  "generated": "2026-09-03T00:30:46Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8389,6 +8389,40 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Watcher/DaydreamObservation.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0418",
+      "shortname": "capture-mitigation",
+      "datetime": "2026-09-03T00:30:46Z",
+      "session": "dream-job",
+      "prompt": "dream.py capture-mitigation",
+      "summary": "Captured mit-0009 (red-green): SqliteWatcherObservationStore.EnsureSchema returned early whenever watcher_schema_version existed, s",
+      "kind": "script",
+      "skill": "dream",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/mitigations.jsonl"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0419",
+      "shortname": "daydream-d2-persistence",
+      "datetime": "2026-09-03T00:30:46Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "yes work on D2 in this session",
+      "summary": "Daydream D2 (persistence) complete. P0 found DC-090 before writing any code: EnsureSchema guarded on whether the version TABLE existed rather than what version it HELD, so the schema ran once per database and never again - adding a table would have given it to new workspaces only. Fixed with a version comparison and additive migrations, plus a test asserting a fresh database and a migrated one end up with identical schemas, because the DDL now lives in two places. daydream_observation_fact is a _fact not a _dim, following the store's own naming grain: an observation is never edited, a re-observation is a new row, and the recurrence count is derived on read so there is one definition of 'how many times'. The in-memory store uses a List rather than a dictionary keyed by id for the same reason. 6 tests; the two migration tests observed failing with migrations disabled.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs"
       ],
       "tags": [],
       "outcome": "success"

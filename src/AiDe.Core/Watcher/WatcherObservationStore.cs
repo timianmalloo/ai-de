@@ -98,6 +98,22 @@ public interface IWatcherObservationStore
     /// <summary>Every recorded dispute - the compute reader for the derived Disputed state (spec §10).</summary>
     IReadOnlyList<ScoreDispute> AllDisputes();
 
+    /// <summary>
+    /// Appends a Daydream observation - one occurrence of one pattern in one episode (US-9, spec
+    /// line 237). Append-only: an observation is never edited, and a re-observation of the same
+    /// episode is a new row that the recurrence fold deduplicates.
+    /// </summary>
+    /// <remarks>
+    /// A <c>_fact</c> and not a <c>_dim</c>, deliberately. An observation is a statement that
+    /// something was seen at a time; correcting it means observing again, not rewriting what was
+    /// believed before. The recurrence count is derived from the rows on read (DM7) and never stored,
+    /// so there is exactly one definition of "how many times".
+    /// </remarks>
+    void AppendDaydreamObservation(DaydreamObservation observation);
+
+    /// <summary>Every recorded observation, in append order - the recurrence detector's input.</summary>
+    IReadOnlyList<DaydreamObservation> AllDaydreamObservations();
+
     /// <summary>Marks a session ended (terminal closed or superseded generation).</summary>
     void MarkEnded(string sessionId);
 
@@ -124,6 +140,10 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
     private readonly Dictionary<string, SessionRecord> _sessions = new();
     private readonly Dictionary<string, WorkEpisode> _episodes = new();
     private readonly Dictionary<string, BoardMessage> _boardMessages = new();
+    // A LIST, not a dictionary keyed by id: an observation is append-only, so two rows for one
+    // episode must both survive. Keying by id would silently collapse a re-observation, which is
+    // exactly the deduplication the recurrence fold is supposed to do on READ.
+    private readonly List<DaydreamObservation> _daydreamObservations = [];
     private readonly Dictionary<string, ScoredEpisode> _scored = new();
     private readonly Dictionary<string, ScoreDispute> _disputes = new();
     private readonly HashSet<string> _ended = new();
@@ -256,6 +276,23 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         lock (_gate)
         {
             _boardMessages[message.MessageId] = message;
+        }
+    }
+
+    public void AppendDaydreamObservation(DaydreamObservation observation)
+    {
+        ArgumentNullException.ThrowIfNull(observation);
+        lock (_gate)
+        {
+            _daydreamObservations.Add(observation);
+        }
+    }
+
+    public IReadOnlyList<DaydreamObservation> AllDaydreamObservations()
+    {
+        lock (_gate)
+        {
+            return [.. _daydreamObservations];
         }
     }
 

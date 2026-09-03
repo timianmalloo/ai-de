@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 128 types, 221 members, 57% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 128 types, 225 members, 56% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**128 public types · 221 public members · 57% documented.**
+**128 public types · 225 public members · 56% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1258,6 +1258,8 @@ Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write 
 | `WorkEpisode? FindEpisode(string episodeId)` | **(gap)** |
 | `IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId)` | **(gap)** |
 | `IReadOnlyList<WorkEpisode> AllEpisodes()` | **(gap)** |
+| `void AppendDaydreamObservation(DaydreamObservation observation)` | **(gap)** |
+| `IReadOnlyList<DaydreamObservation> AllDaydreamObservations()` | **(gap)** |
 | `void AppendBoardMessage(BoardMessage message)` | **(gap)** |
 | `IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)` | **(gap)** |
 | `IReadOnlyList<BoardMessage> AllBoardMessages()` | **(gap)** |
@@ -1510,6 +1512,8 @@ trigger: the SQLite store lands (remaining Phase-1 task), which bounds and persi
 | `IReadOnlyList<WorkEpisode> EpisodesForSession(string sessionId)` | **(gap)** |
 | `IReadOnlyList<WorkEpisode> AllEpisodes()` | **(gap)** |
 | `void AppendBoardMessage(BoardMessage message)` | **(gap)** |
+| `void AppendDaydreamObservation(DaydreamObservation observation)` | **(gap)** |
+| `IReadOnlyList<DaydreamObservation> AllDaydreamObservations()` | **(gap)** |
 | `IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)` | **(gap)** |
 | `IReadOnlyList<BoardMessage> AllBoardMessages()` | **(gap)** |
 | `BoardMessage? FindBoardMessage(string messageId)` | **(gap)** |

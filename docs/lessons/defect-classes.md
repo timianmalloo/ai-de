@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 56 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 57 · partially-controlled 31 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3251,4 +3251,36 @@ for both or split.*
 - **The generalisation worth keeping:** *a component with no caller is not an unfinished feature, it
   is an absent one — and it looks finished from every angle except use.* Completeness is a property
   of the path, never of the parts.
+- **Status:** `controlled`
+
+### DC-090 — A versioned schema stores a version and never compares it
+
+- **Shape:** a store has a `schema_version` table, a `SchemaVersion` constant, and DDL that creates
+  everything. It looks migrated. The creation path guards on **whether the version table exists**
+  rather than on **what version it holds**, so the DDL runs exactly once per database, at creation,
+  and never again. Adding a table gives it to new databases and to no existing one.
+- **Signature:** an `EnsureSchema`-shaped method whose early return is `if (versionTableExists)
+  return;`, with a version constant that is written and never read back for comparison. The presence
+  of the version table is doing the work a version *check* appears to be doing — which is why
+  reading the schema, the constant, or the table list all confirm the design is sound.
+- **Why it survives:** every test creates a fresh database, so the migration path has no coverage by
+  construction — the one shape that exercises it is the one a test never has. It cannot be found by
+  running the suite, only by reading the method or by opening a database that predates the change.
+  The failure then lands as `no such table` in **whichever workspace has been open longest**, which
+  for an observability feature is the one with the most history worth observing.
+- **Instance:** 2026-09-02 — `SqliteWatcherObservationStore.EnsureSchema` returned early whenever
+  `watcher_schema_version` existed. `SchemaVersion` was `1`, written at creation, compared to
+  nothing. Found in Daydream D2's P0 while reading the store to follow its grain, **before** adding
+  `daydream_observation_fact` — so the table never shipped without a way to reach an existing
+  database. Nothing was broken yet; the next additive change would have been.
+- **Control:** the version is now read back and additive migrations apply for anything newer.
+  `DaydreamPersistenceTests` builds a v1 database the way one actually occurs — the table dropped and
+  the version rewound — and asserts the table arrives on open, that reopening applies nothing, and
+  that **a fresh database and a migrated one end up with identical schemas**. That last one exists
+  because the DDL now lives in two places, which is the derived-view problem in a schema; comparing
+  them is cheaper than trusting whoever adds the next table to remember both. **Observed failing**:
+  disabling the migration filter fails exactly those two and leaves the other four green.
+- **The generalisation worth keeping:** *a version you write and never read is a comment.* Wherever
+  schema, protocol or format carries a version, find the comparison — if the only use is an INSERT,
+  the versioning is decorative and the first additive change is the one that discovers it.
 - **Status:** `controlled`
