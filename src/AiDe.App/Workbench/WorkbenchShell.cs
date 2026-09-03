@@ -1979,6 +1979,35 @@ public sealed class WorkbenchShell : IDisposable
         return facts;
     }
 
+    /// <summary>
+    /// Tells a session what the product changed about its own registration (US-1, the worktree case).
+    /// </summary>
+    /// <remarks>
+    /// <para>The product corrects a registration that names a linked worktree as its repository,
+    /// because rejecting it would remove the agent from observation to protect a segmentation key —
+    /// and take the message board with it. The correction is only defensible because the agent is
+    /// told, so this is not a nicety attached to the feature; it is the half that makes the other
+    /// half legitimate.</para>
+    ///
+    /// <para>Notices are DRAINED, so each is delivered once. Failures are swallowed for the same
+    /// reason the standing's are: an agent not receiving a notice must never stop the watcher pump
+    /// that every other surface reads.</para>
+    /// </remarks>
+    private static void PublishRegistrationNotices(WatcherHost host)
+    {
+        try
+        {
+            foreach (var notice in host.Ingest.DrainRegistrationNotices())
+            {
+                RegistrationPublisher.Publish(host.CoordLogDirectory, notice);
+            }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // Never let delivery break observation.
+        }
+    }
+
     private static void PublishStandings(WatcherHost host)
     {
         try
@@ -2045,6 +2074,10 @@ public sealed class WorkbenchShell : IDisposable
                 // Published on the same tick that already runs, so a standing appears when a score
                 // does. Failures are swallowed deliberately: an agent not receiving a standing must
                 // never stop the watcher pump that everything else depends on.
+                // Before the standings, and deliberately: a registration correction must reach the
+                // agent BEFORE its first episode, and a standing cannot exist until after one.
+                PublishRegistrationNotices(host);
+
                 PublishStandings(host);
 
                 var fingerprint = WatcherFingerprint(host);

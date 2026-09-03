@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T16:55:18Z",
+  "generated": "2026-09-03T17:10:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8712,6 +8712,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0438",
+      "shortname": "registration-correction-channel",
+      "datetime": "2026-09-03T17:10:31Z",
+      "session": "ai-de-a7",
+      "prompt": "then next steps",
+      "summary": "Built the registration correction and its channel. An agent registering its worktree as its repository lands on a message board nobody is on, and every reply to another session's thread is REFUSED as cross-repository - literally true and completely misleading. Corrected rather than rejected, because detection and correction are the same filesystem read so rejection could only fire where correction would have worked. Never silently: the notice goes to <AIDE_CONTRACT_LOG>/registration/<session>.json with generated-by, published BEFORE standings on the tick because a correction must reach the agent before its first episode. FileSystemRepositoryLocator tested against a REAL git worktree rather than a fabricated pointer file.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/RepositoryCorrection.cs"
       ],
       "tags": [],
       "outcome": "success"

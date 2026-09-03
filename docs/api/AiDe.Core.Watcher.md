@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 145 types, 269 members, 61% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 151 types, 278 members, 62% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**145 public types · 269 public members · 61% documented.**
+**151 public types · 278 public members · 62% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1194,6 +1194,7 @@ Pattern: bounded producer/consumer (LOA Channel<T> backpressure) - the repo's
 |---|---|
 | `IngestHost(` | **(gap)** |
 | `RegisteredSession Register(HarnessRegistration registration)` | Maps and registers a session synchronously, returning its capability (LK-0004/LK-0002). |
+| `IReadOnlyList<RegistrationNotice> DrainRegistrationNotices()` | Takes the registration corrections that have not yet been delivered, emptying the queue. |
 | `void Heartbeat(string sessionId, SessionCapability capability)` | Records a heartbeat after verifying the capability (LK-0001). |
 | `void UpdateHarnessAndModel(` | Records a harness and/or model learned after registration, capability-verified. |
 | `WorkEpisode OpenEpisode(` | Opens a Work Episode for a verified session (US-6). Capability-gated like every other post-registration write. |
@@ -1207,6 +1208,40 @@ Pattern: bounded producer/consumer (LOA Channel<T> backpressure) - the repo's
 | `int DrainAvailable()` | Processes every span currently queued and returns the count. Deterministic (no waiting), so tests drain exactly what they enqueued. |
 | `Task RunAsync(CancellationToken ct)` | The production loop: wait for spans, then drain, until cancelled. |
 | `IngestStats Stats` | A point-in-time snapshot of the counters. |
+
+### `RegisteredSession Register(HarnessRegistration registration)`
+
+Maps and registers a session synchronously, returning its capability (LK-0004/LK-0002).
+
+**Remarks.** **A registration claiming a worktree as its repository is corrected here**, before
+the registrar sees it, so every downstream consumer of `repo.path` — the fleet map, the
+message board partition, the score segment — agrees from the first moment the session exists.
+Correcting later would leave a window in which the session is on the wrong board.
+
+
+
+
+
+The correction is queued rather than acted on, because telling the registrant is
+somebody else's job: this class has no filesystem to write to and no idea where the agent is
+listening. See `DrainRegistrationNotices`.
+
+### `IReadOnlyList<RegistrationNotice> DrainRegistrationNotices()`
+
+Takes the registration corrections that have not yet been delivered, emptying the queue.
+
+**Remarks.** **Drained, not read.** A notice is delivered once; leaving it queued would rewrite
+the same file every tick forever, and a re-appearing correction reads as a recurring problem
+rather than a single one that was already handled.
+
+
+
+
+
+**Queued rather than published inline** because a registration arrives on the ingest
+path, where a filesystem write would put an agent's disk in the way of the pump every other
+session depends on. The delay is one tick, which is well inside the constraint that matters:
+the notice must be readable BEFORE the agent's first episode, not before its next instruction.
 
 ### `void UpdateHarnessAndModel(`
 
@@ -1610,6 +1645,171 @@ Pattern: Adapter over the ingest host's port. The capability never travels; only
 | `OtlpReceiverStats Stats` | **(gap)** |
 | `Task RunAsync(CancellationToken ct)` | Accepts exports until cancelled. One export per POST; one bad request never stops the loop. |
 | `void Dispose()` | **(gap)** |
+
+## `RegistrationNotice`
+
+*record* — `RegistrationPublisher.cs`
+
+One thing the product changed about a session's own claim, to be told back to that session.
+
+## `RegistrationPublisher`
+
+*class* — `RegistrationPublisher.cs`
+
+Delivers a registration correction to the agent, as a file beside the contract log.
+
+**Remarks.** **Why this exists at all.** The product corrects a registration that names a linked
+worktree as its repository, because rejecting it would remove the agent from observation to
+protect a segmentation key. But silently rewriting a registrant's claim about itself leaves it
+sending the wrong value forever, with the correction depending permanently on our resolution
+staying right. The correction is only defensible because this file exists.
+
+
+
+
+
+**Why not the standing file.** A standing appears only once there is a scored episode,
+and a registration correction has to be readable **before the agent's first episode** —
+otherwise the agent works a whole episode on a board nobody is on before anything tells it.
+Worse, the standing file's *absence* is already load-bearing: it documents "you have no
+scored episode yet", and putting a second meaning on that absence is the shape this codebase has
+registered twice (DC-087).
+
+
+
+
+
+**Invisible to the pump, for the same two reasons as the standing.**
+`CoordinationContractLog.ReadDirectory` enumerates `*.jsonl` with no
+`SearchOption`, so top-directory-only. A notice written as `.jsonl` in the root would
+be parsed every tick and counted MALFORMED — the feature working while the ingest counters filled
+with corruption that was not corruption. Both properties, the extension and the depth, are
+asserted by tests rather than assumed.
+
+
+
+
+
+**Rewritten, never appended.** This is a machine-written directory holding a
+machine-read document, and the current state of a session's registration is one fact, not a
+history. The line agreed with the concurrent session: *rewrite what the product alone reads;
+append to, or leave alone, what a person may edit.*
+
+| Member | Summary |
+|---|---|
+| `string DirectoryName = "registration"` | The subdirectory of the coordination log that carries registration notices. |
+| `string GeneratedByField = StandingPublisher.GeneratedByField` | The provenance marker, under the one field name used in every format. |
+| `string GeneratedBy = "ai-de/registration-publisher"` | This component's provenance value. |
+| `string Publish(string coordLogDirectory, RegistrationNotice notice)` | Writes the notice for one session, and returns the path written. |
+
+### `string Publish(string coordLogDirectory, RegistrationNotice notice)`
+
+Writes the notice for one session, and returns the path written.
+
+**Remarks.** Written via a temp file and a move, because the agent reads it on its own schedule and
+"in the middle of a write" is a state that will occur rather than one that might.
+
+## `IRepositoryLocator`
+
+*interface* — `RepositoryCorrection.cs`
+
+Resolves the repository a checkout belongs to, when that checkout is a linked worktree.
+
+**Remarks.** An interface rather than a static so the correction is testable without creating real git
+worktrees on disk, and so a caller that cannot see the filesystem (a future remote registrant)
+can supply one that always answers "unknown" rather than having the check silently misfire.
+
+## `FileSystemRepositoryLocator`
+
+*class* — `RepositoryCorrection.cs`
+
+The filesystem answer: a linked worktree's `.git` is a FILE, a repository root's is a
+directory.
+
+**Remarks.** **Observed, not assumed.** In this repository's own trees:
+`C:/Projects/ai-de/.git` is a directory, while a linked worktree's `.git` is a 74-byte
+file reading `gitdir: C:/Projects/ai-de/.git/worktrees/<name>`. That pointer file is
+the only thing distinguishing the two — nothing in the spelling of an absolute path does.
+
+
+
+
+
+**Why a file read and not `git rev-parse`.** Core does not shell out, this runs on
+the ingest path where a process launch per registration would be a cost per agent, and the file
+read answers the same question. The shell already uses `--git-common-dir` where it has a
+process to spare; this is the same fact by a cheaper route.
+
+
+
+
+
+**Every failure answers "unknown".** A missing path, an unreadable file, a pointer that
+does not match the expected shape — all return null, which the caller treats as nothing to
+correct. A locator that guessed would reintroduce the split it exists to prevent, silently.
+
+| Member | Summary |
+|---|---|
+| `string? RepositoryFor(string checkoutPath)` | **(gap)** |
+
+## `RepositoryCorrectionResult`
+
+*record* — `RepositoryCorrection.cs`
+
+The outcome of checking a registration's claimed repository: the binding to use, and what to tell
+the registrant if it was not the one they sent.
+
+| Member | Summary |
+|---|---|
+| `bool Corrected` | True when the binding differs from what the registrant claimed. |
+
+## `RepositoryCorrection`
+
+*class* — `RepositoryCorrection.cs`
+
+Corrects a registration that claims a **worktree** as its repository, and reports that it did.
+
+**Remarks.** **The defect this closes.** `repo.path` is the grouping key in the fleet map, the
+registration guard, the scoring segment, AND the message board partition. An externally
+registering agent composes its own attributes; AI-DE's shell sends the repository, but nothing
+enforced that anyone else does. An agent sending its worktree posts to a board nobody is on, and
+— worse — every reply it makes to another session's thread is REFUSED by
+`MessageBoard.RequireParent` as a cross-repository thread, with an error saying exactly that
+to an agent which knows perfectly well it is in the same repository. It would read as the product
+being broken.
+
+
+
+
+
+**Correct, do not reject.** Rejecting the registration was the other candidate and it
+cannot work: detecting a worktree-shaped path and correcting it are the SAME filesystem read, so
+a rejection can only fire in the case where a correction would have succeeded, and is silent in
+the case — a path this machine cannot see — that motivated it. Rejection also removes the agent
+from observation entirely to protect a segmentation key, taking the board with it, which is the
+opposite of what the value is for.
+
+
+
+
+
+**But never silently.** Rewriting a registrant's own claim about itself without telling
+them leaves them sending the wrong value forever, with the correction depending permanently on
+our resolution staying right. The reason travels back to the agent, which is why this returns a
+result rather than just a binding.
+
+
+
+
+
+**Not a guess.** The corrected value is read out of the registrant's own checkout — its
+`.git` pointer file — so it is better evidence than the registrant supplied about itself,
+not worse.
+
+| Member | Summary |
+|---|---|
+| `string WorktreeResolvedReason =` | The reason recorded when a worktree was resolved to its repository. |
+| `RepositoryCorrectionResult Apply(SessionBinding binding, IRepositoryLocator locator)` | Returns the binding to register, corrected when the claimed repository is a linked worktree. |
 
 ## `ScoreDispute`
 

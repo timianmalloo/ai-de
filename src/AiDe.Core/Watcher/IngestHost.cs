@@ -41,7 +41,11 @@ public sealed class IngestHost
     private readonly IWatcherObservationStore _store;
     private readonly IWorkEpisodeService _episodes;
     private readonly IMessageBoard _board;
+    private readonly IRepositoryLocator _locator;
     private readonly TimeProvider _time;
+
+    /// <summary>Corrections awaiting delivery to the registrant, drained by the host that publishes them.</summary>
+    private readonly System.Collections.Concurrent.ConcurrentQueue<RegistrationNotice> _notices = new();
 
     private long _enqueued;
     private long _dropped;
@@ -56,7 +60,8 @@ public sealed class IngestHost
         TimeProvider time,
         int queueCapacity = 1024,
         IWorkEpisodeService? episodes = null,
-        IMessageBoard? board = null)
+        IMessageBoard? board = null,
+        IRepositoryLocator? locator = null)
     {
         ArgumentNullException.ThrowIfNull(store);
         ArgumentNullException.ThrowIfNull(registrar);
@@ -73,6 +78,12 @@ public sealed class IngestHost
         _episodes = episodes ?? new WorkEpisodeService(store, registrar, time);
         _board = board ?? new MessageBoardService(store, registrar, time);
 
+        // Defaulted rather than required for the same reason as the two above: no existing
+        // construction site has an opinion about it. Injectable so the correction can be tested
+        // without creating real git worktrees, and so a caller that cannot see the registrant's
+        // filesystem can supply one that always answers "unknown" instead of misfiring.
+        _locator = locator ?? new FileSystemRepositoryLocator();
+
         // DropOldest keeps the freshest spans under load; the itemDropped callback makes every drop a
         // visible coverage-gap signal rather than a silent loss.
         _queue = Channel.CreateBounded<HarnessSpanEvent>(
@@ -85,8 +96,53 @@ public sealed class IngestHost
     }
 
     /// <summary>Maps and registers a session synchronously, returning its capability (LK-0004/LK-0002).</summary>
+    /// <remarks>
+    /// <para><b>A registration claiming a worktree as its repository is corrected here</b>, before
+    /// the registrar sees it, so every downstream consumer of <c>repo.path</c> — the fleet map, the
+    /// message board partition, the score segment — agrees from the first moment the session exists.
+    /// Correcting later would leave a window in which the session is on the wrong board.</para>
+    ///
+    /// <para>The correction is queued rather than acted on, because telling the registrant is
+    /// somebody else's job: this class has no filesystem to write to and no idea where the agent is
+    /// listening. See <see cref="DrainRegistrationNotices"/>.</para>
+    /// </remarks>
     public RegisteredSession Register(HarnessRegistration registration)
-        => _registrar.Register(OtelSpanMapper.MapRegistration(registration));
+    {
+        var correction = RepositoryCorrection.Apply(OtelSpanMapper.MapRegistration(registration), _locator);
+        var session = _registrar.Register(correction.Binding);
+
+        if (correction.Corrected)
+        {
+            _notices.Enqueue(new RegistrationNotice(
+                session.SessionId, correction.RepositorySent!, correction.RepositoryUsed!, correction.Reason!));
+        }
+
+        return session;
+    }
+
+    /// <summary>
+    /// Takes the registration corrections that have not yet been delivered, emptying the queue.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Drained, not read.</b> A notice is delivered once; leaving it queued would rewrite
+    /// the same file every tick forever, and a re-appearing correction reads as a recurring problem
+    /// rather than a single one that was already handled.</para>
+    ///
+    /// <para><b>Queued rather than published inline</b> because a registration arrives on the ingest
+    /// path, where a filesystem write would put an agent's disk in the way of the pump every other
+    /// session depends on. The delay is one tick, which is well inside the constraint that matters:
+    /// the notice must be readable BEFORE the agent's first episode, not before its next instruction.</para>
+    /// </remarks>
+    public IReadOnlyList<RegistrationNotice> DrainRegistrationNotices()
+    {
+        var drained = new List<RegistrationNotice>();
+        while (_notices.TryDequeue(out var notice))
+        {
+            drained.Add(notice);
+        }
+
+        return drained;
+    }
 
     /// <summary>Records a heartbeat after verifying the capability (LK-0001).</summary>
     public void Heartbeat(string sessionId, SessionCapability capability)
