@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 136 types, 238 members, 57% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 138 types, 241 members, 58% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**136 public types · 238 public members · 57% documented.**
+**138 public types · 241 public members · 58% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -765,6 +765,57 @@ the model's structured output (LOA A1-A3) before returning the rubric.
 |---|---|
 | `string EvaluatorVersion { get; } =` | **(gap)** |
 | `AdvisoryAssessment Evaluate(ScoreDimension dimension, WorkEpisode episode, string evidence)` | **(gap)** |
+
+## `DreamCorpus`
+
+*record* — `DreamCorpusReader.cs`
+
+What the offline Dream has already promoted, so Daydream stops re-proposing it.
+
+**Remarks.** `Present` is the honest part: `false` means the AI-Forward Pack's corpus was not
+found, which is different from finding it empty. A repository without the pack is the normal
+case, not a failure, and the two must never render alike.
+
+| Member | Summary |
+|---|---|
+| `DreamCorpus Absent { get; } =` | The corpus for a repository that has no pack — an absence, stated. |
+| `bool AlreadyKnown(DaydreamSignature signature)` | Whether a candidate has already been promoted, by any route. |
+
+### `bool AlreadyKnown(DaydreamSignature signature)`
+
+Whether a candidate has already been promoted, by any route.
+
+**Remarks.** Matched on the signature's own words appearing in a promoted learning's text. Deliberately
+loose in the direction of **suppressing a duplicate proposal** rather than making a
+claim: a false match costs a candidate that a human can still find on the surface, and a
+false miss costs a re-proposal of something already known. Neither is a correctness failure,
+which is why this is allowed to be a heuristic where nothing else in Daydream is.
+
+## `DreamCorpusReader`
+
+*class* — `DreamCorpusReader.cs`
+
+Reads the AI-Forward Pack's promoted corpus, when a repository has one.
+
+**Remarks.** **Detected, never assumed, and read-only.** AI-DE requires nothing of the pack. This
+looks for two plain files a repository may or may not have, and reports their absence as an
+absence. It never invokes `dream.py`: shelling out would make Python and a vendored pack a
+runtime dependency of the product, which is the inversion
+`design-watcher-daydream-dream-seam` exists to refuse.
+
+
+
+
+
+**Why these two files and not an inbox.** A spike on 2026-09-02 read
+`dream.py`'s `load_corpus` and found it reads five FIXED paths with no discovery and no
+extension point — falsifying the original seam design, which had proposed emitting into an
+inbox the script would have to have been taught to read. These two are what it actually
+maintains, so they are what can be read back.
+
+| Member | Summary |
+|---|---|
+| `DreamCorpus Read(string? repositoryRoot)` | Reads the corpus rooted at a repository, or reports its absence. |
 
 ## `EgressDecision`
 

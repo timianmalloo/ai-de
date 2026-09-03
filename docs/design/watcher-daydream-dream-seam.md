@@ -101,7 +101,49 @@ One occurrence stays an Observation and is **not** generalised — that is US-9'
 criterion and it is the rule most likely to be quietly relaxed under pressure to show the feature
 doing something. A candidate with no disconfirming check has promotion *disabled*, not discouraged.
 
-## 4. The seam
+## 4. The seam — REVISED after the spike falsified it
+
+> **The original design was wrong, and the `Inferred` label was doing real work.** §12 recorded
+> that the proposed shape's acceptance by `dream.py`'s stager was inferred from the script's
+> behaviour rather than from a specification, and that a spike must confirm it. The spike was run on
+> 2026-09-02 and **falsified it**.
+>
+> `load_corpus` (`dream.py:147`) reads exactly five fixed paths — the audit log, the change log,
+> `mitigations.jsonl`, `defect-classes.md`, and `simplify:`/`assume:` markers grepped from source.
+> `cmd_run` accepts `--root`, `--session` and `--days`. **There is no inbox, no discovery, and no
+> extension point.** An emitted `docs/dreams/inbox/*.jsonl` would have been written and never read,
+> which is DC-089's shape — a producer with no consumer — built deliberately.
+>
+> What follows replaces the original. The corrected seam is *narrower and stronger*: a candidate
+> does not cross at all, and only a **promoted** learning does.
+
+### What crosses, and why only that
+
+`dream.py`'s corpus is evidence of things that **happened**. A Daydream candidate is a **proposal**,
+and proposals are what its own review gate exists to filter. Pushing candidates into that corpus
+would put unreviewed material into the input of the process whose job is reviewing — and into
+`mitigations.jsonl` specifically, it would corrupt the **promotion oracle**, the one signal meaning
+*this fix is proven*. That refusal is the important half of this design.
+
+A **promoted** Daydream learning is different. Promotion requires a surviving disconfirming check
+and a human decision, which is exactly what `capture-mitigation --oracle human-validated` means:
+*you approved a change*. So a promoted learning satisfies the oracle's real meaning rather than
+abusing its shape.
+
+| Direction | What moves | When |
+|---|---|---|
+| **Out** | A promoted learning, as a `MitigationRecord` with the `human-validated` oracle | Only after the full staircase |
+| **In** | `defect-classes.md` and `mitigations.jsonl`, read | Any time; marks a candidate already-known so it stops being re-proposed |
+
+### What is NOT built yet, and why
+
+The **outbound** half writes into the repository the user is working on. That is a material change
+in what the product does — AI-DE reads repositories and, so far, writes only into its own workspace
+store. Making it a writer of repository content is a decision for the owner, not one to take while
+they are away. **The inbound half is built** (it only reads, and degrades to "not recorded" when the
+pack is absent); the outbound half is specified here and deliberately unbuilt.
+
+## 4a. The original seam (superseded, kept for the record)
 
 Daydream writes Candidate Lessons into a **signal file** that `dream.py` can read as corpus input,
 in the shape its stager already consumes. That is the whole of the "schema alignment" the spec

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T01:21:45Z",
+  "generated": "2026-09-03T01:34:04Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8474,6 +8474,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Presentation/WatcherDaydreamPaneViewModel.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0423",
+      "shortname": "daydream-d5-dream-seam-spike",
+      "datetime": "2026-09-03T01:34:04Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "keep going on D4 and D5 in collaboration with Core",
+      "summary": "Daydream D5: the P0 spike FALSIFIED the seam design. dream.py's load_corpus reads five FIXED paths and cmd_run takes only --root/--session/--days - there is no inbox, no discovery and no extension point, so the proposed emit into docs/dreams/inbox would have written a file nothing reads, which is DC-089 built deliberately. The design's Inferred label was doing real work. Revised the design: a candidate does NOT cross at all, because dream.py's corpus is evidence of things that happened and pushing proposals into mitigations.jsonl would corrupt the promotion oracle - the one signal meaning a fix is proven. Only a PROMOTED learning crosses, as a human-validated MitigationRecord, because promotion already means a surviving disconfirming check plus a human decision. Built the inbound half only: DreamCorpusReader reads defect-classes.md and mitigations.jsonl when present, reports absence as absence, suppresses a candidate only when every signature term matches, and never suppresses on an absent corpus. The OUTBOUND half is specified and deliberately unbuilt - it would make AI-DE a writer of repository content, which is a decision for the owner rather than one to take while they are away.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/watcher-daydream-dream-seam.md"
       ],
       "tags": [],
       "outcome": "success"
