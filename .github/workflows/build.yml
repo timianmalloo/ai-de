@@ -67,6 +67,19 @@ jobs:
           python tools/verify-cited-controls.py --self-test
           python tools/verify-cited-controls.py
 
+      # DC-104: a new control's first run is evidence about TWO things, and the likelier defect is
+      # in the control — which is the one nobody looks for, because the control is what they just
+      # reasoned about carefully. Four controls were wrong on their first run in a single day. A
+      # --self-test is how a gate shows it can fail at all.
+      #
+      # A RATCHET, not a rule: nine gates predate the convention and are frozen by name, because
+      # failing the build on tools nobody is rewriting is how a gate gets switched off. New debt is
+      # refused; a name that no longer owns its debt must be removed.
+      - name: Gate self-test ratchet
+        run: |
+          python tools/verify-gate-self-tests.py --self-test
+          python tools/verify-gate-self-tests.py
+
       # DC-099: a test written in the same edit as its fix has never been shown capable of failing.
       # Breaks the code on purpose and requires a test to notice. The four CROSS-BOUNDARY/CROSS-AUTHOR
       # mutations are the ones no single-sided sweep can find: each component's own sweep mutates only

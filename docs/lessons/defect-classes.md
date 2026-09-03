@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 61 · partially-controlled 39 · uncontrolled 4
+**Status counts:** controlled 62 · partially-controlled 38 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3845,5 +3845,15 @@ for both or split.*
   convention. Enforcing it would fail the build on pre-existing tools that are not the author's to
   rewrite, so it is recorded here rather than mechanised, and the honest reading is that the
   convention is followed where someone remembered.
-- **Status:** `partially-controlled` — self-test present and CI-invoked for `mutation-replay`; the
+- **The residual is now a ratchet, not a note.** Ten of nineteen gates predate the convention, and
+  enforcing it outright would fail the build on tools nobody is rewriting — which by this class's own
+  asymmetry is how a gate gets switched off. So `tools/verify-gate-self-tests.py` **freezes the
+  existing gaps by name and fails only when the debt moves**: a gate not on the list without a
+  self-test is new debt and is refused; a gate on the list that has since gained one is a stale entry
+  and must be removed. Both directions fail, which is what stops the frozen list becoming the thing
+  that needs maintaining — a list that may only shrink is a register that cannot rot, where one that
+  may be appended to is DC-103 with extra steps. A count would not do: it goes green again if someone
+  adds a self-test to one gate and a new gate without one, holding the debt constant while the
+  newest and least-proven tool is the part missing its proof.
+- **Status:** `controlled` — self-test present and CI-invoked for `mutation-replay`; the
   convention itself is unenforced

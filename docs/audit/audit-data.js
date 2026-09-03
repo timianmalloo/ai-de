@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T18:45:17Z",
+  "generated": "2026-09-03T18:48:20Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8916,6 +8916,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0449",
+      "shortname": "gate-self-test-ratchet",
+      "datetime": "2026-09-03T18:48:12Z",
+      "session": "ai-de-a7",
+      "prompt": "yes do next steps",
+      "summary": "Disagreed with the peer's stopping point on DC-104 and built the middle option. Recording 'ten gates have no --self-test' as a residual is the definition of a memoir, which they flagged themselves; enforcing it outright would fail the build on tools nobody is rewriting, which by DC-104's own asymmetry is how a gate gets switched off. verify-gate-self-tests.py freezes the existing gaps BY NAME and fails only when the debt moves - new debt refused, stale entries must be removed - so both drift directions fail and the list cannot rot. A count would not do: it goes green if someone adds a self-test to one gate and a new gate without one. Wired into build.yml, self-test first.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-gate-self-tests.py"
       ],
       "tags": [],
       "outcome": "success"
