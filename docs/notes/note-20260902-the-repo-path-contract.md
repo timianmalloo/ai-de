@@ -35,9 +35,8 @@ invariant no code enforces.
 
 `Repository.CanonicalPath` is not only the scoring key. It is the grouping key in
 `FleetAggregator`, the registration guard, and — decisively — the **message board partition**:
-`MessageBoard` writes `RepositoryKey` from the binding, and `RequireParent` (`MessageBoard.cs:151`)
-**refuses** a reply whose parent sits under a different key, as a cross-repository thread with
-`InvalidBinding`.
+`MessageBoard` writes `RepositoryKey` from the binding, and `RequireParent` **refuses** a reply whose
+parent sits under a different key, as a cross-repository thread with `InvalidBinding`.
 
 So an agent that sends its worktree does not merely rank oddly:
 

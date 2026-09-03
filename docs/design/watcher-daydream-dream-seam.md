@@ -107,7 +107,7 @@ doing something. A candidate with no disconfirming check has promotion *disabled
 > **Revision 1 (spike, 2026-09-02) — the emit direction was falsified.** §12 recorded that the
 > proposed shape's acceptance by `dream.py`'s stager was *inferred* from the script's behaviour
 > rather than read from a specification, and that a spike must confirm it. The spike ran and
-> **falsified it**. `load_corpus` (`dream.py:147`) reads exactly five fixed paths; `cmd_run` accepts
+> **falsified it**. `load_corpus` reads exactly five fixed paths; `cmd_run` accepts
 > `--root`, `--session` and `--days`. **No inbox, no discovery, no extension point.** An emitted
 > `docs/dreams/inbox/*.jsonl` would have been written and never read — DC-089's shape, a producer
 > with no consumer, built deliberately.
@@ -186,9 +186,9 @@ duplicated, or lost; a field on each record survives every one of those.
 
 `docs/daydream/index.md` carries `generated-by: ai-de/daydream` in its frontmatter. **Verified**:
 `docs-graph.py` treats `REQUIRED` as a required-key list and not an allowlist
-(`docs-graph.py:746`), and `derive` appends the whole frontmatter dict as the index entry
-(`docs-graph.py:738`) — so the field reaches `docs/docs-index.js` and the Docs Explorer with no
-script change.
+(`_validate_frontmatter`), and the scanner appends the whole frontmatter dict as the index entry
+(`scan`, which `cmd_derive` calls) — so the field reaches `docs/docs-index.js` and the Docs Explorer
+with no script change.
 
 ### The cost, stated rather than buried
 
@@ -391,8 +391,9 @@ half we have. The order that makes it worth building:
 **Confidence.** Verified: the spec's requirements and non-goals, quoted. Verified by spike
 (2026-09-02): `dream.py`'s `load_corpus` reads five fixed paths and `cmd_run` takes only
 `--root/--session/--days` — there is no inbox and no extension point. Verified by reading:
-`docs-graph.py` accepts an unknown frontmatter key (`:746` checks REQUIRED as a required-list) and
-`derive` carries the whole dict into the index (`:738`), so `generated-by` needs no script change.
+`docs-graph.py` accepts an unknown frontmatter key (`_validate_frontmatter` checks REQUIRED as a
+required-list) and the scan carries the whole dict into the index (`scan`, via `cmd_derive`), so
+`generated-by` needs no script change.
 Verified: `DaydreamFold` folds evidence before events, which is what §4c relies on.
 
 **The Inferred label that was doing real work has been discharged.** The previous revision recorded

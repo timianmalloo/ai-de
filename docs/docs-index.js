@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T04:00:01Z",
+  "generated": "2026-09-03T04:07:55Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -2248,7 +2248,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2020d09e1a7b0862e95b700d79cae71db4f2de243f764e0d295f1e572eacba48"
+      "sourceSha256": "7f73d1de320ee0bae1301f03f827d76a5b5fcb8af3e9a6e986087d6c1debadea"
     },
     {
       "id": "note-20260902-two-decisions-the-loop-waits-on",
@@ -3159,7 +3159,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "de0788f954b4f8df7f4ffb9e66030a9ae04e29db85f069c804e84e3bf90eaee3"
+      "sourceSha256": "bf218c17d92b26e1194275a958850a6dca53a8acda333316f360787742fe82be"
     },
     {
       "id": "design-watcher-dispute-command",
@@ -10862,5 +10862,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0029bf3d7e4340821019f0b198121d189a7d46012c3a709b63a1b13c966a4bb2"
+  "graphSha256": "880b40e8d11b36f02acff8019b15f8672cbe2887bda8e307be3e45ee0da07afc"
 };
