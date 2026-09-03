@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T17:15:36Z",
+  "generated": "2026-09-03T17:34:54Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8746,6 +8746,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tools/mutation-replay.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0441",
+      "shortname": "episode-artifacts-channel",
+      "datetime": "2026-09-03T17:34:54Z",
+      "session": "e9679dd2",
+      "prompt": "Close the instrumentation gap the probe reports",
+      "summary": "The gap was not that agents produce no evidence — ClosedEpisodeScoring hardcoded HasProofPack:false, an absence asserted with nowhere to look. Built the channel: episode.artifacts on episode-close, newline-separated, bounded, stored DECLARED and never verified so the scoring side can later distinguish a lying agent from a moved file. watcher.db v5. The fresh-vs-migrated guard caught a real bug (migration created the table, SchemaSql did not). A test caught Attr() collapsing present-but-blank into null, which would have made a lost value read as deliberate silence.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DeclaredEpisodeArtifact.cs"
       ],
       "tags": [],
       "outcome": "success"

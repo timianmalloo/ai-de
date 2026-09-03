@@ -524,8 +524,16 @@ public sealed class InjectedContractIngest
         // about its evidence — the agent believes it declared a Proof Pack, the product silently
         // disagrees, and nothing tells either of them. Quarantine is loud, it is counted, and the
         // episode stays open so a corrected re-close still works.
-        if (!DeclaredArtifactBounds.TryParse(
-                Attr(close.Attributes, CoordContract.EpisodeAttributes.Artifacts), out var artifacts))
+        // The RAW value, not Attr(). Attr collapses present-but-blank into null, which is right for
+        // every required attribute here — a blank goal and a missing goal are both "no goal". It is
+        // wrong for this one: absent means "I declare no evidence" and blank means "I meant to say
+        // something", and those want opposite answers. Reading through Attr would have made a value
+        // lost in transit indistinguishable from a deliberate silence, which is the two-states-one-
+        // rendering shape this whole channel exists to remove. Caught by a test, not by review.
+        var rawArtifacts = close.Attributes.TryGetValue(
+            CoordContract.EpisodeAttributes.Artifacts, out var declaredArtifacts) ? declaredArtifacts : null;
+
+        if (!DeclaredArtifactBounds.TryParse(rawArtifacts, out var artifacts))
         {
             _quarantined++;
             return;
