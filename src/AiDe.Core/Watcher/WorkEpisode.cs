@@ -57,6 +57,17 @@ public interface IWorkEpisodeService
     WorkEpisode Reframe(string episodeId, SessionCapability capability, Goal goal, DoneCondition doneWhen, string? notInScope = null);
 
     WorkEpisode Close(string episodeId, SessionCapability capability, EpisodeOutcome outcome);
+
+    /// <summary>
+    /// Records the evidence paths an agent named for an episode — as declared, never as verified.
+    /// </summary>
+    /// <remarks>
+    /// Lives here rather than on the ingest host because capability verification does, and the same
+    /// rule applies: an unregistered session cannot declare evidence, for the reason it cannot open
+    /// an episode. Evidence attributed to a session that was never admitted has no one behind it.
+    /// </remarks>
+    /// <returns>How many paths were recorded. Zero when none were declared — not a failure.</returns>
+    int DeclareArtifacts(string episodeId, SessionCapability capability, IReadOnlyList<string> paths);
 }
 
 /// <summary>The default in-process episode service. See <see cref="IWorkEpisodeService"/>.</summary>
@@ -139,6 +150,50 @@ public sealed class WorkEpisodeService : IWorkEpisodeService
     }
 
     private long NextGeneration(string sessionId) => _store.EpisodesForSession(sessionId).Count + 1;
+
+    /// <summary>
+    /// Records declared evidence paths against an episode.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Against the episode, open or closed.</b> Unlike every other verb here this does not
+    /// call <c>RequireActive</c>: the declaration arrives on the close line, and the contract
+    /// adapter records it before closing, so requiring an OPEN episode would work today and break
+    /// the moment anyone reordered those two calls. It requires the episode to EXIST, which is the
+    /// property actually needed.</para>
+    ///
+    /// <para><b>Nothing here inspects a path.</b> Absolute, escaping the repository, non-existent —
+    /// all recorded exactly as sent. Verification is a separate answer derived at scoring time, and
+    /// merging the two destroys the only evidence separating an agent that lied from a file that
+    /// moved.</para>
+    /// </remarks>
+    public int DeclareArtifacts(string episodeId, SessionCapability capability, IReadOnlyList<string> paths)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(episodeId);
+        ArgumentNullException.ThrowIfNull(paths);
+
+        if (paths.Count == 0)
+        {
+            return 0;
+        }
+
+        lock (_gate)
+        {
+            var episode = _store.FindEpisode(episodeId)
+                ?? throw new WatcherException(
+                    WatcherErrorCodes.InvalidBinding, $"No work episode '{episodeId}' exists.");
+
+            // Verified before ANY row is written, so a refusal writes nothing rather than a prefix.
+            RequireCapability(episode.SessionId, capability);
+
+            var at = _time.GetUtcNow();
+            for (var i = 0; i < paths.Count; i++)
+            {
+                _store.AppendDeclaredArtifact(new DeclaredEpisodeArtifact(episodeId, paths[i], at, i));
+            }
+
+            return paths.Count;
+        }
+    }
 
     private WorkEpisode RequireActive(string episodeId)
     {
