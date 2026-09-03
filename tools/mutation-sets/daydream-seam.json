@@ -1,14 +1,15 @@
 {
   "description": "The Daydream vertical and its seam to scoring — including the couplings that are invisible to a single-sided sweep.",
   "project": "tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj",
-  "filter": "FullyQualifiedName~Daydream",
+  "filter": "FullyQualifiedName~Daydream|FullyQualifiedName~WhatTheRealCorpus",
   "_note": [
     "Every mutation here reddened at least one test when it was added, on the commit that added it.",
     "CROSS-AUTHOR mutations change this session's files and redden the OTHER session's tests - the",
     "ownership boundary, not the test scope.",
     "CROSS-BOUNDARY mutations change a component this vertical only DEPENDS on, and run this",
     "vertical's tests. That case is invisible to both components' own sweeps, because each mutates",
-    "only its own code, and every real instance in this repository was found exactly this way."
+    "only its own code, and every real instance in this repository was found exactly this way.",
+    "The filter covers WhatTheRealCorpusCanProduceTests too. Those run against this repository's OWN audit log, so they are the only tests here that can notice a mutation changing what the product produces from real data rather than from a fixture the test itself built."
   ],
   "mutations": [
     {

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T18:19:54Z",
+  "generated": "2026-09-03T18:28:18Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8831,6 +8831,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Watcher/ClosedEpisodeScoring.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0444",
+      "shortname": "real-corpus-pinned",
+      "datetime": "2026-09-03T18:28:18Z",
+      "session": "e9679dd2",
+      "prompt": "do next steps",
+      "summary": "Verified my own prediction: the proof-pack verifier landed and the corpus number is unchanged — 111/7/103/1, identical. Converted the finding from prose into a control that announces its own expiry: WhatTheRealCorpusCanProduceTests runs the real audit log and asserts the corpus cannot yet produce a candidate, going red the day capture improves. Widened the mutation set filter, which did not cover the new class — a gap in my own set.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/Watcher/WhatTheRealCorpusCanProduceTests.cs"
       ],
       "tags": [],
       "outcome": "success"
