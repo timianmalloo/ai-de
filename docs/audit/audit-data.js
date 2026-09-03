@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T19:03:13Z",
+  "generated": "2026-09-03T19:45:15Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9006,6 +9006,32 @@ window.AUDIT_DATA = {
       "signals": {
         "verification_path": true,
         "verification_executed": true
+      }
+    },
+    {
+      "id": "al-0453",
+      "shortname": "agent-protocol-and-phantom-sessions",
+      "datetime": "2026-09-03T19:45:15Z",
+      "session": "e9679dd2",
+      "prompt": "yes on the workspace protocol / yes fix the phantom registration / then lets discuss the MCP interactively and work on a spec",
+      "summary": "Measured first: 21 register lines had produced 3232 sessions from 6 terminals, because the pump re-reads the whole log every tick while dedup lived in a per-process dictionary. Fixed by adopting an existing session for the terminal via RegisterNextGeneration, which already existed and had no caller. Separately, both agents correctly reported no awareness of Loomkeeper: every instruction file lives in ai-de and agents read the workspace's repo. The product now writes .aide/AGENT-PROTOCOL.md into the workspace and names it in AIDE_AGENT_PROTOCOL. It writes nothing outside .aide, because CLAUDE.md is agent-maintained.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/AgentProtocolDocument.cs",
+        "src/AiDe.Core/Watcher/IngestHost.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Make agents aware of Loomkeeper, and stop the store minting a new session on every restart",
+      "done_when": "a protocol document is written into the opened workspace and named in the environment, and a replayed register adopts its terminal's session instead of minting one, both proven by tests observed failing without the fix",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
       }
     }
   ],

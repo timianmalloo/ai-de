@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 157 types, 297 members, 63% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 158 types, 302 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**157 public types · 297 public members · 63% documented.**
+**158 public types · 302 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -170,6 +170,80 @@ tripped floor stands; an advisory judgment can never raise a deterministic faile
 | Member | Summary |
 |---|---|
 | `Scorecard Score(` | **(gap)** |
+
+## `AgentProtocolDocument`
+
+*class* — `AgentProtocolDocument.cs`
+
+The protocol document AI-DE writes into the workspace so an agent can discover Loomkeeper.
+
+**Remarks.** **Why this exists, measured 2026-09-03.** Two agents were asked whether they were aware
+of Loomkeeper registration. Both answered no, correctly, and one had grepped `.claude/`,
+`.github/`, `docs/`, `scripts/` and its own settings before saying so: *"no tool,
+no config, no endpoint."* Both were registered and trust-Verified at that moment.
+
+
+
+
+
+**The instruction files were in the wrong repository.** AI-DE's own
+`CLAUDE.md`, `AGENTS.md` and `.github/instructions/` document this protocol in
+full — and an agent launched into a user's workspace reads THAT workspace's files. Every one of
+those documents is invisible to the product's actual users. It was a real instruction gap
+(DC-105) hiding behind a coverage check that measured the wrong tree.
+
+
+
+
+
+**Environment carries the address; a file carries the protocol.** The variables already
+worked — that is how registration succeeded — but a variable can say *where*, never
+*what* or *how*. So `AIDE_AGENT_PROTOCOL` names this file and this file explains
+the rest.
+
+
+
+
+
+**Only a file the product owns.** The workspace's own `CLAUDE.md` is
+agent-maintained, and the standing rule is that what an agent generates an agent updates — so the
+product must not write there, however convenient it would be. This lands under `.aide/`,
+which the product owns outright.
+
+| Member | Summary |
+|---|---|
+| `string DirectoryName = ".aide"` | The workspace-relative directory the product owns. |
+| `string RelativePath = ".aide/AGENT-PROTOCOL.md"` | The workspace-relative path of the protocol document. |
+| `string GeneratedBy = "ai-de/agent-protocol"` | The provenance marker, one literal spelling in every format. |
+| `string? WriteTo(string? workspaceRoot)` | Writes the document, returning its full path, or `null` when there is nowhere to write. |
+| `string Content()` | The document's text. Pure, so a test can assert its contents without a filesystem. |
+
+### `string? WriteTo(string? workspaceRoot)`
+
+Writes the document, returning its full path, or `null` when there is nowhere to write.
+
+**Remarks.** **Rewritten every time, deliberately.** This is reference material the product owns
+and must keep accurate; a human edit to it would be silently wrong the moment the protocol
+changed. That is the same rule as a derived view, and the opposite of the Daydream record's
+`index.md`, which a person may add to and which is therefore written once. The file says
+which of the two it is, in itself, so nobody has to guess.
+
+
+
+
+
+A failure to write is reported as `null`, never thrown: a read-only or missing
+workspace must not stop a terminal opening.
+
+### `string Content()`
+
+The document's text. Pure, so a test can assert its contents without a filesystem.
+
+**Remarks.** Not interpolated: the JSON samples below are full of `}}`, which fights raw-string
+interpolation for no benefit. `GeneratedBy` appears here as a literal, and
+`TheDocumentCarriesItsOwnProvenanceMarker` asserts the two agree — a test rather than a
+convention, because a marker that drifts from its constant is a provenance claim nothing can
+check.
 
 ## `AuditLogEpisodeSource`
 

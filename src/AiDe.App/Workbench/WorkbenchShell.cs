@@ -2357,6 +2357,19 @@ public sealed class WorkbenchShell : IDisposable
         var coordLog = _watcherHost?.CoordLogDirectory;
         if (!string.IsNullOrEmpty(coordLog)) { env["AIDE_CONTRACT_LOG"] = coordLog; }
 
+        // The address of the PROTOCOL, which the variables above cannot carry. Measured 2026-09-03:
+        // two registered, trust-Verified agents were asked whether they knew about Loomkeeper and
+        // both correctly said no — one after grepping .claude/, .github/, docs/ and its own
+        // settings. Every document explaining this protocol lived in AI-DE's own repository, and an
+        // agent reads the WORKSPACE's repository. A variable says where; only a file says how.
+        //
+        // Emitted only when the file was actually written, so an agent that sees the variable can
+        // rely on the path existing rather than discovering an absence (DC-025).
+        if (!string.IsNullOrEmpty(root) && AgentProtocolDocument.WriteTo(root) is { } protocolPath)
+        {
+            env["AIDE_AGENT_PROTOCOL"] = protocolPath;
+        }
+
         // Only when there is a real root to have resolved it from. With no workspace,
         // ResolveGitFacts returns the display name "workspace" as its fallback path — a value the
         // IDENTITY record must send because the attribute is required there, and one an environment

@@ -109,7 +109,23 @@ public sealed class IngestHost
     public RegisteredSession Register(HarnessRegistration registration)
     {
         var correction = RepositoryCorrection.Apply(OtelSpanMapper.MapRegistration(registration), _locator);
-        var session = _registrar.Register(correction.Binding);
+
+        // ADOPT an existing session for this terminal rather than minting a second one.
+        //
+        // MEASURED 2026-09-03: 21 register lines in a coordination log had produced 3,232 sessions
+        // from 6 terminals. The pump re-reads the WHOLE log every tick, which is idempotent against
+        // the adapter's in-memory external-id map — but that map dies with the process while the log
+        // does not, so every application start replayed all 21 registers and minted 21 brand-new
+        // sessions. Durable input, in-memory dedup: the duplication is once per restart, forever.
+        //
+        // The fix uses machinery that already existed and had no caller: RegisterNextGeneration
+        // reuses the session id and bumps the generation, which is exactly what a restart IS. The
+        // generation counter now means something — how many times the product restarted around this
+        // terminal — where before it was pinned at 1 because a freshly minted GUID never matched.
+        var existing = FindSessionForTerminal(correction.Binding.Terminal.TerminalId);
+        var session = existing is null
+            ? _registrar.Register(correction.Binding)
+            : _registrar.RegisterNextGeneration(existing.SessionId, correction.Binding);
 
         if (correction.Corrected)
         {
@@ -142,6 +158,33 @@ public sealed class IngestHost
         }
 
         return drained;
+    }
+
+    /// <summary>
+    /// The session already recorded for this terminal, or <c>null</c> when it is genuinely new.
+    /// </summary>
+    /// <remarks>
+    /// <para>Keyed on the TERMINAL id rather than the external session id, because that is the value
+    /// the store durably holds — and the two are the same thing on every path that registers today,
+    /// so matching on the stored one costs nothing and survives a caller that stops passing the
+    /// other.</para>
+    ///
+    /// <para>A linear scan, deliberately. It runs once per register — not per tick — and after this
+    /// fix the session count stops growing, so the set it scans is small by construction. An index
+    /// would be optimising the symptom of the bug this method removes.</para>
+    /// </remarks>
+    private SessionRecord? FindSessionForTerminal(string terminalId)
+    {
+        if (string.IsNullOrEmpty(terminalId))
+        {
+            return null;
+        }
+
+        // The LAST match: with historical duplicates already in a store, adopting the most recent one
+        // continues the newest history rather than resurrecting the oldest.
+        return _store.AllSessions()
+            .LastOrDefault(s => string.Equals(
+                s.Binding.Terminal.TerminalId, terminalId, StringComparison.Ordinal));
     }
 
     /// <summary>Records a heartbeat after verifying the capability (LK-0001).</summary>
