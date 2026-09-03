@@ -3615,6 +3615,13 @@ for both or split.*
   tree — it is that it is **red on the original defect, replayed from the commit that contained
   it**. That replay is cheap, it is available for every defect that has a commit, and it is the only
   thing that distinguishes a control from a decoration.
+- **The technique that found the most, and the one neither session could run alone:** mutate the
+  code on ONE side of a boundary and run the tests on BOTH. Each session's own sweep only mutates
+  its own code, so a dependency that crosses the boundary is invisible to both — making an
+  unevidenced episode trip a floor reddened the scoring tests AND four Daydream recorder tests, and
+  the coupling it revealed (`DaydreamObservationOutcome`'s whole distinction resting on the scorer
+  refusing to fabricate a floor) had been described by both sides as adjacency. Worth writing up
+  properly as a practice; captured here so it is not lost.
 - **Status:** `partially-controlled` — stated as a construction rule, and the replay discipline is
   now used; no gate can check another gate's blind spot
 

@@ -43,6 +43,20 @@ public static class ClosedEpisodeScoring
     /// "nothing was observed" would be a statement about the agent where only a statement about the
     /// evidence is warranted, and it would be indistinguishable from a real failure.</para>
     ///
+    /// <para><b>Another component depends on this refusal, and the damage would start HERE.</b>
+    /// <see cref="DaydreamObservationOutcome"/> distinguishes "nothing went wrong" from "nothing was
+    /// assessed", and that distinction rests entirely on this path not fabricating a floor or a
+    /// rubric it did not observe. Relax the honesty above - default a rubric to zero, trip a
+    /// verification floor because none was seen - and the signature stops being unremarkable, the
+    /// recorder stops being able to tell a clean episode from an unassessed one, and a permanently
+    /// deaf Daydream reports as a healthy repository. Nothing in that component would change and
+    /// nothing there would fail.</para>
+    ///
+    /// <para>Found by mutation across the boundary rather than by reading either side: making an
+    /// unevidenced episode trip a floor reddens this repository's Daydream tests as well as the
+    /// scoring ones. Recorded here rather than only there, because the person who would cause it is
+    /// editing this file.</para>
+    ///
     /// <para><b>The task class is absent, not invented.</b> The coordination contract carries a goal
     /// and a done-condition but no task class, so the segment is
     /// <see cref="ScoreSegment.Unclassified"/> and therefore not comparable: the episode is scored
