@@ -1,0 +1,182 @@
+using AiDe.Core.Watcher;
+
+namespace AiDe.Core.Presentation;
+
+/// <summary>
+/// One row of the Daydreams surface (US-9): a pattern, where it stands, and what is stopping it.
+/// </summary>
+/// <remarks>
+/// <para><b>The block reason is part of the row, not a tooltip.</b> A candidate that cannot be
+/// promoted has to say <i>which</i> prerequisite is missing where it is read. "Promotion disabled"
+/// with the reason a click away is the empty state DC-087 registered — a surface stating a
+/// condition it never explains.</para>
+///
+/// <para><b>No content from an agent appears here.</b> A signature is built from typed values only,
+/// so unlike the Message Board there is no quarantined prose to render and no injection flag to
+/// show. The rows are describable entirely from the store's own vocabulary.</para>
+/// </remarks>
+public sealed record WatcherDaydreamRow(
+    string Pattern,
+    string Stage,
+    string State,
+    string Confidence,
+    int Episodes,
+    string? BlockedBecause,
+    bool CanPromote)
+{
+    /// <summary>The dense one-line label (G6 density).</summary>
+    public string DisplayLabel =>
+        $"{Pattern} · {State} · {Episodes} episode(s) · {Confidence}"
+        + (BlockedBecause is null ? string.Empty : $" · {BlockedBecause}");
+
+    /// <summary>The full row a screen reader announces (WCAG 2.2 AA).</summary>
+    public string AccessibleName =>
+        $"{Pattern}, {State}, {Episodes} source episodes, confidence {Confidence}"
+        + (CanPromote ? ", ready to promote" : BlockedBecause is null ? string.Empty : $", blocked: {BlockedBecause}");
+
+    /// <summary>Builds a row, naming the pattern from its typed parts rather than any prose.</summary>
+    public static WatcherDaydreamRow From(DaydreamCandidate candidate)
+    {
+        ArgumentNullException.ThrowIfNull(candidate);
+        var s = candidate.Signature;
+
+        var pattern = string.Join(" · ", new[]
+        {
+            s.TaskClass,
+            s.Verdict.ToString(),
+            s.Floors.Length == 0 ? null : "floors " + s.Floors.Replace("+", ", "),
+            s.Shortfalls.Length == 0 ? null : "short " + s.Shortfalls.Replace("+", ", "),
+        }.Where(p => p is not null));
+
+        return new WatcherDaydreamRow(
+            pattern,
+            StageOf(candidate.State),
+            candidate.State.ToString(),
+            candidate.Evidence.Confidence,
+            candidate.Evidence.SourceEpisodes.Count,
+            candidate.BlockedBecause,
+            candidate.CanPromote);
+    }
+
+    /// <summary>
+    /// The three stages the spec's Daydreams tab shows: Observations, Candidates, Promoted.
+    /// </summary>
+    /// <remarks>
+    /// Disconfirmed, Deferred and Rejected stay under <b>Candidates</b> rather than being hidden or
+    /// given a fourth stage. A refuted candidate is the most informative thing on this surface —
+    /// it is the system having done the disconfirming work and reported the answer nobody wanted —
+    /// and moving it out of sight would leave a reader looking at only the proposals that survived.
+    /// </remarks>
+    public static string StageOf(DaydreamState state) => state switch
+    {
+        DaydreamState.Observation => "Observations",
+        DaydreamState.Promoted => "Promoted",
+        DaydreamState.Retracted => "Promoted",
+        _ => "Candidates",
+    };
+}
+
+/// <summary>The read seam the Daydreams pane consumes. A null query means no watcher store is wired.</summary>
+public interface IWatcherDaydreamQuery
+{
+    IReadOnlyList<DaydreamCandidate> GetCandidates();
+}
+
+/// <summary>
+/// Folds the observation store's daydream facts into the pane's read (US-9).
+/// </summary>
+/// <remarks>
+/// The fold runs here rather than in the view model, so the pane renders a decision it did not make.
+/// Every state — including whether promotion is possible — comes from
+/// <see cref="DaydreamFold"/>, which is where the acceptance criteria are tested.
+/// </remarks>
+public sealed class WatcherDaydreamQuery(IWatcherObservationStore store) : IWatcherDaydreamQuery
+{
+    private readonly IWatcherObservationStore _store = store ?? throw new ArgumentNullException(nameof(store));
+    private readonly DaydreamFold _fold = new();
+
+    public IReadOnlyList<DaydreamCandidate> GetCandidates() =>
+        _fold.Fold(_store.AllDaydreamObservations(), _store.AllDaydreamEvents());
+}
+
+/// <summary>
+/// The Loomkeeper Daydreams surface view model (US-9) — three stages, each with an honest empty
+/// state, and promotion visible only where it is actually possible.
+/// </summary>
+/// <remarks>
+/// Synchronous load (a local store fold), so it degrades to an explicit state and never strands on
+/// "Loading…" (DC-011).
+/// </remarks>
+public sealed class WatcherDaydreamPaneViewModel(IWatcherDaydreamQuery? query)
+{
+    /// <summary>The stages in reading order, so an empty one is still shown and named.</summary>
+    public static IReadOnlyList<string> Stages { get; } = ["Observations", "Candidates", "Promoted"];
+
+    public PaneState State { get; private set; } = PaneState.Loading;
+
+    public IReadOnlyList<WatcherDaydreamRow> Rows { get; private set; } = [];
+
+    public string StatusMessage { get; private set; } = "Loading daydreams…";
+
+    public string LiveAnnouncement { get; private set; } = string.Empty;
+
+    /// <summary>Rows for one stage, in reading order. An empty stage returns an empty list.</summary>
+    public IReadOnlyList<WatcherDaydreamRow> RowsFor(string stage) =>
+        [.. Rows.Where(r => string.Equals(r.Stage, stage, StringComparison.Ordinal))];
+
+    /// <summary>
+    /// What to show under a stage with nothing in it.
+    /// </summary>
+    /// <remarks>
+    /// Each names only what it has looked at. "Nothing to show" is complete; "nothing to show
+    /// because X" is a claim, and a surface that has not checked X is not entitled to make it
+    /// (DC-087). None of these mentions the extractor, the scorer, or any subsystem this pane does
+    /// not read.
+    /// </remarks>
+    public static string EmptyStateFor(string stage) => stage switch
+    {
+        "Observations" => "No patterns observed yet.",
+        "Candidates" => "Nothing has recurred often enough to propose.",
+        "Promoted" => "Nothing has been promoted.",
+        _ => "Nothing to show.",
+    };
+
+    public void Load()
+    {
+        if (query is null)
+        {
+            State = PaneState.Empty;
+            StatusMessage = "Daydreams are not available — no watcher store is attached.";
+            Rows = [];
+            LiveAnnouncement = StatusMessage;
+            return;
+        }
+
+        try
+        {
+            Rows = [.. query.GetCandidates().Select(WatcherDaydreamRow.From)];
+            if (Rows.Count == 0)
+            {
+                State = PaneState.Empty;
+                StatusMessage = "No patterns observed yet.";
+            }
+            else
+            {
+                State = PaneState.Ready;
+                var promotable = Rows.Count(r => r.CanPromote);
+                var candidates = RowsFor("Candidates").Count;
+                StatusMessage = promotable == 0
+                    ? $"{Rows.Count} pattern(s) · {candidates} candidate(s) · none ready to promote"
+                    : $"{Rows.Count} pattern(s) · {candidates} candidate(s) · {promotable} ready to promote";
+            }
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            State = PaneState.Error;
+            StatusMessage = "Daydreams unavailable — the observation store could not be read.";
+            Rows = [];
+        }
+
+        LiveAnnouncement = StatusMessage;
+    }
+}

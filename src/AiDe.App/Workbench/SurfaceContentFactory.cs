@@ -23,10 +23,14 @@ public sealed class SurfaceContentFactory(
     IWatcherLeaderboardQuery? watcherLeaderboard = null,
     IWatcherDisputeQuery? watcherDisputes = null,
     IWatcherLedgerQuery? watcherLedger = null,
-    System.Func<string, System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SearchResult>>>? searchProvider = null)
+    System.Func<string, System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<SearchResult>>>? searchProvider = null,
+    // Appended rather than inserted. A new optional parameter in the middle silently re-points every
+    // POSITIONAL call site at the wrong argument — the build caught it here, but a same-typed
+    // neighbour would have compiled and mis-wired the pane instead.
+    IWatcherDaydreamQuery? watcherDaydreams = null)
 {
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
-    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "ledger", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"];
+    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "ledger", "daydreams", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"];
 
     public FrameworkElement Create(Surface surface)
     {
@@ -41,6 +45,7 @@ public sealed class SurfaceContentFactory(
             "sessions" => Sessions(surface),
             "board" => Board(surface),
             "leaderboard" => Leaderboard(surface),
+            "daydreams" => Daydreams(surface),
             "ledger" => Ledger(surface),
             "prompt" => new PromptDraftSurface(surface.SurfaceId, surface.Title),
             "classdiagram" => new ClassDiagramSurface(surface.Title),
@@ -344,6 +349,22 @@ public sealed class SurfaceContentFactory(
     /// tombstones. Synchronous local-store fold, like <see cref="Sessions"/> - never strands on
     /// "Loading…" (DC-011).
     /// </summary>
+    /// <summary>
+    /// The Loomkeeper Daydreams surface (US-9): observed patterns, candidate lessons and promoted
+    /// learnings, with each candidate saying what is stopping it.
+    /// </summary>
+    /// <remarks>
+    /// A read surface only. Promotion needs a human gate and an operator action, and this slice
+    /// ships the reading half — a promote control that could be pressed before the write path exists
+    /// would be a button that lies.
+    /// </remarks>
+    private FrameworkElement Daydreams(Surface surface)
+    {
+        var pane = new WatcherDaydreamPaneViewModel(watcherDaydreams);
+        pane.Load();
+        return ListPane(surface, pane.Rows, nameof(WatcherDaydreamRow.DisplayLabel), pane.StatusMessage, "patterns");
+    }
+
     private FrameworkElement Board(Surface surface)
     {
         var pane = new WatcherBoardPaneViewModel(watcherBoard);

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation: 28 types, 65 members, 65% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation: 32 types, 78 members, 65% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation`
 
-**28 public types · 65 public members · 65% documented.**
+**32 public types · 78 public members · 65% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -328,6 +328,91 @@ fold), so it degrades to an explicit state and never strands on "Loading…" (DC
 | `string StatusMessage { get; private set; } = "Loading board…"` | **(gap)** |
 | `string LiveAnnouncement { get; private set; } = string.Empty` | **(gap)** |
 | `void Load()` | **(gap)** |
+
+## `WatcherDaydreamRow`
+
+*record* — `WatcherDaydreamPaneViewModel.cs`
+
+One row of the Daydreams surface (US-9): a pattern, where it stands, and what is stopping it.
+
+**Remarks.** **The block reason is part of the row, not a tooltip.** A candidate that cannot be
+promoted has to say *which* prerequisite is missing where it is read. "Promotion disabled"
+with the reason a click away is the empty state DC-087 registered — a surface stating a
+condition it never explains.
+
+
+
+
+
+**No content from an agent appears here.** A signature is built from typed values only,
+so unlike the Message Board there is no quarantined prose to render and no injection flag to
+show. The rows are describable entirely from the store's own vocabulary.
+
+| Member | Summary |
+|---|---|
+| `string DisplayLabel` | The dense one-line label (G6 density). |
+| `string AccessibleName` | The full row a screen reader announces (WCAG 2.2 AA). |
+| `WatcherDaydreamRow From(DaydreamCandidate candidate)` | Builds a row, naming the pattern from its typed parts rather than any prose. |
+| `string StageOf(DaydreamState state)` | The three stages the spec's Daydreams tab shows: Observations, Candidates, Promoted. |
+
+### `string StageOf(DaydreamState state)`
+
+The three stages the spec's Daydreams tab shows: Observations, Candidates, Promoted.
+
+**Remarks.** Disconfirmed, Deferred and Rejected stay under **Candidates** rather than being hidden or
+given a fourth stage. A refuted candidate is the most informative thing on this surface —
+it is the system having done the disconfirming work and reported the answer nobody wanted —
+and moving it out of sight would leave a reader looking at only the proposals that survived.
+
+## `IWatcherDaydreamQuery`
+
+*interface* — `WatcherDaydreamPaneViewModel.cs`
+
+The read seam the Daydreams pane consumes. A null query means no watcher store is wired.
+
+## `WatcherDaydreamQuery`
+
+*class* — `WatcherDaydreamPaneViewModel.cs`
+
+Folds the observation store's daydream facts into the pane's read (US-9).
+
+**Remarks.** The fold runs here rather than in the view model, so the pane renders a decision it did not make.
+Every state — including whether promotion is possible — comes from
+`DaydreamFold`, which is where the acceptance criteria are tested.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<DaydreamCandidate> GetCandidates()` | **(gap)** |
+
+## `WatcherDaydreamPaneViewModel`
+
+*class* — `WatcherDaydreamPaneViewModel.cs`
+
+The Loomkeeper Daydreams surface view model (US-9) — three stages, each with an honest empty
+state, and promotion visible only where it is actually possible.
+
+**Remarks.** Synchronous load (a local store fold), so it degrades to an explicit state and never strands on
+"Loading…" (DC-011).
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<string> Stages { get; } = ["Observations", "Candidates", "Promoted"]` | The stages in reading order, so an empty one is still shown and named. |
+| `PaneState State { get; private set; } = PaneState.Loading` | **(gap)** |
+| `IReadOnlyList<WatcherDaydreamRow> Rows { get; private set; } = []` | **(gap)** |
+| `string StatusMessage { get; private set; } = "Loading daydreams…"` | **(gap)** |
+| `string LiveAnnouncement { get; private set; } = string.Empty` | **(gap)** |
+| `IReadOnlyList<WatcherDaydreamRow> RowsFor(string stage)` | Rows for one stage, in reading order. An empty stage returns an empty list. |
+| `string EmptyStateFor(string stage)` | What to show under a stage with nothing in it. |
+| `void Load()` | **(gap)** |
+
+### `string EmptyStateFor(string stage)`
+
+What to show under a stage with nothing in it.
+
+**Remarks.** Each names only what it has looked at. "Nothing to show" is complete; "nothing to show
+because X" is a claim, and a surface that has not checked X is not entitled to make it
+(DC-087). None of these mentions the extractor, the scorer, or any subsystem this pane does
+not read.
 
 ## `WatcherLeaderboardRow`
 

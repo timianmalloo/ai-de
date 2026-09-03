@@ -14,7 +14,7 @@ namespace AiDe.Core.Watcher;
 /// </summary>
 public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, IDisposable
 {
-    private const int SchemaVersion = 2;
+    private const int SchemaVersion = 3;
 
     private readonly SqliteConnection _connection;
     private readonly object _gate = new();
@@ -381,6 +381,70 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
                         reader.GetString(5)),
                     reader.GetString(6),
                     DateTimeOffset.Parse(reader.GetString(7), System.Globalization.CultureInfo.InvariantCulture)));
+            }
+
+            return rows;
+        }
+    }
+
+    public void AppendDaydreamEvent(DaydreamEvent daydreamEvent)
+    {
+        ArgumentNullException.ThrowIfNull(daydreamEvent);
+        lock (_gate)
+        {
+            ExecuteNonQuery(
+                _connection,
+                """
+                INSERT INTO daydream_event_fact
+                    (event_id, task_class, schema_version, verdict, floors, shortfalls,
+                     kind, actor, detail, outcome, at, sequence)
+                VALUES ($id, $task, $schema, $verdict, $floors, $shortfalls,
+                        $kind, $actor, $detail, $outcome, $at, $seq);
+                """,
+                null,
+                ("$id", daydreamEvent.EventId),
+                ("$task", daydreamEvent.Signature.TaskClass),
+                ("$schema", daydreamEvent.Signature.SchemaVersion),
+                ("$verdict", daydreamEvent.Signature.Verdict.ToString()),
+                ("$floors", daydreamEvent.Signature.Floors),
+                ("$shortfalls", daydreamEvent.Signature.Shortfalls),
+                ("$kind", daydreamEvent.Kind.ToString()),
+                ("$actor", daydreamEvent.Actor),
+                ("$detail", (object?)daydreamEvent.Detail ?? DBNull.Value),
+                ("$outcome", (object?)daydreamEvent.Outcome?.ToString() ?? DBNull.Value),
+                ("$at", daydreamEvent.At.ToString("O")),
+                ("$seq", daydreamEvent.Sequence));
+        }
+    }
+
+    public IReadOnlyList<DaydreamEvent> AllDaydreamEvents()
+    {
+        lock (_gate)
+        {
+            var rows = new List<DaydreamEvent>();
+            using var command = _connection.CreateCommand();
+            command.CommandText =
+                """
+                SELECT event_id, task_class, schema_version, verdict, floors, shortfalls,
+                       kind, actor, detail, outcome, at, sequence
+                FROM daydream_event_fact
+                ORDER BY sequence, event_id;
+                """;
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                rows.Add(new DaydreamEvent(
+                    reader.GetString(0),
+                    new DaydreamSignature(
+                        reader.GetString(1), reader.GetString(2),
+                        Enum.Parse<WeaveVerdict>(reader.GetString(3)),
+                        reader.GetString(4), reader.GetString(5)),
+                    Enum.Parse<DaydreamEventKind>(reader.GetString(6)),
+                    reader.GetString(7),
+                    reader.IsDBNull(8) ? null : reader.GetString(8),
+                    reader.IsDBNull(9) ? null : Enum.Parse<DisconfirmingOutcome>(reader.GetString(9)),
+                    DateTimeOffset.Parse(reader.GetString(10), System.Globalization.CultureInfo.InvariantCulture),
+                    reader.GetInt64(11)));
             }
 
             return rows;
@@ -795,8 +859,14 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
     /// than trusting that a versioned schema implied a version check.</para>
     ///
     /// <para><b>Expand only.</b> Every migration here creates something that did not exist; none
-    /// rewrites or drops. So there is no backfill to get wrong and nothing to roll back — an
-    /// interrupted run leaves either the old shape or the new one, and re-running is safe.</para>
+    /// rewrites or drops. So there is no backfill to get wrong and nothing to roll back.</para>
+    ///
+    /// <para><b>And idempotent, which this comment claimed before it was true.</b> The DDL uses
+    /// <c>IF NOT EXISTS</c>, so a database that already holds part of a later shape — a shortcut
+    /// during a repair, an interrupted run, a hand edit — heals instead of refusing to open. The
+    /// first version said "re-running is safe" while a re-run would have thrown; a test rewinding a
+    /// version without dropping everything that came after it is what found the gap between the
+    /// sentence and the code.</para>
     /// </remarks>
     private static void EnsureSchema(SqliteConnection connection)
     {
@@ -849,7 +919,7 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
     private static readonly (int Version, string Ddl)[] Migrations =
     [
         (2, """
-            CREATE TABLE daydream_observation_fact (
+            CREATE TABLE IF NOT EXISTS daydream_observation_fact (
                 observation_id  TEXT NOT NULL PRIMARY KEY,
                 task_class      TEXT NOT NULL,
                 schema_version  TEXT NOT NULL,
@@ -859,7 +929,24 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
                 episode_id      TEXT NOT NULL,
                 observed_at     TEXT NOT NULL
             );
-            CREATE INDEX ix_daydream_observation_episode ON daydream_observation_fact (episode_id);
+            CREATE INDEX IF NOT EXISTS ix_daydream_observation_episode ON daydream_observation_fact (episode_id);
+            """),
+        (3, """
+            CREATE TABLE IF NOT EXISTS daydream_event_fact (
+                event_id        TEXT    NOT NULL PRIMARY KEY,
+                task_class      TEXT    NOT NULL,
+                schema_version  TEXT    NOT NULL,
+                verdict         TEXT    NOT NULL,
+                floors          TEXT    NOT NULL,
+                shortfalls      TEXT    NOT NULL,
+                kind            TEXT    NOT NULL,
+                actor           TEXT    NOT NULL,
+                detail          TEXT    NULL,
+                outcome         TEXT    NULL,
+                at              TEXT    NOT NULL,
+                sequence        INTEGER NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS ix_daydream_event_sequence ON daydream_event_fact (sequence);
             """),
     ];
 
@@ -1018,6 +1105,24 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             observed_at     TEXT NOT NULL
         );
         CREATE INDEX ix_daydream_observation_episode ON daydream_observation_fact (episode_id);
+
+        -- A candidate's decision history (US-9). The STATE is folded from these and never stored,
+        -- so "who promoted this, and when" is answerable rather than lost to an overwrite.
+        CREATE TABLE daydream_event_fact (
+            event_id        TEXT    NOT NULL PRIMARY KEY,
+            task_class      TEXT    NOT NULL,
+            schema_version  TEXT    NOT NULL,
+            verdict         TEXT    NOT NULL,
+            floors          TEXT    NOT NULL,
+            shortfalls      TEXT    NOT NULL,
+            kind            TEXT    NOT NULL,
+            actor           TEXT    NOT NULL,
+            detail          TEXT    NULL,
+            outcome         TEXT    NULL,
+            at              TEXT    NOT NULL,
+            sequence        INTEGER NOT NULL
+        );
+        CREATE INDEX ix_daydream_event_sequence ON daydream_event_fact (sequence);
 
         CREATE TRIGGER score_dispute_fact_no_update BEFORE UPDATE ON score_dispute_fact
         BEGIN SELECT RAISE(ABORT, 'score_dispute_fact is append-only'); END;

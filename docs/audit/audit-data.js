@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T00:40:19Z",
+  "generated": "2026-09-03T01:21:45Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8457,6 +8457,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.Core/Watcher/DaydreamCandidate.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0422",
+      "shortname": "daydream-d4-pane",
+      "datetime": "2026-09-03T01:21:45Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "keep going on D4 and D5 in collaboration with Core",
+      "summary": "Daydream D4 (the Daydreams pane) complete. Found D2 under-delivered: I persisted observations and not events, so the pane could never have shown a Promoted stage - added daydream_event_fact at schema v3, and made the migration DDL idempotent because my own doc comment had claimed re-running was safe when it would have thrown. The pane has three stages with an empty state each that names only what the pane looked at, a promote affordance that EXISTS only where CanPromote is true rather than being enabled and refusing, and a block reason carried in the row itself rather than behind an interaction. A disconfirmed candidate stays visible under Candidates because it is the most informative row on the surface. Shared surface files claimed for the edit only and released. The repo's client-boundary gate caught WatcherDaydreamRow as an undeclared client record; declared with its reason.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Presentation/WatcherDaydreamPaneViewModel.cs"
       ],
       "tags": [],
       "outcome": "success"

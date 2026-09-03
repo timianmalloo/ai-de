@@ -131,6 +131,13 @@ public sealed class FieldsSurviveTheClientBoundaryTests
             + "writing that owner's reasons for a dozen dropped ids and keys, which is their "
             + "judgement rather than mine — named here so it is a known debt, not an oversight.",
         ["WatcherLeaderboardRow"] = "Same: a display projection of ScoredEpisode, same owner.",
+        ["WatcherDaydreamRow"] =
+            "A display projection of DaydreamCandidate, which is itself FOLDED from observations and "
+            + "events rather than carried across a boundary — so there is no producer record whose "
+            + "fields could be dropped on the way in. Every field here is either derived by "
+            + "DaydreamFold (state, confidence, the block reason) or composed for reading (the "
+            + "pattern label, the stage). The assertion that matters for this one is that the fold "
+            + "is right, and that is DaydreamCandidateTests.",
         ["WorkspaceDiagnostics"] =
             "Assembled from environment probes (installed versions, incidents, MCP tools) rather "
             + "than projected from a producer record.",

@@ -1011,7 +1011,7 @@ mapping lives, so adding a surface kind never means touching the layout model.
 
 | Member | Summary |
 |---|---|
-| `IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "ledger", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"]` | Surface kinds this factory can build. An unknown kind still gets an honest pane. |
+| `IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "ledger", "daydreams", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"]` | Surface kinds this factory can build. An unknown kind still gets an honest pane. |
 | `FrameworkElement Create(Surface surface)` | **(gap)** |
 
 ## `TerminalColorScheme`

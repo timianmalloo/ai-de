@@ -114,6 +114,21 @@ public interface IWatcherObservationStore
     /// <summary>Every recorded observation, in append order - the recurrence detector's input.</summary>
     IReadOnlyList<DaydreamObservation> AllDaydreamObservations();
 
+    /// <summary>
+    /// Appends one event in a candidate's life - proposed, evidence attached, check completed,
+    /// promoted, deferred, rejected, retracted (US-9).
+    /// </summary>
+    /// <remarks>
+    /// Append-only, like the observations. The candidate's STATE is folded from these and never
+    /// stored, so a correction is a superseding event and the history of what was decided - and by
+    /// whom - survives it. "Who promoted this" is the first question anyone asks about a lesson they
+    /// disagree with, and it is answerable only if the decision is a fact rather than a field.
+    /// </remarks>
+    void AppendDaydreamEvent(DaydreamEvent daydreamEvent);
+
+    /// <summary>Every recorded candidate event, in sequence order - the fold's input.</summary>
+    IReadOnlyList<DaydreamEvent> AllDaydreamEvents();
+
     /// <summary>Marks a session ended (terminal closed or superseded generation).</summary>
     void MarkEnded(string sessionId);
 
@@ -144,6 +159,7 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
     // episode must both survive. Keying by id would silently collapse a re-observation, which is
     // exactly the deduplication the recurrence fold is supposed to do on READ.
     private readonly List<DaydreamObservation> _daydreamObservations = [];
+    private readonly List<DaydreamEvent> _daydreamEvents = [];
     private readonly Dictionary<string, ScoredEpisode> _scored = new();
     private readonly Dictionary<string, ScoreDispute> _disputes = new();
     private readonly HashSet<string> _ended = new();
@@ -293,6 +309,23 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         lock (_gate)
         {
             return [.. _daydreamObservations];
+        }
+    }
+
+    public void AppendDaydreamEvent(DaydreamEvent daydreamEvent)
+    {
+        ArgumentNullException.ThrowIfNull(daydreamEvent);
+        lock (_gate)
+        {
+            _daydreamEvents.Add(daydreamEvent);
+        }
+    }
+
+    public IReadOnlyList<DaydreamEvent> AllDaydreamEvents()
+    {
+        lock (_gate)
+        {
+            return [.. _daydreamEvents.OrderBy(e => e.Sequence)];
         }
     }
 

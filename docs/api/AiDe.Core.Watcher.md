@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 136 types, 234 members, 58% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 136 types, 238 members, 57% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**136 public types · 234 public members · 58% documented.**
+**136 public types · 238 public members · 57% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1391,6 +1391,8 @@ Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write 
 | `IReadOnlyList<WorkEpisode> AllEpisodes()` | **(gap)** |
 | `void AppendDaydreamObservation(DaydreamObservation observation)` | **(gap)** |
 | `IReadOnlyList<DaydreamObservation> AllDaydreamObservations()` | **(gap)** |
+| `void AppendDaydreamEvent(DaydreamEvent daydreamEvent)` | **(gap)** |
+| `IReadOnlyList<DaydreamEvent> AllDaydreamEvents()` | **(gap)** |
 | `void AppendBoardMessage(BoardMessage message)` | **(gap)** |
 | `IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)` | **(gap)** |
 | `IReadOnlyList<BoardMessage> AllBoardMessages()` | **(gap)** |
@@ -1745,6 +1747,8 @@ trigger: the SQLite store lands (remaining Phase-1 task), which bounds and persi
 | `void AppendBoardMessage(BoardMessage message)` | **(gap)** |
 | `void AppendDaydreamObservation(DaydreamObservation observation)` | **(gap)** |
 | `IReadOnlyList<DaydreamObservation> AllDaydreamObservations()` | **(gap)** |
+| `void AppendDaydreamEvent(DaydreamEvent daydreamEvent)` | **(gap)** |
+| `IReadOnlyList<DaydreamEvent> AllDaydreamEvents()` | **(gap)** |
 | `IReadOnlyList<BoardMessage> BoardMessages(string repositoryKey)` | **(gap)** |
 | `IReadOnlyList<BoardMessage> AllBoardMessages()` | **(gap)** |
 | `BoardMessage? FindBoardMessage(string messageId)` | **(gap)** |

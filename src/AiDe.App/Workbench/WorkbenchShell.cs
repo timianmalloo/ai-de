@@ -127,7 +127,8 @@ public sealed class WorkbenchShell : IDisposable
         _factory = new SurfaceContentFactory(
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
             watcher.Ledger,
-            queries is not null ? SearchWorkspaceAsync : null);
+            queries is not null ? SearchWorkspaceAsync : null,
+            watcher.Daydreams);
 
         // The environment contract does not depend on a workspace, so it must not be gated behind
         // one. It was assigned ONLY in AttachWorkspace, which both call sites skip when the daemon
@@ -489,7 +490,8 @@ public sealed class WorkbenchShell : IDisposable
         _factory = new SurfaceContentFactory(
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
             watcher.Ledger,
-            SearchWorkspaceAsync);
+            SearchWorkspaceAsync,
+            watcher.Daydreams);
 
         // Panes realized at construction were built against a factory with no queries and render
         // "not available". Mark every workspace-dependent kind to rebuild on the next Render so they
@@ -1827,7 +1829,7 @@ public sealed class WorkbenchShell : IDisposable
     /// </remarks>
     private (IWatcherSessionsQuery? Sessions, IWatcherBoardQuery? Board,
              IWatcherLeaderboardQuery? Leaderboard, IWatcherDisputeQuery? Disputes,
-             IWatcherLedgerQuery? Ledger) StartWatcher(string? dataDirectory)
+             IWatcherLedgerQuery? Ledger, IWatcherDaydreamQuery? Daydreams) StartWatcher(string? dataDirectory)
     {
         // A re-attach (opening a different workspace) resets the host.
         _watcherPump?.Cancel();
@@ -1841,7 +1843,7 @@ public sealed class WorkbenchShell : IDisposable
 
         if (string.IsNullOrEmpty(dataDirectory))
         {
-            return (null, null, null, null, null);
+            return (null, null, null, null, null, null);
         }
 
         try
@@ -1864,7 +1866,8 @@ public sealed class WorkbenchShell : IDisposable
                 new WatcherBoardQuery(host.Store),
                 new WatcherLeaderboardQuery(host.Store),
                 new WatcherDisputeQuery(host.Store),
-                new WatcherLedgerQuery(host.Store));
+                new WatcherLedgerQuery(host.Store),
+                new WatcherDaydreamQuery(host.Store));
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -1873,7 +1876,7 @@ public sealed class WorkbenchShell : IDisposable
             _watcherHost = null;
             _watcherEmitter = null;
             _watcherPump = null;
-            return (null, null, null, null, null);
+            return (null, null, null, null, null, null);
         }
     }
 
