@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T02:03:26Z",
+  "generated": "2026-09-03T02:11:14Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8559,6 +8559,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "tools/verify-derived-views.py"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0428",
+      "shortname": "absence-has-a-cause",
+      "datetime": "2026-09-03T02:11:14Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Design session closing: an absence turning out to be load-bearing rather than accidental, three times.",
+      "summary": "Registered DC-093 - an absence has a cause, and treating it as neglect produces the worse fix. Three instances from one evening, each with a fix that would have 'worked' and then misbehaved: ungated published docs (a naive comparison would be red every clean run, so the gate gets switched off), docs/api uncovered (a view was one file in the model, so an added entry would silently leave siblings rewritten), and three capabilities with no callers (a unit test is a caller that does not ship, so adding one where noticed leaves the pattern intact). The question that worked four times: what would have gone wrong if someone had tried.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
       ],
       "tags": [],
       "outcome": "success"

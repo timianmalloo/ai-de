@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 58 · partially-controlled 32 · uncontrolled 2
+**Status counts:** controlled 58 · partially-controlled 32 · uncontrolled 3
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3382,3 +3382,33 @@ for both or split.*
   They now derive the key through the product's own canonicaliser: **a test that restates the
   normalised form has copied the rule rather than checked it.**
 - **Status:** `controlled`
+
+### DC-093 — An absence has a cause, and treating it as neglect produces the worse fix
+
+- **Shape:** something is missing — a gate, a caller, a coverage entry, a link — and the obvious
+  reading is that nobody got to it. Acted on that way, the fix is to add the missing thing. But the
+  absence usually has a **reason**, and the reason is a constraint that is still present: whatever
+  prevented it the first time will shape whatever is added now. A fix that does not find the reason
+  either fails in the same way or works while leaving the constraint in place for the next person.
+- **Signature:** an omission in an otherwise careful area, especially beside similar things that
+  were done. The tell is that the missing item is not harder than its neighbours — if adding it
+  were merely work, a careful author would have done it, so something made it *not work* rather than
+  *not happen*. Ask what would have gone wrong if they had tried.
+- **Why it matters more than tidiness:** treating it as neglect produces a fix that is correct in
+  isolation and wrong in place. The three instances below each had an answer that would have
+  "worked" and then misbehaved quietly.
+- **Instances, all 2026-09-02, all found by asking why rather than adding the missing thing:**
+
+  | The absence | The reason | What "just add it" would have produced |
+  |---|---|---|
+  | `docs/_meta.json` and `_site/index.html` had no gate | `documented_sha` names the commit generated FROM, so it differs on every run by construction — a naive comparison is red on every clean run | a gate that fails always, then gets switched off, taking the real check with it |
+  | `verify-derived-views` did not cover `docs/api` | a view was **one file** in its model, and `docs/api` is a directory of seventeen — not excluded by judgement, unrepresentable | an entry that regenerates a set, restores one file, and silently leaves its siblings rewritten |
+  | `MessageBoardService`, `StandingComposer`, `McpToolGateway` had no callers | a unit test **is** a caller — just not one that ships — so every seam was green and nothing was reachable | a caller added where it was noticed, leaving the other two unreachable and the pattern intact |
+
+- **Control:** none mechanised, and it is the same reason as DC-089's: "why is this missing" is a
+  question, not a comparison. What worked, four times, was **asking what would have gone wrong if
+  someone had tried** — and in each case the answer was a constraint that then shaped the correct
+  fix: a volatile-field pattern, a set-valued view, and a standing question about callers.
+- **The generalisation:** *before adding what is missing, find out what made it missing.* An absence
+  in careful work is evidence about a constraint, and the constraint is still there.
+- **Status:** `uncontrolled` — a question at diagnosis time, no automated check
