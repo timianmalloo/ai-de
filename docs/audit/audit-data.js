@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T19:45:15Z",
+  "generated": "2026-09-03T22:47:20Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9027,6 +9027,31 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Make agents aware of Loomkeeper, and stop the store minting a new session on every restart",
       "done_when": "a protocol document is written into the opened workspace and named in the environment, and a replayed register adopts its terminal's session instead of minting one, both proven by tests observed failing without the fix",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-0454",
+      "shortname": "open-terminal-with-none-open",
+      "datetime": "2026-09-03T22:47:20Z",
+      "session": "e9679dd2",
+      "prompt": "new ui bug: i closed all the agent terminals to start clean, then selected new Claude Code session and got 'there is no terminal pane to open it beside' — it should just add the claude code session into the dock",
+      "summary": "Both launch paths looked for a stack already containing a terminal. Closing every terminal empties the Bottom zone, and an empty tool zone has no stack at all, so the lookup found nothing and the one action that would have fixed the state was refused. AddSurface uses the stack id only to name a zone and OpenPane creates the stack when the zone is empty, so the refusal was never needed. Replayed against the original code: 3 of 4 new tests red.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Let a terminal or agent session open when every terminal has been closed",
+      "done_when": "both launch paths open into the Bottom zone with no terminal present, proven by tests observed failing against the original refusal",
       "signals": {
         "verification_path": true,
         "verification_executed": true,

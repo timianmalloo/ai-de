@@ -190,10 +190,22 @@ public sealed class WorkbenchShell : IDisposable
                 return $"{profile.DisplayName ?? agent} was not found on PATH.";
             }
 
-            var terminalStack = Service.Current.AllStacks()
-                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"));
-
-            if (terminalStack is null) return "There is no terminal pane to open it beside.";
+            // Beside an existing terminal when there is one; otherwise into the Bottom zone, which
+            // is where terminals live by definition (ZoneId.Bottom — "terminals, diagnostics,
+            // output").
+            //
+            // This used to refuse with "There is no terminal pane to open it beside." Closing every
+            // terminal empties the Bottom zone, and an empty tool zone has NO STACK — it collapses
+            // to a rail — so the lookup found nothing and the one action that would have fixed the
+            // situation was the one being refused. The user had closed the terminals deliberately,
+            // to start clean, which is the state most likely to precede opening a session.
+            //
+            // AddSurface takes a stack id only to name the ZONE (ZoneFor -> OpenPane), and OpenPane
+            // creates the stack when the zone is empty. The empty case never needed a stack to
+            // exist; it needed a zone to be named.
+            var terminalStackId = Service.Current.AllStacks()
+                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"))?.Id
+                ?? ZonesToTree.BottomStackId;
 
             var id = $"agent:{agent}#{Guid.NewGuid().ToString("N")[..6]}";
 
@@ -204,7 +216,7 @@ public sealed class WorkbenchShell : IDisposable
             _harnessBySurface[id] = profile;
 
             var result = Service.Apply(new LayoutOperation.AddSurface(
-                terminalStack.Id, new Surface(id, "terminal", title)));
+                terminalStackId, new Surface(id, "terminal", title)));
 
             Adapter.Render();
             Adapter.ActivateInView(id); // opening a session focuses it — you open it to type in it (#2)
@@ -221,17 +233,29 @@ public sealed class WorkbenchShell : IDisposable
         Controller.NewTerminalRequested = () =>
         {
             ReconcileViewIntoModel();
-            var terminalStack = Service.Current.AllStacks()
-                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"));
-
-            if (terminalStack is null) return "There is no terminal pane to open it beside.";
+            // Beside an existing terminal when there is one; otherwise into the Bottom zone, which
+            // is where terminals live by definition (ZoneId.Bottom — "terminals, diagnostics,
+            // output").
+            //
+            // This used to refuse with "There is no terminal pane to open it beside." Closing every
+            // terminal empties the Bottom zone, and an empty tool zone has NO STACK — it collapses
+            // to a rail — so the lookup found nothing and the one action that would have fixed the
+            // situation was the one being refused. The user had closed the terminals deliberately,
+            // to start clean, which is the state most likely to precede opening a session.
+            //
+            // AddSurface takes a stack id only to name the ZONE (ZoneFor -> OpenPane), and OpenPane
+            // creates the stack when the zone is empty. The empty case never needed a stack to
+            // exist; it needed a zone to be named.
+            var terminalStackId = Service.Current.AllStacks()
+                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"))?.Id
+                ?? ZonesToTree.BottomStackId;
 
             // A non-"agent:" id makes the content factory launch a plain shell (Executable = null),
             // and the title is "Terminal" — never an agent name. The guid keeps ids unique so a new
             // terminal is ADDED to the collection, never replacing an existing session.
             var id = $"terminal#{Guid.NewGuid().ToString("N")[..6]}";
             var result = Service.Apply(new LayoutOperation.AddSurface(
-                terminalStack.Id, new Surface(id, "terminal", "Terminal")));
+                terminalStackId, new Surface(id, "terminal", "Terminal")));
 
             Adapter.Render();
             Adapter.ActivateInView(id); // focus the new terminal — you open it to type in it (#2)
