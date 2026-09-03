@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T16:33:37Z",
+  "generated": "2026-09-03T16:42:13Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8672,6 +8672,23 @@ window.AUDIT_DATA = {
       "session": "ai-de-a7",
       "prompt": "(continuation) close the end-to-end agent collaboration loop in collaboration with the other session",
       "summary": "Applied DC-099 to my own tests: every one added tonight was written in the same edit as its fix and had never been shown able to fail. Replayed 7 mutations; each reddened exactly the tests about that behaviour, zero uncovered. The headline claim is now proven - keying the workspace on the checkout reddens TwoWorktreesOfOneRepositoryResolveToOneWorkspace and nothing else out of 388. Recorded what reddens what in the tests' own remarks, including two tests NOT replayed. Two harness defects found on the way: the first version used shell=True where dotnet is not on cmd.exe's PATH and read 'no failures parsed' as 'no test failed' - seven false uncovered verdicts, with no guard that a run had happened; and a 10-minute cap SIGTERMed the second version mid-run so its finally never ran, leaving the checkout-keyed mutation live in the tree. DC-101 registered.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0435",
+      "shortname": "not-yet-claims-decay-too",
+      "datetime": "2026-09-03T16:42:13Z",
+      "session": "ai-de-a7",
+      "prompt": "(continuation) land the collaboration loop work on main",
+      "summary": "DC-094 gains its missing half. The peer's DaydreamRecorder paragraph said NO CALLER ON THIS BRANCH - accurate when written, false six hours later when the branch carrying the caller landed. So one paragraph was wrong in both directions in one evening. A claim about what does NOT exist decays exactly as fast as one about what does; it decays when someone ELSE acts, so the author is absent when it expires. The not-yet form is more dangerous because it reads as the careful option. The fix is to tie a negative claim to something that fails when it expires.",
       "kind": "skill",
       "skill": "implement",
       "tool": null,

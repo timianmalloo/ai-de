@@ -3465,6 +3465,22 @@ for both or split.*
 - **The writing-side rule, since the reading-side one was not enough:** before committing a claim
   about code, ask *would this be true of a fresh clone of this branch?* If it depends on work that
   exists somewhere else, write the dependency (*"when X lands"*), never the destination.
+- **Instance 3, which shows the writing-side rule above was itself only half of it:** the same
+  paragraph, corrected to say **NO CALLER ON THIS BRANCH** — accurate when written — became false
+  six hours later when the branch carrying the caller was pushed to `main`. So the paragraph was
+  wrong in *both* directions within one evening: first asserting a call site that lived only on an
+  unpushed branch, then denying one that had landed.
+- **The half that was missing: a claim about what does NOT exist decays exactly as fast as a claim
+  about what does.** It merely decays when *someone else* acts rather than when the file is edited,
+  so its author is not present at the moment it expires and has no reason to look. And the "not yet"
+  form is the more dangerous of the two, because it *reads as the careful option* — an author who
+  writes "no caller yet" has visibly thought about it, which buys the sentence trust it keeps long
+  after it stops being true.
+- **What to do instead of a durable negative:** tie the claim to something that fails when it
+  expires. The corrected paragraph now points at `WhatDaydreamSeesInAnAgentEpisodeTests`, whose red
+  is the signal that the comment has expired — so the expiry is announced by the suite rather than
+  waiting for a reader to notice. A negative claim with no expiry trigger is a claim with a
+  scheduled falsehood in it.
 - **Control:** none mechanised, and a gate cannot have one: no check can tell a comment that
   understates from one that is complete. What works is a rule about **which artifact answers which
   question**. A doc comment answers *what is this for*; only the producer answers *what does this
