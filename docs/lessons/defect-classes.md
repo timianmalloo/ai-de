@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 60 · partially-controlled 34 · uncontrolled 4
+**Status counts:** controlled 61 · partially-controlled 33 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3483,13 +3483,28 @@ for both or split.*
   `DaydreamPersistenceTests.AFreshDatabaseAndAMigratedOneHaveTheSameSchema`; found only while
   checking whether the fresh-vs-migrated comparison would survive an `ALTER TABLE ADD COLUMN`, which
   is the one reason anyone went looking for it.
-- **Control:** `tools/verify-api-crefs.py` already checks `<see cref>` targets in docs; extend the
-  same idea to **prose identifiers that name a test or a tool** — a `<c>` span ending in `Tests`,
-  `.py`, or `Gate` must resolve to a file or a declared type. Cheap, mechanical, and it fails on the
-  un-fixed comment. Until then the reading rule is DC-094's: a citation is evidence only if it
-  resolves, and one naming our own repository is the cheapest of all to check.
-- **Status:** `partially-controlled` — the naming rule is stated; the identifier check is specified
-  and not yet built
+- **Instance 2, and the reason this is `controlled` rather than a rule:** the same evening, in
+  **the same commit that registered this class**, `WatcherIdentity` was committed saying
+  "`TheWorkspaceKeyIsTheRepositoryNotTheCheckout` is the control". The class is
+  `TheWorkspaceKeyIsTheRepositoryTests`. A rule violated within the hour by the person who wrote it
+  is not a rule, it is a memoir (CI6) — so the register entry that stopped at a reading rule was
+  itself the evidence that a reading rule was insufficient.
+- **Control:** `tools/verify-cited-controls.py`. A comment that **claims enforcement** — asserts,
+  pins, proves, guards, enforces, *is the control* — and cites an identifier must cite one that
+  appears in code somewhere under `src/` or `tests/`. Observed failing on both instances above,
+  replayed from their original commits, and `--self-test` proves it fires.
+- **Two things the gate got wrong first, kept here because they are the transferable part:**
+  its first version keyed on the **identifier's shape** (anything ending `Tests`, `Gate`, `.py`) and
+  so could not have caught instance 2, where the *missing* `Tests` suffix WAS the defect — a
+  detector keyed on the shape of a correct name is blind to a name whose shape is what went wrong.
+  Its second version parsed **declarations** to decide what resolves, and reported `SchemaSql` and
+  `WorkbenchShell.ResolveGitFacts` as fabricated because the regex only modelled `void` and `Task`
+  methods; a gate whose findings are mostly its own blind spots gets switched off, taking the real
+  check with it. A plain token scan over non-comment lines answers the actual question — *does this
+  name exist anywhere but in the comment claiming it* — with no modelling to be wrong about.
+- **Residual:** the `IGNORE` list of framework types named descriptively near an enforcement verb.
+  It is the one place a real finding could be silenced, so it is documented in the gate as such.
+- **Status:** `controlled` — a gate, observed failing on both instances
 
 ### DC-096 — An invariant that holds only because every instance so far happened to be shaped alike
 

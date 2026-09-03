@@ -57,6 +57,16 @@ jobs:
       - name: Defect-register integrity gate
         run: python tools/verify-defect-register.py
 
+      # DC-095: a comment that names the test enforcing a property, where that name resolves to
+      # nothing. It reads as the strongest evidence available - a named, locatable control - and
+      # nothing checks it, because compilers do not resolve identifiers inside <c> tags. Two
+      # instances in one evening, the second committed in the SAME change that registered the class,
+      # which is why this is a gate rather than a reading rule.
+      - name: Cited-controls gate
+        run: |
+          python tools/verify-cited-controls.py --self-test
+          python tools/verify-cited-controls.py
+
       # DC-021: a fixture that restates a list the product declares. Three occurrences before it was
       # registered, because each repair was cheap enough that nobody asked why. The register recorded
       # the residual honestly — derivation was a convention and nothing failed when the next fixture

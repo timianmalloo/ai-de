@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T03:48:34Z",
+  "generated": "2026-09-03T04:03:41Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8593,6 +8593,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/notes/note-20260902-two-decisions-the-loop-waits-on.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0432",
+      "shortname": "cited-controls-gate",
+      "datetime": "2026-09-03T04:03:41Z",
+      "session": "ai-de-a7",
+      "prompt": "(continuation) close the end-to-end agent collaboration loop in collaboration with the other session",
+      "summary": "DC-095 recurred within the hour, in the commit that registered it: WatcherIdentity cited TheWorkspaceKeyIsTheRepositoryNotTheCheckout, which resolves to nothing. Built tools/verify-cited-controls.py - a comment claiming enforcement must cite an identifier that exists in code - and observed it failing on both historical instances replayed from their original commits. Two wrong versions kept in the register: keying on the identifier shape could not catch a name whose shape was the defect; parsing declarations produced false positives from its own blind spots. DC-095 promoted to controlled.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/verify-cited-controls.py"
       ],
       "tags": [],
       "outcome": "success"

@@ -2078,7 +2078,8 @@ would have looked right while meaning something else.
 and its primary checkout both answer with the primary path — measured in this repository's own two
 trees. Nothing *enforces* it, though: an externally registering agent composes its own
 `repo.path`, so `From(string?)` is the one place that decides, and
-`TheWorkspaceKeyIsTheRepositoryNotTheCheckout` is the control.
+`TheWorkspaceKeyIsTheRepositoryTests.TwoWorktreesOfOneRepositoryResolveToOneWorkspace` is
+the control, and it builds a real linked worktree rather than a stand-in.
 
 
 

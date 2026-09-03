@@ -120,7 +120,8 @@ public sealed record RepositoryIdentity
 /// and its primary checkout both answer with the primary path — measured in this repository's own two
 /// trees. Nothing <i>enforces</i> it, though: an externally registering agent composes its own
 /// <c>repo.path</c>, so <see cref="From(string?)"/> is the one place that decides, and
-/// <c>TheWorkspaceKeyIsTheRepositoryNotTheCheckout</c> is the control.</para>
+/// <c>TheWorkspaceKeyIsTheRepositoryTests.TwoWorktreesOfOneRepositoryResolveToOneWorkspace</c> is
+/// the control, and it builds a real linked worktree rather than a stand-in.</para>
 ///
 /// <para><b>Absence is stated, never defaulted.</b> An unresolvable workspace yields <c>null</c>, and a
 /// null-workspace episode is excluded from every leaderboard cell rather than placed in a cohort of
