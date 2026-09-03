@@ -56,7 +56,7 @@ public sealed class DaydreamRecorderTests : IDisposable
     [Fact]
     public void AScoredEpisodeBecomesAnObservationInTheRepository()
     {
-        Assert.True(Recorder().Observe(Episode("ep-1")));
+        Assert.Equal(DaydreamObservationOutcome.Recorded, Recorder().Observe(Episode("ep-1")));
 
         var observation = Assert.Single(_record.Read().Observations);
         Assert.Equal("ep-1", observation.EpisodeId);
@@ -76,8 +76,9 @@ public sealed class DaydreamRecorderTests : IDisposable
     [Fact]
     public void ACleanEpisodeIsNotObservedAtAll()
     {
-        Assert.False(Recorder().Observe(
-            Episode("ep-1", WeaveVerdict.Scored, floors: [], rubric: 4)));
+        Assert.Equal(
+            DaydreamObservationOutcome.NothingWentWrong,
+            Recorder().Observe(Episode("ep-1", WeaveVerdict.Scored, floors: [], rubric: 4)));
 
         Assert.Empty(_record.Read().Observations);
     }
@@ -86,7 +87,73 @@ public sealed class DaydreamRecorderTests : IDisposable
     [Fact]
     public void AnUnavailableRecordIsReportedAsNoWrite()
     {
-        Assert.False(Recorder(DaydreamRepositoryRecord.Absent).Observe(Episode("ep-1")));
+        Assert.Equal(
+            DaydreamObservationOutcome.RecordUnavailable,
+            Recorder(DaydreamRepositoryRecord.Absent).Observe(Episode("ep-1")));
+    }
+
+    // ------------------------------------------- nothing observed is not nothing wrong
+
+    /// <summary>
+    /// An episode nobody assessed does not report as a clean one.
+    /// </summary>
+    /// <remarks>
+    /// Both produce an empty signature and both write nothing, so a boolean return collapsed them —
+    /// and they are opposites. "Assessed, nothing fell short" is the system working; "no dimension
+    /// carried a rubric" is the system seeing nothing. Rendered alike, a permanently quiet Daydream
+    /// reads as a healthy repository (DC-025).
+    /// </remarks>
+    [Fact]
+    public void AnUnassessedEpisodeIsDistinguishedFromACleanOne()
+    {
+        Assert.Equal(
+            DaydreamObservationOutcome.NothingWasAssessed,
+            Recorder().Observe(Episode("ep-1", WeaveVerdict.NotScored, floors: [], rubric: null)));
+
+        Assert.Equal(
+            DaydreamObservationOutcome.NothingWentWrong,
+            Recorder().Observe(Episode("ep-2", WeaveVerdict.Scored, floors: [], rubric: 4)));
+    }
+
+    /// <summary>
+    /// And the real evidence-free path, scored by the real scorer, is the unassessed one.
+    /// </summary>
+    /// <remarks>
+    /// <para>MEASURED on 2026-09-02, after a prediction that went the other way. I argued that a
+    /// Not-Scored episode would still carry a tripped floor and so would be observed — and that
+    /// Daydream would drown in one useless recurring pattern. It produces
+    /// <c>verdict=NotScored floors=[] rubrics=[]</c>: no assessments at all. A floor is an
+    /// <i>observed</i> failure, so nothing can trip when nothing is observed.</para>
+    ///
+    /// <para>Built through <c>DeterministicSignalsDeriver</c> and <c>WeaveScorer</c> rather than
+    /// from a hand-made <c>Scorecard</c>, because the claim is about what the real scorer emits. A
+    /// fixture asserting my belief about its output would have passed while being wrong, which is
+    /// how the prediction survived being written down in the first place.</para>
+    /// </remarks>
+    [Fact]
+    public void TheRealEvidenceFreeEpisodeReportsAsUnassessed()
+    {
+        var closed = DateTimeOffset.UnixEpoch.AddDays(1);
+        var episode = new WorkEpisode(
+            "ep-1", "sess-1", new EpisodeGeneration(1), new Goal("Ship it"),
+            new DoneCondition("tests green"), null, DateTimeOffset.UnixEpoch, closed,
+            EpisodeOutcome.Completed);
+
+        var card = new WeaveScorer().Score(
+            episode,
+            DeterministicSignalsDeriver.Derive(
+                episode, new EpisodeEvidence(HasProofPack: false), new InMemoryWatcherObservationStore()),
+            new FixedTimeProvider(closed));
+
+        Assert.Equal(WeaveVerdict.NotScored, card.Verdict);
+        Assert.Empty(card.TrippedFloors);
+
+        var scored = new ScoredEpisode(
+            "ep-1", "claude-code", "opus", "op-1", "implement", ScoreSchema.Weave1Version, card);
+
+        Assert.True(DaydreamSignature.For(scored).IsUnremarkable);
+        Assert.Equal(DaydreamObservationOutcome.NothingWasAssessed, Recorder().Observe(scored));
+        Assert.Empty(_record.Read().Observations);
     }
 
     // ------------------------------------------------------------- determinism

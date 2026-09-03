@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 141 types, 253 members, 59% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 142 types, 253 members, 59% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**141 public types · 253 public members · 59% documented.**
+**142 public types · 253 public members · 59% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -689,6 +689,30 @@ tighten; it must never silently relax.
 |---|---|
 | `IReadOnlyList<DaydreamRecurrence> Recurring(IEnumerable<DaydreamObservation> observations)` | The patterns that recur, ordered deterministically for replay. |
 
+## `DaydreamObservationOutcome`
+
+*enum* — `DaydreamRecorder.cs`
+
+What one call to `Observe` did, and why.
+
+**Remarks.** **Four outcomes rather than a bool, because the bool meant three things and two of them
+are opposites.** A signature with no floors and no shortfalls can arise two ways: the episode
+was assessed and nothing went wrong, or **nothing was assessed at all**. Both are
+"unremarkable" to the signature and they mean the reverse of each other — one is the system
+working, the other is the system seeing nothing.
+
+
+
+
+
+**Measured, on 2026-09-02, not predicted.** An episode with no Proof Pack scores
+`NotScored` with **no assessments at all** and no tripped floors — a floor is an
+*observed* failure, so nothing can trip when nothing is observed. Its signature is therefore
+empty and Daydream declines it. That is correct: there is nothing to learn from an episode
+nobody watched. But reporting it identically to a clean episode would let "Daydream is quiet"
+read as "work is going well", which is DC-025's shape — and the design's own §8 says the operator
+question this must answer is *is Daydream seeing anything*.
+
 ## `DaydreamRecorder`
 
 *class* — `DaydreamRecorder.cs`
@@ -712,13 +736,22 @@ does not yet hold would put a pattern in the record whose evidence a reader cann
 
 
 
-**NO PRODUCTION CALLER YET, and this is stated rather than left to be discovered.** The
-one call site is wherever a scorecard is recorded for an agent's episode — the tick-based scoring
-pass being built on the collaboration track — and it is one line:
-`recorder.Observe(scored);` immediately after `RecordScorecard`. Until that lands, this
-class is exercised only by its tests, which is DC-089's shape: a unit test is a caller, just not
-one that ships. It is written here so nobody concludes from a green suite that the vertical is
-closed.
+**The one call site is `ScoringService.ScoreAndRecord`, immediately after
+`RecordScorecard`** — one level below where this class originally proposed it, because
+`ScoringService` is the single place a `ScoredEpisode` comes into existence and
+both producers pass through it. Placing it on the tick pass instead would have made two call
+sites, and the audit-import one would have been the forgotten one.
+
+
+
+
+
+**What it actually sees today, measured rather than assumed.** An agent's episode
+carries no Proof Pack, so it scores `NotScored` with no assessments and no tripped floors,
+and this class declines it as `NothingWasAssessed`. The
+producer feeding the record today is therefore **audit-import**, whose episodes read committed
+Proof Packs and do trip floors. That is not a defect to fix here — it is the instrumentation gap
+upstream, and the outcome enum exists so it reports as a gap rather than as a quiet day.
 
 
 
@@ -732,13 +765,13 @@ unrecoverable, since the occurrences it needed were never kept.
 
 | Member | Summary |
 |---|---|
-| `bool Observe(ScoredEpisode episode)` | Records one episode as an observation, and reports whether it wrote one. |
+| `DaydreamObservationOutcome Observe(ScoredEpisode episode)` | Records one episode as an observation, and says what it did. |
 
-### `bool Observe(ScoredEpisode episode)`
+### `DaydreamObservationOutcome Observe(ScoredEpisode episode)`
 
-Records one episode as an observation, and reports whether it wrote one.
+Records one episode as an observation, and says what it did.
 
-**Returns.** `true` only when a line was written. `false` covers three different situations — an unremarkable episode, an unavailable record, and a failed write — and the caller that needs to tell them apart asks `Unavailable`. Nothing here reports a write it did not make.
+**Returns.** Which of the four `DaydreamObservationOutcome` cases applied. Nothing here reports a write it did not make, and **nothing collapses "nothing went wrong" into "nothing was assessed"** — see the enum for why those two must not render alike.
 
 ## `DaydreamRecordRead`
 
