@@ -14,12 +14,32 @@ public sealed class WatcherDaydreamPaneTests
 
     private sealed class Fixed(params DaydreamCandidate[] candidates) : IWatcherDaydreamQuery
     {
+        public string? Unavailable => null;
+
+        public int UnreadableLines { get; init; }
+
         public IReadOnlyList<DaydreamCandidate> GetCandidates() => candidates;
     }
 
     private sealed class Broken : IWatcherDaydreamQuery
     {
-        public IReadOnlyList<DaydreamCandidate> GetCandidates() => throw new InvalidOperationException("store gone");
+        public string? Unavailable => null;
+
+        public int UnreadableLines => 0;
+
+        public IReadOnlyList<DaydreamCandidate> GetCandidates() => throw new InvalidOperationException("record gone");
+    }
+
+    private sealed class NoRepository : IWatcherDaydreamQuery
+    {
+        public string? Unavailable => "No repository is open, so nothing is recorded.";
+
+        public int UnreadableLines => 0;
+
+        // Never reached. A query that reports itself unavailable must not also be asked for a
+        // result: if the pane calls this, the absence check ran too late.
+        public IReadOnlyList<DaydreamCandidate> GetCandidates() =>
+            throw new InvalidOperationException("asked an unavailable record for candidates");
     }
 
     private static DaydreamCandidate Candidate(
@@ -175,24 +195,24 @@ public sealed class WatcherDaydreamPaneTests
         Assert.Contains("1 ready to promote", one.StatusMessage);
     }
 
-    // ---------------------------------------------------------------- end to end over the store
+    // ------------------------------------------------- end to end over the repository record
 
     /// <summary>
-    /// The pane reads real store facts through the real fold.
+    /// The pane reads a real repository record through the real fold.
     /// </summary>
     /// <remarks>
-    /// Through <c>WatcherDaydreamQuery</c> and the store rather than a stub, because the whole point
-    /// of D4 is that the surface renders something a writer actually produced. A pane tested only
-    /// against fixtures is the shape DC-089 registered.
+    /// Through <c>WatcherDaydreamQuery</c> and a record on disk rather than a stub, because the
+    /// whole point of D4 is that the surface renders something a writer actually produced. A pane
+    /// tested only against fixtures is the shape DC-089 registered.
     /// </remarks>
     [Fact]
-    public void ThePaneRendersWhatWasWrittenToTheStore()
+    public void ThePaneRendersWhatWasWrittenToTheRepository()
     {
-        var store = new InMemoryWatcherObservationStore();
-        store.AppendDaydreamObservation(new DaydreamObservation("obs-1", Pattern, "ep-1", DateTimeOffset.UnixEpoch));
-        store.AppendDaydreamObservation(new DaydreamObservation("obs-2", Pattern, "ep-2", DateTimeOffset.UnixEpoch));
+        using var repo = new TempRepository();
+        repo.Record.Append(new DaydreamObservation("obs-1", Pattern, "ep-1", DateTimeOffset.UnixEpoch));
+        repo.Record.Append(new DaydreamObservation("obs-2", Pattern, "ep-2", DateTimeOffset.UnixEpoch));
 
-        var pane = Loaded(new WatcherDaydreamQuery(store));
+        var pane = Loaded(new WatcherDaydreamQuery(repo.Record));
 
         var row = Assert.Single(pane.RowsFor("Candidates"));
         Assert.Equal(2, row.Episodes);
@@ -205,12 +225,76 @@ public sealed class WatcherDaydreamPaneTests
     [Fact]
     public void OneObservationNeverReachesTheCandidatesStage()
     {
-        var store = new InMemoryWatcherObservationStore();
-        store.AppendDaydreamObservation(new DaydreamObservation("obs-1", Pattern, "ep-1", DateTimeOffset.UnixEpoch));
+        using var repo = new TempRepository();
+        repo.Record.Append(new DaydreamObservation("obs-1", Pattern, "ep-1", DateTimeOffset.UnixEpoch));
 
-        var pane = Loaded(new WatcherDaydreamQuery(store));
+        var pane = Loaded(new WatcherDaydreamQuery(repo.Record));
 
         Assert.Empty(pane.RowsFor("Candidates"));
         Assert.Equal(PaneState.Empty, pane.State);
+    }
+
+    // ------------------------------------------------------------------ absence
+
+    /// <summary>
+    /// No repository is not an empty Daydream.
+    /// </summary>
+    /// <remarks>
+    /// Both render as <see cref="PaneState.Empty"/>, so only the message distinguishes them — and
+    /// "No patterns observed yet" from a pane that never opened a repository is a claim about the
+    /// repository it did not look at (DC-025, DC-087).
+    /// </remarks>
+    [Fact]
+    public void NoRepositorySaysSoRatherThanReportingNoPatterns()
+    {
+        var pane = Loaded(new NoRepository());
+
+        Assert.Equal(PaneState.Empty, pane.State);
+        Assert.Contains("No repository is open", pane.StatusMessage);
+        Assert.DoesNotContain("No patterns observed", pane.StatusMessage);
+    }
+
+    /// <summary>A partly unreadable record is never rendered as a whole one.</summary>
+    [Fact]
+    public void UnreadableLinesAreCarriedOntoTheSurface()
+    {
+        var pane = Loaded(new Fixed(Candidate(DaydreamState.NeedsDisconfirm)) { UnreadableLines = 3 });
+
+        Assert.Equal(PaneState.Ready, pane.State);
+        Assert.Contains("3 line(s) could not be read", pane.StatusMessage);
+    }
+
+    /// <summary>And an EMPTY record that was partly unreadable says so too.</summary>
+    /// <remarks>
+    /// The case most likely to be missed: with no rows the pane takes the empty branch, and an
+    /// empty branch that drops the caveat reports "nothing has happened here" about a file it could
+    /// not finish reading.
+    /// </remarks>
+    [Fact]
+    public void AnEmptyButPartlyUnreadableRecordStillSaysSo()
+    {
+        var pane = Loaded(new Fixed { UnreadableLines = 1 });
+
+        Assert.Equal(PaneState.Empty, pane.State);
+        Assert.Contains("1 line(s) could not be read", pane.StatusMessage);
+    }
+
+    private sealed class TempRepository : IDisposable
+    {
+        private readonly string _root = Path.Combine(
+            Path.GetTempPath(), "aide-daydream-pane-" + Guid.NewGuid().ToString("n")[..8]);
+
+        public TempRepository()
+        {
+            Directory.CreateDirectory(_root);
+            Record = DaydreamRepositoryRecord.For(_root);
+        }
+
+        public DaydreamRepositoryRecord Record { get; }
+
+        public void Dispose()
+        {
+            try { Directory.Delete(_root, recursive: true); } catch (IOException) { /* best effort */ }
+        }
     }
 }

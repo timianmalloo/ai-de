@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T03:09:30Z",
+  "generated": "2026-09-03T03:22:27Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1480,7 +1480,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 78 members, 65% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 80 members, 63% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1493,7 +1493,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "562b030c4230f3d2320b4214e74300a821c6fc74cddb2735355149f6c0961cbd"
+      "sourceSha256": "04bf396dbd005849202091b92b89390fd815753a785a2568083121ef0da73c40"
     },
     {
       "id": "api-aide-core-projections",
@@ -1605,7 +1605,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 138 types, 241 members, 58% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 141 types, 253 members, 59% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1618,7 +1618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d11160699847cb06baa5a7d55d0632e35aa5c715eb52c5e88d493c3eb3a65c9f"
+      "sourceSha256": "9f797fd818398d802a6dd63a42f50f5032907a1c2ef35b53f4937982fd1baba5"
     },
     {
       "id": "api-aide-core-workbench",
@@ -10830,5 +10830,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "46db1710111549ae2319b3dc8a7db182b58c523b05850f1017d6d5c38e73f36b"
+  "graphSha256": "c987516fd0d2611ae3182bd6cf159fb293d6932ee0ec88a11133d876fcf2ed95"
 };

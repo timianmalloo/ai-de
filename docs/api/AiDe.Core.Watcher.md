@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 138 types, 241 members, 58% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 141 types, 253 members, 59% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**138 public types · 241 public members · 58% documented.**
+**141 public types · 253 public members · 59% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -688,6 +688,140 @@ tighten; it must never silently relax.
 | Member | Summary |
 |---|---|
 | `IReadOnlyList<DaydreamRecurrence> Recurring(IEnumerable<DaydreamObservation> observations)` | The patterns that recur, ordered deterministically for replay. |
+
+## `DaydreamRecorder`
+
+*class* — `DaydreamRecorder.cs`
+
+Turns a scored episode into an observation in the repository's Daydream record.
+
+**Remarks.** **The one call site Daydream needs.** Everything downstream — recurrence, candidates,
+the promotion staircase, the pane — folds from what this writes. It takes a
+`ScoredEpisode` because that is what is actually persisted:
+`DeterministicEpisodeSignals` is never stored, so a signature derived from the scorer's
+inputs could be produced once, live, and never again.
+
+
+
+
+
+**Called after a scorecard is recorded, not before.** Observing an episode the store
+does not yet hold would put a pattern in the record whose evidence a reader cannot follow.
+
+
+
+
+
+**NO PRODUCTION CALLER YET, and this is stated rather than left to be discovered.** The
+one call site is wherever a scorecard is recorded for an agent's episode — the tick-based scoring
+pass being built on the collaboration track — and it is one line:
+`recorder.Observe(scored);` immediately after `RecordScorecard`. Until that lands, this
+class is exercised only by its tests, which is DC-089's shape: a unit test is a caller, just not
+one that ships. It is written here so nobody concludes from a green suite that the vertical is
+closed.
+
+
+
+
+
+**Suppression is deliberately NOT here.** `DreamCorpusReader` marks a
+pattern already-known so it stops being re-*proposed*; it must never stop it being
+*observed*. An observation is evidence, and dropping evidence because a lesson was already
+written would make the record understate what happened — and would make a retraction in the pack
+unrecoverable, since the occurrences it needed were never kept.
+
+| Member | Summary |
+|---|---|
+| `bool Observe(ScoredEpisode episode)` | Records one episode as an observation, and reports whether it wrote one. |
+
+### `bool Observe(ScoredEpisode episode)`
+
+Records one episode as an observation, and reports whether it wrote one.
+
+**Returns.** `true` only when a line was written. `false` covers three different situations — an unremarkable episode, an unavailable record, and a failed write — and the caller that needs to tell them apart asks `Unavailable`. Nothing here reports a write it did not make.
+
+## `DaydreamRecordRead`
+
+*record* — `DaydreamRepositoryRecord.cs`
+
+What one read of the repository's Daydream record found — including what it could not read.
+
+**Remarks.** `UnreadableLines` is reported rather than swallowed, following the audit log's own
+verifier ("0 unreadable lines"). A line this version cannot parse is far more likely to be a
+newer writer's than a corruption, and silently dropping it would render a partial record as a
+complete one — an absence shown as a result (DC-025).
+
+| Member | Summary |
+|---|---|
+| `DaydreamRecordRead Empty { get; } = new([], [], 0)` | **(gap)** |
+
+## `DaydreamRepositoryRecord`
+
+*class* — `DaydreamRepositoryRecord.cs`
+
+The repository's Daydream record: two append-only logs the product maintains, in the repository
+being worked on.
+
+**Remarks.** **Why the repository and not the product's store.** A lesson about *this*
+repository belongs *with* that repository, for the same reason `defect-classes.md` is
+committed rather than kept in a tool's private directory: it survives a machine change, it
+travels with a clone, and it is reviewable in a pull request. The per-workspace SQLite store
+gave the rows the wrong lifetime — they outlived the repository they were about.
+(`design-watcher-daydream-dream-seam` §4a; the owner's decision in
+`note-20260902-two-decisions-the-loop-waits-on`.)
+
+
+
+
+
+**Provenance is per-record, not per-file.** Every line carries
+`"generated-by":"ai-de/daydream"`. These logs merge by *content union* across sessions
+and worktrees (`tools/merge-append-only-log.py`, the DC-026 control), and a header line
+would be merged, duplicated, or lost — while a field on each record survives every one of those.
+The field's presence means the product wrote it; its absence means an agent or a human did.
+
+
+
+
+
+**Enums are written as names.** An ordinal in a committed file is unreadable to the
+human it is committed for, and reordering an enum would silently rewrite the meaning of every
+historical line.
+
+
+
+
+
+**Absence is stated.** A workspace with no repository has nowhere to write, and says so
+rather than presenting an empty Daydream — the same rule `DreamCorpusReader` keeps
+for an absent pack.
+
+| Member | Summary |
+|---|---|
+| `string GeneratedBy = "ai-de/daydream"` | The provenance marker, one literal spelling in every format (see the design §4b). |
+| `string? Root { get; }` | The repository root, or `null` when there is none. |
+| `string? Unavailable { get; }` | Why the record is unavailable, or `null` when it is readable and writable. |
+| `bool Available` | True when the record can be read and written. |
+| `string? Directory` | The directory the record lives in, or `null` when unavailable. |
+| `DaydreamRepositoryRecord For(string? repositoryRoot)` | Opens the record for a repository root, or reports why it cannot be opened. |
+| `DaydreamRepositoryRecord Absent { get; } = For(null)` | The record for a workspace with no repository — an absence, stated. |
+| `bool Append(DaydreamObservation observation)` | Appends one observation. A no-op when the record is unavailable. |
+| `bool Append(DaydreamEvent candidateEvent)` | Appends one candidate event. A no-op when the record is unavailable. |
+| `DaydreamRecordRead Read()` | Reads the whole record. An unavailable record reads as empty, never as an error. |
+
+### `string? Unavailable { get; }`
+
+Why the record is unavailable, or `null` when it is readable and writable.
+
+**Remarks.** A sentence for a person, naming only what was actually checked. It never speculates about a
+cause this class did not look at (DC-087).
+
+### `DaydreamRepositoryRecord For(string? repositoryRoot)`
+
+Opens the record for a repository root, or reports why it cannot be opened.
+
+**Remarks.** The root is not created and not probed for a `.git` directory: the caller decides what a
+repository is, and this class only needs somewhere that exists to write into.
 
 ## `AuditSignals`
 

@@ -80,23 +80,53 @@ public sealed record WatcherDaydreamRow(
 public interface IWatcherDaydreamQuery
 {
     IReadOnlyList<DaydreamCandidate> GetCandidates();
+
+    /// <summary>
+    /// Why there is no record to read, or <c>null</c> when there is one.
+    /// </summary>
+    /// <remarks>
+    /// A separate channel from an empty list, because "no repository is open" and "this repository
+    /// has observed nothing yet" are different facts and only one of them is about the repository.
+    /// Collapsing them would let the pane report an absence as a result (DC-025).
+    /// </remarks>
+    string? Unavailable { get; }
+
+    /// <summary>Lines the record held that this version could not parse. Reported, never swallowed.</summary>
+    int UnreadableLines { get; }
 }
 
 /// <summary>
-/// Folds the observation store's daydream facts into the pane's read (US-9).
+/// Folds the repository's Daydream record into the pane's read (US-9).
 /// </summary>
 /// <remarks>
-/// The fold runs here rather than in the view model, so the pane renders a decision it did not make.
-/// Every state — including whether promotion is possible — comes from
-/// <see cref="DaydreamFold"/>, which is where the acceptance criteria are tested.
+/// <para>The fold runs here rather than in the view model, so the pane renders a decision it did not
+/// make. Every state — including whether promotion is possible — comes from
+/// <see cref="DaydreamFold"/>, which is where the acceptance criteria are tested.</para>
+///
+/// <para><b>The repository is the record, not the store.</b> This read used to fold
+/// <c>IWatcherObservationStore</c>'s <c>daydream_*_fact</c> tables. Those tables still exist —
+/// deleting a shipped migration is worse than leaving one unused — but they are no longer
+/// authoritative, and nothing reads them. Two definitions of one quantity is a defect signature
+/// (DM7), so there is deliberately no parallel copy to fall back to.
+/// (<c>design-watcher-daydream-dream-seam</c> §4a.)</para>
 /// </remarks>
-public sealed class WatcherDaydreamQuery(IWatcherObservationStore store) : IWatcherDaydreamQuery
+public sealed class WatcherDaydreamQuery(DaydreamRepositoryRecord record) : IWatcherDaydreamQuery
 {
-    private readonly IWatcherObservationStore _store = store ?? throw new ArgumentNullException(nameof(store));
+    private readonly DaydreamRepositoryRecord _record = record ?? throw new ArgumentNullException(nameof(record));
     private readonly DaydreamFold _fold = new();
 
-    public IReadOnlyList<DaydreamCandidate> GetCandidates() =>
-        _fold.Fold(_store.AllDaydreamObservations(), _store.AllDaydreamEvents());
+    private int _unreadable;
+
+    public string? Unavailable => _record.Unavailable;
+
+    public int UnreadableLines => _unreadable;
+
+    public IReadOnlyList<DaydreamCandidate> GetCandidates()
+    {
+        var read = _record.Read();
+        _unreadable = read.UnreadableLines;
+        return _fold.Fold(read.Observations, read.Events);
+    }
 }
 
 /// <summary>
@@ -152,28 +182,49 @@ public sealed class WatcherDaydreamPaneViewModel(IWatcherDaydreamQuery? query)
             return;
         }
 
+        // Asked before the read, not after: an unavailable record reads as empty, and reporting
+        // that as "no patterns observed yet" would be a claim about the repository made by a pane
+        // that never opened one.
+        if (query.Unavailable is { Length: > 0 } reason)
+        {
+            State = PaneState.Empty;
+            StatusMessage = reason;
+            Rows = [];
+            LiveAnnouncement = StatusMessage;
+            return;
+        }
+
         try
         {
             Rows = [.. query.GetCandidates().Select(WatcherDaydreamRow.From)];
+
+            // A record that is partly unreadable is never rendered as a whole one, whatever it
+            // otherwise contains (DC-025). The count comes last so it reads as a caveat on the
+            // number rather than replacing it.
+            var caveat = query.UnreadableLines > 0
+                ? $" · {query.UnreadableLines} line(s) could not be read"
+                : string.Empty;
+
             if (Rows.Count == 0)
             {
                 State = PaneState.Empty;
-                StatusMessage = "No patterns observed yet.";
+                StatusMessage = "No patterns observed yet." + caveat;
             }
             else
             {
                 State = PaneState.Ready;
                 var promotable = Rows.Count(r => r.CanPromote);
                 var candidates = RowsFor("Candidates").Count;
-                StatusMessage = promotable == 0
+                StatusMessage = (promotable == 0
                     ? $"{Rows.Count} pattern(s) · {candidates} candidate(s) · none ready to promote"
-                    : $"{Rows.Count} pattern(s) · {candidates} candidate(s) · {promotable} ready to promote";
+                    : $"{Rows.Count} pattern(s) · {candidates} candidate(s) · {promotable} ready to promote")
+                    + caveat;
             }
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             State = PaneState.Error;
-            StatusMessage = "Daydreams unavailable — the observation store could not be read.";
+            StatusMessage = "Daydreams unavailable — the repository's Daydream record could not be read.";
             Rows = [];
         }
 
