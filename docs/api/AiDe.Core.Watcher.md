@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 128 types, 225 members, 56% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 128 types, 225 members, 57% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**128 public types · 225 public members · 56% documented.**
+**128 public types · 225 public members · 57% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -853,6 +853,12 @@ one evidence-backed reason per dimension - and **deliberately no single aggregat
 optimize (the anti-Goodhart stance: there is no `Score` field, only a relative rank, a trend
 direction, and per-dimension evidence).
 
+**Remarks.** **Trend is nullable, and that is the point.** It was `int`, so an agent's first scored
+episode reported **0** — the same value as "you did not move" — in the one feature whose
+purpose is telling an agent whether it is improving or regressing. The spec is explicit that
+"every displayed evaluation or learning claim has evidence/confidence, or renders Not Recorded",
+and no-history is exactly that case.
+
 ## `StandingComposer`
 
 *class* — `Leaderboard.cs`
@@ -863,7 +869,17 @@ render); the reasons are one per dimension from the scorecard; no single optimiz
 
 | Member | Summary |
 |---|---|
-| `AgentStanding Compose(ScoredEpisode subject, Leaderboard board, int trend)` | **(gap)** |
+| `AgentStanding Compose(` | Composes one episode's standing, deriving the trend from . |
+
+### `AgentStanding Compose(`
+
+Composes one episode's standing, deriving the trend from .
+
+**Remarks.** **The history is a parameter, not the trend.** This took `int trend` and nothing in
+src/ produced one — the caller was expected to compute it and there was no caller at all. A
+value someone must remember to supply is a value that will eventually be supplied wrongly or
+not at all; a history the method derives from cannot be forgotten, because the method cannot
+be called without it.
 
 ## `LivenessProjection`
 

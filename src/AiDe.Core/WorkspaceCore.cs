@@ -5,6 +5,7 @@ using AiDe.Core.Health;
 using AiDe.Core.Mcp;
 using AiDe.Core.Projections;
 using AiDe.Core.Store;
+using AiDe.Core.Watcher;
 
 namespace AiDe.Core;
 
@@ -20,9 +21,16 @@ public sealed class WorkspaceCore : IDisposable
     private readonly IExtractor _extractor;
     private long _generation;
 
+    /// <param name="scoredEpisodes">
+    /// The watcher's scored episodes, for the MCP <c>standing</c> tool (US-16). A CONSTRUCTOR
+    /// parameter rather than a property set afterwards: <see cref="Mcp"/> is built in this
+    /// constructor, so anything it needs must arrive with it — a value assigned after construction
+    /// is not available to the object the constructor already made (DC-083).
+    /// </param>
     private WorkspaceCore(
         string workspaceId, WorkspaceStore store, IExtractor extractor,
-        HealthIncidentSidecar incidents, string rootPath)
+        HealthIncidentSidecar incidents, string rootPath,
+        AiDe.Core.Presentation.IWatcherLeaderboardQuery? scoredEpisodes)
     {
         WorkspaceId = workspaceId;
         Store = store;
@@ -31,7 +39,7 @@ public sealed class WorkspaceCore : IDisposable
         RootPath = rootPath;
         Projections = new ProjectionService(store, rootPath);
         Dispatch = new DispatchService(store);
-        Mcp = new McpToolGateway(Projections, workspaceId);
+        Mcp = new McpToolGateway(Projections, workspaceId, scoredEpisodes);
     }
 
     public string WorkspaceId { get; }
@@ -60,7 +68,20 @@ public sealed class WorkspaceCore : IDisposable
         Directory.CreateDirectory(dataDirectory);
         var store = WorkspaceStore.Open(Path.Combine(dataDirectory, "workspace.db"));
         var incidents = new HealthIncidentSidecar(Path.Combine(dataDirectory, "health-incidents.jsonl"));
-        var core = new WorkspaceCore(workspaceId, store, extractor ?? new FixtureExtractor(), incidents, rootPath)
+
+        // The watcher's store lives beside the workspace's, in the directory this method already
+        // has. Opened here so the MCP `standing` tool has a real source at construction rather than
+        // a null it degrades around — a tool wired only on the path that happens to have the value
+        // is the shape that shipped an unreachable environment contract this morning (DC-084).
+        //
+        // A SECOND OPENER of watcher.db: the shell's WatcherHost holds the writer. SQLite permits
+        // this and the tool only reads, but it is a runtime coupling rather than a compile-time one
+        // and is recorded here because nothing else would say so.
+        var watcher = SqliteWatcherObservationStore.Open(Path.Combine(dataDirectory, "watcher.db"));
+
+        var core = new WorkspaceCore(
+            workspaceId, store, extractor ?? new FixtureExtractor(), incidents, rootPath,
+            new AiDe.Core.Presentation.WatcherLeaderboardQuery(watcher))
         {
             DataDirectory = dataDirectory,
         };

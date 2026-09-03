@@ -129,9 +129,20 @@ public sealed record DimensionReason(ScoreDimension Dimension, string Reason);
 /// optimize (the anti-Goodhart stance: there is no <c>Score</c> field, only a relative rank, a trend
 /// direction, and per-dimension evidence).
 /// </summary>
+/// <param name="Trend">
+/// Signed movement in Weave points against the previous episode in the same cohort, or
+/// <c>null</c> when there is no previous episode to move against.
+/// </param>
+/// <remarks>
+/// <b>Trend is nullable, and that is the point.</b> It was <c>int</c>, so an agent's first scored
+/// episode reported <b>0</b> — the same value as "you did not move" — in the one feature whose
+/// purpose is telling an agent whether it is improving or regressing. The spec is explicit that
+/// "every displayed evaluation or learning claim has evidence/confidence, or renders Not Recorded",
+/// and no-history is exactly that case.
+/// </remarks>
 public sealed record AgentStanding(
     string EpisodeId, string? Harness, string? Model,
-    int? Rank, int? Cohort, int Trend, bool RankComparable,
+    int? Rank, int? Cohort, int? Trend, bool RankComparable,
     IReadOnlyList<DimensionReason> Reasons);
 
 /// <summary>
@@ -141,10 +152,24 @@ public sealed record AgentStanding(
 /// </summary>
 public sealed class StandingComposer
 {
-    public AgentStanding Compose(ScoredEpisode subject, Leaderboard board, int trend)
+    /// <summary>
+    /// Composes one episode's standing, deriving the trend from <paramref name="history"/>.
+    /// </summary>
+    /// <remarks>
+    /// <b>The history is a parameter, not the trend.</b> This took <c>int trend</c> and nothing in
+    /// src/ produced one — the caller was expected to compute it and there was no caller at all. A
+    /// value someone must remember to supply is a value that will eventually be supplied wrongly or
+    /// not at all; a history the method derives from cannot be forgotten, because the method cannot
+    /// be called without it.
+    /// </remarks>
+    public AgentStanding Compose(
+        ScoredEpisode subject, Leaderboard board, IReadOnlyList<ScoredEpisode> history)
     {
         ArgumentNullException.ThrowIfNull(subject);
         ArgumentNullException.ThrowIfNull(board);
+        ArgumentNullException.ThrowIfNull(history);
+
+        var trend = TrendFor(subject, history);
 
         LeaderboardCell? cell = subject.Harness is not null && subject.Model is not null
             ? board.Cell(LeaderboardFacet.HarnessModel, $"{subject.Harness} / {subject.Model}")
@@ -162,5 +187,36 @@ public sealed class StandingComposer
             trend,
             comparable,
             reasons);
+    }
+
+    /// <summary>
+    /// Movement in Weave points against the previous episode of the same cohort, or null.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The cohort is harness + model + task class + schema</b> — the same partition the
+    /// leaderboard compares within (rule 11). A trend across task classes would compare a refactor
+    /// against a spike and call the difference improvement.</para>
+    ///
+    /// <para><b>Null when there is no previous episode</b>, never zero. Zero means "scored the same";
+    /// absent means "there is nothing to compare against yet", and an agent reading its first
+    /// standing must be able to tell those apart.</para>
+    ///
+    /// <para>Ordered by <c>EvaluatedAt</c> and filtered to episodes strictly before the subject's,
+    /// so a re-scored or backfilled episode does not become its own predecessor.</para>
+    /// </remarks>
+    private static int? TrendFor(ScoredEpisode subject, IReadOnlyList<ScoredEpisode> history)
+    {
+        var previous = history
+            .Where(e => !string.Equals(e.EpisodeId, subject.EpisodeId, StringComparison.Ordinal))
+            .Where(e => string.Equals(e.Harness, subject.Harness, StringComparison.Ordinal)
+                && string.Equals(e.Model, subject.Model, StringComparison.Ordinal)
+                && string.Equals(e.TaskClass, subject.TaskClass, StringComparison.Ordinal)
+                && string.Equals(e.SchemaVersion, subject.SchemaVersion, StringComparison.Ordinal))
+            .Where(e => e.Scorecard.EvaluatedAt <= subject.Scorecard.EvaluatedAt)
+            .OrderByDescending(e => e.Scorecard.EvaluatedAt)
+            .ThenByDescending(e => e.EpisodeId, StringComparer.Ordinal)
+            .FirstOrDefault();
+
+        return previous is null ? null : (int)Math.Round(subject.Weave - previous.Weave);
     }
 }

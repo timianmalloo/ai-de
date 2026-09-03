@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 57 · partially-controlled 31 · uncontrolled 2
+**Status counts:** controlled 57 · partially-controlled 32 · uncontrolled 2
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3251,6 +3251,15 @@ for both or split.*
 - **The generalisation worth keeping:** *a component with no caller is not an unfinished feature, it
   is an absent one — and it looks finished from every angle except use.* Completeness is a property
   of the path, never of the parts.
+- **A THIRD INSTANCE, and it shows how the shape hides (2026-09-02).** `StandingComposer` had zero
+  production callers, and the reason it looked finished is that its signature was satisfied:
+  `Compose(subject, board, int trend)` took the trend as a parameter, and **nothing in `src/` produced
+  one**. The unit tests passed `trend: 3` and `trend: -1` — numbers no code path could ever generate —
+  so the composer appeared exercised while the value it depended on had no origin at all. **A required
+  parameter with no production producer is the same defect wearing a type signature**: the compiler is
+  satisfied, the tests are satisfied, and the only thing missing is a caller. Closed in C1 by deriving
+  the trend from an episode history the method takes instead, so the value cannot be forgotten because
+  the method cannot be called without the evidence for it.
 - **Status:** `controlled`
 
 ### DC-090 — A versioned schema stores a version and never compares it
@@ -3284,3 +3293,39 @@ for both or split.*
   schema, protocol or format carries a version, find the comparison — if the only use is an INSERT,
   the versioning is decorative and the first additive change is the one that discovers it.
 - **Status:** `controlled`
+
+### DC-091 — An acceptance criterion does not reach its own deliverable
+
+- **Shape:** a slice states what it delivers, and separately states how it will be judged. The two
+  are written at different moments and are not compared. The criterion is satisfiable by work that
+  leaves the deliverable undone — so the slice can go green, the tests can be honest, the reviewer can
+  be satisfied, and the user story stays unmet. Nothing is wrong with any artifact; the defect is in
+  the gap between two sentences that nobody read together.
+- **Signature:** a deliverable written in the **user's voice** and a criterion written in the
+  **system's** — *"an agent sees its standing"* judged by *"a standing is produced"*. The verbs give
+  it away: **produced, computed, available, exposed** on the criterion against **sees, receives,
+  can, knows** on the deliverable. The second tell is that satisfying the criterion requires touching
+  only components that already exist, while the deliverable would require a channel that does not.
+- **Why it survives:** every control points at the criterion. A red-first test is written against it,
+  a reviewer checks the work against it, and a gate — if one existed — would encode it. The
+  deliverable is prose at the top of a plan, and prose is not executable. The failure only appears
+  when a user tries the thing, which is exactly when it is most expensive.
+- **Instance:** 2026-09-02, C1 (US-16). **Delivers:** *"an agent sees its rank, trend and one
+  evidence-backed reason per dimension."* **P1:** *"a standing is produced for a scored episode."*
+  Producing it was satisfiable in an hour by calling `StandingComposer` from
+  `WatcherLeaderboardPaneViewModel` — after which the **operator** would see a standing and the
+  **agent** would receive nothing, which is the opposite of the story. US-16 is written from the
+  agent's seat and its own acceptance clause reads *"Then it **receives** its current standing"*.
+
+  Found in the slice's P0 by reading the **spec line**, not the plan. Reading the plan alone could not
+  have found it: both sentences are in the plan and both are individually reasonable.
+- **Control:** no gate, and the reason is the same one that stopped a text gate for DC-089 — a
+  criterion is prose, and matching a deliverable to it is a semantic comparison. What worked, and
+  costs one step: **in P0, restate the deliverable in the user's voice and ask which component would
+  have to change for that sentence to become true.** If the answer is only components that already
+  exist, the criterion is probably measuring the wrong thing. Here the answer was "a channel the
+  agent can call", and no such channel existed — five MCP tools, three of them writes, and no
+  standing among them.
+- **The generalisation:** *a criterion that can be satisfied without touching anything new is
+  suspicious when the deliverable describes something that does not yet happen.*
+- **Status:** `partially-controlled` — a question in P0, no automated check

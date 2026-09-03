@@ -114,7 +114,12 @@ public sealed class LeaderboardTests
         var board = Composer.Compose(Cohort("Claude Code", "Opus 4.8", 80, 82, 84, 86, 88).ToList(), "refactor", "weave/1");
         var subject = SixDimensionSubject();
 
-        var standing = new StandingComposer().Compose(subject, board, trend: 3);
+        // A HISTORY, not a trend. These tests used to pass `trend: 3` — a number nothing in the
+        // product produced — so they asserted that the composer copies its argument. The trend is
+        // now derived from the same cohort, which is what makes the assertion about behaviour.
+        var earlier = Ep("ep-earlier", "Claude Code", "Opus 4.8", "op1", subject.Weave - 3);
+
+        var standing = new StandingComposer().Compose(subject, board, [earlier, subject]);
 
         Assert.True(standing.RankComparable);
         Assert.Equal(1, standing.Rank);
@@ -128,7 +133,9 @@ public sealed class LeaderboardTests
         var board = Composer.Compose(Cohort("Claude Code", "Opus 4.8", 80, 82, 84).ToList(), "refactor", "weave/1"); // cohort 3
         var subject = SixDimensionSubject();
 
-        var standing = new StandingComposer().Compose(subject, board, trend: -1);
+        var earlier = Ep("ep-earlier", "Claude Code", "Opus 4.8", "op1", subject.Weave + 1);
+
+        var standing = new StandingComposer().Compose(subject, board, [earlier, subject]);
 
         Assert.False(standing.RankComparable);
         Assert.Null(standing.Rank);
