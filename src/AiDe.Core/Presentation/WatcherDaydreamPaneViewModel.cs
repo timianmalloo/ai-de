@@ -93,6 +93,17 @@ public interface IWatcherDaydreamQuery
 
     /// <summary>Lines the record held that this version could not parse. Reported, never swallowed.</summary>
     int UnreadableLines { get; }
+
+    /// <summary>
+    /// Why an empty Daydream is empty, when the reason is not "nothing has happened yet".
+    /// </summary>
+    /// <remarks>
+    /// <see cref="DaydreamReach.Finding"/>, or <c>null</c> when there is nothing to report. This is
+    /// the surface half of the design's §8 question — <i>is Daydream seeing anything?</i> — and it
+    /// exists because "No patterns observed yet" is true of a healthy repository and of one where
+    /// nothing observable was ever recorded, and only the second needs an operator (DC-025).
+    /// </remarks>
+    string? ReachFinding { get; }
 }
 
 /// <summary>
@@ -110,7 +121,9 @@ public interface IWatcherDaydreamQuery
 /// (DM7), so there is deliberately no parallel copy to fall back to.
 /// (<c>design-watcher-daydream-dream-seam</c> §4a.)</para>
 /// </remarks>
-public sealed class WatcherDaydreamQuery(DaydreamRepositoryRecord record) : IWatcherDaydreamQuery
+public sealed class WatcherDaydreamQuery(
+    DaydreamRepositoryRecord record,
+    DaydreamReachProbe? reach = null) : IWatcherDaydreamQuery
 {
     private readonly DaydreamRepositoryRecord _record = record ?? throw new ArgumentNullException(nameof(record));
     private readonly DaydreamFold _fold = new();
@@ -120,6 +133,16 @@ public sealed class WatcherDaydreamQuery(DaydreamRepositoryRecord record) : IWat
     public string? Unavailable => _record.Unavailable;
 
     public int UnreadableLines => _unreadable;
+
+    /// <summary>
+    /// The probe's finding, or <c>null</c> when no probe is wired.
+    /// </summary>
+    /// <remarks>
+    /// Optional so a host with no scored episodes to compare against gets no finding rather than a
+    /// fabricated one — an absent probe must never render as "nothing to report", which is the
+    /// distinction the probe exists to make in the first place.
+    /// </remarks>
+    public string? ReachFinding => reach?.Probe().Finding;
 
     public IReadOnlyList<DaydreamCandidate> GetCandidates()
     {
@@ -208,7 +231,14 @@ public sealed class WatcherDaydreamPaneViewModel(IWatcherDaydreamQuery? query)
             if (Rows.Count == 0)
             {
                 State = PaneState.Empty;
-                StatusMessage = "No patterns observed yet." + caveat;
+
+                // The finding REPLACES the empty message rather than appending to it. "No patterns
+                // observed yet" is true of a healthy repository and of one Daydream cannot see, and
+                // leading with it would let the reassurance arrive first and the cause second —
+                // which is the reading this whole probe exists to displace (DC-025).
+                StatusMessage = (query.ReachFinding is { Length: > 0 } finding
+                    ? finding
+                    : "No patterns observed yet.") + caveat;
             }
             else
             {

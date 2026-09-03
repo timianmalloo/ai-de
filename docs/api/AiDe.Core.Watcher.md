@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 145 types, 269 members, 61% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 147 types, 276 members, 62% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**145 public types · 269 public members · 61% documented.**
+**147 public types · 276 public members · 62% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -784,6 +784,112 @@ tighten; it must never silently relax.
 |---|---|
 | `IReadOnlyList<DaydreamRecurrence> Recurring(IEnumerable<DaydreamObservation> observations)` | The patterns that recur, ordered deterministically for replay. |
 
+## `DaydreamReach`
+
+*record* — `DaydreamReachProbe.cs`
+
+What Daydream actually reached, over the episodes the product has scored.
+
+**Remarks.** Counts, and one finding derived from them. Nothing here is stored: every number folds from
+the scorecards and the repository record on read, because two definitions of one quantity is a
+defect signature (DM7).
+
+| Member | Summary |
+|---|---|
+| `bool NothingScoredYet` | Nothing has been scored, so there is nothing to say about what Daydream saw. |
+| `bool Deaf` | Every scored episode was declined for want of anything to assess. |
+| `int Missing` | Observations the classification expected that the record does not hold. |
+| `int Unaccounted` | Observations the record holds that this store cannot account for. |
+| `string? Finding` | One sentence for an operator, or `null` when there is nothing to report. |
+
+### `bool NothingScoredYet`
+
+Nothing has been scored, so there is nothing to say about what Daydream saw.
+
+**Remarks.** Distinct from every other state below. A repository nobody has scored in is not a repository
+with an instrumentation gap, and reporting it as one would make the gap meaningless on the
+day it is real.
+
+### `bool Deaf`
+
+Every scored episode was declined for want of anything to assess.
+
+**Remarks.** **The finding this probe exists for.** Daydream is not quiet because the work is clean —
+it is quiet because nothing it can key on was ever observed, and it will stay quiet for every
+future episode of the same kind. Without this the surface reports "no patterns observed yet",
+which is true and reads as reassurance (DC-025).
+
+### `int Missing`
+
+Observations the classification expected that the record does not hold.
+
+**Remarks.** The independent half. Comparing what the writer *reported* doing against what it did
+would be self-referential — `FreshnessProber` was built because a staleness metric
+measured against the daemon's own last event, so a dead watcher read as perfectly fresh.
+This compares a classification of the store against the file on disk, which are two sources.
+
+### `int Unaccounted`
+
+Observations the record holds that this store cannot account for.
+
+**Remarks.** **Found because clamping `Missing` at zero was uncovered by mutation.**
+Removing the clamp reddened nothing, which said the negative case had never been thought
+about — and it is not an impossible state. It is the *normal* one for a fresh clone: the
+Daydream record is committed and travels with the repository, while the scorecards live in a
+per-workspace store that starts empty. Retention deletion produces it too.
+
+
+
+
+
+**Deliberately not a finding.** It fires for every clone, and a warning that fires
+for everyone warns no one. It is exposed as a count because clamping it away was the same
+mistake this probe exists to correct — a state folded into "fine" because nobody named
+it.
+
+### `string? Finding`
+
+One sentence for an operator, or `null` when there is nothing to report.
+
+**Remarks.** Ordered by what a reader must act on first: a record it cannot write beats a gap in what it
+would write, which beats an absence of evidence. Each names only what was counted.
+
+## `DaydreamReachProbe`
+
+*class* — `DaydreamReachProbe.cs`
+
+Answers the operator question the Daydream design named: *is Daydream seeing anything?*
+
+**Remarks.** **Why a probe and not a counter.** The obvious build is to tally
+`DaydreamObservationOutcome` as `Observe` returns them.
+That fails twice: the shell constructs a fresh recorder per scoring pass so nothing accumulates,
+and — more importantly — a tally is the writer reporting on itself. `FreshnessProber` exists
+because exactly that shape let a dead watcher read as perfectly fresh. This derives the expected
+answer from the **store's scorecards** and compares it against the **file on disk**: two
+sources, neither of them the writer.
+
+
+
+
+
+**It shares the writer's judgement rather than copying it.**
+`DeclineReason` is the single definition of what gets declined and
+why. A probe with its own copy would drift, and it would drift into reporting the wrong
+silence.
+
+
+
+
+
+**A silence is not a finding on its own.** Nothing scored yet, everything clean, and
+nothing assessable are three different states that all produce an empty Daydream, and only the
+last is a gap. Collapsing them is DC-025 — which is the defect this whole vertical was corrected
+for once already.
+
+| Member | Summary |
+|---|---|
+| `DaydreamReach Probe()` | Classifies every scored episode and compares the result with the record. |
+
 ## `DaydreamObservationOutcome`
 
 *enum* — `DaydreamRecorder.cs`
@@ -883,12 +989,31 @@ unrecoverable, since the occurrences it needed were never kept.
 | Member | Summary |
 |---|---|
 | `DaydreamObservationOutcome Observe(ScoredEpisode episode)` | Records one episode as an observation, and says what it did. |
+| `DaydreamObservationOutcome? DeclineReason(ScoredEpisode episode, DaydreamSignature signature)` | Why this episode would not be observed, or `null` when it would be. |
 
 ### `DaydreamObservationOutcome Observe(ScoredEpisode episode)`
 
 Records one episode as an observation, and says what it did.
 
 **Returns.** Which of the four `DaydreamObservationOutcome` cases applied. Nothing here reports a write it did not make, and **nothing collapses "nothing went wrong" into "nothing was assessed"** — see the enum for why those two must not render alike.
+
+### `DaydreamObservationOutcome? DeclineReason(ScoredEpisode episode, DaydreamSignature signature)`
+
+Why this episode would not be observed, or `null` when it would be.
+
+**Remarks.** **Shared with `DaydreamReachProbe`, deliberately.** The probe answers
+"is Daydream seeing anything" by classifying the store's scored episodes the way this class
+would. If it re-implemented that judgement, the two would be two definitions of one quantity
+(DM7) — and they would drift in the direction that matters, because the probe exists to
+report a silence and a probe that disagrees with the writer reports the wrong silence.
+
+
+
+
+
+Pure and static: no clock, no record, no instance state. That is what lets the probe
+derive the answer from stored scorecards rather than from counters — which it must, because
+the shell builds a fresh recorder per scoring pass, so nothing accumulates on an instance.
 
 ## `DaydreamRecordRead`
 

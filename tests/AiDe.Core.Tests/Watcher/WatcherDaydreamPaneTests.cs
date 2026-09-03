@@ -18,6 +18,8 @@ public sealed class WatcherDaydreamPaneTests
 
         public int UnreadableLines { get; init; }
 
+        public string? ReachFinding { get; init; }
+
         public IReadOnlyList<DaydreamCandidate> GetCandidates() => candidates;
     }
 
@@ -27,6 +29,8 @@ public sealed class WatcherDaydreamPaneTests
 
         public int UnreadableLines => 0;
 
+        public string? ReachFinding => null;
+
         public IReadOnlyList<DaydreamCandidate> GetCandidates() => throw new InvalidOperationException("record gone");
     }
 
@@ -35,6 +39,8 @@ public sealed class WatcherDaydreamPaneTests
         public string? Unavailable => "No repository is open, so nothing is recorded.";
 
         public int UnreadableLines => 0;
+
+        public string? ReachFinding => null;
 
         // Never reached. A query that reports itself unavailable must not also be asked for a
         // result: if the pane calls this, the absence check ran too late.
@@ -269,6 +275,42 @@ public sealed class WatcherDaydreamPaneTests
 
         Assert.Equal(PaneState.Ready, pane.State);
         Assert.Contains("3 line(s) could not be read", pane.StatusMessage);
+    }
+
+    /// <summary>
+    /// A reach finding REPLACES "no patterns observed yet" rather than being appended to it.
+    /// </summary>
+    /// <remarks>
+    /// Order is the whole point. Both sentences are true when Daydream cannot see the work, and
+    /// leading with the reassuring one lets a reader stop before the cause — which is the reading
+    /// the probe exists to displace (DC-025).
+    /// </remarks>
+    [Fact]
+    public void AReachFindingDisplacesTheReassuringEmptyMessage()
+    {
+        var pane = Loaded(new Fixed
+        {
+            ReachFinding = "3 episode(s) scored and none carried anything to assess — "
+                + "Daydream cannot see this work, which is an instrumentation gap rather than a quiet repository.",
+        });
+
+        Assert.Equal(PaneState.Empty, pane.State);
+        Assert.Contains("cannot see this work", pane.StatusMessage);
+        Assert.DoesNotContain("No patterns observed yet", pane.StatusMessage);
+    }
+
+    /// <summary>With nothing to report, the ordinary empty message stands.</summary>
+    /// <remarks>
+    /// The other half, and the one that keeps the finding meaningful: a probe that always had
+    /// something to say would make the sentence above furniture rather than a signal.
+    /// </remarks>
+    [Fact]
+    public void NoReachFindingLeavesTheOrdinaryEmptyMessage()
+    {
+        var pane = Loaded(new Fixed());
+
+        Assert.Equal(PaneState.Empty, pane.State);
+        Assert.Equal("No patterns observed yet.", pane.StatusMessage);
     }
 
     /// <summary>And an EMPTY record that was partly unreadable says so too.</summary>

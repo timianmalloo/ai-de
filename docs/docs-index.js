@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T16:55:19Z",
+  "generated": "2026-09-03T17:02:57Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1480,7 +1480,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 80 members, 63% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Presentation: 32 types, 81 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1493,7 +1493,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "04bf396dbd005849202091b92b89390fd815753a785a2568083121ef0da73c40"
+      "sourceSha256": "14b29968b28ccf9a4be7ac58f6033377a872450880eaa14ea52ee1caab97aa3a"
     },
     {
       "id": "api-aide-core-projections",
@@ -1605,7 +1605,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 145 types, 269 members, 61% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 147 types, 276 members, 62% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1618,7 +1618,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d9302b13158759e8f770162c05c42a738fa915e05db1d1fce25288d1200cf292"
+      "sourceSha256": "be7b897493f9605388f5910106b8af2b8d91c454136af9937233141cc801b51b"
     },
     {
       "id": "api-aide-core-workbench",
@@ -10862,5 +10862,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ead20b13b3226affab974016f99e0b64bffc1f46f770df8e20015797a09d731b"
+  "graphSha256": "10e5c28fd835db38b2bf48e0df49c1f5fd83a102556f18ddcc2c1b41e2377d52"
 };

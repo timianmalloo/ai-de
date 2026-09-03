@@ -113,6 +113,36 @@ public sealed class DaydreamRecorder(
 
         var signature = DaydreamSignature.For(episode, lowRubricThreshold);
 
+        if (DeclineReason(episode, signature) is { } declined)
+        {
+            return declined;
+        }
+
+        return _record.Append(new DaydreamObservation(
+                IdFor(episode.EpisodeId, signature), signature, episode.EpisodeId, _clock()))
+            ? DaydreamObservationOutcome.Recorded
+            : DaydreamObservationOutcome.RecordUnavailable;
+    }
+
+    /// <summary>
+    /// Why this episode would not be observed, or <c>null</c> when it would be.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Shared with <see cref="DaydreamReachProbe"/>, deliberately.</b> The probe answers
+    /// "is Daydream seeing anything" by classifying the store's scored episodes the way this class
+    /// would. If it re-implemented that judgement, the two would be two definitions of one quantity
+    /// (DM7) — and they would drift in the direction that matters, because the probe exists to
+    /// report a silence and a probe that disagrees with the writer reports the wrong silence.</para>
+    ///
+    /// <para>Pure and static: no clock, no record, no instance state. That is what lets the probe
+    /// derive the answer from stored scorecards rather than from counters — which it must, because
+    /// the shell builds a fresh recorder per scoring pass, so nothing accumulates on an instance.</para>
+    /// </remarks>
+    public static DaydreamObservationOutcome? DeclineReason(ScoredEpisode episode, DaydreamSignature signature)
+    {
+        ArgumentNullException.ThrowIfNull(episode);
+        ArgumentNullException.ThrowIfNull(signature);
+
         if (signature.IsUnremarkable)
         {
             // A clean episode is not a pattern to learn from — recording them would fill the record
@@ -136,10 +166,7 @@ public sealed class DaydreamRecorder(
                 : DaydreamObservationOutcome.NothingWasAssessed;
         }
 
-        return _record.Append(new DaydreamObservation(
-                IdFor(episode.EpisodeId, signature), signature, episode.EpisodeId, _clock()))
-            ? DaydreamObservationOutcome.Recorded
-            : DaydreamObservationOutcome.RecordUnavailable;
+        return null;
     }
 
     /// <summary>

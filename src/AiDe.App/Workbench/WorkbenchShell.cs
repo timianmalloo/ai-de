@@ -1876,7 +1876,7 @@ public sealed class WorkbenchShell : IDisposable
                 // _workspaceRoot, because AttachWorkspace assigns that field AFTER this call — the
                 // field would be null on the one path that has a workspace, which is DC-084's shape
                 // and is the third time it would have been built here.
-                new WatcherDaydreamQuery(DaydreamRepositoryRecord.For(repositoryRoot)));
+                DaydreamQueryFor(host, repositoryRoot));
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
@@ -1946,6 +1946,27 @@ public sealed class WorkbenchShell : IDisposable
     /// unremarkable episode. The audit-import producer, which does see committed Proof Packs, is the
     /// one that currently feeds it.</para>
     /// </remarks>
+    /// <summary>
+    /// The Daydreams read, with the probe that says why an empty one is empty.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The probe is wired here or it is DC-089.</b> A probe reachable only from its tests
+    /// is a capability that ships inert, and this one exists precisely to be read on the surface
+    /// where a person would otherwise see "No patterns observed yet" and stop.</para>
+    ///
+    /// <para><b>It derives, so it needs no lifetime.</b> The probe classifies the store's stored
+    /// scorecards and compares that against the file on disk; it holds no counters, so it does not
+    /// care that this method may be called again on a re-attach. That is deliberate — a rate
+    /// accumulated inside the recorder would have been reset by the shell's own construction
+    /// pattern, and a probe for a deaf Daydream that is itself deaf is the failure this design was
+    /// chosen to avoid.</para>
+    /// </remarks>
+    private static WatcherDaydreamQuery DaydreamQueryFor(WatcherHost host, string? repositoryRoot)
+    {
+        var record = DaydreamRepositoryRecord.For(repositoryRoot);
+        return new WatcherDaydreamQuery(record, new DaydreamReachProbe(host.Store, record));
+    }
+
     private DaydreamRecorder DaydreamRecorderForWorkspace()
     {
         var root = _workspaceRoot ?? string.Empty;

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation: 32 types, 80 members, 63% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation: 32 types, 81 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation`
 
-**32 public types · 80 public members · 63% documented.**
+**32 public types · 81 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -395,7 +395,16 @@ authoritative, and nothing reads them. Two definitions of one quantity is a defe
 |---|---|
 | `string? Unavailable` | **(gap)** |
 | `int UnreadableLines` | **(gap)** |
+| `string? ReachFinding` | The probe's finding, or `null` when no probe is wired. |
 | `IReadOnlyList<DaydreamCandidate> GetCandidates()` | **(gap)** |
+
+### `string? ReachFinding`
+
+The probe's finding, or `null` when no probe is wired.
+
+**Remarks.** Optional so a host with no scored episodes to compare against gets no finding rather than a
+fabricated one — an absent probe must never render as "nothing to report", which is the
+distinction the probe exists to make in the first place.
 
 ## `WatcherDaydreamPaneViewModel`
 

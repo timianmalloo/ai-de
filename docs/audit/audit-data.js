@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T16:55:18Z",
+  "generated": "2026-09-03T17:02:56Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8712,6 +8712,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "src/AiDe.App/Workbench/WorkbenchShell.cs"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0437",
+      "shortname": "daydream-reach-probe",
+      "datetime": "2026-09-03T17:02:56Z",
+      "session": "e9679dd2",
+      "prompt": "Build the freshness probe: is Daydream seeing anything",
+      "summary": "DaydreamReachProbe derives from the store's scorecards and compares against the repository record — two sources, neither the writer, following FreshnessProber's lesson that a self-referential staleness metric let a dead watcher read as fresh. Shares DeclineReason with the recorder so there is one definition. Distinguishes nothing-scored-yet, everything-clean and nothing-assessable, of which only the last is a gap. Mutation replay found the Missing clamp uncovered, which turned out to hide a real state (a fresh clone) — now Unaccounted. Wired to the Daydreams pane so the finding displaces the reassuring empty message.",
+      "kind": "prompt",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/DaydreamReachProbe.cs"
       ],
       "tags": [],
       "outcome": "success"
