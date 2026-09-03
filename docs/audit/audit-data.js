@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T01:34:04Z",
+  "generated": "2026-09-03T01:42:58Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8491,6 +8491,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/design/watcher-daydream-dream-seam.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0424",
+      "shortname": "loop-walked-as-a-chain",
+      "datetime": "2026-09-03T01:42:58Z",
+      "session": "phase3-pane-probes",
+      "prompt": "Keep working with the other session to complete the end-to-end of the entire agent collaboration loop.",
+      "summary": "Walked the loop as one chain rather than waiting for a running build. Register, observe, board and episode declaration all work as a circuit headless. The break is that a contract-closed episode is never scored: scoring has one producer (the audit log) and the identifier spaces cannot meet. Delivered C1's outbound half as a file at AIDE_CONTRACT_LOG/standing/<session>.json after finding the MCP gateway has no caller and no transport. Did NOT fix the scoring break - the three options are three different products. Pinned the absence in tests that fail when it closes. Committed a decision note joining it to Daydream's D5 stop as one question about how far outside its own store the product reaches. 385 App + 1526 Core, 19 gates.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260902-two-decisions-the-loop-waits-on.md"
       ],
       "tags": [],
       "outcome": "success"
