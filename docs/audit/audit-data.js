@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T01:48:47Z",
+  "generated": "2026-09-03T01:55:36Z",
   "audit": [
     {
       "id": "al-0001",
@@ -8525,6 +8525,23 @@ window.AUDIT_DATA = {
       "actor": null,
       "artifacts": [
         "docs/lessons/defect-classes.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-0426",
+      "shortname": "regenerate-derived-single-command",
+      "datetime": "2026-09-03T01:55:36Z",
+      "session": "e9679dd2-1c2c-4e15-804c-7fb128bcf4c6",
+      "prompt": "(continuing after Core located the root cause of five stale-derived-view instances)",
+      "summary": "Turned DC-082's ordering rule into a shape. Core found the root cause of my four figure catches plus one of theirs: derived views must regenerate LAST, after append-only logs, because an audit entry changes the counts the figures report - so regenerating before appending produces figures correct when written and stale by commit close, by construction. Nobody caught it because the gate fires on the NEXT run, usually someone else's push, so no one held the whole shape. There was no single regeneration entry point: both sessions ran four commands in a remembered order, which is a procedure with no failure mode. tools/regenerate-derived.py encodes the order once, stops on the first failure rather than deriving from a half-written source, and runs the verifiers at the end so 'did I do that in the right order' is answered locally rather than on the next push. It hit the cp1252 class on its FIRST run - third instance today, this time on output - and pins the encoding on the way out as well as in.",
+      "kind": "script",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tools/regenerate-derived.py"
       ],
       "tags": [],
       "outcome": "success"

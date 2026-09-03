@@ -186,8 +186,17 @@ Every rebase between sessions conflicts on the same files, and never on code (§
 | `docs/audit/*.jsonl` | **Append-only. Union by content**, never by id: `python tools/merge-append-only-log.py docs/audit/audit-log.jsonl`. Hand-resolving dropped an entry once (DC-026) |
 | `docs/docs-index.js`, `docs/audit/audit-data.js` | **Derived. Regenerate, never merge**: `docs-graph.py derive` and `audit-log.py render`. A hand-merged derived view is valid JSON, has no conflict marker, and is wrong (DC-060) |
 
-After any rebase, run both regenerators and commit the result. `python
-tools/verify-derived-views.py` fails if you forget.
+After any rebase — and after appending any audit entry — run:
+
+```
+python tools/regenerate-derived.py
+```
+
+**Order matters and this is the only place it is encoded.** An audit entry changes the counts the
+site figures report, so regenerating BEFORE appending produces figures that were correct when
+written and stale by the time the commit closed. Five instances landed in one day across two
+sessions and none was caught by its author, because the gate catches staleness on the next run —
+usually somebody else's push. One command, right order, verifiers at the end (DC-082).
 
 **Run `prompt-log.py` and `audit-log.py` from your own worktree, never from the primary checkout.**
 The audit log is repo-global in meaning but **per-checkout in storage**: a script writes into
