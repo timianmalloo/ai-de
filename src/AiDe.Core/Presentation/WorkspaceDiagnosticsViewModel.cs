@@ -87,5 +87,23 @@ public sealed class WorkspaceDiagnosticsViewModel(
     }
 
     /// <summary>The tools the MCP gateway exposes. Local-only and read-only by ADR-0004.</summary>
-    public static IReadOnlyList<string> McpToolGatewayNames { get; } = ["describe", "impact", "find", "knowledge"];
+    /// <remarks>
+    /// <para><b>Derived from the gateway, not restated.</b> This was a hand-written
+    /// <c>["describe", "impact", "find", "knowledge"]</c> and it was wrong in both directions:
+    /// <c>impact</c> and <c>knowledge</c> are daemon IPC operations and have never been gateway
+    /// tools, while <c>standing</c> — added for US-16 — was missing. An operator reading the
+    /// diagnostics was told about two tools that do not exist and not told about one that
+    /// does.</para>
+    ///
+    /// <para>A second authority on what a component exposes disagrees with it eventually; this one
+    /// disagreed on three of five entries. Reflected over the methods that actually return an
+    /// <see cref="AiDe.Core.Mcp.McpToolResult"/>, so a tool added tomorrow appears here without
+    /// anyone remembering this list exists (DC-021).</para>
+    /// </remarks>
+    public static IReadOnlyList<string> McpToolGatewayNames { get; } =
+        [.. typeof(AiDe.Core.Mcp.McpToolGateway)
+            .GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)
+            .Where(m => m.ReturnType == typeof(AiDe.Core.Mcp.McpToolResult))
+            .Select(m => m.Name.ToLowerInvariant())
+            .OrderBy(n => n, StringComparer.Ordinal)];
 }

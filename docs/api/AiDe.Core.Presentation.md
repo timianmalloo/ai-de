@@ -512,4 +512,24 @@ a tool added without appearing here would be a discrepancy rather than a documen
 | Member | Summary |
 |---|---|
 | `WorkspaceDiagnostics Read()` | **(gap)** |
-| `IReadOnlyList<string> McpToolGatewayNames { get; } = ["describe", "impact", "find", "knowledge"]` | The tools the MCP gateway exposes. Local-only and read-only by ADR-0004. |
+| `IReadOnlyList<string> McpToolGatewayNames { get; } =` | The tools the MCP gateway exposes. Local-only and read-only by ADR-0004. |
+
+### `IReadOnlyList<string> McpToolGatewayNames { get; } =`
+
+The tools the MCP gateway exposes. Local-only and read-only by ADR-0004.
+
+**Remarks.** **Derived from the gateway, not restated.** This was a hand-written
+`["describe", "impact", "find", "knowledge"]` and it was wrong in both directions:
+`impact` and `knowledge` are daemon IPC operations and have never been gateway
+tools, while `standing` — added for US-16 — was missing. An operator reading the
+diagnostics was told about two tools that do not exist and not told about one that
+does.
+
+
+
+
+
+A second authority on what a component exposes disagrees with it eventually; this one
+disagreed on three of five entries. Reflected over the methods that actually return an
+`McpToolResult`, so a tool added tomorrow appears here without
+anyone remembering this list exists (DC-021).
