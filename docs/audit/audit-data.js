@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-ui-experience-refinement",
-  "generated": "2026-09-04T18:30:57Z",
+  "generated": "2026-09-04T19:27:31Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9355,6 +9355,32 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true,
         "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PY7XXKC4V1NNR3G3QRTNQ5",
+      "shortname": "mcp-episode-tools-and-config",
+      "datetime": "2026-09-04T19:27:31Z",
+      "session": "e9679dd2",
+      "prompt": "do all the next steps including optional",
+      "summary": "Wrote .mcp.json from the product (create-when-absent, merge-when-present, unparseable left byte-for-byte alone), drove the MCP server live against a copy of a real watcher store (whoami resolved generation 38 of a real session; episode-open and episode-close landed contract-shaped lines), and added aide_episode_open/aide_episode_close. Extended the equivalence gate to episodes, and generalised verify-published-layout from the daemon to every BaseDirectory sidecar - closing DC-046's own stated residual risk by failing on a sidecar the gate has not been told about. Both halves observed failing before being believed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/McpConfigWriter.cs",
+        "src/AiDe.Mcp/EpisodeTools.cs",
+        "tests/AiDe.Core.Tests/Watcher/McpConfigWriterTests.cs",
+        "tools/verify-published-layout.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Finish the MCP slice: the product writes .mcp.json into a workspace, the server is proven live against a real store, and an agent can declare and close a scored episode through it.",
+      "done_when": "McpConfigWriter merges beside another tool's servers and refuses an unparseable file; the real AiDe.Mcp.exe answers whoami/board_read/episode_open/episode_close against a copy of a real watcher.db; the equivalence gate covers episodes; both suites and every CI gate are green.",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
       }
     }
   ],

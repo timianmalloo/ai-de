@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 159 types, 308 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 162 types, 312 members, 65% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**159 public types · 308 public members · 64% documented.**
+**162 public types · 312 public members · 65% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -708,26 +708,36 @@ This is the session-side half of the contract; `InjectedContractIngest` is the i
 | `void WriteRegister(string externalSessionId, IReadOnlyDictionary<string, string?> attributes)` | Writes a registration with the same `OtelAttributes` keys as the OTLP path. |
 | `void WriteHeartbeat(string externalSessionId)` | **(gap)** |
 | `void WriteSessionEnd(string externalSessionId)` | **(gap)** |
+| `void Write(string kind, string externalSessionId, IReadOnlyDictionary<string, string?> attributes)` | Writes one contract line of any kind — the same line an agent writes by hand. |
 | `void WriteBoardPost(` | Writes one `board-post` line — the same line an agent writes by hand. |
+
+### `void Write(string kind, string externalSessionId, IReadOnlyDictionary<string, string?> attributes)`
+
+Writes one contract line of any kind — the same line an agent writes by hand.
+
+**Remarks.** **Here rather than in the MCP server, because the line format must have exactly one
+definition.** The server's whole claim is that it is a translation of the contract rather
+than a parallel API (`design-mcp-enlightened-path`), and a second place that knows how a
+contract line is spelled would make that claim untestable — the two paths could then differ
+in precisely the way the equivalence gate exists to catch.
+
+
+
+
+
+**It validates nothing.** Every kind's refusals belong to
+`InjectedContractIngest`, with counters, and re-deciding any of them here would be a
+second set of rules free to drift from the first. Callers report what the ingest will do;
+this writes what the caller said.
 
 ### `void WriteBoardPost(`
 
 Writes one `board-post` line — the same line an agent writes by hand.
 
-**Remarks.** **Here rather than in the MCP server, because the line format must have one
-definition.** The server's whole claim is that it is a translation of the contract rather
-than a parallel API (`design-mcp-enlightened-path`), and a second place that knows how a
-board-post line is spelled would make that claim untestable — the paths could then differ in
-exactly the way the equivalence gate exists to catch.
-
-
-
-
-
-**It validates nothing.** An unrecognised kind, empty content and an orphan parent
-are all quarantined by `InjectedContractIngest`, with counters, and re-deciding any of it
-here would be a second set of rules to drift from the first. The caller reports what the
-ingest will do; this writes what the caller said.
+**Remarks.** Its own method rather than a `Write` call at each site because the absent-vs-null
+content rule below is a property of the board's wire shape, and a rule enforced at the call
+sites is a rule the next call site will not know about. It validates nothing else, for the
+reason `Write` gives.
 
 ## `CoordContractLog`
 
@@ -1866,6 +1876,59 @@ a session's state (spec US-2).
 |---|---|
 | `LivenessProjection(IWatcherObservationStore store, IMonotonicClock clock, TimeSpan staleAfter)` | **(gap)** |
 | `LivenessState Evaluate(string sessionId)` | Ended if the session was ended or has no heartbeat (an unknown or never-alive session collapses to Ended per the spec); otherwise Alive within the stale threshold, else Stale. |
+
+## `McpConfigOutcome`
+
+*enum* — `McpConfigWriter.cs`
+
+What writing `.mcp.json` did, so the caller can say so rather than guess.
+
+## `McpConfigResult`
+
+*record* — `McpConfigWriter.cs`
+
+The outcome and the path, or the reason there is none.
+
+## `McpConfigWriter`
+
+*class* — `McpConfigWriter.cs`
+
+Puts AI-DE's MCP server where a harness will discover it, without taking the file over.
+
+**Remarks.** **The product may contribute to this file.** It is not AI-DE's file — a user or another
+tool may have servers in it — but ensuring the enlightened experience is a legitimate reason to
+write, so the rule is create-when-absent and MERGE-when-present. That is the owner's principle 4,
+and it is the reason this class is a merge rather than a template.
+
+
+
+
+
+**An unparseable file is left alone.** Not rewritten, not backed up and replaced —
+left. A file that fails to parse is far more likely to be mid-edit or written by a tool this
+version does not understand than to be corrupt, and overwriting someone's configuration to add a
+convenience is the kind of help nobody asks for twice. The refusal is reported so it can be
+fixed, which is the only honest thing to do with a file we will not touch.
+
+
+
+
+
+**Only AI-DE's own key is written.** Every other server, and every unrelated top-level
+key, is carried through untouched — including ones this version has never heard of.
+
+| Member | Summary |
+|---|---|
+| `string FileName = ".mcp.json"` | The workspace-relative file a harness reads. |
+| `string ServerKey = "aide"` | The key AI-DE owns. Everything else in the file belongs to someone else. |
+| `McpConfigResult Ensure(string? workspaceRoot, string? serverExecutablePath)` | Ensures the workspace's `.mcp.json` offers AI-DE's server. |
+
+### `McpConfigResult Ensure(string? workspaceRoot, string? serverExecutablePath)`
+
+Ensures the workspace's `.mcp.json` offers AI-DE's server.
+
+- **`workspaceRoot`** — The repository the agent will work in.
+- **`serverExecutablePath`** — The server binary, beside the shell.
 
 ## `BoardMessageKind`
 

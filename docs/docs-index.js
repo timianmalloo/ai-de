@@ -1636,7 +1636,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 159 types, 308 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 162 types, 312 members, 65% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1649,7 +1649,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5e825e325e2727c7ba06df931047ab04eb017d7a98ae000b22b654f9e25289e4"
+      "sourceSha256": "1a99ca334e081d8fd5e9b9fd255823711260e847b673af44891e5fc47c92e288"
     },
     {
       "id": "api-aide-core-workbench",
@@ -1686,7 +1686,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Mcp: 9 types, 16 members, 92% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Mcp: 10 types, 19 members, 93% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1699,7 +1699,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "14dc858c73735be0707d2561cd1ff0621a2f15699edf377d0e29f601dea435b3"
+      "sourceSha256": "7ca8700cf58fdf699d07a93b2d29b3fb9a1624848c509c48b4eda22612970453"
     },
     {
       "id": "architecture",
@@ -4332,7 +4332,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8d976c97505a473d4bf5beaa87be54f672591d120a9eddedb20172eaf37729dd"
+      "sourceSha256": "caf846232ff174bce4888e97771c22d13fb2052b6f2608e173cd35703a017e38"
     },
     {
       "id": "diagram-class",
@@ -11060,5 +11060,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5a6553c588df735b82438e7c30f88301b01f9960a4147754c073e0774b0aa7e5"
+  "graphSha256": "a2c8048660101fc76885afcab183f5ce75bb9819823c5f6c5b936c39c15b344a"
 };

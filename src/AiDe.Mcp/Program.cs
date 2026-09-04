@@ -158,9 +158,11 @@ public static class Program
         Check("initialize echoes the protocol version",
             Handle("""{"jsonrpc":"2.0","id":1,"method":"initialize"}""", context)?.Contains(ProtocolVersion) == true);
 
-        Check("tools/list names all three tools",
+        Check("tools/list names every tool",
             Handle("""{"jsonrpc":"2.0","id":2,"method":"tools/list"}""", context) is { } list
-            && list.Contains("aide_whoami") && list.Contains("aide_board_read") && list.Contains("aide_board_post"));
+            && list.Contains("aide_whoami") && list.Contains("aide_board_read")
+            && list.Contains("aide_board_post") && list.Contains("aide_episode_open")
+            && list.Contains("aide_episode_close"));
 
         Check("an unknown method is answered, not ignored",
             Handle("""{"jsonrpc":"2.0","id":3,"method":"nope"}""", context)?.Contains("method not found") == true);

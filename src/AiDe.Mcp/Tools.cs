@@ -5,7 +5,7 @@ using AiDe.Core.Watcher;
 namespace AiDe.Mcp;
 
 /// <summary>
-/// The three tools, their schemas, and the dispatch between them.
+/// The five tools, their schemas, and the dispatch between them.
 /// </summary>
 /// <remarks>
 /// <para><b>Every tool answers, including when it cannot do its job.</b> No tool throws and none
@@ -78,6 +78,65 @@ public static class Tools
                 },
                 ["required"] = new JsonArray("kind"),
             }),
+
+        Tool(
+            "aide_episode_open",
+            "Declare what you are working on. AI-DE knows a terminal exists; it does not know your "
+            + "goal, and it will not invent one — an episode is the unit your work is scored as, so "
+            + "an undeclared goal scores Not Scored. Declaring again supersedes the open one.",
+            new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["goal"] = new JsonObject
+                    {
+                        ["type"] = "string",
+                        ["description"] = "What you are trying to achieve. Never defaulted.",
+                    },
+                    ["done_when"] = new JsonObject
+                    {
+                        ["type"] = "string",
+                        ["description"] = "The condition that ends this episode. Never defaulted.",
+                    },
+                    ["not_in_scope"] = new JsonObject
+                    {
+                        ["type"] = "string",
+                        ["description"] = "What you are deliberately not doing. Optional.",
+                    },
+                },
+                ["required"] = new JsonArray("goal", "done_when"),
+            }),
+
+        Tool(
+            "aide_episode_close",
+            "Close your episode and name the evidence. `artifacts` is the one thing you may say "
+            + "about your own quality, and it is a POINTER, not a verdict: you name files and the "
+            + "product goes and looks. Ending your session without this leaves the episode open and "
+            + "unscored.",
+            new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["outcome"] = new JsonObject
+                    {
+                        ["type"] = "string",
+                        ["enum"] = new JsonArray([.. EpisodeTools.Outcomes.Select(o => (JsonNode)o!)]),
+                        ["description"] = "How it ended. Never defaulted to completed.",
+                    },
+                    ["artifacts"] = new JsonObject
+                    {
+                        ["type"] = "array",
+                        ["items"] = new JsonObject { ["type"] = "string" },
+                        ["description"] =
+                            $"Repository-relative paths to your evidence — the proof pack, the test "
+                            + $"file, the design. Up to {DeclaredArtifactBounds.MaxPaths}. Optional, "
+                            + "and an episode with none scores Not Scored.",
+                    },
+                },
+                ["required"] = new JsonArray("outcome"),
+            }),
     ];
 
     /// <summary>Dispatches one `tools/call`.</summary>
@@ -93,8 +152,10 @@ public static class Tools
             "aide_whoami" => Text(WhoAmI(context)),
             "aide_board_read" => Text(BoardRead(arguments, context)),
             "aide_board_post" => Text(BoardPost(arguments, context)),
+            "aide_episode_open" => Text(EpisodeOpen(arguments, context)),
+            "aide_episode_close" => Text(EpisodeClose(arguments, context)),
             _ => Text($"There is no tool called '{name}'. This server offers aide_whoami, "
-                    + "aide_board_read and aide_board_post."),
+                    + "aide_board_read, aide_board_post, aide_episode_open and aide_episode_close."),
         };
     }
 
@@ -218,6 +279,83 @@ public static class Tools
             return $"The post could not be written to {context.ContractLogDirectory}: {ex.Message}";
         }
     }
+
+    private static string EpisodeOpen(JsonObject? arguments, ServerContext context)
+    {
+        if (Writer(context, out var writer, out var refusal) is false)
+        {
+            return refusal!;
+        }
+
+        try
+        {
+            return EpisodeTools.Open(
+                writer!,
+                context.Identity.Session!.Binding.Terminal.TerminalId,
+                arguments?["goal"]?.GetValue<string>(),
+                arguments?["done_when"]?.GetValue<string>(),
+                arguments?["not_in_scope"]?.GetValue<string>());
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return $"The episode could not be written to {context.ContractLogDirectory}: {ex.Message}";
+        }
+    }
+
+    private static string EpisodeClose(JsonObject? arguments, ServerContext context)
+    {
+        if (Writer(context, out var writer, out var refusal) is false)
+        {
+            return refusal!;
+        }
+
+        try
+        {
+            return EpisodeTools.Close(
+                writer!,
+                context.Identity.Session!.Binding.Terminal.TerminalId,
+                arguments?["outcome"]?.GetValue<string>(),
+                Strings(arguments, "artifacts"));
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return $"The episode could not be written to {context.ContractLogDirectory}: {ex.Message}";
+        }
+    }
+
+    /// <summary>
+    /// The two preconditions every writing tool shares: a resolved identity and somewhere to write.
+    /// </summary>
+    /// <remarks>
+    /// Shared so the refusals are worded once. Two copies of "you are not registered" drift, and the
+    /// wording IS the feature here — an agent that cannot act needs the reason and the remedy.
+    /// </remarks>
+    private static bool Writer(ServerContext context, out CoordContractWriter? writer, out string? refusal)
+    {
+        writer = null;
+
+        if (!context.Identity.IsResolved)
+        {
+            refusal = context.Identity.Reason ?? "This is not an AI-DE session.";
+            return false;
+        }
+
+        if (context.ContractLogDirectory is null)
+        {
+            refusal = "AIDE_CONTRACT_LOG is unset, so there is nowhere to write.";
+            return false;
+        }
+
+        writer = new CoordContractWriter(context.ContractLogDirectory);
+        refusal = null;
+        return true;
+    }
+
+    /// <summary>Reads a string array argument, skipping anything that is not a string.</summary>
+    private static IReadOnlyList<string>? Strings(JsonObject? arguments, string name) =>
+        arguments?[name] is JsonArray array
+            ? [.. array.Where(n => n?.GetValueKind() == JsonValueKind.String).Select(n => n!.GetValue<string>())]
+            : null;
 
     private static JsonObject Entry(BoardEntry e) => new()
     {

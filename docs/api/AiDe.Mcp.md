@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Mcp: 9 types, 16 members, 92% carrying a summary doc comment.
+  Extracted public surface of AiDe.Mcp: 10 types, 19 members, 93% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Mcp`
 
-**9 public types · 16 public members · 92% documented.**
+**10 public types · 19 public members · 93% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -124,6 +124,58 @@ The kinds an agent may send, spelled the way the wire spells them.
 the contract's vocabulary is kebab-case (`knowledge-candidate`) while the enum is Pascal.
 Typing the list out would be a second copy to drift (DC-021); deriving it means a new kind is
 added once, in the enum.
+
+## `EpisodeTools`
+
+*class* — `EpisodeTools.cs`
+
+Declaring a Work Episode — the unit scoring attaches to.
+
+**Remarks.** **Why an agent declares this and the product cannot.** The workbench knows a terminal
+exists; it does not know what the agent inside it is trying to do. Opening an episode with a
+placeholder goal would fabricate one, and the scorer already treats a missing goal honestly — Not
+Scored, with the reason — so the declaration comes from the only party that has it.
+
+
+
+
+
+**The one thing an agent may say about its own quality is a POINTER.**
+`episode.artifacts` names files; the product goes and looks. There is no
+`acceptance_met` and there never will be: a verdict an agent asserts about itself is what
+the scoring design exists to refuse, while a path is something anyone can check. An agent cannot
+make a file exist by asserting it harder.
+
+
+
+
+
+Measured 2026-09-03: of 292 skill entries in this repository's own audit log, 33 carried a
+goal. The other 259 could never become episodes at all — which is why these tools state what will
+happen rather than accepting silence.
+
+| Member | Summary |
+|---|---|
+| `IReadOnlyList<string> Outcomes { get; } =` | The four outcomes the contract admits. Nothing is defaulted. |
+| `string Open(` | Opens an episode by appending an `episode-open` line. |
+| `string Close(` | Closes an episode, optionally naming the evidence. |
+
+### `string Open(`
+
+Opens an episode by appending an `episode-open` line.
+
+**Remarks.** A second open while one is live **supersedes** it: the first closes `Superseded` and a
+new generation opens. That is deliberate rather than a fallback — changing the goal starts a
+new episode — and it is said here so an agent reframing its work knows it did not lose the
+first one.
+
+### `string Close(`
+
+Closes an episode, optionally naming the evidence.
+
+**Remarks.** **Ending your session leaves an open episode open.** The watcher will not invent an
+outcome, so an episode nobody closes is never scored — said at call time because an agent that
+does not know this simply stops, and the silence looks like the product losing its work.
 
 ## `Program`
 
@@ -253,7 +305,7 @@ testable without an environment or a filesystem.
 
 *class* — `Tools.cs`
 
-The three tools, their schemas, and the dispatch between them.
+The five tools, their schemas, and the dispatch between them.
 
 **Remarks.** **Every tool answers, including when it cannot do its job.** No tool throws and none
 returns an MCP error for a missing session, an unopened workspace or an unreadable store: each is
