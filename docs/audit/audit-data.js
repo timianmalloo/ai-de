@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-ui-experience-refinement",
-  "generated": "2026-09-04T01:55:25Z",
+  "generated": "2026-09-04T01:58:53Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9178,6 +9178,31 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1N27T32M3HYWETSF9Y9P7ZV",
+      "shortname": "design-slice-mcp-stopped-at-grounding",
+      "datetime": "2026-09-04T01:58:53Z",
+      "session": "e9679dd2",
+      "prompt": "take me through what you envision for the MCP scenario / principles and answers given / then do the next steps",
+      "summary": "STOPPED AT GROUNDING, as the skill directs when a load-bearing architectural decision is required. ADR-0011 binds MCP authorization to a session processing class. Verified: SessionBinding carries no such class, SessionProcessingClass.LocalOnly is hardcoded once on a different object, and every McpCallerContext in the tree is built by a test. The control is specified, proven red-first, and has no production input. Worse, a Claude Code or Copilot session is ExternalProcessing by the ADR's own definition, and the ADR denies coordination writes for those — which would disable the collaboration surface. Meanwhile the JSONL path enforces none of it. Recorded the decision needed rather than designing around it.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260903-the-control-under-mcp-has-no-input.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Design the MCP integration slice for Loomkeeper, with JSONL as the participation fallback",
+      "done_when": "either a design exists at docs/design/, or the architectural blocker that prevents one is recorded with the decision it needs",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
         "regression": false
       }
     }

@@ -2278,6 +2278,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "f8d64364b6d6c8f2b91779efe828ec428062142ea5b34345bdb8ae6a95d4697a"
     },
     {
+      "id": "note-20260903-the-control-under-mcp-has-no-input",
+      "path": "docs/notes/note-20260903-the-control-under-mcp-has-no-input.md",
+      "title": "ADR-0011 governs MCP, and nothing can tell it what a session is",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Grounding the MCP design slice found that ADR-0011's authorization gate — the control that decides what an agent may read and write over MCP — has no production input: no session carries a processing class, and every McpCallerContext in the tree is built by a test. Worse, if the class were determined honestly, a Claude Code or Copilot session is ExternalProcessing by the ADR's own definition, and the ADR denies coordination writes for those. The collaboration surface and the egress control cannot both be right as written.",
+      "tags": [
+        "decision-note",
+        "mcp",
+        "security",
+        "adr-0011",
+        "collaboration",
+        "egress"
+      ],
+      "links": [
+        {
+          "to": "adr-0011-session-processing-class-egress",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "87329218c48b616d0cea0fdd1508db2523558ed3aaa490d8eb7129bf9da6c371"
+    },
+    {
       "id": "note-ai-native-ide-architecture-review-depth",
       "path": "docs/notes/ai-native-ide-architecture-review-depth.md",
       "title": "Decision note — AI-native IDE architecture review depth",
@@ -10904,5 +10936,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "12845ad38a322da863b773736915b0b068dba179f934b724cf2792bbd53415cd"
+  "graphSha256": "149d2e629cef9ddac516165d6d2329f03b457e85a329cdd66a43c5688c775766"
 };
