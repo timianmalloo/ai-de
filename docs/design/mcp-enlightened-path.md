@@ -101,23 +101,38 @@ in exchange for nothing the file path cannot do. The stdio server's lack of priv
 capability verification and quarantine — every guarantee the ingest exists to provide — and it would
 make the equivalence gate unprovable, because the two paths would no longer share a mechanism.
 
-### Identity, and the one thing that must be spiked
+### Identity — spiked, and the spike found a second signal
 
 The server reads `AIDE_SESSION` from its own inherited environment. AI-DE sets it on the terminal;
 the harness launches the MCP server as a child of that terminal; the child inherits it. No templating
 in `.mcp.json`, and each agent's server gets that agent's identity without configuration.
 
-> **Inferred, and load-bearing.** That a stdio MCP server inherits the client's environment is the
-> mechanism the whole identity model rests on, and it has **not** been verified against Claude Code.
-> **Spike before implementation:** launch a trivial stdio server from a Claude Code session inside an
-> AI-DE terminal and have it print its own `AIDE_SESSION`. If inheritance does not hold, the fallback
-> is an explicit `env` block in `.mcp.json` — which is per-workspace, not per-session, and would mean
-> **one shared identity for every agent in the workspace**. That is a materially worse design and it
-> must be discovered by the spike, not by a wrong attribution on the board.
+> **VERIFIED 2026-09-04** — `spikes/mcp-stdio-environment`. A probe registered via `claude mcp add`
+> and launched by `claude mcp list` saw `AIDE_SESSION` exactly as the parent set it, alongside 79
+> inherited variables including three invented for the probe. Inheritance is in full, not a curated
+> allowlist. The `.mcp.json` `env` fallback exists (`claude mcp add -e`) if a future harness
+> sanitises, at the cost of per-session identity.
 
-**Identity is verified, never trusted.** On every call the server resolves `AIDE_SESSION` against the
-store and requires a session that exists. An absent or unknown id yields a stated absence — *"no
-AI-DE session; this server has nothing to offer"* — never a guess and never a default session.
+**The spike also found what the design did not have: a second, independent identity signal.** The
+server's `cwd` is the *invocation* directory, not a fixed workspace root — and since `c235611` an
+agent terminal runs in its own git worktree, whose path the store already holds as
+`agent_session_dim.worktree_path`.
+
+So identity is **corroborated, not merely claimed**:
+
+| Env says | cwd matches that session's worktree | Result |
+|---|---|---|
+| a live session | yes | serve |
+| a live session | no | **refuse**, naming both — a stale `AIDE_SESSION` in a long-lived shell is the likely cause, and serving it would attribute one agent's post to another |
+| nothing | matches exactly one session's worktree | serve, and say identity came from the worktree |
+| nothing | no match | stated absence — *"no AI-DE session; this server has nothing to offer"* |
+
+The second row is the one worth having. Environment inheritance means a shell that outlives its
+terminal carries a dead session id forward, and a board post attributed to the wrong agent is the
+single most damaging thing this surface can do. Two signals disagreeing is exactly when to stop.
+
+**Identity is verified, never trusted.** Every call resolves the id against the store and requires a
+session that exists. There is no default session and no guess.
 
 ## 4. The tools
 
@@ -251,11 +266,11 @@ own guards get a `--self-test` before it is gated (DC-104).
 | Distributed Systems | Append-only per writer, one file per session; no new ordering or delivery guarantee claimed. |
 
 **Confidence.** Verified: the absence of any board read for agents; `BoardMessage`'s shape; the
-contract kinds; that `watcher.db` needs no change. **Inferred and load-bearing**: that a stdio MCP
-server inherits the client's environment — the identity model rests on it and the spike in §3 must
-run before implementation.
+contract kinds; that `watcher.db` needs no change; and — since 2026-09-04 — that a stdio MCP server
+inherits the client's environment in full (`spikes/mcp-stdio-environment`), which was the one
+load-bearing inference this design carried.
 
 **Residual risk.** The spoofing hole is real, pre-existing, and now documented; a capability token in
-the log line is the fix and is deliberately out of this slice. If the environment-inheritance spike
-fails, the fallback is materially worse and the slice should be re-scoped rather than shipped with
-one identity per workspace.
+the log line is the fix and is deliberately out of this slice. Environment inheritance is measured on
+Claude Code / Windows only — but the spike's second finding removes the dependency on it being
+universal, because cwd corroborates identity without the environment at all.

@@ -2819,7 +2819,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "723f0669bb8c13095d71eceac0380e6639fed866dc3645a099785040cd8d6078"
+      "sourceSha256": "8238315ef01534a6711abadde0d94fd53873a8cb8f44180522ac5e2c27baf78e"
     },
     {
       "id": "design-named-dock-zones-ui",
@@ -11035,5 +11035,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "029b9fce83986d626a901ff3abe8b3285a41d6fa5c6d68831071b79e1dca3968"
+  "graphSha256": "af5cb1573a5ad1aefe2f41f74d9ebf8268ccfc726f79f1fe8a78c15f8bcc6e71"
 };

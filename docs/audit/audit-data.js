@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-ui-experience-refinement",
-  "generated": "2026-09-04T16:42:42Z",
+  "generated": "2026-09-04T18:01:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9277,6 +9277,31 @@ window.AUDIT_DATA = {
       "signals": {
         "verification_path": true,
         "verification_executed": false,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PSBAAKKGMVSYDEHDBEE0G6",
+      "shortname": "spike-mcp-stdio-environment",
+      "datetime": "2026-09-04T18:01:59Z",
+      "session": "e9679dd2",
+      "prompt": "do all three next steps in order",
+      "summary": "VERIFIED: a stdio MCP server inherits the launching client's environment in full — 79 variables including three invented for the probe, not a curated allowlist. So each agent's server picks up that agent's AIDE_SESSION with no .mcp.json templating, and the per-workspace shared-identity fallback is not needed. The probe was deliberately not a working MCP server, because what is measured is settled before the handshake; claude mcp list turned out to launch every configured server, so no nested session was needed. Second finding the design did not have: cwd is the invocation directory, so an agent's worktree corroborates identity independently of the environment — added as a refusal rule when the two disagree, since a stale AIDE_SESSION in a long-lived shell would otherwise attribute one agent's post to another.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "spikes/mcp-stdio-environment/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Settle the one load-bearing inference in the MCP design before implementing against it",
+      "done_when": "the environment-inheritance question is answered by observation, the design's confidence ledger reflects the result, and the artifacts are committed as evidence",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
         "acceptance_met": true,
         "regression": false
       }
