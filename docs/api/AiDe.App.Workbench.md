@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 79 types, 320 members, 69% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 79 types, 321 members, 69% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**79 public types · 320 public members · 69% documented.**
+**79 public types · 321 public members · 69% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1242,6 +1242,7 @@ indistinguishable from a broken feature).
 | `SessionActivity Activity` | What the session is doing, as the runtime understands it. |
 | `ITerminalSession? Session` | The live session, or null before it starts. Exposed so prompt dispatch can write to the terminal this pane owns. |
 | `string? WorkingDirectory { get; set; }` | Where new sessions start. Set when a workspace attaches; the process directory otherwise. |
+| `Func<string, string?>? WorkingDirectoryFor { get; set; }` | A per-surface working directory, overriding `WorkingDirectory` when it answers. |
 | `Func<string, IReadOnlyDictionary<string, string>>? EnvironmentFor { get; set; }` | Extra environment for a session, by its id. Null (the default) means the child inherits exactly as it always has. |
 | `AgentReadinessWatcher? AgentReadiness { get; private set; }` | Watches for an agent's prompt marker, when this session runs one. |
 | `string CommandLine { get; set; } = "powershell.exe"` | What this pane runs. PowerShell unless a caller asks for something else. |
@@ -1276,6 +1277,23 @@ any workspace is known, and a pane created after one opens should still land in 
 place. `simplify: a static default rather than threading the workspace through the surface
 factory; ceiling is one workspace per shell, which the workspace lock already enforces;
 upgrade trigger = a shell hosts two workspaces at once.`
+
+### `Func<string, string?>? WorkingDirectoryFor { get; set; }`
+
+A per-surface working directory, overriding `WorkingDirectory` when it answers.
+
+**Remarks.** The static above is one value for every terminal, which was right while every terminal
+opened in the workspace. An agent session now gets its OWN git worktree, so the cwd is a
+property of the surface rather than of the shell — the same reason
+`EnvironmentFor` is a function and not a value.
+
+
+
+
+
+**Null is the honest default here**, unlike `EnvironmentFor`: falling
+back to the workspace is a working answer and the state every plain terminal is in, so a
+no-op default hides nothing (DC-084's test — a default is safe exactly when it works).
 
 ### `Func<string, IReadOnlyDictionary<string, string>>? EnvironmentFor { get; set; }`
 

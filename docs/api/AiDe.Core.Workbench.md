@@ -10,17 +10,55 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Workbench: 63 types, 119 members, 49% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Workbench: 65 types, 121 members, 51% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Workbench`
 
-**63 public types · 119 public members · 49% documented.**
+**65 public types · 121 public members · 51% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `AgentWorktree`
+
+*class* — `AgentWorktree.cs`
+
+Where an agent session's own git worktree goes, and what its branch is called.
+
+**Remarks.** **Why an agent gets its own tree.** Two agents in one checkout share an index, a HEAD
+and one set of build outputs, so one agent's staging silently reaches into another's uncommitted
+work and nothing fails loudly. Working in the primary checkout is the recorded exception, not the
+default.
+
+
+
+
+
+**Pure, so the decisions are testable without git.** The names and the path are the part
+with judgement in them; running `git worktree add` is mechanical and lives with the caller
+that owns process launching.
+
+| Member | Summary |
+|---|---|
+| `string ShortId(string sessionId)` | The eight characters the Sessions row also shows. |
+| `string Slug(string harness)` | A harness name reduced to something a git ref and a directory both accept. |
+
+### `string Slug(string harness)`
+
+A harness name reduced to something a git ref and a directory both accept.
+
+**Remarks.** "Claude Code" becomes "claude-code". Lower-cased because half of git's ref rules are
+case-sensitive and half of Windows' path rules are not, and a name that differs only by case
+between the two is a bug waiting for the first person who types it.
+
+## `Plan`
+
+*record* — `AgentWorktree.cs`
+
+Everything about one agent session's tree, derived from its identity.
 
 ## `CanvasFocusOutcome`
 

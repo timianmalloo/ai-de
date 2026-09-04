@@ -2,7 +2,7 @@
 window.DOCS_INDEX = {
   "schemaVersion": "docs-index/v2",
   "project": "ai-de",
-  "generated": "2026-09-03T23:05:50Z",
+  "generated": "2026-09-04T00:20:44Z",
   "generator": "docs-graph.py derive",
   "rootId": "architecture",
   "artifactTypes": [
@@ -1280,7 +1280,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 79 types, 320 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 79 types, 321 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1293,7 +1293,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "70111ae4d0ed774a6e3784caa39d5d4193d0576847aa5237d26a637c9b47975c"
+      "sourceSha256": "67f0738c2bedb6852490db3287f6e92a6cb4f88c45b4ef66f8766a861d0c8f55"
     },
     {
       "id": "api-aide-core",
@@ -1630,7 +1630,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Workbench: 63 types, 119 members, 49% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Workbench: 65 types, 121 members, 51% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1643,7 +1643,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9df0ef29b38b76f436a1d60a92573dff9306615da981fe1a6decbc7359ed6f0f"
+      "sourceSha256": "bde1462310d173beaae3b3df61813862ca278a50dab56002f5f8bf3d9dc4a5ef"
     },
     {
       "id": "architecture",
@@ -10862,5 +10862,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "45a207e042537d485b513bc47f0729efc8ef7bab0fe07436d1b0ebbab4d674bc"
+  "graphSha256": "99c7977bf0ff377d25d45e0eaf6a6bab9ec56b9bfff53642aa9b8c8e6855daa6"
 };

@@ -145,6 +145,12 @@ public sealed class WorkbenchShell : IDisposable
         // AttachWorkspace leaves them inert when one never does. The hook reads current state on
         // every call, so assigning it here is enough — AttachWorkspace no longer needs to.
         TerminalSurface.EnvironmentFor = AgentEnvironmentFor;
+
+        // In the CONSTRUCTOR beside its sibling, for the reason recorded there: assigning these in
+        // AttachWorkspace only leaves them null on every path that skips it, and an agent launched
+        // without them fails silently rather than loudly (DC-084).
+        TerminalSurface.WorkingDirectoryFor =
+            surfaceId => _agentWorktrees.TryGetValue(surfaceId, out var path) ? path : null;
         Manager = new DockingManager();
         AutomationProperties.SetName(Manager, "Workbench");
 
@@ -216,6 +222,11 @@ public sealed class WorkbenchShell : IDisposable
             var title = profile.DisplayName ?? "Agent terminal";
             _harnessBySurface[id] = profile;
 
+            // Before the surface is added, so WorkingDirectoryFor can answer the moment the pane is
+            // built. Provisioning after would launch the process in the workspace and leave a tree
+            // nobody is in — the worst of both.
+            var worktreeNote = ProvisionAgentWorktree(id, agent);
+
             var result = Service.Apply(new LayoutOperation.AddSurface(
                 terminalStackId, new Surface(id, "terminal", title)));
 
@@ -228,7 +239,7 @@ public sealed class WorkbenchShell : IDisposable
         AnnounceEnvironmentHealth();
 
             return result.Applied
-                ? $"{title} session opened. Dispatch is refused until it reaches its prompt."
+                ? $"{title} session opened.{worktreeNote} Dispatch is refused until it reaches its prompt."
                 : result.Announcement;
         };
         Controller.NewTerminalRequested = () =>
@@ -853,6 +864,68 @@ public sealed class WorkbenchShell : IDisposable
     /// current name during a session; the store has it for a session whose pane is gone, which is
     /// most of the inactive list.</para>
     /// </remarks>
+    /// <summary>Worktree directories provisioned for agent sessions, by surface id.</summary>
+    /// <remarks>
+    /// Kept so <see cref="TerminalSurface.WorkingDirectoryFor"/> can answer for a surface the layout
+    /// created moments earlier, and so a later cleanup can find what this shell made. Never removed
+    /// on close: a worktree can hold uncommitted work, and deleting one because a tab closed would
+    /// destroy it silently.
+    /// </remarks>
+    private readonly Dictionary<string, string> _agentWorktrees = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Creates an agent session's own git worktree, or explains why the session is sharing the
+    /// workspace instead.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Never refuses the session.</b> Every failure here — no repository, git absent, a
+    /// branch that already exists, a read-only parent — falls back to the workspace and SAYS so.
+    /// Refusing to open a terminal because a nicety failed is the defect this shell just fixed on
+    /// the other launch path, and an agent that cannot start is worse than one sharing a tree.</para>
+    ///
+    /// <para><b>Why an agent gets its own tree at all.</b> Two agents in one checkout share an
+    /// index, a HEAD and one set of build outputs, so one agent's staging reaches into another's
+    /// uncommitted work and nothing fails loudly.</para>
+    ///
+    /// <para><b>Nothing is ever removed.</b> A worktree can hold work that exists nowhere else, so
+    /// deletion is opt-in and belongs to a person, not to a tab closing.</para>
+    /// </remarks>
+    /// <returns>The announcement suffix — empty when the worktree was created as intended.</returns>
+    private string ProvisionAgentWorktree(string surfaceId, string harness)
+    {
+        var facts = CurrentGitFacts();
+        if (!facts.RepoResolved)
+        {
+            return " It shares the workspace: this folder is not a git repository.";
+        }
+
+        var plan = AgentWorktree.For(facts.RepoPath, harness, surfaceId);
+        if (plan is null)
+        {
+            return " It shares the workspace: no sibling location could be derived for a worktree.";
+        }
+
+        if (Directory.Exists(plan.Path))
+        {
+            // Adopt rather than fail or overwrite. A directory already there is almost always this
+            // same session's tree from a previous run, and `git worktree add` onto it would refuse
+            // anyway — while deleting it could destroy work.
+            _agentWorktrees[surfaceId] = plan.Path;
+            return $" Reusing its worktree at {plan.Path}.";
+        }
+
+        if (Git(facts.RepoPath, "worktree", "add", "-b", plan.Branch, plan.Path) is null)
+        {
+            // Git prints its own reason to stderr, which Git() discards. Rather than guess at the
+            // cause — branch exists, detached HEAD, disk full all look identical from here — the
+            // announcement states the outcome and where the session actually is.
+            return $" It shares the workspace: git could not create a worktree at {plan.Path}.";
+        }
+
+        _agentWorktrees[surfaceId] = plan.Path;
+        return $" Its worktree is {plan.Path} on {plan.Branch}.";
+    }
+
     private string? TerminalNameFor(string terminalId)
     {
         if (string.IsNullOrEmpty(terminalId))

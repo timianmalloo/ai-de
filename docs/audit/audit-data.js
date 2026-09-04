@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T23:05:49Z",
+  "generated": "2026-09-04T00:20:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9078,6 +9078,31 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Make a session row readable and identifiable: no path ambiguity, a discriminator, and the operator's own name",
       "done_when": "a branch containing a slash cannot read as a path, two otherwise-identical sessions differ on screen, and a renamed terminal leads its row — each pinned by a test",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-0456",
+      "shortname": "agent-worktree-per-session",
+      "datetime": "2026-09-04T00:20:43Z",
+      "session": "e9679dd2",
+      "prompt": "you choose",
+      "summary": "Four decisions taken as the owner delegated: branch agent/<harness>-<shortid>, sibling directory, never refuse the session, never auto-delete. Naming and placement are pure and tested; the git call is the only impure part. A test written against hostile input caught a real defect — a dot was allowed through, so a session id of ../../escape produced agent/claude-code-..-..-es, which is both an invalid git ref and path traversal. TerminalSurface.WorkingDirectory was static, one value for all terminals; added a per-surface resolver beside EnvironmentFor and assigned it in the constructor for DC-084's reason.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Workbench/AgentWorktree.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Give each agent session its own git worktree so nothing works in the main tree by default",
+      "done_when": "an agent session opens in a sibling worktree on its own branch, every failure falls back to the workspace with a stated reason, and nothing is ever deleted",
       "signals": {
         "verification_path": true,
         "verification_executed": true,
