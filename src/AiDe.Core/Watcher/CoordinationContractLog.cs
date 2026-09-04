@@ -34,6 +34,48 @@ public sealed class CoordContractWriter
     public void WriteSessionEnd(string externalSessionId) => Append(externalSessionId, "session-end", null);
 
     /// <summary>
+    /// Writes one <c>board-post</c> line — the same line an agent writes by hand.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Here rather than in the MCP server, because the line format must have one
+    /// definition.</b> The server's whole claim is that it is a translation of the contract rather
+    /// than a parallel API (<c>design-mcp-enlightened-path</c>), and a second place that knows how a
+    /// board-post line is spelled would make that claim untestable — the paths could then differ in
+    /// exactly the way the equivalence gate exists to catch.</para>
+    ///
+    /// <para><b>It validates nothing.</b> An unrecognised kind, empty content and an orphan parent
+    /// are all quarantined by <c>InjectedContractIngest</c>, with counters, and re-deciding any of it
+    /// here would be a second set of rules to drift from the first. The caller reports what the
+    /// ingest will do; this writes what the caller said.</para>
+    /// </remarks>
+    public void WriteBoardPost(
+        string externalSessionId, string kind, string? content, string? parentMessageId = null)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(kind);
+
+        var attributes = new Dictionary<string, string?>(StringComparer.Ordinal)
+        {
+            [CoordContract.BoardAttributes.Kind] = kind,
+            [CoordContract.BoardAttributes.Content] = content,
+        };
+
+        // Absent, not null: an acknowledgement legitimately carries no content, and a null-valued key
+        // is a different wire fact from a missing one — the ingest reads present-but-blank as
+        // malformed, which is the distinction that makes a lost value visible.
+        if (content is null)
+        {
+            attributes.Remove(CoordContract.BoardAttributes.Content);
+        }
+
+        if (!string.IsNullOrEmpty(parentMessageId))
+        {
+            attributes[CoordContract.BoardAttributes.Parent] = parentMessageId;
+        }
+
+        Append(externalSessionId, "board-post", attributes);
+    }
+
+    /// <summary>
     /// A filesystem-safe, deterministic file name for one external session id.
     /// </summary>
     /// <remarks>

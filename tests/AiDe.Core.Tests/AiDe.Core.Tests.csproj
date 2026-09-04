@@ -30,6 +30,14 @@
     <ProjectReference Include="..\..\src\AiDe.Core\AiDe.Core.csproj" />
 
     <!--
+      The MCP server lives here for its tests because the one that matters spans both: the
+      cross-path equivalence gate compares an MCP tool call against a hand-written contract line,
+      and the thing it compares them THROUGH is Core's ingest. A separate test project would put the
+      gate on one side of the boundary it exists to check.
+    -->
+    <ProjectReference Include="..\..\src\AiDe.Mcp\AiDe.Mcp.csproj" />
+
+    <!--
       A BUILD-ORDER dependency, not an assembly reference. The ConPTY conformance case launches this
       executable with CREATE_NEW_CONSOLE (DC-014), so it must exist whenever these tests run — and
       `verify-test-run.py` deliberately runs `dotnet test` PER PROJECT to get per-assembly counts,

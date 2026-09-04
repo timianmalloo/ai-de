@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 158 types, 302 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 158 types, 304 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**158 public types · 302 public members · 64% documented.**
+**158 public types · 304 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -646,6 +646,26 @@ This is the session-side half of the contract; `InjectedContractIngest` is the i
 | `void WriteRegister(string externalSessionId, IReadOnlyDictionary<string, string?> attributes)` | Writes a registration with the same `OtelAttributes` keys as the OTLP path. |
 | `void WriteHeartbeat(string externalSessionId)` | **(gap)** |
 | `void WriteSessionEnd(string externalSessionId)` | **(gap)** |
+| `void WriteBoardPost(` | Writes one `board-post` line — the same line an agent writes by hand. |
+
+### `void WriteBoardPost(`
+
+Writes one `board-post` line — the same line an agent writes by hand.
+
+**Remarks.** **Here rather than in the MCP server, because the line format must have one
+definition.** The server's whole claim is that it is a translation of the contract rather
+than a parallel API (`design-mcp-enlightened-path`), and a second place that knows how a
+board-post line is spelled would make that claim untestable — the paths could then differ in
+exactly the way the equivalence gate exists to catch.
+
+
+
+
+
+**It validates nothing.** An unrecognised kind, empty content and an orphan parent
+are all quarantined by `InjectedContractIngest`, with counters, and re-deciding any of it
+here would be a second set of rules to drift from the first. The caller reports what the
+ingest will do; this writes what the caller said.
 
 ## `CoordContractLog`
 
@@ -2404,6 +2424,7 @@ Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write 
 |---|---|
 | `string DatabasePath { get; }` | The backing database file. Exposed so a test can open a raw connection against it. |
 | `SqliteWatcherObservationStore Open(string databasePath)` | **(gap)** |
+| `SqliteWatcherObservationStore OpenReadOnly(string databasePath)` | Opens an EXISTING store read-only. Creates nothing and migrates nothing. |
 | `bool TryAppendSpan(ObservedSpan span)` | **(gap)** |
 | `int SpanCount(string sessionId)` | **(gap)** |
 | `int SpanCountInInterval(string sessionId, DateTimeOffset from, DateTimeOffset toInclusive)` | **(gap)** |
@@ -2437,6 +2458,33 @@ Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write 
 | `IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)` | **(gap)** |
 | `IReadOnlyList<ScoreDispute> AllDisputes()` | **(gap)** |
 | `void Dispose()` | **(gap)** |
+
+### `SqliteWatcherObservationStore OpenReadOnly(string databasePath)`
+
+Opens an EXISTING store read-only. Creates nothing and migrates nothing.
+
+**Throws `FileNotFoundException`.** The store does not exist — an absence, not an empty store.
+
+**Remarks.** **For a reader that must hold no authority** — the MCP server, whose whole claim is
+that it can do nothing an agent writing JSONL by hand cannot. A write handle to the fact store
+would be exactly such an authority and would bypass every guarantee the ingest provides, so
+the mode is enforced here rather than trusted to a caller's discipline.
+
+
+
+
+
+**ReadOnly, not ReadWrite-and-be-careful.** The distinction is enforced by SQLite
+rather than by convention, which is what makes "this process cannot write" a fact rather than
+a promise — and what a test can assert.
+
+
+
+
+
+**No `EnsureSchema`.** A reader must never migrate: it would race the owning
+process, and a schema change is a decision the writer makes. A store older than this reader
+fails on the missing column, loudly, which is the honest outcome.
 
 ## `StandingPublisher`
 

@@ -51,6 +51,47 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         return new SqliteWatcherObservationStore(connection, databasePath);
     }
 
+    /// <summary>
+    /// Opens an EXISTING store read-only. Creates nothing and migrates nothing.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>For a reader that must hold no authority</b> — the MCP server, whose whole claim is
+    /// that it can do nothing an agent writing JSONL by hand cannot. A write handle to the fact store
+    /// would be exactly such an authority and would bypass every guarantee the ingest provides, so
+    /// the mode is enforced here rather than trusted to a caller's discipline.</para>
+    ///
+    /// <para><b>ReadOnly, not ReadWrite-and-be-careful.</b> The distinction is enforced by SQLite
+    /// rather than by convention, which is what makes "this process cannot write" a fact rather than
+    /// a promise — and what a test can assert.</para>
+    ///
+    /// <para><b>No <c>EnsureSchema</c>.</b> A reader must never migrate: it would race the owning
+    /// process, and a schema change is a decision the writer makes. A store older than this reader
+    /// fails on the missing column, loudly, which is the honest outcome.</para>
+    /// </remarks>
+    /// <exception cref="FileNotFoundException">The store does not exist — an absence, not an empty store.</exception>
+    public static SqliteWatcherObservationStore OpenReadOnly(string databasePath)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(databasePath);
+
+        if (!File.Exists(databasePath))
+        {
+            throw new FileNotFoundException(
+                "The workspace store does not exist. Open the workspace in AI-DE first.", databasePath);
+        }
+
+        var connectionString = new SqliteConnectionStringBuilder
+        {
+            DataSource = databasePath,
+            Mode = SqliteOpenMode.ReadOnly,
+            Pooling = false,
+        }.ToString();
+
+        var connection = new SqliteConnection(connectionString);
+        connection.Open();
+
+        return new SqliteWatcherObservationStore(connection, databasePath);
+    }
+
     public bool TryAppendSpan(ObservedSpan span)
     {
         ArgumentNullException.ThrowIfNull(span);

@@ -1636,7 +1636,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 158 types, 302 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 158 types, 304 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1649,7 +1649,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ec2ba555843572278541a36f3e701b98df6c2769923455c551eaf249639a3481"
+      "sourceSha256": "056fb0a937080ed30011bc5f9b3461bebcd7a9cb762639cdf5f4500c52f3a982"
     },
     {
       "id": "api-aide-core-workbench",
@@ -1675,6 +1675,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "bde1462310d173beaae3b3df61813862ca278a50dab56002f5f8bf3d9dc4a5ef"
+    },
+    {
+      "id": "api-aide-mcp",
+      "path": "docs/api/AiDe.Mcp.md",
+      "title": "API: AiDe.Mcp",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Mcp: 9 types, 16 members, 92% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "14dc858c73735be0707d2561cd1ff0621a2f15699edf377d0e29f601dea435b3"
     },
     {
       "id": "architecture",
@@ -11035,5 +11060,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "af5cb1573a5ad1aefe2f41f74d9ebf8268ccfc726f79f1fe8a78c15f8bcc6e71"
+  "graphSha256": "57b18e6cfb26ba3272bb080b9b2587436124e4fe576b20fdca9af3c3ef48841b"
 };

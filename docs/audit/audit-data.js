@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-ui-experience-refinement",
-  "generated": "2026-09-04T18:01:59Z",
+  "generated": "2026-09-04T18:16:08Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9299,6 +9299,32 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Settle the one load-bearing inference in the MCP design before implementing against it",
       "done_when": "the environment-inheritance question is answered by observation, the design's confidence ledger reflects the result, and the artifacts are committed as evidence",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PT56Y5NEMJX0D31N1P9FSK",
+      "shortname": "implement-mcp-first-slice",
+      "datetime": "2026-09-04T18:16:08Z",
+      "session": "e9679dd2",
+      "prompt": "do all three next steps in order",
+      "summary": "AiDe.Mcp: a stdio server that is a client of the coordination contract. Writes board posts by appending the same JSONL line an agent writes by hand; reads the store through a new SqliteWatcherObservationStore.OpenReadOnly so the no-authority claim is enforced by SQLite rather than by discipline. JSON-RPC hand-rolled rather than taking an SDK, and VERIFIED against the real client: claude mcp list reports Connected. Identity uses both signals the spike found, refusing when they disagree. THE EQUIVALENCE GATE FOUND A REAL BUG ON ITS FIRST RUN: the tool refused knowledge-candidate, because my kind check compared lower-cased enum names while the ingest strips hyphens — a divergence narrowing what MCP users could say, invisible to either path's own tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Mcp/BoardTools.cs",
+        "tests/AiDe.Core.Tests/Watcher/McpMatchesTheJsonlPathTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Implement the first MCP slice: whoami, board_read, board_post, with the cross-path equivalence gate",
+      "done_when": "the real Claude Code client completes the handshake, the equivalence gate proves a tool post and a hand-written line land identically, and every gate is green",
       "signals": {
         "verification_path": true,
         "verification_executed": true,
