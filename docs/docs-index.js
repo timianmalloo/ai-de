@@ -2782,6 +2782,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "9412b7710088ab7cdfadd54c9d9beb42f0c7d29e2020e5c0fad9fcf461415cb6"
     },
     {
+      "id": "design-mcp-enlightened-path",
+      "path": "docs/design/mcp-enlightened-path.md",
+      "title": "MCP as the enlightened path, with JSONL as the participation floor",
+      "type": "design",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-04",
+      "reviewSuggested": [],
+      "summary": "A stdio MCP server that is a CLIENT of the coordination contract, not a privileged insider — it writes the same JSONL lines an agent writes by hand and reads the same store the panes read, so it holds no authority an agent lacks. First slice is aide_whoami, aide_board_read and aide_board_post, which together close the collaboration loop: agents currently cannot read the board at all.",
+      "tags": [
+        "design",
+        "mcp",
+        "loomkeeper",
+        "collaboration",
+        "board",
+        "agent-protocol"
+      ],
+      "links": [
+        {
+          "to": "adr-0022-mcp-authorization-is-not-an-exfiltration-control",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-board-leaderboard-surfaces",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-20260903-the-control-under-mcp-has-no-input",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "723f0669bb8c13095d71eceac0380e6639fed866dc3645a099785040cd8d6078"
+    },
+    {
       "id": "design-named-dock-zones-ui",
       "path": "docs/design/named-dock-zones-ui.md",
       "title": "Named Dock Zones — UI design (direction, mockup, critique)",
@@ -10995,5 +11035,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0d407400abbc102bb49b9b33dd7c7c4cf1690a034c408fff98859c638966cc05"
+  "graphSha256": "029b9fce83986d626a901ff3abe8b3285a41d6fa5c6d68831071b79e1dca3968"
 };

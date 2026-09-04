@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-ui-experience-refinement",
-  "generated": "2026-09-04T16:40:15Z",
+  "generated": "2026-09-04T16:42:42Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9255,6 +9255,31 @@ window.AUDIT_DATA = {
         "acceptance_met": true,
         "regression": false
       }
+    },
+    {
+      "id": "al-01M1PMT4B629PNEXWWW2MP0CY2",
+      "shortname": "design-slice-mcp-enlightened-path",
+      "datetime": "2026-09-04T16:42:42Z",
+      "session": "e9679dd2",
+      "prompt": "do next steps including the optional step",
+      "summary": "Designed docs/design/mcp-enlightened-path.md. The strongest claim is the data model: the slice adds NO durable state — no aggregate, no fact, no column, watcher.db stays at v5 — because board_post appends the same JSONL line an agent writes by hand and the ingest does the rest. Five of seven E7 change surfaces are untouched. Transport is a stdio server that is a client of the contract, holding no authority an agent lacks, which is what makes the cross-path equivalence gate provable. One load-bearing inference labelled and spiked: that a stdio MCP server inherits the client environment, which the whole identity model rests on; if it fails the fallback is one identity per workspace and the slice should be re-scoped rather than shipped.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/mcp-enlightened-path.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Design the first MCP slice now that ADR-0022 has unblocked grounding",
+      "done_when": "a design exists with its data model settled, failure modes and STRIDE dispositioned, an equivalence gate specified, and every load-bearing inference labelled with the spike that must confirm it",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true,
+        "regression": false
+      }
     }
   ],
   "changes": [
@@ -12415,6 +12440,28 @@ window.AUDIT_DATA = {
       "git": {
         "before": null,
         "after": "a019ce9fd7d9352e3e09608503730eee6c090b77",
+        "branch": "feature/ui-experience-refinement",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M1PMT4F2F11RNFP2ME5VHC4S",
+      "datetime": "2026-09-04T16:42:42Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "MCP is a client of the coordination contract, not a privileged insider",
+      "prompt": "do next steps including the optional step",
+      "summary": "First MCP slice designed: aide_whoami, aide_board_read, aide_board_post over stdio.",
+      "rationale": "The server writes the same JSONL an agent writes by hand and reads the store read-only, so it holds no authority an agent lacks. That is what makes the owner's participation-not-parity principle enforceable rather than aspirational: two paths can only be guaranteed equivalent when one is a translation of the other, and the equivalence is a gate.",
+      "artifacts": [
+        "docs/design/mcp-enlightened-path.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "566086ae0f65705b7d7ca5ed1814811bc77ea181",
         "branch": "feature/ui-experience-refinement",
         "pushed": false,
         "commits": []
