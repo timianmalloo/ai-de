@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-ui-experience-refinement",
-  "generated": "2026-09-04T01:58:53Z",
+  "generated": "2026-09-04T16:18:34Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9205,6 +9205,31 @@ window.AUDIT_DATA = {
         "acceptance_met": false,
         "regression": false
       }
+    },
+    {
+      "id": "al-01M1PKDXSMMYJ8J6KVSB1179JW",
+      "shortname": "adr-0022-mcp-authorization",
+      "datetime": "2026-09-04T16:18:33Z",
+      "session": "e9679dd2",
+      "prompt": "agreed the utterance-vs-content split is overly conservative - the security veto is invalid",
+      "summary": "The owner judged ADR-0011's processing-class gate overly conservative and the veto invalid. Recorded as ADR-0022: the threat model does not survive contact with the product's shape, because an agent in AI-DE holds a terminal in the workspace and can read the same files directly, so the gate constrained the polite interface while the impolite one stood open. Corrected my own misattribution — the overruled veto was Privacy and Data Governance, not Security and Identity, per architecture.md's gate record. P1-MCP-EGRESS retired and REPLACED by a test asserting the gate is absent, so re-adding one is deliberate. Residual risk named: the reasoning expires for any agent without a shell in the tree.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0022-mcp-authorization-is-not-an-exfiltration-control.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Record the owner's override of ADR-0011's MCP gate as an ADR, and make the code match it",
+      "done_when": "ADR-0022 supersedes ADR-0011, the processing-class branch is gone, the retired security test is replaced rather than deleted, and architecture.md no longer claims a control that was withdrawn",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
     }
   ],
   "changes": [
@@ -12345,6 +12370,28 @@ window.AUDIT_DATA = {
         "after": "25aecba209b9c28f1f46b7e054a079d6cf6153ce",
         "branch": "feature/app-facelift-and-graph-surfaces",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M1PKDXXDDXMXBRM29F8GAN3B",
+      "datetime": "2026-09-04T16:18:34Z",
+      "session": null,
+      "kind": "design",
+      "skill": "define-architecture",
+      "title": "MCP authorization is bound to session identity, not to a data-processing class",
+      "prompt": "agreed the utterance-vs-content split is overly conservative - the security veto is invalid",
+      "summary": "ADR-0022 supersedes ADR-0011's processing-class gate on MCP tools.",
+      "rationale": "An agent in AI-DE has a terminal in the workspace and can read any file directly. Denying it the same content through a tool removes no capability it already has and only makes the enlightened path weaker than the shell beside it. A control that constrains the polite interface while the impolite one is open is a tax on the well-behaved, not a boundary. Owner override of the Privacy hard veto; residual risk is any agent without a shell in the tree.",
+      "artifacts": [
+        "docs/adr/0022-mcp-authorization-is-not-an-exfiltration-control.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "a019ce9fd7d9352e3e09608503730eee6c090b77",
+        "branch": "feature/ui-experience-refinement",
+        "pushed": false,
         "commits": []
       }
     }

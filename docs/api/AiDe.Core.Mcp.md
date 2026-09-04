@@ -75,10 +75,52 @@ an unknown class fails closed exactly like an external one.
 
 | Member | Summary |
 |---|---|
-| `ToolAuthorization Authorize(McpCallerContext caller, string toolName)` | The deterministic (T0) authorization decision. A model never influences this — it runs before any content is read. |
+| `ToolAuthorization Authorize(McpCallerContext caller, string toolName)` | The deterministic (T0) authorization decision. A model never influences this — it runs before any content is read.  Authorizes a tool call. Bound to session identity and workspace, never to a processing class. |
 | `McpToolResult Describe(McpCallerContext caller, string nodeId, int maxNeighbors)` | **(gap)** |
 | `McpToolResult Find(McpCallerContext caller, string term, int maxResults)` | **(gap)** |
 | `McpToolResult Standing(McpCallerContext caller, string episodeId)` | The agent's own standing for one episode: rank where comparable, trend, and one evidence-backed reason per dimension (US-16). |
+
+### `ToolAuthorization Authorize(McpCallerContext caller, string toolName)`
+
+The deterministic (T0) authorization decision. A model never influences this — it runs before
+any content is read.
+
+Authorizes a tool call. Bound to session identity and workspace, never to a processing class.
+
+**Remarks.** **ADR-0022 supersedes ADR-0011 here.** This used to deny writes and reduce reads for
+a session declared `ExternalProcessing`, on the reasoning that a provider-backed agent
+would exfiltrate workspace content. The threat model does not survive contact with the
+product's shape: an agent in AI-DE has a TERMINAL in the workspace — since `c235611`, in
+its own worktree of it — and can `cat`, `grep` and `find` anything the user
+can. Denying it the same content through a tool removed no capability it did not already have
+and only made the enlightened path weaker than the shell beside it.
+
+
+
+
+
+A control that constrains the polite interface while the impolite one is wide open is
+not a boundary; it is a tax on the well-behaved. The owner overruled the Security hard veto on
+exactly that reasoning, and ADR-0022 records the decision and its residual risk.
+
+
+
+
+
+**THE CONDITION THAT REVIVES THE GATE, named so it is discoverable rather than
+remembered:** this argument rests entirely on the agent already having a shell in the tree.
+A remote agent, a sandboxed agent, or any agent granted MCP access *without* a terminal
+is a genuinely different case, and a processing-class gate is the right control for it. If
+AI-DE ever hosts one, reopen ADR-0022 before extending this method.
+
+
+
+
+
+What authorization still does is enforced elsewhere and deliberately not here: the
+workspace check in `Guarded` (a caller may not read another workspace), the result
+bounds every tool applies, and — for writes, when they exist — session capability
+verification, which is what stops knowing an id being enough to post as it.
 
 ### `McpToolResult Standing(McpCallerContext caller, string episodeId)`
 

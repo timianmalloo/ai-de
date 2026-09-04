@@ -68,8 +68,24 @@ public sealed class TelemetryTests : IDisposable
         Assert.Equal(nameof(DispatchState.PtyWriteAccepted), span.GetTagItem("outcome"));
     }
 
+    /// <summary>
+    /// The MCP span records the tool, the declared processing class, and the decision.
+    /// </summary>
+    /// <remarks>
+    /// <para>The expected authorization changed to <c>Allow</c> under ADR-0022, which withdrew the
+    /// processing-class gate: an agent in AI-DE holds a terminal in the workspace and can read the
+    /// same files directly, so the gate constrained the polite interface while the impolite one
+    /// stood open.</para>
+    ///
+    /// <para><b>The class is still on the span, and that is the point.</b> It has stopped being a
+    /// control INPUT and remains an observation — what the session declared about itself. Dropping it
+    /// would lose the only record of that claim, and the day a remote or sandboxed agent appears
+    /// (ADR-0022's named residual risk) this attribute is where the evidence will already be.</para>
+    ///
+    /// <para>Renamed: the old name promised a denied error code it never asserted.</para>
+    /// </remarks>
     [Fact]
-    public async Task McpSpan_RecordsTheAuthorizationDecisionAndDeniedErrorCode()
+    public async Task McpSpan_RecordsTheToolTheDeclaredClassAndTheDecision()
     {
         using var core = WorkspaceCore.Open("ws-1", _fixture.Root, _dataDirectory);
         await core.RefreshScopeAsync("fixture", "rev-1");
@@ -82,7 +98,7 @@ public sealed class TelemetryTests : IDisposable
         var span = Assert.Single(_captured, a => a.OperationName == "aide.mcp.request");
         Assert.Equal("describe", span.GetTagItem("tool"));
         Assert.Equal(nameof(SessionProcessingClass.ExternalProcessing), span.GetTagItem("session.processing_class"));
-        Assert.Equal(nameof(ToolAuthorization.MinimumMetadataOnly), span.GetTagItem("authorization"));
+        Assert.Equal(nameof(ToolAuthorization.Allow), span.GetTagItem("authorization"));
     }
 
     // P1-PRIV — the allowlist enforced outward: a seeded secret must not reach any span attribute.

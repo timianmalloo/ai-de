@@ -1220,6 +1220,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "e5c3f2c93a80886ef7f10800277ea20756361e8f917d645c625873630a3dbc76"
     },
     {
+      "id": "adr-0022-mcp-authorization-is-not-an-exfiltration-control",
+      "path": "docs/adr/0022-mcp-authorization-is-not-an-exfiltration-control.md",
+      "title": "MCP authorization is not an exfiltration control",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-04",
+      "reviewSuggested": [],
+      "summary": "Supersedes ADR-0011's processing-class gate on MCP tools. The gate assumed MCP was an exfiltration path, but an agent in an AI-DE terminal already has a shell in the workspace and can read any file it likes — so denying it the same content through a tool reduces no real capability while making the enlightened path worse than the terminal beside it. Authorization stays, bound to session identity and capability rather than to a processing class the product cannot determine.",
+      "tags": [
+        "adr",
+        "mcp",
+        "security",
+        "egress",
+        "adr-0011",
+        "collaboration"
+      ],
+      "links": [
+        {
+          "to": "adr-0011-session-processing-class-egress",
+          "rel": "supersedes"
+        },
+        {
+          "to": "note-20260903-the-control-under-mcp-has-no-input",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d9e6c55121bab3cf8a734794585e2c70505e5712b60649876f9200e74333d196"
+    },
+    {
       "id": "api-aide-app",
       "path": "docs/api/AiDe.App.md",
       "title": "API: AiDe.App",
@@ -1467,7 +1499,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "db395a7ef2f97243ec9eac80dcc96b3c942b6fcf07743cc4291afec3d5a2ca79"
+      "sourceSha256": "9039fbc6038242b9dfa58f267b507b78b4e2ad6522c2161bb67bf79e43615df0"
     },
     {
       "id": "api-aide-core-presentation",
@@ -1758,7 +1790,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
         }
       ],
-      "sourceSha256": "93bc32b87ab1da76b8b9fc5ad8d9e8c4c2b2480c36cc75580facd5289c2ca1e0"
+      "sourceSha256": "c9d859728478dd1f2c75fdeb11c4d4b0b1165efd3f78ea5f03810ecda015b8f9"
     },
     {
       "id": "architecture-loomkeeper",
@@ -10936,5 +10968,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "149d2e629cef9ddac516165d6d2329f03b457e85a329cdd66a43c5688c775766"
+  "graphSha256": "914b7fc798abb44ef7e0fab4c51377e46d237282d1bf9bc8a620206189ec7279"
 };

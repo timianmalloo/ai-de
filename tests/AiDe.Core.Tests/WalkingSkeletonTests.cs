@@ -138,12 +138,19 @@ public sealed class WalkingSkeletonTests : IDisposable
         Assert.Equal(ProjectionService.MaxEdgesCeiling, result.Bounds.MaxEdges);
     }
 
-    // P1-MCP-EGRESS-01..03 — the Privacy hard-veto control.
-    // Fails RED against a gateway that authorizes on transport alone.
+    // P1-MCP-EGRESS RETIRED by ADR-0022, and REPLACED rather than deleted: a security test that
+    // vanishes with no explanation reads as an oversight to whoever finds the gap next.
+    //
+    // It asserted that a non-LocalOnly session got MinimumMetadataOnly on reads and Deny on writes.
+    // The threat model did not survive contact with the product's shape — an agent in AI-DE has a
+    // terminal in the workspace and can read any file directly, so the gate constrained the polite
+    // interface while the impolite one stood open. What replaces it asserts the gate is GONE, so
+    // re-adding one is a deliberate act with a failing test in front of it.
     [Theory]
+    [InlineData(SessionProcessingClass.LocalOnly)]
     [InlineData(SessionProcessingClass.ExternalProcessing)]
     [InlineData(SessionProcessingClass.UnknownProcessing)]
-    public async Task McpRead_FromNonLocalSession_LeaksNoWorkspaceContent(SessionProcessingClass processingClass)
+    public async Task McpRead_IsNotReducedByProcessingClass(SessionProcessingClass processingClass)
     {
         using var core = OpenCore();
         await core.RefreshScopeAsync("fixture", "rev-1");
@@ -153,31 +160,12 @@ public sealed class WalkingSkeletonTests : IDisposable
 
         var result = core.Mcp.Describe(caller, "Order", 50);
 
-        Assert.Equal(ToolAuthorization.MinimumMetadataOnly, result.Authorization);
-        var metadata = Assert.IsType<MinimumMetadata>(result.Payload);
-        // Counts and a revision only — no labels, no paths, no provenance strings.
-        Assert.IsNotType<DescribeResult>(result.Payload);
-        Assert.True(metadata.NodeCount >= 0);
-    }
-
-    [Fact]
-    public async Task McpRead_FromLocalOnlySession_ReturnsTheBoundedResult()
-    {
-        using var core = OpenCore();
-        await core.RefreshScopeAsync("fixture", "rev-1");
-
-        var caller = new McpCallerContext("ws-1", "session-1", SessionProcessingClass.LocalOnly,
-            new CallerPrincipal("agent-1", CallerKind.McpClient));
-
-        var result = core.Mcp.Describe(caller, "Order", 50);
-
         Assert.Equal(ToolAuthorization.Allow, result.Authorization);
-        var describe = Assert.IsType<DescribeResult>(result.Payload);
-        Assert.NotEmpty(describe.Neighbors);
+        Assert.IsNotType<MinimumMetadata>(result.Payload);
     }
 
     [Fact]
-    public async Task McpWrite_FromNonLocalSession_IsDeniedOutright()
+    public async Task McpWrite_IsNotDeniedByProcessingClass()
     {
         using var core = OpenCore();
         await core.RefreshScopeAsync("fixture", "rev-1");
@@ -185,7 +173,7 @@ public sealed class WalkingSkeletonTests : IDisposable
         var caller = new McpCallerContext("ws-1", "session-x", SessionProcessingClass.ExternalProcessing,
             new CallerPrincipal("agent-1", CallerKind.McpClient));
 
-        Assert.Equal(ToolAuthorization.Deny, McpToolGateway.Authorize(caller, "record_note"));
+        Assert.Equal(ToolAuthorization.Allow, McpToolGateway.Authorize(caller, "record_note"));
     }
 
     // P1-SEC-05

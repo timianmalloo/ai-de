@@ -334,8 +334,10 @@ evidence).
   `LocalOnly` session receives bounded results; an `ExternalProcessing`/`UnknownProcessing` session is
   denied rich reads/writes or served minimum metadata only — from **Phase 1**, as a T0 gateway rule,
   because `describe` ships in Phase 1 and an externally-processing agent would otherwise forward
-  workspace facts to its provider. This is the LINDDUN egress flow now modelled in the privacy
-  review and proven by `P1-MCP-EGRESS`.
+  workspace facts to its provider. **WITHDRAWN by ADR-0022 (2026-09-04):** the agent holds a
+  terminal in that workspace and can read the same files directly, so the gate constrained the
+  polite interface while the impolite one stood open. `P1-MCP-EGRESS` is retired and replaced by
+  a test asserting the gate is gone, so re-adding one is deliberate.
 - MCP read tools require workspace context and return bounded data with authorship origin. Write tools
   create only user/agent-attributed `Decision`, `Note`, `Term`, or advisory coordination records after
   deterministic authorization; artifact-derived facts remain extractor-owned.
@@ -524,7 +526,7 @@ yet needs.
 | P1-KNOW-01..03 | Knowledge/frontmatter fixture: search, type/repo/confidence filter, bounded-neighbor expansion, backlinks, source location, missing-source health finding. | Expected search/filter/neighborhood + required health fields (the spec US-4 oracle). |
 | P1-QUEUE-01..03 | Control saturation (waits, not error), ingestion burst, cancellation/deadline. | Documented wait/coalescing/stale state and queue metric/trace. |
 | P1-MCP-01..05 | Unsupported version, malformed schema, limit/**byte** overflow, cross-workspace read, invalid/valid call. | Stable protocol/operational error or bounded response with provenance/omission/byte state. |
-| P1-MCP-EGRESS-01..03 | `describe`/`find`/`impact` from a session declared `ExternalProcessing` / `UnknownProcessing` / `LocalOnly`. | Non-`LocalOnly` denied or minimum-metadata; `LocalOnly` bounded; the LINDDUN egress flow's negative fixture. |
+| ~~P1-MCP-EGRESS-01..03~~ | **Retired by ADR-0022.** Replaced by `McpRead_IsNotReducedByProcessingClass`, which asserts the gate is absent for every class. | The retirement is the assertion: a security test deleted without a replacement reads as an oversight. |
 | P1-MCP-INERT-01..02 | Hostile symbol labels/provenance seeded through the extractor and returned via `describe`/`find`. | Arrive as inert typed data; no instruction-following; no active markup. |
 | P1-EXT-01..03 | In-process extractor: deterministic scope/assertion identity, duplicate-assertion emission, diagnostics. | Contract-conformant identities and stale/failed diagnostics. |
 | P1-UI-01..04 | Empty/loading/stale/error provenance pane; keyboard path; focus restoration; accessible list equivalence, **diffed against an expected focus-order/name-role-value sequence** (a trace that cannot fail is not an oracle). | Automated state fixture + keyboard/screen-reader assertion vs expected sequence. |
@@ -615,7 +617,7 @@ Trace from each council finding to its resolution (full review:
 | **Hard — DistSys:** no durable record before PTY write | Write-ahead two-phase receipt + recovery sweep; ADR-0010; P1-DISPATCH crash-injection. |
 | **Hard — Test:** spikes cited but not committed | Three spikes committed under `spikes/` with RESULT.md, all re-run green 2026-08-26; Verified rows cite them; `.gitignore` no longer ignores `spikes/`. |
 | **Hard — Test:** US-4 has no verification path | Knowledge projection is Phase-1 Real; P1-KNOW rows added; demo/E2E in the phase table. |
-| **Hard — Privacy:** MCP results are unanalyzed egress | ADR-0011 binds MCP authorization to session processing class from Phase 1; LINDDUN flow added; P1-MCP-EGRESS. |
+| **Hard — Privacy:** MCP results are unanalyzed egress | ~~ADR-0011~~ **superseded by ADR-0022 (owner override):** an MCP gate cannot mitigate egress by an agent that already holds a shell in the tree. The concern stands; the control moves to whether a provider-backed agent gets a terminal. Residual risk: a remote or sandboxed agent, named in ADR-0022. |
 | **Soft — Release:** plan dangling; no rollback actor | Release plan recovered/committed; Shell Bootstrap named as the upgrade/rollback actor; dual-version handshake + P2-UPGRADE-01 moved to Phase 2. |
 | **Soft — Simplifier:** Phase-1 over-build | In-process core in Phase 1 (ADR-0009); dual-major IPC/rollback deferred to Phase 2; telemetry simplified to rolling log + sidecar incidents; control lane waits instead of an error protocol. |
 | **Contradiction:** 60s gate vs 15-min replay | Gate split — fast in-budget subset synchronous; full restore/replay equality is async verification with measured duration (P1-PERF-05). |
