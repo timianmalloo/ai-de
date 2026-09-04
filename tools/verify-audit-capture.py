@@ -66,9 +66,23 @@ for _stream in (sys.stdout, sys.stderr):
             pass
 
 
-def entry_number(entry: dict) -> int | None:
+def is_frozen(entry: dict) -> bool:
+    """Whether this entry predates the ratchet and is therefore exempt.
+
+    THE ID SCHEME CHANGED UNDER THIS GATE. It was written when every id was `al-NNNN`, and the
+    AI-Forward Pack r59 update switched new entries to a ULID — `al-01M1N21F1JKT7VFFBRQHER84T5`.
+    The first version parsed `al-(\\d+)` and treated anything else as unrecognised, which it SKIPPED.
+    So the gate reported "7 checked" while silently ignoring every entry written in the new scheme,
+    including the one recording the change that broke it.
+
+    That is DC-103 — a check whose scope silently stops covering new subjects — inside a control
+    written to stop a different silence. The fix is not to add the second pattern; it is to make the
+    unrecognised case FAIL SAFE. An id this function cannot place is treated as NEW and checked,
+    because the cost of checking a frozen entry is a false alarm someone reads, and the cost of
+    skipping a new one is the gate quietly doing nothing.
+    """
     m = ID_RE.match(str(entry.get("id") or ""))
-    return int(m.group(1)) if m else None
+    return m is not None and int(m.group(1)) <= WATERMARK
 
 
 def is_episode_shaped(entry: dict) -> bool:
@@ -85,10 +99,7 @@ def has_evidence(entry: dict) -> bool:
 
 def failures_for(entry: dict) -> list[str]:
     """What this entry is missing. Empty when it is compliant or out of scope."""
-    number = entry_number(entry)
-    if number is None or number <= WATERMARK:
-        return []
-    if entry.get("kind") != "skill":
+    if is_frozen(entry) or entry.get("kind") != "skill":
         return []
 
     problems = []
@@ -125,10 +136,7 @@ def scan(lines: list[str]) -> tuple[list[tuple[str, str]], int, int]:
             # as unreadable. Failing here too would report one defect twice under two names.
             continue
 
-        number = entry_number(entry)
-        if number is None:
-            continue
-        if number <= WATERMARK:
+        if is_frozen(entry):
             frozen += 1
             continue
         if entry.get("kind") != "skill":
@@ -173,6 +181,15 @@ def self_test() -> int:
           failures_for(dict(base, id=f"al-{WATERMARK:04d}")) == [])
     check("a non-skill entry is out of scope",
           failures_for(dict(base, kind="prompt")) == [])
+
+    # The regression that made this gate silently stop working: the pack changed audit ids from
+    # al-NNNN to a ULID, and an unrecognised id used to be SKIPPED. Unrecognised now means NEW.
+    check("a ULID id is checked, not skipped",
+          any("never become a Work Episode" in p
+              for p in failures_for(dict(base, id="al-01M1N21F1JKT7VFFBRQHER84T5"))))
+    check("a ULID id with a goal and evidence passes",
+          failures_for(dict(base, id="al-01M1N21F1JKT7VFFBRQHER84T5", goal="g", done_when="d",
+                            signals={"verification_path": False})) == [])
 
     # And the scan wrapper, not just the predicate — the predicate being right is not the claim.
     bad, checked, frozen = scan([

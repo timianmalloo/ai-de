@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de",
-  "generated": "2026-09-04T01:27:34Z",
+  "project": "ai-de-feature-ui-experience-refinement",
+  "generated": "2026-09-04T01:55:25Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9154,6 +9154,31 @@ window.AUDIT_DATA = {
       "signals": {
         "verification_path": true,
         "verification_executed": false
+      }
+    },
+    {
+      "id": "al-01M1N21F1JKT7VFFBRQHER84T5",
+      "shortname": "daydream-proposes-its-first-candidate",
+      "datetime": "2026-09-04T01:55:25Z",
+      "session": "e9679dd2",
+      "prompt": "make sure you are re-based and up to date; JSONL is participation not parity; then do the next steps",
+      "summary": "The expiry test fired on the pack rebase — designed behaviour, not a regression. Measured across the transition: episodes 111 to 120, assessed 8 to 17, unassessed 103 to 103, observations 1 to 2, candidates 0 to 1. Daydream proposed its first candidate from real data, signature 'Correctness floor tripped twice'. The 103 did not move, confirming that capture accumulates forward. Rewrote the test as its own remark instructed rather than deleting it, and replaced the expiring claim with one the world cannot change on its own: a candidate with no disconfirming check cannot be promoted. Also corrected the class remark, which still described the pre-expiry state (DC-094).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/Watcher/WhatTheRealCorpusCanProduceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Honour the expiry test's own instruction now that capture has closed the gap it measured",
+      "done_when": "the expired test is rewritten to assert a candidate appears and that promotion stays blocked, and the stale class remark is corrected",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
       }
     }
   ],

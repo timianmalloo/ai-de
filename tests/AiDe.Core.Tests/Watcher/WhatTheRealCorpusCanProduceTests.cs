@@ -11,22 +11,26 @@ namespace AiDe.Core.Tests.Watcher;
 /// the one a fixture cannot: given what has actually been recorded here, can Daydream produce
 /// anything at all?</para>
 ///
-/// <para><b>Measured 2026-09-03 — 111 episodes scored, 7 clean, 103 carrying nothing to assess, ONE
-/// observation recorded.</b> The vertical works end to end. It has one row. And the recurrence
-/// threshold is two distinct episodes, so one observation can never become a candidate: the output
-/// over this repository's entire recorded history is zero, and would be zero however good the engine
-/// is.</para>
+/// <para><b>It has now measured a transition, which is the point of pointing it at real data.</b>
+/// On 2026-09-03 it recorded 111 episodes, 7 clean, 103 carrying nothing to assess and ONE
+/// observation — one short of the recurrence threshold, so the output over the whole recorded
+/// history was zero however good the engine was. Later the same day, after Proof Pack capture was
+/// stipulated and ratcheted: 120 episodes, 17 assessed, <b>103 still unassessed</b>, two
+/// observations, one candidate.</para>
 ///
-/// <para><b>This test exists to expire.</b> A finding written only in prose is a memoir (CI6), and a
-/// claim about what does NOT exist decays when someone else acts — with the author absent and no
-/// reason to look (DC-094). So the claim is tied to something that fails the day it stops being
-/// true. When capture improves enough for a second observation, this goes red, and that red is the
-/// news: <b>Daydream can propose something for the first time.</b> Rewrite it then; do not
-/// delete it.</para>
+/// <para><b>The 103 never moved, and were never going to.</b> Capture accumulates forward, so
+/// episodes closed without evidence are unreachable — the claim made before the change, confirmed
+/// by the measurement after it rather than restated.</para>
 ///
-/// <para><b>It asserts a threshold relationship, never the measured numbers.</b> Pinning "103" would
-/// go red on the next audit entry and be edited back without thought, which is a control that trains
-/// people to ignore it.</para>
+/// <para><b>One test here expired on purpose and was rewritten, not deleted.</b> A claim about what
+/// does NOT exist decays when someone else acts, with the author absent and no reason to look
+/// (DC-094), so it was tied to something that fails the day it stops being true. It failed. Its
+/// replacement asserts the rule the world cannot change on its own: a candidate with no
+/// disconfirming check cannot be promoted.</para>
+///
+/// <para><b>Assertions are threshold relationships, never the measured numbers.</b> Pinning "103"
+/// would go red on the next audit entry and be edited back without thought, which is a control that
+/// trains people to ignore it.</para>
 /// </remarks>
 public sealed class WhatTheRealCorpusCanProduceTests
 {
@@ -47,7 +51,11 @@ public sealed class WhatTheRealCorpusCanProduceTests
         return null;
     }
 
-    private sealed record Measurement(int Scored, DaydreamReach Reach, int Observations);
+    private sealed record Measurement(
+        int Scored,
+        DaydreamReach Reach,
+        int Observations,
+        IReadOnlyList<DaydreamCandidate> Candidates);
 
     private static Measurement Measure()
     {
@@ -75,10 +83,12 @@ public sealed class WhatTheRealCorpusCanProduceTests
                 WorkspaceKey.From(root!),
                 daydream: new DaydreamRecorder(record));
 
+            var read = record.Read();
             return new Measurement(
                 scored,
                 new DaydreamReachProbe(host.Store, record).Probe(),
-                record.Read().Observations.Count);
+                read.Observations.Count,
+                new DaydreamFold().Fold(read.Observations, read.Events));
         }
         finally
         {
@@ -103,29 +113,64 @@ public sealed class WhatTheRealCorpusCanProduceTests
     }
 
     /// <summary>
-    /// EXPECTED RED, EVENTUALLY: the corpus cannot yet produce a single candidate.
+    /// The corpus produces a candidate — the first thing Daydream has ever proposed.
     /// </summary>
     /// <remarks>
-    /// <para>Recurrence needs <c>RecurrenceDetector</c>'s minimum of two distinct episodes. Fewer
-    /// observations than that means no pattern can ever be proposed, whatever the engine does.</para>
+    /// <para><b>This test expired on 2026-09-03, exactly as designed, and this is its rewrite.</b>
+    /// It previously asserted that the corpus could NOT produce a candidate: one observation, and a
+    /// recurrence threshold of two, so the output over the whole recorded history was zero however
+    /// good the engine was. Its own remark said the red would be good news and instructed a rewrite
+    /// rather than a deletion.</para>
     ///
-    /// <para><b>When this fails, nothing is broken.</b> It means enough turns have recorded their
-    /// evidence for a second observable episode to exist, and Daydream can propose something for the
-    /// first time. Rewrite the assertion to check that a candidate appears — that is what its own
-    /// remark asked for, and deleting it would throw away the only place the transition is
-    /// visible.</para>
+    /// <para><b>What closed it was capture, not code.</b> The owner stipulated Proof Pack capture;
+    /// the ratchet made new skill entries carry a goal, a done condition and evidence; nine such
+    /// entries arrived within the day. Measured across that transition, with the historical debt
+    /// untouched exactly as predicted:</para>
+    ///
+    /// <list type="table">
+    ///   <item><description>episodes 111 → 120, assessed 8 → 17, <b>unassessed 103 → 103</b></description></item>
+    ///   <item><description>observations 1 → 2, recurrences 0 → 1, <b>candidates 0 → 1</b></description></item>
+    /// </list>
+    ///
+    /// <para>The 103 did not move, and were never going to: capture accumulates forward, so episodes
+    /// closed without evidence are unreachable. That was the claim, and this is the measurement that
+    /// confirms it rather than a repetition of it.</para>
     /// </remarks>
     [Fact]
-    public void TheRealCorpusCannotYetProduceACandidate()
+    public void TheRealCorpusNowProducesACandidate()
     {
         var m = Measure();
 
         Assert.True(
-            m.Observations < 2,
-            $"{m.Observations} observations were recorded — enough to recur. This test has expired, "
-            + "which is good news: rewrite it to assert that a candidate appears.");
+            m.Observations >= 2,
+            $"only {m.Observations} observation(s) — the corpus has regressed below recurrence, which "
+            + "means capture stopped or an import path broke. This test previously asserted the "
+            + "opposite; do not simply invert it back.");
 
-        Assert.Empty(new RecurrenceDetector().Recurring([]));
+        Assert.NotEmpty(m.Candidates);
+    }
+
+    /// <summary>
+    /// And it is BLOCKED from promotion, because nothing has disconfirmed it.
+    /// </summary>
+    /// <remarks>
+    /// <para>The acceptance criterion most likely to be quietly relaxed under pressure to show the
+    /// feature doing something: a candidate with no disconfirming check has promotion <b>disabled</b>,
+    /// not discouraged, and no amount of recurrence substitutes for one.</para>
+    ///
+    /// <para>This is the assertion that stays true indefinitely. The previous test expired because
+    /// it described a state the world would leave; this one describes a rule the world cannot change
+    /// on its own — only a human attaching a check can move it, which is the design.</para>
+    /// </remarks>
+    [Fact]
+    public void TheCandidateCannotBePromotedWithoutADisconfirmingCheck()
+    {
+        var m = Measure();
+
+        var candidate = Assert.Single(m.Candidates);
+
+        Assert.False(candidate.CanPromote);
+        Assert.NotNull(candidate.BlockedBecause);
     }
 
     /// <summary>
