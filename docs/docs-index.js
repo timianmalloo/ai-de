@@ -2342,6 +2342,33 @@ window.DOCS_INDEX = {
       "sourceSha256": "87329218c48b616d0cea0fdd1508db2523558ed3aaa490d8eb7129bf9da6c371"
     },
     {
+      "id": "note-20260904-two-defects-in-apply-learnings-output",
+      "path": "docs/notes/note-20260904-two-defects-in-apply-learnings-output.md",
+      "title": "Two defects in /apply-learnings output, and one measurement that needed no action",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-04",
+      "reviewSuggested": [],
+      "summary": "Reviewing the fleet dream results found two defects in the generator, not in this repository: eight of eleven inherited classes carry a TODO labelled \"(automated control)\", and ids are truncated to 20 characters mid-word. Both are upstream in ai-forward and are recorded rather than patched, because docs/ai-forward-pack/ is replaced wholesale on the next pack update. The DC-088 measurement that looked actionable turned out to need no action here.",
+      "tags": [
+        "decision-note",
+        "ai-forward-pack",
+        "apply-learnings",
+        "defect-classes",
+        "upstream"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "97234ae560a8663d0d4a2e2510affa12b9f60a61399ff50dafbfe12052a496c1"
+    },
+    {
       "id": "note-ai-native-ide-architecture-review-depth",
       "path": "docs/notes/ai-native-ide-architecture-review-depth.md",
       "title": "Decision note — AI-native IDE architecture review depth",
@@ -10968,5 +10995,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "27b346eab2b83ba9de4144186f2ec73db3ca3fa1e5927af82fdef9ac6c281e84"
+  "graphSha256": "0d407400abbc102bb49b9b33dd7c7c4cf1690a034c408fff98859c638966cc05"
 };

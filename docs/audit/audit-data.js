@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-ui-experience-refinement",
-  "generated": "2026-09-04T16:18:34Z",
+  "generated": "2026-09-04T16:40:15Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9224,6 +9224,31 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Record the owner's override of ADR-0011's MCP gate as an ADR, and make the code match it",
       "done_when": "ADR-0022 supersedes ADR-0011, the processing-class branch is gone, the retired security test is replaced rather than deleted, and architecture.md no longer claims a control that was withdrawn",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PMNN1J7EX4CEDK3S3RP9F0",
+      "shortname": "apply-learnings-generator-defects",
+      "datetime": "2026-09-04T16:40:15Z",
+      "session": "e9679dd2",
+      "prompt": "do next steps including the optional step",
+      "summary": "Both generator defects are upstream in ai-forward and unpatchable here — docs/ai-forward-pack/ is replaced wholesale by the next pack update — so they are recorded with suggested fixes rather than edited into a vendored copy. The DC-088 measurement looked like an argument for enforcing the identity check; checked first and it is not: coord-core already refuses on claim/release, only precommit is advisory and the pack states the trade, and WorkbenchShell already sets AGENT_SESSION unconditionally. The measurement confirms the existing fix rather than indicating new work, on a sample of three.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260904-two-defects-in-apply-learnings-output.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Act on the two generator defects and the DC-088 measurement from the fleet dream results",
+      "done_when": "each is either fixed here or recorded upstream with the reason it cannot be fixed here, and the DC-088 measurement is checked before acting rather than after",
       "signals": {
         "verification_path": true,
         "verification_executed": true,
