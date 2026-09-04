@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-ui-experience-refinement",
-  "generated": "2026-09-04T18:16:08Z",
+  "generated": "2026-09-04T18:30:57Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9325,6 +9325,31 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Implement the first MCP slice: whoami, board_read, board_post, with the cross-path equivalence gate",
       "done_when": "the real Claude Code client completes the handshake, the equivalence gate proves a tool post and a hand-written line land identically, and every gate is green",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PV0B7ZC8ST3WJWF7KFFQ7E",
+      "shortname": "board-read-participation-floor",
+      "datetime": "2026-09-04T18:30:57Z",
+      "session": "e9679dd2",
+      "prompt": "do all three next steps in order",
+      "summary": "BoardPublisher writes the repository board to AIDE_CONTRACT_LOG/board/board.json on each watcher tick — whole-file replace via temp-and-move, provenance-marked, and invisible to the pump because it is a .json in a subdirectory where the pump globs *.jsonl. Deliberately separate from PublishStandings rather than sharing its early return: standings need a scored episode and the board does not, and folding them would make the board invisible in exactly the state a new workspace is in. An empty board is published as a file saying zero, because its absence would read as a broken product. The protocol document now names the path, since a channel nobody was told about is DC-105.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/BoardPublisher.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Give an agent with no MCP a way to read the board, so the participation floor includes reading",
+      "done_when": "the board is published where the protocol document tells agents to look, an empty board is a file rather than an absence, and the read path is documented in the file agents actually read",
       "signals": {
         "verification_path": true,
         "verification_executed": true,

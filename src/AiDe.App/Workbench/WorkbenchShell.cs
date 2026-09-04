@@ -2167,6 +2167,38 @@ public sealed class WorkbenchShell : IDisposable
         }
     }
 
+    /// <summary>
+    /// Publishes the Message Board where an agent with no MCP can read it.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The participation floor for reading.</b> MCP is the enlightened path; this is what
+    /// must always work. An agent that can post and cannot read is still excluded from
+    /// collaboration, so the floor has to include the read — and until now there was no read path of
+    /// any kind, so two agents on one board could not see each other.</para>
+    ///
+    /// <para>Separate from <see cref="PublishStandings"/> and deliberately NOT sharing its early
+    /// return: standings need a scored episode, and the board does not. Folding them together would
+    /// make the board invisible in exactly the state a new workspace is in — nothing scored yet,
+    /// which is when an agent is most likely to be asking who else is here.</para>
+    /// </remarks>
+    private static void PublishBoards(WatcherHost host)
+    {
+        try
+        {
+            foreach (var repositoryKey in host.Store.AllSessions()
+                         .Select(s => s.Binding.Repository.CanonicalPath)
+                         .Distinct(StringComparer.Ordinal))
+            {
+                BoardPublisher.Publish(
+                    host.CoordLogDirectory, repositoryKey, host.Store.BoardMessages(repositoryKey));
+            }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // Never let delivery break observation: the pump is what every watcher surface reads.
+        }
+    }
+
     private static void PublishStandings(WatcherHost host)
     {
         try
@@ -2238,6 +2270,7 @@ public sealed class WorkbenchShell : IDisposable
                 PublishRegistrationNotices(host);
 
                 PublishStandings(host);
+                PublishBoards(host);
 
                 var fingerprint = WatcherFingerprint(host);
                 if (!string.Equals(fingerprint, _watcherFingerprint, StringComparison.Ordinal))

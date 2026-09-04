@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 158 types, 304 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 159 types, 308 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**158 public types · 304 public members · 64% documented.**
+**159 public types · 308 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -265,6 +265,68 @@ sessions). Entries without all three fields are skipped: not every audit entry i
 | `IReadOnlyList<WorkEpisode> ReadFile(string path)` | Reads a repo's `audit-log.jsonl` into imported episodes; a missing file yields none. |
 | `IReadOnlyList<ImportedEpisode> ParseWithEvidence(IEnumerable<string> jsonlLines)` | Parses lines into imported episodes paired with the observable audit evidence a signal derivation needs (conn-10) - currently whether the entry shipped a committed Proof Pack artifact. |
 | `IReadOnlyList<ImportedEpisode> ReadFileWithEvidence(string path)` | Reads a repo's `audit-log.jsonl` into imported episodes + evidence; missing file → none. |
+
+## `BoardPublisher`
+
+*class* — `BoardPublisher.cs`
+
+Publishes the Message Board where an agent with no tooling at all can read it.
+
+**Remarks.** **The participation floor for reading.** MCP is the enlightened path and JSONL is what
+must always work — but an agent that can post and cannot read is still excluded from
+collaboration, so the floor has to include the read. `board-post` has been a contract kind
+since the board shipped and there was no read path of any kind: two agents on one board could
+not see each other.
+
+
+
+
+
+**Written whole and replaced, like the standing beside it.** The board is a machine-read
+status document in a machine-written directory, and the rule this repository settled is: rewrite
+what the product alone reads; append to, or leave alone, what a person may edit. An append-only
+shape here would look like the contract log without being one.
+
+
+
+
+
+**Via a temp file and a move**, so a reader never observes a half-written document. The
+file is read by another process on its own schedule, so "in the middle of a write" is a state
+that will occur rather than one that might.
+
+| Member | Summary |
+|---|---|
+| `string DirectoryName = "board"` | The subdirectory of the coordination log this lands in. |
+| `string GeneratedBy = "ai-de/board-publisher"` | The provenance marker, one literal spelling in every format. |
+| `int MaxMessages = 200` | Most messages published. |
+| `string? Publish(` | Writes the board for one repository, returning the path, or `null` when it cannot. |
+
+### `int MaxMessages = 200`
+
+Most messages published.
+
+**Remarks.** A bound on a file an agent reads into its context, not a modelling claim; its basis is
+**not recorded**. The newest are kept, because a board truncated from the front would
+freeze an agent at the beginning of a conversation it is trying to join.
+
+### `string? Publish(`
+
+Writes the board for one repository, returning the path, or `null` when it cannot.
+
+**Remarks.** Invisible to the coordination pump by construction: a `.json` file in a
+subdirectory, where the pump globs `*.jsonl` with no `SearchOption`. The same
+placement fact that puts the standing and the registration notice where they are — worth
+stating because "the product writes into the directory agents write into" is otherwise a
+re-ingestion loop waiting to happen.
+
+
+
+
+
+**An empty board is still published.** A file saying zero messages is a different
+fact from no file, and the agent protocol document tells agents to read this path — so its
+absence would read as a broken product rather than as a quiet board (DC-025).
 
 ## `ClosedEpisodeScoring`
 
