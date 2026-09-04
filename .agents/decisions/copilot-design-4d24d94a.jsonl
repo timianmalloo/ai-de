@@ -1,0 +1,12 @@
+{"agent": "copilot-design-4d24d94a", "at": 1788106509.8498282, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs", "session": "copilot-design-4d24d94a", "wi": ""}
+{"agent": "copilot-design-4d24d94a", "at": 1788106509.8943157, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Ipc/IpcServer.cs", "session": "copilot-design-4d24d94a", "wi": ""}
+{"agent": "copilot-design-4d24d94a", "at": 1788106509.937233, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Ipc/IpcContract.cs", "session": "copilot-design-4d24d94a", "wi": ""}
+{"agent": "copilot-design-4d24d94a", "at": 1788106509.982635, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Ipc/IpcFraming.cs", "session": "copilot-design-4d24d94a", "wi": ""}
+{"agent": "copilot-design-4d24d94a", "at": 1788106510.027168, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Projections/GraphProjection.cs", "session": "copilot-design-4d24d94a", "wi": ""}
+{"agent": "copilot-design-4d24d94a", "at": 1788108592.8982046, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/WorkbenchAdapter.cs", "session": "copilot-design-4d24d94a", "wi": ""}
+{"agent": "copilot-design-4d24d94a", "at": 1788109218.882137, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/CanvasPage.cs", "session": "copilot-design-4d24d94a", "wi": ""}
+{"agent": "copilot-design-4d24d94a", "at": 1788119898.141767, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/CanvasSurface.cs", "session": "copilot-design-4d24d94a", "wi": ""}
+{"agent": "copilot-design-4d24d94a", "at": 1788119898.192303, "code": null, "kind": "allowed", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "session": "copilot-design-4d24d94a", "wi": ""}
+{"agent": "copilot-design-4d24d94a", "at": 1788237196.174621, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Workbench/WorkbenchCommands.cs", "session": "copilot-design-4d24d94a", "wi": ""}
+{"agent": "copilot-design-4d24d94a", "at": 1788237672.6418116, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Workbench/WorkbenchCommands.cs", "session": "copilot-design-4d24d94a", "wi": ""}
+{"agent": "copilot-design-4d24d94a", "at": 1788276632.520571, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs", "session": "copilot-design-4d24d94a", "wi": ""}

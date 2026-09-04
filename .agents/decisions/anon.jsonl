@@ -1,0 +1,3 @@
+{"agent": "anon", "at": 1788187529.6812057, "code": "COORD-NOT-CHECKED-IDENTITY", "kind": "not_checked", "path": "src/AiDe.Core/Presentation/CanvasGraphViewModel.cs", "session": "anon", "wi": ""}
+{"agent": "anon", "at": 1788237190.2263696, "code": "COORD-NOT-CHECKED-IDENTITY", "kind": "not_checked", "path": "src/AiDe.Core/Workbench/WorkbenchCommands.cs", "session": "anon", "wi": ""}
+{"agent": "anon", "at": 1788307471.8166373, "code": "COORD-NOT-CHECKED-IDENTITY", "kind": "not_checked", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "session": "anon", "wi": ""}

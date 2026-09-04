@@ -17,7 +17,7 @@ This checks, for each log:
 
   1. no id appears twice
   2. no id present in the committed version has DISAPPEARED
-  3. ids parse as <prefix>-<number>
+  3. ids parse as <prefix>-<number> or <prefix>-<ULID> (the pack rev-59 allocator)
   4. every line is valid JSON with an id at all
 
 (1) is the class. (2) is the hole (1) left, and it cost a real entry: resolving a merge by unioning
@@ -45,7 +45,20 @@ DEFAULT_LOGS = [
     REPO / "docs" / "audit" / "audit-log.jsonl",
     REPO / "docs" / "audit" / "change-log.jsonl",
 ]
-ID = re.compile(r"^([a-z]+)-(\d+)$")
+# Two id shapes are legitimate, and the second one arrived with pack revision 59.
+#
+#   al-0449                       the sequential allocator
+#   al-01M1MYWGG050BEVR42EHRC7FBZ the pack's coord_ids.py ULID allocator
+#
+# The pack moved to ULIDs to stop two trees allocating the SAME id independently — which is not a
+# hypothetical here: docs/adr currently carries four collisions (adr-0017..0020, each claimed by two
+# unrelated decisions) from exactly that, and they fail this repository's own allocator gate on main.
+# A sequential allocator cannot be made safe across concurrent worktrees; a ULID cannot collide.
+#
+# Both are accepted rather than switching, because the log is append-only: 435 existing entries carry
+# the sequential form and rewriting them to satisfy a format rule would be editing history to please
+# a checker.
+ID = re.compile(r"^([a-z]+)-(\d+|[0-9A-HJKMNP-TV-Z]{26})$")
 
 # Windows consoles default to cp1252 and cannot encode the glyphs below.
 for _stream in (sys.stdout, sys.stderr):
@@ -133,7 +146,9 @@ def check(path: Path) -> list[str]:
             continue
 
         if not ID.match(str(identifier)):
-            findings.append(f"{path.name}:{number}: id '{identifier}' is not <prefix>-<number>")
+            findings.append(
+                f"{path.name}:{number}: id '{identifier}' is neither <prefix>-<number> nor "
+                "<prefix>-<ULID>")
 
         ids.append(str(identifier))
 

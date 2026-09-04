@@ -1,0 +1,2 @@
+{"agent": "claude-ui-experience", "at": 1788396875.3340921, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Watcher/WatcherObservationStore.cs", "session": "claude-ui-experience", "wi": ""}
+{"agent": "claude-ui-experience", "at": 1788396875.4170666, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs", "session": "claude-ui-experience", "wi": ""}

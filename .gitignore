@@ -516,3 +516,6 @@ spikes/msbuild-task-execution/fixture/markers/
 # Obsidian Smart Environment plugin state — per-user, machine-local (pack rev-52)
 docs/.smart-env/
 **/.smart-env/
+
+# Per-session agent worktrees — machine-local state, never part of the repository
+.claude/worktrees/

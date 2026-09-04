@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-03T19:45:15Z",
+  "generated": "2026-09-04T01:00:17Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9032,6 +9032,29 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true,
         "regression": false
+      }
+    },
+    {
+      "id": "al-01M1MYWGG050BEVR42EHRC7FBZ",
+      "shortname": "updatepack-r59",
+      "datetime": "2026-09-04T01:00:17Z",
+      "session": "ai-de-a7",
+      "prompt": "C:/Program Files/Git/updatepack",
+      "summary": "r45 -> r59 (2026.08.31.1), 14-revision delta, 36 entries, 222 file actions. The substantive change is that knowledge docs now carry load: frontmatter that ROUTES them: always (12) and glob (11) become .github/instructions with each doc's OWN applyTo and the source frontmatter STRIPPED rather than prepended over; skill and reference docs (16) go verbatim to the NEW .github/knowledge/. Stale .instructions.md files for now-skill-scoped docs were REMOVED, without which the routing change would be a no-op. design renamed to design-slice; code-hygiene and also added; coord_ids.py added as a module audit-log.py imports. FOUND AND WORKED AROUND: audit-log.py project_name() derives the project from the CHECKOUT DIRECTORY basename, so a worktree produces a different title than the primary and the committed derived view churns between sessions - the derived views were therefore generated from the primary checkout.",
+      "kind": "command",
+      "skill": "updatepack",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/ai-forward-pack/INSTALL.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Bring the installed AI-Forward Pack from revision 45 to 59 without losing this repository's own customisations",
+      "done_when": "All 36 changelog entries applied, both managed blocks re-pasted wholesale between markers, the repo's Proof Pack capture section and session-collaboration instruction preserved, docs-index.js untouched by the copy pass, and pack-doctor reporting 0 FAIL",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
       }
     }
   ],
