@@ -27,7 +27,12 @@ public sealed class SurfaceContentFactory(
     // Appended rather than inserted. A new optional parameter in the middle silently re-points every
     // POSITIONAL call site at the wrong argument — the build caught it here, but a same-typed
     // neighbour would have compiled and mis-wired the pane instead.
-    IWatcherDaydreamQuery? watcherDaydreams = null)
+    IWatcherDaydreamQuery? watcherDaydreams = null,
+
+    // Appended for the same reason, one parameter later. Resolves the operator's name for a
+    // terminal so a session row can lead with it — a presentation concern the SHELL owns, since
+    // that is where TerminalCustomizationStore lives and where a rename actually happens.
+    Func<string, string?>? terminalNameFor = null)
 {
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
     public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "ledger", "daydreams", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"];
@@ -222,7 +227,7 @@ public sealed class SurfaceContentFactory(
                 var liveRows = new StackPanel();
                 foreach (var row in live)
                 {
-                    liveRows.Children.Add(SessionRow(row));
+                    liveRows.Children.Add(SessionRow(row, terminalNameFor));
                 }
 
                 AutomationProperties.SetName(liveRows, $"{surface.Title} live sessions");
@@ -247,7 +252,7 @@ public sealed class SurfaceContentFactory(
                 var endedRows = new StackPanel();
                 foreach (var row in inactive)
                 {
-                    endedRows.Children.Add(SessionRow(row));
+                    endedRows.Children.Add(SessionRow(row, terminalNameFor));
                 }
 
                 var expander = new Expander
@@ -298,7 +303,7 @@ public sealed class SurfaceContentFactory(
     // One session as a legible two-line row: a colour+glyph liveness chip, a primary identity line,
     // and a muted metadata line beneath it (#15). Presentation strings/brush come from the pure,
     // headlessly-tested SessionRowPresenter.
-    private static FrameworkElement SessionRow(WatcherSessionRow row)
+    private static FrameworkElement SessionRow(WatcherSessionRow row, Func<string, string?>? nameFor)
     {
         var chip = new Border
         {
@@ -316,7 +321,11 @@ public sealed class SurfaceContentFactory(
 
         var identity = new TextBlock
         {
-            Text = SessionRowPresenter.Identity(row),
+            Text = SessionRowPresenter.Identity(
+                row,
+                // Resolved at render, never cached on the row: a rename must show up on the next
+                // render rather than on the next registration, and registration happens once.
+                row.TerminalId.Length == 0 ? null : nameFor?.Invoke(row.TerminalId)),
             FontWeight = FontWeights.SemiBold,
             TextTrimming = TextTrimming.CharacterEllipsis,
         };

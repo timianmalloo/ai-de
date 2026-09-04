@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation: 32 types, 81 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation: 32 types, 83 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation`
 
-**32 public types · 81 public members · 64% documented.**
+**32 public types · 83 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -539,10 +539,56 @@ a guess.
 
 | Member | Summary |
 |---|---|
+| `string ShortId` | A short, stable handle for one session — the thing that tells two otherwise identical rows apart. |
+| `string Location` | Repository and branch, separated so a branch name cannot be mistaken for a path. |
 | `string DisputedText = "⚠ Disputed"` | The prefix a session with a disputed episode carries (US-16 discoverability, no colour-alone). |
 | `string DisplayLabel` | The dense one-line label (G6 Multi-Panel Data Terminal density). |
 | `string AccessibleName` | The full row a screen reader announces (WCAG 2.2 AA). |
 | `WatcherSessionRow From(WatcherSessionSnapshot snapshot)` | Builds an honest row from a snapshot: null harness/model become Not Recorded. |
+
+### `string ShortId`
+
+A short, stable handle for one session — the thing that tells two otherwise identical rows
+apart.
+
+**Remarks.** Reported from the running product: three live sessions rendered as three IDENTICAL
+strings, because every visible field (agent, repository, branch) was the same for all of
+them. Nothing on the surface said WHICH session a row was, and the session id was on the
+record the whole time without being shown.
+
+
+
+
+
+Eight characters, not the whole id. A full `Guid.ToString("n")` is 32 characters of
+noise that pushes the readable part off the line — and the job here is discrimination between
+the handful of sessions on screen, not global uniqueness, which the id itself still carries.
+
+### `string Location`
+
+Repository and branch, separated so a branch name cannot be mistaken for a path.
+
+**Remarks.** This used to be `{Repository}/{Worktree}`, which rendered
+`TheTerrace/docs/fix-broken-design-links` — read, reasonably, as a directory path, and
+the reporter asked why sessions were not at the repository root. They were: that is the repo
+`TheTerrace` on branch `docs/fix-broken-design-links`.
+
+
+
+
+
+A `/` separator collides with the dominant branch-naming convention — `docs/`,
+`feature/`, `fix/` — so the ambiguity was not an edge case but the common case.
+`@` cannot appear alone in a git ref, so it can never be confused for part of either
+side.
+
+### `string AccessibleName`
+
+The full row a screen reader announces (WCAG 2.2 AA).
+
+**Remarks.** Spoken as "on branch" rather than read as `@`: the symbol removes a VISUAL ambiguity and
+would introduce an audible one, since a screen reader says "at" and a listener has no way to
+know it separates two fields.
 
 ## `WatcherSessionSnapshot`
 

@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 79 types, 319 members, 69% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 79 types, 321 members, 69% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**79 public types · 319 public members · 69% documented.**
+**79 public types · 321 public members · 69% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -910,12 +910,55 @@ headless.
 |---|---|
 | `string ChipBrushKey(LivenessBadge liveness)` | The theme brush key that colours a liveness chip. Colour is the third signal only — the glyph and text carry the meaning (WCAG 2.2 AA, not colour alone), matching `LivenessBadge`. |
 | `string ChipText(LivenessBadge liveness)` | The chip's text: the glyph and word together, e.g. "✓ Alive". |
-| `string Identity(WatcherSessionRow row)` | The primary line — who and where: the stable human identity a session is recognised by. |
+| `string Identity(WatcherSessionRow row)` | The primary line — who, where, and WHICH: the identity a session is recognised by. |
+| `string Identity(WatcherSessionRow row, string? name)` | The identity line, preferring the name the operator gave this terminal. |
 | `string Details(WatcherSessionRow row)` | The muted secondary line — harness, model, trust, spans: metadata, subordinate to identity. |
 | `int LivenessRank(WatcherSessionRow row)` | Liveness ordering rank — Alive (0) leads, then Stale (1), then Ended (2). The session actually collaborating right now belongs at the top, not buried in store order. |
 | `(IReadOnlyList<WatcherSessionRow> Live, IReadOnlyList<WatcherSessionRow> Inactive) Partition(` | Splits the sessions into the ones **actively collaborating** — **Live** (Alive only) — and the **Inactive** history to collapse (Stale then Ended). Only a heartbeating session is live; a stale one (heartbeat aged out)… |
 | `string InactiveHeader(int count)` | The collapsed-section header for the inactive history, e.g. "14 inactive session(s)". |
 | `string? SharedTelemetryNote(IReadOnlyList<WatcherSessionRow> rows)` | One line stating a telemetry gap the whole list shares, so it is said once instead of repeated on every row (#15 — "an all-'Not Recorded' row is a telemetry gap the list should state, not repeat five times"). Null whe… |
+
+### `string Identity(WatcherSessionRow row)`
+
+The primary line — who, where, and WHICH: the identity a session is recognised by.
+
+**Remarks.** Two defects reported from the running product, in one line of text.
+
+
+
+
+
+**It read as a path.** `{Repository}/{Worktree}` rendered
+`TheTerrace/docs/fix-broken-design-links`, and the reporter reasonably asked why sessions
+were not at the repository root. They were — that is a repo and a branch whose name contains
+a slash, which is the dominant convention rather than an edge case.
+
+
+
+
+
+**It did not identify anything.** Three live sessions rendered as three identical
+strings, because agent, repository and branch were the same for all three. The session id was
+on the record the whole time and never shown.
+
+### `string Identity(WatcherSessionRow row, string? name)`
+
+The identity line, preferring the name the operator gave this terminal.
+
+**Remarks.** **The name is a presentation concern, resolved here rather than stored on the
+session.** A terminal can already be renamed and the name already survives a restart, in
+`TerminalCustomizationStore`, keyed by surface id — and a session's
+`Terminal.TerminalId` IS that surface id. So the name needed carrying to this line, not
+a column in the watcher store, a schema migration and a contract attribute to move it
+there.
+
+
+
+
+
+**The harness is kept, not replaced.** A row named "refactor the parser" that no
+longer says which harness is running has traded one missing fact for another; the operator
+named the session to tell it apart from its siblings, not to hide what it is.
 
 ### `(IReadOnlyList<WatcherSessionRow> Live, IReadOnlyList<WatcherSessionRow> Inactive) Partition(`
 
@@ -1199,6 +1242,7 @@ indistinguishable from a broken feature).
 | `SessionActivity Activity` | What the session is doing, as the runtime understands it. |
 | `ITerminalSession? Session` | The live session, or null before it starts. Exposed so prompt dispatch can write to the terminal this pane owns. |
 | `string? WorkingDirectory { get; set; }` | Where new sessions start. Set when a workspace attaches; the process directory otherwise. |
+| `Func<string, string?>? WorkingDirectoryFor { get; set; }` | A per-surface working directory, overriding `WorkingDirectory` when it answers. |
 | `Func<string, IReadOnlyDictionary<string, string>>? EnvironmentFor { get; set; }` | Extra environment for a session, by its id. Null (the default) means the child inherits exactly as it always has. |
 | `AgentReadinessWatcher? AgentReadiness { get; private set; }` | Watches for an agent's prompt marker, when this session runs one. |
 | `string CommandLine { get; set; } = "powershell.exe"` | What this pane runs. PowerShell unless a caller asks for something else. |
@@ -1233,6 +1277,23 @@ any workspace is known, and a pane created after one opens should still land in 
 place. `simplify: a static default rather than threading the workspace through the surface
 factory; ceiling is one workspace per shell, which the workspace lock already enforces;
 upgrade trigger = a shell hosts two workspaces at once.`
+
+### `Func<string, string?>? WorkingDirectoryFor { get; set; }`
+
+A per-surface working directory, overriding `WorkingDirectory` when it answers.
+
+**Remarks.** The static above is one value for every terminal, which was right while every terminal
+opened in the workspace. An agent session now gets its OWN git worktree, so the cwd is a
+property of the surface rather than of the shell — the same reason
+`EnvironmentFor` is a function and not a value.
+
+
+
+
+
+**Null is the honest default here**, unlike `EnvironmentFor`: falling
+back to the workspace is a working answer and the state every plain terminal is in, so a
+no-op default hides nothing (DC-084's test — a default is safe exactly when it works).
 
 ### `Func<string, IReadOnlyDictionary<string, string>>? EnvironmentFor { get; set; }`
 

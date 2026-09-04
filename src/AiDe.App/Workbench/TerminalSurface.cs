@@ -223,6 +223,21 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
     public static string? WorkingDirectory { get; set; }
 
     /// <summary>
+    /// A per-surface working directory, overriding <see cref="WorkingDirectory"/> when it answers.
+    /// </summary>
+    /// <remarks>
+    /// <para>The static above is one value for every terminal, which was right while every terminal
+    /// opened in the workspace. An agent session now gets its OWN git worktree, so the cwd is a
+    /// property of the surface rather than of the shell — the same reason
+    /// <see cref="EnvironmentFor"/> is a function and not a value.</para>
+    ///
+    /// <para><b>Null is the honest default here</b>, unlike <see cref="EnvironmentFor"/>: falling
+    /// back to the workspace is a working answer and the state every plain terminal is in, so a
+    /// no-op default hides nothing (DC-084's test — a default is safe exactly when it works).</para>
+    /// </remarks>
+    public static Func<string, string?>? WorkingDirectoryFor { get; set; }
+
+    /// <summary>
     /// Extra environment for a session, by its id. Null (the default) means the child inherits
     /// exactly as it always has.
     /// </summary>
@@ -416,7 +431,13 @@ public sealed class TerminalSurface : ContentControl, IDisposable, IHasDisplayNa
                     // The WORKSPACE, not wherever the shell happened to be launched from. A
                     // terminal in a developer tool that opens somewhere unrelated to the repository
                     // on screen makes the user's first command a cd.
-                    WorkingDirectory: WorkingDirectory ?? Environment.CurrentDirectory,
+                    // Per-surface first (an agent session's own worktree), then the workspace, then
+                    // where the shell happened to start. A terminal in a developer tool that opens
+                    // somewhere unrelated to the repository on screen makes the user's first command
+                    // a cd.
+                    WorkingDirectory: WorkingDirectoryFor?.Invoke(SurfaceId)
+                        ?? WorkingDirectory
+                        ?? Environment.CurrentDirectory,
                     Columns: columns,
                     Rows: rows,
                     ProcessingClass: SessionProcessingClass.LocalOnly,

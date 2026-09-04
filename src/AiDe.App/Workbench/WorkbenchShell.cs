@@ -130,7 +130,8 @@ public sealed class WorkbenchShell : IDisposable
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
             watcher.Ledger,
             queries is not null ? SearchWorkspaceAsync : null,
-            watcher.Daydreams);
+            watcher.Daydreams,
+            TerminalNameFor);
 
         // The environment contract does not depend on a workspace, so it must not be gated behind
         // one. It was assigned ONLY in AttachWorkspace, which both call sites skip when the daemon
@@ -144,6 +145,12 @@ public sealed class WorkbenchShell : IDisposable
         // AttachWorkspace leaves them inert when one never does. The hook reads current state on
         // every call, so assigning it here is enough — AttachWorkspace no longer needs to.
         TerminalSurface.EnvironmentFor = AgentEnvironmentFor;
+
+        // In the CONSTRUCTOR beside its sibling, for the reason recorded there: assigning these in
+        // AttachWorkspace only leaves them null on every path that skips it, and an agent launched
+        // without them fails silently rather than loudly (DC-084).
+        TerminalSurface.WorkingDirectoryFor =
+            surfaceId => _agentWorktrees.TryGetValue(surfaceId, out var path) ? path : null;
         Manager = new DockingManager();
         AutomationProperties.SetName(Manager, "Workbench");
 
@@ -190,10 +197,22 @@ public sealed class WorkbenchShell : IDisposable
                 return $"{profile.DisplayName ?? agent} was not found on PATH.";
             }
 
-            var terminalStack = Service.Current.AllStacks()
-                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"));
-
-            if (terminalStack is null) return "There is no terminal pane to open it beside.";
+            // Beside an existing terminal when there is one; otherwise into the Bottom zone, which
+            // is where terminals live by definition (ZoneId.Bottom — "terminals, diagnostics,
+            // output").
+            //
+            // This used to refuse with "There is no terminal pane to open it beside." Closing every
+            // terminal empties the Bottom zone, and an empty tool zone has NO STACK — it collapses
+            // to a rail — so the lookup found nothing and the one action that would have fixed the
+            // situation was the one being refused. The user had closed the terminals deliberately,
+            // to start clean, which is the state most likely to precede opening a session.
+            //
+            // AddSurface takes a stack id only to name the ZONE (ZoneFor -> OpenPane), and OpenPane
+            // creates the stack when the zone is empty. The empty case never needed a stack to
+            // exist; it needed a zone to be named.
+            var terminalStackId = Service.Current.AllStacks()
+                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"))?.Id
+                ?? ZonesToTree.BottomStackId;
 
             var id = $"agent:{agent}#{Guid.NewGuid().ToString("N")[..6]}";
 
@@ -203,8 +222,13 @@ public sealed class WorkbenchShell : IDisposable
             var title = profile.DisplayName ?? "Agent terminal";
             _harnessBySurface[id] = profile;
 
+            // Before the surface is added, so WorkingDirectoryFor can answer the moment the pane is
+            // built. Provisioning after would launch the process in the workspace and leave a tree
+            // nobody is in — the worst of both.
+            var worktreeNote = ProvisionAgentWorktree(id, agent);
+
             var result = Service.Apply(new LayoutOperation.AddSurface(
-                terminalStack.Id, new Surface(id, "terminal", title)));
+                terminalStackId, new Surface(id, "terminal", title)));
 
             Adapter.Render();
             Adapter.ActivateInView(id); // opening a session focuses it — you open it to type in it (#2)
@@ -215,23 +239,35 @@ public sealed class WorkbenchShell : IDisposable
         AnnounceEnvironmentHealth();
 
             return result.Applied
-                ? $"{title} session opened. Dispatch is refused until it reaches its prompt."
+                ? $"{title} session opened.{worktreeNote} Dispatch is refused until it reaches its prompt."
                 : result.Announcement;
         };
         Controller.NewTerminalRequested = () =>
         {
             ReconcileViewIntoModel();
-            var terminalStack = Service.Current.AllStacks()
-                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"));
-
-            if (terminalStack is null) return "There is no terminal pane to open it beside.";
+            // Beside an existing terminal when there is one; otherwise into the Bottom zone, which
+            // is where terminals live by definition (ZoneId.Bottom — "terminals, diagnostics,
+            // output").
+            //
+            // This used to refuse with "There is no terminal pane to open it beside." Closing every
+            // terminal empties the Bottom zone, and an empty tool zone has NO STACK — it collapses
+            // to a rail — so the lookup found nothing and the one action that would have fixed the
+            // situation was the one being refused. The user had closed the terminals deliberately,
+            // to start clean, which is the state most likely to precede opening a session.
+            //
+            // AddSurface takes a stack id only to name the ZONE (ZoneFor -> OpenPane), and OpenPane
+            // creates the stack when the zone is empty. The empty case never needed a stack to
+            // exist; it needed a zone to be named.
+            var terminalStackId = Service.Current.AllStacks()
+                .FirstOrDefault(s => s.Surfaces.Any(su => su.Kind == "terminal"))?.Id
+                ?? ZonesToTree.BottomStackId;
 
             // A non-"agent:" id makes the content factory launch a plain shell (Executable = null),
             // and the title is "Terminal" — never an agent name. The guid keeps ids unique so a new
             // terminal is ADDED to the collection, never replacing an existing session.
             var id = $"terminal#{Guid.NewGuid().ToString("N")[..6]}";
             var result = Service.Apply(new LayoutOperation.AddSurface(
-                terminalStack.Id, new Surface(id, "terminal", "Terminal")));
+                terminalStackId, new Surface(id, "terminal", "Terminal")));
 
             Adapter.Render();
             Adapter.ActivateInView(id); // focus the new terminal — you open it to type in it (#2)
@@ -493,7 +529,8 @@ public sealed class WorkbenchShell : IDisposable
             queries, watcher.Sessions, watcher.Board, watcher.Leaderboard, watcher.Disputes,
             watcher.Ledger,
             SearchWorkspaceAsync,
-            watcher.Daydreams);
+            watcher.Daydreams,
+            TerminalNameFor);
 
         // Panes realized at construction were built against a factory with no queries and render
         // "not available". Mark every workspace-dependent kind to rebuild on the next Render so they
@@ -810,6 +847,107 @@ public sealed class WorkbenchShell : IDisposable
     // BuildPane reads from the surface's DisplayName, reflects it. Reconcile makes this cheap and
     // leaves every live session untouched.
     private void OnTerminalRenamed(object? sender, EventArgs e) => Adapter.Render();
+
+    /// <summary>
+    /// The operator's name for a terminal, or <c>null</c> when they have not given one.
+    /// </summary>
+    /// <remarks>
+    /// <para>The Sessions surface leads with this so a row is recognisable as the thing the operator
+    /// named, rather than as one of three identical "Claude Code · repo@branch" lines.</para>
+    ///
+    /// <para><b>A terminal id IS a surface id</b>, which is what makes this a lookup rather than a
+    /// schema change: the name is already persisted per surface and already survives a restart, so
+    /// carrying it into the watcher store would have been a second copy of a fact the shell holds.
+    /// </para>
+    ///
+    /// <para>Reads the LIVE terminal first and the persisted store second. The live pane has the
+    /// current name during a session; the store has it for a session whose pane is gone, which is
+    /// most of the inactive list.</para>
+    /// </remarks>
+    /// <summary>Worktree directories provisioned for agent sessions, by surface id.</summary>
+    /// <remarks>
+    /// Kept so <see cref="TerminalSurface.WorkingDirectoryFor"/> can answer for a surface the layout
+    /// created moments earlier, and so a later cleanup can find what this shell made. Never removed
+    /// on close: a worktree can hold uncommitted work, and deleting one because a tab closed would
+    /// destroy it silently.
+    /// </remarks>
+    private readonly Dictionary<string, string> _agentWorktrees = new(StringComparer.Ordinal);
+
+    /// <summary>
+    /// Creates an agent session's own git worktree, or explains why the session is sharing the
+    /// workspace instead.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Never refuses the session.</b> Every failure here — no repository, git absent, a
+    /// branch that already exists, a read-only parent — falls back to the workspace and SAYS so.
+    /// Refusing to open a terminal because a nicety failed is the defect this shell just fixed on
+    /// the other launch path, and an agent that cannot start is worse than one sharing a tree.</para>
+    ///
+    /// <para><b>Why an agent gets its own tree at all.</b> Two agents in one checkout share an
+    /// index, a HEAD and one set of build outputs, so one agent's staging reaches into another's
+    /// uncommitted work and nothing fails loudly.</para>
+    ///
+    /// <para><b>Nothing is ever removed.</b> A worktree can hold work that exists nowhere else, so
+    /// deletion is opt-in and belongs to a person, not to a tab closing.</para>
+    /// </remarks>
+    /// <returns>The announcement suffix — empty when the worktree was created as intended.</returns>
+    private string ProvisionAgentWorktree(string surfaceId, string harness)
+    {
+        var facts = CurrentGitFacts();
+        if (!facts.RepoResolved)
+        {
+            return " It shares the workspace: this folder is not a git repository.";
+        }
+
+        var plan = AgentWorktree.For(facts.RepoPath, harness, surfaceId);
+        if (plan is null)
+        {
+            return " It shares the workspace: no sibling location could be derived for a worktree.";
+        }
+
+        if (Directory.Exists(plan.Path))
+        {
+            // Adopt rather than fail or overwrite. A directory already there is almost always this
+            // same session's tree from a previous run, and `git worktree add` onto it would refuse
+            // anyway — while deleting it could destroy work.
+            _agentWorktrees[surfaceId] = plan.Path;
+            return $" Reusing its worktree at {plan.Path}.";
+        }
+
+        if (Git(facts.RepoPath, "worktree", "add", "-b", plan.Branch, plan.Path) is null)
+        {
+            // Git prints its own reason to stderr, which Git() discards. Rather than guess at the
+            // cause — branch exists, detached HEAD, disk full all look identical from here — the
+            // announcement states the outcome and where the session actually is.
+            return $" It shares the workspace: git could not create a worktree at {plan.Path}.";
+        }
+
+        _agentWorktrees[surfaceId] = plan.Path;
+        return $" Its worktree is {plan.Path} on {plan.Branch}.";
+    }
+
+    private string? TerminalNameFor(string terminalId)
+    {
+        if (string.IsNullOrEmpty(terminalId))
+        {
+            return null;
+        }
+
+        foreach (var terminal in TerminalSurfaces())
+        {
+            if (string.Equals(terminal.SurfaceId, terminalId, StringComparison.Ordinal))
+            {
+                return terminal.DisplayName;
+            }
+        }
+
+        return _customizationStore is not null
+            && _customizationStore.TryGet(terminalId, out var saved)
+            && saved is not null
+            && !string.IsNullOrWhiteSpace(saved.Name)
+                ? saved.Name
+                : null;
+    }
 
     // Persist any customization change (name, scheme, tab colour) keyed by the surface id, so it
     // survives a restart. Best-effort inside the store; a write failure never reaches here.
