@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-04T01:04:22Z",
+  "generated": "2026-09-04T01:27:34Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9131,6 +9131,29 @@ window.AUDIT_DATA = {
       "signals": {
         "verification_path": true,
         "verification_executed": true
+      }
+    },
+    {
+      "id": "al-01M1N0BCA9K0XS02SQMMWNA0YR",
+      "shortname": "specify-gemini-cli-agent-session",
+      "datetime": "2026-09-04T01:25:53Z",
+      "session": "ai-de-a7",
+      "prompt": "yes /specify a gemini cli agent session that is on par with the claude code and copilot sessions (terminal->new gemini session) and think through how to enlist/register a gemini session for coordinated work as well",
+      "summary": "Spec drafted. The finding underneath the request: a harness is currently defined by agreement between THREE unrelated hard-coded maps (KnownAgents, KnownAttention, KnownHarness) that share a key by convention, and a harness present in one but missing from another fails silently - a session that launches but is never detected ready, or is detected but has no harness identity and scores Not Recorded. So the aggregate is Supported Harness and its invariant is 'has a readiness marker, a harness identity and a display name, or is not offered', and no code holds it today. Gemini is an INSTANCE of an existing concept, not a new one. Six assumptions about Gemini CLI recorded with their checks, none asserted, because it is not installed here; A2 (stable readiness prompt), A3 (honours env vars) and A6 (can append to a file) are load-bearing and a spike must settle them before implementation. Ctrl+K,G is already GitHub Copilot so Gemini's obvious chord collides - recorded as an open decision rather than silently reassigned.",
+      "kind": "skill",
+      "skill": "specify",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/specs/gemini-cli-agent-session.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Specify a Gemini CLI agent session on par with Claude Code and GitHub Copilot, including how it enlists for coordinated work",
+      "done_when": "docs/specs/gemini-cli-agent-session.md carries all three layers with falsifiable criteria, every claim about Gemini CLI behaviour marked as an assumption with the check that settles it, and the spec linked into the graph",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false
       }
     }
   ],

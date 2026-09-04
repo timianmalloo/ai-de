@@ -10448,6 +10448,49 @@ window.DOCS_INDEX = {
       "sourceSha256": "948b97adb9009257f71a1df014adc2c271f8ab18df213148ecf6d9b3f4bde21c"
     },
     {
+      "id": "spec-gemini-cli-agent-session",
+      "path": "docs/specs/gemini-cli-agent-session.md",
+      "title": "A Gemini CLI agent session, on par with Claude Code and GitHub Copilot (spec)",
+      "type": "spec",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Specifies a Gemini CLI agent session on par with the Claude Code and GitHub Copilot sessions — launch parity, readiness detection, and enlistment for coordinated work through the existing harness-neutral contract log. The finding underneath it is that a harness is currently defined by agreement between three unrelated hard-coded maps, so a partial declaration fails silently; Gemini is an instance of an existing concept, not a new one. Every claim about Gemini CLI's actual behaviour is recorded as an assumption with the check that settles it, because it is not installed.",
+      "tags": [
+        "agent-session",
+        "harness",
+        "gemini",
+        "terminal",
+        "coordination",
+        "registration",
+        "multi-harness"
+      ],
+      "links": [
+        {
+          "to": "spec-terminal-sessions",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "User flow — happy, alternate, error, recovery",
+          "mermaid": "flowchart TD\n    A[Terminal menu] --> B{Gemini CLI on PATH?}\n    B -- no --> C[Command shown unavailable, with the reason]\n    C --> C2[User installs Gemini CLI] --> A\n    B -- yes --> D[Pane opens, titled Gemini, session = starting]\n    D --> E{Readiness marker seen?}\n    E -- yes --> F[Session = ready]\n    E -- trust/consent prompt --> G[Session = needs attention]\n    G --> G2[User answers the prompt] --> E\n    E -- neither, timeout --> H[Session = started, readiness unknown]\n    H --> H2[Pane still usable; state is unknown, NOT ready]\n    F --> I{Agent registers over AIDE_CONTRACT_LOG?}\n    I -- yes --> J[Appears in Fleet, joins the board]\n    I -- no --> K[Terminal session only — observed as a terminal, not an agent]\n    J --> L[Declares episode → closes with artifacts → scored → standing]\n    J --> M[Closes with no artifacts → Not Scored, with the reason]"
+        }
+      ],
+      "sourceSha256": "e311ddcffddc7afc6df36320a7c923b12b1a10a2b65157313815969d3ce0a17b"
+    },
+    {
       "id": "spec-knowledge-exploration",
       "path": "docs/specs/knowledge-exploration.md",
       "title": "Knowledge Exploration Surface (spec)",
@@ -10861,5 +10904,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "99c7977bf0ff377d25d45e0eaf6a6bab9ec56b9bfff53642aa9b8c8e6855daa6"
+  "graphSha256": "12845ad38a322da863b773736915b0b068dba179f934b724cf2792bbd53415cd"
 };
