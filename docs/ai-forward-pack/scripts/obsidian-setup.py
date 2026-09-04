@@ -121,6 +121,18 @@ CORE_PLUGINS = [
 
 # Per-user Obsidian state that must NEVER be committed (workspace layout, caches,
 # plugin data + third-party plugin CODE).
+#
+# NOT EVERY PLUGIN WRITES INSIDE .obsidian/. Every rule below but the last is scoped to
+# {vault}/.obsidian/, and for years that was assumed to cover "per-user state" - because that is
+# where Obsidian itself puts it. Smart Connections does not: it writes its vector store to
+# {vault}/.smart-env/, a sibling of .obsidian/, so every pattern here missed it and a consuming repo
+# committed 268 files and 8.17 MB of embeddings without a single rule firing (TheTerrace FR-371,
+# 2026-08-30). The embeddings carry a `last_embed` timestamp and are rewritten on every re-embed, so
+# they also conflict by construction between branches.
+#
+# When adding a plugin to the vault, the question is not "is its state under .obsidian/" but "does
+# this plugin write derived state anywhere in the vault at all" - and the answer is checked with
+# `git status --untracked-files=all <vault>` after a session, not assumed from the layout.
 GITIGNORE_RULES = [
     "# Obsidian lens - per-user state (the vault CONFIG is committed; this is not)",
     "{vault}/.obsidian/workspace.json",
@@ -129,6 +141,8 @@ GITIGNORE_RULES = [
     "{vault}/.obsidian/plugins/*/data.json",
     "{vault}/.obsidian/plugins/*/main.js",
     "{vault}/.obsidian/plugins/*/styles.css",
+    "# Plugin state written OUTSIDE .obsidian/ - Smart Connections' vector store (OB4)",
+    "{vault}/.smart-env/",
 ]
 
 
@@ -150,8 +164,9 @@ def write_json(path: str, obj, dry: bool) -> str:
 def write_text(path: str, text: str, dry: bool) -> str:
     if os.path.exists(path):
         try:
-            if open(path, encoding="utf-8").read() == text:
-                return "unchanged"
+            with open(path, encoding="utf-8") as f:
+                if f.read() == text:
+                    return "unchanged"
         except OSError:
             pass
         action = "would update" if dry else "updated"
@@ -170,7 +185,8 @@ def load_index(root: str):
     path = os.path.join(root, "docs", "docs-index.js")
     if not os.path.exists(path):
         return None, f"docs/docs-index.js not found - run docs-graph.py derive first ({path})"
-    raw = open(path, encoding="utf-8").read()
+    with open(path, encoding="utf-8") as f:
+        raw = f.read()
     try:
         start = raw.index("{")
         end = raw.rindex("}") + 1
@@ -599,7 +615,10 @@ plugin (local metrics; AI features are opt-in and require your own API key).
 
 def update_gitignore(root, vault, dry):
     path = os.path.join(root, ".gitignore")
-    existing = open(path, encoding="utf-8").read() if os.path.exists(path) else ""
+    existing = ""
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            existing = f.read()
     rules = [r.format(vault=vault) for r in GITIGNORE_RULES]
     missing = [r for r in rules if r not in existing and not r.startswith("#")]
     if not missing:

@@ -16,7 +16,7 @@ Two logs, one bundle:
 
 Subcommands
   append      Add an audit entry.            (Audit Mandate — every skill's last action)
-  change      Add a change-log entry.        (Change Mandate — collectknowledge/define-architecture/design/migrate)
+  change      Add a change-log entry.        (Change Mandate — collectknowledge/define-architecture/design-slice/migrate)
   list        Show the last N entries (audit|change). For the CLI skill.
   search      Filter by --session / --since / --until / --keyword. For the CLI skill.
   get         Print one entry by --id (use --field prompt to extract the prompt to re-run).
@@ -33,7 +33,7 @@ Conventions
   every git call degrades gracefully when git or a repo is absent. This tool never invents a
   prompt or a summary; required fields must be supplied (flags, --*-file, or --from-json -).
 """
-import argparse, datetime, html, json, os, re, subprocess, sys, time
+import argparse, datetime, html, json, os, re, subprocess, sys
 
 # Windows consoles default to cp1252, which cannot encode the box/arrow glyphs this
 # tool prints - `prompt-log.py --help` crashed outright with UnicodeEncodeError (FR-047).
@@ -83,6 +83,141 @@ def duration_fields(started, ended_iso):
         return {"started_at": s.strftime(ISO), "duration_seconds": None,
                 "duration_note": "start is after end (clock skew); duration not recorded"}
     return {"started_at": s.strftime(ISO), "duration_seconds": round(secs, 1)}
+
+
+# --- per-run spans: make PARALLELISM measurable (P8, IO2) ----------------------------
+# Summed agent time cannot distinguish serial from parallel. A profiled session reported
+# 67 runs totalling 152.6 minutes and called that proof of fan-out, but 152.6 minutes sits
+# comfortably inside its ~240 minutes of wall clock -- fully serial execution fits the same
+# numbers. The claim was unfalsifiable because only DURATIONS were recorded.
+#
+# A start and an end per run fixes that: the union of the intervals is the wall clock the
+# work actually occupied, and speedup = summed / union. Idle gaps between waves are excluded
+# from the union, so a long quiet period cannot understate the parallelism that did happen.
+
+def parse_agent_run(spec):
+    """'<agent>|<start-iso>|<end-iso>' -> a span dict, or None when unusable.
+
+    Degrades to None on anything unparseable or time-reversed, never to a plausible wrong
+    span (IO8) -- a fabricated interval would corrupt the very measurement it exists for.
+    """
+    parts = [p.strip() for p in str(spec).split("|")]
+    if len(parts) != 3 or not parts[0]:
+        return None
+    agent, start, end = parts
+    s, e = parse_iso(start), parse_iso(end)
+    if s is None or e is None:
+        return None
+    secs = (e - s).total_seconds()
+    if secs < 0:
+        return None
+    return {"agent": agent, "started_at": s.strftime(ISO), "ended_at": e.strftime(ISO),
+            "duration_seconds": round(secs, 1), "_s": s, "_e": e}
+
+
+def parallelism_fields(runs):
+    """Union-of-intervals wall clock vs summed run time, from a list of parse_agent_run spans.
+
+    Returns {} when no usable span is present -- "not recorded" rather than a speedup of 1.0
+    that a reader would mistake for a measurement of serial execution.
+    """
+    spans = [r for r in (runs or []) if r]
+    if not spans:
+        return {}
+    total = round(sum(r["duration_seconds"] for r in spans), 1)
+
+    # Union of the intervals: sort by start, merge overlaps, sum the merged lengths.
+    ordered = sorted(spans, key=lambda r: r["_s"])
+    union, cur_s, cur_e = 0.0, ordered[0]["_s"], ordered[0]["_e"]
+    for r in ordered[1:]:
+        if r["_s"] > cur_e:
+            union += (cur_e - cur_s).total_seconds()
+            cur_s, cur_e = r["_s"], r["_e"]
+        elif r["_e"] > cur_e:
+            cur_e = r["_e"]
+    union += (cur_e - cur_s).total_seconds()
+    union = round(union, 1)
+
+    # Peak concurrency: sweep the endpoints. Ends are processed before starts at the same
+    # instant, so a run that ends exactly as another begins is handover, not overlap.
+    events = []
+    for r in spans:
+        events.append((r["_s"], 1))
+        events.append((r["_e"], 0))
+    events.sort(key=lambda ev: (ev[0], ev[1]))
+    live = peak = 0
+    for _, delta in events:
+        live += 1 if delta else -1
+        peak = max(peak, live)
+
+    return {"agent_seconds": total, "span_seconds": union,
+            "speedup": round(total / union, 2) if union else None,
+            "peak_concurrency": peak}
+
+
+# --- persona yield: measure what a convocation was WORTH (P6) -------------------------
+# Convening cost has always been visible; convening value was not. In the profiled session
+# the two advisory personas took 57% of all agent time and changed nothing that shipped,
+# while the four hard-veto personas took 24% and drove material change -- knowable only in
+# hindsight, and only by hand, because findings-accepted was never recorded against the
+# persona that raised them. Recording it makes the roster tunable on evidence.
+
+def parse_persona_yield(spec):
+    """'<persona>|<raised>|<accepted>' -> a yield record, or None when unusable.
+
+    Refuses accepted > raised and negative counts: a row that cannot be true would corrupt
+    every ratio derived from it, and a corrupt ratio is worse than a missing one (IO8).
+    """
+    parts = [p.strip() for p in str(spec).split("|")]
+    if len(parts) != 3 or not parts[0]:
+        return None
+    persona, raised, accepted = parts
+    try:
+        raised, accepted = int(raised), int(accepted)
+    except ValueError:
+        return None
+    if raised < 0 or accepted < 0 or accepted > raised:
+        return None
+    return {"persona": persona, "raised": raised, "accepted": accepted}
+
+
+def aggregate_persona_yield(entries):
+    """Roll persona_yield records up across audit entries.
+
+    `acceptance` is None when nothing was raised: 0/0 is an absence of evidence, not a
+    measured 0% -- reporting 0.0 would read as a verdict on a persona never actually asked.
+    """
+    out = {}
+    for entry in entries or []:
+        for row in (entry or {}).get("persona_yield") or []:
+            name = row.get("persona")
+            if not name:
+                continue
+            acc = out.setdefault(name, {"raised": 0, "accepted": 0, "sessions": 0})
+            acc["raised"] += int(row.get("raised") or 0)
+            acc["accepted"] += int(row.get("accepted") or 0)
+            acc["sessions"] += 1
+    for acc in out.values():
+        acc["acceptance"] = (round(acc["accepted"] / acc["raised"], 2)
+                             if acc["raised"] else None)
+    return out
+
+
+def should_reconvene(stats, advisory=True):
+    """Should this persona be convened AGAIN on the same work? (P6)
+
+    Advisory lenses re-convene on evidence: a repeat run has to be earned by a finding that
+    was actually accepted. Hard-veto lenses are never yield-gated -- a veto exists to be
+    able to say no, and gating it on past productivity would silence precisely the review
+    that has been quiet because the work was clean.
+
+    A persona with no history always gets its first run; the rule gates repeats, not entry.
+    """
+    if not advisory:
+        return True
+    if not stats or not stats.get("raised"):
+        return True
+    return bool(stats.get("accepted"))
 
 
 # --- run-start markers: make duration DEFAULT-ON (IO1) -------------------------------
@@ -202,89 +337,50 @@ def append_log(root, which, entry):
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 
-def _git_common_dir(root):
-    """The directory every worktree of this repository shares, or None."""
+_MISSING = object()     # distinguishes "not supplied" from an explicit allocator=None
+
+
+def _load_allocator():
+    """The collision-proof allocator, if this install has it. None if it does not.
+
+    A GRACEFUL fallback, not an optional feature: audit-log.py is pack-managed and ships to
+    repositories whose installed pack may predate coord_ids.py. Returning None there keeps
+    the legacy sequence working rather than crashing somebody's audit log.
+    """
+    if os.environ.get("COORD_LEGACY_IDS"):
+        return None                       # the rollback half of expand-migrate-contract
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
     try:
-        cwd = os.path.dirname(os.path.abspath(root)) or "."
-        r = subprocess.run(["git", "rev-parse", "--git-common-dir"],
-                           cwd=cwd, capture_output=True, text=True, timeout=15)
-        if r.returncode != 0:
-            return None
-        path = r.stdout.strip()
-        return path if os.path.isabs(path) else os.path.abspath(os.path.join(cwd, path))
-    except (OSError, subprocess.SubprocessError):
+        from coord_ids import new_id
+    except ImportError:
         return None
+    return new_id
 
 
-def _reserve(root, prefix, floor):
+def next_id(entries, prefix, allocator=_MISSING):
+    """Mint the next identifier. EXPAND step of expand-migrate-contract (ADR-0008).
+
+    This function was literally the KG-B shape: max(existing) + 1 over the LOCAL file only.
+    Two branches minting before either has pushed cannot see each other, so the collision is
+    structural -- nine recorded occurrences, twice reaching main, once destroying an entry
+    when the conflict was resolved by deduping on the id.
+
+    The sequential path is RETAINED, not deleted: every existing al-NNNN keeps its value,
+    there is no backfill (so nothing is guessed), and COORD_LEGACY_IDS=1 restores the old
+    scheme entirely. Removing it is the CONTRACT step and is a later decision.
     """
-    Reserve the next number for `prefix`, atomically across every worktree of this repository.
-
-    DC-013, three times: an id allocated as "highest present, plus one" is correct inside one
-    checkout and wrong the moment there are two. The third occurrence was between two AGENTS rather
-    than two trees of one — which broke the previous control, because "do not run a log-writing
-    script in the primary checkout while a worktree is open" is advice that cannot reach a session
-    that is not yours.
-
-    Every worktree of a repository shares ONE git common directory. A counter there is visible to
-    both, and an exclusive-create lock around it makes the read-modify-write atomic — so two
-    sessions cannot be handed the same number, whatever order they run in.
-
-    The file's own highest id is still the floor, so a counter that is missing, stale, or from a
-    fresh clone can only ever be caught up to reality, never behind it. Without git this returns
-    None and the caller falls back to the old behaviour, which is exactly as safe as it ever was.
-    """
-    shared = _git_common_dir(root)
-    if not shared or not os.path.isdir(shared):
-        return None
-
-    counter = os.path.join(shared, "aide-id-counter-{}.txt".format(prefix))
-    lock = counter + ".lock"
-
-    for _ in range(200):
-        try:
-            handle = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-        except FileExistsError:
-            time.sleep(0.01)
-            continue
-        except OSError:
-            return None
-
-        try:
-            stored = 0
-            try:
-                with open(counter, "r", encoding="utf-8") as f:
-                    stored = int((f.read() or "0").strip() or 0)
-            except (OSError, ValueError):
-                stored = 0
-
-            allocated = max(stored, floor) + 1
-
-            with open(counter, "w", encoding="utf-8") as f:
-                f.write(str(allocated))
-
-            return allocated
-        finally:
-            os.close(handle)
-            try:
-                os.unlink(lock)
-            except OSError:
-                pass
-
-    # A lock held for two seconds is a stale lock or a very unlucky day. Falling back is safe: the
-    # file's own highest id still applies, and verify-audit-log.py is the backstop either way.
-    return None
-
-
-def next_id(entries, prefix, root=None):
+    if allocator is _MISSING:
+        allocator = _load_allocator()
+    if allocator is not None:
+        return allocator(prefix)
     n = 0
     for e in entries:
         m = re.match(prefix + r"-(\d+)$", str(e.get("id", "")))
         if m:
             n = max(n, int(m.group(1)))
-
-    reserved = _reserve(root, prefix, n) if root is not None else None
-    return f"{prefix}-{reserved if reserved is not None else n + 1:04d}"
+    return f"{prefix}-{n + 1:04d}"
 
 
 # ---------- git helpers (always graceful) ----------
@@ -313,6 +409,26 @@ def commits_between(before, after, root):
         return []
     out = git(["log", "--pretty=%h %s", f"{before}..{after}"], root)
     return [ln for ln in (out or "").split("\n") if ln.strip()]
+
+
+# FR-071 (class SELF-REPORT). `suggest` must not re-surface its own bookkeeping. Two filters,
+# per audit-and-change-log.md CL3: keep only commits whose subject signals a decision, and drop
+# commits that ARE the logging action (they wrote an audit .jsonl -> already logged by definition).
+DECISION_SIGNAL = re.compile(r"\b(feat|BREAKING|migrate|arch|decision|adr)\b", re.I)
+
+
+def _suggests_decision(subject):
+    """CL3: a commit is a suggest candidate only if its subject signals a decision."""
+    return bool(DECISION_SIGNAL.search(subject or ""))
+
+
+def _is_logging_commit(sha, root):
+    """A commit that wrote the CHANGE log is already a change-log closeout, not an unlogged
+    change (FR-071 self-report). Scoped to change-log.jsonl - `suggest` is about the change log,
+    so an audit-only commit (every skill writes one, AL5) can still be a genuine unlogged decision."""
+    files = git(["show", "--name-only", "--pretty=format:", sha], root) or ""
+    return any(f.strip().endswith("audit/change-log.jsonl")
+               for f in files.splitlines() if f.strip())
 
 
 # ---------- graph hub node (AL7: the bundle must BE a graph node) ----------
@@ -370,42 +486,8 @@ def find_template():
     return None
 
 
-def _remote_project(root):
-    """The repository's name, taken from its origin URL. Stable across every worktree."""
-    try:
-        url = subprocess.run(
-            ["git", "-C", root, "config", "--get", "remote.origin.url"],
-            capture_output=True, encoding="utf-8", errors="replace").stdout.strip()
-    except OSError:
-        return None
-
-    if not url:
-        return None
-
-    name = url.rstrip("/").rsplit("/", 1)[-1]
-    return name[:-4] if name.endswith(".git") else name or None
-
-
 def project_name(root):
-    """What this repository is called, decided by something that does not move.
-
-    It used to be the name of the directory two levels up — which in a worktree is the WORKTREE's
-    name, not the repository's. Every session therefore rendered a different `project` into the
-    derived view: `ai-de-facelift` when the design session regenerated, `ai-de-session-phase3-pane-probes`
-    when this one did. The value flipped back and forth on `main`, produced a spurious diff in a
-    generated artifact on every cross-session rebase, and would have made `verify-derived-views`
-    fail for a reason that has nothing to do with staleness — a control that cries wolf is one
-    people switch off.
-
-    Order: the value already recorded in the derived view (so an established name is never
-    renamed by a tool), then the origin URL, then the directory as a last resort.
-    """
-    # The remote FIRST, not the previous value. "Keep whatever is already there" is stable only
-    # until two sessions disagree, and then it is first-writer-wins with a diff every time the
-    # other one regenerates. The origin URL is the same string in every worktree, on every machine,
-    # forever — which is the only property that makes a generated artifact comparable.
-    return _remote_project(root) or os.path.basename(
-        os.path.abspath(os.path.join(root, "..")))
+    return os.path.basename(os.path.abspath(os.path.join(root, "..")))
 
 
 def render(root, project=None):
@@ -478,7 +560,7 @@ def cmd_append(args):
         return 2
     entries = read_log(args.root, "audit")
     entry = {
-        "id": next_id(entries, "al", args.root),
+        "id": next_id(entries, "al"),
         "shortname": shortname,
         "datetime": args.datetime or base.get("datetime") or now_iso(),
         "session": session,
@@ -523,6 +605,26 @@ def cmd_append(args):
     _started = (args.started or base.get("started_at")
                 or consume_start(args.root, session))
     entry.update(duration_fields(_started, entry["datetime"]))
+    # P8: per-run spans make fan-out measurable. Summed agent time cannot tell serial from
+    # parallel; the union of the intervals can. Unusable spans are dropped and COUNTED, so a
+    # partial record never masquerades as a complete one.
+    _specs = (getattr(args, "agent_run", None) or []) or base.get("agent_run") or []
+    if _specs:
+        _spans = [parse_agent_run(s) for s in _specs]
+        _usable = [s for s in _spans if s]
+        if _usable:
+            entry["agent_runs"] = [{k: v for k, v in s.items() if not k.startswith("_")}
+                                   for s in _usable]
+            entry["parallelism"] = parallelism_fields(_usable)
+        _dropped = len(_spans) - len(_usable)
+        if _dropped:
+            entry.setdefault("parallelism", {})["unparseable_runs"] = _dropped
+    # P6: what the convocation was worth, not just what it cost.
+    _yields = (getattr(args, "persona_yield", None) or []) or base.get("persona_yield") or []
+    if _yields:
+        _rows = [r for r in (parse_persona_yield(y) for y in _yields) if r]
+        if _rows:
+            entry["persona_yield"] = _rows
     if args.change or base.get("change"):
         entry["change"] = args.change or base.get("change")
     if args.git:
@@ -545,7 +647,7 @@ def cmd_change(args):
     before = args.git_before or base.get("git_before")
     entries = read_log(args.root, "change")
     entry = {
-        "id": next_id(entries, "cl", args.root),
+        "id": next_id(entries, "cl"),
         "datetime": args.datetime or now_iso(),
         "session": args.session or base.get("session"),
         "kind": args.kind or base.get("kind") or "decision",
@@ -658,6 +760,34 @@ def cmd_git_context(args):
     return 0
 
 
+def cmd_yield(args):
+    """Persona yield across the log: what each lens raised, and what actually landed (P6).
+
+    This is the report the roster is tuned from. It never issues a verdict on a persona --
+    it reports the ratio and marks the ones with no evidence either way, because "never
+    raised anything" and "raised things nobody took" are different facts with different
+    responses.
+    """
+    entries = read_log(args.root, "audit")
+    stats = aggregate_persona_yield(entries)
+    if not stats:
+        print("no persona_yield records in the log yet - "
+              "append with --persona-yield '<persona>|<raised>|<accepted>'")
+        return 0
+    rows = sorted(stats.items(), key=lambda kv: (kv[1]["acceptance"] is None,
+                                                 kv[1]["acceptance"] or 0,
+                                                 -kv[1]["raised"]))
+    print(f"{'persona':<34}{'runs':>6}{'raised':>8}{'accepted':>10}{'acceptance':>12}")
+    for name, acc in rows:
+        ratio = "no evidence" if acc["acceptance"] is None else f"{acc['acceptance']:.0%}"
+        print(f"{name:<34}{acc['sessions']:>6}{acc['raised']:>8}{acc['accepted']:>10}{ratio:>12}")
+    print()
+    print("An ADVISORY lens re-convenes on the same work only after a finding it raised was")
+    print("accepted. A HARD-VETO lens is never yield-gated: a veto exists to be able to say")
+    print("no, and a quiet one usually means the work was clean.")
+    return 0
+
+
 def cmd_verify(args):
     """FR-052. Assert the system of record is fully readable.
 
@@ -691,13 +821,26 @@ def cmd_suggest(args):
             last_after = a
     head = git(["rev-parse", "HEAD"], args.root)
     findings = []
+
+    def _candidate(ln):
+        # CL3 + FR-071: surface a commit only if its subject signals a decision AND it is not
+        # itself a logging closeout (a commit that wrote an audit .jsonl is already logged).
+        ln = ln.strip()
+        if not ln:
+            return
+        sha, _, subject = ln.partition(" ")
+        if not _suggests_decision(subject):
+            return
+        if _is_logging_commit(sha, args.root):
+            return
+        findings.append(("commit", ln))
+
     if last_after and head:
         for ln in commits_between(last_after, head, args.root):
-            findings.append(("commit", ln))
+            _candidate(ln)
     elif head:
         for ln in (git(["log", "-n", str(args.n), "--pretty=%h %s"], args.root) or "").split("\n"):
-            if ln.strip():
-                findings.append(("commit", ln))
+            _candidate(ln)
     # New decision artifacts (ADRs / decision notes) not referenced by any change entry.
     referenced = " ".join(json.dumps(e) for e in changes)
     for sub in ("adr", "notes"):
@@ -713,6 +856,52 @@ def cmd_suggest(args):
           "(promote with `audit-log.py change`):")
     for kind, what in findings:
         print(f"  [{kind}] {what}")
+    return 0
+
+
+# PACK-O substantive turns: the kinds that carry a goal-state. Must match dream.py's PACKO_SUBSTANTIVE
+# (the same presence check, run offline over the fleet corpus) - kept as one small stable definition
+# per script because both are standalone stdlib scripts that cannot import each other cleanly.
+PACKO_SUBSTANTIVE = {"skill", "manual", "prompt", "command"}
+
+
+def cmd_selfcheck(args):
+    """Bounded inline session self-assessment (FC-1, spec-agent-focus-controls). One deterministic
+    pass over a session's substantive turns -> goal-state presence gaps + done_when->summary review
+    pairs. Advisory and never a scope verdict (the agent/human judges drift); no network, no model,
+    no second pass. This is the rung-2 mechanical aid to the CT25 closing self-assessment."""
+    entries = read_log(args.root, "audit")
+    if args.session:
+        entries = [e for e in entries if e.get("session") == args.session]
+    subst = [e for e in entries if e.get("kind") in PACKO_SUBSTANTIVE]
+    gaps = [e for e in subst if not e.get("done_when")]
+    have = [e for e in subst if e.get("done_when")]
+    review = [{"shortname": e.get("shortname", "?"),
+               "done_when": e.get("done_when", ""),
+               "summary": e.get("summary", "")} for e in have]
+    if args.json:
+        print(json.dumps({
+            "session": args.session, "substantive": len(subst),
+            "gaps": [{"shortname": e.get("shortname", "?"), "id": e.get("id")} for e in gaps],
+            "review": review,
+        }, ensure_ascii=False, indent=2))
+        return 0
+    scope = f"session {args.session}" if args.session else "all sessions"
+    if not subst:
+        print(f"no substantive turns for {scope}")
+        return 0
+    print(f"self-assessment ({scope}): {len(subst)} substantive turn(s), "
+          f"{len(gaps)} without a goal-state")
+    if gaps:
+        print("  goal-state GAPS (substantive turns that recorded no done_when - the PACK-O signal):")
+        for e in gaps:
+            print(f"    [gap] {e.get('shortname', '?')}")
+    else:
+        print(f"  all {len(subst)} substantive turns recorded a goal-state.")
+    if review:
+        print("  scope review (done_when -> summary; judge drift yourself, this is not a verdict):")
+        for r in review:
+            print(f"    {r['shortname']}: '{r['done_when'][:60]}' -> '{r['summary'][:80]}'")
     return 0
 
 
@@ -736,7 +925,7 @@ def cmd_import(args):
             continue
         if len(summary) > 280:
             summary = summary[:277] + "…"
-        eid = next_id(entries, "al", args.root)
+        eid = next_id(entries, "al")
         entry = {
             "id": eid,
             "shortname": r.get("shortname") or (r.get("session", "") or "session")[:8] + f"-t{r.get('turn_index', added)}",
@@ -799,6 +988,17 @@ def main():
     ap_a.add_argument("--started", help="ISO-8601 UTC start stamp captured at grounding; records "
                                         "started_at + duration_seconds so elapsed time is MEASURED, "
                                         "not modeled (instrumentation over inference, IO1)")
+    ap_a.add_argument("--agent-run", dest="agent_run", action="append", metavar="AGENT|START|END",
+                      help="one sub-agent run as '<agent>|<start-iso>|<end-iso>'; repeatable. "
+                           "Records agent_runs + a parallelism block (agent_seconds, span_seconds, "
+                           "speedup, peak_concurrency) so fan-out is MEASURED, not asserted (P8). "
+                           "Summed duration cannot tell serial from parallel; the union of the "
+                           "intervals can.")
+    ap_a.add_argument("--persona-yield", dest="persona_yield", action="append",
+                      metavar="PERSONA|RAISED|ACCEPTED",
+                      help="one persona's findings raised vs accepted; repeatable. Makes the "
+                           "roster tunable on measured yield rather than belief (P6) — an "
+                           "advisory lens re-convenes only on an accepted finding.")
     ap_a.add_argument("--from-json", dest="from_json", help="read fields from a JSON object (path or - for stdin)")
 
     ap_c = sub.add_parser("change", help="add a change-log entry")
@@ -825,10 +1025,17 @@ def main():
 
     sub.add_parser("render", help="regenerate audit-data.js and ensure the viewer exists")
     sub.add_parser("git-context", help="print current git context as JSON")
+    ap_y = sub.add_parser("yield", help="persona yield: findings raised vs accepted (P6)")
+    ap_y.set_defaults(func=cmd_yield)
     sub.add_parser("verify", help="fail if any log line is unreadable (FR-052; CI-able)")
 
     ap_sug = sub.add_parser("suggest", help="surface meaningful changes not yet in the change log")
     ap_sug.add_argument("--n", type=int, default=15)
+
+    ap_sc = sub.add_parser("selfcheck", help="bounded inline session self-assessment (FC-1): "
+                                             "goal-state presence gaps + scope review for a session")
+    ap_sc.add_argument("--session", help="the session to self-assess (recommended)")
+    ap_sc.add_argument("--json", action="store_true")
 
     ap_imp = sub.add_parser("import", help="ingest a session-export JSON array into the audit log")
     ap_imp.add_argument("--file", default="-", help="JSON file (or - for stdin)")
@@ -843,7 +1050,7 @@ def main():
         "append": cmd_append, "change": cmd_change, "list": cmd_list, "search": cmd_search,
         "get": cmd_get, "render": cmd_render, "git-context": cmd_git_context,
         "suggest": cmd_suggest, "import": cmd_import, "start": cmd_start,
-        "verify": cmd_verify,
+        "verify": cmd_verify, "selfcheck": cmd_selfcheck, "yield": cmd_yield,
     }
     sys.exit(dispatch[args.cmd](args))
 

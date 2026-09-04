@@ -1,3 +1,7 @@
+---
+load: skill
+skills: [specify]
+---
 # Specification Standards — functional, UX, and UI
 
 *Normative guidance for **how a specification is structured, deliberated, and codified** — across its three concerns: the **functional** specification (what the product must do and why), the **UX** specification (how it *works* — structure, flows, information architecture), and the **UI** specification (how it *looks* — the visual surface). It governs the `/specify` skill and the spec template, and hands off to the **UI & Interaction Design Standard** (`ui-interaction-design.md`, U1–U20) for UI-surface excellence. The Testing Strategy governs proof; this document governs whether the spec is **complete, well-formed, and correctly layered** before any design begins.*
@@ -56,7 +60,7 @@ The dependency direction *is* the gating rule: **lower planes constrain upper on
 
 ## 4. The UI layer (Surface)
 
-**S8 — UI specification by reference to U1–U20.** When there is a visual UI, the UI layer is specified to the **UI & Interaction Design Standard** (`ui-interaction-design.md`): the **medium(s)** and authoritative platform guidelines; the **token references** (no arbitrary values); the **key screens** with hierarchy; the **complete per-component state set** (default/hover/focus/active/disabled/**loading/empty/error**/success); **motion** with reduced-motion; **real, in-voice UI copy**; and the **accessibility (WCAG 2.2 AA)** and **performance-budget** floors — and, for AI-facing UIs, the applicable **HAX** guidelines and **Shape-of-AI** patterns. This standard does not duplicate U1–U20; it requires the UI layer to satisfy them, owned by the UX & Accessibility lens (which holds the U16 accessibility veto). The UI layer **also records the chosen UI Archetype Signature** (`ui-archetype-grammar.md`; pick the nearest row in `ui-archetype-catalog.md`) — the routing/temporal/data archetype that makes generated UI deterministic in *kind* — with any facet deviations noted; the signature is the selector, U1–U20 the concrete fill. The spec carries the UI *intent and acceptance criteria*; the full visual design is produced in `/design` and built in `/implement`.
+**S8 — UI specification by reference to U1–U20.** When there is a visual UI, the UI layer is specified to the **UI & Interaction Design Standard** (`ui-interaction-design.md`): the **medium(s)** and authoritative platform guidelines; the **token references** (no arbitrary values); the **key screens** with hierarchy; the **complete per-component state set** (default/hover/focus/active/disabled/**loading/empty/error**/success); **motion** with reduced-motion; **real, in-voice UI copy**; and the **accessibility (WCAG 2.2 AA)** and **performance-budget** floors — and, for AI-facing UIs, the applicable **HAX** guidelines and **Shape-of-AI** patterns. This standard does not duplicate U1–U20; it requires the UI layer to satisfy them, owned by the UX & Accessibility lens (which holds the U16 accessibility veto). The UI layer **also records the chosen UI Archetype Signature** (`ui-archetype-grammar.md`; pick the nearest row in `ui-archetype-catalog.md`) — the routing/temporal/data archetype that makes generated UI deterministic in *kind* — with any facet deviations noted; the signature is the selector, U1–U20 the concrete fill. The spec carries the UI *intent and acceptance criteria*; the full visual design is produced in `/design-slice` and built in `/implement`.
 
 ---
 
@@ -64,7 +68,7 @@ The dependency direction *is* the gating rule: **lower planes constrain upper on
 
 **S9 — Layer the spec, gate bottom-up, mark N/A explicitly.** `/specify` writes the three layers in dependency order, convening the **owning lens per layer** (Product Strategist; UX Researcher/IA when there is a user-facing surface; UX & Accessibility when there is a visual UI), marking any absent layer **N/A with a reason**, and making each layer's claims **falsifiable acceptance criteria** rather than prose. The gate reviews bottom-up: the Test Architect attacks the functional criteria, the UX Researcher/IA attacks the UX layer (flow integrity, IA, findability, unhappy-path coverage), and the UX & Accessibility lens attacks the UI layer (state completeness, tokens, WCAG AA) — each holding its veto, none clearing its own.
 
-**S10 — Traceability through the layers.** Every layer is traceable to the one beneath it: each UX flow realizes a functional user story; each UI screen realizes a UX flow. Downstream, `/design` consumes the UX layer as the authoritative Structure the Surface is built on, and the test plan derives from the functional acceptance criteria *and* the UX flow-completion paths. Labels defined in the UX layer's IA become glossary entries (V14).
+**S10 — Traceability through the layers.** Every layer is traceable to the one beneath it: each UX flow realizes a functional user story; each UI screen realizes a UX flow. Downstream, `/design-slice` consumes the UX layer as the authoritative Structure the Surface is built on, and the test plan derives from the functional acceptance criteria *and* the UX flow-completion paths. Labels defined in the UX layer's IA become glossary entries (V14).
 
 ---
 
@@ -86,6 +90,6 @@ The dependency direction *is* the gating rule: **lower planes constrain upper on
 - **ISO/IEC 25010** — the product-quality model used as the NFR checklist.
 - **PRD practice** (Atlassian, Figma, Productboard, Perforce) — problem-first, user stories + Gherkin, the PRD-vs-technical-spec separation, and the **single-source-of-truth / drift** lesson.
 - **Jesse James Garrett, *The Elements of User Experience*** — the **Five Planes** (Strategy → Scope → Structure → Skeleton → Surface), each dependent on the one below; Skeleton = information + interface + navigation design; UI ≈ Surface.
-- **UX vs UI deliverables** (IxDF, Toptal, Slickplan, Nielsen Norman lineage) — IA/flows/wireframes (UX) vs mockups/design-systems/redlines (UI); the buried-vs-disabled-button discriminator; wireflows; the not-a-one-way-handoff and separate-ownership warnings.
+- **UX vs UI deliverables** (IxDF, Toptal, Slickplan, Nielsen Norman lineage) — IA/flows/wireframes (UX) vs mockups/design-slice-systems/redlines (UI); the buried-vs-disabled-button discriminator; wireflows; the not-a-one-way-handoff and separate-ownership warnings.
 - The pack's **UI & Interaction Design Standard** (`ui-interaction-design.md`, U1–U20) — the authority the UI layer is specified against.
 - The pack's **Knowledge Visualization Standard** (V14 glossary/relation registry; V13 SLAs) — labels and the spec's place in the graph.

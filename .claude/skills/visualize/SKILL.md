@@ -21,6 +21,8 @@ A surface plus what it needs. Examples: *"hero imagery for the landing page"*; *
 
 **If the input is "beautify" or similarly open, stop and narrow it first.** "Beautify" usually means one of three different jobs and only one of them is this skill: *make the visual design better* (that is `/ui-design`, and imagery will not fix hierarchy, spacing or type), *add imagery the page displays* (that is this skill), or *make the direction concrete* (that is the direction-board mode below). Name which one before generating anything.
 
+**Native app inputs.** `/visualize` may produce images, fictional personas, direction boards and motion that a native app **shows** — for example a WPF onboarding illustration, a fictional persona portrait for a native review harness, or a product-turntable clip for a native marketing surface. It **must reject generated native interfaces**: no "WPF settings window screenshot", WinUI control panel, native chart/table, icon set, menu, toolbar, file-manager pane, or operable control image. Route those requests to `/ui-design` or implementation. Generated assets are content fixtures; native XAML/WinUI/WPF/Avalonia controls remain hand-authored and token/proof checked.
+
 ## Modes
 
 | Mode | When | Produces |
@@ -83,6 +85,7 @@ A surface plus what it needs. Examples: *"hero imagery for the landing page"*; *
 - [ ] **The job was named** — direction board, asset production, personas or motion — and "beautify" was narrowed rather than assumed.
 - [ ] **Register and slot list in words, and a stated budget, before the first call** (VA10; Stage 1).
 - [ ] **No generated interface** — nothing containing readable UI text or operable controls (VA5).
+- [ ] **Native app classification (if applicable)** — generated content is an asset/persona/motion fixture the native UI shows, not a generated WPF/WinUI/Avalonia/Blazor Hybrid screen, window, control panel, chart, table, icon set, menu or toolbar.
 - [ ] **Mood not structure** (VA6); **real named references still present** in the brief (VA7).
 - [ ] Presets chosen from the **product-appropriate subset** and named in the manifest (VA3).
 - [ ] Candidates went to git-ignored **`_scratch/`**; only survivors were committed.

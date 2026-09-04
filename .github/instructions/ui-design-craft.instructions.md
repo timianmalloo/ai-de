@@ -1,7 +1,6 @@
 ---
-applyTo: "**"
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
 ---
-
 # UI Design Craft — direction, prototyping & critique
 
 *Normative guidance for **producing** and **judging** user-interface work at a professional standard. The UI & Interaction Design Standard (`ui-interaction-design.md`, U1–U20) defines the floor a UI must meet; the UI Archetype Grammar (`ui-archetype-grammar.md`) fixes the *kind*; the Specification Standards (`specification-standards.md`) fix the layers. **This document is the craft between them** — how creative direction is established before pixels, how a mockup is built to be reviewable, what separates "meets the floor" from "obviously designed by someone who cares", and how an existing interface is critiqued with a rubric instead of an opinion. It is the knowledge the `/ui-design` skill runs on.*
@@ -41,6 +40,22 @@ Whenever the work **produces, changes, or reviews a user-facing surface** — a 
 
 **DX4 — Anchor to named references, not adjectives.** "Modern and clean" constrains nothing. Direction **MUST** name concrete references — products, design languages, or committed exemplars — and say *what specifically* is being taken from each ("Linear's information density and keyboard-first posture; **not** its color"). The pack ships attributed exemplars (`examples/design-languages/`, `ui-archetype-catalog.md` §J) for exactly this. **Adapt, never clone** (U12): take the principle, not the pixels, and never reproduce a protected brand's distinctive visual identity.
 
+**DX4a — Native client references carry license posture.** For WPF, WinUI, Avalonia and Blazor Hybrid work, use public native-client exemplars as **pattern references**, not visual assets to clone. The current reference set:
+
+| Exemplar | License posture | Use |
+|---|---|---|
+| `microsoft/WinUI-Gallery` | MIT | WinUI control/style samples and adaptive UI references |
+| `microsoft/PowerToys` | MIT | Windows utility/settings shell and command-palette patterns |
+| `files-community/Files` | MIT | Native file manager workbench patterns |
+| `lepoco/wpfui` | MIT | WPF Fluent controls and navigation/dialog patterns |
+| `MaterialDesignInXAML/MaterialDesignInXamlToolkit` | MIT | WPF Material theming and ResourceDictionary patterns |
+| `AvaloniaUI/Avalonia` | MIT | Cross-platform XAML styling, focus and accessibility patterns |
+| `microsoft/WPF-Samples` | MIT | WPF DPI/control samples |
+| `File-New-Project/EarTrumpet` | Flagged/non-standard | Reference-only tray/audio UX; do not reuse without legal review |
+| `rocksdanister/lively` | GPL-3.0 | Reference-only; do not copy code/assets into permissive pack output |
+
+Borrow patterns and cite license posture. Do not clone brand, screenshots, icons, product identity, or any reference-only code/assets.
+
 ---
 
 ## 2. Creative direction (phase 1 — words before pixels)
@@ -73,6 +88,8 @@ Whenever the work **produces, changes, or reviews a user-facing surface** — a 
 **DX8 — The high-fidelity mockup is a dependency-free, self-contained HTML file, committed to the repo.** One file, no build step, no CDN, no framework — it opens over `file://` on any machine, survives having no network, and can be reviewed by a human who will not run `npm install`. It is the pack's house pattern for the same reasons the Docs Explorer and design-language preview are (`knowledge-visualization.md` V9): reviewability must not depend on a toolchain. It lives at `docs/mockups/<name>.html` with a graph-linked `docs/mockups/<name>.md` hub node carrying the frontmatter.
 
 **DX9 — The mockup renders the *hard* states, not the happy one.** It **MUST** show, for the surfaces it covers: **empty / first-run**, **loading** (skeleton, not spinner, where content has shape), **error** (with the real recovery affordance), **partial/degraded**, and **overflow** (the longest realistic name, the biggest realistic number, the 40-item list). *"It looked fine with data"* is how a real production defect shipped in a pack repo — a read path that could not distinguish a failed read from an empty account. The mockup is where that is cheap to discover.
+
+**DX9a — Native clients require runtime proof beyond the mockup.** For WPF, WinUI, Avalonia and Blazor Hybrid, the dependency-free HTML mockup remains valuable direction evidence, but it is **not native PASS**. Native PASS requires the proof rows in `templates/native-ui-proof-pack.template.md`: keyboard traversal, accessibility tree, theme/high-contrast, DPI/windowing, large-list performance, OS integration and distribution trust. A screenshot or static craft detector cannot prove UI Automation names, focus restoration, mixed-DPI behavior, native windowing, package signing or WebView/native-shell focus handoff.
 
 ---
 

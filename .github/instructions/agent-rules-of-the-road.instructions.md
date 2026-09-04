@@ -1,7 +1,6 @@
 ---
 applyTo: "**"
 ---
-
 # Agent Rules of the Road
 
 *The operational protocol for a coding-agent session. Version 1.1.*
@@ -17,7 +16,7 @@ The companion documents are authoritative within their domains and **MUST** be l
 - **C# Coding Style Guide** — how C# is written.
 - **Layered Optimized Architecture (LOA)** — how AI-integrated systems are designed.
 
-In addition, **Engineering Governance** (`.github/instructions/engineering-governance.instructions.md`) is a *reference* companion — the SDLC lenses (quality attributes, threat model, privacy/data governance, accessibility, performance budgets, release/rollback, supply chain, observability). Pull in the relevant section at Specify time, proportional to tier (Part 0.2); it is not auto-ingested.
+In addition, **Engineering Governance** (`.github/knowledge/engineering-governance.md`) is a *reference* companion — the SDLC lenses (quality attributes, threat model, privacy/data governance, accessibility, performance budgets, release/rollback, supply chain, observability). Pull in the relevant section at Specify time, proportional to tier (Part 0.2); it is not auto-ingested.
 
 ---
 
@@ -177,10 +176,10 @@ The discipline is enforced by the toolchain, not by memory. Deploy the governing
 | Document | Deploy as | Scope / mechanism |
 |---|---|---|
 | **Rules of the Road** (this file) | `AGENTS.md` at repo root (also `CLAUDE.md` / `GEMINI.md` as needed) | Primary instructions; loaded every session by Copilot, Claude Code, Gemini CLI, Codex |
-| **Body of Knowledge** | `.github/instructions/agent-body-of-knowledge.instructions.md` (and referenced from `AGENTS.md`) | Repo-wide reasoning constitution; reference it from `AGENTS.md` so it is always in context |
+| **Body of Knowledge** | `.github/knowledge/agent-body-of-knowledge.md` (and referenced from `AGENTS.md`) | Repo-wide reasoning constitution; reference it from `AGENTS.md` so it is always in context |
 | **Testing Strategy** | `.github/instructions/testing-strategy.instructions.md` | Normative test-selection and test-quality guidance; referenced by BoK and test path instructions |
 | **C# Style Guide** | `.github/instructions/csharp-style-guide.instructions.md` with `applyTo: "**/*.cs"` | Glob-scoped — applies only to C# files |
-| **LOA** | `.github/instructions/layered-optimized-architecture.instructions.md` scoped to the AI-integration paths | Glob-scoped to where AI-integrated code lives |
+| **LOA** | `.github/knowledge/layered-optimized-architecture.md` scoped to the AI-integration paths | Glob-scoped to where AI-integrated code lives |
 | **Each Persona** | `.github/agents/<persona>.agent.md` | Invokable custom agents (`@security-identity-architect`); `description` drives routing; `handoffs` chain the council into a pipeline |
 
 Notes that matter:

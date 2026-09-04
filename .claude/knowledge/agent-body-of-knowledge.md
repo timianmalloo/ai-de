@@ -1,3 +1,6 @@
+---
+load: reference
+---
 # Agent Body of Knowledge
 
 *The constitution for a coding-agent session. Version 1.2.*

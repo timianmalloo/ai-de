@@ -104,7 +104,8 @@ def parse_defect_classes(path):
     classes = []
     if not os.path.isfile(path):
         return classes
-    txt = open(path, "r", encoding="utf-8").read()
+    with open(path, "r", encoding="utf-8") as f:
+        txt = f.read()
     for m in re.finditer(r"^###\s+([A-Z0-9\-]+)\s+[—\-]\s+(.+?)\s*$(.*?)(?=^###\s|\Z)", txt, re.M | re.S):
         cid, shape, body = m.group(1).strip(), m.group(2).strip(), m.group(3)
         status = "unknown"
@@ -445,7 +446,8 @@ def cmd_apply_decisions(args):
         print("error: decisions file not found: {0}".format(args.file), file=sys.stderr)
         return 2
     try:
-        decisions = json.load(open(args.file, "r", encoding="utf-8"))
+        with open(args.file, "r", encoding="utf-8") as f:
+            decisions = json.load(f)
     except json.JSONDecodeError as e:
         print("error: decisions file is malformed ({0}); nothing written.".format(e), file=sys.stderr)
         return 2
@@ -457,7 +459,8 @@ def cmd_apply_decisions(args):
     if not os.path.isfile(dpath):
         print("error: dream {0} not found; cannot apply.".format(did), file=sys.stderr)
         return 2
-    dream = json.load(open(dpath, "r", encoding="utf-8"))
+    with open(dpath, "r", encoding="utf-8") as f:
+        dream = json.load(f)
     by_id = {p["id"]: p for p in dream["proposals"]}
     # idempotency ledger: which (dream,proposal) were already promoted
     ledger_path = os.path.join(root, "learnings", "promoted.jsonl")
@@ -531,7 +534,8 @@ def cmd_list(args):
         for name in sorted(os.listdir(d)):
             jp = os.path.join(d, name, "dream.json")
             if os.path.isfile(jp):
-                dj = json.load(open(jp, encoding="utf-8"))
+                with open(jp, encoding="utf-8") as f:
+                    dj = json.load(f)
                 print("  {0}  {1}  {2} proposals".format(dj["id"], dj["date"], len(dj["proposals"])))
     mits = read_jsonl(os.path.join(root, "docs", "lessons", "mitigations.jsonl"))
     print("mitigations captured: {0}".format(len(mits)))

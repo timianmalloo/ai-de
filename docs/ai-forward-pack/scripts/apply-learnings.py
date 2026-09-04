@@ -43,13 +43,14 @@ def find_root(start):
 def read_jsonl(path):
     out = []
     if os.path.isfile(path):
-        for line in open(path, "r", encoding="utf-8"):
-            line = line.strip()
-            if line:
-                try:
-                    out.append(json.loads(line))
-                except json.JSONDecodeError:
-                    pass
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        out.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
     return out
 
 SECRET_RE = [
@@ -80,7 +81,8 @@ def target_register(repo):
     path = os.path.join(repo, "docs", "lessons", "defect-classes.md")
     ids, sigs = set(), []
     if os.path.isfile(path):
-        txt = open(path, "r", encoding="utf-8", errors="ignore").read()
+        with open(path, "r", encoding="utf-8", errors="ignore") as f:
+            txt = f.read()
         for m in re.finditer(r"^###\s+([A-Z0-9\-]+)\s+[—\-]\s+(.+?)\s*$", txt, re.M):
             ids.add(m.group(1).strip().lower())
             sigs.append(set(re.findall(r"[a-z]{4,}", m.group(2).lower())))
@@ -260,7 +262,8 @@ def _push_manifest(root, args):
     mpath = os.path.abspath(args.manifest)
     if not os.path.isfile(mpath):
         print("manifest not found: {0}".format(mpath)); return 1
-    manifest = json.loads(open(mpath, "r", encoding="utf-8").read())
+    with open(mpath, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
     learnings = load_fleet(root)
     by_slug = {slug(l.get("sig", "")): l for l in learnings}
     assignments = manifest.get("assignments", [])

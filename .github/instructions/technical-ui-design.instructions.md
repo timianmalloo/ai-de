@@ -1,7 +1,6 @@
 ---
-applyTo: "**"
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
 ---
-
 # Technical, Scientific & Quantitative UI Design
 
 *Base knowledge the UX lenses (UX & Accessibility, UX Researcher/IA) maintain for **expert, data-dense, computational** interfaces — CAD & engineering, scientific visualization (CFD, FEA), computational notebooks, financial/spreadsheet modeling, simulation (Monte Carlo for risk, sports, forecasting), and mathematical design systems. It sits beside the **UI & Interaction Design Standard** (`ui-interaction-design.md`, U1–U20, the token/state/excellence authority) and feeds the **UI Archetype Catalog** Section G (the technical/scientific/quantitative archetypes). The general standard governs whether *any* UI is excellent; this governs whether a UI for **experts working with quantities, models, and uncertainty** is correct and legible.*
@@ -61,7 +60,7 @@ Interactive mathematical systems (Desmos, GeoGebra) are the **consumer-facing re
 
 ## 3. The mandate (how the lenses carry this)
 
-**TQ12 — Specify, design, build to these.** When `/specify`, `/design`, or `/implement` produces a technical/scientific/quantitative surface: `/specify` records the domain, the expert's density/precision profile, and the **uncertainty and units requirements** as testable criteria; `/design` selects the §G archetype, names the **colormap (and bans jet)**, the **uncertainty representation**, the **precision-input + direct-manipulation** pair, and the **reactive/provenance** model, with the complete state set incl. stale/recomputing/error (TQ9); `/implement` builds them and proves them red-first — a colormap-is-perceptually-uniform check, a no-PII-style **no-jet** check, a numbers-are-tabular-and-unit-bearing check, an uncertainty-is-shown check, and the large-data performance budget (TQ10). A triggered-but-unmet directive fails the gate (UX & Accessibility veto for legibility/inclusion; Test Architect for coverage).
+**TQ12 — Specify, design, build to these.** When `/specify`, `/design-slice`, or `/implement` produces a technical/scientific/quantitative surface: `/specify` records the domain, the expert's density/precision profile, and the **uncertainty and units requirements** as testable criteria; `/design-slice` selects the §G archetype, names the **colormap (and bans jet)**, the **uncertainty representation**, the **precision-input + direct-manipulation** pair, and the **reactive/provenance** model, with the complete state set incl. stale/recomputing/error (TQ9); `/implement` builds them and proves them red-first — a colormap-is-perceptually-uniform check, a no-PII-style **no-jet** check, a numbers-are-tabular-and-unit-bearing check, an uncertainty-is-shown check, and the large-data performance budget (TQ10). A triggered-but-unmet directive fails the gate (UX & Accessibility veto for legibility/inclusion; Test Architect for coverage).
 
 ---
 

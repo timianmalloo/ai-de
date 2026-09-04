@@ -1,10 +1,13 @@
+---
+load: always
+---
 # The Rigor Protocol
 
 *A staged broad-to-narrow reasoning discipline for coding agents. Version 1.0 — composes on top of Body of Knowledge §II (Coning + Iterative Critical Thinking).*
 
 This document exists to defeat one failure mode above all others: **the rush to a plausible answer.** A language model is built to emit the most probable next token, and the most probable answer is often the most *plausible-sounding* one — which is not the same as the most *correct* one (BoK D2). Speed is the enemy of rigor here. This protocol deliberately slows the agent down, replacing "answer first, justify later" with **"establish first, conclude last,"** and it makes the establishing *inspectable* at every step.
 
-It does not replace Coning or Iterative Critical Thinking (BoK §II.1–II.2). It **deepens** them: Coning says *open wide then narrow*; this protocol supplies the named techniques for *how* to open, *how* to interrogate, *how* to gather evidence, *how* to attack the conclusion, and *how* to narrow with conviction — with an evidence bar at each transition. It is the reasoning spine that the five workflow skills (`/specify`, `/define-architecture`, `/design`, `/implement`, `/investigate`) all run on.
+It does not replace Coning or Iterative Critical Thinking (BoK §II.1–II.2). It **deepens** them: Coning says *open wide then narrow*; this protocol supplies the named techniques for *how* to open, *how* to interrogate, *how* to gather evidence, *how* to attack the conclusion, and *how* to narrow with conviction — with an evidence bar at each transition. It is the reasoning spine that the five workflow skills (`/specify`, `/define-architecture`, `/design-slice`, `/implement`, `/investigate`) all run on.
 
 Normative keywords (**MUST**, **SHOULD**, **MAY**) follow RFC 2119.
 
@@ -123,7 +126,7 @@ Run the cognitive-interview moves on the frame: **probe each segment** (don't ac
 - **Falsification pass (the oracle test).** For each correctness claim, state the input or interleaving that *would make it false*. Is that case in your evidence or your test set? A claim whose only tested inputs are the ones expected to pass is unproven (Test Architect).
 - **Disconfirmation pass.** For each load-bearing belief, assert its negation as if confident — *"On redelivery this consumer double-charges, because the idempotency key is reserved after the side effect"* — and require the design (or the data) to defeat the claim with evidence. A belief that cannot be disconfirmed by any available test is either solid or untestable; decide which.
 - **Self-consistency pass.** Where the cost-of-error is high and the question admits more than one reasoning route, reason it a second time by a different route (e.g., from the boundary inward, or from the failure backward). Convergence raises confidence; divergence is a finding to resolve, not to average away.
-- **Convene the adversaries (T2).** Run the relevant personas' interrogation sets against the spec/plan/design — proportional to cost-of-error (Persona Catalog → "How to convene"). The author does not clear its own hard veto (Security, Test Architect, Distributed Systems). Conflict between personas is the feature; resolve it explicitly and record it (do not average it into mush).
+- **Convene the adversaries (T2).** Run the relevant personas' interrogation sets against the spec/plan/design-slice — proportional to cost-of-error (Persona Catalog → "How to convene"). The author does not clear its own hard veto (Security, Test Architect, Distributed Systems). Conflict between personas is the feature; resolve it explicitly and record it (do not average it into mush).
 
 **Exit evidence.** A short adversarial record: the verification questions and their independent answers, the falsifying input for each claim (and whether it's covered), the disconfirming claims attempted and the evidence that defeated or upheld them, and — for T2 — the persona verdicts with any veto and its resolution (Rules of the Road §3.2 gate records).
 
@@ -168,11 +171,11 @@ Each skill is the Rigor Protocol specialized to one kind of work. The stages are
 |---|---|---|---|---|
 | `/specify` | user/problem space, comps, scenarios | comparable & user-evidence gathering | Simplifier, Test Architect, Security (if data/identity) | spec + acceptance criteria |
 | `/define-architecture` | system sketch, archetype, tier allocation | **Spike/PoC + read-the-code** for unfamiliar SDKs | Enterprise, Distributed Systems, Security architects | architecture.md + ADRs |
-| `/design` | component boundaries, contracts, patterns | contract due diligence + **spikes** | Patterns Expert, Simplifier, language dev | design doc |
+| `/design-slice` | component boundaries, contracts, patterns | contract due diligence + **spikes** | Patterns Expert, Simplifier, language dev | design doc |
 | `/implement` | task decomposition, boundary set | TDD red→green + execution | Test Architect, language dev, SRE | code + tests + Proof Pack |
 | `/investigate` | reproduce, timeline, system map | **RCA method + verify-cause-by-data** | Distributed Systems, SRE, Security | investigation report + go-forward |
 
-These five carry a piece of work from idea to shipped code. **Four supporting skills** run the same protocol specialized to a different end: **`/collectknowledge`** (before design — Stage 3 gathers and sources the domain's state of the art; the artifact is a knowledge base, not a work product), **`/adddomainexperts`** (Stage 1 establishes the domain from repo evidence, Stage 4 attacks the proposed roster as sprawl; the artifact is a roster delta), **`/document`** (the subject is the codebase itself; Stage 3 extracts the API reference and diagrams from the source, Stage 4 verifies every diagram and example against the code), and **`/forensicreview`** (the subject is the entire existing repository; it reconstructs architecture/docs, attacks architecture/design/implementation claims, and converts evidenced gaps into a prioritized backlog). All four are documented with the personas they concern in `collaborative-personas.md` §5.
+These five carry a piece of work from idea to shipped code. **Four supporting skills** run the same protocol specialized to a different end: **`/collectknowledge`** (before design — Stage 3 gathers and sources the domain's state of the art; the artifact is a knowledge base, not a work product), **`/adddomainexperts`** (Stage 1 establishes the domain from repo evidence, Stage 4 attacks the proposed roster as sprawl; the artifact is a roster delta), **`/document`** (the subject is the codebase itself; Stage 3 extracts the API reference and diagrams from the source, Stage 4 verifies every diagram and example against the code), and **`/forensicreview`** (the subject is the entire existing repository; it reconstructs architecture/docs, attacks architecture/design-slice/implementation claims, and converts evidenced gaps into a prioritized backlog). All four are documented with the personas they concern in `collaborative-personas.md` §5.
 
 ---
 

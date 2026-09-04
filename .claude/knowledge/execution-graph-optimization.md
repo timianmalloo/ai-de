@@ -1,3 +1,6 @@
+---
+load: always
+---
 # Execution-Graph Optimization
 
 *Normative guidance for **planning the shape of the work before doing it** — modelling a prompt as a dependency graph, shortening its critical path, running independent work concurrently under a bounded contract, collapsing and promoting nodes to the right granularity, proving that every loop terminates, and recording cost against delivery so the next plan is better. The Rigor Protocol governs how you reason; the Solution-Selection Ladder governs how big the solution may be; **this governs the order, width, and boundedness of the execution itself.** The evidence base is `docs/knowledge/graph-and-loop-engineering/`; the skill that applies it is `/optimize-graph`.*
@@ -112,6 +115,13 @@ This is not theoretical. In this fleet, **five parallel model calls with no cap 
 
 ---
 
+**GO19 — Allocate the model tier per PHASE, and re-allocate at every phase boundary.** A model choice made once at the top of a session is a choice made for the phase you were in *then*. Phases differ in the only two things that decide the tier: **novelty** (how much genuine reasoning a call needs) and **iteration count** (how many times the prefix will be re-read). Design, architecture and adversarial review are high-novelty and low-iteration — buy the expensive tier. Deployment, debugging, build-fix and test-fix loops are the inverse: low-novelty, very high iteration, and every turn re-reads the whole prefix. Putting the premium tier there multiplies the least valuable token by the largest number.
+
+- **The tell:** a session whose most expensive model ran its highest call count in its most mechanical phase. In the profiled session `claude-opus-5` was switched on immediately *before* deployment and took 211 main-thread calls and 76.6% of spend for the most tool-heavy, highest-iteration stretch of the work.
+- **Re-allocate at the boundary**, explicitly, and say which way and why: *"design done, dropping to the cheap tier for the deploy loop."* The boundary is the decision point; drifting through it is how the wrong tier gets paid for.
+- **Tier and prefix multiply.** A large static prefix is a per-call tax, so it costs the most exactly where calls are most numerous. Cutting the prefix (`context-budget.py`) and dropping the tier are the *same* saving applied twice; neither substitutes for the other.
+- **Never trade the floors for the tier.** Dropping to a cheaper model is a cost decision, never a rigor decision: the gates, the Testing-Strategy union and the hard vetoes are unchanged. If a phase genuinely needs the expensive tier to stay correct, that is the answer — say so and pay it (GO15's degradation path never drops a gate).
+
 ## 7. Self-verification checklist
 
 - [ ] Graph made explicit: nodes with goal, inputs, **exit condition**, tier; edges classified (GO1–GO2).
@@ -132,6 +142,7 @@ This is not theoretical. In this fleet, **five parallel model calls with no cap 
 - [ ] Planning **skipped** where the work was smaller than the plan (GO16).
 - [ ] **Re-plan checkpoints** named where a result could change the shape (GO17).
 - [ ] **Planned vs actual recorded**, rework passes counted, estimates labelled (GO18).
+- [ ] **Model tier allocated per phase**, and re-allocated at each boundary — the premium tier is not left running through a high-iteration deploy or debug loop (GO19).
 
 ---
 

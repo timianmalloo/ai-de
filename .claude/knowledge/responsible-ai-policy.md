@@ -1,3 +1,6 @@
+---
+load: always
+---
 # Responsible AI Policy
 
 *AI-Forward's committed Responsible-AI stance. This is a **crosswalk, not a new control set**: it states the principles the pack commits to and maps each one to the **existing** persona, template, gate, or standard that already enforces it. It anchors on the **Microsoft Responsible AI Standard** (principles) and the **NIST AI Risk Management Framework** (lifecycle functions), the two references the field pairs for a credible, auditable policy. Owner: the Privacy & Data Governance and Security & Identity lenses' human counterpart.*
@@ -15,7 +18,7 @@ AI-Forward is a **methodology pack** that helps humans direct AI coding agents r
 | MS RAI principle | AI-Forward commitment | Enforced by (existing artifact) |
 |---|---|---|
 | **Fairness** | Inclusive, accessible interfaces; bias surfaced in spec acceptance criteria | UX & Accessibility lens (WCAG 2.2 AA veto); `ui-interaction-design.md` U16; Product Strategist (testable criteria) |
-| **Reliability & safety** | Correctness demonstrated, not asserted; failure modes dispositioned; tested red-first | BoK D1; Testing Strategy; `/design` failure-mode analysis; Test Architect (hard veto) |
+| **Reliability & safety** | Correctness demonstrated, not asserted; failure modes dispositioned; tested red-first | BoK D1; Testing Strategy; `/design-slice` failure-mode analysis; Test Architect (hard veto) |
 | **Privacy & security** | Least privilege, trust-boundary analysis, no secrets/PII in code, logs, or memory | Security & Identity persona (STRIDE, hard veto); Privacy & Data Governance persona (LINDDUN, hard veto); `engineering-governance.md` §3–4; `scrub.py`; Observability O11 |
 | **Inclusiveness** | Accessibility is a floor, not a feature; multiple platforms/media considered | UX & Accessibility + UX Researcher/IA lenses; `specification-standards.md` (the three layers) |
 | **Transparency** | Show-your-work: assumptions, sources, confidence labels, and a Proof Pack | BoK §III show-your-work; Rigor Protocol confidence ledger; Rules of the Road §3 Proof Pack |
@@ -27,7 +30,7 @@ AI-Forward is a **methodology pack** that helps humans direct AI coding agents r
 |---|---|---|
 | **Govern** | Roles, policies, oversight, culture | This policy + the persona operating standard (`persona-audit.md` §8); the human-in-the-loop gates; `engineering-governance.md` |
 | **Map** | Identify context, intended use, stakeholders, harms | `/specify` (problem, personas, non-goals, comparables); `/collectknowledge` (sourced domain evidence); threat-model + privacy-review scoping |
-| **Measure** | Metrics for reliability, fairness, privacy, security | Testing Strategy (mutation/eval thresholds); `/design` failure-mode/STRIDE/LINDDUN tables; Observability Standard (telemetry, error codes) |
+| **Measure** | Metrics for reliability, fairness, privacy, security | Testing Strategy (mutation/eval thresholds); `/design-slice` failure-mode/STRIDE/LINDDUN tables; Observability Standard (telemetry, error codes) |
 | **Manage** | Mitigate, monitor, respond, improve | Disposition every failure mode/threat (prevent/detect/mitigate/recover/accept); `/investigate` (root-cause + repair); freshness gate (V13); change-impact propagation (V16) |
 
 ## 4. Data handling & the PII/secret scrub

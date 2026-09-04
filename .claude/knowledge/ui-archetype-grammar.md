@@ -1,6 +1,10 @@
+---
+load: glob
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+---
 # UI Archetype Grammar & Determinism Control
 
-*A formal grammar for **identifying** a UI/UX template and using it as a **determinism control** for code generation. It gives `/specify` and `/design` a compact, unambiguous way to pin the *kind* of interface being built — its routing model, temporal behavior, data posture, and surface flavor — so an agentic coding tool (in Claude Code or GitHub Copilot) reaches for the right archetype every time instead of defaulting to a generic dashboard. It composes with, and never replaces, the **UI & Interaction Design Standard** (`ui-interaction-design.md`, U1–U20, the token/state/flow authority) and the **Specification Standards** (`specification-standards.md`, S1–S10, the three spec layers). Catalog of archetypes with exemplars and codegen descriptors: `ui-archetype-catalog.md`.*
+*A formal grammar for **identifying** a UI/UX template and using it as a **determinism control** for code generation. It gives `/specify` and `/design-slice` a compact, unambiguous way to pin the *kind* of interface being built — its routing model, temporal behavior, data posture, and surface flavor — so an agentic coding tool (in Claude Code or GitHub Copilot) reaches for the right archetype every time instead of defaulting to a generic dashboard. It composes with, and never replaces, the **UI & Interaction Design Standard** (`ui-interaction-design.md`, U1–U20, the token/state/flow authority) and the **Specification Standards** (`specification-standards.md`, S1–S10, the three spec layers). Catalog of archetypes with exemplars and codegen descriptors: `ui-archetype-catalog.md`.*
 
 Normative keywords (**MUST**, **SHOULD**, **MAY**, **MUST NOT**) follow RFC 2119.
 
@@ -183,7 +187,7 @@ A syntactically valid signature can still be **semantically incoherent**. These 
 
 **G12 — Determinism, not rigidity.** The signature constrains *kind*, not *every pixel*. Within the archetype, the agent still designs (the spec layers carry that). The goal is that two generations from the same signature + spec are the **same archetype with the same behavioral and state contract** — not byte-identical. Where the source under-determines, the spec layers (not the model's defaults) decide.
 
-**G13 — Surfacing in the artifacts.** In `/specify`, the chosen signature is recorded in the spec's **Part C (UI)** as the archetype selector, with deviations noted (S8). In `/design`, the signature heads the UI design section and each facet's resolution is made concrete against the tokens and states. In `/implement`, the build satisfies the facet rules and the spec proves them (the U9 state tests, the U16 a11y tests, the U17 budget — red-first, like security tests).
+**G13 — Surfacing in the artifacts.** In `/specify`, the chosen signature is recorded in the spec's **Part C (UI)** as the archetype selector, with deviations noted (S8). In `/design-slice`, the signature heads the UI design section and each facet's resolution is made concrete against the tokens and states. In `/implement`, the build satisfies the facet rules and the spec proves them (the U9 state tests, the U16 a11y tests, the U17 budget — red-first, like security tests).
 
 ---
 

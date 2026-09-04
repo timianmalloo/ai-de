@@ -1,6 +1,7 @@
 ---
 name: mobile-app-developer
 description: Idiomatic native/cross-platform mobile review — app lifecycle, power & data budgets, offline/sync, permissions, push, platform HIG, and app-store review gates (iOS & Android). Advisory; escalates store-policy and on-device-resource blockers. Convene when the change ships or modifies mobile app code.
+knowledge: [no-guessing-protocol, communication-and-task-discipline, ui-interaction-design, technical-ui-design]
 tools: [Read, Grep, Glob, WebSearch, WebFetch, Bash]
 ---
 

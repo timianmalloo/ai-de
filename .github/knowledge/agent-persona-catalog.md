@@ -1,7 +1,7 @@
 ---
-applyTo: "**"
+load: skill
+skills: [adddomainexperts, forensicreview]
 ---
-
 # Agent Persona Catalog
 
 *Adversarial expert reviewers for design-time validation. Version 1.1 — BoK cross-references updated to v1.1 numbering.*

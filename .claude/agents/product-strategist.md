@@ -1,6 +1,7 @@
 ---
 name: product-strategist
 description: Defines the product/problem — core scenario, industry comparables, user evidence, explicit non-goals, and testable acceptance criteria. Owns /specify ideation as a collaborating peer. Use to turn a raw prompt into a crisp, falsifiable spec before any architecture exists.
+knowledge: [no-guessing-protocol, communication-and-task-discipline, specification-standards]
 tools: [Read, Grep, Glob, WebSearch, WebFetch, Edit]
 ---
 

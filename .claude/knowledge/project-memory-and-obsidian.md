@@ -1,3 +1,7 @@
+---
+load: skill
+skills: [document, adopt]
+---
 # Project Memory & Continuity (with the Obsidian lens)
 
 *How AI-Forward gives a project durable, tool-neutral memory — what a project has learned and decided — so work compounds across sessions and contributors. This is the methodology-pack analogue of an agent runtime's per-agent `history.md`/`decisions.md`, re-expressed as committed Markdown in the knowledge graph. It composes with the Knowledge Visualization Standard (`knowledge-visualization.md`, V1–V18); it does not replace it.*

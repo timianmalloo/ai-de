@@ -19,7 +19,7 @@ summary: >-
 # Threat Model
 
 *The repo-level rollup of every component's adversarial analysis (design SKILL Stage 3,
-STRIDE-lite). Maintained by `/document` (full refresh) and updated by `/design`//`/implement`
+STRIDE-lite). Maintained by `/document` (full refresh) and updated by `/design-slice`//`/implement`
 when a component's analysis changes. **The per-boundary register below is generated** — refresh
 it with the script bundle, never by hand:*
 

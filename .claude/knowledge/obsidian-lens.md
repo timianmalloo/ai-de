@@ -1,3 +1,7 @@
+---
+load: skill
+skills: [document, adopt]
+---
 # The Obsidian Lens — graph insight over the knowledge base
 
 *Normative guidance for using **Obsidian** and its graph-analysis plugins as a **lens** over the pack's knowledge graph. `knowledge-visualization.md` (V1–V18) defines the graph and the Docs Explorer; `project-memory-and-obsidian.md` (M1–M9) establishes that project memory is committed Markdown and that Obsidian is optional. **This document is how the optional lens is actually stood up** — what is committed, what is not, which plugins earn a seat, how the typed graph is surfaced, and how the insight stays available to people who never install Obsidian.*
@@ -39,6 +43,19 @@ Any repository running the AI-Forward pack whose maintainers want richer navigat
 | `docs/.obsidian/cache/` | **ignore** | Derived |
 | `docs/.obsidian/plugins/*/main.js`, `styles.css` | **ignore** | **Third-party code** — see OB9 |
 | `docs/.obsidian/plugins/*/data.json` | **ignore** | Per-user plugin state, and a place API keys land |
+| `docs/.smart-env/` | **ignore** | Smart Connections' vector store. **Outside `.obsidian/`** — see below |
+
+**Not every plugin writes inside `.obsidian/`.** Each row above but the last is scoped to
+`.obsidian/`, because that is where Obsidian itself keeps state — and that made "per-user state" and
+"under `.obsidian/`" feel like the same statement. They are not. Smart Connections writes its vector
+store to `docs/.smart-env/`, a *sibling* of `.obsidian/`, so every ignore rule missed it and one
+consuming repository committed **268 files and 8.17 MB** of embeddings without a single rule firing.
+The embeddings carry a `last_embed` timestamp and are rewritten on every re-embed, so they also
+conflict by construction between branches — derived files regenerate, they do not merge.
+
+So the question when adding a plugin is **not** *"is its state under `.obsidian/`"* but *"does this
+plugin write derived state anywhere in the vault at all"* — answered by running
+`git status --untracked-files=all <vault>` after a real session, never inferred from the layout.
 
 Verify the split rather than assume it — `git status --untracked-files=all docs/.obsidian` should list the config and the manifests and **nothing else**, and `git check-ignore` should return true for every `main.js`, `styles.css`, `data.json` and `workspace.json`.
 
@@ -50,7 +67,7 @@ Verify the split rather than assume it — `git status --untracked-files=all doc
 
 ## 3. Making the typed graph visible
 
-**OB7 — Colour the graph by the pack's own types.** Obsidian's default graph is an undifferentiated hairball; the pack's `type:` vocabulary is exactly the differentiation that makes it readable. The committed `graph.json` **SHOULD** define a colour group per artifact type (`knowledge`, `design`, `architecture`, `adr`, `spec`, `decision-note`, `proof-pack`, `threat-model`, `privacy-review`, `glossary`, `design-language`, `doc`) using Obsidian's frontmatter query syntax (`["type":"design"]`), with **status overlays last** so `superseded` and `draft` win the colour race and are visible at a glance.
+**OB7 — Colour the graph by the pack's own types.** Obsidian's default graph is an undifferentiated hairball; the pack's `type:` vocabulary is exactly the differentiation that makes it readable. The committed `graph.json` **SHOULD** define a colour group per artifact type (`knowledge`, `design-slice`, `architecture`, `adr`, `spec`, `decision-note`, `proof-pack`, `threat-model`, `privacy-review`, `glossary`, `design-language`, `doc`) using Obsidian's frontmatter query syntax (`["type":"design"]`), with **status overlays last** so `superseded` and `draft` win the colour race and are visible at a glance.
 
 **OB8 — Know what Obsidian's graph cannot show, and cover it.** Obsidian's native graph is **untyped**: a `supersedes` edge and a `relates-to` edge render identically, which erases the distinction the pack's relation registry (V14) exists to make. Two consequences:
 - **Breadcrumbs** earns its seat by rendering the typed relations as navigable hierarchy — it is the plugin that makes `implements` / `refines` / `depends-on` mean something in the UI.

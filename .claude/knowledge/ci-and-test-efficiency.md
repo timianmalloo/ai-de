@@ -1,3 +1,7 @@
+---
+load: glob
+applyTo: ".github/workflows/**,**/*.yml,**/*.yaml,**/Dockerfile,**/Makefile"
+---
 # CI & Test Execution Efficiency — best coverage at minimum time and cost
 
 *Normative guidance for the **economics of verification**: getting the strongest coverage per minute and per dollar out of a test suite and its CI gate, without ever weakening the gate. The **Testing Strategy** (`testing-strategy.md`) governs *what* to test and *what counts as proof*; **`end-to-end-integrity.md`** (E13–E14) governs *that a gate actually runs its contents*; **this document governs how the verification is executed** — the runner it runs on, how often it runs, what it rebuilds, where its time actually goes, and the control that stops its cost creeping up with nobody watching.*

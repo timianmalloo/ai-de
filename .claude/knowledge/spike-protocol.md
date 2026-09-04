@@ -1,10 +1,14 @@
+---
+load: skill
+skills: [define-architecture, design-slice, investigate]
+---
 # The Spike Protocol
 
 *Read the code and run a proof-of-concept before you design against an unfamiliar contract. Version 1.0 — operationalizes Body of Knowledge §III.1 (read the source) and §III.2 (verify by execution).*
 
 A spike is a small, time-boxed, throwaway investigation whose only purpose is to **convert an unfamiliar contract from a guess into established knowledge** before any design or implementation depends on it. It is the direct antidote to the two most expensive AI defects (BoK §VIII): **the Confident Guess** (stating a contract from naming intuition) and **the Plausible Hallucination** (inventing an API that "should" exist). The rule is blunt: *you do not get to be plausible about an SDK you have not read or run; you get to be correct about one you have.*
 
-This protocol is invoked at **Rigor Protocol Stage 3 (EVIDENCE)** and is **mandatory** in `/define-architecture` and `/design` whenever the work depends on an API, SDK, MCP server, protocol, or library that is unfamiliar, preview-status, or version-sensitive.
+This protocol is invoked at **Rigor Protocol Stage 3 (EVIDENCE)** and is **mandatory** in `/define-architecture` and `/design-slice` whenever the work depends on an API, SDK, MCP server, protocol, or library that is unfamiliar, preview-status, or version-sensitive.
 
 Normative keywords (**MUST**, **SHOULD**, **MAY**) follow RFC 2119.
 
@@ -80,7 +84,7 @@ If the spike *contradicts* the agent's prior assumption (the API throws where it
 | Skill | When the spike fires | What it feeds |
 |---|---|---|
 | `/define-architecture` | Stage 3, for every unfamiliar SDK/protocol the architecture depends on (especially AI SDKs, MCP, delegated-identity surfaces) | the archetype/tier decisions and the ADRs — *don't choose a transport you haven't exercised* |
-| `/design` | Stage 3, for every unfamiliar contract a component will call | the component contracts and the call-site citations in the design doc |
+| `/design-slice` | Stage 3, for every unfamiliar contract a component will call | the component contracts and the call-site citations in the design doc |
 | `/implement` | when implementation reveals a contract the design assumed but never spiked | a just-in-time spike before coding against it, then a real test |
 | `/investigate` | when the root-cause hypothesis depends on an unverified contract behavior | the reproduction and the verify-cause-by-data step (Rigor Protocol Stage 3) |
 

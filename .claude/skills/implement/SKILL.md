@@ -13,7 +13,7 @@ Build the feature/component as a sequence of **small, independently verifiable i
 Load the artifacts this implementation must conform to and treat them as the **authoritative source of truth** (Rigor Protocol Stage 0; BoK §III.1): the design (`docs/design/<component>.md`) **and** its spec (`docs/specs/<feature>.md`), the architecture (`docs/architecture.md`), and the existing code and tests in the area you are touching. **Re-read them now — do not work from memory of them.** Quote the specific spec statements and design contracts each increment must satisfy, and trace every task back to one. If the request, the existing code, or your emerging implementation conflicts with the spec or design, **stop and surface the drift** (reconcile against the spec, or record a deviation per Rules of the Road §4) rather than quietly building something else — this is the failure mode that produces spec-to-implementation drift. Prefer **graph traversal** for this grounding (`knowledge-visualization.md` V15): start from this task's artifact(s) in the knowledge graph and follow the typed edges 1–2 hops (upstream `implements`/`refines`/`depends-on`, downstream `tested-by`/`documents`, and `uses-term` into the glossary), citing the traversal path; a missing edge, stale node, or orphan found here is a finding to surface. Skip this grounding only if the user explicitly tells you not to consult the prior artifacts.
 
 ## Input
-A design (`docs/design/<component>.md`) or — for small, low-risk work — a prompt. If implementing from a prompt would touch security/identity/data/contracts/money/concurrency, raise the tier and run `/design` first (Rules of the Road §0.2; the higher tier wins when unsure).
+A design (`docs/design/<component>.md`) or — for small, low-risk work — a prompt. If implementing from a prompt would touch security/identity/data/contracts/money/concurrency, raise the tier and run `/design-slice` first (Rules of the Road §0.2; the higher tier wins when unsure).
 
 ## Cast
 - **Peers (pair to build):** the relevant **language Developer** (C#/Rust/Python — idiomatic shape) ⇄ **Test Architect** (testable slices). **Domain Researcher** for any just-in-time spike a contract turns out to need. **Orchestrator** keeps the thread and the Proof Pack.
@@ -45,7 +45,7 @@ Reach for the wider toolkit when cost-of-error warrants (Testing Strategy): prop
 |---|---|
 | **Completed** | the tasks/slices implemented and proven in this run |
 | **Remaining** | the tasks or phases still unimplemented (per the design and the architecture's phasing plan) |
-| **Best next action** | the single concrete next step (the next task, the next slice's `/design`, or ship) |
+| **Best next action** | the single concrete next step (the next task, the next slice's `/design-slice`, or ship) |
 
 ## Output artifacts
 - The code and its tests (tests ship with code, traceable to spec statements, covering the boundary set).

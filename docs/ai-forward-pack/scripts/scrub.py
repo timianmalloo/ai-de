@@ -111,7 +111,8 @@ def main():
     for path in _iter_md(paths):
         scanned += 1
         try:
-            text = open(path, encoding="utf-8", errors="replace").read()
+            with open(path, encoding="utf-8", errors="replace") as f:
+                text = f.read()
         except OSError:
             continue
         if args.write:

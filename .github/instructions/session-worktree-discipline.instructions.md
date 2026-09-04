@@ -1,10 +1,6 @@
 ---
 applyTo: "**"
 ---
-
----
-applyTo: "**"
----
 # Session Worktree Discipline
 
 *Normative guidance for **where a session does its work**. Every new session starts in its own

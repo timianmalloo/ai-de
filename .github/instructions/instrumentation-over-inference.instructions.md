@@ -1,7 +1,6 @@
 ---
 applyTo: "**"
 ---
-
 # Instrumentation over Inference
 
 *Normative guidance for a standing bias: **when you want to know how something behaves, measure it — do not reason about it.** `observability-and-instrumentation.md` governs *how* telemetry is shaped (the OpenTelemetry data model, structured logs, traces, metrics, error codes). **This document governs whether the measurement exists at all** — it makes instrumentation a delivery obligation and a gate, so that a question about a running system has an answer that is read rather than derived.*
@@ -26,7 +25,7 @@ Every feature, script, skill, pipeline and deployed surface — and the agent's 
 
 **IO1 — Instrument at delivery, not after. A feature is not done until its behaviour is measurable by default.** "Measurable by default" means the measurement is emitted by the normal running of the thing, with no extra flag, no re-run, no attaching a debugger, and no asking someone to reproduce it. Instrumentation added later can only answer questions asked later; it can never answer the question you have *now* about what already happened.
 
-**IO2 — Name the questions before you build.** For any new capability, write down the questions its operator will have to answer within a month — *how long does it take? how often does it run? how much does it cost? which path did it take? did it fail, and where? is anyone using it?* — and confirm each one has an emitting source. A question with no emitting source is an **instrumentation gap**, and it is a finding at design time, not a discovery at incident time.
+**IO2 — Name the questions before you build.** For any new capability, write down the questions its operator will have to answer within a month — *how long does it take? how often does it run? how much does it cost? which path did it take? did it fail, and where? is anyone using it?* — and confirm each one has an emitting source. A question with no emitting source is an **instrumentation gap**, and it is a finding at design time, not a discovery at incident time. The **structured home** for these is the Proof Pack's *operator questions* table (opt-in for a new capability, `templates/proof-pack.template.md`).
 
 **IO3 — Never infer a deployed system's behaviour from its source.** Reading the code tells you what it *would* do; it does not tell you what it *did*, on real inputs, at real volume, with real failures. This is E15 pointed at runtime: **read the telemetry, or label the claim Inferred.** The tells are the same family as NG3 and are worth listing because they are said fluently and constantly:
 
@@ -68,6 +67,14 @@ An unmet item is a gap the reviewer catches, exactly like an unmet Testing-Strat
 **IO12 — Instrument deliberately, not maximally.** This is not licence to emit everything: high-cardinality values stay out of metric labels (O13), context and log volume have real cost, and telemetry that bankrupts a budget gets switched off — which is strictly worse than telemetry designed to be affordable. Measure what answers a named question from IO2; drop the rest.
 
 ---
+
+**IO13 — What you attach to every call is a measured budget, not an accumulation.** Anything loaded unconditionally — an instruction set, a tool schema, a system preamble — is the **static prefix** of every model call: re-read on every turn, billed on every turn, and subtracted from the window before the user has said anything. It is the purest form of the failure this document is about, because *nothing reports it*: each addition looks free at the moment it is written, and the total is knowable only by measuring it.
+
+- **Declare the scope, per item.** Every knowledge doc carries a `load:` scope — `always` (attached to every request), `glob` (attached to matching files), `skill` (read on demand), `reference` (consulted, never attached). The test for `always` is sharp: **a doc is always-on only if an agent could violate it without knowing it exists.** You cannot look up the no-guessing protocol when it becomes relevant, because not knowing it is relevant *is* the failure. You can look up an archetype catalog — you know when you are building a UI.
+- **Ratchet the total; do not ceiling it.** `context-budget.py gate` fails when the always-on set grows past its **recorded baseline** without that baseline moving, and when any doc declares no scope. An undeclared doc is an unbudgeted doc. **Growth is allowed — silent growth is not**, so the fix is one acknowledged line in a diff a reviewer can question. A fixed ceiling is the wrong instrument for accumulation: it stays quiet through the whole build-up and then red-lights an ordinary paragraph, which teaches people to raise the ceiling reflexively — the exact habit the gate exists to break (class **PACK-R**). Keep an absolute backstop behind the ratchet, but **derive it** from the smallest model window you still delegate to, so passing it is a decision about capability rather than a formatting preference.
+- **A sub-agent inherits its lens, not the world.** Every persona declares the `knowledge:` it actually needs. An agent with no declared lens carries a main-thread-sized prefix into every delegated run, which is what turns cheap delegation into the *only* thing that fails — the smallest model has the smallest window, so it breaks first while costing least, and cost telemetry cannot see it.
+- **Preflight before a fan-out.** One failure at a context ceiling predicts every sibling in the wave: the prefix is identical for all of them. Check once (`context-budget.py preflight --window <N>`) rather than rediscovering it N times (class **PACK-S**).
+- **Report the estimate as an estimate.** Token figures derived from character counts are labelled Inferred wherever they appear, and the ratio used is stated. A budget you can gate on does not need to be exact; it needs to be honest about which it is (NG6, IO6).
 
 ## 4. How this composes
 

@@ -1,7 +1,7 @@
 ---
-applyTo: "**"
+load: skill
+skills: [forensicreview, define-architecture]
 ---
-
 # Engineering Governance — the SDLC lenses the craft docs don't cover
 
 *Version 1.0. A reference companion to the Agent Knowledge Pack.*

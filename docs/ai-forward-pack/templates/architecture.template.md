@@ -17,7 +17,7 @@ summary: >-
 TEMPLATE: Top-Level Architecture — produced by /define-architecture
 Copy to docs/architecture.md. This is the top-level shape: boundaries, archetype,
 tier allocation, the load-bearing decisions and their ADRs. Detailed component design
-belongs in /design, not here. Confidence labels [Verified]/[Inferred]/[Flagged] apply
+belongs in /design-slice, not here. Confidence labels [Verified]/[Inferred]/[Flagged] apply
 to every contract. Unfamiliar contracts MUST be established by the Spike Protocol
 (knowledge/spike-protocol.md) BEFORE they are committed here.
 -->
@@ -102,4 +102,4 @@ SRE; hard vetoes Security and Distributed Systems. Authors did not self-clear. -
 `GATE define-architecture · <date> · <personas> · criteria met: <…> · verdict: <…> · vetoes→resolution: <…>`
 
 ---
-**Handoff:** → `/design` per component.
+**Handoff:** → `/design-slice` per component.

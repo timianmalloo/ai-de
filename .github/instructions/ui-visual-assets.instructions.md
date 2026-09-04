@@ -1,7 +1,6 @@
 ---
-applyTo: "**"
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
 ---
-
 # UI Visual Assets — the generative pipeline and its guardrails
 
 *Normative guidance for **generating the imagery, personas and motion a UI contains** — the visual-world direction board that makes a brief concrete, the photographic assets a mockup renders, the consistent characters the review harness switches between, and the cinematic motion a marketing surface uses. The reference implementation is the **Higgsfield** MCP server (`platform.higgsfield.ai`); the directives are written so a different generation backend substitutes without rewriting the standard. `ui-design-craft.md` (DX1–DX25) governs the craft this serves; `ui-craft-detection.md` (CD1–CD20) governs the control that verifies the result; **this document governs what may be generated, how, and at what cost.***
@@ -52,6 +51,8 @@ Any UI work that needs **imagery, avatars, illustrative photography, product vid
 - **Cost.** Re-generating on every render bills every render.
 
 **VA5 — Never generate the interface.** No generated screenshot, mockup image, UI panel, chart, table, icon set, or any asset whose content is **text a user must read** or **a control a user must operate**. Image models produce malformed glyphs and invented affordances; embedding one in a design artifact creates the appearance of a finished decision where no decision exists. The pack's mockups are **hand-authored, dependency-free HTML** (DX8) precisely so every element is real, inspectable and token-checkable. Generate the photograph *inside* the card; never generate the card.
+
+**VA5a — Native client assets are content fixtures, not XAML.** Generated imagery may populate a native client review harness, onboarding illustration, product marketing panel, fictional persona, poster frame or motion clip. It **must not replace** native XAML/WinUI/WPF/Avalonia/Blazor Hybrid controls, app windows, control panels, charts, tables, menus, toolbars or icon sets. A generated "WPF settings window" is a generated interface and is rejected; the native UI remains hand-authored, token/resource-bound and proven with the native proof pack.
 
 **VA6 — Generated imagery informs mood, never structure.** Direction boards (§3) may set atmosphere, palette temperature, material, era and emotional register. They **MUST NOT** determine the archetype, the information architecture, the navigation model or the layout — those come from the **Archetype Signature** (`ui-archetype-grammar.md`) and the UX layer (`specification-standards.md` S6), which are settled *before* any visual artifact exists (DX1, S2). A moodboard that starts dictating structure has inverted the fidelity ladder (DX7).
 

@@ -1,6 +1,7 @@
 ---
 name: domain-researcher
 description: Establishes API/library/protocol/schema contracts and domain facts with cited sources and executed spikes; runs the Spike Protocol for unfamiliar SDKs/APIs/MCP servers. Owns Rigor Protocol Stage 3 evidence. Use before any architect or designer commits to a contract.
+knowledge: [no-guessing-protocol, communication-and-task-discipline, spike-protocol, rigor-protocol]
 tools: [Read, Grep, Glob, WebSearch, WebFetch, Bash, Edit]
 ---
 

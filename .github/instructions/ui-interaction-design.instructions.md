@@ -1,10 +1,9 @@
 ---
-applyTo: "**"
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
 ---
-
 # UI & Interaction Design Standard
 
-*Normative guidance for producing **highly polished, industry-leading user interfaces** whenever a UI is part of the work — on any medium (web, native desktop, mobile, CLI, voice, embedded, XR). It governs how `/specify` frames UI requirements, how `/design` specifies the interface, and how `/implement` builds it. The Testing Strategy governs proof; the Observability Standard governs telemetry; the Accessibility lens governs inclusion; **this document governs whether the interface is excellent.** A UI that merely functions is unfinished — the bar is *crafted*.*
+*Normative guidance for producing **highly polished, industry-leading user interfaces** whenever a UI is part of the work — on any medium (web, native desktop, mobile, CLI, voice, embedded, XR). It governs how `/specify` frames UI requirements, how `/design-slice` specifies the interface, and how `/implement` builds it. The Testing Strategy governs proof; the Observability Standard governs telemetry; the Accessibility lens governs inclusion; **this document governs whether the interface is excellent.** A UI that merely functions is unfinished — the bar is *crafted*.*
 
 Normative keywords (**MUST**, **SHOULD**, **MAY**, **MUST NOT**) follow RFC 2119.
 
@@ -30,7 +29,7 @@ The governing idea, synthesized from the research below: **great UI is not decor
 
 ## 1. When this standard applies
 
-**U1 — UI trigger.** Any work that produces or changes a **user-facing interface** — a screen, a component, a flow, a page, a CLI command's output, a voice turn, a notification — is in scope. If `/specify`, `/design`, or `/implement` touches an interface, these directives are **triggered directives** (Testing-Strategy sense): a triggered-but-unmet UI directive is a gap the gate must catch, not a stylistic nicety to skip.
+**U1 — UI trigger.** Any work that produces or changes a **user-facing interface** — a screen, a component, a flow, a page, a CLI command's output, a voice turn, a notification — is in scope. If `/specify`, `/design-slice`, or `/implement` touches an interface, these directives are **triggered directives** (Testing-Strategy sense): a triggered-but-unmet UI directive is a gap the gate must catch, not a stylistic nicety to skip.
 
 **U2 — Medium declaration.** The first UI decision is naming the **medium(s)** and, for each, the **authoritative platform guidelines** (Apple HIG, Material Design, Microsoft Fluent, GNOME HIG, the relevant CLI conventions, etc.). Excellence is judged *relative to the medium* — the rest of this standard is applied through that lens. Cross-medium products state how the experience adapts per medium rather than forcing one medium's shape onto another.
 
@@ -90,7 +89,7 @@ The governing idea, synthesized from the research below: **great UI is not decor
 
 **U18 — Specify: name the UI bar.** When the work has a UI, `/specify` records the **medium(s)** and authoritative platform guidelines (U2), the **target users and their density/expertise profile**, the **experience qualities** the UI must hit (the adjectives — and their opposites — that define done), the **accessibility and performance floors** (U16–U17), and, for AI UIs, the **AI-UX expectations** (which HAX guidelines apply; whether oversight/trust patterns are required). These become **testable acceptance criteria** — "the empty state guides the user to first action", "all interactive targets meet contrast AA", "the AI shows an action plan before any irreversible step" — not vague wishes.
 
-**U19 — Design: specify the interface, not just the system.** When the work has a UI, `/design` produces, beside the component/data design: the **token references** the UI uses (or the new tokens it defines, U3–U5); the **key screens/flows** with their hierarchy and the **complete state set per component** (U9); the **motion** intent (U10); the **UI copy** for the load-bearing strings (U11); the **medium adaptation** (how it changes across the declared media, U2); and for AI UIs, the **named HAX guidelines and Shape-of-AI patterns** in play (U13–U15). The **UX & Accessibility lens co-owns the design** and holds the U16 veto; bespoke deviations from established patterns (U12) are recorded as deviations with rationale.
+**U19 — Design: specify the interface, not just the system.** When the work has a UI, `/design-slice` produces, beside the component/data design: the **token references** the UI uses (or the new tokens it defines, U3–U5); the **key screens/flows** with their hierarchy and the **complete state set per component** (U9); the **motion** intent (U10); the **UI copy** for the load-bearing strings (U11); the **medium adaptation** (how it changes across the declared media, U2); and for AI UIs, the **named HAX guidelines and Shape-of-AI patterns** in play (U13–U15). The **UX & Accessibility lens co-owns the design** and holds the U16 veto; bespoke deviations from established patterns (U12) are recorded as deviations with rationale.
 
 **U20 — Implement: build it to the system, prove the states.** When the work has a UI, `/implement` builds against the tokens (no arbitrary values, U3), implements **every specified state** including empty/loading/error (U9), honors the platform HIG and responsive/adaptive behavior (U2), wires motion with reduced-motion support (U10), uses the specified real copy (U11), and meets the **accessibility (U16)** and **performance (U17)** floors — with these proven as tests: accessibility checks (keyboard path, contrast, labeling) and performance-budget assertions are **negative/threshold tests written red-first**, exactly like security tests, and a triggered-but-unmet UI directive fails the gate (the UX & Accessibility lens's veto for inclusion, the Test Architect's for coverage).
 

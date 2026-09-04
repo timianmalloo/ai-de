@@ -162,8 +162,9 @@ def out(msg: str = "") -> None:
 def write_text(path: str, text: str, dry: bool) -> str:
     if os.path.exists(path):
         try:
-            if open(path, encoding="utf-8").read() == text:
-                return "unchanged"
+            with open(path, encoding="utf-8") as f:
+                if f.read() == text:
+                    return "unchanged"
         except OSError:
             pass
         action = "would update" if dry else "updated"
@@ -225,7 +226,8 @@ def load_docs_graph(root):
     if not os.path.exists(path):
         return None, "docs/docs-index.js not found - run docs-graph.py derive first"
     try:
-        raw = open(path, encoding="utf-8").read()
+        with open(path, encoding="utf-8") as f:
+            raw = f.read()
         return json.loads(raw[raw.index("{"):raw.rindex("}") + 1]), None
     except (OSError, ValueError) as exc:
         return None, f"could not parse docs-index.js: {exc}"
@@ -272,7 +274,8 @@ def _lens_staleness(root):
     """
     lens = os.path.join(root, "docs", "lenses", "code-doc-join.md")
     try:
-        text = open(lens, encoding="utf-8", errors="replace").read()
+        with open(lens, encoding="utf-8", errors="replace") as f:
+            text = f.read()
     except OSError:
         return False, "unreadable"
 
@@ -338,7 +341,8 @@ def join_graphs(root, code, docs, top_n=15):
             continue
         full = os.path.join(root, art_path.replace("/", os.sep))
         try:
-            text = open(full, encoding="utf-8", errors="replace").read()
+            with open(full, encoding="utf-8", errors="replace") as f:
+                text = f.read()
         except OSError:
             continue
         for match in set(PATH_RX.findall(text)):
@@ -488,7 +492,10 @@ def main() -> int:
         out(f"    canonical copy: {canonical}")
         out(f"    {write_text(os.path.join(root, '.graphifyignore'), text, dry):>16}  .graphifyignore")
         gi = os.path.join(root, ".gitignore")
-        existing = open(gi, encoding="utf-8").read() if os.path.exists(gi) else ""
+        existing = ""
+        if os.path.exists(gi):
+            with open(gi, encoding="utf-8") as f:
+                existing = f.read()
         if "graphify-out/" in existing:
             out(f"    {'unchanged':>16}  .gitignore")
         elif dry:
@@ -563,7 +570,8 @@ def main() -> int:
         else:
             # Drift check: the wrong rules for this repo kind are worse than none, because
             # they silently remove the whole methodology layer from a consuming repo's graph.
-            current = open(ignore_path, encoding="utf-8").read()
+            with open(ignore_path, encoding="utf-8") as f:
+                current = f.read()
             consuming = canonical.startswith(".claude")
             if consuming and re.search(r"(?m)^\.claude/\s*$", current):
                 out(f"  {'':<24} WARNING - ignores .claude/ in a CONSUMING repo: the standards,")
@@ -591,7 +599,10 @@ def main() -> int:
             if stale:
                 findings.append("code/doc join lens built from source older than HEAD - run --build --join")
         gi = os.path.join(root, ".gitignore")
-        ignored = os.path.exists(gi) and "graphify-out/" in open(gi, encoding="utf-8").read()
+        ignored = False
+        if os.path.exists(gi):
+            with open(gi, encoding="utf-8") as f:
+                ignored = "graphify-out/" in f.read()
         out(f"  {'graphify-out ignored':<24} {'yes' if ignored else 'NO - run --init (GK3)'}")
         if not ignored:
             findings.append("graphify-out/ not git-ignored")

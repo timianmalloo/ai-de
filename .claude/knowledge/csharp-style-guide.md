@@ -1,3 +1,7 @@
+---
+load: glob
+applyTo: "**/*.cs,**/*.csx"
+---
 # C# Coding Style Guide
 
 *Version 2.0 — Default target platform: the latest stable LTS / C# version (currently .NET 10 (LTS) / C# 14). This is the portable baseline; a consuming repository's own target framework is authoritative where it differs (see that repo's `.github/instructions/csharp-style-guide.instructions.md` / `Directory.Build.props`).*
@@ -73,6 +77,22 @@ const int MaxRetries = 3;
 ### 1.5 Code reads top-down at one level of abstraction
 
 A method should read like a paragraph. Higher-level orchestration sits at the top of a file; lower-level helpers sit below. A single method should not mix `HttpClient.SendAsync` with domain rule evaluation — the reader has to context-switch on every line.
+
+### 1.6 No commented-out or dead code
+
+Commented-out code is not documentation — it is rot with a delay timer. It goes stale silently, misleads the next reader about what the code actually does, and defeats every tool that reasons about the tree (a code-graph builder, an analyzer, a `grep`). **Version control is the archive; the working tree is not.** Deleted code is one `git log` away, so *delete* it — never park it in a comment "in case."
+
+```csharp
+// ✗ Rot: which of these is the intended path? Neither the reader nor a tool can tell.
+// var result = await _legacyGateway.ChargeAsync(order);
+// return result.ToLegacyDto();
+var result = await _paymentPipeline.ChargeAsync(order, ct);
+return result.ToDto();
+```
+
+The same applies to *dead* code that is not commented out — an unreferenced method, an unreachable branch, a field nobody reads, a `using` nobody needs. If it is not called, remove it; the compiler and analyzers (IDE0051 unused member, IDE0052 unread field, CS0219 unused variable, IDE0059 unnecessary assignment) point at most of it.
+
+Commenting a block out **while you work** is fine — it is a transient scratch. It is *not* fine to **end the turn** with it still there: the cleanup is part of finishing the work, not a follow-up (`communication-and-task-discipline.md` CT18a; defect class **HYG-A**).
 
 ---
 
@@ -560,6 +580,7 @@ Log at the level the event deserves. A cancelled operation (§5.1), an expected 
 | Method length target | ≤10 lines |
 | Cyclomatic complexity | ≤ 8 per method |
 | Public API surface | Documented with XML doc comments |
+| Commented-out / dead code | Forbidden — delete it (version control is the archive), never park it in a comment |
 | Warnings | `TreatWarningsAsErrors` in CI |
 
 ---
@@ -574,6 +595,7 @@ A style guide enforced by reviewer goodwill drifts; one enforced by tooling hold
 - The built-in .NET analyzers (`<AnalysisLevel>latest</AnalysisLevel>`, `<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>`) cover language and style rules.
 - Add a curated set (e.g. Roslynator, Meziantou.Analyzer) for the deeper smells — async misuse, allocation, exception handling — that map to §4–§5.
 - For AI-integrated code, the LOA conformance analyzers (LOA Appendix G) enforce its criteria C1–C11.
+- Treat the unused-code diagnostics as errors so **dead code fails the build**: IDE0051 (unused private member), IDE0052 (unread private field), IDE0059 (unnecessary assignment), CS0219 (unused local). Commented-out code is a review-blocking finding a detector flags (§1.6).
 
 **Project defaults** in `Directory.Build.props` so every project inherits them:
 

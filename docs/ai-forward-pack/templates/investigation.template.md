@@ -25,7 +25,7 @@ not a verified cause. Confidence labels [Verified]/[Inferred]/[Flagged] apply th
 - **Status:** Open | Root cause verified | Fix proposed | Resolved
 - **Severity / tier:**
 - **Reported by / date:**
-- **Related spec/design:**
+- **Related spec/design-slice:**
 
 ## Symptom
 <!-- What was observed, precisely — not the suspected cause. Expected vs actual. -->

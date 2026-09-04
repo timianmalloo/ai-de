@@ -1,7 +1,7 @@
 ---
-applyTo: "**"
+load: skill
+skills: [adopt, investigate, migrate]
 ---
-
 # The Code Knowledge Graph — composing Graphify with the pack
 
 *Normative guidance for composing **Graphify** — an on-device code knowledge graph for AI coding assistants — with the pack's own documentation graph and the Obsidian lens. `knowledge-visualization.md` (V1–V18) governs the **docs** graph; `obsidian-lens.md` (OB1–OB14) governs the **human** lens over it; **this document governs the code graph and, more importantly, the join between them.** Its central claim: the pack already demands that no agent assert the shape of our own code from memory (`end-to-end-integrity.md` E15), and a cited graph path is the first mechanism that makes that demand *cheap* to satisfy.*

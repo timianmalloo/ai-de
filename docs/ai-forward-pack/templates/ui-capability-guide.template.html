@@ -277,7 +277,7 @@
       <article class="card">
         <h3>The design is approved. Build it.</h3>
         <p>Build against the tokens, implement every state, prove WCAG and the performance budget red-first.</p>
-        <p class="run"><code>/design</code> then <code>/implement</code></p>
+        <p class="run"><code>/design-slice</code> then <code>/implement</code></p>
       </article>
 
       <article class="card">
@@ -346,9 +346,11 @@
         </tr>
         <tr>
           <td><strong>UI-T4</strong></td>
-          <td>Ships as a native mobile or desktop app</td>
-          <td>The platform HIG becomes an authority, established from the source rather than recalled, and
-            the platform developer lens attacks idiom, lifecycle, permissions and the store or signing gates</td>
+          <td>Ships as a native client app (WPF, WinUI, Avalonia, Blazor Hybrid first)</td>
+          <td>The run declares medium/platform/framework/distribution/accessibility API, cites the platform HIG,
+            fills the native proof pack, and proves keyboard, accessibility tree, theme/high-contrast,
+            DPI/windowing, OS integration, performance and signing/SmartScreen/notarization where applicable.
+            HTML mockups and static craft scans are direction evidence only; they cannot clear native PASS.</td>
         </tr>
       </tbody>
     </table>
@@ -427,7 +429,7 @@
     <h3>Run the workflow</h3>
     <pre><code>/specify      # functional + UX + UI layers; settles Part B before Part C
 /ui-design    # direction, design language, mockup, rubric critique
-/design       # component contracts, failure modes, test plan behind the surface
+/design-slice       # component contracts, failure modes, test plan behind the surface
 /implement    # build to the tokens, prove the floors red-first
 /investigate  # a defect in running software enters here, never /implement</code></pre>
 

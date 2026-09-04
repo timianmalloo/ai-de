@@ -10,7 +10,7 @@ Build the project's **domain knowledge base**: a researched, sourced, durable bo
 **Spine:** runs the Rigor Protocol (`knowledge/rigor-protocol.md`) on the *domain*, weighted hard toward **Stage 3 EVIDENCE** and **Stage 4 DISCONFIRM**. **Mode:** Peer Mode to gather, Adversary Mode to attack the evidence. **Lead:** the **Domain Researcher** (this is exactly its charter — ground claims in evidence; no new agent is minted).
 
 > **Where it sits in the flow.** `/collectknowledge` runs **first**, before or as the opening move of design:
-> `/collectknowledge` (build the evidence base) → `/adddomainexperts` (instantiate expert lenses that *cite* this base) → `/specify` → `/define-architecture` → `/design` → `/implement` → `/document`.
+> `/collectknowledge` (build the evidence base) → `/adddomainexperts` (instantiate expert lenses that *cite* this base) → `/specify` → `/define-architecture` → `/design-slice` → `/implement` → `/document`.
 > It is the complement of `/adddomainexperts`: that skill adds the *judgment* (personas) for a domain; this skill assembles the *knowledge* (evidence) about it. Run knowledge-first so the experts and the spec stand on sourced ground.
 
 ## Grounding (first action)
@@ -62,4 +62,4 @@ Per the **Knowledge Visualization & Docs Explorer Standard** (`knowledge/knowled
 
 **Audit & change (last action).** Append an audit-log entry for this run — `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "collectknowledge-<topic>" --session "<id>" --skill collectknowledge --kind skill --prompt "<the prompt, verbatim>" --summary "<headline findings>" --artifact docs/knowledge/<topic>/index.md` — per the Audit Mandate (`knowledge/audit-and-change-log.md`, AL5). Because this skill establishes load-bearing knowledge that shapes design, **also append a change-log entry** capturing it and its git context — `… audit-log.py change --title "<the knowledge established>" --kind knowledge --skill collectknowledge --prompt "<driving prompt>" --summary "<design implications>" --rationale "<why it matters>" --artifact docs/knowledge/<topic>/index.md --git-before "<HEAD sha at grounding; from audit-log.py git-context>"` (Change Mandate, CL1–CL2). A run that left no trace in `docs/audit/` is, like an un-indexed artifact, not done.
 
-**Handoff:** → `/adddomainexperts` (expert lenses that cite this base) → `/specify` / `/define-architecture` / `/design`, which now reason from established knowledge rather than assumption.
+**Handoff:** → `/adddomainexperts` (expert lenses that cite this base) → `/specify` / `/define-architecture` / `/design-slice`, which now reason from established knowledge rather than assumption.

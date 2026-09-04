@@ -512,3 +512,7 @@ graphify-out/
 # committed evidence.
 spikes/msbuild-task-execution/fixture/markers/
 .mutation-in-progress
+
+# Obsidian Smart Environment plugin state — per-user, machine-local (pack rev-52)
+docs/.smart-env/
+**/.smart-env/

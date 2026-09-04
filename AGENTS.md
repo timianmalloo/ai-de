@@ -24,7 +24,7 @@ every non-trivial task.
   Map, interrogate, ground in evidence, disconfirm, then converge; label every claim with its
   confidence.
 - **The standing method (unconditional):** the absence of the words *"use the Rigor Protocol"*,
-  *"convene the personas"* or *"run /design first"* is **not permission to skip them** — an
+  *"convene the personas"* or *"run /design-slice first"* is **not permission to skip them** — an
   interactive prompt carries the same standard as a skill run; only the ceremony scales with the
   tier, never the rigor. Never decide in a silo: ground in the **whole intent, end to end**, name
   what the decision constrains, and write down the **surface list** a change must reach before you
@@ -68,7 +68,11 @@ every non-trivial task.
   validation, security, accessibility, or the failure-mode/test floors; mark bounded shortcuts with an
   inline `simplify:` comment (ceiling + upgrade trigger); ceremony scales with the tier (T0 code-first,
   T1/T2 full artifacts). `.github/instructions/solution-selection-ladder.instructions.md`; the
-  Simplifier is its adversarial mirror.
+  Simplifier is its adversarial mirror. **No dead code survives the turn:** commenting code out while
+  you work is a transient scratch, but a turn never closes with commented-out or dead code in the tree
+  — delete it (version control is the archive, not the working tree), and sweep the class, not only the
+  line you noticed. `.github/instructions/communication-and-task-discipline.instructions.md` (CT18a);
+  defect class **HYG-A**.
 - **Start with the goal, then plan the turn — the two-step front matter (universal):** every
   non-trivial turn opens, **before the first substantive tool call**, by writing the **goal state**
   — **Goal · Done when · Not in scope** — the preventive mirror of the *Completed / Remaining /
@@ -85,7 +89,7 @@ every non-trivial task.
   what would end this turn.* A **substantive** turn (one that changed the repo or the plan) records
   its goal-state in the audit log — full prompt, `goal`, `done_when` (AL5b) — the presence signal
   `/dream`'s PACK-O miner reads.
-  `.github/instructions/communication-and-task-discipline.instructions.md` (CT19–CT24); defect
+  `.github/instructions/communication-and-task-discipline.instructions.md` (CT19–CT25); defect
   class PACK-O.
 - **How you write, and how much you take on:** **compress the expression, never the obligation.**
   Simplified technical English — short sentences, common words, active voice, one idea per sentence,
@@ -134,11 +138,11 @@ every non-trivial task.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
   `persona-audit` / `persona-cards` instructions.
-- **Workflows (22):** the prompts in `.github/prompts/` — nineteen reasoning workflows
-  (`collectknowledge`, `adddomainexperts`, `specify`, `define-architecture`, `design`, `ui-design`,
-  `visualize`, `implement`, `investigate`, `document`, `adopt`, `forensicreview`, `migrate`,
+- **Workflows (24):** the prompts in `.github/prompts/` — twenty reasoning workflows
+  (`collectknowledge`, `adddomainexperts`, `specify`, `define-architecture`, `design-slice`, `ui-design`,
+  `visualize`, `implement`, `investigate`, `document`, `adopt`, `forensicreview`, `code-hygiene`, `migrate`,
   `updatepack`, `addpacktorepo`, `extendaibundle`, `optimize-graph`, `dream`, `apply-learnings`),
-  the `auditlog` lens over the audit & change log, plus two prompt-log utilities, `prompts` and
+  the `auditlog` lens over the audit & change log, the `also` turn-control utility, plus two prompt-log utilities, `prompts` and
   `searchprompts`. Templates: `docs/ai-forward-pack/templates/`.
 - **Prompt reuse (utility):** `/prompts` opens the audit log's prompts as an arrow-navigable stack
   (newest on top; → expand, ← collapse, Enter reuse) and `/searchprompts` searches them; reuse
@@ -150,7 +154,7 @@ every non-trivial task.
 - **Unfamiliar APIs/SDKs/MCP servers:** run the Spike Protocol before depending on a contract.
 - **Specification:** `/specify` produces **one spec with three layers** — Functional (what &
   why), UX (how it works: IA, user flows, structure), UI (how it looks) — written bottom-up,
-  UX before UI, each absent layer marked N/A — `.github/instructions/specification-standards.instructions.md`; the
+  UX before UI, each absent layer marked N/A — `.github/knowledge/specification-standards.md`; the
   UX Researcher/IA holds the UX-specification veto, UX & Accessibility the UI veto.
 - **UI:** whenever the work has a user-facing interface (any medium), the **UI & Interaction
   Design Standard** governs excellence — token systems, complete component states (incl.
@@ -220,11 +224,11 @@ every non-trivial task.
 - **Audit & change log:** the project keeps a durable, committed history so work compounds across
   sessions — every meaningful prompt/skill/script in `docs/audit/audit-log.jsonl` (the Audit
   Mandate: every skill appends an entry as its last action) and every design decision in
-  `docs/audit/change-log.jsonl` (collectknowledge/define-architecture/design/migrate capture the
+  `docs/audit/change-log.jsonl` (collectknowledge/define-architecture/design-slice/migrate capture the
   prompt, result, and git before/after). Browse the searchable timeline at `docs/audit/index.html`
   or via the `auditlog` prompt (last-N, search, recall-and-redo, full-history↔changes toggle); all
   writes go through `docs/ai-forward-pack/scripts/audit-log.py`; the standard is
-  `.github/instructions/audit-and-change-log.instructions.md`. A new session reads it to learn what was done and why.
+  `.github/knowledge/audit-and-change-log.md`. A new session reads it to learn what was done and why.
 - **Obsidian lens (optional):** `docs/` is already a valid Obsidian vault — the same V2
   frontmatter drives Properties, Dataview and the graph view. Stand it up with
   `docs/ai-forward-pack/scripts/obsidian-setup.py` (`--check` · `--install-app` · `--init` ·
@@ -233,7 +237,7 @@ every non-trivial task.
   is the record, `docs-graph.py` the only writer, and no query is load-bearing in a canonical
   artifact (queries live only in `docs/lenses/`). `--analyze` computes hubs, exact betweenness
   bridges, components, orphans and structural gaps **dependency-free**, so the insight is never
-  locked behind a plugin. `.github/instructions/obsidian-lens.instructions.md` (OB1–OB14).
+  locked behind a plugin. `.github/knowledge/obsidian-lens.md` (OB1–OB14).
 - **Code knowledge graph (optional, composes with the above):** **Graphify** (graphify.com,
   Apache 2.0, PyPI `graphifyy`) builds an **on-device** graph of the *code* — symbols, calls,
   imports, schemas — that an assistant queries instead of grepping, answering with `file:line`
@@ -246,7 +250,7 @@ every non-trivial task.
   `--join`); `--init` writes a **repo-kind-aware** `.graphifyignore` (in a consuming repo
   `.claude/` and `docs/ai-forward-pack/` are the *only* copy and are kept). `--join` writes the
   code↔docs lens: documentation with no implementation, and risk with no governance.
-  `.github/instructions/code-knowledge-graph.instructions.md` (GK1–GK16).
+  `.github/knowledge/code-knowledge-graph.md` (GK1–GK16).
 - **Foundation:** the Body of Knowledge, Rules of the Road, Persona Catalog, LOA, and Engineering
   Governance are in `.github/instructions/` (always applied) — the constitution all of this rests on.
 <!-- AI-FORWARD-PACK:END -->

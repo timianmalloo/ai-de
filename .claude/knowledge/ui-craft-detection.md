@@ -1,3 +1,7 @@
+---
+load: glob
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+---
 # UI Craft Detection — the deterministic control beneath the craft
 
 *Normative guidance for the **mechanical enforcement** layer under the pack's UI doctrine. `ui-interaction-design.md` (U1–U20) sets the floor, `ui-design-craft.md` (DX1–DX25) sets the craft and the critique rubric, `ui-archetype-grammar.md` fixes the kind — and all three are **prose**. This document governs the tool that turns the mechanizable subset of them into a **runnable, LLM-free, CI-gateable control**: the **Impeccable** detector (`impeccable.style`, Apache-2.0). It is to the UI standards what a lint rule is to a style guide.*
@@ -12,7 +16,7 @@ The proof is uncomfortable and therefore worth stating first: run against **this
 
 ## 0. When this applies
 
-Any work that **produces or changes a rendered user interface** — HTML/CSS/JSX/TSX/Vue/Svelte source, a template, a mockup, or a deployed URL. It is triggered by `/ui-design` (Stage 3 measure, Stage 4 gate), `/implement` (build-time control), `/design` (naming the gate in the test plan), and any CI pipeline that ships a UI. It is **not** triggered by backend work, and it is not a substitute for the human and adversarial critique it feeds.
+Any work that **produces or changes a rendered user interface** — HTML/CSS/JSX/TSX/Vue/Svelte source, a template, a mockup, or a deployed URL. It is triggered by `/ui-design` (Stage 3 measure, Stage 4 gate), `/implement` (build-time control), `/design-slice` (naming the gate in the test plan), and any CI pipeline that ships a UI. It is **not** triggered by backend work, and it is not a substitute for the human and adversarial critique it feeds.
 
 **Owner:** the **UX & Accessibility** lens (which holds the U16 hard veto and consumes the contrast/legibility findings) with the **Test Architect** (who owns whether the control is real, red-first, and actually runs — `end-to-end-integrity.md` E13: *a gate's green result is evidence the gate passed, not that its contents passed*).
 

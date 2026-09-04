@@ -1,7 +1,6 @@
 ---
 applyTo: "**"
 ---
-
 # The Solution-Selection Ladder
 
 *The constructive procedure for "smallest correct" — an ordered, checkable ladder for picking the least solution that fully works, an inline marker for the deliberate simplifications it leaves behind, and a ledger that keeps "later" from becoming "never". Version 1.0.*
@@ -38,7 +37,7 @@ Two rungs hold → take the **higher** one and move on. The ladder is a reflex, 
 
 ## 2. The floors the ladder never cuts
 
-**L4 — Lazy, not negligent.** The ladder **MUST NOT** simplify away any of: input **validation at trust boundaries**; **error handling** that prevents data loss; **security** controls; **accessibility** basics; the real-hardware **calibration** a minimal model can't see (a clock drifts, a sensor reads off); and **anything explicitly requested**. In pack terms these floors are the **failure-mode dispositions** (`/design`), the **STRIDE** mitigations, the **LINDDUN** controls, the **UI state/WCAG/perf** mandates, and the **Testing Strategy** union — all of which stand at full strength regardless of how small the solution is. The merge is safe *because* both disciplines protect the same floors: the ladder only ever removes what is *gratuitous*, never what is *load-bearing*. When the user insists on the fuller version, build it — do not re-argue.
+**L4 — Lazy, not negligent.** The ladder **MUST NOT** simplify away any of: input **validation at trust boundaries**; **error handling** that prevents data loss; **security** controls; **accessibility** basics; the real-hardware **calibration** a minimal model can't see (a clock drifts, a sensor reads off); and **anything explicitly requested**. In pack terms these floors are the **failure-mode dispositions** (`/design-slice`), the **STRIDE** mitigations, the **LINDDUN** controls, the **UI state/WCAG/perf** mandates, and the **Testing Strategy** union — all of which stand at full strength regardless of how small the solution is. The merge is safe *because* both disciplines protect the same floors: the ladder only ever removes what is *gratuitous*, never what is *load-bearing*. When the user insists on the fuller version, build it — do not re-argue.
 
 ## 3. The intentional-simplification marker
 
@@ -49,7 +48,7 @@ Two rungs hold → take the **higher** one and move on. The ladder is a reflex, 
 # simplify: O(n²) match, fine for n<1k batches — index it when batch size grows
 ```
 
-The token is **`simplify:`** (the pack-native marker); the harvest (L6) also recognizes **`ponytail:`** so a repo running the ponytail plugin shares one ledger. A marker with a named ceiling reads as *intent*, not ignorance, and is the **code-local, lightweight sibling** of two heavier pack records: a `/design` failure-mode dispositioned **"consciously accept (rationale + residual risk)"** (BoK; Engineering Governance) and the **Deviation Protocol** (Rules of the Road §4). They are the same idea at three weights — use the marker for a code-local shortcut, a **decision note** (V17) for a session-level judgment, an **ADR** when it bears architectural load. A marker that names **no trigger** is a latent rot: it silently becomes permanent.
+The token is **`simplify:`** (the pack-native marker); the harvest (L6) also recognizes **`ponytail:`** so a repo running the ponytail plugin shares one ledger. A marker with a named ceiling reads as *intent*, not ignorance, and is the **code-local, lightweight sibling** of two heavier pack records: a `/design-slice` failure-mode dispositioned **"consciously accept (rationale + residual risk)"** (BoK; Engineering Governance) and the **Deviation Protocol** (Rules of the Road §4). They are the same idea at three weights — use the marker for a code-local shortcut, a **decision note** (V17) for a session-level judgment, an **ADR** when it bears architectural load. A marker that names **no trigger** is a latent rot: it silently becomes permanent — which `scripts/marker-lint.py` now flags (`simplify-no-trigger`).
 
 ## 4. The debt ledger (so "later" ≠ "never")
 
@@ -59,7 +58,7 @@ The token is **`simplify:`** (the pack-native marker); the harvest (L6) also rec
 grep -rnE '(#|//) ?(simplify|ponytail):' .
 ```
 
-Each row reads `<file>:<line>, <what was simplified>. ceiling: <limit>. upgrade: <trigger>.`; any marker with **no trigger** gets a `no-trigger` tag — *those are the ones that rot*. This maps onto existing machinery rather than inventing a store: a triggerless or stale marker is a **freshness-style finding** (V13), a marker worth durable capture becomes a **decision note** (V17), and the harvest itself is recordable in the **audit log**. (Promoting the harvest into `docs-graph.py` as a first-class command is the natural V18 follow-up; until then the grep is the ledger.)
+Each row reads `<file>:<line>, <what was simplified>. ceiling: <limit>. upgrade: <trigger>.`; any marker with **no trigger** gets a `no-trigger` tag — *those are the ones that rot*. This maps onto existing machinery rather than inventing a store: a triggerless or stale marker is a **freshness-style finding** (V13), a marker worth durable capture becomes a **decision note** (V17), and the harvest itself is recordable in the **audit log**. The harvest is now a **first-class command** — `scripts/marker-lint.py` (`--json`, `--gate`; the sibling of `design-lint.py`) classifies every marker and flags the triggerless/incomplete ones with the same warn-by-default posture; the grep above remains the zero-dependency fallback.
 
 ## 5. Tier-gated ceremony (where minimalism and rigor meet)
 
@@ -71,7 +70,7 @@ Each row reads `<file>:<line>, <what was simplified>. ceiling: <limit>. upgrade:
 
 ## 6. The Simplifier's adversarial procedure
 
-**L9 — At the gate, the Simplifier emits a delete-list, not an essay.** The constructive ladder has an adversarial mirror: in Adversary Mode the Simplifier reviews the diff/design as a tagged, one-line-per-finding delete-list, ending with the only metric that matters — `net: -<N> lines possible.` (or `Lean already. Ship.`). The tags:
+**L9 — At the gate, the Simplifier emits a delete-list, not an essay.** The constructive ladder has an adversarial mirror: in Adversary Mode the Simplifier reviews the diff/design-slice as a tagged, one-line-per-finding delete-list, ending with the only metric that matters — `net: -<N> lines possible.` (or `Lean already. Ship.`). The tags:
 - **`delete:`** dead code, unused flexibility, a speculative feature → replaced by nothing.
 - **`stdlib:`** a hand-rolled thing the standard library ships → name the function.
 - **`native:`** a dependency or code doing what the platform already does → name the feature.

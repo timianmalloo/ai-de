@@ -31,15 +31,17 @@ PACK = os.path.dirname(HERE)
 MANIFEST = os.path.join(PACK, "knowledge", "FOUNDATION.md")
 
 def nhash(path):
-    t = open(path, "rb").read().decode("utf-8", "replace")
+    with open(path, "rb") as f:
+        t = f.read().decode("utf-8", "replace")
     t = "\n".join(ln.rstrip() for ln in t.replace("\r\n", "\n").replace("\r", "\n").split("\n"))
     return hashlib.sha256(t.encode("utf-8")).hexdigest()[:16]
 
 def read_manifest():
     rows = []
-    for ln in open(MANIFEST, encoding="utf-8"):
-        m = re.match(r"\|\s*`([\w.-]+\.md)`\s*\|[^|]*\|\s*`([0-9a-f]{16})`\s*\|", ln)
-        if m: rows.append((m.group(1), m.group(2)))
+    with open(MANIFEST, encoding="utf-8") as f:
+        for ln in f:
+            m = re.match(r"\|\s*`([\w.-]+\.md)`\s*\|[^|]*\|\s*`([0-9a-f]{16})`\s*\|", ln)
+            if m: rows.append((m.group(1), m.group(2)))
     if not rows: sys.exit("no manifest rows found in FOUNDATION.md")
     return rows
 

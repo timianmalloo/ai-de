@@ -25,7 +25,10 @@ import time
 from pathlib import Path
 
 TTL_DEFAULT = 300
+SESSION_STALE_SECONDS = 8 * 3600
 COORD_DIRNAME = ".agents"
+SESSION_CONTRACT = "docs/collaboration/session-contracts.md"
+REQUESTS_FILE = "requests.jsonl"
 
 
 class CoordError(Exception):
@@ -378,6 +381,63 @@ def read_decisions(root):
     return out
 
 
+def append_record(path, record):
+    """Append one JSONL row to a small operator ledger."""
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(record, sort_keys=True) + "\n"
+    if Path(path).exists() and Path(path).stat().st_size:
+        with open(path, "rb") as fh:
+            fh.seek(-1, os.SEEK_END)
+            if fh.read(1) not in (b"\n", b"\r"):
+                payload = "\n" + payload
+    flags = os.O_WRONLY | os.O_APPEND | os.O_CREAT | getattr(os, "O_BINARY", 0)
+    fd = os.open(str(path), flags, 0o644)
+    try:
+        os.write(fd, payload.encode("utf-8"))
+    finally:
+        os.close(fd)
+
+
+def request_log_path(root):
+    return Path(root) / REQUESTS_FILE
+
+
+def read_request_events(root):
+    path = request_log_path(root)
+    if not path.is_file():
+        return [], []
+    events, errors = [], []
+    with open(path, "r", encoding="utf-8") as fh:
+        for lineno, line in enumerate(fh, 1):
+            if not line.strip():
+                continue
+            try:
+                events.append(json.loads(line))
+            except json.JSONDecodeError as exc:
+                errors.append("{}:{}: {}".format(path.name, lineno, exc.msg))
+    events.sort(key=lambda e: e.get("at", 0.0))
+    return events, errors
+
+
+def fold_requests(events):
+    requests = {}
+    for event in events:
+        rid = event.get("id")
+        if not rid:
+            continue
+        if event.get("kind") == "request-add":
+            row = dict(event)
+            row["status"] = "open"
+            requests[rid] = row
+        elif event.get("kind") == "request-resolve" and rid in requests:
+            requests[rid] = dict(requests[rid])
+            requests[rid]["status"] = "resolved"
+            requests[rid]["resolution"] = event.get("resolution", "")
+            requests[rid]["resolved_at"] = event.get("at")
+            requests[rid]["resolved_by"] = event.get("session", "")
+    return sorted(requests.values(), key=lambda r: r.get("at", 0.0))
+
+
 # --- git plumbing -----------------------------------------------------------
 
 def _git(repo, *args):
@@ -473,7 +533,25 @@ def _build_parser():
     guard = sub.add_parser("guard", help="refuse to move HEAD over work held in one place")
     guard.add_argument("--fix", action="store_true", help="push, the cheapest second copy")
     ses = sub.add_parser("session", help="one session per working tree")
-    ses.add_argument("action", choices=["start", "end"])
+    ses.add_argument("action", choices=["start", "end", "list"])
+    ses.add_argument("--json", action="store_true")
+    collab = sub.add_parser("collaborate", help="cross-session collaboration checks")
+    collab.add_argument("action", choices=["check", "summary"])
+    collab.add_argument("--json", action="store_true")
+    req = sub.add_parser("request", help="record or resolve a seam request")
+    req_sub = req.add_subparsers(dest="request_action", required=True)
+    req_add = req_sub.add_parser("add", help="append an open seam request")
+    req_add.add_argument("--to", required=True)
+    req_add.add_argument("--contract", required=True)
+    req_add.add_argument("--reason", required=True)
+    req_add.add_argument("--from-role", default="")
+    req_add.add_argument("--path", default="")
+    req_list = req_sub.add_parser("list", help="list seam requests")
+    req_list.add_argument("--json", action="store_true")
+    req_list.add_argument("--status", choices=["open", "resolved", "all"], default="open")
+    req_resolve = req_sub.add_parser("resolve", help="resolve a seam request")
+    req_resolve.add_argument("id")
+    req_resolve.add_argument("--resolution", required=True)
     # WT1-WT12: a new session starts in a new worktree, and nothing is left behind.
     wt = sub.add_parser("worktree", help="session worktree lifecycle: new | list | cleanup")
     wt.add_argument("action", choices=["new", "list", "cleanup"])
@@ -499,10 +577,20 @@ def _build_parser():
     rg = sub.add_parser("regen", help="run the regenerations the driver deferred")
     rg.add_argument("--timeout", type=float, default=120)
     sub.add_parser("doctor", help="is the driver effective? is the registry sane?")
+    alloc = sub.add_parser("allocate", help="one collision-proof identifier")
+    alloc.add_argument("--scheme", required=True)
+    res = sub.add_parser("resolve", help="resolve an id prefix; never picks a first match")
+    res.add_argument("prefix"); res.add_argument("--register", required=True)
+    mr = sub.add_parser("merge-register", help="union two append-only registers (always 0)")
+    mr.add_argument("result"); mr.add_argument("base")
+    mr.add_argument("theirs"); mr.add_argument("realpath")
+    pl = sub.add_parser("plugin", help="emit the bundle both harnesses read; never installs")
+    pl.add_argument("--emit", required=True, metavar="DIR")
     return parser
 
 
 MERGE_DRIVER_NAME = "coord-regen"
+REGISTER_DRIVER_NAME = "coord-register"
 
 
 MAX_PATH = 4096
@@ -512,6 +600,132 @@ HOOK_BODY = """#!/bin/sh
 # The universal floor: every harness has a commit boundary, and no settings key removes it.
 exec "{python}" "{script}" precommit
 """
+
+
+# --- Phase 3: the collision-proof allocator ---------------------------------
+#
+# KG-B has NINE recorded occurrences of client-minted sequential ids colliding across
+# branches, twice reaching main, once silently DESTROYING an entry. The prevention built for
+# it scans every remote branch, works, takes about a second over 22 branches -- and collided
+# again within the hour, because two sessions that mint before either has pushed are
+# invisible to each other by construction. So the only rung that holds is rung 1: make the
+# collision impossible to express.
+#
+# NOT uuid.uuid7: absent on the installed 3.12, present on the "3.x"-pinned CI runner. A
+# stdlib call that exists on the runner and not on the developer's machine is PACK-J by
+# construction (spike S1).
+
+# ONE implementation, in coord_ids.py, imported by this script AND by audit-log.py. Six
+# duplicated lines across two scripts is ONE-A -- the copies are identical at birth and only
+# diverge later, when one is edited. The sys.path line is what makes the sibling import work
+# both when this file is RUN and when a test loads it via importlib.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
+from coord_ids import new_id, resolve_prefix          # noqa: E402  (path set above)
+
+
+# --- register merges: the half that unique ids do NOT solve ------------------
+
+def entry_fingerprint(row):
+    """A stable identity for a register entry, EXCLUDING its id.
+
+    The id is deliberately excluded. In the recorded KG-B instance the two entries had the
+    SAME id and different content, and the register's own write-up names them by
+    `shortname` rather than by id because rebases had renumbered them three times. A
+    fingerprint keyed on the id would both miss the real loss and cry wolf on every
+    legitimate renumber.
+
+    `renumbered_from` is excluded for the same reason, and the conservation check found
+    that itself: it is provenance ABOUT a merge, not part of the entry's identity, and
+    including it made a renumbered entry look destroyed.
+    """
+    body = {k: v for k, v in row.items() if k not in ("id", "renumbered_from")}
+    return json.dumps(body, sort_keys=True, ensure_ascii=False)
+
+
+def conservation_lost(ours, theirs, merged):
+    """Entries present on either side and absent from the merge. Empty means conserved.
+
+    Unique ids stop the COLLISION; only this stops the RESOLUTION from destroying an entry,
+    which is what actually happened. The recorded resolution reported "203 ours + 203 theirs
+    -> 203 unique" and was caught only because that arithmetic is impossible.
+    """
+    after = {entry_fingerprint(r) for r in merged}
+    lost = []
+    for row in list(ours) + list(theirs):
+        fp = entry_fingerprint(row)
+        if fp not in after and fp not in {entry_fingerprint(x) for x in lost}:
+            lost.append(row)
+    return lost
+
+
+def merge_register(ours, theirs, base=None):
+    """Union two append-only registers by fingerprint. Returns (merged, lost).
+
+    Append-only means the correct resolution is a union, never a pick. Order is preserved:
+    ours first, then whatever theirs adds.
+
+    When `base` is supplied, KG-B's own prescribed resolution also applies: *the id is a
+    sequence, not an identity.* The side that already published an id keeps it, and an
+    entry this merge INTRODUCES on a colliding id is renumbered from the allocator rather
+    than deduped away. NFR-C2 still holds -- nothing already in the base is ever rewritten,
+    and with no base the driver cannot tell who published first, so it conserves and does
+    not guess.
+    """
+    merged, seen, taken = [], set(), set()
+    published = {str(r.get("id")) for r in (base or [])}
+    for source_is_ours, row in ([(True, r) for r in ours] + [(False, r) for r in theirs]):
+        fp = entry_fingerprint(row)
+        if fp in seen:
+            continue
+        seen.add(fp)
+        eid = str(row.get("id", ""))
+        if base is not None and eid in taken and eid not in published:
+            row = dict(row)
+            scheme = eid.split("-", 1)[0] if "-" in eid else "id"
+            row["id"] = new_id(scheme)
+            row["renumbered_from"] = eid    # provenance: a renumber must leave a trace
+            eid = row["id"]
+        taken.add(eid)
+        merged.append(row)
+    return merged, conservation_lost(ours, theirs, merged)
+
+
+def _read_jsonl(path):
+    rows = []
+    for lineno, line in enumerate(Path(path).read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        rows.append(json.loads(line))       # a parse error propagates: never guess a register
+    return rows
+
+
+def cmd_merge_register(result_path, base_path, theirs_path, real_path):
+    """The merge driver for `register`-class artifacts. ALWAYS exits 0 (the S12b rule)."""
+    try:
+        ours = _read_jsonl(result_path)
+        theirs = _read_jsonl(theirs_path)
+        try:
+            base = _read_jsonl(base_path)   # %O: which ids were already published
+        except (OSError, json.JSONDecodeError):
+            base = None                     # no base -> conserve, but never guess a renumber
+    except (OSError, json.JSONDecodeError) as exc:
+        # A register we cannot read must not be "merged" -- guessing here is exactly how an
+        # entry disappears. Make the failure visible in the file instead.
+        _write_conflict(result_path, result_path, theirs_path,
+                        "{} is unreadable as JSONL ({}); not merging".format(
+                            real_path, exc.__class__.__name__))
+        return 0
+    merged, lost = merge_register(ours, theirs, base=base)
+    if lost:
+        _write_conflict(result_path, result_path, theirs_path,
+                        "{} entry/entries would be lost by this merge".format(len(lost)))
+        return 0
+    Path(result_path).write_text(
+        "".join(json.dumps(r, sort_keys=True) + "\n" for r in merged),
+        encoding="utf-8", newline="\n")
+    return 0
 
 
 # --- Phase 3: the artifact-class registry -----------------------------------
@@ -669,6 +883,153 @@ def _reject_path(path):
     return None
 
 
+# --- Phase 3: harness adapters ----------------------------------------------
+#
+# THE TWO ENVELOPES ARE NOT SIMILAR. Established by execution, not by documentation:
+#
+#   Claude   {"tool_name": "Edit", "tool_input": {"file_path": "src/a.cs"}}
+#   Copilot  {"hookType": "preToolUse",
+#             "input": {"cwd": "C:\\repo",
+#                       "toolCalls": [{"name": "edit", "args": "{\"path\": \"C:\\repo\\src\\a.cs\"}"}]}}
+#
+# Copilot batches N tool calls into ONE invocation, `args` is a JSON STRING rather than an
+# object, the path field is `path` not `file_path`, and the path is ABSOLUTE. A hook that
+# reads tool_input.file_path finds nothing in a Copilot payload and returns "allow" for
+# every edit -- a silent no-op wearing the shape of enforcement. The conformance suite
+# caught exactly that before any of it shipped.
+#
+# Shape recorded from ~/.copilot/session-state/*/events.jsonl: 55,541 preToolUse
+# invocations, of which `powershell` is the commonest single tool (26,210) -- the
+# shell-bypass path named as G4 in the Phase-2 design, here measured rather than supposed.
+
+# Tools that WRITE. Everything else carries no path we care about, and one that carries no
+# path must never have one invented for it.
+_WRITE_TOOLS = {"edit", "create", "write", "apply_patch", "str_replace", "multiedit",
+                "notebookedit"}
+_PATH_KEYS = ("file_path", "path", "filePath", "notebook_path")
+
+HARNESS_STATUS = {
+    "claude": {
+        "edit_boundary": "enforcing",
+        "why": "PreToolUse contract established by execution and the deny response is "
+               "honoured (spike S5, five cases incl. both fail-safe paths).",
+    },
+    "copilot": {
+        # The architecture's condition 2, CLOSED by a live session on 2026-08-24 rather
+        # than assumed either way.
+        "edit_boundary": "enforcing",
+        "why": "A live Copilot CLI 1.0.80 session honoured a deny: a read of an unleased "
+               "file succeeded, a write to a leased one was refused with our reason "
+               "rendered verbatim into the transcript, and the file was unmodified. "
+               "RESIDUAL, unchanged: Copilot fails OPEN on a 30s hook timeout, so a hung "
+               "hook allows. Our measured check is 63ms p95, and the commit floor backs it.",
+    },
+}
+
+
+def _relativise(path, repo, cwd=None):
+    """An absolute harness path made repo-relative, or left alone if already relative."""
+    if not path:
+        return None
+    text = _norm(path)
+    for base in (cwd, repo):
+        if not base:
+            continue
+        prefix = _norm(base).rstrip("/") + "/"
+        if text.lower().startswith(prefix.lower()):
+            return text[len(prefix):]
+    return text
+
+
+def parse_hook_request(event, repo):
+    """Normalise any harness's PreToolUse envelope to [(tool_name, repo_relative_path)].
+
+    A path of None means "this tool call carries no path" -- a shell command, a search, a
+    read. That is not the same as "no path found", and the difference decides whether the
+    layer has an opinion at all.
+    """
+    if not isinstance(event, dict):
+        return []
+
+    # Copilot: a batch, under input.toolCalls, with args as a JSON string.
+    payload = event.get("input")
+    if isinstance(payload, dict) and isinstance(payload.get("toolCalls"), list):
+        cwd = payload.get("cwd")
+        calls = []
+        for call in payload["toolCalls"]:
+            if not isinstance(call, dict):
+                continue
+            name = str(call.get("name", ""))
+            args = call.get("args")
+            if isinstance(args, str):
+                try:
+                    args = json.loads(args)
+                except (ValueError, TypeError):
+                    args = None
+            path = None
+            if isinstance(args, dict):
+                for key in _PATH_KEYS:
+                    if args.get(key):
+                        path = _relativise(args[key], repo, cwd)
+                        break
+            calls.append((name, path))
+        return calls
+
+    # Claude: one call, flat.
+    if "tool_name" in event or "tool_input" in event:
+        name = str(event.get("tool_name", ""))
+        tool_input = event.get("tool_input")
+        path = None
+        if isinstance(tool_input, dict):
+            for key in _PATH_KEYS:
+                if tool_input.get(key):
+                    path = _relativise(tool_input[key], repo)
+                    break
+        return [(name, path)]
+
+    return []
+
+
+def detect_harness(event):
+    if isinstance(event, dict) and isinstance(event.get("input"), dict) \
+            and "toolCalls" in event["input"]:
+        return "copilot"
+    return "claude"
+
+
+def hook_decision_of(response):
+    """Read a decision back out of any harness's response envelope.
+
+    Used by the conformance suite so the assertion does not have to know which shape it is
+    looking at -- adding a harness means adding a fixture and a branch here, not rewriting
+    the tests.
+    """
+    if not isinstance(response, dict):
+        return None
+    block = response.get("hookSpecificOutput")
+    if isinstance(block, dict) and block.get("permissionDecision"):
+        return block["permissionDecision"]
+    return response.get("permissionDecision") or response.get("decision")
+
+
+def hook_response_is_valid(response, harness):
+    """Does this response match the envelope that harness actually reads?
+
+    Copilot consumes the Claude plugin format, and the recorded corpus does not show the
+    response shape -- so both adapters emit the Claude envelope and this returns True for
+    both. That is a DELIBERATE, RECORDED assumption, not a verified fact: it is exactly
+    what a live Copilot deny would confirm or refute (H13).
+    """
+    if not isinstance(response, dict):
+        return False
+    block = response.get("hookSpecificOutput")
+    if not isinstance(block, dict):
+        return False
+    return (block.get("hookEventName") == "PreToolUse"
+            and block.get("permissionDecision") in ("allow", "deny", "ask")
+            and isinstance(block.get("permissionDecisionReason"), str))
+
+
 def hook_response(decision, reason):
     """The PreToolUse envelope. ALWAYS printed, and the caller ALWAYS exits 0 - the
     harness reads the decision in the JSON, not the exit code. Conflating them would make
@@ -680,39 +1041,60 @@ def hook_response(decision, reason):
         "permissionDecisionReason": reason}})
 
 
-def cmd_hook(root, session, agent, now, stdin_text):
-    """G1: this must never raise. A hook that crashes on a bad payload blocks every edit."""
+def _not_checked(reason):
+    return hook_response("ask", "NOT CHECKED  -\n  held by   unknown - this check did"
+                         " not run\n  because   {}\n"
+                         "  remedy    fix the condition above; this is not a pass"
+                         .format(reason))
+
+
+def cmd_hook(root, session, agent, now, stdin_text, repo=None):
+    """G1: this must never raise. A hook that crashes on a bad payload blocks every edit.
+
+    Envelope-agnostic: `parse_hook_request` normalises whichever harness is calling. Copilot
+    BATCHES tool calls, so one invocation can carry several paths -- and if any of them is
+    refused the whole batch is refused. A false refusal costs a message; a false grant costs
+    a merge.
+    """
     try:
         event = json.loads(stdin_text or "")
         if not isinstance(event, dict):
             raise ValueError("payload is not an object")
-        tool_input = event.get("tool_input")
-        path = tool_input.get("file_path") if isinstance(tool_input, dict) else None
+        calls = parse_hook_request(event, repo or root)
     except Exception as exc:
-        return hook_response("ask", "NOT CHECKED  -\n  held by   unknown - this check did"
-                             " not run\n  because   unreadable hook payload ({})\n"
-                             "  remedy    fix the condition above; this is not a pass"
-                             .format(exc.__class__.__name__))
-    if not path:
-        # G2: Bash, Read, and anything else without a file_path. The `if` pre-filter
-        # should stop most of these from ever spawning a process.
-        return hook_response("allow", "coordination: no file_path in this call")
-    bad = _reject_path(str(path))                       # B4 tampering
-    if bad:
-        return hook_response("ask", "NOT CHECKED  -\n  held by   unknown - this check did"
-                             " not run\n  because   {}\n"
-                             "  remedy    fix the condition above; this is not a pass"
-                             .format(bad))
+        return _not_checked("unreadable hook payload ({})".format(exc.__class__.__name__))
 
-    # B4 spoofing: identity is the ENVIRONMENT's, never the payload's session_id.
-    decision = check(root, str(path), session, now)
-    if decision["decision"] != "allow":
+    if not calls:
+        return _not_checked("the payload matched no known harness envelope")
+
+    # The PARSER normalises the envelope; the POLICY lives here. Reads are parallel and
+    # writes serialize, so a `view` of a leased artifact is allowed -- refusing reads would
+    # be both wrong and the fastest way to get the hook switched off.
+    paths = [p for name, p in calls if p and str(name).lower() in _WRITE_TOOLS]
+    if not paths:
+        # G2: powershell, view, grep -- 26,210 of the recorded Copilot invocations are
+        # `powershell` alone. A call that carries no path, or only reads one, is allowed.
+        return hook_response("allow", "coordination: no write to a coordinated path")
+
+    worst = None
+    for path in paths:
+        bad = _reject_path(str(path))                   # B4 tampering
+        if bad:
+            return _not_checked(bad)
+        # B4 spoofing: identity is the ENVIRONMENT's, never the payload's sessionId.
+        decision = check(root, str(path), session, now)
         append_decision(root, session, agent, path, decision)
-    else:
-        append_decision(root, session, agent, path, decision)
-    mapped = {"allow": "allow", "deny": "deny", "not_checked": "ask"}[decision["decision"]]
-    reason = render(decision) or "coordination: lease held or artifact free"
-    return hook_response(mapped, reason)
+        if decision["decision"] == "deny":
+            worst = decision
+            break                                       # the batch is already refused
+        if decision["decision"] == "not_checked" and worst is None:
+            worst = decision
+
+    if worst is None:
+        return hook_response("allow", "coordination: {} path(s) free or mine"
+                             .format(len(paths)))
+    mapped = {"deny": "deny", "not_checked": "ask"}[worst["decision"]]
+    return hook_response(mapped, render(worst))
 
 
 def cmd_precommit(root, repo, session, agent, now):
@@ -798,6 +1180,289 @@ def _worktree_key(cwd):
     return str(Path(cwd).resolve()).replace("\\", "/")
 
 
+def active_sessions(root, now, stale_seconds=SESSION_STALE_SECONDS):
+    """Fold the append-only record into active collaboration sessions.
+
+    The session ledger is evidence that someone announced themselves, not proof that nobody
+    else exists (DC-024). This fold therefore reports only positive liveness; callers that
+    need absence-of-use proof must also inspect the filesystem/worktree state.
+    """
+    events, errors, files = read_events(root)
+    leases = fold(events, now)
+    claims_by_session = {}
+    for lease in leases.values():
+        claims_by_session.setdefault(lease["session"], []).append({
+            "path": lease["path"],
+            "wi": lease.get("wi", ""),
+            "agent": lease.get("agent", lease["session"]),
+            "expires": lease.get("expires"),
+        })
+
+    live = {}
+    for event in events:
+        session = event.get("session")
+        if not session:
+            continue
+        if event.get("kind") == "session-start":
+            live[session] = {
+                "session": session,
+                "agent": event.get("agent", session),
+                "worktree": event.get("worktree", ""),
+                "started_at": event.get("at", 0.0),
+                "last_at": event.get("at", 0.0),
+                "claims": [],
+            }
+            continue
+        if event.get("kind") == "session-end":
+            live.pop(session, None)
+            continue
+        if session in live:
+            live[session]["last_at"] = max(live[session]["last_at"], event.get("at", 0.0))
+
+    sessions = []
+    for session, state in live.items():
+        if now - state.get("last_at", 0.0) >= stale_seconds:
+            continue
+        state = dict(state)
+        state["claims"] = sorted(claims_by_session.get(session, []), key=lambda c: c["path"])
+        sessions.append(state)
+    sessions.sort(key=lambda s: (s.get("worktree", ""), s.get("session", "")))
+    return sessions, errors, files
+
+
+def session_contract_path(repo):
+    return Path(repo) / SESSION_CONTRACT
+
+
+def _role_token(value):
+    return re.sub(r"[^a-z0-9]+", "", (value or "").lower())
+
+
+def _strip_cell(value):
+    value = value.strip()
+    if value.startswith("`") and value.endswith("`") and len(value) >= 2:
+        value = value[1:-1]
+    return value.strip()
+
+
+def contract_ownership(repo):
+    """Parse the simple ownership tables from the session contract template.
+
+    This is intentionally Markdown-shaped rather than a general Markdown parser: the pack
+    owns the template and the rows are `| Path | Why |` under `### <Role> owns`.
+    Unknown shapes simply yield no ownership facts; the contract remains human-readable.
+    """
+    path = session_contract_path(repo)
+    if not path.is_file():
+        return {}
+    ownership, current = {}, None
+    for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        heading = re.match(r"^###\s+(.+?)\s+owns\s*$", raw.strip(), flags=re.IGNORECASE)
+        if heading:
+            current = heading.group(1).strip()
+            ownership.setdefault(current, [])
+            continue
+        if raw.startswith("### "):
+            current = None
+            continue
+        if not current or not raw.strip().startswith("|"):
+            continue
+        cells = [_strip_cell(c) for c in raw.strip().strip("|").split("|")]
+        if len(cells) < 2 or cells[0].lower() in ("path", "---") or set(cells[0]) <= {"-"}:
+            continue
+        ownership.setdefault(current, []).append({"path": _norm(cells[0]), "why": cells[1]})
+    return {role: rows for role, rows in ownership.items() if rows}
+
+
+def infer_session_roles(session, agent, ownership):
+    """Infer contract role membership from session/agent labels.
+
+    This stays advisory. A false warning costs a message; a false grant is what creates
+    cross-owned edits. A later slice can replace this with explicit `COORD_ROLE`.
+    """
+    tokens = {t for t in re.split(r"[^a-z0-9]+", "{} {}".format(session, agent).lower()) if t}
+    roles = []
+    for role in ownership:
+        role_tokens = [t for t in re.split(r"[^a-z0-9]+", role.lower()) if t]
+        if role_tokens and all(token in tokens for token in role_tokens):
+            roles.append(role)
+    return roles
+
+
+def owner_rows_for_path(ownership, path):
+    owners = []
+    for role, rows in ownership.items():
+        for row in rows:
+            if overlaps(row["path"], path):
+                owners.append({"role": role, "path": row["path"], "why": row.get("why", "")})
+    return owners
+
+
+def collaboration_findings(root, repo, now, snapshot=None):
+    """Return collaboration health findings.
+
+    This is a small operator gate over the live session fold. It is deliberately advisory:
+    it catches the AI-DE class where two sessions had to publish a contract and claim files
+    to avoid merge/rebase damage, but it does not pretend a claim is a distributed lock.
+    """
+    sessions, errors, files = snapshot or active_sessions(root, now)
+    findings = []
+    if errors:
+        findings.append({
+            "code": "COORD-COLLAB-NOT-CHECKED-RECORD",
+            "severity": "blocker",
+            "reason": "coordination record is unreadable: {}".format(_safe("; ".join(errors[:2]), 200)),
+        })
+        return findings
+    if files == 0:
+        findings.append({
+            "code": "COORD-COLLAB-NOT-CHECKED-EMPTY",
+            "severity": "blocker",
+            "reason": "0 coordination files scanned; no collaboration state established",
+        })
+        return findings
+    if len(sessions) > 1 and not session_contract_path(repo).is_file():
+        findings.append({
+            "code": "COORD-COLLAB-NO-CONTRACT",
+            "severity": "blocker",
+            "reason": "{} active sessions but {} is missing".format(
+                len(sessions), SESSION_CONTRACT),
+        })
+    ownership = contract_ownership(repo)
+    if ownership:
+        for item in sessions:
+            roles = infer_session_roles(item.get("session", ""), item.get("agent", ""), ownership)
+            for claim in item.get("claims", []):
+                owners = owner_rows_for_path(ownership, claim.get("path", ""))
+                if owners and not any(o["role"] in roles for o in owners):
+                    findings.append({
+                        "code": "COORD-COLLAB-CROSS-OWNED-CLAIM",
+                        "severity": "warning",
+                        "reason": "session {} claims {} owned by {}".format(
+                            item["session"], claim.get("path", ""),
+                            ", ".join(sorted({o["role"] for o in owners}))),
+                    })
+    if len(sessions) > 1:
+        no_claims = [s["session"] for s in sessions if not s.get("claims")]
+        if no_claims:
+            findings.append({
+                "code": "COORD-COLLAB-NO-CLAIMS",
+                "severity": "warning",
+                "reason": "active session(s) with no claims: {}".format(", ".join(sorted(no_claims))),
+            })
+    return findings
+
+
+def cmd_session_list(root, now, as_json=False):
+    sessions, errors, files = active_sessions(root, now)
+    payload = {"files_scanned": files, "sessions": sessions, "errors": errors}
+    if as_json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0 if not errors else 4
+    if errors:
+        print("COORD-NOT-CHECKED-RECORD: {}".format(_safe("; ".join(errors[:2]), 200)))
+        return 4
+    print("{} active session(s); {} file(s) scanned".format(len(sessions), files))
+    for item in sessions:
+        print("  {:<24} {:<18} {}  {} claim(s)".format(
+            _safe(item["session"], 24),
+            _safe(item.get("agent", ""), 18),
+            _safe(item.get("worktree", ""), 90),
+            len(item.get("claims", []))))
+        for claim in item.get("claims", []):
+            print("    - {:<30} {}".format(_safe(claim.get("wi", ""), 30),
+                                           _safe(claim.get("path", ""), 120)))
+    return 0
+
+
+def cmd_collaborate(root, repo, action, now, as_json=False):
+    if action not in ("check", "summary"):
+        return 2
+    sessions, errors, files = active_sessions(root, now)
+    findings = collaboration_findings(root, repo, now, snapshot=(sessions, errors, files))
+    request_events, request_errors = read_request_events(root)
+    requests = fold_requests(request_events)
+    open_requests = [r for r in requests if r.get("status") == "open"]
+    payload = {"files_scanned": files, "active_sessions": sessions, "findings": findings,
+               "contract": SESSION_CONTRACT, "contract_exists": session_contract_path(repo).is_file()}
+    if action == "summary":
+        payload["requests"] = open_requests
+        payload["request_errors"] = request_errors
+    if as_json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        if action == "summary":
+            return 0
+        return 3 if any(f.get("severity") == "blocker" for f in findings) else 0
+    print("collaboration: {} active session(s); contract {}".format(
+        len(sessions), "present" if payload["contract_exists"] else "missing"))
+    for item in sessions:
+        print("  session {:<24} agent {:<18} claims {}".format(
+            _safe(item["session"], 24), _safe(item.get("agent", ""), 18),
+            len(item.get("claims", []))))
+    if action == "summary":
+        print("requests: {} open".format(len(open_requests)))
+        for request in open_requests:
+            print("  {:<22} -> {:<12} {}".format(
+                _safe(request.get("id", ""), 22),
+                _safe(request.get("to", ""), 12),
+                _safe(request.get("contract", ""), 90)))
+    if not findings:
+        print("collaboration check: OK")
+        return 0
+    for finding in findings:
+        print("{}  {}  {}".format(finding["severity"].upper(), finding["code"],
+                                  finding["reason"]))
+    if action == "summary":
+        return 0
+    return 3 if any(f.get("severity") == "blocker" for f in findings) else 0
+
+
+def cmd_request(root, action, now, session, agent, args):
+    events, errors = read_request_events(root)
+    if errors:
+        print("COORD-REQUEST-NOT-CHECKED  {}".format(_safe("; ".join(errors[:2]), 200)),
+              file=sys.stderr)
+        return 4
+    if action == "add":
+        rid = new_id("req")
+        record = {"kind": "request-add", "id": rid, "at": now,
+                  "session": session or "anon", "agent": agent or "anon",
+                  "from": args.from_role or agent or session or "unknown",
+                  "to": args.to, "contract": args.contract,
+                  "reason": args.reason, "path": _norm(args.path or "")}
+        append_record(request_log_path(root), record)
+        print(json.dumps({"id": rid, "status": "open"}))
+        return 0
+    if action == "resolve":
+        folded = {r["id"]: r for r in fold_requests(events)}
+        if args.id not in folded:
+            print("COORD-REQUEST-NOT-FOUND  {}".format(_safe(args.id, 80)))
+            return 4
+        append_record(request_log_path(root), {"kind": "request-resolve", "id": args.id,
+                                               "at": now, "session": session or "anon",
+                                               "agent": agent or "anon",
+                                               "resolution": args.resolution})
+        print(json.dumps({"id": args.id, "status": "resolved",
+                          "resolution": args.resolution}))
+        return 0
+    # list
+    folded = fold_requests(events)
+    if args.status != "all":
+        folded = [r for r in folded if r.get("status") == args.status]
+    payload = {"requests": folded, "events_scanned": len(events), "errors": []}
+    if args.json:
+        print(json.dumps(payload, indent=2, sort_keys=True))
+    else:
+        print("{} request(s)".format(len(folded)))
+        for request in folded:
+            print("  {:<22} {:<8} -> {:<12} {}".format(
+                _safe(request.get("id", ""), 22),
+                _safe(request.get("status", ""), 8),
+                _safe(request.get("to", ""), 12),
+                _safe(request.get("contract", ""), 100)))
+    return 0
+
+
 # --- worktree lifecycle (session-worktree-discipline.md WT1-WT12) ------------
 # This file already resolves the primary checkout from any tree and keys occupancy by
 # worktree, so the lifecycle belongs here rather than in a parallel tool. WT1 makes a fresh
@@ -852,53 +1517,7 @@ def worktree_is_clean(path):
     return not [p for p in (out or "").split("\0") if p.strip()], None
 
 
-# How recently a tree must have been touched to count as in use, and how much of it to look at.
-#
-# MEASURED NEED. A tree was reported "clean, merged, unheld" and removed, and a live session
-# recreated it within the minute and wrote a marker reading "facelift worktree in use". Nothing was
-# lost, because the cleanliness checks were correct — but the LIVENESS check was not: it read a
-# registration ledger, and that session had never registered. A ledger says who signed in; the
-# filesystem says who is working.
-#
-# Sixty minutes because a session between actions is still a session, and the cost of waiting an
-# hour to reclaim a directory is nothing against the cost of deleting one somebody is in. The scan
-# is capped and skips build output, so it stays cheap on a large tree; hitting the cap is treated as
-# "recently touched" rather than as an answer, because a partial scan cannot prove absence.
-WORKTREE_IDLE_SECONDS = 3600
-WORKTREE_SCAN_CAP = 4000
-WORKTREE_SCAN_SKIP = {".git", "bin", "obj", "node_modules", ".vs", "artifacts", "packages"}
-
-
-def worktree_touched_within(path, seconds, now):
-    """Whether anything in the tree was modified recently. Fail-safe: unknown means yes."""
-    newest = 0.0
-    seen = 0
-
-    try:
-        for directory, subdirectories, files in os.walk(path):
-            subdirectories[:] = [d for d in subdirectories if d not in WORKTREE_SCAN_SKIP]
-
-            for name in files:
-                seen += 1
-                if seen > WORKTREE_SCAN_CAP:
-                    # A tree too large to read is not a tree anyone can prove is idle.
-                    return True, "scan cap reached; treated as in use"
-
-                try:
-                    newest = max(newest, os.path.getmtime(os.path.join(directory, name)))
-                except OSError:
-                    continue
-    except OSError as error:
-        return True, "could not scan ({})".format(error.__class__.__name__)
-
-    if newest <= 0:
-        return False, "nothing readable to date"
-
-    age = now - newest
-    return age < seconds, "last modified {:.0f} minute(s) ago".format(max(age, 0) / 60)
-
-
-def worktree_safety(record, primary, cwd, live_keys, index, now=None):
+def worktree_safety(record, primary, cwd, live_keys, index):
     """WT7, in order, fail-safe. Returns (safe, reason).
 
     Every condition is a HARD STOP that reports rather than removes. A cleanup that deletes
@@ -930,16 +1549,7 @@ def worktree_safety(record, primary, cwd, live_keys, index, now=None):
     branch = record.get("branch")
     if branch and index.get(branch, 0) > 1:
         return False, "branch {} is checked out in another tree".format(_safe(branch, 60))
-
-    # Last, because it is the weakest signal and the most expensive: everything above answers from
-    # git, and this one answers from the filesystem. It is here because git could not see the
-    # session that was actually working (WT7).
-    recent, detail = worktree_touched_within(
-        path, WORKTREE_IDLE_SECONDS, now if now is not None else time.time())
-    if recent:
-        return False, "touched recently - {} - a session may be in it".format(detail)
-
-    return True, "clean, merged, unheld, idle - {}".format(detail)
+    return True, "clean, merged, unheld"
 
 
 def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
@@ -1177,29 +1787,53 @@ def _install_merge_driver(repo, root):
         return
     if not entries:
         return
-    command = '"{}" "{}" merge-derived %A %O %B %P'.format(
-        sys.executable, str(Path(__file__).resolve()).replace("\\", "/"))
-    _git(repo, "config", "merge.{}.name".format(MERGE_DRIVER_NAME),
-         "coord: resolve derived artifacts, regenerate after the merge")
-    _git(repo, "config", "merge.{}.driver".format(MERGE_DRIVER_NAME), command)
-    got, _err = _git(repo, "config", "--get", "merge.{}.driver".format(MERGE_DRIVER_NAME))
-    if not (got or "").strip():
-        print("merge driver registration FAILED - `git config` reported nothing back")
-        return
+    me = str(Path(__file__).resolve()).replace("\\", "/")
+    # Pattern: Strategy, keyed by artifact class. The class decides the MECHANISM entirely
+    # (ADR-0009) -- derived artifacts are resolved and regenerated afterwards; registers are
+    # unioned under a conservation assertion. One driver each, selected by .gitattributes.
+    drivers = {
+        MERGE_DRIVER_NAME: ("derived",
+                            "coord: resolve derived artifacts, regenerate after the merge",
+                            '"{}" "{}" merge-derived %A %O %B %P'.format(sys.executable, me)),
+        REGISTER_DRIVER_NAME: ("register",
+                               "coord: union append-only registers, conserving every entry",
+                               '"{}" "{}" merge-register %A %O %B %P'.format(sys.executable, me)),
+    }
+    declared = {}
+    for name, (klass, label, command) in drivers.items():
+        patterns = [p for p, k, _c in entries if k == klass]
+        if not patterns:
+            continue
+        _git(repo, "config", "merge.{}.name".format(name), label)
+        _git(repo, "config", "merge.{}.driver".format(name), command)
+        # CTRL-E: read the value back. The recorded instance was a `git config` that failed
+        # while the script reported success, leaving the driver unregistered for weeks.
+        got, _err = _git(repo, "config", "--get", "merge.{}.driver".format(name))
+        if not (got or "").strip():
+            print("merge driver {!r} registration FAILED - `git config` reported nothing back"
+                  .format(name))
+            continue
+        declared[name] = patterns
 
-    derived = [p for p, k, _c in entries if k == "derived"]
-    if derived:
-        ga = Path(repo) / ".gitattributes"
-        current = ga.read_text(encoding="utf-8") if ga.exists() else ""
-        added = [p for p in derived
-                 if "{} merge={}".format(p, MERGE_DRIVER_NAME) not in current]
-        if added:
+    if not declared:
+        return
+    ga = Path(repo) / ".gitattributes"
+    current = ga.read_text(encoding="utf-8") if ga.exists() else ""
+    added = 0
+    for name, patterns in sorted(declared.items()):
+        for pattern in patterns:
+            line = "{} merge={}".format(pattern, name)
+            if line in current:
+                continue
             if current and not current.endswith("\n"):
                 current += "\n"                     # LOG-A's sibling seam
-            current += "".join("{} merge={}\n".format(p, MERGE_DRIVER_NAME) for p in added)
-            ga.write_text(current, encoding="utf-8", newline="\n")
-        print("Registered merge driver {!r}; .gitattributes declares {} derived pattern(s)"
-              .format(MERGE_DRIVER_NAME, len(derived)))
+            current += line + "\n"
+            added += 1
+    if added:
+        ga.write_text(current, encoding="utf-8", newline="\n")
+    print("Registered {}; .gitattributes declares {} pattern(s)".format(
+        ", ".join(repr(n) for n in sorted(declared)),
+        sum(len(p) for p in declared.values())))
 
 
 def _write_conflict(result_path, ours_path, theirs_path, reason):
@@ -1265,6 +1899,13 @@ def cmd_regen(root, repo, timeout=120):
             results.append({"path": path, "status": "no-command"})
             continue
         try:
+            # DEVIATION (Rules of the Road §4, FR-075): shell=True is deliberate. `command` is a
+            # regeneration command resolved from the repo-local coordination registry
+            # (regen_command -> load_registry) - a trusted config source editable only by someone
+            # with repo write access, never untrusted or network input, so this is not an injection
+            # surface. It is retained rather than tokenized because registry regen commands may use
+            # shell operators (&&, |, >) and must run identically on POSIX and Windows; a shlex
+            # arg-list split mishandles Windows path separators and would break the regen path.
             proc = subprocess.run(command, cwd=str(repo), shell=True, capture_output=True,
                                   text=True, timeout=timeout)
             ok = proc.returncode == 0
@@ -1357,7 +1998,105 @@ def cmd_doctor(root, repo):
     if owed:
         print("regeneration     {} artifact(s) OWED - run `coord regen`".format(len(owed)))
         problems += 1
+
+    # NFR-S2: state the limit of our own control rather than implying enforcement we have
+    # not established. Copilot's deny contract is unverified, so it is reported advisory.
+    for name, status in sorted(HARNESS_STATUS.items()):
+        print("harness {:<8} edit boundary: {}".format(name, status["edit_boundary"]))
+        if status["edit_boundary"] != "enforcing":
+            print("  because     {}".format(_safe(status["why"], 400)))
+            print("  effect      the commit floor is the real enforcement for this harness")
+
     return 1 if problems else 0
+
+
+PLUGIN_NAME = "coord-agent-coordination"
+
+
+def cmd_plugin_emit(out_dir):
+    """Write the plugin bundle BOTH harnesses read. It never installs anything.
+
+    S14 established that Copilot CLI consumes the Claude plugin format verbatim --
+    `.claude-plugin/plugin.json` plus `hooks/hooks.json` with the same matcher/hooks shape
+    and the same ${CLAUDE_PLUGIN_ROOT} placeholder. One bundle therefore serves both, which
+    is what made NFR-C1 cheap.
+
+    STRIDE B9: this writes only where it is told and PRINTS what it wrote. It never edits
+    ~/.copilot/settings.json or .claude/settings.json, because a layer that grants itself
+    tool permissions is the elevation it exists to prevent -- the same rule `install`
+    follows by printing the settings entry rather than writing it.
+    """
+    out = Path(out_dir)
+    manifest_path = out / ".claude-plugin" / "plugin.json"
+    if manifest_path.exists():
+        try:
+            existing = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            existing = {}
+        if existing.get("name") != PLUGIN_NAME:
+            print("COORD-PLUGIN-FOREIGN  {} already holds a different plugin ({!r}) -"
+                  " not overwritten.\n  remedy    emit to another directory"
+                  .format(manifest_path, _safe(existing.get("name", "unknown"), 60)))
+            return 2
+
+    me = str(Path(__file__).resolve()).replace("\\", "/")
+    manifest = {
+        "name": PLUGIN_NAME,
+        "description": "Refuse an edit to an artifact another session holds a lease on.",
+        "version": "0.1.0",
+        "author": {"name": "AI-Forward Pack"},
+        "license": "MIT",
+        "keywords": ["agent-coordination", "leases", "pretooluse"],
+    }
+
+    # THE COMMAND SHAPE IS LOAD-BEARING, and it was got wrong first time.
+    # A live Copilot run denied EVERY tool call with "(hook errored)" and the hook script
+    # never executed at all -- no output, no side effect, nothing. The bundle then emitted
+    # `"C:\...\python.exe" "C:/...coord-core.py" hook`: a QUOTED EXECUTABLE.
+    # The one plugin known to work on this machine (wt-agent-hooks, 55,541 invocations)
+    # quotes its SCRIPT but never its interpreter:
+    #     powershell -NoProfile ... -File "${CLAUDE_PLUGIN_ROOT}/hooks/send-event.ps1" ...
+    # So: a bare interpreter resolved from PATH, a quoted script path, and the script
+    # shipped INSIDE the bundle and addressed via ${CLAUDE_PLUGIN_ROOT} -- which also
+    # means the bundle is relocatable rather than pinned to an absolute path.
+    launcher = ("#!/usr/bin/env python3\n"
+                '"""Launcher for the coord PreToolUse hook. Emitted by `coord plugin`.\n\n'
+                "Kept minimal on purpose: the harness runs THIS, and it delegates. It exists\n"
+                "because a hook command must name a bare interpreter and a quoted script\n"
+                "inside the bundle -- a quoted absolute interpreter path does not execute.\n"
+                '"""\n'
+                "import runpy, sys\n"
+                'COORD = r"{}"\n'
+                'sys.argv = [COORD, "hook"]\n'
+                'runpy.run_path(COORD, run_name="__main__")\n').format(me)
+
+    hooks = {"hooks": {"PreToolUse": [{
+        "matcher": ".*",
+        "hooks": [{"type": "command",
+                   "command": 'python "${CLAUDE_PLUGIN_ROOT}/hooks/hook.py"',
+                   "timeout": 10}]}]}}
+
+    (out / ".claude-plugin").mkdir(parents=True, exist_ok=True)
+    (out / "hooks").mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n",
+                             encoding="utf-8", newline="\n")
+    (out / "hooks" / "hook.py").write_text(launcher, encoding="utf-8", newline="\n")
+    (out / "hooks" / "hooks.json").write_text(json.dumps(hooks, indent=2) + "\n",
+                                              encoding="utf-8", newline="\n")
+
+    print("Wrote the plugin bundle to {}".format(out))
+    print("  {}".format(manifest_path))
+    print("  {}".format(out / "hooks" / "hooks.json"))
+    print("")
+    print("This tool does NOT install it. Load it yourself, per harness:")
+    print("  Copilot CLI   copilot --plugin-dir \"{}\"".format(out))
+    print("  Claude Code   add the entry `coord install` prints, or install as a plugin")
+    print("")
+    for name, status in sorted(HARNESS_STATUS.items()):
+        print("  {:<8} edit boundary: {}".format(name, status["edit_boundary"]))
+    print("  Copilot is advisory at the edit boundary until a live session proves a deny is")
+    print("  honoured. The commit floor enforces there regardless.")
+    return 0
 
 
 def _print_settings_entry(repo):
@@ -1400,7 +2139,7 @@ def main(argv=None):
 
     if args.cmd == "hook":
         # ALWAYS exit 0: the harness reads the decision in the JSON, not the exit code.
-        print(cmd_hook(root, session, agent, now, sys.stdin.read()))
+        print(cmd_hook(root, session, agent, now, sys.stdin.read(), repo=repo))
         return 0
 
     if args.cmd == "guard":
@@ -1437,6 +2176,40 @@ def main(argv=None):
     if args.cmd == "doctor":
         return cmd_doctor(root, repo)
 
+    if args.cmd == "allocate":
+        print(new_id(args.scheme))
+        return 0
+
+    if args.cmd == "plugin":
+        return cmd_plugin_emit(args.emit)
+
+    if args.cmd == "merge-register":
+        return cmd_merge_register(args.result, args.base, args.theirs, args.realpath)
+
+    if args.cmd == "resolve":
+        try:
+            rows = _read_jsonl(args.register)
+        except (OSError, json.JSONDecodeError) as exc:
+            print("COORD-NOT-CHECKED-RECORD  {} is unreadable: {}".format(
+                _safe(args.register, 200), exc.__class__.__name__))
+            return 4
+        status, result, corpus = resolve_prefix(rows, args.prefix)
+        if status == "unique":
+            print(result["id"])
+            return 0
+        if status == "ambiguous":
+            print("COORD-PREFIX-AMBIGUOUS  {!r} matches {} entries in a corpus of {}:"
+                  .format(args.prefix, len(result), corpus))
+            for row in result:
+                print("  {}  {}".format(row.get("id"), _safe(row.get("shortname", ""), 80)))
+            print("  remedy    lengthen the prefix; this never picks a first match")
+            return 3
+        # R4: "not found" carries the corpus size, so an empty register cannot render as a
+        # searched one.
+        print("COORD-PREFIX-NOMATCH  {!r} matches nothing in a corpus of {} entries"
+              .format(args.prefix, corpus))
+        return 4
+
     if args.cmd == "metrics":
         return cmd_metrics(root, repo, args.json)
 
@@ -1448,6 +2221,15 @@ def main(argv=None):
         return cmd_worktree(root, repo, args.action, os.getcwd(), now,
                             session=chosen, agent=agent or chosen, branch=args.branch,
                             base=args.base, remove=args.remove)
+
+    if args.cmd == "session" and args.action == "list":
+        return cmd_session_list(root, now, args.json)
+
+    if args.cmd == "collaborate":
+        return cmd_collaborate(root, repo, args.action, now, args.json)
+
+    if args.cmd == "request":
+        return cmd_request(root, args.request_action, now, session, agent, args)
 
     if args.cmd == "check":
         decision = check(root, args.path, session, now)

@@ -14,7 +14,7 @@ summary: >-
 ---
 
 <!--
-TEMPLATE: Detailed Component Design — produced by /design
+TEMPLATE: Detailed Component Design — produced by /design-slice
 Copy to docs/design/<component>.md. The *how* for one component, within an accepted
 architecture. Confidence labels apply to all contracts; unfamiliar ones established by
 the Spike Protocol first.

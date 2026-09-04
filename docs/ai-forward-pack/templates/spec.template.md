@@ -156,7 +156,7 @@ specified recovery path from its error state". -->
 *How it **looks** — the visual surface. Governing model: Garrett **Surface** + the **UI & Interaction Design Standard** (`ui-interaction-design.md`, U1–U20). Owner: **UX & Accessibility**. Present when there is a visual UI; **gated behind a settled Part B**; otherwise: **N/A — `<reason>`** (e.g. "CLI only — see Part B for CLI interaction; no visual surface").*
 
 <!-- This layer is specified to U1–U20; it does not duplicate them. It carries the UI INTENT and
-acceptance criteria — the full visual design is produced in /design and built in /implement. The
+acceptance criteria — the full visual design is produced in /design-slice and built in /implement. The
 UX & Accessibility lens holds the U16 accessibility (WCAG 2.2 AA) veto. -->
 
 ### UI Archetype Signature (the determinism selector)
@@ -205,4 +205,4 @@ Authors did NOT clear their own hard veto. -->
 `GATE specify · <date> · <personas> · criteria met: <…> · verdict: <pass/block> · vetoes→resolution: <…>`
 
 ---
-**Handoff:** → `/define-architecture` (new/load-bearing system) or → `/design` (feature within an existing architecture).
+**Handoff:** → `/define-architecture` (new/load-bearing system) or → `/design-slice` (feature within an existing architecture).

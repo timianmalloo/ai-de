@@ -1,7 +1,6 @@
 ---
-applyTo: "**"
+applyTo: "**/tests/**,**/test/**,**/*.test.*,**/*.spec.*,**/test_*.py,**/*_test.go"
 ---
-
 # Testing Strategy for AI Coding Agents
 
 *Normative guidance for deciding what to test, how to test it, and what evidence is strong enough to claim correctness.*

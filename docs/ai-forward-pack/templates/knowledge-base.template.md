@@ -49,7 +49,7 @@ docs/knowledge/<topic>/
 - Verified: <n> · Inferred: <n> · Flagged: <n>. The Flagged claims that are load-bearing: <list>.
 
 ## Design implications (what the next phase should do with this)
-- <implication for /specify, /define-architecture, or /design>
+- <implication for /specify, /define-architecture, or /design-slice>
 - <constraint, standard, or invariant the design MUST honor>
 - <a comparable worth borrowing / avoiding, and why>
 

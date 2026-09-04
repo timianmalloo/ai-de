@@ -124,17 +124,7 @@ def run_detector(prefix, targets):
     """
     cmd = prefix + ["detect", "--json"] + list(targets)
     try:
-        # encoding is PINNED. `text=True` alone decodes with the locale default, which on a
-        # Windows console is cp1252 - so the first non-ASCII byte in the detector's own output
-        # (a curly quote in a rule message is enough) raised UnicodeDecodeError inside the reader
-        # THREAD, leaving stdout empty. The empty-output guard below then reported "nothing was
-        # scanned", which was true but for the wrong reason: the detector had run and produced
-        # 10 KB of findings. The guard behaved correctly and the diagnosis it offered - install
-        # the detector - pointed at a machine that already had it. Observed on Windows 11,
-        # Python 3.12, impeccable installed. errors="replace" keeps a stray byte from turning a
-        # real report into a non-result a second time.
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=600,
-                              encoding="utf-8", errors="replace")
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
     except (OSError, subprocess.SubprocessError) as exc:
         return None, "could not run the detector: %s" % exc
     out = (proc.stdout or "").strip()

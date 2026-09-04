@@ -28,7 +28,7 @@ The grounding *is* the repository: the code, its tests, its build, every existin
 
 **Stage 4 — DISCONFIRM (the gate).** Adversary Mode: the Steward verifies every frontmatter claim against the file and every architecture edge against the code; the Test Architect attacks the confidence labels (anything Verified must have a citation); the Simplifier strikes speculative nodes — a smaller honest graph beats a larger guessed one. Authors do not self-clear.
 
-**Stage 5 — CONVERGE.** Run `docs-graph.py derive` (the first real index), ensure the **Docs Explorer** at `docs/index.html`, run `docs-graph.py snapshot` (the baseline health record — adoption is day zero of the trend). Write the **adoption plan** into `docs/ai-forward-pack-adoption.md` (type `doc`): the gap table (missing specs/designs/proofs per area), **phased vertically** by load-bearing priority — Phase 1 is the area where an agent will work next — with each phase naming the skills to run (`/specify`, `/design`, `/document`) and ending in a working, navigable graph increment.
+**Stage 5 — CONVERGE.** Run `docs-graph.py derive` (the first real index), ensure the **Docs Explorer** at `docs/index.html`, run `docs-graph.py snapshot` (the baseline health record — adoption is day zero of the trend). Write the **adoption plan** into `docs/ai-forward-pack-adoption.md` (type `doc`): the gap table (missing specs/designs/proofs per area), **phased vertically** by load-bearing priority — Phase 1 is the area where an agent will work next — with each phase naming the skills to run (`/specify`, `/design-slice`, `/document`) and ending in a working, navigable graph increment.
 
 **Status table (last output).** Completed | Remaining | Best next action — the remaining column *is* the adoption plan's head.
 

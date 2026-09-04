@@ -27,7 +27,7 @@ Conventions
   docs/index.html, docs/docs-index.js, non-.md files. Frontmatter is the record; this tool
   never invents metadata — files without frontmatter are reported, not silently indexed.
 """
-import argparse, concurrent.futures, contextlib, datetime, hashlib, json, os, re, stat, subprocess, sys, tempfile, time
+import argparse, concurrent.futures, contextlib, datetime, hashlib, json, os, re, stat, sys, tempfile, time
 from html.parser import HTMLParser
 
 # Windows consoles default to cp1252, which cannot encode the box/arrow glyphs this
@@ -981,19 +981,6 @@ def graph_hash(entries, project):
 def project_identity(root, explicit=None):
     if explicit:
         return explicit
-    # The remote before the recorded value, for the reason in audit-log.py's project_name: an
-    # inherited name is stable only until two worktrees disagree about it.
-    try:
-        url = subprocess.run(
-            ["git", "-C", root, "config", "--get", "remote.origin.url"],
-            capture_output=True, encoding="utf-8", errors="replace").stdout.strip()
-    except OSError:
-        url = ""
-
-    if url:
-        name = url.rstrip("/").rsplit("/", 1)[-1]
-        return name[:-4] if name.endswith(".git") else name
-
     index_path = os.path.join(root, "docs-index.js")
     if os.path.exists(index_path):
         try:
@@ -1008,22 +995,6 @@ def project_identity(root, explicit=None):
                 return str(index["project"])
         except (OSError, UnicodeError, ValueError):
             pass
-
-    # The origin URL before the directory name. Reading the existing index already keeps an
-    # established project stable, but a FRESH clone has no index to read — and in a worktree the
-    # directory is the worktree's name, not the repository's, which is how `audit-data.js` came to
-    # flip between `ai-de-facelift` and `ai-de-session-phase3-pane-probes` on every regeneration.
-    try:
-        url = subprocess.run(
-            ["git", "-C", root, "config", "--get", "remote.origin.url"],
-            capture_output=True, encoding="utf-8", errors="replace").stdout.strip()
-    except OSError:
-        url = ""
-
-    if url:
-        name = url.rstrip("/").rsplit("/", 1)[-1]
-        return name[:-4] if name.endswith(".git") else name
-
     return os.path.basename(os.path.abspath(os.path.join(root, "..")))
 
 
@@ -1098,7 +1069,15 @@ def cmd_derive(args):
     project = project_identity(args.root, args.project)
     surfaces = discover_html_surfaces(args.root, entries)
     out = {"schemaVersion":"docs-index/v2", "project": project,
-           "generated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+           # FR-068. No build timestamp. A wall-clock stamp made this file differ on every run,
+           # so docs-index.js could never be byte-stable and therefore could never sit inside a
+           # drift gate - which in turn blocked FR-060's fix (having sync regenerate the index
+           # BEFORE the portal and web index that read it, since every skill runs `derive` as
+           # its last action). The field was read by nothing: no consumer in docs/index.html,
+           # docs-explorer-core.js, docs/portal, build-docs-portal.py, or any test.
+           # This is the same call the sibling generator already made and documented for
+           # web/pack-index.js (PACK-I / the FR-048 timestamp class); docs-graph.py had simply
+           # never learned it. Git already records when the file changed, and far more reliably.
            "generator": args.generator, "rootId":project_root_id(entries),
            "artifactTypes":TYPES, "relationRegistry":REL_REGISTRY,
            "policyVersion":POLICY_VERSION, "policySha256":policy_hash(),

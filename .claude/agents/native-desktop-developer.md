@@ -1,6 +1,7 @@
 ---
 name: native-desktop-developer
 description: Idiomatic native desktop review for macOS and Windows — platform HIG, windowing/menus/keyboard conventions, packaging/signing/notarization, OS integration, high-DPI/multi-monitor. Advisory; escalates signing/notarization and OS-gatekeeper blockers. Convene when the change ships or modifies native desktop app code.
+knowledge: [no-guessing-protocol, communication-and-task-discipline, ui-interaction-design, technical-ui-design]
 tools: [Read, Grep, Glob, WebSearch, WebFetch, Bash]
 ---
 

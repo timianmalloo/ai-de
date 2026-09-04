@@ -1,7 +1,7 @@
 ---
-applyTo: "**"
+load: skill
+skills: [specify, define-architecture, design-slice, implement, investigate, forensicreview]
 ---
-
 # Persona Cards — the roster in one schema
 
 *Every lens in the swarm rendered as a uniform, actionable card conforming to the **Persona Operating Standard** (`persona-audit.md` §8). Version 1.0.*

@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+load: always
 ---
 # Session Worktree Discipline
 
@@ -138,43 +138,10 @@ python3 docs/ai-forward-pack/scripts/coord-core.py worktree cleanup
 python3 docs/ai-forward-pack/scripts/coord-core.py worktree cleanup --remove
 ```
 
-**WT7a — Liveness is read from the filesystem, not only from the registry.** A tree whose files
-were modified in the last hour is **held**, whatever the session ledger says. Measured: a tree
-reported *"clean, merged, unheld"* was removed, and a live session recreated it within the minute
-and wrote a marker saying it was in use — it had simply never run `coord session start`. Every
-cleanliness check had been correct; the liveness check had answered from a record rather than from
-the world (**DC-024**). The scan skips build output, is capped, and treats hitting the cap as *in
-use*, because a partial scan cannot prove absence. The reason string carries the age, so "idle" is a
-measurement a human can disagree with.
-
 **WT12 — The tool reports its refusals, not just its actions.** `cleanup` prints every tree it
 declined to remove and the condition that stopped it. A cleanup that silently skips is
 indistinguishable from a cleanup that found nothing, and the difference is exactly the
 information the human needs.
-
-**WT13 — A worktree isolates the working tree and the index. It does not isolate the repository.**
-Some git state lives in the shared `.git` and is therefore common to every worktree — most sharply
-**`refs/stash`**, which is one stack for the whole repository. `git stash` is consequently **not a
-worktree-local tool**: two sessions stashing at the same moment will pop each other's work, with no
-error and no warning, because each command did exactly what it is documented to do.
-
-MEASURED, 2026-08-31: two agents working in `ai-de-knowledge-dedup` and `ai-de-csharp-calls`, both
-branched from one commit and both told that worktree isolation was why they could run in parallel,
-collided on the stash stack. One `stash pop` restored the other session's 387-line extractor change
-into the wrong tree; the reciprocal pop took the first session's work. Nothing was lost only because
-both sessions **preserved what they did not recognise** — one recovered from a file copy taken
-beforehand and re-verified every measured number byte-identically, the other pushed the foreign
-change back onto the stack with an explanatory message rather than discarding it.
-
-**For a temporary revert while a sibling session may be live, copy the file** — `git diff > x.patch`
-plus `git checkout --`, or a plain filesystem copy. Reserve `git stash` for a repository you are
-certain you are alone in.
-
-The same reasoning covers the rest of the shared directory: `refs/bisect`, notes, config, hooks and
-the object store are all common. The rule that generalises past this list: **when isolation is the
-reason two things may run at once, enumerate what the isolation does not cover before relying on
-it.** "Separate working directories" is a statement about files, not about every piece of state a
-tool keeps.
 
 ---
 
@@ -183,8 +150,6 @@ tool keeps.
 - [ ] The session created and entered **its own worktree** on its own branch before writing
       (WT1), or recorded why it is working in the primary checkout (WT4).
 - [ ] Additional worktrees, if any, follow the same lifecycle (WT2).
-- [ ] No `git stash` was used for a temporary revert while another session could be live — a file
-      copy was used instead, because the stash stack is shared by the whole repository (WT13).
 - [ ] The branch and directory are named for **the work** (WT5).
 - [ ] At close, the worktree was **removed or explicitly kept with a reason** (WT6).
 - [ ] Nothing was removed that was dirty, unmerged, current, primary, or held by a live

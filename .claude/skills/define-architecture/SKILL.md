@@ -41,7 +41,7 @@ A spec (`docs/specs/<feature>.md` from `/specify`) or a prompt. If only a prompt
 |---|---|
 | **Completed** | what this run produced (architecture, ADRs, phasing plan) |
 | **Remaining** | the delivery phases not yet built, in order |
-| **Best next action** | the single concrete next step (typically `/design` of the Phase-1 slice's components) |
+| **Best next action** | the single concrete next step (typically `/design-slice` of the Phase-1 slice's components) |
 
 ## Output artifacts
 - `docs/architecture.md` (top-level architecture, from `templates/architecture.template.md`).
@@ -64,4 +64,4 @@ Per the **Knowledge Visualization & Docs Explorer Standard** (`knowledge/knowled
 
 **Audit & change (last action).** Append an audit-log entry for this run — `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "define-architecture-<subject>" --session "<id>" --skill define-architecture --kind skill --prompt "<the prompt, verbatim>" --summary "<what it produced>" --artifact docs/architecture.md` — per the Audit Mandate (`knowledge/audit-and-change-log.md`, AL5). Because this skill shapes a load-bearing decision, **also append a change-log entry** capturing the decision and its git context — `… audit-log.py change --title "<the decision>" --kind architecture --skill define-architecture --prompt "<driving prompt>" --summary "<result>" --rationale "<why>" --artifact docs/architecture.md --artifact docs/adr/<id>.md --git-before "<HEAD sha at grounding; from audit-log.py git-context>"` (Change Mandate, CL1–CL2). A run that left no trace in `docs/audit/` is, like an un-indexed artifact, not done.
 
-**Handoff:** → `/design` (detailed design of each component).
+**Handoff:** → `/design-slice` (detailed design of each component).

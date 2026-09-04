@@ -1,3 +1,7 @@
+---
+load: glob
+applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+---
 # UI Archetype Catalog
 
 *The filled-out companion to the **UI Archetype Grammar** (`ui-archetype-grammar.md`, G1–G16). Each row is a UI/UX archetype: its **exemplars** (real, known-good references an agent can anchor to), its **canonical Archetype Signature** (the determinism selector), a plain description, and the **codegen descriptor** — the concrete, model-agnostic instructions a coding tool follows to build it. Use a row as the starting point: copy its signature, adjust facets with rationale (grammar G9), then compose with the concrete spec (tokens U3–U5, complete component states U9, real copy U11, flows S6, a11y/perf floors U16–U17). The signatures here are **hardened**: multi-valued facets are sets, `A11y` always carries `WCAG_2.2_AA`, and conflicts (grammar §4) are resolved.*
@@ -190,7 +194,32 @@
 
 ---
 
-## H. Using a row (worked example)
+## H. Native client archetypes (added)
+
+*Native desktop and hybrid shells where OS windowing, keyboard/focus, accessibility APIs, high-DPI/multi-monitor behavior, native resource systems and distribution trust are part of the UI contract. These rows compose with `native-client-ui-design` and `templates/native-ui-proof-pack.template.md`: a web mockup is direction evidence only; native PASS requires runtime/platform proof.*
+
+### H1 · Windows Fluent Utility Shell
+- **Exemplars:** [Microsoft PowerToys](https://github.com/microsoft/PowerToys) · [WPF UI](https://github.com/lepoco/wpfui) · [WinUI Gallery](https://github.com/microsoft/WinUI-Gallery)
+- **Category:** NativeDesktop · Windows utility and settings surfaces
+- **Signature:** `WindowsFluentUtility { Type:OLTP; Arch:SPA; Layout:MasterDetail; Density:Compact; Nav:Sidebar+CommandPalette; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer; Color:DarkAdaptive; Type:Utilitarian; Depth:Flat; Sync:LocalFirst; Persistence:Session; Feedback:Confirmed; Motion:Micro; Pacing:Freeform; Transition:HardCut; A11y:WCAG_2.2_AA+HighLegibility; x-platform:windows; x-framework:"winui-or-wpf"; }`
+- **Description:** A compact Windows utility/settings shell that feels native to Fluent/Windows, optimized for keyboard-first configuration and operational throughput.
+- **Codegen descriptor:** Use native Windows/Fluent controls and resources; left navigation/settings shell; keyboard accelerators and command search; UI Automation names/roles; Light/Dark/HighContrast resources; Windows signing/SmartScreen proof. The HTML mockup may communicate direction, but only the native proof pack can clear keyboard, UIA, DPI/windowing and signing.
+
+### H2 · Native File/Object Workbench
+- **Exemplars:** [Files](https://github.com/files-community/Files) · Windows Explorer conventions · [WPF Samples](https://github.com/microsoft/WPF-Samples)
+- **Category:** NativeDesktop · file-object management
+- **Signature:** `NativeFileWorkbench { Type:OLTP; Arch:SPA; Layout:MasterDetail; Density:Compact; Nav:Breadcrumb+Sidebar+CommandPalette; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer; Color:DarkAdaptive; Type:Utilitarian; Depth:Flat; Sync:LocalFirst; Persistence:Cloud; Feedback:Confirmed+Instant; Motion:Micro; Pacing:Freeform; Transition:HardCut; A11y:WCAG_2.2_AA+HighLegibility; x-platform:windows; x-framework:"winui-or-wpf"; }`
+- **Description:** A native file/object management workbench with panes, breadcrumbs, selection, context commands, drag/drop and high-volume list behavior.
+- **Codegen descriptor:** Model file/object navigation as a native workbench: path/breadcrumb, panes, optional tabs, context menus, drag/drop, file associations, keyboard selection/open/rename/delete flows, virtualized large item sets, UI Automation proof, DPI/windowing proof and distribution proof.
+
+### H3 · Cross-Platform XAML / Blazor Hybrid Workbench
+- **Exemplars:** [Avalonia](https://github.com/AvaloniaUI/Avalonia) · [Windows App SDK Samples](https://github.com/microsoft/WindowsAppSDK-Samples) · Blazor Hybrid shell pattern
+- **Category:** NativeDesktop · cross-platform shell
+- **Signature:** `CrossPlatformXamlWorkbench { Type:Hybrid; Arch:SPA; Layout:MasterDetail; Density:Comfortable; Nav:Sidebar+CommandPalette; Viewport:DesktopBound; Input:KeyboardFirst+PrecisionPointer; Color:BrandCentric; Type:Utilitarian; Depth:Flat; Sync:LocalFirst; Persistence:Cloud; Feedback:Confirmed; Motion:Micro; Pacing:Freeform; Transition:HardCut; A11y:WCAG_2.2_AA; x-platform:"cross-platform"; x-framework:"avalonia-or-blazor-hybrid"; }`
+- **Description:** A cross-platform XAML or Blazor Hybrid native shell that shares product structure while requiring per-platform proof for accessibility, windowing, resources and distribution.
+- **Codegen descriptor:** Declare platform deltas first. Map tokens through Avalonia theme variants or native shell resources; prove accessibility per platform through UI Automation / NSAccessibility / AT-SPI or browser DOM plus native shell. For Blazor Hybrid, prove both layers: DOM/web accessibility and native shell windowing, packaging/signing, WebView focus handoff, zoom/text scaling and high-contrast behavior.
+
+## I. Using a row (worked example)
 
 To build the **Executive Coaching app** from the source bundle: start at **A1 (Phased Narrative Orchestrator)**, take its canonical signature, and specialize with `StyleHints` and any facet overrides:
 
@@ -228,6 +257,6 @@ The archetypes above fix the *kind*; a **design-language doc** (`DESIGN.md`, `ui
 
 Reference upstream for the rest; the pack vendors only a **handful** as worked exemplars (attributed, MIT — `examples/design-languages/ATTRIBUTION.md`), never the whole library (bloat — the Solution-Selection Ladder applies to artifacts too).
 
-## I. Provenance
+## K. Provenance
 
-Archetypes A1–A4, B1–B4, C1, D1–D3, E1–E2 originate from the externally-provided *Web Design Theme Taxonomy / UX Grammar v5.0* (Gemini-authored) — names and exemplars retained, signatures **hardened** (multi-valued facets, `A11y` floors, conflict resolution, the `LockedUntilValid` typo fixed) per `ui-archetype-grammar.md`. F1–F2 are pack additions covering common gaps (content portals, settings surfaces). **G1–G6 are pack additions for the technical, scientific & quantitative domains** (CAD, scientific visualization, computational notebooks, spreadsheet modeling, probabilistic simulation, quant terminals); they introduce the grammar enum values `Arch:SpatialBounded`, `Nav:Ribbon`, and `Layout:{ViewportWorkbench, VisualizationPipeline, NotebookCells, ComputationalGrid, ScenarioExplorer, MultiPanelWorkstation}` (versioned per G16), and compose with the base knowledge `technical-ui-design.md` (TQ1–TQ12). Exemplar links are to live products as of authoring; verify on use. All signatures compose with `ui-interaction-design.md` (U1–U20) and `specification-standards.md` (S1–S10).
+Archetypes A1–A4, B1–B4, C1, D1–D3, E1–E2 originate from the externally-provided *Web Design Theme Taxonomy / UX Grammar v5.0* (Gemini-authored) — names and exemplars retained, signatures **hardened** (multi-valued facets, `A11y` floors, conflict resolution, the `LockedUntilValid` typo fixed) per `ui-archetype-grammar.md`. F1–F2 are pack additions covering common gaps (content portals, settings surfaces). **G1–G6 are pack additions for the technical, scientific & quantitative domains** (CAD, scientific visualization, computational notebooks, spreadsheet modeling, probabilistic simulation, quant terminals); they introduce the grammar enum values `Arch:SpatialBounded`, `Nav:Ribbon`, and `Layout:{ViewportWorkbench, VisualizationPipeline, NotebookCells, ComputationalGrid, ScenarioExplorer, MultiPanelWorkstation}` (versioned per G16), and compose with the base knowledge `technical-ui-design.md` (TQ1–TQ12). **H1–H3 are pack additions for native client applications** (Windows Fluent utility shells, native file/object workbenches, and cross-platform XAML / Blazor Hybrid shells); they use `x-` extension facets under the grammar's extension hook and compose with `docs/knowledge/native-client-ui-design/` and `templates/native-ui-proof-pack.template.md`. Exemplar links are to live products as of authoring; verify on use and respect the license/reuse posture in `ui-design-craft.md` DX4a. All signatures compose with `ui-interaction-design.md` (U1–U20) and `specification-standards.md` (S1–S10).

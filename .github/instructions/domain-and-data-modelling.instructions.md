@@ -1,10 +1,9 @@
 ---
 applyTo: "**"
 ---
-
 # Domain & Data Modelling Standard
 
-*Normative guidance for the decision that outranks every other technical decision in a project: **the model**. It governs how `/specify`, `/define-architecture`, `/design` and `/implement` derive the **conceptual domain model** (Domain-Driven Design) and choose the **durable data representation** (dimensional: entities as dimensions, change-over-time as append-only facts). The Testing Strategy governs proof; the Observability Standard governs telemetry; the Specification Standards govern the spec's layers; **this document governs whether the model is right** — and a wrong model is the one mistake that compounds.*
+*Normative guidance for the decision that outranks every other technical decision in a project: **the model**. It governs how `/specify`, `/define-architecture`, `/design-slice` and `/implement` derive the **conceptual domain model** (Domain-Driven Design) and choose the **durable data representation** (dimensional: entities as dimensions, change-over-time as append-only facts). The Testing Strategy governs proof; the Observability Standard governs telemetry; the Specification Standards govern the spec's layers; **this document governs whether the model is right** — and a wrong model is the one mistake that compounds.*
 
 Normative keywords (**MUST**, **SHOULD**, **MAY**, **MUST NOT**) follow RFC 2119.
 
@@ -16,7 +15,7 @@ Two repos running this pack in active development independently arrived at the s
 
 ## 0. When this applies, and who owns it
 
-**Applies:** to any work that introduces or changes a **domain concept, a persisted shape, a measure, or a contract that carries data** — which is nearly all non-trivial work. It is triggered by `/specify` (Part A must carry the conceptual model), `/define-architecture` (the durable representation is an architecture decision), `/design` (the component's data model), `/implement` (the migration), `/investigate` (most defects are model defects), and `/migrate`.
+**Applies:** to any work that introduces or changes a **domain concept, a persisted shape, a measure, or a contract that carries data** — which is nearly all non-trivial work. It is triggered by `/specify` (Part A must carry the conceptual model), `/define-architecture` (the durable representation is an architecture decision), `/design-slice` (the component's data model), `/implement` (the migration), `/investigate` (most defects are model defects), and `/migrate`.
 
 **Owner:** the **Data & Persistence Architect** (hard veto — `persona-cards.md` §C) authors the durable representation in Peer Mode and attacks it in Adversary Mode. The **Patterns Expert** checks the model against established idiom; the **Simplifier** attacks speculative structure; the **Domain Researcher** establishes domain facts; the **Test Architect** demands that every model invariant has a test.
 

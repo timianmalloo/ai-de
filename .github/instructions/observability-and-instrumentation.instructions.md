@@ -1,7 +1,6 @@
 ---
-applyTo: "**"
+applyTo: "**/*.py,**/*.ts,**/*.tsx,**/*.cs,**/*.go,**/*.rs,**/*.java,**/*.js"
 ---
-
 # Observability & Instrumentation Standard
 
 *Normative guidance for how code emits telemetry: logs, traces, metrics, and errors. It governs any agent that writes or modifies code in this repository and is the observability companion to the Body of Knowledge and the Testing Strategy — the BoK says failures must be diagnosable; this file defines how that diagnosability is built in.*

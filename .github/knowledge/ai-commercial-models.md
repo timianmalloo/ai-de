@@ -1,10 +1,10 @@
 ---
-applyTo: "**"
+load: skill
+skills: [define-architecture, collectknowledge]
 ---
-
 # AI Commercial, Cost & Billing Models
 
-*Base knowledge for choosing and architecting **how an AI feature is paid for** — whose account runs the inference, whose data it touches, and how the cost reaches the customer. It governs how `/specify` frames the commercial model, how `/define-architecture` and `/design` realize it, and how the **AI Systems Engineer** (owner of inference cost), the **Privacy & Data Governance** lens (owner of whose-data), and the **UX & Accessibility** lens (owner of the cost surface) reason about it. It composes **down** into the Layered-Optimized Architecture (`layered-optimized-architecture.md`) — the commercial model is a first-class architecture input alongside the capability-tier allocation — and into the UI standards. It invents no new LOA pattern; it names which existing ones each model leans on.*
+*Base knowledge for choosing and architecting **how an AI feature is paid for** — whose account runs the inference, whose data it touches, and how the cost reaches the customer. It governs how `/specify` frames the commercial model, how `/define-architecture` and `/design-slice` realize it, and how the **AI Systems Engineer** (owner of inference cost), the **Privacy & Data Governance** lens (owner of whose-data), and the **UX & Accessibility** lens (owner of the cost surface) reason about it. It composes **down** into the Layered-Optimized Architecture (`layered-optimized-architecture.md`) — the commercial model is a first-class architecture input alongside the capability-tier allocation — and into the UI standards. It invents no new LOA pattern; it names which existing ones each model leans on.*
 
 Normative keywords (**MUST**, **SHOULD**, **MAY**, **MUST NOT**) follow RFC 2119.
 

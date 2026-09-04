@@ -1,3 +1,6 @@
+---
+load: always
+---
 # The No-Guessing Protocol
 
 *Normative guidance for the single most persistent failure in agent work: **acting on a belief that was never checked**, and only naming it as "an assumption" after it causes a bug. The Body of Knowledge already forbids guessing at contracts (D2) and names the Confident Guess, the Plausible Hallucination and the Silent Assumption as anti-patterns (Part VIII); `end-to-end-integrity.md` E15 already forbids asserting the shape of our own code from memory. **Those rules are prohibitions. This document is the mechanism** — what to do at the moment of not-knowing, how to notice you are doing it, and why "I assumed" is not available afterwards.*
@@ -55,7 +58,7 @@ And the structural tells, which are worse because they read as confident:
 #         Confirm: request one record and inspect the raw timestamp field.
 ```
 
-A marker without a confirmation route and a consequence is not a marker — it is a shrug with a comment character in front of it. Markers are greppable and are **harvested during investigation** exactly like `simplify:` markers (NG9).
+A marker without a confirmation route and a consequence is not a marker — it is a shrug with a comment character in front of it. Markers are greppable and are **harvested during investigation** exactly like `simplify:` markers (NG9). The three fields are now **checked, not just requested**: `scripts/marker-lint.py` flags an `assume:` marker missing its confirm route (`assume-no-confirm`) or its consequence (`assume-no-consequence`) — warn by default, `--gate` to fail, so legacy free-form is grandfathered (V16a).
 
 **NG5 — Cheapest-check-first: if checking costs less than marking, you may not mark.** Before writing a marker, price the check. Most "I couldn't verify that" is really "I didn't try": the file was one `view` away, the signature one `grep`, the behaviour one line in a REPL, the version one `--version`, the shape one query. **If the check is cheaper than the marker, do the check.** This is the forcing function that makes the disciplined path also the lazy one — and it is why "no guessing" is affordable rather than aspirational.
 

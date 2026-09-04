@@ -20,7 +20,7 @@ summary: >-
 
 *The repo-level rollup of every component's privacy analysis (design SKILL Stage 3,
 LINDDUN-lite — the privacy analog of STRIDE). Maintained by `/document` (full refresh) and
-updated by `/design`//`/implement` when a component's data handling changes. **The findings
+updated by `/design-slice`//`/implement` when a component's data handling changes. **The findings
 register is generated** — refresh it with the script bundle:*
 
 ```bash

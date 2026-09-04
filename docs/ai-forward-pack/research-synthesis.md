@@ -93,7 +93,7 @@ The above disciplines have direct AI-native expressions. **Chain-of-Verification
 
 ### C.3 The five skills as the synthesis
 
-The five skills (`/specify`, `/define-architecture`, `/design`, `/implement`, `/investigate`) are where everything meets: each is the Rigor Protocol specialized to one phase, casting the right peers to author and the right adversaries to review, producing a committed artifact, and referencing your existing Testing Strategy, Engineering Governance, and LOA at the exact stage they apply. They map onto the eight-phase session loop your Rules of the Road already defines — they do not introduce a competing lifecycle.
+The five skills (`/specify`, `/define-architecture`, `/design-slice`, `/implement`, `/investigate`) are where everything meets: each is the Rigor Protocol specialized to one phase, casting the right peers to author and the right adversaries to review, producing a committed artifact, and referencing your existing Testing Strategy, Engineering Governance, and LOA at the exact stage they apply. They map onto the eight-phase session loop your Rules of the Road already defines — they do not introduce a competing lifecycle.
 
 ---
 

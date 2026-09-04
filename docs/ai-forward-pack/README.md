@@ -16,7 +16,7 @@ It adds three things and nothing you have to relearn:
 2. **The dual-mode persona model** — collaborating peers plus the rule for moving between collaboration and adversarial review (`knowledge/collaborative-personas.md`), including three new peer-first roles your all-adversary catalog lacks.
 3. **The Spike Protocol** — read-the-code and run-a-PoC discipline for unfamiliar APIs, SDKs, and MCP servers (`knowledge/spike-protocol.md`), so designs rest on established contracts rather than guessed semantics.
 
-On top of these sit **twenty-two skills** that any developer can invoke — **six delivery workflows** that carry a piece of work from idea to shipped code (including `/ui-design`, the UI craft skill), **seven supporting skills** (domain knowledge, persona tailoring, execution-graph planning, documentation, brownfield adoption, whole-repo forensic review, and characterization-first migration), **three pack-lifecycle skills** that manage the pack itself (install, update, and extend), **one utility skill** — `/auditlog`, the command-line lens over the project's durable **audit & change log** — and **two prompt-log utilities** (`/prompts` and `/searchprompts`) for reusing prior prompts.
+On top of these sit **twenty-four skills** that any developer can invoke — **six delivery workflows** that carry a piece of work from idea to shipped code (including `/ui-design`, the UI craft skill), **eight supporting skills** (domain knowledge, persona tailoring, execution-graph planning, documentation, brownfield adoption, whole-repo forensic review, characterization-first migration, and code-hygiene review/fix), **three pack-lifecycle skills** that manage the pack itself (install, update, and extend), **two utility skills** — `/auditlog`, the command-line lens over the project's durable **audit & change log**, and `/also`, which appends a late addition to the prior prompt without derailing the work in flight — and **two prompt-log utilities** (`/prompts` and `/searchprompts`) for reusing prior prompts.
 
 ---
 
@@ -42,7 +42,7 @@ Six stages: **0 Rush Interdiction** (no conclusion without a confidence label) �
 |---|---|---|---|---|
 | **/specify** | a prompt or idea | a testable spec with acceptance criteria | Product Strategist, Domain Researcher (+ Privacy if data) | Simplifier, Test Architect, Security (+ Privacy / AI Systems if data or model) |
 | **/define-architecture** | a spec | the top-level architecture + ADRs | Enterprise + Distributed + Security architects, Tech Lead, Domain Researcher, AI Systems, Data & Persistence | full architect council, Patterns Expert, SRE, Privacy, Release |
-| **/design** | a spec/component | a detailed component design | Patterns Expert, Simplifier, language Dev, Domain Researcher, AI Systems (prompt/eval), Data (schema) | + Security, Distributed, Test Architect |
+| **/design-slice** | a spec/component | a detailed component design | Patterns Expert, Simplifier, language Dev, Domain Researcher, AI Systems (prompt/eval), Data (schema) | + Security, Distributed, Test Architect |
 | **/implement** | a design | tested code + a Proof Pack | language Developer ⇄ Test Architect (pair), AI Systems (eval), Data (migration) | Test Architect, SRE, architects, Release Engineer |
 | **/investigate** | a defect | a verified root cause, the failure class generalized + a phased repair plan (stops for your review) | SRE + Distributed Systems, Domain Researcher, Data | + Security, Test Architect, AI Systems, Release |
 
@@ -53,9 +53,9 @@ Each skill is the Rigor Protocol specialized to its phase — the same six stage
 - **`/collectknowledge`** runs *before* design: from a domain and problem you state, it does deep, **sourced** research — industry state of the art, comparable solutions and problem framings, reference standards and data, a glossary — and saves a confidence-labeled knowledge base to `docs/knowledge/` that the team and the personas reason from. It bootstraps domain expertise instead of assuming it.
 - **`/adddomainexperts`** tailors the *roster itself* to your project: it derives the domain from the repo's own evidence, proposes the subject-matter lenses that domain needs in peer and adversary modes (finance → accounting/controls; CFD → a fluid dynamicist; clinical → a clinical-safety lens), wires in any existing Claude domain skills that supply the capability, and — once you confirm the set — adds each as a §8-conformant persona and updates every roster artifact locally.
 - **`/document`** produces and maintains the **documentation bundle**: a JavaDoc-style API reference plus sequence, class, layered-architecture, and component diagrams, in both committed markdown and a self-contained browsable HTML view — and installs an after-commit freshness check (owned by the **Documentation Steward**) so the docs never drift from the code.
-- **`/forensicreview`** reconstructs an existing repo's architecture and full documentation from code, runs the complete architecture/design/implementation council against it, and emits a separate evidence-linked review plus a prioritized backlog of risks, verified issues, and todos. It changes documentation, never production code, and stops for human triage.
+- **`/forensicreview`** reconstructs an existing repo's architecture and full documentation from code, runs the complete architecture/design-slice/implementation council against it, and emits a separate evidence-linked review plus a prioritized backlog of risks, verified issues, and todos. It changes documentation, never production code, and stops for human triage.
 
-The natural order: `/collectknowledge` → `/adddomainexperts` → `/specify` → `/define-architecture` → `/design` → `/implement` → `/document`, with `/investigate` whenever a defect appears. See `commands/`.
+The natural order: `/collectknowledge` → `/adddomainexperts` → `/specify` → `/define-architecture` → `/design-slice` → `/implement` → `/document`, with `/investigate` whenever a defect appears. See `commands/`.
 
 ---
 
@@ -96,7 +96,7 @@ ai-forward-pack/
 │  └─ + 7 vendored Agent-Knowledge-Pack foundation docs (so the bundle is self-contained):
 │       body-of-knowledge · rules-of-the-road · persona-catalog · layered-optimized-architecture ·
 │       engineering-governance · testing-strategy · csharp-style-guide
-├─ commands/                         ← the twenty-two skills (SKILL.md each)
+├─ commands/                         ← the twenty-four skills (SKILL.md each)
 │  ├─ specify/  define-architecture/  design/  implement/  investigate/
 │  ├─ collectknowledge/              ← deep domain research before design → docs/knowledge/
 │  ├─ adddomainexperts/              ← tailors the roster to your project's domain
@@ -138,6 +138,6 @@ Both tools share one model: **knowledge** = always-on reference, **skills** = wo
 
 ## How it fits the Agent Knowledge Pack
 
-This pack is an **extension, not a replacement**. It speaks your pack's vocabulary throughout — the three Prime Directives (D1 correctness over completion, D2 no guessing at contracts, D3 verification never self-certified), Coning and Iterative Critical Thinking, the Proof Pack and the phase gates, the capability tiers and the LOA principles P1–P11 and conformance criteria C1–C11, the persona names and the veto matrix, the Testing Strategy triggers, and the Deviation Protocol. The eleven adversaries ship with your existing pack; this one adds their peer mode, three new authoring personas, four further adversaries that close audited coverage gaps, four more for the UI/app and documentation surface, a Persona Operating Standard that makes every lens uniform and machine-routable, the reasoning protocol they all run, and the twenty-two skills that put them to work.
+This pack is an **extension, not a replacement**. It speaks your pack's vocabulary throughout — the three Prime Directives (D1 correctness over completion, D2 no guessing at contracts, D3 verification never self-certified), Coning and Iterative Critical Thinking, the Proof Pack and the phase gates, the capability tiers and the LOA principles P1–P11 and conformance criteria C1–C11, the persona names and the veto matrix, the Testing Strategy triggers, and the Deviation Protocol. The eleven adversaries ship with your existing pack; this one adds their peer mode, three new authoring personas, four further adversaries that close audited coverage gaps, four more for the UI/app and documentation surface, a Persona Operating Standard that makes every lens uniform and machine-routable, the reasoning protocol they all run, and the twenty-four skills that put them to work.
 
 New here? **`OVERVIEW.md`** is the practical start — how to install, what's inside, and how to use the skills. Then `research-synthesis.md` for the *why* behind every choice, `knowledge/rigor-protocol.md` for the *how*, and `adapters/INSTALL.md` to wire it in by hand.

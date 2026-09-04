@@ -1,7 +1,7 @@
 ---
-applyTo: "**"
+load: skill
+skills: [specify, define-architecture, design-slice, implement, investigate]
 ---
-
 # Collaborating Peers & the Dual-Mode Operating Model
 
 *The authoring half of the swarm, and the rule for switching between collaboration and adversarial review. Version 1.0 — extends the Agent Persona Catalog.*
@@ -72,7 +72,7 @@ The existing eleven adversaries already imply their Peer-Mode counterparts (the 
 - Runs the Rigor Protocol stages, and **interdicts the rush** (Rigor Protocol §2): if a peer states a conclusion before the frame exists, the Orchestrator sends it back to Stage 1.
 - Guards against groupthink: ensures at least one genuine alternative framing is on the table before convergence.
 - Manages handoffs between peers and the mode-switch into Adversary Mode at each gate.
-- Maintains the confidence ledger and the artifact (spec/architecture/design/report) as the durable, externalized state (BoK §VI.2).
+- Maintains the confidence ledger and the artifact (spec/architecture/design-slice/report) as the durable, externalized state (BoK §VI.2).
 
 **In Adversary Mode.** Chairs the council, records the gate verdicts and vetoes (Rules of the Road §3.2), and enforces that the author does not clear its own hard veto.
 
@@ -80,7 +80,7 @@ The existing eleven adversaries already imply their Peer-Mode counterparts (the 
 
 **Veto.** Process veto — may block a phase transition whose gate criteria are not explicitly met. Defers all *content* judgments to the relevant persona.
 
-**`.agent.md`** — `name: orchestrator`, `description: Convenes and sequences the persona swarm, runs the Rigor Protocol, enforces gates and mode-switches, maintains the evidence trail. Use to drive any multi-phase task (specify/architect/design/implement/investigate)`, `tools: [read, search, edit]`.
+**`.agent.md`** — `name: orchestrator`, `description: Convenes and sequences the persona swarm, runs the Rigor Protocol, enforces gates and mode-switches, maintains the evidence trail. Use to drive any multi-phase task (specify/architect/design-slice/implement/investigate)`, `tools: [read, search, edit]`.
 
 ### P2. The Product Strategist (owns product definition)
 
@@ -148,7 +148,7 @@ This is the swarm's casting sheet. The **five delivery workflows** carry a piece
 |---|---|---|---|
 | `/specify` | Orchestrator, **Product Strategist**, **Domain Researcher** (+ **Privacy & Data Governance** if personal/work data) | Simplifier, Test Architect, Security (if identity/data), **Privacy** (if data), **AI Systems Engineer** (if a model capability), **UX & Accessibility** (if a user-facing surface) | Test Architect (unverifiable criteria); Security & Privacy (if PII/identity); AI Systems (AI capability with no eval); UX & Accessibility (a11y, if under obligation) |
 | `/define-architecture` | Orchestrator, **Enterprise + Distributed + Security architects** (peer), **AI Systems Engineer**, **Data & Persistence Architect**, Domain Researcher (spikes), Tech Lead | Full architect council, Patterns Expert, SRE, **Privacy & Data Governance**, **Release Engineer** | Security; Distributed Systems; **AI Systems** (eval/determinism); **Data & Persistence** (irreversible migration); **Privacy** (egress/lifecycle) |
-| `/design` | Orchestrator, **Patterns Expert + Simplifier + language Dev** (peer), **AI Systems Engineer** (prompt/eval/tier), **Data & Persistence** (schema), Domain Researcher (spikes), **UX & Accessibility + Mobile / Native-Desktop developer** (if a UI/app surface) | Patterns Expert + Simplifier (mutual check), Security, Distributed Systems, Test Architect, **AI Systems**, **Data & Persistence**, **UX & Accessibility**, **Mobile/Desktop dev** (if UI/app) | Security; Distributed Systems; Test Architect; **AI Systems**; **Data & Persistence**; **UX & Accessibility** (a11y under obligation) |
+| `/design-slice` | Orchestrator, **Patterns Expert + Simplifier + language Dev** (peer), **AI Systems Engineer** (prompt/eval/tier), **Data & Persistence** (schema), Domain Researcher (spikes), **UX & Accessibility + Mobile / Native-Desktop developer** (if a UI/app surface) | Patterns Expert + Simplifier (mutual check), Security, Distributed Systems, Test Architect, **AI Systems**, **Data & Persistence**, **UX & Accessibility**, **Mobile/Desktop dev** (if UI/app) | Security; Distributed Systems; Test Architect; **AI Systems**; **Data & Persistence**; **UX & Accessibility** (a11y under obligation) |
 | `/implement` | **language Developer ⇄ Test Architect** (pair), **AI Systems Engineer** (eval/prompt-gate), **Data & Persistence** (migration), **Mobile / Native-Desktop developer** (if app code), Domain Researcher | Test Architect, SRE, relevant architects, language Dev, **Mobile/Desktop dev**, **UX & Accessibility** (if UI), **Release Engineer** (rollout/flag) | Test Architect; **AI Systems**; **Data & Persistence**; **UX & Accessibility** (a11y under obligation); **Release** (soft) |
 | `/investigate` | Orchestrator, **SRE + Distributed Systems** (peer), **Data & Persistence** (if a data/integrity defect), Domain Researcher | SRE, Distributed Systems, Security, Test Architect (verify the fix), **Data & Persistence**, **AI Systems** (if a model/eval defect), **Release** (if deploy-correlated) | Security (if the fix touches a trust boundary); Test Architect (the fix must be proven); **Data & Persistence** (if the fix migrates data) |
 | `/collectknowledge` | **Domain Researcher** (lead), Product Strategist, any domain experts already added | Domain Researcher (Adversary Mode — source authority/currency/disconfirmation), Simplifier (scope), Security/Privacy (if regulated data) | — (advisory; runs *before* design and feeds it) |

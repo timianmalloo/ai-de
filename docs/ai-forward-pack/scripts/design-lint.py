@@ -79,7 +79,8 @@ def parse_tokens(fm_lines):
 def lint(path):
     fails, warns = [], []
     try:
-        text = open(path, encoding="utf-8").read()
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
     except OSError as e:
         return [f"{path}: cannot read ({e})"], []
     fm, body = split_frontmatter(text)

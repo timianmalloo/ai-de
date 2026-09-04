@@ -73,7 +73,7 @@ Per the **Knowledge Visualization & Docs Explorer Standard** (`knowledge/knowled
 
 **Audit (last action).** Append an audit-log entry for this run — `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "adddomainexperts-<domain>" --session "<id>" --skill adddomainexperts --kind skill --prompt "<the prompt, verbatim>" --summary "<experts added>" --artifact docs/domain-experts.md` — per the Audit Mandate (`knowledge/audit-and-change-log.md`, AL5). A run that left no trace in `docs/audit/` is, like an un-indexed artifact, not done.
 
-**Handoff:** → `/specify` or `/design` — the new experts now join those workflows automatically by their convene-when triggers, in both peer and adversary modes.
+**Handoff:** → `/specify` or `/design-slice` — the new experts now join those workflows automatically by their convene-when triggers, in both peer and adversary modes.
 
 ---
 

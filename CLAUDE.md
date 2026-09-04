@@ -24,7 +24,7 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   rush to a plausible answer: map, interrogate, ground in evidence, disconfirm, then converge,
   with a confidence label on every claim.
 - **The standing method (unconditional):** the absence of the words *"use the Rigor Protocol"*,
-  *"convene the personas"* or *"run /design first"* is **not permission to skip them** — an
+  *"convene the personas"* or *"run /design-slice first"* is **not permission to skip them** — an
   interactive prompt carries the same standard as a skill run; only the ceremony scales with the
   tier, never the rigor. Never decide in a silo: ground in the **whole intent, end to end**, name
   what the decision constrains, and write down the **surface list** a change must reach before you
@@ -67,7 +67,10 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   validation, security, accessibility, or the failure-mode/test floors; mark bounded shortcuts with an
   inline `simplify:` comment (ceiling + upgrade trigger); ceremony scales with the tier (T0 code-first,
   T1/T2 full artifacts). `.claude/knowledge/solution-selection-ladder.md`; the Simplifier is its
-  adversarial mirror.
+  adversarial mirror. **No dead code survives the turn:** commenting code out while you work is a
+  transient scratch, but a turn never closes with commented-out or dead code in the tree — delete it
+  (version control is the archive, not the working tree), and sweep the class, not only the line you
+  noticed. `.claude/knowledge/communication-and-task-discipline.md` (CT18a); defect class **HYG-A**.
 - **Start with the goal, then plan the turn — the two-step front matter (universal):** every
   non-trivial turn opens, **before the first substantive tool call**, by writing the **goal state**
   — **Goal · Done when · Not in scope** — the preventive mirror of the *Completed / Remaining /
@@ -83,7 +86,7 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
   turn continues · resuming after a stop because a reminder arrived · being unable to say in one line
   what would end this turn.* A **substantive** turn (one that changed the repo or the plan) records
   its goal-state in the audit log — full prompt, `goal`, `done_when` (AL5b) — the presence signal
-  `/dream`'s PACK-O miner reads. `.claude/knowledge/communication-and-task-discipline.md` (CT19–CT24);
+  `/dream`'s PACK-O miner reads. `.claude/knowledge/communication-and-task-discipline.md` (CT19–CT25);
   defect class PACK-O.
 - **How you write, and how much you take on:** **compress the expression, never the obligation.**
   Simplified technical English — short sentences, common words, active voice, one idea per sentence,
@@ -130,11 +133,12 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Roster + the operating standard (severity, veto-clears-when,
   conflict rule): `.claude/knowledge/persona-cards.md` and `.claude/knowledge/persona-audit.md`.
-- **Skills (22):** nineteen reasoning workflows — `/collectknowledge`, `/adddomainexperts`,
-  `/specify`, `/define-architecture`, `/design`, `/ui-design`, `/visualize`, `/implement`,
-  `/investigate`, `/document`, `/adopt`, `/forensicreview`, `/migrate`, `/updatepack`,
+- **Skills (24):** twenty reasoning workflows — `/collectknowledge`, `/adddomainexperts`,
+  `/specify`, `/define-architecture`, `/design-slice`, `/ui-design`, `/visualize`, `/implement`,
+  `/investigate`, `/document`, `/adopt`, `/forensicreview`, `/code-hygiene`, `/migrate`, `/updatepack`,
   `/addpacktorepo`, `/extendaibundle`, `/optimize-graph`, `/dream`, `/apply-learnings` — plus the `/auditlog`
-  lens over the durable audit & change log, and two prompt-log utilities, `/prompts` and
+  lens over the durable audit & change log, the `/also` turn-control utility, and two prompt-log
+  utilities, `/prompts` and
   `/searchprompts`, that browse and search your logged prompts to reuse. They live in
   `.claude/skills/`. Templates: `docs/ai-forward-pack/templates/`.
 - **Prompt reuse (utility):** `/prompts` opens the audit log's prompts as an arrow-navigable stack
@@ -215,7 +219,7 @@ the Road) and the **AI-Forward Pack** on top of it. Honor them on every non-triv
 - **Audit & change log:** the project keeps a durable, committed history so work compounds across
   sessions — every meaningful prompt/skill/script in `docs/audit/audit-log.jsonl` (the Audit
   Mandate: every skill appends an entry as its last action) and every design decision in
-  `docs/audit/change-log.jsonl` (collectknowledge/define-architecture/design/migrate capture the
+  `docs/audit/change-log.jsonl` (collectknowledge/define-architecture/design-slice/migrate capture the
   prompt, result, and git before/after). Browse the searchable timeline at `docs/audit/index.html`
   or via `/auditlog` (last-N, search, recall-and-redo a prompt, full-history↔changes toggle); all
   writes go through `docs/ai-forward-pack/scripts/audit-log.py`; the standard is

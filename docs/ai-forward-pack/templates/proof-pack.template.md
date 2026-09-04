@@ -58,6 +58,45 @@ self-certified: the oracle and the observed red→green are the substance, not t
 which boundaries are covered by which test. Coverage % is a floor, not the claim
 (testing-strategy.md). Note any uncovered boundary as a Flagged risk. -->
 
+## Change reach & instrumentation (opt-in — delete whichever table does not apply)
+<!-- Tier-2 of the prose->structure review (docs/proposals/prose-to-structure-review.html):
+the structured home for E7/E8 (a change that adds/changes a data-carrying field) and IO2
+(a new capability). Opt-in and piloted, NOT a mandatory block — the surface list differs per
+architecture (E7), so adapt the rows to this change rather than treating them as fixed. -->
+
+### Change-surface completeness (E7/E8) — for a data-carrying field change
+<!-- Tick one row per surface the change actually reached; the canonical path below is a
+default to adapt, not a fixed set. Then trace every new/changed field to a WRITER and a
+COMPUTE reader: a field with no writer is an unimplemented design; a field with no compute
+reader is dead weight round-trip tests will pass anyway (E8 / DM15). -->
+
+| Surface | Reached? | Where (file / member) |
+|---|---|---|
+| store / schema | | |
+| domain / model | | |
+| service | | |
+| projection / wire | | |
+| client type | | |
+| UI render | | |
+| compute reader | | |
+
+| New / changed field | Writer traced (where) | Compute reader traced (where) |
+|---|---|---|
+| "<field>" | | |
+
+### Operator questions instrumented (IO2 / IO10) — for a new capability
+<!-- Each question an operator asks within a month → its named emitting source on the normal
+path (no flag, no re-run), observed at least once. A question with no source is a NAMED
+instrumentation gap, not a blank (IO4 / IO7). -->
+
+| Operator question | Emitting source (metric / span / log field) | Observed once? |
+|---|---|---|
+| how long does it take? | | |
+| how often does it run? | | |
+| how much does it cost? | | |
+| which path did it take? | | |
+| did it fail, and where? | | |
+
 ## Failure modes addressed
 <!-- Carry the design's failure-mode analysis forward (design.template.md) plus any the
 implementation introduced. One row per mode: how the code addresses it, and the negative/
