@@ -12,17 +12,23 @@ namespace AiDe.Core.Tests.Watcher;
 /// anything at all?</para>
 ///
 /// <para><b>Measured 2026-09-03 — 111 episodes scored, 7 clean, 103 carrying nothing to assess, ONE
-/// observation recorded.</b> The vertical works end to end. It has one row. And the recurrence
-/// threshold is two distinct episodes, so one observation can never become a candidate: the output
-/// over this repository's entire recorded history is zero, and would be zero however good the engine
-/// is.</para>
+/// observation recorded.</b> The vertical worked end to end. It had one row. And the recurrence
+/// threshold is two distinct episodes, so one observation could never become a candidate: the output
+/// over this repository's entire recorded history was zero, and would have been zero however good
+/// the engine is.</para>
 ///
-/// <para><b>This test exists to expire.</b> A finding written only in prose is a memoir (CI6), and a
-/// claim about what does NOT exist decays when someone else acts — with the author absent and no
-/// reason to look (DC-094). So the claim is tied to something that fails the day it stops being
-/// true. When capture improves enough for a second observation, this goes red, and that red is the
-/// news: <b>Daydream can propose something for the first time.</b> Rewrite it then; do not
-/// delete it.</para>
+/// <para><b>Measured again 2026-09-05 — 120 scored, 15 clean, 103 still carrying nothing to assess,
+/// TWO observations over two distinct episodes, ONE recurrence.</b> The threshold was crossed. The
+/// engine did not change; capture did. Note what did <i>not</i> move: 103 episodes still carry
+/// nothing to assess, so the instrumentation gap this file was written about is narrower, not
+/// closed.</para>
+///
+/// <para><b>This test existed to expire, and it has.</b> A finding written only in prose is a memoir
+/// (CI6), and a claim about what does NOT exist decays when someone else acts — with the author
+/// absent and no reason to look (DC-094). So the claim was tied to something that failed the day it
+/// stopped being true, and on 2026-09-05 it did. It was rewritten rather than deleted, because
+/// deleting it would throw away the only place the transition is visible; the assertion now runs in
+/// the opposite direction, and can only break if capture regresses.</para>
 ///
 /// <para><b>It asserts a threshold relationship, never the measured numbers.</b> Pinning "103" would
 /// go red on the next audit entry and be edited back without thought, which is a control that trains
@@ -47,7 +53,14 @@ public sealed class WhatTheRealCorpusCanProduceTests
         return null;
     }
 
-    private sealed record Measurement(int Scored, DaydreamReach Reach, int Observations);
+    /// <remarks>
+    /// Carries the observations themselves, not just their count. The count answered the question
+    /// this file asked while the corpus was too thin to recur; now that it does recur, the only
+    /// honest way to assert a candidate appears is to run the detector over what was actually
+    /// recorded.
+    /// </remarks>
+    private sealed record Measurement(
+        int Scored, DaydreamReach Reach, IReadOnlyList<DaydreamObservation> Observations);
 
     private static Measurement Measure()
     {
@@ -78,7 +91,7 @@ public sealed class WhatTheRealCorpusCanProduceTests
             return new Measurement(
                 scored,
                 new DaydreamReachProbe(host.Store, record).Probe(),
-                record.Read().Observations.Count);
+                record.Read().Observations);
         }
         finally
         {
@@ -103,29 +116,64 @@ public sealed class WhatTheRealCorpusCanProduceTests
     }
 
     /// <summary>
-    /// EXPECTED RED, EVENTUALLY: the corpus cannot yet produce a single candidate.
+    /// The corpus can produce a candidate — the transition this test was written to catch.
     /// </summary>
     /// <remarks>
-    /// <para>Recurrence needs <c>RecurrenceDetector</c>'s minimum of two distinct episodes. Fewer
-    /// observations than that means no pattern can ever be proposed, whatever the engine does.</para>
+    /// <para><b>It expired on 2026-09-05, which was the point.</b> This assertion used to read
+    /// <c>Observations &lt; 2</c> and carried an instruction: when it goes red, nothing is broken —
+    /// enough turns have recorded their evidence for a second observable episode to exist, so
+    /// rewrite it to assert that a candidate appears, and do not delete it. This is that
+    /// rewrite.</para>
     ///
-    /// <para><b>When this fails, nothing is broken.</b> It means enough turns have recorded their
-    /// evidence for a second observable episode to exist, and Daydream can propose something for the
-    /// first time. Rewrite the assertion to check that a candidate appears — that is what its own
-    /// remark asked for, and deleting it would throw away the only place the transition is
-    /// visible.</para>
+    /// <para><b>Measured at the transition — 120 episodes scored, 15 clean, 103 still carrying
+    /// nothing to assess, TWO observations over two distinct episodes, ONE recurrence</b> (task
+    /// class <c>audit-import</c>, verdict <c>Blocked</c>, correctness floor tripped). Daydream
+    /// proposed something for the first time over this repository's real history.</para>
+    ///
+    /// <para><b>The direction of the claim reversed, and with it the direction of the risk.</b> The
+    /// old assertion was doomed to expire, because observations only accumulate. This one can only
+    /// break by <i>regression</i>: capture would have to stop, or the detector would have to stop
+    /// grouping what it already groups. So it is no longer a tripwire waiting to fire — it is the
+    /// floor under the capture obligation that <c>tools/verify-capture-instruction.py</c> enforces
+    /// on the instruction side, asserted here against the corpus that obligation produces.</para>
+    ///
+    /// <para><b>Still a threshold relationship, never the measured numbers</b> (the rule the rest of
+    /// this file follows). Pinning "1 recurrence" or "2 observations" would go red on the next
+    /// episode that recurs and be edited back without thought.</para>
     /// </remarks>
     [Fact]
-    public void TheRealCorpusCannotYetProduceACandidate()
+    public void TheRealCorpusProducesACandidate()
     {
         var m = Measure();
 
+        // Named separately from the recurrence below, because the two failures mean opposite
+        // things: too few observations is a capture regression, while observations that no longer
+        // group is a detector regression, and the fix for those two is not the same.
         Assert.True(
-            m.Observations < 2,
-            $"{m.Observations} observations were recorded — enough to recur. This test has expired, "
-            + "which is good news: rewrite it to assert that a candidate appears.");
+            m.Observations.Count >= 2,
+            $"only {m.Observations.Count} observation(s) were recorded — the corpus has fallen back "
+            + "below the recurrence threshold, so Daydream can propose nothing again. Capture "
+            + "regressed; the engine did not.");
 
-        Assert.Empty(new RecurrenceDetector().Recurring([]));
+        var recurring = new RecurrenceDetector().Recurring(m.Observations);
+
+        Assert.True(
+            recurring.Count > 0,
+            $"{m.Observations.Count} observation(s) were recorded but none recur — every one is a "
+            + "distinct signature, so nothing can be generalised yet.");
+
+        // The two properties that make a candidate honest rather than merely present: it is
+        // evidenced by genuinely distinct episodes (never one episode counted twice, which is the
+        // cheapest way to manufacture confidence from a single event), and it describes something
+        // that actually went wrong (a clean episode recurring is "work went well" — true,
+        // recurrent, and useless as a lesson).
+        Assert.All(recurring, r => Assert.True(
+            r.DistinctEpisodes >= 2,
+            $"recurrence {r.Signature} claims {r.DistinctEpisodes} distinct episode(s)"));
+
+        Assert.All(recurring, r => Assert.False(
+            r.Signature.IsUnremarkable,
+            $"recurrence {r.Signature} is unremarkable and should never have been proposed"));
     }
 
     /// <summary>
