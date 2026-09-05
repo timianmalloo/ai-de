@@ -121,6 +121,7 @@ public sealed class AgentProtocolDocumentTests : IDisposable
     [InlineData("episode.artifacts")]
     [InlineData("board-post")]
     [InlineData("standing/")]
+    [InlineData("board/board.json")]
     [InlineData("registration/")]
     public void ItNamesEveryChannelAnAgentNeeds(string token)
     {

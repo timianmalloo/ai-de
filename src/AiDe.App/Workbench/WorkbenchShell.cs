@@ -926,6 +926,19 @@ public sealed class WorkbenchShell : IDisposable
         return $" Its worktree is {plan.Path} on {plan.Branch}.";
     }
 
+    /// <summary>
+    /// The MCP server, which ships beside the shell in its own folder.
+    /// </summary>
+    /// <remarks>
+    /// The same relative shape as the daemon, and for the same reason: the pair are versioned
+    /// together, so finding "a" server elsewhere is how a shell ends up offering tools it was never
+    /// tested against. Read from <see cref="AppContext.BaseDirectory"/> rather than the working
+    /// directory, because a shell launched from anywhere must still find its own payload — which is
+    /// the defect the published-layout gate exists to catch.
+    /// </remarks>
+    internal static string McpServerPath() =>
+        Path.Combine(AppContext.BaseDirectory, "mcp", "AiDe.Mcp.exe");
+
     private string? TerminalNameFor(string terminalId)
     {
         if (string.IsNullOrEmpty(terminalId))
@@ -2167,6 +2180,38 @@ public sealed class WorkbenchShell : IDisposable
         }
     }
 
+    /// <summary>
+    /// Publishes the Message Board where an agent with no MCP can read it.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The participation floor for reading.</b> MCP is the enlightened path; this is what
+    /// must always work. An agent that can post and cannot read is still excluded from
+    /// collaboration, so the floor has to include the read — and until now there was no read path of
+    /// any kind, so two agents on one board could not see each other.</para>
+    ///
+    /// <para>Separate from <see cref="PublishStandings"/> and deliberately NOT sharing its early
+    /// return: standings need a scored episode, and the board does not. Folding them together would
+    /// make the board invisible in exactly the state a new workspace is in — nothing scored yet,
+    /// which is when an agent is most likely to be asking who else is here.</para>
+    /// </remarks>
+    private static void PublishBoards(WatcherHost host)
+    {
+        try
+        {
+            foreach (var repositoryKey in host.Store.AllSessions()
+                         .Select(s => s.Binding.Repository.CanonicalPath)
+                         .Distinct(StringComparer.Ordinal))
+            {
+                BoardPublisher.Publish(
+                    host.CoordLogDirectory, repositoryKey, host.Store.BoardMessages(repositoryKey));
+            }
+        }
+        catch (Exception ex) when (ex is not OutOfMemoryException)
+        {
+            // Never let delivery break observation: the pump is what every watcher surface reads.
+        }
+    }
+
     private static void PublishStandings(WatcherHost host)
     {
         try
@@ -2238,6 +2283,7 @@ public sealed class WorkbenchShell : IDisposable
                 PublishRegistrationNotices(host);
 
                 PublishStandings(host);
+                PublishBoards(host);
 
                 var fingerprint = WatcherFingerprint(host);
                 if (!string.Equals(fingerprint, _watcherFingerprint, StringComparison.Ordinal))
@@ -2506,6 +2552,23 @@ public sealed class WorkbenchShell : IDisposable
         if (!string.IsNullOrEmpty(root) && AgentProtocolDocument.WriteTo(root) is { } protocolPath)
         {
             env["AIDE_AGENT_PROTOCOL"] = protocolPath;
+        }
+
+        // And the enlightened path: a harness that speaks MCP discovers the server through
+        // .mcp.json, so the product contributes its entry. Create when absent, MERGE when present,
+        // and leave an unparseable file alone — it is not AI-DE's file.
+        //
+        // Here rather than at attach, because this runs per terminal launch and the server path is
+        // the same for all of them: the write is idempotent and returns Unchanged after the first.
+        if (!string.IsNullOrEmpty(root))
+        {
+            var mcp = McpConfigWriter.Ensure(root, McpServerPath());
+            if (mcp.Reason is { Length: > 0 } reason)
+            {
+                // Reported, never silent. A server the agent cannot discover is the defect this
+                // whole line of work started from, and its absence must not be one more silence.
+                Announcer.Announce($"MCP tools are not configured: {reason}");
+            }
         }
 
         // Only when there is a real root to have resolved it from. With no workspace,

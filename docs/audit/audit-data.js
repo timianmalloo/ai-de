@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-05T21:20:25Z",
+  "generated": "2026-09-05T22:26:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9157,6 +9157,233 @@ window.AUDIT_DATA = {
       }
     },
     {
+      "id": "al-01M1N21F1JKT7VFFBRQHER84T5",
+      "shortname": "daydream-proposes-its-first-candidate",
+      "datetime": "2026-09-04T01:55:25Z",
+      "session": "e9679dd2",
+      "prompt": "make sure you are re-based and up to date; JSONL is participation not parity; then do the next steps",
+      "summary": "The expiry test fired on the pack rebase — designed behaviour, not a regression. Measured across the transition: episodes 111 to 120, assessed 8 to 17, unassessed 103 to 103, observations 1 to 2, candidates 0 to 1. Daydream proposed its first candidate from real data, signature 'Correctness floor tripped twice'. The 103 did not move, confirming that capture accumulates forward. Rewrote the test as its own remark instructed rather than deleting it, and replaced the expiring claim with one the world cannot change on its own: a candidate with no disconfirming check cannot be promoted. Also corrected the class remark, which still described the pre-expiry state (DC-094).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "tests/AiDe.Core.Tests/Watcher/WhatTheRealCorpusCanProduceTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Honour the expiry test's own instruction now that capture has closed the gap it measured",
+      "done_when": "the expired test is rewritten to assert a candidate appears and that promotion stays blocked, and the stale class remark is corrected",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1N27T32M3HYWETSF9Y9P7ZV",
+      "shortname": "design-slice-mcp-stopped-at-grounding",
+      "datetime": "2026-09-04T01:58:53Z",
+      "session": "e9679dd2",
+      "prompt": "take me through what you envision for the MCP scenario / principles and answers given / then do the next steps",
+      "summary": "STOPPED AT GROUNDING, as the skill directs when a load-bearing architectural decision is required. ADR-0011 binds MCP authorization to a session processing class. Verified: SessionBinding carries no such class, SessionProcessingClass.LocalOnly is hardcoded once on a different object, and every McpCallerContext in the tree is built by a test. The control is specified, proven red-first, and has no production input. Worse, a Claude Code or Copilot session is ExternalProcessing by the ADR's own definition, and the ADR denies coordination writes for those — which would disable the collaboration surface. Meanwhile the JSONL path enforces none of it. Recorded the decision needed rather than designing around it.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260903-the-control-under-mcp-has-no-input.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Design the MCP integration slice for Loomkeeper, with JSONL as the participation fallback",
+      "done_when": "either a design exists at docs/design/, or the architectural blocker that prevents one is recorded with the decision it needs",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PKDXSMMYJ8J6KVSB1179JW",
+      "shortname": "adr-0022-mcp-authorization",
+      "datetime": "2026-09-04T16:18:33Z",
+      "session": "e9679dd2",
+      "prompt": "agreed the utterance-vs-content split is overly conservative - the security veto is invalid",
+      "summary": "The owner judged ADR-0011's processing-class gate overly conservative and the veto invalid. Recorded as ADR-0022: the threat model does not survive contact with the product's shape, because an agent in AI-DE holds a terminal in the workspace and can read the same files directly, so the gate constrained the polite interface while the impolite one stood open. Corrected my own misattribution — the overruled veto was Privacy and Data Governance, not Security and Identity, per architecture.md's gate record. P1-MCP-EGRESS retired and REPLACED by a test asserting the gate is absent, so re-adding one is deliberate. Residual risk named: the reasoning expires for any agent without a shell in the tree.",
+      "kind": "skill",
+      "skill": "define-architecture",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/adr/0022-mcp-authorization-is-not-an-exfiltration-control.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Record the owner's override of ADR-0011's MCP gate as an ADR, and make the code match it",
+      "done_when": "ADR-0022 supersedes ADR-0011, the processing-class branch is gone, the retired security test is replaced rather than deleted, and architecture.md no longer claims a control that was withdrawn",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PMNN1J7EX4CEDK3S3RP9F0",
+      "shortname": "apply-learnings-generator-defects",
+      "datetime": "2026-09-04T16:40:15Z",
+      "session": "e9679dd2",
+      "prompt": "do next steps including the optional step",
+      "summary": "Both generator defects are upstream in ai-forward and unpatchable here — docs/ai-forward-pack/ is replaced wholesale by the next pack update — so they are recorded with suggested fixes rather than edited into a vendored copy. The DC-088 measurement looked like an argument for enforcing the identity check; checked first and it is not: coord-core already refuses on claim/release, only precommit is advisory and the pack states the trade, and WorkbenchShell already sets AGENT_SESSION unconditionally. The measurement confirms the existing fix rather than indicating new work, on a sample of three.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/note-20260904-two-defects-in-apply-learnings-output.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Act on the two generator defects and the DC-088 measurement from the fleet dream results",
+      "done_when": "each is either fixed here or recorded upstream with the reason it cannot be fixed here, and the DC-088 measurement is checked before acting rather than after",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PMT4B629PNEXWWW2MP0CY2",
+      "shortname": "design-slice-mcp-enlightened-path",
+      "datetime": "2026-09-04T16:42:42Z",
+      "session": "e9679dd2",
+      "prompt": "do next steps including the optional step",
+      "summary": "Designed docs/design/mcp-enlightened-path.md. The strongest claim is the data model: the slice adds NO durable state — no aggregate, no fact, no column, watcher.db stays at v5 — because board_post appends the same JSONL line an agent writes by hand and the ingest does the rest. Five of seven E7 change surfaces are untouched. Transport is a stdio server that is a client of the contract, holding no authority an agent lacks, which is what makes the cross-path equivalence gate provable. One load-bearing inference labelled and spiked: that a stdio MCP server inherits the client environment, which the whole identity model rests on; if it fails the fallback is one identity per workspace and the slice should be re-scoped rather than shipped.",
+      "kind": "skill",
+      "skill": "design-slice",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/design/mcp-enlightened-path.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Design the first MCP slice now that ADR-0022 has unblocked grounding",
+      "done_when": "a design exists with its data model settled, failure modes and STRIDE dispositioned, an equivalence gate specified, and every load-bearing inference labelled with the spike that must confirm it",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": false,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PSBAAKKGMVSYDEHDBEE0G6",
+      "shortname": "spike-mcp-stdio-environment",
+      "datetime": "2026-09-04T18:01:59Z",
+      "session": "e9679dd2",
+      "prompt": "do all three next steps in order",
+      "summary": "VERIFIED: a stdio MCP server inherits the launching client's environment in full — 79 variables including three invented for the probe, not a curated allowlist. So each agent's server picks up that agent's AIDE_SESSION with no .mcp.json templating, and the per-workspace shared-identity fallback is not needed. The probe was deliberately not a working MCP server, because what is measured is settled before the handshake; claude mcp list turned out to launch every configured server, so no nested session was needed. Second finding the design did not have: cwd is the invocation directory, so an agent's worktree corroborates identity independently of the environment — added as a refusal rule when the two disagree, since a stale AIDE_SESSION in a long-lived shell would otherwise attribute one agent's post to another.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "spikes/mcp-stdio-environment/README.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Settle the one load-bearing inference in the MCP design before implementing against it",
+      "done_when": "the environment-inheritance question is answered by observation, the design's confidence ledger reflects the result, and the artifacts are committed as evidence",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PT56Y5NEMJX0D31N1P9FSK",
+      "shortname": "implement-mcp-first-slice",
+      "datetime": "2026-09-04T18:16:08Z",
+      "session": "e9679dd2",
+      "prompt": "do all three next steps in order",
+      "summary": "AiDe.Mcp: a stdio server that is a client of the coordination contract. Writes board posts by appending the same JSONL line an agent writes by hand; reads the store through a new SqliteWatcherObservationStore.OpenReadOnly so the no-authority claim is enforced by SQLite rather than by discipline. JSON-RPC hand-rolled rather than taking an SDK, and VERIFIED against the real client: claude mcp list reports Connected. Identity uses both signals the spike found, refusing when they disagree. THE EQUIVALENCE GATE FOUND A REAL BUG ON ITS FIRST RUN: the tool refused knowledge-candidate, because my kind check compared lower-cased enum names while the ingest strips hyphens — a divergence narrowing what MCP users could say, invisible to either path's own tests.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Mcp/BoardTools.cs",
+        "tests/AiDe.Core.Tests/Watcher/McpMatchesTheJsonlPathTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Implement the first MCP slice: whoami, board_read, board_post, with the cross-path equivalence gate",
+      "done_when": "the real Claude Code client completes the handshake, the equivalence gate proves a tool post and a hand-written line land identically, and every gate is green",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PV0B7ZC8ST3WJWF7KFFQ7E",
+      "shortname": "board-read-participation-floor",
+      "datetime": "2026-09-04T18:30:57Z",
+      "session": "e9679dd2",
+      "prompt": "do all three next steps in order",
+      "summary": "BoardPublisher writes the repository board to AIDE_CONTRACT_LOG/board/board.json on each watcher tick — whole-file replace via temp-and-move, provenance-marked, and invisible to the pump because it is a .json in a subdirectory where the pump globs *.jsonl. Deliberately separate from PublishStandings rather than sharing its early return: standings need a scored episode and the board does not, and folding them would make the board invisible in exactly the state a new workspace is in. An empty board is published as a file saying zero, because its absence would read as a broken product. The protocol document now names the path, since a channel nobody was told about is DC-105.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/BoardPublisher.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Give an agent with no MCP a way to read the board, so the participation floor includes reading",
+      "done_when": "the board is published where the protocol document tells agents to look, an empty board is a file rather than an absence, and the read path is documented in the file agents actually read",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      }
+    },
+    {
+      "id": "al-01M1PY7XXKC4V1NNR3G3QRTNQ5",
+      "shortname": "mcp-episode-tools-and-config",
+      "datetime": "2026-09-04T19:27:31Z",
+      "session": "e9679dd2",
+      "prompt": "do all the next steps including optional",
+      "summary": "Wrote .mcp.json from the product (create-when-absent, merge-when-present, unparseable left byte-for-byte alone), drove the MCP server live against a copy of a real watcher store (whoami resolved generation 38 of a real session; episode-open and episode-close landed contract-shaped lines), and added aide_episode_open/aide_episode_close. Extended the equivalence gate to episodes, and generalised verify-published-layout from the daemon to every BaseDirectory sidecar - closing DC-046's own stated residual risk by failing on a sidecar the gate has not been told about. Both halves observed failing before being believed.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/McpConfigWriter.cs",
+        "src/AiDe.Mcp/EpisodeTools.cs",
+        "tests/AiDe.Core.Tests/Watcher/McpConfigWriterTests.cs",
+        "tools/verify-published-layout.py"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Finish the MCP slice: the product writes .mcp.json into a workspace, the server is proven live against a real store, and an agent can declare and close a scored episode through it.",
+      "done_when": "McpConfigWriter merges beside another tool's servers and refuses an unparseable file; the real AiDe.Mcp.exe answers whoami/board_read/episode_open/episode_close against a copy of a real watcher.db; the equivalence gate covers episodes; both suites and every CI gate are green.",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      }
+    },
+    {
       "id": "al-01M1SQ3C045W4FDKFQGDN8794E",
       "shortname": "updatepack-r61",
       "datetime": "2026-09-05T21:20:25Z",
@@ -12310,6 +12537,50 @@ window.AUDIT_DATA = {
         "after": "25aecba209b9c28f1f46b7e054a079d6cf6153ce",
         "branch": "feature/app-facelift-and-graph-surfaces",
         "pushed": true,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M1PKDXXDDXMXBRM29F8GAN3B",
+      "datetime": "2026-09-04T16:18:34Z",
+      "session": null,
+      "kind": "design",
+      "skill": "define-architecture",
+      "title": "MCP authorization is bound to session identity, not to a data-processing class",
+      "prompt": "agreed the utterance-vs-content split is overly conservative - the security veto is invalid",
+      "summary": "ADR-0022 supersedes ADR-0011's processing-class gate on MCP tools.",
+      "rationale": "An agent in AI-DE has a terminal in the workspace and can read any file directly. Denying it the same content through a tool removes no capability it already has and only makes the enlightened path weaker than the shell beside it. A control that constrains the polite interface while the impolite one is open is a tax on the well-behaved, not a boundary. Owner override of the Privacy hard veto; residual risk is any agent without a shell in the tree.",
+      "artifacts": [
+        "docs/adr/0022-mcp-authorization-is-not-an-exfiltration-control.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "a019ce9fd7d9352e3e09608503730eee6c090b77",
+        "branch": "feature/ui-experience-refinement",
+        "pushed": false,
+        "commits": []
+      }
+    },
+    {
+      "id": "cl-01M1PMT4F2F11RNFP2ME5VHC4S",
+      "datetime": "2026-09-04T16:42:42Z",
+      "session": null,
+      "kind": "design",
+      "skill": "design-slice",
+      "title": "MCP is a client of the coordination contract, not a privileged insider",
+      "prompt": "do next steps including the optional step",
+      "summary": "First MCP slice designed: aide_whoami, aide_board_read, aide_board_post over stdio.",
+      "rationale": "The server writes the same JSONL an agent writes by hand and reads the store read-only, so it holds no authority an agent lacks. That is what makes the owner's participation-not-parity principle enforceable rather than aspirational: two paths can only be guaranteed equivalent when one is a translation of the other, and the equivalence is a gate.",
+      "artifacts": [
+        "docs/design/mcp-enlightened-path.md"
+      ],
+      "tags": [],
+      "git": {
+        "before": null,
+        "after": "566086ae0f65705b7d7ca5ed1814811bc77ea181",
+        "branch": "feature/ui-experience-refinement",
+        "pushed": false,
         "commits": []
       }
     }

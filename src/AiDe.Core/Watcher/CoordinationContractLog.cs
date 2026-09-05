@@ -34,6 +34,64 @@ public sealed class CoordContractWriter
     public void WriteSessionEnd(string externalSessionId) => Append(externalSessionId, "session-end", null);
 
     /// <summary>
+    /// Writes one contract line of any kind — the same line an agent writes by hand.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Here rather than in the MCP server, because the line format must have exactly one
+    /// definition.</b> The server's whole claim is that it is a translation of the contract rather
+    /// than a parallel API (<c>design-mcp-enlightened-path</c>), and a second place that knows how a
+    /// contract line is spelled would make that claim untestable — the two paths could then differ
+    /// in precisely the way the equivalence gate exists to catch.</para>
+    ///
+    /// <para><b>It validates nothing.</b> Every kind's refusals belong to
+    /// <c>InjectedContractIngest</c>, with counters, and re-deciding any of them here would be a
+    /// second set of rules free to drift from the first. Callers report what the ingest will do;
+    /// this writes what the caller said.</para>
+    /// </remarks>
+    public void Write(string kind, string externalSessionId, IReadOnlyDictionary<string, string?> attributes)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(kind);
+        ArgumentNullException.ThrowIfNull(attributes);
+        Append(externalSessionId, kind, attributes);
+    }
+
+    /// <summary>
+    /// Writes one <c>board-post</c> line — the same line an agent writes by hand.
+    /// </summary>
+    /// <remarks>
+    /// Its own method rather than a <see cref="Write"/> call at each site because the absent-vs-null
+    /// content rule below is a property of the board's wire shape, and a rule enforced at the call
+    /// sites is a rule the next call site will not know about. It validates nothing else, for the
+    /// reason <see cref="Write"/> gives.
+    /// </remarks>
+    public void WriteBoardPost(
+        string externalSessionId, string kind, string? content, string? parentMessageId = null)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(kind);
+
+        var attributes = new Dictionary<string, string?>(StringComparer.Ordinal)
+        {
+            [CoordContract.BoardAttributes.Kind] = kind,
+            [CoordContract.BoardAttributes.Content] = content,
+        };
+
+        // Absent, not null: an acknowledgement legitimately carries no content, and a null-valued key
+        // is a different wire fact from a missing one — the ingest reads present-but-blank as
+        // malformed, which is the distinction that makes a lost value visible.
+        if (content is null)
+        {
+            attributes.Remove(CoordContract.BoardAttributes.Content);
+        }
+
+        if (!string.IsNullOrEmpty(parentMessageId))
+        {
+            attributes[CoordContract.BoardAttributes.Parent] = parentMessageId;
+        }
+
+        Append(externalSessionId, "board-post", attributes);
+    }
+
+    /// <summary>
     /// A filesystem-safe, deterministic file name for one external session id.
     /// </summary>
     /// <remarks>

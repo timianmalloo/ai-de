@@ -1220,6 +1220,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "e5c3f2c93a80886ef7f10800277ea20756361e8f917d645c625873630a3dbc76"
     },
     {
+      "id": "adr-0022-mcp-authorization-is-not-an-exfiltration-control",
+      "path": "docs/adr/0022-mcp-authorization-is-not-an-exfiltration-control.md",
+      "title": "MCP authorization is not an exfiltration control",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-04",
+      "reviewSuggested": [],
+      "summary": "Supersedes ADR-0011's processing-class gate on MCP tools. The gate assumed MCP was an exfiltration path, but an agent in an AI-DE terminal already has a shell in the workspace and can read any file it likes — so denying it the same content through a tool reduces no real capability while making the enlightened path worse than the terminal beside it. Authorization stays, bound to session identity and capability rather than to a processing class the product cannot determine.",
+      "tags": [
+        "adr",
+        "mcp",
+        "security",
+        "egress",
+        "adr-0011",
+        "collaboration"
+      ],
+      "links": [
+        {
+          "to": "adr-0011-session-processing-class-egress",
+          "rel": "supersedes"
+        },
+        {
+          "to": "note-20260903-the-control-under-mcp-has-no-input",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d9e6c55121bab3cf8a734794585e2c70505e5712b60649876f9200e74333d196"
+    },
+    {
       "id": "api-aide-app",
       "path": "docs/api/AiDe.App.md",
       "title": "API: AiDe.App",
@@ -1467,7 +1499,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "db395a7ef2f97243ec9eac80dcc96b3c942b6fcf07743cc4291afec3d5a2ca79"
+      "sourceSha256": "9039fbc6038242b9dfa58f267b507b78b4e2ad6522c2161bb67bf79e43615df0"
     },
     {
       "id": "api-aide-core-presentation",
@@ -1604,7 +1636,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 158 types, 302 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 162 types, 312 members, 65% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1617,7 +1649,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ec2ba555843572278541a36f3e701b98df6c2769923455c551eaf249639a3481"
+      "sourceSha256": "1a99ca334e081d8fd5e9b9fd255823711260e847b673af44891e5fc47c92e288"
     },
     {
       "id": "api-aide-core-workbench",
@@ -1643,6 +1675,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "bde1462310d173beaae3b3df61813862ca278a50dab56002f5f8bf3d9dc4a5ef"
+    },
+    {
+      "id": "api-aide-mcp",
+      "path": "docs/api/AiDe.Mcp.md",
+      "title": "API: AiDe.Mcp",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Mcp: 10 types, 19 members, 93% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7ca8700cf58fdf699d07a93b2d29b3fb9a1624848c509c48b4eda22612970453"
     },
     {
       "id": "architecture",
@@ -1758,7 +1815,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
         }
       ],
-      "sourceSha256": "93bc32b87ab1da76b8b9fc5ad8d9e8c4c2b2480c36cc75580facd5289c2ca1e0"
+      "sourceSha256": "c9d859728478dd1f2c75fdeb11c4d4b0b1165efd3f78ea5f03810ecda015b8f9"
     },
     {
       "id": "architecture-loomkeeper",
@@ -2278,6 +2335,65 @@ window.DOCS_INDEX = {
       "sourceSha256": "f8d64364b6d6c8f2b91779efe828ec428062142ea5b34345bdb8ae6a95d4697a"
     },
     {
+      "id": "note-20260903-the-control-under-mcp-has-no-input",
+      "path": "docs/notes/note-20260903-the-control-under-mcp-has-no-input.md",
+      "title": "ADR-0011 governs MCP, and nothing can tell it what a session is",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-03",
+      "reviewSuggested": [],
+      "summary": "Grounding the MCP design slice found that ADR-0011's authorization gate — the control that decides what an agent may read and write over MCP — has no production input: no session carries a processing class, and every McpCallerContext in the tree is built by a test. Worse, if the class were determined honestly, a Claude Code or Copilot session is ExternalProcessing by the ADR's own definition, and the ADR denies coordination writes for those. The collaboration surface and the egress control cannot both be right as written.",
+      "tags": [
+        "decision-note",
+        "mcp",
+        "security",
+        "adr-0011",
+        "collaboration",
+        "egress"
+      ],
+      "links": [
+        {
+          "to": "adr-0011-session-processing-class-egress",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "87329218c48b616d0cea0fdd1508db2523558ed3aaa490d8eb7129bf9da6c371"
+    },
+    {
+      "id": "note-20260904-two-defects-in-apply-learnings-output",
+      "path": "docs/notes/note-20260904-two-defects-in-apply-learnings-output.md",
+      "title": "Two defects in /apply-learnings output, and one measurement that needed no action",
+      "type": "decision-note",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-04",
+      "reviewSuggested": [],
+      "summary": "Reviewing the fleet dream results found two defects in the generator, not in this repository: eight of eleven inherited classes carry a TODO labelled \"(automated control)\", and ids are truncated to 20 characters mid-word. Both are upstream in ai-forward and are recorded rather than patched, because docs/ai-forward-pack/ is replaced wholesale on the next pack update. The DC-088 measurement that looked actionable turned out to need no action here.",
+      "tags": [
+        "decision-note",
+        "ai-forward-pack",
+        "apply-learnings",
+        "defect-classes",
+        "upstream"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "97234ae560a8663d0d4a2e2510affa12b9f60a61399ff50dafbfe12052a496c1"
+    },
+    {
       "id": "note-ai-native-ide-architecture-review-depth",
       "path": "docs/notes/ai-native-ide-architecture-review-depth.md",
       "title": "Decision note — AI-native IDE architecture review depth",
@@ -2689,6 +2805,46 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "9412b7710088ab7cdfadd54c9d9beb42f0c7d29e2020e5c0fad9fcf461415cb6"
+    },
+    {
+      "id": "design-mcp-enlightened-path",
+      "path": "docs/design/mcp-enlightened-path.md",
+      "title": "MCP as the enlightened path, with JSONL as the participation floor",
+      "type": "design",
+      "status": "proposed",
+      "owner": "@timianmalloo",
+      "phase": "phase-3",
+      "reviewBy": "2027-03-04",
+      "reviewSuggested": [],
+      "summary": "A stdio MCP server that is a CLIENT of the coordination contract, not a privileged insider — it writes the same JSONL lines an agent writes by hand and reads the same store the panes read, so it holds no authority an agent lacks. First slice is aide_whoami, aide_board_read and aide_board_post, which together close the collaboration loop: agents currently cannot read the board at all.",
+      "tags": [
+        "design",
+        "mcp",
+        "loomkeeper",
+        "collaboration",
+        "board",
+        "agent-protocol"
+      ],
+      "links": [
+        {
+          "to": "adr-0022-mcp-authorization-is-not-an-exfiltration-control",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "depends-on"
+        },
+        {
+          "to": "design-watcher-board-leaderboard-surfaces",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-20260903-the-control-under-mcp-has-no-input",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8238315ef01534a6711abadde0d94fd53873a8cb8f44180522ac5e2c27baf78e"
     },
     {
       "id": "design-named-dock-zones-ui",
@@ -4176,7 +4332,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "8d976c97505a473d4bf5beaa87be54f672591d120a9eddedb20172eaf37729dd"
+      "sourceSha256": "caf846232ff174bce4888e97771c22d13fb2052b6f2608e173cd35703a017e38"
     },
     {
       "id": "diagram-class",
@@ -10904,5 +11060,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "aeab48418fee7b76f03e1bc15b6e8e03135e8febc11ed3046e33b50c27d8d449"
+  "graphSha256": "a2c8048660101fc76885afcab183f5ce75bb9819823c5f6c5b936c39c15b344a"
 };

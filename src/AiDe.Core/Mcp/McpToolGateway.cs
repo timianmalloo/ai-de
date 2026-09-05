@@ -67,18 +67,39 @@ public sealed class McpToolGateway(
     /// The deterministic (T0) authorization decision. A model never influences this — it runs before
     /// any content is read.
     /// </summary>
+    /// <summary>
+    /// Authorizes a tool call. Bound to session identity and workspace, never to a processing class.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>ADR-0022 supersedes ADR-0011 here.</b> This used to deny writes and reduce reads for
+    /// a session declared <c>ExternalProcessing</c>, on the reasoning that a provider-backed agent
+    /// would exfiltrate workspace content. The threat model does not survive contact with the
+    /// product's shape: an agent in AI-DE has a TERMINAL in the workspace — since <c>c235611</c>, in
+    /// its own worktree of it — and can <c>cat</c>, <c>grep</c> and <c>find</c> anything the user
+    /// can. Denying it the same content through a tool removed no capability it did not already have
+    /// and only made the enlightened path weaker than the shell beside it.</para>
+    ///
+    /// <para>A control that constrains the polite interface while the impolite one is wide open is
+    /// not a boundary; it is a tax on the well-behaved. The owner overruled the Security hard veto on
+    /// exactly that reasoning, and ADR-0022 records the decision and its residual risk.</para>
+    ///
+    /// <para><b>THE CONDITION THAT REVIVES THE GATE, named so it is discoverable rather than
+    /// remembered:</b> this argument rests entirely on the agent already having a shell in the tree.
+    /// A remote agent, a sandboxed agent, or any agent granted MCP access <i>without</i> a terminal
+    /// is a genuinely different case, and a processing-class gate is the right control for it. If
+    /// AI-DE ever hosts one, reopen ADR-0022 before extending this method.</para>
+    ///
+    /// <para>What authorization still does is enforced elsewhere and deliberately not here: the
+    /// workspace check in <see cref="Guarded"/> (a caller may not read another workspace), the result
+    /// bounds every tool applies, and — for writes, when they exist — session capability
+    /// verification, which is what stops knowing an id being enough to post as it.</para>
+    /// </remarks>
     public static ToolAuthorization Authorize(McpCallerContext caller, string toolName)
     {
-        if (caller.ProcessingClass is SessionProcessingClass.LocalOnly)
-        {
-            return ToolAuthorization.Allow;
-        }
+        ArgumentNullException.ThrowIfNull(caller);
+        ArgumentException.ThrowIfNullOrEmpty(toolName);
 
-        // Writes from a non-local session are denied outright: an attributed record authored via a
-        // provider-backed session cannot carry a trustworthy attribution.
-        return toolName is "record_note" or "record_decision" or "announce_claim"
-            ? ToolAuthorization.Deny
-            : ToolAuthorization.MinimumMetadataOnly;
+        return ToolAuthorization.Allow;
     }
 
     public McpToolResult Describe(McpCallerContext caller, string nodeId, int maxNeighbors)

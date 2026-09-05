@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 158 types, 302 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 162 types, 312 members, 65% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**158 public types · 302 public members · 64% documented.**
+**162 public types · 312 public members · 65% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -265,6 +265,68 @@ sessions). Entries without all three fields are skipped: not every audit entry i
 | `IReadOnlyList<WorkEpisode> ReadFile(string path)` | Reads a repo's `audit-log.jsonl` into imported episodes; a missing file yields none. |
 | `IReadOnlyList<ImportedEpisode> ParseWithEvidence(IEnumerable<string> jsonlLines)` | Parses lines into imported episodes paired with the observable audit evidence a signal derivation needs (conn-10) - currently whether the entry shipped a committed Proof Pack artifact. |
 | `IReadOnlyList<ImportedEpisode> ReadFileWithEvidence(string path)` | Reads a repo's `audit-log.jsonl` into imported episodes + evidence; missing file → none. |
+
+## `BoardPublisher`
+
+*class* — `BoardPublisher.cs`
+
+Publishes the Message Board where an agent with no tooling at all can read it.
+
+**Remarks.** **The participation floor for reading.** MCP is the enlightened path and JSONL is what
+must always work — but an agent that can post and cannot read is still excluded from
+collaboration, so the floor has to include the read. `board-post` has been a contract kind
+since the board shipped and there was no read path of any kind: two agents on one board could
+not see each other.
+
+
+
+
+
+**Written whole and replaced, like the standing beside it.** The board is a machine-read
+status document in a machine-written directory, and the rule this repository settled is: rewrite
+what the product alone reads; append to, or leave alone, what a person may edit. An append-only
+shape here would look like the contract log without being one.
+
+
+
+
+
+**Via a temp file and a move**, so a reader never observes a half-written document. The
+file is read by another process on its own schedule, so "in the middle of a write" is a state
+that will occur rather than one that might.
+
+| Member | Summary |
+|---|---|
+| `string DirectoryName = "board"` | The subdirectory of the coordination log this lands in. |
+| `string GeneratedBy = "ai-de/board-publisher"` | The provenance marker, one literal spelling in every format. |
+| `int MaxMessages = 200` | Most messages published. |
+| `string? Publish(` | Writes the board for one repository, returning the path, or `null` when it cannot. |
+
+### `int MaxMessages = 200`
+
+Most messages published.
+
+**Remarks.** A bound on a file an agent reads into its context, not a modelling claim; its basis is
+**not recorded**. The newest are kept, because a board truncated from the front would
+freeze an agent at the beginning of a conversation it is trying to join.
+
+### `string? Publish(`
+
+Writes the board for one repository, returning the path, or `null` when it cannot.
+
+**Remarks.** Invisible to the coordination pump by construction: a `.json` file in a
+subdirectory, where the pump globs `*.jsonl` with no `SearchOption`. The same
+placement fact that puts the standing and the registration notice where they are — worth
+stating because "the product writes into the directory agents write into" is otherwise a
+re-ingestion loop waiting to happen.
+
+
+
+
+
+**An empty board is still published.** A file saying zero messages is a different
+fact from no file, and the agent protocol document tells agents to read this path — so its
+absence would read as a broken product rather than as a quiet board (DC-025).
 
 ## `ClosedEpisodeScoring`
 
@@ -646,6 +708,36 @@ This is the session-side half of the contract; `InjectedContractIngest` is the i
 | `void WriteRegister(string externalSessionId, IReadOnlyDictionary<string, string?> attributes)` | Writes a registration with the same `OtelAttributes` keys as the OTLP path. |
 | `void WriteHeartbeat(string externalSessionId)` | **(gap)** |
 | `void WriteSessionEnd(string externalSessionId)` | **(gap)** |
+| `void Write(string kind, string externalSessionId, IReadOnlyDictionary<string, string?> attributes)` | Writes one contract line of any kind — the same line an agent writes by hand. |
+| `void WriteBoardPost(` | Writes one `board-post` line — the same line an agent writes by hand. |
+
+### `void Write(string kind, string externalSessionId, IReadOnlyDictionary<string, string?> attributes)`
+
+Writes one contract line of any kind — the same line an agent writes by hand.
+
+**Remarks.** **Here rather than in the MCP server, because the line format must have exactly one
+definition.** The server's whole claim is that it is a translation of the contract rather
+than a parallel API (`design-mcp-enlightened-path`), and a second place that knows how a
+contract line is spelled would make that claim untestable — the two paths could then differ
+in precisely the way the equivalence gate exists to catch.
+
+
+
+
+
+**It validates nothing.** Every kind's refusals belong to
+`InjectedContractIngest`, with counters, and re-deciding any of them here would be a
+second set of rules free to drift from the first. Callers report what the ingest will do;
+this writes what the caller said.
+
+### `void WriteBoardPost(`
+
+Writes one `board-post` line — the same line an agent writes by hand.
+
+**Remarks.** Its own method rather than a `Write` call at each site because the absent-vs-null
+content rule below is a property of the board's wire shape, and a rule enforced at the call
+sites is a rule the next call site will not know about. It validates nothing else, for the
+reason `Write` gives.
 
 ## `CoordContractLog`
 
@@ -1785,6 +1877,59 @@ a session's state (spec US-2).
 | `LivenessProjection(IWatcherObservationStore store, IMonotonicClock clock, TimeSpan staleAfter)` | **(gap)** |
 | `LivenessState Evaluate(string sessionId)` | Ended if the session was ended or has no heartbeat (an unknown or never-alive session collapses to Ended per the spec); otherwise Alive within the stale threshold, else Stale. |
 
+## `McpConfigOutcome`
+
+*enum* — `McpConfigWriter.cs`
+
+What writing `.mcp.json` did, so the caller can say so rather than guess.
+
+## `McpConfigResult`
+
+*record* — `McpConfigWriter.cs`
+
+The outcome and the path, or the reason there is none.
+
+## `McpConfigWriter`
+
+*class* — `McpConfigWriter.cs`
+
+Puts AI-DE's MCP server where a harness will discover it, without taking the file over.
+
+**Remarks.** **The product may contribute to this file.** It is not AI-DE's file — a user or another
+tool may have servers in it — but ensuring the enlightened experience is a legitimate reason to
+write, so the rule is create-when-absent and MERGE-when-present. That is the owner's principle 4,
+and it is the reason this class is a merge rather than a template.
+
+
+
+
+
+**An unparseable file is left alone.** Not rewritten, not backed up and replaced —
+left. A file that fails to parse is far more likely to be mid-edit or written by a tool this
+version does not understand than to be corrupt, and overwriting someone's configuration to add a
+convenience is the kind of help nobody asks for twice. The refusal is reported so it can be
+fixed, which is the only honest thing to do with a file we will not touch.
+
+
+
+
+
+**Only AI-DE's own key is written.** Every other server, and every unrelated top-level
+key, is carried through untouched — including ones this version has never heard of.
+
+| Member | Summary |
+|---|---|
+| `string FileName = ".mcp.json"` | The workspace-relative file a harness reads. |
+| `string ServerKey = "aide"` | The key AI-DE owns. Everything else in the file belongs to someone else. |
+| `McpConfigResult Ensure(string? workspaceRoot, string? serverExecutablePath)` | Ensures the workspace's `.mcp.json` offers AI-DE's server. |
+
+### `McpConfigResult Ensure(string? workspaceRoot, string? serverExecutablePath)`
+
+Ensures the workspace's `.mcp.json` offers AI-DE's server.
+
+- **`workspaceRoot`** — The repository the agent will work in.
+- **`serverExecutablePath`** — The server binary, beside the shell.
+
 ## `BoardMessageKind`
 
 *enum* — `MessageBoard.cs`
@@ -2404,6 +2549,7 @@ Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write 
 |---|---|
 | `string DatabasePath { get; }` | The backing database file. Exposed so a test can open a raw connection against it. |
 | `SqliteWatcherObservationStore Open(string databasePath)` | **(gap)** |
+| `SqliteWatcherObservationStore OpenReadOnly(string databasePath)` | Opens an EXISTING store read-only. Creates nothing and migrates nothing. |
 | `bool TryAppendSpan(ObservedSpan span)` | **(gap)** |
 | `int SpanCount(string sessionId)` | **(gap)** |
 | `int SpanCountInInterval(string sessionId, DateTimeOffset from, DateTimeOffset toInclusive)` | **(gap)** |
@@ -2437,6 +2583,33 @@ Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write 
 | `IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)` | **(gap)** |
 | `IReadOnlyList<ScoreDispute> AllDisputes()` | **(gap)** |
 | `void Dispose()` | **(gap)** |
+
+### `SqliteWatcherObservationStore OpenReadOnly(string databasePath)`
+
+Opens an EXISTING store read-only. Creates nothing and migrates nothing.
+
+**Throws `FileNotFoundException`.** The store does not exist — an absence, not an empty store.
+
+**Remarks.** **For a reader that must hold no authority** — the MCP server, whose whole claim is
+that it can do nothing an agent writing JSONL by hand cannot. A write handle to the fact store
+would be exactly such an authority and would bypass every guarantee the ingest provides, so
+the mode is enforced here rather than trusted to a caller's discipline.
+
+
+
+
+
+**ReadOnly, not ReadWrite-and-be-careful.** The distinction is enforced by SQLite
+rather than by convention, which is what makes "this process cannot write" a fact rather than
+a promise — and what a test can assert.
+
+
+
+
+
+**No `EnsureSchema`.** A reader must never migrate: it would race the owning
+process, and a schema change is a decision the writer makes. A store older than this reader
+fails on the missing column, loudly, which is the honest outcome.
 
 ## `StandingPublisher`
 
