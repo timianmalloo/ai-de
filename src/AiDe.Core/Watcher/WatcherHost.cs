@@ -106,7 +106,7 @@ public sealed class WatcherHost : IDisposable
     /// Derives its <see cref="DeterministicEpisodeSignals"/> from the observable audit evidence (a committed
     /// Proof Pack, plus any explicit telemetry <see cref="AuditSignals"/> the turn recorded - t3) and records
     /// the Weave. When <paramref name="evaluator"/> and <paramref name="registry"/> are supplied the two
-    /// ADVISORY dimensions are folded too, but only if the evaluator has qualified in the registry (ADR-0019):
+    /// ADVISORY dimensions are folded too, but only if the evaluator has qualified in the registry (ADR-0019 advisory-evaluator-calibration):
     /// the safe default (both null) records the deterministic Weave only. The local heuristic evaluator is
     /// on-device (no egress); the cloud judge additionally needs an operator egress opt-in + credentials
     /// (t4). Idempotent (episode + scorecard upsert); operatorId is the session id (never a human identity);

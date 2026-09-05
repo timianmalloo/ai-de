@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace AiDe.App.Workbench;
 
-/// <summary>The shell's primary view mode (ADR-0017).</summary>
+/// <summary>The shell's primary view mode (ADR-0017 primary-view-mode).</summary>
 public enum ShellViewMode
 {
     Workbench,
@@ -12,7 +12,7 @@ public enum ShellViewMode
 
 /// <summary>
 /// Owns the shell's primary <see cref="ShellViewMode"/> and the body-content swap that realises it
-/// (ADR-0017). Switching mode only changes what fills the body region; it never disposes the
+/// (ADR-0017 primary-view-mode). Switching mode only changes what fills the body region; it never disposes the
 /// workbench.
 /// </summary>
 /// <remarks>

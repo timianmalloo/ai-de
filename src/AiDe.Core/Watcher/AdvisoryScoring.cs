@@ -1,7 +1,7 @@
 namespace AiDe.Core.Watcher;
 
 /// <summary>
-/// Quadratic Weighted Kappa - the human-agreement gate (spec rule 9b, ADR-0019). Measures agreement
+/// Quadratic Weighted Kappa - the human-agreement gate (spec rule 9b, ADR-0019 advisory-evaluator-calibration). Measures agreement
 /// between two 0..K-1 rating vectors, correcting for chance and penalising disagreement by the squared
 /// band distance. 1 is perfect agreement; 0 is chance; negative is worse than chance.
 /// </summary>
@@ -77,11 +77,11 @@ public sealed record EvaluatorStability(double ModalBandFraction, int Spread)
     }
 }
 
-/// <summary>The outcome of the ADR-0019 calibration gates for one advisory evaluator version.</summary>
+/// <summary>The outcome of the ADR-0019 advisory-evaluator-calibration calibration gates for one advisory evaluator version.</summary>
 public sealed record CalibrationVerdict(bool Qualified, IReadOnlyList<string> Reasons);
 
 /// <summary>
-/// The advisory-evaluator calibration gates (spec rules 9, 14; ADR-0019). An evaluator version qualifies
+/// The advisory-evaluator calibration gates (spec rules 9, 14; ADR-0019 advisory-evaluator-calibration). An evaluator version qualifies
 /// to contribute score points only when ALL hold: (a) it is stable across repeats; (b) its agreement
 /// with human labels reaches QWK &gt;= 0.75; and (c) the anti-Goodhart counter-metrics (held-out outcome
 /// integrity, regression rate, rework, dispute overturns) did not worsen - otherwise it is rejected as
@@ -154,7 +154,7 @@ public sealed record AdvisoryAssessment(
 
 /// <summary>
 /// The model-judge seam (spec rule 8). A real implementation grounds on quarantined evidence and runs a
-/// local model behind the credential/egress policy (ADR-0018, Phase 4/5); slice 7 depends only on the
+/// local model behind the credential/egress policy (ADR-0018 credential-backed-grading-egress, Phase 4/5); slice 7 depends only on the
 /// interface, so the deterministic gate + fold are fully testable without a model.
 /// </summary>
 public interface IAdvisoryEvaluator

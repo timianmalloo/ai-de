@@ -6,7 +6,7 @@ namespace AiDe.Core.Watcher;
 /// <summary>
 /// The observation fact grain: one row is exactly one observed operation emitted by one authenticated
 /// session generation, identified by its source span identity, recorded at ingest. Immutable and
-/// append-only (ADR-0017). Phase 1 carries operation metadata only - no prompt/code/transcript
+/// append-only (ADR-0017 watcher-observation-projection). Phase 1 carries operation metadata only - no prompt/code/transcript
 /// content (that is Phase 5, behind the governance gate).
 /// </summary>
 public sealed record ObservedSpan(

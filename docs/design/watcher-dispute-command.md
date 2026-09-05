@@ -48,7 +48,7 @@ recourse a keyboard-reachable command, and documents where the real cloud judge 
 The advisory (qualitative) dimensions are scored by an `IAdvisoryEvaluator`. The **safe default** is the
 local heuristic; the **real cloud judge** is `DelegatingAdvisoryEvaluator(version, judge)` wrapped by
 `EgressGuardedAdvisoryEvaluator`, folded by `ScoringService.ScoreAndRecord(..., evaluator, registry)` only
-when the evaluator has qualified in the calibration registry (ADR-0019, rule 8). Wiring a live cloud judge
+when the evaluator has qualified in the calibration registry (ADR-0019 advisory-evaluator-calibration, rule 8). Wiring a live cloud judge
 is **deferred** and gated on: (1) an **operator egress opt-in** (the guard blocks egress by default — no
 episode content leaves the device without consent, spec §Capture/Scoring Governance); (2) **operator
 credentials** for the judge endpoint; (3) the evaluator **passing calibration** before its advisory

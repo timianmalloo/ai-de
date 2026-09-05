@@ -21,7 +21,7 @@ summary: >-
   source for a selected node/file, never an editor of record) and a PROMPT-DRAFT editor (rich-text
   prompts staged until an explicit transfer to a ready terminal session). Both are read/compose
   surfaces, not a general-purpose code editor (explicitly out of scope in spec-ai-native-ide). The
-  code viewer is the render side of the ADR-0018 NodeContentAsync seam; the prompt draft composes with
+  code viewer is the render side of the ADR-0018 node-content-reader-contract NodeContentAsync seam; the prompt draft composes with
   the terminal-sessions surface. Grounds the reuse decision (Monaco MIT via WebView2, AvalonEdit MIT
   native, Markdig BSD-2) and names the Design/Core ownership lanes so the surfaces can be built in
   parallel against defined contracts.
@@ -34,7 +34,7 @@ summary: >-
 - **Grounding path:** `spec-editor-surfaces → spec-ai-native-ide → knowledge-hub`; evidence from
   `kb-editor-and-content-rendering-surfaces` (comparables, licences); composes with
   `spec-knowledge-explorer-mode` (the reader is the content seam) and `spec-terminal-sessions` (the
-  prompt-draft transfer target). Depends on **ADR-0018** (the bounded `NodeContentAsync` contract).
+  prompt-draft transfer target). Depends on **ADR-0018 node-content-reader-contract** (the bounded `NodeContentAsync` contract).
 
 ## Part A — Functional (what & why)
 
@@ -50,7 +50,7 @@ primary workflow"* **out of scope**. This spec fills the two gaps **within** tho
 
 1. **Read-only code viewer (US-ED1–ED4).** Show the syntax-highlighted **source** of a selected node
    or file, read-only, with the analysis the graph already knows (which symbols it declares, who it
-   calls) overlaid or linked. It is the *content* half of the Explorer reader (ADR-0018): the reader
+   calls) overlaid or linked. It is the *content* half of the Explorer reader (ADR-0018 node-content-reader-contract): the reader
    shows metadata + edges today; the viewer renders the code when the node's `RenderKind` is `code`.
 
 2. **Prompt-draft editor (US-ED5–ED8).** Compose a prompt in a dockable pane, keep it **staged**
@@ -74,7 +74,7 @@ when they press *Transfer*.
   a language, Then the source is highlighted for that language; And an unknown language degrades to
   plain monospaced text, never to an error.`
 - **US-ED3 — Bounded, honest content.** `Given a node whose source exceeds the transport bound
-  (ADR-0018), Then the viewer shows the first N and an explicit "first N of M — open the file for the
+  (ADR-0018 node-content-reader-contract), Then the viewer shows the first N and an explicit "first N of M — open the file for the
   rest" shortfall, never a truncated frame presented as complete and never an oversized IPC frame.`
 - **US-ED4 — Anchored and linked.** `Given a node with a source location, Then the viewer scrolls to
   the symbol; And the node's typed edges remain navigable back into the graph (walk), so the viewer is
@@ -97,7 +97,7 @@ when they press *Transfer*.
 - **Not** a general-purpose source editor: no editing, saving, refactoring, or IntelliSense-driven
   authoring of source (out of scope in `spec-ai-native-ide`). The viewer is read-only, full stop.
 - **Not** a second file-content authority: the viewer renders what the **Core** content query returns
-  (ADR-0018), it does not read files itself (two authorities disagree — DC-022).
+  (ADR-0018 node-content-reader-contract), it does not read files itself (two authorities disagree — DC-022).
 - **Not** a prompt *runner*: the draft editor stages and transfers; the **session** runs it.
 - **Not** rich-diff or merge (a later spec if wanted).
 
@@ -148,7 +148,7 @@ read-only + decorations) or **AvalonEdit** (MIT, native, no airspace) for code; 
 
 - **Phase 1 (viewer, walking skeleton):** render Core's `NodeContentAsync` code content read-only in
   the Explorer reader when `RenderKind = code`, with highlighting, the shortfall state, and the walk
-  edges — this is **ADR-0018 Phase 2** for the code kind. Real Core query; Design renders.
+  edges — this is **ADR-0018 node-content-reader-contract Phase 2** for the code kind. Real Core query; Design renders.
 - **Phase 2 (prompt draft):** a dockable prompt-draft surface, persisted with the layout, with
   *Transfer to a named ready session* wired to `spec-terminal-sessions` and audited. Largely
   Design/App; the session-input seam already exists.
@@ -159,7 +159,7 @@ read-only + decorations) or **AvalonEdit** (MIT, native, no airspace) for code; 
 
 | Surface | Design/App owns | Core owns (the seam) |
 |---|---|---|
-| Read-only code viewer | the viewer control (Monaco/AvalonEdit host), highlighting, states, walk wiring | `NodeContentAsync` returning `RenderKind=code` + language + bounded content + `Shortfall` (ADR-0018) — **already handed off** |
+| Read-only code viewer | the viewer control (Monaco/AvalonEdit host), highlighting, states, walk wiring | `NodeContentAsync` returning `RenderKind=code` + language + bounded content + `Shortfall` (ADR-0018 node-content-reader-contract) — **already handed off** |
 | Prompt-draft editor | the draft surface, persistence-with-layout, the *Transfer* action + audit | the session-input seam (`spec-terminal-sessions`, exists) — no new Core work expected |
 | Class diagram (separate spec) | the diagram render surface | the class-hierarchy projection query over the code graph (a new Core query, like `OverviewAsync`) |
 
@@ -167,7 +167,7 @@ read-only + decorations) or **AvalonEdit** (MIT, native, no airspace) for code; 
 
 - [ ] Three layers present (Functional/UX; UI intent stated, full visual deferred to `/ui-design`) — S1.
 - [ ] Read-only invariant (US-ED1) and single-content-authority (non-goal) stated as testable criteria.
-- [ ] The `NodeContentAsync` dependency (ADR-0018) is named, not re-invented.
+- [ ] The `NodeContentAsync` dependency (ADR-0018 node-content-reader-contract) is named, not re-invented.
 - [ ] The prompt-draft transfer is explicit, named, one-way, and audited (US-ED6/ED7).
 - [ ] Reuse constraint recorded (permissive licence; renderer choice deferred to a spike).
 - [ ] Ownership lanes defined so parallel build consumes contracts, not races.

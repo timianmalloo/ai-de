@@ -2326,7 +2326,7 @@ for both or split.*
   session that owned the placeholder had already moved on too.
 - **Instance:** 2026-09-01 — `MockNodeContentSource` returned a labelled `// SAMPLE` and
   `WorkbenchShell` instantiated it directly, under the comment *"A mock until Core ships
-  NodeContentAsync (ADR-0018); swapping this field for the Core-backed source is the whole
+  NodeContentAsync (ADR-0018 node-content-reader-contract); swapping this field for the Core-backed source is the whole
   live-wiring change."* `NodeContentAsync` had shipped, and `§4g` of the session contract had
   announced it as *"the code viewer is unblocked"*. **Measured: the App contained zero calls to
   `NodeContentAsync`.** The code viewer showed a sample against a fully indexed workspace, and the
@@ -3604,7 +3604,7 @@ for both or split.*
   than *absent*, for a subject nobody observed.
 - **Why it matters here:** a leaderboard is the acute case, because the neutral element is a
   position. An agent whose episode carried no evidence would appear at the bottom — a statement
-  about the agent, indistinguishable from a real failure, and the exact result ADR-0019's
+  about the agent, indistinguishable from a real failure, and the exact result ADR-0019 advisory-evaluator-calibration's
   anti-Goodhart section exists to prevent.
 - **Instance (prevented, not fixed):** 2026-09-02 — wiring contract-closed episodes to scoring. The
   available shortcut was a placeholder task class so a leaderboard row would appear. Instead:

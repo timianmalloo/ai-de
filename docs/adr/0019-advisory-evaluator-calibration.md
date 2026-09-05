@@ -19,7 +19,7 @@ summary: >-
   anti-Goodhart counter-metrics gate whether a score rise counts as improvement.
 ---
 
-# ADR-0019: Advisory evaluator qualification and task-class calibration
+# ADR-0019 advisory-evaluator-calibration: Advisory evaluator qualification and task-class calibration
 
 - **Status:** Accepted (methodology fixed; calibration itself is a Phase-4 deliverable)
 - **Date:** 2026-08-30

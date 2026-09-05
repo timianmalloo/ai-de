@@ -2,7 +2,7 @@ using AiDe.Core.Presentation;
 
 namespace AiDe.App.Workbench;
 
-/// <summary>A UML relationship kind we derive from the graph (ADR-0020).</summary>
+/// <summary>A UML relationship kind we derive from the graph (ADR-0020 class-diagram-architecture).</summary>
 public enum ClassRelationKind
 {
     /// <summary>`inherits` — a subclass to its base class (UML generalization, solid hollow triangle).</summary>
@@ -21,14 +21,14 @@ public enum ClassRelationKind
     Aggregation,
 }
 
-/// <summary>A type in the class diagram — a class or interface. Members are not available yet (ADR-0020).</summary>
+/// <summary>A type in the class diagram — a class or interface. Members are not available yet (ADR-0020 class-diagram-architecture).</summary>
 public sealed record ClassTypeNode(string Id, string Label, bool IsInterface, string? Context);
 
 /// <summary>One generalization/realization edge between two types in the diagram.</summary>
 public sealed record ClassRelation(string From, string To, ClassRelationKind Kind);
 
 /// <summary>
-/// The class-hierarchy view model (ADR-0020): the classes/interfaces and their generalization/
+/// The class-hierarchy view model (ADR-0020 class-diagram-architecture): the classes/interfaces and their generalization/
 /// realization relationships, projected from the graph the App already holds. A pure function so the
 /// projection is verifiable headlessly. Member-less by construction — no extractor emits members yet;
 /// the surface says so rather than implying empty classes.
@@ -46,7 +46,7 @@ public sealed record ClassHierarchy(
     public IReadOnlyList<ClassRelation> Deps => Dependencies ?? [];
 }
 
-/// <summary>Builds a <see cref="ClassHierarchy"/> from graph nodes and edges (ADR-0020 Phase 1).</summary>
+/// <summary>Builds a <see cref="ClassHierarchy"/> from graph nodes and edges (ADR-0020 class-diagram-architecture Phase 1).</summary>
 public static class ClassHierarchyModel
 {
     // The fine has_type values that are a "type" for a class diagram. Enums are excluded (they are not

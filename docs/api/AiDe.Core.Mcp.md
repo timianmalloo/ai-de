@@ -129,7 +129,7 @@ evidence-backed reason per dimension (US-16).
 
 **Remarks.** **A PULL, deliberately.** US-16 says the agent receives its standing each turn, and
 the obvious reading is a push. A push would put the scorer's output into the agent's context
-every turn whether or not it asked — and ADR-0019's anti-Goodhart section is precisely about
+every turn whether or not it asked — and ADR-0019 advisory-evaluator-calibration's anti-Goodhart section is precisely about
 what an agent is shown regarding its own scoring. An agent that asks has chosen to look.
 
 

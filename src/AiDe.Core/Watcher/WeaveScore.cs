@@ -29,7 +29,7 @@ public sealed record DimensionWeight(ScoreDimension Dimension, int Weight, Asses
 /// A versioned score schema (spec rule 1/13; A6 - a change is a gated contract change). <c>weave/1</c>
 /// pins the four deterministic dimensions (Outcome 30 · Focus 15 · Guidance 15 · Coordination 10 =
 /// observed weight 70) and the two advisory ones (Evidence 15 · Economy 15 = 30), which are excluded
-/// from points until the grader passes its calibration gates (ADR-0019, slice 7).
+/// from points until the grader passes its calibration gates (ADR-0019 advisory-evaluator-calibration, slice 7).
 /// </summary>
 public sealed class ScoreSchema
 {
@@ -205,7 +205,7 @@ public sealed class WeaveScorer
         if (entry.Posture == AssessmentPosture.Advisory)
         {
             return NotScoredDimension(entry, AssessmentPosture.Advisory,
-                "advisory — excluded from points until the grader passes calibration (ADR-0019, slice 7)");
+                "advisory — excluded from points until the grader passes calibration (ADR-0019 advisory-evaluator-calibration, slice 7)");
         }
 
         return entry.Dimension switch

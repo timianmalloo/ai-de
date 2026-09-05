@@ -5,7 +5,7 @@ using AiDe.Core.Presentation;
 namespace AiDe.App.Tests;
 
 /// <summary>
-/// The class-diagram surface (ADR-0020): renders a hierarchy built from graph nodes/edges. Host-side
+/// The class-diagram surface (ADR-0020 class-diagram-architecture): renders a hierarchy built from graph nodes/edges. Host-side
 /// WPF, so it runs on an STA thread with no WebView2.
 /// </summary>
 public sealed class ClassDiagramSurfaceTests
@@ -206,7 +206,7 @@ public sealed class ClassDiagramSurfaceTests
         {
             var s = new ClassDiagramSurface();
             s.ShowGraph(new[] { N("A", "class"), N("B", "class") }, new[] { Edge("A", "B", "inherits") });
-            // The stale ADR-0020 Phase 1 note ("Members are not extracted yet") is gone — members are extracted.
+            // The stale ADR-0020 class-diagram-architecture Phase 1 note ("Members are not extracted yet") is gone — members are extracted.
             Assert.DoesNotContain("not extracted", s.DisclosureText, StringComparison.OrdinalIgnoreCase);
         });
     }

@@ -26,17 +26,17 @@ summary: >-
 
 | Increment | What shipped | Tests |
 |---|---|---|
-| **ADR-0019 residual cleared** | Ran the AvalonEdit read-only PoC (spike, disposed): read-only + highlighting works, `TextEditor` is a pure WPF `Control` (no airspace by construction), C#/py/js/sql highlighted built-in, ts/bicep degrade to plain. RoslynPad fallback dropped. | (spike) |
-| **ADR-0020 + `ClassHierarchyModel`** | Class diagram = App-side type-hierarchy from the existing graph (`inherits`→generalization, `implements`→realization); members/Mermaid deferred to Phase 2 (Core `has_member`). Pure projection logic. | 8 |
+| **ADR-0019 code-viewer-renderer residual cleared** | Ran the AvalonEdit read-only PoC (spike, disposed): read-only + highlighting works, `TextEditor` is a pure WPF `Control` (no airspace by construction), C#/py/js/sql highlighted built-in, ts/bicep degrade to plain. RoslynPad fallback dropped. | (spike) |
+| **ADR-0020 class-diagram-architecture + `ClassHierarchyModel`** | Class diagram = App-side type-hierarchy from the existing graph (`inherits`→generalization, `implements`→realization); members/Mermaid deferred to Phase 2 (Core `has_member`). Pure projection logic. | 8 |
 | **Class-diagram surface (Phase 1)** | Native `ClassDiagramSurface` (no WebView2), reachable via **View menu / Ctrl+K,M**; styled type cards, member-less disclosure, external-relation count; grouped by context for scannability. | 2 |
 | **Prompt-editor (Phase 2) — completed earlier this session, wired** | Reachable **Terminal menu / Ctrl+K,D**; staged draft, one-way named-session transfer, cross-restart persistence. | 7 |
-| **Read-only code viewer component + seam** | `CodeViewerView` (AvalonEdit, read-only, highlight-by-language, shortfall, fallback) + `INodeContentSource` client seam mirroring ADR-0018 + `MockNodeContentSource`. Staged & tested; **not yet wired into the live UI** — see below. | 6 |
+| **Read-only code viewer component + seam** | `CodeViewerView` (AvalonEdit, read-only, highlight-by-language, shortfall, fallback) + `INodeContentSource` client seam mirroring ADR-0018 node-content-reader-contract + `MockNodeContentSource`. Staged & tested; **not yet wired into the live UI** — see below. | 6 |
 
 ## What remains, and why
 
 - **Code viewer live content — Core-gated.** The viewer renders whatever `INodeContentSource` returns,
   but the App must not read files itself (DC-022), so real content needs Core's `NodeContentAsync`
-  (ADR-0018, handed off §4c). The component + seam are staged so that wiring is a **one-line
+  (ADR-0018 node-content-reader-contract, handed off §4c). The component + seam are staged so that wiring is a **one-line
   substitution** (swap `MockNodeContentSource` for the Core-backed source) plus a selection→viewer
   link. Deliberately not wired to mock content in the live UI overnight: a labelled-sample viewer is
   low value and the meaningful version needs selection plumbing + real content.

@@ -36,7 +36,7 @@ public static class CoordContract
         /// It names files; the product goes and looks. An agent cannot make a path exist by
         /// asserting it harder, which is what keeps this observation rather than testimony — and it
         /// is why <c>episode.acceptance_met</c> is deliberately absent and will stay absent.
-        /// ADR-0019's anti-Goodhart concern is about accepting a verdict, not a pointer.</para>
+        /// ADR-0019 advisory-evaluator-calibration's anti-Goodhart concern is about accepting a verdict, not a pointer.</para>
         ///
         /// <para><b>Optional.</b> An agent that never sends it loses nothing it had before: the
         /// episode still closes and still scores Not Scored, which was already the honest answer.

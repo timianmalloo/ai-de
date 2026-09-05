@@ -1529,7 +1529,7 @@ public sealed class WorkbenchShell : IDisposable
 
     /// <summary>
     /// Feeds every class-diagram surface the current graph, from which it derives the type hierarchy
-    /// (ADR-0020). Reads `_queries` live and wires the same context lookup the canvas uses, so a class
+    /// (ADR-0020 class-diagram-architecture). Reads `_queries` live and wires the same context lookup the canvas uses, so a class
     /// diagram opened before or after the workspace attaches still populates.
     /// </summary>
     // The stack a new view should open in: the one the user is focused in, else the graph/canvas stack,
@@ -1797,7 +1797,7 @@ public sealed class WorkbenchShell : IDisposable
     }
 
     // A type's declared members for the class-diagram compartment, read through the workspace's Describe
-    // query (ADR-0020 Phase 2). maxNeighbors is 1 because members ride on the node itself, not its edges.
+    // query (ADR-0020 class-diagram-architecture Phase 2). maxNeighbors is 1 because members ride on the node itself, not its edges.
     private async Task<(IReadOnlyList<string> Members, int Declared)> MembersForTypeAsync(string typeId)
     {
         if (_queries is null) { return ([], 0); }
@@ -1862,7 +1862,7 @@ public sealed class WorkbenchShell : IDisposable
     }
 
     /// <summary>
-    /// Feeds each open code-viewer surface content (ADR-0018/0019). Until Core's NodeContentAsync ships,
+    /// Feeds each open code-viewer surface content (ADR-0018 node-content-reader-contract / ADR-0019 code-viewer-renderer). Until Core's NodeContentAsync ships,
     /// this shows a labelled SAMPLE so the read-only highlighted viewer is visible and reachable; the
     /// real per-node source (following graph selection) drops in when the source is swapped.
     /// </summary>

@@ -18,7 +18,7 @@ summary: >-
   egress path that stays blocked until an explicit, revocable, per-path opt-in reclassifies it.
 ---
 
-# ADR-0018: Credential-backed grading egress
+# ADR-0018 credential-backed-grading-egress: Credential-backed grading egress
 
 - **Status:** Accepted (provisional pending spikes S2/S3)
 - **Date:** 2026-08-30

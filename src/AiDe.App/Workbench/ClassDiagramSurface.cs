@@ -9,7 +9,7 @@ using AiDe.Core.Presentation;
 namespace AiDe.App.Workbench;
 
 /// <summary>
-/// The class-diagram surface (spec-uml-erm-surfaces; ADR-0020 Phase 1): a dependency-free, native WPF
+/// The class-diagram surface (spec-uml-erm-surfaces; ADR-0020 class-diagram-architecture Phase 1): a dependency-free, native WPF
 /// render of the class HIERARCHY derived from the graph — classes and interfaces as cards, each showing
 /// its generalizations (`inherits`) and realizations (`implements`). Member-less by construction (no
 /// extractor emits members yet); the header says so rather than implying empty classes. No WebView2, so
@@ -194,7 +194,7 @@ public sealed class ClassDiagramSurface : ContentControl
     /// <summary>The disclosure/notes line currently shown (for tests).</summary>
     internal string DisclosureText => _disclosure.Text;
 
-    /// <summary>Builds the hierarchy from a graph and renders it (ADR-0020).</summary>
+    /// <summary>Builds the hierarchy from a graph and renders it (ADR-0020 class-diagram-architecture).</summary>
     public void ShowGraph(IReadOnlyList<CanvasNode>? nodes, IReadOnlyList<CanvasEdge>? edges) =>
         Show(ClassHierarchyModel.Build(nodes, edges));
 
@@ -288,7 +288,7 @@ public sealed class ClassDiagramSurface : ContentControl
         }
     }
 
-    // The visual diagram (ADR-0020): types as boxes, generalization/realization as UML connectors with a
+    // The visual diagram (ADR-0020 class-diagram-architecture): types as boxes, generalization/realization as UML connectors with a
     // hollow triangle at the base end, laid out in inheritance ranks (bases on top, derived below, arrows
     // pointing up). Capped to the most-connected DiagramMax types — a diagram of hundreds is a tangle, and
     // search narrows a large hierarchy into a readable one.

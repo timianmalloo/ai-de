@@ -19,7 +19,7 @@ summary: >-
   liveness, Weave, and the leaderboard as ADR-0001 derived views, rather than owning a second store.
 ---
 
-# ADR-0017: Loomkeeper observes as a projection over the shared fact store
+# ADR-0017 watcher-observation-projection: Loomkeeper observes as a projection over the shared fact store
 
 - **Status:** Accepted
 - **Date:** 2026-08-30

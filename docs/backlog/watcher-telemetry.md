@@ -52,7 +52,7 @@ of the "agentic score" that judges craft, and they are currently dormant.
 
 **Seam (already built and dormant — do NOT rebuild):**
 - `AdvisoryWeaveScorer` folds the advisory dims only when the evaluator is qualified in the
-  registry (ADR-0019).
+  registry (ADR-0019 advisory-evaluator-calibration).
 - `LocalHeuristicAdvisoryEvaluator` (`EvaluatorVersion = "local-heuristic/1"`) is the on-device,
   no-egress evaluator; the cloud judge is the same seam behind the egress opt-in + creds.
 - `WatcherHost.ImportAndScoreEpisodesFromAuditLog(path, taskClass, evaluator?, registry?)` already

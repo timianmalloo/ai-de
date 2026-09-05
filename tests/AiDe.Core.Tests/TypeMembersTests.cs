@@ -5,7 +5,7 @@ using AiDe.Core.Facts;
 namespace AiDe.Core.Tests;
 
 /// <summary>
-/// A type carries its own members, formatted for a UML compartment (ADR-0020, Phase 2).
+/// A type carries its own members, formatted for a UML compartment (ADR-0020 class-diagram-architecture, Phase 2).
 /// </summary>
 /// <remarks>
 /// <para>The class diagram was member-less by construction because no extractor emitted members.

@@ -1,7 +1,7 @@
 namespace AiDe.Core.Watcher;
 
 /// <summary>
-/// A presence-only check that a credential exists for a would-egress evaluator (ADR-0018). It never
+/// A presence-only check that a credential exists for a would-egress evaluator (ADR-0018 credential-backed-grading-egress). It never
 /// exposes the secret itself - the watcher store holds non-secret facts only (architecture §4), so the
 /// gate authorises on <b>presence</b>, and the secret is resolved elsewhere, at the call, by the
 /// credential-backed transport. Absent by default.
@@ -28,7 +28,7 @@ public sealed class NoCredential : IAdvisoryCredentialSource
 /// </summary>
 /// <remarks>
 /// <para>Because it is deterministic, its <see cref="EvaluatorStability"/> trivially passes (every repeat
-/// is identical), but it still only folds into Weave points after the ADR-0019 calibration gates qualify
+/// is identical), but it still only folds into Weave points after the ADR-0019 advisory-evaluator-calibration calibration gates qualify
 /// its <c>(version, taskClass, schemaVersion)</c> in the registry (slice 7) - the local heuristic is a
 /// transparent proxy an operator can inspect, not a licence to score advisory dimensions unbounded.</para>
 /// <para>It judges ONLY the two advisory dimensions; asked for any other it throws, because a deterministic
@@ -88,7 +88,7 @@ public sealed class LocalHeuristicAdvisoryEvaluator : IAdvisoryEvaluator
 }
 
 /// <summary>
-/// The <b>egress + credential guard</b> (ADR-0018) around any advisory evaluator that would call out to a
+/// The <b>egress + credential guard</b> (ADR-0018 credential-backed-grading-egress) around any advisory evaluator that would call out to a
 /// model over the network. Before delegating it enforces, in order: the <see cref="EgressGate"/> has an
 /// explicit per-path opt-in for this evaluator's path (else <see cref="WatcherErrorCodes.EgressDenied"/>,
 /// LK-0003 - default-deny), and a credential is present (else <see cref="WatcherErrorCodes.InvalidBinding"/>,
@@ -110,7 +110,7 @@ public sealed class EgressGuardedAdvisoryEvaluator(
 
     public AdvisoryAssessment Evaluate(ScoreDimension dimension, WorkEpisode episode, string evidence)
     {
-        // Egress first: the network boundary is default-deny (ADR-0018). A blocked path never reaches the
+        // Egress first: the network boundary is default-deny (ADR-0018 credential-backed-grading-egress). A blocked path never reaches the
         // credential check, so a missing opt-in cannot be masked by a present credential.
         if (_gate.Decide(_egressPathId) != EgressDecision.Allowed)
         {

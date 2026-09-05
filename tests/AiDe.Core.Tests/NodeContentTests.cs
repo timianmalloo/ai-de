@@ -9,7 +9,7 @@ namespace AiDe.Core.Tests;
 /// honest when there is nothing to give.
 /// </summary>
 /// <remarks>
-/// <para>ADR-0018. The graph carries no content on purpose: paying for 1,500 nodes to serve the one
+/// <para>ADR-0018 node-content-reader-contract. The graph carries no content on purpose: paying for 1,500 nodes to serve the one
 /// a user selected is what overflowed the frame (INV-0003). So content is a separate, on-demand
 /// query — and because it is the only operation on this seam that touches a FILE, the interesting
 /// tests are about what it refuses rather than what it returns.</para>

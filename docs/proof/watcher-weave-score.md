@@ -26,7 +26,7 @@ summary: >-
 
 - **Component:** `src/AiDe.Core/Watcher/WeaveScore.cs` (`ScoreDimension`, `FloorDomain`, `AssessmentPosture`, `WeaveVerdict`, `ScoreSchema` (`weave/1`), `DimensionAssessment`, `EvidenceCoverage`, `DeterministicEpisodeSignals`, `Scorecard`, `WeaveScorer`).
 - **Tests:** `tests/AiDe.Core.Tests/Watcher/WeaveScorerTests.cs` — 27 tests, **27/27**; full `AiDe.Core.Tests` suite **834/0**; build clean (0 warnings, `TreatWarningsAsErrors`).
-- **Pure engine, model-free** — the advisory dimensions are declared-and-excluded (ADR-0019), never stubbed with numbers; scoring the advisory dimensions is slice 7.
+- **Pure engine, model-free** — the advisory dimensions are declared-and-excluded (ADR-0019 advisory-evaluator-calibration), never stubbed with numbers; scoring the advisory dimensions is slice 7.
 
 | Claim | Evidence (test) | Source | Oracle | Red observed | Confidence | Residual |
 |---|---|---|---|---|---|---|
@@ -52,7 +52,7 @@ summary: >-
 
 **Security note (STRIDE, carried from design):** the engine is pure over already-collected deterministic signals and adds no trust boundary or egress. **Evaluator integrity is a first-class hard floor** — a forged/tampered-evidence blocker trips Blocked, and (by construction) an advisory judgment can never raise a deterministic failed dimension and never enters points before its calibration gates (slice 7). No personal data: the signals are counts and booleans about a task, not a person.
 
-**Boundary clarified (what this slice does NOT do):** the two **advisory** dimensions (Evidence discipline, Solution economy = weight 30) are declared and **excluded** from points — the honest Partial denominator is the deterministic 70. The advisory grader, its calibration + QWK gates, the leaderboard, and standing are **slice 7** (ADR-0019).
+**Boundary clarified (what this slice does NOT do):** the two **advisory** dimensions (Evidence discipline, Solution economy = weight 30) are declared and **excluded** from points — the honest Partial denominator is the deterministic 70. The advisory grader, its calibration + QWK gates, the leaderboard, and standing are **slice 7** (ADR-0019 advisory-evaluator-calibration).
 
 **Residual:**
 - **Signal collection** — populating `DeterministicEpisodeSignals` from the observation store, coordination log, and verification/CI ingest — is the connective follow-on; slice 5 ships the pure engine that both a real collector and the tests drive.

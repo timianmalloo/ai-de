@@ -5,7 +5,7 @@ using AiDe.Core.Presentation;
 namespace AiDe.App.Tests;
 
 /// <summary>
-/// Phase-1 controls for the Explorer mode (ADR-0017; design D1-D5). The mode swap and the reader are
+/// Phase-1 controls for the Explorer mode (ADR-0017 primary-view-mode; design D1-D5). The mode swap and the reader are
 /// host-side (no WebView2), so they run on a plain STA thread with stub content; the real
 /// CanvasSurface graph and the "a live terminal survives" integration form of T1 are a launch smoke
 /// test, not a headless one.
@@ -15,7 +15,7 @@ public sealed class ExplorerModeTests
     private static void OnSta(Action work) =>
         Sta.Run(work, 30);
 
-    // T1 — the retain-not-rebuild control (ADR-0017's load-bearing invariant, reference-level). The
+    // T1 — the retain-not-rebuild control (ADR-0017 primary-view-mode's load-bearing invariant, reference-level). The
     // workbench object is the SAME instance across an Explorer round-trip: the swap only unparented
     // it, it was never rebuilt. RED if the swap recreated or disposed the workbench.
     [Fact]

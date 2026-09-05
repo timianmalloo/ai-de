@@ -22,7 +22,7 @@ summary: >-
   classDiagram with empty compartments is not worth vendoring ~3 MB of mermaid.js for.
 ---
 
-# ADR-0020 — Class diagram architecture
+# ADR-0020 class-diagram-architecture — Class diagram architecture
 
 **Status:** Accepted · **Date:** 2026-08-30 · **Deciders:** Design (Enterprise Architect + the-Simplifier peers), grounded in the repo's extractor output and ADR-0015/0019
 

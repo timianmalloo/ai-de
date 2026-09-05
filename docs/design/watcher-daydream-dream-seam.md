@@ -315,11 +315,11 @@ may *display* quarantined text as context; it may never be *keyed* on it.
 
 **A model may propose, never promote.** If an advisory evaluator enriches a candidate's phrasing,
 it sits behind the same capability gate and the same calibration requirement as the advisory
-grader (ADR-0019), and its output is excluded from any threshold until calibrated — declared and
+grader (ADR-0019 advisory-evaluator-calibration), and its output is excluded from any threshold until calibrated — declared and
 excluded, never stubbed with a plausible number.
 
 **Egress stays opt-in and per-path.** Daydream is local and deterministic. Any model-backed
-enrichment is a credential-backed egress path under ADR-0018 and is off by default.
+enrichment is a credential-backed egress path under ADR-0018 credential-backed-grading-egress and is off by default.
 
 **Learnings are about tools, not people.** The leaderboard already refuses a per-operator facet,
 and Daydream inherits that: a candidate is attributed to episodes, harnesses and models, never to

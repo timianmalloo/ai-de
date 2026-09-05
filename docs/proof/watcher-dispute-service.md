@@ -15,7 +15,7 @@ summary: >-
   Evidence that the US-16 fairness loop closes and the model-judge seam is concrete: RaiseDispute mints
   the id + timestamp and appends the fact (requiring a trimmed reason); a session is Disputed iff any of
   its episodes carries a dispute (DM7), shown as a no-colour-alone Sessions badge and computed by the
-  query; and the DelegatingAdvisoryEvaluator clamps + delegates the rubric and, behind the ADR-0018
+  query; and the DelegatingAdvisoryEvaluator clamps + delegates the rubric and, behind the ADR-0018 credential-backed-grading-egress
   egress guard, does not judge until opted-in and credentialed. 12 tests, Core 967/0, App 138/0; the
   per-session derivation mutation-verified.
 ---
@@ -36,12 +36,12 @@ summary: >-
 | An undisputed row omits the badge | `SessionRow_NotDisputed_OmitsTheBadge` | render rule | no "⚠ Disputed" | Seen green | Verified | — |
 | The sessions query marks a disputed session | `WatcherSessionsQuery_MarksASessionDisputed_WhenOneOfItsEpisodesIs` | `WatcherSessionsQuery` | snapshot.Disputed true | Seen green | Verified | the exact query the pane folds |
 | The delegating evaluator clamps + delegates the rubric | `DelegatingEvaluator_DelegatesTheRubric_AndClampsIt` | `DelegatingAdvisoryEvaluator` | judge returns 9 → clamped 4; version carried | Seen green | Verified | the model-call injection point |
-| Behind the guard, it does not judge until opted-in + credentialed | `..._DoesNotJudgeUntilOptedInAndCredentialed`, `..._JudgesOnceOptedInAndCredentialed` | `EgressGuardedAdvisoryEvaluator` | blocked → throws, judge not called; opted-in+cred → judged, rubric 3 | Seen green | Verified | ADR-0018 boundary around the real judge |
+| Behind the guard, it does not judge until opted-in + credentialed | `..._DoesNotJudgeUntilOptedInAndCredentialed`, `..._JudgesOnceOptedInAndCredentialed` | `EgressGuardedAdvisoryEvaluator` | blocked → throws, judge not called; opted-in+cred → judged, rubric 3 | Seen green | Verified | ADR-0018 credential-backed-grading-egress boundary around the real judge |
 
 ## Testing Strategy triggers applied
 
 - **T1 (pure/deterministic):** the raise API, the per-session derivation, the row render, and the delegating evaluator are unit-tested across their boundaries.
-- **Security composition (ADR-0018):** the cloud-judge scaffold is tested *inside* the egress guard - the delegate (the network call) provably does not run until the egress opt-in and credential checks pass, and the "not called" claim is proven by a flag, not just the thrown code.
+- **Security composition (ADR-0018 credential-backed-grading-egress):** the cloud-judge scaffold is tested *inside* the egress guard - the delegate (the network call) provably does not run until the egress opt-in and credential checks pass, and the "not called" claim is proven by a flag, not just the thrown code.
 - **UI (U9/U16):** the Sessions badge is glyph+text (no colour alone) with a screen-reader phrase; shown/omitted states both tested; the defaulted field keeps every existing Sessions construction green.
 - **T1 mutation sense:** the per-session dispute derivation (the US-16 discoverability guarantee) was mutated by inverting the membership check, observed to red, then reverted.
 - **D0 hygiene:** deterministic (`FixedTimeProvider`, injected id), isolated, focal-call + meaningful assertion.
@@ -49,7 +49,7 @@ summary: >-
 ## Security / privacy note
 
 - **Immutable dissent + a required reason:** a raised dispute is append-only (conn-4) and must carry a reason, so the record of *why* a score was contested is tamper-evident and never empty.
-- **The real judge stays behind the guard:** `DelegatingAdvisoryEvaluator` never egresses by itself; egress is the guard's job (default-deny + credential, ADR-0018). The scaffold makes the seam concrete without opening a network path.
+- **The real judge stays behind the guard:** `DelegatingAdvisoryEvaluator` never egresses by itself; egress is the guard's job (default-deny + credential, ADR-0018 credential-backed-grading-egress). The scaffold makes the seam concrete without opening a network path.
 
 ## Residual risk
 

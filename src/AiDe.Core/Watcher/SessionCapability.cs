@@ -8,7 +8,7 @@ namespace AiDe.Core.Watcher;
 /// deny a timing side-channel.
 ///
 /// Pattern: Capability-based security. The capability is the authority; possessing the session id is
-/// not (ADR-0007 / ADR-0020 - terminal output is forgeable).
+/// not (ADR-0007 / ADR-0020 trusted-registrar-harness-model-identity - terminal output is forgeable).
 /// </summary>
 public sealed class SessionCapability
 {

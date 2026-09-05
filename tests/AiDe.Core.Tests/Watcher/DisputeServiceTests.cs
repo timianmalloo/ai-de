@@ -8,7 +8,7 @@ namespace AiDe.Core.Tests.Watcher;
 /// badge, and the cloud-judge scaffold (conn-7). The claims: RaiseDispute mints the id + timestamp and
 /// appends the fact (requiring a reason); a session is Disputed iff any of its episodes carries a dispute
 /// (DM7); the Sessions row and query surface that; and the DelegatingAdvisoryEvaluator delegates the
-/// rubric to an injected model call, composing behind the ADR-0018 egress guard.
+/// rubric to an injected model call, composing behind the ADR-0018 credential-backed-grading-egress egress guard.
 /// </summary>
 public sealed class DisputeServiceTests
 {

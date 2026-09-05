@@ -60,7 +60,7 @@ public sealed record GraphRequest(
 /// <inheritdoc cref="DescribeRequest"/>
 public sealed record KnowledgeRequest(string? Term, string? Type, int MaxResults);
 
-/// <summary>One node, for the reader that selected it (ADR-0018).</summary>
+/// <summary>One node, for the reader that selected it (ADR-0018 node-content-reader-contract).</summary>
 public sealed record NodeContentRequest(string NodeId);
 
 /// <summary>Phase 1 of a dispatch: make the attempt durable before any byte leaves the shell.</summary>
@@ -144,7 +144,7 @@ public static class WorkspaceOperations
     public const string Interaction = "interaction";
     public const string Knowledge = "knowledge";
 
-    /// <summary>One node's content, on demand (ADR-0018).</summary>
+    /// <summary>One node's content, on demand (ADR-0018 node-content-reader-contract).</summary>
     public const string NodeContent = "nodeContent";
     public const string Evidence = "evidence";
     public const string Graph = "graph";
@@ -201,7 +201,7 @@ public static class WorkspaceOperations
 
         // Reads a FILE, unlike every other operation here — which is exactly why it is on this side
         // of the boundary. The projection confines the path to the workspace root; a client that did
-        // its own reading would answer to nothing (ADR-0018).
+        // its own reading would answer to nothing (ADR-0018 node-content-reader-contract).
         endpoint.Register(NodeContent, (request, _) =>
             Refusable(() => Handle<NodeContentRequest>(request,
                 body => projections.NodeContent(body.NodeId))));

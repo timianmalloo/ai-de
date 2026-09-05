@@ -38,7 +38,7 @@ Pure, no live harness and no network: the spike drives **`System.Diagnostics.Act
 
 6. **Unknown harness/model degrade honestly (proven).** A harness that emits no `service.name` / `gen_ai.request.model` maps to `Harness = null` / `Model = null` (rendered **Not Recorded**) and `Trust = Asserted` — the session is still observable and scorable on available evidence (spec US-13).
 
-7. **OTLP `session.id` is asserted, not authority (Verified by design — ADR-0020).** A span's `session.id` says which session a process *claims*; it is **not** proof. The wire must bind incoming spans to the **per-session capability** issued at registration (already built: `TrustedRegistrar` + `SpanIngest`), so a local process cannot forge spans into another session — the "local OTLP forgery" risk the KB open-questions raise.
+7. **OTLP `session.id` is asserted, not authority (Verified by design — ADR-0020 trusted-registrar-harness-model-identity).** A span's `session.id` says which session a process *claims*; it is **not** proof. The wire must bind incoming spans to the **per-session capability** issued at registration (already built: `TrustedRegistrar` + `SpanIngest`), so a local process cannot forge spans into another session — the "local OTLP forgery" risk the KB open-questions raise.
 
 ## Consequences for the design
 

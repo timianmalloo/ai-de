@@ -40,7 +40,7 @@ public static class OtelAttributes
 /// Pattern: Anti-Corruption Layer + Adapter (DDD) - it is the one seam that keeps the preview
 /// OTel/GenAI vocabulary out of the domain, so upstream schema churn changes only this type and its
 /// regression test. It treats a span's <c>session.id</c> as a claim, never authority: the wire binds
-/// spans to the capability issued at registration (ADR-0020), so the mapper mints no trust.
+/// spans to the capability issued at registration (ADR-0020 trusted-registrar-harness-model-identity), so the mapper mints no trust.
 /// </summary>
 public static class OtelSpanMapper
 {
@@ -60,7 +60,7 @@ public static class OtelSpanMapper
     /// <summary>
     /// Maps a registration event to a <see cref="SessionBinding"/>. Harness and model are absent when
     /// their attributes are absent (rendered Not Recorded, spec US-13); trust is <c>Verified</c> only
-    /// when the harness names itself via <c>service.name</c>, else <c>Asserted</c> (ADR-0020). Throws
+    /// when the harness names itself via <c>service.name</c>, else <c>Asserted</c> (ADR-0020 trusted-registrar-harness-model-identity). Throws
     /// LK-0004 when a required identity attribute is missing.
     /// </summary>
     public static SessionBinding MapRegistration(HarnessRegistration registration)

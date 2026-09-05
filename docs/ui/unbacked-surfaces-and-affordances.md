@@ -137,7 +137,7 @@ Every entry in `SurfaceContentFactory.KnownKinds` has a branch in `Create`:
 `leaderboard` · `prompt` · `classdiagram` · `sequence` · `search` · `codeviewer` · `diagnostics`
 
 **Nothing is specced-and-missing at the surface-kind level.** `ExplorerSurface` and `NodeReaderView`
-have no kind and that is correct — they are the full-window Explorer *mode* (ADR-0017), constructed
+have no kind and that is correct — they are the full-window Explorer *mode* (ADR-0017 primary-view-mode), constructed
 at `MainWindow.xaml.cs:54`, not docked panes. *(Checked: an earlier hypothesis that they were
 orphaned classes was wrong.)*
 

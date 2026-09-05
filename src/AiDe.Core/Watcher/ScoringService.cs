@@ -30,7 +30,7 @@ public static class EvidenceComposer
 /// so a scored episode appears on the Leaderboard/Standing surfaces (US-14/US-16). It scores the four
 /// deterministic dimensions always, and folds the two advisory dimensions ONLY when the supplied
 /// evaluator's <c>(version, taskClass, schemaVersion)</c> has qualified in the calibration registry
-/// (ADR-0019, rule 8) - otherwise they stay excluded exactly as the deterministic scorer left them.
+/// (ADR-0019 advisory-evaluator-calibration, rule 8) - otherwise they stay excluded exactly as the deterministic scorer left them.
 /// </summary>
 /// <remarks>
 /// <para>Advisory evaluation grounds on <see cref="EvidenceComposer"/>'s token string. Where no evaluator

@@ -605,7 +605,7 @@ same assertions every other projection reads.
 
 How a node's content should be rendered — the authority's call, not the reader's guess.
 
-**Remarks.** ADR-0018. The reader branches on this rather than inspecting the content or the node id, so a
+**Remarks.** ADR-0018 node-content-reader-contract. The reader branches on this rather than inspecting the content or the node id, so a
 diagram, a proof or a binary comes back as `None` and gets the metadata-and-edges
 fallback instead of being mis-rendered as text that happens not to be text.
 
@@ -990,7 +990,7 @@ One caller's outgoing calls, in call order — the feed for a UML sequence diagr
 
 **Remarks.** **On demand, for the one node asked for.** The graph carries no content by design —
 fattening 1,500 nodes to serve the one a user selected is what overflowed the frame in the
-first place (INV-0003, ADR-0018).
+first place (INV-0003, ADR-0018 node-content-reader-contract).
 
 
 

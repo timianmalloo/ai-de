@@ -19,7 +19,7 @@ namespace AiDe.Core.Tests.Watcher;
 /// <para><b>The agent's only channels are the MCP tools.</b> Three of the five are writes;
 /// <c>describe</c> and <c>find</c> are pulls. A <b>pull</b> is the right shape and not merely the
 /// cheapest: a push would put the scorer's output into the agent's context every turn whether or not
-/// it asked, and ADR-0019's anti-Goodhart section is precisely about what an agent is shown
+/// it asked, and ADR-0019 advisory-evaluator-calibration's anti-Goodhart section is precisely about what an agent is shown
 /// regarding its own scoring.</para>
 ///
 /// <para><b>And nothing computed a trend.</b> <c>StandingComposer.Compose</c> took <c>int trend</c>

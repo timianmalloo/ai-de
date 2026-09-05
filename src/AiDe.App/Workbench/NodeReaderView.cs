@@ -12,7 +12,7 @@ namespace AiDe.App.Workbench;
 /// The reader half of the Explorer surface (spec-knowledge-explorer-mode US-E4; design D4). Phase 1
 /// renders a selected node's header, metadata and its walkable typed edges. The per-kind CONTENT view
 /// (rendered markdown/html, syntax-highlighted code) arrives in Phase 2 behind the node-content
-/// contract (ADR-0018), so the content area is an honest placeholder until then — never a blank. With
+/// contract (ADR-0018 node-content-reader-contract), so the content area is an honest placeholder until then — never a blank. With
 /// no selection it shows an explicit empty state (US-E7).
 /// </summary>
 public sealed class NodeReaderView : ContentControl
@@ -187,11 +187,11 @@ public sealed class NodeReaderView : ContentControl
         root.Children.Add(Text(node.Label, 15, FontWeights.SemiBold));
         root.Children.Add(Muted(typeLabel + (node.Context is { Length: > 0 } c ? "  ·  " + c : ""), 12));
 
-        // Content placeholder — honest about what Phase 2 will add (ADR-0018).
+        // Content placeholder — honest about what Phase 2 will add (ADR-0018 node-content-reader-contract).
         root.Children.Add(Divider());
         root.Children.Add(Muted(
             "Rich content (rendered markdown/html, syntax-highlighted code) arrives with the "
-            + "node-content query (ADR-0018).", 12.5));
+            + "node-content query (ADR-0018 node-content-reader-contract).", 12.5));
 
         // Metadata.
         root.Children.Add(Divider());

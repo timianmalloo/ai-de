@@ -46,7 +46,7 @@ public sealed record WorkEpisode(
 /// <summary>
 /// The Work Episode lifecycle. Only the authenticated session may open, reframe, or close <i>its</i>
 /// episodes - every call presents the session capability and is verified (LK-0001 forgery on mismatch,
-/// ADR-0020). Times use the wall-clock <see cref="TimeProvider"/> - the same base as span
+/// ADR-0020 trusted-registrar-harness-model-identity). Times use the wall-clock <see cref="TimeProvider"/> - the same base as span
 /// <c>RecordedAt</c> - because an episode binds <i>recorded</i> activity, not a <i>live</i> condition.
 /// </summary>
 public interface IWorkEpisodeService

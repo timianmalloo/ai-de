@@ -57,7 +57,7 @@ harness is instrumented — a clean cross-component contract, not a guess.
 ## t4 — the advisory-evaluator seam
 
 `WatcherHost.ImportAndScoreEpisodesFromAuditLog` gains optional `IAdvisoryEvaluator? evaluator` +
-`CalibrationRegistry? registry`, passed straight to `ScoringService.ScoreAndRecord`. Semantics (ADR-0019,
+`CalibrationRegistry? registry`, passed straight to `ScoringService.ScoreAndRecord`. Semantics (ADR-0019 advisory-evaluator-calibration,
 rule 8, unchanged): the two advisory dimensions (EvidenceDiscipline, SolutionEconomy) fold **only** if the
 evaluator has **qualified** in the registry; otherwise they stay excluded.
 
@@ -92,7 +92,7 @@ deriver (explicit-or-default) → host auto-score (evaluator+registry passthroug
 | Partial `signals` (some fields) | Each absent field falls back to its default; present fields used. |
 | Malformed `signals` (wrong types) | Type-checked reads return null → conservative default; a corrupt line is still skipped whole. |
 | Fabricated-high signals in a hand-edited entry | Self-tampering of one's own local record for a non-comparable local score (accepted; STRIDE §below). |
-| Evaluator supplied but unqualified | Advisory dims stay excluded (ADR-0019) — no silent over-scoring. |
+| Evaluator supplied but unqualified | Advisory dims stay excluded (ADR-0019 advisory-evaluator-calibration) — no silent over-scoring. |
 | Cloud evaluator without egress opt-in | `EgressGuardedAdvisoryEvaluator` blocks egress by default — no content leaves the device. |
 
 ## Adversarial analysis (STRIDE-lite)
@@ -131,5 +131,5 @@ value (IO8). The import count is the operator-visible measure. No new spans/erro
 The **writer half** (a harness emitting `signals`) does not exist yet, so today's imported entries still
 score conservatively (Partial) — the reader is ready and dormant, which is the honest state, not a defect.
 The advisory fold needs **calibration data** (human-labelled episodes) to qualify any evaluator; until that
-exists, both the local and cloud judges stay excluded by ADR-0019. The cloud judge additionally needs an
+exists, both the local and cloud judges stay excluded by ADR-0019 advisory-evaluator-calibration. The cloud judge additionally needs an
 operator egress opt-in + credentials.

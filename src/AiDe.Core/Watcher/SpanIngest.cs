@@ -15,7 +15,7 @@ public enum IngestOutcome
 
 /// <summary>
 /// Ingests observed spans, verifying the session capability first (so a forged session cannot write
-/// facts) and then appending idempotently by content-addressed id (ADR-0006 / ADR-0017).
+/// facts) and then appending idempotently by content-addressed id (ADR-0006 / ADR-0017 watcher-observation-projection).
 /// </summary>
 public sealed class SpanIngest
 {

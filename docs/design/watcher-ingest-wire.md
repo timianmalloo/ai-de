@@ -122,7 +122,7 @@ public static class OtelSpanMapper
 | **Repudiation** — untraceable forgery | **Detect** — a rejected ingest is observable (the registrar records the forgery attempt). |
 | **Information disclosure** — attributes leak PII | **Mitigate** — Phase-1 maps only operation metadata (name, ids, model name); no prompt/code content; capabilities never appear in a span. |
 | **DoS** — span flood exhausts memory | **Transfer (deferred)** — the daemon host's bounded queue (ADR-0002 ingest queue); recorded as a remaining Phase-1 control, not silently accepted. |
-| **Elevation** — asserted identity gains authority | **Mitigate** — `MapRegistration` marks a self-unnamed harness `Asserted`; asserted trust cannot clear a floor (ADR-0020). |
+| **Elevation** — asserted identity gains authority | **Mitigate** — `MapRegistration` marks a self-unnamed harness `Asserted`; asserted trust cannot clear a floor (ADR-0020 trusted-registrar-harness-model-identity). |
 
 ## 8. Privacy analysis (LINDDUN-lite)
 

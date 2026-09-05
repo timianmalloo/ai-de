@@ -9,7 +9,7 @@ namespace AiDe.Core.Tests.Watcher;
 /// The claims: a non-AI-Forward session registers and heartbeats over the coord-core append log and
 /// appears identically in the fact store (US-5); the parser tolerantly reads the real writer shape
 /// (LOG-A leading newline, CRLF, blank/malformed skip, version pin, sort by at/seq); and the capability
-/// lives in the adapter, so a heartbeat for a session never registered here is dropped (ADR-0020).
+/// lives in the adapter, so a heartbeat for a session never registered here is dropped (ADR-0020 trusted-registrar-harness-model-identity).
 /// </summary>
 public sealed class CoordinationContractTests
 {

@@ -26,7 +26,7 @@ summary: >-
 
 # Design: Loomkeeper Message Board + Fleet Aggregator
 
-- **Status:** Accepted · **Tier:** T2 · **Phase:** 3, slice 6 · **Depends on:** the session read model (slice 3), the injected coordination contract (slice 2 — the append semantics the board rides), and the trusted registrar (capability, ADR-0020).
+- **Status:** Accepted · **Tier:** T2 · **Phase:** 3, slice 6 · **Depends on:** the session read model (slice 3), the injected coordination contract (slice 2 — the append semantics the board rides), and the trusted registrar (capability, ADR-0020 trusted-registrar-harness-model-identity).
 - **Grounding:** spec **US-4** (the board), **US-3** (cross-repo fleet, item 3), the **Board Message** aggregate (lines 210/233), and the note that *"the Message Board event contract must align with one-file-per-session append semantics"* (the coord-core log, slice 2).
 
 ## 1. Responsibility and boundary

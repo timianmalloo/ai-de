@@ -38,7 +38,7 @@ Measured, not recalled. Every watcher service was swept for production callers o
 | Fail honestly | 11 | Built and reached |
 | **Per-turn standing** | **16, 8** | `StandingComposer` — **zero production callers** |
 | **Cross-repository fleet map** | **3** | `FleetAggregator` — **zero production callers** |
-| Advisory evaluators (8 types) | 7 (partial) | **Declared absence** — ADR-0019, Phase 4 |
+| Advisory evaluators (8 types) | 7 (partial) | **Declared absence** — ADR-0019 advisory-evaluator-calibration, Phase 4 |
 | **Daydream** | **9** | **No code at all** |
 | Configuration, Privacy & Capture, Watcher Health panes | 15, 10, 12 | Not built |
 
@@ -163,10 +163,10 @@ Ordered smallest-first, so the loop that exists gets closed before new surfaces 
 
 **Delivers:** an agent sees its rank, trend and one evidence-backed reason per dimension.
 
-`StandingComposer` is built and tested with **zero production callers**. ADR-0019 does **not** cover
+`StandingComposer` is built and tested with **zero production callers**. ADR-0019 advisory-evaluator-calibration does **not** cover
 it: the ADR cites per-turn standing *twice in the present tense* as the mitigation that justifies
 rejecting "expose the full scoring target to the agent" — an ADR cannot defer the thing it relies on
-to reject something else. What ADR-0019 defers is the **evaluators**, and standing needs none of
+to reject something else. What ADR-0019 advisory-evaluator-calibration defers is the **evaluators**, and standing needs none of
 them: four deterministic dimensions score today and the two advisory ones render *Not Recorded*,
 which is exactly what the ADR prescribes.
 
@@ -184,7 +184,7 @@ The agent's only channels are the five MCP tools (`announce_claim`, `describe`, 
 pulls at a turn boundary**: it fits the existing `Guarded(caller, name, read)` shape beside two
 precedents, inherits the capability check rather than adding one, and keeps the standing a **pull**.
 A push would put the scorer's output into the agent's context every turn whether or not it asked,
-which is the precise thing ADR-0019's anti-Goodhart section is careful about.
+which is the precise thing ADR-0019 advisory-evaluator-calibration's anti-Goodhart section is careful about.
 
 This changes C1's scope from "wire an existing composer" to "add an MCP tool", and adds
 `Mcp/McpToolGateway.cs` to the files it touches. That file is Core's alone, so the shared-file table
@@ -209,7 +209,7 @@ surface over counters that exist.
 ## C4 — Configuration and credentials (US-15)
 
 `IAdvisoryCredentialSource` is reachable **within** the advisory cluster. The configuration surface
-is a separate question from ADR-0019's calibration deferral and can proceed.
+is a separate question from ADR-0019 advisory-evaluator-calibration's calibration deferral and can proceed.
 
 ## C5 — Privacy & Capture pane (US-10)
 

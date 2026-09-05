@@ -16,7 +16,7 @@ summary: >-
   evaluator's token vocabulary (omitting unobserved tokens so they default conservatively) and round-trips
   through the evaluator; ScoringService scores an episode and persists a ScoredEpisode that feeds the
   Leaderboard; the two advisory dimensions fold only when the evaluator is qualified in the registry
-  (ADR-0019, rule 8) and stay excluded otherwise; and a recompute replaces the prior card. 9 tests, full
+  (ADR-0019 advisory-evaluator-calibration, rule 8) and stay excluded otherwise; and a recompute replaces the prior card. 9 tests, full
   suite 955/0, the composer->evaluator mapping mutation-verified.
 ---
 
@@ -31,7 +31,7 @@ summary: >-
 | Not-executed / premature map conservatively | `EvidenceComposer_NotExecuted_Premature_MapsConservatively` | signal mapping | verification=none, premature=true, actions_after_done=5 | Seen green | Verified | NG1 - a missing/negative signal lowers |
 | The composed tokens are exactly what the local evaluator reads | `EvidenceComposer_RoundTripsThroughTheLocalEvaluator` | composer + evaluator | clean signals → evidence rubric 4 | **Yes** — forcing `verification=none` reds this | Verified | mutation-verified oracle |
 | No evaluator persists a deterministic card, advisory excluded | `ScoreAndRecord_NoEvaluator_PersistsDeterministicScorecard_AdvisoryExcluded` | `WeaveScorer` path | 1 stored, Partial, EvidenceDiscipline EarnedPoints null | Seen green | Verified | enough to populate the leaderboard |
-| A qualified evaluator folds advisory points | `ScoreAndRecord_QualifiedEvaluator_FoldsAdvisory` | `AdvisoryWeaveScorer` + registry | EarnedPoints set, rationale "calibrated" | Seen green | Verified | ADR-0019 gate |
+| A qualified evaluator folds advisory points | `ScoreAndRecord_QualifiedEvaluator_FoldsAdvisory` | `AdvisoryWeaveScorer` + registry | EarnedPoints set, rationale "calibrated" | Seen green | Verified | ADR-0019 advisory-evaluator-calibration gate |
 | An unqualified evaluator leaves advisory excluded | `ScoreAndRecord_UnqualifiedEvaluator_LeavesAdvisoryExcluded` | registry gate | EarnedPoints null | Seen green | Verified | rule 8 |
 | The classification is carried onto the ScoredEpisode | `ScoreAndRecord_CarriesTheClassification` | wrapper | operator/task/harness/model preserved | Seen green | Verified | supplied by caller |
 | Scored episodes feed the Leaderboard composer | `ScoreAndRecord_PersistsEpisodes_ThatFeedTheLeaderboard` | `LeaderboardComposer` | 5 scored → HarnessModel cell cohort 5, comparable | Seen green | Verified | conn-1+conn-6 end to end |

@@ -43,5 +43,5 @@ summary: >-
 
 The command disputes the *latest* scored episode with a default reason — no per-episode selection UI or
 reason prompt yet. The real cloud judge is documented (design) but not wired: it is deferred behind an
-operator egress opt-in, credentials, and the evaluator passing calibration (ADR-0019). Until then only the
+operator egress opt-in, credentials, and the evaluator passing calibration (ADR-0019 advisory-evaluator-calibration). Until then only the
 deterministic Weave is recorded — today's honest behaviour.

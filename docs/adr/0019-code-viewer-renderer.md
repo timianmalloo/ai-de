@@ -22,7 +22,7 @@ summary: >-
   content (Mermaid/charts) reuses the ONE existing canvas WebView2 rather than adding another.
 ---
 
-# ADR-0019 — Read-only code viewer renderer
+# ADR-0019 code-viewer-renderer — Read-only code viewer renderer
 
 **Status:** Accepted · **Date:** 2026-08-30 · **Deciders:** Design (Enterprise Architect + the-Simplifier peers), grounded in ADR-0015 and `kb-content-rendering-comparables`
 
@@ -30,7 +30,7 @@ summary: >-
 
 `spec-editor-surfaces` needs a **read-only** code viewer (US-ED1–ED4): syntax-highlighted source of a
 selected node/file, read-only by construction, bounded (shortfall), with the node's typed edges still
-walkable. It is the render side of the ADR-0018 `NodeContentAsync` contract when `RenderKind = code`.
+walkable. It is the render side of the ADR-0018 node-content-reader-contract `NodeContentAsync` contract when `RenderKind = code`.
 
 The collected knowledge (`kb-content-rendering-comparables`, all Verified) gives two permissive
 candidates: **Monaco Editor** (MIT, web, hosted in **WebView2**, VS-Code-parity highlighting + diff +
@@ -95,5 +95,5 @@ WebView2 for the viewer.
   behind the same viewer seam — a follow-up, not a blocker.
 - **Cleared:** the RoslynPad-fallback-for-C# contingency is not needed — AvalonEdit's built-in C#
   highlighting is present and sufficient for a viewer. The `NodeContentAsync` `RenderKind`/`Language`
-  contract (ADR-0018) still carries what the viewer needs to pick the mode, so the renderer remains
+  contract (ADR-0018 node-content-reader-contract) still carries what the viewer needs to pick the mode, so the renderer remains
   swappable behind that seam if a future diff/merge surface reopens the Monaco question.

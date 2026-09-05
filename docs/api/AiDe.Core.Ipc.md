@@ -1027,7 +1027,7 @@ Asks for the graph — all of it, or the part the filters name.
 
 *record* — `WorkspaceOperations.cs`
 
-One node, for the reader that selected it (ADR-0018).
+One node, for the reader that selected it (ADR-0018 node-content-reader-contract).
 
 ## `DispatchBeginRequest`
 
@@ -1105,7 +1105,7 @@ bound, and two definitions of one quantity is a defect signature.
 | `string SearchContent = "search-content"` | Lines in the workspace's own files that contain a term. |
 | `string Interaction = "interaction"` | One caller's outgoing calls, in call order — a sequence diagram's feed. |
 | `string Knowledge = "knowledge"` | **(gap)** |
-| `string NodeContent = "nodeContent"` | One node's content, on demand (ADR-0018). |
+| `string NodeContent = "nodeContent"` | One node's content, on demand (ADR-0018 node-content-reader-contract). |
 | `string Evidence = "evidence"` | **(gap)** |
 | `string Graph = "graph"` | **(gap)** |
 | `string Paths = "paths"` | **(gap)** |

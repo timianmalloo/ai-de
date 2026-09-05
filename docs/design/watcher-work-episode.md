@@ -32,7 +32,7 @@ summary: >-
 
 One responsibility: **bind one immutable goal + done-condition to one bounded interval of one authenticated session, with the observable activity that occurred inside it** (spec US-6, lines 201-234). It is *the unit scoring attaches to* — but it does **not** score. It owns the episode aggregate and its lifecycle; it borrows session identity/capability (Phase 1) and the span store; it does **not** own the Weave, the grader, floors, or coverage (slice 5+).
 
-**The trust boundary is episode management:** only the authenticated session may open, reframe, or close *its* episodes. Every lifecycle call presents the session's capability and is verified (LK-0001 forgery on mismatch), exactly as span ingest is (ADR-0020).
+**The trust boundary is episode management:** only the authenticated session may open, reframe, or close *its* episodes. Every lifecycle call presents the session's capability and is verified (LK-0001 forgery on mismatch), exactly as span ingest is (ADR-0020 trusted-registrar-harness-model-identity).
 
 ## 2. Data model (settled first)
 

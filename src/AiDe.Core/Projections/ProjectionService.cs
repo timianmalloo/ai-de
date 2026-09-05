@@ -389,7 +389,7 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
             .Distinct(StringComparer.Ordinal)
             .ToDictionary(id => id, id => NodeOf(reader, id).NodeKind, StringComparer.Ordinal);
 
-        // The type's OWN members (has_member) — the class-diagram compartment (ADR-0020 Phase 2). Read
+        // The type's OWN members (has_member) — the class-diagram compartment (ADR-0020 class-diagram-architecture Phase 2). Read
         // directly by subject so the neighbour cap cannot starve them; `members_truncated` carries the
         // real declared count when the extractor capped the listing. Empty for a non-type node.
         var ownRows = reader.OutgoingAssertions(nodeId, MaxMembersRead);
@@ -898,7 +898,7 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
     /// <remarks>
     /// <para><b>On demand, for the one node asked for.</b> The graph carries no content by design —
     /// fattening 1,500 nodes to serve the one a user selected is what overflowed the frame in the
-    /// first place (INV-0003, ADR-0018).</para>
+    /// first place (INV-0003, ADR-0018 node-content-reader-contract).</para>
     ///
     /// <para><b>Confined to the workspace.</b> The path is rebuilt from the scope's recorded location
     /// plus the assertion's own provenance, then checked to be under the root before anything is

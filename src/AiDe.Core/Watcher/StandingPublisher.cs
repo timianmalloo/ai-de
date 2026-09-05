@@ -16,7 +16,7 @@ namespace AiDe.Core.Watcher;
 /// handed the directory, and the ingest proves the path works.</para>
 ///
 /// <para><b>It is still a pull.</b> Nothing is injected into the agent's context — the file sits
-/// there and the agent chooses to read it. That distinction is what ADR-0019's anti-Goodhart section
+/// there and the agent chooses to read it. That distinction is what ADR-0019 advisory-evaluator-calibration's anti-Goodhart section
 /// turns on: an agent shown its score every turn regardless is a different decision from one that
 /// asks.</para>
 ///

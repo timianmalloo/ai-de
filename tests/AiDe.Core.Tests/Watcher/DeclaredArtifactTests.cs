@@ -13,7 +13,7 @@ namespace AiDe.Core.Tests.Watcher;
 /// claim was about a missing channel.</para>
 ///
 /// <para><b>Why this is admitted where <c>acceptance_met</c> is refused.</b> An agent cannot make a
-/// path exist by asserting it harder. ADR-0019's anti-Goodhart concern is about accepting a verdict;
+/// path exist by asserting it harder. ADR-0019 advisory-evaluator-calibration's anti-Goodhart concern is about accepting a verdict;
 /// this accepts a pointer and then goes and looks. Every test below is about keeping that
 /// distinction intact — nothing here verifies a path, and nothing here may.</para>
 /// </remarks>

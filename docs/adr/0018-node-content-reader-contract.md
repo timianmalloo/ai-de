@@ -19,7 +19,7 @@ summary: >-
   every node would blow the IPC transport bound (US-K12) for a value only the selected node needs.
 ---
 
-# ADR-0018: The reader fetches node content on demand via a bounded Core query
+# ADR-0018 node-content-reader-contract: The reader fetches node content on demand via a bounded Core query
 
 - **Status:** Proposed 2026-08-30. Raised for the Explorer reader (`spec-knowledge-explorer-mode`
   US-E4). Core-owned contract; the Design session consumes it. Coordinated per
@@ -93,7 +93,7 @@ graph queries are.
 - **Coordination (cross-session).** This is a **Core-owned** contract (it lives on `IWorkspaceQueries`
   and the daemon/IPC surface, alongside `OverviewAsync`). The Design session consumes it in the reader.
   It is registered as a Design→Core request in `session-contracts.md` so the next session can read it;
-  Phase 1 of ADR-0017 mocks this seam (metadata+edges only) so the shell can land before the query
+  Phase 1 of ADR-0017 primary-view-mode mocks this seam (metadata+edges only) so the shell can land before the query
   exists, and Phase 2 substitutes the real query — a substitution, not a redesign.
 - **Negative / cost**
   - One more query on the seam and one more DTO. Accepted: it is small, bounded, and strictly additive;
@@ -101,6 +101,6 @@ graph queries are.
 
 ## Delivery phasing
 
-Tracks ADR-0017's phases: the reader is a **stub over a defined seam** in Phase 1 (the `NodeContent`
+Tracks ADR-0017 primary-view-mode's phases: the reader is a **stub over a defined seam** in Phase 1 (the `NodeContent`
 shape is defined; the reader renders metadata+edges from the graph node it already has, content
 mocked), and the real `NodeContentAsync` query lands in Phase 2 as a drop-in behind that seam.

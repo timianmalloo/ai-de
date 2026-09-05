@@ -4,7 +4,7 @@ namespace AiDe.Core.Tests.Watcher;
 
 /// <summary>
 /// LK-ADV-01..N - the advisory calibration gates + gated fold (design-watcher-advisory-grader, slice 7).
-/// The claims (spec rules 8-9, ADR-0019): quadratic weighted kappa and stability decide qualification; an
+/// The claims (spec rules 8-9, ADR-0019 advisory-evaluator-calibration): quadratic weighted kappa and stability decide qualification; an
 /// advisory dimension enters points only when its evaluator version has qualified; and advisory never
 /// overrides a deterministic Not Scored or Blocked result.
 /// </summary>

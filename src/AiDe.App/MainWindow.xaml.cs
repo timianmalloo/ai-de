@@ -45,7 +45,7 @@ public partial class MainWindow : Window
 
         Shell.Bind(this);
 
-        // Primary view mode (ADR-0017): the Explore rail item toggles the body between the workbench
+        // Primary view mode (ADR-0017 primary-view-mode): the Explore rail item toggles the body between the workbench
         // docking host and the full-window Explorer surface. Shell is held for the window's life, so
         // the swap only unparents the docking host — the workbench (and a running terminal) survive.
         _mode = new ShellModeController(
@@ -180,7 +180,7 @@ public partial class MainWindow : Window
         Shell.Adapter.Render();
     }
 
-    /// <summary>Toggles the shell between the workbench and the full-window Explorer (ADR-0017).</summary>
+    /// <summary>Toggles the shell between the workbench and the full-window Explorer (ADR-0017 primary-view-mode).</summary>
     private void OnToggleExplorer(object sender, RoutedEventArgs e) => _mode.Toggle();
 
     /// <summary>Reflects the active view mode on the Explore rail item — accent bar, pill, icon colour.</summary>

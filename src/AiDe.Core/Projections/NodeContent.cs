@@ -4,7 +4,7 @@ namespace AiDe.Core.Projections;
 /// How a node's content should be rendered — the authority's call, not the reader's guess.
 /// </summary>
 /// <remarks>
-/// ADR-0018. The reader branches on this rather than inspecting the content or the node id, so a
+/// ADR-0018 node-content-reader-contract. The reader branches on this rather than inspecting the content or the node id, so a
 /// diagram, a proof or a binary comes back as <see cref="None"/> and gets the metadata-and-edges
 /// fallback instead of being mis-rendered as text that happens not to be text.
 /// </remarks>

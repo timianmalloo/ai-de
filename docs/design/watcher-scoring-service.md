@@ -20,7 +20,7 @@ summary: >-
   (EvidenceComposer), and turn (episode + signals + classification) into a persisted ScoredEpisode
   (ScoringService) so scored episodes reach the Leaderboard/Standing surfaces. The four deterministic
   dimensions are always scored; the two advisory dimensions fold only when the evaluator's
-  (version, taskClass, schemaVersion) is qualified in the calibration registry (ADR-0019, rule 8);
+  (version, taskClass, schemaVersion) is qualified in the calibration registry (ADR-0019 advisory-evaluator-calibration, rule 8);
   with no evaluator, only the deterministic Weave is recorded (the safe default).
 ---
 

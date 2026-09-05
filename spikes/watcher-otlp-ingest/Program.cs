@@ -138,7 +138,7 @@ static SessionBinding MapRegistration(IReadOnlyDictionary<string, string?> attrs
         harnessName is null ? null : new HarnessIdentity(harnessName, Opt("service.version") ?? "unknown"),
         modelName is null ? null : new ModelIdentity(modelName, Opt("gen_ai.model.version") ?? "unknown"),
         // A harness that names itself via OTel resource attributes is Verified; an opaque one that
-        // only asserts environment identity is Asserted and cannot clear a floor (ADR-0020).
+        // only asserts environment identity is Asserted and cannot clear a floor (ADR-0020 trusted-registrar-harness-model-identity).
         harnessName is null ? TrustClassification.Asserted : TrustClassification.Verified);
 }
 

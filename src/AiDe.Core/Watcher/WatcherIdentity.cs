@@ -37,7 +37,7 @@ public enum LivenessState
     Ended,
 }
 
-// --- Dimensions: value objects, compared by value (ADR-0017). ---
+// --- Dimensions: value objects, compared by value (ADR-0017 watcher-observation-projection). ---
 
 /// <summary>
 /// A repository identity. <see cref="CanonicalPath"/> disambiguates two repositories that share a

@@ -13,7 +13,7 @@ namespace AiDe.Core.Watcher;
 /// <para><b>The agent names a file; the product checks whether the file is there.</b> That is what
 /// keeps this observation rather than testimony, and it is why an <c>episode.acceptance_met</c>
 /// attribute stays refused while this one is admitted: an agent cannot make a path exist by
-/// asserting it harder. ADR-0019's anti-Goodhart concern is about accepting a claim; this accepts a
+/// asserting it harder. ADR-0019 advisory-evaluator-calibration's anti-Goodhart concern is about accepting a claim; this accepts a
 /// pointer and then goes and looks.</para>
 ///
 /// <para><b>Nothing here is verified.</b> The path is stored exactly as sent, including one that is

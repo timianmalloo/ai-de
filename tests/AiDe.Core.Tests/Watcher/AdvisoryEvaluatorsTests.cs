@@ -3,7 +3,7 @@ using AiDe.Core.Watcher;
 namespace AiDe.Core.Tests.Watcher;
 
 /// <summary>
-/// LK-ADV-EVAL-01..14 - the local advisory evaluator and the egress/credential guard (conn-3, ADR-0018).
+/// LK-ADV-EVAL-01..14 - the local advisory evaluator and the egress/credential guard (conn-3, ADR-0018 credential-backed-grading-egress).
 /// The claims: the local heuristic scores the two advisory dimensions deterministically from a quarantined
 /// evidence token list with a conservative (never optimistic) default for absent tokens, needs no egress
 /// or credential, and refuses a deterministic dimension (rule 8); and the guard enforces default-deny
@@ -110,7 +110,7 @@ public sealed class AdvisoryEvaluatorsTests
         var e = new LocalHeuristicAdvisoryEvaluator();
         const string evidence = "verification=executed; coverage=8/10";
 
-        // Twenty repeats produce the identical band - the ADR-0019 stability gate's happy path.
+        // Twenty repeats produce the identical band - the ADR-0019 advisory-evaluator-calibration stability gate's happy path.
         var bands = Enumerable.Range(0, 20)
             .Select(_ => e.Evaluate(ScoreDimension.EvidenceDiscipline, Episode(), evidence).Rubric0to4)
             .ToArray();

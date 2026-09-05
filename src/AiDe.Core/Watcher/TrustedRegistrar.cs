@@ -1,7 +1,7 @@
 namespace AiDe.Core.Watcher;
 
 /// <summary>
-/// Binds session identity and issues a per-session capability verified on every event (ADR-0020,
+/// Binds session identity and issues a per-session capability verified on every event (ADR-0020 trusted-registrar-harness-model-identity,
 /// extends ADR-0007). Capabilities are held in-process and are never persisted to the observation
 /// store, so the secret never reaches the durable facts.
 /// </summary>

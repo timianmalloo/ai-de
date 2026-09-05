@@ -308,7 +308,7 @@ public sealed class McpMatchesTheJsonlPathTests : IDisposable
     /// </summary>
     /// <remarks>
     /// The outcome case is the one that matters: defaulting a missing outcome to <c>Completed</c>
-    /// would hand the scorer a verdict no agent declared, which is the single value ADR-0019 says
+    /// would hand the scorer a verdict no agent declared, which is the single value ADR-0019 advisory-evaluator-calibration says
     /// must never be guessed.
     /// </remarks>
     [Fact]

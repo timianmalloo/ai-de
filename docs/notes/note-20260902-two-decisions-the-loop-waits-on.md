@@ -52,7 +52,7 @@ that.
 
 | Option | What it makes a score mean |
 |---|---|
-| the **agent supplies** its own deterministic signals | a standing rests on self-report, and ADR-0019's entire anti-Goodhart concern arrives at once |
+| the **agent supplies** its own deterministic signals | a standing rests on self-report, and ADR-0019 advisory-evaluator-calibration's entire anti-Goodhart concern arrives at once |
 | the **watcher derives** them | from spans and board posts — the only observations there are, and neither is evidence of outcome |
 | scoring stays **audit-only** | honest, and quietly narrows US-16 to AI-DE's own sessions rather than to agents |
 

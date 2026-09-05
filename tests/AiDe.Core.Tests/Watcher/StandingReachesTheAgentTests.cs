@@ -15,7 +15,7 @@ namespace AiDe.Core.Tests.Watcher;
 /// <para><b><c>AIDE_CONTRACT_LOG</c> is the channel that exists.</b> The agent is given the
 /// directory, reads its own path from it, and the ingest already proves it works. A file there needs
 /// no transport, no new trust boundary and no new environment variable. It stays a pull in the sense
-/// ADR-0019 cares about: nothing is injected into the agent's context, the agent chooses to read.</para>
+/// ADR-0019 advisory-evaluator-calibration cares about: nothing is injected into the agent's context, the agent chooses to read.</para>
 ///
 /// <para><b>The subdirectory is not tidiness.</b> <c>CoordinationContractLog</c> enumerates
 /// <c>Directory.EnumerateFiles(logDir, "*.jsonl")</c> in <c>ReadDirectory</c> — read, not assumed,

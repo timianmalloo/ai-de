@@ -11,7 +11,7 @@ public enum EgressDecision
 }
 
 /// <summary>
-/// The default-deny egress gateway (ADR-0018, extends ADR-0011). Outbound is blocked until an explicit
+/// The default-deny egress gateway (ADR-0018 credential-backed-grading-egress, extends ADR-0011). Outbound is blocked until an explicit
 /// per-path opt-in enables exactly that path; every other path stays blocked. The gate ships in Phase 1,
 /// before any component that could egress, so the local-only default is enforced from the start.
 /// </summary>

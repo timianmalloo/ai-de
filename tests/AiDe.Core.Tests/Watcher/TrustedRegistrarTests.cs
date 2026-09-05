@@ -3,7 +3,7 @@ using AiDe.Core.Watcher;
 namespace AiDe.Core.Tests.Watcher;
 
 /// <summary>
-/// LK-REG-01..09 — the identity and capability contract (ADR-0020). The claim under test is not "we
+/// LK-REG-01..09 — the identity and capability contract (ADR-0020 trusted-registrar-harness-model-identity). The claim under test is not "we
 /// record a session" but "a process cannot act as a session it does not hold the capability for, and a
 /// restart cannot inherit the prior generation's authority."
 /// </summary>

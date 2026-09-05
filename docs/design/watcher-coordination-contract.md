@@ -59,7 +59,7 @@ No new persisted shape. The adapter is stateless w.r.t. the fact store; it holds
 ```
 
 - `contract` is **pinned** (`CoordContract.Version = "loomkeeper/1"`). A record with a different or missing version is **rejected and counted** (A6 — a schema change is a contract change, not a silent re-parse).
-- `attrs` reuses the OTLP attribute keys; `service.name` present ⇒ trust `Verified`, absent ⇒ `Asserted` (ADR-0020, inherited from `MapRegistration`).
+- `attrs` reuses the OTLP attribute keys; `service.name` present ⇒ trust `Verified`, absent ⇒ `Asserted` (ADR-0020 trusted-registrar-harness-model-identity, inherited from `MapRegistration`).
 - `session` is the **external** id; the registrar mints its own internal `SessionId`. The adapter owns the external→internal map.
 
 ### 3.2 Types
@@ -86,7 +86,7 @@ No new persisted shape. The adapter is stateless w.r.t. the fact store; it holds
 
 ## 5. Security (STRIDE-lite, carried into implementation)
 
-- **Spoofing / Tampering:** the file is forgeable, so the capability is **never** read from it — the adapter mints it at `register` and verifies every `heartbeat` against the held capability. A forged `heartbeat` line for a session the adapter never registered is dropped (`Unknown`); a forged `register` can only assert `Asserted` trust unless it also names a real harness, and asserted identity **cannot satisfy a correctness floor** (ADR-0020). Defence in depth: the registrar's own `LK-0001` forgery check still guards heartbeat.
+- **Spoofing / Tampering:** the file is forgeable, so the capability is **never** read from it — the adapter mints it at `register` and verifies every `heartbeat` against the held capability. A forged `heartbeat` line for a session the adapter never registered is dropped (`Unknown`); a forged `register` can only assert `Asserted` trust unless it also names a real harness, and asserted identity **cannot satisfy a correctness floor** (ADR-0020 trusted-registrar-harness-model-identity). Defence in depth: the registrar's own `LK-0001` forgery check still guards heartbeat.
 - **DoS:** parse is bounded by the read; one malformed/oversize line is skipped, not fatal. (Whole-file size bounding is the reader's concern when wired to a real file watcher — noted residual, the in-process `Apply` path is not a network surface.)
 - **Repudiation:** every disposition increments a visible counter (US-11 fail honestly).
 

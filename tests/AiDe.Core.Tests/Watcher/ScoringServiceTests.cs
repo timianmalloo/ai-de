@@ -7,7 +7,7 @@ namespace AiDe.Core.Tests.Watcher;
 /// deterministic signals to the local evaluator's token vocabulary (omitting unobserved tokens so they
 /// default conservatively, NG1); the service scores the four deterministic dimensions and persists the
 /// ScoredEpisode so it reaches the Leaderboard; and the two advisory dimensions fold ONLY when the
-/// evaluator's (version, taskClass, schemaVersion) is qualified in the registry (ADR-0019, rule 8).
+/// evaluator's (version, taskClass, schemaVersion) is qualified in the registry (ADR-0019 advisory-evaluator-calibration, rule 8).
 /// </summary>
 public sealed class ScoringServiceTests
 {

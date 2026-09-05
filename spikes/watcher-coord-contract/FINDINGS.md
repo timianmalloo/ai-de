@@ -45,7 +45,7 @@ Established facts (verified, not inferred):
 
 - `attrs` reuses the **same `OtelAttributes` keys** as the OTLP path, so one mapper
   (`OtelSpanMapper.MapRegistration`) serves both transports - trust is `Verified` when the harness
-  names itself via `service.name`, else `Asserted` (ADR-0020), with no new mapping seam.
+  names itself via `service.name`, else `Asserted` (ADR-0020 trusted-registrar-harness-model-identity), with no new mapping seam.
 - `contract` is the **pinned version** (`loomkeeper/1`). A record whose version differs is rejected
   and counted, never mis-parsed (Testing Strategy A6 - a schema change is a contract change).
 - The **capability lives in the adapter**, not the file: the file is a local, forgeable surface

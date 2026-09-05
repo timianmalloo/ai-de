@@ -149,7 +149,7 @@ rather than papered over.
 
 *class* — `ClassDiagramSurface.cs`
 
-The class-diagram surface (spec-uml-erm-surfaces; ADR-0020 Phase 1): a dependency-free, native WPF
+The class-diagram surface (spec-uml-erm-surfaces; ADR-0020 class-diagram-architecture Phase 1): a dependency-free, native WPF
 render of the class HIERARCHY derived from the graph — classes and interfaces as cards, each showing
 its generalizations (`inherits`) and realizations (`implements`). Member-less by construction (no
 extractor emits members yet); the header says so rather than implying empty classes. No WebView2, so
@@ -165,7 +165,7 @@ none of ADR-0015's airspace concerns. A member-bearing, notation-valid Mermaid r
 | `int TypeCount { get; private set; }` | The number of type cards currently shown (for tests). |
 | `int RelationCount { get; private set; }` | The number of generalization/realization relations currently shown (for tests). |
 | `bool IsEmpty` | **(gap)** |
-| `void ShowGraph(IReadOnlyList<CanvasNode>? nodes, IReadOnlyList<CanvasEdge>? edges)` | Builds the hierarchy from a graph and renders it (ADR-0020). |
+| `void ShowGraph(IReadOnlyList<CanvasNode>? nodes, IReadOnlyList<CanvasEdge>? edges)` | Builds the hierarchy from a graph and renders it (ADR-0020 class-diagram-architecture). |
 | `void Show(ClassHierarchy hierarchy)` | Stores and renders a prebuilt hierarchy (search re-renders a filtered view of it). |
 | `void Clear()` | **(gap)** |
 | `void ShowLoading()` | Shows a loading state while the graph is fetched (U9 state completeness). |
@@ -175,13 +175,13 @@ none of ADR-0015's airspace concerns. A member-bearing, notation-valid Mermaid r
 
 *enum* — `ClassHierarchyModel.cs`
 
-A UML relationship kind we derive from the graph (ADR-0020).
+A UML relationship kind we derive from the graph (ADR-0020 class-diagram-architecture).
 
 ## `ClassTypeNode`
 
 *record* — `ClassHierarchyModel.cs`
 
-A type in the class diagram — a class or interface. Members are not available yet (ADR-0020).
+A type in the class diagram — a class or interface. Members are not available yet (ADR-0020 class-diagram-architecture).
 
 ## `ClassRelation`
 
@@ -193,7 +193,7 @@ One generalization/realization edge between two types in the diagram.
 
 *record* — `ClassHierarchyModel.cs`
 
-The class-hierarchy view model (ADR-0020): the classes/interfaces and their generalization/
+The class-hierarchy view model (ADR-0020 class-diagram-architecture): the classes/interfaces and their generalization/
 realization relationships, projected from the graph the App already holds. A pure function so the
 projection is verifiable headlessly. Member-less by construction — no extractor emits members yet;
 the surface says so rather than implying empty classes.
@@ -207,7 +207,7 @@ the surface says so rather than implying empty classes.
 
 *class* — `ClassHierarchyModel.cs`
 
-Builds a `ClassHierarchy` from graph nodes and edges (ADR-0020 Phase 1).
+Builds a `ClassHierarchy` from graph nodes and edges (ADR-0020 class-diagram-architecture Phase 1).
 
 | Member | Summary |
 |---|---|
@@ -219,7 +219,7 @@ Builds a `ClassHierarchy` from graph nodes and edges (ADR-0020 Phase 1).
 
 *class* — `CodeViewerView.cs`
 
-The read-only code viewer (spec-editor-surfaces US-ED1–ED4; ADR-0019). A native AvalonEdit
+The read-only code viewer (spec-editor-surfaces US-ED1–ED4; ADR-0019 code-viewer-renderer). A native AvalonEdit
 `TextEditor` in read-only mode with syntax highlighting picked from the content's
 language tag — a pure WPF control, so none of ADR-0015's WebView2 airspace concerns. Renders a
 `NodeContent`: code (highlighted), text (plain), a shortfall banner when the content was
@@ -562,7 +562,7 @@ and writing the file on each one would turn a smooth drag into a stutter of disk
 
 *enum* — `NodeContentSource.cs`
 
-How a node's content should be rendered (the client mirror of ADR-0018's RenderKind). The authority
+How a node's content should be rendered (the client mirror of ADR-0018 node-content-reader-contract's RenderKind). The authority
 (Core's future `NodeContentAsync`) decides this, so the viewer's per-kind branch is data, not a
 client guess.
 
@@ -570,7 +570,7 @@ client guess.
 
 *record* — `NodeContentSource.cs`
 
-One node's content for the reader/viewer — the client mirror of ADR-0018's `NodeContent`. Bounded:
+One node's content for the reader/viewer — the client mirror of ADR-0018 node-content-reader-contract's `NodeContent`. Bounded:
 oversized content returns a `Shortfall` ("first N — open the source"), never an oversized
 frame. `Language` is the authority's language tag (e.g. "csharp"), used to pick highlighting.
 
@@ -578,7 +578,7 @@ frame. `Language` is the authority's language tag (e.g. "csharp"), used to pick 
 
 *interface* — `NodeContentSource.cs`
 
-The client seam the reader uses to fetch a selected node's content on demand (ADR-0018). Core's
+The client seam the reader uses to fetch a selected node's content on demand (ADR-0018 node-content-reader-contract). Core's
 future `IWorkspaceQueries.NodeContentAsync` is the real implementation; until it ships,
 `MockNodeContentSource` stands in behind this interface so the viewer is buildable and
 testable and the eventual wiring is a one-line substitution, not a redesign.
@@ -587,7 +587,7 @@ testable and the eventual wiring is a one-line substitution, not a redesign.
 
 *class* — `NodeContentSource.cs`
 
-A stand-in content source until Core ships `NodeContentAsync` (ADR-0018 Phase 1). It returns a
+A stand-in content source until Core ships `NodeContentAsync` (ADR-0018 node-content-reader-contract Phase 1). It returns a
 clearly-labelled SAMPLE — it does NOT read files (the App is not a second file-content authority,
 DC-022) — so the viewer can render and be tested end-to-end while the real query is built.
 
@@ -602,7 +602,7 @@ DC-022) — so the viewer can render and be tested end-to-end while the real que
 The reader half of the Explorer surface (spec-knowledge-explorer-mode US-E4; design D4). Phase 1
 renders a selected node's header, metadata and its walkable typed edges. The per-kind CONTENT view
 (rendered markdown/html, syntax-highlighted code) arrives in Phase 2 behind the node-content
-contract (ADR-0018), so the content area is an honest placeholder until then — never a blank. With
+contract (ADR-0018 node-content-reader-contract), so the content area is an honest placeholder until then — never a blank. With
 no selection it shows an explicit empty state (US-E7).
 
 | Member | Summary |
@@ -976,14 +976,14 @@ is the fix. Pure and dependency-free (UX-SESSIONS-GRAVEYARD).
 
 *enum* — `ShellModeController.cs`
 
-The shell's primary view mode (ADR-0017).
+The shell's primary view mode (ADR-0017 primary-view-mode).
 
 ## `ShellModeController`
 
 *class* — `ShellModeController.cs`
 
 Owns the shell's primary `ShellViewMode` and the body-content swap that realises it
-(ADR-0017). Switching mode only changes what fills the body region; it never disposes the
+(ADR-0017 primary-view-mode). Switching mode only changes what fills the body region; it never disposes the
 workbench.
 
 **Remarks.** **Retain, never rebuild (the load-bearing invariant).** The workbench object is held by

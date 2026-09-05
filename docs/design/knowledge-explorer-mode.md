@@ -18,25 +18,25 @@ summary: >-
   swap (WorkbenchHost.Content toggles Manager↔ExplorerSurface, Shell held so the workbench and its live
   ConPTY/WebView2 children hide-not-destroy), a dedicated CanvasSurface in Explorer (not reparented), a
   new CanvasSurface.NodeSelected seam the reader follows, and a NodeReaderView stub (metadata + walkable
-  edges; content deferred to ADR-0018 Phase 2). Resolves the mechanism the ADRs deferred, with a
+  edges; content deferred to ADR-0018 node-content-reader-contract Phase 2). Resolves the mechanism the ADRs deferred, with a
   red-first test plan whose key control is "a live terminal survives an Explorer round-trip".
 ---
 
 # Knowledge Explorer mode — component design (Phase 1)
 
-Implements `spec-knowledge-explorer-mode` and realises **ADR-0017 Phase 1** (the walking skeleton).
+Implements `spec-knowledge-explorer-mode` and realises **ADR-0017 primary-view-mode Phase 1** (the walking skeleton).
 This design resolves the load-bearing mechanism the ADRs deferred to component design, so the
 `/implement` is mechanical: the **mode swap**, the **graph hosting in Explorer**, the **selection→reader
 seam**, and the **reader stub**, each with its failure modes and its red-first test.
 
-## Scope (Phase 1, per ADR-0017)
+## Scope (Phase 1, per ADR-0017 primary-view-mode)
 
 **In:** a `ShellViewMode` (Workbench | Explorer); the rail's Explore item becomes the mode toggle; the
 body swaps between the docking host and a two-pane Explorer surface (graph | reader) with a splitter;
 the reader **follows the graph selection** and shows the node's **metadata + walkable typed edges**;
 both panes' empty/loading/error states.
 
-**Out (later phases):** the reader's per-kind **content** (markdown/html/code) — that is ADR-0018's
+**Out (later phases):** the reader's per-kind **content** (markdown/html/code) — that is ADR-0018 node-content-reader-contract's
 `NodeContentAsync`, wired in Phase 2 behind the seam this design defines; the full **graph↔reader
 keyboard cycle** and **responsive stacking** (US-E8) — Phase 3. This design defines the seams so those
 are substitutions, not redesigns.
@@ -64,7 +64,7 @@ the toggle, and the body swap, so `MainWindow` stays a thin composition root). E
 the window's life regardless of mode** (unchanged from today), so switching mode only **unparents** the
 `DockingManager` — it does not dispose it.
 
-- **Retain-not-rebuild (the load-bearing invariant, ADR-0017).** When a WPF `HwndHost` (the terminal's
+- **Retain-not-rebuild (the load-bearing invariant, ADR-0017 primary-view-mode).** When a WPF `HwndHost` (the terminal's
   ConPTY renderer) or a hosted `WebView2` is unparented from the visual tree, WPF **hides the child HWND;
   it does not destroy it** — the ConPTY process and the WebView2 keep running, and re-parenting re-shows
   them. This is the property that makes the swap a view change, not a session loss. **It is stated here as
@@ -92,7 +92,7 @@ Add to `CanvasSurface` (App-owned) a minimal event:
 `public event EventHandler<CanvasNodeRef>? NodeSelected;` raised when a node is activated (where the page
 posts `node.activate`, alongside the existing navigation). `CanvasNodeRef` is `(string Id, string Label,
 string Kind, string? Context)` — the data the page already has. The `ExplorerSurface` wires
-`graph.NodeSelected += (_, n) => reader.Show(n, edgesFor(n))`. **This is the Phase-1 seam ADR-0018 sits
+`graph.NodeSelected += (_, n) => reader.Show(n, edgesFor(n))`. **This is the Phase-1 seam ADR-0018 node-content-reader-contract sits
 behind:** Phase 2 replaces `reader.Show(nodeRef, edges)` with a call that also fetches `NodeContentAsync`,
 without changing the event.
 - Edges for the selected node come from the **current `CanvasGraph`** the Explorer canvas holds (it
@@ -105,7 +105,7 @@ edges)` and `void Clear()`. It renders, against `DESIGN.md` tokens (chrome + pro
   never colour alone — US-K5);
 - **metadata** — id, kind, context;
 - **content area** — the Phase-1 placeholder for a renderable kind (*"Rich content view arrives with the
-  node-content query (ADR-0018)."*) — honest about what is not yet wired, not a blank;
+  node-content query (ADR-0018 node-content-reader-contract)."*) — honest about what is not yet wired, not a blank;
 - **typed edges** — a keyboard-navigable list; activating an edge calls `explorerCanvas.RefreshAsync(
   targetId)` (the node-walk, US-E4/E5) and the reader follows via D3.
 - **empty state** — `Clear()` shows *"Select a node to read it."* (US-E7).
@@ -187,9 +187,9 @@ host-side and need no WebView2; T-focus may need the probe.
 - **Assumption D1 false for the terminal host** — caught by T1 (red); fallback is collapse-in-place (D1).
 
 ## Handoff
-→ `/implement` Phase 1 (this design is the buildable contract). → Phase 2 wires ADR-0018
+→ `/implement` Phase 1 (this design is the buildable contract). → Phase 2 wires ADR-0018 node-content-reader-contract
 `NodeContentAsync` behind the D3/D4 seam. → Phase 3 adds the full keyboard cycle and responsive stacking.
-The one **cross-session** dependency (ADR-0018's `NodeContentAsync`) is a Core ask already recorded in
+The one **cross-session** dependency (ADR-0018 node-content-reader-contract's `NodeContentAsync`) is a Core ask already recorded in
 `session-contracts.md §4c`; Phase 1 does not need it.
 
 ## Gate record

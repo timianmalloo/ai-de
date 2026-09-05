@@ -52,7 +52,7 @@ public interface IWorkspaceQueries
     /// The content behind one node — source, prose, or nothing, as the authority sees it.
     /// </summary>
     /// <remarks>
-    /// ADR-0018. Fetched for the ONE node a reader selected, because the graph deliberately carries
+    /// ADR-0018 node-content-reader-contract. Fetched for the ONE node a reader selected, because the graph deliberately carries
     /// no content: paying for 1,500 nodes to serve one is what overflowed the frame (INV-0003). The
     /// client does not read files — two authorities on what a node contains would disagree the first
     /// time one resolved a path differently (DC-022), and file access belongs on the side of the

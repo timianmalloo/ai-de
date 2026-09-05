@@ -19,7 +19,7 @@ summary: >-
   the coord-core records rather than a second ledger.
 ---
 
-# ADR-0020: Trusted registrar and harness/model identity
+# ADR-0020 trusted-registrar-harness-model-identity: Trusted registrar and harness/model identity
 
 - **Status:** Accepted (provisional pending spikes S1/S4)
 - **Date:** 2026-08-30

@@ -53,7 +53,7 @@ The load-bearing structural fact: **Loomkeeper is a projection layer, not a new 
 - **Delays:** grader latency (advisory, off the critical path); eventual consistency of the cross-repo fleet view; the deliberate human gate before promotion.
 - **Boundary drawn:** one machine, v1. **Inside:** local observation, evaluation, learning, and the Observatory UI. **Outside (excluded, deny-by-default):** multi-host operation, cloud sync, external OTLP export, hosted grading, and personnel analytics — each requires a new spec and privacy/security review. Credential-backed off-device grading is the *one* boundary crossing the user may explicitly open, per-path (§7.1).
 
-**Leverage point:** the highest-leverage decision is **where the durable facts live** (ADR-0017), because it is the only decision here that a schema migration cannot cheaply reverse. Everything else — graders, leaderboard, UI — is a derived view or a replaceable component.
+**Leverage point:** the highest-leverage decision is **where the durable facts live** (ADR-0017 watcher-observation-projection), because it is the only decision here that a schema migration cannot cheaply reverse. Everything else — graders, leaderboard, UI — is a derived view or a replaceable component.
 
 ## 3. Candidate shapes considered
 
@@ -75,7 +75,7 @@ The load-bearing structural fact: **Loomkeeper is a projection layer, not a new 
                  │   ├──► Deterministic Projection Engine (T0) ── liveness, trace/trajectory,      │
                  │   │      Weave composition, hard floors, Evidence Coverage, LEADERBOARD (ADR-1) │
                  │   ├──► Advisory Evaluator (T2, local rubric grader) ── qualitative dims +        │
-                 │   │      Candidate Lessons, gated by calibration (ADR-0019)                     │
+                 │   │      Candidate Lessons, gated by calibration (ADR-0019 advisory-evaluator-calibration)                     │
                  │   ├──► Standing Composer ── per-turn rank + why → agent (via injected contract) │
                  │   ├──► Daydream Loop (H, persisted) ── observation→candidate→human gate→promote  │
                  │   └──► Governance Gate ── capture policy, redaction (fail-closed, pre-persist),  │
@@ -85,16 +85,16 @@ The load-bearing structural fact: **Loomkeeper is a projection layer, not a new 
                  └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Adapters + Trusted Registrar** (extends **ADR-0007**): bind identity and issue a per-session capability verified on every event (§6, ADR-0020). Native OTLP where a harness emits it; an **injected coordination contract** for sessions from repositories without the AI-Forward pack; `coord-core` append semantics for AI-Forward sessions (symbiotic, not a second ledger).
-- **Fact store** (**ADR-0002**, extended by **ADR-0017**): the watcher's facts and the harness/model dimensions are additions to the existing store, not a new database.
+- **Adapters + Trusted Registrar** (extends **ADR-0007**): bind identity and issue a per-session capability verified on every event (§6, ADR-0020 trusted-registrar-harness-model-identity). Native OTLP where a harness emits it; an **injected coordination contract** for sessions from repositories without the AI-Forward pack; `coord-core` append semantics for AI-Forward sessions (symbiotic, not a second ledger).
+- **Fact store** (**ADR-0002**, extended by **ADR-0017 watcher-observation-projection**): the watcher's facts and the harness/model dimensions are additions to the existing store, not a new database.
 - **Deterministic Projection Engine (T0):** everything that must be reproducible — identity, liveness, trace/trajectory, Weave composition, the five deterministic dimensions, the hard floors, Evidence Coverage, and the leaderboard. Derived views per **ADR-0001**.
-- **Advisory Evaluator (T2):** local rubric grader for qualitative dimensions and Candidate Lessons; **advisory only**, gated by **ADR-0019**; cannot raise a deterministic failed dimension (LOA P5).
+- **Advisory Evaluator (T2):** local rubric grader for qualitative dimensions and Candidate Lessons; **advisory only**, gated by **ADR-0019 advisory-evaluator-calibration**; cannot raise a deterministic failed dimension (LOA P5).
 - **Standing Composer:** builds each agent's per-turn rank + one evidence-backed reason per dimension; never exposes the held-out target (spec US-16).
 - **Daydream Loop (H):** the only persisted-memory component; observation→candidate→disconfirm→**human gate**→promotion→recurrence measurement; aligns to the Dream/defect-class records.
 - **Governance Gate:** capture policy, redaction before persistence (fail-closed), Configuration, credential storage (DPAPI), and the egress opt-in — the T0 gateway that ships in Phase 1 even though the credential-backed grader arrives later (the ADR-0011 lesson: the gate ships before the thing it governs).
 - **Fleet aggregator + Observatory UI (G6):** read-only cross-repo projection and the WPF surface designed in `docs/specs/agentic-watcher-substrate.md` Part C and `DESIGN.md`.
 
-## 5. Durable data representation (settled — ADR-0017)
+## 5. Durable data representation (settled — ADR-0017 watcher-observation-projection)
 
 Loomkeeper **reuses ADR-0002's dimensions + append-only facts** rather than choosing a representation of its own; this is the DM-default (core entities as dimensions, change-over-time as append-only facts) and it makes history and the audit trail *be* the data. Additions:
 
@@ -104,13 +104,13 @@ Loomkeeper **reuses ADR-0002's dimensions + append-only facts** rather than choo
 - **Derived, never stored** (ADR-0001): liveness roster, Trace/Trajectory, Weave summary, Evidence Coverage, the **leaderboard**, recurrence counts, and "current learning in force." The leaderboard is a projection over comparable episodes, computed per (task class, score schema version, harness/model) — never a stored ranking.
 - **Accepted trade:** current-state reads are "latest row per key" and must be indexed or materialised as a labelled, rebuildable cache (ADR-0002's accepted cost).
 
-## 6. Identity and delegated trust (ADR-0020, extends ADR-0007)
+## 6. Identity and delegated trust (ADR-0020 trusted-registrar-harness-model-identity, extends ADR-0007)
 
 Terminal output is forgeable (ADR-0007), so identity is **asserted until verified**. The Trusted Registrar binds `repository → worktree → terminal → agent → harness → model → session generation` and issues a **per-session capability** verified on every subsequent event; a process reusing another session's identifier without its capability is **rejected and recorded as a forgery attempt**. Environment-asserted identity is labelled and **cannot satisfy a correctness floor**. A terminal restart yields a **new session generation** that cannot inherit the prior session's liveness, claims, or score. Non-AI-Forward sessions receive the **injected coordination contract** (registration, repository identity, heartbeat, message, telemetry); AI-Forward sessions coordinate through the existing `coord-core` records — one ledger, projected, not duplicated.
 
 ## 7. The two riskiest surfaces (front and centre)
 
-### 7.1 Credential and egress model (ADR-0018, extends ADR-0011)
+### 7.1 Credential and egress model (ADR-0018 credential-backed-grading-egress, extends ADR-0011)
 
 This is the surface that can leak work off the device, so it is designed first and fails closed.
 
@@ -120,7 +120,7 @@ This is the surface that can leak work off the device, so it is designed first a
 - **The gateway ships in Phase 1** (deny-by-default, class-bound), before any component that could egress, and a **red-first negative test** proves a non-opted-in path cannot call out.
 - **Spike-gated (S2, S3):** the DPAPI credential lifecycle (S2, low risk — reuse) and, critically, **how process-level outbound denial is actually enforced on Windows/.NET (S3, Flagged — the load-bearing security claim)** must be proven by PoC before Phase 4. Until then the decision is provisional and the credential-backed grader is not built.
 
-### 7.2 Advisory evaluator qualification and task-class calibration (ADR-0019)
+### 7.2 Advisory evaluator qualification and task-class calibration (ADR-0019 advisory-evaluator-calibration)
 
 The leaderboard and every advisory dimension are only meaningful if the grader is calibrated; an uncalibrated comparison is worse than none.
 
@@ -137,7 +137,7 @@ The leaderboard and every advisory dimension are only meaningful if the grader i
 - **Idempotency:** span ingest is idempotent under duplicate/out-of-order delivery (ADR-0006); a redelivered span does not double-count; deletion/retraction is a resumable process with a receipt, not one cross-aggregate transaction.
 - **Observability (self):** Loomkeeper instruments its own ingest lag, event gaps, score coverage, grader cost/latency, failure rate, and learning recurrence (Watcher Health surface); it degrades to "not recorded," never a plausible wrong number (Instrumentation-over-Inference).
 - **Failure modes:** watcher offline → sessions continue, observations paused, nothing stale shown as current; grader unavailable → advisory dimensions excluded, deterministic score stands; adapter degraded → Blind Spot / Partially Observed; redaction failure → content dropped before persistence (fail-closed).
-- **Determinism at the floor (LOA P2):** identity, liveness, floors, Weave composition, and the leaderboard are T0; the model is confined to advisory qualitative signals behind the ADR-0019 gate.
+- **Determinism at the floor (LOA P2):** identity, liveness, floors, Weave composition, and the leaderboard are T0; the model is confined to advisory qualitative signals behind the ADR-0019 advisory-evaluator-calibration gate.
 
 ## 9. LOA conformance (C1–C11, checked)
 
@@ -152,7 +152,7 @@ Each phase is a thin end-to-end path (adapter → ingest → store → projectio
 | **1 — Walking skeleton** | One registered session appears in the Sessions treegrid with honest liveness and Not Recorded for everything unproven; the egress-deny gateway is live | Real: registrar, idempotent ingest, fact store, liveness projection, UI row, egress-deny gate. Mocked: grader, cross-repo (single store) | Start a session; watch it register, go Alive, then Stale; confirm nothing off-device is reachable | 2, 3 |
 | **2 — Deterministic Weave + floors** | A Work Episode gets a Weave Score from the five deterministic dimensions, with hard floors and Evidence Coverage; Blocked and Not Scored are honest | Real: episode lifecycle, deterministic scoring, floors, coverage. Mocked: advisory dimensions (excluded) | Open a Scorecard; force a floor failure; see the numeric headline suppressed | 4 |
 | **3 — Board + cross-repo fleet** | A per-repo append-only Message Board and the repo→session map across ≥2 repositories | Real: board (coord-core append), fleet aggregator over 2 stores | Post/reply/acknowledge; switch repositories; see quarantine of injected content | 5 |
-| **4 — Advisory grader + calibration + leaderboard + standing** | Qualitative dimensions and a leaderboard appear once the grader passes the ADR-0019 gates; agents receive per-turn standing | Real: local grader, calibration harness, leaderboard, standing composer, credential-backed egress path (opt-in). Requires S2/S3 spikes green | Run the calibration harness; see an unqualified dimension excluded; open the leaderboard; read a standing | 5 |
+| **4 — Advisory grader + calibration + leaderboard + standing** | Qualitative dimensions and a leaderboard appear once the grader passes the ADR-0019 advisory-evaluator-calibration gates; agents receive per-turn standing | Real: local grader, calibration harness, leaderboard, standing composer, credential-backed egress path (opt-in). Requires S2/S3 spikes green | Run the calibration harness; see an unqualified dimension excluded; open the leaderboard; read a standing | 5 |
 | **5 — Daydream + governance surfaces** | Observation→candidate→human-gated promotion; Configuration + credentials + egress opt-in; Privacy & Capture; deletion/retraction | Real: Daydream loop, Configuration, credential store, deletion process | Promote a candidate through the gate; opt into an egress path and revoke it; delete captured data and read the receipt | — |
 
 **Phase 1 is the walking skeleton:** it touches every layer (identity → ingest → store → projection → UI → governance gate) and proves the composition and the deny-by-default posture before any scoring or model exists.
@@ -177,7 +177,7 @@ No spike results are fabricated: S1–S4 and the calibration claim are named pre
 
 ## 12. Residual architectural risk
 
-- **S3 (outbound denial)** is the highest architectural risk: the entire local-only guarantee rests on it. If process-level denial is not enforceable, the egress model must fall back to a stronger control (no network stack registered at all in v1) — recorded as the ADR-0018 fallback.
+- **S3 (outbound denial)** is the highest architectural risk: the entire local-only guarantee rests on it. If process-level denial is not enforceable, the egress model must fall back to a stronger control (no network stack registered at all in v1) — recorded as the ADR-0018 credential-backed-grading-egress fallback.
 - **Calibration may not reach QWK ≥0.75** for some task classes; those classes stay advisory/Not Scored rather than being force-ranked — an accepted degradation, not a defect.
 - **Cross-repo fleet consistency** is eventual; the UI must label a stale or paused repository rather than present it as current.
 - Full **threat model, privacy model, and native WPF/AT accessibility proof** remain next-phase conditions inherited from the spec gate.

@@ -22,7 +22,7 @@ summary: >-
   persist and it is not dismiss-only). The non-active mode's state is retained, never rebuilt.
 ---
 
-# ADR-0017: Full-window surfaces are a primary view mode (body-content swap)
+# ADR-0017 primary-view-mode: Full-window surfaces are a primary view mode (body-content swap)
 
 - **Status:** Proposed 2026-08-30. Raised for the full-window Knowledge Explorer
   (`spec-knowledge-explorer-mode`); the mechanism is a general one (any future full-window surface —
@@ -118,7 +118,7 @@ a **body-content swap** of the docking-host region — distinct from a dock pane
    content mocked) on the other. Proves the swap, the retain-not-rebuild invariant, and the rail
    selector end-to-end. Human-validatable (toggle in/out, workbench intact); test-validatable (no
    rebuild of a live surface across a switch).
-2. **Reader content by kind** — wire the reader to the node-content contract (ADR-0018): markdown/html
+2. **Reader content by kind** — wire the reader to the node-content contract (ADR-0018 node-content-reader-contract): markdown/html
    rendered, code in the read-only editor. Mocked seam from Phase 1 becomes the real Core query.
 3. **Keyboard cycle + responsive** — the canvas-trap↔reader focus routing and the narrow-viewport
    stacking (US-E8), each with its test.

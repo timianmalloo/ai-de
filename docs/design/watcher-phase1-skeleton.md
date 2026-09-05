@@ -30,7 +30,7 @@ summary: >-
 - **Tier:** T2 · **Phase:** 1 (walking skeleton) of the [Loomkeeper architecture](../architecture/loomkeeper.md) phasing plan
 - **Driving spec:** [`docs/specs/agentic-watcher-substrate.md`](../specs/agentic-watcher-substrate.md) (US-1, US-2, US-13, US-15 egress default)
 - **Author / date:** @timianmalloo · 2026-08-30
-- **Grounding traversal:** `architecture-loomkeeper` (implements) → ADR-0020/0017/0018 (depends-on) → `adr-0002-workspace-fact-store` (the `Facts/` + `Store/` idiom this reuses). Conforms to the existing `AiDe.Core` conventions: `sealed record` facts with a **grain comment**, **SHA256 content-addressed identity** for idempotent replay (the `EvidenceAssertion` pattern), `Nullable enable`, `TreatWarningsAsErrors=true`, xUnit in `AiDe.Core.Tests`.
+- **Grounding traversal:** `architecture-loomkeeper` (implements) → ADR-0020 trusted-registrar-harness-model-identity / ADR-0017 watcher-observation-projection / ADR-0018 credential-backed-grading-egress (depends-on) → `adr-0002-workspace-fact-store` (the `Facts/` + `Store/` idiom this reuses). Conforms to the existing `AiDe.Core` conventions: `sealed record` facts with a **grain comment**, **SHA256 content-addressed identity** for idempotent replay (the `EvidenceAssertion` pattern), `Nullable enable`, `TreatWarningsAsErrors=true`, xUnit in `AiDe.Core.Tests`.
 
 ## 1. Responsibility and boundary
 
@@ -52,7 +52,7 @@ One responsibility: **turn raw session events into a trustworthy, deterministic 
 | **ObservedSpan** | One span belongs to exactly one trace and session, is immutable, and is **idempotent under duplicate delivery** (content-addressed id). |
 | **EgressPolicy** | Every egress path is **denied until an explicit opt-in enables it** (default `Blocked`). |
 
-**Durable representation (ADR-0017, reusing ADR-0002):** dimensions + append-only facts.
+**Durable representation (ADR-0017 watcher-observation-projection, reusing ADR-0002):** dimensions + append-only facts.
 - **Dimensions (value objects):** `RepositoryIdentity`, `WorktreeIdentity`, `TerminalIdentity`, `AgentIdentity`, `HarnessIdentity`, `ModelIdentity`, `SessionGeneration` — all `sealed record` value objects compared by value.
 - **Fact:** `ObservedSpan`. **Grain:** *one row is exactly one observed operation emitted by one authenticated session generation, identified by its source span identity, recorded at ingest.* **Additivity:** span **count** is additive within an episode; **current live sessions** is a semi-additive point-in-time measure, never summed across time. **History:** the Phase-1 facts are immutable append-only; no SCD attribute here (policy Type-2 history is Phase 5).
 - **Derive-don't-store (DM7, ADR-0001):** `LivenessState` is **computed** from the latest heartbeat and the monotonic clock — never stored. There is no stored "is-alive" flag.

@@ -26,7 +26,7 @@ summary: >-
 
 *interface* — `AdvisoryEvaluators.cs`
 
-A presence-only check that a credential exists for a would-egress evaluator (ADR-0018). It never
+A presence-only check that a credential exists for a would-egress evaluator (ADR-0018 credential-backed-grading-egress). It never
 exposes the secret itself - the watcher store holds non-secret facts only (architecture §4), so the
 gate authorises on **presence**, and the secret is resolved elsewhere, at the call, by the
 credential-backed transport. Absent by default.
@@ -53,7 +53,7 @@ premature=false; reuse=high"`) and maps it to a 0-4 rubric by fixed rules - neve
 absent token scores conservatively (low), never optimistically.
 
 **Remarks.** Because it is deterministic, its `EvaluatorStability` trivially passes (every repeat
-is identical), but it still only folds into Weave points after the ADR-0019 calibration gates qualify
+is identical), but it still only folds into Weave points after the ADR-0019 advisory-evaluator-calibration calibration gates qualify
 its `(version, taskClass, schemaVersion)` in the registry (slice 7) - the local heuristic is a
 transparent proxy an operator can inspect, not a licence to score advisory dimensions unbounded.
 
@@ -72,7 +72,7 @@ dimension is the deterministic scorer's job, never an evaluator's (spec rule 8).
 
 *class* — `AdvisoryEvaluators.cs`
 
-The **egress + credential guard** (ADR-0018) around any advisory evaluator that would call out to a
+The **egress + credential guard** (ADR-0018 credential-backed-grading-egress) around any advisory evaluator that would call out to a
 model over the network. Before delegating it enforces, in order: the `EgressGate` has an
 explicit per-path opt-in for this evaluator's path (else `EgressDenied`,
 LK-0003 - default-deny), and a credential is present (else `InvalidBinding`,
@@ -88,7 +88,7 @@ the `LocalHeuristicAdvisoryEvaluator` needs no guard because it never egresses.
 
 *class* — `AdvisoryScoring.cs`
 
-Quadratic Weighted Kappa - the human-agreement gate (spec rule 9b, ADR-0019). Measures agreement
+Quadratic Weighted Kappa - the human-agreement gate (spec rule 9b, ADR-0019 advisory-evaluator-calibration). Measures agreement
 between two 0..K-1 rating vectors, correcting for chance and penalising disagreement by the squared
 band distance. 1 is perfect agreement; 0 is chance; negative is worse than chance.
 
@@ -114,13 +114,13 @@ more than one band.
 
 *record* — `AdvisoryScoring.cs`
 
-The outcome of the ADR-0019 calibration gates for one advisory evaluator version.
+The outcome of the ADR-0019 advisory-evaluator-calibration calibration gates for one advisory evaluator version.
 
 ## `AdvisoryCalibration`
 
 *class* — `AdvisoryScoring.cs`
 
-The advisory-evaluator calibration gates (spec rules 9, 14; ADR-0019). An evaluator version qualifies
+The advisory-evaluator calibration gates (spec rules 9, 14; ADR-0019 advisory-evaluator-calibration). An evaluator version qualifies
 to contribute score points only when ALL hold: (a) it is stable across repeats; (b) its agreement
 with human labels reaches QWK >= 0.75; and (c) the anti-Goodhart counter-metrics (held-out outcome
 integrity, regression rate, rework, dispute overturns) did not worsen - otherwise it is rejected as
@@ -154,7 +154,7 @@ One advisory (model-judge) assessment of a dimension. Carries its evaluator vers
 *interface* — `AdvisoryScoring.cs`
 
 The model-judge seam (spec rule 8). A real implementation grounds on quarantined evidence and runs a
-local model behind the credential/egress policy (ADR-0018, Phase 4/5); slice 7 depends only on the
+local model behind the credential/egress policy (ADR-0018 credential-backed-grading-egress, Phase 4/5); slice 7 depends only on the
 interface, so the deterministic gate + fold are fully testable without a model.
 
 ## `AdvisoryWeaveScorer`
@@ -463,7 +463,7 @@ Newline-separated repository-relative paths to the evidence for this episode.
 It names files; the product goes and looks. An agent cannot make a path exist by
 asserting it harder, which is what keeps this observation rather than testimony — and it
 is why `episode.acceptance_met` is deliberately absent and will stay absent.
-ADR-0019's anti-Goodhart concern is about accepting a verdict, not a pointer.
+ADR-0019 advisory-evaluator-calibration's anti-Goodhart concern is about accepting a verdict, not a pointer.
 
 
 
@@ -1310,7 +1310,7 @@ about an agent when the true statement was about a missing channel. This is the 
 **The agent names a file; the product checks whether the file is there.** That is what
 keeps this observation rather than testimony, and it is why an `episode.acceptance_met`
 attribute stays refused while this one is admitted: an agent cannot make a path exist by
-asserting it harder. ADR-0019's anti-Goodhart concern is about accepting a claim; this accepts a
+asserting it harder. ADR-0019 advisory-evaluator-calibration's anti-Goodhart concern is about accepting a claim; this accepts a
 pointer and then goes and looks.
 
 
@@ -1430,7 +1430,7 @@ never hand-builds a dispute id or reaches past the store's append-only contract.
 The cloud-judge scaffold: an `IAdvisoryEvaluator` that delegates the actual 0-4 rubric to
 an injected model call. A real integration supplies the delegate (a call to a provider, grounded on
 the quarantined evidence, returning a rubric), and this evaluator is placed **inside** an
-`EgressGuardedAdvisoryEvaluator` so the network call only happens after the ADR-0018
+`EgressGuardedAdvisoryEvaluator` so the network call only happens after the ADR-0018 credential-backed-grading-egress
 egress opt-in and credential check pass. It exists so the seam is concrete and testable without a
 provider: the deterministic parts (guarding, folding, calibration) are proven around it, and the one
 undetermined piece - the model call - is a single injected function.
@@ -1505,7 +1505,7 @@ Whether an egress path may be used.
 
 *class* — `EgressGate.cs`
 
-The default-deny egress gateway (ADR-0018, extends ADR-0011). Outbound is blocked until an explicit
+The default-deny egress gateway (ADR-0018 credential-backed-grading-egress, extends ADR-0011). Outbound is blocked until an explicit
 per-path opt-in enables exactly that path; every other path stays blocked. The gate ships in Phase 1,
 before any component that could egress, so the local-only default is enforced from the start.
 
@@ -2010,7 +2010,7 @@ The production clock, backed by the high-resolution monotonic `Stopwatch`.
 
 The observation fact grain: one row is exactly one observed operation emitted by one authenticated
 session generation, identified by its source span identity, recorded at ingest. Immutable and
-append-only (ADR-0017). Phase 1 carries operation metadata only - no prompt/code/transcript
+append-only (ADR-0017 watcher-observation-projection). Phase 1 carries operation metadata only - no prompt/code/transcript
 content (that is Phase 5, behind the governance gate).
 
 | Member | Summary |
@@ -2062,7 +2062,7 @@ Maps harness telemetry into the watcher domain. Pure, deterministic, stateless.
 Pattern: Anti-Corruption Layer + Adapter (DDD) - it is the one seam that keeps the preview
 OTel/GenAI vocabulary out of the domain, so upstream schema churn changes only this type and its
 regression test. It treats a span's `session.id` as a claim, never authority: the wire binds
-spans to the capability issued at registration (ADR-0020), so the mapper mints no trust.
+spans to the capability issued at registration (ADR-0020 trusted-registrar-harness-model-identity), so the mapper mints no trust.
 
 | Member | Summary |
 |---|---|
@@ -2417,7 +2417,7 @@ Turns a closed Work Episode + its deterministic signals into a persisted `Scored
 so a scored episode appears on the Leaderboard/Standing surfaces (US-14/US-16). It scores the four
 deterministic dimensions always, and folds the two advisory dimensions ONLY when the supplied
 evaluator's `(version, taskClass, schemaVersion)` has qualified in the calibration registry
-(ADR-0019, rule 8) - otherwise they stay excluded exactly as the deterministic scorer left them.
+(ADR-0019 advisory-evaluator-calibration, rule 8) - otherwise they stay excluded exactly as the deterministic scorer left them.
 
 **Remarks.** Advisory evaluation grounds on `EvidenceComposer`'s token string. Where no evaluator
 is supplied (the safe default), only the deterministic Weave is recorded - which is enough to populate
@@ -2451,7 +2451,7 @@ The unforgeable per-session secret. A process must present the matching capabili
 deny a timing side-channel.
 
 Pattern: Capability-based security. The capability is the authority; possessing the session id is
-not (ADR-0007 / ADR-0020 - terminal output is forgeable).
+not (ADR-0007 / ADR-0020 trusted-registrar-harness-model-identity - terminal output is forgeable).
 
 | Member | Summary |
 |---|---|
@@ -2525,7 +2525,7 @@ The outcome of attempting to ingest one span.
 *class* — `SpanIngest.cs`
 
 Ingests observed spans, verifying the session capability first (so a forged session cannot write
-facts) and then appending idempotently by content-addressed id (ADR-0006 / ADR-0017).
+facts) and then appending idempotently by content-addressed id (ADR-0006 / ADR-0017 watcher-observation-projection).
 
 | Member | Summary |
 |---|---|
@@ -2629,7 +2629,7 @@ handed the directory, and the ingest proves the path works.
 
 
 **It is still a pull.** Nothing is injected into the agent's context — the file sits
-there and the agent chooses to read it. That distinction is what ADR-0019's anti-Goodhart section
+there and the agent chooses to read it. That distinction is what ADR-0019 advisory-evaluator-calibration's anti-Goodhart section
 turns on: an agent shown its score every turn regardless is a different decision from one that
 asks.
 
@@ -2702,7 +2702,7 @@ this afternoon; this is the same id reaching the same filesystem by a different 
 
 *interface* — `TrustedRegistrar.cs`
 
-Binds session identity and issues a per-session capability verified on every event (ADR-0020,
+Binds session identity and issues a per-session capability verified on every event (ADR-0020 trusted-registrar-harness-model-identity,
 extends ADR-0007). Capabilities are held in-process and are never persisted to the observation
 store, so the secret never reaches the durable facts.
 
@@ -3083,7 +3083,7 @@ One dimension's weight and posture within a versioned score schema.
 A versioned score schema (spec rule 1/13; A6 - a change is a gated contract change). `weave/1`
 pins the four deterministic dimensions (Outcome 30 · Focus 15 · Guidance 15 · Coordination 10 =
 observed weight 70) and the two advisory ones (Evidence 15 · Economy 15 = 30), which are excluded
-from points until the grader passes its calibration gates (ADR-0019, slice 7).
+from points until the grader passes its calibration gates (ADR-0019 advisory-evaluator-calibration, slice 7).
 
 | Member | Summary |
 |---|---|
@@ -3193,7 +3193,7 @@ turn's goal-state, not a parallel structure.
 
 The Work Episode lifecycle. Only the authenticated session may open, reframe, or close *its*
 episodes - every call presents the session capability and is verified (LK-0001 forgery on mismatch,
-ADR-0020). Times use the wall-clock `TimeProvider` - the same base as span
+ADR-0020 trusted-registrar-harness-model-identity). Times use the wall-clock `TimeProvider` - the same base as span
 `RecordedAt` - because an episode binds *recorded* activity, not a *live* condition.
 
 ## `WorkEpisodeService`

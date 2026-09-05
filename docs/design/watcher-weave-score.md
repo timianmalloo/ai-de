@@ -27,7 +27,7 @@ summary: >-
 # Design: Loomkeeper Deterministic Weave
 
 - **Status:** Accepted · **Tier:** T2 · **Phase:** 2, slice 5 · **Refines:** [`design-watcher-work-episode`](watcher-work-episode.md) (scores a *closed* episode).
-- **Grounding:** spec §"Weave Score" (the six-dimension table + scoring rules 1-14). The **advisory** dimensions are gated by ADR-0019 (calibration + QWK) and are **out of slice 5** — they enter points only after slice 7's grader passes both gates (rule 9). Slice 5 is the **deterministic** Weave: the countable signals, the hard floors, the coverage, and the honest verdicts.
+- **Grounding:** spec §"Weave Score" (the six-dimension table + scoring rules 1-14). The **advisory** dimensions are gated by ADR-0019 advisory-evaluator-calibration (calibration + QWK) and are **out of slice 5** — they enter points only after slice 7's grader passes both gates (rule 9). Slice 5 is the **deterministic** Weave: the countable signals, the hard floors, the coverage, and the honest verdicts.
 
 ## 1. Responsibility and boundary
 
@@ -123,7 +123,7 @@ Pure function over an explicit signals record — **no store change, no dependen
 
 - **Signal collection** — populating `DeterministicEpisodeSignals` from the observation store, coordination log, and CI/verification ingest — is the connective follow-on; slice 5 ships the pure engine both a real collector and a test drive.
 - **Scorecard persistence** (append-only fact; dispute-superseding, rule 12) — a store follow-on.
-- **The advisory grader + calibration + QWK gates + leaderboard + standing** — slice 7 (ADR-0019).
+- **The advisory grader + calibration + QWK gates + leaderboard + standing** — slice 7 (ADR-0019 advisory-evaluator-calibration).
 
 ## 11. Gate record
 
