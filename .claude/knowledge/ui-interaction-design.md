@@ -14,6 +14,35 @@ The governing idea, synthesized from the research below: **great UI is not decor
 
 ---
 
+## Rule index — read this first; open a section only when a rule applies
+
+*This doc loads on demand (`load: glob`). The index is the contract in one screen: cite a rule by id, and open its section below only when a finding needs the rule's full text. A profiled session read four of these docs whole (~200 KB) to author one mockup — the index is the fix (class CTX-E).*
+
+| Rule | In one line |
+|---|---|
+| **U1** | UI trigger |
+| **U2** | Medium declaration |
+| **U3** | Token-based, no arbitrary values |
+| **U3a** | Serialize the token system as a DESIGN.md (the design-language doc) |
+| **U4** | Context as modes |
+| **U5** | A real type and color system |
+| **U6** | Hierarchy and focal point |
+| **U7** | Space and essentialism |
+| **U8** | Guidance and flow |
+| **U9** | Feedback and state completeness |
+| **U10** | Motion with intent |
+| **U11** | Content-first and real words |
+| **U12** | Familiar, then novel (Jakob's Law) |
+| **U13** | HAX baseline |
+| **U14** | Pattern-language fluency (Shape of AI) |
+| **U15** | Probabilistic by design |
+| **U15a** | Cost & commercial transparency (when the AI has a per-use cost) |
+| **U16** | Accessibility is a floor, not a feature |
+| **U17** | Performance is part of the design |
+| **U18** | Specify: name the UI bar |
+| **U19** | Design: specify the interface, not just the system |
+| **U20** | Implement: build it to the system, prove the states |
+
 ## 0. Research synthesis (why these rules)
 
 **The craft baseline (the "Elegance Formula" and the canon of UI rules).** Durable, repeatedly-cited principles: establish a **clear visual hierarchy** through size, weight, color, and spacing so the eye lands on the most important thing first; use **negative space** deliberately — clutter obscures the message; apply a **grid** and a typographic **scale** rather than ad-hoc values; the **60-30-10** color balance (dominant / secondary / accent) and *sufficient contrast* as a hard floor; **typography carries personality** — pair a display and a body face deliberately, limit variations, tune line-height and measure; **progressive disclosure** and *breaking large tasks into steps* to manage cognitive load ("don't make users think"); **immediate feedback** for every action; **consistency** via a design system and standardized templates so behavior is predictable; **micro-interactions and motion** that enhance rather than distract (over-animation reads as un-crafted, often as AI-generated); content-first — *let the content lead, not the chrome*. Novelty is valuable but **balanced with familiarity** (Jakob's Law: users spend most of their time on *other* products, so honor established patterns unless there is a strong reason to deviate).

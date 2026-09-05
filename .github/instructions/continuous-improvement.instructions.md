@@ -143,6 +143,20 @@ A new repo adopting this pack **SHOULD** seed `docs/lessons/defect-classes.md` w
 
 ---
 
+### 6.1 Context, ceremony and coordination classes (seeded from session profiling)
+
+These seven were measured on **one** profiled codebase's Copilot CLI session (`session-profile.py`, 2026-09-05), not two — they are seeded because the controls are generic to the pack, not because the classes met the two-codebase bar above. Each is `partially-controlled` in the source repo and `uncontrolled` in a fresh one until the profiler has re-flagged it there.
+
+| ID | Class | Signature | Why it survives | Control to build |
+|---|---|---|---|---|
+| **CTX-A** | **Several tasks in one session re-read on every request** | Context grows monotonically across unrelated tasks; no compaction fires | Nothing errors; the permissive tier looks like generosity | WT1a (new task → new session); `pack-doctor` `copilot settings`; profiler SP-01 |
+| **CTX-B** | **Budget gate measured its own part, reported the whole green** | Knowledge-only budget ~44k while the assembled prefix was ~105k+; a scope-less vendored copy reported 461 | The gate is honest about what it scans; nobody asks the fraction | `context-budget.py prefix --gate`; scope-declaring discovery; `CLAUDE.md` = `@AGENTS.md` |
+| **CTX-C** | **Council convened on a turn with no declared tier** | Goal state without `Tier:`/`Fan-out cap:`; nine sub-agents on a proposal iteration | Proportionality was prose; goal presence was checkable, tier was not | CT19 tier + cap fields; `audit-log.py --tier --fan-out`; `selfcheck`; profiler SP-06 |
+| **CTX-D** | **Same file read again while still in context** | A file viewed 4× in three minutes; a paged output viewed whole twice | A read never fails; "check first" is prose | `reread-guard.py` hook on both hosts; profiler SP-04 |
+| **CTX-E** | **Knowledge at hand re-fetched whole** | A 30 KB skill re-injected six times; four craft docs read whole for one mockup | A skill has no size budget; glob docs attach late | Progressive-disclosure skills; `context-budget.py skills --gate`; rule indexes; profiler SP-05/SP-16 |
+| **CTX-F** | **Delegation with no budget and no convergence predicate** | 123 tool calls / 3.0M tokens; the parent had to say "converge now" twice | GO7 bounded width, not depth; "enough evidence" was undefined | GO7 per-branch budget + convergence condition; card budget rule; profiler SP-07 |
+| **CTX-G** | **Persona reads the roster to find out what it is** | ~170 KB of roster docs per sub-agent spawn | The card pointed there; the cost hides inside the sub-agent | Self-sufficient cards with a do-not-read list; profiler SP-08 |
+
 ## 7. Self-verification checklist
 
 - [ ] Every defect, correction and falsified assumption from this work produced a **register entry** in the same change (CI1, CI4).

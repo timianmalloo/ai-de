@@ -23,11 +23,22 @@ WHAT IS CHECKED. For each harness root that EXISTS, the file must reach the capt
 the attribute and the channel. A declared harness with no root yet is reported as PENDING rather than
 failed — inventing GEMINI.md before Gemini CLI is used would be a file nobody maintains, and the gate
 catches it the moment the file appears without the instruction, which is when it matters.
+
+REACHES, NOT CONTAINS. A root may carry the instruction through an `@relative/path` import line
+rather than in its own bytes — which is what CLAUDE.md does from pack revision 60 (CTX-B): it is
+`@AGENTS.md` plus a short Claude-specific addendum, because Copilot CLI loads both files and a
+duplicated block is paid twice on every request. Claude Code expands that import at launch, so the
+agent IS told. Following one level of import keeps the gate asserting what it always meant — the
+harness is told — instead of a byte-level invariant the pack has since retired. It is not a
+loophole: a root with neither the text nor a resolving import still fails, and an import pointing at
+a file that does not exist is itself reported, because an import that resolves to nothing carries no
+instruction however convincingly it reads.
 """
 
 from __future__ import annotations
 
 import argparse
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -47,6 +58,34 @@ HARNESS_ROOTS = {
 # markers rather than one, because a file can mention the channel while saying nothing about
 # evidence — the channel predates capture and every harness root could plausibly cite it.
 REQUIRED_MARKERS = ("episode.artifacts", "AIDE_CONTRACT_LOG")
+
+# Claude Code's import syntax: a line that is nothing but `@` and a repo-relative path. Matched
+# strictly (whole line) so an `@mention` in prose is never mistaken for an instruction source.
+IMPORT_LINE = re.compile(r"^@(\S+)[ \t]*$", re.MULTILINE)
+
+
+def reachable_text(root: Path, path: Path) -> tuple[str, list[str]]:
+    """The text an agent reading `path` is actually told: the file, plus what it imports.
+
+    One level deep, which is the depth the harnesses expand and the depth the front doors use;
+    deeper nesting would need cycle handling for a case this repository does not have. Returns
+    (text, imports that did not resolve).
+    """
+    text = path.read_text(encoding="utf-8", errors="replace")
+    dangling: list[str] = []
+    parts = [text]
+
+    for target in IMPORT_LINE.findall(text):
+        imported = (root / target).resolve()
+
+        # Confine resolution to the repository: an import escaping it is not a root we govern.
+        if not imported.is_file() or root.resolve() not in imported.parents:
+            dangling.append(target)
+            continue
+
+        parts.append(imported.read_text(encoding="utf-8", errors="replace"))
+
+    return ("\n".join(parts), dangling)
 
 
 def repo_root() -> Path:
@@ -74,15 +113,23 @@ def check(root: Path, roots: dict[str, str] | None = None) -> tuple[list[str], i
             continue
 
         checked += 1
-        text = path.read_text(encoding="utf-8", errors="replace")
+        text, dangling = reachable_text(root, path)
+
+        for target in dangling:
+            problems.append(
+                f"{relative} is {harness}'s instruction root and imports `@{target}`, which does "
+                "not resolve to a file inside this repository. An import that resolves to nothing "
+                "carries no instruction, however it reads.")
+
         missing = [m for m in REQUIRED_MARKERS if m not in text]
 
         if missing:
             problems.append(
-                f"{relative} is {harness}'s instruction root and does not carry the Proof Pack "
-                f"capture instruction (missing: {', '.join(missing)}). An agent reading only this "
-                "file will close every episode without naming its evidence, and score Not Scored "
-                "forever — which is what 111 episodes and 1 observation looked like.")
+                f"{relative} is {harness}'s instruction root and does not reach the Proof Pack "
+                f"capture instruction, in its own text or through an `@` import (missing: "
+                f"{', '.join(missing)}). An agent reading only this file will close every episode "
+                "without naming its evidence, and score Not Scored forever — which is what 111 "
+                "episodes and 1 observation looked like.")
 
     if checked == 0:
         problems.append(
@@ -93,10 +140,23 @@ def check(root: Path, roots: dict[str, str] | None = None) -> tuple[list[str], i
 
 
 def self_test(root: Path) -> int:
-    """Prove both directions fire: a root missing the instruction, and an examined-nothing run."""
-    silent = root / "docs" / "ai-forward-pack" / "_selftest_harness_root.md"
-    silent.parent.mkdir(parents=True, exist_ok=True)
+    """Prove every direction fires — including that following an import is not a loophole."""
+    scratch = root / "docs" / "ai-forward-pack"
+    scratch.mkdir(parents=True, exist_ok=True)
+
+    silent = scratch / "_selftest_harness_root.md"
+    importer = scratch / "_selftest_importing_root.md"
+    imported = scratch / "_selftest_imported.md"
+    broken = scratch / "_selftest_broken_import.md"
+
     silent.write_text("# A harness root that never mentions capture\n", encoding="utf-8")
+    imported.write_text(
+        "Write `episode.artifacts` on episode-close to $AIDE_CONTRACT_LOG.\n", encoding="utf-8")
+    importer.write_text(
+        f"# A harness root that imports the instruction\n\n@{imported.relative_to(root).as_posix()}\n",
+        encoding="utf-8")
+    broken.write_text("# A harness root importing nothing that exists\n\n@NO_SUCH_FILE.md\n",
+                      encoding="utf-8")
 
     try:
         relative = silent.relative_to(root).as_posix()
@@ -112,10 +172,30 @@ def self_test(root: Path) -> int:
         if not any("examining nothing" in problem for problem in problems):
             print("self-test FAILED: a run with no existing root reported success", file=sys.stderr)
             return 1
-    finally:
-        silent.unlink(missing_ok=True)
 
-    print("self-test OK — a root missing the instruction is reported, and an empty run refuses")
+        # REACHES, NOT CONTAINS: the instruction arriving through an import is the CLAUDE.md shape.
+        problems, _, _ = check(
+            root, roots={"Importing harness": importer.relative_to(root).as_posix()})
+
+        if problems:
+            print("self-test FAILED: a root reaching the instruction through an import was "
+                  f"reported anyway: {problems}", file=sys.stderr)
+            return 1
+
+        # ...and the loophole is closed: an import that resolves to nothing carries no instruction.
+        problems, _, _ = check(
+            root, roots={"Broken-import harness": broken.relative_to(root).as_posix()})
+
+        if not any("does not resolve" in problem for problem in problems):
+            print("self-test FAILED: an import pointing at a missing file was not reported",
+                  file=sys.stderr)
+            return 1
+    finally:
+        for scratch_file in (silent, importer, imported, broken):
+            scratch_file.unlink(missing_ok=True)
+
+    print("self-test OK — a root missing the instruction is reported, an import that reaches it "
+          "passes, a dangling import is reported, and an empty run refuses")
     return 0
 
 

@@ -1,5 +1,6 @@
 ---
-applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+load: skill
+skills: [ui-design, design-slice, implement]
 ---
 # UI Craft Detection — the deterministic control beneath the craft
 
@@ -12,6 +13,33 @@ The governing idea comes straight from this pack's own continuous-improvement do
 The proof is uncomfortable and therefore worth stating first: run against **this pack's own `mockup-harness.template.html`**, the detector found three real defects — two `side-tab` accent borders (*"the most recognizable tell of AI-generated UIs"*, which DX3 names in prose) and one `layout-transition` animating `max-width` (which U17/DX20 forbid in prose). The pack had documented all three rules and shipped a template that violated them. That is exactly the failure mode CI6 exists to prevent, and it is the whole argument for adopting a control.
 
 ---
+
+## Rule index — read this first; open a section only when a rule applies
+
+*This doc loads on demand (`load: skill`). The index is the contract in one screen: cite a rule by id, and open its section below only when a finding needs the rule's full text. A profiled session read four of these docs whole (~200 KB) to author one mockup — the index is the fix (class CTX-E).*
+
+| Rule | In one line |
+|---|---|
+| **CD1** | Know what was adopted, and on what evidence |
+| **CD2** | Flagged: the version surfaces disagree |
+| **CD3** | Adopt the detector; the rest is optional |
+| **CD4** | The pack's design language is the detector's token source |
+| **CD5** | The two linters are complementary and both run |
+| **CD6** | Every rule has an owning pack directive; the detector is enforcement, not new doctrine |
+| **CD7** | A rule the pack does not already hold is a candidate doctrine change, not a silent import |
+| **CD8** | Four placements, each with a different job |
+| **CD9** | Verify the gate executes; a green pipeline is not evidence |
+| **CD10** | The hook is optional and is not the gate |
+| **CD11** | Translate, don't append |
+| **CD12** | Severity floors: accessibility outranks the tool's own opinion |
+| **CD13** | A detector finding is Verified; a detector silence is not |
+| **CD14** | A clean run is a floor, never a verdict |
+| **CD15** | Never optimize for the detector |
+| **CD16** | Suppression is a deviation and is recorded as one |
+| **CD17** | The dependency was justified before it was adopted |
+| **CD18** | Attribution is a licence obligation, not a courtesy |
+| **CD19** | Scanning a file stays local; scanning a URL does not |
+| **CD20** | A client-rendered surface is invisible to static scanning, and that silence reads as a pass |
 
 ## 0. When this applies
 

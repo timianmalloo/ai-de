@@ -4,5 +4,31 @@
       "Bash(git push:*)"
     ],
     "deny": []
-  }
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python docs/ai-forward-pack/hooks/reread-guard.py --host claude",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python docs/ai-forward-pack/hooks/reread-guard.py --host claude",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "showThinkingSummaries": true
 }

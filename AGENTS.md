@@ -5,6 +5,8 @@ Project conventions live here. The AI-Forward Pack's reasoning stack is wired in
 <!-- AI-FORWARD-PACK:BEGIN (managed block — keep this block intact when reconciling; replace it wholesale on pack updates) -->
 ## AI-Forward Pack + Agent Knowledge Pack
 
+*Knowledge docs are cited below by their Copilot path (`.github/instructions/<name>.instructions.md`). In Claude Code the same document is `.claude/knowledge/<name>.md` — `CLAUDE.md` is `@AGENTS.md` plus a short addendum that says so (INSTALL 1.1).*
+
 This repository uses the **Agent Knowledge Pack** and the **AI-Forward Pack**. Honor them on
 every non-trivial task.
 
@@ -75,7 +77,7 @@ every non-trivial task.
   defect class **HYG-A**.
 - **Start with the goal, then plan the turn — the two-step front matter (universal):** every
   non-trivial turn opens, **before the first substantive tool call**, by writing the **goal state**
-  — **Goal · Done when · Not in scope** — the preventive mirror of the *Completed / Remaining /
+  — **Goal · Done when · Not in scope · Tier · Fan-out cap** — the preventive mirror of the *Completed / Remaining /
   Next* close; then it plans the whole turn with **`/optimize-graph` once across all tasks**, whose
   Stage-0 triage means a closed question **skips planning, answers, and stops** (a multi-task turn
   gets the bounded graph). **Autonomy is latitude in the *how*, never the *what*** — a question is
@@ -86,14 +88,17 @@ every non-trivial task.
   not a termination argument** (GO9): re-read the goal state — if met, conclude. Tells: *"so I can
   wire it in" · "let me look at the structure" · a closed question whose answer is in hand while the
   turn continues · resuming after a stop because a reminder arrived · being unable to say in one line
-  what would end this turn.* A **substantive** turn (one that changed the repo or the plan) records
+  what would end this turn · a council, a research agent or a verification run on a turn that declared
+  no tier · re-invoking a skill already active in this turn · re-reading a file already in context.* A
+  **substantive** turn (one that changed the repo or the plan) records
   its goal-state in the audit log — full prompt, `goal`, `done_when` (AL5b) — the presence signal
   `/dream`'s PACK-O miner reads.
   `.github/instructions/communication-and-task-discipline.instructions.md` (CT19–CT25); defect
   class PACK-O.
 - **How you write, and how much you take on:** **compress the expression, never the obligation.**
   Simplified technical English — short sentences, common words, active voice, one idea per sentence,
-  **result first**. No monologue, no self-encouragement, no rhetorical transitions, and never announce
+  **result first**. Every shell call carries a one-line intent — the only reasoning trace a profiler can read
+  (CT26). No monologue, no self-encouragement, no rhetorical transitions, and never announce
   a step and then take it; an interim update earns its place only by carrying a verified result, a real
   blocker, a decision, or the next action. But **concision never drops a confidence label, a citation,
   an assumption, a residual risk, or a correction** — and the response channel is compressed while a
@@ -138,10 +143,10 @@ every non-trivial task.
 - **Personas (dual-mode):** author in Peer Mode, review in Adversary Mode; the author never
   clears its own hard veto. Agents in `.github/agents/`; the operating standard in the
   `persona-audit` / `persona-cards` instructions.
-- **Workflows (24):** the prompts in `.github/prompts/` — twenty reasoning workflows
+- **Workflows (25):** the prompts in `.github/prompts/` — twenty-one reasoning workflows
   (`collectknowledge`, `adddomainexperts`, `specify`, `define-architecture`, `design-slice`, `ui-design`,
   `visualize`, `implement`, `investigate`, `document`, `adopt`, `forensicreview`, `code-hygiene`, `migrate`,
-  `updatepack`, `addpacktorepo`, `extendaibundle`, `optimize-graph`, `dream`, `apply-learnings`),
+  `updatepack`, `addpacktorepo`, `extendaibundle`, `optimize-graph`, `dream`, `apply-learnings`, `session-profiler`),
   the `auditlog` lens over the audit & change log, the `also` turn-control utility, plus two prompt-log utilities, `prompts` and
   `searchprompts`. Templates: `docs/ai-forward-pack/templates/`.
 - **Prompt reuse (utility):** `/prompts` opens the audit log's prompts as an arrow-navigable stack
@@ -162,7 +167,7 @@ every non-trivial task.
   `.github/instructions/ui-interaction-design.instructions.md` (U1–U20); the UX & Accessibility
   lens holds the veto.
 - **UI archetype:** for a user-facing UI, select the **archetype** (routing/temporal/data) as a
-  determinism control before generating — `.github/instructions/ui-archetype-grammar.instructions.md` (G1–G16) + the
+  determinism control before generating — `.github/knowledge/ui-archetype-grammar.md` (G1–G16) + the
   archetype catalog; record the Archetype Signature in the spec, build to its facet rules, and
   verify it against the *shape of the task* even on an existing screen (reading is parallel;
   entering is serial).
@@ -172,7 +177,7 @@ every non-trivial task.
   viewport · state · theme · reduced motion), and a **rubric critique** (location · dimension ·
   severity · evidence · fix · confidence) run structure-before-surface, ending in a ranked plan.
   Measure before you diagnose, and self-check against the generic-AI-look tells.
-  `.github/instructions/ui-design-craft.instructions.md` (DX1–DX25).
+  `.github/knowledge/ui-design-craft.md` (DX1–DX25).
 - **UI craft detection (the control):** the craft floor is not only prose — the **deterministic,
   LLM-free 59-rule detector** (`ui-craft-gate.py`, wrapping Impeccable) reads your `DESIGN.md`
   natively and enforces *outward* against the built source what `design-lint.py` only checks
@@ -182,7 +187,7 @@ every non-trivial task.
   floors, and gate CI on it — **a lesson recorded as prose is a memoir** (CI6). A clean run is a
   **floor, never a verdict**: it cannot see archetype fit, IA, whether the hard states exist at
   all, or whether the copy is true.
-  `.github/instructions/ui-craft-detection.instructions.md` (CD1–CD20).
+  `.github/knowledge/ui-craft-detection.md` (CD1–CD20).
 - **Generated visual assets:** imagery, personas and motion a UI *contains* may be generated;
   the **interface itself may not** (image models render illegible text and invented controls).
   Direction in words first, then optionally a **visual world** that makes the brief concrete —
@@ -191,7 +196,7 @@ every non-trivial task.
   non-determinism in a deterministic artifact); every asset carries a manifest entry with its
   verbatim prompt, preset, cost, **alt text** and disclosure; never upload a real person's
   likeness or customer data.
-  `.github/instructions/ui-visual-assets.instructions.md` (VA1–VA22).
+  `.github/knowledge/ui-visual-assets.md` (VA1–VA22).
 - **Where to start on any UI job:** `docs/ui-guide.html` (also listed under **Knowledge
   surfaces** in the Docs Explorer) is the how-to layer over all of the above — the layer stack,
   a job-to-path picker, the `ui-design` stages, the command sheet, an archetype picker, the veto

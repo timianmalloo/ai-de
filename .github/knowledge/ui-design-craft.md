@@ -1,5 +1,6 @@
 ---
-applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+load: skill
+skills: [ui-design, design-slice, implement]
 ---
 # UI Design Craft — direction, prototyping & critique
 
@@ -10,6 +11,40 @@ Normative keywords (**MUST**, **SHOULD**, **MAY**, **MUST NOT**) follow RFC 2119
 The governing idea: **generic is the default output, and only process defeats it.** A model asked for "a clean dashboard" samples the mean of everything it has ever seen and returns the mean — the same card grid, the same violet-to-indigo gradient, the same three stat tiles, the same empty-state illustration. That is not a taste failure; it is a *process* failure. Human designers do not work in one pass either: they explore, they establish direction, they build a system, they critique, and only then do they produce. This document is that process, made explicit enough for an agent to run and for a reviewer to check.
 
 ---
+
+## Rule index — read this first; open a section only when a rule applies
+
+*This doc loads on demand (`load: skill`). The index is the contract in one screen: cite a rule by id, and open its section below only when a finding needs the rule's full text. A profiled session read four of these docs whole (~200 KB) to author one mockup — the index is the fix (class CTX-E).*
+
+| Rule | In one line |
+|---|---|
+| **DX1** | Separate creative direction from implementation; never do both in one pass |
+| **DX2** | Build the design system before the screens |
+| **DX3** | Know the tells, and design against them |
+| **DX4** | Anchor to named references, not adjectives |
+| **DX4a** | Native client references carry license posture |
+| **DX5** | Write a direction brief before any visual artifact exists |
+| **DX6** | Decide the personality in three moves, and justify each |
+| **DX7** | Climb the fidelity ladder; do not skip to production |
+| **DX8** | The high-fidelity mockup is a dependency-free, self-contained HTML file, committed to the repo |
+| **DX9** | The mockup renders the hard states, not the happy one |
+| **DX9a** | Native clients require runtime proof beyond the mockup |
+| **DX10** | Ship the mockup with a review harness |
+| **DX11** | Include an in-harness self-audit where it is mechanical |
+| **DX12** | Hierarchy through contrast of scale, not just weight |
+| **DX13** | Space is the primary grouping mechanism; borders are the last resort |
+| **DX14** | Restraint in color; earn every hue |
+| **DX15** | Optical over mathematical |
+| **DX16** | Real content, at its real extremes |
+| **DX17** | Density is calibrated to the audience, and density demands more hierarchy |
+| **DX18** | Give the surface one focal point and defend it |
+| **DX19** | Keep a motion inventory: few, purposeful, consistent |
+| **DX20** | Micro-interactions are where "polished" is actually decided |
+| **DX21** | Write the interface copy as part of the design, in the product's voice |
+| **DX22** | Critique against a rubric, not a reaction |
+| **DX23** | Measure before you diagnose |
+| **DX24** | Critique the structure before the surface |
+| **DX25** | A review ends with a ranked plan, not a list |
 
 ## 0. When this applies
 

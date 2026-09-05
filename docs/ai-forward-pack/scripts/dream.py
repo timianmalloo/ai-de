@@ -166,9 +166,36 @@ def load_corpus(root, days):
     mitig = recent(read_jsonl(os.path.join(root, "docs", "lessons", "mitigations.jsonl")))
     classes = parse_defect_classes(os.path.join(root, "docs", "lessons", "defect-classes.md"))
     markers = grep_markers(root)
+    profiles = load_profiles(root, cutoff)
     return {"audit": audit, "change": change, "mitigations": mitig, "classes": classes, "markers": markers,
+            "profiles": profiles,
             "counts": {"audit": len(audit), "change": len(change), "mitigations": len(mitig),
-                       "classes": len(classes), "markers": len(markers)}}
+                       "classes": len(classes), "markers": len(markers), "profiles": len(profiles)}}
+
+
+def load_profiles(root, cutoff):
+    """docs/profiles/<sp-id>/profile.json in the window - session-profile.py output (data, not graph)."""
+    out = []
+    base = os.path.join(root, "docs", "profiles")
+    if not os.path.isdir(base):
+        return out
+    for name in sorted(os.listdir(base)):
+        path = os.path.join(base, name, "profile.json")
+        if not os.path.isfile(path):
+            continue
+        try:
+            with open(path, encoding="utf-8") as fh:
+                pr = json.load(fh)
+        except (OSError, ValueError):
+            continue
+        ts = pr.get("generated") or ""
+        try:
+            dt = datetime.datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        except (ValueError, AttributeError):
+            dt = cutoff
+        if dt >= cutoff:
+            out.append(pr)
+    return out
 
 # ----------------------------------------------------------------------------- scoring (deep phase)
 def score(freq, distinct_days, has_control, recency=1.0):
@@ -293,6 +320,18 @@ def build_proposals(corpus):
         ev = [{"eid": e.get("id", "al-?"),
                "note": "{0} - no done_when recorded (front matter skipped)".format(e.get("shortname", "?"))}
               for e in missing[:8]]
+        # CTX-C: a goal-state with no tier is a turn with no ceremony budget; a fan-out past the
+        # declared cap is a council above tier unless a hard gate was named.
+        no_tier = [e for e in have if not e.get("tier")]
+        over_cap = [e for e in subst if e.get("fan_out") is not None
+                    and len(e.get("agent_runs") or []) > int(e.get("fan_out") or 0)]
+        ev += [{"eid": e.get("id", "al-?"),
+                "note": "{0} - goal-state without a tier (CT19 tier/fan-out cap, CTX-C)".format(e.get("shortname", "?"))}
+               for e in no_tier[:4]]
+        ev += [{"eid": e.get("id", "al-?"),
+                "note": "{0} - {1} agent runs vs declared fan-out cap {2} (council above tier?)".format(
+                    e.get("shortname", "?"), len(e.get("agent_runs") or []), e.get("fan_out"))}
+               for e in over_cap[:4]]
         # drift-review material: goal -> summary pairs a human can scan for scope drift
         for e in have[:4]:
             ev.append({"eid": e.get("id", "al-?"),
@@ -316,6 +355,40 @@ def build_proposals(corpus):
                 "boundary": ("Presence is mechanical; 'summary exceeds goal' is surfaced for human review, not "
                              "auto-judged. Trivial/conversational turns are exempt from logging (AL5b)."),
                 "_freq": max(1, len(missing)), "_days": min(max(len(missing), 1), 3), "_has_control": True})
+
+    # 6. Session profiles (docs/profiles/*/profile.json, written by session-profile.py): each
+    #    finding id that recurs across profiles becomes a control-upgrade proposal carrying the
+    #    fix catalog's control. Deterministic; the profiles are data the profiler measured, and
+    #    every note passes the scrub so a prompt fragment cannot carry a secret into the dream.
+    prof = corpus.get("profiles") or []
+    by_id = {}
+    for pr in prof:
+        for f in pr.get("findings") or []:
+            fid = f.get("id")
+            if not fid:
+                continue
+            slot = by_id.setdefault(fid, {"title": f.get("title", fid), "severity": f.get("severity", "Minor"),
+                                          "fixes": f.get("fixes") or [], "evidence": [], "profiles": set()})
+            slot["profiles"].add(pr.get("id", "?"))
+            for e in (f.get("evidence") or [])[:2]:
+                note = scrub(str(e.get("note", "")))
+                if isinstance(note, tuple):  # (text, tainted) - a tainted note is EXCLUDED, not down-scored (AL4)
+                    if note[1]:
+                        continue
+                    note = note[0]
+                slot["evidence"].append({"eid": "{0}/{1}".format(pr.get("id", "?"), fid), "note": str(note)[:160]})
+    for fid, slot in sorted(by_id.items()):
+        fixes = ", ".join(slot["fixes"]) or "see the fix catalog (session-profile.py fixes)"
+        proposals.append({
+            "kind": "Control upgrade", "group": "Control upgrade",
+            "title": "{0}: {1} (seen in {2} profile(s))".format(fid, slot["title"], len(slot["profiles"])),
+            "sig": "session-profile {0}".format(fid), "scope": "general", "confidence": "v", "source": "deterministic",
+            "evidence": slot["evidence"][:8],
+            "control": {"rung": "automated control",
+                        "text": "Apply pack fix(es) {0}; the profiler re-flags {1} on recurrence.".format(fixes, fid),
+                        "loc": "docs/profiles/ (session-profile.py)"},
+            "boundary": "Measured from harness telemetry; heuristics (regex over text) are labelled Inferred in the profile.",
+            "_freq": len(slot["profiles"]), "_days": min(len(slot["profiles"]), 3), "_has_control": True})
 
     # finalize scores + ids + threshold gate
     out = []

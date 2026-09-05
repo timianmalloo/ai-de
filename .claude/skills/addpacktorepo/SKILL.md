@@ -55,6 +55,8 @@ From the recon, determine for each artifact class:
 Produce a brief "here is what I will install" preview and ask for confirmation before executing if any existing file will be modified.
 
 **Stage 3 — EVIDENCE (apply the full deployment map).**
+**Run the program first, then verify the list below against its table:** `python3 <pack-source>/pack/scripts/pack-apply.py apply --install --source <pack-source> --target <target> --project <repo-name>` performs steps 1–13 mechanically and idempotently (knowledge routed by load scope, whole skill directories, agents renamed and `tools:`-stripped for Copilot, templates/scripts/hooks/context-budget.json, `.claude/settings.json` merged, `.gitignore` lines, `docs/index.html` only if absent, `docs/docs-index.js` never, both managed blocks, `CLAUDE.md` in the `@AGENTS.md` import form) and prints one row per action. The numbered list is the contract the program implements — read it to check the table, not to copy files by hand. Steps 14–16 remain judgement calls.
+
 Execute the deployment map from INSTALL.md §1, in this order. All source paths below are relative to the resolved `<pack-source>` (e.g. `<pack-source>/pack/knowledge/*.md`); all destinations are relative to the target repo.
 
 1. **Knowledge → `.claude/knowledge/`:** copy all `pack/knowledge/*.md`. Create the directory if absent.

@@ -12,6 +12,25 @@ The governing idea: **these interfaces serve experts manipulating quantities, mo
 
 ---
 
+## Rule index — read this first; open a section only when a rule applies
+
+*This doc loads on demand (`load: glob`). The index is the contract in one screen: cite a rule by id, and open its section below only when a finding needs the rule's full text. A profiled session read four of these docs whole (~200 KB) to author one mockup — the index is the fix (class CTX-E).*
+
+| Rule | In one line |
+|---|---|
+| **TQ1** | Density with hierarchy, never density as disorder |
+| **TQ2** | Numerical legibility is a hard requirement |
+| **TQ3** | Perceptually-uniform, colorblind-safe colormaps; never rainbow/jet |
+| **TQ4** | Maximize data-ink (Tufte) |
+| **TQ5** | Uncertainty is first-class; never a point estimate for a stochastic result |
+| **TQ6** | Direct manipulation and precision input — both, never only one |
+| **TQ7** | Units & dimensional integrity |
+| **TQ8** | Reproducibility & provenance |
+| **TQ9** | Reactive recomputation with visible staleness |
+| **TQ10** | Performance for large data |
+| **TQ11** | Accessibility still applies (and is harder) |
+| **TQ12** | Specify, design, build to these |
+
 ## 0. When this applies
 
 Any UI whose primary user is an expert working with **models, measurements, simulations, or quantitative analysis**: parametric CAD and engineering tools; scientific visualization and post-processing (CFD/FEA contour plots, streamlines, volume rendering); computational notebooks (Jupyter/Observable/Mathematica); financial and spreadsheet modeling; probabilistic simulation and risk/forecasting; and interactive mathematical systems (graphing, symbolic). When a change produces such a surface, these directives are **triggered** (Testing-Strategy sense): a triggered-but-unmet directive is a gap the gate catches, owned by the UX & Accessibility lens (with the Test Architect for verification).

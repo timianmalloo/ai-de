@@ -1,6 +1,6 @@
 ---
-load: glob
-applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+load: skill
+skills: [ui-design, design-slice, implement]
 ---
 # UI Archetype Catalog
 

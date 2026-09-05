@@ -1,107 +1,69 @@
 ---
 name: updatepack
-description: Update an installed AI-Forward Pack to the latest revision — reads the pack source INSTALL.md from a local ai-forward clone, diffs the installed vs source revision, applies exactly the changed artifacts listed in the changelog (never guesses by diffing the tree), and produces a tabular action summary before offering to commit and push. Run this from the repo that already has the pack installed.
+description: Update an installed AI-Forward Pack to the latest revision — reads the pack source INSTALL.md from a local ai-forward clone, diffs the installed vs source revision, applies the deployment map mechanically with pack-apply.py (managed-block re-paste, stale-copy removal, the CLAUDE.md import conversion, parity-control retirement, three-way merges over repo-local deviations), and produces a tabular action summary before offering to commit and push. Run this from the repo that already has the pack installed.
 ---
 
 # /updatepack — pull the latest AI-Forward Pack into an installed repo
 
-The AI-Forward Pack evolves: knowledge docs deepen, skills sharpen, new personas join the roster. This skill is the **single safe path for refreshing the pack** in a repo that has already had it installed — it reads the authoritative changelog from the pack source, applies exactly what changed, and never guesses. A wrong update is worse than a stale one; precision beats speed.
+The AI-Forward Pack evolves: knowledge docs deepen, skills sharpen, new personas join the roster, and sometimes the *shape* of the install changes — a doc's load scope moves, `CLAUDE.md` becomes an import, a control that encoded the old invariant must retire. This skill is the **single safe path for refreshing the pack** in a repo that has already had it installed. Since revision 61 the mechanical half is a program, `docs/ai-forward-pack/scripts/pack-apply.py` (deployed with the pack; the source clone carries it as `pack/scripts/pack-apply.py`), and the skill's job is what a program cannot decide: reading the changelog for the *why*, reconciling the conflicts the program reports, and confirming the commit. **Nothing in the deployment map is remembered by a person any more** — a step that was forgotten in one repo becomes a row the program prints in every repo.
 
-**Spine:** the Rigor Protocol (`knowledge/rigor-protocol.md`) applied to the update delta — every change must be named, justified, and verified applied before it is called done. **Cast:** the **Release Engineer** leads (owns the installation path and the "no silent overwrites" rule); the **Documentation Steward** reviews every artifact landing (correct destination, managed-block integrity, V10 protection); the **Tech Lead** guards against over-application (only what `changes` lists, nothing extra). **Tooling:** standard filesystem reads/writes + `git diff --stat` to surface what actually changed.
+**Spine:** the Rigor Protocol (`knowledge/rigor-protocol.md`) applied to the update delta — every change is named by the changelog, applied by the program, and verified by its report before it is called done. **Cast:** the **Release Engineer** leads (owns the installation path and the "no silent overwrites" rule — the program backs up and reports, never destroys); the **Documentation Steward** reviews every artifact landing (correct destination, managed-block integrity, V10 protection); the **Tech Lead** guards against over-application (the program applies the deployment map, and only that). **Tooling:** `pack-apply.py plan|apply`, `pack-doctor.py`, `git diff --stat`.
 
 ## Grounding (first action)
 
-The source of truth for *what to apply* is `INSTALL.md`'s **`changes` frontmatter in the pack source**, and the *baseline* is the target repo's **last-applied revision** (recorded in `docs/ai-forward-pack/INSTALL.md`). Read both before touching a single file. If the target repo lacks `docs/ai-forward-pack/INSTALL.md`, surface this gap — the repo either predates revision tracking or has never had the pack installed; redirect to `/addpacktorepo` rather than applying a partial update. Skip grounding only if the user explicitly says to skip.
+`python3 docs/ai-forward-pack/scripts/audit-log.py start --session <id>` (IO1). The source of truth for *what changes and why* is `INSTALL.md`'s **`changes` frontmatter in the pack source**; the *baseline* is the target repo's **installed revision** (`docs/ai-forward-pack/INSTALL.md`). Read both before running anything. If the target lacks `docs/ai-forward-pack/INSTALL.md`, this is a fresh install — redirect to `/addpacktorepo` (which runs the same program with `--install`). Read the target's **deviation register** if it has one (`scripts/test-pack-deviations.py` or similar): it names the repo-local additions to pack files that the program will three-way merge and that you must see land.
 
 ## Input
 
-The path to the local AI-Forward repository (from `$ARGUMENTS` or the user's message). Locate it in this order:
-1. Explicit path provided in the user's message.
-2. `AI_FORWARD_PACK` environment variable.
-3. A sibling directory named `ai-forward` or `AI-Forward` relative to the current repo root.
-
-If none of the above yields a valid path that contains `pack/adapters/INSTALL.md`, ask the user for the path before proceeding.
+The path to the local AI-Forward repository (from `$ARGUMENTS` or the user's message). Locate it in this order: (1) an explicit path; (2) `AI_FORWARD_PACK`; (3) a sibling `ai-forward` / `AI-Forward` directory. If none holds `pack/adapters/INSTALL.md`, ask.
 
 ## Modes — dry-run & idempotency
-- **Dry-run (preview).** If the request contains `dry run`, `--dry-run`, `preview`, or `what would change`, run Stages 0–2 and produce the full **action summary table** (Stage 5) **without writing, staging, committing, or pushing anything**. End by stating it was a preview and how to apply for real. The commit/push step is *always* confirmed regardless of mode — dry-run additionally suppresses every file write.
-- **Idempotent by construction.** Re-running is safe: if the target is already at the source `revision` the skill writes nothing and reports "already current" (Stage 1, `delta = 0`). When a delta is applied, every action is a **wholesale** copy or a wholesale managed-block re-paste between markers — never an append — so a duplicate block can never accumulate and re-applying the same delta yields an identical tree. An interrupted update can simply be re-run to completion; the installed `revision` only ever advances to the source revision, never past it.
+- **Dry-run (preview).** `dry run`, `--dry-run`, `preview` or `what would change` → run `pack-apply.py plan` and stop after the table. `plan` writes nothing (the test suite pins that).
+- **Idempotent by construction.** `apply` on a current target reports `already at revision N` and changes nothing; every action is a wholesale copy, a wholesale managed-block re-paste between markers, or a three-way merge — never an append — so re-running never duplicates a block, never re-converts `CLAUDE.md`, and never advances past the source revision. An interrupted update is re-run to completion.
 
 ## Stages
 
-**Stage 0 — interdict the rush.** A pack update is not "just a file copy." Two failure modes to prevent: (1) overwriting accumulated artifacts — especially `docs/docs-index.js`, which must **never** be touched (V10); (2) missing a managed-block re-paste, the step most commonly skipped. Every action here is driven by the changelog; diffing the directory tree is not a substitute.
+**Stage 0 — interdict the rush.** Do not copy files by hand and do not diff directory trees: the changelog says *what changed*, the program applies the *map*. The two failure modes this stage prevents are unchanged — overwriting accumulated artifacts (`docs/docs-index.js`, V10 — the program never touches it) and a missed managed-block re-paste (the program always re-pastes) — plus the three that used to be remembered: the stale wrapped copy of a re-scoped doc, the `CLAUDE.md` import conversion, and a parity control that asserts the old invariant.
 
-**Stage 1 — OPEN (read both revisions).**
-- Read `<pack-source>/pack/adapters/INSTALL.md` frontmatter: extract `revision`, `bundle_version`, `released`, `counts`, and `changes`.
-- Read `<target-repo>/docs/ai-forward-pack/INSTALL.md` frontmatter: extract the installed `revision`.
-- Compute: `delta = source.revision − target.revision`.
-  - `delta = 0` → pack is current. Report this and stop.
-  - `delta < 0` → target is ahead of the claimed source (anomaly). Surface to the user and ask for confirmation before proceeding.
-  - `delta > 0` → list every `changes` entry that applies (the entire `changes` list covers the delta from the previous revision to the current one).
+**Stage 1 — OPEN (read both revisions, then plan).**
+- Read the source `revision`, `bundle_version` and `changes`; read the installed `revision`; `delta = source − target`. `delta = 0` → report current and stop. `delta < 0` → anomaly; surface and ask.
+- Run the preview: `python3 docs/ai-forward-pack/scripts/pack-apply.py plan --source <pack-source> --target . --quiet`. Read the table. Every row is one action the program will take: `ADD` · `UPDATE` (the repo had the pack's old text verbatim) · `MERGE` (a repo-local deviation carried over by three-way merge against the pack text at the installed revision) · `KEEP` (a deviation over an unchanged pack file) · `REMOVE` (a stale copy whose load scope moved) · `CONVERT` (`CLAUDE.md` → `@AGENTS.md` + addendum, previous file backed up under `docs/ai-forward-pack/retired/`, unique paragraphs retained) · `REWRITE` (a parity control rewritten into the new-invariant shim, original backed up) · `CONFLICT` (a deviation the merge could not carry; the new pack text is parked under `docs/ai-forward-pack/conflicts/`) · `REVIEW` (a non-PowerShell control that asserts the old invariant) · `SKIP` (protected).
 
-**Stage 2 — INTERROGATE (classify each change entry).**
-For each entry in `changes`, determine:
-- **Type:** `added` (new artifact) | `changed` (replace existing) | `managed-block` (RE-PASTE between markers).
-- **Deploy action:** direct copy, Copilot-wrap (prepend `applyTo` frontmatter), or managed-block wholesale replace.
-- **Risk:** does the path already exist? Is it a protected path (`docs/docs-index.js` — never overwrite)? Does it overlap with repo-specific customizations that could be silently lost?
+**Stage 2 — INTERROGATE (the rows that need a person).**
+For each `CONFLICT` and `REVIEW` row, and for each `changes` entry whose `deploy` names a non-file directive the program does not implement, decide *before* applying: which repo-local addition must survive (the deviation register is the list), and where it now belongs (a skill that was split into `SKILL.md` + `reference/` carries its stage text in `reference/flow.md`, so an addition to a stage moves there). For a `CONVERT` row, read the retained paragraphs the program lists: they belong in `AGENTS.md` above its managed block (both hosts read it), and the program leaves them in `CLAUDE.md` only so nothing is lost. The Release Engineer holds a hard veto on resolving a `CONFLICT` by discarding the repo's text.
 
-Surface any conflict or customization risk to the user before applying. The Release Engineer holds a hard veto on any action that would silently destroy existing content.
-
-**Stage 3 — EVIDENCE (apply, verify each action).**
-Apply each change in changelog order:
-
-1. **Copy actions.** Copy the file from `<pack-source>/pack/...` to its mapped destination (per the deployment map in INSTALL.md §1). For knowledge docs destined for Copilot (`.github/instructions/`), prepend the `applyTo` frontmatter wrap (`---\napplyTo: "**"\n---\n`). Exception: `csharp-style-guide` uses `applyTo: "**/*.cs,**/*.csx"`; `FOUNDATION.md` is copied verbatim, **not** wrapped. Never touch `docs/docs-index.js`.
-
-2. **Managed-block re-paste.** For each `deploy: RE-PASTE` entry:
-   - Locate `CLAUDE.md` (for the Claude block) and/or `AGENTS.md` (for the Agents block) in the target repo root.
-   - Find the `AI-FORWARD-PACK:BEGIN` / `AI-FORWARD-PACK:END` markers.
-   - Replace the entire region **wholesale** with the new block from `<pack-source>/pack/adapters/managed-blocks/CLAUDE.block.md` (or `AGENTS.block.md`). Include the markers in the replacement.
-   - If markers are absent, append the block (with markers) at the end of the file.
-
-3. **Non-file deploy directives.** Some `changes` entries carry a `deploy` that is neither a copy nor a managed-block re-paste — e.g. rev-17's `install-hygiene` entry (`add *.jsonl.lock to the consuming repository .gitignore`). Apply the directive literally: for a `.gitignore` addition, append any missing line (`*.jsonl.lock`, `spikes/`) to the target repo's `.gitignore` (create it if absent; never remove existing entries). Log it as ✅ applied like any other action.
-
-4. **Post-copy verify.** For each action, confirm the file exists at the destination and is not zero bytes. Log: ✅ applied | ⚠️ skipped (with reason) | ❌ failed.
-
-5. **Advance the installed revision.** Copy `<pack-source>/pack/adapters/INSTALL.md` to `<target-repo>/docs/ai-forward-pack/INSTALL.md` — this advances the installed revision to the current one.
+**Stage 3 — EVIDENCE (apply, then reconcile).**
+1. `python3 docs/ai-forward-pack/scripts/pack-apply.py apply --source <pack-source> --target .` — it applies the map, backs up before every conversion, merges deviations, removes stale copies, re-pastes both managed blocks, merges `.claude/settings.json`, writes `.github/hooks/ai-forward.json`, adds the `.gitignore` lines, advances the installed revision, and records the three `context-budget` baselines (`gate`, `prefix`, `skills`) for this repo.
+2. Reconcile every `CONFLICT` row by hand: merge the repo-local addition into the new pack text (from `docs/ai-forward-pack/conflicts/<path>`), write the result to its destination, delete the parked file. Update the deviation register entry if the addition moved file.
+3. Move any paragraphs `CONVERT` retained from `CLAUDE.md` into `AGENTS.md` and remove them from `CLAUDE.md`; delete the `retired/` backups once the diff has been reviewed (they are there to make the review possible, not to be committed forever).
+4. Apply any remaining non-file `deploy` directive from the changelog literally, and log it like any other action.
+5. Run the deployed `context-budget.py gate --update-baseline` again only if step 2 changed an always-on doc.
 
 **Stage 4 — DISCONFIRM (the gate).**
-Before reporting success:
-- Confirm `docs/docs-index.js` was **not** touched.
-- Confirm each managed-block re-paste replaced *between* markers — not appended as a second copy.
-- Confirm no file landed at a wrong destination.
-- The Release Engineer vetos reporting "done" if any ❌ rows remain unresolved.
+- `python3 docs/ai-forward-pack/scripts/pack-doctor.py` — every check PASS, or WARN with a reason you can state (`copilot settings` is a user-level choice, not an install defect).
+- `git diff --stat` — `docs/docs-index.js` absent from the diff; exactly one `AI-FORWARD-PACK:BEGIN` in `AGENTS.md` and one in `CLAUDE.md`; `CLAUDE.md` begins with `@AGENTS.md`; no `.instructions.md` remains for a doc now under `.github/knowledge/`; no file left under `docs/ai-forward-pack/conflicts/`.
+- Run the repo's own controls that touch the front doors (the rewritten parity shim, the deviation register): green, or the reason is in the report.
+- The Release Engineer vetos reporting "done" while a `CONFLICT` or `REVIEW` row is unresolved.
 
 **Stage 5 — CONVERGE (summary + commit offer).**
-Produce a **tabular summary** of every action taken:
-
-| Area | Artifact / File | Action | Status |
-|------|----------------|--------|--------|
-| knowledge | `.claude/knowledge/ui-archetype-grammar.md` | Copied | ✅ |
-| knowledge | `.github/instructions/ui-archetype-grammar.instructions.md` | Copied + Copilot-wrapped | ✅ |
-| managed-block | `CLAUDE.md` AI-FORWARD-PACK block | RE-PASTED wholesale | ✅ |
-| meta | `docs/ai-forward-pack/INSTALL.md` | Revision advanced to `N` | ✅ |
-
-Below the table, state: **Pack updated: revision `<from>` → `<to>` (`<bundle_version>`, released `<date>`).**
-
-Then ask the user:
+Paste the program's final table (`pack-apply.py apply … --quiet`, so `UNCHANGED` rows are hidden) as the action summary, then the line **Pack updated: revision `<from>` → `<to>` (`<bundle_version>`).** Name any new skills or knowledge docs so the user can orient. Then ask:
 > "Would you like me to stage, commit, and push these changes?
-> Proposed message: `chore: update AI-Forward Pack to revision <N> (<bundle_version>)`
-> (y to proceed · n to leave staged · or type a custom commit message)"
+> Proposed message: `chore: update AI-Forward Pack to revision <N> (<bundle_version>)`"
 
-If confirmed: run `git add -A && git commit -m "chore: update AI-Forward Pack to revision <N> (<bundle_version>)" && git push` from the target repo root.
+On confirmation stage the *pack surfaces* (`.claude/`, `.github/`, `docs/ai-forward-pack/`, `docs/index.html` if new, `AGENTS.md`, `CLAUDE.md`, `.gitignore`, the rewritten control and the reconciled files) — not `-A` in a repo that runs several worktrees off one checkout — commit, and push.
 
 ## Documentation & discoverability (note)
-Unlike the workflow skills, this is a **pack-lifecycle skill**: it operates on the pack *installation*, not on the repo's product, so it produces no `docs/` knowledge-graph artifact and does **not** write frontmatter or sync `docs/docs-index.js` (V10 does not apply). Its durable record is the advanced `revision` in `docs/ai-forward-pack/INSTALL.md` plus the commit. If a *skill run it triggered* later changes product docs, that run owns its own discoverability.
+A pack-lifecycle skill: it operates on the installation, not the product, so it writes no frontmatter and never syncs `docs/docs-index.js` (V10 does not apply). Its durable record is the advanced `revision`, the `retired/` backups reviewed and removed, and the commit.
 
 ## Definition of done
-- [ ] Both revisions read; delta computed; anomalies surfaced before any file operation.
-- [ ] Every `changes` entry applied (or explicitly deferred with user confirmation and a ⚠️ entry in the summary).
-- [ ] Managed blocks re-pasted wholesale between markers — no partial merges, no duplicate blocks.
-- [ ] `docs/docs-index.js` untouched (V10).
-- [ ] Target `docs/ai-forward-pack/INSTALL.md` advanced to the new revision.
-- [ ] Summary table complete; no ❌ rows without explicit user deferral.
-- [ ] Commit offered with exact proposed message; user decision honoured.
-- [ ] Dry-run requests produced the action table with zero writes; a normal run is idempotent (re-runnable without duplicate blocks or advancing past the source revision).
+- [ ] Both revisions read; delta computed; anomalies surfaced before any write.
+- [ ] `plan` run and read before `apply`; every `CONFLICT` / `REVIEW` row decided by a person, none resolved by discarding repo text.
+- [ ] `apply` run; the table shows the managed blocks re-pasted, stale copies removed, `CLAUDE.md` in the import form, parity controls rewritten, baselines recorded.
+- [ ] `docs/docs-index.js` untouched; no duplicate block; nothing left under `conflicts/`; `retired/` reviewed and cleaned.
+- [ ] `pack-doctor.py` green (or WARNs explained); the repo's front-door controls green.
+- [ ] Summary table pasted from the program; commit offered with the exact message; the user's decision honoured.
+- [ ] Dry-run requests produced the table with zero writes; a normal run is idempotent.
 
-**Audit (last action).** Append an audit-log entry to the updated repo's log recording the refresh — `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "updatepack-r<to>" --session "<id>" --skill updatepack --kind command --prompt "<the prompt, verbatim>" --summary "<from-revision → to-revision; delta applied>"` — per the Audit Mandate (`knowledge/audit-and-change-log.md`, AL5), so the repo records the revision history of its installed pack.
+**Audit (last action).** `python3 docs/ai-forward-pack/scripts/audit-log.py append --shortname "updatepack-r<to>" --session "<id>" --skill updatepack --kind command --prompt "<verbatim>" --summary "<from → to; N rows; conflicts reconciled>" --goal "<goal>" --done-when "<done when>" --tier T1 --fan-out 0`.
 
-**Handoff:** if the update added new skills or knowledge docs, mention them by name so the user can orient to the new capabilities.
+**Handoff:** if the update added skills or knowledge docs, name them; if it converted `CLAUDE.md`, say where the retained paragraphs went; if `pack-doctor` warned on `copilot settings`, say it is the user's per-phase choice (WT1a).

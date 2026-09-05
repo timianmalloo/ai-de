@@ -1,5 +1,6 @@
 ---
-applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+load: skill
+skills: [ui-design, design-slice, implement]
 ---
 # UI Visual Assets — the generative pipeline and its guardrails
 
@@ -12,6 +13,36 @@ The governing idea: **a direction brief is words, and words are where UI design 
 And the single most important rule is a prohibition, stated first because it is the one people break: **never generate the interface itself.** Image models render fake, illegible text and hallucinated controls. A "dashboard screenshot" pasted into a mockup makes a design look finished while encoding nothing a developer can build, no state a reviewer can interrogate, and no token any linter can check. Generate what the UI **shows**, never the UI.
 
 ---
+
+## Rule index — read this first; open a section only when a rule applies
+
+*This doc loads on demand (`load: skill`). The index is the contract in one screen: cite a rule by id, and open its section below only when a finding needs the rule's full text. A profiled session read four of these docs whole (~200 KB) to author one mockup — the index is the fix (class CTX-E).*
+
+| Rule | In one line |
+|---|---|
+| **VA1** | Establish the generation contract before depending on it |
+| **VA2** | Everything is asynchronous and some of it fails |
+| **VA3** | Know what the presets actually are, and don't reach past them |
+| **VA4** | Generate once, commit the artifact, reference the file |
+| **VA5** | Never generate the interface |
+| **VA5a** | Native client assets are content fixtures, not XAML |
+| **VA6** | Generated imagery informs mood, never structure |
+| **VA7** | A generated reference does not replace a real named reference |
+| **VA8** | The generic tells apply to imagery too |
+| **VA9** | Never send real people's images or customer data to the generator |
+| **VA10** | Cost is metered and therefore budgeted |
+| **VA11** | Disclose, attribute, and check the terms |
+| **VA12** | Every generated asset carries a manifest entry |
+| **VA13** | Alt text is written when the asset is generated, not later |
+| **VA14** | Assets meet the performance budget |
+| **VA15** | The visual world comes after the words, and before the system |
+| **VA16** | Consistent personas are the highest-value use, and they are test data |
+| **VA17** | Motion is for marketing surfaces and product demonstration, and it obeys the motion inventory |
+| **VA18** | What is generated is then verified |
+| **VA19** | A consumer AI subscription is not API access |
+| **VA20** | The capability contract a backend must satisfy |
+| **VA21** | The supported adapters |
+| **VA22** | Wire the backend with the setup script, and never with a committed credential |
 
 ## 0. When this applies
 

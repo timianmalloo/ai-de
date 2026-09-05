@@ -576,10 +576,17 @@ def cmd_append(args):
     }
     # Front-matter goal-state (CT19): done_when is the terminal condition, and is the PACK-O
     # PRESENCE signal /dream mines (a substantive turn without it skipped the front matter, AL5b).
-    for _opt in ("goal", "done_when"):
+    for _opt in ("goal", "done_when", "tier"):
         _v = getattr(args, _opt, None) or base.get(_opt)
         if _v:
             entry[_opt] = _v
+    # CT19 tier + fan-out cap: the ceremony budget the turn declared. fan_out is the CAP it
+    # declared; agent_runs (below) is what it actually convened, so /dream can compare the two.
+    _fo = getattr(args, "fan_out", None)
+    if _fo is None:
+        _fo = base.get("fan_out")
+    if _fo is not None:
+        entry["fan_out"] = int(_fo)
     # Watcher telemetry convention (AL2a): an OPTIONAL `signals` object carrying the deterministic
     # signals a turn actually OBSERVED at close, read by the watcher's DeterministicSignalsDeriver to
     # lift an imported episode above its conservative default. Honest by construction - only supplied
@@ -876,6 +883,8 @@ def cmd_selfcheck(args):
     subst = [e for e in entries if e.get("kind") in PACKO_SUBSTANTIVE]
     gaps = [e for e in subst if not e.get("done_when")]
     have = [e for e in subst if e.get("done_when")]
+    tier_gaps = [e for e in have if not e.get("tier")]
+    over_cap = [e for e in subst if e.get("fan_out") is not None and len(e.get("agent_runs") or []) > int(e.get("fan_out") or 0)]
     review = [{"shortname": e.get("shortname", "?"),
                "done_when": e.get("done_when", ""),
                "summary": e.get("summary", "")} for e in have]
@@ -883,6 +892,9 @@ def cmd_selfcheck(args):
         print(json.dumps({
             "session": args.session, "substantive": len(subst),
             "gaps": [{"shortname": e.get("shortname", "?"), "id": e.get("id")} for e in gaps],
+            "tier_gaps": [{"shortname": e.get("shortname", "?"), "id": e.get("id")} for e in tier_gaps],
+            "over_cap": [{"shortname": e.get("shortname", "?"), "id": e.get("id"), "fan_out": e.get("fan_out"),
+                          "agent_runs": len(e.get("agent_runs") or [])} for e in over_cap],
             "review": review,
         }, ensure_ascii=False, indent=2))
         return 0
@@ -898,6 +910,14 @@ def cmd_selfcheck(args):
             print(f"    [gap] {e.get('shortname', '?')}")
     else:
         print(f"  all {len(subst)} substantive turns recorded a goal-state.")
+    if tier_gaps:
+        print("  tier GAPS (goal-state without a tier - the ceremony budget was never declared, CT19 / CTX-C):")
+        for e in tier_gaps:
+            print(f"    [tier] {e.get('shortname', '?')}")
+    if over_cap:
+        print("  fan-out OVER CAP (more agent_runs than the declared fan_out - a council above tier unless a hard gate was named):")
+        for e in over_cap:
+            print(f"    [cap] {e.get('shortname', '?')}: {len(e.get('agent_runs') or [])} runs vs cap {e.get('fan_out')}")
     if review:
         print("  scope review (done_when -> summary; judge drift yourself, this is not a verdict):")
         for r in review:
@@ -970,6 +990,8 @@ def main():
     ap_a.add_argument("--change", help="link to a change-log id (cl-NNNN)")
     ap_a.add_argument("--goal", help="the turn's goal (front matter CT19)")
     ap_a.add_argument("--done-when", dest="done_when", help="the terminal condition (front matter CT19); the PACK-O presence signal /dream mines (AL5b)")
+    ap_a.add_argument("--tier", choices=["T0", "T1", "T2"], help="the turn's declared ceremony tier (front matter CT19)")
+    ap_a.add_argument("--fan-out", dest="fan_out", type=int, help="the declared fan-out cap: most sub-agents the turn may convene (CT19; 0 at T0, 2 at T1)")
     # Watcher telemetry convention (AL2a): the safe, close-observable deterministic signals a turn
     # may record. Tri-state (absent -> omitted -> the watcher reader's conservative default; NG1).
     ap_a.add_argument("--signal-verification-path", dest="signal_verification_path",

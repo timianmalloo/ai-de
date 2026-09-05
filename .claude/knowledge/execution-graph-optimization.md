@@ -76,8 +76,10 @@ Among all plans that clear the floors and this rule, **prefer the fastest** — 
 | **Per-branch exit condition** | how one branch knows it is done |
 | **Join rule** | all-must-succeed / quorum / best-effort-with-report — **and what the join does with a partial** |
 | **Failure containment** | whether one branch failing fails the node (usually it must not) |
+| **Per-branch budget** | a **tool-call and token budget** each branch carries in its own prompt (`max_tool_calls`, and a token or wall-clock bound where the runner exposes one). A branch that reaches it **stops and reports what it has** — the budget firing is a finding for the join, never a retry with a bigger number (GO9) |
+| **Convergence condition** | the evidence at which a branch is *done gathering* and must converge, stated as a predicate ("three cited sources per claim", "every file in the list classified"), not as effort. Without it a research branch ends only when the parent interrupts it |
 
-This is not theoretical. In this fleet, **five parallel model calls with no cap and no retry tripped 429/529 and failed the entire panel**; the fix was a concurrency cap of 2 plus retry-with-backoff (evidence base C1). A fan-out without this contract is an incident with a countdown.
+This is not theoretical. In this fleet, **five parallel model calls with no cap and no retry tripped 429/529 and failed the entire panel**; the fix was a concurrency cap of 2 plus retry-with-backoff (evidence base C1). A fan-out without this contract is an incident with a countdown. The last two rows come from a second measured shape: a research sub-agent ran **123 tool calls and 3.0M tokens** on a proposal iteration, and the parent had to send *"converge now — stop further investigation"* twice — the branch had no budget and no convergence predicate, so its only exit was the parent noticing (`session-profile.py` finding SP-07; class **CTX-F**). Record each branch's actual calls against its budget in the audit entry (`audit-log.py --agent-run`, GO18).
 
 ---
 

@@ -519,3 +519,6 @@ docs/.smart-env/
 
 # Per-session agent worktrees — machine-local state, never part of the repository
 .claude/worktrees/
+
+# AI-Forward Pack (INSTALL 2): local coordination and per-run state, never committed
+spikes/

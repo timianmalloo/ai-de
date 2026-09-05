@@ -47,6 +47,8 @@ working in the primary checkout. This is the default and it does not require a r
 the primary checkout is what requires one (WT4). The primary checkout stays clean, reviewable and
 always-buildable — which is what makes it a useful reference while other work is in flight.
 
+**WT1a — A new task starts in a new session, and a long session compacts before it turns.** A worktree isolates the *tree*; nothing isolates the *context*. A session that carries a pack refresh, a PR merge and then a product-pivot proposal in one conversation re-reads all three on every request — the profiled shape was a 23-hour session whose main context grew from 159k to 564k tokens across three unrelated tasks with **zero compactions**, because a long-context tier never forces one. So: when the task changes, start a new session (or compact deliberately) *in the same worktree*; the audit log, not the conversation, is how work compounds across sessions (AL5). A harness setting that lets the context grow without bound (`contextTier: long_context` in Copilot CLI, a 1M window in Claude Code) is a per-phase choice (GO19), never a global default — `pack-doctor.py` reports it. `session-profile.py` finding SP-01 is the recurrence signal; class **CTX-A**.
+
 **WT2 — A session MAY create further worktrees when the work genuinely needs them.** Comparing
 two revisions side by side, running a long test suite against a baseline while editing, bisecting,
 or holding a release branch open are all legitimate. Every additional tree follows the same rules

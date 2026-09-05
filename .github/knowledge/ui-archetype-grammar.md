@@ -1,5 +1,6 @@
 ---
-applyTo: "**/*.tsx,**/*.jsx,**/*.vue,**/*.svelte,**/*.css,**/*.scss,**/*.html,**/DESIGN.md"
+load: skill
+skills: [ui-design, design-slice, implement]
 ---
 # UI Archetype Grammar & Determinism Control
 
@@ -12,6 +13,29 @@ The governing idea: **determinism in generated UI comes from constraining the se
 This work began from an external taxonomy (the "Web Design Theme Taxonomy / UX Grammar v5.0") whose key insight is retained and credited: **modern high-value apps are temporal state machines, not just spatial destinations**, so the grammar must encode *time, pacing, and data persistence*, not only DOM layout. This standard hardens that taxonomy into a valid, multi-valued, composable grammar and wires it to the pack's existing token/state/flow discipline.
 
 ---
+
+## Rule index — read this first; open a section only when a rule applies
+
+*This doc loads on demand (`load: skill`). The index is the contract in one screen: cite a rule by id, and open its section below only when a finding needs the rule's full text. A profiled session read four of these docs whole (~200 KB) to author one mockup — the index is the fix (class CTX-E).*
+
+| Rule | In one line |
+|---|---|
+| **G1** | Archetype Signature + concrete spec, always both |
+| **G2** | The signature is a selector, not the design |
+| **G3** | Composition direction |
+| **G4** | Required vs optional facets |
+| **G5** | Multi-valued facets |
+| **G6** | A11y is a floor, not a flavor |
+| **G7** | Facets map to concrete codegen decisions |
+| **G8** | No facet contradicts a higher-altitude facet |
+| **G9** | Coherent archetype, or explicit deviation |
+| **G10** | Round-trip test |
+| **G11** | The codegen contract |
+| **G12** | Determinism, not rigidity |
+| **G13** | Surfacing in the artifacts |
+| **G14** | Identify before you generate |
+| **G15** | Extension over violation |
+| **G16** | Versioned vocabulary |
 
 ## 0. Why this exists (the determinism problem)
 

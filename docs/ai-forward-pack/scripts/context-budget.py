@@ -31,6 +31,11 @@ Subcommands
               and on a derived backstop. CI-able. See pack/context-budget.json.
   agents      Per-agent declared knowledge prefix (the sub-agent lens, P3).
   preflight   Fail when an assembled prefix would not fit a model's window (P5).
+  prefix      The WHOLE static prefix as the host assembles it - managed blocks (AGENTS.md /
+              CLAUDE.md, counted twice where the host loads both), the always-on docs, plus
+              stated tool/host allowances - with its own ratchet (CTX-B).
+  skills      Per-skill SKILL.md size with a per-skill ratchet and a ceiling: a skill is
+              re-injected whole on every invocation, so its size is a per-invocation tax (CTX-E).
 
 Token figures are ESTIMATES (chars / 4.83) and are labelled as such everywhere. The ratio
 is calibrated against a measured system prompt of 184,364 tokens over 890,204 characters of
@@ -105,17 +110,59 @@ def _is_knowledge_dir(path):
     return os.path.isfile(os.path.join(path, MANIFEST))
 
 
+def _declares_scope(path):
+    """At least one doc in the directory declares a `load:` scope. The vendored copy under
+    docs/ai-forward-pack/knowledge carries the manifest but no frontmatter, so it satisfied
+    _is_knowledge_dir and reported 461 always-on tokens over an unscoped corpus - green (CTX-B).
+    A budget over a corpus that declares nothing is not a budget."""
+    try:
+        for name in os.listdir(path):
+            if name.endswith(".md") and name != MANIFEST:
+                meta, _ = read_frontmatter(os.path.join(path, name))
+                if meta.get("load"):
+                    return True
+    except OSError:
+        return False
+    return False
+
+
 def knowledge_dir(explicit=None):
     if explicit:
         return explicit
+    # Walk every level for the declared layouts FIRST; a bare "knowledge" directory wins only
+    # when nothing declared exists anywhere above - and only if it declares scope itself.
+    declared = find_dir(os.path.join("pack", "knowledge"), os.path.join(".claude", "knowledge"),
+                        predicate=lambda p: _is_knowledge_dir(p) and _declares_scope(p))
+    if declared:
+        return declared
     return find_dir(os.path.join("pack", "knowledge"), os.path.join(".claude", "knowledge"),
-                    "knowledge", predicate=_is_knowledge_dir)
+                    "knowledge", predicate=lambda p: _is_knowledge_dir(p) and _declares_scope(p))
+
+
+def repo_root(explicit=None):
+    """The repo root the managed blocks live in: the nearest ancestor holding AGENTS.md,
+    CLAUDE.md or .git."""
+    if explicit:
+        return explicit
+    start = HERE
+    for _ in range(6):
+        for marker in ("AGENTS.md", "CLAUDE.md", ".git"):
+            if os.path.exists(os.path.join(start, marker)):
+                return start
+        parent = os.path.dirname(start)
+        if parent == start:
+            break
+        start = parent
+    return None
 
 
 CONFIG_NAME = "context-budget.json"
 CONFIG_DEFAULTS = {
     "always_on_tokens": None, "growth_tolerance_pct": 2, "shrink_report_pct": 5,
     "ceiling_tokens": 60000,
+    # the whole-prefix ratchet (CTX-B) and the per-skill ratchet (CTX-E)
+    "prefix_tokens": None, "prefix_allowances": {"tool_definitions": 24070, "host_prompt": 12000},
+    "skills_baseline": {}, "skill_ceiling_tokens": 5000,
 }
 
 
@@ -154,14 +201,39 @@ def load_config(explicit=None):
     return cfg, path
 
 
-def write_baseline(path, total):
-    """Rewrite only always_on_tokens + the stamp, preserving comments, key order and formatting."""
+def write_baseline(path, total, key="always_on_tokens", stamp="baseline_set_on"):
+    """Rewrite only the named baseline + its stamp, preserving comments, key order and formatting."""
     with open(path, encoding="utf-8", newline="") as fh:
         text = fh.read()
-    text = re.sub(r'("always_on_tokens":\s*)\d+', lambda m: m.group(1) + str(total), text, count=1)
-    text = re.sub(r'("baseline_set_on":\s*)"[^"]*"',
-                  lambda m: m.group(1) + '"' + datetime.date.today().isoformat() + '"',
-                  text, count=1)
+    if re.search(r'"%s":\s*(\d+|null)' % re.escape(key), text):
+        text = re.sub(r'("%s":\s*)(\d+|null)' % re.escape(key), lambda m: m.group(1) + str(total), text, count=1)
+    elif re.search(r'\n\s*"always_on_tokens":', text):
+        text = re.sub(r'(\n\s*"always_on_tokens":)', lambda m: '\n  "%s": %d,%s' % (key, total, m.group(1)), text, count=1)
+    else:
+        text = re.sub(r'^\s*\{', lambda m: m.group(0) + '\n  "%s": %d,' % (key, total), text, count=1)
+    if re.search(r'"%s":\s*"[^"]*"' % re.escape(stamp), text):
+        text = re.sub(r'("%s":\s*)"[^"]*"' % re.escape(stamp),
+                      lambda m: m.group(1) + '"' + datetime.date.today().isoformat() + '"', text, count=1)
+    with open(path, "w", encoding="utf-8", newline="") as fh:
+        fh.write(text)
+
+
+def write_json_key(path, key, value):
+    """Rewrite one JSON object-valued key (the per-skill baseline map). Comments and the other
+    keys are preserved; the map is re-serialised one entry per line."""
+    with open(path, encoding="utf-8", newline="") as fh:
+        text = fh.read()
+    body = json.dumps(value, indent=4, sort_keys=True)
+    body = "\n".join(("  " + line) if i else line for i, line in enumerate(body.splitlines()))
+    # a flat map of ints: `{}` and a multi-line map both match; nested braces never occur here
+    pattern = re.compile(r'"%s":\s*\{[^{}]*\}' % re.escape(key), re.S)
+    if pattern.search(text):
+        text = pattern.sub(lambda m: '"%s": %s' % (key, body), text, count=1)
+    elif re.search(r'\n\s*"always_on_tokens":', text):
+        text = re.sub(r'(\n\s*"always_on_tokens":)', lambda m: '\n  "%s": %s,%s' % (key, body, m.group(1)), text, count=1)
+    else:
+        # no anchor key: insert as the first member of the top-level object
+        text = re.sub(r'^\s*\{', lambda m: m.group(0) + '\n  "%s": %s,' % (key, body), text, count=1)
     with open(path, "w", encoding="utf-8", newline="") as fh:
         fh.write(text)
 
@@ -486,6 +558,163 @@ def cmd_preflight(args):
     return 0
 
 
+# ---------------------------------------------------------------------------- prefix
+
+IMPORT_RX = re.compile(r"^\s*@AGENTS\.md\s*$", re.M)
+
+
+def _file_chars(path):
+    try:
+        return os.path.getsize(path)
+    except OSError:
+        return 0
+
+
+def prefix_components(root, kdir, cfg, host):
+    """Every component of the static prefix this tool can see, per host, with a label each.
+    'measured' = a file on disk; 'allowance' = a stated figure from config (Inferred)."""
+    comps = []
+    agents = os.path.join(root, "AGENTS.md")
+    claude = os.path.join(root, "CLAUDE.md")
+    a_chars, c_chars = _file_chars(agents), _file_chars(claude)
+    c_text = ""
+    if c_chars:
+        with open(claude, encoding="utf-8", errors="replace") as fh:
+            c_text = fh.read()
+    claude_is_import = bool(IMPORT_RX.search(c_text))
+    if host == "copilot":
+        # Copilot CLI loads AGENTS.md AND CLAUDE.md as custom instructions (measured: two
+        # near-identical <custom_instruction> blocks in a captured prefix, CTX-B).
+        if a_chars:
+            comps.append(("AGENTS.md", est_tokens(a_chars), "measured"))
+        if c_chars:
+            comps.append(("CLAUDE.md" + (" (import stub)" if claude_is_import else " (FULL COPY - double-load)"),
+                          est_tokens(c_chars), "measured"))
+    else:
+        # Claude Code loads CLAUDE.md; an @AGENTS.md line expands AGENTS.md in place.
+        if c_chars:
+            comps.append(("CLAUDE.md", est_tokens(c_chars), "measured"))
+            if claude_is_import and a_chars:
+                comps.append(("AGENTS.md (via @import)", est_tokens(a_chars), "measured"))
+        elif a_chars:
+            comps.append(("AGENTS.md (not loaded by Claude Code - no CLAUDE.md import)", 0, "measured"))
+    if kdir:
+        docs = scan(kdir)
+        comps.append(("always-on knowledge docs ({0})".format(len(always_on(docs))),
+                      sum(d["tokens"] for d in always_on(docs)), "measured"))
+    allow = cfg.get("prefix_allowances") or {}
+    for name, key in (("tool definitions", "tool_definitions"), ("host system prompt", "host_prompt")):
+        if allow.get(key):
+            comps.append((name + " (allowance)", int(allow[key]), "allowance"))
+    return comps, {"claude_is_import": claude_is_import, "agents_chars": a_chars, "claude_chars": c_chars}
+
+
+def cmd_prefix(args):
+    root = repo_root(args.root)
+    kdir = knowledge_dir(args.knowledge_dir)
+    if not root:
+        print("context-budget: no repo root (AGENTS.md / CLAUDE.md / .git) found", file=sys.stderr)
+        return 1
+    cfg, cfgpath = load_config(args.config)
+    hosts = [args.host] if args.host != "both" else ["copilot", "claude"]
+    worst = 0
+    failed = False
+    for host in hosts:
+        comps, facts = prefix_components(root, kdir, cfg, host)
+        total = sum(t for _, t, _ in comps)
+        worst = max(worst, total)
+        print("static prefix as {0} assembles it   (ESTIMATES at {1} chars/token; allowances are Inferred)".format(host, CHARS_PER_TOKEN))
+        for name, tokens, kind in comps:
+            print("  ~{0:>8,d}  {1}{2}".format(tokens, name, "" if kind == "measured" else "   [Inferred]"))
+        print("  ~{0:>8,d}  TOTAL\n".format(total))
+        if host == "copilot" and facts["claude_chars"] and not facts["claude_is_import"] and facts["agents_chars"]:
+            print("  NOTE: CLAUDE.md is a full copy beside AGENTS.md; Copilot CLI loads both, so ~{0:,} est. tokens are paid twice on every request. Make CLAUDE.md an `@AGENTS.md` import (INSTALL 1.1).\n".format(est_tokens(facts["claude_chars"])))
+            if args.gate:
+                failed = True
+    baseline = cfg.get("prefix_tokens")
+    tol = cfg.get("growth_tolerance_pct") or 0
+    if args.update_baseline:
+        if not cfgpath:
+            print("FAIL: --update-baseline needs a config file; none found.")
+            return 1
+        write_baseline(cfgpath, worst, key="prefix_tokens", stamp="prefix_set_on")
+        print("prefix baseline updated to ~{0:,} in {1}".format(worst, cfgpath))
+        return 0
+    if args.gate:
+        if baseline:
+            allowed = int(baseline * (1 + tol / 100.0))
+            print("prefix ratchet: ~{0:,} vs baseline ~{1:,} (tolerance {2}% = {3:,})".format(worst, baseline, tol, allowed))
+            if worst > allowed:
+                print("FAIL: the static prefix grew ~{0:,} tokens past its recorded baseline. Growing it is allowed; growing it silently is not: `context-budget.py prefix --update-baseline` in the same commit, or move a doc out of the always-on tier.".format(worst - baseline))
+                failed = True
+        else:
+            print("prefix ratchet: no baseline recorded (`prefix --update-baseline` to start it)")
+        if failed:
+            return 1
+        print("clean - prefix within its baseline")
+    return 0
+
+
+# ---------------------------------------------------------------------------- skills
+
+def skills_dir(explicit=None):
+    if explicit:
+        return explicit
+    return find_dir(os.path.join("pack", "commands"), os.path.join(".claude", "skills"),
+                    predicate=lambda p: any(os.path.isfile(os.path.join(p, d, "SKILL.md")) for d in os.listdir(p)))
+
+
+def scan_skills(sdir):
+    out = []
+    for name in sorted(os.listdir(sdir)):
+        path = os.path.join(sdir, name, "SKILL.md")
+        if os.path.isfile(path):
+            chars = os.path.getsize(path)
+            refs = [f for f in os.listdir(os.path.join(sdir, name)) if f != "SKILL.md"]
+            out.append({"name": name, "chars": chars, "tokens": est_tokens(chars), "reference_files": refs})
+    if not out:
+        raise EmptyCorpus("no skills found in {0}".format(sdir))
+    return out
+
+
+def cmd_skills(args):
+    sdir = skills_dir(args.skills_dir)
+    if not sdir:
+        print("context-budget: no skills directory found", file=sys.stderr)
+        return 1
+    cfg, cfgpath = load_config(args.config)
+    skills = scan_skills(sdir)
+    baseline = cfg.get("skills_baseline") or {}
+    ceiling = args.ceiling if args.ceiling is not None else cfg.get("skill_ceiling_tokens")
+    tol = cfg.get("growth_tolerance_pct") or 0
+    print("skills dir: {0}   ({1} skills; ESTIMATES at {2} chars/token; each SKILL.md is re-injected whole on every invocation)".format(sdir, len(skills), CHARS_PER_TOKEN))
+    failed = False
+    for sk in sorted(skills, key=lambda d: -d["tokens"]):
+        base = baseline.get(sk["name"])
+        flag = ""
+        if base is not None and sk["tokens"] > int(base * (1 + tol / 100.0)):
+            flag = "  GREW ~{0:,} past baseline ~{1:,}".format(sk["tokens"] - base, base)
+            failed = True
+        elif base is None and ceiling and sk["tokens"] > ceiling:
+            flag = "  NEW and above the {0:,} ceiling".format(ceiling)
+            failed = True
+        print("  ~{0:>6,d}  {1:<22}{2}{3}".format(sk["tokens"], sk["name"],
+                                              (" (+{0} reference file(s))".format(len(sk["reference_files"])) if sk["reference_files"] else ""), flag))
+    if args.update_baseline:
+        if not cfgpath:
+            print("FAIL: --update-baseline needs a config file; none found.")
+            return 1
+        write_json_key(cfgpath, "skills_baseline", {sk["name"]: sk["tokens"] for sk in skills})
+        print("\nskills baseline updated in {0}".format(cfgpath))
+        return 0
+    if args.gate:
+        if failed:
+            print("\nFAIL: a SKILL.md grew past its recorded baseline (or a new one is above the ceiling). Move stage detail into a reference file the skill reads on demand, or record the growth: `context-budget.py skills --update-baseline`.")
+            return 1
+        print("\nclean - no unacknowledged skill growth")
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="context-budget.py",
@@ -493,6 +722,8 @@ def main(argv=None):
     parser.add_argument("--knowledge-dir", help="override knowledge doc discovery")
     parser.add_argument("--agents-dir", help="override agent definition discovery")
     parser.add_argument("--config", help="override context-budget.json discovery")
+    parser.add_argument("--root", help="override repo-root discovery (AGENTS.md / CLAUDE.md)")
+    parser.add_argument("--skills-dir", help="override skills discovery (pack/commands or .claude/skills)")
     sub = parser.add_subparsers(dest="cmd")
 
     p_rep = sub.add_parser("report", help="tier table + always-on total")
@@ -520,6 +751,18 @@ def main(argv=None):
     p_pre.add_argument("--min-headroom", type=int, default=32000,
                        help="working headroom the task itself needs (default 32000)")
     p_pre.set_defaults(func=cmd_preflight)
+
+    p_px = sub.add_parser("prefix", help="the whole static prefix per host, with its ratchet")
+    p_px.add_argument("--host", choices=["copilot", "claude", "both"], default="both")
+    p_px.add_argument("--gate", action="store_true", help="fail on unacknowledged prefix growth or a double-loaded CLAUDE.md")
+    p_px.add_argument("--update-baseline", action="store_true")
+    p_px.set_defaults(func=cmd_prefix)
+
+    p_sk = sub.add_parser("skills", help="per-skill SKILL.md size with a per-skill ratchet")
+    p_sk.add_argument("--gate", action="store_true")
+    p_sk.add_argument("--ceiling", type=int, default=None, help="override skill_ceiling_tokens")
+    p_sk.add_argument("--update-baseline", action="store_true")
+    p_sk.set_defaults(func=cmd_skills)
 
     args = parser.parse_args(argv)
     if not getattr(args, "func", None):

@@ -67,6 +67,107 @@ def check_surface(root, label, subdirs):
     return _result(f"{surface} surface", PASS, f"{label}/{{{','.join(s.split('/')[-1] for s in subdirs)}}} present")
 
 
+IMPORT_RX = re.compile(r"^\s*@AGENTS\.md\s*$", re.M)
+MARKER_RX = re.compile(r"AI-FORWARD-PACK:BEGIN")
+
+
+def _read(path):
+    try:
+        with open(path, encoding="utf-8", errors="replace") as fh:
+            return fh.read()
+    except OSError:
+        return None
+
+
+def check_claude_md_import(root):
+    """CTX-B / F-01. Copilot CLI loads BOTH AGENTS.md and CLAUDE.md as custom instructions
+    (measured: two ~58 KB <custom_instruction> blocks in one captured prefix), while Claude
+    Code reads only CLAUDE.md and expands an `@AGENTS.md` import in place. The pack's
+    byte-identical parity therefore pays the managed block twice on every Copilot request.
+    The fix is structural, so the check is too: CLAUDE.md must be the import stub."""
+    agents = _read(os.path.join(root, "AGENTS.md"))
+    claude = _read(os.path.join(root, "CLAUDE.md"))
+    if agents is None and claude is None:
+        return _result("claude-md import", FAIL, "neither AGENTS.md nor CLAUDE.md present",
+                       "paste the managed block into AGENTS.md and make CLAUDE.md `@AGENTS.md` (INSTALL 1.1)")
+    if claude is None:
+        return _result("claude-md import", WARN, "CLAUDE.md absent - Claude Code will not read AGENTS.md",
+                       "create CLAUDE.md containing `@AGENTS.md` (Claude Code expands the import; INSTALL 1.1)")
+    if agents is None:
+        return _result("claude-md import", WARN, "AGENTS.md absent - Copilot has no instruction file",
+                       "move the managed block to AGENTS.md and make CLAUDE.md `@AGENTS.md` (INSTALL 1.1)")
+    if IMPORT_RX.search(claude):
+        return _result("claude-md import", PASS, "CLAUDE.md imports AGENTS.md ({0:,} bytes); the block is loaded once per host".format(len(claude)))
+    both_blocks = bool(MARKER_RX.search(agents)) and bool(MARKER_RX.search(claude))
+    detail = "CLAUDE.md is a {0:,}-byte copy beside a {1:,}-byte AGENTS.md{2}".format(
+        len(claude), len(agents), " - both carry the managed block" if both_blocks else "")
+    return _result("claude-md import", WARN, detail + "; Copilot CLI loads both, so ~{0:,} est. tokens are paid twice per request (CTX-B)".format(int(len(claude) / 3.54)),
+                   "replace CLAUDE.md's copy with a single `@AGENTS.md` line plus the short Claude Code addendum block (INSTALL 1.1)")
+
+
+def check_copilot_settings():
+    """F-09 / WT1a. `contextTier: long_context` and `effortLevel: high` as GLOBAL defaults let a
+    session grow without a compaction and pay maximum reasoning on every T0 turn - the profiled
+    23-hour session went 159k -> 564k tokens with zero compactions. Both are per-phase
+    choices (GO19), so a global setting is reported, not assumed."""
+    home = os.environ.get("COPILOT_HOME") or os.path.join(os.path.expanduser("~"), ".copilot")
+    path = os.path.join(home, "settings.json")
+    if not os.path.isfile(path):
+        return _result("copilot settings", PASS, "no Copilot CLI settings.json on this machine (not installed, or defaults)")
+    try:
+        with open(path, encoding="utf-8") as fh:
+            cfg = json.load(fh)
+    except (OSError, ValueError) as exc:
+        return _result("copilot settings", WARN, "cannot read {0}: {1}".format(path, exc), "fix the file; the check is fail-open")
+    tier, effort = cfg.get("contextTier"), cfg.get("effortLevel")
+    flags = []
+    if tier == "long_context":
+        flags.append("contextTier=long_context (never compacts; context accretes across tasks - CTX-A)")
+    if effort == "high":
+        flags.append("effortLevel=high as the global default (tail latency on every T0 step; per-phase per GO19)")
+    if flags:
+        return _result("copilot settings", WARN, "; ".join(flags),
+                       "set these per session/phase (`/model`, `--effort`) rather than in ~/.copilot/settings.json; start a new session per task (WT1a)")
+    return _result("copilot settings", PASS, "contextTier={0}, effortLevel={1}".format(tier or "default", effort or "default"))
+
+
+def check_claude_settings(root):
+    """F-12 / IO14. `showThinkingSummaries` is the richest thinking display Claude Code offers; a
+    project that profiles its sessions wants it on. Project scope (.claude/settings.json) so it
+    travels with the repo; the user file is reported but never edited."""
+    text = _read(os.path.join(root, ".claude", "settings.json"))
+    if text is None:
+        return _result("claude settings", WARN, ".claude/settings.json absent",
+                       "create it from adapters/hooks/claude-code.settings.hooks.json (hooks + showThinkingSummaries)")
+    try:
+        cfg = json.loads(text)
+    except ValueError as exc:
+        return _result("claude settings", WARN, "cannot parse .claude/settings.json: {0}".format(exc), "fix the JSON")
+    if cfg.get("showThinkingSummaries") is True:
+        return _result("claude settings", PASS, "showThinkingSummaries=true (the richest thinking display the host offers)")
+    return _result("claude settings", WARN, "showThinkingSummaries not set - thinking is shown as a collapsed stub",
+                   "set \"showThinkingSummaries\": true in .claude/settings.json (INSTALL 1.6); it changes the display, not the billed tokens")
+
+
+def check_hooks(root):
+    """F-07 / CTX-D. The re-read guard is a control only when a host runs it."""
+    cop = os.path.join(root, ".github", "hooks", "ai-forward.json")
+    cc = _read(os.path.join(root, ".claude", "settings.json")) or ""
+    have = []
+    if os.path.isfile(cop):
+        have.append("Copilot (.github/hooks/ai-forward.json)")
+    if "reread-guard" in cc:
+        have.append("Claude Code (.claude/settings.json)")
+    guard = os.path.isfile(os.path.join(root, "docs", "ai-forward-pack", "hooks", "reread-guard.py"))
+    if have and guard:
+        return _result("re-read guard hook", PASS, "installed for " + ", ".join(have))
+    if have and not guard:
+        return _result("re-read guard hook", FAIL, "hook config present but docs/ai-forward-pack/hooks/reread-guard.py is missing",
+                       "copy adapters/hooks/reread-guard.py to docs/ai-forward-pack/hooks/ (INSTALL 1.5)")
+    return _result("re-read guard hook", WARN, "not installed on either host",
+                   "copy adapters/hooks/copilot.ai-forward-hooks.json to .github/hooks/ai-forward.json and merge adapters/hooks/claude-code.settings.hooks.json into .claude/settings.json (INSTALL 1.5)")
+
+
 def check_block(root, fname):
     p = os.path.join(root, fname)
     if not os.path.exists(p):
@@ -76,6 +177,9 @@ def check_block(root, fname):
         text = instruction_file.read()
     begins = text.count("AI-FORWARD-PACK:BEGIN")
     ends = text.count("AI-FORWARD-PACK:END")
+    if fname == "CLAUDE.md" and IMPORT_RX.search(text) and begins == 0:
+        # The import form (INSTALL 1.1): the block lives once, in AGENTS.md; CLAUDE.md pulls it in.
+        return _result(f"{fname} managed block", PASS, "import form (`@AGENTS.md`); the block is checked on AGENTS.md")
     if begins == 1 and ends == 1:
         return _result(f"{fname} managed block", PASS, "intact (1 block)")
     if begins == 0:
@@ -257,6 +361,10 @@ def run(root):
         check_surface(root, ".github", [".github/instructions", ".github/prompts", ".github/agents"]),
         check_block(root, "CLAUDE.md"),
         check_block(root, "AGENTS.md"),
+        check_claude_md_import(root),
+        check_hooks(root),
+        check_claude_settings(root),
+        check_copilot_settings(),
         check_graph(root),
     ]
     return checks

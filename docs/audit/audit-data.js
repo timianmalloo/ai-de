@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-04T01:27:34Z",
+  "generated": "2026-09-05T21:20:25Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9155,6 +9155,21 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "verification_executed": false
       }
+    },
+    {
+      "id": "al-01M1SQ3C045W4FDKFQGDN8794E",
+      "shortname": "updatepack-r61",
+      "datetime": "2026-09-05T21:20:25Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "C:/Program Files/Git/updatepack",
+      "summary": "AI-Forward Pack revision 59 -> 61 (2026.09.05.2). Applied mechanically with pack-apply.py (rev-61's own directive): 47 UPDATE, 43 ADD, 12 MERGE (repo-local agent deviations three-way merged), 5 REMOVE (stale wrapped UI instruction copies whose load scope moved, CTX-E), 1 CONVERT (CLAUDE.md -> @AGENTS.md + addendum, CTX-B; previous file backed up under docs/ai-forward-pack/retired/), AGENTS.md managed block re-pasted wholesale, context-budget prefix/skills baselines recorded. docs/docs-index.js untouched (V10). New: /session-profiler skill, session-profile.py, pack-apply.py, the re-read guard hook. Repo-local reconciliation: tools/verify-capture-instruction.py asserted CLAUDE.md literally contains the capture markers and broke on the CTX-B conversion; taught it to follow one level of @ import (reaches, not contains) with two new self-test directions (an import that reaches passes; a dangling import is reported). pack-doctor 0 FAIL / 3 WARN (all pre-existing/environmental). Pre-existing failures left alone and reported: verify-id-allocators (duplicate adr-0017..0020 across trees), verify-test-run (AiDe.Core.Tests), verify-derived-views (stale index from an uncommitted docs/lessons/defect-classes.md edit).",
+      "kind": "command",
+      "skill": "updatepack",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
     }
   ],
   "changes": [
