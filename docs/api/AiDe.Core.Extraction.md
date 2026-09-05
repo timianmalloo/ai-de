@@ -1179,7 +1179,7 @@ is a graph that quietly describes code that no longer exists.
 
 | Member | Summary |
 |---|---|
-| `string ExtractorGeneration = "2026-09-01.8"` | **(gap)** |
+| `string ExtractorGeneration = "2026-09-05.1"` | **(gap)** |
 | `ScopeFingerprints Load(string dataDirectory)` | **(gap)** |
 | `bool IsUnchanged(string scopeId, string fingerprint)` | True when this scope's inputs are byte-for-byte what they were when it last ran. |
 | `void Record(string scopeId, string fingerprint)` | **(gap)** |

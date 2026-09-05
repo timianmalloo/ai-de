@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-05T22:26:43Z",
+  "generated": "2026-09-05T23:45:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9390,6 +9390,21 @@ window.AUDIT_DATA = {
       "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
       "prompt": "C:/Program Files/Git/updatepack",
       "summary": "AI-Forward Pack revision 59 -> 61 (2026.09.05.2). Applied mechanically with pack-apply.py (rev-61's own directive): 47 UPDATE, 43 ADD, 12 MERGE (repo-local agent deviations three-way merged), 5 REMOVE (stale wrapped UI instruction copies whose load scope moved, CTX-E), 1 CONVERT (CLAUDE.md -> @AGENTS.md + addendum, CTX-B; previous file backed up under docs/ai-forward-pack/retired/), AGENTS.md managed block re-pasted wholesale, context-budget prefix/skills baselines recorded. docs/docs-index.js untouched (V10). New: /session-profiler skill, session-profile.py, pack-apply.py, the re-read guard hook. Repo-local reconciliation: tools/verify-capture-instruction.py asserted CLAUDE.md literally contains the capture markers and broke on the CTX-B conversion; taught it to follow one level of @ import (reaches, not contains) with two new self-test directions (an import that reaches passes; a dangling import is reported). pack-doctor 0 FAIL / 3 WARN (all pre-existing/environmental). Pre-existing failures left alone and reported: verify-id-allocators (duplicate adr-0017..0020 across trees), verify-test-run (AiDe.Core.Tests), verify-derived-views (stale index from an uncommitted docs/lessons/defect-classes.md edit).",
+      "kind": "command",
+      "skill": "updatepack",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M1SZDJF4FBTES359H38F8G6F",
+      "shortname": "adr-collision-resolved",
+      "datetime": "2026-09-05T23:45:48Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "do D then A",
+      "summary": "Resolved the four ADR-number collisions on main (session-contracts §4o), in the prescribed order. D: 237 citations across 98 files qualified with number+slug; 53 settled by an inline slug, 57 the keyword scorer could not separate were read and decided individually, 0 unresolved, and a cross-check found none assigned against its own file's domain; 14 left bare on purpose (8 ADR titles, 6 lines where the id IS the subject). A: 0017->0023 watcher-observation-projection, 0018->0024 credential-backed-grading-egress, 0019->0025 code-viewer-renderer, 0020->0026 class-diagram-architecture. §4o's '0021+' was stale and 0022-mcp-authorization landed from main mid-operation, so the first pass collided on a fresh 0022 and shifted — §4m's rule (run the allocator, do not count) recorded in §4o. ExtractorGeneration bumped for a comment-only Extraction change because the gate refuses that judgement. verify-id-allocators green (26 ADRs, no duplicates, no holes, 11 branches); every non-test gate green; 2118 tests at baseline.",
       "kind": "command",
       "skill": "updatepack",
       "tool": null,
