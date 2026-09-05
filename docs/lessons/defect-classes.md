@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 63 · partially-controlled 38 · uncontrolled 4
+**Status counts:** controlled 63 · partially-controlled 39 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3903,6 +3903,50 @@ for both or split.*
   longer a single fact about the repository. It is one fact per audience, and it is measurable.
 - **Status:** `controlled` — both halves now have gates; the diagnosis rule itself is a one-command
   check with no gate, because there is nothing to check until someone makes the claim
+
+### DC-106 — A conflict marker committed into a file that every gate reads for CONTENT and none reads for STRUCTURE
+
+- **Shape:** a merge conflict is resolved by hand in a file that should have been regenerated, the
+  resolution is left unfinished, and the literal `<<<<<<<` / `>>>>>>>` markers are committed. Nothing
+  objects, because the markers are syntactically legal in the format — HTML renders them as stray
+  text, Markdown as a paragraph — and the checks that do run on the file ask only whether the
+  *values* in it are right.
+- **Signature:** a gate reports success over a file that is visibly broken when opened. The tell is a
+  content-level check (a number, a count, a cited id) passing on a document whose structure nobody
+  verifies — and, downstream, a *nested* conflict on the next merge, which is the first moment the
+  damage becomes impossible to ignore.
+- **Why it survives:** the duplicated regions produced by a marker set usually hold the **same** value,
+  so a checker that reads each occurrence and compares it against the source finds every copy correct.
+  It counts figures; it has no opinion about the document around them. And a large generated file is
+  the one nobody reads in review.
+- **Instance:** 2026-09-05 — `site/collaboration.html` and `site/index.html`, the **published** pages,
+  carried committed markers on `main` (`1c2c7c4`). Four `data-figure` cells were duplicated: the
+  audit-entry count appeared four times in one table row, the ledger count twice. `verify-site-figures`
+  reported *"15 figure(s) verified against source"* — it had verified four copies of a right answer.
+  Found only because a subsequent merge produced NESTED markers. After the fix the same gate reports
+  **14**: the count dropped because duplicates went away, not because figures were lost.
+- **The structural cause is an ownership hole, and it is the more general half.** `site/*.html` are
+  **partially derived**: `regenerate-derived.py` patches their figures in place rather than rebuilding
+  them, so they are neither source (a human edits them) nor derived (`verify-derived-views` does not
+  list them among its four). A file that is partly generated belongs to no gate's structural check by
+  construction — *"is it regenerated correctly?"* is never asked of it, because nothing regenerates it
+  whole.
+- **Control:** `tools/verify-no-conflict-markers.py`, on every push. It flags `<<<<<<<`, `>>>>>>>` and
+  `|||||||` at line start in every tracked text file, and deliberately does **not** flag a bare
+  `=======`, which is a valid Markdown setext underline — a gate that fires on real prose is a gate
+  someone switches off. **Observed failing on the un-fixed shape rather than on a fixture:** run
+  against the blob at `1c2c7c4` it reports `collaboration.html:267` and `:271`. Its `--self-test`
+  proves all three directions, including the false-positive one.
+- **The generalisation:** *a content check cannot see structural damage, and will report success over
+  a corrupt file with confident precision.* Where a file is validated only for the values inside it,
+  something separate has to assert that the file is intact — and the cheapest such assertion is for
+  the one defect that has no legitimate instance anywhere.
+- **Residual risk:** the marker gate closes the loud case. The ownership hole is still open — nothing
+  rebuilds `site/*.html` end to end, so a hand-edit that produces *plausible* wrong structure (no
+  marker) remains invisible. That is DC-060 pointed at a partially-derived artifact, and it wants
+  either full generation or a structural check, neither of which this entry delivers.
+- **Status:** `partially-controlled` — the marker case is gated and proven; the partial-derivation
+  hole that let it reach a published page is named, not closed
 
 ---
 

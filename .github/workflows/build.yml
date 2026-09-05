@@ -107,6 +107,16 @@ jobs:
           python tools/verify-capture-instruction.py --self-test
           python tools/verify-capture-instruction.py
 
+      # DC-106: site/collaboration.html and site/index.html carried COMMITTED conflict markers on
+      # main, duplicating four data-figure cells on the PUBLISHED pages. verify-site-figures read
+      # each duplicated cell, found the same correct number in all of them, and reported success —
+      # a content check cannot see structural damage. A conflict marker has no legitimate instance
+      # in a tracked file, so this is the rare gate with no judgement in it.
+      - name: No conflict markers in tracked files
+        run: |
+          python tools/verify-no-conflict-markers.py --self-test
+          python tools/verify-no-conflict-markers.py
+
       # DC-099: a test written in the same edit as its fix has never been shown capable of failing.
       # Breaks the code on purpose and requires a test to notice. The four CROSS-BOUNDARY/CROSS-AUTHOR
       # mutations are the ones no single-sided sweep can find: each component's own sweep mutates only

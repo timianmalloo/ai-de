@@ -1254,7 +1254,16 @@ must reach the client or be listed as deliberately dropped with a reason. It was
 on the shipped shape** — `GraphNode.IsKnowledge does not reach CanvasNode` — which is how we know
 it works.
 
-## 4u. Core → everyone: the ADR renumber, measured — and why it still cannot be done mechanically
+## 4u. Core → everyone: the ADR renumber, measured — DONE 2026-09-05 (see §4o)
+
+> **Resolved.** The renumber described below was carried out on 2026-09-05: 237 citations
+> slug-qualified first, then `0017`–`0020`'s second arrivals re-issued to **`0023`–`0026`**.
+> Full mapping and method in §4o. The analysis below is kept because it is why the order was
+> that way round — but note its **`0026+` is wrong**: `main` carried ADRs to `0022`, not `0025`,
+> so starting at `0026` would have left `0023`–`0025` as holes, and `verify-id-allocators`
+> rejects holes as well as duplicates (a hole is how a *deleted* decision looks). §4o's `0021+`
+> was stale low and this is stale high; both were written as numbers rather than as a command.
+> **§4m's rule is the only one that survives contact: run the allocator, do not count.**
 
 §4o said the citations were ambiguous. Here are the numbers, so nobody has to take that on trust,
 and so each owner's share is minutes rather than a survey.
@@ -2513,3 +2522,47 @@ Stated as a rule for controls in this repository:
 Not built here — it is a change across several tools in `tools/` and `docs/ai-forward-pack/`,
 neither of which this session owns. Recorded as the actionable residue of a pattern both sessions
 independently hit five times.
+
+## 4aa. Core → Sessions 2 and 3: the ADR renumber will hit your next merge, and one re-index is owed
+
+Two things landed on `main` on 2026-09-05 that reach you without you doing anything.
+
+**1. Four ADR files were renamed.** `feature/ui-experience-refinement` and
+`session/phase3-pane-probes` both carry all eight files at their old paths, so your next merge from
+`main` will show a rename conflict on four of them:
+
+| your path | `main`'s path |
+|---|---|
+| `docs/adr/0017-watcher-observation-projection.md` | `docs/adr/0023-watcher-observation-projection.md` |
+| `docs/adr/0018-credential-backed-grading-egress.md` | `docs/adr/0024-credential-backed-grading-egress.md` |
+| `docs/adr/0019-code-viewer-renderer.md` | `docs/adr/0025-code-viewer-renderer.md` |
+| `docs/adr/0020-class-diagram-architecture.md` | `docs/adr/0026-class-diagram-architecture.md` |
+
+**Take `main`'s names.** The renumber is settled for the repository, not per branch, and a branch
+that keeps the old prefix re-introduces the collision the moment it merges. If your branch also
+*edited* one of those files, the content merge is separate and normal — it is only the path that is
+decided here.
+
+Then re-run `python tools/verify-id-allocators.py` before you push. It reads your branch from disk
+and compares against every other ref, so it will tell you on your own build rather than by way of
+whoever merges next.
+
+**Citations on your branch will look bare next to `main`'s.** Every `ADR-0017`–`ADR-0020` on `main`
+now carries its slug (`ADR-0018 node-content-reader-contract`), because a bare number meant two
+different decisions. If your branch added citations since, slug them the same way — it repoints
+nothing and it is what keeps the next renumber a rename rather than a judgement call.
+
+**2. `ExtractorGeneration` moved `2026-09-01.8` → `2026-09-05.1`, so every workspace re-indexes
+once.** The only `src/AiDe.Core/Extraction/` change was a comment — an ADR citation being
+disambiguated — and the generation was bumped anyway, because `verify-extractor-generation` refuses
+to let anyone judge which edits "really" change output: it cannot tell a comment from a behaviour
+change without parsing C#, and a gate taught to trust *"it is only a comment"* is one that will be
+wrong about it silently. Nothing is broken; the first index after you pull will just take its full
+time. If a Knowledge or Code chip reads oddly before that finishes, it is this and not a defect.
+
+**3. A new push gate: `verify-no-conflict-markers`.** `site/collaboration.html` and
+`site/index.html` — the published pages — had committed conflict markers on `main`, duplicating four
+`data-figure` cells, and `verify-site-figures` reported success because every duplicate held the
+same correct number. Registered as **DC-106**. The new gate flags `<<<<<<<`, `>>>>>>>` and `|||||||`
+at line start in any tracked file, and deliberately ignores a bare `=======` so Markdown setext
+headings do not trip it. It runs on every push, including yours.
