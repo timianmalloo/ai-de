@@ -2162,6 +2162,7 @@ for both or split.*
 - **Signature:** an ingest handles a `session-end` (or close) event by forgetting the session's *external→internal id mapping*, but never marks the *internal* session ended in the store. Liveness is a projection over the store (Ended iff `IsEnded(sessionId)`, else Alive/Stale by heartbeat recency), so a closed session that was never marked ended keeps reporting **Alive** (or drifts to **Stale**) forever — the watcher shows a live session for a terminal that is gone.
 - **Why it survives:** the mapping removal is the *visible* half of "end the session" and it works — a subsequent heartbeat for that external id is correctly ignored — so the handler looks complete. Nothing in the end path reads liveness back, and a round-trip test that only checks "no new session on a stale heartbeat" passes. The lie only shows when something *evaluates liveness* after the end.
 - **Instances:** 2026-08-31 — `InjectedContractIngest.ContractSessionEnd` (conn-2/conn-5) removed `_byExternalId[externalId]` but never called into the store, so `SessionCoordinationEmitter.End` → coordination `session-end` → pump left the session `Alive`. Found by the conn-8 emitter test `End_WritesSessionEnd_AndStopsTracking` asserting `LivenessState.Ended` after end+pump. **Fixed** the same day: added `IngestHost.EndSession(sessionId) => _store.MarkEnded(sessionId)` and made the `ContractSessionEnd` case call it (via the external→internal lookup) *before* removing the mapping.
+- **Instance (fleet, ai-forward drm-0009 COORD-D):** `2026-09-04` -- the same class, now with a number: 24 session-start events against 1 session-end (96% never closed), and 131 claims against 117 releases with 33 (25%) never released. 86% of the releases that did happen landed while the lease was still live, so the verb works and the exit is what is skipped; every abandoned lease was reclaimed by TTL, not by protocol.
 - **Control:** `SessionCoordinationEmitterTests.End_WritesSessionEnd_AndStopsTracking` (end→pump→`Ended`) and `Reconcile_Registers_Heartbeats_AndEnds_FromASnapshot` (a snapshot that drops a session ends exactly that one, leaving it `Ended` while the survivor stays `Alive`) — both mutation-verified: neutralising the `_host.EndSession(...)` call reds the first, and neutralising the "end gone" branch reds the second. Generalisation: **an end/close handler must change the state the reader projects from, not only the lookup that routed the event — and prove it by reading the projection (liveness) back after the end, never only by asserting the routing stopped.**
 - **Residual risk:** the shell drives ends by *reconcile from the current terminal snapshot* (a closed pane disappears from the snapshot and is ended on the next tick, ≤2s later), not by a precise per-pane close event; a session whose pane vanishes without the loop running (e.g. process kill mid-tick) is ended only when the loop next runs, and on host dispose tracked sessions are dropped without an explicit end (they go Stale, then the host's DB is disposed). The async shell loop timing itself is not unit-tested (covered by the Core end-to-end reconcile test + manual smoke).
 - **Status:** `controlled`
@@ -3224,6 +3225,7 @@ for both or split.*
   refresh into a commit describing only the merger's work, and nothing objected. Three sessions
   then spent an afternoon tracing an "unreachable" fourth session that had never been given an
   identity to register with.
+- **Instance (fleet, ai-forward drm-0009 COORD-C):** `2026-09-04` -- the same class, generalised for the fleet and measured here: 3 `COORD-NOT-CHECKED-IDENTITY` events under agent `anon`, against 50 allowed and 2 refused across the whole decision record -- the not-checked path was more common than the refusal it replaces. Promoted to the ai-forward fleet store as a general class on 2026-09-04.
 - **The trap inside the fix:** the obvious value is the launcher's own session id. AI-DE's is
   `agent:claude#a90b5c`, and `coord-core.py` writes `logdir / "{}.jsonl".format(session)` then reads
   it back with `glob("*.jsonl")` — so on Windows that colon would have made every write an NTFS
@@ -3899,3 +3901,118 @@ for both or split.*
   longer a single fact about the repository. It is one fact per audience, and it is measurable.
 - **Status:** `controlled` — both halves now have gates; the diagnosis rule itself is a one-command
   check with no gate, because there is nothing to check until someone makes the claim
+
+---
+
+## Inherited from the fleet (ai-forward drm-0009, 2026-09-04)
+
+Classes discovered in OTHER repositories, promoted to the shared fleet store and pushed here by `/apply-learnings`. They are kept separate from this repo's own findings because their evidence is elsewhere: treat each as a shape to watch for, not as something already observed here. The **Status counts** line above is deliberately unchanged -- an inherited class has not yet earned a status in this repo.
+
+Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` to refresh.
+
+**Not added, because this repo already carries them under different wording** -- merged into the existing class instead: `COORD-C` into `DC-088`, `COORD-D` into `DC-067`.
+
+### UNKNOWN-ARTIFACT-TYP - unknown-artifact-type-in-frontmatter
+- **Control:** docs-graph.py validate rejects any frontmatter 'type' not in the TYPES enum; run it after adding a graph node. (automated control)
+- **Boundary:** Applies to any new .md graph node; type must be one of the known TYPES.
+- **Confidence:** v  - **Source:** fleet (drm-0009/p1)
+
+### PACK-E-AN-AMBIGUOUS- - PACK-E · An ambiguous proper noun resolved inside my own frame
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i  - **Source:** fleet (drm-0009/p8)
+
+### PACK-D-AN-ARRAY-PARA - PACK-D · An array parameter arrives as one comma-joined string when the script is invoked as an executable
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i  - **Source:** fleet (drm-0009/p9)
+
+### PACK-C-AN-ASSERTION- - PACK-C · An assertion encodes a transient magnitude assumption
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i  - **Source:** fleet (drm-0009/p10)
+
+### PACK-H-A-FIX-TO-A-HO - PACK-H · A fix to a hosted surface reported "done" from the working tree, not verified on the live surface
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i  - **Source:** fleet (drm-0009/p7)
+
+### PACK-N-STALENESS-INF - PACK-N · Staleness inferred from a timestamp rather than from content truth
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i  - **Source:** fleet (drm-0009/p6)
+
+### PACK-Q-AN-ADAPTER-WR - PACK-Q · An adapter written to a contract's *documented* shape, never to a *recorded* one
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i  - **Source:** fleet (drm-0009/p4)
+
+### PACK-O-FRONT-MATTER- - PACK-O front-matter presence + scope-drift review
+- **Control:** Presence (mechanical): every substantive turn records done_when (CT19); a missing one skipped the front matter. Satisfaction: review each done_when->summary pair where the summary exceeds the goal (scope drift, PACK-O). The audit done_when field + this miner ARE the rung-2 control (CI6). (automated control)
+- **Boundary:** Presence is mechanical; 'summary exceeds goal' is surfaced for human review, not auto-judged. Trivial/conversational turns are exempt from logging (AL5b).
+- **Confidence:** v  - **Source:** fleet (drm-0009/p13)
+
+### PACK-P-A-CHECK-REPOR - PACK-P · A check reports its verdict over a corpus it never established was non-empty
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i  - **Source:** fleet (drm-0009/p5)
+
+### SHELL-A-CONTENT-ROUT - SHELL-A · Content routed through a shell construct that performs substitution on it
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i  - **Source:** fleet (drm-0009/p3)
+
+### TWO-OR-MORE-AGENT-SE - Two or more agent sessions work one repository, but session registration, file ownership, seam contracts, and derived/append-only merge policy are not recorded before work begins.
+- **Control:** Add a multi-session collaboration check: when more than one active worktree/session exists, fail or warn if any session is unregistered, if changed files lack a current coord claim or owner mapping, if no shared session contract exists, or if derived/append-only conflicts are hand-merged rather than regenerated/re-issued. Observe it failing on an unregistered two-session fixture and passing once both sessions register, claim files, and publish the seam contract. (automated control)
+- **Boundary:** Applies to concurrent cross-agent repository writes. It does not apply to a single writing session, read-only exploration, or a normal human code review where one actor owns the worktree. It coordinates humans/agents by evidence; it is not a distributed lock unless the edited resource accepts fencing tokens.
+- **Confidence:** v  - **Source:** fleet (drm-0007/p12)
+
+### A-CONSOLIDATION-LOOP - A consolidation loop whose promote step succeeds and whose DOWNSTREAM steps — distribution and control-building — are never run, so the same proposals resurface
+- **Control:** The dream run reports the state of the PIPELINE, not just of the corpus: for each proposal, how many prior dreams raised it; for the previous dream, how many proposals were promoted; and for the fleet store, how many classes have never been distributed (no plan in learnings/plans/) and how many name a class in this repo's register that is still not `controlled`. A proposal recurring for the Nth time renders as an ESCALATION at the top of the review view rather than as a fresh idea in the middle of it. The number that matters is not 'proposals promoted' but 'promoted learnings that reached a repo AND produced a control'. (automated control)
+- **Boundary:** Applies to any multi-stage produce-review-promote-distribute loop where each stage is a separate manual command. It does not apply to the human gate itself, which is correct and deliberate — the defect is the UNMEASURED skip of a downstream stage, not the existence of the gate.
+- **Confidence:** v  - **Source:** fleet (drm-0009/p22)
+
+### GIT-A-A-REVERT-USED- - GIT-A · A revert used as an undo, on a file that also carries unrelated uncommitted work
+- **Control:** Derive a falsifiable control for this class and observe it failing on the un-fixed shape (CI6); move status -> controlled. (automated control)
+- **Boundary:** Applies wherever the class's signature recurs; a control is not a control until observed failing.
+- **Confidence:** i  - **Source:** fleet (drm-0009/p2)
+
+### ASSUME-MARKER-HARVES - assume marker harvest
+- **Control:** Review each assume: marker; a triggered one is a bug already written down (NG9). Verify or convert to a control. (knowledge doc)
+- **Boundary:** Markers in this repo only; harvested at consolidation time.
+- **Confidence:** v  - **Source:** fleet (drm-0009/p11)
+
+### SIMPLIFY-MARKER-HARV - simplify marker harvest
+- **Control:** Review each simplify: marker against its upgrade trigger; a triggered one is debt due (L6). (knowledge doc)
+- **Boundary:** Markers in this repo only; harvested at consolidation time.
+- **Confidence:** v  - **Source:** fleet (drm-0009/p12)
+
+### TWO-REGISTERS-OF-ONE - Two registers of one quantity, created by a session that had not opened the first one
+- **Control:** Coordination state splits into exactly TWO stores with different lifetimes and one authority rule: a TRACKED ownership register that is the sole authority on who owns what, and an UNTRACKED liveness store that says only who is running right now, in which tree, on what, and what they are blocked on — and that states no path or ownership table at all. A lint fails the liveness store when it contains an ownership/path table, and the liveness store's own header must point at the tracked register and declare that the tracked one wins on any disagreement. Add as a WT-series directive in session-worktree-discipline.md with the lint in coord doctor. (automated control)
+- **Boundary:** Applies wherever more than one agent session writes to one repository. Does not apply to a single-session repo, where one register is correct and a second store is pure ceremony.
+- **Confidence:** v  - **Source:** fleet (drm-0009/p14)
+
+### A-SESSION-DESCRIBES- - A session describes another session's ownership, contract or seam without opening the file that states it
+- **Control:** Extend E15 in end-to-end-integrity.md from code to AGREEMENTS: never assert the shape of our own contracts, ownership, or seam from memory — open the register or label the claim Inferred. The tell is one session summarising another session's ownership without a citation, and the cheap check is that every cross-session claim about who owns what carries the register line it came from. (always-loaded instruction)
+- **Boundary:** Applies to claims about shared, written agreements. It does not apply to a session describing its OWN in-flight work, which has no register to cite yet.
+- **Confidence:** v  - **Source:** fleet (drm-0009/p15)
+
+### A-COLLABORATION-CHAN - A collaboration channel accumulates repeated same-shape requests against one seam, each handled individually
+- **Control:** CI2 (class, not instance) applies to the collaboration channel, not only to defects. When a session opens the Nth request of the same shape against the same seam, it raises the CLASS — the missing capability behind all N — rather than the N+1th request. The channel's own review asks 'how many of these are one thing?' before it asks 'which is next?'. (knowledge doc)
+- **Boundary:** Applies where one session repeatedly asks another for variations of one capability. It does not apply to genuinely distinct requests that merely arrive together.
+- **Confidence:** i  - **Source:** fleet (drm-0009/p18)
+
+### ONE-FIELD-CARRIES-TH - One field carries three different kinds of identity, so no query over it means one thing
+- **Control:** Declare the identity vocabulary once and validate the field against it: an AGENT is a stable logical actor, a SESSION is one run in one worktree, and they are separate fields. Reject a raw UUID in the agent field, and reject a work-item placeholder that is constant across every record — a field whose value never varies carries no information and should be removed rather than filled in. (automated control)
+- **Boundary:** Applies to any shared record keyed by actor. Not applicable where a single anonymous writer is intended by design.
+- **Confidence:** v  - **Source:** fleet (drm-0009/p19)
+
+### TWO-SESSIONS-COLLIDE - Two sessions collide on a lease and the collision is treated as a scheduling problem to wait out
+- **Control:** A coordination refusal is a DEFECT SIGNAL about the decomposition: if two sessions need the same file at the same time, the work was split along the wrong seam and the plan is wrong, not the timing. The response is to re-cut the work item or record a block naming what is needed — never to retry on a timer, and never to widen the lease. Repeated refusals on one path escalate to a plan review. This is GO9 (a cap firing is a defect signal) pointed at coordination. (always-loaded instruction)
+- **Boundary:** Applies to refusals arising from CONTENTION. A refusal caused by a missing identity or a malformed request is a different class (COORD-C) and is not evidence about the plan.
+- **Confidence:** v  - **Source:** fleet (drm-0009/p20)
+
+### A-DOCUMENTED-DEFAULT - A documented default and the observed distribution differ by two orders of magnitude at the tail
+- **Control:** Bound the lease at the guard rather than in prose: cap the TTL, and require a recorded reason above a stated threshold. Report the TTL distribution in doctor so the drift is visible as a number. The rule that should hold — 'a lease covers the minutes you are editing a file, never an area you intend to own' — is only real if something refuses the twelve-hour lease. (automated control)
+- **Boundary:** Applies where leases are advisory over shared files. A long lease is legitimate for a genuinely exclusive, long-running operation — which should be a different verb, not a longer default.
+- **Confidence:** v  - **Source:** fleet (drm-0009/p21)

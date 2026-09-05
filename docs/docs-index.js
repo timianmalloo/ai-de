@@ -4176,7 +4176,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "7b0a0d1e2834eeb5dba3401f67b46f17208bfbeded347059ead57d5127d18d32"
+      "sourceSha256": "8d976c97505a473d4bf5beaa87be54f672591d120a9eddedb20172eaf37729dd"
     },
     {
       "id": "diagram-class",
@@ -10904,5 +10904,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "12845ad38a322da863b773736915b0b068dba179f934b724cf2792bbd53415cd"
+  "graphSha256": "aeab48418fee7b76f03e1bc15b6e8e03135e8febc11ed3046e33b50c27d8d449"
 };
