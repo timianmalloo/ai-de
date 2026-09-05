@@ -389,7 +389,7 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
             .Distinct(StringComparer.Ordinal)
             .ToDictionary(id => id, id => NodeOf(reader, id).NodeKind, StringComparer.Ordinal);
 
-        // The type's OWN members (has_member) — the class-diagram compartment (ADR-0020 class-diagram-architecture Phase 2). Read
+        // The type's OWN members (has_member) — the class-diagram compartment (ADR-0026 class-diagram-architecture Phase 2). Read
         // directly by subject so the neighbour cap cannot starve them; `members_truncated` carries the
         // real declared count when the extractor capped the listing. Empty for a non-type node.
         var ownRows = reader.OutgoingAssertions(nodeId, MaxMembersRead);

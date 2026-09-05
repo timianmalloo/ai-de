@@ -11,7 +11,7 @@ links:
   - { to: design-watcher-phase1-skeleton, rel: refines }
   - { to: spec-agentic-watcher-substrate, rel: implements }
   - { to: mockup-watcher-observatory, rel: refines }
-  - { to: adr-0017-watcher-observation-projection, rel: depends-on }
+  - { to: adr-0023-watcher-observation-projection, rel: depends-on }
 review-by: 2027-02-26
 review-suggested: []
 summary: >-

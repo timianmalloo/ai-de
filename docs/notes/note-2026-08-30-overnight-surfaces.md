@@ -9,8 +9,8 @@ tags: [overnight, class-diagram, code-viewer, prompt-editor, editor-surfaces, st
 links:
   - { to: spec-editor-surfaces, rel: relates-to }
   - { to: spec-uml-erm-surfaces, rel: relates-to }
-  - { to: adr-0020-class-diagram-architecture, rel: relates-to }
-  - { to: adr-0019-code-viewer-renderer, rel: relates-to }
+  - { to: adr-0026-class-diagram-architecture, rel: relates-to }
+  - { to: adr-0025-code-viewer-renderer, rel: relates-to }
 review-by: 2026-11-30
 review-suggested: []
 summary: >-
@@ -26,8 +26,8 @@ summary: >-
 
 | Increment | What shipped | Tests |
 |---|---|---|
-| **ADR-0019 code-viewer-renderer residual cleared** | Ran the AvalonEdit read-only PoC (spike, disposed): read-only + highlighting works, `TextEditor` is a pure WPF `Control` (no airspace by construction), C#/py/js/sql highlighted built-in, ts/bicep degrade to plain. RoslynPad fallback dropped. | (spike) |
-| **ADR-0020 class-diagram-architecture + `ClassHierarchyModel`** | Class diagram = App-side type-hierarchy from the existing graph (`inherits`→generalization, `implements`→realization); members/Mermaid deferred to Phase 2 (Core `has_member`). Pure projection logic. | 8 |
+| **ADR-0025 code-viewer-renderer residual cleared** | Ran the AvalonEdit read-only PoC (spike, disposed): read-only + highlighting works, `TextEditor` is a pure WPF `Control` (no airspace by construction), C#/py/js/sql highlighted built-in, ts/bicep degrade to plain. RoslynPad fallback dropped. | (spike) |
+| **ADR-0026 class-diagram-architecture + `ClassHierarchyModel`** | Class diagram = App-side type-hierarchy from the existing graph (`inherits`→generalization, `implements`→realization); members/Mermaid deferred to Phase 2 (Core `has_member`). Pure projection logic. | 8 |
 | **Class-diagram surface (Phase 1)** | Native `ClassDiagramSurface` (no WebView2), reachable via **View menu / Ctrl+K,M**; styled type cards, member-less disclosure, external-relation count; grouped by context for scannability. | 2 |
 | **Prompt-editor (Phase 2) — completed earlier this session, wired** | Reachable **Terminal menu / Ctrl+K,D**; staged draft, one-way named-session transfer, cross-restart persistence. | 7 |
 | **Read-only code viewer component + seam** | `CodeViewerView` (AvalonEdit, read-only, highlight-by-language, shortfall, fallback) + `INodeContentSource` client seam mirroring ADR-0018 node-content-reader-contract + `MockNodeContentSource`. Staged & tested; **not yet wired into the live UI** — see below. | 6 |

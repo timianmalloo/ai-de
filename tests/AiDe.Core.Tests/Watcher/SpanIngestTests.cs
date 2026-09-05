@@ -3,7 +3,7 @@ using AiDe.Core.Watcher;
 namespace AiDe.Core.Tests.Watcher;
 
 /// <summary>
-/// LK-SPAN-01..08 — idempotent span ingest (ADR-0006 / ADR-0017 watcher-observation-projection). The claim is not "we store a span"
+/// LK-SPAN-01..08 — idempotent span ingest (ADR-0006 / ADR-0023 watcher-observation-projection). The claim is not "we store a span"
 /// but "a redelivered or out-of-order span is safe, and a forged session cannot write a fact."
 /// </summary>
 public sealed class SpanIngestTests

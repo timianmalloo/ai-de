@@ -12,10 +12,10 @@ links:
   - { to: spec-terminal-sessions, rel: relates-to }
   - { to: kb-editor-and-content-rendering-surfaces, rel: implements }
   - { to: adr-0018-node-content-reader-contract, rel: depends-on }
-  - { to: adr-0019-code-viewer-renderer, rel: depends-on }
+  - { to: adr-0025-code-viewer-renderer, rel: depends-on }
 review-by: 2027-02-28
 review-suggested:
-  - { by: adr-0019-code-viewer-renderer, on: 2026-08-30, reason: "residual cleared: AvalonEdit read-only highlighting PoC passed (C#/py/js/sql covered, ts/bicep degrade to plain, pure-WPF no airspace)" }
+  - { by: adr-0025-code-viewer-renderer, on: 2026-08-30, reason: "residual cleared: AvalonEdit read-only highlighting PoC passed (C#/py/js/sql covered, ts/bicep degrade to plain, pure-WPF no airspace)" }
 summary: >-
   Specifies two content surfaces the workbench still lacks: a READ-ONLY code viewer (syntax-highlighted
   source for a selected node/file, never an editor of record) and a PROMPT-DRAFT editor (rich-text

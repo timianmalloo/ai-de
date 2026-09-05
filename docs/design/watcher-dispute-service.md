@@ -20,7 +20,7 @@ summary: >-
   A session is Disputed iff any of its episodes carries a dispute (DM7), surfaced as a no-colour-alone
   badge on the Sessions row and computed by the sessions query. DelegatingAdvisoryEvaluator is the
   cloud-judge scaffold: an IAdvisoryEvaluator that delegates the 0-4 rubric to an injected model call and
-  is placed inside the EgressGuardedAdvisoryEvaluator, so the network call only happens after the ADR-0018 credential-backed-grading-egress
+  is placed inside the EgressGuardedAdvisoryEvaluator, so the network call only happens after the ADR-0024 credential-backed-grading-egress
   egress opt-in + credential check pass.
 ---
 
@@ -63,7 +63,7 @@ Sessions view within one interaction.
 0-4 rubric to the injected `judge` function (clamping it and wrapping it with the version + rationale). A
 real integration supplies `judge` as a call to a provider - grounded on the quarantined evidence,
 validating the structured output (LOA A1-A3) - and places this evaluator **inside** the
-`EgressGuardedAdvisoryEvaluator` (conn-3), so the network call only happens after the ADR-0018 credential-backed-grading-egress egress
+`EgressGuardedAdvisoryEvaluator` (conn-3), so the network call only happens after the ADR-0024 credential-backed-grading-egress egress
 opt-in and credential check pass. This makes the one undetermined piece - the model call - a single
 injected function, with everything around it (guarding, folding, calibration) already deterministic and
 proven.

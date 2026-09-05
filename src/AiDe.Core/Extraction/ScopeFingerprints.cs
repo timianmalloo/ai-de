@@ -66,7 +66,13 @@ public sealed class ScopeFingerprints
     // member's name. `calls` keeps its deduplicated one-row-per-pair shape for the graph; this is
     // the interaction a sequence diagram draws, where a repeated call is a repeated message rather
     // than a duplicate to be folded away. An attribute, so it is never drawn.
-    public const string ExtractorGeneration = "2026-09-01.8";
+    // 2026-09-05.1 — COMMENT ONLY, and bumped anyway. The ADR citation in `CSharpExtractor` was
+    // disambiguated (`ADR-0020` meant two different decisions; it is now `ADR-0026
+    // class-diagram-architecture`). Extraction output is unchanged, and that is precisely the
+    // judgement this gate refuses to let anyone make: it cannot tell a comment from a behaviour
+    // change without parsing C#, and a gate taught to trust "it is only a comment" is a gate that
+    // will one day be wrong about it silently. One re-index is the cheap side of that trade.
+    public const string ExtractorGeneration = "2026-09-05.1";
 
     private const string FileName = "scope-fingerprints.json";
 

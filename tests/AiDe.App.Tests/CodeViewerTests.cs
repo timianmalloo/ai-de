@@ -3,8 +3,8 @@ using AiDe.App.Workbench;
 namespace AiDe.App.Tests;
 
 /// <summary>
-/// The read-only code viewer (ADR-0019 code-viewer-renderer) and its content seam (ADR-0018 node-content-reader-contract). AvalonEdit constructs on an
-/// STA thread with no window (confirmed by the ADR-0019 code-viewer-renderer spike).
+/// The read-only code viewer (ADR-0025 code-viewer-renderer) and its content seam (ADR-0018 node-content-reader-contract). AvalonEdit constructs on an
+/// STA thread with no window (confirmed by the ADR-0025 code-viewer-renderer spike).
 /// </summary>
 public sealed class CodeViewerTests
 {

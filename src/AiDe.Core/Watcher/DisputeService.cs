@@ -34,7 +34,7 @@ public sealed class DisputeService(IWatcherObservationStore store, TimeProvider 
 /// The cloud-judge scaffold: an <see cref="IAdvisoryEvaluator"/> that delegates the actual 0-4 rubric to
 /// an injected model call. A real integration supplies the delegate (a call to a provider, grounded on
 /// the quarantined evidence, returning a rubric), and this evaluator is placed <b>inside</b> an
-/// <see cref="EgressGuardedAdvisoryEvaluator"/> so the network call only happens after the ADR-0018 credential-backed-grading-egress
+/// <see cref="EgressGuardedAdvisoryEvaluator"/> so the network call only happens after the ADR-0024 credential-backed-grading-egress
 /// egress opt-in and credential check pass. It exists so the seam is concrete and testable without a
 /// provider: the deterministic parts (guarding, folding, calibration) are proven around it, and the one
 /// undetermined piece - the model call - is a single injected function.

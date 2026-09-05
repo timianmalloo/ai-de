@@ -3,7 +3,7 @@ using AiDe.Core.Watcher;
 namespace AiDe.Core.Tests.Watcher;
 
 /// <summary>
-/// LK-EGRESS-01..04 — the default-deny egress gate (ADR-0018 credential-backed-grading-egress). The claim is that nothing egresses
+/// LK-EGRESS-01..04 — the default-deny egress gate (ADR-0024 credential-backed-grading-egress). The claim is that nothing egresses
 /// unless an explicit per-path opt-in enabled exactly that path.
 /// </summary>
 public sealed class EgressGateTests

@@ -26,7 +26,7 @@ summary: >-
 
 *interface* — `AdvisoryEvaluators.cs`
 
-A presence-only check that a credential exists for a would-egress evaluator (ADR-0018 credential-backed-grading-egress). It never
+A presence-only check that a credential exists for a would-egress evaluator (ADR-0024 credential-backed-grading-egress). It never
 exposes the secret itself - the watcher store holds non-secret facts only (architecture §4), so the
 gate authorises on **presence**, and the secret is resolved elsewhere, at the call, by the
 credential-backed transport. Absent by default.
@@ -72,7 +72,7 @@ dimension is the deterministic scorer's job, never an evaluator's (spec rule 8).
 
 *class* — `AdvisoryEvaluators.cs`
 
-The **egress + credential guard** (ADR-0018 credential-backed-grading-egress) around any advisory evaluator that would call out to a
+The **egress + credential guard** (ADR-0024 credential-backed-grading-egress) around any advisory evaluator that would call out to a
 model over the network. Before delegating it enforces, in order: the `EgressGate` has an
 explicit per-path opt-in for this evaluator's path (else `EgressDenied`,
 LK-0003 - default-deny), and a credential is present (else `InvalidBinding`,
@@ -154,7 +154,7 @@ One advisory (model-judge) assessment of a dimension. Carries its evaluator vers
 *interface* — `AdvisoryScoring.cs`
 
 The model-judge seam (spec rule 8). A real implementation grounds on quarantined evidence and runs a
-local model behind the credential/egress policy (ADR-0018 credential-backed-grading-egress, Phase 4/5); slice 7 depends only on the
+local model behind the credential/egress policy (ADR-0024 credential-backed-grading-egress, Phase 4/5); slice 7 depends only on the
 interface, so the deterministic gate + fold are fully testable without a model.
 
 ## `AdvisoryWeaveScorer`
@@ -1430,7 +1430,7 @@ never hand-builds a dispute id or reaches past the store's append-only contract.
 The cloud-judge scaffold: an `IAdvisoryEvaluator` that delegates the actual 0-4 rubric to
 an injected model call. A real integration supplies the delegate (a call to a provider, grounded on
 the quarantined evidence, returning a rubric), and this evaluator is placed **inside** an
-`EgressGuardedAdvisoryEvaluator` so the network call only happens after the ADR-0018 credential-backed-grading-egress
+`EgressGuardedAdvisoryEvaluator` so the network call only happens after the ADR-0024 credential-backed-grading-egress
 egress opt-in and credential check pass. It exists so the seam is concrete and testable without a
 provider: the deterministic parts (guarding, folding, calibration) are proven around it, and the one
 undetermined piece - the model call - is a single injected function.
@@ -1505,7 +1505,7 @@ Whether an egress path may be used.
 
 *class* — `EgressGate.cs`
 
-The default-deny egress gateway (ADR-0018 credential-backed-grading-egress, extends ADR-0011). Outbound is blocked until an explicit
+The default-deny egress gateway (ADR-0024 credential-backed-grading-egress, extends ADR-0011). Outbound is blocked until an explicit
 per-path opt-in enables exactly that path; every other path stays blocked. The gate ships in Phase 1,
 before any component that could egress, so the local-only default is enforced from the start.
 
@@ -2010,7 +2010,7 @@ The production clock, backed by the high-resolution monotonic `Stopwatch`.
 
 The observation fact grain: one row is exactly one observed operation emitted by one authenticated
 session generation, identified by its source span identity, recorded at ingest. Immutable and
-append-only (ADR-0017 watcher-observation-projection). Phase 1 carries operation metadata only - no prompt/code/transcript
+append-only (ADR-0023 watcher-observation-projection). Phase 1 carries operation metadata only - no prompt/code/transcript
 content (that is Phase 5, behind the governance gate).
 
 | Member | Summary |
@@ -2525,7 +2525,7 @@ The outcome of attempting to ingest one span.
 *class* — `SpanIngest.cs`
 
 Ingests observed spans, verifying the session capability first (so a forged session cannot write
-facts) and then appending idempotently by content-addressed id (ADR-0006 / ADR-0017 watcher-observation-projection).
+facts) and then appending idempotently by content-addressed id (ADR-0006 / ADR-0023 watcher-observation-projection).
 
 | Member | Summary |
 |---|---|

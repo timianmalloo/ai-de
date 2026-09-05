@@ -913,84 +913,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "33fa8d47c7ff1d0044252c2961c4a9d81b97eabdb6728dfe1e4f3c23104b20dc"
-    },
-    {
-      "id": "adr-0017-watcher-observation-projection",
-      "path": "docs/adr/0017-watcher-observation-projection.md",
-      "title": "ADR-0017 — Loomkeeper observes as a projection over the shared fact store, not a second database",
-      "type": "adr",
-      "status": "accepted",
-      "owner": "@timianmalloo",
-      "phase": "discovery",
-      "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
-      "summary": "Loomkeeper adds harness/model dimensions and watcher facts (span, board message, work episode, evidence, scorecard, daydream observation) to the existing ADR-0002 SQLite fact store and computes liveness, Weave, and the leaderboard as ADR-0001 derived views, rather than owning a second store.",
-      "tags": [
-        "architecture",
-        "loomkeeper",
-        "facts",
-        "dimensions",
-        "projection",
-        "observability"
-      ],
-      "links": [
-        {
-          "to": "architecture-loomkeeper",
-          "rel": "implements"
-        },
-        {
-          "to": "spec-agentic-watcher-substrate",
-          "rel": "implements"
-        },
-        {
-          "to": "adr-0002-workspace-fact-store",
-          "rel": "refines"
-        },
-        {
-          "to": "adr-0001-derived-evidence-views",
-          "rel": "depends-on"
-        }
-      ],
-      "diagrams": [],
-      "sourceSha256": "324e75068c16ec719d8a2d162d0c687cd567c925c4d88c0d8031f662af2ac4c0"
-    },
-    {
-      "id": "adr-0018-credential-backed-grading-egress",
-      "path": "docs/adr/0018-credential-backed-grading-egress.md",
-      "title": "ADR-0018 — Credentials are DPAPI local secrets and off-device grading is an opt-in egress path",
-      "type": "adr",
-      "status": "accepted",
-      "owner": "@timianmalloo",
-      "phase": "discovery",
-      "reviewBy": "2027-02-26",
-      "reviewSuggested": [],
-      "summary": "Loomkeeper credentials are sealed with DPAPI CurrentUser and never logged or emitted; outbound network is denied by default; credential-backed off-device grading is an ADR-0011 ExternalProcessing egress path that stays blocked until an explicit, revocable, per-path opt-in reclassifies it.",
-      "tags": [
-        "architecture",
-        "loomkeeper",
-        "security",
-        "privacy",
-        "egress",
-        "credentials",
-        "dpapi"
-      ],
-      "links": [
-        {
-          "to": "architecture-loomkeeper",
-          "rel": "implements"
-        },
-        {
-          "to": "spec-agentic-watcher-substrate",
-          "rel": "implements"
-        },
-        {
-          "to": "adr-0011-session-processing-class-egress",
-          "rel": "refines"
-        }
-      ],
-      "diagrams": [],
-      "sourceSha256": "967858353b15a2c3f5c665c8b42043f852ad8d856de56ade35105dc23d80cad7"
+      "sourceSha256": "a0fd25f41ccbbcc1c1de6317ccca478e2e77b800403234c6fd68582c9acc6773"
     },
     {
       "id": "adr-0018-node-content-reader-contract",
@@ -1030,7 +953,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "4717e8bf67ad30e341ea64f1e512187f2db334114e5f265f75b422b664f69fc2"
+      "sourceSha256": "c130a64221c086e88ffd7b3865b90bcaf09f910e404c422680e717376424e8e3"
     },
     {
       "id": "adr-0019-advisory-evaluator-calibration",
@@ -1067,85 +990,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5abb6588cbfeb19126e3e8cc9b885fc86599a0bd076d572827cf92a11abae1a3"
-    },
-    {
-      "id": "adr-0019-code-viewer-renderer",
-      "path": "docs/adr/0019-code-viewer-renderer.md",
-      "title": "ADR-0019 — Render the read-only code viewer with native AvalonEdit, not Monaco-in-WebView2",
-      "type": "adr",
-      "status": "accepted",
-      "owner": "@timianmalloo",
-      "phase": "",
-      "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
-      "summary": "For the read-only code viewer (spec-editor-surfaces US-ED1–ED4), use native AvalonEdit (MIT) rather than Monaco-in-WebView2 (MIT). The deciding factor is the repo's own documented WebView2 airspace pain (ADR-0015: the windowed control cannot be drawn over and the composition alternative crashes on float) — a read-only viewer does not need Monaco's VS-Code parity, so it should not pay a second WebView2's airspace and process-risk cost. Markdown content renders via Markdig (BSD-2); rich content (Mermaid/charts) reuses the ONE existing canvas WebView2 rather than adding another.",
-      "tags": [
-        "architecture",
-        "editor",
-        "avalonedit",
-        "monaco",
-        "webview2",
-        "airspace",
-        "read-only",
-        "viewer"
-      ],
-      "links": [
-        {
-          "to": "spec-editor-surfaces",
-          "rel": "relates-to"
-        },
-        {
-          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
-          "rel": "depends-on"
-        },
-        {
-          "to": "adr-0018-node-content-reader-contract",
-          "rel": "relates-to"
-        },
-        {
-          "to": "kb-content-rendering-comparables",
-          "rel": "depends-on"
-        }
-      ],
-      "diagrams": [],
-      "sourceSha256": "32125e82283ff33fc2c9d8084f3aed992fbcec914560d33b9e5f0d5b06c5861f"
-    },
-    {
-      "id": "adr-0020-class-diagram-architecture",
-      "path": "docs/adr/0020-class-diagram-architecture.md",
-      "title": "ADR-0020 — Class diagram: an App-side type-hierarchy view from the existing graph, dependency-free; members & Mermaid deferred",
-      "type": "adr",
-      "status": "accepted",
-      "owner": "@timianmalloo",
-      "phase": "",
-      "reviewBy": "2027-02-28",
-      "reviewSuggested": [],
-      "summary": "The class-diagram surface (spec-uml-erm-surfaces US-U*) renders a UML type hierarchy — classes and interfaces as the nodes, `inherits` → generalization and `implements` → realization as the edges — built App-side from the EXISTING graph projection (C# already extracts these edges), so Phase 1 needs no new Core query and no vendored diagram library. Members are NOT extracted today, so the Phase-1 view is member-less by construction; a full member-bearing, notation-valid Mermaid `classDiagram` render is deferred to Phase 2, gated on a Core `has_member` extractor enhancement — because a Mermaid classDiagram with empty compartments is not worth vendoring ~3 MB of mermaid.js for.",
-      "tags": [
-        "architecture",
-        "class-diagram",
-        "uml",
-        "mermaid",
-        "graph",
-        "derived-view"
-      ],
-      "links": [
-        {
-          "to": "spec-uml-erm-surfaces",
-          "rel": "relates-to"
-        },
-        {
-          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
-          "rel": "depends-on"
-        },
-        {
-          "to": "adr-0019-code-viewer-renderer",
-          "rel": "relates-to"
-        }
-      ],
-      "diagrams": [],
-      "sourceSha256": "c4969f43c03d38620516205ffc4efd9e8a45f99e77010e28630843b4ffbc3eaa"
+      "sourceSha256": "af23c90d2ee23e4ff4d0f947ce70ad9674457d74854717dbe738d634fdeca7d3"
     },
     {
       "id": "adr-0020-trusted-registrar-harness-model-identity",
@@ -1182,7 +1027,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fc184c3983c4eacb54336a4b7e13680da7ca551c7664768f7866a48a3f52df97"
+      "sourceSha256": "739baf4d5700247409d1164cf7b0977766bf8d73a8f2dd7cc562d40d97508d02"
     },
     {
       "id": "adr-0021-named-dock-zones",
@@ -1250,6 +1095,161 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "d9e6c55121bab3cf8a734794585e2c70505e5712b60649876f9200e74333d196"
+    },
+    {
+      "id": "adr-0023-watcher-observation-projection",
+      "path": "docs/adr/0023-watcher-observation-projection.md",
+      "title": "ADR-0023 — Loomkeeper observes as a projection over the shared fact store, not a second database",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Loomkeeper adds harness/model dimensions and watcher facts (span, board message, work episode, evidence, scorecard, daydream observation) to the existing ADR-0002 SQLite fact store and computes liveness, Weave, and the leaderboard as ADR-0001 derived views, rather than owning a second store.",
+      "tags": [
+        "architecture",
+        "loomkeeper",
+        "facts",
+        "dimensions",
+        "projection",
+        "observability"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0002-workspace-fact-store",
+          "rel": "refines"
+        },
+        {
+          "to": "adr-0001-derived-evidence-views",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "05b8d2c73131752225c7e661240f186b84300dc4aae53d32cc1f17c533d92faf"
+    },
+    {
+      "id": "adr-0024-credential-backed-grading-egress",
+      "path": "docs/adr/0024-credential-backed-grading-egress.md",
+      "title": "ADR-0024 — Credentials are DPAPI local secrets and off-device grading is an opt-in egress path",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "discovery",
+      "reviewBy": "2027-02-26",
+      "reviewSuggested": [],
+      "summary": "Loomkeeper credentials are sealed with DPAPI CurrentUser and never logged or emitted; outbound network is denied by default; credential-backed off-device grading is an ADR-0011 ExternalProcessing egress path that stays blocked until an explicit, revocable, per-path opt-in reclassifies it.",
+      "tags": [
+        "architecture",
+        "loomkeeper",
+        "security",
+        "privacy",
+        "egress",
+        "credentials",
+        "dpapi"
+      ],
+      "links": [
+        {
+          "to": "architecture-loomkeeper",
+          "rel": "implements"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0011-session-processing-class-egress",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "31442d71ed7581858fb390001e947a655f79a9749b396fa8041576349129cc05"
+    },
+    {
+      "id": "adr-0025-code-viewer-renderer",
+      "path": "docs/adr/0025-code-viewer-renderer.md",
+      "title": "ADR-0025 — Render the read-only code viewer with native AvalonEdit, not Monaco-in-WebView2",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "For the read-only code viewer (spec-editor-surfaces US-ED1–ED4), use native AvalonEdit (MIT) rather than Monaco-in-WebView2 (MIT). The deciding factor is the repo's own documented WebView2 airspace pain (ADR-0015: the windowed control cannot be drawn over and the composition alternative crashes on float) — a read-only viewer does not need Monaco's VS-Code parity, so it should not pay a second WebView2's airspace and process-risk cost. Markdown content renders via Markdig (BSD-2); rich content (Mermaid/charts) reuses the ONE existing canvas WebView2 rather than adding another.",
+      "tags": [
+        "architecture",
+        "editor",
+        "avalonedit",
+        "monaco",
+        "webview2",
+        "airspace",
+        "read-only",
+        "viewer"
+      ],
+      "links": [
+        {
+          "to": "spec-editor-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0018-node-content-reader-contract",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-content-rendering-comparables",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "77c2111346cf703a74412d058a485129a2c66ebe2d18d93f59f8fc3e344e959e"
+    },
+    {
+      "id": "adr-0026-class-diagram-architecture",
+      "path": "docs/adr/0026-class-diagram-architecture.md",
+      "title": "ADR-0026 — Class diagram: an App-side type-hierarchy view from the existing graph, dependency-free; members & Mermaid deferred",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "The class-diagram surface (spec-uml-erm-surfaces US-U*) renders a UML type hierarchy — classes and interfaces as the nodes, `inherits` → generalization and `implements` → realization as the edges — built App-side from the EXISTING graph projection (C# already extracts these edges), so Phase 1 needs no new Core query and no vendored diagram library. Members are NOT extracted today, so the Phase-1 view is member-less by construction; a full member-bearing, notation-valid Mermaid `classDiagram` render is deferred to Phase 2, gated on a Core `has_member` extractor enhancement — because a Mermaid classDiagram with empty compartments is not worth vendoring ~3 MB of mermaid.js for.",
+      "tags": [
+        "architecture",
+        "class-diagram",
+        "uml",
+        "mermaid",
+        "graph",
+        "derived-view"
+      ],
+      "links": [
+        {
+          "to": "spec-uml-erm-surfaces",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0015-canvas-hosting-and-overlay-strategy",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0025-code-viewer-renderer",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "7fad0ce772d6ce8324a7e76017d589227c838949bbda86ac6b792cf1d5891d55"
     },
     {
       "id": "api-aide-app",
@@ -1324,7 +1324,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "67f0738c2bedb6852490db3287f6e92a6cb4f88c45b4ef66f8766a861d0c8f55"
+      "sourceSha256": "3e2670c8b14759aece3fac4900cb909954d699713f303ef631eaf60390d525d3"
     },
     {
       "id": "api-aide-core",
@@ -1474,7 +1474,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "64045c3c04e90125cfda6cc3011b9a885c692e8bdcd2c1a8faff00e7032715ac"
+      "sourceSha256": "dae1ccab60d45fa8161501e23802cbfdadfccce47e626013a868379d27a17672"
     },
     {
       "id": "api-aide-core-mcp",
@@ -1499,7 +1499,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9039fbc6038242b9dfa58f267b507b78b4e2ad6522c2161bb67bf79e43615df0"
+      "sourceSha256": "26554674c38f7a15c862db063dcf030adf0c19cfb963ab3a30a40bd12ca6e879"
     },
     {
       "id": "api-aide-core-presentation",
@@ -1549,7 +1549,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "81b76950c602968aad2574211baed53370d40887daee19083dbdd839930f790d"
+      "sourceSha256": "71755f35fc0bf3dfcee9fc6c6d0b9873c829782329928d7cce3328b531de48ca"
     },
     {
       "id": "api-aide-core-store",
@@ -1649,7 +1649,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1a99ca334e081d8fd5e9b9fd255823711260e847b673af44891e5fc47c92e288"
+      "sourceSha256": "daac5111405407a1a9f1523bbbe1ac3992ec22e7a3ae33bccde96c73e6c6255a"
     },
     {
       "id": "api-aide-core-workbench",
@@ -1815,7 +1815,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  User[Workspace operator]\n  Shell[WPF Shell + WebView2 host]\n  Boot[Shell Bootstrap / Updater]\n  Session[Terminal Session Runtime]\n  View[Visual Surface Host]\n  Core[Workspace Authority Core]\n  Registry[Workspace Registry]\n  Ingest[Ingestion Scheduler]\n  Freshness[Freshness Prober]\n  Extractors[Extractor Adapters]\n  Store[(SQLite Fact Store)]\n  Incidents[(Health Incident Sidecar)]\n  Projection[Query and Projection Service]\n  Audit[Audit Reader]\n  Coordination[Coordination Reader]\n  Mcp[MCP Tool Gateway]\n  Repos[Repositories and Worktrees]\n  Agents[Claude Code / Copilot CLI sessions]\n\n  User --> Shell\n  Boot -. supervises/upgrades .-> Core\n  Shell --> Session\n  Shell --> View\n  Shell <--> Core\n  Session <--> Agents\n  Session --> Core\n  View <--> Core\n  Repos --> Ingest\n  Repos --> Freshness\n  Freshness --> Ingest\n  Ingest --> Extractors\n  Extractors --> Core\n  Core --> Registry\n  Core --> Store\n  Core --> Incidents\n  Core --> Projection\n  Core --> Audit\n  Core --> Coordination\n  Mcp <--> Core\n  Agents <--> Mcp"
         }
       ],
-      "sourceSha256": "c9d859728478dd1f2c75fdeb11c4d4b0b1165efd3f78ea5f03810ecda015b8f9"
+      "sourceSha256": "f406eb168e57a38893b5e4f552b0513bb4a715e4de280094f21ffb316e3c3cf8"
     },
     {
       "id": "architecture-loomkeeper",
@@ -1875,11 +1875,11 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
-          "to": "adr-0017-watcher-observation-projection",
+          "to": "adr-0023-watcher-observation-projection",
           "rel": "depends-on"
         },
         {
-          "to": "adr-0018-credential-backed-grading-egress",
+          "to": "adr-0024-credential-backed-grading-egress",
           "rel": "depends-on"
         },
         {
@@ -1892,7 +1892,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6c61ff31a5e56c22b9165b075b48c2658ed6a74adcfe00105d6cb3c860d8bfce"
+      "sourceSha256": "379b24209d0ac4ce0eda4e2ba6feb0d8fa47d0d8863780cce5b05e98db2803a0"
     },
     {
       "id": "note-2026-08-30-overnight-surfaces",
@@ -1923,16 +1923,16 @@ window.DOCS_INDEX = {
           "rel": "relates-to"
         },
         {
-          "to": "adr-0020-class-diagram-architecture",
+          "to": "adr-0026-class-diagram-architecture",
           "rel": "relates-to"
         },
         {
-          "to": "adr-0019-code-viewer-renderer",
+          "to": "adr-0025-code-viewer-renderer",
           "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "38cfdca171bb12ffb3e7a99fe22d35bb438908a03dcdc2bdfbbbe16ebc8a3db3"
+      "sourceSha256": "4722581b16f48aaec8ac8062f568efcd6c1ccb989f8db3671c579043f6169bf2"
     },
     {
       "id": "note-2026-08-30-prompt-draft-wiring",
@@ -2332,7 +2332,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f8d64364b6d6c8f2b91779efe828ec428062142ea5b34345bdb8ae6a95d4697a"
+      "sourceSha256": "38fee342b749098fd65114995bed0ec53051b5d25bddc06bbf580acd0c90d3c9"
     },
     {
       "id": "note-20260903-the-control-under-mcp-has-no-input",
@@ -2770,7 +2770,7 @@ window.DOCS_INDEX = {
       "phase": "",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Component design for the Phase-1 walking skeleton of the full-window Explorer mode: the ShellViewMode swap (WorkbenchHost.Content toggles Manager↔ExplorerSurface, Shell held so the workbench and its live ConPTY/WebView2 children hide-not-destroy), a dedicated CanvasSurface in Explorer (not reparented), a new CanvasSurface.NodeSelected seam the reader follows, and a NodeReaderView stub (metadata + walkable edges; content deferred to ADR-0018 Phase 2). Resolves the mechanism the ADRs deferred, with a red-first test plan whose key control is \"a live terminal survives an Explorer round-trip\".",
+      "summary": "Component design for the Phase-1 walking skeleton of the full-window Explorer mode: the ShellViewMode swap (WorkbenchHost.Content toggles Manager↔ExplorerSurface, Shell held so the workbench and its live ConPTY/WebView2 children hide-not-destroy), a dedicated CanvasSurface in Explorer (not reparented), a new CanvasSurface.NodeSelected seam the reader follows, and a NodeReaderView stub (metadata + walkable edges; content deferred to ADR-0018 node-content-reader-contract Phase 2). Resolves the mechanism the ADRs deferred, with a red-first test plan whose key control is \"a live terminal survives an Explorer round-trip\".",
       "tags": [
         "explorer",
         "view-mode",
@@ -2804,7 +2804,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart LR\n  Rail[Explore rail item] -->|Toggle| SMC[ShellModeController]\n  SMC -->|Workbench| WH[WorkbenchHost.Content = Shell.Manager]\n  SMC -->|Explorer| EX[WorkbenchHost.Content = ExplorerSurface]\n  EX --> G[CanvasSurface 'explorer-graph']\n  EX --> R[NodeReaderView]\n  G -->|NodeSelected CanvasNodeRef| R\n  R -->|activate edge -> RefreshAsync target| G\n  G -. GraphSource .-> VM[CanvasGraphViewModel over IWorkspaceQueries]"
         }
       ],
-      "sourceSha256": "9412b7710088ab7cdfadd54c9d9beb42f0c7d29e2020e5c0fad9fcf461415cb6"
+      "sourceSha256": "fd5e5efd36e8264327a3aaa7a6d98b0dfe90dbdd6724ff2fb5ea4e47b2ec816d"
     },
     {
       "id": "design-mcp-enlightened-path",
@@ -3095,7 +3095,7 @@ window.DOCS_INDEX = {
       "phase": "4",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Implement the IAdvisoryEvaluator seam two ways: a deterministic LOCAL heuristic evaluator that scores the two advisory dimensions from a quarantined evidence token list with a conservative default (needs no model, credential, or egress - the safe smoke-test default), and an EgressGuardedAdvisoryEvaluator that enforces default-deny egress (LK-0003) THEN a present credential (LK-0002) before any egressing cloud judge can run (ADR-0018), never calling the inner evaluator when either check fails. The real cloud model call stays a seam behind the guard - a local smoke test uses the local evaluator.",
+      "summary": "Implement the IAdvisoryEvaluator seam two ways: a deterministic LOCAL heuristic evaluator that scores the two advisory dimensions from a quarantined evidence token list with a conservative default (needs no model, credential, or egress - the safe smoke-test default), and an EgressGuardedAdvisoryEvaluator that enforces default-deny egress (LK-0003) THEN a present credential (LK-0002) before any egressing cloud judge can run (ADR-0024 credential-backed-grading-egress), never calling the inner evaluator when either check fails. The real cloud model call stays a seam behind the guard - a local smoke test uses the local evaluator.",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -3103,7 +3103,7 @@ window.DOCS_INDEX = {
         "evaluator",
         "egress",
         "credential",
-        "adr-0018",
+        "adr-0018 credential-backed-grading-egress",
         "phase-4"
       ],
       "links": [
@@ -3112,7 +3112,7 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
-          "to": "adr-0018-credential-backed-grading-egress",
+          "to": "adr-0024-credential-backed-grading-egress",
           "rel": "implements"
         },
         {
@@ -3125,7 +3125,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "be3bcdad905ba7bf7fea9404ea36391fb9630f26237435f961121ff6e6c829dd"
+      "sourceSha256": "a8a53662ff1b047c0f89afc8524f743a3066e3ebcc4e73b4d00da0216935ce72"
     },
     {
       "id": "design-watcher-advisory-grader",
@@ -3137,7 +3137,7 @@ window.DOCS_INDEX = {
       "phase": "4",
       "reviewBy": "2027-02-26",
       "reviewSuggested": [],
-      "summary": "Design for the Loomkeeper advisory grader (slice 7, final). The deterministic cores: the ADR-0019 calibration gates (stability >=95% band consistency with spread <=1, quadratic weighted kappa >=0.75 vs human labels, and anti-Goodhart counter-metrics that must not worsen) that decide whether an advisory evaluator version may contribute points; the gated fold of a qualified advisory dimension into the Weave (never overriding a deterministic dimension); the leaderboard (cohort >=5 or Not Comparable, segmented by task class + score schema version, per harness/model/harness-model, non-identifying); and per-turn agent standing (rank + trend + one evidence reason per dimension, no single optimizable scalar). The model judge itself sits behind an IAdvisoryEvaluator seam.",
+      "summary": "Design for the Loomkeeper advisory grader (slice 7, final). The deterministic cores: the ADR-0019 advisory-evaluator-calibration calibration gates (stability >=95% band consistency with spread <=1, quadratic weighted kappa >=0.75 vs human labels, and anti-Goodhart counter-metrics that must not worsen) that decide whether an advisory evaluator version may contribute points; the gated fold of a qualified advisory dimension into the Weave (never overriding a deterministic dimension); the leaderboard (cohort >=5 or Not Comparable, segmented by task class + score schema version, per harness/model/harness-model, non-identifying); and per-turn agent standing (rank + trend + one evidence reason per dimension, no single optimizable scalar). The model judge itself sits behind an IAdvisoryEvaluator seam.",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -3167,12 +3167,12 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
-          "to": "adr-0018-credential-backed-grading-egress",
+          "to": "adr-0024-credential-backed-grading-egress",
           "rel": "depends-on"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9b7c531d475e24574be847f70c0c5b79ec52c466c83d7afed07118ffb1669318"
+      "sourceSha256": "4f6e28dcf08156a76b45b09906681d9b7d6b856937f8b6ed8f3ebae7c089fe61"
     },
     {
       "id": "design-watcher-board-leaderboard-surfaces",
@@ -3264,7 +3264,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b35449953a8e36be6f47f6be73211d64ac85e3d2386f5fe29f3deba6b310f499"
+      "sourceSha256": "f93767c437526e8c06ae283c081c90bc211fdbf2ca24596330ec6f6443641156"
     },
     {
       "id": "design-watcher-daydream-dream-seam",
@@ -3309,12 +3309,12 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
-          "to": "adr-0017-watcher-observation-projection",
+          "to": "adr-0023-watcher-observation-projection",
           "rel": "depends-on"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "66dfee2b3391fcf63b869cfe5cfcf609017864a4ebdb527137a60d0534d53011"
+      "sourceSha256": "5fdb37afb4dc4572c5e096e597397405465b5bc1f83e5b76022f0a87e57152eb"
     },
     {
       "id": "design-watcher-dispute-command",
@@ -3356,7 +3356,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a5ce7554f95af1781cd6ef8b65d0289154d6791885db47d8883a1af70fea5920"
+      "sourceSha256": "f9b5fb8cc0c75fa927a2eba8ccf7e586b7618e930a10f7d738a7ee24ced1e594"
     },
     {
       "id": "design-watcher-dispute-service",
@@ -3368,7 +3368,7 @@ window.DOCS_INDEX = {
       "phase": "4",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Close the US-16 fairness loop and make the model-judge seam concrete. DisputeService.RaiseDispute is the operator API that mints the dispute id + timestamp and appends the append-only fact (requiring a reason). A session is Disputed iff any of its episodes carries a dispute (DM7), surfaced as a no-colour-alone badge on the Sessions row and computed by the sessions query. DelegatingAdvisoryEvaluator is the cloud-judge scaffold: an IAdvisoryEvaluator that delegates the 0-4 rubric to an injected model call and is placed inside the EgressGuardedAdvisoryEvaluator, so the network call only happens after the ADR-0018 egress opt-in + credential check pass.",
+      "summary": "Close the US-16 fairness loop and make the model-judge seam concrete. DisputeService.RaiseDispute is the operator API that mints the dispute id + timestamp and appends the append-only fact (requiring a reason). A session is Disputed iff any of its episodes carries a dispute (DM7), surfaced as a no-colour-alone badge on the Sessions row and computed by the sessions query. DelegatingAdvisoryEvaluator is the cloud-judge scaffold: an IAdvisoryEvaluator that delegates the 0-4 rubric to an injected model call and is placed inside the EgressGuardedAdvisoryEvaluator, so the network call only happens after the ADR-0024 credential-backed-grading-egress egress opt-in + credential check pass.",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -3376,7 +3376,7 @@ window.DOCS_INDEX = {
         "sessions",
         "badge",
         "cloud-judge",
-        "adr-0018",
+        "adr-0018 credential-backed-grading-egress",
         "phase-4"
       ],
       "links": [
@@ -3402,7 +3402,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fbb52b9329b1f4c843ce6366b425da52a31da18240774100a941b2f500709d41"
+      "sourceSha256": "d0b15517fd0c2de8a7753a40e9b65013fc68cf352f3a3e80fbf5c487c909bcb2"
     },
     {
       "id": "design-watcher-episode-capture",
@@ -3580,12 +3580,12 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
-          "to": "adr-0017-watcher-observation-projection",
+          "to": "adr-0023-watcher-observation-projection",
           "rel": "depends-on"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "019d9cfedee12d87e29eb6c749715ff3d1dbf27ff6789aeb74fa4e909597e989"
+      "sourceSha256": "fc179d72d6af0306c28b0ffcb85a769e65adb9a5061f4f0cb1298fd2015fdaec"
     },
     {
       "id": "design-watcher-live-refresh",
@@ -3673,7 +3673,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6fdf4b28bfea48ee8af4d2e88e47db4c5f38ef4a01921e529e1254f6155e3a58"
+      "sourceSha256": "2bb717dcbb9e41c1e253ad470ff0aa2fc1fa4e4768822211e868af8e8bbdc7de"
     },
     {
       "id": "design-watcher-otlp-receiver",
@@ -3709,12 +3709,12 @@ window.DOCS_INDEX = {
           "rel": "implements"
         },
         {
-          "to": "adr-0018-credential-backed-grading-egress",
+          "to": "adr-0024-credential-backed-grading-egress",
           "rel": "depends-on"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "cd1fd8022e65e8c70e7d0d628e243ad8cc0ddd47b4fb34a54c964319deda8f19"
+      "sourceSha256": "d22631dfc112d3f77f349ecd5926c34a13e53d8ec783efd296874e599ddaf0ec"
     },
     {
       "id": "design-watcher-phase1-skeleton",
@@ -3751,11 +3751,11 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
-          "to": "adr-0017-watcher-observation-projection",
+          "to": "adr-0023-watcher-observation-projection",
           "rel": "depends-on"
         },
         {
-          "to": "adr-0018-credential-backed-grading-egress",
+          "to": "adr-0024-credential-backed-grading-egress",
           "rel": "depends-on"
         },
         {
@@ -3768,7 +3768,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "807705a3a65c94b27ae9d0b1385fec92878071c1eb7a3a6d8d0e4bde10249762"
+      "sourceSha256": "c738ebaf6e7913da817925e2950c8c62b33f18ca4868e2992f6713c727413274"
     },
     {
       "id": "design-watcher-score-dispute",
@@ -3871,7 +3871,7 @@ window.DOCS_INDEX = {
       "phase": "4",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Compose a closed episode's DeterministicEpisodeSignals into the local evaluator's evidence token string (EvidenceComposer), and turn (episode + signals + classification) into a persisted ScoredEpisode (ScoringService) so scored episodes reach the Leaderboard/Standing surfaces. The four deterministic dimensions are always scored; the two advisory dimensions fold only when the evaluator's (version, taskClass, schemaVersion) is qualified in the calibration registry (ADR-0019, rule 8); with no evaluator, only the deterministic Weave is recorded (the safe default).",
+      "summary": "Compose a closed episode's DeterministicEpisodeSignals into the local evaluator's evidence token string (EvidenceComposer), and turn (episode + signals + classification) into a persisted ScoredEpisode (ScoringService) so scored episodes reach the Leaderboard/Standing surfaces. The four deterministic dimensions are always scored; the two advisory dimensions fold only when the evaluator's (version, taskClass, schemaVersion) is qualified in the calibration registry (ADR-0019 advisory-evaluator-calibration, rule 8); with no evaluator, only the deterministic Weave is recorded (the safe default).",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -3908,7 +3908,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "001a6ae7f964e4116e8f95fe6e29656ca37ff25f7ff1ac113808deb52eeb9da3"
+      "sourceSha256": "bdaf21bd97eaed9c410acebffc9a36accaff31b278b91c31946759440c39c288"
     },
     {
       "id": "design-watcher-session-emitter",
@@ -3996,12 +3996,12 @@ window.DOCS_INDEX = {
           "rel": "refines"
         },
         {
-          "to": "adr-0017-watcher-observation-projection",
+          "to": "adr-0023-watcher-observation-projection",
           "rel": "depends-on"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9e2f4a197ea31e0fbbc0cfd7e9d19602e8e53a9132b267a21c5ffad894676d57"
+      "sourceSha256": "a9402cc0b7bdc8740459a17bc6e1f1a07c14f39afad8145c7600ad0e50d81a89"
     },
     {
       "id": "design-watcher-signals-derivation",
@@ -4091,7 +4091,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a518666f23d7387cffe87f385584f338e3a7516b8efee1ade43ec42c95a19087"
+      "sourceSha256": "4168b23a3c81bd7cd252e9fb4abca7fd1f14e112b35677ab55ea185b621655c8"
     },
     {
       "id": "design-watcher-weave-score",
@@ -4133,7 +4133,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1313ec1c4e7eb40c7a48ff546eb8d35d9191c0a749e2634e71464531e735bfce"
+      "sourceSha256": "3d5d6cdc8560aedaa61e7dedc034de972e37b9fe97a800802cd46e73313f465c"
     },
     {
       "id": "design-watcher-work-episode",
@@ -4174,12 +4174,12 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
-          "to": "adr-0017-watcher-observation-projection",
+          "to": "adr-0023-watcher-observation-projection",
           "rel": "depends-on"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "971343e1f38cd837fcc7a080ca59011f70d9a5b74f5a762b132f360badf22317"
+      "sourceSha256": "19e50784f6ce1f58cebee32fd631dba02848e23bf9ba69db194289b6b9d4642a"
     },
     {
       "id": "ui-bounded-count-chip",
@@ -4303,7 +4303,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "334b67013be9821b409974b9a41e729c5671298435384e058152299f15438ce2"
+      "sourceSha256": "6549168b93046ac99c21691b61f11f8ca8e7baa58b4cf8ee2e82340e61b34615"
     },
     {
       "id": "defect-classes",
@@ -4332,7 +4332,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "caf846232ff174bce4888e97771c22d13fb2052b6f2608e173cd35703a017e38"
+      "sourceSha256": "1ae36a66269a006c7509e90e5401aea44474ccdcef9c121cc96f1be5c143743b"
     },
     {
       "id": "diagram-class",
@@ -4538,7 +4538,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3e4d48769f2fcd812b6bd64c70c89c25616634e4dc9360160179d7c83103b9ca"
+      "sourceSha256": "9ef93d917274bbd16bfec3f5a910b86cc650b9d9bb2bd76966ea0573b2f874dd"
     },
     {
       "id": "domain-experts",
@@ -5355,7 +5355,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ce00e8b90df345981502c6f181aaf66cd2de84f6c8e82e61b08e9964d42b4563"
+      "sourceSha256": "7244ae47e85135c9e55d2777404f7dd1734115b24a21bf99baf345f9d0880083"
     },
     {
       "id": "plan-extractor-roadmap",
@@ -5878,7 +5878,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3cb2a3497b37c0d8da17f3cdaf1fc466d079ca917ce47f144c50d35d88f79946"
+      "sourceSha256": "589e316c630604d41776b7f7fea8568596245f7aa68549b72b0c4088ea8b665c"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -6369,7 +6369,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "129eb0e73f70c9b572e82f760e1a4f00f52e34a51b7d2691b6f2c495b35b5eee"
+      "sourceSha256": "8cfcbd238e463a872de42d7923bec2c3ea2dd78eae40859db3494864d9f76d99"
     },
     {
       "id": "kb-agentic-session-observability",
@@ -9520,7 +9520,7 @@ window.DOCS_INDEX = {
         "evaluator",
         "egress",
         "credential",
-        "adr-0018",
+        "adr-0018 credential-backed-grading-egress",
         "phase-4"
       ],
       "links": [
@@ -9529,7 +9529,7 @@ window.DOCS_INDEX = {
           "rel": "tested-by"
         },
         {
-          "to": "adr-0018-credential-backed-grading-egress",
+          "to": "adr-0024-credential-backed-grading-egress",
           "rel": "depends-on"
         },
         {
@@ -9538,7 +9538,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "22650db2ba58b4eb65f125c289eb910dffb703e6fd9bdafb5fbad0d3aa578891"
+      "sourceSha256": "532b1a37debdef6693bd90fcef1e2c62f26f1a9ec37b4db393724448126fc9de"
     },
     {
       "id": "proof-watcher-advisory-grader",
@@ -9550,7 +9550,7 @@ window.DOCS_INDEX = {
       "phase": "4",
       "reviewBy": "2027-02-26",
       "reviewSuggested": [],
-      "summary": "Evidence that the Loomkeeper advisory grader meets its design: the two advisory dimensions (Evidence discipline, Solution economy) enter Weave points ONLY after the ADR-0019 calibration gates pass - evaluator stability (>=95% modal band, spread <=1 over 20 repeats), quadratic-weighted-kappa >=0.75 against human labels, and an anti-Goodhart held-out counter-metric check; the advisory fold never raises a Blocked or Not Scored verdict (rule 8) and only folds a dimension whose (evaluatorVersion, taskClass, schemaVersion) triple is qualified in the registry; the leaderboard is Not Comparable below a cohort of 5 (rule 10) or with a single operator (US-10 privacy suppression), and is segmented by (task class, schema version) (rule 11); and the AgentStanding exposes rank, trend and one reason per dimension but NO single optimizable scalar (US-16 anti-Goodhart) - proven by 27 tests incl. a reflection guard on the no-scalar contract and a mutation-verified cohort-minimum oracle. Full suite 889/0.",
+      "summary": "Evidence that the Loomkeeper advisory grader meets its design: the two advisory dimensions (Evidence discipline, Solution economy) enter Weave points ONLY after the ADR-0019 advisory-evaluator-calibration calibration gates pass - evaluator stability (>=95% modal band, spread <=1 over 20 repeats), quadratic-weighted-kappa >=0.75 against human labels, and an anti-Goodhart held-out counter-metric check; the advisory fold never raises a Blocked or Not Scored verdict (rule 8) and only folds a dimension whose (evaluatorVersion, taskClass, schemaVersion) triple is qualified in the registry; the leaderboard is Not Comparable below a cohort of 5 (rule 10) or with a single operator (US-10 privacy suppression), and is segmented by (task class, schema version) (rule 11); and the AgentStanding exposes rank, trend and one reason per dimension but NO single optimizable scalar (US-16 anti-Goodhart) - proven by 27 tests incl. a reflection guard on the no-scalar contract and a mutation-verified cohort-minimum oracle. Full suite 889/0.",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -9582,7 +9582,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "ddfd8d51c3ee1bc76913c7228b1062ab4686f4327cbae48b015e0a5d65e24a46"
+      "sourceSha256": "87c33bde8b97803582fcc5d74419758cd1db8e97762ea6da6a559a90465f55df"
     },
     {
       "id": "proof-watcher-board-leaderboard-surfaces",
@@ -9654,7 +9654,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "5fa9741013bb7e88311ef9a97b418ebe042d7fa9e115d5c6c7a5e74576935a7b"
+      "sourceSha256": "9df0883a4d23a429467d9dcefb51882398b2668210b51c4393962d51eb538214"
     },
     {
       "id": "proof-watcher-dispute-command",
@@ -9687,7 +9687,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "31d0e67c73bb37a24e5ab000bd9a6d59593a09ddcec86987724379da0ab5bb1a"
+      "sourceSha256": "8a0bc026d22055d956794e7ec6d6a50cc56772683674b85f26b52946db180cc3"
     },
     {
       "id": "proof-watcher-dispute-service",
@@ -9699,7 +9699,7 @@ window.DOCS_INDEX = {
       "phase": "4",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Evidence that the US-16 fairness loop closes and the model-judge seam is concrete: RaiseDispute mints the id + timestamp and appends the fact (requiring a trimmed reason); a session is Disputed iff any of its episodes carries a dispute (DM7), shown as a no-colour-alone Sessions badge and computed by the query; and the DelegatingAdvisoryEvaluator clamps + delegates the rubric and, behind the ADR-0018 egress guard, does not judge until opted-in and credentialed. 12 tests, Core 967/0, App 138/0; the per-session derivation mutation-verified.",
+      "summary": "Evidence that the US-16 fairness loop closes and the model-judge seam is concrete: RaiseDispute mints the id + timestamp and appends the fact (requiring a trimmed reason); a session is Disputed iff any of its episodes carries a dispute (DM7), shown as a no-colour-alone Sessions badge and computed by the query; and the DelegatingAdvisoryEvaluator clamps + delegates the rubric and, behind the ADR-0024 credential-backed-grading-egress egress guard, does not judge until opted-in and credentialed. 12 tests, Core 967/0, App 138/0; the per-session derivation mutation-verified.",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -9720,7 +9720,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f87ced28267f64ac14f8f93bb64033a1f1c6f631de453d1ebb0f3545e5f147a3"
+      "sourceSha256": "74e98ddc2b635ba28295323dacba8b629a1ea8b53e1aa112dd6437c17871d898"
     },
     {
       "id": "proof-watcher-episode-capture",
@@ -10109,7 +10109,7 @@ window.DOCS_INDEX = {
       "phase": "4",
       "reviewBy": "2027-02-28",
       "reviewSuggested": [],
-      "summary": "Evidence that the scoring path is wired: EvidenceComposer maps deterministic signals to the local evaluator's token vocabulary (omitting unobserved tokens so they default conservatively) and round-trips through the evaluator; ScoringService scores an episode and persists a ScoredEpisode that feeds the Leaderboard; the two advisory dimensions fold only when the evaluator is qualified in the registry (ADR-0019, rule 8) and stay excluded otherwise; and a recompute replaces the prior card. 9 tests, full suite 955/0, the composer->evaluator mapping mutation-verified.",
+      "summary": "Evidence that the scoring path is wired: EvidenceComposer maps deterministic signals to the local evaluator's token vocabulary (omitting unobserved tokens so they default conservatively) and round-trips through the evaluator; ScoringService scores an episode and persists a ScoredEpisode that feeds the Leaderboard; the two advisory dimensions fold only when the evaluator is qualified in the registry (ADR-0019 advisory-evaluator-calibration, rule 8) and stay excluded otherwise; and a recompute replaces the prior card. 9 tests, full suite 955/0, the composer->evaluator mapping mutation-verified.",
       "tags": [
         "loomkeeper",
         "watcher",
@@ -10130,7 +10130,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "fc94abce1c6bc7c116b719101dc8f7efca6de7c2c375304ee89692043aec4afe"
+      "sourceSha256": "d7fc4a55acd276cb33861ef82f42e69fb5d98c544cdbef5e07079e8fce70fe6d"
     },
     {
       "id": "proof-watcher-session-emitter",
@@ -10306,7 +10306,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "69ffea8b77a21e25742f2fc4f309e2fd185c26445fcde439dc228cc92a335345"
+      "sourceSha256": "da41efcbe2cb295ad9e0382d713cc603935e3f88aa59fe1fea3a22b385b9c02c"
     },
     {
       "id": "proof-watcher-work-episode",
@@ -10558,12 +10558,12 @@ window.DOCS_INDEX = {
       "reviewBy": "2027-02-28",
       "reviewSuggested": [
         {
-          "by": "adr-0019-code-viewer-renderer",
+          "by": "adr-0025-code-viewer-renderer",
           "on": "2026-08-30",
           "reason": "residual cleared: AvalonEdit read-only highlighting PoC passed (C#/py/js/sql covered, ts/bicep degrade to plain, pure-WPF no airspace)"
         }
       ],
-      "summary": "Specifies two content surfaces the workbench still lacks: a READ-ONLY code viewer (syntax-highlighted source for a selected node/file, never an editor of record) and a PROMPT-DRAFT editor (rich-text prompts staged until an explicit transfer to a ready terminal session). Both are read/compose surfaces, not a general-purpose code editor (explicitly out of scope in spec-ai-native-ide). The code viewer is the render side of the ADR-0018 NodeContentAsync seam; the prompt draft composes with the terminal-sessions surface. Grounds the reuse decision (Monaco MIT via WebView2, AvalonEdit MIT native, Markdig BSD-2) and names the Design/Core ownership lanes so the surfaces can be built in parallel against defined contracts.",
+      "summary": "Specifies two content surfaces the workbench still lacks: a READ-ONLY code viewer (syntax-highlighted source for a selected node/file, never an editor of record) and a PROMPT-DRAFT editor (rich-text prompts staged until an explicit transfer to a ready terminal session). Both are read/compose surfaces, not a general-purpose code editor (explicitly out of scope in spec-ai-native-ide). The code viewer is the render side of the ADR-0018 node-content-reader-contract NodeContentAsync seam; the prompt draft composes with the terminal-sessions surface. Grounds the reuse decision (Monaco MIT via WebView2, AvalonEdit MIT native, Markdig BSD-2) and names the Design/Core ownership lanes so the surfaces can be built in parallel against defined contracts.",
       "tags": [
         "editor",
         "monaco",
@@ -10596,12 +10596,12 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
-          "to": "adr-0019-code-viewer-renderer",
+          "to": "adr-0025-code-viewer-renderer",
           "rel": "depends-on"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "948b97adb9009257f71a1df014adc2c271f8ab18df213148ecf6d9b3f4bde21c"
+      "sourceSha256": "4668f56adfa45ce69201c46b666d9d19865f5a48fd22d3e3b203e66295e2a45d"
     },
     {
       "id": "spec-gemini-cli-agent-session",
@@ -11060,5 +11060,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a2c8048660101fc76885afcab183f5ce75bb9819823c5f6c5b936c39c15b344a"
+  "graphSha256": "42cd1ff4e1f7749b832e4d6f47e727b016021a608625c95792a050df6bd06069"
 };

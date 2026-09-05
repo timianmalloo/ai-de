@@ -11,7 +11,7 @@ links:
   - { to: design-watcher-phase1-skeleton, rel: depends-on }
   - { to: spec-agentic-watcher-substrate, rel: implements }
   - { to: adr-0020-trusted-registrar-harness-model-identity, rel: depends-on }
-  - { to: adr-0017-watcher-observation-projection, rel: depends-on }
+  - { to: adr-0023-watcher-observation-projection, rel: depends-on }
 review-by: 2027-02-26
 review-suggested: []
 summary: >-

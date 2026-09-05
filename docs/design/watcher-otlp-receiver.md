@@ -10,7 +10,7 @@ links:
   - { to: architecture-loomkeeper, rel: implements }
   - { to: design-watcher-ingest-host, rel: refines }
   - { to: spec-agentic-watcher-substrate, rel: implements }
-  - { to: adr-0018-credential-backed-grading-egress, rel: depends-on }
+  - { to: adr-0024-credential-backed-grading-egress, rel: depends-on }
 review-by: 2027-02-26
 review-suggested: []
 summary: >-

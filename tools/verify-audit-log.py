@@ -50,9 +50,12 @@ DEFAULT_LOGS = [
 #   al-0449                       the sequential allocator
 #   al-01M1MYWGG050BEVR42EHRC7FBZ the pack's coord_ids.py ULID allocator
 #
-# The pack moved to ULIDs to stop two trees allocating the SAME id independently — which is not a
-# hypothetical here: docs/adr currently carries four collisions (adr-0017..0020, each claimed by two
-# unrelated decisions) from exactly that, and they fail this repository's own allocator gate on main.
+# The pack moved to ULIDs to stop two trees allocating the SAME id independently — which was not a
+# hypothetical here: docs/adr carried four collisions (adr-0017..0020, each claimed by two unrelated
+# decisions) from exactly that, and they failed this repository's own allocator gate on main until
+# they were re-issued to adr-0023..0026 on 2026-09-05 (session-contracts §4o). The cost was 237
+# citations disambiguated first, because renaming ahead of that turns an ambiguous reference into a
+# confidently wrong one.
 # A sequential allocator cannot be made safe across concurrent worktrees; a ULID cannot collide.
 #
 # Both are accepted rather than switching, because the log is append-only: 435 existing entries carry

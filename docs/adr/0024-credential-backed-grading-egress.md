@@ -1,6 +1,6 @@
 ---
-id: adr-0018-credential-backed-grading-egress
-title: "ADR-0018 — Credentials are DPAPI local secrets and off-device grading is an opt-in egress path"
+id: adr-0024-credential-backed-grading-egress
+title: "ADR-0024 — Credentials are DPAPI local secrets and off-device grading is an opt-in egress path"
 type: adr
 status: accepted
 owner: "@timianmalloo"
@@ -18,7 +18,7 @@ summary: >-
   egress path that stays blocked until an explicit, revocable, per-path opt-in reclassifies it.
 ---
 
-# ADR-0018 credential-backed-grading-egress: Credential-backed grading egress
+# ADR-0024 credential-backed-grading-egress: Credential-backed grading egress
 
 - **Status:** Accepted (provisional pending spikes S2/S3)
 - **Date:** 2026-08-30

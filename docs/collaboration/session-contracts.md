@@ -81,7 +81,7 @@ other session may not read it — reading is how contracts stay honest.
 | `src/AiDe.App/ViewModels/**` | Composition root wiring |
 | `src/AiDe.App/Workbench/DiagnosticsSurface.cs` | Renders the index summary and its disclosures — a Core projection end to end |
 | `src/AiDe.App/Workbench/NodeReaderView.cs` | Reads `DescribeAsync`/`NodeContentAsync` directly — see the split below |
-| `src/AiDe.App/Workbench/CodeViewerView.cs` | The render half of the `NodeContentAsync` contract (ADR-0019 code-viewer-renderer) — see the split below |
+| `src/AiDe.App/Workbench/CodeViewerView.cs` | The render half of the `NodeContentAsync` contract (ADR-0025 code-viewer-renderer) — see the split below |
 
 **The reader and viewer are split, and the rule is written down rather than inferred.** Core owns
 them on one day's evidence about one defect class — what content *arrives*. Their other half is
@@ -114,7 +114,7 @@ of both files is unchanged and returns to Design.
 | `src/AiDe.App/Workbench/CanvasPage.cs`, `CanvasSurface.cs` | The graph surface and its embedded page |
 | `src/AiDe.App/Workbench/TerminalView.cs`, `TerminalPalette.cs` | Terminal rendering and colour |
 | `src/AiDe.App/Workbench/CommandPalette.cs`, `PromptBar.cs`, `MainMenuBuilder.cs` | Interactive chrome |
-| `src/AiDe.App/Workbench/ClassDiagramSurface.cs` | A design surface (ADR-0020 class-diagram-architecture) |
+| `src/AiDe.App/Workbench/ClassDiagramSurface.cs` | A design surface (ADR-0026 class-diagram-architecture) |
 | `src/AiDe.App/Workbench/SequenceDiagramSurface.cs` | A design surface; Core owns its `InteractionAsync` feed |
 | `src/AiDe.App/Workbench/SearchSurface.cs` | Design authored it; Core owns its provider — how it was actually built |
 | `src/AiDe.App/Workbench/ExplorerSurface.cs` | The full-window Explorer shell (ADR-0017 primary-view-mode) |
@@ -260,7 +260,7 @@ up the root cause, the scaling model (`knowledge-exploration.md` **US-K10–K12*
 | **Graph kind taxonomy & the docs/knowledge extractor** (INV-0004) | **NEW — Core to build (Design consumes).** Four items surfaced while building the Explorer category filter (`inv-0004-graph-kind-taxonomy-and-knowledge`). **(1) A docs/knowledge extractor** so the repo's markdown specs/ADRs/designs enter the graph and the Explorer's **Knowledge/Specs** chips populate — today the graph is code-only (C#/py/ts/EF-SQL/bicep), so US-K1's "one graph over all artifacts" is only half-built and those chips are correctly 0. **(2) `node_kind = knowledge` on extracted (source) nodes** — a bicep resource carries the coarse dimensional `node_kind` of `knowledge` where `source` is expected; confirm the classification or fix it at the extractor/projection (`WorkspaceSchema.cs:56`). Design mitigated the *symptom* by making the reader prefer the fine `has_type` over the coarse `node_kind`, but the underlying label is Core's. **(3) Neighbour `has_type` on the describe path** — `CanvasGraphViewModel:210` hardcodes neighbour `Kind = "source"`, so a *focused* graph loses every neighbour's real type and the category filter can only categorise the *overview* accurately; carry the neighbour's `has_type` on the describe result. **(4) Extractor coverage** — `python-dynamic-imports-not-analysed`, `python-nested-declarations-not-analysed`, `schema-changed-by-raw-sql-not-read` are genuine coverage gaps (the rest of the disclosures are by-design/external boundaries); a priority call, not a defect. | Core: docs extractor, `node_kind` fix, neighbour `has_type`, extractor coverage; Design: reader now prefers `has_type` (landed), filter categorises by `has_type` (landed) |
 | **The docked "Explore" view shows "not available" on an open workspace** | **NEW — Core/shared to decide (Design diagnosed).** The default layout (`LayoutModel.cs:137`) declares a docked `explore` surface of kind `view`; a `view` pane renders evidence content only when the factory has live `queries`. Panes built at startup — before a workspace attaches — are built with a null-queries factory (→ `Unavailable`, *"'Explore' is not available in this build."*) and are **not refreshed when the workspace attaches** (the documented "reopen a pane to see them" behaviour, `WorkbenchShell` AttachWorkspace). Now that a workspace **auto-opens** (TheTerrace), the first-run view therefore shows a dead pane even though the graph — which reads live `_queries` — is populated. Two questions for Core/shared: **(a)** refresh open `view`/`inspector` panes' content on workspace attach (the Adapter/Controller reconcile path, Core-owned) so they stop showing "not available"; **(b)** the docked `explore` pane is now **semantically redundant** with the full-window Explorer rail mode (ADR-0017 primary-view-mode) — consider removing it from the default layout or renaming it, since two "Explore" surfaces confuse. Design owns the rail/full-window Explorer; the docked default-layout surface + the attach-refresh are Core. | Core: refresh view panes on attach; decide the docked `explore` surface's fate (LayoutModel default). Design: rail/full-window Explorer (done) |
 | **FYI — Design added a user command to the Core command catalog** (`workbench.newPromptDraft`) | **FYI, not a request.** Building the prompt-draft surface (spec-editor-surfaces) needed a reachable entry point. Adding a user command is, by the seam the `MainMenuBuilder` comment already documents (*"CORE-OWNED DATA in a design-owned file … adding a command and placing it one atomic change"*), an atomic change spanning the Core catalog (`WorkbenchCommands.cs`, the `Menu:`-carrying entry) and the App menu (`MainMenuBuilder`). Design added `new("workbench.newPromptDraft", "New prompt draft", "Ctrl+K, D", nameof(LayoutOperation.AddSurface), …, Menu: "_Terminal")` to the catalog, the id to the `_Terminal` menu list, and bumped the `_Terminal` count 3→4 in the Core tripwire test `Phase3SurfacingTests.DeclaredMenusMatchWhatTheBuilderRenders`. No behaviour change to any existing command. Flagged here so Core sees the catalog touch; the standing proposal to move the menu mapping onto the catalog entry (so this seam stops crossing) still applies. | Design added the command (done); Core owns the catalog long-term |
-| **`has_member` extraction for the class diagram** (ADR-0020 class-diagram-architecture) | **NEW — Core to build (Design consumes).** The class-diagram surface (spec-uml-erm-surfaces, ADR-0020 class-diagram-architecture) renders a type hierarchy today from the graph's existing `inherits`/`implements` edges — but **no extractor emits members** (`has_member`/`has_method`/`has_field`), so the Phase-1 view is member-less by construction. Core adding `has_member` (methods/fields/properties per class, with visibility where cheap) is the **Phase-2 unlock** for UML member compartments — at which point a notation-valid Mermaid `classDiagram` render (vendored locally) becomes worthwhile. **Optional Phase-2 sibling:** a bounded `ClassModelAsync(context)` query returning the complete class model (classes/interfaces + generalization/realization/association + members) for a scope — a sibling of `OverviewAsync`/`NodeContentAsync` — for when the overview cap omits hierarchy edges. Design's Phase-1 filters the graph already in hand; neither is Phase-1-blocking. | Core: `has_member` extraction (priority); optional `ClassModelAsync`. Design: Phase-1 type-hierarchy view from the existing graph (in progress) |
+| **`has_member` extraction for the class diagram** (ADR-0026 class-diagram-architecture) | **NEW — Core to build (Design consumes).** The class-diagram surface (spec-uml-erm-surfaces, ADR-0026 class-diagram-architecture) renders a type hierarchy today from the graph's existing `inherits`/`implements` edges — but **no extractor emits members** (`has_member`/`has_method`/`has_field`), so the Phase-1 view is member-less by construction. Core adding `has_member` (methods/fields/properties per class, with visibility where cheap) is the **Phase-2 unlock** for UML member compartments — at which point a notation-valid Mermaid `classDiagram` render (vendored locally) becomes worthwhile. **Optional Phase-2 sibling:** a bounded `ClassModelAsync(context)` query returning the complete class model (classes/interfaces + generalization/realization/association + members) for a scope — a sibling of `OverviewAsync`/`NodeContentAsync` — for when the overview cap omits hierarchy edges. Design's Phase-1 filters the graph already in hand; neither is Phase-1-blocking. | Core: `has_member` extraction (priority); optional `ClassModelAsync`. Design: Phase-1 type-hierarchy view from the existing graph (in progress) |
 
 Lesson for both sessions: this is exactly the file-overlap the ownership split exists to prevent —
 both sessions edited `IpcServer.cs` / `CanvasGraphViewModel.cs` in the same window. It converged
@@ -936,7 +936,7 @@ ordinals make call facts strictly larger. Core will come back with a measurement
 ordinal costs per edge before agreeing a shape, rather than agreeing a shape and discovering the
 cost afterwards.
 
-## 4o. Core → everyone: four ADR numbers are duplicated ON MAIN, and citations are already ambiguous
+## 4o. Core → everyone: four ADR numbers were duplicated ON MAIN — RESOLVED 2026-09-05
 
 The cross-branch allocator check found this on its first full run. It is **not** a branch problem —
 `origin/main` itself carries both halves of four pairs, and has since **2026-08-30**:
@@ -978,6 +978,50 @@ ADR-0011"* meaning credential-backed egress; `NodeContent.cs` says *"ADR-0018"* 
 contract. Same string, same number, different decisions. The frontmatter `id:` is already
 unambiguous (`adr-0018-node-content-reader-contract`), so **the graph is fine** — it is the human
 label and the filename prefix that collide.
+
+### RESOLVED — 2026-09-05, in the order above
+
+**Step 1, disambiguate.** 237 citations across 98 files now carry the number **plus the slug**.
+`EgressGate.cs` reads `ADR-0018 credential-backed-grading-egress, extends ADR-0011`; `NodeContent.cs`
+reads `ADR-0018 node-content-reader-contract`. Fourteen were deliberately left bare: the eight ADRs'
+own frontmatter titles, which their prose already disambiguates and whose numbers step 2 renumbered,
+and six lines — five in this section, one in `verify-audit-log.py` — where the id **is** the subject
+rather than a citation. Annotating a quoted example of the ambiguity would have destroyed the
+explanation.
+
+**Step 2, re-issue.** The second arrival took the next free numbers, in original landing order:
+
+| was | is now | decision |
+|---|---|---|
+| `0017` | **`0023`** | `watcher-observation-projection` |
+| `0018` | **`0024`** | `credential-backed-grading-egress` |
+| `0019` | **`0025`** | `code-viewer-renderer` |
+| `0020` | **`0026`** | `class-diagram-architecture` |
+
+`0017`–`0020` now belong solely to `primary-view-mode`, `node-content-reader-contract`,
+`advisory-evaluator-calibration` and `trusted-registrar-harness-model-identity`. `verify-id-allocators`
+is green: 26 ADRs, no duplicates, no holes, 11 branches compared.
+
+**One session did both halves, which is not what step 1 proposed.** Every occurrence was decided from
+its own surrounding text and file path rather than from the number: 53 were settled by a slug already
+present in the line, and the 57 a keyword scorer could not separate were read and decided one at a
+time. Zero were left unresolved, and a cross-check found no citation assigned against its own file's
+domain. The calls are all in one commit — if one is wrong, it is visible and reversible in a line.
+That is offered as evidence, not as authority: an author who meant the other decision should just fix
+it.
+
+**"The next free number (0021+)" was already wrong when it was followed**, and this is the part worth
+carrying. `0021-named-dock-zones` had been allocated since this section was written, and
+`0022-mcp-authorization-is-not-an-exfiltration-control` landed from `main` *during* the operation — so
+the first pass renamed to `0022`–`0025` and the allocator immediately failed on a fresh `0022`
+collision. It was `main`'s own build catching the same class the section is about, one hour after the
+section prescribed it. **§4m's rule is the one that holds: run the allocator, do not count the files.**
+A number written into a document is a measurement with an expiry date.
+
+**Two live branches carry the old filenames.** `feature/ui-experience-refinement` and
+`session/phase3-pane-probes` both hold all eight ADR files at their pre-rename paths, so each will see
+a rename conflict on its next merge from `main`. Resolve it by taking `main`'s filenames — the
+renumber is settled here, not per branch — and re-run `verify-id-allocators` before pushing.
 
 ## 4p. Core → Design: both §4i asks have shipped, and here is the shape
 

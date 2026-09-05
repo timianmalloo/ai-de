@@ -7,7 +7,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 namespace AiDe.App.Workbench;
 
 /// <summary>
-/// The read-only code viewer (spec-editor-surfaces US-ED1–ED4; ADR-0019 code-viewer-renderer). A native AvalonEdit
+/// The read-only code viewer (spec-editor-surfaces US-ED1–ED4; ADR-0025 code-viewer-renderer). A native AvalonEdit
 /// <see cref="TextEditor"/> in read-only mode with syntax highlighting picked from the content's
 /// language tag — a pure WPF control, so none of ADR-0015's WebView2 airspace concerns. Renders a
 /// <see cref="NodeContent"/>: code (highlighted), text (plain), a shortfall banner when the content was
@@ -131,7 +131,7 @@ public sealed class CodeViewerView : ContentControl
 
     /// <summary>
     /// Maps a language tag to an AvalonEdit built-in highlighting, or null (plain text) when there is
-    /// none — confirmed by the ADR-0019 code-viewer-renderer spike: C#/Python/JavaScript/TSQL ship built-in; ts/bicep degrade.
+    /// none — confirmed by the ADR-0025 code-viewer-renderer spike: C#/Python/JavaScript/TSQL ship built-in; ts/bicep degrade.
     /// </summary>
     private static IHighlightingDefinition? HighlightingFor(string? language)
     {

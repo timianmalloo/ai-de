@@ -154,7 +154,7 @@ public sealed record AdvisoryAssessment(
 
 /// <summary>
 /// The model-judge seam (spec rule 8). A real implementation grounds on quarantined evidence and runs a
-/// local model behind the credential/egress policy (ADR-0018 credential-backed-grading-egress, Phase 4/5); slice 7 depends only on the
+/// local model behind the credential/egress policy (ADR-0024 credential-backed-grading-egress, Phase 4/5); slice 7 depends only on the
 /// interface, so the deterministic gate + fold are fully testable without a model.
 /// </summary>
 public interface IAdvisoryEvaluator

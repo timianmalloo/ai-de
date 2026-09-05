@@ -149,7 +149,7 @@ rather than papered over.
 
 *class* — `ClassDiagramSurface.cs`
 
-The class-diagram surface (spec-uml-erm-surfaces; ADR-0020 class-diagram-architecture Phase 1): a dependency-free, native WPF
+The class-diagram surface (spec-uml-erm-surfaces; ADR-0026 class-diagram-architecture Phase 1): a dependency-free, native WPF
 render of the class HIERARCHY derived from the graph — classes and interfaces as cards, each showing
 its generalizations (`inherits`) and realizations (`implements`). Member-less by construction (no
 extractor emits members yet); the header says so rather than implying empty classes. No WebView2, so
@@ -165,7 +165,7 @@ none of ADR-0015's airspace concerns. A member-bearing, notation-valid Mermaid r
 | `int TypeCount { get; private set; }` | The number of type cards currently shown (for tests). |
 | `int RelationCount { get; private set; }` | The number of generalization/realization relations currently shown (for tests). |
 | `bool IsEmpty` | **(gap)** |
-| `void ShowGraph(IReadOnlyList<CanvasNode>? nodes, IReadOnlyList<CanvasEdge>? edges)` | Builds the hierarchy from a graph and renders it (ADR-0020 class-diagram-architecture). |
+| `void ShowGraph(IReadOnlyList<CanvasNode>? nodes, IReadOnlyList<CanvasEdge>? edges)` | Builds the hierarchy from a graph and renders it (ADR-0026 class-diagram-architecture). |
 | `void Show(ClassHierarchy hierarchy)` | Stores and renders a prebuilt hierarchy (search re-renders a filtered view of it). |
 | `void Clear()` | **(gap)** |
 | `void ShowLoading()` | Shows a loading state while the graph is fetched (U9 state completeness). |
@@ -175,13 +175,13 @@ none of ADR-0015's airspace concerns. A member-bearing, notation-valid Mermaid r
 
 *enum* — `ClassHierarchyModel.cs`
 
-A UML relationship kind we derive from the graph (ADR-0020 class-diagram-architecture).
+A UML relationship kind we derive from the graph (ADR-0026 class-diagram-architecture).
 
 ## `ClassTypeNode`
 
 *record* — `ClassHierarchyModel.cs`
 
-A type in the class diagram — a class or interface. Members are not available yet (ADR-0020 class-diagram-architecture).
+A type in the class diagram — a class or interface. Members are not available yet (ADR-0026 class-diagram-architecture).
 
 ## `ClassRelation`
 
@@ -193,7 +193,7 @@ One generalization/realization edge between two types in the diagram.
 
 *record* — `ClassHierarchyModel.cs`
 
-The class-hierarchy view model (ADR-0020 class-diagram-architecture): the classes/interfaces and their generalization/
+The class-hierarchy view model (ADR-0026 class-diagram-architecture): the classes/interfaces and their generalization/
 realization relationships, projected from the graph the App already holds. A pure function so the
 projection is verifiable headlessly. Member-less by construction — no extractor emits members yet;
 the surface says so rather than implying empty classes.
@@ -207,7 +207,7 @@ the surface says so rather than implying empty classes.
 
 *class* — `ClassHierarchyModel.cs`
 
-Builds a `ClassHierarchy` from graph nodes and edges (ADR-0020 class-diagram-architecture Phase 1).
+Builds a `ClassHierarchy` from graph nodes and edges (ADR-0026 class-diagram-architecture Phase 1).
 
 | Member | Summary |
 |---|---|
@@ -219,7 +219,7 @@ Builds a `ClassHierarchy` from graph nodes and edges (ADR-0020 class-diagram-arc
 
 *class* — `CodeViewerView.cs`
 
-The read-only code viewer (spec-editor-surfaces US-ED1–ED4; ADR-0019 code-viewer-renderer). A native AvalonEdit
+The read-only code viewer (spec-editor-surfaces US-ED1–ED4; ADR-0025 code-viewer-renderer). A native AvalonEdit
 `TextEditor` in read-only mode with syntax highlighting picked from the content's
 language tag — a pure WPF control, so none of ADR-0015's WebView2 airspace concerns. Renders a
 `NodeContent`: code (highlighted), text (plain), a shortfall banner when the content was

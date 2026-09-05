@@ -31,7 +31,7 @@ summary: >-
 
 - **Components:** `src/AiDe.Core/Watcher/AdvisoryScoring.cs` (`QuadraticWeightedKappa`, `EvaluatorStability`, `CalibrationVerdict`, `AdvisoryCalibration`, `CalibrationRegistry`, `AdvisoryAssessment`, `IAdvisoryEvaluator`, `AdvisoryWeaveScorer`) and `src/AiDe.Core/Watcher/Leaderboard.cs` (`ScoredEpisode`, `LeaderboardFacet`, `LeaderboardCell`, `Leaderboard`, `LeaderboardComposer`, `DimensionReason`, `AgentStanding`, `StandingComposer`). Slice-5 `WeaveScore.cs` refactored to expose `internal static WeaveScorer.ComposeScoredCard(...)` so the fold reuses the exact headline logic (no re-derivation of rule 2).
 - **Tests:** `tests/AiDe.Core.Tests/Watcher/AdvisoryScoringTests.cs` (19) + `tests/AiDe.Core.Tests/Watcher/LeaderboardTests.cs` (8) — **27/27**; full `AiDe.Core.Tests` suite **889/0**; build clean (0 warnings, `TreatWarningsAsErrors`).
-- **Pure engine, model-free** — `IAdvisoryEvaluator` is the seam for a real model judge; the calibration gates, the fold, the leaderboard and the standing are all deterministic and tested against fixtures. The real judge + its ADR-0018 credential-backed-grading-egress credential/egress boundary is out of scope here (residual).
+- **Pure engine, model-free** — `IAdvisoryEvaluator` is the seam for a real model judge; the calibration gates, the fold, the leaderboard and the standing are all deterministic and tested against fixtures. The real judge + its ADR-0024 credential-backed-grading-egress credential/egress boundary is out of scope here (residual).
 
 | Claim | Evidence (test) | Source | Oracle | Red observed | Confidence | Residual |
 |---|---|---|---|---|---|---|
@@ -66,11 +66,11 @@ US-16 forbids a single optimizable scalar for standing because a leaderboard tha
 ## Security / privacy note
 
 - **US-10 small-cohort privacy** is enforced at composition: a single-operator cell is Not Comparable and its Weave is not surfaced as a rankable value, so one operator's episodes cannot be de-anonymized off a public leaderboard.
-- **No credentials, no egress** in this slice — `IAdvisoryEvaluator` is an unimplemented seam. The real model judge and its ADR-0018 credential-backed-grading-egress credential-backed / egress-controlled boundary are out of scope (residual).
+- **No credentials, no egress** in this slice — `IAdvisoryEvaluator` is an unimplemented seam. The real model judge and its ADR-0024 credential-backed-grading-egress credential-backed / egress-controlled boundary are out of scope (residual).
 
 ## Residual risk
 
-- **Real model judge unimplemented** — `IAdvisoryEvaluator` has no production implementation; the fold is exercised only with fixture evaluators. The real judge + ADR-0018 credential-backed-grading-egress credential/egress boundary is the connective follow-on.
+- **Real model judge unimplemented** — `IAdvisoryEvaluator` has no production implementation; the fold is exercised only with fixture evaluators. The real judge + ADR-0024 credential-backed-grading-egress credential/egress boundary is the connective follow-on.
 - **Persistence** — `CalibrationRegistry`, `ScoredEpisode` and leaderboard/standing outputs are in-memory; the SQLite `Scorecard`/calibration/leaderboard tables are a connective follow-on.
 - **UI surfaces** — the Leaderboard and Standing WPF surfaces are not built; this slice is the engine only.
 - **Dispute path** — an operator dispute of an advisory score (US-16 fairness) is designed but not implemented.

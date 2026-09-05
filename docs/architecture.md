@@ -487,12 +487,12 @@ description/schema edit — not only protocol conformance.
   on demand via a bounded Core query** (a sibling of `OverviewAsync`), not by fattening the graph
   payload — content is paid for only for the selected node and is transport-bounded like every other
   query.
-- [ADR-0019](adr/0019-code-viewer-renderer.md): **the read-only code viewer renders with native
+- [ADR-0025](adr/0025-code-viewer-renderer.md): **the read-only code viewer renders with native
   AvalonEdit (MIT), not Monaco-in-WebView2** — the deciding factor is the repo's own documented
   WebView2 airspace/float-crash cost (ADR-0015); a read-only viewer does not need Monaco's VS-Code
   parity, so it should not pay a second WebView2's cost. Markdown via Markdig; rich content reuses the
   one existing canvas WebView2.
-- [ADR-0020](adr/0020-class-diagram-architecture.md): **the class diagram is an App-side type-hierarchy
+- [ADR-0026](adr/0026-class-diagram-architecture.md): **the class diagram is an App-side type-hierarchy
   view derived from the existing graph** (classes/interfaces + `inherits`→generalization,
   `implements`→realization), dependency-free and Core-ungated for Phase 1; **members and a
   notation-valid Mermaid `classDiagram` render defer to Phase 2**, gated on a Core `has_member`

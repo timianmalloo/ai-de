@@ -3,7 +3,7 @@ using AiDe.Core.Watcher;
 namespace AiDe.Core.Tests.Watcher;
 
 /// <summary>
-/// LK-ADV-EVAL-01..14 - the local advisory evaluator and the egress/credential guard (conn-3, ADR-0018 credential-backed-grading-egress).
+/// LK-ADV-EVAL-01..14 - the local advisory evaluator and the egress/credential guard (conn-3, ADR-0024 credential-backed-grading-egress).
 /// The claims: the local heuristic scores the two advisory dimensions deterministically from a quarantined
 /// evidence token list with a conservative (never optimistic) default for absent tokens, needs no egress
 /// or credential, and refuses a deterministic dimension (rule 8); and the guard enforces default-deny

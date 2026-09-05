@@ -12,7 +12,7 @@ links:
   - { to: design-watcher-work-episode, rel: depends-on }
   - { to: design-watcher-scoring-service, rel: depends-on }
   - { to: design-watcher-advisory-grader, rel: depends-on }
-  - { to: adr-0017-watcher-observation-projection, rel: depends-on }
+  - { to: adr-0023-watcher-observation-projection, rel: depends-on }
 review-by: 2027-03-02
 review-suggested: []
 summary: >-
@@ -319,7 +319,7 @@ grader (ADR-0019 advisory-evaluator-calibration), and its output is excluded fro
 excluded, never stubbed with a plausible number.
 
 **Egress stays opt-in and per-path.** Daydream is local and deterministic. Any model-backed
-enrichment is a credential-backed egress path under ADR-0018 credential-backed-grading-egress and is off by default.
+enrichment is a credential-backed egress path under ADR-0024 credential-backed-grading-egress and is off by default.
 
 **Learnings are about tools, not people.** The leaderboard already refuses a per-operator facet,
 and Daydream inherits that: a candidate is attributed to episodes, harnesses and models, never to

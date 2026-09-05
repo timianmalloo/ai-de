@@ -4,7 +4,7 @@ using AiDe.Core.Presentation;
 namespace AiDe.App.Tests;
 
 /// <summary>
-/// The class-hierarchy projection (ADR-0020 class-diagram-architecture): a pure function from graph nodes/edges to a UML type
+/// The class-hierarchy projection (ADR-0026 class-diagram-architecture): a pure function from graph nodes/edges to a UML type
 /// hierarchy, so it is verified headlessly. Members are out of scope (not extracted yet).
 /// </summary>
 public sealed class ClassHierarchyTests

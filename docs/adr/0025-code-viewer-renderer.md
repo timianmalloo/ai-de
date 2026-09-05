@@ -1,6 +1,6 @@
 ---
-id: adr-0019-code-viewer-renderer
-title: "ADR-0019 — Render the read-only code viewer with native AvalonEdit, not Monaco-in-WebView2"
+id: adr-0025-code-viewer-renderer
+title: "ADR-0025 — Render the read-only code viewer with native AvalonEdit, not Monaco-in-WebView2"
 type: adr
 status: accepted
 owner: "@timianmalloo"
@@ -22,7 +22,7 @@ summary: >-
   content (Mermaid/charts) reuses the ONE existing canvas WebView2 rather than adding another.
 ---
 
-# ADR-0019 code-viewer-renderer — Read-only code viewer renderer
+# ADR-0025 code-viewer-renderer — Read-only code viewer renderer
 
 **Status:** Accepted · **Date:** 2026-08-30 · **Deciders:** Design (Enterprise Architect + the-Simplifier peers), grounded in ADR-0015 and `kb-content-rendering-comparables`
 

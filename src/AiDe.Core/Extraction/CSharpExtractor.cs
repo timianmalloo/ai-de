@@ -185,7 +185,7 @@ public sealed class CSharpExtractor(string extractorVersion = "1.0.0") : IExtrac
                     request, subject, "inherits", baseName, VerificationStatus.Verified, provenance));
             }
 
-            // MEMBERS, for the class diagram's compartments (ADR-0020 class-diagram-architecture).
+            // MEMBERS, for the class diagram's compartments (ADR-0026 class-diagram-architecture).
             //
             // Declared on this type only — inherited members belong to the type that declares them,
             // and repeating them would make every subclass look like it redefined its parent. The

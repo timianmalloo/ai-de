@@ -11,7 +11,7 @@ links:
   - { to: design-watcher-weave-score, rel: refines }
   - { to: spec-agentic-watcher-substrate, rel: implements }
   - { to: adr-0019-advisory-evaluator-calibration, rel: depends-on }
-  - { to: adr-0018-credential-backed-grading-egress, rel: depends-on }
+  - { to: adr-0024-credential-backed-grading-egress, rel: depends-on }
 review-by: 2027-02-26
 review-suggested: []
 summary: >-
@@ -32,7 +32,7 @@ summary: >-
 
 ## 1. Responsibility and boundary
 
-One responsibility: **decide whether, and how, a non-deterministic advisory judgment may enter the score and the fleet ranking - and turn a scorecard into honest per-turn feedback**. It owns the calibration math, the gated fold, the leaderboard, and the standing; it borrows the deterministic Weave (slice 5) and the scorecard shape. It does **not** own the model judge's prompt/grounding (a seam) or the credential/egress path (ADR-0018 credential-backed-grading-egress, Phase 4/5).
+One responsibility: **decide whether, and how, a non-deterministic advisory judgment may enter the score and the fleet ranking - and turn a scorecard into honest per-turn feedback**. It owns the calibration math, the gated fold, the leaderboard, and the standing; it borrows the deterministic Weave (slice 5) and the scorecard shape. It does **not** own the model judge's prompt/grounding (a seam) or the credential/egress path (ADR-0024 credential-backed-grading-egress, Phase 4/5).
 
 **The anti-Goodhart stance is the point (rules 8/9/14, US-16).** An advisory judgment can never *raise* a deterministic failed dimension (rule 8); it enters points *only* after passing both calibration gates (rule 9); a visible score gain is *rejected* if the held-out counter-metrics (outcome integrity, regression rate, rework, dispute overturns) worsen (rule 14); and per-turn standing exposes evidence + trend, **never a single optimizable scalar** (US-16).
 
@@ -102,7 +102,7 @@ public sealed class StandingComposer { AgentStanding Compose(ScoredEpisode subje
 
 - **Anti-Goodhart** (rules 8/9/14, US-16) is the security property: no path lets an advisory judgment raise a deterministic fail, enter points uncalibrated, survive worsening counter-metrics, or become a single gameable target.
 - **Small-cohort privacy (US-10):** a cohort `< 5` or a single-operator cell is suppressed as Not Comparable; ranking identifiable people is refused by construction (the leaderboard has no person facet).
-- **Prompt-injection invariance:** the model judge (seam) consumes board/episode evidence that is quarantined (slice 6); the deterministic gate + fold guarantee an injection fixture cannot change a *scored* result (the scored dimensions are deterministic or calibration-gated). The credential/egress path for a real judge is ADR-0018 credential-backed-grading-egress (Phase 4/5, opt-in, off by default).
+- **Prompt-injection invariance:** the model judge (seam) consumes board/episode evidence that is quarantined (slice 6); the deterministic gate + fold guarantee an injection fixture cannot change a *scored* result (the scored dimensions are deterministic or calibration-gated). The credential/egress path for a real judge is ADR-0024 credential-backed-grading-egress (Phase 4/5, opt-in, off by default).
 
 ## 7. Test plan (Testing Strategy D1)
 
@@ -120,7 +120,7 @@ Pure math + composition over the existing scorecard - **no new dependency, no ML
 
 ## 9. Residual (out of slice 7)
 
-- **The real model judge** (`IAdvisoryEvaluator` grounded implementation) + its **credential/egress** path (ADR-0018 credential-backed-grading-egress) + its **prompt-injection-invariance** corpus - Phase 4/5, with a threat model.
+- **The real model judge** (`IAdvisoryEvaluator` grounded implementation) + its **credential/egress** path (ADR-0024 credential-backed-grading-egress) + its **prompt-injection-invariance** corpus - Phase 4/5, with a threat model.
 - **Scorecard / leaderboard / standing persistence** and the **WPF surfaces** (Leaderboard + per-turn standing states) - follow-ons (the slice-3 pattern).
 - **Dispute** superseding evaluation records (rule 12) - a persistence follow-on.
 

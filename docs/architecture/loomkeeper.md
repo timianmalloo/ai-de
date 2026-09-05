@@ -16,8 +16,8 @@ links:
   - { to: adr-0007-agent-session-adapter, rel: depends-on }
   - { to: adr-0011-session-processing-class-egress, rel: depends-on }
   - { to: adr-0016-bounded-context-declaration, rel: depends-on }
-  - { to: adr-0017-watcher-observation-projection, rel: depends-on }
-  - { to: adr-0018-credential-backed-grading-egress, rel: depends-on }
+  - { to: adr-0023-watcher-observation-projection, rel: depends-on }
+  - { to: adr-0024-credential-backed-grading-egress, rel: depends-on }
   - { to: adr-0019-advisory-evaluator-calibration, rel: depends-on }
   - { to: adr-0020-trusted-registrar-harness-model-identity, rel: depends-on }
 review-by: 2027-02-26
@@ -53,7 +53,7 @@ The load-bearing structural fact: **Loomkeeper is a projection layer, not a new 
 - **Delays:** grader latency (advisory, off the critical path); eventual consistency of the cross-repo fleet view; the deliberate human gate before promotion.
 - **Boundary drawn:** one machine, v1. **Inside:** local observation, evaluation, learning, and the Observatory UI. **Outside (excluded, deny-by-default):** multi-host operation, cloud sync, external OTLP export, hosted grading, and personnel analytics — each requires a new spec and privacy/security review. Credential-backed off-device grading is the *one* boundary crossing the user may explicitly open, per-path (§7.1).
 
-**Leverage point:** the highest-leverage decision is **where the durable facts live** (ADR-0017 watcher-observation-projection), because it is the only decision here that a schema migration cannot cheaply reverse. Everything else — graders, leaderboard, UI — is a derived view or a replaceable component.
+**Leverage point:** the highest-leverage decision is **where the durable facts live** (ADR-0023 watcher-observation-projection), because it is the only decision here that a schema migration cannot cheaply reverse. Everything else — graders, leaderboard, UI — is a derived view or a replaceable component.
 
 ## 3. Candidate shapes considered
 
@@ -86,7 +86,7 @@ The load-bearing structural fact: **Loomkeeper is a projection layer, not a new 
 ```
 
 - **Adapters + Trusted Registrar** (extends **ADR-0007**): bind identity and issue a per-session capability verified on every event (§6, ADR-0020 trusted-registrar-harness-model-identity). Native OTLP where a harness emits it; an **injected coordination contract** for sessions from repositories without the AI-Forward pack; `coord-core` append semantics for AI-Forward sessions (symbiotic, not a second ledger).
-- **Fact store** (**ADR-0002**, extended by **ADR-0017 watcher-observation-projection**): the watcher's facts and the harness/model dimensions are additions to the existing store, not a new database.
+- **Fact store** (**ADR-0002**, extended by **ADR-0023 watcher-observation-projection**): the watcher's facts and the harness/model dimensions are additions to the existing store, not a new database.
 - **Deterministic Projection Engine (T0):** everything that must be reproducible — identity, liveness, trace/trajectory, Weave composition, the five deterministic dimensions, the hard floors, Evidence Coverage, and the leaderboard. Derived views per **ADR-0001**.
 - **Advisory Evaluator (T2):** local rubric grader for qualitative dimensions and Candidate Lessons; **advisory only**, gated by **ADR-0019 advisory-evaluator-calibration**; cannot raise a deterministic failed dimension (LOA P5).
 - **Standing Composer:** builds each agent's per-turn rank + one evidence-backed reason per dimension; never exposes the held-out target (spec US-16).
@@ -94,7 +94,7 @@ The load-bearing structural fact: **Loomkeeper is a projection layer, not a new 
 - **Governance Gate:** capture policy, redaction before persistence (fail-closed), Configuration, credential storage (DPAPI), and the egress opt-in — the T0 gateway that ships in Phase 1 even though the credential-backed grader arrives later (the ADR-0011 lesson: the gate ships before the thing it governs).
 - **Fleet aggregator + Observatory UI (G6):** read-only cross-repo projection and the WPF surface designed in `docs/specs/agentic-watcher-substrate.md` Part C and `DESIGN.md`.
 
-## 5. Durable data representation (settled — ADR-0017 watcher-observation-projection)
+## 5. Durable data representation (settled — ADR-0023 watcher-observation-projection)
 
 Loomkeeper **reuses ADR-0002's dimensions + append-only facts** rather than choosing a representation of its own; this is the DM-default (core entities as dimensions, change-over-time as append-only facts) and it makes history and the audit trail *be* the data. Additions:
 
@@ -110,7 +110,7 @@ Terminal output is forgeable (ADR-0007), so identity is **asserted until verifie
 
 ## 7. The two riskiest surfaces (front and centre)
 
-### 7.1 Credential and egress model (ADR-0018 credential-backed-grading-egress, extends ADR-0011)
+### 7.1 Credential and egress model (ADR-0024 credential-backed-grading-egress, extends ADR-0011)
 
 This is the surface that can leak work off the device, so it is designed first and fails closed.
 
@@ -177,7 +177,7 @@ No spike results are fabricated: S1–S4 and the calibration claim are named pre
 
 ## 12. Residual architectural risk
 
-- **S3 (outbound denial)** is the highest architectural risk: the entire local-only guarantee rests on it. If process-level denial is not enforceable, the egress model must fall back to a stronger control (no network stack registered at all in v1) — recorded as the ADR-0018 credential-backed-grading-egress fallback.
+- **S3 (outbound denial)** is the highest architectural risk: the entire local-only guarantee rests on it. If process-level denial is not enforceable, the egress model must fall back to a stronger control (no network stack registered at all in v1) — recorded as the ADR-0024 credential-backed-grading-egress fallback.
 - **Calibration may not reach QWK ≥0.75** for some task classes; those classes stay advisory/Not Scored rather than being force-ranked — an accepted degradation, not a defect.
 - **Cross-repo fleet consistency** is eventual; the UI must label a stale or paused repository rather than present it as current.
 - Full **threat model, privacy model, and native WPF/AT accessibility proof** remain next-phase conditions inherited from the spec gate.

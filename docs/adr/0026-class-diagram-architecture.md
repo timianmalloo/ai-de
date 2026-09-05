@@ -1,6 +1,6 @@
 ---
-id: adr-0020-class-diagram-architecture
-title: "ADR-0020 — Class diagram: an App-side type-hierarchy view from the existing graph, dependency-free; members & Mermaid deferred"
+id: adr-0026-class-diagram-architecture
+title: "ADR-0026 — Class diagram: an App-side type-hierarchy view from the existing graph, dependency-free; members & Mermaid deferred"
 type: adr
 status: accepted
 owner: "@timianmalloo"
@@ -9,7 +9,7 @@ tags: [architecture, class-diagram, uml, mermaid, graph, derived-view]
 links:
   - { to: spec-uml-erm-surfaces, rel: relates-to }
   - { to: adr-0015-canvas-hosting-and-overlay-strategy, rel: depends-on }
-  - { to: adr-0019-code-viewer-renderer, rel: relates-to }
+  - { to: adr-0025-code-viewer-renderer, rel: relates-to }
 review-by: 2027-02-28
 review-suggested: []
 summary: >-
@@ -22,7 +22,7 @@ summary: >-
   classDiagram with empty compartments is not worth vendoring ~3 MB of mermaid.js for.
 ---
 
-# ADR-0020 class-diagram-architecture — Class diagram architecture
+# ADR-0026 class-diagram-architecture — Class diagram architecture
 
 **Status:** Accepted · **Date:** 2026-08-30 · **Deciders:** Design (Enterprise Architect + the-Simplifier peers), grounded in the repo's extractor output and ADR-0015/0019
 
