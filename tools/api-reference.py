@@ -235,8 +235,15 @@ def main():
     args = ap.parse_args()
 
     src, out = Path(args.src), Path(args.out)
-    files = [p for p in src.rglob('*.cs')
-             if 'obj' not in p.parts and 'bin' not in p.parts and not p.name.endswith('.g.cs')]
+    # SORTED, and by a plain string. `rglob` yields in filesystem order, which differs between a
+    # Windows developer's disk and a Linux runner — and members are appended per namespace in this
+    # order, so the generated markdown would differ by host from identical sources. Sorting Path
+    # objects would not fix it either: pathlib compares Windows paths case-insensitively and POSIX
+    # paths case-sensitively (DC-108). `as_posix()` is the same string everywhere.
+    files = sorted(
+        (p for p in src.rglob('*.cs')
+         if 'obj' not in p.parts and 'bin' not in p.parts and not p.name.endswith('.g.cs')),
+        key=lambda p: p.as_posix())
     if not files:
         # A generator that scanned nothing must not report success (R4/CD9).
         print('error: no C# sources under ' + str(src), file=sys.stderr)
@@ -255,7 +262,9 @@ def main():
     total = documented = 0
     report = {}
     for ns, items in sorted(namespaces.items()):
-        (out / (ns + '.md')).write_text(render(ns, items), encoding='utf-8')
+        # newline pinned: the platform's default translation would make these files CRLF on Windows
+        # and LF on Linux, so a byte-for-byte reproducibility gate could never pass on both (DC-108).
+        (out / (ns + '.md')).write_text(render(ns, items), encoding='utf-8', newline='\n')
         d = sum(1 for i in items if i['doc'] and i['doc']['summary'])
         total += len(items)
         documented += d

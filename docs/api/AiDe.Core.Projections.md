@@ -500,18 +500,6 @@ Nodes returned before the cap applies.
 graph. A cap exists because a surface that receives ten million nodes stops responding, and a
 pane that stops responding tells the user nothing at all.
 
-## `InteractionMessage`
-
-*record* — `Interaction.cs`
-
-One message in an interaction: who called whom, and what they called.
-
-## `InteractionResult`
-
-*record* — `Interaction.cs`
-
-One caller's outgoing calls in order — the data a UML sequence diagram draws.
-
 ## `IWorkspaceQueries`
 
 *interface* — `IWorkspaceQueries.cs`
@@ -562,6 +550,18 @@ is not there.
 | `Task<WorkspaceGraph> GraphAsync(GraphQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<PathResult> PathsAsync(PathQuery query, CancellationToken cancellationToken)` | **(gap)** |
 | `Task<WorkspaceOverview> OverviewAsync(OverviewQuery query, CancellationToken cancellationToken)` | **(gap)** |
+
+## `InteractionMessage`
+
+*record* — `Interaction.cs`
+
+One message in an interaction: who called whom, and what they called.
+
+## `InteractionResult`
+
+*record* — `Interaction.cs`
+
+One caller's outgoing calls in order — the data a UML sequence diagram draws.
 
 ## `JoinEdge`
 

@@ -1474,7 +1474,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dae1ccab60d45fa8161501e23802cbfdadfccce47e626013a868379d27a17672"
+      "sourceSha256": "6df911a0686ab51a2822be00ef456254514c288e792d09dc92ab4daf2e803b8c"
     },
     {
       "id": "api-aide-core-mcp",
@@ -1549,7 +1549,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "71755f35fc0bf3dfcee9fc6c6d0b9873c829782329928d7cce3328b531de48ca"
+      "sourceSha256": "931922b7daf24b6592406a843d77a6399488e3959ad3ae2ed1c3d24637223c11"
     },
     {
       "id": "api-aide-core-store",
@@ -11091,5 +11091,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7c70f1b4dedf48327dbcc3c10c3e411a5533d12e5349c7b57776750f641c4b21"
+  "graphSha256": "c2ef5eb5dab6b32e0436f375271147203bbf869b4c21e32185e1aab7547a443d"
 };

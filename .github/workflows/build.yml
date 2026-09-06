@@ -36,6 +36,14 @@ jobs:
   gates:
     runs-on: ubuntu-latest
 
+    # EVERY GATE RUNS, EVEN AFTER ONE FAILS (`if: !cancelled()` on each step below).
+    #
+    # Actions stops a job at the first failing step, which is the same defect this whole job exists
+    # to escape — one step's failure hiding every check behind it (INV-0005 RC-2). Without this, a
+    # single red gate means one finding per push and a round trip to CI for the next one; that cost
+    # two cycles the day this job was created. A failing step still fails the JOB, so the gate stays
+    # fail-closed — it just reports everything it found first.
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -74,6 +82,7 @@ jobs:
       # every cited DC-NNN must resolve, the sequence must have no gaps, and the counts are derived
       # rather than typed.
       - name: Defect-register integrity gate
+        if: ${{ !cancelled() }}
         run: python tools/verify-defect-register.py
 
       # DC-095: a comment that names the test enforcing a property, where that name resolves to
@@ -82,6 +91,7 @@ jobs:
       # instances in one evening, the second committed in the SAME change that registered the class,
       # which is why this is a gate rather than a reading rule.
       - name: Cited-controls gate
+        if: ${{ !cancelled() }}
         run: |
           python tools/verify-cited-controls.py --self-test
           python tools/verify-cited-controls.py
@@ -95,6 +105,7 @@ jobs:
       # failing the build on tools nobody is rewriting is how a gate gets switched off. New debt is
       # refused; a name that no longer owns its debt must be removed.
       - name: Gate self-test ratchet
+        if: ${{ !cancelled() }}
         run: |
           python tools/verify-gate-self-tests.py --self-test
           python tools/verify-gate-self-tests.py
@@ -109,6 +120,7 @@ jobs:
       # that verified nothing is the false positive that gets a gate switched off (DC-104). What is
       # refused is silence.
       - name: Audit capture ratchet — a skill run says what it was for
+        if: ${{ !cancelled() }}
         run: |
           python tools/verify-audit-capture.py --self-test
           python tools/verify-audit-capture.py
@@ -122,6 +134,7 @@ jobs:
       # root stops carrying the capture instruction, and catches the next harness the moment its
       # root appears without it.
       - name: Proof Pack capture instruction gate
+        if: ${{ !cancelled() }}
         run: |
           python tools/verify-capture-instruction.py --self-test
           python tools/verify-capture-instruction.py
@@ -132,6 +145,7 @@ jobs:
       # a content check cannot see structural damage. A conflict marker has no legitimate instance
       # in a tracked file, so this is the rare gate with no judgement in it.
       - name: No conflict markers in tracked files
+        if: ${{ !cancelled() }}
         run: |
           python tools/verify-no-conflict-markers.py --self-test
           python tools/verify-no-conflict-markers.py
@@ -142,6 +156,7 @@ jobs:
       # typed the list out again. This is the missing half. It found two live cases the hour it was
       # written, one of them a day old.
       - name: Fixture-derivation gate
+        if: ${{ !cancelled() }}
         run: python tools/verify-fixture-derivation.py
 
       # An embedded page gets no compiler, no analyzer and no test. A stray quote in the canvas page
@@ -149,6 +164,7 @@ jobs:
       # invisible to 628 tests, and the one probe that would have caught it was running a stale
       # binary (DC-023). Uses node --check where Node exists and says so when it falls back.
       - name: Embedded-script syntax gate
+        if: ${{ !cancelled() }}
         run: python tools/verify-embedded-scripts.py
 
       # Audit ids are allocated by "highest present, plus one", which is correct in one checkout and
@@ -156,6 +172,7 @@ jobs:
       # Append-only logs can merge cleanly with two records under one id, where nothing fails and one
       # silently wins every lookup (defect class DC-013).
       - name: Audit-log id uniqueness gate
+        if: ${{ !cancelled() }}
         run: python tools/verify-audit-log.py
 
       # verify-audit-log covers two JSONL logs. DC-013 recurred a fourth time in a THIRD allocator
@@ -172,12 +189,14 @@ jobs:
       # between two OTHER branches is a note, not a failure, so nobody's build goes red waiting on
       # somebody else.
       - name: Monotonic id allocator gate
+        if: ${{ !cancelled() }}
         run: python tools/verify-id-allocators.py
 
       # The control must be observed failing, not asserted to work (CI6). Both halves have a
       # planted-failure self-test, and the cross-branch one builds a throwaway two-branch
       # repository because the shape it guards cannot be reproduced inside a single tree.
       - name: Monotonic id allocator gate — self-test
+        if: ${{ !cancelled() }}
         run: python tools/verify-id-allocators.py --self-test
 
       # The derived views are generated from frontmatter and from the append-only logs, and they
@@ -186,9 +205,11 @@ jobs:
       # That has happened three times in two days (DC-060). The response was "always regenerate
       # after a rebase", which is a habit; this is the executable form.
       - name: Derived views match their generators
+        if: ${{ !cancelled() }}
         run: python tools/verify-derived-views.py
 
       - name: Derived views gate — self-test
+        if: ${{ !cancelled() }}
         run: python tools/verify-derived-views.py --self-test
 
       # A stand-in wired into production outlives the thing it stood in for, and every signal stays
@@ -197,9 +218,11 @@ jobs:
       # it anywhere in the App. Not a ban — a forcing function: each one names the condition that
       # makes it right, and the next reader is asked whether that condition still holds.
       - name: Production stand-ins are accounted for
+        if: ${{ !cancelled() }}
         run: python tools/verify-standins.py
 
       - name: Stand-ins gate — self-test
+        if: ${{ !cancelled() }}
         run: python tools/verify-standins.py --self-test
 
       # ONLY the self-test runs here, and that is deliberate. The real check looks across every
@@ -210,6 +233,7 @@ jobs:
       # up. The self-test builds its own repository and CAN fail, so CI proves the control is alive
       # while the control itself runs where the hazard is: a developer's machine, pre-commit.
       - name: Stranded audit-log gate — self-test
+        if: ${{ !cancelled() }}
         run: python tools/verify-stranded-audit.py --self-test
 
       # §2 of the session contract assigns four of thirteen surfaces. The other nine were built
@@ -218,9 +242,11 @@ jobs:
       # looks like, which already sent a Core-owned registry defect to the design session. This
       # cannot decide who should own a new surface; it refuses to let one exist with no answer.
       - name: Every surface has a declared owner
+        if: ${{ !cancelled() }}
         run: python tools/verify-surface-ownership.py
 
       - name: Surface-ownership gate — self-test
+        if: ${{ !cancelled() }}
         run: python tools/verify-surface-ownership.py --self-test
 
       # Every STA harness in the App suite wrapped assertion failures in "STA work failed", so the
@@ -229,9 +255,11 @@ jobs:
       # investigation — a false claim aimed at the person diagnosing, which is why it outranks the
       # announcement classes it came from. 16 harnesses, found by sweeping after a copy exposed one.
       - name: An assertion failure is reported as itself
+        if: ${{ !cancelled() }}
         run: python tools/verify-harness-diagnostics.py
 
       - name: Harness-diagnostics gate — self-test
+        if: ${{ !cancelled() }}
         run: python tools/verify-harness-diagnostics.py --self-test
 
       # api-reference.py stripped the XML-doc prefix with `[A-Za-z]:?` — colon optional, letter
@@ -240,9 +268,11 @@ jobs:
       # entirely legitimate. 13 committed files, and nothing compared a generated doc against the
       # source it documents.
       - name: Generated API docs name real identifiers
+        if: ${{ !cancelled() }}
         run: python tools/verify-api-crefs.py
 
       - name: API-cref gate — self-test
+        if: ${{ !cancelled() }}
         run: python tools/verify-api-crefs.py --self-test
 
       # Three times in one session a comment stated a bound the code did not apply: an evidence page
@@ -250,6 +280,7 @@ jobs:
       # returning 461,750, and a regex whose exclusion existed only in prose (DC-038). Every constant
       # whose NAME claims a limit must appear in a comparison, a clamp or a take.
       - name: Bounds-are-enforced gate
+        if: ${{ !cancelled() }}
         run: python tools/verify-bounds-are-enforced.py
 
       # ScopeFingerprints.ExtractorGeneration invalidates every cached extraction when the product
@@ -258,6 +289,7 @@ jobs:
       # from the previous generation and the Knowledge chip read 0 on a repository holding 2,343
       # knowledge nodes. Needs full history to find the last bump.
       - name: Extractor generation gate
+        if: ${{ !cancelled() }}
         run: python tools/verify-extractor-generation.py
 
   # ---------------------------------------------------------------------------------------------

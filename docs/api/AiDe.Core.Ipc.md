@@ -121,6 +121,96 @@ The opening exchange: agree a version and issue a capability, in that order.
 never obtains authority — not even briefly. The reverse order would hand out a token and then
 discover the holder cannot be understood.
 
+## `IWorkspaceCommands`
+
+*interface* — `IWorkspaceCommands.cs`
+
+The workspace's write surface, however it is reached.
+
+**Remarks.** **Separate from `IWorkspaceQueries` because reads and writes are
+not the same kind of thing.** A read can be repeated freely; a write bumps a generation and
+commits a snapshot, carries an idempotency key, and is judged against the epoch fence. Folding
+them into one interface would put a name on the seam ("queries") that half its members
+contradict, and would make every read-only consumer hold a handle that can also mutate.
+
+
+
+
+
+Both hosting modes satisfy it — the in-process core and the daemon client — for the same
+reason the read seam exists: ADR-0009 keeps both, and a UI written against one of them is a UI
+that has to be rewritten to get the other.
+
+## `IndexSummary`
+
+*record* — `IWorkspaceCommands.cs`
+
+What an index run found, as the shell reports it.
+
+| Member | Summary |
+|---|---|
+| `string Describe()` | One sentence for the announcement channel, including what was NOT seen. |
+| `string NotAnalysed()` | What was not analysed, as ONE clause — a count and the sharpest example, never the list. |
+
+### `string NotAnalysed()`
+
+What was not analysed, as ONE clause — a count and the sharpest example, never the list.
+
+**Remarks.** **The status line is a line.** This clause used to be every disclosure joined with
+commas. Folding them by class took it from 108 to 28, which is a better list and still not a
+status message: on a real index it filled roughly four fifths of the window and pushed the
+graph into a strip along the top.
+
+
+
+
+
+**Which one to name is the whole design.** A count alone ("28 boundaries") tells a
+reader nothing about whether to care. So the clause names the disclosure with the largest
+count, which is where the most unread repository is — and, because gaps sort before
+boundaries when counts tie, prefers a thing the product MEANT to read and could not over a
+thing it never intended to read (DC-050).
+
+
+
+
+
+The full list is still in the result, unchanged, for a surface that can hold it.
+
+## `LocalWorkspaceCommands`
+
+*class* — `IWorkspaceCommands.cs`
+
+The write surface applied by a core in this process.
+
+**Remarks.** Takes the refresh as a delegate rather than a `WorkspaceCore` so that what the
+in-process mode reports — a completed count, or a failure with its reason — is decided in one
+place and testable without a store.
+
+| Member | Summary |
+|---|---|
+| `Task<IndexSummary> IndexSolutionAsync(` | **(gap)** |
+| `Task<ScopeRefreshStatus> RefreshScopeAsync(` | **(gap)** |
+
+## `IWorkspaceDispatch`
+
+*interface* — `IWorkspaceDispatch.cs`
+
+The two durable phases of prompt dispatch, as a caller sees them.
+
+**Remarks.** Separate from `IWorkspaceCommands` because it is a different obligation: a
+workspace can answer projections and re-index without being able to record a dispatch, and a
+shell that cannot dispatch should discover that by the capability being absent rather than by a
+call failing.
+
+
+
+
+
+**The side effect is deliberately not here.** Writing to the terminal is the shell's
+job — it owns the process (D1) — so this interface covers only what must be durable, and
+`BeginAndWriteAsync` is what orders the three steps.
+
 ## `IpcClient`
 
 *class* — `IpcClient.cs`
@@ -611,96 +701,6 @@ Varying the *expected* value tests the decision honestly without needing a secon
 user account: a server told to expect a different owner must refuse the connection it gets.
 The alternative was to leave the branch permanently unexercised and say so in a comment,
 which is how a security check quietly becomes decoration.
-
-## `IWorkspaceCommands`
-
-*interface* — `IWorkspaceCommands.cs`
-
-The workspace's write surface, however it is reached.
-
-**Remarks.** **Separate from `IWorkspaceQueries` because reads and writes are
-not the same kind of thing.** A read can be repeated freely; a write bumps a generation and
-commits a snapshot, carries an idempotency key, and is judged against the epoch fence. Folding
-them into one interface would put a name on the seam ("queries") that half its members
-contradict, and would make every read-only consumer hold a handle that can also mutate.
-
-
-
-
-
-Both hosting modes satisfy it — the in-process core and the daemon client — for the same
-reason the read seam exists: ADR-0009 keeps both, and a UI written against one of them is a UI
-that has to be rewritten to get the other.
-
-## `IndexSummary`
-
-*record* — `IWorkspaceCommands.cs`
-
-What an index run found, as the shell reports it.
-
-| Member | Summary |
-|---|---|
-| `string Describe()` | One sentence for the announcement channel, including what was NOT seen. |
-| `string NotAnalysed()` | What was not analysed, as ONE clause — a count and the sharpest example, never the list. |
-
-### `string NotAnalysed()`
-
-What was not analysed, as ONE clause — a count and the sharpest example, never the list.
-
-**Remarks.** **The status line is a line.** This clause used to be every disclosure joined with
-commas. Folding them by class took it from 108 to 28, which is a better list and still not a
-status message: on a real index it filled roughly four fifths of the window and pushed the
-graph into a strip along the top.
-
-
-
-
-
-**Which one to name is the whole design.** A count alone ("28 boundaries") tells a
-reader nothing about whether to care. So the clause names the disclosure with the largest
-count, which is where the most unread repository is — and, because gaps sort before
-boundaries when counts tie, prefers a thing the product MEANT to read and could not over a
-thing it never intended to read (DC-050).
-
-
-
-
-
-The full list is still in the result, unchanged, for a surface that can hold it.
-
-## `LocalWorkspaceCommands`
-
-*class* — `IWorkspaceCommands.cs`
-
-The write surface applied by a core in this process.
-
-**Remarks.** Takes the refresh as a delegate rather than a `WorkspaceCore` so that what the
-in-process mode reports — a completed count, or a failure with its reason — is decided in one
-place and testable without a store.
-
-| Member | Summary |
-|---|---|
-| `Task<IndexSummary> IndexSolutionAsync(` | **(gap)** |
-| `Task<ScopeRefreshStatus> RefreshScopeAsync(` | **(gap)** |
-
-## `IWorkspaceDispatch`
-
-*interface* — `IWorkspaceDispatch.cs`
-
-The two durable phases of prompt dispatch, as a caller sees them.
-
-**Remarks.** Separate from `IWorkspaceCommands` because it is a different obligation: a
-workspace can answer projections and re-index without being able to record a dispatch, and a
-shell that cannot dispatch should discover that by the capability being absent rather than by a
-call failing.
-
-
-
-
-
-**The side effect is deliberately not here.** Writing to the terminal is the shell's
-job — it owns the process (D1) — so this interface covers only what must be durable, and
-`BeginAndWriteAsync` is what orders the three steps.
 
 ## `ScopeRefreshState`
 
