@@ -153,6 +153,8 @@ public sealed class McpSessionIdentityTests
     /// comparison would make a worktree fail to match itself. The same normalisation
     /// <c>RepositoryIdentity</c> already applies, and for the same reason it was added there.
     /// </remarks>
+    // Platform=Windows: one theory case spells the path with a drive letter, which is not a path on Linux
+    [Trait("Platform", "Windows")]
     [Theory]
     [InlineData(@"C:\Projects\app-agent-alpha")]
     [InlineData("C:/Projects/app-agent-alpha")]

@@ -64,6 +64,8 @@ public sealed class OneRepositoryIsOneRepositoryTests
         Assert.Single(fleet.Repositories);
     }
 
+    // Platform=Windows: asserts a case-INsensitive filesystem; on Linux case correctly does split a repository
+    [Trait("Platform", "Windows")]
     [Fact]
     public void CaseDoesNotSplitARepository()
     {

@@ -49,6 +49,8 @@ public sealed class ProofPackVerifierTests : IDisposable
             ProofPackVerifier.Verify(_repository, "docs/proof/ep-1.md"));
     }
 
+    // Platform=Windows: asserts Windows path semantics: backslashes resolve, directory matching ignores case
+    [Trait("Platform", "Windows")]
     [Fact]
     public void BackslashesAndForwardSlashesBothWork()
     {
@@ -213,6 +215,8 @@ public sealed class ProofPackVerifierTests : IDisposable
             ProofPackVerifier.Verify(_repository, "docs/proof/run-1"));
     }
 
+    // Platform=Windows: asserts Windows path semantics: backslashes resolve, directory matching ignores case
+    [Trait("Platform", "Windows")]
     [Fact]
     public void TheProofDirectoryMatchIgnoresCase()
     {

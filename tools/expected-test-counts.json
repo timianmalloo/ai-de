@@ -3,8 +3,8 @@
   "minimumExecuted": {
     "AiDe.App.Tests": 399,
     "AiDe.Core.Tests": 1719,
-    "AiDe.Core.Tests.portable": 1581,
-    "AiDe.Core.Tests.nonportable": 138
+    "AiDe.Core.Tests.portable": 1560,
+    "AiDe.Core.Tests.nonportable": 159
   },
   "splits": {
     "AiDe.Core.Tests": [

@@ -507,6 +507,8 @@ public sealed class LackingWorkspaceTests : IDisposable
         Assert.NotEmpty(AiDe.Core.Terminal.EnvironmentHealth.Inspect(justOver));
     }
 
+    // Platform=Windows: counts PATH entries under Windows PATH semantics; every entry exists on the Linux runner
+    [Trait("Platform", "Windows")]
     [Fact]
     public void PathRegrowthIsCaughtBySHAPE_LongBeforeItReachesTheLimit()
     {

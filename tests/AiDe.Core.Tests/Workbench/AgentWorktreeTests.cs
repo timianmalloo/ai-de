@@ -42,6 +42,8 @@ public sealed class AgentWorktreeTests
     /// Inside, it would need git-ignoring, would appear in every search and file watch, and would
     /// put one agent's build outputs inside the tree another agent is reading.
     /// </remarks>
+    // Platform=Windows: asserts against hardcoded @"C:\Projects" fixtures - a Windows path shape, by design
+    [Trait("Platform", "Windows")]
     [Fact]
     public void ThePlannedPathIsNotInsideTheRepository()
     {
@@ -61,6 +63,8 @@ public sealed class AgentWorktreeTests
     /// <c>git branch</c> can tell which session made it without a lookup. If these two drifted, the
     /// short id would be decoration.
     /// </remarks>
+    // Platform=Windows: asserts against hardcoded @"C:\Projects" fixtures - a Windows path shape, by design
+    [Trait("Platform", "Windows")]
     [Fact]
     public void TheShortIdTiesTheBranchTheFolderAndTheSessionRowTogether()
     {
@@ -98,6 +102,8 @@ public sealed class AgentWorktreeTests
     /// A bare "claude-code-a3f81c2e" among a person's own branches reads as something they created
     /// and forgot. The prefix says the product made it and can be listed or deleted as a group.
     /// </remarks>
+    // Platform=Windows: asserts against hardcoded @"C:\Projects" fixtures - a Windows path shape, by design
+    [Trait("Platform", "Windows")]
     [Fact]
     public void TheBranchIsNamespacedUnderAgent()
     {
@@ -114,6 +120,8 @@ public sealed class AgentWorktreeTests
     /// value today and a `git worktree add` that fails on a stray character would fall back to the
     /// shared workspace — a silent loss of the isolation the feature exists for.
     /// </remarks>
+    // Platform=Windows: asserts against hardcoded @"C:\Projects" fixtures - a Windows path shape, by design
+    [Trait("Platform", "Windows")]
     [Theory]
     [InlineData("agent:claude#6d40a4")]
     [InlineData("term inal 1")]
@@ -151,6 +159,8 @@ public sealed class AgentWorktreeTests
         => Assert.Null(AgentWorktree.For(@"C:\", "claude-code", "abcdef12"));
 
     /// <summary>A trailing separator does not change the answer.</summary>
+    // Platform=Windows: asserts against hardcoded @"C:\Projects" fixtures - a Windows path shape, by design
+    [Trait("Platform", "Windows")]
     [Fact]
     public void ATrailingSeparatorIsIgnored()
     {
