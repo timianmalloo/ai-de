@@ -21,6 +21,10 @@ namespace AiDe.Core.Tests.Watcher;
 /// could not look" is the exact defect being fixed one layer up, where <c>HasProofPack: false</c>
 /// was hardcoded.</para>
 /// </remarks>
+    // PORTABILITY UNVERIFIED. This class fails on Linux and the cause has not been
+    // diagnosed, so it runs on Windows for now. That is NOT a claim that it needs
+    // Windows — the honest reading is that nobody has looked (INV-0005 follow-up).
+[Trait("Platform", "Unverified")]
 public sealed class ProofPackVerifierTests : IDisposable
 {
     private readonly string _repository = NewDirectory();

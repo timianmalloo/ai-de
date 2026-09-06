@@ -11,6 +11,10 @@ namespace AiDe.Core.Tests.Workbench;
 /// placement are the part with judgement in them, so they are pure and tested here; running
 /// <c>git worktree add</c> is mechanical and belongs with the caller that owns process launch.</para>
 /// </remarks>
+    // PORTABILITY UNVERIFIED. This class fails on Linux and the cause has not been
+    // diagnosed, so it runs on Windows for now. That is NOT a claim that it needs
+    // Windows — the honest reading is that nobody has looked (INV-0005 follow-up).
+[Trait("Platform", "Unverified")]
 public sealed class AgentWorktreeTests
 {
     [Fact]

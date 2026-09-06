@@ -19,6 +19,7 @@ namespace AiDe.Core.Tests;
 /// displaced. So the script installs the complete loop or installs nothing at all, and "nothing" is
 /// a supported outcome rather than a failure.</para>
 /// </remarks>
+[Trait("Platform", "Windows")]
 public sealed class ShellIntegrationTests
 {
     private const string Nonce = "0123456789abcdef0123456789abcdef";

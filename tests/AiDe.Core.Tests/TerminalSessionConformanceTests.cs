@@ -303,6 +303,7 @@ public sealed class FixtureTerminalSessionConformanceTests : TerminalSessionConf
 /// quietly stops running (DC-012).
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class ConPtyTerminalSessionConformanceTests : TerminalSessionConformanceTests
 {
     protected override async Task<ITerminalSession> CreateAsync(string sessionId, long generation)

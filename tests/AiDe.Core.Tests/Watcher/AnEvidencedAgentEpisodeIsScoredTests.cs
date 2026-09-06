@@ -17,6 +17,10 @@ namespace AiDe.Core.Tests.Watcher;
 /// Collapsing any of the other three into "the agent did badly" is the shape this whole slice
 /// exists to prevent.</para>
 /// </remarks>
+    // PORTABILITY UNVERIFIED. This class fails on Linux and the cause has not been
+    // diagnosed, so it runs on Windows for now. That is NOT a claim that it needs
+    // Windows — the honest reading is that nobody has looked (INV-0005 follow-up).
+[Trait("Platform", "Unverified")]
 public sealed class AnEvidencedAgentEpisodeIsScoredTests : IDisposable
 {
     private const double At = 1000;

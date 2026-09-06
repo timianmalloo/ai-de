@@ -31,6 +31,7 @@ namespace AiDe.Core.Tests;
 /// <para><b>The agent stands in as <c>whoami</c></b> — same code path, prints something checkable,
 /// and starts no billable session.</para>
 /// </remarks>
+[Trait("Platform", "Windows")]
 public sealed class AgentLaunchSurvivesIntegrationTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(90);
