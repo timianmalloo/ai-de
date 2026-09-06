@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-06T05:03:32Z",
+  "generated": "2026-09-06T15:21:12Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9569,6 +9569,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "571075ae5b7c84386fba6139eb7fedc44122e58f",
         "short": "571075ae5",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-01M1VMYB6DBNKPKNQQTD0FGCWM",
+      "shortname": "extractor-refpacks-portable",
+      "datetime": "2026-09-06T15:21:12Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "do the best next actions",
+      "summary": "ONE root cause for all six, and it is a product defect rather than a test or fixture problem. CSharpProjectReader located .NET reference packs via Environment.GetFolderPath(SpecialFolder.ProgramFiles), which returns the EMPTY STRING on Unix — so Path.Combine produced the relative path 'dotnet/packs/...', probed against the current directory rather than rejected, and no pack is findable off Windows. With no pack the compilation carries NO framework references: [Table] is not recognised so declares_table is never emitted, and Console/List<T> stop being classified as runtime types. Extraction still SUCCEEDS and returns fewer, quieter facts — a note is logged and the run is green, which is the silent-degradation shape this codebase keeps naming. Fixed by deriving the .NET root from the runtime the process is already running on (System.Private.CoreLib sits three levels under it), with DOTNET_ROOT ahead of it and an empty ProgramFiles no longer able to yield a relative probe. ExtractorGeneration bumped 2026-09-05.1 -> 2026-09-06.1, a REAL output change this time: affected workspaces stored facts extracted without framework references. The six tests moved back to the portable half and are green on Linux in CI (1,565 + 154 = 1,719); Windows unchanged. Recorded as the product-side sibling of DC-108. Also noted for later: running verify-derived-views leaves docs/api/*.md rewritten because build-doc-viewer invokes api-reference and those files are not among the view's own paths, so the check does not restore them — a control should not leave the tree different from how it found it.",
+      "kind": "command",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Diagnose why 6 of the 8 remaining Unverified tests fail on Linux over source that is identical, and return them to the 1x runner if the cause is fixable.",
+      "done_when": "A single verified root cause covering all six; the fix proven by those tests passing on Linux in CI and still passing on Windows; the class recorded.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "4f6ab254218a8451c046cf54ad980b2470ada1b8",
+        "short": "4f6ab2542",
         "branch": "main",
         "pushed": false
       }

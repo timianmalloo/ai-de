@@ -4033,6 +4033,18 @@ for both or split.*
   Windows — so this class is now caught by construction on every push rather than by anyone
   remembering it. Cross-platform disagreement in a generator cannot survive a gate that runs on the
   other platform. Observed failing on the un-fixed code: run `34001468310` and the run after it.
+- **The product-side sibling, found the same way (2026-09-06).** `CSharpProjectReader` located .NET
+  reference packs at `Path.Combine(Environment.GetFolderPath(SpecialFolder.ProgramFiles), "dotnet",
+  "packs", …)`. On Unix that call returns the **empty string**, so `Path.Combine` produced the
+  *relative* path `dotnet/packs/…`, probed against the current directory rather than rejected — no
+  pack is findable off Windows. The consequence is worse than a crash: with no pack the compilation
+  carries **no framework references**, so `[Table]` is not recognised (no `declares_table` emitted)
+  and `Console` and `List<T>` stop being classified as runtime types. **Extraction still succeeds and
+  still returns facts, just fewer and quieter ones.** A note was recorded and the run stayed green.
+  This is the same host-dependence as above but on the *product* rather than a generator, and the
+  gate that found it was simply running the suite somewhere new. Fixed by deriving the .NET root from
+  the runtime the process is already executing on, with `DOTNET_ROOT` ahead of it and an empty
+  `ProgramFiles` no longer able to yield a relative probe.
 - **The generalisation:** *a reproducibility check is only as portable as its generator's least
   portable primitive* — and the cheapest way to find those primitives is to run the check somewhere
   other than where the artifact was made. Prefer explicit, value-typed keys (`key=lambda p: p.name`)
