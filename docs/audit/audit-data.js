@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-06T04:12:48Z",
+  "generated": "2026-09-06T05:03:32Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9537,6 +9537,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "03f57f0d7db85237a8731b46ec6fdd2d19b0b649",
         "short": "03f57f0d7",
+        "branch": "main",
+        "pushed": false
+      }
+    },
+    {
+      "id": "al-01M1THKBB11SB8MACACVZFNCHQ",
+      "shortname": "triage-unverified-tests",
+      "datetime": "2026-09-06T05:03:32Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "do the next steps: you triage the 104 tests and the continue on with the other next steps",
+      "summary": "The Unverified trait was on CLASSES, so 104 tests sat on the 2x runner because 21 of them failed. Moved to METHOD level with a per-method verdict: portable 1,486 -> 1,560, nonportable 233 -> 159, sum still 1,719 (74 tests recovered). Verdicts from the Linux run's own failure messages: WINDOWS BY DESIGN (11) - AgentWorktreeTests hardcodes C:\\Projects fixtures, McpSessionIdentity spells a path with a drive letter, OneRepositoryIsOneRepository asserts a case-insensitive filesystem, ProofPackVerifier asserts backslash resolution and case-insensitive matching, LackingWorkspace counts PATH entries under Windows semantics. STILL UNVERIFIED (8) - CallEdgeTests (4) and ConsumersReadWhatProducersEmitTests (2) both point at the C# EXTRACTOR behaving differently on Linux over source that is identical because it is a string literal in the test, which is neither a fixture nor a path problem; plus a committed Proof Pack not recognised as evidence, and a linked worktree resolving to null. Refused to relabel those as Windows to tidy the bucket. My first insertion pass silently wrote nothing (a lazy regex never matched a method) and CI caught it - the count was right and the same 18 tests still failed; redone line-based and verified 0 of 19 targets missing.",
+      "kind": "command",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Triage the 104 Platform=Unverified tests: say for each whether it needs Windows or is a real portability defect, and return everything that does not need Windows to the 1x runner.",
+      "done_when": "Every tagged test carries a verdict and the evidence for it; the Unverified bucket contains only genuinely undiagnosed cases; the halves still sum to 1,719; both jobs green on CI.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "571075ae5b7c84386fba6139eb7fedc44122e58f",
+        "short": "571075ae5",
         "branch": "main",
         "pushed": false
       }
