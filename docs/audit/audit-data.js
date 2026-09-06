@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-06T00:02:14Z",
+  "generated": "2026-09-06T01:12:11Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9441,6 +9441,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "367a556589f96ba7d0dbc89869cfb1d9f28f9128",
         "short": "367a55658",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M1T4BQNBJQ44PMZ086B9C37Q",
+      "shortname": "inv-0005-phases-0-2",
+      "datetime": "2026-09-06T01:12:11Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "approved / do the next steps",
+      "summary": "Phases 0-2 landed and verified green (workflow success: gates 19s, build 672s, parallel — vs 1189s sequential). Phase 0: frame assertion now compares per-line against a per-cell reference measured in the same process; 4.30ms vs 164.24ms = 38x against a 5x floor, and observed red at 0.7x on a simulated reversion. First green Build since 2026-09-03. Phase 1: steps ordered by measured cost. Phase 2 DELIVERED PARTIAL — Core tests cannot move to Linux (they launch the net10.0-windows daemon and drive ConPTY), so the large multiplier win is unavailable; recorded under CE9, not accepted. The move immediately surfaced DC-108 (a generator whose output depends on the host, checked by a gate that assumes it does not): sorted(Path) case-sensitivity, rglob filesystem order, and unpinned newlines across build-doc-viewer.py and api-reference.py — all fixed, now controlled by construction because the gate runs on a different OS than the developers. Two process fixes: verify-derived-views now prints the first diverging byte (it named the real cause on its next run after two wrong hypotheses), and every gate step carries if: !cancelled() so one failure no longer hides twelve.",
+      "kind": "command",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Implement INV-0005 phases 0, 1 and 2 as approved: make the frame-budget assertion environment-relative, order CI steps cheapest-first, and split the control suite onto a Linux runner — without weakening coverage.",
+      "done_when": "CI observed GREEN on the real runner (not inferred from source); the frame test proven to redden on a simulated per-cell reversion; every gate executing on Linux; any defect surfaced by the move fixed and registered rather than masked.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "f8cdd90a48562f99f8713ce20c1ccdb2f50bcb8f",
+        "short": "f8cdd90a4",
         "branch": "main",
         "pushed": true
       }

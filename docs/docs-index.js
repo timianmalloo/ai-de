@@ -6078,7 +6078,7 @@ window.DOCS_INDEX = {
       "path": "docs/investigations/INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days.md",
       "title": "INV-0005 — The gate runs everything, in the wrong order, and has been red for two days",
       "type": "investigation",
-      "status": "draft",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "",
       "reviewBy": "",
@@ -6102,7 +6102,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "52596f5c0eedef43c6649830d44a2f01667c2dc23d15e335e7b1bdced44904e4"
+      "sourceSha256": "9efbd1f90c0325abf2ba84b58ff298870d66e7a733e44363de4c17fe618ddfe4"
     },
     {
       "id": "inv-0004-graph-kind-taxonomy-and-knowledge",
@@ -11091,5 +11091,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c2ef5eb5dab6b32e0436f375271147203bbf869b4c21e32185e1aab7547a443d"
+  "graphSha256": "c83c1e8929b692c0d220b4fc71cfd066b2e61ceff4dc7b39d2e9d551e66bbe52"
 };

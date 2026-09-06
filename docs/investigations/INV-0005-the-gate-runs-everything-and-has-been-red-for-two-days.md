@@ -2,7 +2,7 @@
 id: "INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days"
 title: "INV-0005 — The gate runs everything, in the wrong order, and has been red for two days"
 type: investigation
-status: draft
+status: accepted
 owner: "@timianmalloo"
 phase: ""
 tags: [ci, testing, gates, efficiency, performance-assertion]
@@ -20,7 +20,7 @@ summary: >-
 
 # Investigation: INV-0005 — the gate runs everything, in the wrong order, and has been red for two days
 
-- **Status:** Root cause verified · fixes proposed · **stopped for review**
+- **Status:** Root cause verified · **phases 0–2 approved and implemented, verified green on CI** · phases 3–4 open
 - **Opened:** 2026-09-05
 - **Trigger:** *"it's odd that we have full test runs on things like terminals and WPF shells for changes like these — should we have a more intentional and efficient test plan?"*
 
@@ -178,6 +178,48 @@ implemented** — this report stops at review.
 move and it is the wrong one here. It buys ~27s of WPF time, and CE7 warns that a `paths:` filter
 feeding a fail-closed aggregator is exactly how a skipped job becomes a silent green. Phases 1–3 are
 larger wins with no false-green surface.
+
+## 7a. What happened when phases 0–2 were implemented (2026-09-05)
+
+Approved and landed the same day. Verified on the runner, not inferred.
+
+| Phase | Result |
+|---|---|
+| 0 — environment-relative frame assertion | Green. Measured 4.30 ms per-line against a 164.24 ms per-cell reference — **38×**, close to S3's 21×, against a 5× floor. Reversion simulated: 0.7×, red. |
+| 1 — cost-ascending step order | Green. Run `34000905461` was the **first successful Build since 2026-09-03**. |
+| 2 — control suite on Linux | Green. `gates` job completes in **19s**; `build` 672s. They run in parallel, so wall-clock is 672s against 1,189s sequential. |
+
+**Phase 2 was delivered partial.** The Core tests do NOT move to Linux. They target `net10.0`, which
+made the lock look like a label; it is not. That project launches `AiDe.Daemon` (`net10.0-windows`)
+as a real process and drives ConPTY via `CREATE_NEW_CONSOLE`. The large multiplier win in the plan
+was moving those 1,719 tests to a 1× runner, and it is unavailable without splitting the project
+into portable and Windows-locked halves. Recorded under CE9 as a cost to remove, not accepted as a
+floor. The plan's cost estimate was wrong because it read a `TargetFramework` instead of the
+project's references.
+
+**Moving to Linux immediately found a second class, which is the point of moving.** `verify-derived-views`
+reddened at once on `docs/_site/index.html`. Three host-dependent primitives across two generators,
+registered as **DC-108**:
+
+- `sorted(Path)` — `pathlib` compares Windows paths case-insensitively and POSIX paths
+  case-sensitively, so `AiDe.App.md` and `AiDe.App.ViewModels.md` swap order between hosts
+- `rglob` — filesystem enumeration order, with members appended per namespace in that order
+- `write_text` without `newline=` — CRLF on Windows, LF on Linux
+
+All three are fixed. The class is now controlled **by construction**: the gate runs on Linux while
+developers run on Windows, so a cross-platform disagreement in any generator cannot survive a push.
+
+**Two process findings from doing it, both already fixed:**
+
+1. **A gate that detects but does not localise is half a control.** `verify-derived-views` named a
+   700 KB file and stopped, so diagnosing meant reproducing the other host. Two hypotheses (line
+   endings, then the embedded date/SHA) were wrong before the real cause was found. The gate now
+   prints the first diverging byte with context, and on its very next run that output named the
+   cause in one line. Same shape as `verify-test-run` reporting *"1 failed"* without naming the test.
+2. **The skip-cascade repeated one level down.** Inside the `gates` job, one failing step still
+   skipped the twelve behind it, so each diagnosis cost a whole CI round trip — which is why this
+   took four cycles rather than one. Every gate step now carries `if: ${{ !cancelled() }}`; a
+   failing step still fails the job, so it stays fail-closed, but one run now reports everything.
 
 ## 8. Residual risk / what would change this diagnosis
 
