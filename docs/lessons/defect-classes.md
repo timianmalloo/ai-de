@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 39 · uncontrolled 5
+**Status counts:** controlled 65 · partially-controlled 39 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3978,11 +3978,17 @@ for both or split.*
   them. **38 of 40 consecutive `Build` runs red, the entire control suite dark for two days** — id
   allocators, derived views, register integrity, all of it. A brittle check placed early does not
   merely fail; it **silences everything behind it**.
-- **Control:** an assertion about speed must compare against something measured **in the same
-  process on the same host** (assert the ratio between the fast and slow paths, not an absolute), or
-  be explicitly opt-in on known hardware. A scheduling decision justified by a duration must carry a
-  duration **measured where the job runs**. Phase 4 of INV-0005 proposes the gate; until it exists
-  this class is caught by review, not mechanically.
+- **Control:** `tools/verify-perf-assertions.py`, on every push. It refuses an **upper** bound on a
+  measured duration compared against a constant, inside an assertion — the shape whose verdict
+  depends on the host. It deliberately permits a **lower** bound (`duration >= 30` beneath a
+  `Task.Delay(40)` the test injected asserts that the clock ran; slower hardware only makes it more
+  true), a hang guard (`WaitForExit(timeout)` asserts completion, not speed), and a ratio between two
+  values measured in the same process. A genuine absolute budget is declared in place with a
+  `perf-budget:` comment carrying the hardware it holds on, so the justification sits next to the
+  number. **Observed failing on the un-fixed code, not on a fixture:** run against the blob at
+  `d6ce176` it reports `TerminalViewTests.cs:173` — the exact line that reddened 38 runs.
+  The scheduling half is fixed too: mutation replay's `74s on this machine` was **re-measured on the
+  runner at 401s** and re-ringed against that number.
 - **Relationship to `PACK-C`** (fleet, *an assertion encodes a transient magnitude assumption*):
   ancestor, not duplicate. PACK-C's discriminator is **time** — a number that was true and decayed.
   DC-107's is **host** — a number that was never portable in the first place. The controls differ:
@@ -3992,8 +3998,8 @@ for both or split.*
 - **The generalisation:** *a measurement is evidence about the machine it was taken on; treating it
   as evidence about every machine is an unmarked assumption* (NG9) — and the cheapest fix is almost
   never a bigger threshold, it is an assertion that carries its own baseline.
-- **Status:** `uncontrolled` — both instances are identified and INV-0005 proposes the fixes, but
-  nothing has been implemented and no gate yet catches the shape
+- **Status:** `controlled` — both instances fixed, and a gate refuses the shape on every push with
+  its self-test proving it stays quiet on the lower-bound, hang-guard and ratio forms
 
 ### DC-108 — A generator whose output depends on the host, checked by a gate that assumes it does not
 

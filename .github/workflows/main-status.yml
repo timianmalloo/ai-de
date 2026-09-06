@@ -1,0 +1,107 @@
+name: main status
+
+# THE FEEDBACK PATH FOR A RED `main`.
+#
+# `main` carried 38 red Build runs across two days and nothing happened — because nothing CONSUMED
+# the signal (INV-0005). Every session pushed and moved on, and the run-history page is one nobody
+# opens unless already suspicious. The gate was working perfectly and reporting into a void.
+#
+# BRANCH PROTECTION IS THE OBVIOUS ANSWER AND IT IS THE WRONG ONE HERE. Landing directly on `main` is
+# this repository's deliberate working agreement — verification replaces review. A required check
+# would force every session through a pull request in order to fix the very build that is blocking
+# them, which is the worst moment to add ceremony. The problem was never that red pushes were
+# allowed. It was that red became INVISIBLE the moment the session that caused it ended.
+#
+# So push the signal at the actor rather than waiting for anyone to pull it: ONE issue, labelled
+# `main-red`, opened when `main` breaks and closed by this same workflow when it recovers. It
+# outlives the session that caused it, all three concurrent sessions and the human see the same one,
+# it costs nothing while green, and it blocks nobody.
+#
+#     gh issue list --label main-red        <- one command, at session grounding
+#
+# Deliberately ONE issue that is EDITED rather than a comment per failure: an alert that arrives 38
+# times is an alert that gets filtered, which is the failure mode this is meant to fix, not repeat.
+#
+# `workflow_run` rather than a job inside Build, so this reports on the whole workflow's verdict
+# including a run that was cancelled or that died before any job produced a result — the cases a
+# `needs:` job cannot see.
+
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types: [completed]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  report:
+    # Only the trunk. A red feature branch is its own session's business; a red `main` is everyone's.
+    if: ${{ github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.event != 'pull_request' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Open or close the "main is red" issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          TITLE: ${{ github.event.workflow_run.display_title }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          gh label create main-red --color B60205 \
+            --description "main's build is failing" --force >/dev/null 2>&1 || true
+
+          existing=$(gh issue list --repo "$REPO" --label main-red --state open \
+            --json number --jq '.[0].number // empty')
+
+          short="${SHA:0:9}"
+
+          if [ "$CONCLUSION" = "success" ]; then
+            if [ -n "$existing" ]; then
+              gh issue close "$existing" --repo "$REPO" \
+                --comment "main is green again as of $short. $RUN_URL"
+              echo "closed #$existing - main recovered"
+            else
+              echo "main is green; nothing to report"
+            fi
+            exit 0
+          fi
+
+          # Cancelled and skipped are not failures worth waking anyone for.
+          if [ "$CONCLUSION" != "failure" ] && [ "$CONCLUSION" != "timed_out" ]; then
+            echo "conclusion '$CONCLUSION' is not a failure; leaving the issue as it is"
+            exit 0
+          fi
+
+          {
+            echo "**\`main\` is failing.** Opened automatically, and closed automatically when \`main\` goes green."
+            echo
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Conclusion | \`$CONCLUSION\` |"
+            echo "| Commit | \`$short\` - $TITLE |"
+            echo "| Run | $RUN_URL |"
+            echo
+            echo "This issue exists because a red \`main\` once went unnoticed for two days and 38 runs:"
+            echo "the signal was there and nothing consumed it (INV-0005). It does **not** block pushing."
+            echo "It is here so the next session sees it at grounding:"
+            echo
+            echo '```'
+            echo "gh issue list --label main-red"
+            echo '```'
+          } > body.md
+
+          if [ -n "$existing" ]; then
+            gh issue edit "$existing" --repo "$REPO" --body-file body.md
+            echo "updated #$existing - still red"
+          else
+            gh issue create --repo "$REPO" --label main-red \
+              --title "main is red" --body-file body.md
+            echo "opened an issue - main just went red"
+          fi

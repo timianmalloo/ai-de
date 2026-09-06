@@ -4332,7 +4332,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "721ddd58c1d7e6730581543eae35c3b03f6face823ac4fad404086826a07b097"
+      "sourceSha256": "c0a9d5e67fc88dbfa60a7de01dc1ad3f5da557ab9a72ed4e6288b79c989e7f8e"
     },
     {
       "id": "diagram-class",
@@ -5878,7 +5878,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f7ce5cb76604f96dc30cb90af6bad998635edef8ee10ef610cef995ee786b034"
+      "sourceSha256": "b791fbaf02c6d63534a9972e979f12b1e3fb69c5c743f8057aeacc5d16088bc9"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -11091,5 +11091,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c83c1e8929b692c0d220b4fc71cfd066b2e61ceff4dc7b39d2e9d551e66bbe52"
+  "graphSha256": "7f3cb17199dca5e58dfd5920aaa17b8be9953ae158f3936868c3fa3b012f547f"
 };

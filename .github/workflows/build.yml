@@ -9,6 +9,11 @@ name: Build
 on:
   push:
   pull_request:
+  # RING 2 (CE4): a daily full sweep, so anything the per-push scoping below skips is still proven
+  # within 24h. This is the safety net under the mutation-replay scoping, not a second opinion.
+  schedule:
+    - cron: '23 4 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -149,6 +154,16 @@ jobs:
         run: |
           python tools/verify-no-conflict-markers.py --self-test
           python tools/verify-no-conflict-markers.py
+
+      # DC-107: a frame-budget assertion compared a measured p95 against 16.67 ms, a number taken on
+      # a developer workstation. The CI runner is ~3x slower, so it failed 38 consecutive runs while
+      # the draw path was correct. Refuses an UPPER bound on a measured duration against a constant;
+      # a lower bound is fine (slower hardware only makes it more true), as is a hang guard.
+      - name: No wall-clock budget assertions
+        if: ${{ !cancelled() }}
+        run: |
+          python tools/verify-perf-assertions.py --self-test
+          python tools/verify-perf-assertions.py
 
       # DC-021: a fixture that restates a list the product declares. Three occurrences before it was
       # registered, because each repair was cheap enough that nobody asked why. The register recorded
@@ -349,12 +364,46 @@ jobs:
       - name: Published layout gate
         run: python tools/verify-published-layout.py
 
+      # Does this push touch anything a mutation could reach? Mutation replay edits C# and runs the
+      # test suites, so a change to Markdown, a gate script or a workflow cannot alter its verdict —
+      # it would spend 401s re-proving the identical thing.
+      #
+      # Computed from the diff rather than an `on.push.paths` filter, deliberately: a workflow-level
+      # path filter makes the whole JOB not exist, and a job that does not exist reports neither
+      # success nor failure. Should this repository ever adopt branch protection, that is the shape
+      # that reads as green (CE7). Skipping one STEP keeps the job, and the job's verdict, real.
+      - name: Scope — did any mutable code change?
+        id: scope
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" != "push" ]; then
+            echo "code=true" >> "$GITHUB_OUTPUT"; echo "not a push — running the full sweep"; exit 0
+          fi
+          before="${{ github.event.before }}"
+          # All-zeros is a new branch with no `before` to diff against; unknown scope means run it.
+          if [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ]              || ! git cat-file -e "$before^{commit}" 2>/dev/null; then
+            echo "code=true" >> "$GITHUB_OUTPUT"; echo "no comparable base — running the full sweep"; exit 0
+          fi
+          changed=$(git diff --name-only "$before" "${{ github.sha }}"             -- src tests tools/mutation-replay.py tools/mutation-sets | head -20)
+          if [ -n "$changed" ]; then
+            echo "code=true" >> "$GITHUB_OUTPUT"; echo "mutable code changed:"; echo "$changed"
+          else
+            echo "code=false" >> "$GITHUB_OUTPUT"; echo "no src/, tests/ or mutation-set change"
+          fi
+
       # DC-099: a test written in the same edit as its fix has never been shown capable of failing.
       # Breaks the code on purpose and requires a test to notice. The four CROSS-BOUNDARY/CROSS-AUTHOR
       # mutations are the ones no single-sided sweep can find: each component's own sweep mutates only
-      # its own code, so a dependency that runs A -> B is invisible from both ends. MEASURED at 74s
-      # for 18 mutations on this machine, which is why it is an every-push gate and not a nightly.
+      # its own code, so a dependency that runs A -> B is invisible from both ends.
+      #
+      # RE-MEASURED ON THE RUNNER, 2026-09-05: 401s — the largest step in this job by a wide margin.
+      # The comment here used to justify every-push scheduling with "74s for 18 mutations on this
+      # machine", which was 5.4x wrong because it was measured on a laptop and never re-taken where
+      # the gate runs (DC-107, INV-0005). It now runs when mutable code changed, on a schedule, or on
+      # demand — and the number above is the runner's, so the next person to re-ring it is arguing
+      # with a measurement rather than with a memory.
       - name: Mutation replay — the controls can actually fail
+        if: ${{ steps.scope.outputs.code == 'true' }}
         run: |
           python tools/mutation-replay.py --self-test
           python tools/mutation-replay.py --set tools/mutation-sets/daydream-seam.json

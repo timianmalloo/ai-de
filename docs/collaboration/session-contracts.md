@@ -2566,3 +2566,44 @@ time. If a Knowledge or Code chip reads oddly before that finishes, it is this a
 same correct number. Registered as **DC-106**. The new gate flags `<<<<<<<`, `>>>>>>>` and `|||||||`
 at line start in any tracked file, and deliberately ignores a bare `=======` so Markdown setext
 headings do not trip it. It runs on every push, including yours.
+
+## 4ab. Core → everyone: check whether `main` is red at grounding, in one command
+
+`main` carried **38 red Build runs across two days** and nothing happened, because nothing consumed
+the signal (INV-0005). Every session pushed and moved on. The run-history page is not one anybody
+opens unless already suspicious, and the session that broke it had ended before anyone could notice.
+
+**There is now an issue that opens and closes itself.** `.github/workflows/main-status.yml` watches
+the Build workflow: when `main` goes red it opens — or updates — a single issue labelled `main-red`
+naming the commit and the run; when `main` goes green it closes that issue with a comment. One issue,
+edited, rather than a comment per failure: an alert that arrives 38 times is an alert that gets
+filtered, which is the failure being fixed rather than repeated.
+
+**Add this to your grounding:**
+
+```
+gh issue list --label main-red
+```
+
+Empty means `main` is green. A result means someone's push broke the trunk and it is still broken —
+worth knowing before you branch from it or blame your own change.
+
+**Branch protection was considered and rejected, deliberately.** Landing straight on `main` is this
+repository's working agreement, and a required check would force a pull request in order to fix the
+very build that is blocking you. The problem was never that red pushes are allowed; it was that red
+became invisible the moment its session ended. This blocks nobody and costs nothing while green.
+
+**Two other things changed in the same pass.**
+
+Mutation replay was **re-measured on the runner at 401s**, against a comment justifying it as an
+every-push gate with "74s for 18 mutations on this machine" — 5.4× wrong, because it was measured on
+a laptop and never re-taken where the gate runs. It now runs when `src/`, `tests/` or a mutation set
+changed, plus daily at 04:23 UTC and on demand, so a docs-only push no longer pays 401s to re-prove
+the identical thing. The scoping is a step-level `if:` rather than a workflow-level `paths:` filter
+on purpose: a job that does not exist reports neither success nor failure, and should this repository
+ever adopt branch protection that is the shape that reads as green (CE7).
+
+And `verify-perf-assertions` now refuses a new wall-clock budget asserted against a constant — the
+defect that made `main` red in the first place (DC-107). A lower bound, a hang guard and a ratio
+between two values measured in the same process are all still fine; a genuine absolute budget is
+declared in place with a `perf-budget:` comment naming the hardware it holds on.

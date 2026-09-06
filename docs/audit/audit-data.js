@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-06T01:12:11Z",
+  "generated": "2026-09-06T02:41:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9473,6 +9473,38 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "f8cdd90a48562f99f8713ce20c1ccdb2f50bcb8f",
         "short": "f8cdd90a4",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M1T9FP358AJV4MMRZ7D41D4J",
+      "shortname": "inv-0005-phases-3-4",
+      "datetime": "2026-09-06T02:41:43Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "do the next steps : use your best recommendation for the feedback path for a red main",
+      "summary": "Phase 3: mutation replay re-measured on the runner at 401s (the build.yml comment claimed 74s on a laptop, 5.4x wrong) and re-ringed — it now runs when src/, tests/ or a mutation set changed, plus daily and on demand. Scoped with a step-level if: rather than a workflow-level paths: filter, because a job that does not exist reports neither success nor failure (CE7). Phase 4: tools/verify-perf-assertions.py refuses an UPPER bound on a measured duration against a constant; observed failing on the real pre-fix blob at d6ce176 reporting TerminalViewTests.cs:173, the exact line that reddened 38 runs, and clean over 242 test sources. It deliberately permits a lower bound (the repo's three instances assert a recorded duration is at least a delay the test injected — slower hardware only makes those more true), a hang guard, and a ratio; a real absolute budget is declared with a perf-budget: comment. The first draft over-fired on those three lower bounds and was refined rather than exempting them by name. DC-107 moved uncontrolled -> controlled. FEEDBACK PATH: rejected branch protection (it would force a PR to fix the build that is blocking you, against a working agreement of landing on main directly) in favour of .github/workflows/main-status.yml — a workflow_run watcher that opens one self-closing issue labelled main-red when main breaks and closes it when green. Sessions check it with 'gh issue list --label main-red' at grounding; recorded in session-contracts §4ab.",
+      "kind": "command",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Complete INV-0005 phases 3 and 4, and give a red main a feedback path that fits landing directly on main rather than replacing it with branch protection.",
+      "done_when": "Mutation replay re-measured ON THE RUNNER and re-ringed against that number rather than the laptop figure; a gate refusing DC-107's shape, observed failing on the real pre-fix code and quiet on the shapes that are legitimately fine; a red main producing a signal that outlives the session that caused it; sessions told how to consume it in one command.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "f7a84801a8c15a90da7bda994447357bf91d0df1",
+        "short": "f7a84801a",
         "branch": "main",
         "pushed": true
       }
