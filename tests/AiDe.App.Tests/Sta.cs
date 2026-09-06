@@ -48,6 +48,18 @@ public static class Sta
         });
 
         thread.SetApartmentState(ApartmentState.STA);
+
+        // BACKGROUND, or a hung body outlives the whole test run. `new Thread(...)` defaults to a
+        // FOREGROUND thread, and a live foreground thread keeps the process alive — so when the Join
+        // below times out, the assertion reports the timeout correctly and the thread carries on,
+        // and testhost.exe never exits. It then holds the test assembly's DLLs open, so the NEXT
+        // build fails with MSB3027 "the file is locked by testhost" and the next `dotnet test`
+        // appears to hang. That happened twice in one day, cost a CI-length wait each time, and
+        // presented as a build or infrastructure problem rather than as a test that did not finish.
+        //
+        // A background thread cannot hold the process open. Nothing else changes: the Join still
+        // waits the same time and the assertion below still says the same thing.
+        thread.IsBackground = true;
         thread.Start();
 
         var finished = thread.Join(TimeSpan.FromSeconds(timeoutSeconds));
@@ -161,6 +173,11 @@ public static class Sta
         });
 
         thread.SetApartmentState(ApartmentState.STA);
+
+        // Background for the same reason as Run above, and more sharply here: this thread owns a
+        // Window and a pumping Dispatcher, so a body that never completes leaves a live message loop
+        // behind. As a foreground thread that loop would keep testhost.exe alive indefinitely.
+        thread.IsBackground = true;
         thread.Start();
 
         Assert.True(

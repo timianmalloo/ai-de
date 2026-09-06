@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 39 · uncontrolled 4
+**Status counts:** controlled 65 · partially-controlled 40 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -4051,6 +4051,40 @@ for both or split.*
   over relying on a library type's comparison semantics, which are allowed to differ by platform.
 - **Status:** `controlled` — the two known primitives are fixed and the gate now runs on a different
   OS from the one that generates the artifacts, which is what makes the class self-reporting
+
+### DC-109 — A helper creates a FOREGROUND thread, so a hung body outlives the run and the process cannot exit
+
+- **Shape:** a test helper starts a thread, waits on it with a timeout, and reports honestly when the
+  wait expires. What it does not do is stop the thread — and `new Thread(...)` in .NET is a
+  **foreground** thread, which keeps the process alive on its own. The run finishes, the report is
+  correct, and the host never exits.
+- **Signature:** the symptom never appears in the run that caused it. It appears in the NEXT command,
+  as a build failing with *"the file is locked by testhost"* (MSB3027), or as a `dotnet test` that
+  seems to hang far past the suite's normal duration. Both read as infrastructure or flakiness, so
+  the response is a re-run rather than an investigation.
+- **Why it survives:** every visible part is correct. The `Join` waits, the assertion fires, the
+  failure message says exactly what happened. The leak occurs *after* the reporting, and nothing in
+  the run's own output can show it — the evidence is a process that outlives the process that would
+  have told you.
+- **Instance:** 2026-09-05/06 — `tests/AiDe.App.Tests/Sta.cs` started both its STA threads as
+  foreground. Twice in one day an orphaned `testhost.exe` held the test assembly's DLLs: once
+  surfacing as `MSB3027` mid-build, once as a `dotnet test` that ran for over twenty minutes against
+  a suite that takes thirty seconds. Both were initially read as environment problems, and the second
+  cost a full CI-length wait before anyone looked at the process list.
+- **Control:** `thread.IsBackground = true` on both threads. A background thread cannot hold the
+  process open, and nothing else changes — the same wait, the same assertion, the same message. The
+  structural half is that **there is exactly one STA helper**: DC-079 consolidated thirty-two
+  hand-rolled copies into `Sta`, so this defect had one place to live and one place to be fixed.
+  That consolidation is what makes a single-line fix a complete one.
+- **No mechanical gate, and the reason is proportionality rather than oversight.** A check refusing
+  `new Thread(` in `tests/` without a nearby `IsBackground` would today be watching a single file
+  that is already correct. If a second thread-creating helper ever appears, that check becomes worth
+  writing — and DC-079's consolidation is the thing that would have to fail first.
+- **The generalisation:** *a timeout that reports without terminating has handled the message, not
+  the thread.* Any wait-with-deadline should be asked what happens to the work when the deadline
+  passes — and if the answer is "it keeps running", whether it can still hold something open.
+- **Status:** `partially-controlled` — fixed at the only site that can exhibit it, verified by a
+  clean process table after a full run, with no gate because there is currently nothing else to gate
 
 ---
 

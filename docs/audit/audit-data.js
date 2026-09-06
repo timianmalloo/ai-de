@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-06T19:19:38Z",
+  "generated": "2026-09-06T20:18:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9631,6 +9631,36 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "627dc7b7a8402409da034ba8068781a5c1b1f543",
         "short": "627dc7b7a",
+        "branch": "main",
+        "pushed": true
+      }
+    },
+    {
+      "id": "al-01M1W5Y90KTZ94D68A1BMCRJAR",
+      "shortname": "orphaned-testhost-DC-109",
+      "datetime": "2026-09-06T20:18:16Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "yes push and then investigate the orphaned testhost",
+      "summary": "UPSTREAM: the four unpinned writes in pack/scripts/audit-log.py are fixed on ai-forward main (1ca2197). I first committed onto fix/ctx-h-ctx-j-controls, which is ANOTHER SESSION'S active branch, and pushing it published their in-flight branch — not mine to publish. Corrected by cherry-picking to main through a temporary worktree (so their working tree was never touched) and deleting the remote branch I had created. Their 15 uncommitted files, including 198 new lines of CTX-H work in coord-core.py that appeared while I was working, are intact and uncommitted. TESTHOST: Sta.cs started both its STA threads as FOREGROUND threads (new Thread defaults to IsBackground=false). When a body hangs, Join times out and the assertion reports it correctly — but the thread keeps running, and a live foreground thread keeps the process alive, so testhost.exe never exits and holds the test assembly's DLLs. The symptom then appears in the NEXT command as MSB3027 'locked by testhost' or a dotnet test that runs 20+ minutes against a 30-second suite, which reads as infrastructure rather than as a test that did not finish. Fixed with IsBackground=true on both; same wait, same assertion, same message. Verified: 399/399 and zero testhost processes afterwards. Registered DC-109, partially-controlled — fixed at the only site that can exhibit it because DC-079 had already consolidated 32 hand-rolled STA helpers into one, and no gate because such a gate would today watch a single already-correct file.",
+      "kind": "command",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Push the audit-log.py LF pin upstream to ai-forward, then find why an orphaned testhost.exe survives the App test run and blocks the next build.",
+      "done_when": "The pack fix on ai-forward main without disturbing the session working in that repo; the testhost cause identified in code rather than guessed; fixed and verified by an empty process table after a full run; the class registered.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "63cafafa7d7b881f9b7b169fa2c15862d0d6ba25",
+        "short": "63cafafa7",
         "branch": "main",
         "pushed": true
       }
