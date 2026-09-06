@@ -151,6 +151,24 @@ def check(root: Path) -> list[str]:
             p.relative_to(root).as_posix() for p in paths
             if not p.exists() or comparable(committed[p]) != comparable(p.read_bytes()))
 
+        # WHERE it differs, not just THAT it differs. Without this the finding names a 700 KB
+        # generated file and nothing else, and diagnosing it means reproducing the other host —
+        # which cost most of an investigation the first time this fired on a Linux runner and not on
+        # Windows (INV-0005). The excerpt is bounded and is the first divergence only.
+        excerpts = []
+        for path in paths:
+            if path.relative_to(root).as_posix() not in stale or not path.exists():
+                continue
+            was, now = comparable(committed[path]), comparable(path.read_bytes())
+            at = next((i for i in range(min(len(was), len(now))) if was[i] != now[i]),
+                      min(len(was), len(now)))
+            excerpts.append(
+                "      {0}: first difference at byte {1} of {2} (regenerated {3})\n"
+                "        committed:   ...{4!r}\n"
+                "        regenerated: ...{5!r}".format(
+                    path.relative_to(root).as_posix(), at, len(was), len(now),
+                    was[max(0, at - 40):at + 60], now[max(0, at - 40):at + 60]))
+
         # Restore before reporting, and before returning clean. A control that leaves the working
         # tree rewritten makes the next command's output a lie about what is committed.
         for path, blob in committed.items():
@@ -165,7 +183,8 @@ def check(root: Path) -> list[str]:
             f"produces — derived from {view['from']}, so they are stale or were merged by hand. "
             f"This is the shape a rebase leaves behind: no conflict marker, and wrong (DC-060). "
             f"Stale: {', '.join(stale[:4])}{' …' if len(stale) > 4 else ''}. "
-            f"Fix: run `python {fix}` and commit the result.")
+            f"Fix: run `python {fix}` and commit the result."
+            + ("\n" + "\n".join(excerpts) if excerpts else ""))
 
     return findings
 

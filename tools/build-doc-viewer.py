@@ -29,6 +29,22 @@ META = DOCS / '_meta.json'
 
 FRONTMATTER = re.compile(r'^---\n.*?\n---\n', re.S)
 
+
+def read_normalised(path: Path) -> str:
+    """Read a file with newlines normalised to LF.
+
+    THE OUTPUT OF THIS GENERATOR MUST NOT DEPEND ON THE HOST THAT RAN IT. `verify-derived-views`
+    regenerates this file and compares it against the committed one, so any byte that varies by
+    platform makes a correct file report as stale on one OS and clean on another. That is exactly
+    what happened the first time the control suite moved to a Linux runner (INV-0005): git checks
+    these sources out with CRLF on Windows and LF on Linux, and FRONTMATTER above anchors on a bare
+    LF, so the same document strips its frontmatter on one host and keeps it on the other.
+
+    Normalising on read removes the class rather than that one regex, and the write below pins LF so
+    the bytes on disk do not depend on the platform's newline translation either.
+    """
+    return path.read_text(encoding='utf-8').replace('\r\n', '\n')
+
 # Order is the reading order, not the filesystem's.
 BUNDLE = [
     ('index', 'Overview', 'Start here', DOCS / 'index.md'),
@@ -64,14 +80,14 @@ def main() -> int:
             missing.append(str(path.relative_to(ROOT)))
             continue
         pages.append({'id': page_id, 'title': title, 'group': group,
-                      'markdown': strip_frontmatter(path.read_text(encoding='utf-8'))})
+                      'markdown': strip_frontmatter(read_normalised(path))})
 
     api_files = sorted((DOCS / 'api').glob('AiDe*.md')) if (DOCS / 'api').exists() else []
     for path in api_files:
         ns = path.stem
         pages.append({'id': 'api-' + ns.replace('.', '-').lower(),
                       'title': ns, 'group': 'API reference',
-                      'markdown': strip_frontmatter(path.read_text(encoding='utf-8'))})
+                      'markdown': strip_frontmatter(read_normalised(path))})
 
     if not pages:
         # A builder that assembled nothing must not report success (R4).
@@ -80,7 +96,7 @@ def main() -> int:
     if missing:
         print('warning: missing bundle pages: ' + ', '.join(missing), file=sys.stderr)
 
-    html = TEMPLATE.read_text(encoding='utf-8').replace('__PROJECT__', 'AI-DE')
+    html = read_normalised(TEMPLATE).replace('__PROJECT__', 'AI-DE')
 
     sha = head_sha()
     meta_js = {'project': 'AI-DE', 'generated': date.today().isoformat(), 'documented_sha': sha}
@@ -95,7 +111,7 @@ def main() -> int:
     html = html[:start] + docs_js + '\n' + meta_line + html[end_of_meta:]
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(html, encoding='utf-8')
+    OUT.write_text(html, encoding='utf-8', newline='\n')
 
     # Coverage comes from the extractor's own count, never from a second tally here.
     try:
@@ -128,7 +144,7 @@ def main() -> int:
             'conditional compilation are not resolved.',
             'Coverage counts a summary doc comment, not its quality.',
         ],
-    }, indent=2) + '\n', encoding='utf-8')
+    }, indent=2) + '\n', encoding='utf-8', newline='\n')
 
     print(str(len(pages)) + ' pages -> ' + str(OUT.relative_to(ROOT))
           + ' (' + str(round(OUT.stat().st_size / 1024)) + ' KB)')
