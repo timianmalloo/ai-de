@@ -479,9 +479,23 @@ internal static class Program
 
         await using (session)
         {
-            // The child prints the seed twice on its own, so nothing needs to be typed. WaitForAsync
-            // requires two occurrences, which is why the command line echoes it twice.
-            var reached = await WaitForAsync(session, seed, log);
+            // ONE occurrence, and the reason is the whole diagnosis of a flake that reddened CI
+            // twice while passing locally every time (INV-0005).
+            //
+            // Nothing is typed here — the child prints the seed itself — so there is no keystroke
+            // echo to skip, and the second occurrence was never evidence of anything the first did
+            // not already prove. Meanwhile ConPtyTerminalSession's output channel is
+            // BoundedChannelFullMode.DropOldest, which is right for a live terminal and means the
+            // EARLIEST chunks are discarded under load. `cmd /c echo && echo` exits in
+            // milliseconds, so on a loaded runner the first echo can be dropped before anything
+            // drains — and the probe then waited for a second occurrence that could never arrive,
+            // reporting "output completed before the marker appeared".
+            //
+            // The terminal is behaving correctly; the probe was assuming lossless delivery over a
+            // channel that is deliberately lossy. One occurrence is all this test needs: it only
+            // has to prove the seed reached the output channel before asserting it appears nowhere
+            // else.
+            var reached = await WaitForAsync(session, seed, log, occurrences: 1);
 
             if (!reached)
             {
@@ -579,7 +593,7 @@ internal static class Program
     /// the child in that order down one pipe.
     /// </remarks>
     private static async Task<bool> WaitForAsync(
-        ConPtyTerminalSession session, string marker, StringBuilder log)
+        ConPtyTerminalSession session, string marker, StringBuilder log, int occurrences = 2)
     {
         var seen = new StringBuilder();
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(25));
@@ -592,13 +606,20 @@ internal static class Program
                 {
                     seen.Append(Encoding.UTF8.GetString(chunk.Bytes.Span));
 
-                    // The echo of the command we typed also contains the marker, so require the
-                    // second occurrence: the first is the terminal echoing our own keystrokes back.
-                    var first = seen.ToString().IndexOf(marker, StringComparison.Ordinal);
-                    if (first >= 0
-                        && seen.ToString().IndexOf(marker, first + 1, StringComparison.Ordinal) >= 0)
+                    // Where the marker is TYPED, the terminal echoes our keystrokes back, so the
+                    // first occurrence is our own input and only the second proves the child ran.
+                    // Where the child prints it unprompted there is no echo, and demanding two is
+                    // asking a deliberately lossy channel not to lose — see the privacy probe.
+                    var text = seen.ToString();
+                    var found = 0;
+                    for (var at = text.IndexOf(marker, StringComparison.Ordinal);
+                         at >= 0;
+                         at = text.IndexOf(marker, at + 1, StringComparison.Ordinal))
                     {
-                        return true;
+                        if (++found >= occurrences)
+                        {
+                            return true;
+                        }
                     }
                 }
             }

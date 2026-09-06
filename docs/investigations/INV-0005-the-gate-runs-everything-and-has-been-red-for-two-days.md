@@ -265,19 +265,27 @@ proves it, and now fails loudly if it does not.
   above 23 ms.
 - Phase 3's placement was decided from a runner measurement (401s), not the earlier 612s figure —
   which itself came from a differently-loaded run, so treat single-run step timings as ±50%.
-- **A new, unrelated flake surfaced, has since RECURRED, and is not fixed here.**
-  `TerminalPrivacyTests.ASecretPrintedByATerminal_ReachesNoSpanAttributeAndNoWorkspaceFile` has now
-  failed **twice** on CI (2026-09-05, on `ce64c1d` and again on `047d2b8`), passes locally in ~1s,
-  and passed on an immediate re-run of the second failure — so it is **intermittent, not
-  deterministic**. Two occurrences is this repository's own recurrence threshold, so it is a pattern
-  rather than an incident. The test is well built: it refuses to pass vacuously, which is the only
-  reason the failure is legible at all.
+- **A flake surfaced, recurred, was diagnosed and is now FIXED.**
+  `TerminalPrivacyTests.ASecretPrintedByATerminal_ReachesNoSpanAttributeAndNoWorkspaceFile` failed
+  twice on CI (`ce64c1d`, `047d2b8`), passed locally every time, and passed on an immediate re-run —
+  intermittent, and past the recurrence threshold.
 
-  **The obvious fix is ruled out by the evidence.** The message is `output completed before
-  '<marker>' appeared`, **not** `timed out waiting for '<marker>'` — so the 25s deadline in
-  `tests/AiDe.Core.TerminalHost/Program.cs` is never reached and raising any bound would change
-  nothing. The ConPTY output channel *completes* before the marker's **second** occurrence arrives,
-  and that second occurrence is the terminal echoing the typed command back. The open questions are
-  why the channel closes early and whether that echo is reliable on a non-interactive CI console.
-  Inflating a bound that was never hit is precisely the shape this whole investigation is about, so
-  this is recorded for its own investigation rather than patched.
+  **The timeout theory was eliminated first.** The message is `output completed before '<marker>'
+  appeared`, not `timed out waiting`, so the 25s deadline was never reached and no bound needed
+  raising. That is the fix the symptom invites and it would have changed nothing.
+
+  **The cause is an assumption of lossless delivery over a deliberately lossy channel.**
+  `ConPtyTerminalSession` creates its output channel with `BoundedChannelFullMode.DropOldest` —
+  correct for a live terminal, which must neither block its producer nor grow without bound, and
+  which means the **earliest** chunks are discarded under load. The probe's child is
+  `cmd.exe /c echo {seed} && echo {seed}`, which exits in milliseconds, and the wait helper required
+  the marker **twice**. On a loaded runner the first `echo` can be dropped before anything drains,
+  after which the second occurrence can never arrive and the channel simply completes — which is
+  precisely the message observed.
+
+  **The terminal is behaving correctly; the probe was wrong.** The two-occurrence rule exists for the
+  helper's *other* callers, where the marker is typed and the first occurrence is the terminal
+  echoing the keystrokes back. Nothing is typed in the privacy probe, so the second occurrence never
+  proved anything the first had not. `WaitForAsync` now takes an `occurrences` parameter: the typed
+  callers keep 2, the privacy probe asks for 1. [Verified] by reading the channel construction and a
+  green local run of the Windows half (159/159).
