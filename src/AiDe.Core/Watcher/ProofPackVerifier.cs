@@ -74,12 +74,27 @@ public static class ProofPackVerifier
     /// <param name="declaredPath">The path exactly as the agent sent it, unmodified by the ingest.</param>
     public static ProofPackVerdict Verify(string? repositoryRoot, string? declaredPath)
     {
+        // THE IDENTITY-TO-FILESYSTEM BOUNDARY, and it belongs here rather than in the caller.
+        //
+        // The repository root arrives as WatcherIdentity.Canonicalise's output, which normalises to a
+        // BACKSLASH on every platform so that two spellings of one directory collapse to one
+        // repository in the fleet map wherever they are read. That is right for an identity and wrong
+        // for a path: on Linux it asks the OS about "\tmp\xyz", a single filename with no separators,
+        // so Directory.Exists was false for every Linux repository and this returned Unverifiable
+        // before looking at anything. A committed Proof Pack simply stopped counting as evidence, and
+        // the verdict said "we could not look" rather than "it is not there" — which is the honest
+        // answer to the wrong question (INV-0005).
+        var reachable = repositoryRoot?.Replace('\\', Path.DirectorySeparatorChar)
+                                       .Replace('/', Path.DirectorySeparatorChar);
+
         // No repository we can reach means we cannot look. Saying NotFound here would be the
         // hardcoded false all over again, in the one case where the product is the thing at fault.
-        if (string.IsNullOrWhiteSpace(repositoryRoot) || !Directory.Exists(repositoryRoot))
+        if (string.IsNullOrWhiteSpace(reachable) || !Directory.Exists(reachable))
         {
             return ProofPackVerdict.Unverifiable;
         }
+
+        repositoryRoot = reachable;
 
         if (string.IsNullOrWhiteSpace(declaredPath))
         {

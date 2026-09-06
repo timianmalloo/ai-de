@@ -89,20 +89,23 @@ public sealed record RepositoryIdentity
             return path ?? string.Empty;
         }
 
-        // THE PLATFORM'S separator, not a backslash. This used to hardcode '\\', which on Linux
-        // rewrote "/tmp/xyz" as "\tmp\xyz" — a string with no separator the OS recognises. The
-        // canonical form was still self-consistent, so identity comparisons kept working and nothing
-        // looked wrong, but anything that then went to the FILESYSTEM with it silently found nothing:
-        // ProofPackVerifier's `Directory.Exists(repositoryRoot)` returned false and a committed Proof
-        // Pack stopped counting as evidence (INV-0005). The case guard below shows the author had
-        // already thought about crossing platforms; the separator was the half that was missed.
-        var separator = Path.DirectorySeparatorChar;
-        var normalised = path.Replace('/', separator);
+        // A BACKSLASH ON PURPOSE, AND NOT THE RUNNING PLATFORM'S SEPARATOR. This is an IDENTITY
+        // function: the fleet map aggregates sessions recorded on several machines, so "C:\Projects\x"
+        // and "C:/Projects/x" must collapse to one repository no matter which host is doing the
+        // collapsing. Using Path.DirectorySeparatorChar here was tried and reverted — on Linux it made
+        // those two spellings two different repositories, which is what
+        // OneRepositoryIsOneRepositoryTests exists to catch.
+        //
+        // The corollary is the rule that was actually broken: THIS IS NOT A FILESYSTEM PATH. Handing
+        // it to Directory.Exists on Linux asks the OS about "\tmp\xyz", which is one filename with no
+        // separators in it. ProofPackVerifier now converts at that boundary rather than this function
+        // pretending to serve both purposes (INV-0005).
+        var normalised = path.Replace('/', '\\');
 
         // Trailing separator, except on a bare root ("C:\") where it is part of the path.
-        if (normalised.Length > 3 && normalised.EndsWith(separator))
+        if (normalised.Length > 3 && normalised.EndsWith('\\'))
         {
-            normalised = normalised.TrimEnd(separator);
+            normalised = normalised.TrimEnd('\\');
         }
 
         return OperatingSystem.IsWindows() ? normalised.ToLowerInvariant() : normalised;
