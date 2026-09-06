@@ -248,7 +248,7 @@ def _write_starts(root, data):
     try:
         os.makedirs(os.path.dirname(p), exist_ok=True)
         tmp = p + ".tmp"
-        with open(tmp, "w", encoding="utf-8") as f:
+        with open(tmp, "w", encoding="utf-8", newline="\n") as f:
             json.dump(data, f, indent=2, sort_keys=True)
         os.replace(tmp, p)
     except OSError as exc:
@@ -471,7 +471,7 @@ def ensure_hub(adir):
         return False
     stamp = now_iso()
     review = "%d%s" % (int(stamp[:4]) + 1, stamp[4:10])
-    with open(path, "w", encoding="utf-8") as handle:
+    with open(path, "w", encoding="utf-8", newline="\n") as handle:
         handle.write(HUB % review)
     return True
 
@@ -501,7 +501,7 @@ def render(root, project=None):
     body = ("// Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit"
             " (the JSONL logs are the source of truth; see audit-and-change-log.md).\n"
             "window.AUDIT_DATA = " + payload + ";\n")
-    with open(os.path.join(audit_dir(root), "audit-data.js"), "w", encoding="utf-8") as out:
+    with open(os.path.join(audit_dir(root), "audit-data.js"), "w", encoding="utf-8", newline="\n") as out:
         out.write(body)
     idx = os.path.join(audit_dir(root), "index.html")
     tpl = find_template()
@@ -510,7 +510,7 @@ def render(root, project=None):
             viewer = src.read().replace(
                 "__PROJECT__", html.escape(data["project"], quote=True)
             )
-        with open(idx, "w", encoding="utf-8") as out:
+        with open(idx, "w", encoding="utf-8", newline="\n") as out:
             out.write(viewer)
     return data
 

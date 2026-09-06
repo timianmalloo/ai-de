@@ -143,7 +143,7 @@ def main() -> int:
 
         text = FIGURE.sub(replace, text)
         if args.update and text != original:
-            page.write_text(text, encoding='utf-8')
+            page.write_text(text, encoding='utf-8', newline='\n')
 
     if checked == 0:
         # The figures are only bound while they are ANNOTATED. A page whose data-figure attributes
