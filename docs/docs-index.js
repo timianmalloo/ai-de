@@ -6102,7 +6102,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9efbd1f90c0325abf2ba84b58ff298870d66e7a733e44363de4c17fe618ddfe4"
+      "sourceSha256": "08eb04c1571ff5fd350df316b80f2570c96c5a8b6067397c2d5516c410bd090d"
     },
     {
       "id": "inv-0004-graph-kind-taxonomy-and-knowledge",
@@ -11091,5 +11091,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "7f3cb17199dca5e58dfd5920aaa17b8be9953ae158f3936868c3fa3b012f547f"
+  "graphSha256": "a568abecc02710fb456ee4fe02fb3d96165c6b46367acc22dbb9c10106df97bf"
 };

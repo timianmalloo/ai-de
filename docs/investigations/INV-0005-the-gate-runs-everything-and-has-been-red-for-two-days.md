@@ -20,7 +20,7 @@ summary: >-
 
 # Investigation: INV-0005 — the gate runs everything, in the wrong order, and has been red for two days
 
-- **Status:** Root cause verified · **phases 0–2 approved and implemented, verified green on CI** · phases 3–4 open
+- **Status:** Root cause verified · **all five phases implemented and verified green on CI** · one new flake tracked below
 - **Opened:** 2026-09-05
 - **Trigger:** *"it's odd that we have full test runs on things like terminals and WPF shells for changes like these — should we have a more intentional and efficient test plan?"*
 
@@ -221,6 +221,38 @@ developers run on Windows, so a cross-platform disagreement in any generator can
    took four cycles rather than one. Every gate step now carries `if: ${{ !cancelled() }}`; a
    failing step still fails the job, so it stays fail-closed, but one run now reports everything.
 
+## 7b. Phases 3–4 and the feedback path (2026-09-05)
+
+| Phase | Result |
+|---|---|
+| 3 — re-ring mutation replay | **Re-measured on the runner at 401s**, against the `74s on this machine` in the comment justifying it — 5.4× wrong. Now runs when `src/`, `tests/` or a mutation set changed, plus daily and on demand. **Verified live:** a push touching only `.github/` and `tools/` reported `skipped`. |
+| 4 — gate the class | `tools/verify-perf-assertions.py`. Clean across 242 test sources; **observed failing on the real pre-fix blob** at `d6ce176`, reporting `TerminalViewTests.cs:173` — the exact line that reddened 38 runs. DC-107 moved to `controlled`. |
+| Feedback path | `.github/workflows/main-status.yml` — one self-closing `main-red` issue. |
+
+**Phase 4's first draft was wrong, and the correction is the interesting part.** It fired on three
+assertions in `RefreshMetricsTests` of the form `status.DurationMilliseconds >= 30`. Those are
+**lower** bounds sitting beneath a `Task.Delay(40)` the test itself injects: they assert the clock
+ran at all, and slower hardware only makes them *more* true. Only an **upper** bound puts the machine
+in the verdict. The rule was narrowed rather than the three exempted by name — an exemption list is
+how a gate stops describing a class and starts describing a codebase.
+
+**Why branch protection was rejected as the feedback path.** It is the obvious answer. It would also
+force a pull request in order to fix the very build that is blocking you, against a working agreement
+of landing directly on `main` where verification replaces review. The problem was never that red
+pushes are allowed — it is that red became invisible the moment its session ended. So the fix pushes
+the signal at the actor: one issue, opened when `main` breaks, edited while it stays broken, closed
+when it recovers. One issue rather than a comment per failure, because an alert arriving 38 times is
+the failure being repeated rather than fixed.
+
+**Its own first firing failed, which is the only reason it is now trustworthy.** `gh label create`
+was called without `--repo`, and a `workflow_run` job has no checkout for `gh` to infer one from — so
+the label never existed and `gh issue create --label main-red` died a step later. A `|| true` on the
+label call had swallowed the real error and moved the symptom. Both fixed; the label now exists in
+the repository, so the observed failure cannot recur, and the guard fails loudly instead of
+half-working. **Confidence:** the green path is [Verified] — it ran on a green `main` and correctly
+did nothing. The red path is [Inferred] past the point that previously broke; the next genuine red
+proves it, and now fails loudly if it does not.
+
 ## 8. Residual risk / what would change this diagnosis
 
 - The billing API was not consulted; billable-minute figures are **derived from wall-clock × the
@@ -231,5 +263,13 @@ developers run on Windows, so a cross-platform disagreement in any generator can
 - If the frame-budget test were ever observed failing at a *hundreds*-of-milliseconds p95, RC-1 would
   be wrong and a genuine draw-path regression would be the cause. Nothing in five sampled runs is
   above 23 ms.
-- Phase 3's placement cannot be decided until mutation replay is re-measured **on the runner**;
-  proposing a ring now, from the 612s figure alone, would repeat the very mistake this report names.
+- Phase 3's placement was decided from a runner measurement (401s), not the earlier 612s figure —
+  which itself came from a differently-loaded run, so treat single-run step timings as ±50%.
+- **A new, unrelated flake surfaced and is NOT fixed here.**
+  `TerminalPrivacyTests.ASecretPrintedByATerminal_ReachesNoSpanAttributeAndNoWorkspaceFile` failed
+  once on CI with exit code 8 — *the seeded secret never reached the terminal's output channel* — and
+  passes locally in ~1s. It launches a real console helper through ConPTY with a 120s bound, so it is
+  timing-sensitive on a loaded shared runner. The test is well built: it refuses to pass vacuously,
+  which is why the failure is legible at all. It was seen once in one run and has not recurred;
+  raising the bound without understanding whether the output *hung* or was merely *late* would be
+  guessing, so it is recorded rather than patched. If it recurs it wants its own investigation.
