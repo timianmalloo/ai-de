@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-05T23:45:48Z",
+  "generated": "2026-09-06T00:02:14Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9412,6 +9412,38 @@ window.AUDIT_DATA = {
       "artifacts": [],
       "tags": [],
       "outcome": "success"
+    },
+    {
+      "id": "al-01M1T0BNA85SBDKKTQJ77CY8HS",
+      "shortname": "investigate-INV-0005",
+      "datetime": "2026-09-06T00:02:14Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "/investigate our test strategy, its odd that we have full test runs on things like terminals and wpf shells for changes like these? should we have a more intentional and efficient test plan?",
+      "summary": "Two verified root causes. RC-1: TerminalViewTests.AFullScreenRedraw_StaysInsideTheFrameBudget asserts p95 < 16.67ms absolute; CI hardware is ~3x slower than the machine that set it, so it fails deterministically (5 runs sampled, 17.2-22.8ms) while the draw path is correct — its own message says a real regression would be ~143ms, so it watches for a 20x effect through a 2.5x window on a 3x noise floor. RC-2: that test is ordered BEFORE 26 Python gates, which GitHub Actions then skips, so the whole control suite has been dark since 2026-09-04; 38 of the last 40 Build runs are red. Efficiency premise inverted by measurement: the WPF/terminal suite is 27.5s (2.3%) and all Python gates ~31s (2.6%), while mutation replay is 612s (51%) — justified in build.yml by a 74s local measurement, 8.3x wrong on the runner. Verification path: five sampled CI runs, their uploaded .trx artifacts, and per-step timings from the last green run 33792751361. Registered DC-107 (a magnitude measured on one machine encoded as a portable threshold; PACK-C is the ancestor, discriminator time vs host). Five-phase plan proposed; path-filtering explicitly NOT recommended (CE7 false-green risk, buys 27s). Nothing implemented — stopped for review.",
+      "kind": "skill",
+      "skill": "investigate",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Find the verified root cause of why a docs-only change runs the full 2118-test Windows gate, and produce a phased plan for a more intentional, efficient test/gate shape without weakening coverage.",
+      "done_when": "Root cause verified necessary-and-sufficient against CI data (not narrative); the efficiency premise tested against measured per-step and per-project timings taken from the runner rather than a dev machine; failure class registered with siblings swept; phased repair plan emitted; stopped at the report for human review with nothing implemented.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "367a556589f96ba7d0dbc89869cfb1d9f28f9128",
+        "short": "367a55658",
+        "branch": "main",
+        "pushed": true
+      }
     }
   ],
   "changes": [

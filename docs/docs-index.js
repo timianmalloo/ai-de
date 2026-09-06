@@ -4332,7 +4332,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "df7dc3f4e653bf4e4594e161f0642ea124adc7ffdee4e6cf7bcf0edb1e11bca4"
+      "sourceSha256": "43e205c308242ee123063b8cf7de1bb2a77a084265bf151b4f796052caa92ff1"
     },
     {
       "id": "diagram-class",
@@ -6072,6 +6072,37 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "855af815674245851df9fc51855e1117fe59ddff3127449ee9da7583c0c75f07"
+    },
+    {
+      "id": "INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days",
+      "path": "docs/investigations/INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days.md",
+      "title": "INV-0005 — The gate runs everything, in the wrong order, and has been red for two days",
+      "type": "investigation",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "",
+      "reviewSuggested": [],
+      "summary": "A docs-only change runs a 20-minute Windows gate. Measured, the WPF/terminal suite everyone suspects is 2.3% of it and mutation replay is 51%. The larger finding is correctness, not cost: a wall-clock frame-budget assertion fails deterministically on CI hardware, and because it sits before every other gate, 26 gates have not executed on any run since 2026-09-04 — 38 of the last 40 Build runs are red.",
+      "tags": [
+        "ci",
+        "testing",
+        "gates",
+        "efficiency",
+        "performance-assertion"
+      ],
+      "links": [
+        {
+          "to": "defect-classes",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "52596f5c0eedef43c6649830d44a2f01667c2dc23d15e335e7b1bdced44904e4"
     },
     {
       "id": "inv-0004-graph-kind-taxonomy-and-knowledge",
@@ -11060,5 +11091,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6beb99bfa2af1f3e23158b952a3149e0243d5f5e1a9bc8ee78c6e5f9a358387a"
+  "graphSha256": "7571de360c262f4f5dabda208bd76db067db61bfa7ffc99fb1ae775b11aafca7"
 };

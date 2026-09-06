@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 63 · partially-controlled 39 · uncontrolled 4
+**Status counts:** controlled 63 · partially-controlled 39 · uncontrolled 5
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3947,6 +3947,53 @@ for both or split.*
   either full generation or a structural check, neither of which this entry delivers.
 - **Status:** `partially-controlled` — the marker case is gated and proven; the partial-derivation
   hole that let it reach a published page is named, not closed
+
+### DC-107 — A magnitude measured on one machine, encoded as a portable threshold
+
+- **Shape:** somebody measures a number — a duration, a p95, a size — on the machine in front of
+  them, and writes it into something that will run somewhere else: an assertion, a budget, or a
+  scheduling decision. The measurement was real. The **portability** of it was never measured, and
+  never stated as an assumption either.
+- **Signature:** a bare wall-clock constant in an assertion, or a comment of the form *"MEASURED at
+  N on this machine, which is why …"* justifying where a check runs. The tell is that the number and
+  the decision are in the same sentence with no environment between them.
+- **Why it survives:** it passes on the author's machine, which is the only place it is run before it
+  lands — and *the author measured*, so it feels like the opposite of a guess. It is not: the
+  measurement is Verified, the **generalisation of it** is unmarked (NG9). Worse, when it later fails
+  it fails as the thing it was watching for, so the first reading is always "the regression happened".
+- **The discriminator is the guard band.** A performance assertion is only meaningful when the gap
+  between good and bad is wider than the spread between the machines it will run on. Where the guard
+  band is narrower than the environmental noise, the test cannot ever reach its own subject.
+- **Instances:** 2026-09-05, both found in one investigation (INV-0005).
+  1. `TerminalViewTests.AFullScreenRedraw_StaysInsideTheFrameBudget` asserts `p95 < 16.67 ms`. Its
+     own message names the signal it wants: GlyphRun-per-line 6.64 ms vs FormattedText-per-cell
+     142.80 ms — a **20×** effect. The threshold sits at **2.5×** the good value; CI hardware is
+     **~3×** slower than the machine that set it. Five consecutive CI runs failed at 17.2–22.8 ms —
+     never near the hundreds that would mean the defect. It was **watching for a 20× regression
+     through a 2.5× window on a 3× noise floor.**
+  2. `.github/workflows/build.yml` justifies mutation replay as an every-push gate: *"MEASURED at 74s
+     for 18 mutations on this machine, which is why it is an every-push gate and not a nightly."* On
+     the runner it is **612s — 8.3×** — and 51% of the whole job.
+- **What it cost:** the assertion is ordered before 26 other gates, so its failure skipped all of
+  them. **38 of 40 consecutive `Build` runs red, the entire control suite dark for two days** — id
+  allocators, derived views, register integrity, all of it. A brittle check placed early does not
+  merely fail; it **silences everything behind it**.
+- **Control:** an assertion about speed must compare against something measured **in the same
+  process on the same host** (assert the ratio between the fast and slow paths, not an absolute), or
+  be explicitly opt-in on known hardware. A scheduling decision justified by a duration must carry a
+  duration **measured where the job runs**. Phase 4 of INV-0005 proposes the gate; until it exists
+  this class is caught by review, not mechanically.
+- **Relationship to `PACK-C`** (fleet, *an assertion encodes a transient magnitude assumption*):
+  ancestor, not duplicate. PACK-C's discriminator is **time** — a number that was true and decayed.
+  DC-107's is **host** — a number that was never portable in the first place. The controls differ:
+  PACK-C wants re-measurement on a schedule; DC-107 wants the comparison made relative, or the check
+  moved to where the hardware is fixed. These two local instances are the first evidence PACK-C has
+  in this repository.
+- **The generalisation:** *a measurement is evidence about the machine it was taken on; treating it
+  as evidence about every machine is an unmarked assumption* (NG9) — and the cheapest fix is almost
+  never a bigger threshold, it is an assertion that carries its own baseline.
+- **Status:** `uncontrolled` — both instances are identified and INV-0005 proposes the fixes, but
+  nothing has been implemented and no gate yet catches the shape
 
 ---
 
