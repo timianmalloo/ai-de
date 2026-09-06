@@ -14,8 +14,27 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: windows-latest
+  # ---------------------------------------------------------------------------------------------
+  # RING 0 — the control suite. Linux, no .NET, no build.
+  #
+  # These 24 checks are pure Python over files and git history: ~31s COMBINED, measured on the
+  # runner. They are split out for two reasons, and the smaller one is money.
+  #
+  # The REASON is independence. They used to be steps in the .NET job, so anything that failed
+  # earlier took them with it — Actions skips the rest of a job after a failure. One
+  # hardware-sensitive WPF assertion did exactly that for two days: 38 consecutive red runs in which
+  # not one of these ever executed, including the id-allocator and derived-view gates, on the days
+  # those defects landed (INV-0005). As their own job they now report even when the build is broken,
+  # which is precisely when a docs/register defect is most likely to be riding along.
+  #
+  # The money is small and worth stating honestly: ~31s moving from a 2x runner to a 1x one. The big
+  # multiplier win — moving the 1,719 Core tests to Linux — is NOT available: they launch the
+  # net10.0-windows daemon as a real process and exercise ConPTY via CREATE_NEW_CONSOLE, so that
+  # lock is real rather than a target-framework label (CE9 — recorded as a cost to remove later,
+  # not accepted as a floor).
+  # ---------------------------------------------------------------------------------------------
+  gates:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Check out repository
@@ -26,15 +45,6 @@ jobs:
           # the gate reports "no prior change to compare against" and passes. A gate that cannot
           # fire is the defect it was written to prevent, one layer up.
           fetch-depth: 0
-
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v4
-
-      - name: Restore
-        run: dotnet restore .\AiDe.sln
-
-      - name: Build
-        run: dotnet build .\AiDe.sln --configuration Release --no-restore
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -249,6 +259,41 @@ jobs:
       # knowledge nodes. Needs full history to find the last bump.
       - name: Extractor generation gate
         run: python tools/verify-extractor-generation.py
+
+  # ---------------------------------------------------------------------------------------------
+  # RING 0/1 — everything that needs .NET, on Windows because it genuinely needs Windows: WPF
+  # (net10.0-windows), ConPTY, and the daemon launched as a separate process.
+  #
+  # Steps stay in COST-ASCENDING order, measured on the runner: test 317s, compilation coverage 82s,
+  # published layout 4s, mutation replay 612s. Cheapest first, so a failure is reported by the
+  # cheapest check that can see it. If you add a step here, put it in cost order.
+  # ---------------------------------------------------------------------------------------------
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          # Full history. The extractor-generation gate finds the commit where the generation last
+          # changed, and checkout is SHALLOW by default — with depth 1 that search finds nothing and
+          # the gate reports "no prior change to compare against" and passes. A gate that cannot
+          # fire is the defect it was written to prevent, one layer up.
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+
+      - name: Restore
+        run: dotnet restore .\AiDe.sln
+
+      - name: Build
+        run: dotnet build .\AiDe.sln --configuration Release --no-restore
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
       # Not a bare `dotnet test`. That command prints "Passed!" for a run whose host CRASHED
       # partway through — nothing failed, execution just stopped — so a green step can hide any
