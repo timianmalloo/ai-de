@@ -41,13 +41,22 @@ jobs:
         with:
           python-version: '3.x'
 
-      # Not a bare `dotnet test`. That command prints "Passed!" for a run whose host CRASHED
-      # partway through — nothing failed, execution just stopped — so a green step can hide any
-      # number of tests that never ran (defect class DC-012). The gate asserts on that negative:
-      # every project must produce results, report itself Completed, and execute at least as many
-      # tests as the committed baseline.
-      - name: Test (with run-integrity gate)
-        run: python tools/verify-test-run.py
+      # ---------------------------------------------------------------------------------------
+      # STEP ORDER IS COST-ASCENDING, AND THAT IS LOAD-BEARING (INV-0005).
+      #
+      # Actions skips every later step once one fails. The test step used to sit here, ahead of the
+      # gates below — so when one hardware-sensitive WPF assertion started failing on the runner, all
+      # 26 of these were reported `skipped` on every run for two days. The whole control suite went
+      # dark, including the id-allocator and derived-view gates, on the days those exact defects
+      # landed. 38 of 40 consecutive runs were red and none of them ever reached a gate.
+      #
+      # Measured on the runner: everything from here to "Extractor generation gate" is ~31s COMBINED.
+      # The test step is 317s, mutation replay 612s. Cheap and broad first, expensive and narrow last,
+      # so a failure is reported by the cheapest check that can see it.
+      #
+      # If you add a step, put it in cost order. Anything ahead of these gates must be cheaper than
+      # ~31s and must not depend on the machine it runs on.
+      # ---------------------------------------------------------------------------------------
 
       # A defect class cited by ID in prose cannot fail. Three of them (DC-009/010/011) were cited as
       # authoritative by four committed artifacts while having no entry in the register at all, and
@@ -116,16 +125,6 @@ jobs:
         run: |
           python tools/verify-no-conflict-markers.py --self-test
           python tools/verify-no-conflict-markers.py
-
-      # DC-099: a test written in the same edit as its fix has never been shown capable of failing.
-      # Breaks the code on purpose and requires a test to notice. The four CROSS-BOUNDARY/CROSS-AUTHOR
-      # mutations are the ones no single-sided sweep can find: each component's own sweep mutates only
-      # its own code, so a dependency that runs A -> B is invisible from both ends. MEASURED at 74s
-      # for 18 mutations on this machine, which is why it is an every-push gate and not a nightly.
-      - name: Mutation replay — the controls can actually fail
-        run: |
-          python tools/mutation-replay.py --self-test
-          python tools/mutation-replay.py --set tools/mutation-sets/daydream-seam.json
 
       # DC-021: a fixture that restates a list the product declares. Three occurrences before it was
       # registered, because each repair was cheap enough that nobody asked why. The register recorded
@@ -236,13 +235,6 @@ jobs:
       - name: API-cref gate — self-test
         run: python tools/verify-api-crefs.py --self-test
 
-      # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
-      # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the
-      # twist that the gate was not stale but NARROW). Builds every tracked project the solution does
-      # not contain: 19 of them, measured at 16 seconds, which is why this is here and not nightly.
-      - name: Project compilation coverage gate
-        run: python tools/verify-project-coverage.py
-
       # Three times in one session a comment stated a bound the code did not apply: an evidence page
       # documented as fitting a cap it exceeded fifteenfold, a search reporting MaxBytes 65,536 while
       # returning 461,750, and a regex whose exclusion existed only in prose (DC-038). Every constant
@@ -258,12 +250,37 @@ jobs:
       - name: Extractor generation gate
         run: python tools/verify-extractor-generation.py
 
+      # Not a bare `dotnet test`. That command prints "Passed!" for a run whose host CRASHED
+      # partway through — nothing failed, execution just stopped — so a green step can hide any
+      # number of tests that never ran (defect class DC-012). The gate asserts on that negative:
+      # every project must produce results, report itself Completed, and execute at least as many
+      # tests as the committed baseline.
+      - name: Test (with run-integrity gate)
+        run: python tools/verify-test-run.py
+
+      # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
+      # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the
+      # twist that the gate was not stale but NARROW). Builds every tracked project the solution does
+      # not contain: 19 of them, measured at 16 seconds, which is why this is here and not nightly.
+      - name: Project compilation coverage gate
+        run: python tools/verify-project-coverage.py
+
       # The shell resolves its daemon at <BaseDirectory>/daemon/AiDe.Daemon.exe. A build-time target
       # put it there, so every developer run and every test worked; publish writes elsewhere and did
       # not carry it, so the SHIPPED build could not open a workspace at all. The layout that was
       # tested was never the layout that shipped. Publishes to a scratch directory and looks.
       - name: Published layout gate
         run: python tools/verify-published-layout.py
+
+      # DC-099: a test written in the same edit as its fix has never been shown capable of failing.
+      # Breaks the code on purpose and requires a test to notice. The four CROSS-BOUNDARY/CROSS-AUTHOR
+      # mutations are the ones no single-sided sweep can find: each component's own sweep mutates only
+      # its own code, so a dependency that runs A -> B is invisible from both ends. MEASURED at 74s
+      # for 18 mutations on this machine, which is why it is an every-push gate and not a nightly.
+      - name: Mutation replay — the controls can actually fail
+        run: |
+          python tools/mutation-replay.py --self-test
+          python tools/mutation-replay.py --set tools/mutation-sets/daydream-seam.json
 
       - name: Upload test results
         if: always()
