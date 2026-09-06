@@ -104,11 +104,39 @@ def comparable(blob: bytes) -> bytes:
     return VOLATILE.sub(b'"generated":"-"', blob).replace(b"\r\n", b"\n")
 
 
+def dirty_files(root: Path) -> set[str]:
+    """Paths git currently reports as modified, so a run can tell what IT changed."""
+    out = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"],
+                         capture_output=True, text=True, cwd=root)
+    return {line[3:].strip().strip('"') for line in out.stdout.splitlines() if line[3:].strip()}
+
+
 def regenerate(root: Path, view: dict) -> str | None:
-    """Run the generator. Returns an error string, or None."""
+    """Run the generator, restoring anything it rewrote OUTSIDE its own view.
+
+    A CONTROL MUST LEAVE THE TREE AS IT FOUND IT. `build-doc-viewer.py` shells out to
+    `api-reference.py`, which rewrites every `docs/api/*.md` — files that are not among this view's
+    own paths and so were never restored. The first check therefore left the tree dirty and the
+    SECOND one saw the difference, which is how this gate's own self-test failed on a branch where
+    the gate itself passed (INV-0005). A check whose output depends on whether it has already run is
+    not a check.
+
+    The set is DERIVED, not named: whatever git reports as newly dirty is what this run did. Files
+    that were already modified before it started are left alone, so a developer's work in progress is
+    never reverted.
+    """
+    before = dirty_files(root)
+
     out = subprocess.run(
         [sys.executable, *view["command"]],
         capture_output=True, cwd=root, encoding="utf-8", errors="replace")
+
+    collateral = sorted(dirty_files(root) - before - {p for p in view.get("paths", [])}
+                        - ({view["path"]} if "path" in view else set()))
+
+    if collateral:
+        subprocess.run(["git", "checkout", "--", *collateral],
+                       capture_output=True, text=True, cwd=root)
 
     if out.returncode != 0:
         return (f"{' '.join(view['command'])} exited {out.returncode} — the view cannot be "
