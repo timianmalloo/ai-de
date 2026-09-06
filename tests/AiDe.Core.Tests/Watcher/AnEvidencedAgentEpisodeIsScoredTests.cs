@@ -97,8 +97,6 @@ public sealed class AnEvidencedAgentEpisodeIsScoredTests : IDisposable
         return scored.Scorecard.Verdict is not WeaveVerdict.NotScored;
     }
 
-    // Platform=Unverified: a committed Proof Pack is not recognised as evidence on Linux - cause UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
     [Fact]
     public void ADeclaredAndCommittedProofPackIsEvidence()
     {

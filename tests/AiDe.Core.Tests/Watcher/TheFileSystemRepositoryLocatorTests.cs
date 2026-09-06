@@ -19,8 +19,6 @@ namespace AiDe.Core.Tests.Watcher;
 /// </remarks>
 public sealed class TheFileSystemRepositoryLocatorTests
 {
-    // Platform=Unverified: a linked worktree resolves to null on Linux - cause UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
     [Fact]
     public void ALinkedWorktreeResolvesToItsRepository()
     {

@@ -67,14 +67,6 @@ public sealed class CallEdgeTests : IDisposable
     // What is drawn.
     // ---------------------------------------------------------------------------------------------
 
-    // Platform=Unverified: the C# reader produces different call edges on Linux for identical inline source - cause UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
-    // Platform=Unverified: the C# reader produces different call edges on Linux for identical inline source - cause UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
-    // Platform=Unverified: the C# reader produces different call edges on Linux for identical inline source - cause UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
-    // Platform=Unverified: the C# reader produces different call edges on Linux for identical inline source - cause UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
     [Fact]
     public async Task OneTypeCallingAnotherIsAnEdge()
     {

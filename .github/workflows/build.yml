@@ -336,7 +336,7 @@ jobs:
           python-version: '3.x'
 
       - name: Test — the portable half (with run-integrity gate)
-        run: python tools/verify-test-run.py --only AiDe.Core.Tests --filter 'Platform!=Windows&Platform!=Unverified' --key AiDe.Core.Tests.portable
+        run: python tools/verify-test-run.py --only AiDe.Core.Tests --filter 'Platform!=Windows' --key AiDe.Core.Tests.portable
 
       - name: Upload test results
         if: always()
@@ -388,14 +388,14 @@ jobs:
       # tests as the committed baseline.
       #
       # THIS JOB NOW RUNS ONLY WHAT NEEDS WINDOWS. `AiDe.App.Tests` is WPF, so all 399 of it. Of
-      # `AiDe.Core.Tests`, the 233 that cannot run on Linux: 129 needing it genuinely
-      # (kernel32, powershell, the net10.0-windows daemon), and 104 marked Unverified - they fail on
-      # Linux and nobody has diagnosed why, which is debt rather than a platform fact. The other 1,486
-      # run on Linux at 1x. expected-test-counts.json asserts the halves still total 1,719.
+      # `AiDe.Core.Tests`, only what genuinely needs it
+      # - kernel32, powershell, the net10.0-windows daemon, and tests that assert Windows path
+      # semantics on purpose. Every test that merely FAILED on Linux has since been diagnosed and
+      # fixed; the quarantine bucket is empty and the filter no longer names it.
       - name: Test — the Windows-locked half (with run-integrity gate)
         run: |
           python tools/verify-test-run.py --only AiDe.App.Tests
-          python tools/verify-test-run.py --only AiDe.Core.Tests --filter 'Platform=Windows|Platform=Unverified' --key AiDe.Core.Tests.nonportable
+          python tools/verify-test-run.py --only AiDe.Core.Tests --filter 'Platform=Windows' --key AiDe.Core.Tests.nonportable
 
       # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
       # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the

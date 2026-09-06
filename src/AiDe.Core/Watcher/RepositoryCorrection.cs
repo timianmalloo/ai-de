@@ -79,12 +79,19 @@ public sealed class FileSystemRepositoryLocator : IRepositoryLocator
                 return null;
             }
 
-            var gitDir = pointer[GitDirPrefix.Length..].Trim().Replace('/', '\\');
+            // THE PLATFORM'S separator, not a backslash. Git writes the pointer with forward slashes
+            // on every OS, so on Windows this still normalises to '\'. On Linux the old hardcoded
+            // '\\' turned "/repo/.git/worktrees/x" into "\repo\.git\worktrees\x": the marker below
+            // still matched, but Path.GetDirectoryName then saw a string containing no separator the
+            // OS recognises, returned empty, and the locator reported "unknown repository" for every
+            // linked worktree (INV-0005).
+            var separator = Path.DirectorySeparatorChar;
+            var gitDir = pointer[GitDirPrefix.Length..].Trim().Replace('/', separator);
 
-            // gitDir is <repository>\.git\worktrees\<name>. Cut at the worktrees segment to get the
+            // gitDir is <repository>/.git/worktrees/<name>. Cut at the worktrees segment to get the
             // common dir, whose parent is the repository — the same primitive the shell derives from
             // --git-common-dir, so the two agree by construction rather than by coincidence.
-            var marker = "\\" + WorktreesSegment + "\\";
+            var marker = separator + WorktreesSegment + separator;
             var cut = gitDir.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
             if (cut < 0)
             {

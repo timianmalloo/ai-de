@@ -125,8 +125,6 @@ public sealed class ConsumersReadWhatProducersEmitTests : IDisposable
         return predicates;
     }
 
-    // Platform=Unverified: declares_table is emitted on Windows and not on Linux - an extractor difference, cause UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
     [Fact]
     public async Task TheJoinProjectionReadsNoPredicateThatNobodyEmits()
     {

@@ -89,12 +89,20 @@ public sealed record RepositoryIdentity
             return path ?? string.Empty;
         }
 
-        var normalised = path.Replace('/', '\\');
+        // THE PLATFORM'S separator, not a backslash. This used to hardcode '\\', which on Linux
+        // rewrote "/tmp/xyz" as "\tmp\xyz" — a string with no separator the OS recognises. The
+        // canonical form was still self-consistent, so identity comparisons kept working and nothing
+        // looked wrong, but anything that then went to the FILESYSTEM with it silently found nothing:
+        // ProofPackVerifier's `Directory.Exists(repositoryRoot)` returned false and a committed Proof
+        // Pack stopped counting as evidence (INV-0005). The case guard below shows the author had
+        // already thought about crossing platforms; the separator was the half that was missed.
+        var separator = Path.DirectorySeparatorChar;
+        var normalised = path.Replace('/', separator);
 
         // Trailing separator, except on a bare root ("C:\") where it is part of the path.
-        if (normalised.Length > 3 && normalised.EndsWith('\\'))
+        if (normalised.Length > 3 && normalised.EndsWith(separator))
         {
-            normalised = normalised.TrimEnd('\\');
+            normalised = normalised.TrimEnd(separator);
         }
 
         return OperatingSystem.IsWindows() ? normalised.ToLowerInvariant() : normalised;
