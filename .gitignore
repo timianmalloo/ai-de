@@ -522,3 +522,8 @@ docs/.smart-env/
 
 # AI-Forward Pack (INSTALL 2): local coordination and per-run state, never committed
 spikes/
+
+# Shell-redirection captures. `cmd > something.out` during a session is how la.out and smoke.out
+# reached the repository: 470 bytes each of a PowerShell screen-reader warning and terminal escape
+# sequences, from a worktree that no longer exists, referenced by nothing and committed by accident.
+*.out
