@@ -1,0 +1,26 @@
+# Line endings are decided HERE, once, rather than by each machine's core.autocrlf.
+#
+# WHAT WAS AND WAS NOT WRONG. The object store was already clean: every blob in HEAD is LF, because
+# core.autocrlf=true normalises on the way in. Nothing about the repository's committed content
+# changes here, and `git add --renormalize .` rewrites exactly zero files — measured, after an
+# earlier claim that the store held CRLF turned out to be a miscounted grep.
+#
+# What IS host-dependent is the WORKING TREE. `text=auto` alone normalises the store and still checks
+# out CRLF on Windows, so the bytes on disk depend on which OS did the checkout. That matters here
+# more than it usually does:
+#
+#   - the gates read the working tree, and several of them compare bytes;
+#   - the build now runs those gates on Linux and the tests on both, so "the same file" must mean the
+#     same bytes on both halves;
+#   - three generators had already been pinned to newline='\n' one at a time to work around it
+#     (build-doc-viewer.py, api-reference.py, and the doc bundle), which is the shape of a cause being
+#     treated one symptom at a time — DC-108.
+#
+# `eol=lf` makes the checkout LF everywhere, so a byte-for-byte comparison means the same thing on
+# both runners and on a developer's machine. It also ends the ~20 "LF will be replaced by CRLF"
+# warnings every commit printed, which is the cosmetic part and the least of it.
+#
+# No binary rules are listed because no binary file is tracked: all 1,260 tracked files are text, and
+# there is no .bat or .cmd that would need CRLF. `text=auto` detects binary content by itself, so an
+# image added later is safe without an entry here.
+* text=auto eol=lf
