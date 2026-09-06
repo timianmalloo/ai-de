@@ -72,7 +72,14 @@ public sealed class ScopeFingerprints
     // judgement this gate refuses to let anyone make: it cannot tell a comment from a behaviour
     // change without parsing C#, and a gate taught to trust "it is only a comment" is a gate that
     // will one day be wrong about it silently. One re-index is the cheap side of that trade.
-    public const string ExtractorGeneration = "2026-09-05.1";
+    // 2026-09-06.1 — REAL OUTPUT CHANGE, unlike the comment-only bump above. Reference packs were
+    // located through `ProgramFiles`, which is the EMPTY STRING on Unix, so the probe became the
+    // relative path `dotnet/packs/…` and never matched. With no pack the compilation carries no
+    // framework references, so `[Table]` is not recognised (no `declares_table`) and `Console` and
+    // `List<T>` stop being classified as runtime types — extraction still succeeds and quietly
+    // returns fewer facts. The root is now taken from the runtime the process is already running on,
+    // with DOTNET_ROOT and the usual install locations behind it (INV-0005).
+    public const string ExtractorGeneration = "2026-09-06.1";
 
     private const string FileName = "scope-fingerprints.json";
 

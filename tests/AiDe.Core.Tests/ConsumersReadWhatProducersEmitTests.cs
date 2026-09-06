@@ -127,8 +127,6 @@ public sealed class ConsumersReadWhatProducersEmitTests : IDisposable
 
     // Platform=Unverified: declares_table is emitted on Windows and not on Linux - an extractor difference, cause UNDIAGNOSED
     [Trait("Platform", "Unverified")]
-    // Platform=Unverified: declares_table is emitted on Windows and not on Linux - an extractor difference, cause UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
     [Fact]
     public async Task TheJoinProjectionReadsNoPredicateThatNobodyEmits()
     {
@@ -162,8 +160,6 @@ public sealed class ConsumersReadWhatProducersEmitTests : IDisposable
             + "the set has drifted from the vocabulary the producers use");
     }
 
-    // Platform=Unverified: declares_table is emitted on Windows and not on Linux - an extractor difference, UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
     [Fact]
     public async Task KnowledgeAndCodeReachTheSameStoreWithTheSameGrain()
     {

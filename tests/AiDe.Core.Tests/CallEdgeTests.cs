@@ -259,8 +259,6 @@ public sealed class CallEdgeTests : IDisposable
     // What is NOT drawn, and is counted instead.
     // ---------------------------------------------------------------------------------------------
 
-    // Platform=Unverified: the C# reader yields different call edges on Linux for identical INLINE source - UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
     [Fact]
     public async Task TheRuntimeIsCountedAndNotDrawn()
     {
@@ -323,8 +321,6 @@ public sealed class CallEdgeTests : IDisposable
         Assert.True(Discloses(facts, "calls-not-resolved ("));
     }
 
-    // Platform=Unverified: the C# reader yields different call edges on Linux for identical INLINE source - UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
     [Fact]
     public async Task ADelegateInvocationIsNotAnEdge()
     {
@@ -346,8 +342,6 @@ public sealed class CallEdgeTests : IDisposable
         Assert.True(Discloses(facts, "calls-through-a-delegate ("));
     }
 
-    // Platform=Unverified: the C# reader yields different call edges on Linux for identical INLINE source - UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
     [Fact]
     public async Task ReflectionIsCountedAndNotDrawn()
     {
@@ -519,8 +513,6 @@ public sealed class CallEdgeTests : IDisposable
         Assert.False(Discloses(facts, "calls-dispatched-at-runtime ("));
     }
 
-    // Platform=Unverified: the C# reader yields different call edges on Linux for identical INLINE source - UNDIAGNOSED
-    [Trait("Platform", "Unverified")]
     [Fact]
     public async Task ABoundaryAndAGapAreDifferentSentences()
     {

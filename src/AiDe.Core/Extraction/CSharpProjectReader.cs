@@ -616,24 +616,70 @@ public sealed class CSharpProjectReader
         }
     }
 
+    /// <summary>Where a .NET installation might be, most authoritative first.</summary>
+    /// <remarks>
+    /// <para><b>This used to be <c>ProgramFiles</c> and nothing else</b>, which made every reference
+    /// pack unfindable anywhere but Windows — and worse than unfindable. On Unix
+    /// <c>Environment.GetFolderPath(SpecialFolder.ProgramFiles)</c> returns the EMPTY STRING, so
+    /// <c>Path.Combine</c> produced the RELATIVE path <c>dotnet/packs/…</c>, which is resolved against
+    /// the current directory rather than rejected.</para>
+    ///
+    /// <para><b>What that cost.</b> With no pack found the compilation carries no framework
+    /// references at all, so nothing from the BCL resolves: <c>[Table]</c> is not recognised as the
+    /// EF attribute and no <c>declares_table</c> is emitted, and <c>Console</c> and <c>List&lt;T&gt;</c>
+    /// stop being classified as runtime types. Extraction still succeeds and still returns facts —
+    /// just fewer, quieter ones. Found when the Core suite first ran on a Linux runner (INV-0005).</para>
+    ///
+    /// <para>The runtime's own location is the reliable answer, because the process is already running
+    /// on it: <c>System.Private.CoreLib</c> sits in <c>&lt;root&gt;/shared/Microsoft.NETCore.App/&lt;version&gt;</c>,
+    /// three levels below the root that also holds <c>packs/</c>.</para>
+    /// </remarks>
+    private static IEnumerable<string> DotnetRoots()
+    {
+        // An explicit install wins: this is the variable the SDK itself honours.
+        var declared = Environment.GetEnvironmentVariable("DOTNET_ROOT");
+        if (!string.IsNullOrWhiteSpace(declared)) yield return declared;
+
+        // Empty in a single-file publish, hence the guard rather than an assumption.
+        var coreLib = typeof(object).Assembly.Location;
+        if (!string.IsNullOrEmpty(coreLib))
+        {
+            var root = Directory.GetParent(coreLib)?.Parent?.Parent?.Parent?.FullName;
+            if (!string.IsNullOrEmpty(root)) yield return root;
+        }
+
+        // The Windows default — but only when ProgramFiles actually resolved, so a relative
+        // "dotnet/packs/…" can never be probed against the current directory.
+        var programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+        if (!string.IsNullOrEmpty(programFiles)) yield return Path.Combine(programFiles, "dotnet");
+
+        // Where the Linux packages put it.
+        yield return "/usr/share/dotnet";
+        yield return "/usr/lib/dotnet";
+    }
+
     /// <summary>Newest reference pack not above <paramref name="wanted"/>, ordered by parsed version.</summary>
     private static string? RefPack(string packName, Version? wanted)
     {
-        var root = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-            "dotnet", "packs", packName);
+        foreach (var dotnetRoot in DotnetRoots())
+        {
+            var root = Path.Combine(dotnetRoot, "packs", packName);
+            if (!Directory.Exists(root)) continue;
 
-        if (!Directory.Exists(root)) return null;
+            // Ordered by parsed VERSION, not lexically: a string sort puts 8.0.28 above 10.0.11 and
+            // silently compiles against the wrong framework.
+            var found = Directory.EnumerateDirectories(root)
+                .Select(d => (Dir: d, Ok: Version.TryParse(Path.GetFileName(d), out var v), Version: v))
+                .Where(x => x.Ok && (wanted is null || x.Version!.Major <= wanted.Major))
+                .OrderByDescending(x => x.Version)
+                .Select(x => SafeDirectories(Path.Combine(x.Dir, "ref"))
+                    .OrderByDescending(r => r, StringComparer.OrdinalIgnoreCase).FirstOrDefault())
+                .FirstOrDefault(d => d is not null && Directory.EnumerateFiles(d, "*.dll").Any());
 
-        // Ordered by parsed VERSION, not lexically: a string sort puts 8.0.28 above 10.0.11 and
-        // silently compiles against the wrong framework.
-        return Directory.EnumerateDirectories(root)
-            .Select(d => (Dir: d, Ok: Version.TryParse(Path.GetFileName(d), out var v), Version: v))
-            .Where(x => x.Ok && (wanted is null || x.Version!.Major <= wanted.Major))
-            .OrderByDescending(x => x.Version)
-            .Select(x => SafeDirectories(Path.Combine(x.Dir, "ref"))
-                .OrderByDescending(r => r, StringComparer.OrdinalIgnoreCase).FirstOrDefault())
-            .FirstOrDefault(d => d is not null && Directory.EnumerateFiles(d, "*.dll").Any());
+            if (found is not null) return found;
+        }
+
+        return null;
 
         static IEnumerable<string> SafeDirectories(string path) =>
             Directory.Exists(path) ? Directory.EnumerateDirectories(path) : [];
