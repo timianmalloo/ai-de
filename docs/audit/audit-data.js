@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-06T15:21:12Z",
+  "generated": "2026-09-06T19:16:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9603,6 +9603,36 @@ window.AUDIT_DATA = {
         "short": "4f6ab2542",
         "branch": "main",
         "pushed": false
+      }
+    },
+    {
+      "id": "al-01M1W2DR1EFK528R1KP42HFQ20",
+      "shortname": "gitattributes-lf",
+      "datetime": "2026-09-06T19:16:48Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "do this next: .gitattributes with * text=auto eol=lf",
+      "summary": "Landed, and the premise I gave for it was wrong in a way worth recording. I had claimed CRLF was in the OBJECT STORE (457 CRs in HEAD:audit-log.jsonl). It is not — every blob is already LF because core.autocrlf=true normalises on the way in, and 'git add --renormalize .' rewrote exactly ZERO files. The 457 came from 'grep -c ' in Git Bash matching the letter r; od -c showed the blob starting with a bare \\n. Second time this week a confident measurement turned out to be about the tool rather than the subject. The real and narrower justification: text=auto alone normalises the store and still checks out CRLF on Windows, so the WORKING TREE was host-dependent — and the gates read the working tree, several compare bytes, and the build now runs gates on Linux and tests on both. Three generators had already been pinned to newline='\\n' one at a time to work around it (DC-108 treated one symptom at a time). Checked before writing: no binary files tracked at all (1,260/1,260 text), no .bat or .cmd needing CRLF, and merge-append-only-log.py uses splitlines() so the append-only union is NOT line-ending sensitive — the one hazard that could have doubled the audit log. Verified after: 0 build errors, every gate green, 1,569 + 150 + 399 tests at baseline, tree still clean, CI green on all three jobs, and no CRLF warnings on push. session-contracts §4ac tells Sessions 2 and 3 to refresh with 'git rm --cached -r . && git reset --hard' and to set merge.renormalize for older branches.",
+      "kind": "command",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Add .gitattributes with * text=auto eol=lf so the working tree stops depending on which OS checked it out.",
+      "done_when": "The checkout is LF on every OS; the repository's committed content provably unchanged; build, every gate and all three test halves green with the tree still clean afterwards; the other two sessions told how to refresh.",
+      "tier": "T0",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "627dc7b7a8402409da034ba8068781a5c1b1f543",
+        "short": "627dc7b7a",
+        "branch": "main",
+        "pushed": true
       }
     }
   ],
