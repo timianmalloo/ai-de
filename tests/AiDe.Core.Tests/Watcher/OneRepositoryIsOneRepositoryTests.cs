@@ -29,10 +29,6 @@ namespace AiDe.Core.Tests.Watcher;
 /// one consumer leaves the other three disagreeing about whether two sessions are in the same
 /// repository.</para>
 /// </remarks>
-    // PORTABILITY UNVERIFIED. This class fails on Linux and the cause has not been
-    // diagnosed, so it runs on Windows for now. That is NOT a claim that it needs
-    // Windows — the honest reading is that nobody has looked (INV-0005 follow-up).
-[Trait("Platform", "Unverified")]
 public sealed class OneRepositoryIsOneRepositoryTests
 {
     private sealed class Sessions(params WatcherSessionSnapshot[] snapshots) : IWatcherSessionsQuery
@@ -55,6 +51,8 @@ public sealed class OneRepositoryIsOneRepositoryTests
     private static FleetView Aggregate(params WatcherSessionSnapshot[] snapshots) =>
         new FleetAggregator().Aggregate([new Sessions(snapshots)]);
 
+    // Platform=Windows: asserts a case-INsensitive filesystem; on Linux case correctly does split a repository
+    [Trait("Platform", "Windows")]
     [Fact]
     public void SlashDirectionDoesNotSplitARepository()
     {

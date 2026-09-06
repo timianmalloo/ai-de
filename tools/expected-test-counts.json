@@ -1,10 +1,10 @@
 {
-  "_comment": "Minimum tests that must EXECUTE per project. The control for defect class DC-012: a crashed test host reports success with a smaller count, and nothing else notices. Raise these with `python tools/verify-test-run.py --update` when you add tests; never lower one to make a run pass. Keys with a suffix are HALVES of a project run on one OS; `splits` says which halves must account for which whole, and verify-test-run checks that sum on every invocation, on both operating systems. AiDe.Core.Tests.nonportable is Platform=Windows (129, genuinely locked: kernel32, powershell, the net10.0-windows daemon) plus Platform=Unverified (104, fails on Linux with the cause undiagnosed - see INV-0005). Moving a class out of Unverified lowers nonportable and raises portable by the same amount; the total may not move.",
+  "_comment": "Minimum tests that must EXECUTE per project. The control for defect class DC-012: a crashed test host reports success with a smaller count, and nothing else notices. Raise these with `python tools/verify-test-run.py --update` when you add tests; never lower one to make a run pass. Keys with a suffix are HALVES of a project run on one OS; `splits` says which halves must account for which whole, and verify-test-run checks that sum on every invocation, on both operating systems. AiDe.Core.Tests.nonportable is Platform=Windows (genuinely locked: kernel32, powershell, the net10.0-windows daemon, and tests that assert Windows path semantics on purpose) plus Platform=Unverified (fails on Linux, cause undiagnosed - INV-0005). Both traits are on METHODS, not classes: tagging whole classes dragged 95 passing tests onto the 2x runner with them.",
   "minimumExecuted": {
     "AiDe.App.Tests": 399,
     "AiDe.Core.Tests": 1719,
-    "AiDe.Core.Tests.portable": 1486,
-    "AiDe.Core.Tests.nonportable": 233
+    "AiDe.Core.Tests.portable": 1581,
+    "AiDe.Core.Tests.nonportable": 138
   },
   "splits": {
     "AiDe.Core.Tests": [

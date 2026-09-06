@@ -23,10 +23,6 @@ namespace AiDe.Core.Tests;
 /// a fixture restating the product's own list (DC-021) and would go stale in exactly the case that
 /// matters — a predicate added to the projection and produced by nobody.</para>
 /// </remarks>
-    // PORTABILITY UNVERIFIED. This class fails on Linux and the cause has not been
-    // diagnosed, so it runs on Windows for now. That is NOT a claim that it needs
-    // Windows — the honest reading is that nobody has looked (INV-0005 follow-up).
-[Trait("Platform", "Unverified")]
 public sealed class ConsumersReadWhatProducersEmitTests : IDisposable
 {
     private readonly string _dir = Path.Combine(
@@ -129,6 +125,10 @@ public sealed class ConsumersReadWhatProducersEmitTests : IDisposable
         return predicates;
     }
 
+    // Platform=Unverified: declares_table is emitted on Windows and not on Linux - an extractor difference, cause UNDIAGNOSED
+    [Trait("Platform", "Unverified")]
+    // Platform=Unverified: declares_table is emitted on Windows and not on Linux - an extractor difference, cause UNDIAGNOSED
+    [Trait("Platform", "Unverified")]
     [Fact]
     public async Task TheJoinProjectionReadsNoPredicateThatNobodyEmits()
     {

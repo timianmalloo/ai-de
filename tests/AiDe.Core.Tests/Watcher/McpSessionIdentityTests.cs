@@ -17,10 +17,6 @@ namespace AiDe.Core.Tests.Watcher;
 /// agent is the most damaging thing this surface can do — the board's whole purpose is that another
 /// agent reads it and believes it.</para>
 /// </remarks>
-    // PORTABILITY UNVERIFIED. This class fails on Linux and the cause has not been
-    // diagnosed, so it runs on Windows for now. That is NOT a claim that it needs
-    // Windows — the honest reading is that nobody has looked (INV-0005 follow-up).
-[Trait("Platform", "Unverified")]
 public sealed class McpSessionIdentityTests
 {
     private static SessionRecord Session(string sessionId, string terminalId, string worktree) =>
@@ -39,6 +35,8 @@ public sealed class McpSessionIdentityTests
 
     private static readonly SessionRecord[] Both = [Alpha, Beta];
 
+    // Platform=Windows: one theory case spells the path with a drive letter, which is not a path on Linux
+    [Trait("Platform", "Windows")]
     [Fact]
     public void BothSignalsAgreeing_IsCorroborated()
     {

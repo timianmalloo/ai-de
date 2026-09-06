@@ -18,10 +18,6 @@ namespace AiDe.Core.Tests;
 /// one that always fires is noise (DC-016, DC-025), so each limit here is asserted present on input
 /// that triggers it and absent on input that does not.</para>
 /// </remarks>
-    // PORTABILITY UNVERIFIED. This class fails on Linux and the cause has not been
-    // diagnosed, so it runs on Windows for now. That is NOT a claim that it needs
-    // Windows — the honest reading is that nobody has looked (INV-0005 follow-up).
-[Trait("Platform", "Unverified")]
 public sealed class CallEdgeTests : IDisposable
 {
     private readonly string _dir = Path.Combine(
@@ -71,6 +67,14 @@ public sealed class CallEdgeTests : IDisposable
     // What is drawn.
     // ---------------------------------------------------------------------------------------------
 
+    // Platform=Unverified: the C# reader produces different call edges on Linux for identical inline source - cause UNDIAGNOSED
+    [Trait("Platform", "Unverified")]
+    // Platform=Unverified: the C# reader produces different call edges on Linux for identical inline source - cause UNDIAGNOSED
+    [Trait("Platform", "Unverified")]
+    // Platform=Unverified: the C# reader produces different call edges on Linux for identical inline source - cause UNDIAGNOSED
+    [Trait("Platform", "Unverified")]
+    // Platform=Unverified: the C# reader produces different call edges on Linux for identical inline source - cause UNDIAGNOSED
+    [Trait("Platform", "Unverified")]
     [Fact]
     public async Task OneTypeCallingAnotherIsAnEdge()
     {

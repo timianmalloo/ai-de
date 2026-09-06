@@ -24,10 +24,6 @@ namespace AiDe.Core.Tests;
 ///
 /// <para><b>Every case asserts a sentence, not a count.</b> A count is what was already right.</para>
 /// </remarks>
-    // PORTABILITY UNVERIFIED. This class fails on Linux and the cause has not been
-    // diagnosed, so it runs on Windows for now. That is NOT a claim that it needs
-    // Windows — the honest reading is that nobody has looked (INV-0005 follow-up).
-[Trait("Platform", "Unverified")]
 public sealed class LackingWorkspaceTests : IDisposable
 {
     private readonly string _dir =
@@ -64,6 +60,8 @@ public sealed class LackingWorkspaceTests : IDisposable
 
     // ── Lacking: anything at all ──────────────────────────────────────────────────────────
 
+    // Platform=Windows: counts PATH entries under Windows PATH semantics; every entry exists on the Linux runner
+    [Trait("Platform", "Windows")]
     [Fact]
     public async Task AnEmptyWorkspaceSaysThereWasNothingToRead()
     {

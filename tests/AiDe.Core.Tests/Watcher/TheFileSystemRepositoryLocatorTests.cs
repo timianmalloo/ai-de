@@ -17,12 +17,10 @@ namespace AiDe.Core.Tests.Watcher;
 /// registration does with an answer, not about how the answer is obtained. This file is the only
 /// place the filesystem claim is checked, which is why it must not be a fake.</para>
 /// </remarks>
-    // PORTABILITY UNVERIFIED. This class fails on Linux and the cause has not been
-    // diagnosed, so it runs on Windows for now. That is NOT a claim that it needs
-    // Windows — the honest reading is that nobody has looked (INV-0005 follow-up).
-[Trait("Platform", "Unverified")]
 public sealed class TheFileSystemRepositoryLocatorTests
 {
+    // Platform=Unverified: a linked worktree resolves to null on Linux - cause UNDIAGNOSED
+    [Trait("Platform", "Unverified")]
     [Fact]
     public void ALinkedWorktreeResolvesToItsRepository()
     {
