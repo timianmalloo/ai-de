@@ -82,7 +82,13 @@ def main() -> int:
         pages.append({'id': page_id, 'title': title, 'group': group,
                       'markdown': strip_frontmatter(read_normalised(path))})
 
-    api_files = sorted((DOCS / 'api').glob('AiDe*.md')) if (DOCS / 'api').exists() else []
+    # key=name, because sorting Path OBJECTS is platform-dependent: pathlib compares Windows paths
+    # case-INsensitively and POSIX paths case-sensitively. `AiDe.App.md` and `AiDe.App.ViewModels.md`
+    # therefore swap order between a Windows developer and a Linux runner, and the two hosts produce
+    # different bytes from identical inputs — which reddened verify-derived-views the first time the
+    # control suite ran on Linux (INV-0005, DC-108). A plain string key sorts the same everywhere.
+    api_files = sorted((DOCS / 'api').glob('AiDe*.md'), key=lambda p: p.name) \
+        if (DOCS / 'api').exists() else []
     for path in api_files:
         ns = path.stem
         pages.append({'id': 'api-' + ns.replace('.', '-').lower(),

@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 63 · partially-controlled 39 · uncontrolled 5
+**Status counts:** controlled 64 · partially-controlled 39 · uncontrolled 5
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -3994,6 +3994,45 @@ for both or split.*
   never a bigger threshold, it is an assertion that carries its own baseline.
 - **Status:** `uncontrolled` — both instances are identified and INV-0005 proposes the fixes, but
   nothing has been implemented and no gate yet catches the shape
+
+### DC-108 — A generator whose output depends on the host, checked by a gate that assumes it does not
+
+- **Shape:** a reproducibility gate regenerates a committed artifact and compares it byte for byte.
+  The generator uses a platform-dependent primitive somewhere — ordering, newline translation, path
+  case, locale, filesystem enumeration order — so two hosts produce different bytes from **identical
+  inputs**. The gate is correct and the artifact is correct; only the pair is impossible.
+- **Signature:** a derived-view check that passes on every developer machine and fails on CI, or the
+  reverse, with no content change between them. The tell is a diff whose two sides are both right.
+- **Why it survives:** it cannot be seen from one host. Everyone who runs it locally sees green, and
+  the gate was almost certainly authored on the same platform it is verified on, so the divergence has
+  no opportunity to appear until someone changes runners — which is rare and looks like the change
+  that broke it.
+- **Instance:** 2026-09-05 — moving the control suite to a Linux runner (INV-0005 phase 2) reddened
+  `verify-derived-views` on `docs/_site/index.html` immediately. `build-doc-viewer.py` did
+  `sorted((DOCS / 'api').glob('AiDe*.md'))`, sorting **`Path` objects**: `pathlib` compares Windows
+  paths case-INsensitively and POSIX paths case-sensitively, so `AiDe.App.md` and
+  `AiDe.App.ViewModels.md` swap places between hosts. Fixed with `key=lambda p: p.name` — a plain
+  string sorts identically everywhere. The same pass pinned the generator's newline handling
+  (normalise on read, `newline='
+'` on write), which was a second latent instance of the same class
+  in the same file.
+- **What made it expensive, and what fixed that:** the gate reported *"docs/_site/index.html is
+  stale"* and nothing more — a 700 KB generated file, with the diagnostic cost pushed onto whoever
+  read it, on a host they could not reproduce. Two full CI cycles went into guessing at mechanisms
+  (line endings, embedded dates, the commit SHA) that turned out to be wrong. `verify-derived-views`
+  now prints the **first diverging byte with context from both sides**, and on the very next run that
+  output named the cause in one line. **A gate that detects but does not localise is only half a
+  control** — the same shape as `verify-test-run` reporting *"1 failed"* without naming the test.
+- **Control:** `verify-derived-views` runs in the `gates` job on **Linux**, while developers run it on
+  Windows — so this class is now caught by construction on every push rather than by anyone
+  remembering it. Cross-platform disagreement in a generator cannot survive a gate that runs on the
+  other platform. Observed failing on the un-fixed code: run `34001468310` and the run after it.
+- **The generalisation:** *a reproducibility check is only as portable as its generator's least
+  portable primitive* — and the cheapest way to find those primitives is to run the check somewhere
+  other than where the artifact was made. Prefer explicit, value-typed keys (`key=lambda p: p.name`)
+  over relying on a library type's comparison semantics, which are allowed to differ by platform.
+- **Status:** `controlled` — the two known primitives are fixed and the gate now runs on a different
+  OS from the one that generates the artifacts, which is what makes the class self-reporting
 
 ---
 
