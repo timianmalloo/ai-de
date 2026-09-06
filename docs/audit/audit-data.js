@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-06T20:19:43Z",
+  "generated": "2026-09-06T20:21:16Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9681,6 +9681,24 @@ window.AUDIT_DATA = {
       "outcome": "success",
       "goal": "Pin the audit log's own append write to LF in both repos.",
       "done_when": "A fresh append adds no CRLF to audit-log.jsonl.",
+      "tier": "T0"
+    },
+    {
+      "id": "al-01M1W63SDNVJ8RGNMKC2TA9B8Z",
+      "shortname": "lf-drift-closed",
+      "datetime": "2026-09-06T20:21:16Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "yes push and then investigate the orphaned testhost",
+      "summary": "Final check that all six writers are pinned: append, the four rendered artifacts, and the site-figure patcher.",
+      "kind": "command",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Confirm no writer re-dirties the tree with CRLF after a refresh.",
+      "done_when": "An append plus a full regenerate leaves zero CRLF and a clean git status.",
       "tier": "T0"
     }
   ],
