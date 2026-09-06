@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-06T02:41:43Z",
+  "generated": "2026-09-06T04:12:48Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9507,6 +9507,38 @@ window.AUDIT_DATA = {
         "short": "f7a84801a",
         "branch": "main",
         "pushed": true
+      }
+    },
+    {
+      "id": "al-01M1TEPEQTCFKWS2H4ZBCTTYZX",
+      "shortname": "core-tests-linux-split",
+      "datetime": "2026-09-06T04:12:48Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "do the next practical step (the split)",
+      "summary": "1,486 of 1,719 Core tests (86%) now run on Linux at 1x in a 50s job; 233 stay on Windows. What pinned the whole suite to a 2x runner was ONE build-order ProjectReference to AiDe.Daemon (net10.0-windows, cannot be built off Windows) present for 9 process-launching tests — now conditioned on Windows. Classification derives from the codebase's own [SupportedOSPlatform(\"windows\")] declaration, not my inference; four files that matched a naive grep were verified NOT locked (a fixture file named AiDe.Daemon.exe, a comment saying 'tested without a pseudo console', a marker file, and 'ConPTY' inside a string literal). CI then found 37 Linux failures: 15 definitively Windows (kernel32.dll, powershell.exe) marked Platform=Windows, and 22 across 9 classes marked Platform=Unverified with an in-code note that this is NOT a claim they need Windows — nobody has diagnosed them. Relabelling an open question as a settled fact would have outlived everyone who knew better. splits in expected-test-counts.json asserts 1486+233=1719 on every invocation on both OSes; observed firing when a half is lowered. verify-test-run.py gains --only/--filter/--key, refuses --filter without --key, merges on --update, and scopes stale-trx deletion so two sequential runs stop wiping each other's evidence. Done on a branch so main stayed green throughout; merged after a fully green run.",
+      "kind": "command",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/investigations/INV-0005-the-gate-runs-everything-and-has-been-red-for-two-days.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Take the multiplier win INV-0005 phase 2 could not: get the portable majority of AiDe.Core.Tests off the 2x Windows runner onto Linux, without weakening coverage.",
+      "done_when": "The Core suite split by an explicit declared trait rather than an inferred classification; both halves green on CI; the halves proven to sum to the whole 1,719 with that invariant enforced on every invocation; anything that fails on Linux classified honestly rather than relabelled; main never red while iterating.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "03f57f0d7db85237a8731b46ec6fdd2d19b0b649",
+        "short": "03f57f0d7",
+        "branch": "main",
+        "pushed": false
       }
     }
   ],
