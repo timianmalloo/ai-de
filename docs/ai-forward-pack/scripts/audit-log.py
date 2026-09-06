@@ -333,7 +333,7 @@ def read_log(root, which, warn=True):
 
 def append_log(root, which, entry):
     os.makedirs(audit_dir(root), exist_ok=True)
-    with open(log_path(root, which), "a", encoding="utf-8") as f:
+    with open(log_path(root, which), "a", encoding="utf-8", newline="\n") as f:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 

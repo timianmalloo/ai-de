@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-06T20:18:16Z",
+  "generated": "2026-09-06T20:19:43Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9664,6 +9664,24 @@ window.AUDIT_DATA = {
         "branch": "main",
         "pushed": true
       }
+    },
+    {
+      "id": "al-01M1W60Y3JS2HNQNSG40TATK1K",
+      "shortname": "pin-append-lf",
+      "datetime": "2026-09-06T20:19:43Z",
+      "session": "session_01GVhuxmxQ2Xb7pN6aTJmPhm",
+      "prompt": "yes push and then investigate the orphaned testhost",
+      "summary": "The append at audit-log.py:336 was the one unpinned write left, and it runs on EVERY skill invocation - so it was the write most responsible for the working tree drifting back to CRLF after each turn. Pinned in ai-de and in both copies in ai-forward.",
+      "kind": "command",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Pin the audit log's own append write to LF in both repos.",
+      "done_when": "A fresh append adds no CRLF to audit-log.jsonl.",
+      "tier": "T0"
     }
   ],
   "changes": [
