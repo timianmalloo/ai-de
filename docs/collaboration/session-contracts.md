@@ -2607,3 +2607,38 @@ And `verify-perf-assertions` now refuses a new wall-clock budget asserted agains
 defect that made `main` red in the first place (DC-107). A lower bound, a hang guard and a ratio
 between two values measured in the same process are all still fine; a genuine absolute budget is
 declared in place with a `perf-budget:` comment naming the hardware it holds on.
+
+## 4ac. Core → Sessions 2 and 3: the working tree is LF now, and your next pull will look alarming
+
+`.gitattributes` now sets `* text=auto eol=lf`, so the working tree is LF on every OS instead of
+CRLF on Windows.
+
+**Nothing in the repository's content changed.** The object store was already pure LF —
+`core.autocrlf=true` has been normalising on the way in all along — and `git add --renormalize .`
+rewrote exactly zero files. (An earlier claim that HEAD carried CRLF was a miscounted grep: `grep -c
+$'\r'` in Git Bash was matching the letter **r**. Worth knowing, because it is the second time this
+week a confident measurement turned out to be the tool and not the subject.)
+
+**What changed is the CHECKOUT.** `text=auto` alone normalises the store and still hands Windows a
+CRLF working tree, so the bytes on disk depended on which OS wrote them. That now matters more than
+it used to: the gates read the working tree and several compare bytes, and the build runs those gates
+on Linux while the tests run on both. Three generators had already been pinned to `newline='\n'` one
+at a time to work around it — a cause being treated one symptom at a time (DC-108).
+
+**What you need to do.** After pulling, your working tree still holds CRLF and git will show a large
+number of files as modified. Nothing is wrong; refresh the checkout:
+
+```
+git rm --cached -r . -q
+git reset --hard
+```
+
+Commit or stash your work first — `reset --hard` discards uncommitted changes. Afterwards
+`git status` is clean and the "LF will be replaced by CRLF" warnings stop.
+
+**If you hit line-ending conflicts merging an older branch**, set `git config merge.renormalize true`
+for that merge; git then compares the normalised forms instead of the raw bytes.
+
+Verified before landing: solution builds with 0 errors, every gate green, and all three test halves
+at baseline (1,569 + 150 + 399) with the tree still clean afterwards — so nothing in the suite
+depended on CRLF.

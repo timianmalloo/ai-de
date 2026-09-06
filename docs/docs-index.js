@@ -5878,7 +5878,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b791fbaf02c6d63534a9972e979f12b1e3fb69c5c743f8057aeacc5d16088bc9"
+      "sourceSha256": "551a8eb68d6bf1d12d9640452f094c1e33f19933de8caa3f519975b09fff423b"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -11091,5 +11091,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "d9096c1396f875aacd8c66bc6254511e2618bded2d6560c10f3ad513b3180069"
+  "graphSha256": "7dc710c262d7f0685eb4fc78f125cbf9954f994756c0371ccafe335a58917e6d"
 };
