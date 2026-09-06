@@ -21,6 +21,7 @@ namespace AiDe.Core.Tests;
 /// FAIL rather than skip (<b>DC-012</b>).</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class DispatchLiveSessionTests
 {
     [Fact]

@@ -14,6 +14,7 @@ namespace AiDe.Core.Tests;
 /// degrading.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class WorkspaceLockTests
 {
     private static string FreshWorkspace() =>

@@ -23,6 +23,7 @@ namespace AiDe.Core.Tests;
 /// the test below simulates it by never calling finalize.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class BoundaryDispatchTests : IDisposable
 {
     private readonly TestWorkspace _workspace = TestWorkspace.Create();

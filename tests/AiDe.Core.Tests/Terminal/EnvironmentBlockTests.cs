@@ -24,6 +24,7 @@ namespace AiDe.Core.Tests.Terminal;
 /// below the one that breaks PowerShell, so the hazard that does exist is already covered.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class EnvironmentBlockTests
 {
     [Fact]

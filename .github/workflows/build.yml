@@ -308,6 +308,45 @@ jobs:
         run: python tools/verify-extractor-generation.py
 
   # ---------------------------------------------------------------------------------------------
+  # THE PORTABLE 94% OF THE CORE SUITE, ON LINUX AT 1x.
+  #
+  # AiDe.Core.Tests targets net10.0 and 1,621 of its 1,719 cases are platform-agnostic. What pinned
+  # the whole suite to a 2x Windows runner was ONE build-order ProjectReference to AiDe.Daemon
+  # (net10.0-windows), which cannot be built off Windows - present for the 9 cases that launch the
+  # daemon as a process. That reference is now conditioned on Windows, and the cases that need it
+  # declare [Trait("Platform", "Windows")].
+  #
+  # CHEAPER IS NEVER WEAKER (CE19): the halves are not independent minimums. `splits` in
+  # tools/expected-test-counts.json asserts they still total 1,719, checked on every invocation on
+  # both operating systems, so lowering one half to make a run pass fails loudly instead.
+  # ---------------------------------------------------------------------------------------------
+  core-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Test — the portable half (with run-integrity gate)
+        run: python tools/verify-test-run.py --only AiDe.Core.Tests --filter 'Platform!=Windows' --key AiDe.Core.Tests.portable
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-linux
+          path: artifacts/test-results/*.trx
+          if-no-files-found: warn
+
+  # ---------------------------------------------------------------------------------------------
   # RING 0/1 — everything that needs .NET, on Windows because it genuinely needs Windows: WPF
   # (net10.0-windows), ConPTY, and the daemon launched as a separate process.
   #
@@ -347,8 +386,16 @@ jobs:
       # number of tests that never ran (defect class DC-012). The gate asserts on that negative:
       # every project must produce results, report itself Completed, and execute at least as many
       # tests as the committed baseline.
-      - name: Test (with run-integrity gate)
-        run: python tools/verify-test-run.py
+      #
+      # THIS JOB NOW RUNS ONLY WHAT NEEDS WINDOWS. `AiDe.App.Tests` is WPF, so all 399 of it. Of
+      # `AiDe.Core.Tests`, only the 98 cases that launch the net10.0-windows daemon or drive ConPTY -
+      # they carry [Trait("Platform", "Windows")]. The other 1,621 run on Linux in `core-tests`, at
+      # 1x instead of 2x. tools/expected-test-counts.json asserts the two halves still total 1,719,
+      # so the split can be re-balanced but coverage cannot quietly shrink.
+      - name: Test — the Windows-locked half (with run-integrity gate)
+        run: |
+          python tools/verify-test-run.py --only AiDe.App.Tests
+          python tools/verify-test-run.py --only AiDe.Core.Tests --filter 'Platform=Windows' --key AiDe.Core.Tests.windows
 
       # The joins harness is not in AiDe.sln, so a change to GraphAsync broke it while the solution
       # build stayed green and the next measurement silently ran a STALE BINARY (DC-023, with the

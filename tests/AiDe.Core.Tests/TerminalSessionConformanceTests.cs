@@ -282,6 +282,7 @@ public abstract class TerminalSessionConformanceTests : IDisposable
 }
 
 /// <summary>D7 against the Phase-1 fixture — the double every dispatch test still runs on.</summary>
+[Trait("Platform", "Windows")]
 public sealed class FixtureTerminalSessionConformanceTests : TerminalSessionConformanceTests
 {
     protected override Task<ITerminalSession> CreateAsync(string sessionId, long generation) =>

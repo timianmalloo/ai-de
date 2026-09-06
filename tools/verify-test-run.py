@@ -71,21 +71,63 @@ def discover_projects() -> list[Path]:
     return projects
 
 
-def run_tests(projects: list[Path]) -> None:
+def split_invariant(document: dict) -> list[str]:
+    """Each split's halves must sum to the whole project's baseline.
+
+    THE CONTROL THAT KEEPS "CHEAPER IS NEVER WEAKER" CHECKABLE. `AiDe.Core.Tests` is run in two
+    halves on two operating systems: the portable majority on Linux and the Windows-locked minority
+    on Windows. Two independent minimums would let someone quietly lower one to make a run pass,
+    and the total — the number that says whether anything stopped running at all — would move with
+    nobody watching. This asserts the halves still account for the whole, so the split can be
+    re-balanced but the coverage cannot shrink without saying so out loud.
+    """
+    minimums = document.get("minimumExecuted", {})
+    findings = []
+
+    for whole, parts in document.get("splits", {}).items():
+        if whole not in minimums:
+            findings.append(f"split '{whole}' has no whole-project baseline to be checked against")
+            continue
+
+        missing = [p for p in parts if p not in minimums]
+        if missing:
+            findings.append(f"split '{whole}' names {missing}, which have no baseline")
+            continue
+
+        total = sum(minimums[p] for p in parts)
+        if total != minimums[whole]:
+            findings.append(
+                f"split '{whole}': its halves total {total} but the whole expects "
+                f"{minimums[whole]} — {abs(minimums[whole] - total)} test(s) are unaccounted for. "
+                "Either a half's baseline was lowered without the total moving, or tests moved "
+                "between halves and nobody said so.")
+
+    return findings
+
+
+def run_tests(projects: list[Path], filter_expr: str | None = None, key: str | None = None) -> None:
     RESULTS.mkdir(parents=True, exist_ok=True)
-    for stale in RESULTS.glob("*.trx"):
-        stale.unlink()
+
+    # Only the results this invocation is about to replace. Deleting every .trx would make two
+    # sequential runs — the App suite and one HALF of the Core suite, which is how the Windows job
+    # now works — wipe each other's evidence, leaving the uploaded artifact describing whichever ran
+    # last. The verification itself would still be correct; the record a human reads would not be.
+    for project in projects:
+        stale = RESULTS / f"{key or project.stem}.trx"
+        stale.unlink(missing_ok=True)
 
     for project in projects:
-        name = project.stem
         # Per-project runs give per-assembly counts, which is what the baseline is expressed in —
-        # and it means one crashed assembly cannot mask another's numbers.
-        subprocess.run(
-            ["dotnet", "test", str(project), "--nologo",
-             "--logger", f"trx;LogFileName={name}.trx",
-             "--results-directory", str(RESULTS)],
-            cwd=REPO, capture_output=True, text=True, check=False,
-        )
+        # and it means one crashed assembly cannot mask another's numbers. `key` renames the result
+        # file when only HALF a project is being run, so the two halves cannot overwrite each other.
+        name = key or project.stem
+        command = ["dotnet", "test", str(project), "--nologo",
+                   "--logger", f"trx;LogFileName={name}.trx",
+                   "--results-directory", str(RESULTS)]
+        if filter_expr:
+            command += ["--filter", filter_expr]
+
+        subprocess.run(command, cwd=REPO, capture_output=True, text=True, check=False)
 
 
 def read_counts(project_name: str) -> tuple[dict[str, int], str] | None:
@@ -113,20 +155,51 @@ def main() -> int:
                         help="re-baseline the expected counts from this run")
     parser.add_argument("--no-run", action="store_true",
                         help="verify existing result files instead of running the suite")
+    parser.add_argument("--only", metavar="PROJECT",
+                        help="run and verify one project by name (e.g. AiDe.Core.Tests)")
+    parser.add_argument("--filter", dest="filter_expr", metavar="EXPR",
+                        help="a dotnet test --filter, for running one HALF of a project")
+    parser.add_argument("--key", metavar="NAME",
+                        help="baseline key and result-file name for a filtered half "
+                             "(e.g. AiDe.Core.Tests.portable)")
     args = parser.parse_args()
 
+    if args.filter_expr and not args.key:
+        print("verify-test-run: --filter needs --key, or the half would be measured against the "
+              "whole project's baseline and a shortfall would read as success")
+        return 1
+
     projects = discover_projects()
+
+    if args.only:
+        projects = [p for p in projects if p.stem == args.only]
+        if not projects:
+            print(f"verify-test-run: no test project named '{args.only}' — refusing to report "
+                  "success over nothing")
+            return 1
+
     if not projects:
         print("verify-test-run: no test projects found — refusing to report success over nothing")
         return 1
 
-    if not args.no_run:
-        print(f"verify-test-run: running {len(projects)} test project(s)…")
-        run_tests(projects)
-
-    baseline: dict[str, int] = {}
+    document: dict = {}
     if BASELINE.exists():
-        baseline = json.loads(BASELINE.read_text(encoding="utf-8")).get("minimumExecuted", {})
+        document = json.loads(BASELINE.read_text(encoding="utf-8"))
+    baseline: dict[str, int] = document.get("minimumExecuted", {})
+
+    # Checked on every invocation, including a filtered half: the halves must still account for the
+    # whole, whichever side is running.
+    invariant = split_invariant(document)
+    if invariant and not args.update:
+        print("verify-test-run: FAILED")
+        for finding in invariant:
+            print(f"  - {finding}")
+        return 1
+
+    if not args.no_run:
+        scope = f"{args.key} ({args.filter_expr})" if args.key else f"{len(projects)} test project(s)"
+        print(f"verify-test-run: running {scope}…")
+        run_tests(projects, args.filter_expr, args.key)
 
     findings: list[str] = []
     observed: dict[str, int] = {}
@@ -136,7 +209,7 @@ def main() -> int:
     print("-" * 62)
 
     for project in projects:
-        name = project.stem
+        name = args.key or project.stem
         result = read_counts(name)
 
         if result is None:
@@ -173,15 +246,23 @@ def main() -> int:
 
     if args.update:
         BASELINE.parent.mkdir(parents=True, exist_ok=True)
+        # MERGED, not replaced. A filtered run only observes its own half, and writing `observed`
+        # wholesale would delete every key this invocation did not measure — including the whole
+        # project's total, which is the one the split invariant is checked against.
+        merged = dict(baseline)
+        merged.update(observed)
         BASELINE.write_text(json.dumps({
             "_comment": (
                 "Minimum tests that must EXECUTE per project. The control for defect class DC-012: "
                 "a crashed test host reports success with a smaller count, and nothing else notices. "
                 "Raise these with `python tools/verify-test-run.py --update` when you add tests; "
-                "never lower one to make a run pass."
+                "never lower one to make a run pass. Keys with a suffix are HALVES of a project run "
+                "on one OS; `splits` says which halves must account for which whole."
             ),
-            "minimumExecuted": observed,
+            "minimumExecuted": merged,
+            "splits": document.get("splits", {}),
         }, indent=2) + "\n", encoding="utf-8")
+        observed = merged
         print(f"verify-test-run: baseline updated → {BASELINE.relative_to(REPO)}")
         for name, count in sorted(observed.items()):
             print(f"  {name}: {count}")

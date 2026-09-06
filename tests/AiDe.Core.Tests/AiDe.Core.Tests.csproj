@@ -59,10 +59,21 @@
       SkipGetTargetFrameworkProperties because the daemon targets net10.0-windows while these
       tests target net10.0 — without it the build refuses a reference it is only using for
       ordering.
+
+      AND CONDITIONED ON WINDOWS, which is what lets this project build on Linux at all. These tests
+      target net10.0 and 1,621 of their 1,719 cases are portable — but a net10.0-windows project
+      cannot be BUILT off Windows, so this single build-order reference, present for the 9 cases that
+      launch the daemon as a process, was pinning the entire suite to a 2× runner (INV-0005).
+
+      The cases that need it declare [Trait("Platform", "Windows")] and run only there; on Linux the
+      reference is absent and so are they. `splits` in tools/expected-test-counts.json asserts the
+      two halves still account for all 1,719, so the split can be re-balanced but coverage cannot
+      quietly shrink.
     -->
     <ProjectReference Include="..\..\src\AiDe.Daemon\AiDe.Daemon.csproj"
                       ReferenceOutputAssembly="false"
-                      SkipGetTargetFrameworkProperties="true" />
+                      SkipGetTargetFrameworkProperties="true"
+                      Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
   </ItemGroup>
 
   <ItemGroup>

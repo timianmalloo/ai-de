@@ -19,6 +19,7 @@ namespace AiDe.Core.Tests;
 /// whole budget and the daemon's response-write timeout would abandon it first.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class ScopeRefreshTests
 {
     private const string Workspace = "ws-refresh";

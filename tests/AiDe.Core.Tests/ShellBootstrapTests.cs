@@ -16,6 +16,7 @@ namespace AiDe.Core.Tests;
 /// which is the only question worth asking of a launcher.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class ShellBootstrapTests : IDisposable
 {
     private readonly List<string> _workspaces = [];

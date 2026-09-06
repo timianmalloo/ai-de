@@ -25,6 +25,7 @@ namespace AiDe.Core.Tests;
 /// child is the point — a fixture session would only prove the fixture keeps secrets.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class TerminalPrivacyTests
 {
     [Fact]

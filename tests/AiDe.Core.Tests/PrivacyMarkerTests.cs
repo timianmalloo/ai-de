@@ -22,6 +22,7 @@ namespace AiDe.Core.Tests;
 /// it; <see cref="EveryActivitySource_IsUnderTheAideNamespace"/> is what stops it reopening.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class PrivacyMarkerTests : IDisposable
 {
     /// <summary>Unique enough that a match cannot be coincidence.</summary>

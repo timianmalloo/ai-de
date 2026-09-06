@@ -21,6 +21,7 @@ namespace AiDe.Core.Tests;
 /// connected is wrong about everything.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class IpcTransportTests
 {
     private const string Workspace = "ws-transport";

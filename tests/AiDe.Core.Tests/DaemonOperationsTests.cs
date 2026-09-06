@@ -20,6 +20,7 @@ namespace AiDe.Core.Tests;
 /// read it. Comparing whole results is what catches those; comparing a node id would not.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class DaemonOperationsTests : IDisposable
 {
     private readonly TestWorkspace _workspace = TestWorkspace.Create();

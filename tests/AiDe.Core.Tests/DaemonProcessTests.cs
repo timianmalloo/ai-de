@@ -20,6 +20,7 @@ namespace AiDe.Core.Tests;
 /// the actual scenario, and it is the only version that proves the store cannot get two writers.</para>
 /// </remarks>
 [SupportedOSPlatform("windows")]
+[Trait("Platform", "Windows")]
 public sealed class DaemonProcessTests
 {
     private static string FreshWorkspace() =>
