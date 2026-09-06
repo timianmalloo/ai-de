@@ -54,8 +54,17 @@ jobs:
         run: |
           set -euo pipefail
 
-          gh label create main-red --color B60205 \
-            --description "main's build is failing" --force >/dev/null 2>&1 || true
+          # --repo is REQUIRED here. This job has no checkout — a workflow_run job needs no source —
+          # so gh has no git remote to infer the repository from, and `gh label create` without it
+          # fails. The first run of this workflow failed exactly that way: the label was never
+          # created, and `gh issue create --label main-red` then died with "'main-red' not found".
+          # The error was also swallowed by `|| true`, which is why it surfaced one step later than
+          # it happened.
+          if ! gh label create main-red --repo "$REPO" --color B60205 \
+                 --description "main's build is failing" --force; then
+            echo "could not ensure the main-red label exists — see above" >&2
+            exit 1
+          fi
 
           existing=$(gh issue list --repo "$REPO" --label main-red --state open \
             --json number --jq '.[0].number // empty')
