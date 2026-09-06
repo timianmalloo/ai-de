@@ -265,11 +265,19 @@ proves it, and now fails loudly if it does not.
   above 23 ms.
 - Phase 3's placement was decided from a runner measurement (401s), not the earlier 612s figure —
   which itself came from a differently-loaded run, so treat single-run step timings as ±50%.
-- **A new, unrelated flake surfaced and is NOT fixed here.**
-  `TerminalPrivacyTests.ASecretPrintedByATerminal_ReachesNoSpanAttributeAndNoWorkspaceFile` failed
-  once on CI with exit code 8 — *the seeded secret never reached the terminal's output channel* — and
-  passes locally in ~1s. It launches a real console helper through ConPTY with a 120s bound, so it is
-  timing-sensitive on a loaded shared runner. The test is well built: it refuses to pass vacuously,
-  which is why the failure is legible at all. It was seen once in one run and has not recurred;
-  raising the bound without understanding whether the output *hung* or was merely *late* would be
-  guessing, so it is recorded rather than patched. If it recurs it wants its own investigation.
+- **A new, unrelated flake surfaced, has since RECURRED, and is not fixed here.**
+  `TerminalPrivacyTests.ASecretPrintedByATerminal_ReachesNoSpanAttributeAndNoWorkspaceFile` has now
+  failed **twice** on CI (2026-09-05, on `ce64c1d` and again on `047d2b8`), passes locally in ~1s,
+  and passed on an immediate re-run of the second failure — so it is **intermittent, not
+  deterministic**. Two occurrences is this repository's own recurrence threshold, so it is a pattern
+  rather than an incident. The test is well built: it refuses to pass vacuously, which is the only
+  reason the failure is legible at all.
+
+  **The obvious fix is ruled out by the evidence.** The message is `output completed before
+  '<marker>' appeared`, **not** `timed out waiting for '<marker>'` — so the 25s deadline in
+  `tests/AiDe.Core.TerminalHost/Program.cs` is never reached and raising any bound would change
+  nothing. The ConPTY output channel *completes* before the marker's **second** occurrence arrives,
+  and that second occurrence is the terminal echoing the typed command back. The open questions are
+  why the channel closes early and whether that echo is reliable on a non-interactive CI console.
+  Inflating a bound that was never hit is precisely the shape this whole investigation is about, so
+  this is recorded for its own investigation rather than patched.
