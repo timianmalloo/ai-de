@@ -6,7 +6,7 @@
 name: docs-health
 on:
   pull_request:
-    paths: ["docs/**", "**/*.md", ".github/workflows/docs-health.yml"]
+    paths: ["docs/**", "**/*.md", "scripts/goal-state-gate.py", ".github/workflows/docs-health.yml"]
   workflow_dispatch:
 
 jobs:
@@ -25,6 +25,14 @@ jobs:
       # Start with warn; flip to fail once the backlog is clean.
       - name: Freshness gate (V13/V16)
         run: python3 docs/ai-forward-pack/scripts/docs-graph.py freshness --gate warn
+
+      # AI-Forward proposal 3.b: a substantive audit entry added in this PR that recorded no
+      # goal-state (done_when)/tier or exceeded its fan-out cap fails the merge. Forward ratchet
+      # (historical entries grandfathered). Reuses the vendored selfcheck --json.
+      - name: Goal-state gate (AI-Forward 3.b)
+        run: |
+          git fetch --no-tags --depth=1 origin main
+          python3 scripts/goal-state-gate.py
 
   # Optional: pack-eval job for repos that vendor the pack source and edit skills/prompts.
   # Uncomment and point --workspace at recorded eval workspaces (see evals/README.md).
