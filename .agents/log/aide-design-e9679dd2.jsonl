@@ -1,0 +1,8 @@
+{"agent": "claude-design", "at": 1788455824.8547263, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationContract.cs", "seq": 1, "session": "aide-design-e9679dd2", "ttl": 3600.0, "wi": "episode-artifacts-channel"}
+{"agent": "claude-design", "at": 1788455824.9373345, "kind": "claim", "path": "src/AiDe.Core/Watcher/IngestHost.cs", "seq": 2, "session": "aide-design-e9679dd2", "ttl": 3600.0, "wi": "episode-artifacts-channel"}
+{"agent": "claude-design", "at": 1788455825.0019028, "kind": "claim", "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs", "seq": 3, "session": "aide-design-e9679dd2", "ttl": 3600.0, "wi": "episode-artifacts-channel"}
+{"agent": "claude-design", "at": 1788455825.0916312, "kind": "claim", "path": "src/AiDe.Core/Watcher/WatcherObservationStore.cs", "seq": 4, "session": "aide-design-e9679dd2", "ttl": 3600.0, "wi": "episode-artifacts-channel"}
+{"agent": "claude-design", "at": 1788457067.0619478, "kind": "release", "path": "src/AiDe.Core/Watcher/CoordinationContract.cs", "seq": 5, "session": "aide-design-e9679dd2", "wi": "WI-0"}
+{"agent": "claude-design", "at": 1788457067.146116, "kind": "release", "path": "src/AiDe.Core/Watcher/IngestHost.cs", "seq": 6, "session": "aide-design-e9679dd2", "wi": "WI-0"}
+{"agent": "claude-design", "at": 1788457067.2266426, "kind": "release", "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs", "seq": 7, "session": "aide-design-e9679dd2", "wi": "WI-0"}
+{"agent": "claude-design", "at": 1788457067.2986126, "kind": "release", "path": "src/AiDe.Core/Watcher/WatcherObservationStore.cs", "seq": 8, "session": "aide-design-e9679dd2", "wi": "WI-0"}

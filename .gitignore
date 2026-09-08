@@ -527,3 +527,18 @@ spikes/
 # reached the repository: 470 bytes each of a PowerShell screen-reader warning and terminal escape
 # sequences, from a worktree that no longer exists, referenced by nothing and committed by accident.
 *.out
+
+# COORDINATION LAYER (.agents/) — the pack's default is `.agents/*` then `!.agents/artifacts.yml`,
+# so coord state stays per-clone and only the registry travels. This repo deliberately does NOT
+# carry those lines: `.agents/decisions/`, `.agents/log/` and `.agents/sessions/` are the committed
+# loomkeeper contract logs that AGENTS.md mandates and tools/verify-stranded-audit.py checks, so
+# ignoring them would silently stop new episode captures from ever being tracked. Nothing under
+# .agents/ is ignored here, which satisfies the pack's requirement (the registry is visible to git)
+# by a wider route. Verified with `git check-ignore --quiet`, not `-v`.
+
+# The stock `[Ll]og/` rule above also matches .agents/log/ - which is $AIDE_CONTRACT_LOG, where
+# every episode-close capture is written. Measured: a NEW capture there was invisible to git while
+# the seven already-tracked ones looked fine, so the capture mandate was failing silently - exactly
+# the shape AGENTS.md counts as 111 episodes with 1 observation. The exclusion is on the DIRECTORY,
+# so the negation must re-include the directory, not the files inside it.
+!.agents/log/

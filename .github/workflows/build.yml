@@ -190,6 +190,21 @@ jobs:
         if: ${{ !cancelled() }}
         run: python tools/verify-audit-log.py
 
+      # Pack revision 63: the audit selfcheck was advisory — it always returned 0, "a record not an
+      # enforcement" — so a substantive turn could record no goal state or bust its declared fan-out
+      # cap and nothing said so. `--gate` makes it fail; `--since` makes it a FORWARD ratchet, judging
+      # only entries absent from the base, so the existing history is never re-litigated.
+      #
+      # The base is origin/main for a branch. On a push to main itself origin/main IS HEAD, which
+      # would compare the commit to itself and pass vacuously — the memoir shape CI6 warns about — so
+      # main falls back to its own previous commit and the new entries are still judged.
+      - name: Goal-state gate (new audit entries)
+        if: ${{ !cancelled() }}
+        run: |
+          base=origin/main
+          [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ] && base=HEAD~1
+          python docs/ai-forward-pack/scripts/audit-log.py selfcheck --gate --since "$base"
+
       # verify-audit-log covers two JSONL logs. DC-013 recurred a fourth time in a THIRD allocator
       # nobody had classified as one — the defect register, where the file merged cleanly with two
       # entries under DC-032. This asks the generalising question instead: what else here is numbered

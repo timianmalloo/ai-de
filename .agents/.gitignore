@@ -1,0 +1,5 @@
+# coord install writes `decisions/` here so coord state stays per-clone. This repo COMMITS
+# .agents/decisions - they are loomkeeper contract records, not scratch. The negation below
+# also keeps coord from re-appending the exclusion: it only appends when the substring
+# `decisions/` is absent (coord-core.py:2144).
+!decisions/

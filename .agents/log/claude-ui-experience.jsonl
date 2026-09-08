@@ -1,0 +1,26 @@
+{"agent": "claude-ui-experience", "at": 1788373434.2627525, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationContract.cs", "seq": 1, "session": "claude-ui-experience", "ttl": 7200.0, "wi": "live-episodes"}
+{"agent": "claude-ui-experience", "at": 1788373435.9455564, "kind": "claim", "path": "src/AiDe.Core/Watcher/IngestHost.cs", "seq": 2, "session": "claude-ui-experience", "ttl": 7200.0, "wi": "live-episodes"}
+{"agent": "claude-ui-experience", "at": 1788373790.8453302, "kind": "release", "path": "all", "seq": 3, "session": "claude-ui-experience", "wi": "live-episodes"}
+{"agent": "claude-ui-experience", "at": 1788378967.2756796, "kind": "claim", "path": "src/AiDe.App/Workbench/TerminalSurface.cs", "seq": 4, "session": "claude-ui-experience", "ttl": 5400.0, "wi": "agent-launch-executable"}
+{"agent": "claude-ui-experience", "at": 1788378968.9930542, "kind": "claim", "path": "src/AiDe.App/Workbench/SurfaceContentFactory.cs", "seq": 5, "session": "claude-ui-experience", "ttl": 5400.0, "wi": "agent-launch-executable"}
+{"agent": "claude-ui-experience", "at": 1788379380.2675316, "kind": "release", "path": "all", "seq": 6, "session": "claude-ui-experience", "wi": "agent-launch-executable"}
+{"agent": "claude-ui-experience", "at": 1788380129.8592548, "kind": "claim", "path": "src/AiDe.App/Workbench/TerminalSurface.cs", "seq": 7, "session": "claude-ui-experience", "ttl": 1800.0, "wi": "env-hook-note"}
+{"agent": "claude-ui-experience", "at": 1788380221.6816835, "kind": "release", "path": "all", "seq": 8, "session": "claude-ui-experience", "wi": "env-hook-note"}
+{"agent": "claude-ui-experience", "at": 1788384825.8200307, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationContractLog.cs", "seq": 9, "session": "claude-ui-experience", "ttl": 5400.0, "wi": "coord-log-filename"}
+{"agent": "claude-ui-experience", "at": 1788385157.0361774, "kind": "release", "path": "all", "seq": 10, "session": "claude-ui-experience", "wi": "coord-log-filename"}
+{"agent": "claude-ui-experience", "at": 1788390387.726018, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 11, "session": "claude-ui-experience", "ttl": 3600.0, "wi": "agent-session-bridge"}
+{"agent": "claude-ui-experience", "at": 1788390630.0744643, "kind": "release", "path": "all", "seq": 12, "session": "claude-ui-experience", "wi": "agent-session-bridge"}
+{"agent": "claude-ui-experience", "at": 1788392822.8449738, "kind": "claim", "path": "src/AiDe.Core/Watcher/CoordinationContract.cs", "seq": 13, "session": "claude-ui-experience", "ttl": 7200.0, "wi": "board-post"}
+{"agent": "claude-ui-experience", "at": 1788392824.4418416, "kind": "claim", "path": "src/AiDe.Core/Watcher/IngestHost.cs", "seq": 14, "session": "claude-ui-experience", "ttl": 7200.0, "wi": "board-post"}
+{"agent": "claude-ui-experience", "at": 1788393193.5307546, "kind": "release", "path": "all", "seq": 15, "session": "claude-ui-experience", "wi": "board-post"}
+{"agent": "claude-ui-experience", "at": 1788394968.2860959, "kind": "claim", "path": "src/AiDe.Core/Watcher/WatcherObservationStore.cs", "seq": 16, "session": "claude-ui-experience", "ttl": 7200.0, "wi": "daydream-d2-store"}
+{"agent": "claude-ui-experience", "at": 1788394970.0154135, "kind": "claim", "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs", "seq": 17, "session": "claude-ui-experience", "ttl": 7200.0, "wi": "daydream-d2-store"}
+{"agent": "claude-ui-experience", "at": 1788395306.0889938, "kind": "release", "path": "all", "seq": 18, "session": "claude-ui-experience", "wi": "daydream-d2-store"}
+{"agent": "claude-ui-experience", "at": 1788396882.0889037, "kind": "claim", "path": "src/AiDe.Core/Watcher/WatcherObservationStore.cs", "seq": 19, "session": "claude-ui-experience", "ttl": 3600.0, "wi": "daydream-d4-events"}
+{"agent": "claude-ui-experience", "at": 1788396882.1692126, "kind": "claim", "path": "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs", "seq": 20, "session": "claude-ui-experience", "ttl": 3600.0, "wi": "daydream-d4-events"}
+{"agent": "claude-ui-experience", "at": 1788397063.8237305, "kind": "release", "path": "all", "seq": 21, "session": "claude-ui-experience", "wi": "daydream-d4-events"}
+{"agent": "claude-ui-experience", "at": 1788397267.2708113, "kind": "claim", "path": "src/AiDe.App/Workbench/SurfaceContentFactory.cs", "seq": 22, "session": "claude-ui-experience", "ttl": 1800.0, "wi": "daydream-d4-surface"}
+{"agent": "claude-ui-experience", "at": 1788397269.1257339, "kind": "claim", "path": "src/AiDe.App/Workbench/WorkbenchShell.cs", "seq": 23, "session": "claude-ui-experience", "ttl": 1800.0, "wi": "daydream-d4-surface"}
+{"agent": "claude-ui-experience", "at": 1788397323.5972817, "kind": "release", "path": "all", "seq": 24, "session": "claude-ui-experience", "wi": "daydream-d4-surface"}
+{"agent": "claude-ui-experience", "at": 1788397421.5805895, "kind": "claim", "path": "src/AiDe.App/Workbench/SurfaceContentFactory.cs", "seq": 25, "session": "claude-ui-experience", "ttl": 1800.0, "wi": "daydream-d4-fix"}
+{"agent": "claude-ui-experience", "at": 1788397478.6060398, "kind": "release", "path": "all", "seq": 26, "session": "claude-ui-experience", "wi": "daydream-d4-fix"}

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-06T20:21:16Z",
+  "generated": "2026-09-07T23:56:09Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9700,6 +9700,27 @@ window.AUDIT_DATA = {
       "goal": "Confirm no writer re-dirties the tree with CRLF after a refresh.",
       "done_when": "An append plus a full regenerate leaves zero CRLF and a clean git status.",
       "tier": "T0"
+    },
+    {
+      "id": "al-01M1Z4SZ2XN4K2P6QQ70WJ0RJJ",
+      "shortname": "updatepack-r63",
+      "datetime": "2026-09-07T23:56:09Z",
+      "session": "updatepack-r63",
+      "prompt": "/updatepack",
+      "summary": "r61 -> r63 (2026.09.06.1). 15 UPDATE, 12 MERGE, 4 ADD, 3 BASELINE, 2 SKIP, 1 CONFLICT reconciled. Two new skills (prepare-for-coordination, execute-with-coordination; 25->27) and the AGENTS block re-pasted at Workflows 27. The coordination layer was inert here exactly as class CTX-H describes - registry NOT PRESENT, no merge driver over 1,259 tracked files - and is now on: 6 patterns classified, coord-regen/coord-register registered, pre-commit floor written. Two judgement calls. (1) coord-core.py:899 bakes sys.executable into .agents/artifacts.yml, a file that MUST travel with the repo, so the generated registry named C:\\Users\\malla\\...\\python.exe and would break on every other clone; normalised to python and both generators re-verified at exit 0. Upstream defect, PACK-P family. (2) The pack's .agents/* + !.agents/artifacts.yml gitignore lines were NOT added: this repo commits .agents/decisions, .agents/log and .agents/sessions as the loomkeeper contract logs AGENTS.md mandates, and ignoring them would silently stop future episode captures being tracked - the requirement's purpose (registry visible to git) is met by a wider route, verified with git check-ignore --quiet. The rev-63 goal-state gate is wired into build.yml as a required check, with the base falling back to HEAD~1 on main so it cannot pass vacuously against itself. context-budget CONFLICT resolved by re-measurement: structure byte-identical, only per-repo numbers. pack-doctor 0 FAIL / 3 WARN (python3-on-Windows, copilot per-phase settings, pre-existing stale graph nodes) / 10 PASS; seven front-door controls green; docs/docs-index.js untouched.",
+      "kind": "command",
+      "skill": "updatepack",
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Bring ai-de's installed AI-Forward Pack from revision 61 to 63, applying the deployment map and every non-file deploy directive.",
+      "done_when": "pack-apply apply clean, every CONFLICT/REVIEW row decided by a person, coord classify init/install/doctor run, gitignore directive resolved, audit --gate wired, pack-doctor 0 FAIL, docs-index.js untouched, nothing left under conflicts/ or retired/.",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-07T23:48:10Z",
+      "duration_seconds": 479.0
     }
   ],
   "changes": [

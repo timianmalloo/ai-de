@@ -24,3 +24,9 @@
 # there is no .bat or .cmd that would need CRLF. `text=auto` detects binary content by itself, so an
 # image added later is safe without an entry here.
 * text=auto eol=lf
+docs/docs-index.js merge=coord-regen
+docs/audit/audit-data.js merge=coord-regen
+docs/audit/index.html merge=coord-regen
+docs/audit/audit-log.jsonl merge=coord-register
+docs/audit/change-log.jsonl merge=coord-register
+docs/health-history.jsonl merge=coord-register
