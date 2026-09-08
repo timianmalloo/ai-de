@@ -19,3 +19,12 @@ docs/audit/audit-log.jsonl: register
 docs/audit/change-log.jsonl: register
 docs/health-history.jsonl: register
 # <<< coord classify init - end managed block. Add your own entries BELOW.
+
+# INTERPRETER TOKEN — `coord classify init` writes sys.executable (coord-core.py:899), i.e. this
+# machine's absolute python.exe, into a file the pack requires to travel with the repo. Normalised
+# to `python` here. That token is CONTINGENT: python.org Windows ships no `python3`, while on POSIX
+# `python` may be absent (pack defect class PACK-C warns against blind substitution for exactly this
+# reason). It is correct for this repo because these commands run only where a merge happens — a
+# developer machine, all Windows — and NO workflow invokes coord, the merge drivers or `coord regen`
+# (verified against .github/workflows/, 2026-09-07). Wire coord into CI (ubuntu-latest) and this
+# token must be revisited. `classify init --force` re-bakes the absolute path; re-normalise after it.
