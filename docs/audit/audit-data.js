@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de",
-  "generated": "2026-09-09T18:47:32Z",
+  "project": "ai-de-feature-conductor-agent-plane",
+  "generated": "2026-09-09T19:15:10Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9867,6 +9867,48 @@ window.AUDIT_DATA = {
           "accepted": 3
         }
       ]
+    },
+    {
+      "id": "al-01M23SGWV17MAQ4DBPHNDBD3XV",
+      "shortname": "conductor N1+N2 envelope and engine catalog",
+      "datetime": "2026-09-09T19:15:10Z",
+      "session": "conductor-phase1",
+      "prompt": "Execute nodes N1 and N2 of the approved council-reviewed plan docs/plans/conductor-programme.md, in the worktree C:\\Projects\\ai-de-feature-conductor-agent-plane on branch feature/conductor-agent-plane.\n\nN1 - run-event envelope, bounded to one source. One record in src/AiDe.Core/AgentPlane/ in the spec 14.1 shape; kind is an OPEN STRING, not an exhaustive enum (the spec says consumers ignore unknown kinds and evolution is additive-only); ONE mapper, because ACP is the only Phase-1 source; no per-kind handler for a kind with no Phase-1 producer (block.open, plan.submitted, council.verdict, decision, quota.pressure); parent_agent_id carried as a nullable field with nothing built on it; ext preservation load-bearing. The oracle is the 88 REAL captured ACP frames in spikes/acp-subscription-lane/frames/ - round-trip every frame asserting no field is lost over the full JSON structure, assert the real non-schema-v1 traffic survives in ext (_auth/status_update is a top-level method; usage_update is a session/update discriminator; _session/goal and _meta.jetbrains.air are declared capabilities, not traffic), and load the corpus from the committed files, never from pasted strings (DC-021).\n\nN2 - engine catalog. Engines are data, not code paths. Three rows: claude-code, codex, copilot with the packages pinned in docs/notes/conductor-spec-errata-policy.md. ONE launch path exercised (adapter); an engine whose acp mode is not adapter is REFUSED WITH A NAMED REASON, never defaulted; an unknown engine id is refused; a simplify: marker on the launch-path restriction.\n\nTDD red-first, TreatWarningsAsErrors, tests mirror src, verify-test-run.py in CHECK mode (never --update), no dead code, prefer reuse and record the rung.",
+      "summary": "N1: RunEvent (spec 14.1 shape) with kind as an OPEN STRING, parent_agent_id carried and always null, and one ACP mapper. All 88 captured frames round-trip with every leaf present exactly once across body/ext (equal counts, so no drop and no duplication); mutation-checked by making the mapper drop jsonrpc and observing the oracle name the lost field. Unrecognized traffic (_auth/status_update as a top-level method, usage_update as a session/update discriminator) is carried whole in ext. N2: three engine data rows with the errata-note pins, one launch path (adapter), and three named refusals - unknown id, non-adapter mode, and adapter with no observed entry module. The third is a finding: codex declares acp: adapter in spec 14.2, so the mode gate alone would NOT have enforced its deferral; refusing an unobserved entry module does. Build 0 warnings; tests 2118 -> 2145 (+27); verify-test-run CHECK OK; marker-lint 8/8; verify-fixture-derivation OK; verify-no-conflict-markers OK. Gates NOT run and why: verify-derived-views, verify-defect-register, verify-perf-assertions, verify-standins - no docs view, defect register, perf assertion or stand-in was touched.",
+      "kind": "skill",
+      "skill": null,
+      "tool": "claude-code",
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/RunEvent.cs",
+        "src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs",
+        "src/AiDe.Core/AgentPlane/EngineCatalog.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/AcpRunEventMapperTests.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/EngineCatalogTests.cs"
+      ],
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "acp",
+        "phase-1"
+      ],
+      "outcome": "success",
+      "goal": "Land the run-event envelope (N1) and the engine catalog (N2) for the AI-DE Conductor Agent Plane, with the captured ACP frame corpus as the oracle for the envelope.",
+      "done_when": "AiDe.Core/AgentPlane/ holds the envelope record, one ACP mapper and the engine catalog; every frame in spikes/acp-subscription-lane/frames/*.jsonl round-trips with no field lost; an engine whose acp mode is not adapter is refused with a named reason; build and test green in Release; verify-test-run.py passes in CHECK mode.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "f366c4bb0d2a0e883454d39e24b2064709bb637f",
+        "short": "f366c4bb0",
+        "branch": "feature/conductor-agent-plane",
+        "pushed": null
+      }
     }
   ],
   "changes": [
