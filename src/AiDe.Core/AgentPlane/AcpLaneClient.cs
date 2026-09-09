@@ -24,14 +24,11 @@ public static class AcpAuthStatus
             return null;
         }
 
-        var kind = Text(status["kind"]);
+        var kind = AcpJson.Text(status["kind"]);
         return kind is null
             ? null
-            : new ObservedAuthStatus(kind, Text((status["account"] as JsonObject)?["plan"]), Text(status["label"]));
+            : new ObservedAuthStatus(kind, AcpJson.Text((status["account"] as JsonObject)?["plan"]), AcpJson.Text(status["label"]));
     }
-
-    private static string? Text(JsonNode? node)
-        => node is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
 }
 
 /// <summary>

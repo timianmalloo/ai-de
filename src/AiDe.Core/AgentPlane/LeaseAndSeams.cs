@@ -252,7 +252,7 @@ public sealed class LeaseMonitor
             return [];
         }
 
-        var toolCallId = Text(runEvent.Body["toolCallId"]) ?? runEvent.Kind + ":" + runEvent.Seq;
+        var toolCallId = AcpJson.Text(runEvent.Body["toolCallId"]) ?? runEvent.Kind + ":" + runEvent.Seq;
         var raised = new List<Seam>();
 
         foreach (var path in Locations(runEvent.Body))
@@ -353,13 +353,10 @@ public sealed class LeaseMonitor
 
         foreach (var location in locations.OfType<JsonObject>())
         {
-            if (Text(location["path"]) is { } path)
+            if (AcpJson.Text(location["path"]) is { } path)
             {
                 yield return path;
             }
         }
     }
-
-    private static string? Text(JsonNode? node)
-        => node is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
 }

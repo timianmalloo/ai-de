@@ -75,10 +75,10 @@ public sealed class AcpRunEventMapper
         var frame = Parse(frameLine);
         var ordinal = Interlocked.Increment(ref seq);
 
-        var method = Text(frame["method"]);
+        var method = AcpJson.Text(frame["method"]);
         var parameters = frame["params"] as JsonObject;
         var update = parameters?["update"] as JsonObject;
-        var sessionUpdate = update is null ? null : Text(update["sessionUpdate"]);
+        var sessionUpdate = update is null ? null : AcpJson.Text(update["sessionUpdate"]);
 
         var cost = CostOf(frame["result"] as JsonObject);
 
@@ -182,9 +182,6 @@ public sealed class AcpRunEventMapper
             Number(usage["cachedReadTokens"]),
             Requests: 1);
     }
-
-    private static string? Text(JsonNode? node)
-        => node is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
 
     private static long Number(JsonNode? node)
         => node is JsonValue value && value.TryGetValue<long>(out var number) ? number : 0;
