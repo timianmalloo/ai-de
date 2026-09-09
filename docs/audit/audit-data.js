@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-09T18:09:19Z",
+  "generated": "2026-09-09T18:22:11Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9774,6 +9774,40 @@ window.AUDIT_DATA = {
       "signals": {
         "verification_path": true,
         "verification_executed": true
+      }
+    },
+    {
+      "id": "al-01M23PFQGTS3QQQ355Y118FY8B",
+      "shortname": "spike-acp-subscription-lane",
+      "datetime": "2026-09-09T18:22:06Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "Run the Spike Protocol on the Agent Client Protocol and its Claude Code / Codex adapters: can a .NET 10 client drive a real claude-code ACP session authenticated by a Max SUBSCRIPTION (no API key), cwd = a git worktree, receiving structured tool-call/edit/permission events - today?",
+      "summary": "ANSWER: YES, verified by execution. A plain Node client (not Claude Code) spoke newline-delimited JSON-RPC to @agentclientprotocol/claude-agent-acp@0.75.1 with no API key in env, received authStatus label 'Claude Max' plan 'max', opened a session with cwd on a git working tree, and received tool_call, tool_call_update kind=edit, and session/request_permission carrying a structured diff. Phase 1 exit evidence is reachable as specified. SPEC CORRECTIONS FOUND: (1) the spec's @zed-industries adapter package names are STALE - the project moved, maintained packages are @agentclientprotocol/claude-agent-acp and @agentclientprotocol/codex-acp; the zed package last published 2026-03-26 pinning ACP SDK 0.14.x. (2) framing is newline-delimited JSON, NOT LSP Content-Length. (3) ACP is BIDIRECTIONAL - the agent calls the client (session/request_permission, fs/*, terminal/*), so a .NET implementation needs a server loop, not a request/response client; this is the largest architectural consequence and it bears on whether ITerminalSession can be the one lane interface. (4) ext preservation is load-bearing on turn one, not defensive: usage_update, _auth/status_update, _session/goal and _meta.jetbrains.air all appeared immediately and are absent from schema v1. (5) file edits are tool_call kind=edit, not a distinct update type. (6) no official .NET SDK exists. RESIDUAL RISKS FLAGGED NOT CLOSED: the LICENSING question (a --hide-claude-auth flag exists so redistributors can disable subscription auth, so whether a third-party product may drive a customer's Max subscription is unsettled - do not treat 'it worked' as permission); API-key env sources OUTRANK the subscription and would silently bill the API, so spec 4.2's invariant must guard that specific list rather than only an explicit direct-api entry; codex and copilot adapters were read, not run.",
+      "kind": "script",
+      "skill": null,
+      "tool": "domain-researcher",
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "spikes/acp-subscription-lane/README.md",
+        "spikes/acp-subscription-lane/probe-read.js",
+        "spikes/acp-subscription-lane/probe-write.js"
+      ],
+      "tags": [
+        "conductor",
+        "phase-1",
+        "spike",
+        "acp",
+        "subscription"
+      ],
+      "outcome": "success",
+      "goal": "Settle by execution whether Conductor Phase 1's exit evidence (a governed claude-code lane on a subscription, zero terminal hosting) is reachable, before any client is built",
+      "done_when": "A non-Claude-Code client process observed to authenticate as Max with no API key, open an ACP session with cwd on a worktree, and receive structured tool_call / edit / permission events - or a definitive NO with the cheapest settling experiment named",
+      "tier": "T2",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
       }
     }
   ],

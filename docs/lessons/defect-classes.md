@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 40 · uncontrolled 4
+**Status counts:** controlled 65 · partially-controlled 41 · uncontrolled 4
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -4085,6 +4085,44 @@ for both or split.*
   passes — and if the answer is "it keeps running", whether it can still hold something open.
 - **Status:** `partially-controlled` — fixed at the only site that can exhibit it, verified by a
   clean process table after a full run, with no gate because there is currently nothing else to gate
+
+---
+
+### DC-110 — A partition value derived from the INGEST PATH rather than from the work
+
+- **Shape:** a record is filed under a key that names *how it arrived* instead of *what it is*. Each
+  door hard-codes its own default for a field that is part of a comparison key, so two records of the
+  same work, entering by different doors, are filed as different kinds of thing. Nothing is
+  mislabelled and no code is wrong at either door — the defect exists only in the space between them.
+- **Signature:** comparisons that should be like-for-like silently return nothing, or return a
+  ranking with one side missing. Because each door is individually correct, the symptom presents as
+  "the board looks sparse" rather than as a fault, and the natural response is to doubt the data
+  volume rather than the key.
+- **Why it survives:** the defaulted parameter reads as a sensible convenience at each call site. The
+  scoring contract itself is innocent — it *requires* the value from the caller. The divergence is
+  invisible in any single file, and appears only when someone asks the specific question "do these
+  two land in the same cell?", which nobody asks until a requirement forces it.
+- **Instance:** 2026-09-09 — `WatcherHost.ImportAndScoreEpisodesFromAuditLog` defaults
+  `taskClass = "audit-import"` (`WatcherHost.cs:118`) while `ClosedEpisodeScoring.Run` defaults it to
+  `ScoreSegment.Unclassified` (`ClosedEpisodeScoring.cs:69`). `taskClass` is one of the three axes of
+  `ScoreSegment`, the leaderboard partition key. So an observed-lane episode and a governed-lane
+  episode of the *same work* can never share a cell — and worse, `Unclassified` is
+  `IsComparable == false` (`Leaderboard.cs:66-70`), so the governed side ranks **nowhere** while the
+  observed side ranks in a cell named after its door. Found while checking whether Conductor spec R4
+  ("leaderboard cells never split by mode") could be satisfied: the split R4 forbids was already
+  present, wearing a different column's name.
+- **Control:** the positive test, not the negative one. A test that asserts "mode is absent from the
+  partition key" proves a compile-time tautology and cannot fail for the right reason. The control is
+  a test that pushes one episode through *each* door under **one caller-chosen task class** and
+  asserts they land in **one cell as two cohorts**. Standing rule: **the door determines the mode;
+  the work determines the task class; never the reverse.**
+- **The generalisation:** *a default that is convenient at the call site becomes a fact about the
+  record.* Any defaulted parameter should be asked whether it feeds a key, an index, or a comparison
+  — and if it does, the default belongs to the work, or there is no default at all.
+- **Status:** `partially-controlled` — the one-cell-two-cohorts test is the control for the
+  comparison; retiring the door-named `"audit-import"` default itself is deferred to Phase 3, when
+  controlled task classes arrive, because changing it now would move existing observed episodes from
+  a comparable cell into `Unclassified` (a history-rule change with no spec basis)
 
 ---
 

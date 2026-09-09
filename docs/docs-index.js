@@ -2584,6 +2584,69 @@ window.DOCS_INDEX = {
       "sourceSha256": "0bcfb55ab5073a76f04666b822627bd2087a49aecf43cf0b4dd3a6b1039ac545"
     },
     {
+      "id": "note-conductor-latency-slo-not-assertion",
+      "path": "docs/notes/conductor-latency-slo-not-assertion.md",
+      "title": "Decision note — R1's 250 ms and R7's 2 s are recorded SLOs, not CI assertions",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Spec R1 requires run events within 250 ms of receipt, but this repo's CI gate verify-perf-assertions.py refuses any assertion that a measured duration is under a constant - it is the control for DC-107. The latency is therefore emitted and recorded on the normal path and evaluated as an SLO at the exit run; only arrival and the event-cycle ordinal are asserted.",
+      "tags": [
+        "conductor",
+        "testing",
+        "performance",
+        "instrumentation",
+        "dc-107"
+      ],
+      "links": [
+        {
+          "to": "note-conductor-r4-core-phase1-scope",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2679a09e80098e9bedf5759b1f32dd206aba451d00bd55bcc146f176aaff6d9c"
+    },
+    {
+      "id": "note-conductor-mode-cohort-not-partition",
+      "path": "docs/notes/conductor-mode-cohort-not-partition.md",
+      "title": "Decision note — R4 bullet 2 proven by one cell holding both modes",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "R4 forbids leaderboard cells splitting by mode, but the two ingest doors default to different task classes - and task class IS a partition axis - so the same work would split anyway under a different column name. Phase 1 adds a nullable mode column and proves one cell holds both modes under one caller-chosen task class.",
+      "tags": [
+        "conductor",
+        "leaderboard",
+        "scoring",
+        "cohort",
+        "partition",
+        "task-class"
+      ],
+      "links": [
+        {
+          "to": "note-conductor-r4-core-phase1-scope",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4b5b1f03a6a7d7ff1390488f6ae1e47e073a46322b9f6ba459cd99b9179b8b54"
+    },
+    {
       "id": "note-conductor-r4-core-phase1-scope",
       "path": "docs/notes/conductor-r4-core-phase1-scope.md",
       "title": "Decision note — R4-core scope for Conductor Phase 1",
@@ -4425,7 +4488,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "e8042067a89c8a5a059f7e531e206efa91536139ac3f7af06efa382ee551e100"
+      "sourceSha256": "fe546b2ca3fd9a0c07001ec7368afc1dfd6518e643e3e9bed3f6bef989f79db1"
     },
     {
       "id": "diagram-class",
@@ -11234,5 +11297,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "05e8313a7cef56f628fea9b635cdac1c854386ba9b3f4d33c5a42310465f18ac"
+  "graphSha256": "ea3275128c408d6fb40964ec5f9ef60d96b668bce768d4ab6b4617607fe8e350"
 };
