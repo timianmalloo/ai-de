@@ -244,6 +244,13 @@ observing the failure it prevents, not before imagining it.
   recorded here rather than closed. **Enforcement was deliberately not added at this node:** the exit
   run's evidence describes the binary that ran, and quietly shipping a control that could have changed
   its outcome would make the record describe a build nobody executed.
+- **An `AiDe.App.Tests` test host hung once during the exit gate** — 3.81 s of CPU over 18 minutes,
+  no result file written, killed rather than waited out. It did not reproduce: the clean re-run
+  finished 399/399. **Cause unknown and not investigated**, so nothing is claimed about it; it is one
+  observation, below the recurrence threshold, and it is recorded here rather than dropped because
+  "the suite is green" and "the suite finishes" are different statements and only the first was
+  proven twice. It overlapped a concurrent documentation regeneration, which is a correlation, not a
+  cause.
 - **One run is one sample.** Two runs were executed; the first found a defect and did not produce a
   result, the second is the exit evidence. Neither is a distribution.
 - **The exit run is not re-runnable without a Max subscription and a local adapter install.** The
