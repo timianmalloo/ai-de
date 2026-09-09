@@ -37,6 +37,28 @@ public sealed class AcpEngineProcessTests
         Assert.False(StillRunning(processId), $"process {processId} outlived the lane that started it");
     }
 
+    /// <summary>
+    /// The child's id is still answerable after the lane reaped it.
+    /// </summary>
+    /// <remarks>
+    /// <b>Found by running, not by reading.</b> N7's first governed run completed the whole arc —
+    /// episode opened, worktree provisioned, prompt answered, episode closed, scorecard written —
+    /// and then died assembling its own result, because <c>Process.Id</c> throws
+    /// <c>InvalidOperationException</c> once <c>Process.Dispose</c> has run. <c>HasExited</c>
+    /// already carried exactly this reasoning in its own doc comment; the property one line above it
+    /// did not. The report that names what was left behind was the thing that could not be written.
+    /// </remarks>
+    [Fact]
+    public void TheChildsIdIsStillAnswerableAfterTheLaneReapedIt()
+    {
+        var engine = AcpEngineProcess.Start(Hang(), AppContext.BaseDirectory);
+        var beforeDisposal = engine.ProcessId;
+
+        engine.Dispose();
+
+        Assert.Equal(beforeDisposal, engine.ProcessId);
+    }
+
     /// <summary>The engine's environment is inspected before the lane runs, and findings are surfaced.</summary>
     [Fact]
     public void AnEnvironmentFindingIsSurfacedBeforeTheLaneRunsRatherThanDiscoveredByTheAgent()

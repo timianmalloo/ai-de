@@ -34,10 +34,19 @@ public sealed class AcpEngineProcess : IDisposable
         _process = process;
         _diagnostics = diagnostics;
         EnvironmentFindings = environmentFindings;
+
+        // READ ONCE, HERE. Process.Id throws "No process is associated with this object" after
+        // Process.Dispose, which Dispose below calls — so the id was unreadable from exactly the
+        // moment a report needs it. HasExited already carried this reasoning and ProcessId did not,
+        // which is how a reasoned-about hazard survives one field away from where it was fixed.
+        // FOUND BY N7's first governed run: the run completed, the episode closed, the scorecard was
+        // written, and the process then crashed assembling its own result.
+        ProcessId = process.Id;
     }
 
     /// <summary>The child's process id, for a report that has to name what was left behind.</summary>
-    public int ProcessId => _process.Id;
+    /// <remarks>Captured at start, so it survives disposal — see the constructor.</remarks>
+    public int ProcessId { get; }
 
     /// <summary>Whether the child has ended.</summary>
     /// <remarks>

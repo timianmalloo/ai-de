@@ -35,18 +35,20 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         // HEADLESS CONDUCTOR MODE — the same App-layer composition root the deferred Conductor
-        // Surface will call, reached without a window. Handled BEFORE base.OnStartup because
-        // StartupUri is set in App.xaml: letting the base run would show MainWindow, attach a
-        // workspace and start a terminal session, which is precisely what a governed run claims not
-        // to do — and the claim is counted, so the shell doing it would show up as a non-zero count
-        // rather than as a quiet contradiction.
+        // Surface will call, reached without a window. It returns before StartupUri is assigned:
+        // showing MainWindow would attach a workspace and start a terminal session, which is
+        // precisely what a governed run claims not to do — and the claim is counted, so the shell
+        // doing it would surface as a non-zero count rather than as a quiet contradiction.
         if (Conductor.ConductorEntry.IsRequested(e?.Args ?? []))
         {
-            StartupUri = null;
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
             _ = RunHeadlessAsync(e!.Args);
             return;
         }
+
+        // The interactive shell's first window. Declared here rather than in App.xaml so the branch
+        // above can decline it; see the comment there.
+        StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
 
         DispatcherUnhandledException += OnDispatcherUnhandledException;
 

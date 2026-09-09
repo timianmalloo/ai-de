@@ -2,8 +2,14 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:AiDe.App"
-             xmlns:avalonDock="clr-namespace:AvalonDock.Controls;assembly=AvalonDock"
-             StartupUri="MainWindow.xaml">
+             xmlns:avalonDock="clr-namespace:AvalonDock.Controls;assembly=AvalonDock">
+    <!--
+        StartupUri is set in App.xaml.cs, not here. WPF applies it AFTER OnStartup returns, and it
+        refuses null, so a declared StartupUri cannot be withdrawn by the headless conductor path —
+        the shell would show a window, attach a workspace and start a terminal on a run whose whole
+        claim is that it hosts none. Assigning it on the interactive path is the same behaviour with
+        one branch that can decline it.
+    -->
     <Application.Resources>
         <!--  Semantic brushes mirroring DESIGN.md. Components reference these, never raw values,
               so a token change is one edit and the craft gate can enforce it outward.  -->
