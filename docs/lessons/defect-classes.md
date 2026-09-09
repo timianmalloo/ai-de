@@ -4330,8 +4330,38 @@ for both or split.*
   landed.* For any change to a mechanism that propagates changes, the acceptance test is not "does
   it work here" but **"run the consumer's existing copy against the new source and read what it
   proposes."**
-- **Status:** `controlled` upstream at revision 65 for every future hop; the one-time first-hop gap
-  is closed in this repo by hand and verified by the plan diff above
+- **CLOSED BY CONSTRUCTION upstream at revision 66, not merely warned about.** The residual above
+  was stated as unavoidable — *"you cannot make an already-deployed old program warn about itself"* —
+  and that premise is true but its conclusion was too narrow. **The old program is not the only
+  thing in the loop.** Two levers closed it:
+  1. `/updatepack` already mandates reading the **source's** `INSTALL.md` `changes` frontmatter, so
+     a source-side deploy note reaches a stale target on hop 1 — the one hop nothing else reaches.
+  2. **The invocation was inverted.** The documented flow now runs the **source clone's**
+     `pack-apply.py` with `--target .`, so the target's stale copy never computes a plan at all and
+     staleness becomes **impossible rather than detected**. It required no new capability: `--target`
+     already existed and every subprocess was already pinned to the target's cwd; only `--source`
+     being `required=True` stood in the way. `STALE-APPLIER` remains as the backstop.
+- **Demonstrated against a genuine pre-fix applier taken from git history**, three arms:
+  **Arm 1** (old flow, stale copy): 0 `STALE-APPLIER` rows, the declined `spikes/` line re-appended,
+  **and new spike evidence silently dropped by `git add -A`** — the residual reproduced *including*
+  the evidence loss. **Arm 2** (new flow, same stale copy still on disk but not running): `KEEP`
+  withheld the declined line; evidence staged. **Arm 3** (old invocation at rev ≥ 64): hard refusal.
+- **Second instance, and it is the sharper one: the fix's own check asked the wrong question.**
+  Revision 65's staleness check compared the target's **installed** copy with the source's, not the
+  copy that was **running** — so it accused the source's own script of being the target's stale one,
+  and that false positive **hid the cure by flagging the inverted invocation as the disease.** Its
+  row text was literally false in that case. Now keyed on the running script, with the tests
+  re-expressed as **subprocess** tests, because staleness is a property of the program that runs and
+  cannot be tested in-process. *(Two of those tests were also caught passing **vacuously** first —
+  argparse errored, so the assertion inspected empty output: the same proves-nothing failure the
+  whole revision is about.)*
+- **Registered upstream as `BOOT-A`** in the pack's own register, carrying the control and the
+  generalisation rather than only the instance.
+- **Status:** `controlled` — closed by construction upstream at revision 66 (remote `c20c2df`, three
+  CI workflows green, fresh clone 11/11); this repo's own first hop was closed by hand and verified
+  by the plan diff above. The one uncovered path — a person below rev 64 invoking their own copy
+  directly *and* reading no documentation — is unreachable by any mechanism, since every artifact in
+  that path is the stale one
 
 ---
 

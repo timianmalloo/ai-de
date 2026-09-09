@@ -24,3 +24,16 @@
 {"agent": "conductor-phase1", "at": 1788985340.520532, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-phase1", "wi": ""}
 {"agent": "conductor-phase1", "at": 1788985340.520532, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-phase1", "wi": ""}
 {"agent": "conductor-phase1", "at": 1788987425.7509077, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/AcpProbeLauncher.cs", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989050.1331167, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/AcpLaneClient.cs", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989050.134114, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/GovernedSessionSource.cs", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989050.1351144, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/LaneCohort.cs", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989050.136114, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/LeaseAndSeams.cs", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989050.1381137, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/RunEvent.cs", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989050.1391141, "code": null, "kind": "allowed", "path": "src/AiDe.Core/AgentPlane/RunTriage.cs", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989050.1401124, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/ATierZeroRunSkipsPlanAndCouncilTests.cs", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989050.1411138, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/GovernedAndObservedShareOneCellTests.cs", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989050.1421137, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/LeasesRaiseSeamsTests.cs", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989050.1431153, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/TheAcpSessionRunsInTheProvisionedWorktreeTests.cs", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989115.9432256, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989115.944235, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788989821.3694346, "code": null, "kind": "allowed", "path": "docs/notes/conductor-n7-refactor-oracle.md", "session": "conductor-phase1", "wi": ""}
