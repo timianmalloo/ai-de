@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-conductor-agent-plane",
-  "generated": "2026-09-09T20:22:13Z",
+  "generated": "2026-09-09T21:24:59Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9995,6 +9995,51 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "281e2c2bb3ed533eedf1e19ec94a2b7531f25a49",
         "short": "281e2c2bb",
+        "branch": "feature/conductor-agent-plane",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M240YKF6X0SCFYGPNVVYYHEP",
+      "shortname": "conductor N5+N6 — one cell two cohorts, leases raise seams",
+      "datetime": "2026-09-09T21:24:59Z",
+      "session": "conductor-phase1",
+      "prompt": "Execute nodes N5 and N6 of the approved conductor programme plan (docs/plans/conductor-programme.md), in the feature/conductor-agent-plane worktree, TDD red-first, under the plan's binding exit clauses.\n\nN5 - integration and scoring, one store one test: one governed episode reaches the store and is scored by the UNCHANGED ScoringService; a governed and an audit-imported (observed) episode carrying the same caller-chosen task class land in ONE ScoreSegment cell as exactly two distinct mode values, both present, asserted positively, no sleeping, no ingest-order dependence; taskClass passed explicitly on the governed path with the assertion reading the STORED TaskClass, and neither episode's class arriving by parameter default; the ACP session's cwd IS the provisioned worktree and the branch IS namespaced; a T0-tier run reaches dispatch with zero council lanes and zero plan artifacts.\n\nN6 - leases and seams: an edit outside the lease raises a seam event; an edit inside the lease raises none (the negative control); closing with an open seam forces outcome Blocked, and seam_resolution_ratio must be 1.0 before a clean close.\n\nBuy assertion-level red by mutation, especially for the one-cell clause. Do not create ILane or IEpisodeSource; do not modify Dispatch/ or Terminal/; do not change semantics in ScoringService, WeaveScore, Leaderboard, MessageBoard, ProofPackVerifier or EgressGate. Gates run bare (DC-113); verify-test-run.py in CHECK mode only.",
+      "summary": "N5 and N6 landed as commit ee9bcf9 on feature/conductor-agent-plane. 2252 -> 2273 tests, 0 warnings, every gate green.\n\nN5. LaneScoring gives the two doors one entry each - ScoreGoverned (ClosedEpisodeScoring over a registered session) and ImportObserved (WatcherHost's audit import) - with taskClass REQUIRED on both, because \"audit-import\" is a comparable class and an episode acquiring it by default ranks silently in the wrong cohort rather than surfacing as unranked. LaneMode replaces three spelled-out literals. The decisive test runs both doors into ONE real SQLite store and asserts the positive shape: exactly one ScoreSegment across both scored rows, the segment comparable, exactly two distinct stored modes both present, and both task classes read from the store rather than the call. It runs in both ingest orders and sleeps nowhere. AcpLaneClient gained a NewSessionAsync(ProvisionedWorktree) overload so R1 bullet 1's composition lives in the signature; the test cuts a real git worktree, reads the session/new frame that actually went out, and reads the branch back with git rev-parse inside the tree. RunTriage implements spec 5.3 Stage 0 from what the goal block declares (tier and fan-out cap - it carries no loop or gate field), and the T0 clause is proven by dispatching for real and reading the counts off the store: one registered session, no declared artifact.\n\nN6. Lease (glob, repo-relative, case-sensitive so it fails toward raising a seam) plus LeaseMonitor, which recognizes edits by the shape the captured corpus actually carries - tool_call/tool_call_update with kind \"edit\" and locations[] - because spec 7.2's file.edit has no Phase-1 producer. One edit is one seam, keyed on (toolCallId, path): the corpus shows the same write four times, and a per-frame monitor would turn seam_resolution_ratio into a measure of adapter chattiness. The pending frame's empty locations[] observes nothing. GovernedLane.Close forces Blocked while the ratio is below 1.0, at the one place a governed episode closes.\n\nSix mutations bought assertion-level red and were reverted: the observed door taking the audit-import default (two segments, Assert.Single red); both doors stamping one mode (modes collection differs); every edit outside the lease (the negative control plus two more red); dropping the Blocked forcing; rooting the session at the primary checkout; and T0 never skipping.\n\nFindings. (1) Spec 7.2 lists file.edit, seam.open and seam.resolve as v1 kinds with no Phase-1 producer - edits arrive as tool calls, and seams stay ledger entries until Phase 2's conductor owns the run-event sequence. (2) The audit-import episode's four repeated frames for one write is a corpus fact that forced the dedupe design. (3) This branch's defect register stops at DC-111; DC-112 and DC-113 exist on main and are not here yet, so the branch is behind main and will need reconciling at N7.",
+      "kind": "skill",
+      "skill": null,
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/LaneCohort.cs",
+        "src/AiDe.Core/AgentPlane/LeaseAndSeams.cs",
+        "src/AiDe.Core/AgentPlane/RunTriage.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/GovernedAndObservedShareOneCellTests.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/LeasesRaiseSeamsTests.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/ATierZeroRunSkipsPlanAndCouncilTests.cs",
+        "tests/AiDe.Core.Tests/AgentPlane/TheAcpSessionRunsInTheProvisionedWorktreeTests.cs"
+      ],
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "phase-1"
+      ],
+      "outcome": "success",
+      "goal": "Prove the governed and observed paths meet in one scored cell (N5), and that leases raise seams and an open seam blocks a close (N6)",
+      "done_when": "every N5/N6 clause passes as a test; dotnet build -c Release green with zero warnings; dotnet test -c Release green; python tools/verify-test-run.py passes in CHECK mode",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-09T21:02:05Z",
+      "duration_seconds": 1374.0,
+      "git": {
+        "sha": "ee9bcf9af75fd35ea51b01113ce12c888a95b3e2",
+        "short": "ee9bcf9af",
         "branch": "feature/conductor-agent-plane",
         "pushed": null
       }
