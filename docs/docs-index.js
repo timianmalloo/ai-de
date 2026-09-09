@@ -2777,6 +2777,37 @@ window.DOCS_INDEX = {
       "sourceSha256": "86fef6ba1f84009e378367a4da3fd7bf3b2943b15e0768c1fd9f8f410be7ef09"
     },
     {
+      "id": "note-conductor-subscription-use-authorised",
+      "path": "docs/notes/conductor-subscription-use-authorised.md",
+      "title": "Decision note — operator authorises use of their own Max subscription for governed lanes",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "The Owner escalated the licensing question to the human operator and declined to rule on it. The operator has authorised use of their own Max subscription for this project. Re-plan checkpoint 3 is closed and the Phase-1 exit run is unblocked.",
+      "tags": [
+        "conductor",
+        "subscription",
+        "licensing",
+        "human-ruling",
+        "escalation"
+      ],
+      "links": [
+        {
+          "to": "note-conductor-tos-invariant-observed-auth",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-conductor-programme",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2efd0b48d1156ccaf377b453d6c7e71009bd8776ec989e3215908c4da7b8d86c"
+    },
+    {
       "id": "note-conductor-tos-invariant-observed-auth",
       "path": "docs/notes/conductor-tos-invariant-observed-auth.md",
       "title": "Decision note — the ToS invariant is enforced against observed auth status, fail closed",
@@ -5666,7 +5697,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f6306ad6f64ec864ef7d5f14bf9c8c8417e8907019b3fd5e06de97fa9db0d13e"
+      "sourceSha256": "97e39abc3ee61d225d80f6b49e74a0931e3610dcd2e9337285090393397324f3"
     },
     {
       "id": "plan-daydream-and-collaboration-slices",
@@ -11492,5 +11523,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "1dcc59c2bba3c360abe71c63a976b928bf302c1f5aa2c5fb6e67183f9b0b06b8"
+  "graphSha256": "168174ff42ce27ee742fad67d331d7f2669fa503bb366a4bf26764a538f2953a"
 };

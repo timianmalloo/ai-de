@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-09T18:59:45Z",
+  "generated": "2026-09-09T19:13:52Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9897,6 +9897,36 @@ window.AUDIT_DATA = {
       "signals": {
         "verification_path": true,
         "verification_executed": true
+      }
+    },
+    {
+      "id": "al-01M23SEGAS071BX81W0MA9RF92",
+      "shortname": "licensing-ruling-human",
+      "datetime": "2026-09-09T19:13:51Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "yes i have already said i am ok with using my Max account",
+      "summary": "The human operator authorised use of their own Max subscription. This is the ONE decision in the programme that was not delegated - the Owner agent explicitly declined to rule, on the grounds that a commercial question about the operator's own account sits outside spec-reading and outside its delegated authority, and the ACP spike had flagged it with 'do not treat it worked as permission'. EFFECT: re-plan checkpoint 3 CLOSED; N7's exit run on the Max account unblocked; the E18 close unblocked for Owner counter-signature. SCOPE OF THE RULING, recorded so it is not over-cited later: it covers the operator using their own subscription on their own machine for their own project. It does NOT cover distributing AI-DE such that OTHER users drive THEIR subscriptions - the scenario --hide-claude-auth exists for - which is a distribution decision no Phase-1 work requires. UNCHANGED BY IT: the observed-auth spawn gate still fails closed, because an API-key environment source outranks the stored subscription and would bill the API silently while the UI reads max-personal. That control protects the operator's money, which is a different concern from their permission.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "human-operator",
+      "artifacts": [
+        "docs/notes/conductor-subscription-use-authorised.md"
+      ],
+      "tags": [
+        "conductor",
+        "phase-1",
+        "licensing",
+        "human-ruling",
+        "escalation"
+      ],
+      "outcome": "success",
+      "goal": "Close the one question the Owner escalated to the human rather than ruling on: may this programme drive the operator's Max subscription",
+      "done_when": "The authorisation is recorded as a human ruling, re-plan checkpoint 3 is closed, and the Phase-1 exit run plus the E18 close are unblocked",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "acceptance_met": true
       }
     }
   ],

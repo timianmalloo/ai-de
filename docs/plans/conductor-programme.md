@@ -312,8 +312,11 @@ token by the largest number.
    fallback, and at width 1 an N4 stall is a phase stall with no parallel progress to show.*
 2. **After N5.** If the episode does not score through unchanged `ScoringService`, Ruling 3's
    reading is wrong and the seam question reopens.
-3. **The licensing answer** (human). A NO re-cuts the phase: everything protocol-level still builds
-   and tests against `codex-acp`, and **N0's corpus survives a NO** — a further reason it ran first.
+3. ~~**The licensing answer** (human).~~ **CLOSED 2026-09-09** — the operator authorised use of
+   their own Max subscription; see [[conductor-subscription-use-authorised]]. N7's exit run and the
+   E18 close are unblocked. *(Unchanged by it: the observed-auth spawn gate still fails closed, because
+   an API-key environment source outranks the subscription and would bill silently. That control
+   protects the operator's money, not their permission.)*
 4. **Adapter version bump** — re-check the pinned override constant (Ruling 8, condition 3).
 
 ## Non-goals (decided against — NOT debt)
