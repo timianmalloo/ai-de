@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-09T19:20:23Z",
+  "generated": "2026-09-09T20:18:39Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9962,6 +9962,33 @@ window.AUDIT_DATA = {
       "parallelism": {
         "unparseable_runs": 1
       }
+    },
+    {
+      "id": "al-01M23X54E4KN2NMXSY14540ZNF",
+      "shortname": "dispatch-upstream-pack-fixes",
+      "datetime": "2026-09-09T20:18:39Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "for these classes of defects which should be fixed upstream in the ai-forward repo as well, lets have a sub-agent fixing in ai-forward and committing and pushing, as there are no contending work sessions in ai-forward",
+      "summary": "TRIAGE - which of today's findings are the PACK's and which are this repo's. UPSTREAM, dispatched to ai-forward with authority to commit and push (operator confirmed no contending sessions there): (1) DC-112, the strongest - the pack instructs 'run coord install inside each new worktree (per-clone .git/config)'. Per-clone is true; per-worktree does not follow, because a worktree SHARES .git/config with its parent unless extensions.worktreeConfig is set. Following the instruction exactly overwrote the parent clone's merge-driver paths with a path inside a temporary tree, and coord doctor reports 'declared and registered' either way because it never checks that the path outlives the tree that wrote it. Fix: correct the instruction everywhere it appears, and give doctor the missing assertion (the driver path must resolve AND lie inside the clone being checked). (2) DC-111's MECHANISM - pack-apply re-appends a blanket gitignore pattern that git's last-match rule lets silently invert an earlier, explicitly recorded repo override; the pack's default may be right, the silent inversion is not. (3) The rev-63 .agents/* instruction can defeat the pack's OWN capture mandate for repos that commit contract logs under .agents/log/; the invariant the pack wants is 'the registry travels with the repo', which several ignore-shapes satisfy, so it should state the invariant and its verification rather than one literal pattern. (4) Lower confidence, left to the agent to judge: audit-log.py's start stamp is CONSUMED by the next append, while AGENTS.md presents duration as measured with no flag to remember - possibly a documentation gap rather than a defect, and explicitly told not to change consuming behaviour unless confident, because silently reusing a stale start stamp would be worse than an honest 'not recorded'. LEFT LOCAL, deliberately: ai-de's own tools/verify-test-run.py --update hazard (its tool, not the pack's) and the site-figures staleness. The agent was told evidence is not authority and to verify every claim before changing a source that every consuming repo inherits - pushing a wrong default reaches all of them.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "conductor",
+        "ai-forward",
+        "upstream",
+        "defect-class",
+        "continuous-improvement"
+      ],
+      "outcome": "success",
+      "goal": "Fix upstream, in the AI-Forward Pack source, the defect classes this repo discovered that originate in the pack rather than locally",
+      "done_when": "Each finding triaged upstream-vs-local with a reason; genuinely upstream defects fixed in C:/Projects/ai-forward following that repo's own revision protocol and gates; changes committed and pushed; repo-local findings left alone and named",
+      "tier": "T2",
+      "fan_out": 1
     }
   ],
   "changes": [

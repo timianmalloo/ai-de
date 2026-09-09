@@ -11,3 +11,6 @@
 {"agent": "conductor-main", "at": 1788984305.1815803, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788984305.1825857, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788984305.1825857, "code": null, "kind": "allowed", "path": "docs/plans/conductor-programme.md", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788984416.3592725, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788984416.3592725, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788984416.3592725, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "conductor-main", "wi": ""}
