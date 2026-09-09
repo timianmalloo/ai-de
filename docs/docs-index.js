@@ -1277,6 +1277,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "8a9145020ebc341504a12748381e4109c1c26e0409e90dc75aa4fe9626f3d265"
     },
     {
+      "id": "api-aide-app-conductor",
+      "path": "docs/api/AiDe.App.Conductor.md",
+      "title": "API: AiDe.App.Conductor",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Conductor: 4 types, 6 members, 100% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "dcee303a3587857a2fd2d01a17c0fc1b99149ee82375b93b194bb0647e09c121"
+    },
+    {
       "id": "api-aide-app-viewmodels",
       "path": "docs/api/AiDe.App.ViewModels.md",
       "title": "API: AiDe.App.ViewModels",
@@ -1350,6 +1375,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "055608a444176535cc17473985a62186acadc2bc3f2a89f23bccdcfd6092c9c9"
+    },
+    {
+      "id": "api-aide-core-agentplane",
+      "path": "docs/api/AiDe.Core.AgentPlane.md",
+      "title": "API: AiDe.Core.AgentPlane",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.AgentPlane: 54 types, 128 members, 90% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b920c4cf6c67af2d0c2337b83a0fa7db851ff697e1920ffe2ac338b9987fe9cc"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -1636,7 +1686,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 162 types, 312 members, 65% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 162 types, 316 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1649,7 +1699,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "daac5111405407a1a9f1523bbbe1ac3992ec22e7a3ae33bccde96c73e6c6255a"
+      "sourceSha256": "d67377ecfc50f6a1bf5a6ee1d9ebadc1a3ab82ebfb420a10e46156c8e0695c88"
     },
     {
       "id": "api-aide-core-workbench",
@@ -2677,6 +2727,70 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4b5b1f03a6a7d7ff1390488f6ae1e47e073a46322b9f6ba459cd99b9179b8b54"
+    },
+    {
+      "id": "note-conductor-n7-refactor-oracle",
+      "path": "docs/notes/conductor-n7-refactor-oracle.md",
+      "title": "Pre-declaration — N7's refactor task and its diff oracle, written before the run",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "N7's floor point 1 requires a named refactor whose diff oracle is written and committed BEFORE the governed run, because \"a real refactor\" left undefined is satisfied by a one-line edit. This note is that pre-declaration: the task the governed claude-code lane is given, the lease it runs under, and the exact contents the resulting diff must have for the run to count as a pass.",
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "n7",
+        "exit-evidence",
+        "oracle",
+        "phase-1"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-programme",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "885b31a5ff678aa8daaa2eec0a05f6fcc3a239686af5d06d3ab335f4f440779a"
+    },
+    {
+      "id": "note-conductor-observed-auth-label-correspondence",
+      "path": "docs/notes/conductor-observed-auth-label-correspondence.md",
+      "title": "Decision note — the observed auth label is checked against a declared correspondence, never a derived one",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "N3's ToS gate asserted the adapter's auth kind is \"account\" but never checked WHICH account, because the observed label (\"Claude Max\") is a plan-tier string and the configured label (\"max-personal\") is an operator's own name, and neither determines the other. Phase 1 closes the gap with an operator-declared correspondence that is enforced where it exists and reads \"not recorded\" where it does not.",
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "acp",
+        "auth",
+        "subscription",
+        "fail-closed"
+      ],
+      "links": [
+        {
+          "to": "note-conductor-tos-invariant-observed-auth",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f608586266a5eb82ff5903bc41fecc7b76726f2e52b3593e6ba7259ae283c50f"
     },
     {
       "id": "note-conductor-phase1-plan-approval",
@@ -4650,7 +4764,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "0de4a394a38b52294b0e5b8cf9bc70c52cd95e84e2cbd37296f4a99a48b71624"
+      "sourceSha256": "2b87223b986d6987d1748e8e00b23f57d178456e792e6dd3c6165007ed278d09"
     },
     {
       "id": "diagram-class",
@@ -5697,7 +5811,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6f4f9e622ca6b45f02c0b71a0973b88beff6bc9fd40fe87ec42ca926f0295d77"
+      "sourceSha256": "f190faaac7aa37c40bee4b407c9893793944112cd611e3133fd72440b99059c9"
     },
     {
       "id": "plan-daydream-and-collaboration-slices",
@@ -9885,6 +9999,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
+      "id": "proof-conductor-agent-plane",
+      "path": "docs/proof/conductor-agent-plane.md",
+      "title": "Proof Pack — Conductor agent plane, Phase 1 (N0–N7)",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-09",
+      "reviewSuggested": [],
+      "summary": "Evidence for Phase 1 of the Conductor spec: the run-event envelope over a real captured ACP frame corpus, the engine catalog's three named refusals, the plane services, the bidirectional ACP client verified live, one cell with two mode cohorts, leases and seams, and a governed run driven through the App-layer composition root against a Max subscription — zero terminal hosting asserted as a counter, a pre-declared refactor matched against an oracle committed before the run, and the episode scored into a comparable cell.",
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "acp",
+        "proof-pack",
+        "phase-1",
+        "exit-evidence"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-programme",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "tested-by"
+        },
+        {
+          "to": "note-conductor-n7-refactor-oracle",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5ceb5507a5710e579bc6160c03077fb806b8cd01f8cc25aa3adf1bde84b80807"
+    },
+    {
       "id": "proof-terminal-cursor-render-crash",
       "path": "docs/proof/terminal-cursor-render-crash.md",
       "title": "Proof Pack - Terminal cursor render crash fix (DC-061)",
@@ -11523,5 +11673,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "27d6d37a4dc77dc94c74c40fd1fcb85d04bab7c3d466b72fa646e58dacdfaa9c"
+  "graphSha256": "f118bf8c19fb56012d56da5ffc56f8d3fc0c86d68d961a1d7835aaa78bde7fe1"
 };
