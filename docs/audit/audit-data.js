@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-09T22:42:46Z",
+  "generated": "2026-09-09T22:48:20Z",
   "audit": [
     {
       "actor": null,
@@ -10208,6 +10208,38 @@ window.AUDIT_DATA = {
         "short": "0a6460f34",
         "branch": "feature/conductor-agent-plane",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M245Q6Y9TAVQGQ7TDTHHMK56",
+      "shortname": "conductor-phase1-e18-close",
+      "datetime": "2026-09-09T22:48:20Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "Close Phase 1 with the CT25 self-assessment and the E18 Completed/Remaining/Next, counter-signed by an Owner ruling. Then STOP and present the Phase 2 proposal.",
+      "summary": "PHASE 1 COMPLETED, E18 counter-signed by the Owner on evidence it opened itself. All four done-when clauses met: a real governed run on claude-code (run-832a8655, 102s, end_turn, auth kind=account label='Claude Max', 7 permissions inside lease, 0 seams, tree parked, engine reaped) launched through the REAL App composition root; the four-point exit floor with a pre-committed oracle, a FALSIFIABLE zero-terminal-hosting counter (a companion test starts a real ConPTY and the same counter reads 1), IsComparable true with verdict Partial 15/15, and p50 0.022ms / p95 0.0641ms over 287 events with the host named; R4-core mutation-verified; build and suite green on main at 2276 tests with the gate run BARE so the exit code is real. Dispatch/ and Terminal/ byte-unchanged, zero files; Watcher/ +104/-2 with the only deletions a schema constant and a trailing comma. QUALIFICATION, stated not buried: DC-115 - the run rooted in a local CLONE, not a linked worktree, because RepositoryCorrection rebinds to the parent checkout and ProofPackVerifier reads that tree, so the shape spec 6.4 describes cannot currently be credited for its own evidence. LOOMKEEPER CAPTURE: episode-open and episode-close written to .agents/log/<session>.jsonl naming docs/proof/conductor-agent-plane.md, verified to exist and sit under docs/proof/. RECORDED HONESTLY: AIDE_CONTRACT_LOG is UNSET, so this is the committed stand-in, and the session never registered with the watcher - the contract drops an open from an unregistered session, so the line is reachable forward but WILL NOT BE SCORED NOW. Status is 'not recorded', never 'captured'. Before today a grep for loomkeeper/1 across .agents/log returned ZERO; this is the first episode the channel has ever carried. THREE FAILURES THAT ARE MINE: the by-subject gate policy let four gates go unrun for eight nodes, proving its own sentence that a skipped gate looks identical to a run one; the 'pre-existing site figures' framing was incomplete (6 measured at setup, 10 at N7, all figures this phase moved); and Floor 3's sequence, which I wrote, was insufficient. Budget: 300 declared, ~290 spent and passed - a finding about the estimate, recorded not absorbed. FIVE OWNER CONDITIONS carried into Phase 2, whose mandatory N0 holds the curated /document half, /session-profiler, and a DC-115 control; the full gate set now runs at every node close.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/proof/conductor-agent-plane.md",
+        "docs/notes/conductor-phase1-e18-close.md"
+      ],
+      "tags": [
+        "conductor",
+        "phase-1",
+        "e18",
+        "close"
+      ],
+      "outcome": "success",
+      "goal": "Close AI-DE Conductor Phase 1 against its ratified done-when, counter-signed by the Owner",
+      "done_when": "All four done-when clauses evidenced; Proof Pack committed with populated residuals; loomkeeper episode closed; Owner counter-signature recorded with its conditions",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
       }
     }
   ],

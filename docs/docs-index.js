@@ -2793,6 +2793,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "f608586266a5eb82ff5903bc41fecc7b76726f2e52b3593e6ba7259ae283c50f"
     },
     {
+      "id": "note-conductor-phase1-e18-close",
+      "path": "docs/notes/conductor-phase1-e18-close.md",
+      "title": "E18 close — Conductor Phase 1, counter-signed Completed",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Phase 1 closed Completed and counter-signed by the Owner on evidence it opened itself. All four done-when clauses met. Five conditions carried into Phase 2, including a mandatory first node holding the DC-115 control, the curated documentation half and the session profiler.",
+      "tags": [
+        "conductor",
+        "phase-1",
+        "e18",
+        "close",
+        "ct25",
+        "self-assessment"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-programme",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-phase1-plan-approval",
+          "rel": "refines"
+        },
+        {
+          "to": "proof-conductor-agent-plane",
+          "rel": "tested-by"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "6c736cfe04ed662f09e4dc42db999289faa26e8416fb7cf04b0a131b4b7afa37"
+    },
+    {
       "id": "note-conductor-phase1-plan-approval",
       "path": "docs/notes/conductor-phase1-plan-approval.md",
       "title": "Decision note — Phase 1 plan approved at width 1, with six binding conditions",
@@ -11673,5 +11709,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f118bf8c19fb56012d56da5ffc56f8d3fc0c86d68d961a1d7835aaa78bde7fe1"
+  "graphSha256": "c68d3cc2decbc32490a2989072a0076ee07fb0f258196a260416e3f8b7a29328"
 };
