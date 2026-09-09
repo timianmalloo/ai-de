@@ -128,3 +128,91 @@ conditions written into the plan **before** the skill runs:
 
 **Rigor floors touched: none removed.** E7 retained with a deferred row; red-first unchanged; the
 Testing-Strategy union **widened** by Rulings 8 and 11; audit entries gain a measured duration.
+
+---
+
+# Second round — the Tech Lead's casting vote, and Rulings 12–14
+
+**Casting vote: PASS-WITH-CONDITIONS, *for* the resolution** — take both vetoes, go width 1.
+*"These two vetoes were never in tension: one adds proof, one removes scope, and doing both is
+strictly better than either."* Three Blockers, one of which overruled a deferral. It also corrected
+the Simplifier and the Owner, not only the conductor.
+
+## Ruling 12 — the governed path passes `taskClass` explicitly
+
+**Verified by the conductor and re-verified by the Owner:** `Leaderboard.cs:66-70` makes **only**
+`Unclassified` and a null `Workspace` incomparable. So **`"audit-import"` is a comparable class** —
+and it is a **parameter default** at `WatcherHost.cs:118`, acquired by omission. A governed episode
+picking it up does **not** surface as unranked; it **silently ranks inside the wrong cohort**. DM's
+*"a backfill never guesses"* means Phase 3 cannot repair it.
+
+**Ruling:** the governed call site passes `taskClass` explicitly in Phase 1, and the integration
+node asserts **neither episode's `TaskClass` came from a parameter default**. Retiring the default
+still waits for Phase 3 — the observed path is untouched, so no existing episode moves.
+*"Retiring the default may wait; passing the argument may not."*
+
+**Condition:** the assertion **reads the stored `TaskClass`, not the call argument.**
+
+**New Phase-3 finding, surfaced by the Owner:** `WatcherHost.cs:118` and `:146` carry **two
+defaults for one concept** — one comparable (`"audit-import"`), one not (`Unclassified`).
+
+## Ruling 13 — split the launcher from the Surface
+
+Ruling 10 cut the Surface node wholesale. But that node was *"App wiring **+** single-lane
+Conductor Surface"* — cutting it deletes **the only launcher in the graph**, making Ruling 10's own
+condition (the exit run must use real App-layer composition) **unsatisfiable**.
+
+**Ruling:** cut the Surface (pane render, `ui-craft-gate`, `verify-surface-ownership.py`, declared
+owner — honestly gone). **Keep** the headless App-layer launch path. Floor row becomes **"9/9, UX &
+Accessibility retired from Phase 1 by the surface deferral"** — a 10/10 claim would be contradicted
+by the artifacts at close. **Amends Ruling 10; does not reverse it.**
+
+**Condition:** the launch path is **the same composition root the Surface will later call** — no
+test-owned wiring, no second entry point.
+
+## Ruling 14 — two deferrals were misfiled
+
+- **"Phase 1b" is retired as a label.** It appears **nowhere** in spec §12 (grep: 0 matches), so it
+  is an invented, ownerless container — the standard shape of debt that becomes permanent. Replaced
+  by a named **re-entry trigger**: *"the first time a run must be watched by a human rather than
+  read from the store,"* carried as a line in Planned-vs-actual.
+- **The one-interface lane convergence is NOT debt.** Ruling 7 *decided against* `ILane`. Filing a
+  decided non-goal as debt **invites a future session to build the thing Ruling 7 forbids**.
+  Recorded as a **non-goal with a trigger** (`ObservedLaneBinding`, Phase 4). Non-goals and
+  deferrals are now **separate sections** in the plan.
+- The codex/copilot deferral is named **the gold standard**: N2's *"an unknown engine is refused,
+  not defaulted"* means the deferral is **enforced by a test that goes red** the moment someone
+  half-implements it, rather than remembered.
+
+## Confirmations
+
+1. **Node count is 8, not 7** — N0 plus the split launcher. Understating it would put
+   Planned-vs-actual in the wrong from day one.
+2. **Gate policy confirmed, with an addition:** each node's close note lists which subject-changed
+   gates were **not** run and why — *so a skip is recorded rather than indistinguishable from a run.*
+3. **Reuse call confirmed, duplication on the record.** The Tech Lead corrected the Simplifier:
+   `Program.cs` is a **false comparable** — a server whose single peer never initiates, with no
+   outbound requests, no id generation, no pending table. The true comparable is `probe-write.js`,
+   a working 36-line bidirectional client already in the repo. Copy ~35 lines with a cross-reference
+   marker in **both** files, ship `--self-test`, **extract nothing**; trigger = a third stdio
+   JSON-RPC consumer or the first defect fixed twice. **Condition:** the copied region carries a
+   `simplify:` marker naming that trigger.
+4. **Session boundaries confirmed:** one worktree for the Phase-1 branch, four sequential sessions,
+   boundaries after N2, after plane services, and after the ACP client — **no WT1 exception to
+   record.**
+
+## On dispatching N0 without a ruling
+
+The conductor dispatched the frame-corpus capture before asking, because the probes truncate every
+frame (`probe-write.js:13,15`) and the open licensing question could remove the authenticated access
+that makes capture possible. **The Owner: "your judgement stands. Capturing evidence in an open
+window is not a scope change."** Recorded here with the licensing risk as the stated reason for not
+waiting.
+
+## Sign-off
+
+**GRANTED** — Phase 1 is **8 nodes, width 1**, both vetoes taken, Surface deferred with a trigger,
+lane convergence a non-goal. Five conditions, all now present in the plan: explicit `taskClass` plus
+a stored-value assertion; floor row 9/9 with UX & A named as retired; "Phase 1b" removed and the
+re-entry trigger carried; non-goals separated from deferrals; gate-skip recording per node and the
+`simplify:` marker on the copied framing.

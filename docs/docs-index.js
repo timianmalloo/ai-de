@@ -2712,7 +2712,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "576a305658844005b24cd7dc083351e09ace38530716b620b0be05ffec2ae0e3"
+      "sourceSha256": "28a4987cdaa765d2108ad56e5686c953cb0e916aaf949ee52accd74c556444fc"
     },
     {
       "id": "note-conductor-r4-core-phase1-scope",
@@ -5609,12 +5609,12 @@ window.DOCS_INDEX = {
       "path": "docs/plans/conductor-programme.md",
       "title": "Execution graph — AI-DE Conductor programme, Phase 1 expanded",
       "type": "doc",
-      "status": "in-review",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2026-12-09",
       "reviewSuggested": [],
-      "summary": "The bounded execution graph for Conductor Phase 1 (R1, R2, R4-core), with Phases 2-4 as collapsed nodes. Width is two tracks, not the permitted four: the ACP client dominates the span, so widening around it buys ~1.2x against a token multiplier that ranks above speed.",
+      "summary": "Phase 1 of the Conductor spec as eight serial nodes at width 1. Both council vetoes returned BLOCK and converged: going serial dissolved the finding that the two tracks were never independent and made the restored dependency free. Approved by the Owner with five binding conditions.",
       "tags": [
         "execution-graph",
         "conductor",
@@ -5633,6 +5633,10 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
+          "to": "note-conductor-phase1-plan-approval",
+          "rel": "depends-on"
+        },
+        {
           "to": "note-conductor-r4-core-phase1-scope",
           "rel": "depends-on"
         },
@@ -5643,10 +5647,26 @@ window.DOCS_INDEX = {
         {
           "to": "note-conductor-tos-invariant-observed-auth",
           "rel": "depends-on"
+        },
+        {
+          "to": "note-conductor-latency-slo-not-assertion",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-conductor-mode-cohort-not-partition",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-conductor-episode-source-seam",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-conductor-spec-errata-policy",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "78dbd34cf70341487ebdd384aff4b4598bcdde1728fda41bc0946d9409eb7b07"
+      "sourceSha256": "f6306ad6f64ec864ef7d5f14bf9c8c8417e8907019b3fd5e06de97fa9db0d13e"
     },
     {
       "id": "plan-daydream-and-collaboration-slices",
@@ -11472,5 +11492,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "f46b4a291d104273a502aa986a252baed74d5b46f3ab9364784c37c00b3502de"
+  "graphSha256": "7d3220fcb1faabeb1da6f27c27c6800ae267b816a4c695a837190da6184f2f09"
 };

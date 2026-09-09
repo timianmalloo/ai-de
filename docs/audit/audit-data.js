@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-09T18:22:11Z",
+  "generated": "2026-09-09T18:47:32Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9809,6 +9809,64 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       }
+    },
+    {
+      "id": "al-01M23QXKTKV5CB8EDSHRW1ZERB",
+      "shortname": "optimize-graph-conductor-programme",
+      "datetime": "2026-09-09T18:47:09Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "/optimize-graph on the whole AI-DE Conductor programme, with Phase 1 (spec 12: ACP client, engine catalog, provider registry + probes, worktree provisioning, goal-block spawn, governed episodes, single-lane Conductor Surface; R1, R2, R4-core) expanded to task granularity and Phases 2-4 as collapsed nodes. Fan-out cap 4; lexicographic objective completeness+rigor > tokens > speed.",
+      "summary": "BEFORE: 12 naive serial nodes, no floors named, no loop variants. AFTER: 8 nodes, WIDTH 1 (serial), 9 floor nodes, 4 bounded loops each with a variant. Both vetoes returned BLOCK and CONVERGED: going serial dissolved the Simplifier's finding that the two tracks were never independent (the ACP client's own exit condition consumes the other track's ProviderRegistry and WorktreeProvisioner) and made the Test Architect's restored dependency free. GO4a admits the slower plan because completeness UP, rigor UP, tokens DOWN all hold together. FOUR ERRORS IN MY OWN PLAN, each verified against source: (1) I prescribed verify-test-run.py --update as the standing gate - at :193 it skips the split invariant and at :269 returns 0 unconditionally, i.e. DC-012's control with the control off; the Owner noted this would have been an EvaluatorIntegrity escalation had it shipped. (2) I claimed GO5 independence that my own exit conditions disprove. (3) I laundered the cost model - the 900s median comes from a SQLite store, an HTTP receiver, JSONL parsing and a WPF pane, none a bidirectional server loop; relabelled Flagged and replaced with a sensitivity table showing width buys 0.11-0.22x across the whole plausible range, so the decision never rested on the number. (4) I missed that AiDe.Mcp/Program.cs already holds the NDJSON JSON-RPC framing. The Tech Lead then corrected the Simplifier in turn: Program.cs is a FALSE comparable (a server whose peer never initiates); the true comparable is probe-write.js, a working 36-line bidirectional client already in the repo. It also overruled a deferral I had mis-scoped: audit-import is a COMPARABLE class (Leaderboard.cs:66-70), so a governed episode acquiring it by parameter default ranks silently in the WRONG cohort - retiring the default may wait, passing the argument may not. Rulings 9-14 recorded. Rigor floors removed: NONE; the Testing-Strategy union was WIDENED twice.",
+      "kind": "skill",
+      "skill": "optimize-graph",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/plans/conductor-programme.md",
+        "docs/notes/conductor-phase1-plan-approval.md",
+        "docs/notes/conductor-latency-slo-not-assertion.md"
+      ],
+      "tags": [
+        "conductor",
+        "phase-1",
+        "execution-graph",
+        "council",
+        "veto"
+      ],
+      "outcome": "success",
+      "goal": "Produce the optimized execution graph for the Conductor programme before any implementation, with incidental ordering deleted, the critical path attacked before the width, every loop given a termination variant, and the honest parallel multiplier stated",
+      "done_when": "A committed plan with node table, exit conditions declaring oracles, floor nodes, loop bounds, budget and degradation path, re-plan checkpoints - cleared through the Test Architect hard veto and the Simplifier soft veto, with the Owner signing off",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "started_at": "2026-09-09T18:38:38Z",
+      "duration_seconds": 511.0,
+      "persona_yield": [
+        {
+          "persona": "test-architect",
+          "raised": 8,
+          "accepted": 8
+        },
+        {
+          "persona": "the-simplifier",
+          "raised": 7,
+          "accepted": 7
+        },
+        {
+          "persona": "sre-diagnostician",
+          "raised": 5,
+          "accepted": 5
+        },
+        {
+          "persona": "tech-lead",
+          "raised": 3,
+          "accepted": 3
+        }
+      ]
     }
   ],
   "changes": [
