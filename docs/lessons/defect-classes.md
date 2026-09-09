@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 66 · partially-controlled 42 · uncontrolled 7
+**Status counts:** controlled 65 · partially-controlled 43 · uncontrolled 7
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -4009,8 +4009,25 @@ for both or split.*
 - **The generalisation:** *a measurement is evidence about the machine it was taken on; treating it
   as evidence about every machine is an unmarked assumption* (NG9) — and the cheapest fix is almost
   never a bigger threshold, it is an assertion that carries its own baseline.
-- **Status:** `controlled` — both instances fixed, and a gate refuses the shape on every push with
-  its self-test proving it stays quiet on the lower-bound, hang-guard and ratio forms
+- **Third instance, 2026-09-09 (Conductor N7) — and it contradicts this entry's own carve-out.**
+  The control deliberately permits a **lower** bound beneath an injected `Task.Delay`, on the stated
+  reasoning that *"slower hardware only makes it more true"*. **Measured false.**
+  `RefreshMetricsTests.AFailedRefreshIsTimedToo` asserts `DurationMilliseconds >= 20` under a
+  `Task.Delay(30)` and recorded **17 ms** — twice in four full suite runs on `TIMMALLSTRIX`, passing
+  in isolation and on re-run both times. Windows timer coalescing can complete a delay **early**
+  relative to the clock the code under test reads, so a lower bound beneath an injected delay is an
+  assertion that two clocks agree, not an assertion about the code. It reddened the phase's exit
+  gate, which is the only reason it was looked at rather than retried.
+  **Fixed by making the assertion carry its own subject:** all three timing assertions in that file
+  now assert the duration is **recorded at all** (`> 0`), which is what the tests' own comments claim
+  to be about — that a *failed* run is timed too, so a percentile does not describe only the easy
+  cases. The magnitude was never the claim.
+  **The carve-out is not removed, but it is now known to be one-directional:** a lower bound is safe
+  against *slower* hardware and unsafe against a *coarse timer*, and only the first was reasoned
+  about when it was written.
+- **Status:** `partially-controlled` — the gate refuses the upper-bound shape on every push with its
+  self-test intact, and the lower-bound carve-out it still permits has now been measured failing. No
+  gate refuses that shape yet; the three instances in `RefreshMetricsTests` were repaired by hand
 
 ### DC-108 — A generator whose output depends on the host, checked by a gate that assumes it does not
 

@@ -14,15 +14,23 @@ public sealed record RunBudget(int Requests, long Tokens);
 /// </summary>
 public static class GoalBlockFields
 {
-    public const string Goal = "goal";
-    public const string DoneWhen = "done_when";
-    public const string NotInScope = "not_in_scope";
-    public const string Tier = "tier";
-    public const string FanOutCap = "fan_out_cap";
-    public const string Budget = "budget";
+    // THE `Key` SUFFIX IS NOT DECORATION. These are the wire FIELD NAMES §14.3 lists, not the values
+    // they carry: `FanOutCap` and `Budget` without it are names that claim to be limits, and
+    // `verify-bounds-are-enforced.py` reads them as bounds that are declared and never compared —
+    // correctly, on the name alone. The real bounds are `GoalBlock.FanOutCap` and `GoalBlock.Budget`,
+    // and Phase 1 VALIDATES them without ENFORCING them: nothing counts requests or tokens against
+    // the budget, and the plane spawns no sub-lane for a cap to bound. That gap is recorded in the
+    // Proof Pack rather than hidden behind a name that reads as though it were closed.
+
+    public const string GoalKey = "goal";
+    public const string DoneWhenKey = "done_when";
+    public const string NotInScopeKey = "not_in_scope";
+    public const string TierKey = "tier";
+    public const string FanOutCapKey = "fan_out_cap";
+    public const string BudgetKey = "budget";
 
     /// <summary>All six, in the order §14.3 lists them.</summary>
-    public static readonly IReadOnlyList<string> All = [Goal, DoneWhen, NotInScope, Tier, FanOutCap, Budget];
+    public static readonly IReadOnlyList<string> All = [GoalKey, DoneWhenKey, NotInScopeKey, TierKey, FanOutCapKey, BudgetKey];
 }
 
 /// <summary>
@@ -120,31 +128,31 @@ public static class SpawnContract
     {
         var errors = new List<GoalBlockError>();
 
-        Text(errors, GoalBlockFields.Goal, block?.Goal, "what this lane is to achieve");
-        Text(errors, GoalBlockFields.DoneWhen, block?.DoneWhen, "the terminal condition the outcome is judged against");
-        Text(errors, GoalBlockFields.NotInScope, block?.NotInScope, "the boundary the lane may not cross");
-        Text(errors, GoalBlockFields.Tier, block?.Tier, "the ceremony tier the run is held to");
+        Text(errors, GoalBlockFields.GoalKey, block?.Goal, "what this lane is to achieve");
+        Text(errors, GoalBlockFields.DoneWhenKey, block?.DoneWhen, "the terminal condition the outcome is judged against");
+        Text(errors, GoalBlockFields.NotInScopeKey, block?.NotInScope, "the boundary the lane may not cross");
+        Text(errors, GoalBlockFields.TierKey, block?.Tier, "the ceremony tier the run is held to");
 
         if (block?.FanOutCap is not { } cap)
         {
-            errors.Add(Missing(GoalBlockFields.FanOutCap, "how many sub-lanes this lane may spawn (0 is a valid answer)"));
+            errors.Add(Missing(GoalBlockFields.FanOutCapKey, "how many sub-lanes this lane may spawn (0 is a valid answer)"));
         }
         else if (cap < 0)
         {
             errors.Add(new GoalBlockError(
-                GoalBlockFields.FanOutCap,
-                $"the goal block field '{GoalBlockFields.FanOutCap}' is {cap}; a cap is a bound, and a negative bound is not one"));
+                GoalBlockFields.FanOutCapKey,
+                $"the goal block field '{GoalBlockFields.FanOutCapKey}' is {cap}; a cap is a bound, and a negative bound is not one"));
         }
 
         if (block?.Budget is not { } budget)
         {
-            errors.Add(Missing(GoalBlockFields.Budget, "the request and token ceiling this run may not exceed"));
+            errors.Add(Missing(GoalBlockFields.BudgetKey, "the request and token ceiling this run may not exceed"));
         }
         else if (budget.Requests <= 0 || budget.Tokens <= 0)
         {
             errors.Add(new GoalBlockError(
-                GoalBlockFields.Budget,
-                $"the goal block field '{GoalBlockFields.Budget}' allows {budget.Requests} requests and "
+                GoalBlockFields.BudgetKey,
+                $"the goal block field '{GoalBlockFields.BudgetKey}' allows {budget.Requests} requests and "
                 + $"{budget.Tokens} tokens; a spawn that can do nothing is a typo, not a budget"));
         }
 

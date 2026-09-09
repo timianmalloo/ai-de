@@ -37,9 +37,10 @@ public sealed record LaneIdentity(
 /// <para><b>No new seam.</b> Registration, episode open, artifact declaration and close all go
 /// through <see cref="IngestHost"/> and are capability-verified by <c>ITrustedRegistrar</c>, exactly
 /// as <c>InjectedContractIngest</c> does for a session that declares its own episodes. An
-/// <c>IEpisodeSource</c> interface was declined by ruling until a third implementer exists; two
-/// implementations are not evidence of a shape, and the interface would have to be guessed from
-/// one of them.</para>
+/// episode-source interface was declined by ruling until a third implementer exists — the name is
+/// left unwritten deliberately, because a doc comment that cites a type nobody declared reads as a
+/// guarantee (DC-095); two implementations are not evidence of a shape, and the interface would
+/// have to be guessed from one of them.</para>
 ///
 /// <para><b>The difference from the observed door is authorship, not mechanism</b> (§6.1). An
 /// observed session <i>declares</i> its episode over the coordination log and could in principle

@@ -433,9 +433,28 @@ entries and records **0 non-success outcomes across 465**, so a rework count of 
 
 | | Planned | Actual |
 | --- | --- | --- |
-| Nodes | 8 | — |
-| Width | 1 | — |
-| Work `T₁` | 10.0 units (unit **Flagged**) | — |
-| Rework passes | not predicted | — |
-| Floors met | 9/9 | — |
-| Conductor Surface re-entry trigger fired? | no | — |
+| Nodes | 8 | **8**, all closed |
+| Width | 1 | **1** — no second agent, one worktree, four sessions |
+| Work `T₁` | 10.0 units (unit **Flagged**) | **not comparable.** Only three node durations were measured — N4 **1931 s**, N5+N6 **1374 s**, N7 **2404 s** — so 5.7 units of the 10 are **not recorded**, never zero. The unit stays `Flagged`: nothing here confirms or refutes it |
+| Rework passes | not predicted | **2 observed, both at N7** — the first governed run crashed on `AcpEngineProcess.ProcessId`, and the launcher's `StartupUri = null` threw before the first run began. Neither is in the audit log's outcome field, which records 0 non-success across 475 entries — so the count is **observed here**, not derived from the instrument |
+| Floors met | 9/9 | **9/9.** UX & Accessibility stays retired by the surface deferral (Ruling 13), named rather than deleted |
+| Conductor Surface re-entry trigger fired? | no | **no.** No run had to be watched by a human; the exit run was read from the store and from the result file it wrote |
+
+### What the exit run cost, and what it bought
+
+The exit run itself was **102 s** of wall clock end to end — engine start, handshake, observed auth,
+worktree, episode, one prompt turn, seven permission decisions, close and score. N7's **2404 s** is
+almost entirely the evidence around it: the oracle written first, the ledger and its falsification,
+the Proof Pack, the R4-core check, the full gate set, and the four gates that set found.
+
+**The clause that paid for itself:** *"full set once at N7"*. Four gates —
+`verify-id-allocators`, `verify-bounds-are-enforced`, `verify-cited-controls`, `verify-api-crefs` —
+had been failing since the node that caused them, invisibly, because the by-subject policy never ran
+them. The gate policy's own words were *"a skipped gate looks identical to a run one"*, and for eight
+nodes it did.
+
+**The clause that did not hold as written:** floor point 3's assumption that committing the Proof
+Pack before the close is sufficient. It is not, in a linked worktree — `RepositoryCorrection` rebinds
+the session to the parent checkout and the verifier reads that checkout's working tree. Registered as
+**DC-115**, uncontrolled. The exit run met the floor by running against a clone, which is a fact about
+the shape the run took and not about the defect.

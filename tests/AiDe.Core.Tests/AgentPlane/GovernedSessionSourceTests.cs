@@ -104,7 +104,7 @@ public sealed class GovernedSessionSourceTests
             () => source.Open(Lane(), Block() with { Budget = null }));
 
         Assert.Equal(AgentPlaneErrorCodes.GoalBlockIncomplete, error.Code);
-        Assert.Contains(GoalBlockFields.Budget, error.Message, StringComparison.Ordinal);
+        Assert.Contains(GoalBlockFields.BudgetKey, error.Message, StringComparison.Ordinal);
         Assert.Empty(store.AllEpisodes());
         Assert.Empty(store.AllSessions());
     }

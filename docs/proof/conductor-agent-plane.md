@@ -55,6 +55,35 @@ summary: >-
 | 4 | A latency SLO breach **fails** the exit | **Met, no breach.** p50 **0.022 ms**, p95 **0.0641 ms** over **287** measured events on host **`TIMMALLSTRIX`**, against the recorded 250 ms SLO | `result.json` |
 | + | Launched through the **real App-layer composition root**, no second entry point | **Met.** `AiDe.App.exe --conduct` → `App.OnStartup` → `ConductorEntry` → `GovernedRunHost.RunAsync` — the method the deferred Surface will call | `src/AiDe.App/Conductor/` |
 
+## R4-core — "unchanged by diff", over the whole phase
+
+```
+git diff --numstat aa48321..HEAD -- src/AiDe.Core/Watcher/ src/AiDe.Core/Dispatch/ src/AiDe.Core/Terminal/
+51  2  src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs
+53  0  src/AiDe.Core/Watcher/WatcherObservationStore.cs
+```
+
+**`src/AiDe.Core/Dispatch/` and `src/AiDe.Core/Terminal/` are byte-unchanged — zero files.** The
+terminal stack gained an *observer*, not a line: `TerminalHostingLedger` subscribes to the
+`terminal.start` activity `ConPtyTerminalSession` already emits on the normal path.
+
+**`src/AiDe.Core/Watcher/` is +104 / −2 across two files, and the two removed lines are additive in
+effect.** They are, verbatim:
+
+```
+-    private const int SchemaVersion = 5;
+-            workspace         TEXT    NULL
+```
+
+— the schema constant moving 5 → 6, and the last column of `scored_episode_cell` gaining a trailing
+comma so `mode TEXT NULL` can follow it. **No existing method body, no existing SQL column's type or
+nullability, and no existing call site changed.** What was added: two interface members
+(`RecordEpisodeMode`, `FindEpisodeMode`), their SQLite and in-memory implementations, and a v6
+expand-only nullable column with no backfill. The watcher gained **callers** —
+`LaneScoring.ScoreGoverned` and `LaneScoring.ImportObserved` — and the two store members those
+callers need. `ScoringService`, `ClosedEpisodeScoring`, `Leaderboard` and `WeaveScore` are untouched,
+which is why a governed episode carrying `weave/1` is evidence the existing scorer ran.
+
 ## Claims and evidence
 
 | Claim | Evidence (test) | Source | Oracle | Red observed | Confidence | Residual |
@@ -144,12 +173,28 @@ observing the failure it prevents, not before imagining it.
 5. **The two evidence doors disagree.** `AuditLogEpisodeSource.HasProofPackArtifact` credits a declared
    path by **substring**, never touching the filesystem; the governed door requires the file to exist.
    Two definitions of "has evidence", and the stricter one applies to the lane the product drove.
-6. **A `Task.Delay(30)` was measured at 17 ms** on this host, reddening
-   `RefreshMetricsTests.AFailedRefreshIsTimedToo` once in a full run and passing on re-run and in
-   isolation. DC-107's control deliberately *permits* a lower bound beneath an injected delay, on the
-   reasoning that "slower hardware only makes it more true". This observation contradicts that
-   reasoning: the delay under-slept. Not caused by this phase; recorded because the carve-out rests on
-   an assumption this machine falsified once.
+6. **A `Task.Delay(30)` was measured at 17 ms, twice.** It reddened
+   `RefreshMetricsTests.AFailedRefreshIsTimedToo` in two of four full suite runs and passed in
+   isolation both times — the recurrence threshold, so a class rather than a flake to retry.
+   **DC-107's own carve-out is contradicted by it:** the control deliberately permits a *lower* bound
+   beneath an injected `Task.Delay`, reasoning that "slower hardware only makes it more true", and
+   Windows timer coalescing can complete a delay **early** relative to the clock the code reads. The
+   three timing assertions in that file now assert the duration is **recorded at all**, which is what
+   their own comments claim to be about; DC-107 moves to `partially-controlled` and records the third
+   instance. Not caused by this phase — surfaced by it, because the exit gate is the first thing that
+   made a retry unacceptable.
+
+7. **The full gate set found four things eight nodes of subject-scoped gates did not.** Every one
+   was this phase's own doing and every one had been green-by-omission since the node that caused it:
+   `verify-id-allocators` (twenty `AP-` refusal codes with **no declared allocator** — the shape where
+   two sessions each mint `AP-0021`, both files are valid C#, the merge is clean, and two different
+   refusals answer to one identifier forever); `verify-bounds-are-enforced` (`FanOutCap` and `Budget`
+   named as limits and never compared); `verify-cited-controls` (`GovernedSessionSource` citing
+   `IEpisodeSource`, a name that resolves to nothing, inside a sentence claiming enforcement — DC-095);
+   and `verify-api-crefs` (`ext` reported as a decapitated `Next`). **This is the argument for the
+   "full set once at N7" clause, made by the clause paying off.** The gate policy's own reasoning was
+   that a skipped gate looks identical to a run one; four gates were skipped for eight nodes and
+   looked identical to green.
 
 ## Residual
 
@@ -191,6 +236,14 @@ observing the failure it prevents, not before imagining it.
   *normalization* — receipt to published envelope — inside one process with no I/O. They are strong
   evidence that the 250 ms SLO is not near breach on this machine and **no evidence at all** about a
   loaded machine, a slower one, or a lane whose events cross a process boundary (DC-107).
+- **The goal block's `Budget` and `FanOutCap` are validated but NOT enforced.** `SpawnContract`
+  refuses a budget of zero or a negative cap, and nothing thereafter counts requests or tokens
+  against the budget — Phase 1 has no request meter — and the plane spawns no sub-lane for a cap to
+  bound. `verify-bounds-are-enforced` flagged the field-name constants that read as limits; they were
+  renamed with a `Key` suffix so the name stops claiming what the code does not do, and the gap is
+  recorded here rather than closed. **Enforcement was deliberately not added at this node:** the exit
+  run's evidence describes the binary that ran, and quietly shipping a control that could have changed
+  its outcome would make the record describe a build nobody executed.
 - **One run is one sample.** Two runs were executed; the first found a defect and did not produce a
   result, the second is the exit evidence. Neither is a distribution.
 - **The exit run is not re-runnable without a Max subscription and a local adapter install.** The
@@ -198,5 +251,17 @@ observing the failure it prevents, not before imagining it.
   `spikes/conductor-exit-run/` is the record of the live run, in the same sense the frame corpus is.
 - **The governed lane left its work uncommitted** in a parked worktree; the patch was applied and
   committed here. A lane that commits its own work is Phase 2's `converge`.
-- **`verify-site-figures` was already failing on `main` before this phase** (6 of 14 figures). Reported,
-  not repaired: it is not this phase's doing, and repairing it here would hide which commit owns it.
+- **`verify-site-figures` was measured, not assumed.** Before regeneration it reported **10 stale of
+  14** — audit-entry, artifact, ledger, defect-class and public-symbol counts, every one of which this
+  phase moved. `tools/regenerate-derived.py` rewrote all ten and the gate now verifies **14 of 14**.
+  So the staleness carried into this node was *not* independent of the phase, and nothing was left
+  unrepaired; the earlier report of a pre-existing 6-of-14 failure did not reproduce.
+- **`docs/audit/audit-data.js` was stale in a way regeneration does not cover.** The committed file
+  was produced by an older renderer (its records begin `"id","shortname"`; the current one emits
+  `"actor","artifacts","datetime"`), so `verify-derived-views` failed until
+  `audit-log.py render` rewrote it. `regenerate-derived.py` does **not** render it — the two derived
+  bundles have separate regenerators, and only one of them is in the "regenerate everything" script.
+- **Regeneration ran twice in this session and once in the history.** The first run preceded the N7
+  audit append, which re-staled the audit-entry figure — the script's own failure text names that
+  ordering. The tree was regenerated again after the append and committed once. Recorded rather than
+  smoothed: the rule is *append first, then regenerate*.

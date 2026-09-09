@@ -120,6 +120,26 @@ FAMILIES = [
         "what": "investigations",
         "contiguous": True,
     },
+    {
+        # FOUND BY THIS SCRIPT'S undeclared-family check, on the Conductor phase's first full gate
+        # run: twenty AP- codes had accumulated with no allocator. They are the agent plane's stable
+        # refusal codes, and a refusal code is the worst kind to collide on — two sessions each add
+        # "AP-0021", both files are valid C#, the merge is clean, and two DIFFERENT refusals then
+        # answer to one identifier in every log, dashboard and support conversation that ever quotes
+        # it.
+        #
+        # The allocator is the constant list itself, which is why the pattern reads the declaration
+        # rather than the usage: docs/api/ carries the same ids in a DERIVED view, and treating a
+        # generated file as an allocator would report every regeneration as a duplicate.
+        "prefix": "AP",
+        "path": "src/AiDe.Core/AgentPlane/RunEvent.cs",
+        "kind": "heading",
+        "pattern": r'^\s*public const string \w+ = "(AP-\d+)";',
+        "what": "agent-plane refusal codes",
+        # Contiguous: a code is never re-issued, so a hole would mean a refusal was deleted rather
+        # than superseded — and a deleted refusal is a control that stopped firing.
+        "contiguous": True,
+    },
 ]
 
 # A token that looks like a monotonic id: a short prefix, a dash, a zero-padded number.

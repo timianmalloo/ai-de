@@ -32,12 +32,12 @@ public sealed class SpawnContractTests
     /// <summary>The complete block with exactly one field removed.</summary>
     private static GoalBlock Without(string field) => field switch
     {
-        GoalBlockFields.Goal => Complete() with { Goal = null },
-        GoalBlockFields.DoneWhen => Complete() with { DoneWhen = null },
-        GoalBlockFields.NotInScope => Complete() with { NotInScope = null },
-        GoalBlockFields.Tier => Complete() with { Tier = null },
-        GoalBlockFields.FanOutCap => Complete() with { FanOutCap = null },
-        GoalBlockFields.Budget => Complete() with { Budget = null },
+        GoalBlockFields.GoalKey => Complete() with { Goal = null },
+        GoalBlockFields.DoneWhenKey => Complete() with { DoneWhen = null },
+        GoalBlockFields.NotInScopeKey => Complete() with { NotInScope = null },
+        GoalBlockFields.TierKey => Complete() with { Tier = null },
+        GoalBlockFields.FanOutCapKey => Complete() with { FanOutCap = null },
+        GoalBlockFields.BudgetKey => Complete() with { Budget = null },
         _ => throw new ArgumentOutOfRangeException(nameof(field), field, "unknown goal-block field"),
     };
 
@@ -63,12 +63,12 @@ public sealed class SpawnContractTests
 
     /// <summary>Omitting any one of the six yields exactly one error, and it names that field.</summary>
     [Theory]
-    [InlineData(GoalBlockFields.Goal)]
-    [InlineData(GoalBlockFields.DoneWhen)]
-    [InlineData(GoalBlockFields.NotInScope)]
-    [InlineData(GoalBlockFields.Tier)]
-    [InlineData(GoalBlockFields.FanOutCap)]
-    [InlineData(GoalBlockFields.Budget)]
+    [InlineData(GoalBlockFields.GoalKey)]
+    [InlineData(GoalBlockFields.DoneWhenKey)]
+    [InlineData(GoalBlockFields.NotInScopeKey)]
+    [InlineData(GoalBlockFields.TierKey)]
+    [InlineData(GoalBlockFields.FanOutCapKey)]
+    [InlineData(GoalBlockFields.BudgetKey)]
     public void OmittingAnyOneFieldFailsWithAnErrorNamingThatField(string field)
     {
         var error = Assert.Single(SpawnContract.Validate(Without(field)));
@@ -79,12 +79,12 @@ public sealed class SpawnContractTests
 
     /// <summary>And the refusal a caller actually sees at spawn names it too, not merely the result object.</summary>
     [Theory]
-    [InlineData(GoalBlockFields.Goal)]
-    [InlineData(GoalBlockFields.DoneWhen)]
-    [InlineData(GoalBlockFields.NotInScope)]
-    [InlineData(GoalBlockFields.Tier)]
-    [InlineData(GoalBlockFields.FanOutCap)]
-    [InlineData(GoalBlockFields.Budget)]
+    [InlineData(GoalBlockFields.GoalKey)]
+    [InlineData(GoalBlockFields.DoneWhenKey)]
+    [InlineData(GoalBlockFields.NotInScopeKey)]
+    [InlineData(GoalBlockFields.TierKey)]
+    [InlineData(GoalBlockFields.FanOutCapKey)]
+    [InlineData(GoalBlockFields.BudgetKey)]
     public void TheSpawnRefusalNamesTheOmittedField(string field)
     {
         var error = Assert.Throws<AgentPlaneException>(
@@ -117,7 +117,7 @@ public sealed class SpawnContractTests
     {
         var error = Assert.Single(SpawnContract.Validate(Complete() with { NotInScope = blank }));
 
-        Assert.Equal(GoalBlockFields.NotInScope, error.Field);
+        Assert.Equal(GoalBlockFields.NotInScopeKey, error.Field);
     }
 
     /// <summary>A negative cap and an empty budget are named against their own field, not a generic error.</summary>
@@ -125,11 +125,11 @@ public sealed class SpawnContractTests
     public void AnOutOfRangeValueIsReportedAgainstItsOwnField()
     {
         Assert.Equal(
-            GoalBlockFields.FanOutCap,
+            GoalBlockFields.FanOutCapKey,
             Assert.Single(SpawnContract.Validate(Complete() with { FanOutCap = -1 })).Field);
 
         Assert.Equal(
-            GoalBlockFields.Budget,
+            GoalBlockFields.BudgetKey,
             Assert.Single(SpawnContract.Validate(Complete() with { Budget = new RunBudget(0, 0) })).Field);
     }
 

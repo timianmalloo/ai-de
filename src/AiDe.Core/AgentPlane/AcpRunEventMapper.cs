@@ -15,12 +15,12 @@ namespace AiDe.Core.AgentPlane;
 ///
 /// <para><b>Recognition is a table, not a handler per kind.</b> Four wire shapes have a Phase-1
 /// producer and are projected onto v1 kinds; everything else is namespaced <c>acp.*</c> and carried
-/// whole under <c>ext</c>. Adding a kind is adding a row, and an adapter release that invents one
+/// whole under <c>Ext</c>. Adding a kind is adding a row, and an adapter release that invents one
 /// needs no change at all — §7.2's "consumers ignore unknown kinds", implemented rather than
 /// restated.</para>
 ///
 /// <para><b>Nothing is dropped, ever.</b> A recognized frame's payload moves to <c>body</c> and the
-/// remaining envelope stays in <c>ext</c>; an unrecognized frame goes to <c>ext</c> entire. Either
+/// remaining envelope stays in <c>Ext</c>; an unrecognized frame goes to <c>Ext</c> entire. Either
 /// way every field of the original frame is present exactly once, which is what the captured-corpus
 /// round-trip proves over all 88 frames.</para>
 ///

@@ -460,7 +460,7 @@ than a contract one writer owns.
 
 **Recognition is a table, not a handler per kind.** Four wire shapes have a Phase-1
 producer and are projected onto v1 kinds; everything else is namespaced `acp.*` and carried
-whole under `ext`. Adding a kind is adding a row, and an adapter release that invents one
+whole under `Ext`. Adding a kind is adding a row, and an adapter release that invents one
 needs no change at all — §7.2's "consumers ignore unknown kinds", implemented rather than
 restated.
 
@@ -469,7 +469,7 @@ restated.
 
 
 **Nothing is dropped, ever.** A recognized frame's payload moves to `body` and the
-remaining envelope stays in `ext`; an unrecognized frame goes to `ext` entire. Either
+remaining envelope stays in `Ext`; an unrecognized frame goes to `Ext` entire. Either
 way every field of the original frame is present exactly once, which is what the captured-corpus
 round-trip proves over all 88 frames.
 
@@ -583,13 +583,13 @@ message and the schema are the same vocabulary.
 
 | Member | Summary |
 |---|---|
-| `string Goal = "goal"` | **(gap)** |
-| `string DoneWhen = "done_when"` | **(gap)** |
-| `string NotInScope = "not_in_scope"` | **(gap)** |
-| `string Tier = "tier"` | **(gap)** |
-| `string FanOutCap = "fan_out_cap"` | **(gap)** |
-| `string Budget = "budget"` | **(gap)** |
-| `IReadOnlyList<string> All = [Goal, DoneWhen, NotInScope, Tier, FanOutCap, Budget]` | All six, in the order §14.3 lists them. |
+| `string GoalKey = "goal"` | **(gap)** |
+| `string DoneWhenKey = "done_when"` | **(gap)** |
+| `string NotInScopeKey = "not_in_scope"` | **(gap)** |
+| `string TierKey = "tier"` | **(gap)** |
+| `string FanOutCapKey = "fan_out_cap"` | **(gap)** |
+| `string BudgetKey = "budget"` | **(gap)** |
+| `IReadOnlyList<string> All = [GoalKey, DoneWhenKey, NotInScopeKey, TierKey, FanOutCapKey, BudgetKey]` | All six, in the order §14.3 lists them. |
 
 ## `GoalBlock`
 
@@ -739,9 +739,10 @@ Opens governed episodes on the live ingest path — spec §6.2's `GovernedSessio
 **Remarks.** **No new seam.** Registration, episode open, artifact declaration and close all go
 through `IngestHost` and are capability-verified by `ITrustedRegistrar`, exactly
 as `InjectedContractIngest` does for a session that declares its own episodes. An
-`IEpisodeSource` interface was declined by ruling until a third implementer exists; two
-implementations are not evidence of a shape, and the interface would have to be guessed from
-one of them.
+episode-source interface was declined by ruling until a third implementer exists — the name is
+left unwritten deliberately, because a doc comment that cites a type nobody declared reads as a
+guarantee (DC-095); two implementations are not evidence of a shape, and the interface would
+have to be guessed from one of them.
 
 
 
