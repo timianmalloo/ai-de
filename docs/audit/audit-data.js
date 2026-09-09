@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-09T19:13:52Z",
+  "generated": "2026-09-09T19:20:23Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9927,6 +9927,40 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "signals": {
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M23STE7W6R4EEN3GRV4B76T8",
+      "shortname": "verify-n1-n2-and-route-n3",
+      "datetime": "2026-09-09T19:20:23Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "Verify N1/N2 independently rather than accepting the track's report, then route and dispatch N3 (plane services).",
+      "summary": "VERIFIED INDEPENDENTLY, not accepted: build clean with 0 warnings; 399 App + 1746 Core = 2145 passing, 0 failed (baseline 2118, +27), both projects clearing their minimums; marker-lint 8/8; verify-fixture-derivation OK; verify-no-conflict-markers OK across 1299 files. The track's counts matched mine exactly. I did NOT re-run verify-test-run.py over the same tree a third time - I hold its evidence directly, and running it again would be ceremony without new information. THE TRACK DISPROVED A CLAIM IN MY OWN APPROVED PLAN: the plan said N2's non-adapter mode refusal keeps 'the codex/copilot deferral' enforced; it only enforces copilot, because spec 14.2 declares openai as engine codex with acp: adapter - I verified the spec text myself. The track added a third refusal (AP-0003, an adapter row whose entry module has never been observed on a real install) rather than papering over it, which strengthened the deferral. Plan corrected in place. The track also proved its oracle CAN fail rather than merely asserting it: it mutated the mapper to drop a field, observed red on all four corpus files, and reverted. All 88 frames round-trip with no field lost, checked per-leaf with count equality so omission and duplication both fail. Two findings carried forward to later nodes: id:0 is a valid inbound request id (write.jsonl:12) that a truthiness-keyed correlation table would never answer, now a required N4 case; and cost arrives twice at different fidelities, with the richer per-model block preserved in ext for Phase 3. ROUTING N3 - ESCALATION RECORDED (spec 9.3): plan allocated sonnet as well-scoped implementation; escalated to OPUS because the node carries a store schema migration under the Data & Persistence HARD VETO and R2's byte-for-byte episode-attribute requirement, both semantic rather than mechanical, which is what the routing rule means by architecture-sensitive. Alternatives rejected: sonnet-as-planned (risks a restart on the two semantic clauses); splitting the node (the Owner ruled its five pieces are one node).",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/plans/conductor-programme.md"
+      ],
+      "tags": [
+        "conductor",
+        "phase-1",
+        "verification",
+        "routing"
+      ],
+      "outcome": "success",
+      "goal": "Confirm N1/N2 by running the gates myself, and dispatch N3 with a recorded routing rationale",
+      "done_when": "Build, test counts and the fast gates verified by the conductor independently of the track's claims; N3 dispatched with its routing rationale and alternatives recorded",
+      "tier": "T2",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      },
+      "parallelism": {
+        "unparseable_runs": 1
       }
     }
   ],
