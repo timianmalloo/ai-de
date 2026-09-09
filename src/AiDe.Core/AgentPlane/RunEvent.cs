@@ -66,6 +66,36 @@ public static class AgentPlaneErrorCodes
 
     /// <summary>A worktree that could not be provisioned. Fatal: a governed lane has no shared-checkout fallback.</summary>
     public const string WorktreeProvisionFailed = "AP-0012";
+
+    /// <summary>
+    /// An observed auth label that contradicts the one the operator recorded for the configured
+    /// account. Refused: the lane would bill, rank and report against a different subscription.
+    /// </summary>
+    public const string ObservedAuthAccountMismatch = "AP-0013";
+
+    /// <summary>The engine's stdout ended while a request was outstanding — it exited or was killed.</summary>
+    public const string EngineStreamEnded = "AP-0014";
+
+    /// <summary>The engine never answered a request. A hung child, bounded rather than waited on forever.</summary>
+    public const string EngineRequestTimedOut = "AP-0015";
+
+    /// <summary>The engine answered with a JSON-RPC error. Its code and message travel on the refusal.</summary>
+    public const string EngineReturnedError = "AP-0016";
+
+    /// <summary>
+    /// The engine echoed a protocol version this client does not speak, or echoed none. Refused:
+    /// every frame would still parse and the meanings would have moved.
+    /// </summary>
+    public const string ProtocolVersionMismatch = "AP-0017";
+
+    /// <summary>
+    /// A session cwd that is not absolute. Refused before the wire, so the reason names the caller
+    /// rather than arriving later as the adapter's own <c>-32602</c>.
+    /// </summary>
+    public const string SessionCwdNotAbsolute = "AP-0018";
+
+    /// <summary>The engine executable could not be started at all.</summary>
+    public const string EngineDidNotStart = "AP-0019";
 }
 
 /// <summary>

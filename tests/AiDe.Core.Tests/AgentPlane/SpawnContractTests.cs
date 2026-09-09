@@ -245,4 +245,76 @@ public sealed class SpawnContractTests
 
         Assert.Equal(AccountHealth.QuotaDegraded, spawn.Binding.Account.Health);
     }
+
+    // ------------------------------------------------------------ the auth-label correspondence
+
+    /// <summary>
+    /// The gap N3 named, closed: when the operator has recorded what the adapter calls this account,
+    /// the observed label is checked against it, and a mismatch refuses.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why the correspondence has to be declared and cannot be derived.</b> The configured
+    /// label is an operator's own name for a login (<c>max-personal</c>); the observed label is the
+    /// adapter's name for a <i>plan tier</i> (<c>Claude Max</c>). Nothing in either value determines
+    /// the other, and the adapter reads the local <c>claude</c> CLI credential store — which holds
+    /// exactly one login — so it can never report which of several configured accounts the operator
+    /// meant. Inventing a mapping inside a control that exists because guessing is expensive is how
+    /// the control starts lying.</para>
+    ///
+    /// <para><b>What the check therefore buys.</b> An operator who has two subscription logins and
+    /// switches the CLI between them gets a refusal instead of a lane that bills, ranks and reports
+    /// against the wrong account.</para>
+    /// </remarks>
+    [Fact]
+    public void AnObservedLabelThatContradictsTheRecordedOneRefusesTheSpawn()
+    {
+        var registry = new ProviderRegistry([
+            new ProviderRow(
+                "anthropic",
+                ProviderAuth.Subscription,
+                [new ProviderAccount("max-personal", AccountHealth.Ready, ObservedAuthLabel: "Claude Max")]),
+        ]);
+
+        var error = Assert.Throws<AgentPlaneException>(
+            () => SpawnContract.Authorize(
+                Request(auth: new ObservedAuthStatus(ObservedAuthStatus.AccountKind, "team", "Claude Team")),
+                registry));
+
+        Assert.Equal(AgentPlaneErrorCodes.ObservedAuthAccountMismatch, error.Code);
+        Assert.Contains("Claude Max", error.Message, StringComparison.Ordinal);
+        Assert.Contains("Claude Team", error.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>The matching case authorizes — the check is a correspondence, not a second refusal.</summary>
+    [Fact]
+    public void AnObservedLabelThatMatchesTheRecordedOneAuthorizes()
+    {
+        var registry = new ProviderRegistry([
+            new ProviderRow(
+                "anthropic",
+                ProviderAuth.Subscription,
+                [new ProviderAccount("max-personal", AccountHealth.Ready, ObservedAuthLabel: "Claude Max")]),
+        ]);
+
+        var spawn = SpawnContract.Authorize(Request(auth: Subscription()), registry);
+
+        Assert.Equal("Claude Max", spawn.ObservedAuth.Label);
+    }
+
+    /// <summary>
+    /// With nothing recorded the check degrades to <c>kind</c> alone — <b>"not recorded", never a
+    /// guessed correspondence</b> (IO12) — and the account says so about itself.
+    /// </summary>
+    [Fact]
+    public void WithNoRecordedLabelTheCheckIsKindAloneAndTheAccountSaysSo()
+    {
+        var account = new ProviderAccount("max-personal", AccountHealth.Ready);
+        Assert.Null(account.ObservedAuthLabel);
+
+        var spawn = SpawnContract.Authorize(
+            Request(auth: new ObservedAuthStatus(ObservedAuthStatus.AccountKind, "max", "Anything At All")),
+            new ProviderRegistry([new ProviderRow("anthropic", ProviderAuth.Subscription, [account])]));
+
+        Assert.Equal("Anything At All", spawn.ObservedAuth.Label);
+    }
 }

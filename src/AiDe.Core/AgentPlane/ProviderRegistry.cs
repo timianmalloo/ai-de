@@ -37,7 +37,15 @@ public enum ProviderAuth
 /// </summary>
 /// <param name="Label">The label the operator configured. AI-DE stores labels, never credentials.</param>
 /// <param name="Health">What the last health probe observed.</param>
-public sealed record ProviderAccount(string Label, AccountHealth Health);
+/// <param name="ObservedAuthLabel">
+/// What the engine's own adapter calls this account, <b>as the operator recorded it after seeing
+/// it</b> — e.g. <c>"Claude Max"</c>. <c>null</c> means not recorded, and the spawn gate then checks
+/// the auth <i>kind</i> alone. It is deliberately not derived: <see cref="Label"/> is an operator's
+/// name for a login and this is the adapter's name for a plan tier, so nothing in either determines
+/// the other, and a mapping invented inside a control that exists because guessing is expensive is
+/// how the control starts lying.
+/// </param>
+public sealed record ProviderAccount(string Label, AccountHealth Health, string? ObservedAuthLabel = null);
 
 /// <summary>
 /// One <c>providers.yaml</c> row (§14.2) — a provider, how it authenticates, and its accounts.

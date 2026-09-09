@@ -45,25 +45,7 @@ public sealed class AcpRunEventMapperTests
     /// Walks up for the repository root, so the test does not depend on the runner's cwd — the same
     /// approach <c>WhatTheRealCorpusCanProduceTests</c> uses for the audit log.
     /// </summary>
-    private static string CorpusDirectory()
-    {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null)
-        {
-            var candidate = Path.Combine(dir.FullName, "spikes", "acp-subscription-lane", "frames");
-            if (File.Exists(Path.Combine(candidate, "PROVENANCE.md")))
-            {
-                return candidate;
-            }
-
-            dir = dir.Parent;
-        }
-
-        // Loud, never skipped. A test that passes because it could not find its subject is an
-        // absence rendered as success (DC-025).
-        throw new InvalidOperationException(
-            "could not locate spikes/acp-subscription-lane/frames from " + AppContext.BaseDirectory);
-    }
+    private static string CorpusDirectory() => AcpCorpus.Directory();
 
     /// <summary>The corpus file names, enumerated from disk rather than listed here (DC-021).</summary>
     public static TheoryData<string> CorpusFiles

@@ -2679,6 +2679,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "4b5b1f03a6a7d7ff1390488f6ae1e47e073a46322b9f6ba459cd99b9179b8b54"
     },
     {
+      "id": "note-conductor-observed-auth-label-correspondence",
+      "path": "docs/notes/conductor-observed-auth-label-correspondence.md",
+      "title": "Decision note — the observed auth label is checked against a declared correspondence, never a derived one",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "N3's ToS gate asserted the adapter's auth kind is \"account\" but never checked WHICH account, because the observed label (\"Claude Max\") is a plan-tier string and the configured label (\"max-personal\") is an operator's own name, and neither determines the other. Phase 1 closes the gap with an operator-declared correspondence that is enforced where it exists and reads \"not recorded\" where it does not.",
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "acp",
+        "auth",
+        "subscription",
+        "fail-closed"
+      ],
+      "links": [
+        {
+          "to": "note-conductor-tos-invariant-observed-auth",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "f608586266a5eb82ff5903bc41fecc7b76726f2e52b3593e6ba7259ae283c50f"
+    },
+    {
       "id": "note-conductor-phase1-plan-approval",
       "path": "docs/notes/conductor-phase1-plan-approval.md",
       "title": "Decision note — Phase 1 plan approved at width 1, with six binding conditions",
@@ -11353,7 +11385,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de — Audit & Change Log",
+      "title": "ai-de-feature-conductor-agent-plane — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -11492,5 +11524,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "1dcc59c2bba3c360abe71c63a976b928bf302c1f5aa2c5fb6e67183f9b0b06b8"
+  "graphSha256": "6b3aeb319e3ecd20c435c484b87662c04a38ae3cf78ff9d9f8b553aec560b70a"
 };

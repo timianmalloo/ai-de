@@ -162,11 +162,16 @@ public static class SpawnContract
     /// accident rather than read it.</para>
     ///
     /// <para><b>The observed-auth gate fails closed.</b> A subscription-configured account with no
-    /// observed status is refused, never assumed. The one thing this gate does <i>not</i> assert is
-    /// that the observed label matches the configured account label: the observed label is a display
-    /// string the adapter chooses ("Claude Max") and the configured label is an operator's own name
-    /// ("max-personal"), and inventing a mapping between them would be a guess in the middle of a
-    /// control that exists because guessing is expensive. Named here rather than left implicit.</para>
+    /// observed status is refused, never assumed.</para>
+    ///
+    /// <para><b>And the observed account is checked, when there is something to check it against.</b>
+    /// The observed label is a display string the adapter chooses ("Claude Max"); the configured
+    /// label is an operator's own name for a login ("max-personal"). Neither determines the other, so
+    /// the correspondence is <i>declared</i> — <see cref="ProviderAccount.ObservedAuthLabel"/> — and
+    /// enforced only where it was declared. Where it was not, the check is the auth <i>kind</i>
+    /// alone, which is "not recorded" rather than a guessed mapping (IO12). What the declared form
+    /// buys is real: an operator with two subscription logins who switches the local CLI between them
+    /// gets a refusal instead of a lane that bills and ranks against the wrong account.</para>
     /// </remarks>
     /// <exception cref="AgentPlaneException">
     /// <see cref="AgentPlaneErrorCodes.DirectApiRefusedByToS"/>,
@@ -218,6 +223,16 @@ public static class SpawnContract
                 $"account '{binding.Account.Label}' is configured as a subscription, but the adapter reports "
                 + $"auth kind '{observed.Kind}'; an API key or an unauthenticated adapter bills somewhere the "
                 + "subscription does not, so the spawn is refused");
+        }
+
+        if (binding.Account.ObservedAuthLabel is { } recorded
+            && !string.Equals(recorded, observed.Label, StringComparison.Ordinal))
+        {
+            throw new AgentPlaneException(
+                AgentPlaneErrorCodes.ObservedAuthAccountMismatch,
+                $"account '{binding.Account.Label}' was recorded as the one the adapter calls '{recorded}', but "
+                + $"the adapter reports '{observed.Label ?? "not recorded"}'; the engine is logged into a "
+                + "different account than the lane was bound to, and the work would bill and rank against that one");
         }
 
         return new Spawn(request.Goal!, binding, observed);
