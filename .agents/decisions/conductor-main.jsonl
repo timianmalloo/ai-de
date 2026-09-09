@@ -28,3 +28,6 @@
 {"agent": "conductor-main", "at": 1788987620.1102462, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-phase1.jsonl", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788987620.1102462, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788987620.1102462, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788987732.990533, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788987733.0049028, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788987733.0064938, "code": null, "kind": "allowed", "path": "docs/plans/conductor-programme.md", "session": "conductor-main", "wi": ""}

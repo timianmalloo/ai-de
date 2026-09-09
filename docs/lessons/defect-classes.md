@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 42 · uncontrolled 6
+**Status counts:** controlled 66 · partially-controlled 42 · uncontrolled 6
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -4289,6 +4289,49 @@ for both or split.*
   meta-shape is the thing to look for, and it is why each was found by *measuring the control itself*
   rather than by trusting its green.
 - **Status:** `uncontrolled` — recorded, with the exposure scoped to interactive and agent sessions
+
+---
+
+### DC-114 — A fix to the deployment mechanism cannot deploy itself: correct, tested, green, and unreachable
+
+- **Shape:** the thing being fixed is the thing that performs the fix. An updater, installer,
+  migrator or applier is repaired at the source, and every gate passes — but the repair only takes
+  effect once it is *already installed*, and the program that installs it is **the old copy**. The
+  old copy computes the plan; the new copy is merely one of the files that plan copies. So the
+  first refresh after the fix runs the **unfixed** logic, and does the exact thing the fix existed
+  to prevent.
+- **Signature:** none at the source, which is the trap. Every local signal is green — tests pass,
+  gates pass, CI passes, a fresh clone passes — because all of them measure whether the fix is
+  CORRECT. None of them asks whether it can REACH anyone. The failure surfaces in a different
+  repository, at a later date, as the deliberate repair quietly reverting.
+- **Why it survives:** verification naturally points at the artifact you changed. Asking "can this
+  fix reach a consumer?" requires running the *consumer's own installed copy* against the new
+  source — an inversion nobody does by habit, because it means deliberately using the stale program
+  you just replaced.
+- **Instance:** 2026-09-09 — AI-Forward Pack revision 64 taught `pack-apply.py` to withhold a
+  gitignore line a repo had explicitly declined. All 11 bundle gates passed, three CI workflows were
+  green, and a fresh clone reproduced it. Then the consumer-side question was finally asked: ai-de's
+  **installed rev-63** `pack-apply.py`, run against the rev-64 source, proposed
+  `UPDATE | added spikes/, .agents/*, !.agents/artifacts.yml` — **exactly the two lines rev 64
+  existed to withhold, and exactly the two repairs made in this repo that same day** (DC-111's
+  spikes override and the `.agents/` capture logs). The mechanism was right and unreachable.
+- **Control (upstream, revision 65):** `pack-apply` compares the running copy against the source's,
+  prints a `STALE-APPLIER` row on `plan` and **refuses to `apply`** (`--allow-stale` is the recorded
+  exception, whose help states it applies the OLD map); absent or unreadable is deliberately not
+  treated as stale. `/updatepack` now copies the program as its first mechanical step, so the
+  refusal never fires in normal use.
+- **The residual is unavoidable and must be stated, not engineered away:** a repo already holding a
+  pre-fix copy gets **no warning**, because you cannot make an already-deployed old program warn
+  about itself. The first hop after the fix depends on a person following the deploy note. **Applied
+  here:** `pack-apply.py` was copied into this repo manually, and the proposal changed from
+  `UPDATE — added spikes/, .agents/*` to three `KEEP` rows citing the decline marker and the 21
+  tracked files under `.agents/`.
+- **The generalisation:** *a gate's green is evidence the gate passed, never evidence the work
+  landed.* For any change to a mechanism that propagates changes, the acceptance test is not "does
+  it work here" but **"run the consumer's existing copy against the new source and read what it
+  proposes."**
+- **Status:** `controlled` upstream at revision 65 for every future hop; the one-time first-hop gap
+  is closed in this repo by hand and verified by the plan diff above
 
 ---
 
