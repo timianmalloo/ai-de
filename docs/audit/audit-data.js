@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-conductor-agent-plane",
-  "generated": "2026-09-09T19:45:54Z",
+  "generated": "2026-09-09T20:22:13Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9951,6 +9951,50 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "84c5a24805bf0d08be12eddc88a722603d28f80c",
         "short": "84c5a2480",
+        "branch": "feature/conductor-agent-plane",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M23XBNAFVPJYERFDH5NFB0MY",
+      "shortname": "conductor-n4-acp-client",
+      "datetime": "2026-09-09T20:22:13Z",
+      "session": "conductor-phase1",
+      "prompt": "Execute node N4 of the approved, council-reviewed Conductor Phase 1 plan (docs/plans/conductor-programme.md), the largest node in the phase and on its critical path, in the worktree C:\\Projects\\ai-de-feature-conductor-agent-plane on branch feature/conductor-agent-plane.\n\nGoal: Implement the ACP client as a bidirectional JSON-RPC peer over newline-delimited JSON on a child process's stdio, driving a real claude-code ACP session.\nDone when: every N4 exit clause passes as a test; a live round-trip against the pinned adapter works; dotnet build -c Release green with ZERO warnings; dotnet test -c Release green; python tools/verify-test-run.py passes in CHECK mode.\nNot in scope: N5's integration test, N6's leases and seams, N7's launcher and exit run, any UI. No ILane or IEpisodeSource interface (both declined by ruling). No changes to src/AiDe.Core/Dispatch/ or src/AiDe.Core/Terminal/ (frozen for Phase 1). No semantic changes to ScoringService, WeaveScore, Leaderboard, MessageBoard, ProofPackVerifier or EgressGate.\nTier: T2. Fan-out cap: 0. Budget: 150 tool calls.\n\nSeven exit clauses, each individually falsifiable: (1) live round-trip pinning protocolVersion 1 and ASSERTING the echoed value, absolute cwd, a tool_call arriving; (2) id:0 is a valid inbound request id (frames/write.jsonl:12) - a truthiness-keyed table never answers it; (3) backpressure via IngestHost.cs:89-95's counted-drop idiom, NOT ConPtyTerminalSession's DropOldest, because ACP events are the run log that spec 7.1 calls the truth; (4) six named subprocess failure modes reusing EnvironmentHealth.Inspect; (5) Ruling 11's deterministic ordinal instead of a literal latency budget (refused by tools/verify-perf-assertions.py, the DC-107 control); (6) a --self-test covering the guards src/AiDe.Mcp/Program.cs:140-186 covers (DC-104); (7) close the auth-label gap N3 named - either a real correspondence or a recorded decision.\n\nReuse ruled and binding: COPY ~35 lines of framing from src/AiDe.Mcp/Program.cs with a \"mirrors\" marker in BOTH files and a simplify: marker naming the extraction trigger; PORT THE STRUCTURE from spikes/acp-subscription-lane/probe-write.js, whose hardcoded m.id === 1|2|3 correlation is the one mechanism that does not scale and is therefore the thing to design; do NOT extract a generic JsonRpcPeer. Work TDD red-first, observe the actual failure, and buy assertion-level red by deliberate mutation. TreatWarningsAsErrors, zero warnings. Never git stash (DC-053/WT13). Never verify-test-run --update.",
+      "summary": "N4: bidirectional ACP peer over NDJSON. Correlation keyed on the presence of the id KEY (id 0 is a real inbound request id, frames/write.jsonl:12), not on truthiness; replies matched through a pending table on the id's canonical text. Normalize-then-dispatch gives Ruling 11's deterministic ordinal with no stopwatch. Bounded channel with FullMode.Wait plus counted drops (IngestHost's idiom, NOT ConPtyTerminalSession's DropOldest). Six named subprocess failure modes: crash mid-session, unterminated tail, over-long line at a 4 MiB cap, backpressure, hung child at 60s/15min, whole-tree reaping. EnvironmentHealth.Inspect reused. Clause 7 closed with an operator-declared ObservedAuthLabel correspondence (AP-0013) that degrades to 'not recorded'. ~35 lines of framing copied from src/AiDe.Mcp/Program.cs with a marker in both files. Red observed first (compile-red on missing types, then 4 assertion failures), and three deliberate mutations each reddened their control. LIVE round-trip ran twice: read path 137 frames, write path 52 frames with session/request_permission answered reject and no file created; both observed a session_info_update discriminator absent from the committed corpus. AgentPlane tests 88 -> 128; suite 2212 -> 2252; Release build zero warnings; verify-test-run, marker-lint --gate, verify-perf-assertions, verify-no-conflict-markers all green.",
+      "kind": "skill",
+      "skill": null,
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/AcpPeer.cs",
+        "src/AiDe.Core/AgentPlane/AcpLaneClient.cs",
+        "src/AiDe.Core/AgentPlane/AcpEngineProcess.cs",
+        "tests/AiDe.Core.AcpProbe/Program.cs",
+        "docs/notes/conductor-observed-auth-label-correspondence.md"
+      ],
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "acp",
+        "n4"
+      ],
+      "outcome": "success",
+      "goal": "Implement the ACP client as a bidirectional JSON-RPC peer over newline-delimited JSON on a child process's stdio, driving a real claude-code ACP session.",
+      "done_when": "Every N4 exit clause passes as a test; a live round-trip against @agentclientprotocol/claude-agent-acp@0.75.1 works; dotnet build -c Release green with zero warnings; dotnet test -c Release green; python tools/verify-test-run.py passes in CHECK mode.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-09T19:50:02Z",
+      "duration_seconds": 1931.0,
+      "git": {
+        "sha": "281e2c2bb3ed533eedf1e19ec94a2b7531f25a49",
+        "short": "281e2c2bb",
         "branch": "feature/conductor-agent-plane",
         "pushed": null
       }
