@@ -1,0 +1,3 @@
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":1,"clientCapabilities":{"fs":{"readTextFile":true,"writeTextFile":true},"terminal":true}}}
+{"jsonrpc":"2.0","id":2,"method":"session/new","params":{"cwd":"C:/projects/ai-de","mcpServers":[]}}
+{"jsonrpc":"2.0","id":3,"method":"session/prompt","params":{"sessionId":"02e96152-59ca-4031-b37e-f8f5ef7c7f61","prompt":[{"type":"text","text":"Run the shell command `git status --short` in the current directory and tell me the output. Do nothing else."}]}}

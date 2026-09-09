@@ -1,0 +1,4 @@
+{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":1,"clientCapabilities":{"fs":{"readTextFile":true,"writeTextFile":true},"terminal":true}}}
+{"jsonrpc":"2.0","id":2,"method":"session/new","params":{"cwd":"C:/<REDACTED_HOME>/AppData/Local/Temp/claude/C--projects-ai-de/18fe7a5a-c1b6-434e-8033-3f0c4e841f24/scratchpad/probe","mcpServers":[]}}
+{"jsonrpc":"2.0","id":3,"method":"session/prompt","params":{"sessionId":"c31a783b-de61-4e66-ae25-91d8c928d241","prompt":[{"type":"text","text":"Create a file named hello.txt containing the word hi in the current directory. Do nothing else."}]}}
+{"jsonrpc":"2.0","id":0,"result":{"outcome":{"outcome":"selected","optionId":"reject"}}}
