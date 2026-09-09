@@ -2644,7 +2644,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2679a09e80098e9bedf5759b1f32dd206aba451d00bd55bcc146f176aaff6d9c"
+      "sourceSha256": "8d93a9f7c1f58b6cf627c2b92eae020ab4acda7ec323aef9115a0b7edd42bbe9"
     },
     {
       "id": "note-conductor-mode-cohort-not-partition",
@@ -2677,6 +2677,42 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "4b5b1f03a6a7d7ff1390488f6ae1e47e073a46322b9f6ba459cd99b9179b8b54"
+    },
+    {
+      "id": "note-conductor-phase1-plan-approval",
+      "path": "docs/notes/conductor-phase1-plan-approval.md",
+      "title": "Decision note — Phase 1 plan approved at width 1, with six binding conditions",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Both council vetoes returned BLOCK. They converged rather than conflicted: going fully serial dissolved the Simplifier's finding that the two tracks were never independent and made the Test Architect's restored dependency free. Rulings 9-11 resolve them; the plan is approved at width 1 with seven serial nodes and six binding conditions.",
+      "tags": [
+        "conductor",
+        "execution-graph",
+        "council",
+        "veto",
+        "width",
+        "plan-approval"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-programme",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-latency-slo-not-assertion",
+          "rel": "refines"
+        },
+        {
+          "to": "note-conductor-r4-core-phase1-scope",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "576a305658844005b24cd7dc083351e09ace38530716b620b0be05ffec2ae0e3"
     },
     {
       "id": "note-conductor-r4-core-phase1-scope",
@@ -11436,5 +11472,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "fd2587fc5505bb55a90196c4b7aaabc98d0fe1b25c018cbb2f987280b7be9bcb"
+  "graphSha256": "f46b4a291d104273a502aa986a252baed74d5b46f3ab9364784c37c00b3502de"
 };

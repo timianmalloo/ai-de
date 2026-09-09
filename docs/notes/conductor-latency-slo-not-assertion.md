@@ -38,7 +38,35 @@ the code was correct**, stayed red for 38 runs, and took 26 other gates down wit
 A literal `elapsed < 250` is therefore **not a floor being thinned — it is a registered defect
 class being re-created.**
 
-## Ruling
+## AMENDED 2026-09-09 by Ruling 11 — read this first
+
+The ruling below rejected a host-independent relational assertion on the grounds that it *"has no
+natural baseline … and would be contrived"*, a sub-claim the Owner **marked Inferred**. The Test
+Architect disconfirmed it against the register, and the disconfirmation is **Verified**:
+
+> **DC-107's own control text** (`docs/lessons/defect-classes.md:3994-4000`): the gate *"deliberately
+> permits a **lower** bound …, a hang guard …, and **a ratio between two values measured in the same
+> process**."* Its generalisation: *"the cheapest fix is almost never a bigger threshold, it is **an
+> assertion that carries its own baseline**."*
+
+So a host-independent assertion **was** available and permitted, and the original ruling adopted the
+weakest permitted form. **Ruling 11 amends this note as follows — strictly more proof, not less:**
+
+1. **Keep** the recorded SLO exactly as ruled below.
+2. **Add, as the REQUIRED assertion, a deterministic ordinal**: the normalized run event is
+   observable **before** the client's response to the next inbound ACP request for the same call id.
+   A same-process ratio is permitted **as an addition, never as a substitute** — the ordinal is
+   preferred because it has **no guard band to mis-size**, which is DC-107's actual discriminator.
+   If an implementer chooses the ratio instead, the plan **must state the baseline and the band in
+   writing**.
+3. **Attach Conditions 1 and 2 below to the ACP-client node as actual tests.** They were previously
+   attached to no node, which made R1 bullet 2 a criterion nothing could fail.
+
+*This amendment is the disconfirmation loop working: an `Inferred` sub-claim was carried into a
+ruling as settled, and the adversarial gate caught it against the register. It is recorded rather
+than edited away.*
+
+## Ruling (as originally issued — now read subject to the amendment above)
 
 R1 bullet 2 **passes as a test** when:
 
