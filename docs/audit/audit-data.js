@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-09T18:47:32Z",
+  "generated": "2026-09-09T18:59:45Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9867,6 +9867,37 @@ window.AUDIT_DATA = {
           "accepted": 3
         }
       ]
+    },
+    {
+      "id": "al-01M23RMCR3AR8A72P9MH8Z2168",
+      "shortname": "prepare-for-coordination-phase1",
+      "datetime": "2026-09-09T18:59:36Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "/prepare-for-coordination scoped to Phase 1 (R1, R2, R4-core): classify artifacts first, apply GO5 independence from the workspace graph's real edges, name the serial spine, state the multiplier honestly - if the honest answer is fewer tracks, or one, say so.",
+      "summary": "The skill's core output - the division of work - was already derived, adversarially reviewed by both vetoes, and RULED at width 1 by the Owner. Re-running the skill to re-derive a decided answer would have spent tokens to reach the same place, so only its actionable remainder was executed and that is recorded here rather than implied. THE HONEST MULTIPLIER IS 1: GO5 independence was claimed in the first draft and is disproved by the plan's own exit conditions (the ACP client's oracle requires the auth-status refusal and an absolute cwd, both owned by the other track), and the ceiling was ~1.24x against GO6's ~15x token multiplier while speed ranks last. Artifact classification was done first, in SETUP 4: the registry went 6 -> 10 patterns with every regenerate command run before its rule was written, and every pattern verified by calling the classifier directly (site/*.html deliberately left authored, because regeneration rewrites only its data figures and would discard authored prose). DONE: worktree C:/Projects/ai-de-feature-conductor-agent-plane on branch feature/conductor-agent-plane, branched from main at 711c559, with coord install run INSIDE it (.git/config is per-clone) - doctor reports 10 patterns and both merge drivers registered. Execution is four SEQUENTIAL SESSIONS in that one tree rather than parallel worktrees, which satisfies WT1 with no primary-checkout exception to record. Node N0 (frame corpus) is complete; N1+N2 dispatched.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/plans/conductor-programme.md",
+        "docs/notes/conductor-phase1-plan-approval.md"
+      ],
+      "tags": [
+        "conductor",
+        "phase-1",
+        "coordination",
+        "worktree"
+      ],
+      "outcome": "success",
+      "goal": "Turn coordination on for Phase 1 and settle the division of work, or record that it is already settled",
+      "done_when": "Phase-1 worktree exists on its own branch with coord installed inside it; the division of work is recorded and approved; no parallel track is claimed that GO5 does not support",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      }
     }
   ],
   "changes": [
