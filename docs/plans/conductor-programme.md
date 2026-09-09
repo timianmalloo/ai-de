@@ -184,6 +184,12 @@ message never kills the loop, an unknown method is **answered, not ignored**.
 - Live round-trip: `initialize` (pinning `protocolVersion: 1` and **asserting the echoed value**) →
   `session/new` with an **absolute** `cwd` → `tool_call`.
 - **Spawn is refused when observed auth status is absent** — fail closed, never assume subscription.
+- **Close the auth-label gap N3 left open, and named.** The ToS ruling says the observed status must
+  *"match the configured subscription account"*, but the observed label is an adapter display string
+  (`"Claude Max"`) while the configured label is an operator's own name (`"max-personal"`). N3
+  refused to invent a mapping inside a control that exists *because* guessing is expensive, so its
+  gate asserts `kind == "account"` and carries the observed label onto the spawn. **N4 owns closing
+  it** — with a real correspondence, or with a recorded decision that `kind` is the whole check.
 - **Backpressure, named.** Reuse the bounded-channel idiom from `IngestHost.cs:89-95` (which counts
   drops via `itemDropped`), **not** `ConPtyTerminalSession`'s `DropOldest`: terminal bytes are
   ephemeral by contract, but **ACP events are the run log, which §7.1 calls the truth** — a silent
@@ -238,7 +244,18 @@ test, not in two separate tests"* — so N3/N4 of the old draft are **one node**
   Surface will later call. **A hand-assembled test harness fails N7.** No second entry point.
 - The `R4-core` "unchanged by diff" check runs **here**, over the whole phase diff (not at N5,
   which precedes the `mode` column's write path).
-- Full gate set runs here.
+- Full gate set runs here. **Derived artifacts regenerate exactly once, after the last authored
+  merge** (spec §6.5) — `tools/regenerate-derived.py`, which covers `docs/api/` for the new
+  `AgentPlane` namespace as well as the graph index.
+- **N7 MUST NOT use `git stash` to compare against HEAD.** Near-miss recorded during N3: `git stash
+  push -u` was used inside the worktree to check a gate against the branch point. Two facts combine
+  badly. **DC-053/WT13:** the stash is *repo-global* — the one thing a worktree does not isolate.
+  And **`verify-derived-views.py` writes into the working tree as a side effect** (it generated
+  `docs/api/AiDe.Core.AgentPlane.md`), so `git stash pop` failed with *"could not restore untracked
+  files."* Full recovery was achieved and verified byte-identical, but **with a second agent in the
+  repo this would have reached into their work.** *A verification gate with a filesystem side effect,
+  plus a repo-global stash, is a hazard — compare against HEAD with `git show`/`git worktree`, never
+  by stashing.*
 
 ## Immovable floor nodes — 9/9
 

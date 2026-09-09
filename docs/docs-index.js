@@ -4650,7 +4650,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b972de08e704e6d86ae0c0ca68d512a82ce62be4fdece3259f64f91806ca670d"
+      "sourceSha256": "3750a5dafba2dbca77006791d47bbe1f1a1c540c5d51dc386146fbea0e277ba2"
     },
     {
       "id": "diagram-class",
@@ -5697,7 +5697,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9b763e8cef6073be5a94316de7e6dec3c175afb3d9eb00be27615994d3b49dd3"
+      "sourceSha256": "94946f4d59036b144261f825ac557dd9d7592e395159a37d894cac1b2c96453a"
     },
     {
       "id": "plan-daydream-and-collaboration-slices",
@@ -11523,5 +11523,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5484a4685ff079030fa5f60cd8f6889c714b9f56e99d94a8773a1a185a693b0e"
+  "graphSha256": "b78f11ecb2a16535c229118e82fd76ea7c49ce0b995c2f84155f0e958cccd777"
 };

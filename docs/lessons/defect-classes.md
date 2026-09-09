@@ -1862,6 +1862,17 @@ for both or split.*
 - **The generalisation to apply elsewhere:** when isolation is the reason two things may run at once, **enumerate what the isolation does not cover** before relying on it. "Separate working directories" is a statement about files, not about every piece of state a tool keeps.
 - **Control:** **WT13**, added to `.claude/knowledge/session-worktree-discipline.md` — the always-loaded rule, where a session reads it before opening a worktree rather than after colliding in one — plus a line in the self-verification checklist. Not mechanisable: nothing can stop a subprocess calling `git stash`, which is why it has to be a rule and why both agents preserving what they did not recognise is the behaviour worth keeping.
 - **Residual risk:** WT13 names `refs/stash` sharply and the rest of the shared directory generally (`refs/bisect`, notes, config, hooks). A session that meets a different piece of shared state will not find it listed — the rule it will find is the generalisation: enumerate what the isolation does not cover before relying on it.
+- **Second instance, 2026-09-09 — a near-miss, and it names the ingredient the entry was missing.**
+  An agent ran `git stash push -u` inside a Phase-1 worktree to check a gate against the branch
+  point. Two facts combined: the stash is repo-global (this class), **and
+  `tools/verify-derived-views.py` WRITES INTO THE WORKING TREE as a side effect** — it generated
+  `docs/api/AiDe.Core.AgentPlane.md` while merely *checking*. `git stash pop` then failed with
+  *"could not restore untracked files."* Recovery was complete and verified byte-identical, so
+  nothing was lost — but the phase happened to be running one agent at a time. **With a second agent
+  in the repo it would have reached into their work.** The ingredient this class did not previously
+  name: *a verification gate with a filesystem side effect turns the repo-global stash from a
+  latent hazard into an active one.* Compare against HEAD with `git show` or a second worktree,
+  never by stashing.
 - **Status:** `partially-controlled`
 
 ### DC-054 — A new pane placed into the focused stack hides the surface that stack already held
