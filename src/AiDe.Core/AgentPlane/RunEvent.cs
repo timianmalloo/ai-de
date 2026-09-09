@@ -96,6 +96,13 @@ public static class AgentPlaneErrorCodes
 
     /// <summary>The engine executable could not be started at all.</summary>
     public const string EngineDidNotStart = "AP-0019";
+
+    /// <summary>
+    /// A governed lane's closed episode produced no scorecard, so it belongs to no cohort. Reported
+    /// rather than absorbed: an episode that scores nowhere is indistinguishable from a lane that
+    /// never ran.
+    /// </summary>
+    public const string GovernedEpisodeNotScored = "AP-0020";
 }
 
 /// <summary>

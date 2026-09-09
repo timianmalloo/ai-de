@@ -177,6 +177,22 @@ public sealed class AcpLaneClient
     }
 
     /// <summary>
+    /// Opens the lane's session rooted in its <b>provisioned worktree</b> — spec R1 bullet 1.
+    /// </summary>
+    /// <remarks>
+    /// <b>The composition lives in the signature.</b> Each half was already true and neither implied
+    /// the other: this client refused a relative <c>cwd</c> (true of any absolute path, including the
+    /// primary checkout), and the provisioner really cut a tree (true whether or not the lane ever
+    /// ran there). A caller holding a <see cref="ProvisionedWorktree"/> passes the tree, not a
+    /// string, so a governed lane cannot be rooted anywhere else by picking the wrong path.
+    /// </remarks>
+    public Task<string> NewSessionAsync(ProvisionedWorktree worktree, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(worktree);
+        return NewSessionAsync(worktree.Path, cancellationToken);
+    }
+
+    /// <summary>
     /// Sends one prompt and waits for the turn to end, under the prompt bound rather than the
     /// handshake one.
     /// </summary>

@@ -191,14 +191,28 @@ public sealed class GovernedLane
     private readonly GovernedSession _session;
     private readonly WorktreeProvisioner _provisioner;
     private readonly ProvisionedWorktree? _worktree;
+    private readonly LeaseMonitor? _seams;
 
-    public GovernedLane(GovernedSession session, WorktreeProvisioner provisioner, ProvisionedWorktree? worktree)
+    /// <param name="session">The lane's open episode.</param>
+    /// <param name="provisioner">Who releases the tree.</param>
+    /// <param name="worktree">The tree, or <c>null</c> when the lane had none.</param>
+    /// <param name="seams">
+    /// The lane's lease monitor, when it declared a lease. <c>null</c> means no lease was declared —
+    /// not "no seams found": a lane with no declared scope has nothing to be outside of, and an
+    /// empty <see cref="Lease"/> is refused rather than read as either extreme.
+    /// </param>
+    public GovernedLane(
+        GovernedSession session,
+        WorktreeProvisioner provisioner,
+        ProvisionedWorktree? worktree,
+        LeaseMonitor? seams = null)
     {
         ArgumentNullException.ThrowIfNull(session);
         ArgumentNullException.ThrowIfNull(provisioner);
         _session = session;
         _provisioner = provisioner;
         _worktree = worktree;
+        _seams = seams;
     }
 
     /// <summary>
@@ -215,18 +229,30 @@ public sealed class GovernedLane
     public LaneTeardown EngineKilled(WorktreeState state)
         => Close(EpisodeOutcome.Blocked, LaneClosure.Unresolved, state, removeWorktreeWhenSafe: false);
 
-    /// <summary>Closes the episode and releases the tree under the fail-safe rule.</summary>
+    /// <summary>
+    /// Closes the episode and releases the tree under the fail-safe rule.
+    /// </summary>
+    /// <remarks>
+    /// <b>An open seam forces <c>Blocked</c>, whatever the lane declared</b> (spec R4 and §8.2:
+    /// <c>seam_resolution_ratio</c> must be 1.0 before the final close). The outcome is overridden
+    /// rather than the close refused: a refusal would leave the episode open, which reads as a lane
+    /// still working — the state R1 already decided is the wrong one to leave behind. The override
+    /// happens here, at the one place a governed episode closes, so there is no second path that
+    /// closes without asking.
+    /// </remarks>
     public LaneTeardown Close(
         EpisodeOutcome outcome, LaneClosure closure, WorktreeState state, bool removeWorktreeWhenSafe)
     {
+        var forced = _seams is { MayCloseCleanly: false } ? EpisodeOutcome.Blocked : outcome;
+
         // The episode first: it is the durable record, and a tree that fails to release leaves a
         // reportable directory, while an episode that fails to close leaves work that scores nowhere.
-        var episode = _session.Close(outcome);
+        var episode = _session.Close(forced);
 
         var disposition = _worktree is null
             ? null
             : _provisioner.Release(_worktree, closure, state, removeWorktreeWhenSafe);
 
-        return new LaneTeardown(episode.Outcome ?? outcome, disposition);
+        return new LaneTeardown(episode.Outcome ?? forced, disposition);
     }
 }
