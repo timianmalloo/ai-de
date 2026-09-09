@@ -87,6 +87,29 @@ public interface IWatcherObservationStore
     IReadOnlyList<ScoredEpisode> AllScoredEpisodes();
 
     /// <summary>
+    /// Stamps the LANE MODE on an already-scored episode - <c>governed</c> (an ACP lane the plane
+    /// drove) or <c>observed</c> (a CLI lane the watcher watched).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>A cohort attribute, never a partition axis.</b> The partition is
+    /// <see cref="ScoreSegment"/> and a comparison never crosses it; mode lives beside the segment so
+    /// one cell can hold both cohorts, which is precisely what R4 requires and what a fourth segment
+    /// axis would prevent.</para>
+    ///
+    /// <para><b>Separate from <see cref="RecordScorecard"/> on purpose.</b> The door determines the
+    /// mode and the work determines the task class, never the reverse - so the mode is stamped by the
+    /// caller that knows which door this was, and the scoring contract is untouched.</para>
+    /// </remarks>
+    /// <returns><c>true</c> when a scored cell was stamped; <c>false</c> when there was none to stamp.</returns>
+    bool RecordEpisodeMode(string episodeId, string mode);
+
+    /// <summary>
+    /// The lane mode recorded for an episode, or <c>null</c> meaning <b>not recorded</b> - which is
+    /// what every row written before the column existed reads, and what it should read.
+    /// </summary>
+    string? FindEpisodeMode(string episodeId);
+
+    /// <summary>
     /// Appends an operator's dispute of a scored episode (US-16 / rule 12). Append-only: raising a
     /// dispute never overwrites the Scorecard. A duplicate dispute id is ignored idempotently.
     /// </summary>
@@ -181,6 +204,10 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
     private readonly List<DaydreamObservation> _daydreamObservations = [];
     private readonly List<DaydreamEvent> _daydreamEvents = [];
     private readonly Dictionary<string, ScoredEpisode> _scored = new();
+    // Beside the scored cells rather than inside ScoredEpisode: mode is a cohort attribute of the
+    // cell, and putting it on the record would have made it part of the value the leaderboard
+    // partitions and compares.
+    private readonly Dictionary<string, string> _modes = new(StringComparer.Ordinal);
     private readonly Dictionary<string, ScoreDispute> _disputes = new();
     private readonly HashSet<string> _ended = new();
 
@@ -442,6 +469,32 @@ public sealed class InMemoryWatcherObservationStore : IWatcherObservationStore
         lock (_gate)
         {
             return [.. _scored.Values];
+        }
+    }
+
+    public bool RecordEpisodeMode(string episodeId, string mode)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(episodeId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(mode);
+        lock (_gate)
+        {
+            // Only an already-scored episode carries a mode, mirroring the SQL store's UPDATE: the
+            // cohort label belongs to the scored cell, so there is nothing to label without one.
+            if (!_scored.ContainsKey(episodeId))
+            {
+                return false;
+            }
+
+            _modes[episodeId] = mode;
+            return true;
+        }
+    }
+
+    public string? FindEpisodeMode(string episodeId)
+    {
+        lock (_gate)
+        {
+            return _modes.TryGetValue(episodeId, out var mode) ? mode : null;
         }
     }
 

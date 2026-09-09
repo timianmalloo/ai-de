@@ -14,7 +14,7 @@ namespace AiDe.Core.Watcher;
 /// </summary>
 public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, IDisposable
 {
-    private const int SchemaVersion = 5;
+    private const int SchemaVersion = 6;
 
     private readonly SqliteConnection _connection;
     private readonly object _gate = new();
@@ -781,6 +781,37 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
         }
     }
 
+    public bool RecordEpisodeMode(string episodeId, string mode)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(episodeId);
+        ArgumentException.ThrowIfNullOrWhiteSpace(mode);
+
+        lock (_gate)
+        {
+            // An UPDATE, not an upsert. A mode without a scorecard would be a cohort label on a cell
+            // that does not exist, and the caller learns nothing was stamped rather than believing it
+            // was. RecordScorecard's own column list omits `mode`, so a re-score preserves whatever
+            // was stamped here instead of clearing it.
+            using var command = _connection.CreateCommand();
+            command.CommandText = "UPDATE scored_episode_cell SET mode = $mode WHERE episode_id = $id;";
+            command.Parameters.AddWithValue("$mode", mode);
+            command.Parameters.AddWithValue("$id", episodeId);
+            return command.ExecuteNonQuery() == 1;
+        }
+    }
+
+    public string? FindEpisodeMode(string episodeId)
+    {
+        lock (_gate)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText = "SELECT mode FROM scored_episode_cell WHERE episode_id = $id;";
+            command.Parameters.AddWithValue("$id", episodeId);
+            var value = command.ExecuteScalar();
+            return value is null or DBNull ? null : (string)value;
+        }
+    }
+
     private const string ScoredEpisodeSelect =
         """
         SELECT episode_id, harness, model, operator_id, task_class, schema_version,
@@ -1095,6 +1126,18 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             );
             CREATE INDEX IF NOT EXISTS ix_declared_artifact_episode ON declared_artifact_fact (episode_id);
             """, null),
+
+        // v6: the scored cell gains its lane MODE - governed (an ACP lane the plane drove) or
+        // observed (a CLI lane the watcher watched). Expand-only and nullable, following v4's shape
+        // exactly. A row written before this column existed came through a door nobody recorded, so
+        // it reads NULL, meaning "not recorded". There is deliberately NO backfill: inferring
+        // "observed" from the absence of a session record would put every unrecorded episode into
+        // one confident bucket, and a cohort comparison would then be comparing a guess.
+        //
+        // MODE IS NOT A PARTITION AXIS. The partition is ScoreSegment(Workspace, TaskClass,
+        // SchemaVersion) and a comparison never crosses it; a fourth axis here would split the same
+        // work into two cells, which is exactly what R4 forbids. It is an attribute OF the cell.
+        (6, "", ("scored_episode_cell", "mode", "TEXT NULL")),
     ];
 
     private const string SchemaSql =
@@ -1205,7 +1248,13 @@ public sealed class SqliteWatcherObservationStore : IWatcherObservationStore, ID
             -- row written before v4; such a row is excluded from leaderboard cells rather than
             -- backfilled with a path nobody observed. Declared LAST so a fresh database and one
             -- migrated by ALTER TABLE ADD COLUMN produce the same sqlite_master text.
-            workspace         TEXT    NULL
+            workspace         TEXT    NULL,
+            -- The LANE MODE this episode came through: 'governed' (an ACP lane) or 'observed' (a CLI
+            -- lane). NULL for a row written before v6, meaning "not recorded" - never backfilled.
+            -- A cohort attribute, deliberately absent from ScoreSegment. Declared LAST for the same
+            -- reason workspace is: a fresh database and one migrated by ALTER TABLE ADD COLUMN must
+            -- produce the same sqlite_master text.
+            mode              TEXT    NULL
         );
         CREATE INDEX ix_scored_episode_task ON scored_episode_cell (task_class, schema_version);
 

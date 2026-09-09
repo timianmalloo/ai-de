@@ -33,6 +33,39 @@ public static class AgentPlaneErrorCodes
 
     /// <summary>A wire frame that is not a JSON object, so it carries no event at all.</summary>
     public const string MalformedFrame = "AP-0004";
+
+    /// <summary>A provider id the registry does not carry. Never defaulted to the one that is configured.</summary>
+    public const string UnknownProvider = "AP-0005";
+
+    /// <summary>An account label the configured provider does not carry.</summary>
+    public const string UnknownAccount = "AP-0006";
+
+    /// <summary>
+    /// An account whose observed health is <c>needs-login</c>. Spec §4.3: "the router treats
+    /// <c>needs-login</c> as absent."
+    /// </summary>
+    public const string AccountNotReady = "AP-0007";
+
+    /// <summary>A goal block missing one or more of the six fields spec §14.3 names.</summary>
+    public const string GoalBlockIncomplete = "AP-0008";
+
+    /// <summary>
+    /// An Anthropic direct-api spawn attempted while a subscription account is configured — spec
+    /// §4.2's prohibition, enforced rather than documented.
+    /// </summary>
+    public const string DirectApiRefusedByToS = "AP-0009";
+
+    /// <summary>
+    /// No observed auth status for a subscription-configured account. <b>Fails closed:</b> absent is
+    /// "not recorded", and a spawn on "not recorded" is a guess with a bill attached.
+    /// </summary>
+    public const string ObservedAuthNotRecorded = "AP-0010";
+
+    /// <summary>An observed auth status that is present and is not a subscription.</summary>
+    public const string ObservedAuthNotSubscription = "AP-0011";
+
+    /// <summary>A worktree that could not be provisioned. Fatal: a governed lane has no shared-checkout fallback.</summary>
+    public const string WorktreeProvisionFailed = "AP-0012";
 }
 
 /// <summary>
