@@ -17,7 +17,11 @@ internal static class AcpProbeLauncher
     {
         var root = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory, "..", "..", "..", "..", "AiDe.Core.AcpProbe", "bin"));
-        var configuration = Directory.Exists(Path.Combine(root, "Release")) ? "Release" : "Debug";
+
+        // The configuration is read from THIS assembly's own path, not preferred. A machine that has
+        // built both would otherwise run a stale Release probe against Debug tests - a control
+        // reporting on a binary that is not the one under test, which is the DC-012 shape.
+        var configuration = new DirectoryInfo(AppContext.BaseDirectory).Parent?.Name ?? "Debug";
         var name = "AiDe.Core.AcpProbe" + (OperatingSystem.IsWindows() ? ".exe" : string.Empty);
         var candidate = Path.Combine(root, configuration, "net10.0", name);
 
