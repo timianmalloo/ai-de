@@ -28,3 +28,29 @@ docs/health-history.jsonl: register
 # developer machine, all Windows — and NO workflow invokes coord, the merge drivers or `coord regen`
 # (verified against .github/workflows/, 2026-09-07). Wire coord into CI (ubuntu-latest) and this
 # token must be revisited. `classify init --force` re-bakes the absolute path; re-normalise after it.
+
+# ── ai-de's own surfaces (added 2026-09-09, Conductor programme SETUP 4) ──────────────
+# Every `derived` command below was RUN before this rule was written, per the file header.
+#   api-reference.py     -> "209 files, 18 namespaces, 1954 public symbols, 66.5% documented", no diff
+#   build-doc-viewer.py  -> "24 pages -> docs\_site\index.html (707 KB)"; the only diff is the
+#                           DOC_META provenance stamp (generated date + documented_sha), which is
+#                           the artifact recording which commit it describes — not non-determinism.
+# Order note: tools/regenerate-derived.py runs api-reference BEFORE docs-graph derive, because the
+# API markdown carries frontmatter the graph index reads. The registry does not encode that order;
+# regenerate-derived.py is the orchestrator and remains the thing to run.
+
+docs/api/*.md: derived python tools/api-reference.py --src src --out docs/api
+docs/_site/index.html: derived python tools/build-doc-viewer.py
+
+# Append-only loomkeeper contract logs. These are `register`, not `derived`: nothing regenerates
+# them, they only ever grow, and a conflict is resolved by union rather than by re-running a
+# generator. They are committed by mandate (AGENTS.md capture obligation) and are deliberately NOT
+# gitignored — see docs/notes/conductor-agents-gitignore-deviation.md.
+.agents/log/*.jsonl: register
+.agents/decisions/*.jsonl: register
+
+# DELIBERATELY NOT CLASSIFIED — `site/*.html` stays `authored`.
+# tools/verify-site-figures.py --update rewrites only the DATA FIGURES inside those pages; the
+# surrounding prose is authored. Classifying them `derived` would let the merge driver "resolve" a
+# conflict by regenerating, which reconstructs the numbers and DISCARDS the authored prose. The
+# safe default is the correct one here. (Measured 2026-09-09: 6 of 14 figures stale on main.)

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-07T23:56:09Z",
+  "generated": "2026-09-09T18:09:19Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9721,6 +9721,60 @@ window.AUDIT_DATA = {
       "fan_out": 0,
       "started_at": "2026-09-07T23:48:10Z",
       "duration_seconds": 479.0
+    },
+    {
+      "id": "al-01M23NQ3H2X748YSBMDKDVV9EJ",
+      "shortname": "Implement AI-DE Conductor spec v1.0 (Phase 1)",
+      "datetime": "2026-09-09T18:08:39Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "Goal: Implement the AI-DE Conductor specification (spec v1.0) in this repository — Agent Plane, Conductor, unified coordination modes, session model, Agent Profiler, routing/standings — delivered phase by phase per spec §12, while PRESERVING the existing terminal/ConPTY agent-CLI capability as a first-class observed-lane option.\nDone when: Phase 1 exit evidence is demonstrated (a real governed run on claude-code, in a provisioned worktree, scored end-to-end by the existing Watcher with zero terminal hosting), R1/R2/R4-core acceptance criteria pass as tests, the build and full test suite are green on main, and the Owner agent has signed the E18 close. Later phases proceed only on an explicit Owner ruling per phase.\nNot in scope: Antigravity (deferred spike) · any change to weave/1 dimensions, weights, floors, or the leaderboard partition · API-key routing paths beyond the disabled-by-default config entry · removal or degradation of Terminal/, ConPTY, readiness profiles, or any existing CLI session capability.\nTier: T2. Fan-out cap: 4 (GO7 governs). Main-line budget: 300 tool calls.\n\nROLES AND AUTHORITY (strict order: Owner > approved plan > conductor > agents)\n1. OWNER agent — model: fable. Created as an early step; convened for every judgment call: slice boundaries, spec ambiguity, trade-off rulings, scope questions, which-next-action. Its ruling counts as the user's decision (CT20 delegated). Every ruling recorded: decision note in docs/notes/ plus an audit entry citing it. Rules on evidence brought to it.\n2. CONDUCTOR — this session, on Opus. Owns sequencing, division of labor, seams, decisions, convergence, and DOES NOT AUTHOR TRACK WORK. Own edits limited to coordination artifacts.\n3. AGENTS — Claude Code agents, one worktree each (WT1), one goal block each, model chosen per task WITH A RECORDED RATIONALE (spec §9.3): reasoning-heavy on opus; well-scoped implementation on sonnet; mechanical on haiku. Prefer the pack's persona roster for reviewers.\n4. HUMAN — hard floors only: Correctness/Security/Privacy/DataIntegrity/EvaluatorIntegrity trips, irreversible actions outside the plan, or a BENCHMARK-HALT-class integrity finding.\n\nSETUP (in order): 1. Ingest spec + mockups from Downloads into docs/specs/conductor/, commit with provenance, read the spec and the code it names. 2. /updatepack from C:\\Projects\\ai-forward; pack-doctor + foundation checks; commit before anything else. 3. Create the Owner agent .claude/agents/owner.agent.md (model fable) and have it ratify the goal block. 4. Coordination on, measured not assumed: coord-core classify init, coord-core install, coord doctor; extend the artifact-class registry with this repo's generated/derived/register surfaces, running each regenerate command before writing its rule.\n\nEXECUTION MODEL: 5. /optimize-graph on the whole effort once (CT24). 6. /prepare-for-coordination scoped to Phase 1 (R1, R2, R4-core); classify artifacts FIRST; GO5 independence from real graph edges; name the serial spine; state the multiplier honestly. Owner rules on slice boundaries and approves the plan after council vetoes resolve. 7. /execute-with-coordination on the approved plan; spawn agents per track with goal blocks and leases; arbitrate seams; a track's done is evidence, not authority. Spec-first and TDD; every shell call carries a one-line intent (CT26). 8. Converge per spec §6.5; then /document; then /session-profiler over this run. 9. Close with CT25 self-assessment and E18, counter-signed by an Owner ruling. Then STOP and present the Phase 2 proposal.\n\nSTANDING CONSTRAINTS: The spec is authoritative over the proposal, mockups, and this prompt. Preserve and keep green: Terminal/ConPTY, AgentReadinessProfiles, existing Watcher episode sources and scoring, MVVM seam, CI. Subscription-first invariant in code (spec §4.2). Anything not demonstrated is \"not recorded\", never zero; claims and evidence stay separate columns.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [
+        "conductor",
+        "phase-1",
+        "spec"
+      ],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M23NR2DK9ESSP40KJ5PWSJ11",
+      "shortname": "conductor-phase1-setup",
+      "datetime": "2026-09-09T18:09:11Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "Implement the AI-DE Conductor specification (spec v1.0) phase by phase per spec 12, preserving the terminal/ConPTY capability as a first-class observed lane. SETUP steps 1-4: ingest the spec, refresh the pack, create and convene the Owner agent, turn coordination on and extend the artifact-class registry. Full prompt logged as al-01M23NQ3H2X748YSBMDKDVV9EJ.",
+      "summary": "Ingested Conductor spec v1.0 + mockups v2 with checksums. Measured pack drift: both repos at rev 63; the single UPDATE (.gitignore .agents/*) was DECLINED by Owner ruling because it would break the AGENTS.md capture mandate - registry visibility verified to hold by a wider route (git check-ignore exit 1, 18 tracked files). Created the Owner agent (.claude/agents/owner.md, model fable, read-only toolset so 'never authors code' is structural); it is NOT invocable this session because the agent roster is fixed at launch, so it was convened by charter injection on fable instead - it returned three Verified rulings with its own citations. Rulings: (1) R4-core for Phase 1 = same store + cohort-not-partition + no-close-with-open-seam, proven by test, with the live grok-build lane deferred to R11/Phase 4; (2) keep the .gitignore deviation; (3) spec 6.2 'same source seam' read as the live IngestHost path - no IEpisodeSource interface in Phase 1, deferred until a third implementer. Extended the artifact registry 6 -> 10 patterns, running every regenerate command first; site/*.html deliberately left authored because regeneration rewrites only its data figures and would discard authored prose. Baseline measured green: build clean, 2118 tests pass (1719 Core + 399 App). FINDINGS carried forward: 6 of 14 site figures are stale on main and pages.yml gates on them; AIDE_SESSION/AIDE_CONTRACT_LOG are unset in this session.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/specs/conductor/README.md",
+        "docs/notes/conductor-r4-core-phase1-scope.md",
+        "docs/notes/conductor-agents-gitignore-deviation.md",
+        "docs/notes/conductor-episode-source-seam.md",
+        ".claude/agents/owner.md",
+        ".agents/artifacts.yml"
+      ],
+      "tags": [
+        "conductor",
+        "phase-1",
+        "setup",
+        "grounding"
+      ],
+      "outcome": "success",
+      "goal": "Ground the AI-DE Conductor programme: ingest the spec, refresh the pack, stand up the Owner authority, and extend the coordination registry before any implementation",
+      "done_when": "Spec ingested with provenance; pack drift measured and resolved; Owner agent created and three rulings recorded; artifact registry extended with every command run first; build and test baseline measured",
+      "tier": "T2",
+      "fan_out": 4,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      }
     }
   ],
   "changes": [

@@ -2522,6 +2522,99 @@ window.DOCS_INDEX = {
       "sourceSha256": "7512d0c42ae281d521239e2d341d6a2c1af30a4551b7963e559a931dcfa76675"
     },
     {
+      "id": "note-conductor-agents-gitignore-deviation",
+      "path": "docs/notes/conductor-agents-gitignore-deviation.md",
+      "title": "Decision note — decline the pack rev-63 .agents/* ignore lines",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "AI-Forward Pack revision 63 instructs every consuming repo to carry `.agents/*` then `!.agents/artifacts.yml` in .gitignore. This repo declines: its .agents/decisions/, .agents/log/ and .agents/sessions/ are committed loomkeeper contract logs that AGENTS.md mandates, and the pack's mechanism would make new episode captures invisible to git — a failure this repo has already measured once.",
+      "tags": [
+        "ai-forward-pack",
+        "coordination",
+        "gitignore",
+        "capture-mandate",
+        "updatepack"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "knowledge-hub",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "8e035320c60ec96935e29a7fa99ebd72bf73514d2cd3fe40fc66862f5a5b5deb"
+    },
+    {
+      "id": "note-conductor-episode-source-seam",
+      "path": "docs/notes/conductor-episode-source-seam.md",
+      "title": "Decision note — spec §6.2 'same source seam' read as the live IngestHost path",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "The spec says GovernedSessionSource \"implements the same source seam as AuditLogEpisodeSource\", but no such seam exists — AuditLogEpisodeSource is a static batch importer. The Owner ruled the phrase is intent, not an instruction: the governed source enters through the live IngestHost path, and no IEpisodeSource interface is invented in Phase 1.",
+      "tags": [
+        "conductor",
+        "watcher",
+        "episode-source",
+        "scoring",
+        "simplification"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0bcfb55ab5073a76f04666b822627bd2087a49aecf43cf0b4dd3a6b1039ac545"
+    },
+    {
+      "id": "note-conductor-r4-core-phase1-scope",
+      "path": "docs/notes/conductor-r4-core-phase1-scope.md",
+      "title": "Decision note — R4-core scope for Conductor Phase 1",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Spec R4 requires a run containing both a governed claude-code lane and an observed grok-build lane, but grok-build parity is R11, which the spec assigns to Phase 4. The Owner ruled what \"R4(core)\" means in Phase 1 so no Phase-4 work is pulled forward and no R4 criterion is silently dropped.",
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "coordination-modes",
+        "scoring",
+        "phasing"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "refines"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1bd178fc1b3ab1758d876b7042a7ad085fd161ca50d642c445d1671a93f8bd6c"
+    },
+    {
       "id": "note-conn-10-11-episode-source-blocker",
       "path": "docs/notes/conn-10-11-episode-source-blocker.md",
       "title": "conn-10/conn-11 are blocked on an episode-lifecycle source + verification telemetry",
@@ -10579,6 +10672,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "b9c49e5aaf87e7290f150837b4cdad32506f2b3d7ae9846832d74fd67e7b11a4"
     },
     {
+      "id": "spec-conductor",
+      "path": "docs/specs/conductor/README.md",
+      "title": "AI-DE Conductor — specification inputs",
+      "type": "spec",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Provenance and authority for the Conductor spec v1.0 and mockups v2: what was ingested, its checksums, the decisions the spec locks, and the phasing that governs delivery.",
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "acp",
+        "coordination",
+        "weave",
+        "routing"
+      ],
+      "links": [
+        {
+          "to": "spec-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-agentic-watcher-substrate",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "a62cb4f4d99b5cde621c2e595d2d30bfe0ea3261942a76336a87c3cb42aade31"
+    },
+    {
       "id": "spec-editor-surfaces",
       "path": "docs/specs/editor-surfaces.md",
       "title": "Editor & Content Surfaces — read-only code viewer & prompt drafts (spec)",
@@ -10987,6 +11116,20 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-activity-rail"
     },
     {
+      "id": "surface-specs-conductor-ai-de-conductor-spec-v1",
+      "path": "docs/specs/conductor/ai-de-conductor-spec-v1.html",
+      "title": "AI-DE Conductor — Specification v1.0",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
+      "id": "surface-specs-conductor-ai-de-conductor-mockups-v2",
+      "path": "docs/specs/conductor/ai-de-conductor-mockups-v2.html",
+      "title": "ai-de Conductor — UX mockups v2",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-mockups-facelift-elevate",
       "path": "docs/mockups/facelift-elevate.html",
       "title": "AI-DE facelift — elevate proposals (visualization)",
@@ -11091,5 +11234,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "61663991f3742cad0c9780859c08d7b3507cb8e585a65192fdf5935aec998ed0"
+  "graphSha256": "05e8313a7cef56f628fea9b635cdac1c854386ba9b3f4d33c5a42310465f18ac"
 };
