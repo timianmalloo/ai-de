@@ -139,8 +139,18 @@ nullable field, build nothing on it.
 **N2 — engine catalog.**
 - Three engine **data** rows load (pinned packages per the errata-policy note); **one** launch path
   (adapter) is exercised.
-- **An engine whose `acp` mode is not `adapter` is refused with a named reason** — this is the
-  clause that keeps the codex/copilot deferral *enforced rather than remembered*.
+- **An engine whose `acp` mode is not `adapter` is refused with a named reason.**
+
+  > **Corrected 2026-09-09 during N2, against the spec.** This plan claimed the mode refusal keeps
+  > *"the codex/copilot deferral"* enforced. **It only enforces copilot.** Spec §14.2 declares
+  > `openai: { engine: codex, acp: adapter }` — **codex's mode *is* `adapter`**, so a mode-only gate
+  > lets it straight through. The track found this and added a **third** refusal rather than paper
+  > over it: an adapter row **whose entry module has never been observed on a real install** is
+  > refused, because inventing one by analogy with the Claude adapter would be a guess that fails at
+  > spawn time with a file-not-found. **That** is what enforces the codex deferral.
+  >
+  > Three named refusals: `AP-0001` unknown id · `AP-0002` non-adapter mode · `AP-0003` unobserved
+  > entry module.
 - Carries `simplify: adapter launch only; upgrade trigger = first native-ACP (copilot) spawn`.
   *Fails if:* an unknown or non-adapter engine is silently defaulted.
 
@@ -181,6 +191,10 @@ message never kills the loop, an unknown method is **answered, not ignored**.
   and visible**, never silent.
 - Subprocess failure modes each have a case: child crash mid-session, partial/unterminated line,
   over-long line, child outpacing the reader, hung child (named timeout), orphaned process reaped.
+- **`id: 0` is a valid inbound request id.** Found in the corpus at `write.jsonl:12`. A correlation
+  table keyed on truthiness (`if (m.id)`) treats that frame as having no id and **never answers
+  it** — the peer then waits forever. The test for this is named and required, and it exists
+  because a real frame had the value, not because someone imagined the case.
 - **Latency (Ruling 11):** the **required** assertion is a deterministic **ordinal** — the
   normalized run event is observable **before** the client's response to the next inbound ACP
   request for the same call id. Plus: the latency measurement **exists and is a number**; with the
@@ -335,7 +349,7 @@ that was declined.
 | --- | --- | --- |
 | Single-lane Conductor Surface | — | **"The first time a run must be watched by a human rather than read from the store."** Carried as a named line in Planned-vs-actual. *(The label "Phase 1b" is retired — it appears nowhere in spec §12, and debt in an invented, ownerless phase becomes permanent.)* |
 | Retiring the `"audit-import"` task-class default | Phase 3 | §8.4 controlled task classes. **Phase-3 finding:** `WatcherHost.cs:118` and `:146` carry **two defaults for one concept** — one comparable, one not. |
-| codex / copilot launch paths | Phase 3+ | **Enforced, not remembered** — N2's refusal test goes red the moment someone half-implements one. This is the model the other deferrals should imitate. |
+| codex / copilot launch paths | Phase 3+ | **Enforced, not remembered** — but by *two* refusals, not one. **copilot** by the non-adapter mode gate (`AP-0002`); **codex** by the unobserved-entry-module gate (`AP-0003`), because §14.2 gives codex `acp: adapter` and a mode-only gate would have let it through. Each goes red the moment someone half-implements it. Still the model the other deferrals should imitate — the correction *strengthened* it. |
 
 ## Phases 2–4 (collapsed)
 
@@ -343,6 +357,13 @@ that was declined.
 | --- | --- | --- | --- |
 | **2 — Conductor** | `ConductorHost` on Max, tools, plan/council/dispatch/steward, board + seams, converge (R3, R5, R10) | N1 envelope, N4 client, N6 seams | data |
 | **3 — Observe & choose** | Sessions store, projections, restart, Profiler, derived metrics, bench import, cohorts, routing + standings (R6–R9) | N1, N5 cohorts; Phase 2 board | data + decision |
+
+**Already captured for Phase 3, nothing to re-capture:** the `session/prompt` result carries cost
+**twice at different fidelities** — `result.usage` has four totals, while `result._meta.quota.token_count`
+carries a per-model breakdown including `reasoningOutputTokens` and a `model_usage[]` array naming
+distinct models within one turn. N1 maps `cost` from `result.usage` only and preserves the richer
+block verbatim in `ext`. Phase 3's standings work will want that array, and it is already in the
+committed corpus.
 | **4 — Reach** | grok-build observed parity, routing-quality review, Antigravity spike (R11, R12) | N5 cohorts; resolves Ruling 7's deferred convergence | decision |
 
 ## Planned vs actual
