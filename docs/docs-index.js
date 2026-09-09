@@ -5697,7 +5697,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "234d14dbf8fbee2131cc24ded66bfc4953facba5c48ffd6e484f4b0acaf4929d"
+      "sourceSha256": "6f4f9e622ca6b45f02c0b71a0973b88beff6bc9fd40fe87ec42ca926f0295d77"
     },
     {
       "id": "plan-daydream-and-collaboration-slices",
@@ -11523,5 +11523,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6d745b081757c59bf5c59a4a7f97f43a35061c9e5d7f21584a39e1d41a9be21f"
+  "graphSha256": "a364b04ebf5b150ba5cbc933d27a4a87bc7ed5bb1f8fbf6bbe77cf9ff47dbf10"
 };

@@ -258,9 +258,19 @@ test, not in two separate tests"* — so N3/N4 of the old draft are **one node**
   Follow the 25 existing packs' shape — a table of
   **Claim | Evidence (test) | Source | Oracle | Red observed | Confidence | Residual** — plus the
   component, test counts, and the spike. **Every "Verified" must cite something re-runnable**
-  (DC-002), and the **Residual column must be populated, not blank**: the auth-label correspondence,
-  the deferred DC-111 control, the unregistered-session capture, and any node whose duration is
-  "not recorded" all belong there.
+  (DC-002), and the **Residual column must be populated, not blank**. Named residuals already known:
+  the deferred DC-111 control · DC-112 `partially-controlled` here until the rev-64 refresh ·
+  DC-113 uncontrolled · the unregistered-session capture that will not be scored · every node whose
+  duration is **"not recorded"** (N0–N3; only N4 measured, at 1931 s) · and —
+
+  > **the corpus is an incomplete oracle, and that is a finding rather than a flaw.** N4's live runs
+  > observed **`session_info_update`**, a discriminator absent from all 88 committed frames. It was
+  > carried correctly under `ext` as `acp.session.update.session_info_update`. So **`ext` preservation
+  > earned its keep on traffic two hours newer than the corpus** — the strongest available evidence
+  > that N1's open-`kind`-string ruling was right, and simultaneously proof that *"every frame
+  > round-trips"* bounds the oracle to **what was captured**, never to **what the protocol can send**.
+  > Also: `authStatus.account.plan` returned `"Claude Max"` live where the corpus recorded `"max"`,
+  > on the **same pinned adapter** — nothing may key on that value.
 - **N7 MUST NOT use `git stash` to compare against HEAD.** Near-miss recorded during N3: `git stash
   push -u` was used inside the worktree to check a gate against the branch point. Two facts combine
   badly. **DC-053/WT13:** the stash is *repo-global* — the one thing a worktree does not isolate.
