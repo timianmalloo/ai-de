@@ -2522,6 +2522,38 @@ window.DOCS_INDEX = {
       "sourceSha256": "7512d0c42ae281d521239e2d341d6a2c1af30a4551b7963e559a931dcfa76675"
     },
     {
+      "id": "note-conductor-acp-lane-separate-shape",
+      "path": "docs/notes/conductor-acp-lane-separate-shape.md",
+      "title": "Decision note — ITerminalSession stays frozen; the ACP lane is a separate shape",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Spec §10 says the dispatch seam \"generalizes to lanes... behind one interface\". ACP is bidirectional and its events must be persisted, while ITerminalSession's Output is explicitly ephemeral and must never be persisted - an opposite contract. Phase 1 therefore freezes ITerminalSession, builds the ACP lane on its own types, and defers the one-interface convergence until ObservedLaneBinding exists.",
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "acp",
+        "dispatch",
+        "privacy",
+        "dc-096"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "refines"
+        },
+        {
+          "to": "note-conductor-r4-core-phase1-scope",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "325c97527f0b8142530c34fd42d563cd3c51450b0b06129a79d2d01959364a00"
+    },
+    {
       "id": "note-conductor-agents-gitignore-deviation",
       "path": "docs/notes/conductor-agents-gitignore-deviation.md",
       "title": "Decision note — decline the pack rev-63 .agents/* ignore lines",
@@ -2676,6 +2708,69 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1bd178fc1b3ab1758d876b7042a7ad085fd161ca50d642c445d1671a93f8bd6c"
+    },
+    {
+      "id": "note-conductor-spec-errata-policy",
+      "path": "docs/notes/conductor-spec-errata-policy.md",
+      "title": "Decision note — the received spec is byte-frozen; corrections are quoted-line notes",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Policy for a spec that is authoritative but overtaken by fact: the received HTML stays byte-intact and corrections are decision notes that quote the line they correct. Applied to the ACP adapter packages, the policy shows this was never an erratum - the spec names no package, so the package identity is a catalog fact to pin.",
+      "tags": [
+        "conductor",
+        "spec",
+        "errata",
+        "provenance",
+        "engine-catalog"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-acp-lane-separate-shape",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "86fef6ba1f84009e378367a4da3fd7bf3b2943b15e0768c1fd9f8f410be7ef09"
+    },
+    {
+      "id": "note-conductor-tos-invariant-observed-auth",
+      "path": "docs/notes/conductor-tos-invariant-observed-auth.md",
+      "title": "Decision note — the ToS invariant is enforced against observed auth status, fail closed",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Spec §4.2 forbids an Anthropic direct-api entry while a subscription is configured, but the real failure is an environmental API-key override that outranks the subscription and bills silently, with no spawn to reject. Phase 1 gates every claude-code spawn on the adapter's observed auth status, fails closed when it is absent, and attaches the override list as the refusal reason.",
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "tos",
+        "subscription",
+        "security",
+        "fail-closed"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "refines"
+        },
+        {
+          "to": "note-conductor-acp-lane-separate-shape",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d77e1bdf03f44717e883e3abdf76d81ba1d4cc2502347f668ed1851239b7f5b5"
     },
     {
       "id": "note-conn-10-11-episode-source-blocker",
@@ -5472,6 +5567,50 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
+    },
+    {
+      "id": "plan-conductor-programme",
+      "path": "docs/plans/conductor-programme.md",
+      "title": "Execution graph — AI-DE Conductor programme, Phase 1 expanded",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "The bounded execution graph for Conductor Phase 1 (R1, R2, R4-core), with Phases 2-4 as collapsed nodes. Width is two tracks, not the permitted four: the ACP client dominates the span, so widening around it buys ~1.2x against a token multiplier that ranks above speed.",
+      "tags": [
+        "execution-graph",
+        "conductor",
+        "agent-plane",
+        "acp",
+        "phase-1",
+        "coordination"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "kb-multi-agent-coordination",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-conductor-r4-core-phase1-scope",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-conductor-acp-lane-separate-shape",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-conductor-tos-invariant-observed-auth",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "78dbd34cf70341487ebdd384aff4b4598bcdde1728fda41bc0946d9409eb7b07"
     },
     {
       "id": "plan-daydream-and-collaboration-slices",
@@ -11297,5 +11436,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ea3275128c408d6fb40964ec5f9ef60d96b668bce768d4ab6b4617607fe8e350"
+  "graphSha256": "fd2587fc5505bb55a90196c4b7aaabc98d0fe1b25c018cbb2f987280b7be9bcb"
 };
