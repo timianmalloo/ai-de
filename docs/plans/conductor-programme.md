@@ -139,8 +139,18 @@ nullable field, build nothing on it.
 **N2 — engine catalog.**
 - Three engine **data** rows load (pinned packages per the errata-policy note); **one** launch path
   (adapter) is exercised.
-- **An engine whose `acp` mode is not `adapter` is refused with a named reason** — this is the
-  clause that keeps the codex/copilot deferral *enforced rather than remembered*.
+- **An engine whose `acp` mode is not `adapter` is refused with a named reason.**
+
+  > **Corrected 2026-09-09 during N2, against the spec.** This plan claimed the mode refusal keeps
+  > *"the codex/copilot deferral"* enforced. **It only enforces copilot.** Spec §14.2 declares
+  > `openai: { engine: codex, acp: adapter }` — **codex's mode *is* `adapter`**, so a mode-only gate
+  > lets it straight through. The track found this and added a **third** refusal rather than paper
+  > over it: an adapter row **whose entry module has never been observed on a real install** is
+  > refused, because inventing one by analogy with the Claude adapter would be a guess that fails at
+  > spawn time with a file-not-found. **That** is what enforces the codex deferral.
+  >
+  > Three named refusals: `AP-0001` unknown id · `AP-0002` non-adapter mode · `AP-0003` unobserved
+  > entry module.
 - Carries `simplify: adapter launch only; upgrade trigger = first native-ACP (copilot) spawn`.
   *Fails if:* an unknown or non-adapter engine is silently defaulted.
 
@@ -174,6 +184,12 @@ message never kills the loop, an unknown method is **answered, not ignored**.
 - Live round-trip: `initialize` (pinning `protocolVersion: 1` and **asserting the echoed value**) →
   `session/new` with an **absolute** `cwd` → `tool_call`.
 - **Spawn is refused when observed auth status is absent** — fail closed, never assume subscription.
+- **Close the auth-label gap N3 left open, and named.** The ToS ruling says the observed status must
+  *"match the configured subscription account"*, but the observed label is an adapter display string
+  (`"Claude Max"`) while the configured label is an operator's own name (`"max-personal"`). N3
+  refused to invent a mapping inside a control that exists *because* guessing is expensive, so its
+  gate asserts `kind == "account"` and carries the observed label onto the spawn. **N4 owns closing
+  it** — with a real correspondence, or with a recorded decision that `kind` is the whole check.
 - **Backpressure, named.** Reuse the bounded-channel idiom from `IngestHost.cs:89-95` (which counts
   drops via `itemDropped`), **not** `ConPtyTerminalSession`'s `DropOldest`: terminal bytes are
   ephemeral by contract, but **ACP events are the run log, which §7.1 calls the truth** — a silent
@@ -181,6 +197,10 @@ message never kills the loop, an unknown method is **answered, not ignored**.
   and visible**, never silent.
 - Subprocess failure modes each have a case: child crash mid-session, partial/unterminated line,
   over-long line, child outpacing the reader, hung child (named timeout), orphaned process reaped.
+- **`id: 0` is a valid inbound request id.** Found in the corpus at `write.jsonl:12`. A correlation
+  table keyed on truthiness (`if (m.id)`) treats that frame as having no id and **never answers
+  it** — the peer then waits forever. The test for this is named and required, and it exists
+  because a real frame had the value, not because someone imagined the case.
 - **Latency (Ruling 11):** the **required** assertion is a deterministic **ordinal** — the
   normalized run event is observable **before** the client's response to the next inbound ACP
   request for the same call id. Plus: the latency measurement **exists and is a number**; with the
@@ -224,7 +244,42 @@ test, not in two separate tests"* — so N3/N4 of the old draft are **one node**
   Surface will later call. **A hand-assembled test harness fails N7.** No second entry point.
 - The `R4-core` "unchanged by diff" check runs **here**, over the whole phase diff (not at N5,
   which precedes the `mode` column's write path).
-- Full gate set runs here.
+- Full gate set runs here. **Derived artifacts regenerate exactly once, after the last authored
+  merge** (spec §6.5) — `tools/regenerate-derived.py`, which covers `docs/api/` for the new
+  `AgentPlane` namespace as well as the graph index.
+- **A Proof Pack at `docs/proof/conductor-agent-plane.md`, and it is not optional.** Two independent
+  reasons, and the gap was found before N7 was dispatched rather than at the close:
+  1. **The episode-close has nothing valid to name without it.** The loomkeeper contract refuses an
+     `episode.artifacts` path that does not exist or sits outside `docs/proof/`, and *"declaring one
+     costs you the evidence, not your episode."* An earlier draft of this plan named no Proof Pack
+     at all, so the E18 close would have had no admissible artifact.
+  2. It is the phase's own claims-vs-evidence record, which spec §8.1 requires be kept in
+     **separate columns**.
+  Follow the 25 existing packs' shape — a table of
+  **Claim | Evidence (test) | Source | Oracle | Red observed | Confidence | Residual** — plus the
+  component, test counts, and the spike. **Every "Verified" must cite something re-runnable**
+  (DC-002), and the **Residual column must be populated, not blank**. Named residuals already known:
+  the deferred DC-111 control · DC-112 `partially-controlled` here until the rev-64 refresh ·
+  DC-113 uncontrolled · the unregistered-session capture that will not be scored · every node whose
+  duration is **"not recorded"** (N0–N3; only N4 measured, at 1931 s) · and —
+
+  > **the corpus is an incomplete oracle, and that is a finding rather than a flaw.** N4's live runs
+  > observed **`session_info_update`**, a discriminator absent from all 88 committed frames. It was
+  > carried correctly under `ext` as `acp.session.update.session_info_update`. So **`ext` preservation
+  > earned its keep on traffic two hours newer than the corpus** — the strongest available evidence
+  > that N1's open-`kind`-string ruling was right, and simultaneously proof that *"every frame
+  > round-trips"* bounds the oracle to **what was captured**, never to **what the protocol can send**.
+  > Also: `authStatus.account.plan` returned `"Claude Max"` live where the corpus recorded `"max"`,
+  > on the **same pinned adapter** — nothing may key on that value.
+- **N7 MUST NOT use `git stash` to compare against HEAD.** Near-miss recorded during N3: `git stash
+  push -u` was used inside the worktree to check a gate against the branch point. Two facts combine
+  badly. **DC-053/WT13:** the stash is *repo-global* — the one thing a worktree does not isolate.
+  And **`verify-derived-views.py` writes into the working tree as a side effect** (it generated
+  `docs/api/AiDe.Core.AgentPlane.md`), so `git stash pop` failed with *"could not restore untracked
+  files."* Full recovery was achieved and verified byte-identical, but **with a second agent in the
+  repo this would have reached into their work.** *A verification gate with a filesystem side effect,
+  plus a repo-global stash, is a hazard — compare against HEAD with `git show`/`git worktree`, never
+  by stashing.*
 
 ## Immovable floor nodes — 9/9
 
@@ -312,8 +367,11 @@ token by the largest number.
    fallback, and at width 1 an N4 stall is a phase stall with no parallel progress to show.*
 2. **After N5.** If the episode does not score through unchanged `ScoringService`, Ruling 3's
    reading is wrong and the seam question reopens.
-3. **The licensing answer** (human). A NO re-cuts the phase: everything protocol-level still builds
-   and tests against `codex-acp`, and **N0's corpus survives a NO** — a further reason it ran first.
+3. ~~**The licensing answer** (human).~~ **CLOSED 2026-09-09** — the operator authorised use of
+   their own Max subscription; see [[conductor-subscription-use-authorised]]. N7's exit run and the
+   E18 close are unblocked. *(Unchanged by it: the observed-auth spawn gate still fails closed, because
+   an API-key environment source outranks the subscription and would bill silently. That control
+   protects the operator's money, not their permission.)*
 4. **Adapter version bump** — re-check the pinned override constant (Ruling 8, condition 3).
 
 ## Non-goals (decided against — NOT debt)
@@ -332,7 +390,7 @@ that was declined.
 | --- | --- | --- |
 | Single-lane Conductor Surface | — | **"The first time a run must be watched by a human rather than read from the store."** Carried as a named line in Planned-vs-actual. *(The label "Phase 1b" is retired — it appears nowhere in spec §12, and debt in an invented, ownerless phase becomes permanent.)* |
 | Retiring the `"audit-import"` task-class default | Phase 3 | §8.4 controlled task classes. **Phase-3 finding:** `WatcherHost.cs:118` and `:146` carry **two defaults for one concept** — one comparable, one not. |
-| codex / copilot launch paths | Phase 3+ | **Enforced, not remembered** — N2's refusal test goes red the moment someone half-implements one. This is the model the other deferrals should imitate. |
+| codex / copilot launch paths | Phase 3+ | **Enforced, not remembered** — but by *two* refusals, not one. **copilot** by the non-adapter mode gate (`AP-0002`); **codex** by the unobserved-entry-module gate (`AP-0003`), because §14.2 gives codex `acp: adapter` and a mode-only gate would have let it through. Each goes red the moment someone half-implements it. Still the model the other deferrals should imitate — the correction *strengthened* it. |
 
 ## Phases 2–4 (collapsed)
 
@@ -340,14 +398,38 @@ that was declined.
 | --- | --- | --- | --- |
 | **2 — Conductor** | `ConductorHost` on Max, tools, plan/council/dispatch/steward, board + seams, converge (R3, R5, R10) | N1 envelope, N4 client, N6 seams | data |
 | **3 — Observe & choose** | Sessions store, projections, restart, Profiler, derived metrics, bench import, cohorts, routing + standings (R6–R9) | N1, N5 cohorts; Phase 2 board | data + decision |
+
+**Already captured for Phase 3, nothing to re-capture:** the `session/prompt` result carries cost
+**twice at different fidelities** — `result.usage` has four totals, while `result._meta.quota.token_count`
+carries a per-model breakdown including `reasoningOutputTokens` and a `model_usage[]` array naming
+distinct models within one turn. N1 maps `cost` from `result.usage` only and preserves the richer
+block verbatim in `ext`. Phase 3's standings work will want that array, and it is already in the
+committed corpus.
 | **4 — Reach** | grok-build observed parity, routing-quality review, Antigravity spike (R11, R12) | N5 cohorts; resolves Ruling 7's deferred convergence | decision |
 
 ## Planned vs actual
 
-*(Completed at close per GO18. Duration is **measured** — `audit-log.py start` was run — not
-modeled. Note the instrument's own limits: the audit log carries `duration_seconds` on 4.5% of
+*(Completed at close per GO18.)*
+
+**The duration instrument, measured rather than assumed — and it does less than Condition 6 implied.**
+`audit-log.py append` picks up a start stamp via `consume_start(root, session)`, which **consumes**
+it. So **one `start` yields a duration on exactly one subsequent `append`** — the design is one skill
+run, one start, one closing entry. Checked against this session's own entries: **1 of 7 carries
+`duration_seconds`** (the `optimize-graph` skill entry, 511.0 s); the other six correctly read
+**not recorded**.
+
+Consequence, and it is a correction to this plan: **Condition 6 requires `audit-log.py start`
+per NODE, not once per phase.** Nodes N0–N3 were dispatched without it and their durations are
+**not recorded** — the honest value, never zero. From N4 onward every node's delegation opens with
+`start` and closes with its own `append`.
+
+This is the SRE's finding confirmed by measurement rather than argued: *"the table is fillable only
+by accident"* unless a node actively emits. It was found by measuring the instrument instead of
+trusting that running `start` once had armed it.
+
+**Other instrument limits, unchanged:** the audit log carries `duration_seconds` on ~4.5% of all
 entries and records **0 non-success outcomes across 465**, so a rework count of 0 must be read as
-"not recorded" unless a node actively emits it.)*
+**not recorded**, never as "no rework happened".
 
 | | Planned | Actual |
 | --- | --- | --- |

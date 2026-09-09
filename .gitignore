@@ -492,6 +492,7 @@ artifacts/test-results/
 *.jsonl.lock
 docs/audit/.run-starts.json
 docs/audit/.run-starts.json.tmp
+# pack-apply: decline spikes/ — committed spike evidence (Test Architect gate, 2026-08-26)
 # spikes/ is NOT ignored in this repo (pack default overridden): a contract labelled
 # Verified must cite committed, re-runnable spike evidence (Test Architect gate,
 # 2026-08-26). Spike build outputs are still excluded by bin/obj rules above.
@@ -520,8 +521,15 @@ docs/.smart-env/
 # Per-session agent worktrees — machine-local state, never part of the repository
 .claude/worktrees/
 
-# AI-Forward Pack (INSTALL 2): local coordination and per-run state, never committed
-spikes/
+# AI-Forward Pack (INSTALL 2) proposed a blanket `spikes/` here. REMOVED 2026-09-09: it
+# silently regressed the override recorded ~29 lines above ("spikes/ is NOT ignored in this
+# repo... Test Architect gate, 2026-08-26"), and git's last-match rule made the regression
+# win. Two contradictory statements in one file, the later one authoritative by accident.
+# Committed spike evidence — including the ACP frame corpus this phase uses as a test
+# oracle — was reachable only via `git add -f`, and a forgotten -f loses evidence with NO
+# signature: add reports nothing, status shows nothing, the commit succeeds. Defect class
+# DC-111. Verified with `git check-ignore --quiet`, never `-v` (which prints the negation
+# and exits 0, inverting the answer).
 
 # Shell-redirection captures. `cmd > something.out` during a session is how la.out and smoke.out
 # reached the repository: 470 bytes each of a PowerShell screen-reader warning and terminal escape

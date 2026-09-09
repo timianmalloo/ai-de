@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 41 · uncontrolled 5
+**Status counts:** controlled 66 · partially-controlled 42 · uncontrolled 6
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -1862,6 +1862,17 @@ for both or split.*
 - **The generalisation to apply elsewhere:** when isolation is the reason two things may run at once, **enumerate what the isolation does not cover** before relying on it. "Separate working directories" is a statement about files, not about every piece of state a tool keeps.
 - **Control:** **WT13**, added to `.claude/knowledge/session-worktree-discipline.md` — the always-loaded rule, where a session reads it before opening a worktree rather than after colliding in one — plus a line in the self-verification checklist. Not mechanisable: nothing can stop a subprocess calling `git stash`, which is why it has to be a rule and why both agents preserving what they did not recognise is the behaviour worth keeping.
 - **Residual risk:** WT13 names `refs/stash` sharply and the rest of the shared directory generally (`refs/bisect`, notes, config, hooks). A session that meets a different piece of shared state will not find it listed — the rule it will find is the generalisation: enumerate what the isolation does not cover before relying on it.
+- **Second instance, 2026-09-09 — a near-miss, and it names the ingredient the entry was missing.**
+  An agent ran `git stash push -u` inside a Phase-1 worktree to check a gate against the branch
+  point. Two facts combined: the stash is repo-global (this class), **and
+  `tools/verify-derived-views.py` WRITES INTO THE WORKING TREE as a side effect** — it generated
+  `docs/api/AiDe.Core.AgentPlane.md` while merely *checking*. `git stash pop` then failed with
+  *"could not restore untracked files."* Recovery was complete and verified byte-identical, so
+  nothing was lost — but the phase happened to be running one agent at a time. **With a second agent
+  in the repo it would have reached into their work.** The ingredient this class did not previously
+  name: *a verification gate with a filesystem side effect turns the repo-global stash from a
+  latent hazard into an active one.* Compare against HEAD with `git show` or a second worktree,
+  never by stashing.
 - **Status:** `partially-controlled`
 
 ### DC-054 — A new pane placed into the focused stack hides the surface that stack already held
@@ -4152,17 +4163,175 @@ for both or split.*
   **deliberately declined** the rule with the reasoning recorded in `.gitignore`. Here the rule was
   accepted and then routed around per-commit. The discriminator is whether the divergence was
   **recorded once** or **re-improvised every time**.
-- **Control:** none yet — recorded as a finding. The candidate control is a negation for the
-  committed artifact shapes (so `git add` alone suffices and `-f` becomes unnecessary rather than
-  load-bearing), verified with `git check-ignore --quiet` on a representative artifact path — never
-  with `-v`, which prints the negation and exits 0, inverting the answer. The change is repo-wide
-  hygiene outside the Phase-1 goal that surfaced it, so it is a **finding for ruling**, not a
-  unilateral edit.
+- **It was not hygiene — it was a REGRESSION of a recorded decision, and that is the sharper
+  finding.** `.gitignore:495-497` states: *"spikes/ is NOT ignored in this repo (pack default
+  overridden): a contract labelled Verified must cite committed, re-runnable spike evidence
+  (Test Architect gate, 2026-08-26)."* Twenty-nine lines later, a pack INSTALL-2 block silently
+  re-appended a blanket `spikes/` — and **git's last-match rule made the regression win.** Two
+  contradictory statements in one file, the later one authoritative by accident. A pack update
+  overwrote a repo decision that the file itself recorded, and nothing failed.
+- **Fix applied 2026-09-09:** the pack blanket was **removed** rather than negated. A negation after
+  a blanket is fragile — the next pack update re-appends the blanket and the negation's position
+  decides the outcome. Verified in **both** directions with `git check-ignore --quiet`, never `-v`
+  (which prints the negation and exits 0, inverting the answer): the ACP frame corpus at
+  `spikes/acp-subscription-lane/frames/read.jsonl` exits **1** (not ignored, reachable by plain
+  `git add`), while `spikes/msbuild-task-execution/fixture/markers/` still exits **0**, so the
+  narrower intentional exclusion survived the edit.
+- **Control: DEFERRED, and the register stays honest about it.** The gate would be a new
+  self-tested check (DC-104 requires `--self-test`) plus CI wiring; no existing `verify-*.py` is a
+  semantic home. **Trigger: before DC-111 is moved from `uncontrolled` to `controlled`.** Until
+  then the repair is real but nothing fails when the shape recurs — which is exactly why the status
+  below is not being upgraded.
 - **The generalisation:** *a convention that works only because everyone remembers a flag is not a
   convention, it is a streak.* Ask of any required artifact: if the next author does the obvious
   thing, does the artifact arrive?
 - **Status:** `uncontrolled` — the divergence is now recorded, but nothing yet fails when the next
   spike's evidence is silently dropped
+
+---
+
+### DC-112 — A per-clone install run inside a WORKTREE rewrites the parent clone's config, because a worktree is not a clone
+
+- **Shape:** a setup step is documented as *per-clone* and is therefore run again in each new working
+  tree. But a git worktree **shares `.git/config` with its parent** unless `extensions.worktreeConfig`
+  is set, so the "second install" does not create a second configuration — it **overwrites the first**,
+  rewriting absolute paths to point at the newest, and most temporary, tree. The instruction is
+  followed exactly and the result is worse than skipping it.
+- **Signature:** none while the tree exists, because the rewritten path still resolves and the script
+  it names is byte-identical. The failure arrives **after cleanup**, in a *different* operation
+  (a merge), in a tree that never ran the install, naming a directory that no longer exists. By then
+  nothing connects the symptom to the setup step that caused it.
+- **Why it survives:** "per-clone" is *true* of `.git/config` and is the reason the instruction
+  exists; the inference that a worktree is a clone is the only wrong step, and it is invisible
+  because the observable state immediately afterwards is correct. `doctor` reports the drivers
+  **registered and effective** either way — it checks that a driver is declared, not that the path
+  it names will outlive the tree that wrote it.
+- **Instance:** 2026-09-09 — `AGENTS.md` and the pack's INSTALL step both say to run `coord install`
+  inside each new worktree, citing "per-clone `.git/config`". Doing so in
+  `ai-de-feature-conductor-agent-plane` repointed the **main clone's** `merge.coord-regen.driver` and
+  `merge.coord-register.driver` at
+  `C:/Projects/ai-de-feature-conductor-agent-plane/docs/ai-forward-pack/scripts/coord-core.py`.
+  Confirmed with `git config --show-origin` (`file:.git/config`) and `extensions.worktreeConfig`
+  unset. The plan's own fail-safe cleanup deletes that tree at converge, after which **every future
+  merge of `docs/audit/audit-log.jsonl`, `docs/docs-index.js`, `docs/api/*.md` or `.agents/log/*.jsonl`
+  — all ten declared in `.gitattributes` — would invoke a missing script**, in a repo whose whole
+  coordination story is that those artifacts merge automatically.
+- **Control:** none yet. `doctor`'s `merge driver` check reports *declared and registered* and is
+  blind to whether the configured path exists or points outside the clone. The candidate control is
+  one assertion in that check: the driver's script path must **resolve** and must lie **inside the
+  clone that is being checked**. Recorded as a finding for ruling, with the repair applied.
+- **It is BOTH halves of `install`, not just the drivers — this entry was incomplete when first
+  written.** Confirmed upstream and then re-confirmed here: **`.git/hooks` is shared through the
+  common dir exactly as `.git/config` is** (`git rev-parse --git-path hooks` from the worktree
+  resolves into the primary `.git`). So the worktree install ALSO rewrote the shared **pre-commit
+  floor**. Measured in this repo: `.git/hooks/pre-commit` line 4 named
+  `C:/Projects/ai-de-feature-conductor-agent-plane/.../coord-core.py`. That is the worse half —
+  losing the merge drivers breaks merges of ten declared paths, but losing the hook would have made
+  **every commit in the repository** invoke a missing script the moment the tree was deleted.
+- **Repair applied:** both merge drivers **and** the pre-commit hook repointed at
+  `C:/projects/ai-de/...` — the durable clone — each verified: the drivers resolve, and the hook was
+  observed firing ("2 staged path(s) checked - all free or mine") on a rolled-back test commit. A
+  sweep of `.git/config` and `.git/hooks/` now returns **zero** references to the worktree.
+  **The correct general instruction is that a worktree needs no `coord install` at all**: it inherits
+  the parent's config *and hooks*, and running one there can only overwrite them.
+- **Fixed upstream, 2026-09-09 (pack revision 64).** `coord install` now **refuses** from a linked
+  worktree (`COORD-INSTALL-IN-WORKTREE`, `--force` the recorded exception); `coord doctor` gained a
+  `driver_path_status` check; nine surfaces corrected. Note the upstream agent **narrowed the check
+  this entry originally proposed**: "the path must lie inside the clone being checked" wrongly
+  flagged a legitimate out-of-tree script install, so the rule is **"not inside a linked worktree"**,
+  which is the actual hazard and catches it from both sides.
+- **The generalisation:** *"per-clone" and "per-working-tree" are different scopes, and git only
+  makes them the same when you ask it to.* Any setup step documented as per-clone should be asked
+  what it does when run in a worktree — and if the answer is "overwrites the parent", it must not be
+  run there.
+- **Status:** `partially-controlled` — the local repair is done and verified (drivers and hook
+  repointed, zero worktree references left in shared git state), but nothing *in this repo* yet
+  fails when the shape recurs. It is `controlled` **upstream** at pack revision 64, where
+  `coord install` refuses from a linked worktree and `coord doctor` checks driver paths; this repo
+  inherits that control at its next `/updatepack`, and the status moves then, not before
+
+---
+
+### DC-113 — A gate made advisory by the SHAPE OF THE SHELL LINE, not by any decision
+
+- **Shape:** a verification command is piped into something that formats its output — `| tail`,
+  `| head`, `| grep`, `| Select-Object` — and the pipeline's exit status becomes the **formatter's**,
+  which is ~always 0. Chained with `&&`, the following step then runs **whether the gate passed or
+  failed**. Nobody decided the gate should be advisory; the shell line decided it.
+- **Signature:** none, and it is worse than silence — the gate's own FAILURE TEXT is printed, right
+  above the successful next step. A reader scanning for red sees red, and also sees the commit
+  succeed, and reconciles the two as "it warned but was fine". The output and the exit code disagree,
+  and only one of them is load-bearing.
+- **Why it survives:** piping to `tail` is the natural way to keep a verbose gate readable, and it is
+  correct everywhere the reader is a human who reads the line. It only becomes a defect when an `&&`
+  turns the discarded status into control flow — so the habit is right in one context and wrong in
+  the next, with no visible difference between them.
+- **Instance:** 2026-09-09, self-reported by the N4 agent rather than hidden: it ran
+  `verify-test-run.py | tail`, so a **FAILED gate still let an `&&` chain reach `git commit`**. The
+  committed content happened to be correct and both halves were subsequently verified green with the
+  status preserved — so the defect cost nothing this time, which is exactly why it is worth
+  registering rather than forgetting. Confirmed in isolation: `false | tail -1` exits **0**.
+- **Near-miss for the conductor, recorded honestly:** the conductor's own pre-commit chains used
+  `>/dev/null 2>&1 &&` (redirect, which preserves status) and read the message text where it piped
+  to `tail`. It was not bitten — **by habit, not by design**, which is not a control.
+- **Control:** none yet. Candidates, cheapest first: run gates **bare** before a chained step and let
+  the status do its job; where output must be trimmed, capture to a file and check `$?` first; in
+  PowerShell `$LASTEXITCODE` after a pipeline reports the last **native** command, which is a
+  different trap in the other direction. Not gated here — CI does not have this shape (its steps are
+  bare `run:` lines), so the exposure is interactive and agent sessions only.
+- **The generalisation:** *an exit code that has been through a pipe is a statement about the last
+  program in the pipe.* Any `cmd | fmt && next` should be read as "run next regardless" — and if that
+  is not what was meant, the pipe is in the wrong place.
+- **Relationship to DC-111 and DC-112:** all three are one meta-shape found on the same day — **a
+  control that is off, where "off" is indistinguishable from "on and quiet."** DC-111: evidence
+  behind an ignore rule. DC-112: a config path pointing at a doomed directory. DC-113: a status
+  discarded by a pipe. In each the mechanism reports success, and the absence has no signature. That
+  meta-shape is the thing to look for, and it is why each was found by *measuring the control itself*
+  rather than by trusting its green.
+- **Status:** `uncontrolled` — recorded, with the exposure scoped to interactive and agent sessions
+
+---
+
+### DC-114 — A fix to the deployment mechanism cannot deploy itself: correct, tested, green, and unreachable
+
+- **Shape:** the thing being fixed is the thing that performs the fix. An updater, installer,
+  migrator or applier is repaired at the source, and every gate passes — but the repair only takes
+  effect once it is *already installed*, and the program that installs it is **the old copy**. The
+  old copy computes the plan; the new copy is merely one of the files that plan copies. So the
+  first refresh after the fix runs the **unfixed** logic, and does the exact thing the fix existed
+  to prevent.
+- **Signature:** none at the source, which is the trap. Every local signal is green — tests pass,
+  gates pass, CI passes, a fresh clone passes — because all of them measure whether the fix is
+  CORRECT. None of them asks whether it can REACH anyone. The failure surfaces in a different
+  repository, at a later date, as the deliberate repair quietly reverting.
+- **Why it survives:** verification naturally points at the artifact you changed. Asking "can this
+  fix reach a consumer?" requires running the *consumer's own installed copy* against the new
+  source — an inversion nobody does by habit, because it means deliberately using the stale program
+  you just replaced.
+- **Instance:** 2026-09-09 — AI-Forward Pack revision 64 taught `pack-apply.py` to withhold a
+  gitignore line a repo had explicitly declined. All 11 bundle gates passed, three CI workflows were
+  green, and a fresh clone reproduced it. Then the consumer-side question was finally asked: ai-de's
+  **installed rev-63** `pack-apply.py`, run against the rev-64 source, proposed
+  `UPDATE | added spikes/, .agents/*, !.agents/artifacts.yml` — **exactly the two lines rev 64
+  existed to withhold, and exactly the two repairs made in this repo that same day** (DC-111's
+  spikes override and the `.agents/` capture logs). The mechanism was right and unreachable.
+- **Control (upstream, revision 65):** `pack-apply` compares the running copy against the source's,
+  prints a `STALE-APPLIER` row on `plan` and **refuses to `apply`** (`--allow-stale` is the recorded
+  exception, whose help states it applies the OLD map); absent or unreadable is deliberately not
+  treated as stale. `/updatepack` now copies the program as its first mechanical step, so the
+  refusal never fires in normal use.
+- **The residual is unavoidable and must be stated, not engineered away:** a repo already holding a
+  pre-fix copy gets **no warning**, because you cannot make an already-deployed old program warn
+  about itself. The first hop after the fix depends on a person following the deploy note. **Applied
+  here:** `pack-apply.py` was copied into this repo manually, and the proposal changed from
+  `UPDATE — added spikes/, .agents/*` to three `KEEP` rows citing the decline marker and the 21
+  tracked files under `.agents/`.
+- **The generalisation:** *a gate's green is evidence the gate passed, never evidence the work
+  landed.* For any change to a mechanism that propagates changes, the acceptance test is not "does
+  it work here" but **"run the consumer's existing copy against the new source and read what it
+  proposes."**
+- **Status:** `controlled` upstream at revision 65 for every future hop; the one-time first-hop gap
+  is closed in this repo by hand and verified by the plan diff above
 
 ---
 

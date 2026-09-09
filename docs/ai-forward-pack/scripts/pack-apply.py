@@ -62,13 +62,71 @@ MANIFEST = "FOUNDATION.md"
 BEGIN = "<!-- AI-FORWARD-PACK:BEGIN"
 END = "<!-- AI-FORWARD-PACK:END -->"
 IMPORT_LINE = "@AGENTS.md"
-# `.agents/*` then `!.agents/artifacts.yml`, in that order and never a bare `.agents/`:
-# git does not descend into an excluded DIRECTORY, so the negation would never fire and
-# the artifact registry -- the one file in there that must travel with the repo -- would
-# be written where git can never see it. Everything else under .agents/ is per-run state.
+# THE INVARIANT IS "the registry travels with the repo", not any particular pattern.
+# `.agents/*` then `!.agents/artifacts.yml` is ONE shape that satisfies it, and the shape
+# this script writes by default: a bare `.agents/` excludes the DIRECTORY, git never
+# descends into it, the negation never fires, and the registry lands where git cannot see
+# it. Other shapes satisfy the invariant too -- a repo that commits its per-run records
+# under `.agents/` (a coordination log, an episode-capture log) satisfies it by the wider
+# route, and for THAT repo this blanket is wrong: tracked files stay tracked and look fine
+# while every new record becomes invisible. So the pattern is CONDITIONAL below, and the
+# check is `git check-ignore --quiet <representative path>` -- exit 0 means ignored.
+# Never `-v`: with -v the exit code means "some pattern matched", and a `!` negation
+# counts, so it exits 0 for a re-included path and inverts the answer (measured).
 GITIGNORE_LINES = ["*.jsonl.lock", "spikes/", "docs/audit/.run-starts.json",
                    "docs/audit/.run-starts.json.tmp",
                    ".agents/*", "!.agents/artifacts.yml"]
+
+# A .gitignore is LAST-MATCH-WINS, so a blanket appended below an existing rule silently
+# reverses it. Measured 2026-09-09 in a consuming repo: line 495 recorded "spikes/ is NOT
+# ignored in this repo (pack default overridden) ... (Test Architect gate, 2026-08-26)";
+# this block re-appended a blanket `spikes/` twenty-nine lines later and won. 117 tracked
+# spike files became reachable only with `git add -f`, and a forgotten `-f` loses evidence
+# with NO signature -- `git add -A` drops a NEW ignored file silently, `git status` never
+# lists it, and the commit succeeds. The default is not the defect; appending it over a
+# recorded decision is.
+#
+# Three deterministic guards, no heuristics and no comment-parsing:
+#   1. a CONDITIONAL line is withheld when the repo's own state answers its condition;
+#   2. a line the repo already re-includes is REPORTED, never appended;
+#   3. `# pack-apply: decline <pattern>` makes a declination survive the next refresh --
+#      without it, deleting the line is undone by the following `/updatepack`.
+# Every withholding produces a KEEP row. Silence was the whole problem.
+
+# INSTALL.md 2 has always carried this condition and this script applied it unconditionally:
+# "add `spikes/` to `.gitignore` UNLESS a probe is worth keeping as evidence." A repo that
+# TRACKS files under spikes/ has already answered that, in the only way git records an answer.
+# pattern -> (probe path, paths the pack's own negation already re-includes, why)
+CONDITIONAL_GITIGNORE = {
+    "spikes/": ("spikes", (),
+                "the repo tracks {n} file(s) under spikes/ - INSTALL 2 adds this line"
+                " *unless a probe is worth keeping as evidence*, and tracking one is how"
+                " that is recorded"),
+    ".agents/*": (".agents", (".agents/artifacts.yml",),
+                  "the repo tracks {n} file(s) under .agents/ beyond the registry, so it"
+                  " commits its per-run records; this blanket would leave those tracked"
+                  " and hide every NEW one, with no signature"),
+}
+
+# A `!` line exists only to punch through its blanket. Withhold the blanket and the
+# exception is a negation with nothing to negate -- inert, and it tells a reader the
+# opposite of the KEEP row that withheld the blanket.
+GITIGNORE_DEPENDENTS = {".agents/*": ("!.agents/artifacts.yml",)}
+
+DECLINE_MARKER = "# pack-apply: decline "
+
+
+def gitignore_negations(pattern):
+    """The literal forms a repo writes to re-include a pattern this block would ignore.
+
+    Note what git does NOT allow: `spikes/` followed by `!spikes/**` still ignores the
+    tree, because git stops descending at an excluded directory and never consults the
+    deeper negation (measured). So a negation cannot repair a blanket that was already
+    appended -- which is why this is checked BEFORE appending, not after.
+    """
+    base = pattern.rstrip("/")
+    return {"!" + base, "!" + base + "/", "!" + base + "/**", "!/" + base,
+            "!/" + base + "/", "!/" + base + "/**"}
 PROTECTED = {"docs/docs-index.js"}
 PATH_NORMALISERS = [
     (re.compile(r"\.github/instructions/([\w.-]+?)\.instructions\.md"), r"<doc:\1>"),
@@ -127,7 +185,8 @@ def git(args, cwd):
 
 # --------------------------------------------------------------------------- the applier
 class Applier(object):
-    def __init__(self, source, target, dry, project=None, install=False, force=False, baselines=True):
+    def __init__(self, source, target, dry, project=None, install=False, force=False,
+                 baselines=True, allow_stale=False):
         self.source = os.path.abspath(source)
         self.pack = os.path.join(self.source, "pack")
         self.target = os.path.abspath(target)
@@ -136,12 +195,44 @@ class Applier(object):
         self.install = install
         self.force = force
         self.baselines = baselines
+        self.allow_stale = allow_stale
         self.rows = []
         self.old_pack_sha = None
         self.source_rev, self.source_meta = self._source_revision()
         self.target_rev = self._target_revision()
 
     # ---- bookkeeping
+    def _stale_applier(self):
+        """Is the pack-apply.py RUNNING the one this source ships? (the bootstrap defect)
+
+        The deployment map IS this program, and `/updatepack` runs the TARGET's installed
+        copy. So a revision whose point is a change to pack-apply.py cannot protect the
+        very refresh that installs it: the old copy computes the plan, and the new copy is
+        merely one of the files it copies.
+
+        Measured 2026-09-09 against a consuming repo at revision 63, planning against
+        revision-64 source: `.gitignore | UPDATE | added spikes/, .agents/*` -- both lines
+        that repo had explicitly declined, and exactly what revision 64 exists to withhold.
+        The identical plan run with the rev-64 script withheld both, with reasons.
+
+        Returns the remedy note, or "" when there is nothing to say. An unreadable copy is
+        NOT reported as stale: absent or unreadable is not evidence of staleness (R4), and
+        a fresh install has no copy at all.
+        """
+        installed = os.path.join(self.target, "docs", "ai-forward-pack", "scripts",
+                                 "pack-apply.py")
+        if not os.path.isfile(installed):
+            return ""
+        mine, theirs = read(installed), read(os.path.join(self.pack, "scripts",
+                                                          "pack-apply.py"))
+        if mine is None or theirs is None or norm_nl(mine) == norm_nl(theirs):
+            return ""
+        return ("this plan was computed by the target's OWN pack-apply.py, which differs "
+                "from the one this source ships - the deployment map is this program, so a "
+                "revision that changes it cannot apply itself. Copy it first, then re-run: "
+                "cp <source>/pack/scripts/pack-apply.py docs/ai-forward-pack/scripts/  "
+                "(--allow-stale overrides, and applies the OLD map)")
+
     def row(self, area, path, action, status="ok", note=""):
         self.rows.append({"area": area, "path": path.replace("\\", "/"), "action": action, "status": status, "note": note})
 
@@ -384,11 +475,70 @@ class Applier(object):
         self.row("hooks", ".claude/settings.json", "ADD" if current_text is None else "MERGE", "ok",
                  "hooks + showThinkingSummaries merged; other keys untouched")
 
+    def _tracked_under(self, path):
+        """Which files does the TARGET repo track under this path? None = cannot tell.
+
+        R4: `git ls-files` failing (not a repo, no git, a fresh target) is not evidence
+        that nothing is tracked. None keeps the pack default, which is right where the
+        question cannot be asked; it never invents an answer.
+        """
+        try:
+            proc = subprocess.run(["git", "ls-files", "--", path], cwd=self.target,
+                                  capture_output=True, text=True, timeout=20)
+        except (OSError, subprocess.SubprocessError):
+            return None
+        if proc.returncode != 0:
+            return None
+        return [l.strip() for l in proc.stdout.splitlines() if l.strip()]
+
+    def _gitignore_withhold(self, line, have):
+        """Why this pack line must NOT be appended to this repo, or "" to append it."""
+        # `# pack-apply: decline <pattern> [why]` - the pattern is the first token, so the
+        # rest of the line is the human reason, recorded where the next reader will see it.
+        declined = set()
+        for entry in have:
+            if entry.startswith(DECLINE_MARKER):
+                rest = entry[len(DECLINE_MARKER):].split()
+                if rest:
+                    declined.add(rest[0])
+        if line in declined:
+            return "the repo records `{0}{1}`".format(DECLINE_MARKER, line)
+        clash = sorted(gitignore_negations(line) & have)
+        if clash:
+            return ("the repo already re-includes it with {0} - .gitignore is"
+                    " last-match-wins, so appending would silently reverse that"
+                    .format(", ".join(clash)))
+        condition = CONDITIONAL_GITIGNORE.get(line)
+        if condition:
+            probe, already_kept, template = condition
+            tracked = self._tracked_under(probe)
+            if tracked is not None:
+                # The pack's own re-includes do not count as the repo contradicting it.
+                answered = [f for f in tracked if f not in already_kept]
+                if answered:
+                    return template.format(n=len(answered))
+        return ""
+
     def _gitignore(self):
         dest = os.path.join(self.target, ".gitignore")
         current = read(dest) or ""
         have = {l.strip() for l in norm_nl(current).splitlines()}
-        missing = [l for l in GITIGNORE_LINES if l not in have]
+        missing, withheld = [], []
+        for line in GITIGNORE_LINES:
+            if line in have:
+                continue
+            why = self._gitignore_withhold(line, have)
+            if not why:
+                owner = next((b for b, deps in GITIGNORE_DEPENDENTS.items()
+                              if line in deps and b in dict(withheld)), None)
+                if owner:
+                    why = "its blanket `{0}` was withheld, so it would negate nothing".format(
+                        owner)
+            (withheld if why else missing).append((line, why) if why else line)
+        for line, why in withheld:
+            # REPORTED, never silent: a reversal nobody is told about is the defect.
+            self.row("bundle", ".gitignore", "KEEP", "ok",
+                     "withheld `{0}`: {1}".format(line, why))
         if not missing:
             self.row("bundle", ".gitignore", "UNCHANGED", "ok")
             return
@@ -515,6 +665,16 @@ class Applier(object):
             self.row("meta", "docs/ai-forward-pack/INSTALL.md", "ERROR", "fail",
                      "no installed pack found; pass --install for a fresh install (/addpacktorepo)")
             return self.rows
+        stale = self._stale_applier()
+        if stale:
+            # Reported on `plan` (the table above was computed by the OLD map) and FATAL on
+            # `apply`, because applying a stale deployment map is precisely how a repo
+            # silently misses the fix the revision exists to deliver.
+            fatal = not self.dry and not self.allow_stale
+            self.row("meta", "docs/ai-forward-pack/scripts/pack-apply.py", "STALE-APPLIER",
+                     "fail" if fatal else "ok", stale)
+            if fatal:
+                return self.rows
         if self.target_rev is not None and self.target_rev > self.source_rev:
             self.row("meta", "revision", "ERROR", "fail",
                      "target is at revision {0}, ahead of the source {1} - refusing".format(self.target_rev, self.source_rev))
@@ -687,6 +847,10 @@ def main(argv=None):
         p.add_argument("--no-baselines", action="store_true", help="do not run context-budget --update-baseline after applying")
         p.add_argument("--json", action="store_true", help="emit the action rows as JSON")
         p.add_argument("--quiet", action="store_true", help="only the UNCHANGED rows are hidden")
+        p.add_argument("--allow-stale", action="store_true",
+                       help="apply even though the running pack-apply.py is older than the "
+                            "source's. It applies the OLD deployment map - the recorded "
+                            "exception, never the default")
     args = ap.parse_args(argv)
     if not args.cmd:
         ap.print_help()
@@ -694,7 +858,7 @@ def main(argv=None):
     if not os.path.isfile(os.path.join(args.source, "pack", "adapters", "INSTALL.md")):
         print("pack-apply: --source must be an ai-forward clone containing pack/adapters/INSTALL.md", file=sys.stderr)
         return 2
-    app = Applier(args.source, args.target, dry=(args.cmd == "plan"), project=args.project, install=args.install,
+    app = Applier(args.source, args.target, dry=(args.cmd == "plan"), project=args.project, install=args.install, allow_stale=args.allow_stale,
                   force=args.force, baselines=not args.no_baselines)
     rows = app.run()
     if args.json:
