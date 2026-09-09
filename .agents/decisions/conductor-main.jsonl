@@ -14,3 +14,8 @@
 {"agent": "conductor-main", "at": 1788984416.3592725, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788984416.3592725, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788984416.3592725, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788985119.8081844, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788985119.8106925, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788985119.8106925, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788987173.1567876, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788987173.1567876, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-phase1.jsonl", "session": "conductor-main", "wi": ""}

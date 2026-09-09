@@ -492,6 +492,7 @@ artifacts/test-results/
 *.jsonl.lock
 docs/audit/.run-starts.json
 docs/audit/.run-starts.json.tmp
+# pack-apply: decline spikes/ — committed spike evidence (Test Architect gate, 2026-08-26)
 # spikes/ is NOT ignored in this repo (pack default overridden): a contract labelled
 # Verified must cite committed, re-runnable spike evidence (Test Architect gate,
 # 2026-08-26). Spike build outputs are still excluded by bin/obj rules above.

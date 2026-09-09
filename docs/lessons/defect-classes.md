@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 41 · uncontrolled 6
+**Status counts:** controlled 65 · partially-controlled 42 · uncontrolled 5
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -4220,15 +4220,35 @@ for both or split.*
   blind to whether the configured path exists or points outside the clone. The candidate control is
   one assertion in that check: the driver's script path must **resolve** and must lie **inside the
   clone that is being checked**. Recorded as a finding for ruling, with the repair applied.
-- **Repair applied:** both drivers repointed at `C:/projects/ai-de/...` — the durable clone — and
-  verified present. **The correct general instruction is that a worktree needs no `coord install`
-  at all**: it inherits the parent's config, and running one can only overwrite it.
+- **It is BOTH halves of `install`, not just the drivers — this entry was incomplete when first
+  written.** Confirmed upstream and then re-confirmed here: **`.git/hooks` is shared through the
+  common dir exactly as `.git/config` is** (`git rev-parse --git-path hooks` from the worktree
+  resolves into the primary `.git`). So the worktree install ALSO rewrote the shared **pre-commit
+  floor**. Measured in this repo: `.git/hooks/pre-commit` line 4 named
+  `C:/Projects/ai-de-feature-conductor-agent-plane/.../coord-core.py`. That is the worse half —
+  losing the merge drivers breaks merges of ten declared paths, but losing the hook would have made
+  **every commit in the repository** invoke a missing script the moment the tree was deleted.
+- **Repair applied:** both merge drivers **and** the pre-commit hook repointed at
+  `C:/projects/ai-de/...` — the durable clone — each verified: the drivers resolve, and the hook was
+  observed firing ("2 staged path(s) checked - all free or mine") on a rolled-back test commit. A
+  sweep of `.git/config` and `.git/hooks/` now returns **zero** references to the worktree.
+  **The correct general instruction is that a worktree needs no `coord install` at all**: it inherits
+  the parent's config *and hooks*, and running one there can only overwrite them.
+- **Fixed upstream, 2026-09-09 (pack revision 64).** `coord install` now **refuses** from a linked
+  worktree (`COORD-INSTALL-IN-WORKTREE`, `--force` the recorded exception); `coord doctor` gained a
+  `driver_path_status` check; nine surfaces corrected. Note the upstream agent **narrowed the check
+  this entry originally proposed**: "the path must lie inside the clone being checked" wrongly
+  flagged a legitimate out-of-tree script install, so the rule is **"not inside a linked worktree"**,
+  which is the actual hazard and catches it from both sides.
 - **The generalisation:** *"per-clone" and "per-working-tree" are different scopes, and git only
   makes them the same when you ask it to.* Any setup step documented as per-clone should be asked
   what it does when run in a worktree — and if the answer is "overwrites the parent", it must not be
   run there.
-- **Status:** `uncontrolled` — repaired at the one site, generalisation recorded, but `doctor` still
-  cannot tell a durable driver path from a doomed one
+- **Status:** `partially-controlled` — the local repair is done and verified (drivers and hook
+  repointed, zero worktree references left in shared git state), but nothing *in this repo* yet
+  fails when the shape recurs. It is `controlled` **upstream** at pack revision 64, where
+  `coord install` refuses from a linked worktree and `coord doctor` checks driver paths; this repo
+  inherits that control at its next `/updatepack`, and the status moves then, not before
 
 ---
 
