@@ -23,3 +23,4 @@
 {"agent": "conductor-phase1", "at": 1788985283.1064372, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AiDe.Core.Tests.csproj", "session": "conductor-phase1", "wi": ""}
 {"agent": "conductor-phase1", "at": 1788985340.520532, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-phase1", "wi": ""}
 {"agent": "conductor-phase1", "at": 1788985340.520532, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-phase1", "wi": ""}
+{"agent": "conductor-phase1", "at": 1788987425.7509077, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/AgentPlane/AcpProbeLauncher.cs", "session": "conductor-phase1", "wi": ""}

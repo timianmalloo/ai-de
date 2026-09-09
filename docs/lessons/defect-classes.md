@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 42 · uncontrolled 5
+**Status counts:** controlled 65 · partially-controlled 42 · uncontrolled 6
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -4249,6 +4249,46 @@ for both or split.*
   fails when the shape recurs. It is `controlled` **upstream** at pack revision 64, where
   `coord install` refuses from a linked worktree and `coord doctor` checks driver paths; this repo
   inherits that control at its next `/updatepack`, and the status moves then, not before
+
+---
+
+### DC-113 — A gate made advisory by the SHAPE OF THE SHELL LINE, not by any decision
+
+- **Shape:** a verification command is piped into something that formats its output — `| tail`,
+  `| head`, `| grep`, `| Select-Object` — and the pipeline's exit status becomes the **formatter's**,
+  which is ~always 0. Chained with `&&`, the following step then runs **whether the gate passed or
+  failed**. Nobody decided the gate should be advisory; the shell line decided it.
+- **Signature:** none, and it is worse than silence — the gate's own FAILURE TEXT is printed, right
+  above the successful next step. A reader scanning for red sees red, and also sees the commit
+  succeed, and reconciles the two as "it warned but was fine". The output and the exit code disagree,
+  and only one of them is load-bearing.
+- **Why it survives:** piping to `tail` is the natural way to keep a verbose gate readable, and it is
+  correct everywhere the reader is a human who reads the line. It only becomes a defect when an `&&`
+  turns the discarded status into control flow — so the habit is right in one context and wrong in
+  the next, with no visible difference between them.
+- **Instance:** 2026-09-09, self-reported by the N4 agent rather than hidden: it ran
+  `verify-test-run.py | tail`, so a **FAILED gate still let an `&&` chain reach `git commit`**. The
+  committed content happened to be correct and both halves were subsequently verified green with the
+  status preserved — so the defect cost nothing this time, which is exactly why it is worth
+  registering rather than forgetting. Confirmed in isolation: `false | tail -1` exits **0**.
+- **Near-miss for the conductor, recorded honestly:** the conductor's own pre-commit chains used
+  `>/dev/null 2>&1 &&` (redirect, which preserves status) and read the message text where it piped
+  to `tail`. It was not bitten — **by habit, not by design**, which is not a control.
+- **Control:** none yet. Candidates, cheapest first: run gates **bare** before a chained step and let
+  the status do its job; where output must be trimmed, capture to a file and check `$?` first; in
+  PowerShell `$LASTEXITCODE` after a pipeline reports the last **native** command, which is a
+  different trap in the other direction. Not gated here — CI does not have this shape (its steps are
+  bare `run:` lines), so the exposure is interactive and agent sessions only.
+- **The generalisation:** *an exit code that has been through a pipe is a statement about the last
+  program in the pipe.* Any `cmd | fmt && next` should be read as "run next regardless" — and if that
+  is not what was meant, the pipe is in the wrong place.
+- **Relationship to DC-111 and DC-112:** all three are one meta-shape found on the same day — **a
+  control that is off, where "off" is indistinguishable from "on and quiet."** DC-111: evidence
+  behind an ignore rule. DC-112: a config path pointing at a doomed directory. DC-113: a status
+  discarded by a pipe. In each the mechanism reports success, and the absence has no signature. That
+  meta-shape is the thing to look for, and it is why each was found by *measuring the control itself*
+  rather than by trusting its green.
+- **Status:** `uncontrolled` — recorded, with the exposure scoped to interactive and agent sessions
 
 ---
 

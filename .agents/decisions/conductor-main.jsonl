@@ -19,3 +19,8 @@
 {"agent": "conductor-main", "at": 1788985119.8106925, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788987173.1567876, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788987173.1567876, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-phase1.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788987242.9225454, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788987242.9245515, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-phase1.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788987242.9245515, "code": null, "kind": "allowed", "path": ".gitignore", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788987242.9265578, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788987242.9265578, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "conductor-main", "wi": ""}
