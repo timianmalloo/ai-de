@@ -21,6 +21,13 @@ namespace AiDe.Mcp;
 /// </remarks>
 public static class Program
 {
+    // mirrors src/AiDe.Core/AgentPlane/AcpPeer.cs framing
+    //
+    // The NDJSON loop discipline below, the Result/Error envelope builders and the -32601 case are
+    // copied THERE, not shared. The extraction trigger is recorded on the copy: a third stdio
+    // JSON-RPC consumer, or the first defect that must be fixed in both places. A change to any of
+    // those three here is a change that has to be made there too - which is why this marker exists
+    // as a grep rather than as a note in a review.
     private static readonly JsonSerializerOptions Json = new() { WriteIndented = false };
 
     /// <summary>The MCP revision this server speaks, echoed back on initialize.</summary>

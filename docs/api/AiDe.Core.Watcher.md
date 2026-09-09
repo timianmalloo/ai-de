@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 162 types, 312 members, 65% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 162 types, 316 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**162 public types · 312 public members · 65% documented.**
+**162 public types · 316 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -2579,6 +2579,8 @@ Upgrade trigger: read volume grows enough to want the WorkspaceStore read/write 
 | `void RecordScorecard(ScoredEpisode scored)` | **(gap)** |
 | `ScoredEpisode? FindScoredEpisode(string episodeId)` | **(gap)** |
 | `IReadOnlyList<ScoredEpisode> AllScoredEpisodes()` | **(gap)** |
+| `bool RecordEpisodeMode(string episodeId, string mode)` | **(gap)** |
+| `string? FindEpisodeMode(string episodeId)` | **(gap)** |
 | `void AppendScoreDispute(ScoreDispute dispute)` | **(gap)** |
 | `IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)` | **(gap)** |
 | `IReadOnlyList<ScoreDispute> AllDisputes()` | **(gap)** |
@@ -3040,6 +3042,8 @@ trigger: the SQLite store lands (remaining Phase-1 task), which bounds and persi
 | `void RecordScorecard(ScoredEpisode scored)` | **(gap)** |
 | `ScoredEpisode? FindScoredEpisode(string episodeId)` | **(gap)** |
 | `IReadOnlyList<ScoredEpisode> AllScoredEpisodes()` | **(gap)** |
+| `bool RecordEpisodeMode(string episodeId, string mode)` | **(gap)** |
+| `string? FindEpisodeMode(string episodeId)` | **(gap)** |
 | `void AppendScoreDispute(ScoreDispute dispute)` | **(gap)** |
 | `IReadOnlyList<ScoreDispute> DisputesForEpisode(string episodeId)` | **(gap)** |
 | `IReadOnlyList<ScoreDispute> AllDisputes()` | **(gap)** |

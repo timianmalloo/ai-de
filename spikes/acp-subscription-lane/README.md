@@ -73,6 +73,18 @@ because an earlier revision of this README implied otherwise:
 - `_session/goal` and `_meta.jetbrains.air` — **never fired as traffic**; they occur only as
   declared capabilities in the `initialize` response's `_meta` block.
 
+> **Extended by the N4 live runs, 2026-09-09.** Driving the same pinned adapter from the .NET
+> client (`AiDe.Core.AcpProbe --live`, 137 frames on a read prompt and 52 on a write prompt) saw
+> **one `session/update` discriminator this corpus does not contain: `session_info_update`.** It
+> was carried whole under `ext` as `acp.session.update.session_info_update`, which is the
+> `ext`-preservation mitigation doing its job on traffic captured two hours earlier and already
+> out of date. The same runs also observed `authStatus.account.plan` as **`"Claude Max"`**, not
+> `"max"` — `PROVENANCE.md` already records both spellings, so nothing may key on that value.
+>
+> The write run also confirmed the inbound direction end to end against a live agent:
+> `session/request_permission` arrived, was answered with the `reject` option, and `hello.txt` was
+> **not** created.
+
 Redaction is documented in `frames/PROVENANCE.md`, which deliberately records the *rule* and not the
 values — naming what you removed is how a redaction undoes itself.
 

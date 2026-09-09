@@ -1,0 +1,31 @@
+{
+  "repositoryRoot": "<REDACTED_HOME>/AppData/Local/Temp/claude/C--projects-ai-de/18fe7a5a-c1b6-434e-8033-3f0c4e841f24/scratchpad/lane-repo",
+  "dataDirectory": "<REDACTED_HOME>/AppData/Local/Temp/claude/C--projects-ai-de/18fe7a5a-c1b6-434e-8033-3f0c4e841f24/scratchpad/lane-data",
+  "adapterInstallRoot": "C:/Projects/ai-de-feature-conductor-agent-plane/spikes/acp-subscription-lane",
+  "engineId": "claude-code",
+  "model": "claude-code-default",
+  "accountLabel": "max-personal",
+  "taskClass": "refactor-extract-helper",
+  "coordCommand": "<REDACTED_HOME>/AppData/Local/Temp/claude/C--projects-ai-de/18fe7a5a-c1b6-434e-8033-3f0c4e841f24/scratchpad/coord.cmd",
+  "promptTimeoutMinutes": 15,
+  "goal": {
+    "goal": "Remove the triplicated private JSON string reader in src/AiDe.Core/AgentPlane/ by extracting one internal AcpJson.Text helper and qualifying every call site.",
+    "doneWhen": "AcpJson.cs exists with exactly one internal Text(JsonNode?) member; the three private copies in AcpLaneClient.cs, AcpRunEventMapper.cs and LeaseAndSeams.cs are gone; all seven call sites read AcpJson.Text(...); GoalBlock.cs is unchanged; no file outside src/AiDe.Core/AgentPlane/ changes.",
+    "notInScope": "GoalBlock.cs's own Text(List<GoalBlockError>, ...) overload; any behaviour change; any file outside src/AiDe.Core/AgentPlane/; running builds or tests.",
+    "tier": "T1",
+    "fanOutCap": 0,
+    "budget": { "requests": 200, "tokens": 400000 }
+  },
+  "lease": ["src/AiDe.Core/AgentPlane/**"],
+  "proofPackArtifacts": ["docs/proof/conductor-agent-plane.md"],
+  "providers": [
+    {
+      "providerId": "anthropic",
+      "auth": "Subscription",
+      "accounts": [
+        { "label": "max-personal", "health": "Ready", "observedAuthLabel": "Claude Max" }
+      ]
+    }
+  ],
+  "prompt": "Refactor task. Work only inside src/AiDe.Core/AgentPlane/ in this worktree.\n\nThree files each declare an identical private helper:\n\n    private static string? Text(JsonNode? node)\n        => node is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;\n\nThey are in AcpLaneClient.cs, AcpRunEventMapper.cs and LeaseAndSeams.cs.\n\nDo exactly this:\n1. Add src/AiDe.Core/AgentPlane/AcpJson.cs declaring `internal static class AcpJson` in namespace AiDe.Core.AgentPlane, containing exactly one member: `internal static string? Text(JsonNode? node)` whose body is the same expression, unchanged in meaning. Give it a short XML doc comment saying why one reader replaces three.\n2. Delete all three private copies.\n3. Change every call site to the qualified form `AcpJson.Text(...)`. Do NOT add a `using static` directive — the qualified call is the point.\n4. Do NOT touch GoalBlock.cs. It declares a DIFFERENT method that is also called Text; it is not part of this duplication.\n5. Change no other file. Do not run builds or tests — the harness verifies.\n\nWhen the edits are done, stop and say what you changed."
+}

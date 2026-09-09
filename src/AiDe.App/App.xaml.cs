@@ -34,6 +34,22 @@ public partial class App : Application
 {
     protected override void OnStartup(StartupEventArgs e)
     {
+        // HEADLESS CONDUCTOR MODE — the same App-layer composition root the deferred Conductor
+        // Surface will call, reached without a window. It returns before StartupUri is assigned:
+        // showing MainWindow would attach a workspace and start a terminal session, which is
+        // precisely what a governed run claims not to do — and the claim is counted, so the shell
+        // doing it would surface as a non-zero count rather than as a quiet contradiction.
+        if (Conductor.ConductorEntry.IsRequested(e?.Args ?? []))
+        {
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            _ = RunHeadlessAsync(e!.Args);
+            return;
+        }
+
+        // The interactive shell's first window. Declared here rather than in App.xaml so the branch
+        // above can decline it; see the comment there.
+        StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
+
         DispatcherUnhandledException += OnDispatcherUnhandledException;
 
         AppDomain.CurrentDomain.UnhandledException += (_, args) =>
@@ -51,6 +67,32 @@ public partial class App : Application
         };
 
         base.OnStartup(e);
+    }
+
+    /// <summary>
+    /// Drives the headless run and ends the process with its verdict.
+    /// </summary>
+    /// <remarks>
+    /// <b>The exit code is the report.</b> A shell with no console cannot say anything on the way
+    /// out, so the run writes its result and transcript as files and the code says whether the
+    /// evidence held. Shutting down inside a <c>finally</c> is what stops a failed run from leaving a
+    /// windowless process alive under <c>OnExplicitShutdown</c>.
+    /// </remarks>
+    private async Task RunHeadlessAsync(string[] args)
+    {
+        var code = 3;
+        try
+        {
+            code = await Conductor.ConductorEntry.RunAsync(args).ConfigureAwait(true);
+        }
+        catch (Exception error)
+        {
+            WorkbenchDiagnostics.Crash("conduct", error);
+        }
+        finally
+        {
+            Shutdown(code);
+        }
     }
 
     private static void OnDispatcherUnhandledException(

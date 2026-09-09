@@ -49,6 +49,17 @@
                       ReferenceOutputAssembly="false" />
 
     <!--
+      The ACP probe, built alongside the tests for the same reason as the terminal host: the
+      self-test case runs it as a real process to prove the shipped self-test flag's guards fire
+      (DC-104), and the process-reaping case needs a child that will not exit on its own.
+
+      ReferenceOutputAssembly="false" because it is started, never linked. No platform condition:
+      it targets net10.0 and both cases are portable.
+    -->
+    <ProjectReference Include="..\AiDe.Core.AcpProbe\AiDe.Core.AcpProbe.csproj"
+                      ReferenceOutputAssembly="false" />
+
+    <!--
       The daemon, built alongside the tests so DaemonProcessTests cannot silently skip.
 
       Those tests start it as a real second process — the only way to prove the process split at

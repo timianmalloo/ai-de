@@ -1,0 +1,76 @@
+diff --git a/src/AiDe.Core/AgentPlane/AcpLaneClient.cs b/src/AiDe.Core/AgentPlane/AcpLaneClient.cs
+index bdcfb2b..2877ff8 100644
+--- a/src/AiDe.Core/AgentPlane/AcpLaneClient.cs
++++ b/src/AiDe.Core/AgentPlane/AcpLaneClient.cs
+@@ -24,14 +24,11 @@ public static class AcpAuthStatus
+             return null;
+         }
+ 
+-        var kind = Text(status["kind"]);
++        var kind = AcpJson.Text(status["kind"]);
+         return kind is null
+             ? null
+-            : new ObservedAuthStatus(kind, Text((status["account"] as JsonObject)?["plan"]), Text(status["label"]));
++            : new ObservedAuthStatus(kind, AcpJson.Text((status["account"] as JsonObject)?["plan"]), AcpJson.Text(status["label"]));
+     }
+-
+-    private static string? Text(JsonNode? node)
+-        => node is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
+ }
+ 
+ /// <summary>
+diff --git a/src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs b/src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs
+index b756e2c..e777424 100644
+--- a/src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs
++++ b/src/AiDe.Core/AgentPlane/AcpRunEventMapper.cs
+@@ -75,10 +75,10 @@ public sealed class AcpRunEventMapper
+         var frame = Parse(frameLine);
+         var ordinal = Interlocked.Increment(ref seq);
+ 
+-        var method = Text(frame["method"]);
++        var method = AcpJson.Text(frame["method"]);
+         var parameters = frame["params"] as JsonObject;
+         var update = parameters?["update"] as JsonObject;
+-        var sessionUpdate = update is null ? null : Text(update["sessionUpdate"]);
++        var sessionUpdate = update is null ? null : AcpJson.Text(update["sessionUpdate"]);
+ 
+         var cost = CostOf(frame["result"] as JsonObject);
+ 
+@@ -183,9 +183,6 @@ public sealed class AcpRunEventMapper
+             Requests: 1);
+     }
+ 
+-    private static string? Text(JsonNode? node)
+-        => node is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
+-
+     private static long Number(JsonNode? node)
+         => node is JsonValue value && value.TryGetValue<long>(out var number) ? number : 0;
+ }
+diff --git a/src/AiDe.Core/AgentPlane/LeaseAndSeams.cs b/src/AiDe.Core/AgentPlane/LeaseAndSeams.cs
+index e1c7c0e..369aea2 100644
+--- a/src/AiDe.Core/AgentPlane/LeaseAndSeams.cs
++++ b/src/AiDe.Core/AgentPlane/LeaseAndSeams.cs
+@@ -252,7 +252,7 @@ public sealed class LeaseMonitor
+             return [];
+         }
+ 
+-        var toolCallId = Text(runEvent.Body["toolCallId"]) ?? runEvent.Kind + ":" + runEvent.Seq;
++        var toolCallId = AcpJson.Text(runEvent.Body["toolCallId"]) ?? runEvent.Kind + ":" + runEvent.Seq;
+         var raised = new List<Seam>();
+ 
+         foreach (var path in Locations(runEvent.Body))
+@@ -353,13 +353,10 @@ public sealed class LeaseMonitor
+ 
+         foreach (var location in locations.OfType<JsonObject>())
+         {
+-            if (Text(location["path"]) is { } path)
++            if (AcpJson.Text(location["path"]) is { } path)
+             {
+                 yield return path;
+             }
+         }
+     }
+-
+-    private static string? Text(JsonNode? node)
+-        => node is JsonValue value && value.TryGetValue<string>(out var text) ? text : null;
+ }
