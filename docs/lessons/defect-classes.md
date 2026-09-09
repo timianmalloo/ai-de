@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 41 · uncontrolled 5
+**Status counts:** controlled 65 · partially-controlled 41 · uncontrolled 6
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -4187,6 +4187,48 @@ for both or split.*
   thing, does the artifact arrive?
 - **Status:** `uncontrolled` — the divergence is now recorded, but nothing yet fails when the next
   spike's evidence is silently dropped
+
+---
+
+### DC-112 — A per-clone install run inside a WORKTREE rewrites the parent clone's config, because a worktree is not a clone
+
+- **Shape:** a setup step is documented as *per-clone* and is therefore run again in each new working
+  tree. But a git worktree **shares `.git/config` with its parent** unless `extensions.worktreeConfig`
+  is set, so the "second install" does not create a second configuration — it **overwrites the first**,
+  rewriting absolute paths to point at the newest, and most temporary, tree. The instruction is
+  followed exactly and the result is worse than skipping it.
+- **Signature:** none while the tree exists, because the rewritten path still resolves and the script
+  it names is byte-identical. The failure arrives **after cleanup**, in a *different* operation
+  (a merge), in a tree that never ran the install, naming a directory that no longer exists. By then
+  nothing connects the symptom to the setup step that caused it.
+- **Why it survives:** "per-clone" is *true* of `.git/config` and is the reason the instruction
+  exists; the inference that a worktree is a clone is the only wrong step, and it is invisible
+  because the observable state immediately afterwards is correct. `doctor` reports the drivers
+  **registered and effective** either way — it checks that a driver is declared, not that the path
+  it names will outlive the tree that wrote it.
+- **Instance:** 2026-09-09 — `AGENTS.md` and the pack's INSTALL step both say to run `coord install`
+  inside each new worktree, citing "per-clone `.git/config`". Doing so in
+  `ai-de-feature-conductor-agent-plane` repointed the **main clone's** `merge.coord-regen.driver` and
+  `merge.coord-register.driver` at
+  `C:/Projects/ai-de-feature-conductor-agent-plane/docs/ai-forward-pack/scripts/coord-core.py`.
+  Confirmed with `git config --show-origin` (`file:.git/config`) and `extensions.worktreeConfig`
+  unset. The plan's own fail-safe cleanup deletes that tree at converge, after which **every future
+  merge of `docs/audit/audit-log.jsonl`, `docs/docs-index.js`, `docs/api/*.md` or `.agents/log/*.jsonl`
+  — all ten declared in `.gitattributes` — would invoke a missing script**, in a repo whose whole
+  coordination story is that those artifacts merge automatically.
+- **Control:** none yet. `doctor`'s `merge driver` check reports *declared and registered* and is
+  blind to whether the configured path exists or points outside the clone. The candidate control is
+  one assertion in that check: the driver's script path must **resolve** and must lie **inside the
+  clone that is being checked**. Recorded as a finding for ruling, with the repair applied.
+- **Repair applied:** both drivers repointed at `C:/projects/ai-de/...` — the durable clone — and
+  verified present. **The correct general instruction is that a worktree needs no `coord install`
+  at all**: it inherits the parent's config, and running one can only overwrite it.
+- **The generalisation:** *"per-clone" and "per-working-tree" are different scopes, and git only
+  makes them the same when you ask it to.* Any setup step documented as per-clone should be asked
+  what it does when run in a worktree — and if the answer is "overwrites the parent", it must not be
+  run there.
+- **Status:** `uncontrolled` — repaired at the one site, generalisation recorded, but `doctor` still
+  cannot tell a durable driver path from a doomed one
 
 ---
 
