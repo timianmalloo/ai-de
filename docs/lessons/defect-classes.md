@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 41 · uncontrolled 4
+**Status counts:** controlled 65 · partially-controlled 41 · uncontrolled 5
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -4123,6 +4123,46 @@ for both or split.*
   comparison; retiring the door-named `"audit-import"` default itself is deferred to Phase 3, when
   controlled task classes arrive, because changing it now would move existing observed episodes from
   a comparable cell into `Unclassified` (a history-rule change with no spec basis)
+
+---
+
+### DC-111 — Evidence the repo REQUIRES committed lives under a blanket ignore, reachable only by `git add -f`
+
+- **Shape:** a directory is ignored wholesale by an inherited rule written for a different purpose
+  ("per-run state, never committed"), while the repository's own conventions treat that directory as
+  the home of **committed evidence**. Both facts are true at once, so the tree looks correct: the
+  evidence is there, tracked, and reviewable. What is missing is any mechanism ensuring the NEXT
+  piece of evidence arrives — it does so only because each author happened to remember `-f`.
+- **Signature:** there is none at the moment of loss. `git add` reports nothing, `git status` shows
+  nothing, and the commit succeeds with the evidence simply absent. The defect is a **negative**, and
+  negatives are invisible unless something asserts on them. It surfaces much later, as a spike or a
+  proof whose artifact "was definitely captured" and is not in the history.
+- **Why it survives:** the ignore rule is inherited and looks authoritative, and the many already-
+  tracked files under the same path are read as proof that the path works. Nobody re-derives the
+  ignore state for a directory that visibly contains tracked files. The rule and the convention were
+  written by different authors for different purposes and have never been compared.
+- **Instance:** 2026-09-09 — `.gitignore:523` carries a blanket `spikes/` from the AI-Forward Pack
+  ("local coordination and per-run state, never committed"), while `git ls-files spikes/` returns
+  **117 tracked files**: every prior spike's committed deliverables. So every one of those commits
+  used `git add -f`. Found while capturing the ACP frame corpus, which the approved Phase-1 plan
+  makes the **test oracle for both sides of a wire contract** — evidence whose loss would not have
+  been noticed until the contract was already built against author-written events instead.
+- **Relationship to the `.agents/` finding (same day, same shape, opposite resolution):** there, a
+  pack ignore rule would have hidden the loomkeeper contract logs, and the repo had already
+  **deliberately declined** the rule with the reasoning recorded in `.gitignore`. Here the rule was
+  accepted and then routed around per-commit. The discriminator is whether the divergence was
+  **recorded once** or **re-improvised every time**.
+- **Control:** none yet — recorded as a finding. The candidate control is a negation for the
+  committed artifact shapes (so `git add` alone suffices and `-f` becomes unnecessary rather than
+  load-bearing), verified with `git check-ignore --quiet` on a representative artifact path — never
+  with `-v`, which prints the negation and exits 0, inverting the answer. The change is repo-wide
+  hygiene outside the Phase-1 goal that surfaced it, so it is a **finding for ruling**, not a
+  unilateral edit.
+- **The generalisation:** *a convention that works only because everyone remembers a flag is not a
+  convention, it is a streak.* Ask of any required artifact: if the next author does the obvious
+  thing, does the artifact arrive?
+- **Status:** `uncontrolled` — the divergence is now recorded, but nothing yet fails when the next
+  spike's evidence is silently dropped
 
 ---
 

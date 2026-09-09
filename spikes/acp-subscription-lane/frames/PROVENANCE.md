@@ -56,14 +56,22 @@ stdin (`JSON.stringify(o) + "\n"`), captured at the point of sending.
 Two literal-substring replacements were applied to all four files, chosen because they were the
 only sensitive values found in the captured text (see "swept for" below):
 
-1. The account email `mallalieut@hotmail.com` → `<REDACTED_ACCOUNT>`. This appears inside
-   `_auth/status_update` frames as `account.email` and inside the derived
-   `account.organization` string (`"<email>'s Organization"`), both of which the substring
-   replace fixed structurally correctly.
-2. The user's home-directory prefix, in both path spellings the adapter used —
-   `C:\Users\malla` (backslash-escaped, inside JSON string values like `rawInput.file_path` and
-   `content[].path`) → `C:\<REDACTED_HOME>`, and `C:/Users/malla` (forward-slash, inside the
-   `session/new` `cwd` param) → `C:/<REDACTED_HOME>`.
+> **The values themselves are deliberately not reproduced here.** An earlier revision of this file
+> named the exact email and home-directory path it had redacted, which put both back into the
+> committed repository and defeated the redaction it was documenting. The rule is recorded; the
+> value is not. *Naming what you removed is how a redaction undoes itself.*
+
+1. **The operator's account email** → `<REDACTED_ACCOUNT>` (one literal substring). It appears
+   inside `_auth/status_update` frames as `account.email` and inside the derived
+   `account.organization` string (`"<email>'s Organization"`); the substring replace fixed both
+   structurally correctly.
+2. **The operator's home-directory prefix**, in both path spellings the adapter used — the
+   backslash form (backslash-escaped, inside JSON string values such as `rawInput.file_path` and
+   `content[].path`) → `C:\<REDACTED_HOME>`, and the forward-slash form (inside the `session/new`
+   `cwd` param) → `C:/<REDACTED_HOME>`.
+
+To re-verify redaction on a fresh capture without naming either value, grep the frames for `@` in
+`account.*` fields and for `Users` in any path field; both should return nothing.
 
 No plan/label/id under `account` needed redaction beyond the email: the captured `account`
 object was `{"plan":"max"|"Claude Max","email":"...","organization":"...'s Organization"}` —

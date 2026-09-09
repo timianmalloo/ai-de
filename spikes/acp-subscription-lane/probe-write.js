@@ -25,7 +25,11 @@ p.stdout.on("data", d => {
       console.log("OTHER-INBOUND " + m.method + " " + JSON.stringify(m.params).slice(0,300));
       if (m.id !== undefined) send({jsonrpc:"2.0",id:m.id,result:{}});
     } else if (m.id === 1) {
-      send({jsonrpc:"2.0",id:2,method:"session/new",params:{cwd:"C:/Users/malla/AppData/Local/Temp/claude/C--projects-ai-de/18fe7a5a-c1b6-434e-8033-3f0c4e841f24/scratchpad/probe",mcpServers:[]}});
+      // Derived at runtime, never hard-coded: an absolute path typed into a committed file carries
+      // the operator's home directory into the repository. ACP requires cwd to be ABSOLUTE
+      // (a relative path returns -32602), and mkdtempSync always returns one.
+      const scratch = require("fs").mkdtempSync(require("path").join(require("os").tmpdir(), "acp-probe-"));
+      send({jsonrpc:"2.0",id:2,method:"session/new",params:{cwd:scratch.replace(/\\/g,"/"),mcpServers:[]}});
     } else if (m.id === 2) {
       console.log("SESSION/NEW RESULT " + JSON.stringify(m.result || m.error).slice(0,600));
       if (!m.result) { p.kill(); process.exit(0); }

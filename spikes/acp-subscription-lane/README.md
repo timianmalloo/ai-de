@@ -47,6 +47,35 @@ An `authRequired` error, or `-32601 Method not found`, means NO.
   `content:[{type:"diff", path:"…hello.txt", oldText:null, newText:"hi\n"}]` and
   `options:[{optionId:"allow-once",kind:"allow_once"}, …]`. Rejected; turn ended `end_turn`.
 
+## The captured corpus — the authoritative record
+
+The prose above is a summary. **`frames/*.jsonl` is the evidence**, and where the two disagree the
+frames win. Captured 2026-09-09; 88 lines total, every one verified to parse standalone.
+
+| File | Lines | Direction |
+| --- | --- | --- |
+| `frames/read.jsonl` | 22 | received (read-only probe) |
+| `frames/read.sent.jsonl` | 3 | sent |
+| `frames/write.jsonl` | 59 | received (permission probe) |
+| `frames/write.sent.jsonl` | 4 | sent |
+
+**Top-level methods observed:** `_auth/status_update`, `session/update`, `session/request_permission`
+(write probe only).
+
+**`update.sessionUpdate` discriminators observed:** `available_commands_update`, `usage_update`,
+`tool_call`, `tool_call_update`, `agent_message_chunk`.
+
+**Explicitly NOT observed** — recorded because an absent kind is *not recorded*, never zero, and
+because an earlier revision of this README implied otherwise:
+
+- `user_message_chunk` and `agent_thought_chunk` — **neither probe's prompt triggered them.** They
+  may well exist; these two runs did not elicit them.
+- `_session/goal` and `_meta.jetbrains.air` — **never fired as traffic**; they occur only as
+  declared capabilities in the `initialize` response's `_meta` block.
+
+Redaction is documented in `frames/PROVENANCE.md`, which deliberately records the *rule* and not the
+values — naming what you removed is how a redaction undoes itself.
+
 ## What this establishes
 
 > **Correction, 2026-09-09.** An earlier revision of this README claimed *"the spec's package names
@@ -71,8 +100,24 @@ An `authRequired` error, or `-32601 Method not found`, means NO.
    needs a **server loop**, not a request/response client. This is the single biggest architectural
    consequence.
 4. **`ext` preservation is load-bearing on turn one, not defensive.** Traffic absent from schema v1
-   appeared immediately: `usage_update` (`{"used":21970,"size":1000000}`), `_auth/status_update`,
-   `_session/goal`, and `_meta.jetbrains.air`.
+   appeared immediately: `_auth/status_update` as a **top-level method**, and `usage_update` as a
+   **`session/update` discriminator**.
+
+   > **Corrected 2026-09-09 against the captured corpus.** An earlier revision of this line listed
+   > `usage_update`, `_auth/status_update`, `_session/goal` and `_meta.jetbrains.air` together as
+   > traffic that "appeared", which the frames disprove in two ways:
+   >
+   > - **`_session/goal` and `_meta.jetbrains.air` never fired as events.** They appear **only as
+   >   declared capabilities inside the `initialize` response's `_meta` block.** A capability
+   >   announcement is not traffic, and reading it as traffic would have had the client waiting for
+   >   frames that never arrive.
+   > - **`usage_update` is not a top-level method.** It is delivered as a `session/update` frame
+   >   whose `update.sessionUpdate` discriminator is `usage_update` — a different place in the
+   >   envelope, and therefore a different mapper.
+   >
+   > This is what the corpus is for: the claim was written from truncated console output, and the
+   > frames corrected it. **`ext` preservation remains load-bearing** — the corrected traffic is
+   > still absent from schema v1 — but the *shape* was wrong, and the shape is what gets built.
 5. **File edits are not a distinct update type.** They arrive as `tool_call` with `kind:"edit"` and
    a `content:[{type:"diff", …}]` payload.
 6. **No official .NET SDK exists.** Four unofficial NuGet families exist, all low-download, none
