@@ -247,6 +247,20 @@ test, not in two separate tests"* — so N3/N4 of the old draft are **one node**
 - Full gate set runs here. **Derived artifacts regenerate exactly once, after the last authored
   merge** (spec §6.5) — `tools/regenerate-derived.py`, which covers `docs/api/` for the new
   `AgentPlane` namespace as well as the graph index.
+- **A Proof Pack at `docs/proof/conductor-agent-plane.md`, and it is not optional.** Two independent
+  reasons, and the gap was found before N7 was dispatched rather than at the close:
+  1. **The episode-close has nothing valid to name without it.** The loomkeeper contract refuses an
+     `episode.artifacts` path that does not exist or sits outside `docs/proof/`, and *"declaring one
+     costs you the evidence, not your episode."* An earlier draft of this plan named no Proof Pack
+     at all, so the E18 close would have had no admissible artifact.
+  2. It is the phase's own claims-vs-evidence record, which spec §8.1 requires be kept in
+     **separate columns**.
+  Follow the 25 existing packs' shape — a table of
+  **Claim | Evidence (test) | Source | Oracle | Red observed | Confidence | Residual** — plus the
+  component, test counts, and the spike. **Every "Verified" must cite something re-runnable**
+  (DC-002), and the **Residual column must be populated, not blank**: the auth-label correspondence,
+  the deferred DC-111 control, the unregistered-session capture, and any node whose duration is
+  "not recorded" all belong there.
 - **N7 MUST NOT use `git stash` to compare against HEAD.** Near-miss recorded during N3: `git stash
   push -u` was used inside the worktree to check a gate against the branch point. Two facts combine
   badly. **DC-053/WT13:** the stash is *repo-global* — the one thing a worktree does not isolate.
