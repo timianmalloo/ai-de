@@ -4152,12 +4152,25 @@ for both or split.*
   **deliberately declined** the rule with the reasoning recorded in `.gitignore`. Here the rule was
   accepted and then routed around per-commit. The discriminator is whether the divergence was
   **recorded once** or **re-improvised every time**.
-- **Control:** none yet — recorded as a finding. The candidate control is a negation for the
-  committed artifact shapes (so `git add` alone suffices and `-f` becomes unnecessary rather than
-  load-bearing), verified with `git check-ignore --quiet` on a representative artifact path — never
-  with `-v`, which prints the negation and exits 0, inverting the answer. The change is repo-wide
-  hygiene outside the Phase-1 goal that surfaced it, so it is a **finding for ruling**, not a
-  unilateral edit.
+- **It was not hygiene — it was a REGRESSION of a recorded decision, and that is the sharper
+  finding.** `.gitignore:495-497` states: *"spikes/ is NOT ignored in this repo (pack default
+  overridden): a contract labelled Verified must cite committed, re-runnable spike evidence
+  (Test Architect gate, 2026-08-26)."* Twenty-nine lines later, a pack INSTALL-2 block silently
+  re-appended a blanket `spikes/` — and **git's last-match rule made the regression win.** Two
+  contradictory statements in one file, the later one authoritative by accident. A pack update
+  overwrote a repo decision that the file itself recorded, and nothing failed.
+- **Fix applied 2026-09-09:** the pack blanket was **removed** rather than negated. A negation after
+  a blanket is fragile — the next pack update re-appends the blanket and the negation's position
+  decides the outcome. Verified in **both** directions with `git check-ignore --quiet`, never `-v`
+  (which prints the negation and exits 0, inverting the answer): the ACP frame corpus at
+  `spikes/acp-subscription-lane/frames/read.jsonl` exits **1** (not ignored, reachable by plain
+  `git add`), while `spikes/msbuild-task-execution/fixture/markers/` still exits **0**, so the
+  narrower intentional exclusion survived the edit.
+- **Control: DEFERRED, and the register stays honest about it.** The gate would be a new
+  self-tested check (DC-104 requires `--self-test`) plus CI wiring; no existing `verify-*.py` is a
+  semantic home. **Trigger: before DC-111 is moved from `uncontrolled` to `controlled`.** Until
+  then the repair is real but nothing fails when the shape recurs — which is exactly why the status
+  below is not being upgraded.
 - **The generalisation:** *a convention that works only because everyone remembers a flag is not a
   convention, it is a streak.* Ask of any required artifact: if the next author does the obvious
   thing, does the artifact arrive?
