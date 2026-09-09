@@ -368,10 +368,27 @@ committed corpus.
 
 ## Planned vs actual
 
-*(Completed at close per GO18. Duration is **measured** — `audit-log.py start` was run — not
-modeled. Note the instrument's own limits: the audit log carries `duration_seconds` on 4.5% of
+*(Completed at close per GO18.)*
+
+**The duration instrument, measured rather than assumed — and it does less than Condition 6 implied.**
+`audit-log.py append` picks up a start stamp via `consume_start(root, session)`, which **consumes**
+it. So **one `start` yields a duration on exactly one subsequent `append`** — the design is one skill
+run, one start, one closing entry. Checked against this session's own entries: **1 of 7 carries
+`duration_seconds`** (the `optimize-graph` skill entry, 511.0 s); the other six correctly read
+**not recorded**.
+
+Consequence, and it is a correction to this plan: **Condition 6 requires `audit-log.py start`
+per NODE, not once per phase.** Nodes N0–N3 were dispatched without it and their durations are
+**not recorded** — the honest value, never zero. From N4 onward every node's delegation opens with
+`start` and closes with its own `append`.
+
+This is the SRE's finding confirmed by measurement rather than argued: *"the table is fillable only
+by accident"* unless a node actively emits. It was found by measuring the instrument instead of
+trusting that running `start` once had armed it.
+
+**Other instrument limits, unchanged:** the audit log carries `duration_seconds` on ~4.5% of all
 entries and records **0 non-success outcomes across 465**, so a rework count of 0 must be read as
-"not recorded" unless a node actively emits it.)*
+**not recorded**, never as "no rework happened".
 
 | | Planned | Actual |
 | --- | --- | --- |
