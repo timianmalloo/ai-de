@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-conductor-agent-plane",
-  "generated": "2026-09-09T19:15:10Z",
+  "generated": "2026-09-09T19:45:54Z",
   "audit": [
     {
       "id": "al-0001",
@@ -9906,6 +9906,51 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "f366c4bb0d2a0e883454d39e24b2064709bb637f",
         "short": "f366c4bb0",
+        "branch": "feature/conductor-agent-plane",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M23V95K6X8P96F4D540D03RD",
+      "shortname": "conductor-n3-plane-services",
+      "datetime": "2026-09-09T19:45:54Z",
+      "session": "conductor-phase1",
+      "prompt": "Execute node N3 of the approved conductor programme: the Agent Plane's five services under seven individually falsifiable exit clauses, TDD red-first, in the feature/conductor-agent-plane worktree.",
+      "summary": "N3 landed: ProviderRegistry (unknown provider refused not defaulted; lane binds to engine+model+account; ready/needs-login/quota-degraded), WorktreeProvisioner (namespaced branch from AgentWorktree.For, coord install run INSIDE the tree, fail-safe park-not-delete cleanup), SpawnContract (parameterized over all six goal-block fields, each error naming its field; ToS direct-api refusal checked first; observed-auth gate fails closed on absent status), GovernedSessionSource (byte-for-byte episode attributes over the live IngestHost path, session registered so ClosedEpisodeScoring sweeps it, GovernedLane kill path closes Blocked and parks a dirty tree), and the expand-only v6 mode column (legacy rows read NULL, proven against a hand-written pre-migration v5 fixture, no backfill, never a ScoreSegment member). 94 new tests; Core 1719 -> 1813. Both oracles proven falsifiable by mutation and reverted. Nothing under Watcher/ changed semantics: WatcherObservationStore.cs is 53/0 pure addition and SqliteWatcherObservationStore.cs deletes exactly two lines (schema-version constant, trailing comma).",
+      "kind": "skill",
+      "skill": null,
+      "tool": "claude-code",
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "src/AiDe.Core/AgentPlane/ProviderRegistry.cs",
+        "src/AiDe.Core/AgentPlane/GoalBlock.cs",
+        "src/AiDe.Core/AgentPlane/WorktreeProvisioner.cs",
+        "src/AiDe.Core/AgentPlane/GovernedSessionSource.cs",
+        "src/AiDe.Core/Watcher/SqliteWatcherObservationStore.cs",
+        "tests/AiDe.Core.Tests/Watcher/ScoredEpisodeModeMigrationTests.cs"
+      ],
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "phase-1",
+        "n3",
+        "migration",
+        "tos"
+      ],
+      "outcome": "success",
+      "goal": "Land the Agent Plane's services - provider registry, worktree provisioner, goal-block/spawn contract, GovernedSessionSource, and the mode cohort column - each independently falsifiable.",
+      "done_when": "All seven N3 clauses pass as tests; dotnet build -c Release green with zero warnings; dotnet test -c Release green; python tools/verify-test-run.py passes in CHECK mode.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "84c5a24805bf0d08be12eddc88a722603d28f80c",
+        "short": "84c5a2480",
         "branch": "feature/conductor-agent-plane",
         "pushed": null
       }
