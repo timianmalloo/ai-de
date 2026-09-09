@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 66 · partially-controlled 42 · uncontrolled 6
+**Status counts:** controlled 66 · partially-controlled 42 · uncontrolled 7
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -4334,6 +4334,62 @@ for both or split.*
   is closed in this repo by hand and verified by the plan diff above
 
 ---
+
+### DC-115 — Evidence committed on a lane's BRANCH is invisible to a verifier that reads the parent checkout's WORKING TREE
+
+- **Shape:** a control resolves an identity to its canonical form — a linked worktree to the
+  repository it belongs to — and a *second* consumer then uses that canonical identity as a
+  **filesystem path to read a file from**. The canonicalisation is right for grouping and wrong for
+  reading: the parent checkout is a different working tree, on a different branch, and the file the
+  lane committed is simply not in it.
+- **Signature:** none at the boundary. `ProofPackVerifier` answers `NotFound`, which is its honest
+  answer to the question it was asked — the file really is not at that path. `EvidenceFor` turns
+  that into `HasProofPack: false`, `DeterministicSignalsDeriver` into "no verification path", and
+  `WeaveScore` into **`Not Scored`** with the reason *"no minimum verification path"*. Every layer
+  is individually correct and the composed statement — *this agent produced no evidence* — is false.
+  The scorecard then makes a claim about the agent when the true claim is about where somebody
+  looked.
+- **Measured, both halves, 2026-09-09 during N7:**
+  1. `C:/Projects/ai-de-feature-conductor-agent-plane/.git` is a **file** reading
+     `gitdir: C:/Projects/ai-de/.git/worktrees/ai-de-feature-conductor-agent-plane`, so
+     `FileSystemRepositoryLocator` resolves it to `C:/Projects/ai-de` and
+     `RepositoryCorrection.Apply` rebinds the session there — correctly, by its own contract.
+  2. `C:/Projects/ai-de/docs/proof/conductor-agent-plane.md` **does not exist**: that checkout is on
+     `main`, and the Proof Pack is committed on `feature/conductor-agent-plane`.
+- **What it cost here: nothing, because the exit run was rooted in a clone instead** — a repository
+  root whose `.git` is a directory, so no correction fires and the declared path resolves inside the
+  tree that holds it. The run scored `Partial: 15 / 15 observed` with `IsComparable == true`. That is
+  a statement about the shape the run happened to take, **not** about the defect being absent: a
+  governed lane in a linked worktree of the operator's own checkout — the shape spec §6.4 describes,
+  and the one the shell provisions — cannot be credited for evidence it commits on its own branch.
+- **Why it survives:** the comment on `ProofPackVerifier.Verify`'s own parameter asserts the
+  opposite — *"the corrected one, so a worktree-registered agent is checked against the repository
+  its evidence is actually committed in"* — which is true for a worktree sharing the parent's branch
+  and false for every agent branch. A reasoned-through comment is the hardest kind of wrong claim to
+  notice, because it reads as though somebody checked.
+- **The asymmetry that makes it worse:** the *observed* door does not have this problem.
+  `AuditLogEpisodeSource.HasProofPackArtifact` credits a declared path by **substring** and never
+  touches the filesystem, so an audit-imported episode is evidenced by naming a path while a governed
+  one must have the file present in a checkout it does not control. Two doors, two definitions of
+  "has evidence", and the stricter one applies to the lane the product itself drove.
+- **Control:** none yet, and deliberately not built at N7 — R4-core scopes this phase to the watcher
+  gaining *callers, not semantics*, and every candidate changes an existing verdict. Named so the fix
+  is a decision rather than a rediscovery. Cheapest first: (a) verify against
+  `SessionBinding.Worktree.Path` before falling back to `Repository.CanonicalPath` — the worktree is
+  the checkout the evidence is in, and the binding already carries it; (b) ask git for the blob
+  (`git -C <worktree> cat-file -e <branch>:<path>`) rather than the filesystem, which also covers a
+  committed-but-not-checked-out file; (c) give `ProofPackVerdict` the third state it already models
+  (`Unverifiable`) a route through `EpisodeEvidence`, which today collapses it to `false` at exactly
+  this boundary — its own doc comment says so.
+- **The generalisation:** *a canonical identity is not a path.* The moment a value normalised for
+  grouping is handed to `File.Exists`, ask which of the several real directories it now names — and
+  whether the one it names is the one holding the thing you are looking for.
+- **Relationship to DC-110** (a partition value derived from the ingest path rather than the work):
+  sibling. Both are one value serving two purposes that disagree; DC-110's split the cohort, this one
+  empties the evidence.
+- **Status:** `uncontrolled` — measured, reproducible from the two observations above, and owed a fix
+  before a governed lane runs in an operator's own worktree.
+
 
 ## Inherited from the fleet (ai-forward drm-0009, 2026-09-04)
 

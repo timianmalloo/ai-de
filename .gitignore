@@ -512,6 +512,12 @@ graphify-out/
 # code executed. They are the OUTPUT of a run, regenerated every time; RESULT-raw.txt is the
 # committed evidence.
 spikes/msbuild-task-execution/fixture/markers/
+
+# The Phase-1 exit run's TRANSCRIPT is committed evidence, and the blanket `*.log` above swallows it.
+# Un-ignored by name rather than reached with `git add -f`: DC-111 is precisely the class where
+# evidence the repo requires lives under a blanket ignore and is committed only by a flag nobody
+# remembers next time. A negation is a decision that survives; a flag is a habit.
+!spikes/conductor-exit-run/*.log
 .mutation-in-progress
 
 # Obsidian Smart Environment plugin state — per-user, machine-local (pack rev-52)
