@@ -82,14 +82,18 @@ public sealed class SessionLane : IDisposable
     /// A completion condition, not a speed claim: the bound is there so a stalled pump reports a
     /// stall instead of hanging the run, exactly as a <c>WaitForExit</c> bound does.
     /// </remarks>
-    /// <returns>True when the count was reached; false when the bound elapsed first.</returns>
+    /// <returns>
+    /// True when the count was reached; false when the drain finished first or the bound elapsed.
+    /// </returns>
     public async Task<bool> WaitForDeliveredAsync(long count, TimeSpan bound)
     {
         var deadline = DateTimeOffset.UtcNow + bound;
 
         while (Delivered < count)
         {
-            if (DateTimeOffset.UtcNow > deadline)
+            // A finished pump can never deliver another event, so waiting out the bound would only
+            // convert a definite answer into a slow one.
+            if (Pump.IsCompleted || DateTimeOffset.UtcNow > deadline)
             {
                 return false;
             }

@@ -45,9 +45,12 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     private readonly ColumnDefinition _canvasSplitterColumn = new() { Width = new GridLength(0) };
     private readonly ColumnDefinition _secondaryColumn = new();
     private readonly StackPanel _tabStrip = new() { Orientation = System.Windows.Controls.Orientation.Horizontal };
+    private readonly ToggleButton _splitToggle = new();
     private readonly Border _permissionBanner = new();
     private readonly TextBlock _permissionText = new();
     private readonly SessionDocumentStore? _store;
+
+    private bool _reflectingSplitToggle;
 
     private bool _disposed;
 
@@ -114,6 +117,14 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     /// <summary>Whether the permission overlay is showing.</summary>
     public bool PermissionBannerVisible => _permissionBanner.Visibility == Visibility.Visible;
 
+    /// <summary>What the permission overlay is saying, or empty when it is not showing.</summary>
+    public string PermissionBannerText => _permissionBanner.Visibility == Visibility.Visible
+        ? _permissionText.Text
+        : string.Empty;
+
+    /// <summary>The split control on the mode strip — the operator's way into R16 b2.</summary>
+    public ToggleButton SplitControl => _splitToggle;
+
     /// <summary>The content built for a mode, creating it on first use and holding it after.</summary>
     /// <remarks>
     /// Lazy, then retained — the idiom <c>ShellModeController</c> uses for the Explorer surface, for
@@ -145,9 +156,6 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         _lanes.Add(lane);
     }
 
-    /// <summary>The lanes feeding this document.</summary>
-    public IReadOnlyList<SessionLane> Lanes => _lanes;
-
     private Grid BuildPairedZone()
     {
         var root = new Grid();
@@ -168,6 +176,15 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         };
         AutomationProperties.SetName(zoneSplitter, "Composer and canvas splitter");
         zoneSplitter.SetResourceReference(BackgroundProperty, "BorderBrush");
+
+        // A DRAG THAT THE MODEL NEVER HEARS ABOUT IS A DRAG THAT DOES NOT SURVIVE THE SESSION.
+        // The splitter moves the Grid's columns directly, so without this the operator's arrangement
+        // was correct on screen and absent from the envelope — restored to wherever it had last been
+        // set programmatically. Read back from the realised widths rather than tracked, because the
+        // widths are what the splitter actually produced.
+        zoneSplitter.DragCompleted += (_, _) => Model.SetComposerWeight(
+            ShareOf(_composerColumn, _canvasColumn));
+
         Grid.SetColumn(zoneSplitter, 1);
         root.Children.Add(zoneSplitter);
 
@@ -178,17 +195,59 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         return root;
     }
 
+    /// <summary>The first column's share of a pair, read from the widths the splitter left behind.</summary>
+    private static double ShareOf(ColumnDefinition first, ColumnDefinition second)
+    {
+        var total = first.ActualWidth + second.ActualWidth;
+
+        // An unrealised grid has no widths at all. Returning the current star value keeps the drag a
+        // no-op rather than collapsing the pair to a number computed from two zeroes.
+        return total > 0
+            ? first.ActualWidth / total
+            : first.Width.Value / Math.Max(first.Width.Value + second.Width.Value, double.Epsilon);
+    }
+
     private DockPanel BuildCanvasZone()
     {
         AutomationProperties.SetName(_tabStrip, "Canvas modes");
         var header = new DockPanel { Margin = new Thickness(10, 8, 10, 6) };
         DockPanel.SetDock(_tabStrip, Dock.Left);
         header.Children.Add(_tabStrip);
+
+        // The control that makes R16 b2 reachable. Without it the canvas is splittable only through
+        // the model, which is a capability nobody can open — the same defect the main menu exists to
+        // fix one layer up.
+        _splitToggle.Content = "Split";
+        _splitToggle.Padding = new Thickness(10, 4, 10, 4);
+        _splitToggle.HorizontalAlignment = HorizontalAlignment.Right;
+        AutomationProperties.SetName(_splitToggle, "Split the canvas into two modes");
+        _splitToggle.Click += (_, _) => ToggleSplit();
+        DockPanel.SetDock(_splitToggle, Dock.Right);
+        header.Children.Add(_splitToggle);
+
         DockPanel.SetDock(header, Dock.Top);
 
         _permissionText.TextWrapping = TextWrapping.Wrap;
         _permissionText.SetResourceReference(TextBlock.ForegroundProperty, "TextBrush");
-        _permissionBanner.Child = _permissionText;
+
+        var dismiss = new Button
+        {
+            Content = "Dismiss",
+            Padding = new Thickness(10, 2, 10, 2),
+            Margin = new Thickness(10, 0, 0, 0),
+            VerticalAlignment = VerticalAlignment.Center,
+        };
+        AutomationProperties.SetName(dismiss, "Dismiss the permission notice");
+        dismiss.Click += (_, _) => Model.Permission.Clear();
+
+        // Dismiss, never Allow/Deny. The decision belongs to the plane's permission policy — an edit
+        // inside the lease is allowed and one outside it raises a seam — so a button here offering to
+        // answer would be offering a choice the operator does not actually hold in this phase.
+        var banner = new DockPanel();
+        DockPanel.SetDock(dismiss, Dock.Right);
+        banner.Children.Add(dismiss);
+        banner.Children.Add(_permissionText);
+        _permissionBanner.Child = banner;
         _permissionBanner.Padding = new Thickness(10, 6, 10, 6);
         _permissionBanner.Margin = new Thickness(10, 0, 10, 6);
         _permissionBanner.BorderThickness = new Thickness(1);
@@ -212,6 +271,8 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
         _canvasSplitter.Visibility = Visibility.Collapsed;
         AutomationProperties.SetName(_canvasSplitter, "Canvas mode splitter");
         _canvasSplitter.SetResourceReference(BackgroundProperty, "BorderBrush");
+        _canvasSplitter.DragCompleted += (_, _) => Model.SetCanvasSplitWeight(
+            ShareOf(_primaryColumn, _secondaryColumn));
         Grid.SetColumn(_canvasSplitter, 1);
         body.Children.Add(_canvasSplitter);
 
@@ -300,6 +361,45 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
             tab.IsChecked = string.Equals(modeId, Model.ActiveModeId, StringComparison.Ordinal)
                 || string.Equals(modeId, Model.SplitModeId, StringComparison.Ordinal);
         }
+
+        // Guarded, because assigning IsChecked raises Click's sibling events; without it a render
+        // triggered BY a split would toggle the split straight back.
+        _reflectingSplitToggle = true;
+        _splitToggle.IsChecked = Model.IsSplit;
+        _splitToggle.IsEnabled = Model.AvailableModes.Count > 1;
+        _reflectingSplitToggle = false;
+    }
+
+    /// <summary>Splits the canvas against the next available mode, or closes an open split.</summary>
+    /// <remarks>
+    /// "The next available mode" is the first row that is not already active — data, so a third
+    /// registered mode needs no change here either.
+    /// </remarks>
+    private void ToggleSplit()
+    {
+        if (_reflectingSplitToggle)
+        {
+            return;
+        }
+
+        if (Model.IsSplit)
+        {
+            Model.Unsplit();
+            return;
+        }
+
+        var beside = Model.AvailableModes.FirstOrDefault(
+            m => !string.Equals(m, Model.ActiveModeId, StringComparison.Ordinal));
+
+        if (beside is null)
+        {
+            // One mode cannot sit beside itself. The toggle is disabled in that case, so this is the
+            // belt to that brace rather than a state the operator can reach.
+            _splitToggle.IsChecked = false;
+            return;
+        }
+
+        Model.Split(beside);
     }
 
     private void RenderPermission()

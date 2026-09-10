@@ -29,14 +29,11 @@ public sealed class ConsoleSurface : ContentControl, IDisposable
     private readonly ConsoleStreamModel _model;
     private bool _disposed;
 
-    /// <param name="sessionId">The session this console belongs to — its stable surface id.</param>
     /// <param name="model">The merged stream. Shared with the document, never copied.</param>
-    public ConsoleSurface(string sessionId, ConsoleStreamModel model)
+    public ConsoleSurface(ConsoleStreamModel model)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(sessionId);
         ArgumentNullException.ThrowIfNull(model);
 
-        SurfaceId = sessionId;
         _model = model;
 
         AutomationProperties.SetName(this, "Console");
@@ -73,9 +70,6 @@ public sealed class ConsoleSurface : ContentControl, IDisposable
         _model.Changed += Render;
         Render();
     }
-
-    /// <summary>The layout surface id this console renders under.</summary>
-    public string SurfaceId { get; }
 
     /// <summary>The merged stream this console shows.</summary>
     public ConsoleStreamModel Model => _model;

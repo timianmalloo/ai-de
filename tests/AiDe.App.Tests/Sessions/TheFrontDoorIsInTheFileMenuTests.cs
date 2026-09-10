@@ -47,6 +47,41 @@ public sealed class TheFrontDoorIsInTheFileMenuTests : IDisposable
     });
 
     [Fact]
+    public void CtrlNIsReallyBoundToIt() => Sta.Run(() =>
+    {
+        // The catalog's gesture STRING is what the menu shows; this is the binding a key press
+        // actually reaches. A command whose chord is only printed is not keyboard-reachable, and
+        // the two live in different places — which is exactly how they drift.
+        var host = new System.Windows.Controls.Grid();
+        var ran = new List<string>();
+
+        var controller = new WorkbenchController(new LayoutService(), new RecordingAnnouncer())
+        {
+            NewSessionRequested = () => { ran.Add("session.new"); return "Session created."; },
+        };
+
+        controller.Bind(host);
+
+        var binding = host.InputBindings.OfType<System.Windows.Input.KeyBinding>().SingleOrDefault(
+            b => b.Key == System.Windows.Input.Key.N
+                && b.Modifiers == System.Windows.Input.ModifierKeys.Control);
+
+        Assert.NotNull(binding);
+
+        var routed = Assert.IsType<System.Windows.Input.RoutedUICommand>(binding.Command);
+        Assert.Equal("session.new", routed.Name);
+
+        // And the command the binding names really reaches the flow, rather than resolving to an id
+        // nothing handles — the two halves of "the chord works".
+        Assert.Contains(
+            host.CommandBindings.OfType<System.Windows.Input.CommandBinding>(),
+            b => ReferenceEquals(b.Command, routed));
+
+        controller.Execute(routed.Name);
+        Assert.Equal(["session.new"], ran);
+    });
+
+    [Fact]
     public void InvokingItRunsTheFlow_AndSaysSoWhenNoFlowIsWired() => Sta.Run(() =>
     {
         var announcer = new RecordingAnnouncer();

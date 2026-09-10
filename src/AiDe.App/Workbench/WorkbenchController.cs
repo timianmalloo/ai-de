@@ -771,6 +771,12 @@ internal static class KeyGestures
             case "workbench.closeSurface":
                 yield return new KeyGesture(Key.W, ModifierKeys.Control);
                 break;
+            case "session.new":
+                // R13 b1 names the gesture, and it is the entry point for the product's primary
+                // object — a front door reachable only through the palette is a front door nobody
+                // finds.
+                yield return new KeyGesture(Key.N, ModifierKeys.Control);
+                break;
             default:
                 yield break;   // chorded — reachable through the command palette
         }

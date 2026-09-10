@@ -36,7 +36,7 @@ public sealed class TheConsoleRendersTheMergedStreamTests
 
         var rendered = Sta.Run(() =>
         {
-            using var console = new ConsoleSurface(model.SessionId, model.Console);
+            using var console = new ConsoleSurface(model.Console);
             return (Rows: console.RenderedRows.ToList(), Rail: console.RailLanes.ToList());
         });
 
@@ -72,7 +72,7 @@ public sealed class TheConsoleRendersTheMergedStreamTests
 
         var observed = Sta.Run(() =>
         {
-            using var console = new ConsoleSurface(model.SessionId, model.Console);
+            using var console = new ConsoleSurface(model.Console);
 
             var all = console.RenderedRows.Count;
 

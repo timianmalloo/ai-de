@@ -52,52 +52,98 @@ public sealed class ConsoleStreamModel
     private readonly HashSet<string> _hiddenLanes = new(StringComparer.Ordinal);
     private readonly HashSet<(string Lane, string Kind)> _hiddenKinds = [];
 
+    /// <summary>
+    /// Guards every read and write. <b>A merged stream is written by more than one lane by
+    /// definition</b> — that is what "merged" means — and each lane drains its own queue on its own
+    /// thread, so an unsynchronised <see cref="List{T}"/> here is not a theoretical race: two lanes
+    /// appending at once corrupt it or throw, intermittently, which reads as a flaky test rather
+    /// than as the defect it is (DC-078). Reads return snapshots for the same reason: a view
+    /// enumerating while a lane appends would throw mid-render.
+    /// </summary>
+    private readonly Lock _gate = new();
+
     /// <summary>Every row that ever arrived, in receipt order.</summary>
-    public IReadOnlyList<ConsoleRow> Rows => _rows;
+    public IReadOnlyList<ConsoleRow> Rows
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return [.. _rows];
+            }
+        }
+    }
 
     /// <summary>The rows the filter currently includes.</summary>
-    public IReadOnlyList<ConsoleRow> VisibleRows =>
-        [.. _rows.Where(r => !_hiddenLanes.Contains(r.LaneId) && !_hiddenKinds.Contains((r.LaneId, r.Kind)))];
+    public IReadOnlyList<ConsoleRow> VisibleRows
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return [.. _rows.Where(
+                    r => !_hiddenLanes.Contains(r.LaneId) && !_hiddenKinds.Contains((r.LaneId, r.Kind)))];
+            }
+        }
+    }
 
     /// <summary>Raised after any append or filter change, so a view can re-read.</summary>
     public event Action? Changed;
 
     /// <summary>The lane rail, in first-seen order.</summary>
-    public IReadOnlyList<ConsoleRail> Rail =>
-    [
-        .. _laneOrder.Select(id => new ConsoleRail(
-            id,
-            _laneNames[id],
-            _rows.Count(r => string.Equals(r.LaneId, id, StringComparison.Ordinal)),
-            !_hiddenLanes.Contains(id))),
-    ];
+    public IReadOnlyList<ConsoleRail> Rail
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return
+                [
+                    .. _laneOrder.Select(id => new ConsoleRail(
+                        id,
+                        _laneNames[id],
+                        _rows.Count(r => string.Equals(r.LaneId, id, StringComparison.Ordinal)),
+                        !_hiddenLanes.Contains(id))),
+                ];
+            }
+        }
+    }
 
     /// <summary>The filter tree: one node per lane, one child per kind that lane has produced.</summary>
     public IReadOnlyList<ConsoleFilterNode> FilterTree
     {
         get
         {
-            var nodes = new List<ConsoleFilterNode>();
-
-            foreach (var lane in _laneOrder)
+            lock (_gate)
             {
-                var laneRows = _rows.Where(r => string.Equals(r.LaneId, lane, StringComparison.Ordinal)).ToList();
-                nodes.Add(new ConsoleFilterNode(
-                    lane, null, _laneNames[lane], laneRows.Count, !_hiddenLanes.Contains(lane)));
-
-                foreach (var kind in laneRows.Select(r => r.Kind).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal))
-                {
-                    nodes.Add(new ConsoleFilterNode(
-                        lane,
-                        kind,
-                        kind,
-                        laneRows.Count(r => string.Equals(r.Kind, kind, StringComparison.Ordinal)),
-                        !_hiddenLanes.Contains(lane) && !_hiddenKinds.Contains((lane, kind))));
-                }
+                return FilterTreeUnsafe();
             }
-
-            return nodes;
         }
+    }
+
+    /// <summary>Builds the tree. The caller holds <see cref="_gate"/>.</summary>
+    private List<ConsoleFilterNode> FilterTreeUnsafe()
+    {
+        var nodes = new List<ConsoleFilterNode>();
+
+        foreach (var lane in _laneOrder)
+        {
+            var laneRows = _rows.Where(r => string.Equals(r.LaneId, lane, StringComparison.Ordinal)).ToList();
+            nodes.Add(new ConsoleFilterNode(
+                lane, null, _laneNames[lane], laneRows.Count, !_hiddenLanes.Contains(lane)));
+
+            foreach (var kind in laneRows.Select(r => r.Kind).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal))
+            {
+                nodes.Add(new ConsoleFilterNode(
+                    lane,
+                    kind,
+                    kind,
+                    laneRows.Count(r => string.Equals(r.Kind, kind, StringComparison.Ordinal)),
+                    !_hiddenLanes.Contains(lane) && !_hiddenKinds.Contains((lane, kind))));
+            }
+        }
+
+        return nodes;
     }
 
     /// <summary>Appends one lane event to the merged stream.</summary>
@@ -106,26 +152,35 @@ public sealed class ConsoleStreamModel
         ArgumentException.ThrowIfNullOrWhiteSpace(laneId);
         ArgumentNullException.ThrowIfNull(evt);
 
-        if (!_laneNames.ContainsKey(laneId))
+        lock (_gate)
         {
-            _laneNames[laneId] = string.IsNullOrWhiteSpace(laneName) ? laneId : laneName;
-            _laneOrder.Add(laneId);
+            if (!_laneNames.ContainsKey(laneId))
+            {
+                _laneNames[laneId] = string.IsNullOrWhiteSpace(laneName) ? laneId : laneName;
+                _laneOrder.Add(laneId);
+            }
+
+            _rows.Add(new ConsoleRow(evt.Seq, laneId, _laneNames[laneId], evt.Kind, TextOf(evt)));
         }
 
-        _rows.Add(new ConsoleRow(evt.Seq, laneId, _laneNames[laneId], evt.Kind, TextOf(evt)));
+        // Outside the lock: a subscriber marshals to the UI thread, and holding a lock across that
+        // hand-off is how a render and an append deadlock against each other.
         Changed?.Invoke();
     }
 
     /// <summary>Includes or excludes a whole lane.</summary>
     public void SetLaneVisible(string laneId, bool visible)
     {
-        if (visible)
+        lock (_gate)
         {
-            _hiddenLanes.Remove(laneId);
-        }
-        else
-        {
-            _hiddenLanes.Add(laneId);
+            if (visible)
+            {
+                _hiddenLanes.Remove(laneId);
+            }
+            else
+            {
+                _hiddenLanes.Add(laneId);
+            }
         }
 
         Changed?.Invoke();
@@ -134,13 +189,16 @@ public sealed class ConsoleStreamModel
     /// <summary>Includes or excludes one event kind within one lane.</summary>
     public void SetKindVisible(string laneId, string kind, bool visible)
     {
-        if (visible)
+        lock (_gate)
         {
-            _hiddenKinds.Remove((laneId, kind));
-        }
-        else
-        {
-            _hiddenKinds.Add((laneId, kind));
+            if (visible)
+            {
+                _hiddenKinds.Remove((laneId, kind));
+            }
+            else
+            {
+                _hiddenKinds.Add((laneId, kind));
+            }
         }
 
         Changed?.Invoke();
@@ -157,10 +215,14 @@ public sealed class ConsoleStreamModel
     /// </remarks>
     public IReadOnlyList<long> OrdinalGaps(string laneId)
     {
-        var seen = _rows
-            .Where(r => string.Equals(r.LaneId, laneId, StringComparison.Ordinal))
-            .Select(r => r.Ordinal)
-            .ToHashSet();
+        HashSet<long> seen;
+
+        lock (_gate)
+        {
+            seen = [.. _rows
+                .Where(r => string.Equals(r.LaneId, laneId, StringComparison.Ordinal))
+                .Select(r => r.Ordinal)];
+        }
 
         if (seen.Count == 0)
         {

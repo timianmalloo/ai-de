@@ -56,7 +56,7 @@ public static class CanvasModeCatalog
     /// <summary>The two rows this phase ships. Console and Terminal only — no placeholder.</summary>
     public static IReadOnlyList<CanvasMode> BuiltIn { get; } =
     [
-        new(ConsoleModeId, "Console", context => new ConsoleSurface(context.SessionId, context.Stream)),
+        new(ConsoleModeId, "Console", context => new ConsoleSurface(context.Stream)),
 
         // The existing terminal surface, constructed exactly as SurfaceContentFactory constructs a
         // terminal pane. A session's terminal mode is a terminal, not a second implementation of one.

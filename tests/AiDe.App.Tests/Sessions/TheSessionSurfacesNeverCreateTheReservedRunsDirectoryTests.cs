@@ -104,7 +104,7 @@ public sealed class TheSessionSurfacesNeverCreateTheReservedRunsDirectoryTests :
 
         Sta.Run(() =>
         {
-            using var console = new ConsoleSurface(sessionId, model.Console);
+            using var console = new ConsoleSurface(model.Console);
 
             model.Console.SetLaneVisible("lane-1", false);
             model.Console.SetLaneVisible("lane-1", true);
@@ -128,6 +128,18 @@ public sealed class TheSessionSurfacesNeverCreateTheReservedRunsDirectoryTests :
         sessionId, SessionName, _root,
         availableModes: [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
 
+    /// <summary>
+    /// The shared assertion: the exercised surface left the reserved run-log path empty.
+    /// </summary>
+    /// <remarks>
+    /// <b>Scope of the directory sweep below (DC-118).</b> <b>Root:</b> this test's own temporary
+    /// workspace, at <c>&lt;root&gt;/.aide</c>. <b>Recursive:</b> yes. <b>Token:</b> a directory
+    /// named exactly <c>runs</c>. <b>Allowlist:</b> none — nothing in this slice may create one
+    /// anywhere under <c>.aide</c>. It is deliberately scoped to one temporary workspace rather than
+    /// to the repository: this is the <i>dynamic</i> half of the reservation, asserting what a
+    /// surface did, and the static half (<c>src/</c>, recursive, three tokens, allowlisted to
+    /// <c>SessionPaths.cs</c>) is <c>SessionPathContractTests</c>'s.
+    /// </remarks>
     private void AssertReservedPathIsUntouched(string sessionId)
     {
         var sessionDirectory = SessionPaths.SessionDirectory(_root, sessionId);

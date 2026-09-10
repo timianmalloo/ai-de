@@ -2812,7 +2812,12 @@ public sealed class WorkbenchShell : IDisposable
                 model.Restore(saved);
             }
 
-            _sessionDocuments[surfaceId] = new Sessions.SessionDocumentSurface(model, store);
+            var document = new Sessions.SessionDocumentSurface(model, store);
+
+            // Keyed by the document's OWN id rather than by the one computed above: the surface and
+            // the dictionary must agree about which pane holds this session, and two derivations of
+            // one key is the shape that lets them stop agreeing (DM7).
+            _sessionDocuments[document.SurfaceId] = document;
         }
 
         return OpenReferenceDocument(

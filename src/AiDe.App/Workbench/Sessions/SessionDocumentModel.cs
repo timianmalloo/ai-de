@@ -24,6 +24,9 @@ public sealed class SessionDocumentModel
 
     private readonly List<string> _availableModes;
 
+    /// <summary>Serialises one event cycle — see <see cref="Dispatch"/>.</summary>
+    private readonly Lock _dispatchGate = new();
+
     /// <param name="sessionId">The session this document renders.</param>
     /// <param name="title">Its display name.</param>
     /// <param name="workspaceRoot">The workspace it is bound to. A session cannot exist unbound (R13).</param>
@@ -176,8 +179,14 @@ public sealed class SessionDocumentModel
     {
         ArgumentNullException.ThrowIfNull(evt);
 
-        Dispatched++;
-        Console.Append(laneId, laneName, evt);
+        // One lock around the whole cycle, because more than one lane dispatches into one document
+        // and each drains on its own thread. Without it the count and the permission ordinal are
+        // read and written by two threads at once, and R16 b3's claim — "raised at THIS dispatch
+        // count" — would be a race rather than an assertion.
+        lock (_dispatchGate)
+        {
+            Dispatched++;
+            Console.Append(laneId, laneName, evt);
 
         // REGARDLESS OF THE ACTIVE MODE (R16 b3), and this line is the whole clause.
         //
@@ -185,9 +194,10 @@ public sealed class SessionDocumentModel
         // case passed and the Terminal case failed with "no permission surfaced in terminal mode".
         // That is the real defect shape — the overlay appearing when you happen to switch back — and
         // it is invisible to anyone testing in the default mode.
-        if (string.Equals(evt.Kind, PermissionRequestKind, StringComparison.Ordinal))
-        {
-            Permission.Raise(evt, Dispatched);
+            if (string.Equals(evt.Kind, PermissionRequestKind, StringComparison.Ordinal))
+            {
+                Permission.Raise(evt, Dispatched);
+            }
         }
     }
 

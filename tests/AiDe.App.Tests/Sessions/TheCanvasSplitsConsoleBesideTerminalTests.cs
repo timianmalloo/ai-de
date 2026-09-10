@@ -71,6 +71,62 @@ public sealed class TheCanvasSplitsConsoleBesideTerminalTests
     });
 
     [Fact]
+    public void TheOperatorCanReachTheSplit_AndCloseItAgain() => Sta.Run(() =>
+    {
+        // A canvas that is splittable only through the model is a capability nobody can open. The
+        // control is on the mode strip, and it toggles both ways.
+        var model = Model();
+        using var document = new SessionDocumentSurface(model);
+
+        Assert.False(model.IsSplit);
+        Assert.False(document.SplitControl.IsChecked);
+
+        document.SplitControl.RaiseEvent(new System.Windows.RoutedEventArgs(
+            System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+
+        Assert.True(model.IsSplit);
+        Assert.Equal(CanvasModeCatalog.TerminalModeId, model.SplitModeId);
+        Assert.True(document.SplitControl.IsChecked);
+
+        document.SplitControl.RaiseEvent(new System.Windows.RoutedEventArgs(
+            System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+
+        Assert.False(model.IsSplit);
+        Assert.False(document.SplitControl.IsChecked);
+        Assert.Equal(0.0, document.RenderedSecondaryWeight, 3);
+    });
+
+    [Fact]
+    public void ThePermissionOverlayShowsAndCanBeDismissed() => Sta.Run(() =>
+    {
+        // R16 b3 renders as an overlay; the assertion here is that it appears and can be put away.
+        // Dismiss, never Allow/Deny — the decision belongs to the plane's permission policy.
+        var model = Model();
+        using var document = new SessionDocumentSurface(model);
+
+        Assert.False(document.PermissionBannerVisible);
+
+        model.Dispatch("lane-1", "claude-code", PermissionEvent("Write src/Payments/X.cs?"));
+
+        Assert.True(document.PermissionBannerVisible);
+        Assert.Contains("Write src/Payments/X.cs?", document.PermissionBannerText, StringComparison.Ordinal);
+
+        model.Permission.Clear();
+        Assert.False(document.PermissionBannerVisible);
+
+        // The ordinals survive the dismissal: a control that erases its own evidence when the
+        // overlay closes cannot be asked about it afterwards.
+        Assert.Equal(1, model.Permission.RaisedAtOrdinal);
+        Assert.Equal(1, model.Permission.DispatchedWhenRaised);
+    });
+
+    private static AiDe.Core.AgentPlane.RunEvent PermissionEvent(string title) => new(
+        "run-1", "lane-1", null, 1, DateTimeOffset.UtcNow,
+        SessionDocumentModel.PermissionRequestKind, null,
+        new System.Text.Json.Nodes.JsonObject { ["title"] = title },
+        []);
+
+    [Fact]
     public void ACanvasCannotBeSplitAgainstItsOwnActiveMode() => Sta.Run(() =>
     {
         // Two halves rendering one mode would read as two lanes, which is the opposite of what the

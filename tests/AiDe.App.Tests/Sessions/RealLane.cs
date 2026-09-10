@@ -72,7 +72,6 @@ internal sealed class RealLane : IDisposable
     private readonly CancellationTokenSource _stopping = new();
     private readonly AcpPeer _peer;
     private readonly Task _pump;
-    private int _pushed;
 
     public RealLane(string runId, string laneId)
     {
@@ -90,9 +89,6 @@ internal sealed class RealLane : IDisposable
 
     /// <summary>The plane's own queue for this lane — what a <see cref="SessionLane"/> drains.</summary>
     public ChannelReader<ObservedRunEvent> Events => _peer.Events.Reader;
-
-    /// <summary>How many frames the test has pushed.</summary>
-    public int Pushed => _pushed;
 
     /// <summary>Pushes one <c>agent_message_chunk</c> — the commonest frame a lane emits.</summary>
     public void Say(string text)
@@ -112,7 +108,6 @@ internal sealed class RealLane : IDisposable
         };
 
         _stdout.PushFrame(frame.ToJsonString());
-        _pushed++;
     }
 
     /// <summary>
@@ -134,7 +129,6 @@ internal sealed class RealLane : IDisposable
         };
 
         _stdout.PushFrame(frame.ToJsonString());
-        _pushed++;
     }
 
     public void Dispose()

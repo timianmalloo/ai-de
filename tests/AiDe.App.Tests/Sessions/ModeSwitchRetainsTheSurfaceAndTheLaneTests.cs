@@ -155,7 +155,7 @@ public sealed class ModeSwitchRetainsTheSurfaceAndTheLaneTests
                     currentFeed.Dispose();
 
                     activeModel = NewModel();
-                    consoleAfter = new ConsoleSurface(activeModel.SessionId, activeModel.Console);
+                    consoleAfter = new ConsoleSurface(activeModel.Console);
                     currentFeed = new SessionLane(
                         "lane-1", "claude-code", lane.Events, activeModel,
                         marshal: work => document.Dispatcher.Invoke(work));
