@@ -60,6 +60,15 @@ public sealed class WorkbenchShell : IDisposable
     // Cross-restart prompt drafts, keyed by the stable SurfaceId (off the Core layout model).
     private PromptDraftStore? _promptDraftStore;
 
+    // The open session documents, keyed by their stable SurfaceId (R13 b3, A4.4).
+    //
+    // The SHELL owns their lifetime, not the factory: a session outlives the pane it is docked in,
+    // and a factory that built one per render would build a second composer and a second console on
+    // every re-render — the DC-029 shape, and here it would also strand the stream a lane is writing
+    // into.
+    private readonly Dictionary<string, Sessions.SessionDocumentSurface> _sessionDocuments =
+        new(StringComparer.Ordinal);
+
     // The per-workspace Loomkeeper host: it owns the observation store AND runs the ingest (the
     // coordination-contract log pump, in-process, so liveness is exact). Null until a workspace with a
     // data directory is attached; reset on each attach. The panes then show "not available".
@@ -131,7 +140,8 @@ public sealed class WorkbenchShell : IDisposable
             watcher.Ledger,
             queries is not null ? SearchWorkspaceAsync : null,
             watcher.Daydreams,
-            TerminalNameFor);
+            TerminalNameFor,
+            SessionDocumentFor);
 
         // The environment contract does not depend on a workspace, so it must not be gated behind
         // one. It was assigned ONLY in AttachWorkspace, which both call sites skip when the daemon
@@ -530,7 +540,8 @@ public sealed class WorkbenchShell : IDisposable
             watcher.Ledger,
             SearchWorkspaceAsync,
             watcher.Daydreams,
-            TerminalNameFor);
+            TerminalNameFor,
+            SessionDocumentFor);
 
         // Panes realized at construction were built against a factory with no queries and render
         // "not available". Mark every workspace-dependent kind to rebuild on the next Render so they
@@ -2743,9 +2754,81 @@ public sealed class WorkbenchShell : IDisposable
     public void Dispose()
     {
         Persistence?.Dispose();
+
+        // The ONE place a session document is disposed. A mode switch, a tab switch and a re-render
+        // reach none of this — the invariant is ADR-0017's, and SessionDisposalLedger is what checks
+        // it rather than trusting it.
+        foreach (var document in _sessionDocuments.Values)
+        {
+            document.Dispose();
+        }
+
+        _sessionDocuments.Clear();
         _watcherPump?.Cancel();
         _watcherPump?.Dispose();
         _watcherHost?.Dispose();
+    }
+
+    /// <summary>The live session document for a <c>session-document</c> surface, or null.</summary>
+    /// <remarks>
+    /// Null is a working state, not a gap: a saved layout can carry a session-document surface whose
+    /// session has not been reopened yet, and the pane then shows the "no session is open" empty
+    /// state rather than an empty document that reads as a broken one.
+    /// </remarks>
+    private Sessions.SessionDocumentSurface? SessionDocumentFor(Surface surface) =>
+        _sessionDocuments.GetValueOrDefault(surface.SurfaceId);
+
+    /// <summary>
+    /// Opens a created session as a dock document in the paired-zone preset (R13 b3, A4.4).
+    /// </summary>
+    /// <remarks>
+    /// The document is registered BEFORE the surface is added, because adding it renders the pane and
+    /// the factory resolves the document at that moment — registering afterwards renders the empty
+    /// state once and leaves it there until something else forces a re-render.
+    /// </remarks>
+    /// <param name="config">
+    /// The session container. Deliberately not the sheet's <c>NewSessionResult</c>: a document needs
+    /// the session, and the result's task class and lease belong to a <i>run</i> — passing them here
+    /// would force the reopen path to invent both.
+    /// </param>
+    /// <returns>What to announce.</returns>
+    internal string OpenSessionDocument(AiDe.Core.Sessions.SessionConfig config)
+    {
+        ArgumentNullException.ThrowIfNull(config);
+
+        var surfaceId = Sessions.SessionDocumentSurface.SurfaceIdFor(config.SessionId);
+        var root = _workspaceRoot ?? config.WorkspaceId;
+
+        if (!_sessionDocuments.ContainsKey(surfaceId))
+        {
+            var store = new AiDe.Core.Presentation.Sessions.SessionDocumentStore(root, config.SessionId);
+
+            // The catalog's ids, passed in. The view model is Presentation and knows nothing about
+            // what a mode renders (Ruling 41), so the App is where the two meet.
+            var model = new AiDe.Core.Presentation.Sessions.SessionDocumentViewModel(
+                config.SessionId, config.Name, root,
+                [.. Sessions.CanvasModeCatalog.All.Select(mode => mode.ModeId)]);
+
+            // A reopened session restores the mode and both splitter positions it was left in
+            // (R13 b3). A session opened for the first time has no envelope, and the model's own
+            // defaults — Console, unsplit, the preset's weights — are what it opens with.
+            if (store.Load() is { } saved)
+            {
+                model.Restore(saved);
+            }
+
+            var document = new Sessions.SessionDocumentSurface(model, store);
+
+            // Keyed by the document's OWN id rather than by the one computed above: the surface and
+            // the dictionary must agree about which pane holds this session, and two derivations of
+            // one key is the shape that lets them stop agreeing (DM7).
+            _sessionDocuments[document.SurfaceId] = document;
+        }
+
+        return OpenReferenceDocument(
+            new Surface(surfaceId, Sessions.SessionDocumentSurface.Kind, config.Name),
+            $"Session “{config.Name}” opened.",
+            "There is no pane to open a session document in.");
     }
 
     /// <summary>The command palette's rows: every keyboard-reachable layout command.</summary>

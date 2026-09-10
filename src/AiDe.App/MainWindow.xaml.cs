@@ -77,6 +77,10 @@ public partial class MainWindow : Window
         // command and knows nothing about dialogs.
         Shell.Controller.WorkspaceOpen = ChooseAndOpenAsync;
 
+        // File → New Session (R13 b1). Wired here for the same reason as the folder picker: the
+        // sheet and the workspace chooser are both windows, and only a Window can show one.
+        Shell.Controller.NewSessionRequested = NewSession;
+
         // Built from the command catalog, so the menu cannot offer something the product no longer
         // does — and every item shows its chord, which is how the chord becomes discoverable.
         RebuildMenu();
@@ -118,7 +122,109 @@ public partial class MainWindow : Window
         Shell.Controller,
         Close,
         MainMenuBuilder.RecentWorkspaces(ShellStateDirectory),
-        path => _ = OpenAndAnnounceAsync(path));
+        path => _ = OpenAndAnnounceAsync(path),
+        Workbench.Sessions.RecentSessions.All(ShellStateDirectory),
+        ReopenSession);
+
+    /// <summary>
+    /// Runs <c>File → New Session</c> (R13 b1) and returns what to announce.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The chooser interposes here, not in the sheet.</b> With no workspace open the flow
+    /// calls <see cref="ChooseWorkspaceForSession"/> first, and a cancelled chooser ends the flow
+    /// having created nothing — the sheet is not even constructed, because it is not constructible
+    /// without a workspace.</para>
+    ///
+    /// <para><b>No provider registry is configured yet, and the sheet says so.</b> §14.2's
+    /// <c>providers.yaml</c> has no reader in this repository — <c>ProviderRegistry</c>'s own remarks
+    /// record that parsing it is a caller's job — so the sheet is handed an empty registry and
+    /// renders "no agent backend is configured", which is true. A session still opens; a governed
+    /// run is what needs a backend.</para>
+    /// </remarks>
+    private string NewSession()
+    {
+        var flow = new Workbench.Sessions.NewSessionFlow(
+            activeWorkspaceRoot: () => (DataContext as MainWindowViewModel)?.WorkspaceRoot,
+            chooseWorkspace: ChooseWorkspaceForSession,
+            showSheet: sheet => Workbench.Sessions.NewSessionSheetDialog.Show(
+                sheet, this, Shell.Announcer.Announce),
+            registry: () => new AiDe.Core.AgentPlane.ProviderRegistry([]),
+            workspaceId: root => root,
+            opened: created =>
+            {
+                Workbench.Sessions.RecentSessions.Remember(
+                    ShellStateDirectory,
+                    new Workbench.Sessions.RecentSessionEntry(
+                        created.Config.SessionId, created.Config.Name, created.Config.WorkspaceId));
+
+                Shell.Announcer.Announce(Shell.OpenSessionDocument(created.Config));
+                RebuildMenu();
+            });
+
+        return flow.Start().Announcement;
+    }
+
+    /// <summary>Reopens a session from the Recent sessions list, restoring its workspace first.</summary>
+    /// <remarks>
+    /// The workspace comes first because a session cannot exist unbound and its document reads its
+    /// state from inside that workspace — reopening the document against a different workspace would
+    /// show a session that is not the one the operator clicked.
+    /// </remarks>
+    private void ReopenSession(string sessionId)
+    {
+        var entry = Workbench.Sessions.RecentSessions.Find(ShellStateDirectory, sessionId);
+
+        if (entry is null)
+        {
+            Shell.Announcer.Announce("That session is no longer available.");
+            return;
+        }
+
+        _ = ReopenSessionAsync(entry);
+    }
+
+    private async Task ReopenSessionAsync(Workbench.Sessions.RecentSessionEntry entry)
+    {
+        var current = (DataContext as MainWindowViewModel)?.WorkspaceRoot;
+
+        if (!string.Equals(current, entry.WorkspaceRoot, StringComparison.OrdinalIgnoreCase))
+        {
+            var opened = await OpenWorkspaceAtAsync(entry.WorkspaceRoot);
+
+            if ((DataContext as MainWindowViewModel)?.Queries is null)
+            {
+                Shell.Announcer.Announce(opened);
+                return;
+            }
+        }
+
+        var store = new AiDe.Core.Sessions.SessionConfigStore(entry.WorkspaceRoot, entry.SessionId);
+        AiDe.Core.Sessions.SessionConfig config;
+
+        try
+        {
+            config = store.Load();
+        }
+        catch (Exception error) when (error is System.IO.IOException or System.Text.Json.JsonException)
+        {
+            Shell.Announcer.Announce($"“{entry.Name}” could not be read from its workspace.");
+            return;
+        }
+
+        Shell.Announcer.Announce(Shell.OpenSessionDocument(config));
+    }
+
+    /// <summary>Shows the workspace chooser that interposes when no workspace is open (R13 b1).</summary>
+    private string? ChooseWorkspaceForSession()
+    {
+        var dialog = new Microsoft.Win32.OpenFolderDialog
+        {
+            Title = "A session belongs to a workspace — choose one",
+            Multiselect = false,
+        };
+
+        return dialog.ShowDialog(this) == true ? dialog.FolderName : null;
+    }
 
     private async Task OpenAndAnnounceAsync(string path) =>
         Shell.Announcer.Announce(await OpenWorkspaceAtAsync(path));

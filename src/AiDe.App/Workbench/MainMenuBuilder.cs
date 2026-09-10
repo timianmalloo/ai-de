@@ -71,7 +71,9 @@ internal static class MainMenuBuilder
         // to is a Core decision, and TheMenuCoversEveryCatalogCommand makes adding a command and
         // placing it one atomic change. Recorded in docs/collaboration/session-contracts.md, with a
         // proposal to move this mapping onto the catalog entry so the seam stops crossing here.
-        ("_File", ["workspace.open", "workspace.indexSolution", "workspace.reindexAll", "workspace.refresh"]),
+        // "session.new" leads: the front door is the first thing the File menu offers, and a session
+        // is the object the product is about (R13 b1).
+        ("_File", ["session.new", "workspace.open", "workspace.indexSolution", "workspace.reindexAll", "workspace.refresh"]),
         ("_Edit", ["workbench.moveSurface", "workbench.resizePane"]),
         ("_View", ["workbench.focusCanvas", "workbench.nextSurface", "workbench.previousSurface",
                    "workbench.reorderSurface", "watcher.raiseDispute", "workbench.newSearch",
@@ -149,12 +151,21 @@ internal static class MainMenuBuilder
         }
     }
 
+    /// <param name="recentSessions">
+    /// Recently opened sessions, most recent first (R13 b3). <b>New construction</b>, and
+    /// deliberately not the same list as <paramref name="recent"/>: that one is installation-scoped
+    /// and holds repositories, while a session lives inside a workspace and carries the workspace it
+    /// is bound to — which is what reopening one restores first.
+    /// </param>
+    /// <param name="onOpenRecentSession">Reopens a recent session by id.</param>
     internal static void Build(
         Menu menu,
         WorkbenchController controller,
         Action? onExit = null,
         IReadOnlyList<string>? recent = null,
-        Action<string>? onOpenRecent = null)
+        Action<string>? onOpenRecent = null,
+        IReadOnlyList<Sessions.RecentSessionEntry>? recentSessions = null,
+        Action<string>? onOpenRecentSession = null)
     {
         ArgumentNullException.ThrowIfNull(menu);
         ArgumentNullException.ThrowIfNull(controller);
@@ -188,6 +199,30 @@ internal static class MainMenuBuilder
             }
 
             if (top.Items.Count == 0) continue;
+
+            if (header == "_File" && recentSessions is { Count: > 0 } && onOpenRecentSession is not null)
+            {
+                top.Items.Add(new Separator());
+                var sessionMenu = new MenuItem { Header = "Recent _sessions" };
+
+                foreach (var entry in recentSessions)
+                {
+                    var item = new MenuItem
+                    {
+                        // The session's NAME is what the operator recognises; the workspace it is
+                        // bound to is the tooltip, because reopening restores that first and a
+                        // session name alone does not say where it will land.
+                        Header = entry.Name,
+                        ToolTip = entry.WorkspaceRoot,
+                    };
+
+                    var captured = entry.SessionId;
+                    item.Click += (_, _) => onOpenRecentSession(captured);
+                    sessionMenu.Items.Add(item);
+                }
+
+                top.Items.Add(sessionMenu);
+            }
 
             if (header == "_File" && recent is { Count: > 0 } && onOpenRecent is not null)
             {

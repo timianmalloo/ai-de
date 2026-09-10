@@ -36,6 +36,17 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     public Func<Task<string>>? WorkspaceRefresh { get; set; }
 
     /// <summary>
+    /// Runs <c>File → New Session</c> and returns what to announce. Set by the shell; null before
+    /// that, which the command reports rather than doing nothing.
+    /// </summary>
+    /// <remarks>
+    /// Synchronous, unlike <see cref="WorkspaceRefresh"/>: the flow is a modal sheet on the UI
+    /// thread, and a Task here would only describe the wait for a dialog the user is already looking
+    /// at.
+    /// </remarks>
+    public Func<string>? NewSessionRequested { get; set; }
+
+    /// <summary>
     /// Raised after a command that CHANGED what the store holds has finished.
     /// </summary>
     /// <remarks>
@@ -99,6 +110,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
 
             case "workspace.open":
                 return OpenWorkspace();
+
+            case "session.new":
+                return NewSession();
 
             // One case for every harness, matched by the id the profile itself spells
             // (AgentReadinessProfile.CommandIdFor), so adding a harness never needs a case here.
@@ -558,6 +572,23 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         return true;
     }
 
+    /// <summary>
+    /// Runs the <c>File → New Session</c> flow and announces what it did (R13 b1).
+    /// </summary>
+    /// <remarks>
+    /// The controller holds a delegate, not the flow: workspace binding, the sheet and the session
+    /// store belong to the shell's composition, and a controller that could reach them would be a
+    /// second place a session can be created (Ruling 13's shape, one layer up).
+    /// </remarks>
+    private bool NewSession()
+    {
+        announcer.Announce(NewSessionRequested is null
+            ? "Creating a session is not available in this build."
+            : NewSessionRequested());
+
+        return true;
+    }
+
     private bool ShowDiagnostics()
     {
         announcer.Announce(WorkspaceDiagnostics is null
@@ -739,6 +770,12 @@ internal static class KeyGestures
                 break;
             case "workbench.closeSurface":
                 yield return new KeyGesture(Key.W, ModifierKeys.Control);
+                break;
+            case "session.new":
+                // R13 b1 names the gesture, and it is the entry point for the product's primary
+                // object — a front door reachable only through the palette is a front door nobody
+                // finds.
+                yield return new KeyGesture(Key.N, ModifierKeys.Control);
                 break;
             default:
                 yield break;   // chorded — reachable through the command palette
