@@ -120,22 +120,71 @@ def failures_for(entry: dict) -> list[str]:
     return problems
 
 
+def is_substantively_compliant(entry: dict) -> bool:
+    """Episode-shaped with evidence, on this entry's own fields alone — no frozen/kind exemption.
+
+    `failures_for` short-circuits a frozen or non-skill entry to "no problems," because that is
+    correct for deciding whether the GATE points at an entry at all. It is the wrong test for what a
+    SUPERSEDER must demonstrate: an entry corrects another by actually carrying goal/done_when/session
+    and evidence, never by being exempt from the check. Using `failures_for` there would let a
+    frozen or `kind != "skill"` entry clear a real defect for free — a non-compliant entry cleared by
+    a non-compliant superseder, exactly what this rule must never do.
+    """
+    return is_episode_shaped(entry) and has_evidence(entry)
+
+
+def _is_compliant(idx: int, entry: dict, supersede_index: dict, visiting: frozenset) -> bool:
+    """An entry is compliant if it satisfies the rules itself, OR a LATER entry supersedes it and
+    that superseding entry is itself fully compliant (the same rule, recursively).
+
+    Ordering ("later") is enforced by list position, which an append-only log makes equivalent to
+    write order: a superseder must sit at a strictly greater index than the entry it corrects. That
+    alone makes a literal cycle (A supersedes B supersedes A) impossible to construct honestly — B
+    would have to be both after and before A. `visiting` is kept anyway as an explicit, cheap
+    termination guard rather than an implicit one, so the invariant is checked, not just argued.
+    """
+    if is_substantively_compliant(entry):
+        return True
+    if idx in visiting:
+        return False
+    eid = entry.get("id")
+    if eid is None:
+        return False
+    visiting = visiting | {idx}
+    for j, superseder in supersede_index.get(eid, []):
+        if j <= idx:
+            continue  # a superseder must be later — this is what makes a cycle unreachable
+        if _is_compliant(j, superseder, supersede_index, visiting):
+            return True
+    return False
+
+
 def scan(lines: list[str]) -> tuple[list[tuple[str, str]], int, int]:
     """Returns (failures, entries checked, entries frozen)."""
-    bad: list[tuple[str, str]] = []
-    checked = frozen = 0
-
+    entries: list[dict] = []
     for line in lines:
         line = line.strip()
         if not line:
             continue
         try:
-            entry = json.loads(line)
+            entries.append(json.loads(line))
         except json.JSONDecodeError:
             # Someone else's problem: the audit-log verifier owns malformed lines and reports them
             # as unreadable. Failing here too would report one defect twice under two names.
             continue
 
+    # A reverse index: target entry id -> [(index, entry-that-supersedes-it), ...], built once so
+    # resolving a chain does not rescan the whole log per node.
+    supersede_index: dict[str, list[tuple[int, dict]]] = {}
+    for idx, entry in enumerate(entries):
+        target = entry.get("supersedes")
+        if target:
+            supersede_index.setdefault(target, []).append((idx, entry))
+
+    bad: list[tuple[str, str]] = []
+    checked = frozen = 0
+
+    for idx, entry in enumerate(entries):
         if is_frozen(entry):
             frozen += 1
             continue
@@ -143,6 +192,8 @@ def scan(lines: list[str]) -> tuple[list[tuple[str, str]], int, int]:
             continue
 
         checked += 1
+        if _is_compliant(idx, entry, supersede_index, frozenset()):
+            continue
         for problem in failures_for(entry):
             bad.append((str(entry.get("id")), problem))
 
@@ -198,6 +249,57 @@ def self_test() -> int:
     ])
     check("scan reports exactly the offending entry",
           len(bad) == 1 and bad[0][0] == f"al-{after + 1:04d}" and checked == 2 and frozen == 0)
+
+    # Supersession: the log is append-only, so a correction is a NEW, later entry naming the one it
+    # fixes — audit-log.py's `--supersedes`. The gate must honour it under a rule that cannot weaken
+    # the control: an entry is compliant if it satisfies the rules itself, OR a LATER entry
+    # supersedes it AND that superseding entry is itself fully compliant (recursively — the same
+    # rule, not a one-hop special case).
+    bad_id = f"al-{after:04d}"
+    sup_id = f"al-{after + 2:04d}"
+
+    check("a non-compliant entry is cleared by a later, fully compliant superseder",
+          scan([
+              json.dumps(dict(base, id=bad_id, goal="g", done_when="d")),  # no evidence
+              json.dumps(dict(base, id=sup_id, goal="g", done_when="d",
+                              signals={"verification_path": True}, supersedes=bad_id)),
+          ])[0] == [])
+
+    check("a non-compliant entry is NOT cleared by a non-compliant superseder",
+          scan([
+              json.dumps(dict(base, id=bad_id, goal="g", done_when="d")),  # no evidence
+              json.dumps(dict(base, id=sup_id, goal="g", done_when="d",
+                              supersedes=bad_id)),  # the "fix" has no evidence either
+          ])[0] != [])
+
+    check("supersession only counts forward — an EARLIER entry cannot clear a later one",
+          scan([
+              json.dumps(dict(base, id=sup_id, goal="g", done_when="d",
+                              signals={"verification_path": True}, supersedes=bad_id)),
+              json.dumps(dict(base, id=bad_id, goal="g", done_when="d")),  # written after, no evidence
+          ])[0] != [])
+
+    check("a multi-hop chain resolves: C compliant clears B clears A",
+          scan([
+              json.dumps(dict(base, id=f"al-{after:04d}", goal="g", done_when="d")),
+              json.dumps(dict(base, id=f"al-{after + 1:04d}", goal="g", done_when="d",
+                              supersedes=f"al-{after:04d}")),
+              json.dumps(dict(base, id=f"al-{after + 2:04d}", goal="g", done_when="d",
+                              signals={"verification_path": True},
+                              supersedes=f"al-{after + 1:04d}")),
+          ])[0] == [])
+
+    # A must never clear via B if B only clears via A — the ordering rule above already makes a
+    # literal A<-B<-A cycle impossible to construct honestly (B must be later than A, so A cannot
+    # also be later than B), but the guard is exercised directly: neither resolves through the other.
+    # Both entries lack evidence, so BOTH are flagged — the corrector is itself a skill entry with
+    # no evidence, and reporting only the original would let an empty "fix" go unnoticed.
+    _chain_bad, _chain_checked, _ = scan([
+        json.dumps(dict(base, id=bad_id, goal="g", done_when="d")),
+        json.dumps(dict(base, id=sup_id, goal="g", done_when="d", supersedes=bad_id)),
+    ])
+    check("a chain that never reaches a compliant entry terminates and clears neither",
+          len(_chain_bad) == 2 and _chain_checked == 2)
 
     print()
     if failures:

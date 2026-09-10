@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 43 · uncontrolled 7
+**Status counts:** controlled 65 · partially-controlled 44 · uncontrolled 6
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -4419,23 +4419,52 @@ for both or split.*
   touches the filesystem, so an audit-imported episode is evidenced by naming a path while a governed
   one must have the file present in a checkout it does not control. Two doors, two definitions of
   "has evidence", and the stricter one applies to the lane the product itself drove.
-- **Control:** none yet, and deliberately not built at N7 — R4-core scopes this phase to the watcher
-  gaining *callers, not semantics*, and every candidate changes an existing verdict. Named so the fix
-  is a decision rather than a rediscovery. Cheapest first: (a) verify against
-  `SessionBinding.Worktree.Path` before falling back to `Repository.CanonicalPath` — the worktree is
-  the checkout the evidence is in, and the binding already carries it; (b) ask git for the blob
-  (`git -C <worktree> cat-file -e <branch>:<path>`) rather than the filesystem, which also covers a
-  committed-but-not-checked-out file; (c) give `ProofPackVerdict` the third state it already models
-  (`Unverifiable`) a route through `EpisodeEvidence`, which today collapses it to `false` at exactly
-  this boundary — its own doc comment says so.
+- **Correction to the two observations above, measured 2026-09-09 during Phase 2 N0:** the
+  correction is *one* route to the defect and not the one spec §6.4 takes. A governed lane registers
+  `repo.path` as the **parent** already — `LaneIdentity.RepositoryPath` says so in its own doc
+  comment — so `RepositoryCorrection` never fires for the shape the product provisions, and the
+  episode still scores `Not Scored`. The essential shape is narrower than the register said: **any
+  session whose `Repository.CanonicalPath` is not the checkout its evidence is in**. Both routes are
+  now covered by tests; fixing only the corrected one would have left the provisioned shape broken.
+- **Control (partial), 2026-09-09, Phase 2 N0:** `ProofPackVerifier.VerifyInCheckouts` folds a
+  verdict across the session's checkouts — `Verified` beats `NotFound` beats `Unverifiable`,
+  order-independently, with containment applied whole against each root so several roots is several
+  complete checks and never a widened one. `ClosedEpisodeScoring.CheckoutsOf` decides which roots are
+  legitimate: the repository always, plus the lane's own tree **only when `IRepositoryLocator` reads
+  its `.git` pointer and finds the bound repository**. `worktree.path` is registrant-composed like
+  every other attribute, so admitting it on the claim alone would let a session keep an honest
+  `repo.path` — board and cohort looking right — while pointing verification at any directory on the
+  machine; the claim is checked, never trusted. Candidate (a) of the three below, tightened.
+  **Tests:** `AGovernedLaneIsCreditedForItsOwnBranchTests` (a real repository, a real linked
+  worktree, a Proof Pack committed on the lane's branch, driven through `GovernedSessionSource` and
+  the real `FileSystemRepositoryLocator`; both routes, plus the two refusals) and
+  `ProofPackVerifierAcrossCheckoutsTests` (the tri-state, where scoring's bool cannot see it).
+  Observed failing on the un-fixed shape before the fix — `Not Scored — no minimum verification
+  path` — and again on three deliberate breaks afterwards. Decision:
+  `docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md`.
+- **What the control does NOT reach, and why:** (b) ask git for the blob
+  (`git -C <worktree> cat-file -e <branch>:<path>`) — declined: `AiDe.Core` does not shell out, and a
+  process launch per declared artifact on an idempotent sweep is a cost paid forever. It is the only
+  candidate that covers **a lane whose tree was released before the sweep ran**, which therefore
+  remains uncontrolled: the branch keeps the commit, the tree is gone, the locator answers "unknown",
+  and the verdict falls back to the parent checkout's honest `NotFound`. (c) give `Unverifiable` a
+  route through `EpisodeEvidence` — declined here as out of phase scope: it changes what a scorecard
+  says about episodes this node never touched. So "we could not look" still collapses into "there was
+  none" at that boundary, and `AnUnverifiableRepositoryIsNotEvidenceOfAbsence` still pins the limit at
+  the verifier. **The asymmetry between the two doors is also untouched** — an audit-imported episode
+  is still evidenced by *naming* a path (substring, no filesystem) while a governed one must have the
+  file present in a checkout.
 - **The generalisation:** *a canonical identity is not a path.* The moment a value normalised for
   grouping is handed to `File.Exists`, ask which of the several real directories it now names — and
   whether the one it names is the one holding the thing you are looking for.
 - **Relationship to DC-110** (a partition value derived from the ingest path rather than the work):
   sibling. Both are one value serving two purposes that disagree; DC-110's split the cohort, this one
   empties the evidence.
-- **Status:** `uncontrolled` — measured, reproducible from the two observations above, and owed a fix
-  before a governed lane runs in an operator's own worktree.
+- **Status:** `partially-controlled` — a governed lane in a **live** linked worktree is now credited
+  for evidence on its own branch, by a control observed failing first. Three residues stay open and
+  are named above: a released tree, the `Unverifiable` collapse at `EpisodeEvidence`, and the
+  two-doors asymmetry. Not upgraded to `controlled`, because each of those is a real case in which an
+  agent that produced evidence is still told it produced none.
 
 
 ## Inherited from the fleet (ai-forward drm-0009, 2026-09-04)

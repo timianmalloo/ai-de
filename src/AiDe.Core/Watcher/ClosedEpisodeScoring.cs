@@ -32,12 +32,14 @@ public static class ClosedEpisodeScoring
     /// number newly scored.
     /// </summary>
     /// <remarks>
-    /// <para><b>The evidence is honestly empty.</b> A contract-declared episode carries no Proof
-    /// Pack - the watcher observed spans and a declared outcome, and neither is evidence of outcome
-    /// <i>quality</i>. So <see cref="EpisodeEvidence"/> is built with <c>HasProofPack: false</c> and
-    /// <see cref="DeterministicSignalsDeriver"/>'s conservative defaults apply: no verification path,
-    /// acceptance unknown, requirements zero. What falls out is <b>Not Scored, with the reason</b> -
-    /// which is true, and is the honest first thing an agent can receive.</para>
+    /// <para><b>The evidence is observed, and honestly empty when it is empty.</b> This paragraph
+    /// used to say <c>HasProofPack: false</c> was built here as a literal; that stopped being true
+    /// when <see cref="EvidenceFor"/> landed and started asking the store what the agent declared,
+    /// and a stale doc comment describing the defect a method no longer has is how DC-115 survived
+    /// one layer up. What is still true is the shape of the answer for an episode that declares
+    /// nothing: <see cref="DeterministicSignalsDeriver"/>'s conservative defaults apply - no
+    /// verification path, acceptance unknown, requirements zero - and what falls out is <b>Not
+    /// Scored, with the reason</b>, which is the honest first thing an agent can receive.</para>
     ///
     /// <para>It is emphatically <b>not a low score</b>. A derived-signals path that returned 0 for
     /// "nothing was observed" would be a statement about the agent where only a statement about the
@@ -69,11 +71,18 @@ public static class ClosedEpisodeScoring
         string taskClass = ScoreSegment.Unclassified,
         IAdvisoryEvaluator? evaluator = null,
         CalibrationRegistry? registry = null,
-        DaydreamRecorder? daydream = null)
+        DaydreamRecorder? daydream = null,
+        IRepositoryLocator? locator = null)
     {
         ArgumentNullException.ThrowIfNull(store);
         ArgumentNullException.ThrowIfNull(time);
         ArgumentException.ThrowIfNullOrEmpty(taskClass);
+
+        // Defaulted rather than required, for the same reason IngestHost defaults its own: no
+        // existing call site has an opinion about it. Injectable so a caller that cannot see the
+        // registrant's filesystem can supply one that always answers "unknown" — which costs that
+        // caller nothing, because an unadmitted worktree just leaves the repository root.
+        var checkouts = locator ?? new FileSystemRepositoryLocator();
 
         var scoring = new ScoringService(store, time, daydream);
         var scored = 0;
@@ -91,7 +100,8 @@ public static class ClosedEpisodeScoring
                 continue;
             }
 
-            var signals = DeterministicSignalsDeriver.Derive(episode, EvidenceFor(episode, session, store), store);
+            var signals = DeterministicSignalsDeriver.Derive(
+                episode, EvidenceFor(episode, session, store, checkouts), store);
 
             scoring.ScoreAndRecord(
                 episode,
@@ -140,13 +150,61 @@ public static class ClosedEpisodeScoring
     /// <c>AnUnverifiableRepositoryIsNotEvidenceOfAbsence</c> is the test that says so.</para>
     /// </remarks>
     private static EpisodeEvidence EvidenceFor(
-        WorkEpisode episode, SessionRecord session, IWatcherObservationStore store)
+        WorkEpisode episode, SessionRecord session, IWatcherObservationStore store, IRepositoryLocator locator)
     {
-        var repository = session.Binding.Repository.CanonicalPath;
+        var checkouts = CheckoutsOf(session.Binding, locator);
 
         var verified = store.DeclaredArtifactsFor(episode.EpisodeId)
-            .Any(a => ProofPackVerifier.Verify(repository, a.Path) is ProofPackVerdict.Verified);
+            .Any(a => ProofPackVerifier.VerifyInCheckouts(checkouts, a.Path) is ProofPackVerdict.Verified);
 
         return new EpisodeEvidence(HasProofPack: verified);
+    }
+
+    /// <summary>
+    /// The working trees this session's evidence could honestly be in (DC-115).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>A canonical identity is not a path.</b> <c>Repository.CanonicalPath</c> is normalised
+    /// so that every worktree of one repository groups into one cohort — right for the fleet map, the
+    /// board partition and the leaderboard cell, and wrong the moment it is handed to
+    /// <c>File.Exists</c>, because it then names the PARENT checkout: a different working tree, on a
+    /// different branch, which does not contain what the lane committed on its own. The episode
+    /// scored <c>Not Scored — no minimum verification path</c> while the path existed, was committed
+    /// and was named. Every layer was individually correct and the composed claim was false.</para>
+    ///
+    /// <para><b>The second checkout is OBSERVED, never claimed.</b> <c>worktree.path</c> is composed
+    /// by the registrant like every other registration attribute, so admitting it on the claim alone
+    /// would let a session keep an honest <c>repo.path</c> — board and cohort looking right — while
+    /// pointing evidence verification at any directory on the machine. It is admitted only when the
+    /// locator reads its <c>.git</c> pointer and finds the repository the session is bound to: the
+    /// same filesystem fact <see cref="RepositoryCorrection"/> already resolves, so the two agree by
+    /// construction rather than by coincidence.</para>
+    ///
+    /// <para><b>A session that is not in a worktree is unaffected, exactly.</b> A repository root's
+    /// <c>.git</c> is a directory, so the locator answers null and the list is the single root this
+    /// method always returned — the same one call, on the same path, with the same verdict.</para>
+    ///
+    /// <para><b>What this still does not reach:</b> a lane whose tree was released before the sweep
+    /// ran. The branch keeps the commit but the working tree is gone, so there is nothing to read and
+    /// the verdict falls back to the parent checkout's honest <c>NotFound</c>. Asking git for the
+    /// blob would cover it and is not done here: Core does not shell out, and a process launch per
+    /// declared artifact on a sweep is a cost per episode forever. DC-115 records the residue.</para>
+    /// </remarks>
+    private static IReadOnlyList<string?> CheckoutsOf(SessionBinding binding, IRepositoryLocator locator)
+    {
+        var repository = binding.Repository.CanonicalPath;
+        var worktree = binding.Worktree.Path;
+
+        if (string.IsNullOrWhiteSpace(worktree))
+        {
+            return [repository];
+        }
+
+        var owner = locator.RepositoryFor(worktree);
+
+        var belongs = owner is not null
+            && string.Equals(RepositoryIdentity.Canonicalise(owner), repository, StringComparison.Ordinal);
+
+        return belongs ? [worktree, repository] : [repository];
     }
 }

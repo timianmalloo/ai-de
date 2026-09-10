@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 162 types, 316 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 162 types, 317 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**162 public types · 316 public members · 64% documented.**
+**162 public types · 317 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -376,12 +376,14 @@ receiver, and none of them are involved in deciding whether an episode should be
 Scores every closed episode of a registered session that has no scorecard, and returns the
 number newly scored.
 
-**Remarks.** **The evidence is honestly empty.** A contract-declared episode carries no Proof
-Pack - the watcher observed spans and a declared outcome, and neither is evidence of outcome
-*quality*. So `EpisodeEvidence` is built with `HasProofPack: false` and
-`DeterministicSignalsDeriver`'s conservative defaults apply: no verification path,
-acceptance unknown, requirements zero. What falls out is **Not Scored, with the reason** -
-which is true, and is the honest first thing an agent can receive.
+**Remarks.** **The evidence is observed, and honestly empty when it is empty.** This paragraph
+used to say `HasProofPack: false` was built here as a literal; that stopped being true
+when `EvidenceFor` landed and started asking the store what the agent declared,
+and a stale doc comment describing the defect a method no longer has is how DC-115 survived
+one layer up. What is still true is the shape of the answer for an episode that declares
+nothing: `DeterministicSignalsDeriver`'s conservative defaults apply - no
+verification path, acceptance unknown, requirements zero - and what falls out is **Not
+Scored, with the reason**, which is the honest first thing an agent can receive.
 
 
 
@@ -2183,7 +2185,8 @@ because an evidenced episode stops being unremarkable.
 | Member | Summary |
 |---|---|
 | `string ProofDirectory = "docs/proof/"` | The committed location a Proof Pack lives in, matching the audit-log convention. |
-| `ProofPackVerdict Verify(string? repositoryRoot, string? declaredPath)` | The verdict for one declared path, relative to the repository the session is bound to. |
+| `ProofPackVerdict VerifyInCheckouts(IReadOnlyList<string?> checkouts, string? declaredPath)` | The verdict for one declared path across every checkout the session could have committed it in, and the method a caller holding a `SessionBinding` wants (DC-115). |
+| `ProofPackVerdict Verify(string? repositoryRoot, string? declaredPath)` | The verdict for one declared path, relative to ONE working tree. |
 
 ### `string ProofDirectory = "docs/proof/"`
 
@@ -2193,11 +2196,50 @@ The committed location a Proof Pack lives in, matching the audit-log convention.
 the two evidence paths agree on what a Proof Pack IS. Two definitions of that would let an
 episode be evidenced on one path and unevidenced on the other.
 
+### `ProofPackVerdict VerifyInCheckouts(IReadOnlyList<string?> checkouts, string? declaredPath)`
+
+The verdict for one declared path across every checkout the session could have committed it
+in, and the method a caller holding a `SessionBinding` wants (DC-115).
+
+- **`checkouts`** — The working trees to look in. Null and blank entries are tolerated and answer `Unverifiable` on their own, so a caller need not filter an absent worktree out.
+- **`declaredPath`** — The path exactly as the agent sent it, unmodified by the ingest.
+
+**Remarks.** **Why more than one root.** A repository has several working trees, and the one a
+lane commits its evidence in is its own linked worktree, on its own branch. Reading only the
+canonical repository path answers about the PARENT checkout — a different tree, on a
+different branch, which simply does not contain the file. That produced `Not Scored — no
+minimum verification path` for evidence that existed and was named: a false statement
+about the agent where the true statement was about where somebody looked.
+
+
+
+
+
+**Verified wins, and the fold is therefore order-independent.** A verdict per root,
+combined so that `Verified` beats `NotFound` beats `Unverifiable`: finding it
+anywhere is finding it, "we looked in a real checkout and it is not there" outranks "we could
+not look", and an empty or wholly unreachable set stays `Unverifiable` rather than
+becoming an absence nobody observed. Nothing depends on which root is passed first, so a
+caller cannot get this wrong by ordering it wrong.
+
+
+
+
+
+**Containment is unchanged, and per root.** Each candidate is checked whole against
+one root — the declared path must land inside THAT root's tree and under its
+`docs/proof/`. Several roots is several complete checks, never a widened one: a path
+escaping every root is still `NotFound`, and neighbouring-directory admission is still
+refused by the separator-terminated prefix test. **Which roots are legitimate is the
+caller's decision, not this method's** — see `ClosedEpisodeScoring`, which
+admits a second checkout only when the filesystem confirms it belongs to the bound
+repository.
+
 ### `ProofPackVerdict Verify(string? repositoryRoot, string? declaredPath)`
 
-The verdict for one declared path, relative to the repository the session is bound to.
+The verdict for one declared path, relative to ONE working tree.
 
-- **`repositoryRoot`** — The session's repository — the corrected one, so a worktree-registered agent is checked against the repository its evidence is actually committed in.
+- **`repositoryRoot`** — The working tree to look in — a directory on this machine, not an identity.      **The canonical repository path is not sufficient on its own**, and the comment here used to say that it was: *"the corrected one, so a worktree-registered agent is checked against the repository its evidence is actually committed in"*. That holds only for a worktree sharing the parent's branch, and is false for every lane on its own — which is DC-115. It survived because a reasoned-through comment reads as though somebody had checked. A caller holding a session should use `VerifyInCheckouts`.
 - **`declaredPath`** — The path exactly as the agent sent it, unmodified by the ingest.
 
 ## `RegistrationNotice`
