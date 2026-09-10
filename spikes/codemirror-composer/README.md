@@ -146,3 +146,115 @@ that must be manually refreshed on upgrade.
 6. Package-count claim is for this specific import set (markdown + one nested language +
    language-data's language catalog). A composer needing more embedded languages will pull in more
    @lezer/* parser packages; the count is not a fixed ceiling.
+
+## Trimmed (Ruling 24 — cut `@codemirror/language-data`, re-measure)
+
+**What was cut.** `package.json`'s dependency on `@codemirror/language-data` (which hard-imports
+~20 language packages as a catalog) is replaced by a hand-picked `codeLanguages` array passed to
+`markdown({ codeLanguages })` in `lib.mjs`, built with `LanguageDescription.of(...)` in the exact
+shape `@codemirror/language-data`'s own source uses (verified by reading
+`node_modules/@codemirror/language-data/dist/index.js` before writing the replacement). Three
+languages, chosen for what a user of *this* repo would actually paste into a fence: **C#** (this
+repo's own source language; loaded via `@codemirror/legacy-modes/mode/clike`'s `csharp` stream
+parser — CodeMirror 6 has no dedicated `@lezer/csharp` grammar, `language-data` uses the same
+legacy mode), **JSON** (config/data snippets; `@codemirror/lang-json`), and **Markdown itself**
+(quoted/nested markdown; `@codemirror/lang-markdown`, already a direct dependency for the composer
+language itself). `package.json` now declares `@codemirror/lang-json`, `@codemirror/language`
+(imported directly for `LanguageDescription`/`LanguageSupport`/`StreamLanguage`, previously only a
+transitive dependency) and `@codemirror/legacy-modes` in place of `@codemirror/language-data`.
+
+**Before / after** (measured this session; before re-verified by a clean `npm install` against the
+un-trimmed `package.json`, after by a clean reinstall against the trimmed one — `npm ls --all
+--omit=dev --json` for package identity, `du -ch` over those package directories for disk size):
+
+| Metric | Before | After | Change |
+|---|---|---|---|
+| Production (CM6) packages | 52 | 26 | −50% |
+| Production packages, disk size | 11 MB | 7.5 MB | −32% |
+| Full `node_modules` (incl. `jsdom` dev dep) | 90 packages, 37 MB | 64 packages, 34 MB | −29% packages, −8% size |
+| Generated import-map entries (`importmap.json`) | 51 | 24 | −53% |
+| Live import map (`browser-test.html`, incl. hand-added `@marijn/find-cluster-break`) | 52 | 25 | −52% |
+
+Two things keep the reduction from being a clean 20-language-to-3: (a) `@codemirror/lang-markdown`
+itself hard-depends on `@codemirror/lang-html` (→ `@codemirror/lang-css`) for embedded-HTML support
+inside markdown — verified by reading `node_modules/@codemirror/lang-markdown/package.json`'s
+`dependencies` — so those two packages stay regardless of the `codeLanguages` list; (b)
+`@codemirror/legacy-modes`, needed only for the C# stream parser, ships as one package containing
+*every* legacy-mode language (2.5 MB on disk by itself, the single largest addition) — the
+unbundled import map only ever fetches its one `mode/clike.js` file at runtime, but the npm
+package-count and disk-size metrics both count the whole package once it is a dependency at all.
+Dropping C# from the list (JSON + Markdown only) would remove that 2.5 MB and both `@codemirror/
+legacy-modes` and `@marijn/find-cluster-break`'s only remaining pull-in reason; it was kept because
+C# is this repo's own source language and the more honest choice for what gets pasted into a
+fence here.
+
+**Still works — reverified, not assumed.** The MIME-type note: the original reproduce steps say
+"any static server"; Python's `http.server` on this machine serves `.mjs` as `text/plain`
+(`mimetypes.guess_type('x.mjs')` → `('text/plain', None)`, checked directly), which real Chromium's
+strict module-script MIME checking rejects (`Failed to load module script: ... MIME type of
+"text/plain"`, caught via `--enable-logging=stderr`). The reproduction needs a server that serves
+`.mjs`/`.js` as `text/javascript`; a two-line Node `http` server suffices (not committed — it is a
+throwaway dev-time tool, not part of the app or its build path).
+
+Re-ran both proofs against the trimmed `lib.mjs`, with the composer fixture now mixing a **kept**
+language (JSON) and an **unlisted** one (JS, since `javascript` is no longer in `codeLanguages`):
+- `node test.mjs` (headless jsdom): composer mounts, `data-language="markdown"`,
+  `contenteditable="true"`; mention chip present (`cm-mention-chip`, `data-mention="design-doc"`,
+  flanked by `cm-widgetBuffer` markers — genuine `Decoration.replace` widget, not styled text);
+  heading/bold/italic get distinct highlight classes; source viewer mounts read-only
+  (`contenteditable` attr `"false"`, `data-language="javascript"`) with full keyword/identifier/
+  number token classes.
+- Real Chromium (`msedge.exe --headless=new --dump-dom` against `browser-test.html` over the
+  MIME-correct server) — `browser-dump.html` in this directory is the captured artifact from this
+  run: identical structural result — chip widget intact, heading/bold/italic highlighted, source
+  viewer read-only and highlighted.
+- **Kept-language fence (JSON):** `{ "hi": <span class="ͼd">1</span> }` — the numeric literal
+  carries a highlight class in both runs, confirming `@codemirror/lang-json` loaded and tokenized.
+- **Unlisted-language fence (JS):** `function hi() { return 1; }` — zero highlight spans, in both
+  the jsdom and real-Chromium runs. Observed, not assumed: a fence naming a language outside the
+  hand-picked `codeLanguages` list renders as **plain, unhighlighted text** (the fence markers
+  ` ``` ` and the language tag `js` still get their own token classes from the outer Markdown
+  grammar; only the fenced content itself stays unstyled). It does not error and does not block
+  editing — CodeMirror falls back silently to no nested language.
+
+**The vendored ESM bundle (Owner's option c).** Built once, from the packages the committed
+`package-lock.json` resolves (never fetched from a CDN at runtime):
+
+```
+npx esbuild@0.28.2 lib.mjs --bundle --format=esm --minify --outfile=vendor/codemirror-composer.bundle.mjs
+```
+
+Output: `spikes/codemirror-composer/vendor/codemirror-composer.bundle.mjs`, **508,337 bytes (496.4
+KiB, esbuild's own report)**, one file, `export { makeComposer, makeSourceViewer }`. This is a
+one-off recorded command whose output is committed — `npm`/`npx` is not wired into `AiDe.App`'s
+build path, and `esbuild` is not added to `package.json` as a dependency (it ran via `npx` and is
+not installed in this tree). SHA-256 (also saved alongside as
+`vendor/codemirror-composer.bundle.mjs.sha256`):
+
+```
+ee3d19a44a330c43d03889ace6424732a5314073c96a36c39e83a2e1ee340981  codemirror-composer.bundle.mjs
+```
+
+Smoke-tested in real Chromium with no import map and no `node_modules` present at request time
+(only the one bundle file plus `<script type="module">` referencing it): composer mounted,
+`data-language="markdown"`, heading/bold/italic highlighted, mention chip intact. The transient
+test page and DOM capture used for that check were not committed (not a deliverable of this spike;
+`browser-dump.html` above is the recorded proof artifact for the unbundled path).
+
+**Does the trim change which hosting option is cheapest? No — reported plainly, per the Owner's
+condition.** The package count more than halves (52→26) and the import map shrinks by about half
+(51→24 generated / 52→25 live), but it does not fall to "trivial": the live map still needed a
+hand-added entry (`@marijn/find-cluster-break`) this run, the same fragility class Finding #6 in
+the original spike already named — trimming the language list narrows the manifest, it does not
+remove the class of defect. More importantly, the mandatory cost identified in the original
+Decision answer — the current WebView2 host (`NavigateToString`) cannot serve import-map ES
+modules at all, so *some* host change is required before R15 ships — is a hosting-integration fact,
+untouched by which or how many CodeMirror packages are installed; the trim does not reach it. The
+vendored-bundle option's structural advantages (one file, zero import-map maintenance, one HTTP
+request instead of ~25) hold regardless of package count and are undiminished by the trim; if
+anything the trim modestly *sharpens* the case for the import-map path (option a/b) by shrinking
+its manifest and its maintenance surface, without closing the gap to option (c)'s zero-maintenance
+property. **Conclusion:** the new numbers change the *inputs* to the Owner's plan (smaller install,
+smaller manifest) but do not by themselves flip which option is cheapest — that still turns on the
+WebView2 host-change cost and the import-map maintenance cost over time, neither of which this
+measurement altered.

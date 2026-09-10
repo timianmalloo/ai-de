@@ -3,9 +3,51 @@
 import { EditorView, Decoration, WidgetType, ViewPlugin } from "@codemirror/view";
 import { EditorState, RangeSetBuilder } from "@codemirror/state";
 import { markdown } from "@codemirror/lang-markdown";
-import { languages } from "@codemirror/language-data";
 import { javascript } from "@codemirror/lang-javascript";
-import { syntaxHighlighting, defaultHighlightStyle } from "@codemirror/language";
+import {
+  syntaxHighlighting,
+  defaultHighlightStyle,
+  LanguageDescription,
+  LanguageSupport,
+  StreamLanguage,
+} from "@codemirror/language";
+
+// Hand-picked fence languages, replacing @codemirror/language-data's
+// ~20-language catalog (Angular, Go, Rust, PHP, SQL, YAML, ...) with the
+// three this repo's own composer fences actually use: C# (this repo's
+// primary source language), JSON (config/data snippets), and Markdown
+// itself (nested/quoted markdown). Each entry follows language-data's own
+// LanguageDescription.of() shape (verified by reading
+// node_modules/@codemirror/language-data/dist/index.js), so this is the
+// same supported lazy-load contract @codemirror/lang-markdown documents
+// for codeLanguages, just a shorter list.
+const codeLanguages = [
+  LanguageDescription.of({
+    name: "C#",
+    alias: ["csharp", "cs"],
+    extensions: ["cs"],
+    load() {
+      return import("@codemirror/legacy-modes/mode/clike").then(
+        (m) => new LanguageSupport(StreamLanguage.define(m.csharp))
+      );
+    },
+  }),
+  LanguageDescription.of({
+    name: "JSON",
+    alias: ["json5"],
+    extensions: ["json", "map"],
+    load() {
+      return import("@codemirror/lang-json").then((m) => m.json());
+    },
+  }),
+  LanguageDescription.of({
+    name: "Markdown",
+    extensions: ["md", "markdown", "mkd"],
+    load() {
+      return import("@codemirror/lang-markdown").then((m) => m.markdown());
+    },
+  }),
+];
 
 // --- Q3: inline @-mention chip as a real widget, not styled text ---
 class ChipWidget extends WidgetType {
@@ -55,7 +97,7 @@ export function makeComposer(parent, doc) {
   const state = EditorState.create({
     doc,
     extensions: [
-      markdown({ codeLanguages: languages }),
+      markdown({ codeLanguages }),
       syntaxHighlighting(defaultHighlightStyle),
       mentionChipPlugin,
     ],
