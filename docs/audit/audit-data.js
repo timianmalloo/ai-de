@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T20:51:42Z",
+  "generated": "2026-09-10T20:55:25Z",
   "audit": [
     {
       "actor": null,
@@ -10792,6 +10792,38 @@ window.AUDIT_DATA = {
       "goal": "Close the front-door head-join green so F2 can dispatch",
       "done_when": "Core observed 2037/2037 green on the final tree, floor set from measured halves, derived regenerated, full gate set run bare, one conductor-owned merge commit",
       "tier": "T2"
+    },
+    {
+      "id": "al-01M26HMZ61KMGVZQ5CEGBPPXHE",
+      "shortname": "Front-door head-join closed green; F2 dispatched",
+      "datetime": "2026-09-10T20:55:18Z",
+      "session": "conductor-front-door-join",
+      "prompt": "Complete the head-join of F0 || F1 || FT per Ruling 37 condition 1, then dispatch F2.",
+      "summary": "Front-door head-join CLOSED GREEN. Ruling 37 condition 1 (\"F2 does not dispatch until this passes\") is satisfied; F2 dispatched.\n\nMEASURED ON THE MERGED TREE: AiDe.App.Tests 400 Completed (PowerShell console host, DC-117 workaround); AiDe.Core.Tests 2037 Completed = portable 1885 + nonportable 152, the split invariant confirmed by observation rather than arithmetic. Every floor raised, none lowered; verify-test-run.py --update never run. Full repo gate set run bare: 41 of 41 green (the one earlier red, verify-derived-views --self-test, compared against git HEAD and cleared on commit -- re-run and observed rc=0 after 55f1879, not assumed).\n\nFOUR SEAM COMMITS, none of them a defect in any node:\n  f7e51df Ruling 36 -- F0's YAML guard narrowed to the session-config path.\n  a3a98c9 SessionPaths.cs stated \"no YAML parser exists in any .csproj\"; true when written, falsified by FT. Corrected, repo swept for the shape (6 hits triaged).\n  1f8c1a8 Ruling 38 -- run-log guard widened to src/ recursive over RunLogFile|RunsDirectory|RunsDirectoryName with a named allowlist constant. Four falsifiers observed, including the token case that passed the old guard INSIDE its own scanned directory.\n  bbb7def DC-095 -- a comment cited TemplateSchema.cs as its control; no type of that name exists. Now cites the test that enforces the scoping.\n\nDC-118 REGISTERED, three instances, one class: transcribing a decision into a clause, or a clause into a guard, is a WIDTH-CHANGING step and nothing checks the width. Widening goes red at a join and announces itself; narrowing stays green while the promise it documents is violated. Third instance is the sharpest: a line safe only because two unrelated gate scopes happen not to cover it -- correctness load-bearing on two scopes staying exactly where they are.\n\nCONTROL LANDED UPSTREAM as GO14a in ai-forward (rev 66->67, tip bf5c93bf36230053c6e06a901978f2b009dc6b17, three CI workflows read back from the API as success with step lists checked). NOT installed here -- ai-de is on rev 66 -- so DC-118 is recorded uncontrolled IN THIS REPOSITORY rather than claiming a control it does not have. Installing the pack update is a recorded next step.\n\nFINDINGS CARRIED FORWARD:\n  1. regenerate-derived.py prints \"every derived view is current\" while never running a generator the registry declares (audit-log.py render). It shipped a stale derived view to main: HEAD had 490 log lines, 488 rendered. Node FD1 dispatched.\n  2. audit-log.py derives the viewer project name from the repo directory BASENAME, so every WT1 worktree stamps the wrong name -- the pack's own worktree discipline guarantees tripping its own renderer. Root cause found upstream; fix dispatched there.\n  3. The commit-boundary hook printed \"advisory: AGENT_SESSION is unset, so nothing was checked\" -- a check that silently does nothing when an env var is absent. DC-113's shape.\n  4. verify-derived-views --self-test attributes ANY stale report to DC-071 without checking its own precondition (that derived views are current in HEAD), so it misdiagnoses ordinary staleness as a directory-naming recurrence.\n  5. A review persona was briefed to implement (python-developer is review-charter); it returned a review, not code. Conductor selection error -- implementation goes to general-purpose.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/plans/conductor-front-door.md",
+        "docs/notes/front-door-ruling-36-yaml-guard-scope.md",
+        "docs/notes/front-door-ruling-38-run-log-guard-scope.md"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "head-join",
+        "dc-118",
+        "e18"
+      ],
+      "outcome": "success",
+      "goal": "Close the front-door head-join green so F2 can dispatch",
+      "done_when": "Core 2037 and App 400 observed green on the merged tree, floors set from measured halves, derived regenerated, full gate set run bare, one conductor-owned merge commit",
+      "tier": "T2",
+      "signals": {
+        "verification_executed": true,
+        "acceptance_met": true
+      }
     }
   ],
   "changes": [
