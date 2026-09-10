@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T18:10:48Z",
+  "generated": "2026-09-10T19:25:34Z",
   "audit": [
     {
       "actor": null,
@@ -10610,6 +10610,54 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M26CFZZF9YS2AEN5WH7G00BR",
+      "shortname": "F1 web host + vendored bundle + its gate",
+      "datetime": "2026-09-10T19:25:12Z",
+      "session": "f1-web-host",
+      "prompt": "Execute node F1 of the approved front-door plan (docs/plans/conductor-front-door.md, F1 section - binding) with the Security review's C1-C8 verbatim (docs/reviews/front-door-council.md).\n\nGoal: Make the WebView2 host able to serve a vendored ES-module bundle, and make its integrity hash an actual control.\nDone when: the spike bundle renders inside the REAL WebView2 host; CanvasSurface does not regress; C1-C8 are satisfied; dotnet build -c Release clean, zero warnings; full gate set green bare.\nNot in scope: the composer or any form engine (F4); the session document or sheet (F2); templates (FT); building the PRODUCTION bundle - Ruling 33 puts that in F4, once, after the field-widget inventory.\nTier: T2. Fan-out cap: 0. Budget: 90 tool calls.\n\nClauses: (1) the spike bundle renders inside the real WebView2 host over a virtual host, not headless Chromium; (2) CanvasSurface does not regress - NavigateToString retained, with a simplify: marker recording that two web-hosting idioms coexist; (3) C1 - built by npm ci from the committed lockfile plus one pinned, recorded, one-off bundler invocation, no CDN-service artifact, nothing entering AiDe.sln/MSBuild/CI, plus --legal-comments=eof and a CodeMirror section in THIRD-PARTY-NOTICES.md; (4) C2 - a committed vendor-manifest.json with per-file {path, sha256, bytes} plus package set, versions, lockfile path and its sha256, verbatim build command, builder and version, node/npm versions, build date, licence, licence-copy path; (5) C3 - tools/verify-vendored-assets.py exits 1 on all five modes including A FILE WITH NO MANIFEST ENTRY; (6) C4 - --self-test asserting exit 1 for each of the five and exit 0 clean, not added to KNOWN_WITHOUT_SELF_TEST, repo root from git rev-parse, self-test run from a non-root directory; (7) C5 - wired into build.yml as its own bare step with a paired --self-test step; (8) C6 - .gitattributes marks the vendor directory -text and the .csproj copies verbatim; (9) C8 - correct the spike README's esm.sh suggestion.\n\nHard constraints: TDD red-first, report the actual red, then prove the oracle can fail by breaking the manifest deliberately in each of the five modes; TreatWarningsAsErrors, zero warnings; full gate set at close run BARE (DC-113); never git stash (DC-053); never verify-test-run.py --update; append to the audit log BEFORE regenerating derived artifacts; every load-bearing repo fact checked this turn or labelled unverified (DC-116). Work only in C:\\Projects\\ai-de-feature-web-host on branch feature/web-host; do not run coord install (DC-112).",
+      "summary": "F1. WebAssetHost maps the shell's Web folder onto https://aide.assets.invalid via CoreWebView2.SetVirtualHostNameToFolderMapping (DenyCors) - the first use of that API in src/. AiDe.App.WebHostProbe renders the vendored CodeMirror ES-module bundle in a REAL WebView2 control out of process (DC-014's idiom): 1 editor, 1 mention chip produced by the bundle's own ViewPlugin, 8 lines; two falsifiers observed red (missing bundle -> exit 2, stubbed export -> exit 3). CanvasSurface keeps NavigateToString and carries a simplify: marker recording the two coexisting idioms. Bundle rebuilt from the committed lockfile: npm ci --omit=dev (26 prod packages, 0 vulnerabilities) then one pinned npx esbuild@0.28.2 with --legal-comments=eof. FINDING: the flag emits nothing - zero @license/@preserve markers in the install tree - so the bundle is byte-identical to the spike's recorded artifact (sha256 ee3d19a4..., 508337 bytes), which also proves the vendored bytes are reproducible from the lockfile rather than a blob of unknown origin; the MIT notice obligation is met by a committed licence copy and a new THIRD-PARTY-NOTICES.md section (was 0 CodeMirror mentions). tools/verify-vendored-assets.py exits 1 on all five modes - hash mismatch, entry with no file, FILE WITH NO ENTRY (filesystem-walked, so untracked counts), lockfile-hash mismatch, blank provenance - each demonstrated red against the real repo from a non-root cwd, then reverted green; --self-test proves all five plus the clean case by running the script from a subdirectory of a throwaway repo (DC-071). Wired into build.yml as two bare steps. .gitattributes marks the vendor directory -text and the index blob is byte-identical to the working tree (C6/DC-108). Spike README's esm.sh recommendation corrected in place with the reasoning (C8). FINDING: AiDe.App.Tests hung once (testhost alive 22 min, no trx); the identical re-run passed 400/400 - this is the Phase-1 recorded hang recurring, cause still not established.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.App/Workbench/WebAssetHost.cs",
+        "src/AiDe.App/Web/composer-host.html",
+        "src/AiDe.App/Web/vendor/codemirror-composer.bundle.mjs",
+        "src/AiDe.App/Web/vendor/vendor-manifest.json",
+        "src/AiDe.App/Web/vendor/LICENSES-codemirror.txt",
+        "tools/verify-vendored-assets.py",
+        "tests/AiDe.App.WebHostProbe/Program.cs",
+        "tests/AiDe.App.Tests/WebAssetHostIntegrationTests.cs"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "f1",
+        "webview2",
+        "supply-chain",
+        "vendoring"
+      ],
+      "outcome": "success",
+      "goal": "Make the WebView2 host able to serve a vendored ES-module bundle, and make its integrity hash an actual control.",
+      "done_when": "The spike bundle renders inside the REAL WebView2 host over a virtual host; CanvasSurface does not regress; Security C1-C8 satisfied; dotnet build -c Release clean with zero warnings; full gate set green, run bare.",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-10T18:42:17Z",
+      "duration_seconds": 2575.0,
+      "git": {
+        "sha": "607c131fa4450cd22f3ffc15c10a313be455e030",
+        "short": "607c131fa",
+        "branch": "feature/web-host",
+        "pushed": null
       }
     }
   ],

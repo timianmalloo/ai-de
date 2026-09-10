@@ -208,6 +208,13 @@ public sealed class CanvasSurface : ContentControl, IDisposable
         try
         {
             await _view.EnsureCoreWebView2Async();
+            // simplify: TWO WEB-HOSTING IDIOMS COEXIST IN THIS SHELL, deliberately. The canvas
+            // stays on NavigateToString because its page is a self-contained string with no
+            // imports, and moving it would buy nothing but a second thing to break; the composer
+            // needs WebAssetHost's virtual-host mapping because an ES module cannot be served to
+            // a NavigateToString document at all. Ceiling: exactly these two surfaces.
+            // trigger: revisit when this canvas needs a module import of its own, or when a THIRD
+            // web surface appears — at that point one host abstraction is cheaper than three copies.
             _view.NavigateToString(CanvasPage.Html);
         }
         catch (Exception ex) when (ex is not OutOfMemoryException)

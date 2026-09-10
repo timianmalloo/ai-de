@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>AiDe composer host</title>
+<!--
+  THE HOSTING PROBE'S PAGE, and the first page in this shell served over a virtual host rather than
+  by NavigateToString. It exists to answer one question: does the vendored CodeMirror ES-module
+  bundle load and run inside the real WebView2 control?
+
+  It reports through the DOM and through window flags rather than by posting a web message, because
+  the question is about the PAGE, and a message channel that works would prove the channel.
+-->
+<style>
+  html, body { margin: 0; height: 100%; background: #1e1e1e; color: #d4d4d4; }
+  #composer { height: 100%; font: 13px/1.5 Consolas, monospace; }
+  .cm-mention-chip {
+    background: #094771; border-radius: 3px; padding: 0 4px; color: #cce6ff;
+  }
+  #error { padding: 12px; color: #f48771; white-space: pre-wrap; font: 12px/1.5 Consolas, monospace; }
+</style>
+
+<div id="composer"></div>
+<pre id="error" hidden></pre>
+
+<script type="module">
+  // The bare failure path first: if the module cannot be fetched or parsed, `window.__composerReady`
+  // stays false and the reason is on screen AND readable by the host. A page that fails silently
+  // reports the same thing as a page that never started.
+  window.__composerReady = false;
+  window.__composerError = "";
+
+  try {
+    const { makeComposer } = await import("./vendor/codemirror-composer.bundle.mjs");
+
+    // The document is chosen so that a rendered result proves the BUNDLE ran, not that a div exists:
+    // `@codemirror` is replaced by the bundle's own ViewPlugin with a `.cm-mention-chip` widget, and
+    // the fence exercises the markdown parser's nested-language path.
+    makeComposer(
+      document.getElementById("composer"),
+      [
+        "# Front door",
+        "",
+        "Ask @codemirror to render this inside the real host.",
+        "",
+        "```csharp",
+        "var host = WebAssetHost.Map(core);",
+        "```",
+        "",
+      ].join("\n"));
+
+    window.__composerReady = true;
+  } catch (e) {
+    window.__composerError = String(e && e.stack || e);
+    const box = document.getElementById("error");
+    box.hidden = false;
+    box.textContent = window.__composerError;
+  }
+</script>

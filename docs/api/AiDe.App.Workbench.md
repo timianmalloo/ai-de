@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 79 types, 321 members, 69% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 80 types, 325 members, 69% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**79 public types · 321 public members · 69% documented.**
+**80 public types · 325 public members · 69% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1528,6 +1528,70 @@ as `SessionRowPresenter` and the leaderboard row.
 | `LedgerRow From(WorkEpisode episode)` | **(gap)** |
 | `IReadOnlyList<LedgerRow> Rows(IReadOnlyList<WorkEpisode> episodes)` | Newest first — a ledger reads top-down as most-recent-first. |
 | `string StatusFor(IWatcherLedgerQuery? query)` | The honest status line: whether observation is wired, and how much it has recorded. |
+
+## `WebAssetHost`
+
+*class* — `WebAssetHost.cs`
+
+Serves this shell's committed web assets to a `CoreWebView2` over a virtual host, so
+a page can use ES modules and an import map.
+
+**Remarks.** **Why this exists at all.** `NavigateToString` — the idiom
+`CanvasSurface` uses — gives the page the opaque origin `about:blank`-alike that
+Chromium refuses module resolution from: a `<script type="module">` cannot be fetched
+and an import map cannot resolve, so a bundled editor has no route into the shell. Measured, not
+assumed: the CodeMirror spike could only be run in a browser served over HTTP, never in the
+control this shell hosts. `SetVirtualHostNameToFolderMapping` gives the page a real
+`https://` origin backed by a local folder, and nothing else about the hosting changes.
+
+
+
+
+
+**Why a made-up TLD.** `.invalid` is reserved by RFC 2606 precisely so it can never
+resolve in public DNS. A plausible-looking hostname would be one typo away from a request that
+leaves the machine.
+
+
+
+
+
+**Why `DenyCors`.** The page needs to load
+its own scripts and nothing else. `Deny` would refuse the module fetch; `Allow` would
+let any other origin the control ever visits read these files by XHR. `DenyCors` is the one
+that serves same-origin navigations and subresources while refusing cross-origin reads — the
+smallest grant that makes a module load work.
+
+| Member | Summary |
+|---|---|
+| `string VirtualHostName = "aide.assets.invalid"` | The virtual hostname the assets are served from. RFC 2606 reserved; never resolves. |
+| `string AssetRoot` | The folder the virtual host maps onto: the `Web` directory beside the shell. |
+| `string Url(string relativePath)` | The `https://` URL a page or asset under `AssetRoot` is reached by. |
+| `string Map(CoreWebView2 core)` | Maps `AssetRoot` onto `VirtualHostName` for . |
+
+### `string AssetRoot`
+
+The folder the virtual host maps onto: the `Web` directory beside the shell.
+
+**Remarks.** Resolved from `BaseDirectory` rather than the working directory,
+because the shell is launched from wherever the user happened to be and a relative asset path
+would then depend on that.
+
+### `string Url(string relativePath)`
+
+The `https://` URL a page or asset under `AssetRoot` is reached by.
+
+**Remarks.** The separator swap reads `DirectorySeparatorChar` rather than hard-coding a
+backslash: a caller that built its relative path with `Path.Combine` gets the platform's
+separator, and a URL is the one place it is always a forward slash.
+
+### `string Map(CoreWebView2 core)`
+
+Maps `AssetRoot` onto `VirtualHostName` for .
+
+**Returns.** The folder that was mapped, so a caller can say something true about it.
+
+**Throws `DirectoryNotFoundException`.** The asset folder is missing from the build output. Thrown rather than mapped-anyway, because the failure would otherwise arrive as a blank page and a 404 nobody sees: the mapping call itself succeeds for a folder that does not exist.
 
 ## `WorkbenchAdapter`
 
