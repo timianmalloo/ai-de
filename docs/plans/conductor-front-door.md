@@ -11,6 +11,7 @@ links:
   - { to: note-addendum-b-ratification, rel: depends-on }
   - { to: note-addendum-a-ratification, rel: depends-on }
   - { to: note-addendum-b-reconciliation, rel: depends-on }
+  - { to: review-front-door-council, rel: depends-on }
   - { to: plan-conductor-programme, rel: refines }
 review-by: 2026-12-10
 summary: >-
@@ -49,9 +50,9 @@ Recorded, because the corrections are the most reusable part of this document.
   composer, streamed in Console mode, scored end-to-end by the existing Watcher, with zero terminal
   hosting"*; **R13, R14, R15, R16, R18, R19** pass as tests under the rulings' cuts; suite green on
   main; Owner signs the front-door E18.
-- **Not in scope:** R17 · R20 · R21 · R22 · R23 · R24 · Artifacts/Profiler/Board canvas modes ·
-  the Templates catalog view · artifact and block mention sources · `RunLogStore` · assist of any
-  kind · React · any template beyond the twelve.
+- **Not in scope:** R17 · **assist of any kind (R20, R21 — Phase 3)** · **the Templates catalog
+  canvas view (R22)** · R23 · R24 · Artifacts / Profiler / Board canvas modes · artifact and block
+  mention sources · `RunLogStore` · React · any template beyond the twelve.
 - **Tier:** T2 · **Width:** 3 at the head, 1 thereafter.
 
 ## The nodes
@@ -62,7 +63,7 @@ Recorded, because the corrections are the most reusable part of this document.
 | --- | --- | --- | --- | --- |
 | **F0** | Session object + path contract (R14) | T1 | sonnet | ~1400 s |
 | **F1** | Web host + vendored bundle + its gate (C1–C8) | T2 | **opus** | ~2400 s |
-| **FT** | Template spine — `template-schema/1`, validator, compiler, catalog (R18) | T2 | **opus** | ~2400 s |
+| **FT** | Template spine — `template-schema/1`, validator, compiler, catalog, registry, frontmatter parser (R18) | T2 | **opus** | ~2700 s |
 | **F2** | Sheet + File menu + session document + canvas modes + split (R13, R16) | T1 | sonnet | ~3300 s |
 | **F4** | Composer: form engine, goal-block re-base, shapes (R15, R19) | T2 | **opus** | ~2400 s |
 | **F5** | Exit evidence + Proof Pack | T2 | **opus** | ~2400 s |
@@ -119,6 +120,15 @@ took packages 52 → 26 and import-map entries 51 → 24 **without changing the 
 - **C8** — the spike README's esm.sh suggestion is corrected. *A stale document recommending a
   rejected supply-chain path is how the rejected path returns.*
 
+**Ruling 33 — F1 proves HOSTING, not the production artifact.** The committed bundle exports only
+`{ makeComposer, makeSourceViewer }` and **contains no picker at all** — no `@codemirror/autocomplete`
+import, no file/graph source. So it is the **spike's** bundle, and any production need (the mention
+picker, a `Ctrl+Enter` keymap, a single-line `mentions` field) forces a rebuild **even with zero new
+packages**: the trigger is the entry file, not the package list. **F1's exit is therefore "the spike
+bundle renders inside real WebView2 over the virtual host".** The **production bundle is built
+exactly once, in F4**, after the field-widget inventory is fixed, and hash-pinned then. **The spike's
+SHA-256 `ee3d19a4…` is spike evidence and is never cited as the production pin.**
+
 Plus: CodeMirror **renders inside the real WebView2 host**, not only headless Chromium; and
 **`NavigateToString` is retained for the existing canvas** — *fails if `CanvasSurface` regresses.*
 A `simplify:` marker records two web-hosting idioms coexisting, trigger: the canvas needing a
@@ -146,7 +156,24 @@ module import, or a third web surface.
   additionally checked **field-by-field against the two real prompts in the audit log**.
   **All ship at `version: 1`** — B3.1's illustrative `version: 3` *would claim a history that was
   not observed*. *Fails if:* any tooltip text diverges from B4.
-- Catalog **sources are a descriptor list**, consistent with Ruling 22's shape.
+- **Template frontmatter takes an installed YAML dependency, scoped to the template loader**
+  (**Ruling 35**). B3.1 uses **multi-line plain scalars and flow mappings**, and the repo's two
+  hand-rolled subset readers each carry a `simplify:` marker whose upgrade trigger **B3.1 fires
+  exactly** — `KnowledgeFrontmatter.cs:30-32` ("a consumer needs nested or multi-line values") and
+  `BoundedContextMap.cs:61-63`. **A third hand-rolled reader is refused**; `KnowledgeFrontmatter.cs:20-23`
+  already records why ("two copies of a format parser is two things to drift"). **JSON frontmatter is
+  also refused** — it would extend B3.1 rather than read it. Ruling 23's ladder argument does **not**
+  transfer: its ground was *no hand-editability rationale*, and B1/B3.2/B7 state that rationale
+  explicitly for templates. Ruling 28 (config = one serialization) is unchanged.
+  *Fails if:* a third subset parser appears, or deserialization uses tag-driven type resolution
+  rather than the schema type. **The `.csproj` edit belongs to this node alone** — it is the one
+  shared derived surface with F0/F1.
+- Migrating the two existing subset readers onto the dependency is a **recorded next step**, not this
+  slice.
+- **Ruling 29's registry entry for `template-schema/1` names the frontmatter format and the parser.**
+- Catalog **sources are an ordered descriptor list** — built-in and workspace in Phase 1; pack and
+  personal append later **without editing the loader** (**Ruling 32**: this falls under Ruling 26(i),
+  *not* Ruling 22, whose "picker sources" are the mention picker's alone).
 
 ## F2 — sheet, File menu, session document, canvas modes (R13, R16)
 
@@ -224,10 +251,18 @@ forced a stub (HYG-A).
   switching loses content, or an assist call is made.
 - **`paste-to-fence` and `attach`** (R15 b1). *Fails if:* pasting multi-line code lands as prose, or
   no attach path exists.
-- **`promote-to-goal-block` round-trip** (R15 b2) — **pending the collision re-check.** B5.2 lists
-  it as assist-powered and Ruling 27 defers assist to Phase 3; if the re-check confirms, this
-  becomes a **cut naming Ruling 27**, not a vanish. If a non-assist round-trip survives, it keeps
-  this clause. *Fails if:* message → goal block → message loses a field.
+- **R15 b2 is RE-BASED, not vanished** (**Ruling 34**). Its three halves resolve separately: the
+  **assist-powered** promote is Phase 3 (Ruling 27); the **conductor-drafted** reply needs
+  `ConductorHost`, Phase 2; and the **non-assist residue survives here as R19 bullet 3's shape
+  switch**, with the goal-block direction named explicitly — **free-form → goal-block → free-form
+  restores the original draft byte-identical, and goal-block → free-form yields the compiled text.**
+  Red-first. *Fails if:* a round-trip loses a field, or an assist call is made.
+- **The field-widget inventory** (Ruling 33): `mentions` and `long-text` render in the composer's
+  `EditorView` with the composer's extension set; **`text`, `list`, `enum`, `budget` are native HTML
+  controls with no CodeMirror instance.** *Fails if:* a per-field editor is created for the four
+  native types.
+- **The production bundle is built once here** and hash-pinned, after that inventory, with its
+  recorded command and SHA-256 (Ruling 33).
 - **US-ED5/ED6/ED7, with observables** (Test Architect Major): a **`sendCount` on the send seam** —
   edit, paste, newline and near-miss keystrokes assert `sendCount == 0`; one send asserts `1`; a
   **second send attempt on the same block asserts still `1`**. "Draft persists across restart"
@@ -272,7 +307,7 @@ Phase 1 measured: **N4 1931 s · N5+N6 1374 s · N7 2404 s**. Node time ≈ **14
 shape — F1, FT, F4 and F5 are N4/N7-shaped (novel dependency, pinned contract, evidence), F0 and F2
 nearer N5+N6.
 
-**Main-line budget: 110 calls** — six nodes at the *measured* per-node conductor cost (dispatch +
+**Main-line budget: 115 calls** — six nodes at the *measured* per-node conductor cost (dispatch +
 independent verification + commit ≈ 8–10), plus ~30 for converge and close, plus contingency.
 **Revision 1 derived its figure from N0, a docs-and-control node — the wrong shape.** The
 verification half is sized from N4/N7, because **N7 measured verification at 23:1 against the run
@@ -290,8 +325,10 @@ citing it).
 
 ## Re-plan checkpoints
 
-1. **The collision re-check against Rulings 19–25** (Ruling 31) — outstanding; gates approval.
-   Candidate 3 may convert R15 b2 from a clause to a cut.
+1. ~~The collision re-check against Rulings 19–25~~ — **DISCHARGED.** Two hits confirmed
+   (Rulings 33, 34), one dismissed (32), **one hit the conductor did not name** (35, the YAML
+   frontmatter dependency), and 26(g) promoted to ruled (36). Rulings 19–25 vs 26/27 checked
+   pairwise: **clean**.
 2. **After F1** — if CodeMirror does not render in the real WebView2 host, R15's base is wrong.
 3. **The field-widget inventory vs the vendored bundle** — if a typed field needs a package outside
    the trimmed 26, the hash-pinned artifact is rebuilt **once, before C2's manifest is final**.

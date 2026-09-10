@@ -6349,12 +6349,16 @@ window.DOCS_INDEX = {
           "rel": "depends-on"
         },
         {
+          "to": "review-front-door-council",
+          "rel": "depends-on"
+        },
+        {
           "to": "plan-conductor-programme",
           "rel": "refines"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "13a18b84cbff6b0515258a54bc646e588ba92662f344239510e919768fff1e51"
+      "sourceSha256": "3c6105802a50649aa02cc2d85883911686e5e63825bc63fb721a642f15b8eb38"
     },
     {
       "id": "plan-conductor-programme",
@@ -6627,6 +6631,40 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "c6d8f6ca4e8896ef7c8169785f3c2e9f45a7012ec9bb580df466e7cf1d204da2"
+    },
+    {
+      "id": "review-front-door-council",
+      "path": "docs/reviews/front-door-council.md",
+      "title": "Council review — front-door plan Revision 1 (both vetoes BLOCK)",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "The operative content of the three front-door reviews, filed verbatim rather than as counts. Test Architect BLOCK with ten Blockers and six untraced bullets; Simplifier BLOCK with seven Majors; Security PASS-WITH-CONDITIONS C1-C8.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "council",
+        "review",
+        "veto",
+        "security",
+        "test-architect",
+        "simplifier"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1ba0543d60aa135ffc5e6fa11fc6446c9748a25baa56fcfbea51d517bb4c45f5"
     },
     {
       "id": "review-nvda-workbench-session",
@@ -12433,5 +12471,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "540f0d74b8e81baebabf5e506f68276b061c22fcab2d8cbd23037cda2939310b"
+  "graphSha256": "20007b7f5da6f039a1b982c6f8592dd52c7f3aa9353649eca2c0e0879f3f610b"
 };
