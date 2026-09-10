@@ -322,6 +322,19 @@ jobs:
         if: ${{ !cancelled() }}
         run: python tools/verify-extractor-generation.py
 
+      # F0 (docs/plans/conductor-front-door.md), R14 b2 (Ruling 15/15a's actual renames were both
+      # production types: GovernedSessionSource, GovernedSession). New "session"-named types outside
+      # src/AiDe.Core/Sessions/ (the front door's container) and outside the frozen
+      # Watcher/Dispatch/Terminal directories are exactly the vocabulary collision that rename fixed
+      # — this catches the next one on the day it is added rather than after it ships.
+      - name: Session-naming gate (R14 b2) — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-r14b2-session-naming.py --self-test
+
+      - name: Session-naming gate (R14 b2)
+        if: ${{ !cancelled() }}
+        run: python tools/verify-r14b2-session-naming.py
+
   # ---------------------------------------------------------------------------------------------
   # THE PORTABLE 94% OF THE CORE SUITE, ON LINUX AT 1x.
   #
