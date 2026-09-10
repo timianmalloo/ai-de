@@ -100,8 +100,29 @@ public sealed class FileSystemRepositoryLocator : IRepositoryLocator
             // gitDir is <repository>/.git/worktrees/<name>. Cut at the worktrees segment to get the
             // common dir, whose parent is the repository — the same primitive the shell derives from
             // --git-common-dir, so the two agree by construction rather than by coincidence.
+            //
+            // THE LAST OCCURRENCE, NOT THE FIRST. "~/worktrees/<project>" is a common way to keep
+            // checkouts, and it puts a second worktrees segment in FRONT of the one git writes:
+            // "/home/me/worktrees/proj/.git/worktrees/lane" cut at the FIRST match gives "/home/me"
+            // as the common dir and "/home" as the repository, grouping every session in every such
+            // checkout under one wrong repository. Wrong on Windows exactly as much as on Linux.
+            //
+            // The last match is right by CONSTRUCTION rather than by luck: git's <name> is one path
+            // segment, so nothing after the real marker can hold another separator-terminated
+            // "worktrees" - even a worktree named "worktrees" ends the string with no closing
+            // separator, which is what
+            // AWorktreeWhoseOWNNameIsWorktreesStillResolvesToItsRepository pins.
+            //
+            // AND THE PLATFORM'S OWN CASE RULE. OrdinalIgnoreCase on every platform resolved
+            // "/repo/.GIT/WORKTREES/x" on Linux, where it is a DIFFERENT path that git could not
+            // have written - a guess wearing a repository path. This is the same ternary
+            // ProofPackVerifier uses at its containment boundary; one rule, not a second idiom.
+            var comparison = OperatingSystem.IsWindows()
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+
             var marker = separator + WorktreesSegment + separator;
-            var cut = gitDir.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
+            var cut = gitDir.LastIndexOf(marker, comparison);
             if (cut < 0)
             {
                 return null;
