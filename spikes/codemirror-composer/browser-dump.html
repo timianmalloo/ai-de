@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html><head><style>.ͼ1.cm-focused {outline: 1px dotted #212121;}
+.ͼ1 {position: relative !important; box-sizing: border-box; display: flex !important; flex-direction: column;}
+.ͼ1 .cm-scroller {display: flex !important; align-items: flex-start !important; font-family: monospace; line-height: 1.4; height: 100%; overflow-x: auto; position: relative; z-index: 0; overflow-anchor: none;}
+.ͼ1 .cm-content[contenteditable=true] {-webkit-user-modify: read-write-plaintext-only;}
+.ͼ1 .cm-content {margin: 0; flex-grow: 2; flex-shrink: 0; display: block; white-space: pre; word-wrap: normal; box-sizing: border-box; min-height: 100%; padding: 4px 0; outline: none;}
+.ͼ1 .cm-lineWrapping {white-space: pre-wrap; white-space: break-spaces; word-break: break-word; overflow-wrap: anywhere; flex-shrink: 1;}
+.ͼ2 .cm-content {caret-color: black;}
+.ͼ3 .cm-content {caret-color: white;}
+.ͼ1 .cm-line {display: block; padding: 0 2px 0 6px;}
+.ͼ1 .cm-layer > * {position: absolute;}
+.ͼ1 .cm-layer {user-select: none; position: absolute; left: 0; top: 0; contain: size style;}
+.ͼ2 .cm-selectionBackground {background: #d9d9d9;}
+.ͼ3 .cm-selectionBackground {background: #222;}
+.ͼ2.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {background: #d7d4f0;}
+.ͼ3.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {background: #233;}
+.ͼ1 .cm-cursorLayer {pointer-events: none;}
+.ͼ1.cm-focused > .cm-scroller > .cm-cursorLayer {animation: steps(1) cm-blink 1.2s infinite;}
+@keyframes cm-blink {50% {opacity: 0;}}
+@keyframes cm-blink2 {50% {opacity: 0;}}
+.ͼ1 .cm-cursor, .ͼ1 .cm-dropCursor {border-left: 1.2px solid black; margin-left: -0.6px; pointer-events: none;}
+.ͼ1 .cm-cursor {display: none;}
+.ͼ3 .cm-cursor {border-left-color: #ddd;}
+.ͼ1 .cm-selectionHandle {background-color: currentColor; width: 1.5px;}
+.ͼ1 .cm-selectionHandle-start::before, .ͼ1 .cm-selectionHandle-end::before {content: ""; background-color: inherit; border-radius: 50%; width: 8px; height: 8px; position: absolute; left: -3.25px;}
+.ͼ1 .cm-selectionHandle-start::before {top: -8px;}
+.ͼ1 .cm-selectionHandle-end::before {bottom: -8px;}
+.ͼ1 .cm-dropCursor {position: absolute;}
+.ͼ1.cm-focused > .cm-scroller > .cm-cursorLayer .cm-cursor {display: block;}
+.ͼ1 .cm-iso {unicode-bidi: isolate;}
+.ͼ1 .cm-announced {position: fixed; top: -10000px;}
+@media print {.ͼ1 .cm-announced {display: none;}}
+.ͼ2 .cm-activeLine {background-color: #cceeff44;}
+.ͼ3 .cm-activeLine {background-color: #99eeff33;}
+.ͼ2 .cm-specialChar {color: red;}
+.ͼ3 .cm-specialChar {color: #f78;}
+.ͼ1 .cm-gutters {flex-shrink: 0; display: flex; height: 100%; box-sizing: border-box; z-index: 200;}
+.ͼ1 .cm-gutters-before {inset-inline-start: 0;}
+.ͼ1 .cm-gutters-after {inset-inline-end: 0;}
+.ͼ2 .cm-gutters.cm-gutters-before {border-right-width: 1px;}
+.ͼ2 .cm-gutters.cm-gutters-after {border-left-width: 1px;}
+.ͼ2 .cm-gutters {background-color: #f5f5f5; color: #6c6c6c; border: 0px solid #ddd;}
+.ͼ3 .cm-gutters {background-color: #333338; color: #ccc;}
+.ͼ1 .cm-gutter {display: flex !important; flex-direction: column; flex-shrink: 0; box-sizing: border-box; min-height: 100%; overflow: hidden;}
+.ͼ1 .cm-gutterElement {box-sizing: border-box;}
+.ͼ1 .cm-lineNumbers .cm-gutterElement {padding: 0 3px 0 5px; min-width: 20px; text-align: right; white-space: nowrap;}
+.ͼ2 .cm-activeLineGutter {background-color: #e2f2ff;}
+.ͼ3 .cm-activeLineGutter {background-color: #222227;}
+.ͼ1 .cm-panels {box-sizing: border-box; position: sticky; left: 0; right: 0; z-index: 300;}
+.ͼ2 .cm-panels {background-color: #f5f5f5; color: black;}
+.ͼ1 .cm-panels-top {top: 0;}
+.ͼ1 .cm-panels-bottom {bottom: 0;}
+.ͼ2 .cm-panels-top {border-bottom: 1px solid #ddd;}
+.ͼ2 .cm-panels-bottom {border-top: 1px solid #ddd;}
+.ͼ3 .cm-panels {background-color: #333338; color: white;}
+.ͼ1 .cm-dialog label {font-size: 80%;}
+.ͼ1 .cm-dialog {padding: 2px 19px 4px 6px; position: relative;}
+.ͼ1 .cm-dialog-close {position: absolute; top: 3px; right: 4px; background-color: inherit; border: none; font: inherit; font-size: 14px; padding: 0;}
+.ͼ1 .cm-tab {display: inline-block; overflow: hidden; vertical-align: bottom;}
+.ͼ1 .cm-widgetBuffer {vertical-align: text-top; height: 1em; width: 0; display: inline;}
+.ͼ1 .cm-placeholder {color: #888; display: inline-block; vertical-align: top; user-select: none;}
+.ͼ1 .cm-highlightSpace {background: radial-gradient(circle at 50% 55%, #aaa 20%, transparent 0) no-repeat; background-size: .4em; background-position: calc(min(50%, 0px)) center;}
+.ͼ1 .cm-highlightTab {background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><path stroke="%23888" stroke-width="1" fill="none" d="M1 10H196L190 5M190 15L196 10M197 4L197 16"/></svg>'); background-size: auto 100%; background-position: right 90%; background-repeat: no-repeat;}
+.ͼ1 .cm-trailingSpace {background-color: #ff332255;}
+.ͼ1 .cm-button {vertical-align: middle; color: inherit; font-size: 70%; padding: .2em 1em; border-radius: 1px;}
+.ͼ2 .cm-button:active {background-image: linear-gradient(#b4b4b4, #d0d3d6);}
+.ͼ2 .cm-button {background-image: linear-gradient(#eff1f5, #d9d9df); border: 1px solid #888;}
+.ͼ3 .cm-button:active {background-image: linear-gradient(#111, #333);}
+.ͼ3 .cm-button {background-image: linear-gradient(#393939, #111); border: 1px solid #888;}
+.ͼ1 .cm-textfield {vertical-align: middle; color: inherit; font-size: 70%; border: 1px solid silver; padding: .2em .5em;}
+.ͼ2 .cm-textfield {background-color: white;}
+.ͼ3 .cm-textfield {border: 1px solid #555; background-color: inherit;}
+.ͼ5 {color: #404740;}
+.ͼ6 {text-decoration: underline;}
+.ͼ7 {text-decoration: underline; font-weight: bold;}
+.ͼ8 {font-style: italic;}
+.ͼ9 {font-weight: bold;}
+.ͼa {text-decoration: line-through;}
+.ͼb {color: #708;}
+.ͼc {color: #219;}
+.ͼd {color: #164;}
+.ͼe {color: #a11;}
+.ͼf {color: #e40;}
+.ͼg {color: #00f;}
+.ͼh {color: #30a;}
+.ͼi {color: #085;}
+.ͼj {color: #167;}
+.ͼk {color: #256;}
+.ͼl {color: #00c;}
+.ͼm {color: #940;}
+.ͼn {color: #f00;}
+</style><title>DONE</title></head><body><div id="composer"><div class="cm-editor ͼ1 ͼ2 "><div class="cm-announced" aria-live="polite"></div><div tabindex="-1" class="cm-scroller"><div spellcheck="false" autocorrect="off" autocapitalize="off" writingsuggestions="false" translate="no" contenteditable="true" style="tab-size: 4;" class="cm-content" role="textbox" aria-multiline="true" data-language="markdown"><div class="cm-line"><span class="ͼ7 ͼ5">#</span><span class="ͼ7"> Title</span></div><div class="cm-line"><br></div><div class="cm-line">Some <span class="ͼ9 ͼ5">**</span><span class="ͼ9">bold</span><span class="ͼ9 ͼ5">**</span> and <span class="ͼ8 ͼ5">*</span><span class="ͼ8">italic</span><span class="ͼ8 ͼ5">*</span> with a mention <img class="cm-widgetBuffer" aria-hidden="true"><span class="cm-mention-chip" contenteditable="false" data-mention="design-doc">@design-doc</span><img class="cm-widgetBuffer" aria-hidden="true"> here.</div><div class="cm-line"><br></div><div class="cm-line"><span class="ͼ5">```</span><span class="ͼc">js</span></div><div class="cm-line"><span class="ͼb">function</span> <span class="ͼg">hi</span>() { <span class="ͼb">return</span> <span class="ͼd">1</span>; }</div><div class="cm-line"><span class="ͼ5">```</span></div></div></div></div></div><div id="source"><div class="cm-editor ͼ1 ͼ2 "><div class="cm-announced" aria-live="polite"></div><div tabindex="-1" class="cm-scroller"><div spellcheck="false" autocorrect="off" autocapitalize="off" writingsuggestions="false" translate="no" contenteditable="false" style="tab-size: 4;" class="cm-content" role="textbox" aria-multiline="true" aria-readonly="true" data-language="javascript"><div class="cm-line"><span class="ͼb">const</span> <span class="ͼg">x</span> = <span class="ͼd">1</span>;</div><div class="cm-line"><span class="ͼb">function</span> <span class="ͼg">f</span>(<span class="ͼg">a</span>) { <span class="ͼb">return</span> a + <span class="ͼd">1</span>; }</div><div class="cm-line"><br></div></div></div></div></div><script type="importmap">{"imports":{"@codemirror/autocomplete":"./node_modules/@codemirror/autocomplete/dist/index.js","@codemirror/commands":"./node_modules/@codemirror/commands/dist/index.js","@codemirror/lang-angular":"./node_modules/@codemirror/lang-angular/dist/index.js","@codemirror/lang-cpp":"./node_modules/@codemirror/lang-cpp/dist/index.js","@codemirror/lang-css":"./node_modules/@codemirror/lang-css/dist/index.js","@codemirror/lang-go":"./node_modules/@codemirror/lang-go/dist/index.js","@codemirror/lang-html":"./node_modules/@codemirror/lang-html/dist/index.js","@codemirror/lang-java":"./node_modules/@codemirror/lang-java/dist/index.js","@codemirror/lang-javascript":"./node_modules/@codemirror/lang-javascript/dist/index.js","@codemirror/lang-jinja":"./node_modules/@codemirror/lang-jinja/dist/index.js","@codemirror/lang-json":"./node_modules/@codemirror/lang-json/dist/index.js","@codemirror/lang-less":"./node_modules/@codemirror/lang-less/dist/index.js","@codemirror/lang-liquid":"./node_modules/@codemirror/lang-liquid/dist/index.js","@codemirror/lang-markdown":"./node_modules/@codemirror/lang-markdown/dist/index.js","@codemirror/lang-php":"./node_modules/@codemirror/lang-php/dist/index.js","@codemirror/lang-python":"./node_modules/@codemirror/lang-python/dist/index.js","@codemirror/lang-rust":"./node_modules/@codemirror/lang-rust/dist/index.js","@codemirror/lang-sass":"./node_modules/@codemirror/lang-sass/dist/index.js","@codemirror/lang-sql":"./node_modules/@codemirror/lang-sql/dist/index.js","@codemirror/lang-vue":"./node_modules/@codemirror/lang-vue/dist/index.js","@codemirror/lang-wast":"./node_modules/@codemirror/lang-wast/dist/index.js","@codemirror/lang-xml":"./node_modules/@codemirror/lang-xml/dist/index.js","@codemirror/lang-yaml":"./node_modules/@codemirror/lang-yaml/dist/index.js","@codemirror/language":"./node_modules/@codemirror/language/dist/index.js","@codemirror/language-data":"./node_modules/@codemirror/language-data/dist/index.js","@codemirror/lint":"./node_modules/@codemirror/lint/dist/index.js","@codemirror/search":"./node_modules/@codemirror/search/dist/index.js","@codemirror/state":"./node_modules/@codemirror/state/dist/index.js","@codemirror/view":"./node_modules/@codemirror/view/dist/index.js","@lezer/common":"./node_modules/@lezer/common/dist/index.js","@lezer/cpp":"./node_modules/@lezer/cpp/dist/index.js","@lezer/css":"./node_modules/@lezer/css/dist/index.js","@lezer/go":"./node_modules/@lezer/go/dist/index.js","@lezer/highlight":"./node_modules/@lezer/highlight/dist/index.js","@lezer/html":"./node_modules/@lezer/html/dist/index.js","@lezer/java":"./node_modules/@lezer/java/dist/index.js","@lezer/javascript":"./node_modules/@lezer/javascript/dist/index.js","@lezer/json":"./node_modules/@lezer/json/dist/index.js","@lezer/lr":"./node_modules/@lezer/lr/dist/index.js","@lezer/markdown":"./node_modules/@lezer/markdown/dist/index.js","@lezer/php":"./node_modules/@lezer/php/dist/index.js","@lezer/python":"./node_modules/@lezer/python/dist/index.js","@lezer/rust":"./node_modules/@lezer/rust/dist/index.js","@lezer/sass":"./node_modules/@lezer/sass/dist/index.js","@lezer/xml":"./node_modules/@lezer/xml/dist/index.js","@lezer/yaml":"./node_modules/@lezer/yaml/dist/index.js","style-mod":"./node_modules/style-mod/src/style-mod.js","w3c-keyname":"./node_modules/w3c-keyname/index.js","crelt":"./node_modules/crelt/index.js","codemirror":"./node_modules/codemirror/dist/index.js","@marijn/find-cluster-break":"./node_modules/@marijn/find-cluster-break/src/index.js"}}</script><script type="module">import { makeComposer, makeSourceViewer } from "./lib.mjs";
+function out(obj) {
+  const pre = document.createElement("pre");
+  pre.id = "out";
+  pre.textContent = JSON.stringify(obj);
+  document.body.appendChild(pre);
+  document.title = "DONE";
+}
+try {
+  const fence = String.fromCharCode(96, 96, 96);
+  const composerDoc = [
+    "# Title", "", "Some **bold** and *italic* with a mention @design-doc here.", "",
+    fence + "js", "function hi() { return 1; }", fence
+  ].join(String.fromCharCode(10));
+  const sourceDoc = ["const x = 1;", "function f(a) { return a + 1; }", ""].join(String.fromCharCode(10));
+  const cv = makeComposer(document.getElementById("composer"), composerDoc);
+  const sv = makeSourceViewer(document.getElementById("source"), sourceDoc);
+  setTimeout(() => out({ status: "ok", composerHTML: cv.dom.outerHTML, sourceHTML: sv.dom.outerHTML }), 1200);
+} catch (e) {
+  out({ status: "error", message: String((e && e.stack) || e) });
+}</script><pre id="out">{"status":"ok","composerHTML":"&lt;div class=\"cm-editor ͼ1 ͼ2 \"&gt;&lt;div class=\"cm-announced\" aria-live=\"polite\"&gt;&lt;/div&gt;&lt;div tabindex=\"-1\" class=\"cm-scroller\"&gt;&lt;div spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" writingsuggestions=\"false\" translate=\"no\" contenteditable=\"true\" style=\"tab-size: 4;\" class=\"cm-content\" role=\"textbox\" aria-multiline=\"true\" data-language=\"markdown\"&gt;&lt;div class=\"cm-line\"&gt;&lt;span class=\"ͼ7 ͼ5\"&gt;#&lt;/span&gt;&lt;span class=\"ͼ7\"&gt; Title&lt;/span&gt;&lt;/div&gt;&lt;div class=\"cm-line\"&gt;&lt;br&gt;&lt;/div&gt;&lt;div class=\"cm-line\"&gt;Some &lt;span class=\"ͼ9 ͼ5\"&gt;**&lt;/span&gt;&lt;span class=\"ͼ9\"&gt;bold&lt;/span&gt;&lt;span class=\"ͼ9 ͼ5\"&gt;**&lt;/span&gt; and &lt;span class=\"ͼ8 ͼ5\"&gt;*&lt;/span&gt;&lt;span class=\"ͼ8\"&gt;italic&lt;/span&gt;&lt;span class=\"ͼ8 ͼ5\"&gt;*&lt;/span&gt; with a mention &lt;img class=\"cm-widgetBuffer\" aria-hidden=\"true\"&gt;&lt;span class=\"cm-mention-chip\" contenteditable=\"false\" data-mention=\"design-doc\"&gt;@design-doc&lt;/span&gt;&lt;img class=\"cm-widgetBuffer\" aria-hidden=\"true\"&gt; here.&lt;/div&gt;&lt;div class=\"cm-line\"&gt;&lt;br&gt;&lt;/div&gt;&lt;div class=\"cm-line\"&gt;&lt;span class=\"ͼ5\"&gt;```&lt;/span&gt;&lt;span class=\"ͼc\"&gt;js&lt;/span&gt;&lt;/div&gt;&lt;div class=\"cm-line\"&gt;&lt;span class=\"ͼb\"&gt;function&lt;/span&gt; &lt;span class=\"ͼg\"&gt;hi&lt;/span&gt;() { &lt;span class=\"ͼb\"&gt;return&lt;/span&gt; &lt;span class=\"ͼd\"&gt;1&lt;/span&gt;; }&lt;/div&gt;&lt;div class=\"cm-line\"&gt;&lt;span class=\"ͼ5\"&gt;```&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;","sourceHTML":"&lt;div class=\"cm-editor ͼ1 ͼ2 \"&gt;&lt;div class=\"cm-announced\" aria-live=\"polite\"&gt;&lt;/div&gt;&lt;div tabindex=\"-1\" class=\"cm-scroller\"&gt;&lt;div spellcheck=\"false\" autocorrect=\"off\" autocapitalize=\"off\" writingsuggestions=\"false\" translate=\"no\" contenteditable=\"false\" style=\"tab-size: 4;\" class=\"cm-content\" role=\"textbox\" aria-multiline=\"true\" aria-readonly=\"true\" data-language=\"javascript\"&gt;&lt;div class=\"cm-line\"&gt;&lt;span class=\"ͼb\"&gt;const&lt;/span&gt; &lt;span class=\"ͼg\"&gt;x&lt;/span&gt; = &lt;span class=\"ͼd\"&gt;1&lt;/span&gt;;&lt;/div&gt;&lt;div class=\"cm-line\"&gt;&lt;span class=\"ͼb\"&gt;function&lt;/span&gt; &lt;span class=\"ͼg\"&gt;f&lt;/span&gt;(&lt;span class=\"ͼg\"&gt;a&lt;/span&gt;) { &lt;span class=\"ͼb\"&gt;return&lt;/span&gt; a + &lt;span class=\"ͼd\"&gt;1&lt;/span&gt;; }&lt;/div&gt;&lt;div class=\"cm-line\"&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"}</pre></body></html>
