@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T18:05:47Z",
+  "generated": "2026-09-10T18:10:48Z",
   "audit": [
     {
       "actor": null,
@@ -10577,6 +10577,39 @@ window.AUDIT_DATA = {
         "short": "1e03de95e",
         "branch": "spike/codemirror-trim",
         "pushed": null
+      }
+    },
+    {
+      "id": "al-01M2687RD6P8RK5KZJXQ0ZBEJS",
+      "shortname": "file-rulings-19-31",
+      "datetime": "2026-09-10T18:10:48Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "CHANGE ORDER - Addendum B: Prompt Templates. Ingest, reconcile against the front-door work in flight, amend the goal block, convene the Owner; ratification admits the scope; record the ruling as decision note + audit entry.",
+      "summary": "A PROCESS FAILURE OF MINE, DETECTED BY THE OWNER. Rulings 19-25 were issued, acted on in conversation, reported to the operator, and NEVER WRITTEN to docs/notes/. The Owner found it while checking Addendum B for collisions against them: docs/notes/ held only Rulings 15-18 and 15a, the audit log named 'Ruling 24' once, and the front-door plan on main still said session.yaml at lines 90/109/151 despite Ruling 23 moving it to JSON. It declined to treat them as given and ruled the providers question on the ladder directly rather than on an unrecorded ruling - and said plainly: 'that is the finding, not a clearance.' AN UNFILED RULING IS NOT RECORDED. Same shape as DC-111, DC-112 and DC-113: a record that exists somewhere unreachable is not a record. I filed 1-18 diligently and then stopped. Both notes now committed. ADDENDUM B RATIFIED (Rulings 26-31): R18 and R19 admitted to the front-door slice with FOUR CUTS - catalog sources ship built-in+workspace only (the pack source's lifecycle IS R22's update notice), the catalog canvas view is R22, the sheet's Start-from-template row is cut because it creates a back-edge from the composer node to the sheet node, and free-form-to-template preserves content by per-shape draft retention rather than transformation. That last cut resolves an INTERNAL COLLISION INSIDE ADDENDUM B that the Owner found and I had missed: B6/R19 is Phase 1 but routes one switch direction through apply-template, which is R20, Phase 3. R21 DEFERRED to Phase 3 beside R20 - its only consumer is the assist call path, and its own section-4.2 test ('no assist path exists outside the subscription engines') proves nothing while no assist path exists at all. Marked as EXTENDING the spec, since B8 phases R21 to Phase 1. Ruling 29 creates the pinned-contracts registry B9 assumes and the repo lacks, because template-schema/1's validator ships in Phase 1 and a contract enforced in code with no documented shape is a shape asserted from code. Ruling 30 transcribes the twelve built-ins byte-for-byte from B4 with a fixture test, checks launch and change-order field-by-field against the two real prompts in the audit log, and ships everything at v1 because B3.1's illustrative 'version: 3' would claim a history that was not observed. STILL OWED before plan approval: re-run the collision check against the now-filed Rulings 19-25.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/notes/front-door-council-rulings.md",
+        "docs/notes/addendum-b-ratification.md",
+        "docs/notes/addendum-b-reconciliation.md"
+      ],
+      "tags": [
+        "conductor",
+        "addendum-b",
+        "ruling",
+        "process-failure"
+      ],
+      "outcome": "success",
+      "goal": "File Rulings 19-31 as decision notes, correcting an unfiled-ruling gap the Owner detected, and record Addendum B's ratification",
+      "done_when": "Rulings 19-25 and 26-31 exist as committed decision notes with their evidence; the audit entry cites them; the collision re-check against 19-25 is scheduled before plan approval",
+      "tier": "T2",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
       }
     }
   ],

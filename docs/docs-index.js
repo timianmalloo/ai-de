@@ -2756,6 +2756,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "5eb051331e34c8c9d5a905fd23bd014aea8305d55252f88c7257045d851cbc77"
     },
     {
+      "id": "note-addendum-b-ratification",
+      "path": "docs/notes/addendum-b-ratification.md",
+      "title": "Decision note — Addendum B ratified; Rulings 26–31",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "Addendum B ratified: R18 and R19 admitted to the front-door slice with four cuts, R21 deferred to Phase 3 because nothing in Phase 1 consumes it, a pinned-contracts registry created, and the twelve built-ins transcribed rather than authored. One internal phase collision inside Addendum B found and resolved.",
+      "tags": [
+        "conductor",
+        "addendum-b",
+        "templates",
+        "ratification",
+        "assist",
+        "pinned-contract"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-b-reconciliation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-a-ratification",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "b7cb55ebda6662864af692a270685ce07dfe79e606cddd9568e5da67a794b735"
+    },
+    {
       "id": "note-addendum-b-reconciliation",
       "path": "docs/notes/addendum-b-reconciliation.md",
       "title": "Reconciliation — Addendum B against the front-door work in flight",
@@ -3448,6 +3484,42 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "bdf356fe8e627146ca59bca7a953e7b5e5b854ce088b34e89a758ff0707086e5"
+    },
+    {
+      "id": "note-front-door-council-rulings",
+      "path": "docs/notes/front-door-council-rulings.md",
+      "title": "Decision note — Rulings 19–25, resolving the front-door council vetoes",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "Both front-door council vetoes returned BLOCK. Rulings 19-25 resolve them: four dead sheet fields cut and the two the run actually requires added, login remediation moved out of the sheet, the canvas split admitted, descriptor lists instead of registries, session.json instead of session.yaml, hosting settled after a dependency trim, and F2/F3 merged.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "council",
+        "veto",
+        "ruling",
+        "addendum-a"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-a-ratification",
+          "rel": "refines"
+        },
+        {
+          "to": "note-conductor-phase1-e18-close",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e1ff5834b588aa2ec56a2c1eff70494c4da19afbf1205019e4718cd2904a07cd"
     },
     {
       "id": "note-terminal-customization-persistence",
@@ -12357,5 +12429,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6415617ce07b9fdb63baa919b3aa732ab9c00f88b5caa0dd55ade8c74a9696d8"
+  "graphSha256": "aad00f22876a48978f954fa8de08e83b4e99687f7c818a8d323ceb13d6b213c5"
 };
