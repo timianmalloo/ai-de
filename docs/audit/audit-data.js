@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T18:10:48Z",
+  "generated": "2026-09-10T19:07:48Z",
   "audit": [
     {
       "actor": null,
@@ -10611,6 +10611,47 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       }
+    },
+    {
+      "id": "al-01M26BEQABQV7Y1J5BCCTMZV31",
+      "shortname": "ft-template-spine",
+      "datetime": "2026-09-10T19:07:02Z",
+      "session": "ft-template-spine",
+      "prompt": "Execute node FT, the template spine, of the approved front-door plan (docs/plans/conductor-front-door.md, FT section; docs/notes/addendum-b-ratification.md Rulings 26-31; Addendum B B3, B4, B7, R18).\n\nGoal: Land template-schema/1 as a pinned contract, its validator, a deterministic compiler, the catalog with source precedence, and the twelve built-in templates transcribed from Addendum B.\nDone when: every FT clause passes as a test; dotnet build -c Release clean, zero warnings; full gate set green bare.\nNot in scope: the composer or form rendering (F4) - the picker UI - the catalog canvas view (R22, Phase 3) - assist of any kind (R20/R21, Phase 3) - the session object (F0) - web hosting (F1) - anything under Watcher/, Dispatch/ or Terminal/.\nTier: T2. Fan-out cap: 0. Budget: 95 tool calls.\n\nClauses: (1) template-schema/1 pinned from birth, documented in a new pinned-contracts registry (Ruling 29) that links weave/1 and loomkeeper/1 without moving them, and states whether min and tier_default are schema-1 constraints or preserved-unknown fields. (2) when_to_use and why load-blocking; a failed template surfaces as a disabled entry carrying its error. (3) Deterministic compile, byte-identical. (4) Built-in + workspace only, precedence personal > workspace > pack > built-in fixed now, overrides badged, sources an ordered descriptor list. (5) Take an installed YAML dependency scoped to the template loader (Ruling 35); a third hand-rolled reader and JSON frontmatter are both refused; no tag-driven type resolution. (6) The twelve built-ins are transcribed, not authored (Ruling 30), with a fixture test citing B4 and launch/change-order checked against the real audit-log prompts. (7) goal-block's fields ARE GoalBlockFields' six constants; SpawnContractTests.cs stays byte-unchanged; template hints must not read as enforced.\n\nHard constraints: TDD red-first with mutation-bought assertion-level red; TreatWarningsAsErrors, zero warnings; new code in src/AiDe.Core/Sessions/; full gate set at close, bare; never git stash; never verify-test-run.py --update.",
+      "summary": "FT, the template spine. template-schema/1 pinned from birth and declared in a new pinned-contracts registry (Ruling 29) that links weave/1 and loomkeeper/1 where they live: min and tier_default are declared SCHEMA-1 CONSTRAINTS, not preserved unknowns; unknown frontmatter is preserved, never rejected. when_to_use and why are load-blocking and a failed template becomes a disabled catalog entry carrying its error. Compile is byte-deterministic - the renderer walks the template, never the caller's dictionary. Sources are an ordered descriptor list with personal > workspace > pack > built-in fixed now and built-in + workspace registered; overrides are badged. Frontmatter takes YamlDotNet 18.1.0 scoped to one file (Ruling 35), with explicit YAML tags refused before any node is built. The twelve built-ins are transcribed from B4 and re-derived from the spec HTML by the fixture test on every run; launch and change-order are additionally checked field-by-field against audit prompts al-01M23NQ3H2X748YSBMDKDVV9EJ, al-01M24B0ERPJYMCAR1BS49N7J4P and al-01M2687RD6P8RK5KZJXQ0ZBEJS. goal-block's fields are GoalBlockFields' six constants, in spec order; its fan_out_cap and budget hints say validated, not enforced. 124 new tests; compile-red observed, then assertion-level red bought by three mutations.",
+      "kind": "skill",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "src/AiDe.Core/Sessions/TemplateSchema.cs",
+        "src/AiDe.Core/Sessions/TemplateFrontmatterReader.cs",
+        "src/AiDe.Core/Sessions/TemplateLoader.cs",
+        "src/AiDe.Core/Sessions/TemplateCompiler.cs",
+        "src/AiDe.Core/Sessions/TemplateSources.cs",
+        "src/AiDe.Core/Sessions/TemplateCatalog.cs",
+        "docs/architecture/pinned-contracts.md"
+      ],
+      "tags": [
+        "conductor",
+        "templates",
+        "template-schema",
+        "pinned-contract",
+        "front-door"
+      ],
+      "outcome": "success",
+      "goal": "Land template-schema/1 as a pinned contract, its validator, a deterministic compiler, the catalog with source precedence, and the twelve built-in templates transcribed from Addendum B (front-door node FT, R18).",
+      "done_when": "Every FT clause passes as a test; dotnet build -c Release clean with zero warnings; the full gate set green, run bare.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-10T18:42:49Z",
+      "duration_seconds": 1453.0
     }
   ],
   "changes": [

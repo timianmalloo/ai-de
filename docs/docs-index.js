@@ -1712,6 +1712,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "931922b7daf24b6592406a843d77a6399488e3959ad3ae2ed1c3d24637223c11"
     },
     {
+      "id": "api-aide-core-sessions",
+      "path": "docs/api/AiDe.Core.Sessions.md",
+      "title": "API: AiDe.Core.Sessions",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 16 types, 36 members, 92% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4e53f367ac7c555ccb4893f81050d30ba63072677b6e1eb7bf435900a46058db"
+    },
+    {
       "id": "api-aide-core-store",
       "path": "docs/api/AiDe.Core.Store.md",
       "title": "API: AiDe.Core.Store",
@@ -2147,6 +2172,46 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "379b24209d0ac4ce0eda4e2ba6feb0d8fa47d0d8863780cce5b05e98db2803a0"
+    },
+    {
+      "id": "architecture-pinned-contracts",
+      "path": "docs/architecture/pinned-contracts.md",
+      "title": "Pinned contracts registry",
+      "type": "architecture",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "One page naming every pinned contract in this repository — id, version, home document, and evolution rule. Created by Ruling 29 because template-schema/1's validator ships in Phase 1 and enforces a shape, and a contract enforced in code with no documented shape is a shape asserted from code. It LINKS to weave/1 and loomkeeper/1 where they already live; it does not move or restate them.",
+      "tags": [
+        "contracts",
+        "pinned",
+        "template-schema",
+        "weave",
+        "loomkeeper",
+        "governance"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-b-ratification",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-agent-plane",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1bd9b5378c68127a8db8b65282967dc58b152babb1f78b8ccaa12ee907410223"
     },
     {
       "id": "note-2026-08-30-overnight-surfaces",
@@ -12471,5 +12536,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "20007b7f5da6f039a1b982c6f8592dd52c7f3aa9353649eca2c0e0879f3f610b"
+  "graphSha256": "e63c2c1b8236bac4cc999decb24c57aae9d4361c7ad3cb06ec013272094e6e18"
 };

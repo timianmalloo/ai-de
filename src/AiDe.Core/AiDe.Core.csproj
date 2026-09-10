@@ -19,6 +19,23 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" />
+
+    <!--
+      SCOPED TO THE TEMPLATE LOADER (Sessions/TemplateFrontmatterReader.cs) and nowhere else. It
+      reads the frontmatter of a `template-schema/1` file through YamlDotNet's DOM, so the document
+      never chooses a CLR type: the loader picks every type from the schema. Migrating the two
+      existing subset readers onto it is a recorded next step, not this slice.
+    -->
+    <PackageReference Include="YamlDotNet" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      The twelve built-in templates ship as REAL template files inside the assembly, so the built-in
+      source loads through exactly the parser and validator every other source uses. A C# table
+      would be a second construction path, and the one that never proves the loader works.
+    -->
+    <EmbeddedResource Include="Sessions\BuiltIn\*.template.md" />
   </ItemGroup>
 
   <ItemGroup>

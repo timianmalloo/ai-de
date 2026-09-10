@@ -2,8 +2,8 @@
   "_comment": "Minimum tests that must EXECUTE per project. The control for defect class DC-012: a crashed test host reports success with a smaller count, and nothing else notices. Raise these with `python tools/verify-test-run.py --update` when you add tests; never lower one to make a run pass. Keys with a suffix are HALVES of a project run on one OS; `splits` says which halves must account for which whole, and verify-test-run checks that sum on every invocation, on both operating systems. AiDe.Core.Tests.nonportable is [Trait(\"Platform\",\"Windows\")] only - kernel32, powershell.exe, the net10.0-windows daemon, and tests that assert Windows path semantics on purpose. There is no quarantine category: every test that merely failed on Linux was diagnosed and fixed (INV-0005).",
   "minimumExecuted": {
     "AiDe.App.Tests": 399,
-    "AiDe.Core.Tests": 1877,
-    "AiDe.Core.Tests.portable": 1725,
+    "AiDe.Core.Tests": 2014,
+    "AiDe.Core.Tests.portable": 1862,
     "AiDe.Core.Tests.nonportable": 152
   },
   "splits": {
@@ -12,5 +12,5 @@
       "AiDe.Core.Tests.nonportable"
     ]
   },
-  "_baselineBump": "2026-09-09, Conductor Phase 1 converge (N7). AiDe.Core.Tests 1719 -> 1877 (+158), portable 1569 -> 1725 (+156), nonportable 150 -> 152 (+2); AiDe.App.Tests unchanged at 399. The split halves were MEASURED, not apportioned: --filter Platform=Windows gave 152 and --filter Platform!=Windows gave 1725, and 152 + 1725 = 1877, so the split invariant holds by observation rather than by arithmetic on one number. +155 of the +158 were added by N0-N6 without a bump; N7 added 3 (two terminal-hosting ledger tests, one AcpEngineProcess.ProcessId regression). This is the one deliberate bump of the phase, and it RAISES every floor."
+  "_baselineBump": "2026-09-10, front-door FT (template spine). AiDe.Core.Tests 1877 -> 2014, portable 1725 -> 1862; nonportable unchanged at 152; AiDe.App.Tests unchanged at 399. MEASURED, not apportioned: --filter Platform!=Windows gave 1862 and --filter Platform=Windows gave 152, and 1862 + 152 = 2014, so the split invariant holds by observation. The FT node added 124 portable cases (template schema, loader, compiler, catalog, precedence, frontmatter parser, the B4 transcription fixture and the goal-block field-set check); the remaining rise was already in the branch and had never been baselined. This RAISES every floor it touches."
 }
