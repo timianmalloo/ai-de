@@ -656,7 +656,9 @@ is a composer-input control — what content the operator may transclude into th
 Different object, opposite direction.
 
 - **C21 — a persisted `AttachEnabled` field on `SessionConfig`, defaulting `false` at
-  `SessionConfigStore.Create`, toggled through the store like `EnabledBackends` (**new runs only**).**
+  `SessionConfigStore.Create`, toggled through the store like `EnabledBackends` (**new runs
+  only**). CONFIRMED BY THE HUMAN, 2026-09-10: *"off-by-default should be the default for
+  phase 1"*.**
   - **(a)** *Fails if:* `AttachEnabled` is false and any attach path produces an attachment, **or
     reads a single byte of a picked file**. **Oracle:** red-first — with the toggle false, drop a
     file, use the file dialog, and multi-select N files; assert zero attachments, the draft
@@ -691,6 +693,12 @@ Different object, opposite direction.
     enforceable policy.** A deployment that must *prevent* attach needs a **non-session-overridable
     layer — Phase 2**, named here as the upgrade trigger. *Fails if:* C21 is described anywhere as
     **restricting** or **preventing** attach for a deployment.
+  > **The gap is accepted by the human, not merely noted.** Privacy raised it as a scope
+  > question — *"a per-session toggle the operator can flip is an operator preference with a
+  > safe default; it is not an enforceable policy. If that gap is unacceptable to the human,
+  > they should say so now."* It was put to them and the answer was **off-by-default for
+  > Phase 1**. So Phase 1 ships **the safe default it can honestly deliver**, and the
+  > non-session-overridable layer is Phase 2 **by decision rather than by omission.**
 
 **Refused outright — (i):** any page→host message that reads or writes `AttachEnabled`, in any
 spelling, and any page-side representation of it that the host trusts. **The page may be *told* the

@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T23:34:22Z",
+  "generated": "2026-09-10T23:54:18Z",
   "audit": [
     {
       "actor": null,
@@ -11028,6 +11028,33 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": null
+    },
+    {
+      "id": "al-01M26VWPBWCEHFA97GDC6KPWW0",
+      "shortname": "Human: attach off-by-default for Phase 1; the gap accepted by decision",
+      "datetime": "2026-09-10T23:54:17Z",
+      "session": "conductor-front-door-join",
+      "prompt": "off-by-default should be the default for phase 1",
+      "summary": "HUMAN DECISION on the scope question Privacy raised, captured verbatim: \"off-by-default should be the default for phase 1\".\n\nWHAT IT SETTLES. Privacy ruled C21 -- attach gated, off by default, no Settings surface, a field on the existing SessionConfig record -- and then flagged an honest limit rather than shipping the word \"restrict\" unexamined: SessionConfig is PER-SESSION and operator-writable, so what Phase 1 can deliver is a DEFAULT WITH A SAFE INITIAL STATE, NOT AN ENFORCEABLE POLICY. In a deployment where the egress genuinely is not acceptable, a control the operator can switch on is not a control. Privacy's words: \"If that gap is unacceptable to the human, they should say so now; it is a scope question, not a design one.\"\n\nIt was put to the human verbatim. They chose off-by-default for Phase 1. So the gap is ACCEPTED BY DECISION rather than carried by omission, and the non-session-overridable layer is Phase 2 with C21(f) as its named upgrade trigger.\n\nWHY OFF-BY-DEFAULT COSTS THIS OPERATOR ALMOST NOTHING, which is what made the literal reading of \"opt-in\" affordable: gating ATTACH rather than egress or send means free-form send, goal blocks, templates and paste-to-fence all work with it off -- F4's own S1 guard already requires free-form to work with no template anywhere in the path. Gating egress or send would have been dishonest in a specific way Privacy named: claude-code is a separate process the operator launches from a terminal anyway, so switching off AI-DE's send does not stop the egress, it ROUTES AROUND it -- which is C14(e)'s own test for whether a control is real.\n\nAND THE ASYMMETRY THAT DECIDED THE DEFAULT: the failure modes are not symmetric and one is irreversible -- \"once sent, nothing is retractable\". Off-by-default is safe for the deployment that never opens the settings; on-by-default is safe only for the one that does.\n\nSTILL OPEN, and it is the operator's to close: row 6a of the provider record, the ACCOUNT'S OBSERVED model-improvement setting. The default for a new signup is not published by Anthropic, so the record must carry an observation rather than a tier-level assumption. The conductor's reading is that this does NOT block -- it decides which published retention figure applies, not whether the egress is permitted -- and that reading has been put to Privacy to confirm or overrule rather than self-certified.\n\nTHE RECORD ITSELF is written at docs/security/conductor-privacy-review.md and has been sent to Privacy for confirmation. The conductor did not clear its own artifact: Privacy set the clearing condition and its own line was \"I do not clear my own basis\", so the same logic applies to the document the conductor wrote against that condition.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "timianmalloo (human)",
+      "artifacts": [
+        "docs/plans/conductor-front-door.md",
+        "docs/security/conductor-privacy-review.md"
+      ],
+      "tags": [
+        "conductor",
+        "privacy",
+        "c21",
+        "human-floor",
+        "f4"
+      ],
+      "outcome": "success",
+      "goal": "Settle whether a safe default, rather than enforceable prevention, is acceptable for Phase 1",
+      "done_when": "C21's default confirmed and the per-session limit recorded as accepted rather than omitted",
+      "tier": "T2"
     }
   ],
   "changes": [
