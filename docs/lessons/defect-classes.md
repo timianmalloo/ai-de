@@ -28,14 +28,16 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 45 · uncontrolled 6
+**Status counts:** controlled 64 · partially-controlled 46 · uncontrolled 6
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
-**Recurrences since last review:** 4.
+**Recurrences since last review:** 5.
 - **DC-008**, whose first control was scoped to one test project when the cause was not project-specific.
 - **DC-001**, whose first control checked links between files and so could not see three classes cited by ID with no entry in this register.
 - **DC-013**, which recurred the same day it was first caused, because the first occurrence was repaired without being registered at all.
 - **DC-021**, which reached its *third* occurrence before it was registered at all: each repair was cheap enough to make asking why unnecessary.
+- **DC-071**, whose first control lived inside a vendored file and was silently deleted six hours
+  later by a routine `/updatepack` — the fix and the mechanism that erases it shared one file.
 
 *All three are CI4: a second occurrence means the control was wrong, not that someone was careless. In the first two the control had been written to fit the instances rather than the class; in the third there was no control at all, because the first occurrence was repaired and never registered — which is the failure this file exists to prevent.*
 
@@ -2280,7 +2282,68 @@ for both or split.*
   hat. The executable guard is `verify-derived-views.py`, which now passes across worktrees for the
   first time. **Observed failing 2026-08-31** on `main`: both derived views reported stale, with the
   only substantive difference being the project name.
-- **Status:** `controlled`
+- **Recurrence, 2026-09-10 (lane-rename follow-up).** The 2026-08-31 control lived *inside* the
+  vendored generator (`audit-log.py`'s `project_name()`, reading the git remote first). `chore:
+  update AI-Forward Pack: revision 45 -> 59` (`7bb1892`), six hours later the same day, overwrote
+  `audit-log.py` wholesale from the upstream pack source — which did not yet carry this repo's
+  local fix — and silently deleted `_remote_project` and its call, with no test failing, because
+  the only executable guard (`verify-derived-views.py`) was run from `ai-de` itself that day and
+  the defect is invisible from inside the one checkout named correctly. `verify-derived-views`
+  then reported `docs/audit/audit-data.js` **falsely stale** in three different worktrees this
+  same session (`ai-de-chore-lane-rename`, and two more the same class of agent reported working
+  in), each read as "the artifact is wrong" rather than "the check is wrong" — exactly DC-060's
+  message, misattributed. It also came within one comparison of a **false negative**: it silently
+  corrupted `verify-derived-views --self-test`'s own `timestamp_only` assertion (a check meant to
+  confirm a volatile field alone never fails the gate) by contaminating `check(root)` with the
+  same unrelated finding, on every run from a mismatched worktree — a control's self-test, broken
+  by the very class the control exists to catch.
+
+  The pack itself independently arrived at a *different*, compatible fix for the same class,
+  registered as its own `PACK-P`: not a smarter generator default, but every **caller** pinning
+  `--root docs --project <name>` explicitly (`.agents/artifacts.yml`'s committed registry,
+  `coord-core.py`'s `_canonical_project`). That fix survives a vendored-file overwrite because it
+  lives in the *caller*, never in the file the pack update replaces. `verify-derived-views.py` —
+  a repo-local tool, not a vendored pack script — was the one caller still invoking `render` bare.
+  Fixed there the same way, with `--root docs --project ai-de` pinned at the call site (matching
+  the values already committed everywhere else), never by teaching the gate to tolerate a
+  mismatch — the artifact really would be wrong if regenerated that way.
+
+  **Refined shape, generalizing past this one call site:** *a verification gate reconstructs an
+  artifact with different arguments than the ones that built the committed copy, so it measures
+  its own invocation rather than the artifact, and reports the difference as the artifact's
+  fault.* WT1a (a session always works in its own worktree) turns this from a latent mismatch
+  into the everyday case: the one directory where the bare invocation is honest — the repository's
+  own canonical name — is, by policy, the one directory a session is never supposed to be
+  working in.
+
+  Sibling sweep of `verify-derived-views.py`'s own `VIEWS` table: `docs-graph.py derive` (no
+  `--project`) is not an instance — `project_identity()` reads the value already committed in
+  `docs-index.js` before falling back to the directory, so it is self-healing wherever the file
+  already exists (an unrelated, thinner exposure only on a first-ever derive, out of scope here).
+  `build-doc-viewer.py` hardcodes the literal string `'AI-DE'`, never derived from the directory.
+  `api-reference.py` embeds no project identity at all. **One instance in this table, not two.**
+
+  Related, not fixed here: `tools/regenerate-derived.py` — the single documented entry point for
+  "regenerate everything, in the right order" (DC-082) — never calls `audit-log.py render` at
+  all, so following its own instructions after appending an audit entry does not regenerate
+  `audit-data.js`. Different failure shape (an omitted call, not a wrong argument to a present
+  one); flagged for separate attention.
+- **Control (this recurrence).** `tools/verify-derived-views.py`'s own `VIEWS` table now pins
+  `--root docs --project ai-de` on the `audit-log.py render` command, matching the values
+  `.agents/artifacts.yml` and `coord-core.py` already commit to — one decided value, cited, not
+  reinvented. `self_test()` gained a permanent, environment-independent reproduction: it
+  provisions a throwaway `git worktree` under a name guaranteed never to equal the canonical
+  project, runs `check()` rooted there, and fails if `docs/audit/audit-data.js` is reported stale
+  — so this recurring exactly the same way fails the self-test regardless of which directory a
+  future session happens to run it from, including `ai-de` itself. **Observed failing 2026-09-10**
+  before the fix (see `docs/proof/pp-lane-rename-ruling-15.md` and the follow-up proof pack for
+  the transcript); passes after.
+- **Status:** `partially-controlled` — durable against a repeat of *this exact* regression path
+  (a pack update overwriting a vendored generator's local fix), because the pin now lives outside
+  every file `/updatepack` can touch, and the self-test catches a reversion of this call site from
+  any directory. Not `controlled`: the class's general shape — any future caller of `render` (a
+  new skill, a new script) that forgets `--root`/`--project` — is prevented by convention and a
+  code comment, not by construction; nothing stops a *new* caller from repeating DC-071 verbatim.
 
 
 ### DC-072 — Ambient input handler competes with a focused capture surface

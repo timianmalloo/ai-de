@@ -48,7 +48,13 @@ VIEWS = [
     },
     {
         "path": "docs/audit/audit-data.js",
-        "command": ["docs/ai-forward-pack/scripts/audit-log.py", "render"],
+        # --root/--project pinned explicitly (DC-071 recurrence, 2026-09-10): left to their
+        # defaults, audit-log.py derives "project" from the WORKING DIRECTORY's name, which is
+        # the WORKTREE's name, never the repository's (WT1a makes a worktree the every-day case,
+        # not an edge one). This is the same value `.agents/artifacts.yml`'s committed registry
+        # and `coord-core.py`'s `_canonical_project` already pin every derived-view command to —
+        # matched here, not reinvented, so there is exactly one place this name is decided.
+        "command": ["docs/ai-forward-pack/scripts/audit-log.py", "--root", "docs", "--project", "ai-de", "render"],
         "from": "docs/audit/audit-log.jsonl and docs/audit/change-log.jsonl",
     },
     {
@@ -217,6 +223,38 @@ def check(root: Path) -> list[str]:
     return findings
 
 
+def _check_from_a_differently_named_worktree(root: Path) -> list[str] | None:
+    """The DC-071-recurrence reproduction: check from a directory that is NEVER "ai-de".
+
+    Provisions a throwaway `git worktree` under a name guaranteed not to match the canonical
+    project (a random suffix), runs `check()` rooted there, and returns whatever it reports
+    for `docs/audit/audit-data.js` — which must be empty, since nothing about the CONTENT
+    changed, only the directory name. Manufacturing the mismatch here means this reproduces
+    identically whether this file is run from the "ai-de" primary checkout or from any worktree
+    — WT1a makes a worktree the every-day case, so the test must not depend on which one this
+    process happens to be in today. Returns None (not a finding list) if the worktree itself
+    could not be provisioned, so that is never confused with "no findings."
+    """
+    import tempfile
+    import uuid
+
+    wt_path = Path(tempfile.gettempdir()) / f"verify-derived-views-selftest-not-ai-de-{uuid.uuid4().hex[:8]}"
+
+    added = subprocess.run(
+        ["git", "worktree", "add", "--detach", str(wt_path), "HEAD"],
+        cwd=root, capture_output=True, text=True)
+
+    if added.returncode != 0:
+        print(f"  (could not provision the worktree: {added.stderr.strip()[:300]})")
+        return None
+
+    try:
+        return [f for f in check(wt_path) if "audit-data.js" in f]
+    finally:
+        subprocess.run(["git", "worktree", "remove", "--force", str(wt_path)],
+                       cwd=root, capture_output=True, text=True)
+
+
 def self_test(root: Path) -> int:
     """The control must be observed FAILING, or it is not a control (CI6)."""
     view = VIEWS[0]
@@ -282,6 +320,21 @@ def self_test(root: Path) -> int:
         print("verify-derived-views: SELF-TEST FAILED — a difference in documented_sha alone was "
               "reported. That field is the parent commit by construction, so this gate would be red "
               "on every clean run — which is exactly why the published docs went ungated.")
+        return 1
+
+    name_mismatch = _check_from_a_differently_named_worktree(root)
+
+    if name_mismatch is None:
+        print("verify-derived-views: SELF-TEST FAILED — could not provision a differently-named "
+              "worktree to check from; see stderr above.")
+        return 1
+
+    if name_mismatch:
+        print("verify-derived-views: SELF-TEST FAILED (DC-071 recurrence) — docs/audit/audit-data.js "
+              "was reported stale from a worktree not literally named the canonical project, with "
+              "nothing else changed:")
+        for finding in name_mismatch:
+            print(f"  {finding}")
         return 1
 
     print("verify-derived-views: self-test OK — a stale view fails; a changed timestamp and a "
