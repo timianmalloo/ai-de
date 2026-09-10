@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T21:20:53Z",
+  "generated": "2026-09-10T21:41:42Z",
   "audit": [
     {
       "actor": null,
@@ -10878,6 +10878,30 @@ window.AUDIT_DATA = {
       "signals": {
         "regression": true
       }
+    },
+    {
+      "id": "al-01M26M8CYZ3YDG02BGPDK42RB2",
+      "shortname": "Orphaned worktree directory found; reported, not removed",
+      "datetime": "2026-09-10T21:40:52Z",
+      "session": "conductor-front-door-join",
+      "prompt": "Check for orphaned worktree directories after the repo-wide cleanup.",
+      "summary": "ORPHANED WORKTREE DIRECTORY FOUND IN ai-de. Reported, NOT removed. Needs a human decision.\n\nPATH: C:/projects/ai-de-spike-codemirror  (7.0 MB, 638 files)\n\nWHY IT IS AN ORPHAN: it is on disk and git does not know it. `git worktree list` does not mention it and it carries NO .git file, so no worktree command will ever find it. This is the exact mechanism rev 69 found upstream: git DE-REGISTERS a worktree before it deletes the directory, so a failed delete leaves a directory nothing will ever clean up. Note the name: the registered spike tree is ai-de-spike-codemirror-TRIM; this is a different, earlier one.\n\nWHAT IT HOLDS -- assessed rather than assumed:\n  - 638 files vs the repo's 728. Exactly TWO files exist here and not in main: src/AiDe.Core/AgentPlane/GovernedSessionSource.cs and tests/AiDe.Core.Tests/AgentPlane/GovernedSessionSourceTests.cs.\n  - Those are the PRE-RENAME names. Ruling 15/15a renamed GovernedSessionSource -> GovernedLaneSource; both successors exist in main and are NEWER (Sep 9 17:50 vs the orphan's newest file at Sep 9 17:33, a 17-minute gap).\n  - Every other differing file is an older revision of something main has moved past.\n  - CONCLUSION: no unique work. It is a snapshot taken minutes before the lane rename landed.\n\nWHY IT WAS NOT DELETED, despite holding nothing unique:\n  - WT1 is explicit that cleanup is FAIL-SAFE: a tree that cannot be shown removable is \"reported, never removed\", and deletion is opt-in.\n  - With no .git, the \"carries no commit that exists nowhere else\" test CANNOT be run at all -- only a file-level comparison, which is weaker evidence than the rule asks for.\n  - Deleting 7 MB of files is irreversible and outside the plan, which is a stated human floor in this programme, not a conductor or Owner call.\n\nRECOMMENDATION: it appears safe to delete by hand, on the file-level evidence above. That recommendation is the conductor's read, not a clearance.\n\nRELATED, and the reason this was looked for at all: an agent ran `coord worktree cleanup --remove` in ai-de, which is repo-wide, and reported \"removed 4 of 4\" while one live tree survived. Verified afterwards: NO WORK WAS LOST -- the two trees actually removed had branch tips already merged to main, and every live tree was correctly KEPT. The fail-safe held. Upstream rev 69 now (a) counts by reading the inventory back rather than by intent, (b) reports ORPHANED as a distinct outcome from \"not removed\", because telling an operator to retry something git can no longer see is worse than saying nothing, and (c) adds --path to scope a removal to one tree.\n\nai-de is on pack rev 68; rev 69 carries these fixes. Pulling it is a recorded next step.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [],
+      "tags": [
+        "conductor",
+        "worktree",
+        "wt1",
+        "orphan",
+        "human-decision"
+      ],
+      "outcome": "partial",
+      "goal": "Establish whether the repo-wide cleanup lost or orphaned any work",
+      "done_when": "Every on-disk ai-de-* directory is either registered by git or assessed and reported",
+      "tier": "T2"
     }
   ],
   "changes": [

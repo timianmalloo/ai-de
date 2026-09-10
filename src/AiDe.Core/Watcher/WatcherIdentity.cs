@@ -110,6 +110,33 @@ public sealed record RepositoryIdentity
 
         return OperatingSystem.IsWindows() ? normalised.ToLowerInvariant() : normalised;
     }
+
+    /// <summary>The inverse boundary: an identity respelled as a path THIS machine can open.</summary>
+    /// <remarks>
+    /// <para><b>Every filesystem call that starts from an identity goes through here.</b>
+    /// <see cref="Canonicalise"/> writes a BACKSLASH on every platform on purpose, which is right for
+    /// an identity and wrong for a path: on Linux the result is one filename with no separators in
+    /// it, so <c>File.Exists</c> and <c>Directory.Exists</c> answer "no" about a file that could not
+    /// exist, and the caller reports that absence as a fact about the world.</para>
+    ///
+    /// <para><b>A named function, because the rule had already been learned and written down.</b>
+    /// INV-0005 converted at the verifier's boundary and left the rule as prose in three comments,
+    /// which is a memoir rather than a control. The correction's boundary, one call further out, kept
+    /// handing <c>CanonicalPath</c> straight to the filesystem, so no linked worktree was ever
+    /// corrected on Linux; the miss was invisible because "unknown" is also the honest answer when
+    /// the registrant's path is simply not ours. DC-115's generalisation, at a second site.</para>
+    ///
+    /// <para><b>Deliberately not an exact inverse.</b> A POSIX filename may contain a backslash, and
+    /// this turns it into a separator. The ambiguity is created by <see cref="Canonicalise"/> and
+    /// cannot be undone here: a directory whose name contains a backslash is unreachable through an
+    /// identity, on any platform. Naming the limit is the point, because the alternative is a caller
+    /// that believes the round trip is total.</para>
+    /// </remarks>
+    public static string ToFileSystemPath(string? path)
+        => string.IsNullOrWhiteSpace(path)
+            ? path ?? string.Empty
+            : path.Replace('\\', Path.DirectorySeparatorChar)
+                  .Replace('/', Path.DirectorySeparatorChar);
 }
 
 /// <summary>

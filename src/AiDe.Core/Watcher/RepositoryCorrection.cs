@@ -58,7 +58,16 @@ public sealed class FileSystemRepositoryLocator : IRepositoryLocator
 
         try
         {
-            var dotGit = Path.Combine(checkoutPath, ".git");
+            // THE IDENTITY-TO-FILESYSTEM BOUNDARY, and it belongs where a path first meets the
+            // filesystem rather than in each caller, because both callers legitimately hold an
+            // IDENTITY: Apply below passes Repository.CanonicalPath, which Canonicalise spells with a
+            // backslash on every platform on purpose so that one repository stays one repository
+            // wherever it is read. On Linux "\tmp\x-lane" is a single filename, so File.Exists was
+            // false for every linked worktree, this answered "nothing to correct", and the correction
+            // silently never fired: the half of INV-0005 left standing after the pointer file's own
+            // separators were fixed below.
+            var checkout = RepositoryIdentity.ToFileSystemPath(checkoutPath);
+            var dotGit = Path.Combine(checkout, ".git");
 
             // A repository root has a .git DIRECTORY, and a linked worktree has a .git FILE, so
             // "is not a file" already covers both the directory case and the absent case.
