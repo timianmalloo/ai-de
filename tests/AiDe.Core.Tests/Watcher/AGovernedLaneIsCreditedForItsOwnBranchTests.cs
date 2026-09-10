@@ -224,7 +224,7 @@ public sealed class AGovernedLaneIsCreditedForItsOwnBranchTests : IDisposable
         Harness: "claude-code",
         Model: "opus");
 
-    private static (GovernedSessionSource Source, InMemoryWatcherObservationStore Store, TimeProvider Time) Circuit()
+    private static (GovernedLaneSource Source, InMemoryWatcherObservationStore Store, TimeProvider Time) Circuit()
     {
         var store = new InMemoryWatcherObservationStore();
         var time = new FixedTimeProvider(DateTimeOffset.UnixEpoch.AddSeconds(At));
@@ -234,7 +234,7 @@ public sealed class AGovernedLaneIsCreditedForItsOwnBranchTests : IDisposable
 
         // The REAL locator: the correction and the evidence search must agree with git, not with a
         // double that agrees with them.
-        return (new GovernedSessionSource(new IngestHost(store, registrar, time)), store, time);
+        return (new GovernedLaneSource(new IngestHost(store, registrar, time)), store, time);
     }
 
     private static string NewDirectory()

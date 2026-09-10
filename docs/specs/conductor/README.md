@@ -11,6 +11,8 @@ links:
   - { to: spec-ai-native-ide, rel: refines }
   - { to: spec-agentic-watcher-substrate, rel: depends-on }
   - { to: architecture, rel: relates-to }
+  - { to: note-conductor-spec-errata-policy, rel: relates-to }
+  - { to: note-conductor-spec-errata-lane-rename, rel: relates-to }
 review-by: 2026-12-09
 ---
 
@@ -41,3 +43,11 @@ Decisions locked by the spec before this programme starts:
 
 Phasing (§12) is the delivery contract. Phase 1 ships the Agent Plane
 (R1, R2, R4-core); later phases proceed only on an explicit ruling.
+
+## Errata
+
+Corrections to the byte-frozen spec HTML, per `note-conductor-spec-errata-policy` (quote the
+corrected line, verbatim, with its line number; never edit the HTML):
+
+- `note-conductor-spec-errata-lane-rename` — v1.0 §6.2 (line 260), §10 (line 336), §11
+  (line 376) name `GovernedSessionSource`; superseded by `GovernedLaneSource` (Ruling 15/A3).

@@ -111,7 +111,7 @@ public static class GovernedRunHost
             Harness: spawn.Binding.EngineId,
             Model: spawn.Binding.Model);
 
-        var session = new GovernedSessionSource(watcher.Ingest).Open(identity, request.Goal);
+        var session = new GovernedLaneSource(watcher.Ingest).Open(identity, request.Goal);
         Report($"episode {session.EpisodeId} opened on session {session.SessionId}");
 
         // R1 bullet 1: the ACP session's cwd IS the provisioned worktree. The provisioner's own type
