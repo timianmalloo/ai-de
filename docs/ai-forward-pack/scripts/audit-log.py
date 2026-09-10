@@ -733,6 +733,8 @@ def cmd_append(args):
             entry["persona_yield"] = _rows
     if args.change or base.get("change"):
         entry["change"] = args.change or base.get("change")
+    if args.supersedes or base.get("supersedes"):
+        entry["supersedes"] = args.supersedes or base.get("supersedes")
     if args.git:
         entry["git"] = git_context(args.root)
     append_log(args.root, "audit", entry)
@@ -1154,6 +1156,9 @@ def main():
     ap_a.add_argument("--artifact", action="append"); ap_a.add_argument("--tag", action="append")
     ap_a.add_argument("--outcome", choices=["success", "partial", "failed", "blocked"])
     ap_a.add_argument("--change", help="link to a change-log id (cl-NNNN)")
+    ap_a.add_argument("--supersedes", help="id of an earlier audit entry this one corrects — the "
+                       "log is append-only, so the original stays and this is the correction "
+                       "(mirrors `change`'s existing --supersedes)")
     ap_a.add_argument("--goal", help="the turn's goal (front matter CT19)")
     ap_a.add_argument("--done-when", dest="done_when", help="the terminal condition (front matter CT19); the PACK-O presence signal /dream mines (AL5b)")
     ap_a.add_argument("--tier", choices=["T0", "T1", "T2"], help="the turn's declared ceremony tier (front matter CT19)")

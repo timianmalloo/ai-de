@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de-feature-conductor-host",
-  "generated": "2026-09-10T00:14:44Z",
+  "generated": "2026-09-10T00:28:07Z",
   "audit": [
     {
       "actor": null,
@@ -10336,6 +10336,46 @@ window.AUDIT_DATA = {
         "branch": "feature/conductor-host",
         "pushed": null
       }
+    },
+    {
+      "id": "al-01M24BDXZF9FDBHG0W86V4N6EF",
+      "shortname": "conductor-phase2-n0-docs-and-profile-evidence",
+      "datetime": "2026-09-10T00:28:07Z",
+      "session": "conductor-phase2-docs",
+      "prompt": "Correction: record the verification evidence omitted from al-01M24ACX5F31CG5XEP17NGYSYB (the Phase-2 N0 docs/profiler entry) - docs-graph.py validate, verify-api-crefs.py and verify-cited-controls.py were all run bare and their results were not captured as signals.",
+      "summary": "Superseding al-01M24ACX5F31CG5XEP17NGYSYB to carry the evidence it omitted. Verified, bare: docs-graph.py validate -> 0 defects over 344 artifacts, 0 problems, 0 orphans. verify-api-crefs.py -> OK, 2814 declared names known, 1165 unresolved spans, none a dropped first character. verify-cited-controls.py -> OK, 133 claimed controls across 13445 code identifiers, all resolve. tools/verify-derived-views.py was NOT green at the time (stale docs/_meta.json and docs/_site/index.html from a concurrent agent's uncommitted src/ changes) and is not claimed here as passing - this entry records only what was actually verified, honestly.",
+      "kind": "skill",
+      "skill": "document",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/architecture/agent-plane.md",
+        "docs/adr/0027-acp-lane-separate-shape.md",
+        "docs/adr/0028-mode-cohort-not-partition.md",
+        "docs/adr/0029-latency-slo-recorded-not-asserted.md",
+        "docs/profiles/conductor-phase1.md",
+        "docs/profiles/sp-0001/profile.md"
+      ],
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "phase-2",
+        "documentation",
+        "session-profiler",
+        "audit-capture-correction"
+      ],
+      "outcome": "success",
+      "goal": "Bring the curated documentation current for the AgentPlane that Phase 1 built, and profile the Phase 1 run itself so Phase 2's planning has measured inputs.",
+      "done_when": "An architecture document and ADRs exist for the AgentPlane with correct frontmatter and typed links; the Docs Explorer index is regenerated and validates with zero defects; a session profile of Phase 1 exists with findings and fixes tables.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "supersedes": "al-01M24ACX5F31CG5XEP17NGYSYB"
     }
   ],
   "changes": [
