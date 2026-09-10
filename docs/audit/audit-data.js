@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de",
-  "generated": "2026-09-09T22:48:20Z",
+  "project": "ai-de-feature-conductor-host",
+  "generated": "2026-09-10T00:14:44Z",
   "audit": [
     {
       "actor": null,
@@ -10240,6 +10240,101 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M249Z5NPXT07050DTBX9XE4R",
+      "shortname": "session-profile-sp-0001",
+      "datetime": "2026-09-10T00:02:35Z",
+      "session": "88ea0857",
+      "prompt": "session-profile.py profile",
+      "summary": "Profile sp-0001: 18 session(s), 98 finding(s)",
+      "kind": "script",
+      "skill": "session-profiler",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/profiles/sp-0001/profile.md"
+      ],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M24ACX5F31CG5XEP17NGYSYB",
+      "shortname": "conductor-phase2-n0-docs-and-profile",
+      "datetime": "2026-09-10T00:10:05Z",
+      "session": "conductor-phase2-docs",
+      "prompt": "Execute the documentation half of Phase 2's mandatory node N0: bring the curated documentation current for the AgentPlane that Phase 1 built (architecture doc + ADRs + docs graph regeneration), and run /session-profiler over the Phase 1 run itself so Phase 2's planning has measured inputs. Work only in docs/ in worktree ai-de-feature-conductor-host; do not touch src/, tests/, or docs/lessons/defect-classes.md.",
+      "summary": "AgentPlane architecture doc (docs/architecture/agent-plane.md, following the loomkeeper.md subsystem-architecture convention) with embedded component + sequence mermaid diagrams; 3 ADRs (0027 ACP-lane-separate-shape/privacy-contract collision, 0028 mode-cohort-not-partition, 0029 latency-SLO-recorded-not-asserted), each tracing to its docs/notes/conductor-*.md ruling. Found: the task brief said eleven conductor-*.md notes; thirteen exist and were all read. Session-profiler run: 3 of 8 Phase-1 plan nodes carry a measured duration (N4 1931s, N5+N6 1374s, N7 2404s); N0/N1+N2/N3 and all orchestration steps read not-recorded because audit-log.py append consumes exactly one preceding start. 35.6% of the 4h51m Phase-1 window is inside a measured node. N7's verification cost (2404s) outweighs its 102s exit run by ~23:1. Two whole-repo profiler findings (SP-06, SP-09) were disconfirmed against this session specifically: the audit log shows tier/goal/done-when WAS recorded for the delegated nodes, so the heuristic's miss is a detector-scope gap (it does not parse a dispatched sub-agent's own prompt), not a CT19 compliance gap. One finding (SP-15, session overlap) struck as noise (2-3s git-status checks). Per-node token/cost, per-node tool-call counts, and sub-agent-level cost for the Claude-harness delegations could not be measured and are reported as not recorded, not modeled. New CTX-shaped classes proposed but NOT registered in docs/lessons/defect-classes.md, which is owned by a concurrent agent in this worktree.",
+      "kind": "skill",
+      "skill": "document",
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/architecture/agent-plane.md",
+        "docs/adr/0027-acp-lane-separate-shape.md",
+        "docs/adr/0028-mode-cohort-not-partition.md",
+        "docs/adr/0029-latency-slo-recorded-not-asserted.md",
+        "docs/profiles/conductor-phase1.md",
+        "docs/profiles/sp-0001/profile.md"
+      ],
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "phase-2",
+        "documentation",
+        "session-profiler"
+      ],
+      "outcome": "success",
+      "goal": "Bring the curated documentation current for the AgentPlane that Phase 1 built, and profile the Phase 1 run itself so Phase 2's planning has measured inputs.",
+      "done_when": "An architecture document and ADRs exist for the AgentPlane with correct frontmatter and typed links; the Docs Explorer index is regenerated and validates with zero defects; a session profile of Phase 1 exists with findings and fixes tables.",
+      "tier": "T1",
+      "fan_out": 0,
+      "started_at": "2026-09-09T23:54:35Z",
+      "duration_seconds": 930.0
+    },
+    {
+      "id": "al-01M24ANDK8H7FC6KR8R7RJC5MA",
+      "shortname": "conductor-phase2-n0-dc-115-control",
+      "datetime": "2026-09-10T00:14:44Z",
+      "session": "conductor-phase2",
+      "prompt": "Execute the blocking half of Phase 2's mandatory node N0: give DC-115 a control. Evaluate the Owner's candidate (verify against SessionBinding.Worktree.Path) rather than implementing it blind; keep the three-state verdict and the path-traversal containment; change no scoring semantics; red first, then fix, then break the fix deliberately to prove the oracle can fail.",
+      "summary": "DC-115 controlled in part. Reproduced behaviourally with a real repository, a real linked worktree and a Proof Pack committed on the lane's branch, driven through GovernedSessionSource and the real FileSystemRepositoryLocator: observed 'Not Scored - no minimum verification path' on BOTH routes to the defect. Took the Owner's candidate (a) and tightened it: ProofPackVerifier.VerifyInCheckouts folds a verdict across the session's checkouts (Verified beats NotFound beats Unverifiable, order-independent, containment applied whole per root), and ClosedEpisodeScoring.CheckoutsOf admits the lane's tree only when IRepositoryLocator reads its .git pointer and finds the bound repository - the registrant's worktree claim is checked, never trusted. Candidate (b) declined (Core does not shell out); candidate (c) declined (scoring semantics, out of phase scope). Three deliberate breaks each reddened their own assertion and nothing else. Suite 1890/399, build 0 warnings. Register correction: RepositoryCorrection is only one route - a governed lane registers the parent as repo.path already, so the correction never fires for the shape spec 6.4 provisions, and it still scored Not Scored. DC-115 -> partially-controlled: a released tree, the Unverifiable collapse at EpisodeEvidence, and the two-doors asymmetry remain open.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "src/AiDe.Core/Watcher/ProofPackVerifier.cs",
+        "src/AiDe.Core/Watcher/ClosedEpisodeScoring.cs",
+        "tests/AiDe.Core.Tests/Watcher/AGovernedLaneIsCreditedForItsOwnBranchTests.cs",
+        "tests/AiDe.Core.Tests/Watcher/ProofPackVerifierAcrossCheckoutsTests.cs",
+        "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md"
+      ],
+      "tags": [
+        "conductor",
+        "phase-2",
+        "dc-115",
+        "watcher"
+      ],
+      "outcome": "success",
+      "goal": "Give DC-115 a control, so a governed lane in a linked worktree is credited for evidence it committed on its own branch.",
+      "done_when": "A red-first behavioural test reproduces the false Not Scored verdict, the fix makes it green, ProofPackVerifier's non-worktree behaviour is unchanged, dotnet build -c Release is clean with zero warnings, and the full gate set is reported with exit codes.",
+      "tier": "T2",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-09T23:53:25Z",
+      "duration_seconds": 1279.0,
+      "git": {
+        "sha": "b1831d0fd30cd10cb785bcedae8109523457570e",
+        "short": "b1831d0fd",
+        "branch": "feature/conductor-host",
+        "pushed": null
       }
     }
   ],
