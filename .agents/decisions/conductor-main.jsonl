@@ -107,3 +107,9 @@
 {"agent": "conductor-main", "at": 1789063549.2394793, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1789063549.2394793, "code": null, "kind": "allowed", "path": "docs/notes/addendum-b-reconciliation.md", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1789063549.2394793, "code": null, "kind": "allowed", "path": "docs/specs/conductor/ai-de-spec-addendum-b-prompt-templates.html", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789063849.173311, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789063849.1807606, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789063849.1823192, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789063849.1823192, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789063849.1823192, "code": null, "kind": "allowed", "path": "docs/notes/addendum-b-ratification.md", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789063849.1823192, "code": null, "kind": "allowed", "path": "docs/notes/front-door-council-rulings.md", "session": "conductor-main", "wi": ""}

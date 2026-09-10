@@ -1,189 +1,298 @@
 ---
 id: plan-conductor-front-door
-title: "Execution graph — Phase 1, Session front door (R13–R16)"
+title: "Execution graph — Phase 1, Session front door (R13–R16, R18–R19)"
 type: doc
 status: in-review
 owner: "@timianmalloo"
 phase: "1"
-tags: [execution-graph, conductor, addendum-a, session, composer, canvas, front-door]
+tags: [execution-graph, conductor, addendum-a, addendum-b, session, composer, templates]
 links:
+  - { to: note-front-door-council-rulings, rel: depends-on }
+  - { to: note-addendum-b-ratification, rel: depends-on }
   - { to: note-addendum-a-ratification, rel: depends-on }
-  - { to: note-addendum-a-reconciliation, rel: depends-on }
+  - { to: note-addendum-b-reconciliation, rel: depends-on }
   - { to: plan-conductor-programme, rel: refines }
-  - { to: spec-conductor, rel: relates-to }
 review-by: 2026-12-10
 summary: >-
-  The second Phase-1 delivery: Addendum A's front door, as six mostly serial nodes. Carries
-  the CodeMirror spike result and the one decision it left open - how the web surface is
-  hosted - plus the E7 surface list, red-first tests per acceptance bullet, and a budget
-  derived from Phase 1's three measured node durations.
+  Revision 2. Rewritten against Rulings 19-31, the Test Architect's ten Blockers, the
+  Simplifier's seven Majors and Security's C1-C8. Six nodes, width 3 at the head. Every
+  R13-R16 and R18-R19 bullet is a clause with an oracle, or a cut naming its ruling.
 ---
 
 # Execution graph — Phase 1, Session front door
 
-**Status: awaiting Owner plan-approval.** Ruling 16 requires this slice to have its own
-approval ruling before its first code node; it is not authorised by the ratification alone.
+**Revision 2.** Revision 1 was **BLOCKED by both council vetoes**. This rewrite folds
+**Rulings 19–31**, the Test Architect's **10 Blockers**, the Simplifier's **7 Majors**, and
+Security's **C1–C8**.
+
+**Still not approved.** Ruling 16 requires this slice's own plan-approval ruling, and Ruling 31
+requires the collision re-check against the now-filed Rulings 19–25 to report first.
+
+## What Revision 1 got wrong
+
+Recorded, because the corrections are the most reusable part of this document.
+
+| Defect | Correction |
+| --- | --- |
+| **Six R13–R16 bullets had no clause, and none had been cut** | Every bullet below is a clause with an oracle, or a cut naming its ruling |
+| I repeated the oracle defect in **six** places; **F5 had no `Fails if` at all** | Every clause names the input that makes it fail |
+| **I violated DC-116 in the artifact that cites it** — asserted "Recent sessions" and "paired-zone preset" as existing destinations; neither exists in `src/` | Both are now **new construction**, stated as such |
+| I cited ADR-0017's proof as grounding — **`Assert.Same` passes on a disposed instance**, so it cannot detect what my clause demanded | The clause now names an oracle that detects disposal |
+| I recommended hosting option (c) on **idiom** | Re-argued on correctness-over-time; the trim was measured before the ruling |
+| **Rulings 19–25 were never filed** | Filed. *An unfiled ruling is not recorded* |
 
 ## Goal state
 
-- **Goal:** deliver Addendum A's front door — File → New Session, the session document, the
-  composer, and the output canvas — as the second Phase-1 delivery.
+- **Goal:** deliver Addendum A's front door and Addendum B's template foundation, as the second
+  Phase-1 delivery.
 - **Done when:** *"a real governed run started from File → New Session, composed in the rich
-  composer, streamed in Console mode, scored end-to-end by the existing Watcher, with zero
-  terminal hosting"*; R13–R16 pass as tests under the ratification's cuts; suite green on main;
-  Owner signs the front-door E18.
-- **Not in scope:** R17 Artifacts viewer (Phase 3) · Artifacts/Profiler/Board canvas modes ·
-  artifact and block mention sources · the conductor-drafted goal-block reply (needs
-  `ConductorHost`) · `RunLogStore` (Phase 3) · any big-bang rename of Watcher session
-  vocabulary · React.
-- **Tier:** T2 · **Width:** 2 at the head, 1 thereafter (justified below).
-
-## The CodeMirror spike result, and the one decision it left open
-
-`spikes/codemirror-composer/` — **YES, with a named cost.** Verified by execution in real
-Chromium: plain `new EditorView` with **zero React imports**; markdown live-edit; a fenced JS
-block fully highlighted; the `@mention` chip a **genuine `Decoration.replace` + `WidgetType`**
-(a real widget replacing source text, not styled text); read-only a first-class facet. MIT
-across all 52 packages.
-
-**The cost is hosting, not the editor**, and it is now decidable — I verified both halves:
-
-- `CanvasSurface.cs:211` loads content with **`NavigateToString`**, which **cannot serve
-  import-map modules at all**.
-- WebView2 **1.0.3485.44** ships `SetVirtualHostNameToFolderMapping`; **nothing in `src/` uses
-  it yet**.
-
-| Option | Cost | Risk |
-| --- | --- | --- |
-| **(a)** Virtual host + generated import map | No bundler; a **second hand-maintained manifest** | The spike measured this: one missing transitive package = **hard runtime failure, no build-time warning** |
-| **(b)** Minimal bundler (esbuild, no config) | Introduces a JS toolchain to a repo with **no `package.json` at root, ever** | A build step .NET developers must know about |
-| **(c)** Vendor one pre-built ESM bundle, committed | **Zero toolchain**, one file, re-fetchable by a recorded command | A vendored blob; updates are deliberate rather than automatic |
-
-**Recommendation: (c), served over a virtual host.** It matches this repo's existing idiom —
-the pack vendors scripts, spikes commit evidence — and it removes the failure the spike actually
-measured, which is the second manifest, not the module count. **This is a decision for the Owner
-at plan approval, not mine**, and (a) is the honest fallback if a vendored blob is judged
-unauditable.
+  composer, streamed in Console mode, scored end-to-end by the existing Watcher, with zero terminal
+  hosting"*; **R13, R14, R15, R16, R18, R19** pass as tests under the rulings' cuts; suite green on
+  main; Owner signs the front-door E18.
+- **Not in scope:** R17 · R20 · R21 · R22 · R23 · R24 · Artifacts/Profiler/Board canvas modes ·
+  the Templates catalog view · artifact and block mention sources · `RunLogStore` · assist of any
+  kind · React · any template beyond the twelve.
+- **Tier:** T2 · **Width:** 3 at the head, 1 thereafter.
 
 ## The nodes
 
-`F0 ∥ F1 → F2 → F3 → F4 → F5`
+`F0 ∥ F1 ∥ FT → F2 → F4 → F5`
 
 | Node | Goal | Tier | Model | Est. |
 | --- | --- | --- | --- | --- |
 | **F0** | Session object + path contract (R14) | T1 | sonnet | ~1400 s |
-| **F1** | Web host decision executed + shell | T2 | opus | ~1900 s |
-| **F2** | New Session sheet + File menu (R13) | T1 | sonnet | ~1900 s |
-| **F3** | Session document + canvas modes (R16) | T1 | sonnet | ~1900 s |
-| **F4** | Composer (R15) | T2 | **opus** | ~1900 s |
+| **F1** | Web host + vendored bundle + its gate (C1–C8) | T2 | **opus** | ~2400 s |
+| **FT** | Template spine — `template-schema/1`, validator, compiler, catalog (R18) | T2 | **opus** | ~2400 s |
+| **F2** | Sheet + File menu + session document + canvas modes + split (R13, R16) | T1 | sonnet | ~3300 s |
+| **F4** | Composer: form engine, goal-block re-base, shapes (R15, R19) | T2 | **opus** | ~2400 s |
 | **F5** | Exit evidence + Proof Pack | T2 | **opus** | ~2400 s |
 
-**Width 2 only at the head, and only because GO5 genuinely holds there.** F0 is C# session
-config and on-disk paths; F1 is WebView2 hosting and a vendored web asset. No shared authored
-file, no shared derived surface, and — applying the lesson N0 taught — **separate worktrees**.
-Everything after F2 contends on `WorkbenchShell.cs`, `SurfaceContentFactory.cs` and
-`MainMenuBuilder.cs`, so it is serial and says so.
+**Width 3, and the GO5 evidence for it.** F0 writes `AiDe.Core/Sessions` session config and the
+`.aide/sessions/` subtree. FT writes `AiDe.Core/Sessions` template types and reads the
+`.aide/templates/` subtree. F1 writes `AiDe.App/Workbench` hosting plus a web asset. **No shared
+authored file; different `.aide/` subtrees; no output edge between any pair** — FT consumes nothing
+F0 produces. **Separate worktrees**, per the lesson N0 taught when two halves shared one tree.
+Everything after F2 serialises on `WorkbenchShell.cs`, `SurfaceContentFactory.cs` and
+`MainMenuBuilder.cs`.
 
-### Exit conditions — each names what would make it fail
+---
 
-**F0 — session object and path contract (R14).**
-- `session.yaml` is written at `.aide/sessions/<session-id>/session.yaml`; the run-log path
-  `.aide/sessions/<session-id>/runs/<run-id>.jsonl` is **reserved and asserted unused** —
-  nothing writes a run log anywhere, which is the ratification's cut (`RunLogStore` is Phase 3).
-- Backend toggles apply to **new runs only** and emit a session event.
-- New event kinds `session.open` / `session.config` ride the **open `kind` string** — no schema
-  change, which N1's ruling already bought.
-  *Fails if:* anything writes a run log, or a toggle retroactively changes a prior run.
+## F0 — session object and path contract (R14)
 
-**F1 — web host.**
-- The chosen option (Owner's ruling) is executed, and a CodeMirror instance **renders inside the
-  real WebView2 host**, not only in headless Chromium.
-- **`NavigateToString` remains for the existing canvas** — this must not regress `CanvasSurface`.
-  *Fails if:* the existing canvas stops rendering, or the editor works only outside WebView2.
+- `session.json` at `.aide/sessions/<session-id>/session.json` (**Ruling 23** — no YAML parser
+  exists; recorded as an A3 erratum). *Fails if:* a YAML dependency appears.
+- The run-log path `.aide/sessions/<session-id>/runs/<run-id>.jsonl` is **reserved and asserted
+  unused**. *Fails if:* anything writes a run log anywhere (`RunLogStore` is Phase 3).
+- Backend toggles apply to **new runs only** and emit a session event. *Fails if:* a toggle changes
+  a prior run's recorded config.
+- New kinds `session.open` / `session.config` ride the **open `kind` string**. *Fails if:* the
+  envelope's schema changes — asserted by a test that adds an unknown kind and shows it survives.
+- **R14 b2 lint** (Test Architect Major): a check that new symbols in this slice use "session" only
+  for the container. *Depends on the rename node* (Ruling 15/15a, already landed).
 
-**F2 — New Session sheet + File menu (R13).**
-- `Ctrl+N` with an active workspace opens the sheet **pre-bound**; with none, the **workspace
-  chooser interposes and cancel aborts cleanly**.
-- Agent backends listed **from `EngineCatalog` filtered by `ProviderRegistry` state**, with live
-  per-account health — these already exist and must be *read*, not re-modelled.
-- Create writes `session.yaml`, opens the document, registers in **Recent sessions**.
-- **`File → New Terminal Session` still produces today's terminal session, unchanged** —
-  asserted, not assumed.
-  *Fails if:* a session can exist unbound to a workspace, or the terminal path changes behaviour.
+## F1 — web host, vendored bundle, and the gate that makes the hash a control
 
-**F3 — session document + canvas modes (R16).**
-- Surface kind is **`"session-document"`** (Ruling 18) — never `"session"`, which sits one letter
-  from the existing `"sessions"` and is a defect signature.
-- **Console and Terminal only**, registered **data-driven** (Owner condition a) — not a
-  hard-coded strip with placeholders.
-- **ADR-0017 retain-never-rebuild proven against a LIVE LANE**, the way the ADR does it — mode
-  switch and tab switch must not dispose the surface or any lane. *Inspection is not proof.*
-- **A permission request surfaces within one event cycle regardless of active mode**, proven
-  **red-first with a synthetic permission event** (Owner condition e — the exit run may raise
-  none; Phase 1's seven were all lease-approved).
-  *Fails if:* unparenting disposes a lane, or a permission is hostage to the selected tab.
+Hosting is **option (c)** — a vendored, hash-pinned ESM bundle (**Ruling 24**), after the trim that
+took packages 52 → 26 and import-map entries 51 → 24 **without changing the ranking**, because
+`NavigateToString` cannot serve import-map modules at all.
 
-**F4 — composer (R15).**
-- Markdown-live editing, highlighted fences, and **@-mention chips that materialise a recipe
-  line** — files and graph nodes only (ratification cut).
-- **Message and Goal-block shapes**; a **T2 goal block missing a CT19 field cannot send**, with a
-  field-level error — the same six-field parameterised test shape N3 used, not one omit-case.
-- **US-ED5/ED6/ED7 hold**: never sent by editing · one explicit send · draft persists across
-  restart · the same draft **transfers one-way to a ready observed lane**.
-- **One text stack** — the Source viewer, when it lands, uses this same editor.
-  *Fails if:* editing sends, a draft is lost across restart, or the transfer path regresses.
+**Security conditions, each a clause:**
 
-**F5 — exit evidence + Proof Pack.**
-The amended done-when, as a falsifiable floor:
-1. The run is **started from File → New Session** — not constructed in a test.
-2. **Composed in the composer** and **streamed in Console mode**.
-3. **Scored end-to-end**, cell `IsComparable == true`.
-4. **`terminalHostConstructions == 0`** — and note Owner condition (d): *the Terminal mode
-   existing is not a violation; a terminal constructed during the run is.*
-5. Launched through **the same composition root `GovernedRunHost` uses** — no second entry point
-   (Ruling 13's condition, carried verbatim).
-6. **Proof Pack at `docs/proof/conductor-front-door.md`** with **every Residual cell populated**.
-7. **DC-115's condition holds:** if the run roots in a clone rather than a linked worktree, the
-   qualification is carried **exactly as Phase 1 carried it, never silently**.
+- **C1** — built by `npm ci` from the committed lockfile plus one pinned, recorded, one-off bundler
+  invocation. **No CDN-service artifact is committed** (esm.sh refused: the hash pins distribution,
+  not provenance, and the MIT clearance was verified against the local install tree). Nothing enters
+  `AiDe.sln`, MSBuild or CI.
+- **C2** — a committed `vendor-manifest.json` carrying per-file `{path, sha256, bytes}` plus package
+  set + exact versions, lockfile path + its sha256, verbatim build command, builder + version,
+  node/npm versions, date, licence, licence-copy path.
+- **C3** — `tools/verify-vendored-assets.py` exits 1 on: hash mismatch · manifest entry with no file
+  · **a file with no manifest entry** · lockfile-hash mismatch · missing provenance field.
+  *The third is the one that gets omitted, and without it a second script dropped beside the bundle
+  is invisible.*
+- **C4** — ships `--self-test` asserting exit 1 for **all five** modes and exit 0 clean; **not**
+  added to `KNOWN_WITHOUT_SELF_TEST`; resolves the repo root via `git rev-parse --show-toplevel`;
+  **its self-test runs from a non-root directory** (DC-071's shape).
+- **C5** — wired into `build.yml` as its own step, run **bare**, with a paired `--self-test` step.
+- **C6** — `.gitattributes` marks the vendor directory `-text`, so build-output, committed and
+  shipped bytes are one number (`* text=auto eol=lf` would otherwise normalise on add — **DC-108**).
+- **C7** — the vendored input set stays narrowed to what the composer renders.
+- **C8** — the spike README's esm.sh suggestion is corrected. *A stale document recommending a
+  rejected supply-chain path is how the rejected path returns.*
 
-## E7 surface list
+Plus: CodeMirror **renders inside the real WebView2 host**, not only headless Chromium; and
+**`NavigateToString` is retained for the existing canvas** — *fails if `CanvasSurface` regresses.*
+A `simplify:` marker records two web-hosting idioms coexisting, trigger: the canvas needing a
+module import, or a third web surface.
 
-`session.yaml` (store) → `SessionConfig` → `NewSessionSheetViewModel` → `MainMenuBuilder`
-(File → New Session) → `SurfaceContentFactory` (`"session-document"`) → `WorkbenchShell`
-(paired-zone placement, `restorableKinds`) → web host → composer → `RunEvent` (`session.open`,
-`session.config`) → `GovernedRunHost` (the one composition root) → Recent sessions.
+## FT — the template spine (R18)
 
-**UI row: present, not deferred.** Phase 1's Agent Plane delivery marked it "deferred to 1b";
-this slice is where it lands, so the row is now live rather than carried.
+- **`template-schema/1` is a pinned contract from birth**, documented in the **new
+  pinned-contracts registry** (**Ruling 29**) that links `weave/1` and `loomkeeper/1` where they
+  already live without moving them. The declaration must state whether `min` and `tier_default`
+  are **schema-1 constraints or preserved-unknown fields** — *not left ambiguous*.
+  *Fails if:* an unknown frontmatter field is rejected rather than preserved.
+- **`when_to_use` and `why` are load-blocking.** A template missing either **fails load** and
+  surfaces as a **disabled picker entry carrying its error** — never silently dropped (Ruling 26e;
+  the catalog *view* is R22). *Fails if:* a template with no `when_to_use` loads.
+- **Deterministic compile:** same template version + values → **byte-identical** prompt text.
+  *Fails if:* two compiles of one input differ in a byte.
+- **Sources: built-in + workspace only** (Ruling 26 cut i). Precedence
+  `personal > workspace > pack > built-in` is **fixed in the contract now** so later registration
+  is data, not renegotiation; an override is **visibly badged**. *Fails if:* a workspace template
+  does not shadow a built-in of the same id, or the badge is absent.
+- **The twelve built-ins are transcribed, not authored** (Ruling 30): `when_to_use` and `why`
+  **byte-for-byte from B4**, fields from B4's core-fields column, **a fixture test comparing the
+  catalog against the transcription with each row citing B4**. `launch` and `change-order` are
+  additionally checked **field-by-field against the two real prompts in the audit log**.
+  **All ship at `version: 1`** — B3.1's illustrative `version: 3` *would claim a history that was
+  not observed*. *Fails if:* any tooltip text diverges from B4.
+- Catalog **sources are a descriptor list**, consistent with Ruling 22's shape.
 
-## Budget, derived from measurement rather than carried
+## F2 — sheet, File menu, session document, canvas modes (R13, R16)
 
-Phase 1's measured node durations: **N4 1931 s · N5+N6 1374 s · N7 2404 s** (N0–N3 are *not
-recorded*). Front-door estimate ≈ **11,400 s of node time**, sized by shape: F4 is N4-shaped (a
-novel dependency), F5 is N7-shaped (evidence), the rest sit near N5+N6.
+**Merged per Ruling 25** — F2's exit consumed F3's output, so the split bought zero parallelism and
+forced a stub (HYG-A).
 
-**Main-line budget: 90 tool calls.** Derived from Phase 1's *measured* per-node conductor cost
-(dispatch + independent verification + commit ≈ 8–10) across 6 nodes, plus ~25 for converge and
-close, plus contingency. **Phase 1 declared 300 and passed it; Phase 2's N0 ran ~55 against 120.**
-The estimate is now built from the shape that actually recurred, not from the front-loaded total.
+**The sheet (R13):**
+- `Ctrl+N` with an active workspace opens the sheet **pre-bound**; with none the **workspace
+  chooser interposes and cancel aborts cleanly**. *Fails if:* a session can exist unbound.
+- Agent backends listed **from `EngineCatalog` filtered by `ProviderRegistry`** with live health —
+  **read, not re-modelled**. *Fails if:* a second health model appears (asserted: the sheet's health
+  values are reference-equal to the registry's).
+- **`TaskClass` is required with NO default; `Lease` is derived and displayed** (**Ruling 19**).
+  *Fails if:* a run can start with a `TaskClass` that came from a parameter default — **this is
+  DC-110, and a defaulted class ranks in the wrong cohort.**
+- **Cut** (Ruling 19): routing mode, autonomy, default policy, per-session MCP. **Cut**
+  (Ruling 26 iii): the "Start from template" row — it creates a back-edge from F4 to F2.
+- **Login (R13 b2, Ruling 20):** health display stays; remediation is a **"Sign in" action**
+  launching the engine-native flow, **claude-code only**, re-probing on return, under a `simplify:`
+  marker. **Toggling a `needs-login` engine is still refused for routing** — *fails if it is
+  offered to the router.*
+- **Recent sessions is NEW CONSTRUCTION**, not an existing destination — `MainMenuBuilder`
+  currently has `RecentWorkspaces`, which is installation-scoped and different. *Fails if:* a
+  created session does not appear, or a Recent entry does not restore its workspace.
+- **`File → New Terminal Session` still produces today's terminal session, unchanged** — asserted,
+  not assumed.
 
-**The number to plan against, measured at N7: verification cost 2404 s against a 102 s exit run —
-23:1.** That is not waste; it is what evidence-not-assertion costs. F5 is budgeted for it.
+**The document and canvas (R16):**
+- Surface kind is **`"session-document"`** (Ruling 18) — never `"session"`, one letter from the
+  existing `"sessions"`.
+- **The paired-zone preset is NEW CONSTRUCTION** — no "preset" concept exists (`grep` finds only
+  `TerminalColorScheme.Presets`). *Fails if:* the composer and canvas zones do not open in the
+  specified split.
+- **Console and Terminal only**, as a **descriptor list, not a switch arm and not a registry**
+  (**Ruling 22**): *adding a mode is adding a row.* *Fails if:* a placeholder tab exists, or a new
+  mode requires editing the factory — **asserted by registering a throwaway third mode in a test
+  and showing it appears with no factory edit, then removing it.**
+- **Console content (R16 b1):** merged stream with a **lane rail**, **tree filtering**, and
+  **default on session open**. *Fails if:* a two-lane stream renders with no rail attribution, a
+  filter cannot exclude a lane, or opening lands on Terminal.
+- **Canvas split (R16 b2, Ruling 21):** Console beside Terminal. *Fails if:* the split yields one
+  live pane and one rebuilt-on-focus pane, or does not survive a mode switch.
+- **Mode + layout restore (R13 b3):** a **real round-trip** — write the envelope, use a new
+  process or store instance, assert mode and split ratio. *Fails if:* reopen lands Console-default
+  when Terminal was active, or the split collapses.
+- **ADR-0017 retain-never-rebuild, with an oracle that can detect disposal.** `Assert.Same` **passes
+  on a disposed instance** and is therefore insufficient. The test must: drive a **real lane**
+  producing events · instrument a **dispose counter** on surface and lane (the
+  `TerminalHostingLedger.Open()` idiom is the repo's existing answer) · mode-switch **and**
+  tab-switch **while events are in flight** · assert `Assert.Same` on both, `disposeCount == 0`,
+  **and event-ordinal continuity with no gap** · plus a **companion falsifier** taking the rebuild
+  path that shows all three go red.
+- **Permission surfacing (R16 b3):** an **ordinal, not a duration** — *the permission overlay is
+  raised before the next event is dispatched*, asserted on recorded event ordinals, **parameterised
+  over active mode**, red-first with a synthetic permission event. *A duration form trips
+  `verify-perf-assertions.py`* (DC-107).
 
-## Standing constraints carried into every node
+## F4 — the composer (R15, R19)
 
-Full gate set at **every** node close (the by-subject policy let four gates go unrun for eight
-nodes) · gates run **bare**, never piped before `&&` (DC-113) · never `git stash` (DC-053) ·
-never `verify-test-run.py --update` as a gate · **no `coord install` in a worktree** (DC-112) ·
-`audit-log.py start` first and an entry **with signals** at close (`verify-audit-capture` is a
-gate) · **separate worktrees for concurrent nodes** (N0's lesson) · every load-bearing repo fact
-in a brief either checked in the same turn or labelled unverified with an instruction to check
-(**DC-116**, three instances in one session, all caught by the delegate).
+- **Free-form is the default and works with no template anywhere in the path** — the **S1
+  regression guard**. *Fails if:* any template code executes on a free-form send.
+- **The goal-block re-base is one mechanism** (Ruling 26b): the send gate calls
+  `SpawnContract.Validate`; a test asserts the generic form engine's required-field errors and
+  `SpawnContract.Validate` name **the same field set for every input**; **`SpawnContractTests.cs`'s
+  four tests stay byte-unchanged**. *Fails if:* a second definition of goal-block validity exists.
+- **`fan_out_cap` and `budget` hints must not read as enforced** (Ruling 26c) — `GoalBlock.cs`'s
+  remark carries through: **validated, not enforced**, in Phase 1.
+- Template picker renders any catalog template as a **validated form**; a required-field gap
+  **blocks send with a field-level error**; the picker card shows `when_to_use` as headline and
+  `why` as detail. *Fails if:* send succeeds with a required field empty.
+- **View-compiled** shows exactly the text the conductor receives. *Fails if:* compiled output and
+  sent text differ by a byte.
+- **Per-block shape switching preserves content by per-shape draft retention** (Ruling 26 cut iv) —
+  **not** by transformation; the transform is R20. Shape badges render in the Score. *Fails if:*
+  switching loses content, or an assist call is made.
+- **`paste-to-fence` and `attach`** (R15 b1). *Fails if:* pasting multi-line code lands as prose, or
+  no attach path exists.
+- **`promote-to-goal-block` round-trip** (R15 b2) — **pending the collision re-check.** B5.2 lists
+  it as assist-powered and Ruling 27 defers assist to Phase 3; if the re-check confirms, this
+  becomes a **cut naming Ruling 27**, not a vanish. If a non-assist round-trip survives, it keeps
+  this clause. *Fails if:* message → goal block → message loses a field.
+- **US-ED5/ED6/ED7, with observables** (Test Architect Major): a **`sendCount` on the send seam** —
+  edit, paste, newline and near-miss keystrokes assert `sendCount == 0`; one send asserts `1`; a
+  **second send attempt on the same block asserts still `1`**. "Draft persists across restart"
+  round-trips **the store or the process**, not a re-instantiated view model. "Transfers one-way"
+  asserts the one-way: mutate the lane's copy, assert the composer draft is unchanged, and assert
+  **no reverse path exists**.
+- The mention picker uses **`@codemirror/autocomplete`'s `CompletionSource`** — already in the
+  installed set — with files and graph nodes as two sources. *Not a bespoke popup.*
+- **Re-entry trigger, not an exit condition:** the Source viewer shares this editor when it lands.
+
+## F5 — exit evidence and Proof Pack
+
+**The oracle is committed BEFORE the run and its SHA cited in the Proof Pack** — seven points
+written after seeing the run are a description, not a test (N7 did this; Revision 1 dropped it).
+
+1. **Started from `File → New Session`, machine-checkably.** `session.open` carries an **`origin`
+   field set only on the `Ctrl+N` / `MainMenuBuilder` command path**; asserted on the exit run's
+   stream — **plus a companion test constructing a session directly and showing `origin` reads the
+   other value.** *Asserted-about is what N7 was blocked for.*
+2. **Composed in the composer, streamed in Console mode.**
+3. **Scored end-to-end**, cell **`IsComparable == true`**, read from `scored_episode_cell`.
+4. **`terminalHostConstructions == 0`, with N7's companion falsifier carried forward verbatim** — a
+   test that constructs a real ConPTY and shows the same counter reads **1**. *A counter nothing
+   increments reads 0 forever.*
+5. **Launched through the same composition root `GovernedRunHost` uses** — no second entry point
+   (Ruling 13), asserted by a ledger counting roots.
+6. **Recorded measurement**: event count, p50/p95, **host named** — recorded per ADR-0029, **never
+   asserted** (DC-107).
+7. **Proof Pack at `docs/proof/conductor-front-door.md`**, every Residual cell **naming a
+   measurement or an explicit uncovered input** — *"populated" is satisfied by "none" in every cell*.
+8. **The R13 b2 qualification** (Ruling 18): only `claude-code` was exercised; codex and copilot are
+   refused by N2's own test. **Stated in the exit evidence, not stubbed.**
+9. **DC-115:** if the run roots in a clone rather than a linked worktree, the qualification is
+   carried **exactly as Phase 1 carried it, never silently.**
+
+***Fails if:*** any of 1–6 is absent, the oracle post-dates the run, or a Residual cell reads
+"none".
+
+## Budget, re-derived
+
+Phase 1 measured: **N4 1931 s · N5+N6 1374 s · N7 2404 s**. Node time ≈ **14,300 s**, sized by
+shape — F1, FT, F4 and F5 are N4/N7-shaped (novel dependency, pinned contract, evidence), F0 and F2
+nearer N5+N6.
+
+**Main-line budget: 110 calls** — six nodes at the *measured* per-node conductor cost (dispatch +
+independent verification + commit ≈ 8–10), plus ~30 for converge and close, plus contingency.
+**Revision 1 derived its figure from N0, a docs-and-control node — the wrong shape.** The
+verification half is sized from N4/N7, because **N7 measured verification at 23:1 against the run
+it verified**, and under-budgeting verification does not produce a late node — it produces the
+cheapest artifact that satisfies the words.
+
+## Standing constraints per node
+
+Full gate set at **every** node close · gates **bare**, never piped before `&&` (DC-113) · never
+`git stash` (DC-053) · never `verify-test-run.py --update` as a gate · **no `coord install` in a
+worktree** (DC-112) · `audit-log.py start` first and an entry **with signals** at close ·
+**separate worktrees for concurrent nodes** · **every load-bearing repo fact in a brief checked in
+the same turn or labelled unverified** (DC-116 — and this plan's Revision 1 broke that rule while
+citing it).
 
 ## Re-plan checkpoints
 
-1. **The Owner's hosting ruling** — (a), (b) or (c) changes F1 entirely.
-2. **After F1** — if CodeMirror does not render inside the real WebView2 host, the composer's
-   base is wrong and R15 re-plans before F4 starts.
-3. **DC-115** — still `partially-controlled`; if F5's run must be scored in a linked worktree,
-   its remaining cases decide whether that is possible.
+1. **The collision re-check against Rulings 19–25** (Ruling 31) — outstanding; gates approval.
+   Candidate 3 may convert R15 b2 from a clause to a cut.
+2. **After F1** — if CodeMirror does not render in the real WebView2 host, R15's base is wrong.
+3. **The field-widget inventory vs the vendored bundle** — if a typed field needs a package outside
+   the trimmed 26, the hash-pinned artifact is rebuilt **once, before C2's manifest is final**.
+4. **DC-115** — still `partially-controlled`; decides whether F5 can root in a linked worktree.

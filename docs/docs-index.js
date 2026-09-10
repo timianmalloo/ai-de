@@ -6314,43 +6314,47 @@ window.DOCS_INDEX = {
     {
       "id": "plan-conductor-front-door",
       "path": "docs/plans/conductor-front-door.md",
-      "title": "Execution graph — Phase 1, Session front door (R13–R16)",
+      "title": "Execution graph — Phase 1, Session front door (R13–R16, R18–R19)",
       "type": "doc",
       "status": "in-review",
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2026-12-10",
       "reviewSuggested": [],
-      "summary": "The second Phase-1 delivery: Addendum A's front door, as six mostly serial nodes. Carries the CodeMirror spike result and the one decision it left open - how the web surface is hosted - plus the E7 surface list, red-first tests per acceptance bullet, and a budget derived from Phase 1's three measured node durations.",
+      "summary": "Revision 2. Rewritten against Rulings 19-31, the Test Architect's ten Blockers, the Simplifier's seven Majors and Security's C1-C8. Six nodes, width 3 at the head. Every R13-R16 and R18-R19 bullet is a clause with an oracle, or a cut naming its ruling.",
       "tags": [
         "execution-graph",
         "conductor",
         "addendum-a",
+        "addendum-b",
         "session",
         "composer",
-        "canvas",
-        "front-door"
+        "templates"
       ],
       "links": [
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-b-ratification",
+          "rel": "depends-on"
+        },
         {
           "to": "note-addendum-a-ratification",
           "rel": "depends-on"
         },
         {
-          "to": "note-addendum-a-reconciliation",
+          "to": "note-addendum-b-reconciliation",
           "rel": "depends-on"
         },
         {
           "to": "plan-conductor-programme",
           "rel": "refines"
-        },
-        {
-          "to": "spec-conductor",
-          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "617097bbde7ba77e90604cc9054bc8ff483abebab86d80ae548c9ffa579dcb8f"
+      "sourceSha256": "13a18b84cbff6b0515258a54bc646e588ba92662f344239510e919768fff1e51"
     },
     {
       "id": "plan-conductor-programme",
@@ -12429,5 +12433,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "aad00f22876a48978f954fa8de08e83b4e99687f7c818a8d323ceb13d6b213c5"
+  "graphSha256": "540f0d74b8e81baebabf5e506f68276b061c22fcab2d8cbd23037cda2939310b"
 };
