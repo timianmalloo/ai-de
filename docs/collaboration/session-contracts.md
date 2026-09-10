@@ -55,8 +55,16 @@ which is the defect signature the data-modelling standard names.
 
 ## 2. File ownership
 
-**Last reconciled against the tree: 2026-09-01**, by the core session, on the repository owner's
-instruction, covering the nine surfaces §4y listed and the Session 3 rows in §4z.
+**Last reconciled against the tree: 2026-09-10**, by node F2 of the front-door slice, adding the
+three surfaces it built under `src/AiDe.App/Workbench/Sessions/`. Previously reconciled 2026-09-01 by
+the core session, covering the nine surfaces §4y listed and the Session 3 rows in §4z.
+
+*A gap this reconciliation found, reported rather than closed here.* `tools/verify-surface-ownership.py`
+iterates `src/AiDe.App/Workbench` **non-recursively**, so the three rows added below sit outside its
+scan and were assigned by hand rather than forced by the gate. That is the DC-118 shape — a guard
+narrower than the sentence it enforces ("every surface has a declared owner") — and widening it is a
+change to a shared control, which belongs to whoever owns that decision rather than to the node that
+noticed.
 
 *Why this line exists.* Everything in this section was correct while it silently stopped describing
 the app: it assigned four of thirteen surfaces, because it is appended to and never revisited, and
@@ -114,12 +122,24 @@ of both files is unchanged and returns to Design.
 | `src/AiDe.App/Workbench/CanvasPage.cs`, `CanvasSurface.cs` | The graph surface and its embedded page |
 | `src/AiDe.App/Workbench/TerminalView.cs`, `TerminalPalette.cs` | Terminal rendering and colour |
 | `src/AiDe.App/Workbench/CommandPalette.cs`, `PromptBar.cs`, `MainMenuBuilder.cs` | Interactive chrome |
+
+**Recorded crossing, 2026-09-10 (front-door F2).** The front-door node edited two Design-owned files
+to make `File → New Session` reachable at all: `MainMenuBuilder.cs` gained a **Recent sessions**
+submenu beside the existing Recent workspaces one (the `Layout` array edit beside it is the
+Core-owned data this section already carves out), and `MainWindow.xaml.cs` gained the flow that shows
+the sheet and the workspace chooser — both are windows, and only a `Window` can show one, which is
+the same reason the folder picker already lives there. Recorded rather than done quietly, because a
+contract that is silently crossed is worse than one that is amended. Ownership of both files is
+unchanged and returns to Design.
 | `src/AiDe.App/Workbench/ClassDiagramSurface.cs` | A design surface (ADR-0026 class-diagram-architecture) |
 | `src/AiDe.App/Workbench/SequenceDiagramSurface.cs` | A design surface; Core owns its `InteractionAsync` feed |
 | `src/AiDe.App/Workbench/SearchSurface.cs` | Design authored it; Core owns its provider — how it was actually built |
 | `src/AiDe.App/Workbench/ExplorerSurface.cs` | The full-window Explorer shell (ADR-0017 primary-view-mode) |
 | `src/AiDe.App/Workbench/PromptDraftSurface.cs` | Interactive chrome |
 | `src/AiDe.App/Workbench/TerminalSurface.cs` | Terminal rendering, with `TerminalView` |
+| `src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs` | The session document: the paired-zone preset and the canvas mode strip (R13 b3, R16) |
+| `src/AiDe.App/Workbench/Sessions/ConsoleSurface.cs` | The Console canvas mode: the merged stream, its lane rail and its filter tree (R16 b1) |
+| `src/AiDe.App/Workbench/Sessions/NewSessionSheetDialog.cs` | The New Session sheet's window; every rule it renders belongs to `NewSessionSheetModel` (R13) |
 | `docs/mockups/**`, `docs/design/**` | Design artifacts |
 | `docs/ui/**` | Session 3 (`claude-ui-experience`) — craft findings, mockups, review harnesses |
 | `docs/design/ux-*.md`, `docs/design/ui-*.md` | Session 3 — UX/UI specs it authors |

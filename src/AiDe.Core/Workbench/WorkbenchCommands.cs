@@ -113,6 +113,16 @@ public static class WorkbenchCommandCatalog
             "Choose a folder. Its daemon is started if it is not already running, and its evidence becomes queryable.",
             Menu: "_File"),
 
+        // The front door (R13 b1). Ctrl+N rather than a Ctrl+K chord: this opens the product's
+        // primary object and Addendum A names the gesture. A session cannot exist unbound, so with
+        // no workspace open the chooser interposes before the sheet — that happens in the flow, not
+        // in this row.
+        new("session.new", "New session…", "Ctrl+N",
+            string.Empty,
+            "Opens the New Session sheet, pre-bound to the open workspace. With none open, the "
+            + "workspace chooser comes first, and cancelling it creates nothing.",
+            Menu: "_File"),
+
         new("workspace.diagnostics", "Show daemon, health and MCP diagnostics", "Ctrl+K, D",
             string.Empty,
             "Reports the daemon version, whether a rollback is possible, open health incidents, and the registered MCP tools.",

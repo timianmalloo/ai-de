@@ -32,34 +32,72 @@ public sealed class SurfaceContentFactory(
     // Appended for the same reason, one parameter later. Resolves the operator's name for a
     // terminal so a session row can lead with it — a presentation concern the SHELL owns, since
     // that is where TerminalCustomizationStore lives and where a rename actually happens.
-    Func<string, string?>? terminalNameFor = null)
+    Func<string, string?>? terminalNameFor = null,
+
+    // Appended for the same reason as its two neighbours above. Resolves the live session document
+    // for a `session-document` surface; null in a build (or a test) with no session open, which the
+    // pane says plainly rather than rendering an empty document.
+    Func<Surface, Sessions.SessionDocumentSurface?>? sessionDocumentFor = null)
 {
+    /// <summary>
+    /// One surface kind, as a row of data: what it answers to, how it is built, and whether its
+    /// content owns a child window.
+    /// </summary>
+    /// <param name="Kind">The <see cref="Surface.Kind"/> this row answers to.</param>
+    /// <param name="Build">Builds the content for one surface of this kind.</param>
+    /// <param name="Windowed">
+    /// True for a kind whose content owns a child HWND (canvas, terminal). A windowed kind is
+    /// returned UNWRAPPED — see the note at the end of <see cref="Create"/>.
+    /// </param>
+    public sealed record SurfaceKind(
+        string Kind,
+        Func<SurfaceContentFactory, Surface, FrameworkElement> Build,
+        bool Windowed = false);
+
+    /// <summary>
+    /// The surface kinds this factory builds — <b>a descriptor list, not a switch arm</b> (Ruling 22).
+    /// </summary>
+    /// <remarks>
+    /// <b>Adding a kind is adding a row.</b> This was a <c>switch</c> expression beside a
+    /// hand-maintained <see cref="KnownKinds"/> array, so a new surface meant editing two things
+    /// that nothing checked against each other — and the array is load-bearing: the layout restore
+    /// reads it to decide what it can rebuild, so a kind listed there and missing from the switch
+    /// resurrected a pane that then rendered "not available in this build". One list now answers
+    /// both questions, and <c>SurfaceContentTests</c> walks it.
+    /// </remarks>
+    public static IReadOnlyList<SurfaceKind> Kinds { get; } =
+    [
+        new("view", static (f, s) => f.Evidence(s)),
+        new("inspector", static (f, s) => f.Evidence(s)),
+        new("terminal", static (_, s) => Terminal(s), Windowed: true),
+        new("canvas", static (_, s) => new CanvasSurface(s.SurfaceId, s.Title), Windowed: true),
+        new("contexts", static (_, s) => new ContextMapSurface(s.Title)),
+        new("joins", static (_, s) => new JoinSurface(s.Title)),
+        new("sessions", static (f, s) => f.Sessions(s)),
+        new("board", static (f, s) => f.Board(s)),
+        new("leaderboard", static (f, s) => f.Leaderboard(s)),
+        new("ledger", static (f, s) => f.Ledger(s)),
+        new("daydreams", static (f, s) => f.Daydreams(s)),
+        new("prompt", static (_, s) => new PromptDraftSurface(s.SurfaceId, s.Title)),
+        new("classdiagram", static (_, s) => new ClassDiagramSurface(s.Title)),
+        new("sequence", static (_, _) => new SequenceDiagramSurface()),
+        new("search", static (f, _) => f.SearchPane()),
+        new("codeviewer", static (_, s) => new CodeViewerView(s.Title)),
+        new("diagnostics", static (_, s) => new DiagnosticsSurface(s.Title)),
+
+        // The session document (R13 b3, R16). "session-document", never "session" (Ruling 18): the
+        // "sessions" row above is the Loomkeeper watcher pane, and a kind one letter away from it
+        // would be resolved by whichever row was read first, silently.
+        new(AiDe.App.Workbench.Sessions.SessionDocumentSurface.Kind, static (f, s) => f.SessionDocument(s)),
+    ];
+
     /// <summary>Surface kinds this factory can build. An unknown kind still gets an honest pane.</summary>
-    public static IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "ledger", "daydreams", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"];
+    public static IReadOnlyList<string> KnownKinds { get; } = [.. Kinds.Select(k => k.Kind)];
 
     public FrameworkElement Create(Surface surface)
     {
-        var content = surface.Kind switch
-        {
-            "view" or "inspector" when queries is not null => EvidenceContent(surface),
-            "view" or "inspector" => WorkspaceNeeded(surface),
-            "terminal" => Terminal(surface),
-            "canvas" => new CanvasSurface(surface.SurfaceId, surface.Title),
-            "contexts" => new ContextMapSurface(surface.Title),
-            "joins" => new JoinSurface(surface.Title),
-            "sessions" => Sessions(surface),
-            "board" => Board(surface),
-            "leaderboard" => Leaderboard(surface),
-            "daydreams" => Daydreams(surface),
-            "ledger" => Ledger(surface),
-            "prompt" => new PromptDraftSurface(surface.SurfaceId, surface.Title),
-            "classdiagram" => new ClassDiagramSurface(surface.Title),
-            "sequence" => new SequenceDiagramSurface(),
-            "search" => new SearchSurface { Provider = searchProvider },
-            "codeviewer" => new CodeViewerView(surface.Title),
-            "diagnostics" => new DiagnosticsSurface(surface.Title),
-            _ => Unavailable(surface),
-        };
+        var row = Kinds.FirstOrDefault(k => string.Equals(k.Kind, surface.Kind, StringComparison.Ordinal));
+        var content = row is null ? Unavailable(surface) : row.Build(this, surface);
 
         // Every surface carries its title into the accessibility tree in its own right, not only via
         // its tab — a screen-reader user who moves focus into the pane must still know where they are.
@@ -74,10 +112,55 @@ public sealed class SurfaceContentFactory(
         // Border cannot clip a child HWND to its corners anyway (airspace), and — load-bearing — the
         // shell finds the live canvas by `Adapter.ContentFor(id).OfType<CanvasSurface>()` to wire its
         // focus, filtering and re-centring, so a wrapper that hid the type would silently break those.
-        return surface.Kind is "canvas" or "terminal"
+        return row is { Windowed: true }
             ? content
             : SurfaceChrome.WrapAsIsland(content);
     }
+
+    /// <summary>
+    /// The live session document for a <c>session-document</c> surface, or an honest empty state
+    /// when no session is open.
+    /// </summary>
+    /// <remarks>
+    /// The document's own lifetime belongs to the shell, not to this factory: a session outlives the
+    /// pane it is docked in, and a factory that constructed one per render would build a second
+    /// composer and a second console every time the layout re-rendered. So the shell resolves it and
+    /// this hands back what it is given.
+    /// </remarks>
+    private FrameworkElement SessionDocument(Surface surface)
+    {
+        if (sessionDocumentFor?.Invoke(surface) is FrameworkElement document)
+        {
+            return document;
+        }
+
+        // The ordinary empty state, in the same voice as WorkspaceNeeded: this is "no session open",
+        // not a build or packaging defect, and saying "not available in this build" would point the
+        // reader at the wrong thing (UI-EMPTY-STATE).
+        var text = new TextBlock
+        {
+            Text = "No session is open. Create one from File → New Session.",
+            Margin = new Thickness(12),
+            TextWrapping = TextWrapping.Wrap,
+        };
+        text.SetResourceReference(TextBlock.ForegroundProperty, "TextMutedBrush");
+        return text;
+    }
+
+    /// <summary>
+    /// An evidence <c>view</c>/<c>inspector</c> pane, or the "no workspace" empty state when there
+    /// is nothing to read yet.
+    /// </summary>
+    /// <remarks>
+    /// The gate lives here rather than in the descriptor row because a row's <c>Build</c> is static:
+    /// the constructor's arguments are in scope for this method and not for a lambda, and pushing
+    /// the check down here is what keeps every row a one-line call.
+    /// </remarks>
+    private FrameworkElement Evidence(Surface surface) =>
+        queries is not null ? EvidenceContent(surface) : WorkspaceNeeded(surface);
+
+    /// <summary>The breadth-search pane, wired to the shell's provider.</summary>
+    private FrameworkElement SearchPane() => new SearchSurface { Provider = searchProvider };
 
     private FrameworkElement EvidenceContent(Surface surface)
     {
