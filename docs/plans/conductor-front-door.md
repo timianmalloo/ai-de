@@ -468,6 +468,145 @@ purpose/basis question, not a protection question. I ask is it protected?; they 
 sent?"* Specifically: may anything outside the workspace root be attached **at all**, and is the
 attach recorded in the audit trail.
 
+### Privacy & Data Governance — **BLOCK. F4's send seam does not start until the human answers.**
+
+Co-convened by Security, which referred **C14(e)** with *"I ask **is it protected?**; they ask
+**should it be sent?**"* Privacy's rulings on the two referred questions are **permissive** — the
+block is on *"a document that does not exist and a `.gitignore` line that does not exist."*
+
+> **CLEARS-THE-VETO: no.** Purpose is stated and legitimate. **Basis is absent.**
+
+#### Blocker 1 — there is no governance basis for this egress, and the repo's own privacy artifact forbids it
+`docs/security/ai-native-ide-privacy-review.md:86` classifies a session that may send prompt content
+to an external provider as **`ExternalProcessing`**, transfer rule *"Future capability only.
+**Version 1 blocks rich transfer**"*; `:89-90`: *"The initial product remains **direct-egress deny by
+default**. It does not call model providers or attach derived data to a model."*
+
+**And `docs/security/` contains no privacy review for the Conductor at all** — only the two
+`ai-native-ide-*` files. `spec-conductor` **refines** `spec-ai-native-ide`, so **the parent posture
+governs until superseded.**
+
+The review's own **gate 4** (`:136-138`) requires, before `ExternalProcessing` is enabled, a
+**human-approved provider record** covering purpose/basis, permitted data classes, processor role,
+residency/transfer mechanism, **training posture**, retention, deletion/rights path, and
+repository-policy authorization — with *"unknown fields fail closed."* **No such record exists.**
+
+> **This is wider than F4.** Phase 1 already ran a real governed run against a live subscription
+> account. **The egress is not introduced by F4; it is already happening and has never had a basis.**
+> F4 is simply the first node where a reviewer was convened to notice.
+
+**Two of the seven fields Privacy refuses to guess, and correctly:** *"Anthropic's subscription-tier
+retention and training posture, and the residency of the processing, are unknown to me. I am not a
+lawyer and this is a genuine regulatory fact, not an inference — **Flagged for the human**, per the
+review's own 'unknown fails closed' rule."*
+
+**Fails if:** F4's send seam lands before a conductor provider record and the supersession are
+written into `docs/security/`. *It is a document, not code, and it changes nothing in F4's design.*
+
+#### Blocker 2 — the draft sidecar is unbounded and un-ignored, and that is true today
+`WorkbenchShell.cs:1520-1523` writes `<workspaceRoot>/.aide/prompt-drafts.json`;
+`PromptDraftStore.cs` writes **plaintext JSON with no expiry, no size bound and no deletion path**;
+and **no `.gitignore` in the tree matches `.aide/`**. Today it holds typed prompt text. After F4 it
+holds **arbitrary file bodies from anywhere on the disk**, and it is **one `git add -A` from
+permanent**. *Fails if:* `git check-ignore --quiet .aide/prompt-drafts.json` does not succeed.
+**Being fixed now, ahead of F4, because the exposure is already live.** Expiry mechanics are
+deferred to the Data & Persistence Architect; the git-ignore is *"the control that stops Channel B
+becoming Channel A by accident."*
+
+#### C14(e) — outside-workspace attach is PERMITTED-WITH-CONDITIONS, not refused
+**Refusing it would be worse.** *"If attach refuses outside-workspace files, the user copies the file
+into the repo and attaches it from there. That converts a **transient egress** into a **permanent
+committed record** in a pushed repository. A privacy control whose route-around is worse than the
+thing it prevents is not a control."* And the use case is **Verified in this repository** —
+`docs/specs/conductor/README.md:29` records the authoritative spec HTML as *"Ingested 2026-09-09 from
+the operator's `Downloads` directory"*: **the exact workflow C14(e) would refuse produced the spec
+F4 is built from.** Also: *"inside-the-root is not a safety property"* — `.git/config` can carry
+credentials in a remote URL and sits inside every workspace root.
+
+**But the label as drafted is in the wrong place:** *"its defect is not that it is weak; it is that
+it is **placed after the decision, in the artifact, where its only reader is the person who already
+decided**. The control that bites is at the **pick**."*
+
+- **C14(e)(i) — one human act, one named file.** No directory, glob, archive expansion, recursive walk or "attach all open files". *Fails if:* one human action produces more than one attachment. **Oracle:** dropping a directory and a `.zip` each produce zero attachments and one visible refusal; a multi-select of N files produces N **separately affirmed** attachments, never one bulk insert.
+- **C14(e)(ii) — the label is computed from the RESOLVED path.** Symlinks, junctions and reparse points resolved before the inside/outside test. **This is a real hole in C14(e) as drafted — it can be bypassed without anyone lying.** *Fails if:* a symlink under the workspace root targeting a file outside it is inserted without the outside label. **Oracle:** red-first — `<workspace>/link.md` → `%TEMP%\outside.md`; a second row for a directory junction in the path **prefix**.
+- **C14(e)(iii) — outside-workspace attach requires a per-file affirmation, shown BEFORE the bytes are read**, naming the absolute path, the byte count, and **where the content goes — the provider and the account label the run bills to**. The fence-header label is the **record** of that decision, not the decision. *Fails if:* bytes are read before the affirmation returns true, or the text does not name provider and account. **Oracle:** a file-reader counter asserts **0** reads while the affirmation is pending; declining leaves the draft byte-unchanged. **Inside-workspace files get NO affirmation** — deliberately: *"a prompt on every one is a click-through trainer that degrades the single control this design depends on."*
+- **C14(e)(iv) — a categorical refusal set, applied to the RESOLVED path, regardless of the human's pick.** Never attachable: anything under `.git/`, `.ssh/`, `.aws/`, `.azure/`, `.gnupg/`, `.config/gh/`, `.kube/`, or a browser profile directory; any file named `.env*`, `*.pem`, `*.key`, `*.p12`, `*.pfx`, `id_rsa*`, `id_ed25519*`, `.npmrc`, `.netrc`, `.git-credentials`, `credentials`, `*.kdbx`. **This list is a floor, not a guarantee** — *"recording it as 'secrets cannot be attached' would be exactly the security-shaped lie this programme keeps catching."* Content scanning is Security's and is deferred. **Oracle:** a table test, one row per entry, asserting zero attachments and one visible refusal naming the rule — **plus one row asserting a near-miss (`env.md`, `keynote.md`) IS attached**, because *a deny-list that also denies the neighbours is a different defect*.
+- **C14(e)(v) — the bytes that will be sent are legible before the send.** The fenced block renders in full, or behind a single explicit expand; **never truncated, elided or virtualized.** *"A 64 KiB block folded behind an ellipsis makes the containment sentence false."* *Fails if:* the compiled view displays fewer characters of an attachment than will be sent with no expand revealing all of them. **Oracle:** attach a 32 KiB file; the compiled view's **rendered** text length equals the sent length — C15's byte check pointed at the **view** rather than the model.
+- **C14(e)(vi) — volume is visible at the point of decision.** Fence header names source and byte count; the composer shows a running total against the per-send cap. *Fails if:* the header omits the byte count, or a cap refusal does not name the current total and the cap.
+
+**Recorded minimization rationale (not a gate):** whole-file attach is **not** minimized — the
+purpose is almost always a fragment. **`paste-to-fence` is the minimizing path and `attach` is the
+maximal one.** Treat paste as the ordinary affordance and attach as the deliberate one, and **do not
+describe the caps anywhere as a "data budget"**: `paste-to-fence` has no stated cap, so the caps
+ceiling the attach path only. *A wrong ceiling is worse than a named absence.*
+
+**UTF-8-text-only is a safety filter, not a minimization one.** It excludes images, archives, SQLite
+stores, `.kdbx`, `.pfx` — genuinely good, and **record that as deliberate so nobody "fixes" it
+later**. But the class it *passes* is where the highest risk-per-byte lives: `.env`, `.pem`,
+`id_rsa`, `.npmrc`, `.netrc` are all UTF-8 text. C14(e)(iv) is the compensating control.
+**Decoding must be strict** — a lossy decode substituting U+FFFD silently mangles the artifact while
+still carrying recognizable fragments of it — and **a refusal must name the detected encoding**,
+because UTF-16LE-with-BOM is common on Windows and a bare "file refused" routes the user into the
+uncapped paste path.
+
+#### The audit trail — two channels, and the committed one gets counts only
+**The committed audit surface is three files, not one:** `docs/audit/audit-log.jsonl`,
+`docs/audit/audit-data.js` (**a full copy of every field, regenerated on every append**), and
+`.agents/log/` (**deliberately re-included** at `.gitignore:553-558`). And **`audit-log.py` contains
+no redaction path anywhere** — `--supersedes` records a correction but never removes the original.
+So **short of a history rewrite on a pushed repo, there is no erasure path at all.**
+
+**MUST contain, committed channel, per send:**
+`"attachments": { "count": 3, "bytes_total": 41207, "inside_workspace": 2, "outside_workspace": 1 }`
+— sufficient to answer *did this run carry attached content, how much, and did any come from outside
+the repository?*, non-identifying, so permanent retention is fine.
+
+**MUST NOT contain, committed channel:** attachment contents, ever · **any absolute path**, ever
+(inside-workspace files may use a **repository-relative** path) · for an outside-workspace file, its
+**basename, extension, directory or content hash** — *"a SHA-256 in a cloned file is a confirmable
+fingerprint; anyone holding a candidate copy can prove the developer attached exactly that file"* ·
+the composed prompt text whenever it carries an attachment.
+
+**Channel B — the reviewable record is machine-local.** Resolved path, byte count, SHA-256, outside
+flag, timestamp, per attachment, written under `<workspaceRoot>/.aide/` and **git-ignored**. *"That
+is what makes the egress reviewable without making it permanent. Its erasure path is 'delete
+`.aide/`', which is statable and testable."*
+
+**Added to Refused outright — (h):** writing the composed prompt, any attachment content, or any
+absolute path into `docs/audit/audit-log.jsonl`, `docs/audit/change-log.jsonl`,
+`docs/audit/audit-data.js`, or `.agents/log/`. *"The Audit Mandate's `--prompt` is for the human's
+instruction to an agent, and it is verbatim, committed, cloned and append-only. Routing the
+composer's send through it converts a transient egress into a permanent, shared, unretractable one."*
+**Oracle, red-first, both halves:** send a draft containing `PRIVACY-CANARY-<guid>` plus an
+attachment of a file containing the same canary; grep `docs/audit/**` and `.agents/log/**` for the
+canary and for the attachment's absolute path — **zero hits**. The falsifier: the same probe with
+the canary deliberately written to the log asserts the grep **finds** it. *"A grep that greps
+nothing passes forever."*
+
+#### `paste-to-fence` — nothing beyond what a typed prompt needs, with three riders
+*"A consent step on paste would be **consent theatre that trains click-through**, degrading the one
+control this whole design rests on."* Paste is also the **minimizing** path — a selection rather
+than a whole file.
+**(1)** No provenance claim in the fence header — it says `pasted`, never a filename or URL, because
+*"the app cannot verify where clipboard content came from, and a fabricated provenance is worse than
+none."* **(2)** No clipboard access outside the explicit paste gesture — no polling, no history, no
+paste-on-focus. **Oracle:** a clipboard-read counter asserts 0 across a session of typing, focus
+changes and sends. **(3)** Paste inherits Blocker 2, not a separate finding.
+
+#### Privacy residuals, added to F4's accepted list
+The refusal set in C14(e)(iv) is **incomplete by construction** and must never be described as
+"secrets cannot be attached" · once sent, **nothing is retractable** — the affirmation in
+C14(e)(iii) is the last moment anything is decidable · the worktree is **deliberately never
+auto-removed** (`GovernedRunHost.cs:170`), so attachment-derived content the agent writes to disk
+outlives the run · **the API-key exception is a second egress class with different third-party
+terms**, so one provider record cannot cover both — *Fails if:* the API-key exception is enabled
+while attach is enabled and the record covers only the subscription tier.
+
+**Deferred, named:** content-based secret scanning (Security, Phase 2) · the `.aide/` expiry sweep
+and workspace-deletion purge oracle (Data & Persistence Architect) · the full `ExternalProcessing`
+disclosure panel (Phase 2 — F4 needs only the provider + account line inside C14(e)(iii)) ·
+worktree-lifetime retention of agent-written attachment content.
+
 ## F5 — exit evidence and Proof Pack
 
 **The oracle is committed BEFORE the run and its SHA cited in the Proof Pack** — seven points
