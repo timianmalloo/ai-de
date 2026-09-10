@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T18:59:04Z",
+  "generated": "2026-09-10T20:51:42Z",
   "audit": [
     {
       "actor": null,
@@ -10480,72 +10480,63 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M264PTY4Z7FC6VM08XNZJ40S",
-      "shortname": "cleanup-worktrees-and-processes",
-      "datetime": "2026-09-10T17:09:08Z",
-      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
-      "prompt": "it seems like there are still hanging processes or work trees? clean up where you can before proceeding / what i am seeing are a bunch of terminal host processes",
-      "summary": "WORKTREES: coord worktree cleanup reported all four as clean/merged/unheld, then removed three. The fourth (spike/codemirror) failed on a locked handle; git no longer tracks it (worktree list shows only main, prune finds nothing) but the DIRECTORY REMAINS ON DISK - reported, not forced, per WT8's rule that anything not safely removable is reported. Its holders were traced and killed one by one (two stale bash agent shells, one leftover pwsh) and the lock outlived all of them - a filesystem handle, most likely node_modules' several thousand files still being released or scanned. DC-112 RE-VERIFIED AFTER REMOVAL, which is the failure this morning's repair existed to prevent: the merge drivers and the pre-commit hook still name the durable clone, and the gates still run. Had the repair not been made, deleting those trees would have broken every merge of ten declared paths AND every commit in the repository. PROCESSES - THE HEADLINE IS A CORRECTION: the operator reported 'a bunch of terminal host processes'. conhost.exe IS the terminal host (ConPTY creates one per pseudo-console), so the report was accurate, but tracing PARENTAGE showed almost all of them belong to the OPERATOR'S OWN applications - codex.exe, ollama.exe, WindowsTerminal.exe, ArmouryCrate, PresentMonService, cmd.exe. Killing those would have taken out their running tools. EXACTLY ONE was a genuine orphan (parent dead, 16.5h old, consistent with the N4/spike window) and only that one was stopped. SEPARATELY, AND NOT FROM THIS WORK: 198 orphaned node.exe processes all running higgsfield-mcp/src/server.js, ~11 GB of working set, spawned across a 12-hour span. An MCP server leak in the environment - one process per spawn, never reaped - not an ACP adapter leak from the conductor runs. Stopped, ~11 GB reclaimed. NOT ASSERTED, because I could not verify it: N4's report claimed zero orphaned adapter processes 'checked Win32_Process for claude-agent-acp'. The adapter runs AS node.exe, so a filter on process NAME could never match it while a filter on COMMANDLINE would. Whether N4 filtered on name or command line is not determinable from its report, so whether that check was capable of failing is UNRESOLVED and is recorded as such rather than claimed either way.",
-      "kind": "manual",
-      "skill": null,
-      "tool": null,
       "actor": "claude-opus-5",
       "artifacts": [],
+      "datetime": "2026-09-10T17:09:08Z",
+      "done_when": "Merged worktrees removed via the fail-safe path; genuinely orphaned processes stopped; anything ambiguous or held reported rather than forced; the operator's own processes left alone",
+      "fan_out": 0,
+      "goal": "Clean up the worktrees and orphaned processes this run left behind, without touching anything that belongs to the operator",
+      "id": "al-01M264PTY4Z7FC6VM08XNZJ40S",
+      "kind": "manual",
+      "outcome": "partial",
+      "prompt": "it seems like there are still hanging processes or work trees? clean up where you can before proceeding / what i am seeing are a bunch of terminal host processes",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "cleanup-worktrees-and-processes",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "WORKTREES: coord worktree cleanup reported all four as clean/merged/unheld, then removed three. The fourth (spike/codemirror) failed on a locked handle; git no longer tracks it (worktree list shows only main, prune finds nothing) but the DIRECTORY REMAINS ON DISK - reported, not forced, per WT8's rule that anything not safely removable is reported. Its holders were traced and killed one by one (two stale bash agent shells, one leftover pwsh) and the lock outlived all of them - a filesystem handle, most likely node_modules' several thousand files still being released or scanned. DC-112 RE-VERIFIED AFTER REMOVAL, which is the failure this morning's repair existed to prevent: the merge drivers and the pre-commit hook still name the durable clone, and the gates still run. Had the repair not been made, deleting those trees would have broken every merge of ten declared paths AND every commit in the repository. PROCESSES - THE HEADLINE IS A CORRECTION: the operator reported 'a bunch of terminal host processes'. conhost.exe IS the terminal host (ConPTY creates one per pseudo-console), so the report was accurate, but tracing PARENTAGE showed almost all of them belong to the OPERATOR'S OWN applications - codex.exe, ollama.exe, WindowsTerminal.exe, ArmouryCrate, PresentMonService, cmd.exe. Killing those would have taken out their running tools. EXACTLY ONE was a genuine orphan (parent dead, 16.5h old, consistent with the N4/spike window) and only that one was stopped. SEPARATELY, AND NOT FROM THIS WORK: 198 orphaned node.exe processes all running higgsfield-mcp/src/server.js, ~11 GB of working set, spawned across a 12-hour span. An MCP server leak in the environment - one process per spawn, never reaped - not an ACP adapter leak from the conductor runs. Stopped, ~11 GB reclaimed. NOT ASSERTED, because I could not verify it: N4's report claimed zero orphaned adapter processes 'checked Win32_Process for claude-agent-acp'. The adapter runs AS node.exe, so a filter on process NAME could never match it while a filter on COMMANDLINE would. Whether N4 filtered on name or command line is not determinable from its report, so whether that check was capable of failing is UNRESOLVED and is recorded as such rather than claimed either way.",
       "tags": [
         "cleanup",
         "worktree",
         "process-leak",
         "conductor"
       ],
-      "outcome": "partial",
-      "goal": "Clean up the worktrees and orphaned processes this run left behind, without touching anything that belongs to the operator",
-      "done_when": "Merged worktrees removed via the fail-safe path; genuinely orphaned processes stopped; anything ambiguous or held reported rather than forced; the operator's own processes left alone",
       "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true
-      }
+      "tool": null
     },
     {
-      "id": "al-01M2671DQ6M613NWDDCMT22F79",
-      "shortname": "cleanup-correction-phantom-tabs",
-      "datetime": "2026-09-10T17:49:52Z",
-      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
-      "prompt": "i still see multiple ai-de terminal hosts that look like phantom hosts because you only have the main session and two sub-agents going ... so i dont think you actually cleaned up the stale terminal hosts",
-      "summary": "MY EARLIER CLEANUP CLAIM WAS WRONG, and the operator was right to push. I reported the terminal-host question resolved after tracing conhost.exe parentage; the operator's screenshot named the actual thing - AiDe.Core.TerminalHost.exe from worktree paths I had deleted. MEASURED PROPERLY THIS TIME, twice: Win32_Process sees NO AiDe.Core.TerminalHost.exe at all, and exactly one process on the machine references 'ai-de' in its executable path or command line (my own shell). So there is no process leak. WHAT THE OPERATOR IS SEEING: I enumerated visible top-level windows via EnumWindows and resolved each to its owning PID. All ten ai-de-titled windows belong to ONE process - WindowsTerminal.exe PID 11772. They are TABS, not processes. Nine still display the last title of AiDe.Core.TerminalHost.exe runs from ai-de-feature-conductor-agent-plane, ai-de-chore-lane-rename and ai-de-feature-conductor-host - worktrees that no longer exist. The processes exited; Windows Terminal retained the tabs. The operator's word 'phantom' was exactly right. WHY I MISSED IT: my scan matched on process NAME and enumerated running processes, so a dead process with a surviving tab button was invisible to every query I ran. That is the same shape as DC-113 and DC-116 - I measured the thing I could see rather than the thing that was reported. WHAT I DELIBERATELY DID NOT DO: PID 11772 also owns the tab titled 'AI-DE Conductor specification phase 1 implementation' - the operator's own Claude Code session. Killing it to clear nine stale tabs would have closed the session running this work. Its live children are 3 wta.exe + 3 OpenConsole.exe (Windows Terminal's own infrastructure) and one 23-hour-old powershell.exe; none is an ai-de process. Closing the stale tabs is a UI action in the operator's terminal, not something to force from outside, and I am reporting it rather than reaching for it. STANDING FINDING for the ConPTY conformance tests: AiDe.Core.TerminalHost.exe is launched as a console app, so with Windows Terminal as the default terminal application each run adopts a tab that survives the process. Every full test run leaves visual debris the test suite never cleans, which is why nine accumulated across a day of runs.",
-      "kind": "manual",
-      "skill": null,
-      "tool": null,
       "actor": "claude-opus-5",
       "artifacts": [],
+      "datetime": "2026-09-10T17:49:52Z",
+      "done_when": "The nine ai-de terminal-host windows are resolved to their real owner and their true process state, my earlier claim is corrected on the record, and no action is taken that would disrupt the operator's own session",
+      "fan_out": 0,
+      "goal": "Correct my own cleanup claim: identify what the operator is actually seeing rather than what I assumed I had cleaned",
+      "id": "al-01M2671DQ6M613NWDDCMT22F79",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "i still see multiple ai-de terminal hosts that look like phantom hosts because you only have the main session and two sub-agents going ... so i dont think you actually cleaned up the stale terminal hosts",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "cleanup-correction-phantom-tabs",
+      "signals": {
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "MY EARLIER CLEANUP CLAIM WAS WRONG, and the operator was right to push. I reported the terminal-host question resolved after tracing conhost.exe parentage; the operator's screenshot named the actual thing - AiDe.Core.TerminalHost.exe from worktree paths I had deleted. MEASURED PROPERLY THIS TIME, twice: Win32_Process sees NO AiDe.Core.TerminalHost.exe at all, and exactly one process on the machine references 'ai-de' in its executable path or command line (my own shell). So there is no process leak. WHAT THE OPERATOR IS SEEING: I enumerated visible top-level windows via EnumWindows and resolved each to its owning PID. All ten ai-de-titled windows belong to ONE process - WindowsTerminal.exe PID 11772. They are TABS, not processes. Nine still display the last title of AiDe.Core.TerminalHost.exe runs from ai-de-feature-conductor-agent-plane, ai-de-chore-lane-rename and ai-de-feature-conductor-host - worktrees that no longer exist. The processes exited; Windows Terminal retained the tabs. The operator's word 'phantom' was exactly right. WHY I MISSED IT: my scan matched on process NAME and enumerated running processes, so a dead process with a surviving tab button was invisible to every query I ran. That is the same shape as DC-113 and DC-116 - I measured the thing I could see rather than the thing that was reported. WHAT I DELIBERATELY DID NOT DO: PID 11772 also owns the tab titled 'AI-DE Conductor specification phase 1 implementation' - the operator's own Claude Code session. Killing it to clear nine stale tabs would have closed the session running this work. Its live children are 3 wta.exe + 3 OpenConsole.exe (Windows Terminal's own infrastructure) and one 23-hour-old powershell.exe; none is an ai-de process. Closing the stale tabs is a UI action in the operator's terminal, not something to force from outside, and I am reporting it rather than reaching for it. STANDING FINDING for the ConPTY conformance tests: AiDe.Core.TerminalHost.exe is launched as a console app, so with Windows Terminal as the default terminal application each run adopts a tab that survives the process. Every full test run leaves visual debris the test suite never cleans, which is why nine accumulated across a day of runs.",
+      "supersedes": "al-01M264PTY4Z7FC6VM08XNZJ40S",
       "tags": [
         "cleanup",
         "correction",
         "process-leak",
         "conpty"
       ],
-      "outcome": "success",
-      "goal": "Correct my own cleanup claim: identify what the operator is actually seeing rather than what I assumed I had cleaned",
-      "done_when": "The nine ai-de terminal-host windows are resolved to their real owner and their true process state, my earlier claim is corrected on the record, and no action is taken that would disrupt the operator's own session",
       "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true
-      },
-      "supersedes": "al-01M264PTY4Z7FC6VM08XNZJ40S"
+      "tool": null
     },
     {
-      "id": "al-01M267VWN7NXPQ3NCSWVMYKRFM",
-      "shortname": "cm-trim: drop language-data",
-      "datetime": "2026-09-10T18:04:19Z",
-      "session": "cm-trim",
-      "prompt": "Execute the measurement Ruling 24 requires before the CodeMirror hosting option can be finalised: replace @codemirror/language-data with a hand-picked codeLanguages list, re-measure package count/disk size/import-map entries, reverify the composer+source-viewer in jsdom and real Chromium, build and hash the vendored ESM bundle (option c), and report whether the new numbers change which hosting option is cheapest.",
-      "summary": "Cut @codemirror/language-data, replaced with a hand-picked codeLanguages array (C#, JSON, Markdown) in lib.mjs. Production packages 52->26 (-50%), disk size 11MB->7.5MB (-32%), generated import-map entries 51->24. Reverified composer (chip widget, markdown edit, kept-language JSON fence highlighted) and read-only source viewer in headless jsdom and real Chromium (browser-dump.html); confirmed an unlisted-language (JS) fence now renders unhighlighted, not broken. Built vendored ESM bundle via npx esbuild@0.28.2 --bundle --format=esm --minify, 508337 bytes, SHA-256 ee3d19a44a330c43d03889ace6424732a5314073c96a36c39e83a2e1ee340981, committed with the hash alongside; smoke-tested standalone with no import map. Answered plainly: trim narrows the import-map manifest but does not remove the mandatory WebView2 host-change cost or the manifest-fragility class (a transitive package still needed a hand-added entry this run), so it does not by itself flip which hosting option is cheapest.",
-      "kind": "script",
-      "skill": null,
-      "tool": null,
       "actor": null,
       "artifacts": [
         "spikes/codemirror-composer/README.md",
@@ -10555,98 +10546,252 @@ window.AUDIT_DATA = {
         "spikes/codemirror-composer/vendor/codemirror-composer.bundle.mjs",
         "spikes/codemirror-composer/vendor/codemirror-composer.bundle.mjs.sha256"
       ],
+      "datetime": "2026-09-10T18:04:19Z",
+      "done_when": "New before/after numbers recorded in README, both proof paths (jsdom + real Chromium) re-executed and captured, vendored bundle built from the committed lockfile with a recorded command and SHA-256, and the hosting-option question answered plainly.",
+      "duration_seconds": 516.0,
+      "git": {
+        "branch": "spike/codemirror-trim",
+        "pushed": null,
+        "sha": "1e03de95e0781cb1eb13d3d173ab70b3e6cb27e6",
+        "short": "1e03de95e"
+      },
+      "goal": "Execute Ruling 24's measurement: cut @codemirror/language-data from the composer spike, re-measure package count/size/import-map, prove the composer+source-viewer still work, and build the vendored ESM bundle option (c).",
+      "id": "al-01M267VWN7NXPQ3NCSWVMYKRFM",
+      "kind": "script",
+      "outcome": "success",
+      "prompt": "Execute the measurement Ruling 24 requires before the CodeMirror hosting option can be finalised: replace @codemirror/language-data with a hand-picked codeLanguages list, re-measure package count/disk size/import-map entries, reverify the composer+source-viewer in jsdom and real Chromium, build and hash the vendored ESM bundle (option c), and report whether the new numbers change which hosting option is cheapest.",
+      "session": "cm-trim",
+      "shortname": "cm-trim: drop language-data",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-10T17:55:43Z",
+      "summary": "Cut @codemirror/language-data, replaced with a hand-picked codeLanguages array (C#, JSON, Markdown) in lib.mjs. Production packages 52->26 (-50%), disk size 11MB->7.5MB (-32%), generated import-map entries 51->24. Reverified composer (chip widget, markdown edit, kept-language JSON fence highlighted) and read-only source viewer in headless jsdom and real Chromium (browser-dump.html); confirmed an unlisted-language (JS) fence now renders unhighlighted, not broken. Built vendored ESM bundle via npx esbuild@0.28.2 --bundle --format=esm --minify, 508337 bytes, SHA-256 ee3d19a44a330c43d03889ace6424732a5314073c96a36c39e83a2e1ee340981, committed with the hash alongside; smoke-tested standalone with no import map. Answered plainly: trim narrows the import-map manifest but does not remove the mandatory WebView2 host-change cost or the manifest-fragility class (a transitive package still needed a hand-added entry this run), so it does not by itself flip which hosting option is cheapest.",
       "tags": [
         "codemirror",
         "ruling-24",
         "dependency-trim"
       ],
-      "outcome": "success",
-      "goal": "Execute Ruling 24's measurement: cut @codemirror/language-data from the composer spike, re-measure package count/size/import-map, prove the composer+source-viewer still work, and build the vendored ESM bundle option (c).",
-      "done_when": "New before/after numbers recorded in README, both proof paths (jsdom + real Chromium) re-executed and captured, vendored bundle built from the committed lockfile with a recorded command and SHA-256, and the hosting-option question answered plainly.",
       "tier": "T1",
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "started_at": "2026-09-10T17:55:43Z",
-      "duration_seconds": 516.0,
-      "git": {
-        "sha": "1e03de95e0781cb1eb13d3d173ab70b3e6cb27e6",
-        "short": "1e03de95e",
-        "branch": "spike/codemirror-trim",
-        "pushed": null
-      }
+      "tool": null
     },
     {
-      "id": "al-01M2687RD6P8RK5KZJXQ0ZBEJS",
-      "shortname": "file-rulings-19-31",
-      "datetime": "2026-09-10T18:10:48Z",
-      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
-      "prompt": "CHANGE ORDER - Addendum B: Prompt Templates. Ingest, reconcile against the front-door work in flight, amend the goal block, convene the Owner; ratification admits the scope; record the ruling as decision note + audit entry.",
-      "summary": "A PROCESS FAILURE OF MINE, DETECTED BY THE OWNER. Rulings 19-25 were issued, acted on in conversation, reported to the operator, and NEVER WRITTEN to docs/notes/. The Owner found it while checking Addendum B for collisions against them: docs/notes/ held only Rulings 15-18 and 15a, the audit log named 'Ruling 24' once, and the front-door plan on main still said session.yaml at lines 90/109/151 despite Ruling 23 moving it to JSON. It declined to treat them as given and ruled the providers question on the ladder directly rather than on an unrecorded ruling - and said plainly: 'that is the finding, not a clearance.' AN UNFILED RULING IS NOT RECORDED. Same shape as DC-111, DC-112 and DC-113: a record that exists somewhere unreachable is not a record. I filed 1-18 diligently and then stopped. Both notes now committed. ADDENDUM B RATIFIED (Rulings 26-31): R18 and R19 admitted to the front-door slice with FOUR CUTS - catalog sources ship built-in+workspace only (the pack source's lifecycle IS R22's update notice), the catalog canvas view is R22, the sheet's Start-from-template row is cut because it creates a back-edge from the composer node to the sheet node, and free-form-to-template preserves content by per-shape draft retention rather than transformation. That last cut resolves an INTERNAL COLLISION INSIDE ADDENDUM B that the Owner found and I had missed: B6/R19 is Phase 1 but routes one switch direction through apply-template, which is R20, Phase 3. R21 DEFERRED to Phase 3 beside R20 - its only consumer is the assist call path, and its own section-4.2 test ('no assist path exists outside the subscription engines') proves nothing while no assist path exists at all. Marked as EXTENDING the spec, since B8 phases R21 to Phase 1. Ruling 29 creates the pinned-contracts registry B9 assumes and the repo lacks, because template-schema/1's validator ships in Phase 1 and a contract enforced in code with no documented shape is a shape asserted from code. Ruling 30 transcribes the twelve built-ins byte-for-byte from B4 with a fixture test, checks launch and change-order field-by-field against the two real prompts in the audit log, and ships everything at v1 because B3.1's illustrative 'version: 3' would claim a history that was not observed. STILL OWED before plan approval: re-run the collision check against the now-filed Rulings 19-25.",
-      "kind": "manual",
-      "skill": null,
-      "tool": null,
       "actor": "claude-opus-5",
       "artifacts": [
         "docs/notes/front-door-council-rulings.md",
         "docs/notes/addendum-b-ratification.md",
         "docs/notes/addendum-b-reconciliation.md"
       ],
+      "datetime": "2026-09-10T18:10:48Z",
+      "done_when": "Rulings 19-25 and 26-31 exist as committed decision notes with their evidence; the audit entry cites them; the collision re-check against 19-25 is scheduled before plan approval",
+      "fan_out": 1,
+      "goal": "File Rulings 19-31 as decision notes, correcting an unfiled-ruling gap the Owner detected, and record Addendum B's ratification",
+      "id": "al-01M2687RD6P8RK5KZJXQ0ZBEJS",
+      "kind": "manual",
+      "outcome": "success",
+      "prompt": "CHANGE ORDER - Addendum B: Prompt Templates. Ingest, reconcile against the front-door work in flight, amend the goal block, convene the Owner; ratification admits the scope; record the ruling as decision note + audit entry.",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "shortname": "file-rulings-19-31",
+      "signals": {
+        "acceptance_met": true,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "summary": "A PROCESS FAILURE OF MINE, DETECTED BY THE OWNER. Rulings 19-25 were issued, acted on in conversation, reported to the operator, and NEVER WRITTEN to docs/notes/. The Owner found it while checking Addendum B for collisions against them: docs/notes/ held only Rulings 15-18 and 15a, the audit log named 'Ruling 24' once, and the front-door plan on main still said session.yaml at lines 90/109/151 despite Ruling 23 moving it to JSON. It declined to treat them as given and ruled the providers question on the ladder directly rather than on an unrecorded ruling - and said plainly: 'that is the finding, not a clearance.' AN UNFILED RULING IS NOT RECORDED. Same shape as DC-111, DC-112 and DC-113: a record that exists somewhere unreachable is not a record. I filed 1-18 diligently and then stopped. Both notes now committed. ADDENDUM B RATIFIED (Rulings 26-31): R18 and R19 admitted to the front-door slice with FOUR CUTS - catalog sources ship built-in+workspace only (the pack source's lifecycle IS R22's update notice), the catalog canvas view is R22, the sheet's Start-from-template row is cut because it creates a back-edge from the composer node to the sheet node, and free-form-to-template preserves content by per-shape draft retention rather than transformation. That last cut resolves an INTERNAL COLLISION INSIDE ADDENDUM B that the Owner found and I had missed: B6/R19 is Phase 1 but routes one switch direction through apply-template, which is R20, Phase 3. R21 DEFERRED to Phase 3 beside R20 - its only consumer is the assist call path, and its own section-4.2 test ('no assist path exists outside the subscription engines') proves nothing while no assist path exists at all. Marked as EXTENDING the spec, since B8 phases R21 to Phase 1. Ruling 29 creates the pinned-contracts registry B9 assumes and the repo lacks, because template-schema/1's validator ships in Phase 1 and a contract enforced in code with no documented shape is a shape asserted from code. Ruling 30 transcribes the twelve built-ins byte-for-byte from B4 with a fixture test, checks launch and change-order field-by-field against the two real prompts in the audit log, and ships everything at v1 because B3.1's illustrative 'version: 3' would claim a history that was not observed. STILL OWED before plan approval: re-run the collision check against the now-filed Rulings 19-25.",
       "tags": [
         "conductor",
         "addendum-b",
         "ruling",
         "process-failure"
       ],
-      "outcome": "success",
-      "goal": "File Rulings 19-31 as decision notes, correcting an unfiled-ruling gap the Owner detected, and record Addendum B's ratification",
-      "done_when": "Rulings 19-25 and 26-31 exist as committed decision notes with their evidence; the audit entry cites them; the collision re-check against 19-25 is scheduled before plan approval",
       "tier": "T2",
-      "fan_out": 1,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true
-      }
+      "tool": null
     },
     {
-      "id": "al-01M26AZMDETZHCG7CJ1PBSFR6E",
-      "shortname": "f0-session-object",
-      "datetime": "2026-09-10T18:58:47Z",
-      "session": "f0-session-object",
-      "prompt": "Execute node F0 of docs/plans/conductor-front-door.md: land the Session object and its on-disk path contract (Addendum A3) in src/AiDe.Core/Sessions/, TDD red-first, full gate set green, in the worktree C:\\Projects\\ai-de-feature-session-object on branch feature/session-object.",
-      "summary": "SessionConfig/SessionId/SessionPaths/SessionConfigStore/SessionEvent landed in the new src/AiDe.Core/Sessions/ namespace: session.json (not .yaml, Ruling 23), the reserved-and-unused runs/<run-id>.jsonl path, backend toggles that apply to new runs only and emit an append-only session.open/session.config event, and session.open/session.config proven to ride RunEvent's open Kind string with no schema change. Added tools/verify-r14b2-session-naming.py (--self-test) wired into build.yml as its own step. 23 new tests (4 files), all TDD red-first with an observed compile-red plus two deliberate assertion-level mutations (session.json->.yaml; append->overwrite on session-events.jsonl), both reverted after observing red. dotnet build -c Release: 0 warnings. Full gate set run bare: all green except two pre-existing, pre-F0 failures unrelated to this slice (verify-derived-views — fixed by this entry's own regeneration pass; the goal-state gate vs origin/main, which is stale by ~467 historical audit entries predating this session and is not F0's to repair).",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": null,
       "actor": "claude-opus-5-1m",
       "artifacts": [],
+      "datetime": "2026-09-10T18:58:47Z",
+      "done_when": "every F0 clause (session.json path; reserved run-log path unused; backend toggles apply to new runs only and emit a session event; session.open/session.config ride RunEvent's open kind with no schema change; R14 b2 naming lint wired into build.yml) passes as a test; dotnet build -c Release clean with zero warnings; dotnet test green; the full gate set green run bare.",
+      "fan_out": 0,
+      "git": {
+        "branch": "feature/session-object",
+        "pushed": null,
+        "sha": "2178e3d74276190e6f7b3b01473192fc784db7d7",
+        "short": "2178e3d74"
+      },
+      "goal": "Land the Session object and its on-disk path contract - the user-facing container Addendum A3 defines.",
+      "id": "al-01M26AZMDETZHCG7CJ1PBSFR6E",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Execute node F0 of docs/plans/conductor-front-door.md: land the Session object and its on-disk path contract (Addendum A3) in src/AiDe.Core/Sessions/, TDD red-first, full gate set green, in the worktree C:\\Projects\\ai-de-feature-session-object on branch feature/session-object.",
+      "session": "f0-session-object",
+      "shortname": "f0-session-object",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "SessionConfig/SessionId/SessionPaths/SessionConfigStore/SessionEvent landed in the new src/AiDe.Core/Sessions/ namespace: session.json (not .yaml, Ruling 23), the reserved-and-unused runs/<run-id>.jsonl path, backend toggles that apply to new runs only and emit an append-only session.open/session.config event, and session.open/session.config proven to ride RunEvent's open Kind string with no schema change. Added tools/verify-r14b2-session-naming.py (--self-test) wired into build.yml as its own step. 23 new tests (4 files), all TDD red-first with an observed compile-red plus two deliberate assertion-level mutations (session.json->.yaml; append->overwrite on session-events.jsonl), both reverted after observing red. dotnet build -c Release: 0 warnings. Full gate set run bare: all green except two pre-existing, pre-F0 failures unrelated to this slice (verify-derived-views — fixed by this entry's own regeneration pass; the goal-state gate vs origin/main, which is stale by ~467 historical audit entries predating this session and is not F0's to repair).",
       "tags": [
         "conductor",
         "addendum-a",
         "session",
         "F0"
       ],
-      "outcome": "success",
-      "goal": "Land the Session object and its on-disk path contract - the user-facing container Addendum A3 defines.",
-      "done_when": "every F0 clause (session.json path; reserved run-log path unused; backend toggles apply to new runs only and emit a session event; session.open/session.config ride RunEvent's open kind with no schema change; R14 b2 naming lint wired into build.yml) passes as a test; dotnet build -c Release clean with zero warnings; dotnet test green; the full gate set green run bare.",
       "tier": "T1",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
+      "tool": null
+    },
+    {
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.App/Workbench/WebAssetHost.cs",
+        "src/AiDe.App/Web/composer-host.html",
+        "src/AiDe.App/Web/vendor/codemirror-composer.bundle.mjs",
+        "src/AiDe.App/Web/vendor/vendor-manifest.json",
+        "src/AiDe.App/Web/vendor/LICENSES-codemirror.txt",
+        "tools/verify-vendored-assets.py",
+        "tests/AiDe.App.WebHostProbe/Program.cs",
+        "tests/AiDe.App.Tests/WebAssetHostIntegrationTests.cs"
+      ],
+      "datetime": "2026-09-10T19:25:12Z",
+      "done_when": "The spike bundle renders inside the REAL WebView2 host over a virtual host; CanvasSurface does not regress; Security C1-C8 satisfied; dotnet build -c Release clean with zero warnings; full gate set green, run bare.",
+      "duration_seconds": 2575.0,
       "git": {
-        "sha": "2178e3d74276190e6f7b3b01473192fc784db7d7",
-        "short": "2178e3d74",
-        "branch": "feature/session-object",
-        "pushed": null
-      }
+        "branch": "feature/web-host",
+        "pushed": null,
+        "sha": "607c131fa4450cd22f3ffc15c10a313be455e030",
+        "short": "607c131fa"
+      },
+      "goal": "Make the WebView2 host able to serve a vendored ES-module bundle, and make its integrity hash an actual control.",
+      "id": "al-01M26CFZZF9YS2AEN5WH7G00BR",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Execute node F1 of the approved front-door plan (docs/plans/conductor-front-door.md, F1 section - binding) with the Security review's C1-C8 verbatim (docs/reviews/front-door-council.md).\n\nGoal: Make the WebView2 host able to serve a vendored ES-module bundle, and make its integrity hash an actual control.\nDone when: the spike bundle renders inside the REAL WebView2 host; CanvasSurface does not regress; C1-C8 are satisfied; dotnet build -c Release clean, zero warnings; full gate set green bare.\nNot in scope: the composer or any form engine (F4); the session document or sheet (F2); templates (FT); building the PRODUCTION bundle - Ruling 33 puts that in F4, once, after the field-widget inventory.\nTier: T2. Fan-out cap: 0. Budget: 90 tool calls.\n\nClauses: (1) the spike bundle renders inside the real WebView2 host over a virtual host, not headless Chromium; (2) CanvasSurface does not regress - NavigateToString retained, with a simplify: marker recording that two web-hosting idioms coexist; (3) C1 - built by npm ci from the committed lockfile plus one pinned, recorded, one-off bundler invocation, no CDN-service artifact, nothing entering AiDe.sln/MSBuild/CI, plus --legal-comments=eof and a CodeMirror section in THIRD-PARTY-NOTICES.md; (4) C2 - a committed vendor-manifest.json with per-file {path, sha256, bytes} plus package set, versions, lockfile path and its sha256, verbatim build command, builder and version, node/npm versions, build date, licence, licence-copy path; (5) C3 - tools/verify-vendored-assets.py exits 1 on all five modes including A FILE WITH NO MANIFEST ENTRY; (6) C4 - --self-test asserting exit 1 for each of the five and exit 0 clean, not added to KNOWN_WITHOUT_SELF_TEST, repo root from git rev-parse, self-test run from a non-root directory; (7) C5 - wired into build.yml as its own bare step with a paired --self-test step; (8) C6 - .gitattributes marks the vendor directory -text and the .csproj copies verbatim; (9) C8 - correct the spike README's esm.sh suggestion.\n\nHard constraints: TDD red-first, report the actual red, then prove the oracle can fail by breaking the manifest deliberately in each of the five modes; TreatWarningsAsErrors, zero warnings; full gate set at close run BARE (DC-113); never git stash (DC-053); never verify-test-run.py --update; append to the audit log BEFORE regenerating derived artifacts; every load-bearing repo fact checked this turn or labelled unverified (DC-116). Work only in C:\\Projects\\ai-de-feature-web-host on branch feature/web-host; do not run coord install (DC-112).",
+      "session": "f1-web-host",
+      "shortname": "F1 web host + vendored bundle + its gate",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "started_at": "2026-09-10T18:42:17Z",
+      "summary": "F1. WebAssetHost maps the shell's Web folder onto https://aide.assets.invalid via CoreWebView2.SetVirtualHostNameToFolderMapping (DenyCors) - the first use of that API in src/. AiDe.App.WebHostProbe renders the vendored CodeMirror ES-module bundle in a REAL WebView2 control out of process (DC-014's idiom): 1 editor, 1 mention chip produced by the bundle's own ViewPlugin, 8 lines; two falsifiers observed red (missing bundle -> exit 2, stubbed export -> exit 3). CanvasSurface keeps NavigateToString and carries a simplify: marker recording the two coexisting idioms. Bundle rebuilt from the committed lockfile: npm ci --omit=dev (26 prod packages, 0 vulnerabilities) then one pinned npx esbuild@0.28.2 with --legal-comments=eof. FINDING: the flag emits nothing - zero @license/@preserve markers in the install tree - so the bundle is byte-identical to the spike's recorded artifact (sha256 ee3d19a4..., 508337 bytes), which also proves the vendored bytes are reproducible from the lockfile rather than a blob of unknown origin; the MIT notice obligation is met by a committed licence copy and a new THIRD-PARTY-NOTICES.md section (was 0 CodeMirror mentions). tools/verify-vendored-assets.py exits 1 on all five modes - hash mismatch, entry with no file, FILE WITH NO ENTRY (filesystem-walked, so untracked counts), lockfile-hash mismatch, blank provenance - each demonstrated red against the real repo from a non-root cwd, then reverted green; --self-test proves all five plus the clean case by running the script from a subdirectory of a throwaway repo (DC-071). Wired into build.yml as two bare steps. .gitattributes marks the vendor directory -text and the index blob is byte-identical to the working tree (C6/DC-108). Spike README's esm.sh recommendation corrected in place with the reasoning (C8). FINDING: AiDe.App.Tests hung once (testhost alive 22 min, no trx); the identical re-run passed 400/400 - this is the Phase-1 recorded hang recurring, cause still not established.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "f1",
+        "webview2",
+        "supply-chain",
+        "vendoring"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "src/AiDe.Core/Sessions/TemplateSchema.cs",
+        "src/AiDe.Core/Sessions/TemplateFrontmatterReader.cs",
+        "src/AiDe.Core/Sessions/TemplateLoader.cs",
+        "src/AiDe.Core/Sessions/TemplateCompiler.cs",
+        "src/AiDe.Core/Sessions/TemplateSources.cs",
+        "src/AiDe.Core/Sessions/TemplateCatalog.cs",
+        "docs/architecture/pinned-contracts.md"
+      ],
+      "datetime": "2026-09-10T19:07:02Z",
+      "done_when": "Every FT clause passes as a test; dotnet build -c Release clean with zero warnings; the full gate set green, run bare.",
+      "duration_seconds": 1453.0,
+      "fan_out": 0,
+      "goal": "Land template-schema/1 as a pinned contract, its validator, a deterministic compiler, the catalog with source precedence, and the twelve built-in templates transcribed from Addendum B (front-door node FT, R18).",
+      "id": "al-01M26BEQABQV7Y1J5BCCTMZV31",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Execute node FT, the template spine, of the approved front-door plan (docs/plans/conductor-front-door.md, FT section; docs/notes/addendum-b-ratification.md Rulings 26-31; Addendum B B3, B4, B7, R18).\n\nGoal: Land template-schema/1 as a pinned contract, its validator, a deterministic compiler, the catalog with source precedence, and the twelve built-in templates transcribed from Addendum B.\nDone when: every FT clause passes as a test; dotnet build -c Release clean, zero warnings; full gate set green bare.\nNot in scope: the composer or form rendering (F4) - the picker UI - the catalog canvas view (R22, Phase 3) - assist of any kind (R20/R21, Phase 3) - the session object (F0) - web hosting (F1) - anything under Watcher/, Dispatch/ or Terminal/.\nTier: T2. Fan-out cap: 0. Budget: 95 tool calls.\n\nClauses: (1) template-schema/1 pinned from birth, documented in a new pinned-contracts registry (Ruling 29) that links weave/1 and loomkeeper/1 without moving them, and states whether min and tier_default are schema-1 constraints or preserved-unknown fields. (2) when_to_use and why load-blocking; a failed template surfaces as a disabled entry carrying its error. (3) Deterministic compile, byte-identical. (4) Built-in + workspace only, precedence personal > workspace > pack > built-in fixed now, overrides badged, sources an ordered descriptor list. (5) Take an installed YAML dependency scoped to the template loader (Ruling 35); a third hand-rolled reader and JSON frontmatter are both refused; no tag-driven type resolution. (6) The twelve built-ins are transcribed, not authored (Ruling 30), with a fixture test citing B4 and launch/change-order checked against the real audit-log prompts. (7) goal-block's fields ARE GoalBlockFields' six constants; SpawnContractTests.cs stays byte-unchanged; template hints must not read as enforced.\n\nHard constraints: TDD red-first with mutation-bought assertion-level red; TreatWarningsAsErrors, zero warnings; new code in src/AiDe.Core/Sessions/; full gate set at close, bare; never git stash; never verify-test-run.py --update.",
+      "session": "ft-template-spine",
+      "shortname": "ft-template-spine",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": null,
+      "started_at": "2026-09-10T18:42:49Z",
+      "summary": "FT, the template spine. template-schema/1 pinned from birth and declared in a new pinned-contracts registry (Ruling 29) that links weave/1 and loomkeeper/1 where they live: min and tier_default are declared SCHEMA-1 CONSTRAINTS, not preserved unknowns; unknown frontmatter is preserved, never rejected. when_to_use and why are load-blocking and a failed template becomes a disabled catalog entry carrying its error. Compile is byte-deterministic - the renderer walks the template, never the caller's dictionary. Sources are an ordered descriptor list with personal > workspace > pack > built-in fixed now and built-in + workspace registered; overrides are badged. Frontmatter takes YamlDotNet 18.1.0 scoped to one file (Ruling 35), with explicit YAML tags refused before any node is built. The twelve built-ins are transcribed from B4 and re-derived from the spec HTML by the fixture test on every run; launch and change-order are additionally checked field-by-field against audit prompts al-01M23NQ3H2X748YSBMDKDVV9EJ, al-01M24B0ERPJYMCAR1BS49N7J4P and al-01M2687RD6P8RK5KZJXQ0ZBEJS. goal-block's fields are GoalBlockFields' six constants, in spec order; its fan_out_cap and budget hints say validated, not enforced. 124 new tests; compile-red observed, then assertion-level red bought by three mutations.",
+      "tags": [
+        "conductor",
+        "templates",
+        "template-schema",
+        "pinned-contract",
+        "front-door"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
+      "id": "al-01M26FVM2C9KR79G6JRJPAFNRW",
+      "shortname": "Ruling 36 — YAML guard scope at the front-door head-join",
+      "datetime": "2026-09-10T20:23:59Z",
+      "session": "conductor-front-door-join",
+      "prompt": "Owner arbitration: F0's Ruling-23 YAML guard vs FT's Ruling-35 YamlDotNet dependency, colliding on AiDe.Core.csproj at the head-join.",
+      "summary": "Ruling 36 (Owner, Verified). The head-join of F0 || F1 || FT built clean and ran App 400/400 Completed, Core 2037 executed / 1 failed. The single failure was SessionPathContractTests.CoreProject_TakesNoYamlDependency, matching at pos 1127 inside FT's own explanatory comment in AiDe.Core.csproj.\n\nRULED: Rulings 23 and 35 do not conflict. Ruling 23's subject is session config; Ruling 35 explicitly carves itself out of it. F0's guard is narrowed to the session-config path (a source scan of SessionConfig.cs and SessionConfigStore.cs, same shape as the existing RunLogFile scan), renamed to say what it proves. Test count stays 2037; no test deleted. Refused: an allow-list inside the repo-wide guard; splitting YamlDotNet into its own project.\n\nCORRECTION TO THE CONDUCTOR, recorded because it changes where the fault lies: the conductor brought this as an over-reaching implementation in one node. The Owner found the plan's F0 clause reads \"Fails if: a YAML dependency appears\" with NO scope qualifier, while the FT clause names the .csproj as \"the one shared derived surface with F0/F1\". The contradiction was written into the plan's fail-clauses, not only into F0's implementation, and the ruling-level collision re-check had both facts in hand without crossing them. F0 implemented its clause literally and correctly.\n\nCONDUCTOR-OWNED AND DONE: the plan's F0 fail-clause amended with its missing scope qualifier plus a blockquote recording why; this note filed; DC-118 registered (status uncontrolled, counts 64/47/7).\nNOT CONDUCTOR-OWNED: the test edit. Dispatched as seam node FS1 in its own worktree, under a red-first condition (narrowed test observed passing, observed failing with a temporary Yaml reference in SessionConfigStore.cs, restore proven by an empty diff).\nDEFERRED, RECORDED: no test today enforces Ruling 35's \"scoped to the template loader\" clause for YamlDotNet types. A gap, not a floor trip.\nUPSTREAM: DC-118's control is pack-level (plan authoring, not this codebase) and is being landed in ai-forward, driven to acceptance.\n\nCONDITION ON THE CLOSE: the merged floor (App 400 / Core 2037, both measured, --update never run) is set only after Core is observed 2037/2037 green. F2 does not dispatch until the join passes (Ruling 37 condition 1).",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/notes/front-door-ruling-36-yaml-guard-scope.md",
+        "docs/plans/conductor-front-door.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "ruling",
+        "head-join",
+        "dc-118"
+      ],
+      "outcome": "partial",
+      "goal": "Close the front-door head-join green so F2 can dispatch",
+      "done_when": "Core observed 2037/2037 green, floor set from measured halves, derived regenerated, full gate set run bare, one conductor-owned merge commit",
+      "tier": "T2"
+    },
+    {
+      "id": "al-01M26G7P0T04RK5P9NDB4HMPGB",
+      "shortname": "Ruling 38 — run-log reservation guard widened before F2",
+      "datetime": "2026-09-10T20:30:34Z",
+      "session": "conductor-front-door-join",
+      "prompt": "Scope call before F2: widen the run-log reservation guard, or declare the residual and brief F2?",
+      "summary": "Ruling 38 (Owner, Verified). Found by pointing Ruling 36's new control (collision check per declared shared surface) at F2 BEFORE dispatch, rather than by looking for it.\n\nDEFECT: SessionPathContractTests.cs:52-79 documents the plan clause verbatim -- \"Fails if: anything writes a run log anywhere\" -- while scanning src/AiDe.Core/Sessions with SearchOption.TopDirectoryOnly for the single token RunLogFile. The Owner found a second narrowing the conductor had missed: the TOKEN SET is narrowed too, so a writer calling SessionPaths.RunsDirectory(...) or RunsDirectoryName and appending its own filename passes the guard EVEN INSIDE Sessions/. The dynamic half (SessionConfigStoreTests.cs:135-150) exercises only SessionConfigStore. Neither half reaches src/AiDe.App/, which is exactly where F2 builds the session document, paired-zone preset and Console merged stream. RunLogStore is Phase 3, so a squatted path would be inherited.\n\nRULED (b) -- widen before F2 dispatches, not declare-and-brief. On one line: \"a brief is not a control.\" Verified affordable, not assumed: grep of src/**/*.cs shows ZERO use sites of the three tokens outside their declarations in SessionPaths.cs, so the widened guard passes on today's tree.\n\nSCOPE: src/ recursive *.cs; tokens RunLogFile|RunsDirectory|RunsDirectoryName; allowlist { SessionPaths.cs } as a named constant; tests/ NOT scanned (tests legitimately reference these). Phase 3 extends the allowlist by one entry citing its ruling -- a guard that must be deleted to make progress is one people delete. Doc comment states scanned root, recursion, token set and allowlist verbatim.\n\nDECLARED RESIDUAL, covered dynamically not statically: a hard-coded \"runs\" literal defeats any token scan. F2 must, for EACH App surface it builds, exercise it then assert SessionPaths.RunsDirectory(...) does not exist -- the App-layer twin of Lifecycle_NeverWritesUnderTheReservedRunsDirectory. Ruled a TEST OBLIGATION, not a caution: a control F2 writes, not a sentence F2 is told. Recorded in the plan under F2.\n\nDC-118: second instance, same class, explicitly NOT a new class. Control gained a second half -- every scan-shaped guard's doc comment must name scanned root, recursion, token set and allowlist, and the plan clause it discharges must carry the same qualifier; the mismatch is the tell, and it is mechanically checkable (one sentence against one EnumerateFiles call). The asymmetry recorded: widening goes red at a join and announces itself; narrowing stays green while the promise is violated.\n\nCONDUCTOR-OWNED AND DONE: plan F0 run-log clause scoped with a blockquote; plan F2 given the App-layer twin obligation; this note filed; DC-118 control extended; upstream ai-forward node messaged so it lands both halves of the control rather than one.\nNOT CONDUCTOR-OWNED: the guard widening, dispatched to the open seam as a third commit, under a red-first condition (temporary RunsDirectory caller under src/AiDe.App/, restore proven by empty diff).\n\nJOIN: Ruling 37 condition 1 is satisfied when Core is observed green on the final tree of the join, whichever commit is last. The SessionPaths.cs:8 doc-comment correction counts as inside the join -- same seam, same defect shape, prose only.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/notes/front-door-ruling-38-run-log-guard-scope.md",
+        "docs/plans/conductor-front-door.md",
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "ruling",
+        "guard-scope",
+        "dc-118"
+      ],
+      "outcome": "partial",
+      "goal": "Close the front-door head-join green so F2 can dispatch",
+      "done_when": "Core observed 2037/2037 green on the final tree, floor set from measured halves, derived regenerated, full gate set run bare, one conductor-owned merge commit",
+      "tier": "T2"
     }
   ],
   "changes": [

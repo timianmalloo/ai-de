@@ -28,6 +28,12 @@ reconciliation, `GoalBlock.cs`, `GovernedRunHost.cs:69`, both contract docs, and
 
 1. **No YAML parser exists anywhere** — `Yaml` matches zero `.csproj`. `ProviderRegistry` is
    constructed from **in-code rows** (`GovernedRunHost.cs:69`), never from a file.
+   > **True when ruled; no longer true.** **Ruling 35** later authorised YamlDotNet in
+   > `AiDe.Core.csproj`, scoped to the template frontmatter loader, on grounds Ruling 23 did not
+   > cover (B3.1 uses multi-line scalars and flow mappings, and both hand-rolled subset readers'
+   > own `simplify:` upgrade triggers had fired). **Ruling 36** confirmed the two do not conflict.
+   > The ruling below is unchanged — only the fact it rested on moved. See
+   > `note-front-door-ruling-36`.
 2. **Rulings 19–25 were not filed** when it ruled. It therefore **declined to treat them as
    given** and ruled the providers question on the ladder directly. *(Now filed —
    `note-front-door-council-rulings`.)*

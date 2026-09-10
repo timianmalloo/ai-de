@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 79 types, 321 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 80 types, 325 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3e2670c8b14759aece3fac4900cb909954d699713f303ef631eaf60390d525d3"
+      "sourceSha256": "abf9ddf6be1a7971a6085061f379b4e6e1d15a892f95fbffb4b1ddecf7f08c0a"
     },
     {
       "id": "api-aide-core",
@@ -1710,6 +1710,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "931922b7daf24b6592406a843d77a6399488e3959ad3ae2ed1c3d24637223c11"
+    },
+    {
+      "id": "api-aide-core-sessions",
+      "path": "docs/api/AiDe.Core.Sessions.md",
+      "title": "API: AiDe.Core.Sessions",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 22 types, 56 members, 87% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4ba8f8a86c9e217ec4e205bc4e5e848433e44cef79b26c5b61f91e60a6c5c8b4"
     },
     {
       "id": "api-aide-core-store",
@@ -2147,6 +2172,46 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "379b24209d0ac4ce0eda4e2ba6feb0d8fa47d0d8863780cce5b05e98db2803a0"
+    },
+    {
+      "id": "architecture-pinned-contracts",
+      "path": "docs/architecture/pinned-contracts.md",
+      "title": "Pinned contracts registry",
+      "type": "architecture",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "One page naming every pinned contract in this repository — id, version, home document, and evolution rule. Created by Ruling 29 because template-schema/1's validator ships in Phase 1 and enforces a shape, and a contract enforced in code with no documented shape is a shape asserted from code. It LINKS to weave/1 and loomkeeper/1 where they already live; it does not move or restate them.",
+      "tags": [
+        "contracts",
+        "pinned",
+        "template-schema",
+        "weave",
+        "loomkeeper",
+        "governance"
+      ],
+      "links": [
+        {
+          "to": "design-watcher-weave-score",
+          "rel": "relates-to"
+        },
+        {
+          "to": "design-watcher-coordination-contract",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-b-ratification",
+          "rel": "depends-on"
+        },
+        {
+          "to": "architecture-agent-plane",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "1bd9b5378c68127a8db8b65282967dc58b152babb1f78b8ccaa12ee907410223"
     },
     {
       "id": "note-2026-08-30-overnight-surfaces",
@@ -2789,7 +2854,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b7cb55ebda6662864af692a270685ce07dfe79e606cddd9568e5da67a794b735"
+      "sourceSha256": "28525b746b4f316ba9fae57a73478600f21bf4885aa17214be96a239bb624c25"
     },
     {
       "id": "note-addendum-b-reconciliation",
@@ -3520,6 +3585,80 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "e1ff5834b588aa2ec56a2c1eff70494c4da19afbf1205019e4718cd2904a07cd"
+    },
+    {
+      "id": "note-front-door-ruling-36",
+      "path": "docs/notes/front-door-ruling-36-yaml-guard-scope.md",
+      "title": "Decision note — Ruling 36: Rulings 23 and 35 do not conflict; F0's YAML guard narrowed",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "The head-join of F0, F1 and FT produced one failing test. Rulings 23 and 35 do not conflict; the fail-clauses derived from them did, on a surface the plan itself named as shared. F0's repo-wide YAML guard is narrowed to the session-config path by a seam node, the plan's F0 fail-clause gains the scope qualifier it was missing, and the class is registered as DC-118.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "ruling",
+        "seam",
+        "head-join",
+        "yaml",
+        "collision-check"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-b-ratification",
+          "rel": "depends-on"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "c42ebc25c9b3bff6aa85004dd535de334fb6af52bf3445228dc6df939134ca33"
+    },
+    {
+      "id": "note-front-door-ruling-38",
+      "path": "docs/notes/front-door-ruling-38-run-log-guard-scope.md",
+      "title": "Decision note — Ruling 38: the run-log reservation guard widened before F2",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "Ruling 36's per-shared-surface control, applied to F2 before dispatch, found F0's run-log guard narrower than its own doc comment in two dimensions. Widened to src/ recursive over three tokens with a named allowlist, red-first, before F2 dispatches. A brief is not a control.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "ruling",
+        "guard-scope",
+        "run-log",
+        "dc-118",
+        "head-join"
+      ],
+      "links": [
+        {
+          "to": "note-front-door-ruling-36",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "d26789684f6dc9d229f4e05352992992cf60e0c2f26880a52dcac230d7933fbe"
     },
     {
       "id": "note-terminal-customization-persistence",
@@ -5294,7 +5433,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "1a3e15cb0bc01a80ff2ad0f8035c9f530fe9447760d10dfe9714b14693298617"
+      "sourceSha256": "1e7acdcc43cf110e129147eefdcb37d95ce9c1ff52d313efd1ff206b5e46e15f"
     },
     {
       "id": "design-session-profiler",
@@ -6358,7 +6497,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a666c24b7c9d23c6e023854bf0b7d9c0eae1f3914d62178a8d3aa0adf290a3a1"
+      "sourceSha256": "51c967b451eb5854a3eedc71cb5e68c43a0b20b198de2fc6d8bdcd4ab14eb92c"
     },
     {
       "id": "plan-conductor-programme",
@@ -12471,5 +12610,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "686dd3d48319eee01c7de2f51550bf34c5c8f58665382ab0ff2abcec23027050"
+  "graphSha256": "13d4656c4f85b81646006ecac9796eb4eba4471a575e1a6d28c3565fcb0a4a58"
 };

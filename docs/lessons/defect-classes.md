@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 46 · uncontrolled 6
+**Status counts:** controlled 64 · partially-controlled 47 · uncontrolled 7
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -4566,6 +4566,128 @@ for both or split.*
 - **Status:** `partially-controlled` — the "verify what you rely on" instruction is now standing in
   every delegation brief and caught all three instances; nothing prevents the false premise being
   written in the first place
+
+---
+
+### DC-117 — A GUI test suite that drives shell integration cannot complete under a console-less tool host
+
+- **Shape:** a suite spawns real shells to exercise shell-integration behaviour. Under an
+  interactive console those shells attach, run and exit. Under a **console-less automation host**
+  they attach to nothing, never complete, and the test host blocks waiting for them — so the suite
+  neither passes nor fails. **It produces no result file at all**, which is the part that makes it
+  hard to read: a suite that fails leaves evidence, and this one leaves silence.
+- **Signature:** minutes of wall-clock with almost no CPU (58 s over 35 minutes, measured), no
+  `.trx`, no progress output. It reads as a hang in the *product*, or as flakiness, and the natural
+  response is a re-run — which succeeds if it happens to land in a different host, cementing the
+  "flaky" reading.
+- **Why it survives:** the same command is correct. Nothing about the invocation, the suite or the
+  machine is wrong — only the **host the command runs under**, which is invisible in the command
+  line and absent from every log the run produces.
+- **Instances — three, across two phases, before the cause was found:**
+  1. Phase-1 N7: one hang, ~18 minutes, no result file, **cause recorded as unknown** and carried
+     as a residual with the trigger *"if it recurs it becomes a class before any other Phase 2 work
+     proceeds."*
+  2. Front-door F1: recurrence, **22 minutes**, no `.trx`; killed, re-run identically, 400/400 green.
+     The trigger fired here.
+  3. Front-door FT: **root-caused.** `AiDe.App.Tests` spawns ~30
+     `powershell.exe -NoLogo -NoExit -EncodedCommand` shell-integration processes that never
+     complete under the Bash tool host. **Killing those shells advanced the run immediately** (58 s
+     → 92 s CPU), and fresh batches then appeared. **The identical command from the PowerShell
+     console host completes and passes 399/399.**
+- **Relationship to DC-014:** this is DC-014's shape **one layer up** — there, a console-less host
+  could not drive a pseudo-console; here it cannot drive shell integration. Same root, different
+  altitude.
+- **Control:** run `AiDe.App.Tests` **from a console host**, never from the Bash tool. Recorded in
+  the plan's standing constraints so every future node's brief carries it. **Not yet mechanised** —
+  a gate that refuses to start under a console-less host is the candidate, and it must be careful
+  not to refuse CI, where the suite runs correctly.
+- **The generalisation:** *a test that drives the terminal is testing the host it runs under, whether
+  or not it means to be.* Any suite that spawns shells, consoles or PTYs should be asked which host
+  it needs — and a run that produces **no result file** should be read as a host mismatch before it
+  is read as flakiness.
+- **Status:** `partially-controlled` — the cause is established and the workaround is known and
+  written into the briefs, but nothing fails when the shape recurs; a re-run under the wrong host
+  still hangs silently
+
+### DC-118 — A ruling-level collision check passes while the FAIL-CLAUSES derived from those rulings contradict on a declared shared surface
+
+- **Shape:** two decisions are individually correct and do not conflict *as decisions* — one even
+  carves its scope explicitly out of the other. Each is then transcribed into a plan as a node's
+  `Fails if:` clause. One clause is written **without a scope qualifier**, so it asserts a
+  repo-wide fact; a sibling node is explicitly authorised to make that fact false on a surface
+  **the same plan names as shared between them**. The collision check runs at the level of the
+  *rulings* and passes — correctly. The contradiction is one level down, in the derivation.
+- **Signature:** one document contains both halves — a line naming a surface as shared between
+  nodes, and a `Fails if:` over that surface carrying no *"in this node"* / *"on this path"*
+  qualifier. Nothing crosses them. The failure surfaces only at the join, as a single red test,
+  and often the matched text is the **other node's explanatory comment** rather than its code.
+- **Instance (front-door slice, 2026-09-10):** Ruling 23 (session config is JSON — no YAML parser
+  existed) became F0's clause *"Fails if: a YAML dependency appears."* Ruling 35 (template
+  frontmatter takes an installed YAML dependency, **scoped to the template loader**) became FT's
+  clause *"The `.csproj` edit belongs to this node alone — it is the one shared derived surface
+  with F0/F1."* F0 implemented its clause literally, as a repo-wide scan of `AiDe.Core.csproj`.
+  Green in both worktrees; red on the merged tree, at `pos 1127` — inside the comment FT had
+  written to explain **why** it took the dependency. Neither node was defective. The plan was.
+- **Why the existing check could not see it:** Ruling 31's collision re-check compares rulings
+  against rulings, and Rulings 23 and 35 are compatible — 35 states in terms that 23's ladder
+  argument *"does not transfer"*. No ruling-level comparison can find this, because the source
+  decisions agree. The Owner's finding on review: *"the contradiction was written into the plan's
+  fail-clauses, not only into F0's implementation, and the re-check had both facts in hand without
+  crossing them."*
+- **Why parallel execution hides it until the most expensive moment:** each node's suite was green
+  in its own worktree because **neither worktree contained the other's change**. A guard whose
+  subject is a shared surface is not meaningfully evaluated before the join — so the earliest
+  possible detection is a plan-time reading, not a test run.
+- **Control (named by Ruling 36, minimum form):** run the collision check **per declared shared
+  surface**, not only per ruling. For every surface a plan names as shared between nodes, list
+  each node's `Fails if:` that names that surface and show them **jointly satisfiable**. A
+  `Fails if:` clause carrying no scope qualifier over a declared shared surface is a defect in the
+  plan, independent of whether it happens to collide. Lands as a checklist row in the
+  plan-producing stage; prose alone is a memoir (CI6).
+- **Control, second half (added by Ruling 38 after the second instance):** every **scan-shaped
+  guard** — any test that enumerates files and matches tokens — must state in its doc comment the
+  **scanned root**, whether it **recurses**, the **token set**, and the **allowlist**; and the plan
+  clause it discharges must carry **the same qualifier**. *The mismatch between the two is the
+  tell*, and it is mechanically checkable by reading one sentence against one `EnumerateFiles`
+  call. A guard is built to be **extended** — Phase 3 adds `RunLogStore.cs` to the allowlist citing
+  its ruling — because **a guard that must be deleted to make progress is one people delete.**
+- **Second instance, opposite direction, found by this class's own control within the hour
+  (front-door F0):** the plan clause *"Fails if: anything writes a run log **anywhere**"* was
+  transcribed into `RunLogFile_IsCalledOnlyByItsOwnDeclaration_NothingElseInSessionsWritesThere`,
+  whose XML doc **quotes the clause verbatim — "anything writes a run log anywhere"** — while the
+  body scans `src/AiDe.Core/Sessions/` with `SearchOption.TopDirectoryOnly`. The guard is
+  **narrower than the sentence above it**, and the sentence is what a reader trusts. This direction
+  is the more dangerous of the two: a clause written **wider** than its ruling goes **red** at a
+  join and is therefore self-announcing, whereas a guard written **narrower** than its clause stays
+  **green** while the thing it promised is violated. The repo's own good practice for this is at
+  `defect-classes.md:1788` — *state the residual scope explicitly* (*"discovery is scoped to
+  `src/AiDe.App` and to the `=>`-bodied form"*). F0 did not; it kept the word *anywhere*.
+- **Both directions are one mechanism:** transcribing a decision into an executable clause, or a
+  clause into a guard, is a **width-changing step**, and nothing checks the width. Widening is
+  caught by the join; narrowing is caught by nothing.
+
+- **The generalisation:** *checking that two decisions agree does not check that two
+  implementations of those decisions agree.* Transcribing a decision into an executable clause
+  creates a **new artifact with its own failure modes**, and the tell is asymmetry of width — the
+  narrower and more carefully carved the ruling, the more likely the clause derived from it is
+  written wider than the ruling it claims to enforce.
+- **Landed upstream, not yet installed here.** The control shipped in `ai-forward` as **GO14a**
+  in `execution-graph-optimization.md` (`load: always`, beside GO14, which already owns *"a gate
+  must state what input would make it fail"*), with checklist rows in the `optimize-graph` and
+  `prepare-for-coordination` skills and their Copilot mirrors. Pack **rev 66 → 67**
+  (`2026.09.10.1`), remote tip `bf5c93bf36230053c6e06a901978f2b009dc6b17`, three CI workflows read
+  back from the API as `success` with the step list checked rather than the job conclusion trusted.
+  Both halves went in as **one** directive deliberately: they are one mechanism, and the asymmetry
+  only reads as an insight when the two directions sit in the same paragraph. Always-loaded cost
+  **+520 est. tokens**, inside the 2% ratchet — and the **per-skill ratchet fired red** before the
+  baseline was recorded, which is the growth control working rather than being trusted.
+  **No plan-lint exists** in the pack, and one was deliberately not invented: half (a) is not
+  evaluable before a join, because separate worktrees never contain each other's change.
+- **Status:** `uncontrolled` **in this repository** — the control exists upstream but ai-de is on
+  pack rev 66, so nothing here fails when the shape recurs yet. It moves to
+  `partially-controlled` when the pack update lands in ai-de, and that is a **recorded next step**,
+  not an assumption: the difference between a control that exists and a control that is installed
+  is exactly the gap DC-114 is about.
 
 ---
 

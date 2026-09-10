@@ -41,6 +41,12 @@ docs/health-history.jsonl: register
 
 docs/api/*.md: derived python tools/api-reference.py --src src --out docs/api
 docs/_site/index.html: derived python tools/build-doc-viewer.py
+# A GENERATOR OWNS A SET. build-doc-viewer.py writes docs/_site/index.html AND docs/_meta.json;
+# SETUP 4 registered only the first, so _meta.json stayed `authored` and produced a real merge
+# conflict at the head join that its own class would have resolved by regeneration. The registry's
+# own header records this lesson from the pack ("a generator owns a SET and a candidate declares
+# patterns, not one path") and I declared one path anyway. Command re-run before writing this rule.
+docs/_meta.json: derived python tools/build-doc-viewer.py
 
 # Append-only loomkeeper contract logs. These are `register`, not `derived`: nothing regenerates
 # them, they only ever grow, and a conflict is resolved by union rather than by re-running a

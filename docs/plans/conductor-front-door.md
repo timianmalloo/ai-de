@@ -109,9 +109,26 @@ Everything after F2 serialises on `WorkbenchShell.cs`, `SurfaceContentFactory.cs
 ## F0 — session object and path contract (R14)
 
 - `session.json` at `.aide/sessions/<session-id>/session.json` (**Ruling 23** — no YAML parser
-  exists; recorded as an A3 erratum). *Fails if:* a YAML dependency appears.
+  existed when that was ruled; recorded as an A3 erratum). *Fails if:* `SessionConfig` /
+  `SessionConfigStore` or the on-disk session file uses YAML.
+  > **Scope qualifier added by Ruling 36**, after the head-join. As first written this clause read
+  > *"Fails if: a YAML dependency appears"* — unqualified — while FT's clause below hands FT the
+  > `.csproj` and calls it *"the one shared derived surface with F0/F1."* Two fail-clauses over one
+  > declared shared surface, jointly unsatisfiable, and F0 implemented its clause literally as a
+  > repo-wide scan. Rulings 23 and 35 never conflicted; **the fail-clauses derived from them did.**
+  > See `note-front-door-ruling-36`.
 - The run-log path `.aide/sessions/<session-id>/runs/<run-id>.jsonl` is **reserved and asserted
-  unused**. *Fails if:* anything writes a run log anywhere (`RunLogStore` is Phase 3).
+  unused**. *Fails if:* any file under `src/` (recursive, `*.cs`) outside the allowlist
+  `{ SessionPaths.cs }` names `RunLogFile`, `RunsDirectory` or `RunsDirectoryName`
+  (`RunLogStore` is Phase 3, and extends the allowlist by one entry citing its ruling).
+  > **Scope stated by Ruling 38**, after Ruling 36's control was applied to F2. As first written
+  > this clause said *"anything writes a run log anywhere"*, and the guard implementing it scanned
+  > `src/AiDe.Core/Sessions` **top-directory only** for the single token `RunLogFile` — while
+  > keeping the word *anywhere* in its own doc comment. Narrower than its sentence in **two**
+  > dimensions, and F2 is the node most likely to trip it. **DC-118, second instance:** widening
+  > goes red at a join and announces itself; narrowing stays green while the promise is violated.
+  > **Declared residual:** a hard-coded `"runs"` literal bypasses any token scan, and is covered
+  > dynamically by F2's own obligation below, not statically here. See `note-front-door-ruling-38`.
 - Backend toggles apply to **new runs only** and emit a session event. *Fails if:* a toggle changes
   a prior run's recorded config.
 - New kinds `session.open` / `session.config` ride the **open `kind` string**. *Fails if:* the
@@ -223,6 +240,12 @@ forced a stub (HYG-A).
   launching the engine-native flow, **claude-code only**, re-probing on return, under a `simplify:`
   marker. **Toggling a `needs-login` engine is still refused for routing** — *fails if it is
   offered to the router.*
+- **The reserved run-log path is F2's to keep empty (Ruling 38, item 2 — a test obligation, not a
+  caution).** For **each** App surface F2 builds — session document, paired-zone preset, Console
+  merged stream — exercise it, then assert `SessionPaths.RunsDirectory(...)` **does not exist**.
+  This is the App-layer twin of `SessionConfigStoreTests.Lifecycle_NeverWritesUnderTheReservedRunsDirectory`,
+  and it is the only cover for the declared residual that a hard-coded `"runs"` literal defeats a
+  token scan. *Fails if:* any of the three surfaces creates the reserved directory.
 - **Recent sessions is NEW CONSTRUCTION**, not an existing destination — `MainMenuBuilder`
   currently has `RecentWorkspaces`, which is installation-scoped and different. *Fails if:* a
   created session does not appear, or a Recent entry does not restore its workspace.

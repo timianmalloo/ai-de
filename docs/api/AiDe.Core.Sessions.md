@@ -135,10 +135,29 @@ controls completely rather than to hostile input.
 The on-disk path contract for a session (Addendum A3; Ruling 23; F0 clauses 1-2).
 
 **Remarks.** **`session.json`, not `.yaml` (Ruling 23, recorded as an A3 erratum).** A3's
-prose named `session.yaml`; no YAML parser exists in any `.csproj` in this repository,
-`System.Text.Json` is already used in 38 files, and the sibling run-log path is
-`.jsonl`. Introducing a YAML dependency for this one file would be the only YAML reader in
-the product for a format with no reader anywhere else.
+prose named `session.yaml`; at the time of Ruling 23, no YAML parser existed in any
+`.csproj` in this repository, `System.Text.Json` was already used in 38 files, and the
+sibling run-log path is `.jsonl`. Choosing YAML for this one file would have made it the
+only YAML reader in the product for a format with no reader anywhere else — that was the actual
+reasoning, and it still holds for THIS path today: `SessionFile` reads and writes
+`System.Text.Json` only, via `SessionConfigStore`.
+
+
+
+
+
+**Update (Ruling 35 / Ruling 36): a YAML-reading package now exists in this project.**
+`AiDe.Core.csproj` takes a YAML library, scoped to the template loader
+(`TemplateFrontmatterReader` / `TemplateSchema.cs`) for template
+frontmatter — an unrelated format, an unrelated path. This does not reopen Ruling 23: Ruling 36
+confirmed the two rulings do not conflict, because Ruling 23's subject was always the
+session-config path specifically, never a claim that the *project* would forever contain no
+YAML parser. Nothing under this type takes a YAML dependency; see
+`SessionPathContractTests.SessionConfigSource_ContainsNoYamlToken`, which asserts that
+directly against source rather than repeating a repo-wide claim in prose. (Deliberately not
+naming the package here by its literal token:
+`TemplateFrontmatterParserTests.TheDependencyIsScopedToTheTemplateLoader` asserts that
+exactly one file in `src/` contains it, and this paragraph would otherwise be a second.)
 
 
 
