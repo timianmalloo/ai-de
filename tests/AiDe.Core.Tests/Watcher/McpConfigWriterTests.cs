@@ -280,8 +280,12 @@ public sealed class McpConfigWriterTests : IDisposable
     /// identical.</para>
     ///
     /// <para>The same mechanism applies on POSIX, where a <c>0600</c> file returns as
-    /// <c>0666 &amp; ~umask</c>. This case carries no platform trait ON PURPOSE: it is the Linux
-    /// runner executing this branch that turns that half from inference into measurement.</para>
+    /// <c>0666 &amp; ~umask</c>. This case carries no platform trait ON PURPOSE, and the Linux runner
+    /// earned its keep on the first push: <c>File.Replace</c> alone does NOT preserve the mode there.
+    /// It failed with <c>Expected: "UserWrite, UserRead"</c> / <c>Actual: "OtherRead, GroupRead,
+    /// UserWrite, UserRead"</c> — a file the user made private, published to the group and the world.
+    /// The writer now sets the mode on the replacement before the swap. Had this case been written
+    /// Windows-only, the fix would have shipped half-done and looked complete.</para>
     /// </remarks>
     [Fact]
     public void AMergeLeavesTheFilesProtectionExactlyAsItWas()

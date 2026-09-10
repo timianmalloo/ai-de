@@ -186,16 +186,27 @@ public static class McpConfigWriter
 
             if (File.Exists(path))
             {
-                // NOT File.Move(overwrite: true). Move installs the TEMP file's security descriptor —
-                // freshly created, so directory-inherited — over the target's own. MEASURED on
-                // Windows: a .mcp.json hardened to owner-only with inheritance disabled came back as
-                // SYSTEM + Administrators + owner, every ACE inherited and protection off. A user who
-                // locked the file down BECAUSE it holds a live third-party key had it silently
-                // unlocked, and re-subscribed to every later change to the directory's ACL. The same
-                // mechanism applies on POSIX, where 0600 returns as 0666 & ~umask.
+                // NOT File.Move(overwrite: true). Move installs the TEMP file's permissions — freshly
+                // created, so whatever the directory and umask hand out — over the target's own. A
+                // user who locked .mcp.json down BECAUSE it holds a live third-party key had it
+                // silently unlocked. MEASURED on Windows: owner-only with inheritance disabled came
+                // back SYSTEM + Administrators + owner, every ACE inherited and protection off.
                 //
-                // ReplaceFile preserves the REPLACED file's attributes and ACL, and is still atomic
-                // and still same-volume — which this already is.
+                // ReplaceFile preserves the REPLACED file's attributes and ACL, stays atomic, and
+                // stays same-volume — which this already is. MEASURED on the same hardened file:
+                // protection and the ACE set came back identical.
+                //
+                // BUT THAT IS THE WINDOWS HALF ONLY. On POSIX, File.Replace does NOT carry the
+                // destination's mode across — MEASURED on the Linux runner, where a 0600 target came
+                // back 0644, i.e. the temp file's own creation mode survived the rename. So there the
+                // mode is put on the REPLACEMENT before the swap rather than restored after it: a
+                // chmod afterwards would leave a window, however short, in which a file the user made
+                // private is world-readable.
+                if (!OperatingSystem.IsWindows())
+                {
+                    File.SetUnixFileMode(temporary, File.GetUnixFileMode(path));
+                }
+
                 File.Replace(temporary, path, destinationBackupFileName: null);
             }
             else
