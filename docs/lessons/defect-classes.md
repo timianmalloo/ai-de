@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 47 · uncontrolled 8
+**Status counts:** controlled 65 · partially-controlled 47 · uncontrolled 9
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -4712,6 +4712,15 @@ for both or split.*
   **green** while the thing it promised is violated. The repo's own good practice for this is at
   `defect-classes.md:1788` — *state the residual scope explicitly* (*"discovery is scoped to
   `src/AiDe.App` and to the `=>`-bodied form"*). F0 did not; it kept the word *anywhere*.
+- **Third gate in one day, found by a node rather than by the class's own control (front-door F2):**
+  `tools/verify-surface-ownership.py` iterates `src/AiDe.App/Workbench` **non-recursively**, so
+  three new `*Surface.cs` files under `Workbench/Sessions/` sit **outside its scan** while the gate
+  reports every surface assigned. Three gates in one day — `SessionPathContractTests`'s YAML scan,
+  its run-log scan, and now this — all **narrower than the sentence describing them**, none
+  declaring it. **That is no longer three coincidences; it is the house style for scan-shaped
+  guards**, and it is what the control's second half exists to change. The node assigned the three
+  surfaces by hand and **recorded the gap rather than widening a shared control unilaterally**,
+  which is the right call and is why widening it is a **named follow-up node, not prose** (CI6).
 - **Both directions are one mechanism:** transcribing a decision into an executable clause, or a
   clause into a guard, is a **width-changing step**, and nothing checks the width. Widening is
   caught by the join; narrowing is caught by nothing.
@@ -4837,6 +4846,45 @@ for both or split.*
 - **Status:** `uncontrolled` — the analysis is complete and upstream has fixed the tool, but in this
   repository nothing yet stops a node typing a repo-wide destructive command, and the briefs that
   would carry clause (a) are written fresh each time
+
+
+### DC-121 — A brief's exclusion is scoped by PATH when its purpose was a KIND, and silently suppresses an unrelated obligation
+
+- **Shape:** a coordinator writes a negative instruction into a node's brief to prevent one specific
+  failure — *"do not commit `docs/audit/*`"*, meant to stop derived-view merge conflicts. The
+  exclusion is expressed as a **path glob**, but the thing it was protecting against is a **kind of
+  artifact**. Another artifact of a *different* kind lives under the same path, carrying an
+  obligation the coordinator never intended to waive. The node obeys the brief exactly — correctly,
+  since the brief is its authority — and the obligation silently does not happen. **Nothing fails,
+  because the omission is compliance.**
+- **Signature:** a node reporting *"I did not do X because the brief said not to"* where X is a
+  standing repo obligation nobody meant to suspend; an exclusion glob whose directory contains more
+  than one class of artifact; a coordinator surprised by a gap in output that its own instruction
+  produced.
+- **Instance (front-door F2, 2026-09-10):** the brief's *"do not commit regenerated derived output"*
+  list named `docs/audit/*` alongside `docs/api/`, `docs/_site/` and `docs/docs-index.js`. The
+  intent was `audit-data.js` and `index.html` — **derived views**. But `docs/audit/audit-log.jsonl`
+  is an **append-only register**, a different class in the repo's own `.agents/artifacts.yml`, and
+  it carries the **standing Audit Mandate**. F2 closed with no audit entry and **said so explicitly**
+  — *"your brief lists `docs/audit/*` among the output not to commit; the standing constraint
+  expects an entry at close. I followed the brief. That tension is yours to resolve."* It was right
+  on every count.
+- **Why it survives:** the exclusion is **correct for what it was aimed at** and there is no signal
+  at all for what it also hit. A missing audit entry produces no error, no red gate, and no diff —
+  it produces **nothing**, which is indistinguishable from a turn that had nothing to record.
+- **Relationship to DC-118:** the same mechanism, pointed at an **instruction** instead of a clause
+  or a guard: **the instruction's width exceeded its purpose's width.** The repo already has the
+  vocabulary to prevent it — `.agents/artifacts.yml` classifies every path as
+  `authored`/`derived`/`register`/`generated`, and `derived` is exactly what the brief meant.
+- **Control:** **exclude by class, not by glob.** A brief that means "do not commit derived output"
+  says *"do not commit anything the registry classifies `derived`"* and, where it must name paths,
+  names them from the registry rather than from memory. Where a path glob is genuinely required, the
+  brief states **what it is protecting against**, so a node can tell an intended exclusion from an
+  accidental one — and a node that finds an obligation inside an exclusion should raise it, as this
+  one did.
+- **Status:** `uncontrolled` — briefs are written fresh each time and nothing checks their exclusion
+  lists against the artifact registry. The one thing working here is the standing instruction to
+  report anything in a brief that looks wrong, which is what surfaced it
 
 
 ---

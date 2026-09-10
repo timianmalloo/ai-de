@@ -284,6 +284,19 @@ forced a stub (HYG-A).
 
 ## F4 — the composer (R15, R19)
 
+- **The lease is the goal block's, and F2 carries none** (**Ruling 42**, moved here from F2).
+  *Fails if:* a `GovernedRunRequest` is built with a lease of `["**"]` or with no lease; the lease
+  is the goal block's `lease.exclusive` (**spec §14.3**). **Red-first when F4 starts.**
+  > **Why this moved.** R19 said *"`Lease` is derived and displayed"* at the sheet. At sheet time
+  > there is nothing to derive **from** — the lease belongs to the goal block, which is this node.
+  > F2 built it as `["**"]` under a `simplify:` marker and then argued against its own code. The
+  > Owner went further: `NewSessionResult` was carrying a **live** all-covering lease out of the
+  > sheet, and `GovernedRunRequest` *requires* one, so the first node wiring sheet-to-run would
+  > have handed the exit run a lease that never seams — the exact case `LeaseAndSeams.cs:22-24`
+  > refuses (*"covers everything … looks like it is working"*). **A `simplify:` whose stated
+  > ceiling is "the seam control does not discriminate" is not a bounded shortcut; it is a
+  > disabled control marked as one.** R19's purpose was that a lease is never operator-typed; at
+  > sheet time the honest display is its **absence**. See `note-front-door-rulings-41-42`.
 - **Free-form is the default and works with no template anywhere in the path** — the **S1
   regression guard**. *Fails if:* any template code executes on a free-form send.
 - **The goal-block re-base is one mechanism** (Ruling 26b): the send gate calls
