@@ -509,7 +509,14 @@ written into `docs/security/`. *It is a document, not code, and it changes nothi
 and **no `.gitignore` in the tree matches `.aide/`**. Today it holds typed prompt text. After F4 it
 holds **arbitrary file bodies from anywhere on the disk**, and it is **one `git add -A` from
 permanent**. *Fails if:* `git check-ignore --quiet .aide/prompt-drafts.json` does not succeed.
-**Being fixed now, ahead of F4, because the exposure is already live.** Expiry mechanics are
+**CLOSED 2026-09-10, ahead of F4, because the exposure was already live** — `.gitignore`
+gains `.aide/` (plain directory form: verified by sweep that nothing under it needs to
+travel with the repo, unlike `.agents/log/`), and the control is
+`tools/verify-aide-gitignore.py`, red-first proven **twice** — against the real repo and
+against the gate itself — with a `--self-test`, so the gate-debt ratchet reports no new
+debt. **Reported, not fixed:** `.mcp.json` is also unignored, but is a deliberately
+shareable config holding a server path, no prompt text and no PII — handed to the Privacy
+backlog to confirm rather than folded in. Expiry mechanics are
 deferred to the Data & Persistence Architect; the git-ignore is *"the control that stops Channel B
 becoming Channel A by accident."*
 
