@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 47 · uncontrolled 7
+**Status counts:** controlled 65 · partially-controlled 47 · uncontrolled 7
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -2338,12 +2338,38 @@ for both or split.*
   future session happens to run it from, including `ai-de` itself. **Observed failing 2026-09-10**
   before the fix (see `docs/proof/pp-lane-rename-ruling-15.md` and the follow-up proof pack for
   the transcript); passes after.
-- **Status:** `partially-controlled` — durable against a repeat of *this exact* regression path
-  (a pack update overwriting a vendored generator's local fix), because the pin now lives outside
-  every file `/updatepack` can touch, and the self-test catches a reversion of this call site from
-  any directory. Not `controlled`: the class's general shape — any future caller of `render` (a
-  new skill, a new script) that forgets `--root`/`--project` — is prevented by convention and a
-  code comment, not by construction; nothing stops a *new* caller from repeating DC-071 verbatim.
+- **Closed at the root, upstream, 2026-09-10 — and the named residual is what closed.** The status
+  below said the general shape was *"prevented by convention and a code comment, not by
+  construction; nothing stops a **new** caller from repeating DC-071 verbatim."* That is now false,
+  which is the only kind of evidence that should move a status.
+  - **The pack owned the defect, not this repo.** An upstream sweep found **five** implementations
+    of one quantity: three wrong (`audit-log.py`, `docs-graph.py`, `pack-apply.py` — the last
+    stamping a *target* repository's artifacts) and **two already correct, both citing this class
+    in their own docstrings.** The pack had diagnosed it, written the right resolver twice, and
+    never wired it to the three generators that actually commit artifacts. `docs-graph.py` was the
+    worst: it read its own previous output back as the answer first, so **one bad render was
+    self-perpetuating.**
+  - **The fix is a shared resolver with a configuration-first ladder** — explicit `--project`, then
+    `remote.origin.url`, then the primary checkout via `git rev-parse --git-common-dir`, then the
+    directory name as a last resort. Forgetting the flag now yields the **right** answer, so the
+    residual is closed **by construction** rather than by remembering.
+  - **And by a sweep test that fails on any *new* pack script** deriving the project from its own
+    directory — so the class cannot re-enter through a caller that does not exist yet, which was
+    exactly the hole named below.
+  - **Why upstream is the closure and a local fix was not.** The 2026-09-10 recurrence happened
+    because a pack update *overwrote ai-de's own local fix*. The repair now lives in the thing that
+    does the overwriting. A fix held only in the consuming repo is a fix waiting for the next
+    `/updatepack`.
+  - **Proven in ai-de, not inferred from installed code:** a real linked worktree named
+    `ai-de-chore-pack-p-proof` ran `audit-log.py render` with **no `--project` flag** and generated
+    `"project": "ai-de"`. *That proof took two attempts* — the first was a **false negative**,
+    because `coord worktree new --base HEAD` invoked from inside a linked worktree resolved `HEAD`
+    against the **primary**, creating a tree at the wrong commit carrying the old script. Reported
+    upstream: it is this class's own family, one axis over — a tool inferring **revision** from the
+    wrong tree where this class inferred **identity** from it.
+- **Status:** `controlled` — the resolver is shared, the default is correct without a flag, a sweep
+  test fails on any new offender, and the whole of it was observed working from a real linked
+  worktree in this repository
 
 
 ### DC-072 — Ambient input handler competes with a focused capture surface
@@ -4683,11 +4709,65 @@ for both or split.*
   baseline was recorded, which is the growth control working rather than being trusted.
   **No plan-lint exists** in the pack, and one was deliberately not invented: half (a) is not
   evaluable before a join, because separate worktrees never contain each other's change.
-- **Status:** `uncontrolled` **in this repository** — the control exists upstream but ai-de is on
-  pack rev 66, so nothing here fails when the shape recurs yet. It moves to
+- **Installed here 2026-09-10** — ai-de moved pack **rev 63 → 68** (`pack-doctor.py` reads it back;
+  the conductor had first written *"rev 66"* here from memory, which was the upstream repo's
+  revision at an earlier point rather than ai-de's installed one — **DC-116, committed inside the
+  entry for a class about claims wider than their evidence**). GO14a is now present at line 106 of
+  **both** harness forms, byte-identical, with two self-verification rows and a DoD row in each of
+  the two plan-producing skills.
+- **Status:** `partially-controlled` — the directive is **always-loaded**, so it is in context at
+  the moment a plan is written, which is the only moment half (a) can be checked. But **nothing
+  fails**: no plan-lint exists, and one was deliberately not invented, because separate worktrees
+  never contain each other's change, so a shared-surface fail-clause is **not evaluable before the
+  join**. Half (b) — *every scan-shaped guard states its root, recursion, token set and allowlist* —
+  **is** mechanically checkable (one sentence read against one enumeration call) and is the
+  candidate for the first real gate. Until one exists this stays short of `controlled`, because a
+  directive an agent must remember to apply is a better memoir, not a control It moves to
   `partially-controlled` when the pack update lands in ai-de, and that is a **recorded next step**,
   not an assumption: the difference between a control that exists and a control that is installed
   is exactly the gap DC-114 is about.
+
+### DC-119 — A "gate set green" claim made from one platform, for a gate set that runs on two
+
+- **Shape:** the repo's suites are split by platform on purpose — `AiDe.Core.Tests.portable` runs on
+  **Linux** in CI and `AiDe.Core.Tests.nonportable` is `[Trait("Platform","Windows")]`. A developer
+  or agent runs **everything locally on Windows**, sees every suite and every gate pass, and reports
+  *"all green"*. The sentence is true of what was run and false of what CI runs. **A Linux-only
+  failure is invisible to every local instrument**, so the claim cannot be wrong in a way its author
+  can detect.
+- **Signature:** a green local run and a red `core-tests` job; a failure whose stack trace is rooted
+  at `/home/runner/work/...`; a test that has been failing for **multiple commits** with nobody
+  noticing, because each session verified locally and read only the workflow it happened to
+  remember. **The tell is a completion claim that names a count but not a platform** — *"2037/2037"*
+  and *"41 of 41 gates"* say nothing about which OS produced them.
+- **Instance (front-door head-join, 2026-09-10):** the conductor verified Core **2037/2037** and
+  **41 of 41** repo gates on Windows, pushed, and reported the tree green. CI's Linux portable half
+  was **1885 executed / 1884 passed / 1 failed** — the same single test at `e2c746d` and at the join
+  commit, so `main` had been **red on Linux across at least two pushes** while every local
+  observation said otherwise. The failing test was
+  `AGovernedLaneIsCreditedForItsOwnBranchTests.ACorrectedWorktreeRegistrationIsCreditedForEvidenceOnItsBranch`
+  — itself the control for **DC-115**, doing exactly its job on the only platform that could see it.
+- **A second, compounding defect in the diagnosis path:** `verify-test-run.py`'s CI output reports
+  *"1 failed, 0 errored, 0 aborted, 0 timed out"* and **never names the test**. Reading the workflow
+  log is not enough; the failing name is only recoverable by downloading the uploaded `.trx`
+  artifact. **A gate that reports a count without an identity makes its own failure expensive to
+  act on**, which is how a red build survives two pushes.
+- **Why it survives:** the local run is not wrong, it is *narrower than the sentence describing it* —
+  which is **DC-118's mechanism applied to a verification claim rather than to a guard.** The claim's
+  width ("green") exceeds the evidence's width ("green on Windows").
+- **Control:** two halves, neither yet built. **(a)** No completion claim asserts "green" without
+  naming the platforms it covers, and CI status is **read back after every push** — observed, not
+  inferred from a successful push, and read from the run's own conclusion rather than from a
+  wrapper's exit code. **(b)** `verify-test-run.py` should **name the failing tests** it counts, so
+  a CI log is self-sufficient. (b) is the cheaper and more durable of the two, because it removes a
+  human step rather than adding one.
+- **Relationship to DC-117:** DC-117 is the same family one axis over — there the invisible variable
+  was the **host** (console vs console-less), here it is the **operating system**. Both are *the
+  environment a test ran in is not recorded in the claim that it passed.*
+- **Status:** `uncontrolled` — the instance is being repaired and the class is stated, but nothing
+  fails when the shape recurs, and the next Windows-only "all green" will read exactly as
+  convincing as this one did
+
 
 ---
 

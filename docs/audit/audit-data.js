@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T20:55:25Z",
+  "generated": "2026-09-10T21:20:53Z",
   "audit": [
     {
       "actor": null,
@@ -10823,6 +10823,60 @@ window.AUDIT_DATA = {
       "signals": {
         "verification_executed": true,
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M26JC56T3VHDTJEYEG3EZFM2",
+      "shortname": "Correction — regenerate-derived framing, and ai-de's pack revision",
+      "datetime": "2026-09-10T21:07:58Z",
+      "session": "conductor-front-door-join",
+      "prompt": "Verify FD1's claim that the brief's central premise was false.",
+      "summary": "TWO CORRECTIONS by the conductor to al-01M26HMZ61KMGVZQ5CEGBPPXHE and to commit messages 55f1879 / ef0a091. Both were claims the conductor made without opening the thing it described, in artifacts about a class defined by exactly that failure.\n\nCORRECTION 1 -- the regenerate-derived defect was framed wrongly.\nCLAIMED: \"regenerate-derived.py prints 'every derived view is current' while never running a generator the registry declares\", i.e. a silent false all-clear over a stale view.\nFALSE. Node FD1 disproved it and refused to build to a premise it had disconfirmed. The conductor then verified independently: verify-derived-views.py:43-57 VIEWS includes docs/audit/audit-data.js with the pinned `--root docs --project ai-de render` command; corrupting the working-tree view makes PLAIN verify exit 1; and regenerate-derived.py's CHECKS calls that verifier. So it does NOT print a false all-clear over working-tree staleness.\nWHY THE CONDUCTOR BELIEVED IT: it observed regenerate-derived.py print all-green while HEAD's audit-data.js was stale (490 log lines, 488 rendered) and inferred causation. The real explanation is that `audit-log.py append` auto-renders, so the WORKING TREE was current; only the COMMITTED view was stale, and plain verify does not read git. The all-green was correct for what it checked.\nWHAT IS TRUE, and what FD1 fixed: STEPS regenerated four views while artifacts.yml declares six. The audit renderer was never among them, so the script could DETECT that view drifting and never REPAIR it -- a failing run stayed failing on re-run -- while its own docstring promises regenerate-and-verify. Narrower than claimed, real, now closed, plus a one-directional coverage check (registry `derived` generators must be a subset of STEPS, never the reverse, because site figures are deliberately `authored`).\n\nCORRECTION 2 -- ai-de's installed pack revision is 63, not 66.\nCLAIMED in DC-118's status line and in commit 55f1879: \"ai-de is on rev 66\".\nFALSE. pack-doctor.py --root . reads back \"revision 63 (2026.09.06.1)\". 66 was the UPSTREAM repository's revision at an earlier point in this programme, asserted here from memory as though it were the local install. This is DC-116 -- a repo fact asserted from memory and dressed as verified -- committed inside the register entry for DC-118, a class about claims wider than their evidence. The register text now carries the correction and names the error rather than silently replacing the number.\nCONSEQUENCE: the drift is FIVE revisions, not two. Node PU1 dispatched to install 64-68, under a condition that PACK-P be proven fixed by running the renderer from inside a real linked worktree with no --project flag and observing \"ai-de\", rather than by reading the installed code.\n\nBOTH corrections share one shape, which is the one this slice keeps paying for: a conclusion drawn from an observation that was consistent with it but did not establish it. The commit messages are pushed and immutable; this entry is the record.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "conductor",
+        "correction",
+        "dc-116",
+        "dc-118",
+        "dc-071"
+      ],
+      "outcome": "partial",
+      "tier": "T2",
+      "supersedes": "al-01M26HMZ61KMGVZQ5CEGBPPXHE"
+    },
+    {
+      "id": "al-01M26JMNKNPZGNDETYZ1YQPHE2",
+      "shortname": "main is red on Linux; DC-119 registered",
+      "datetime": "2026-09-10T21:12:37Z",
+      "session": "conductor-front-door-join",
+      "prompt": "Check CI status for the pushed join commit.",
+      "summary": "CORRECTION AND FINDING. main is RED on Linux and the conductor reported it green.\n\nWHAT THE CONDUCTOR CLAIMED: \"Core 2037/2037\", \"41 of 41 gates green\", \"the join passes\". All observed, all true of what was run -- and all run ON WINDOWS ONLY.\n\nWHAT CI SHOWS: the portable half runs on ubuntu-latest. At the join commit ef0a0914 it was 1885 executed / 1884 passed / 1 FAILED. The same single test also failed at e2c746d, the previous push. So main has been red on Linux across at least two pushes while every local instrument said green. The `pages` workflow was green both times, which is what the conductor had checked before.\n\nTHE FAILING TEST: AiDe.Core.Tests.Watcher.AGovernedLaneIsCreditedForItsOwnBranchTests.ACorrectedWorktreeRegistrationIsCreditedForEvidenceOnItsBranch, at line 98, expecting the parent repository and getting the lane worktree. That test IS the control for DC-115, and its own comment says the assertion exists \"otherwise this test is the one above under another name\" -- so RepositoryCorrection silently does not fire on Linux, and the guard written to catch exactly that caught it, on the only platform that could see it.\n\nA SECOND DEFECT IN THE DIAGNOSIS PATH: verify-test-run.py's CI output says \"1 failed, 0 errored, 0 aborted, 0 timed out\" and NEVER NAMES THE TEST. The name was only recoverable by downloading the uploaded .trx artifact. A gate that reports a count without an identity makes its own failure expensive to act on, which is part of how a red build survived two pushes.\n\nA THIRD, BY THE CONDUCTOR: on first reading the CI watch it reported \"the join Build watch exited 0\" and believed the build green. That 0 was the WRAPPING SHELL's exit code; `gh run watch --exit-status` had exited 1 and printed \"completed with 'failure'\". Corrected within the same turn, and written into node FX1's brief as a caution so it is not repeated there.\n\nREGISTERED: DC-119 -- a \"gate set green\" claim made from one platform for a gate set that runs on two. Counts 64/47/8 = 119. It is DC-118's mechanism applied to a VERIFICATION CLAIM rather than to a guard: the claim's width (\"green\") exceeds the evidence's width (\"green on Windows\"). Same family as DC-117 one axis over -- there the invisible variable was the HOST, here the OPERATING SYSTEM; both are \"the environment a test ran in is not recorded in the claim that it passed\".\n\nCONTROL NAMED, NOT YET BUILT: (a) no completion claim asserts green without naming the platforms it covers, and CI is read back after every push from the run's own conclusion rather than a wrapper's exit code; (b) verify-test-run.py names the failing tests it counts. (b) is cheaper and more durable because it removes a human step rather than adding one.\n\nNODE FX1 DISPATCHED to fix the Linux failure, using CI as the oracle -- build.yml runs `on: push:` with no branch filter, by deliberate design (\"a gate that only guards the destination is a gate that reports problems to the wrong person\"), so a fix branch gets a real Linux run. It is authorised to push its BRANCH only.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/lessons/defect-classes.md"
+      ],
+      "tags": [
+        "conductor",
+        "correction",
+        "dc-119",
+        "dc-115",
+        "ci"
+      ],
+      "outcome": "failed",
+      "goal": "Get main green on BOTH platforms, not one",
+      "done_when": "Linux portable half observed 1885/1885 in CI, read from the run conclusion and the trx",
+      "tier": "T2",
+      "signals": {
+        "regression": true
       }
     }
   ],
