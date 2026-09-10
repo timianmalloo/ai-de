@@ -126,6 +126,130 @@ public sealed class TheFileSystemRepositoryLocatorTests
         }
     }
 
+    [Fact]
+    public void ARepositoryKeptUNDERADirectoryCalledWorktreesResolvesToITSELF()
+    {
+        // THE FIRST-OCCURRENCE DEFECT, and it needs no POSIX to show: the pointer simply contains
+        // the marker twice.
+        //
+        // "~/worktrees/<project>" is a common way to keep checkouts, and it puts a literal
+        // /worktrees/ segment in front of the .git/worktrees/ one that git writes. Cutting at the
+        // FIRST match cuts at the user's own directory, so the repository resolved to the parent of
+        // that - two levels above the project, on Windows exactly as much as on Linux. Every session
+        // in every such checkout would then be grouped under one wrong repository.
+        var container = NewDirectory();
+        var root = Path.Combine(container, "worktrees", "proj");
+        var linked = root + "-linked";
+
+        try
+        {
+            Directory.CreateDirectory(root);
+            Git(root, "init", "-q", "-b", "main");
+            Git(root, "config", "user.email", "test@example.invalid");
+            Git(root, "config", "user.name", "test");
+            File.WriteAllText(Path.Combine(root, "a.txt"), "a");
+            Git(root, "add", "-A");
+            Git(root, "commit", "-q", "-m", "init");
+            Git(root, "worktree", "add", "-q", "-b", "linked", linked);
+
+            // If the pointer does not actually contain the marker twice this test proves nothing -
+            // say which, rather than failing on a comparison about paths.
+            var pointer = File.ReadAllText(Path.Combine(linked, ".git"));
+            Assert.Contains("worktrees", pointer[..pointer.LastIndexOf("worktrees", StringComparison.Ordinal)], StringComparison.Ordinal);
+
+            var resolved = new FileSystemRepositoryLocator().RepositoryFor(linked);
+
+            Assert.NotNull(resolved);
+            Assert.Equal(
+                new RepositoryIdentity(root, "x").CanonicalPath,
+                new RepositoryIdentity(resolved!, "x").CanonicalPath);
+        }
+        finally
+        {
+            Delete(linked);
+            Delete(container);
+        }
+    }
+
+    [Fact]
+    public void AWorktreeWhoseOWNNameIsWorktreesStillResolvesToItsRepository()
+    {
+        // THE DISCONFIRMING HALF of the fix above, and the reason LastIndexOf is correct here rather
+        // than merely less wrong. Git's <name> in .git/worktrees/<name> is ONE path segment, so the
+        // marker's real occurrence is always the last one - even when the worktree is itself called
+        // "worktrees", which is the only way a later occurrence could plausibly appear. The pointer
+        // then ends ".git/worktrees/worktrees", whose trailing segment carries no closing separator
+        // and so is not a match at all.
+        //
+        // Green before the fix and after it. It exists so that "the last match is the right one" is
+        // a checked claim rather than a reading of git's source.
+        var root = NewDirectory();
+        var linked = Path.Combine(root + "-tree", "worktrees");
+
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(linked)!);
+            Git(root, "init", "-q", "-b", "main");
+            Git(root, "config", "user.email", "test@example.invalid");
+            Git(root, "config", "user.name", "test");
+            File.WriteAllText(Path.Combine(root, "a.txt"), "a");
+            Git(root, "add", "-A");
+            Git(root, "commit", "-q", "-m", "init");
+            Git(root, "worktree", "add", "-q", "-b", "linked", linked);
+
+            var pointer = File.ReadAllText(Path.Combine(linked, ".git"));
+            Assert.EndsWith("worktrees/worktrees", pointer.Trim(), StringComparison.Ordinal);
+
+            var resolved = new FileSystemRepositoryLocator().RepositoryFor(linked);
+
+            Assert.NotNull(resolved);
+            Assert.Equal(
+                new RepositoryIdentity(root, "x").CanonicalPath,
+                new RepositoryIdentity(resolved!, "x").CanonicalPath);
+        }
+        finally
+        {
+            Delete(Path.GetDirectoryName(linked)!);
+            Delete(root);
+        }
+    }
+
+    [Fact]
+    public void APointerSpelledInADIFFERENTCASEIsResolvedONLYWhereTheFilesystemSaysItIsTheSamePath()
+    {
+        // The marker match was OrdinalIgnoreCase on every platform. On Windows that is right -
+        // ".GIT\WORKTREES\x" and ".git\worktrees\x" are one directory. On Linux they are two, and
+        // folding makes the locator answer about a pointer git could not have written, which is a
+        // guess wearing a repository path.
+        //
+        // NOT SKIPPED ON WINDOWS: there is a true and different answer to assert on each platform.
+        // Only the Linux branch can redden; the Windows branch pins the answer a fix must not break
+        // while correcting the other platform.
+        //
+        // A FABRICATED pointer, unlike the tests above, because git will not write this file - the
+        // same reason AGitFileThatIsNotAWorktreePointerAnswersNothing fabricates one.
+        var root = NewDirectory();
+
+        try
+        {
+            File.WriteAllText(
+                Path.Combine(root, ".git"),
+                "gitdir: " + root.Replace(Path.DirectorySeparatorChar, '/') + "/.GIT/WORKTREES/lane");
+
+            var expected = OperatingSystem.IsWindows()
+                ? new RepositoryIdentity(root, "x").CanonicalPath
+                : null;
+
+            var resolved = new FileSystemRepositoryLocator().RepositoryFor(root);
+
+            Assert.Equal(expected, resolved is null ? null : new RepositoryIdentity(resolved, "x").CanonicalPath);
+        }
+        finally
+        {
+            Delete(root);
+        }
+    }
+
     private static string NewDirectory()
     {
         var path = Path.Combine(Path.GetTempPath(), "aide-loc-" + Guid.NewGuid().ToString("N")[..8]);
