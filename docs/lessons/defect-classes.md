@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 44 · uncontrolled 6
+**Status counts:** controlled 65 · partially-controlled 45 · uncontrolled 6
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 4.
@@ -4466,6 +4466,45 @@ for both or split.*
   two-doors asymmetry. Not upgraded to `controlled`, because each of those is a real case in which an
   agent that produced evidence is still told it produced none.
 
+
+### DC-116 — The conductor briefs an agent with a repo fact asserted from memory, dressed as verified
+
+- **Shape:** a coordinator hands a delegate a factual premise about the repository — a file that
+  exists, a flag a script supports, a convention the codebase follows — **carrying a citation**: a
+  line number, a filename, a version. The citation makes it read as *checked*. It was not checked;
+  it was recalled, or carried across from an adjacent repository. The delegate is now working from a
+  false foundation supplied by the one party it has most reason to trust.
+- **Signature:** none, when it works. A delegate that trusts the premise builds on it and the error
+  surfaces later, somewhere else, attributed to the delegate. **The only signal is a delegate that
+  checks anyway** — which means the defect is invisible in exactly the delegations that are least
+  careful.
+- **Why it survives:** it is the coordinator's *job* to compress context for delegates, and a brief
+  with specifics is a better brief. The failure is invisible at the moment of writing, because the
+  recalled fact feels identical to a read one — E15's *"never assert the shape of our own code from
+  memory"* is easy to honour when writing code and easy to forget when writing a prompt.
+- **Instances — three in one session, 2026-09-09, all caught by the delegate, none by the author:**
+  1. Told an upstream agent that shipping a gate with `--self-test` was an established convention in
+     `ai-forward`. It measured: **1 of 23 scripts**. The real convention is red-first `unittest`.
+  2. Told an agent `audit-log.py append` supports `--supersedes`, **with a line number**. It opened
+     the source: the flag existed only on `change`. It added the flag, then used it.
+  3. Told a spike agent this repo has a root `package-lock.json` "for other tooling". It ran
+     `git log --all`: **no commit has ever added one.** The file exists in the *adjacent* repo,
+     `ai-forward` — a cross-repository conflation while working in both.
+- **Control:** none mechanical, and a lint cannot see it — a prompt is prose. What exists is a
+  cheap discipline with a measured hit rate of 3-for-3: **every load-bearing repo fact in a
+  delegation brief is either (a) checked in the same turn it is written, or (b) explicitly labelled
+  as unverified with an instruction to check.** The second half is what worked here — the briefs
+  that said *"verify what you rely on"* and *"evidence is not authority"* are the ones that produced
+  the corrections.
+- **The generalisation:** *a citation the author did not open is a decoration, not evidence* — and
+  attaching one to a recalled fact makes it more dangerous, not less, because it transfers the
+  author's confidence without the author's checking. **Whatever you are about to assert to a
+  delegate, ask whether you read it or remembered it.**
+- **Status:** `partially-controlled` — the "verify what you rely on" instruction is now standing in
+  every delegation brief and caught all three instances; nothing prevents the false premise being
+  written in the first place
+
+---
 
 ## Inherited from the fleet (ai-forward drm-0009, 2026-09-04)
 

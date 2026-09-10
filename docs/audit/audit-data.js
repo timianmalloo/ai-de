@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T00:32:42Z",
+  "generated": "2026-09-10T00:47:12Z",
   "audit": [
     {
       "actor": null,
@@ -10409,6 +10409,38 @@ window.AUDIT_DATA = {
       ],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M24CGVK52HV960BGK27ZH407",
+      "shortname": "spike-codemirror-composer",
+      "datetime": "2026-09-10T00:47:11Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "Run the Spike Protocol on CodeMirror 6: can it serve both the composer and the Source viewer, inside WebView2, without React, at a build cost this repo should accept? The Owner made this a precondition before R15 may depend on it.",
+      "summary": "YES WITH A NAMED COST, not an unqualified yes. Verified by execution in a real Chromium engine (Edge 152 headless, DOM captured to browser-dump.html): CodeMirror 6 mounts with plain new EditorView into a div with zero React imports; markdown live-edits; a fenced JS block gets full highlighting; and the @mention chip is a GENUINE Decoration.replace + WidgetType rendering a contenteditable=false span that REPLACES the source text - a real widget, not styled text, which was the load-bearing question. Read-only is first-class via EditorState.readOnly + EditorView.editable. MIT across all 52 installed packages, 11 MB, actively maintained. THE COST IS HOSTING, NOT THE EDITOR: the current WebView2 host uses NavigateToString, which cannot serve import-map modules at all, so R15 must either adopt SetVirtualHostNameToFolderMapping and maintain a generated import map, or take a minimal bundler. The import-map path also proved fragile in exactly the way a second hand-maintained manifest does - one missing transitive package produced a hard runtime failure with NO build-time warning. Flipping to NO requires SetVirtualHostNameToFolderMapping being unavailable in this repo's hosting model, unchecked here. THE SPIKE ALSO DISPROVED A PREMISE I GAVE IT: I said this repo has a root package-lock.json 'for other tooling'; git log --all shows no commit has EVER added one - the file exists in the adjacent ai-forward repo and I conflated the two. That is the third false premise I handed a delegate today, all three caught by the delegate; registered as DC-116.",
+      "kind": "script",
+      "skill": null,
+      "tool": "domain-researcher",
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "spikes/codemirror-composer/README.md"
+      ],
+      "tags": [
+        "conductor",
+        "addendum-a",
+        "spike",
+        "codemirror",
+        "r15"
+      ],
+      "outcome": "success",
+      "goal": "Settle by execution whether CodeMirror 6 can serve Addendum A's composer and Source viewer without React and without forcing a bundler this repo does not have",
+      "done_when": "A committed re-runnable spike answers yes/no/unclear with executed evidence, names the build cost honestly, and states residual risks",
+      "tier": "T2",
+      "fan_out": 1,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
     }
   ],
   "changes": [
