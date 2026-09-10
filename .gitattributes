@@ -34,3 +34,13 @@ docs/api/*.md merge=coord-regen
 docs/_site/index.html merge=coord-regen
 .agents/log/*.jsonl merge=coord-register
 .agents/decisions/*.jsonl merge=coord-register
+
+# THE VENDORED WEB ASSETS ARE BYTES, NOT TEXT (Security C6, DC-108's shape).
+#
+# `* text=auto eol=lf` above normalises a generated text file ON ADD. The vendored CodeMirror bundle
+# is hash-pinned by `tools/verify-vendored-assets.py` against a manifest recorded at BUILD time, so a
+# normalisation between "what esbuild wrote" and "what git stored" would make the build-output hash,
+# the committed hash and the shipped hash three different numbers — and CI could be green on Linux
+# while the bytes a Windows checkout ships differ. `-text` disables every conversion in both
+# directions, so the one number means the same thing in all three places.
+src/AiDe.App/Web/vendor/** -text

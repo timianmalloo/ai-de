@@ -116,10 +116,29 @@ turns out to be unavailable or disallowed in this repo's WebView2 hosting model 
 that host code is in a different worktree per this task's constraint), unbundled CM6 has no path
 into the existing shell at all, and a bundler stops being optional.
 
-Cheapest alternative if the answer settles to NO: vendor a single pre-built ESM bundle of CM6
-(community CDN bundlers such as esm.sh can produce one on the fly) fetched once and committed —
-avoids both a bundler and the import-map maintenance burden, at the cost of one large generated file
-that must be manually refreshed on upgrade.
+Cheapest alternative if the answer settles to NO: vendor a single pre-built ESM bundle of CM6,
+built LOCALLY from the committed lockfile, fetched once and committed — avoids the import-map
+maintenance burden, at the cost of one large generated file that must be manually refreshed on
+upgrade.
+
+> **CORRECTED (Security condition C8, front-door council review).** This paragraph originally
+> suggested fetching that bundle from a community CDN bundler such as **esm.sh**. That path is
+> **REFUSED**, and the correction is recorded here rather than deleted because a stale document
+> recommending a rejected supply-chain path is how the rejected path comes back.
+>
+> Two reasons, both structural. **A hash pins distribution, not provenance:** hashing a blob after
+> you fetched it is trust-on-first-use with no second observation available — it proves the bytes
+> did not change *after* you got them, and says nothing about what produced them. And **the MIT
+> clearance does not transfer:** it was verified by reading `license` out of every
+> `node_modules/**/package.json`, which is a statement about the local install tree and about
+> nothing a CDN returns.
+>
+> What was built instead (node F1): `npm ci --omit=dev` from the committed lockfile, then one
+> pinned, recorded, one-off `npx esbuild@0.28.2` invocation, output committed to
+> `src/AiDe.App/Web/vendor/` with a `vendor-manifest.json` that `tools/verify-vendored-assets.py`
+> re-reads on every push. That same command *without* `--legal-comments=eof` reproduces this
+> spike's own recorded artifact byte-for-byte, which is the observation a CDN fetch can never
+> offer.
 
 ## Residual risks — flagged, not closed
 
@@ -128,6 +147,11 @@ that must be manually refreshed on upgrade.
    CoreWebView2 host, and did not implement or test SetVirtualHostNameToFolderMapping. That is the
    next probe, and it touches the WebView2 host code, which is in a different worktree per this
    task's constraint (another agent owns it).
+   **DISCHARGED by node F1:** `WebAssetHost` maps the asset folder onto a virtual host, and
+   `tests/AiDe.App.WebHostProbe` renders the vendored bundle inside a real `WebView2` control over
+   `https://aide.assets.invalid/` — asserted by
+   `AiDe.App.Tests.WebAssetHostIntegrationTests`. IME, clipboard and focus parity (risk 2) are
+   still unchecked.
 2. IME/clipboard/focus parity inside WebView2 is genuinely unchecked (Q5). Cheapest next probe:
    drive the composer's EditorView inside the real webview2-airspace / webview2-snapshot-swap host
    and type IME (e.g., Japanese) input and paste rich-text clipboard content.

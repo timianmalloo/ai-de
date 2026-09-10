@@ -93,6 +93,24 @@
     <Copy SourceFiles="@(PublishedDaemonPayload)" DestinationFolder="$(PublishDir)daemon\%(RecursiveDir)" SkipUnchangedFiles="true" />
   </Target>
 
+  <!--
+    THE WEB ASSETS ARE COPIED VERBATIM (Security C6).
+
+    `Update`, not `Include`: the SDK's default `None` glob already owns every non-.cs file under the
+    project, so an `Include` here would list each asset twice and MSBuild would warn about it.
+
+    `CopyToOutputDirectory` is a copy and nothing else — no transform, no token substitution, no
+    line-ending conversion. That is the point: `tools/verify-vendored-assets.py` pins the committed
+    bytes by SHA-256, and `.gitattributes` marks `src/AiDe.App/Web/vendor/** -text` so the checkout
+    does not rewrite them either. Build output, committed content and shipped file are one number,
+    and any build-path transform inserted here would quietly make them three.
+
+    PreserveNewest rather than Always so an incremental build does not recopy half a megabyte.
+  -->
+  <ItemGroup>
+    <None Update="Web\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="AiDe.App.Tests" />
   </ItemGroup>

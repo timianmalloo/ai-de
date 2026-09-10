@@ -45,6 +45,21 @@
     -->
     <ProjectReference Include="..\AiDe.App.CanvasProbe\AiDe.App.CanvasProbe.csproj"
                       ReferenceOutputAssembly="false" />
+
+    <!--
+      The web-host probe, the THIRD instance of the same build-order edge, added by the node that
+      needed it rather than after the same failure a third time. It renders the vendored CodeMirror
+      bundle inside a real WebView2 over the virtual host mapping, which a `dotnet test` host cannot
+      do (DC-014). Its absence must read as a failure, never as a skip (DC-012).
+
+      This one was found the way the canvas one was: a Release-only build left the Debug probe
+      missing and the test failed with "the web-host probe was not built" — an honest message about
+      a missing edge, not about the product.
+
+      ReferenceOutputAssembly="false" because it is started as a process, never linked.
+    -->
+    <ProjectReference Include="..\AiDe.App.WebHostProbe\AiDe.App.WebHostProbe.csproj"
+                      ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
