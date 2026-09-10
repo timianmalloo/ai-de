@@ -25,11 +25,14 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import re
+import shlex
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+REGISTRY = ROOT / ".agents" / "artifacts.yml"
 
 # Encoding pinned on the way OUT as well as the way in. Every step below is read with
 # errors="replace", which yields U+FFFD for a byte the tool emitted in another encoding — and
@@ -48,12 +51,26 @@ for _stream in (sys.stdout, sys.stderr):
 #   api-reference     rewrites docs/api/*.md, whose FRONTMATTER the graph index reads
 #   build-doc-viewer  embeds docs/api + the diagrams into docs/_site, and writes _meta.json
 #   site-figures      counts artifacts, ledger entries, defect classes and public symbols
+#   audit log render  rewrites docs/audit/audit-data.js + index.html from the JSONL logs — not a
+#                     frontmatter source (docs-graph.py only walks *.md for frontmatter and treats
+#                     *.html purely as a titled surface; verified by grep against its own file
+#                     discovery, tools/regenerate-derived.py FD1), so it is placed here rather than
+#                     forced strictly before docs-graph derive for a real dependency — only kept out
+#                     of the LAST slot, which is reserved below
 #   docs-graph derive rebuilds the index from every artifact's frontmatter — so it must be LAST,
 #                     after anything that can change a frontmatter block or add an artifact
 STEPS = [
     ("API reference", [sys.executable, "tools/api-reference.py", "--src", "src", "--out", "docs/api"]),
     ("documentation bundle", [sys.executable, "tools/build-doc-viewer.py"]),
     ("site figures", [sys.executable, "tools/verify-site-figures.py", "--update"]),
+    # FD1: this is the one registry-declared `derived` generator that had no STEPS entry, so this
+    # file's own completion message ("every derived view is current") was never true of it — the
+    # verify phase below can FAIL on it (tools/verify-derived-views.py already covers
+    # docs/audit/audit-data.js), but nothing here ever RE-RUN the generator to fix what it found.
+    # A gate that only detects drift, on a tool whose stated job is to resolve it, leaves the
+    # operator to go find the fix command themselves.
+    ("audit log render", [sys.executable, "docs/ai-forward-pack/scripts/audit-log.py",
+                           "--root", "docs", "--project", "ai-de", "render"]),
     ("docs graph index", [sys.executable, "docs/ai-forward-pack/scripts/docs-graph.py", "derive"]),
 ]
 
@@ -65,6 +82,61 @@ CHECKS = [
     ("defect register", [sys.executable, "tools/verify-defect-register.py"]),
     ("audit log", [sys.executable, "docs/ai-forward-pack/scripts/audit-log.py", "verify"]),
 ]
+
+# The registry entry pattern is `path: class command...` (.agents/artifacts.yml:2). Only lines in
+# exactly that shape, outside comments, count — the file's own header and its narrative asides
+# ("tools/regenerate-derived.py runs api-reference BEFORE docs-graph derive...", artifacts.yml:38)
+# echo the word `derived` in prose and must not be mistaken for a declaration.
+_REGISTRY_LINE = re.compile(r"^(\S+):\s+derived\s+(.+)$")
+
+
+def registry_derived_commands(path: Path) -> list[tuple[str, tuple[str, ...], int]]:
+    """(artifact, argv[1:], line number) for every `pattern: derived <command>` line.
+
+    argv[0] (the interpreter) is dropped before comparison: the registry stores the literal
+    token `python` (artifacts.yml:23-30 explains why — a merge-time driver's contingency, not a
+    generator identity), while STEPS builds every command with sys.executable, this machine's
+    absolute interpreter path. Comparing full argv would never match on any machine; comparing
+    argv[1:] (script path + arguments) compares what actually identifies the generator.
+    """
+    out = []
+    for lineno, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        m = _REGISTRY_LINE.match(line)
+        if not m:
+            continue
+        artifact, command = m.group(1), m.group(2)
+        try:
+            argv = shlex.split(command)
+        except ValueError:
+            continue
+        if len(argv) < 2:
+            continue
+        out.append((artifact, tuple(argv[1:]), lineno))
+    return out
+
+
+def check_registry_coverage() -> tuple[bool, str]:
+    """STEPS must regenerate every artifact the registry declares `derived` — never the reverse.
+
+    One-directional on purpose (.agents/artifacts.yml:38-40: regenerate-derived.py is the
+    orchestrator; the registry can't encode the ORDER, only the generator, so this file stays
+    authoritative over STEPS and the registry is only ever read, never driven from). Reversing the
+    check — demanding a registry line for every STEPS command — would fail on site/*.html, which
+    artifacts.yml:58-62 keeps deliberately OUT of the registry so a merge never lets a regenerate
+    silently discard hand-authored prose alongside the figures.
+    """
+    if not REGISTRY.exists():
+        return False, f"registry coverage: {REGISTRY} not found"
+    declared = registry_derived_commands(REGISTRY)
+    covered = {tuple(cmd[1:]) for _label, cmd in STEPS}
+    missing = [(artifact, lineno) for artifact, argv, lineno in declared if argv not in covered]
+    if missing:
+        named = "; ".join(f"{artifact} ({REGISTRY.name}:{lineno})" for artifact, lineno in missing)
+        return False, f"registry coverage: STEPS has no generator for {named}"
+    return True, f"registry coverage: {len(declared)} derived declaration(s) in {REGISTRY.name}, all in STEPS"
 
 
 def run(label: str, cmd: list[str]) -> tuple[bool, str]:
@@ -105,6 +177,13 @@ def main() -> int:
             print(("  " if ok else "  FAILED ") + line)
             if not ok:
                 failures.append(line)
+        # In-process, not a subprocess: it reads STEPS from this same file, so there is nothing to
+        # shell out to. Runs even if earlier CHECKS failed — a missing generator is worth reporting
+        # alongside whatever it left stale, not hidden behind an unrelated failure.
+        ok, line = check_registry_coverage()
+        print(("  " if ok else "  FAILED ") + line)
+        if not ok:
+            failures.append(line)
 
     if failures:
         print()
