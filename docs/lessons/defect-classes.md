@@ -4641,6 +4641,23 @@ for both or split.*
   attaching one to a recalled fact makes it more dangerous, not less, because it transfers the
   author's confidence without the author's checking. **Whatever you are about to assert to a
   delegate, ask whether you read it or remembered it.**
+- **Widened 2026-09-10: it is not only the conductor, and a RULING is not exempt.** In one
+  convening, three of the conductor's claims were corrected by Security — a **stale file citation**
+  (`CanvasSurface.cs:103,226`, which a sibling node had since moved to `:233-316`), the **lease
+  provenance** (*"the lease is the goal block's `lease.exclusive`"*, false against both code and
+  spec), and a description of a permission surface that **implied containment it does not have**
+  (it is **Dismiss-only** — a notice, not a gate). All three were the same shape: **a code shape
+  asserted from memory or from a persona's summary rather than opened.**
+  **The lease claim did not originate with the conductor — it was a condition in an Owner ruling**,
+  transcribed into the plan verbatim. The Owner named the class and then applied it to itself:
+  > *"The conditions I write into the plan are repo facts as much as yours are; **treat them as
+  > claims until you have opened the file they cite**, and say so when you file them."*
+  **The generalisation:** any authority's output — a ruling, a persona review, a sibling node's
+  report — **becomes a repo claim the moment it is written into a plan**, and inherits none of the
+  authority's standing as evidence. A third-order instance landed the same day: Security wrote a
+  containment sentence, the conductor transcribed it, and the **Owner** caught it false by opening
+  the function it described. Three reviewers, and the sentence was still wrong until someone read
+  the code.
 - **Status:** `partially-controlled` — the "verify what you rely on" instruction is now standing in
   every delegation brief and caught all three instances; nothing prevents the false premise being
   written in the first place

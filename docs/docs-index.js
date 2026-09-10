@@ -3753,6 +3753,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "ec29989c27a3533acd1581ec2c01c6383977f73660c6d1abc0347f4c20f538b7"
     },
     {
+      "id": "note-front-door-rulings-43-44",
+      "path": "docs/notes/front-door-rulings-43-44.md",
+      "title": "Decision note — Rulings 43 and 44: attachment caps, and the Phase-1 posture accepted with an expiry",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "Security's F4 convening cleared on plan text alone with conditions C9-C20. Three things were left to the Owner: an erratum to its own Ruling 42 condition, the attachment caps, and whether to accept the Phase-1 auto-allow posture. It accepted the posture but corrected the sentence describing it, and gave the acceptance a hard expiry rather than an open end.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "ruling",
+        "f4",
+        "security",
+        "residual-risk",
+        "attachments",
+        "dc-116"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-rulings-41-42",
+          "rel": "depends-on"
+        },
+        {
+          "to": "review-front-door-council",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2f0f00167f44229374a054156349912b571a740c0e4dd61c053ab41d2292a4bf"
+    },
+    {
       "id": "note-terminal-customization-persistence",
       "path": "docs/notes/terminal-customization-persistence.md",
       "title": "Decision — terminal customization persistence & busy-close",
@@ -5525,7 +5563,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f97b462867d8621e97b651864584c67fe8afcc5e986c2c1458bd989bfee5ee29"
+      "sourceSha256": "205368024bd48c015f4991c47d98bfc4bbc4cd9a50a7d79a0d6a579773ec79ff"
     },
     {
       "id": "design-session-profiler",
@@ -6589,7 +6627,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a6630148fd8fcf1edefa8a6014ac32c3dec299362bed0fa778213112a18fdc0c"
+      "sourceSha256": "a741d4d665536b9919828b041fd16fdfa23973f62e6e76ef7d3246d867c453e2"
     },
     {
       "id": "plan-conductor-programme",
@@ -12702,5 +12740,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "a4d8c85def3ab3f4c65490c0c9eda6d68899feb36f84e3bc2928ab7e20b14c3f"
+  "graphSha256": "3a875bfc7332a663cdc5fc44d0995e86d0fb99212ef118cd7df427007ee0209d"
 };

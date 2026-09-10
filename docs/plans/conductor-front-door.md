@@ -284,9 +284,24 @@ forced a stub (HYG-A).
 
 ## F4 — the composer (R15, R19)
 
-- **The lease is the goal block's, and F2 carries none** (**Ruling 42**, moved here from F2).
-  *Fails if:* a `GovernedRunRequest` is built with a lease of `["**"]` or with no lease; the lease
-  is the goal block's `lease.exclusive` (**spec §14.3**). **Red-first when F4 starts.**
+- **The lease is a SIBLING of the goal block, and F2 carries none** (**Ruling 42**, moved here from
+  F2; provenance corrected by **Security C17**). *Fails if:* `GoalBlockFields.All.Count != 6`; or a
+  `GovernedRunRequest` is built with an **empty** lease, or with one that **covers everything**.
+  **Red-first when F4 starts.**
+  > **Correction, recorded rather than silently fixed.** This clause first read *"the lease is the
+  > goal block's `lease.exclusive`"*. **That is false against both code and spec**, and the
+  > conductor wrote it from a ruling condition without opening `GoalBlock.cs`. `GoalBlockFields.All`
+  > is **exactly six** - `goal, done_when, not_in_scope, tier, fan_out_cap, budget` - with no lease
+  > (`GoalBlock.cs:33`); `ConductorEntry.cs:123` reads `Lease: new Lease(file.Lease ?? [])` as a
+  > **top-level peer** (`:162`); and the spec's own signature is
+  > `spawn_agent(role, engine, model, account, goal_block, lease, policy)` - **lease beside
+  > `goal_block`, not inside it.** As written the clause collided with this same section's
+  > requirement that `SpawnContractTests.cs`'s four tests stay **byte-unchanged**, since
+  > `TheSpecNamesExactlySixFields` asserts that list by name.
+  > **The oracle is C17's, not a string match.** `Assert.False(request.Lease.Covers("/no-lease-covers-this"))`
+  > - which **no spelling of "everything"** (`**`, `**/*`, `**/**`) can pass, unlike a comparison
+  > against the literal `["**"]`. And the composer **must not** catch `ArgumentException` from
+  > `new Lease([])` into a default: **that exception failing closed is the control.**
   > **Why this moved.** R19 said *"`Lease` is derived and displayed"* at the sheet. At sheet time
   > there is nothing to derive **from** — the lease belongs to the goal block, which is this node.
   > F2 built it as `["**"]` under a `simplify:` marker and then argued against its own code. The
@@ -336,6 +351,122 @@ forced a stub (HYG-A).
 - The mention picker uses **`@codemirror/autocomplete`'s `CompletionSource`** — already in the
   installed set — with files and graph nodes as two sources. *Not a bespoke popup.*
 - **Re-entry trigger, not an exit condition:** the Source viewer shares this editor when it lands.
+
+### Security conditions C9–C20 — **the convening the plan required, and its BLOCK clears here**
+
+Security was convened **before a line of the send seam was written**, because **its own earlier
+review ordered it** — *"it needs its own convening at F4."* Its verdict: **BLOCK on the plan text,
+not on the design.**
+
+> *"It clears the moment C9–C17 are in the plan verbatim. No code is needed to clear it. I am
+> blocking because F4's current clauses contain no safety clause at all for the bridge: the only
+> attach clause is 'Fails if: … no attach path exists', which is a completeness oracle, and **a
+> control that cannot go red on the attack is not a control**."*
+
+**The one-line rule F4 holds in its head:** *the page contributes **text**; it never contributes a
+**verb**, a **path**, or an **identity**.*
+
+**The boundary has moved.** It was *"there is no boundary because the vocabulary is read-only"*; it
+is now the **WebView2 renderer ↔ the shell process**, with the shell as sole authority for
+everything except the characters of the draft. The second boundary is **inside the prompt**: the
+human reading the view-compiled text is the verifier for untrusted content — *"given that the
+permission banner cannot refuse anything, that human is the only gate between a pasted instruction
+and a shell command in a worktree."*
+
+#### The page→host vocabulary — five kinds, and no more
+
+Envelope on every message: `{ "v": 1, "kind": "<name>", "instance": "<host-minted GUID>" }`. The
+host mints `instance` per composer surface; `kind` is compared **`Ordinal`** against a closed
+allow-list. *(`JsonSerializerDefaults.Web` sets `PropertyNameCaseInsensitive = true`, so
+`{"KIND":…}` binds today — the allow-list is on the **value**, and a `kind` comparison must never
+become case-insensitive.)*
+
+| kind | the host may | the host must refuse |
+| --- | --- | --- |
+| `editor.ready` | mark Ready; flush queued host→page pushes | unknown/stale `instance`; a second ready for one instance (drop, count) |
+| `draft.changed` | replace the host-side **mirror** of `fieldId` when `rev` is strictly greater; set dirty | a `fieldId` the host did not mint (**never create one**); `rev <= stored`; `text` over the byte cap (**refuse the message; never truncate**); anything before Ready |
+| `focus.leave` | move WPF focus (existing behaviour) | nothing new |
+| `attach.offered` | read `CoreWebView2File.Path` from **`AdditionalObjects` only**, then apply C14 | any `path`/`uri`/`name`/`content`/`bytes` in the JSON body; more objects than the cap; a non-`CoreWebView2File` |
+| `metrics` | move a diagnostic counter | anything touching state outside diagnostics |
+
+**Not in the vocabulary, and not to be added:** `send`, `send.requested`, `run.start`,
+`attach.path`, `file.read`, `open`, `navigate`, `exec`, `lease.*`, `template.apply`, and any message
+naming a **field set** rather than one field's value.
+
+**The host must never infer from a message:** that a human acted · which field this is (it may only
+*match* a host-minted id) · any path on disk · engine, model, account, task class, repository root,
+data directory, adapter root, providers, proof-pack paths · the lease · the goal block's field set ·
+that the page is the page.
+
+#### The conditions
+
+- **C9 — Origin-bound routing, testable headlessly.** `ComposerMessageRouter.Route(sourceUri, json, filePaths)` is a pure function; the handler passes `e.Source` and `e.AdditionalObjects` and does nothing else. *Fails if:* the router acts on a message whose `sourceUri` is not exactly the composer page's URL, or whose `instance` is not live. **Oracle:** red-first table over `{https://example.invalid/, file:///C:/x.html, about:blank, https://aide.assets.invalid.evil.test/, https://aide.assets.invalid/other.html}` × every kind, asserting every effect counter stays 0 and drops == inputs.
+- **C10 — The control can reach exactly one document.** `NavigationStarting`, `FrameNavigationStarting`, `NewWindowRequested` and `LaunchingExternalUriScheme` all cancel anything off-origin. *Fails if:* the control's document can be changed. **Oracle:** a probe that sets `location.href`, calls `window.open`, appends an off-origin `<iframe>`, and drops a file — asserting `Source` unchanged, no new window, frame cancelled, `sendCount == 0`. **Load-bearing for C9:** the origin check is only sound *because* frame navigation is cancelled.
+- **C11 — The send verb is host-owned.** Send is a WPF control plus a host-side `AcceleratorKeyPressed` handler for Ctrl+Enter setting `Handled = true`. *Fails if:* **any** `postMessage` from the page, of any shape, increments `sendCount`. **Oracle:** red-first — post every kind, plus `send`, `send.requested`, `run.start`, plus 100 generated unknown kinds; assert `sendCount == 0`; then the Send button gives exactly 1 and the accelerator exactly 1.
+- **C12 — CSP and settings floor.** The page carries `default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'`, and its inline module moves to an external `.mjs`. On the control: `AreDevToolsEnabled=false`, `AreHostObjectsAllowed=false`, `AreDefaultContextMenusEnabled=false`. *Fails if:* the shipped page lacks the meta, or any of the three settings is left at its default. **Oracle:** a byte assertion over the shipped page, plus a probe asserting `fetch('https://example.invalid')` rejects, `chrome.webview.hostObjects === undefined`, **and that the editor still renders under the CSP** — `style-src 'unsafe-inline'` is **Inferred** to be required by CodeMirror's style-mod, so *the probe settles it rather than Security's say-so*.
+- **C13 — No path crosses the bridge as a string.** A filesystem path enters the host only as `CoreWebView2File.Path` from `AdditionalObjects`, or from a host-owned `OpenFileDialog`. *Fails if:* any host code reads a path out of a page message body. **Oracle:** the router given an `attach.offered` carrying a `path` member and an empty `AdditionalObjects` produces zero attachments and one refusal; plus a grep control asserting the message record type declares no `Path`/`Uri`/`File`/`Content` member.
+- **C14 — Attachments are bounded, visible, and literal.** **≤32 KiB per file, ≤128 KiB and ≤5 files per send** (**Ruling 43** — each a **named constant** with its own red-first test); UTF-8-decodable text only (binary refused, never base64'd in); inserted into the draft as a **visible fenced block** whose header names the source file **and its byte count** — *"the byte count is what makes the human's read informed"*; a file outside the session's workspace root **labelled as such** in that header. Over-cap is a **refusal naming the file and its size**, never truncation. **Ruling 43's confidence is Inferred and the gap is named rather than hidden:** the only Phase-1 control is a human reading the compiled text, so the cap must bound **what a human can actually read**, not what a file can hold — 32 KiB is ~800 lines, and this repository's larger files (`GovernedRunHost.cs`, `GoalBlock.cs`) are ~300 lines / ~14 KB, so real files fit, while 64 KiB is ~1,600 lines, **scrolled past rather than read**. *No measurement exists of how much compiled text an operator reads before skimming.* **Condition:** the `metrics` kind records **per-send attachment count and bytes on the normal path**, so these numbers are revisited on data at Phase 2 rather than re-argued. No config knob — nobody asked for one. *Fails if:* a size or count cap is exceeded · an attachment is held as a reference rather than inserted as text · an attachment is **re-read at send time** · a non-UTF-8 file is accepted · an outside-workspace file is inserted without the label. **Oracle:** one red-first test per clause.
+- **C15 — No late binding anywhere in the send path.** Nothing is resolved after the compiled view last rendered — no mention expansion, no template expansion, no file read, no graph query, no network call. *Fails if:* the send path performs any such resolution. **Oracle:** counters on the file reader and `GraphSource` assert **0** between "compiled view rendered" and "prompt handed to the run host"; and a send with the workspace root **renamed** produces byte-identical prompt text. **This is what makes the existing *"compiled output and sent text differ by a byte"* clause mean what it says** — otherwise the human approved `@src/Foo.cs`, the agent received its contents, and the byte check stayed green because both sides held the unresolved text.
+- **C16 — One construction site, host-side sources.** Every field of `GovernedRunRequest` except `Prompt` and the text values of goal-block fields comes from the session config and the provider registry. *Fails if:* any other field derives from a page message, or a third `new GovernedRunRequest` site appears. **Oracle:** a hostile draft naming an engine, model, account, lease, repository root and proof-pack path is sent, and the built request's `EngineId`, `Model`, `AccountLabel`, `TaskClass`, `RepositoryRoot`, `DataDirectory`, `AdapterInstallRoot`, `Lease`, `ProofPackArtifacts` and `Providers` all equal the **session-config** values; plus `grep -c "new GovernedRunRequest" src/` ≤ 2, each site named in the test. *(Verified: there is exactly **one** site today — `ConductorEntry.cs:112`. F4's send is the second. That single fact is the strongest control available.)*
+- **C17 — The lease's provenance is settled before the send is written.** See the corrected lease clause above: the lease is a **sibling** of the goal block, and the oracle is a universal-lease detector, not a string match.
+- **C18 — The F4 production bundle re-fires C1–C8.** It is a new dependency set, so provenance, pinning, manifest, hash gate, `--legal-comments=eof` and the notices section all apply again. *Fails if:* `tools/verify-vendored-assets.py` is not green on the F4 manifest, or any `provenance.packages[].name@version` in the manifest is absent from `THIRD-PARTY-NOTICES.md`. **Oracle:** the existing CI steps plus a new manifest↔notices cross-check.
+- **C19 — A recurring advisory check exists for the vendored set.** *Fails if:* the F4 bundle is committed without a recorded advisory scan over the committed lockfile, stored beside the manifest, **and** without a CI step that re-runs it. **Honest limit, which Security required be stated in the plan:** a one-off scan is a point-in-time observation — **the recurring step is the control, not the stored output.**
+- **C20 — The schema is closed and versioned.** *Fails if:* an unknown `kind`, a missing or non-`1` `v`, or a malformed body reaches anything but drop-and-count. **Oracle:** a fuzz corpus (unknown kinds, wrong types, nulls, 10 MB strings, duplicate keys, `__proto__`, case-varied `kind` values) asserting no exception escapes, no effect counter moves, and drops == inputs.
+
+#### Refused outright — do not build it, so it is not cut later
+
+(a) any page→host `send` or `run.start` verb, in any spelling · (b) any page-supplied path, URI or
+glob · (c) any "allow all" / "skip permissions" / autonomous-mode toggle in the composer —
+**`GovernedRunHost.Decide` *is* the governance and the composer does not get a dial on it** ·
+(d) any operator-typed lease editor (Ruling 42's whole point) · (e) `AddHostObjectToScript` on the
+composer control — *"a host object is a general-purpose write bridge that voids this entire contract
+in one line"* · (f) rendering untrusted content as HTML anywhere in the composer · (g) any runtime
+CDN fetch.
+
+#### Accepted residual risk — written down now, not discovered later
+
+`GovernedRunHost.Decide` **auto-allows every non-edit call** (*"a '{kind}' call is not a write"*), so
+an instruction that survives the human's read of the compiled text **can run shell commands inside
+the worktree**; the lease bounds **edits only**. And the F2 permission banner is **Dismiss-only**
+(`SessionDocumentSurface.cs:244` — *"Dismiss, never Allow/Deny. The decision belongs to the plane's
+permission policy."*), so **no human answers a tool permission in Phase 1**: it is a notice, not a
+gate. **Phase-1 containment for edits is the lease inside the worktree; for every other tool
+kind it is one human read, and nothing else** — **Ruling 44 (1)**, correcting the sentence
+Security wrote and the conductor transcribed, which **overstated it**. *Verified:* the ACP
+session's cwd is the worktree (`GovernedRunHost.cs:117-119`), but `Decide` bounds **only edit
+kinds** by lease and worktree (`:285-313`). **For a shell call the worktree is a starting
+directory, not a boundary** — `cd ..`, absolute paths, network and push are all reachable, and
+the spec's own `network: deny, push: deny` (§14.3) **is not implemented anywhere in `Decide`.**
+`budget` and `fan_out_cap` are validated, not enforced, so an injected run has no spend ceiling. No
+advisory signal exists for the vendored npm set (C19 closes this). The hash gate proves the
+repository's bytes, not the running app's. And a same-origin XSS inside the composer page would sit
+**inside** the origin check — **C10 and C12 are what keep that unreachable, so they are load-bearing,
+not hygiene.**
+
+**Ruling 44 — accepted as an Owner residual, NOT a floor trip, and the acceptance ENDS on a
+named trigger.** Accepted because it is **the spec's own** posture (§14.3's example policy is
+`edits: worktree-only, shell: allow`), because Security was convened specifically for it and
+**chose deferral over veto**, and because the injected content in F4 is content **the human
+personally chose** — a paste or a picked file — with C15 guaranteeing nothing reaches the
+prompt that the human did not see in the compiled view.
+> **The acceptance is VOID, and human Allow/Deny plus policy bounds on non-edit kinds become a
+> BLOCKING PRECONDITION, the moment ANY text reaches the prompt that the human did not
+> personally read in the compiled view.** That means conductor-drafted replies (Phase 2),
+> mention or template **expansion** (R20), graph-query results, or any assist. **Phase 2 cannot
+> start those nodes without it.** The Owner's stated assumption, which carries the ruling: this
+> is a **single-operator desktop app whose only user is the one doing the reading** — *if that
+> assumption is wrong, this becomes a Security floor question and goes to the human.*
+
+**Deferred, not folded in:** human Allow/Deny at the banner (the conductor's Stage-4 `seam_resolve`,
+Phase 2) · policy bounds on non-edit tool calls, i.e. exec (Phase 2) · enforcing
+`fan_out_cap`/`budget` (Ruling 26c holds: validated, not enforced) · a general WebView2 host
+abstraction (its `simplify:` trigger is a **third** surface; F4 is the second).
+
+**Co-convening required:** Security refers **C14(e)** to **Privacy & Data Governance** — *"attaching
+a file puts user or repository content into a prompt bound for a model provider, which is an egress
+purpose/basis question, not a protection question. I ask is it protected?; they ask should it be
+sent?"* Specifically: may anything outside the workspace root be attached **at all**, and is the
+attach recorded in the audit trail.
 
 ## F5 — exit evidence and Proof Pack
 
