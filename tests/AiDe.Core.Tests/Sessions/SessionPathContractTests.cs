@@ -78,14 +78,42 @@ public sealed class SessionPathContractTests
                 + string.Join(" | ", callers));
     }
 
-    /// <summary>Fails if: a YAML dependency appears in this node (Ruling 23).</summary>
+    /// <summary>
+    /// Fails if: the session-config path takes a YAML dependency. Ruling 23's subject is session
+    /// config, not the project as a whole — Ruling 35 explicitly carves YamlDotNet out, scoped to
+    /// the template loader (<c>TemplateFrontmatterReader.cs</c> / <c>TemplateSchema.cs</c>), so a
+    /// repo-wide <c>AiDe.Core.csproj</c> scan is falsified by that loader's own explanatory comment
+    /// on the dependency, not by an actual violation of Ruling 23. Ruling 36 narrows this guard to
+    /// what Ruling 23 actually governs: <see cref="SessionConfig"/> and
+    /// <see cref="SessionConfigStore"/> take no YAML dependency, full stop. Same shape as
+    /// <see cref="RunLogFile_IsCalledOnlyByItsOwnDeclaration_NothingElseInSessionsWritesThere"/>: a
+    /// source scan collecting hits rather than a substring check on one file.
+    /// </summary>
     [Fact]
-    public void CoreProject_TakesNoYamlDependency()
+    public void SessionConfigSource_ContainsNoYamlToken()
     {
-        var csproj = Path.Combine(RepoRoot(), "src", "AiDe.Core", "AiDe.Core.csproj");
-        var text = File.ReadAllText(csproj);
+        var sessionsDirectory = Path.Combine(RepoRoot(), "src", "AiDe.Core", "Sessions");
+        var sessionConfigFiles = new[] { "SessionConfig.cs", "SessionConfigStore.cs" };
 
-        Assert.DoesNotContain("Yaml", text, StringComparison.OrdinalIgnoreCase);
+        var hits = new List<string>();
+
+        foreach (var fileName in sessionConfigFiles)
+        {
+            var path = Path.Combine(sessionsDirectory, fileName);
+            Assert.True(File.Exists(path), $"expected {path} to exist");
+
+            foreach (var line in File.ReadAllLines(path))
+            {
+                if (line.Contains("Yaml", StringComparison.OrdinalIgnoreCase))
+                {
+                    hits.Add($"{fileName}: {line.Trim()}");
+                }
+            }
+        }
+
+        Assert.True(
+            hits.Count == 0,
+            "session config must take no YAML dependency (Ruling 23); found: " + string.Join(" | ", hits));
     }
 
     private static string RepoRoot()
