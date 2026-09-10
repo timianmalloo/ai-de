@@ -4505,6 +4505,30 @@ for both or split.*
   Observed failing on the un-fixed shape before the fix — `Not Scored — no minimum verification
   path` — and again on three deliberate breaks afterwards. Decision:
   `docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md`.
+- **Recurrence at a SECOND boundary, measured 2026-09-10 on Linux CI (two commits, `e2c746d` and
+  `60ae4a9` — stable, not flaky):** the generalisation below was written down and the sweep was never
+  run. `RepositoryCorrection.Apply` hands `Repository.CanonicalPath` — an identity — straight to
+  `IRepositoryLocator.RepositoryFor`, which opens `<path>/.git`. `Canonicalise` writes a backslash on
+  every platform on purpose, so on Linux the locator was asked about `\tmp\aide-x-lane`: one
+  filename with no separators, `File.Exists` false, answer `null` — *nothing to correct*. **No linked
+  worktree was ever corrected on Linux**, and nothing said so, because `null` is also the honest
+  answer when the registrant's path is simply not ours. Portable half: 1,885 executed, 1,884 passed.
+  It was caught by `ACorrectedWorktreeRegistrationIsCreditedForEvidenceOnItsBranch` — which uses the
+  REAL locator — while the stub in `AWorktreeRegistrationIsCorrectedAndSaidSoTests` canonicalises its
+  own argument before comparing, so it agreed with the caller's mistake and stayed green. **A double
+  that normalises its input cannot see a normalisation defect in its caller.**
+- **Control, 2026-09-10:** `RepositoryIdentity.ToFileSystemPath` — ONE named conversion, called at
+  both boundaries: `FileSystemRepositoryLocator.RepositoryFor` (the miss) and
+  `ProofPackVerifier.Verify` (which held the only previous copy, inline). The rule existed in three
+  comments and nowhere executable, and prose is what the next boundary gets written against (CI6).
+  `TheFileSystemRepositoryLocatorTests.ALinkedWorktreeResolvesToItsRepository_ByPathAndByIdentity`
+  now asks the locator with the identity spelling as well as the raw path.
+- **The residue, stated because it is the uncomfortable half:** that control **cannot redden on
+  Windows**, where an identity and a filesystem path are the same string — the divergence exists only
+  where `\` is not a separator. Making it fail locally would take a seam that injects the separator,
+  which distorts the code to model the platform instead of running on it. So the control for this
+  class is **CI on a POSIX runner on every branch**, not the local gate, and a Windows-only proof of
+  a path change is not a proof.
 - **What the control does NOT reach, and why:** (b) ask git for the blob
   (`git -C <worktree> cat-file -e <branch>:<path>`) — declined: `AiDe.Core` does not shell out, and a
   process launch per declared artifact on an idempotent sweep is a cost paid forever. It is the only

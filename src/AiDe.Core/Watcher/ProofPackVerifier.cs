@@ -148,8 +148,10 @@ public static class ProofPackVerifier
         // before looking at anything. A committed Proof Pack simply stopped counting as evidence, and
         // the verdict said "we could not look" rather than "it is not there" — which is the honest
         // answer to the wrong question (INV-0005).
-        var reachable = repositoryRoot?.Replace('\\', Path.DirectorySeparatorChar)
-                                       .Replace('/', Path.DirectorySeparatorChar);
+        //
+        // ONE definition of the conversion, shared with the locator's own boundary. It was two
+        // copies and a rule in prose, and the prose is what the next boundary was written against.
+        var reachable = RepositoryIdentity.ToFileSystemPath(repositoryRoot);
 
         // No repository we can reach means we cannot look. Saying NotFound here would be the
         // hardcoded false all over again, in the one case where the product is the thing at fault.

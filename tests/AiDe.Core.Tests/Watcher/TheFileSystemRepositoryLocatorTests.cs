@@ -20,7 +20,18 @@ namespace AiDe.Core.Tests.Watcher;
 public sealed class TheFileSystemRepositoryLocatorTests
 {
     [Fact]
-    public void ALinkedWorktreeResolvesToItsRepository()
+    /// <summary>
+    /// Both spellings a caller can hold: the checkout's own path, and its canonical IDENTITY.
+    /// </summary>
+    /// <remarks>
+    /// The identity half is not decoration. It is the only spelling any production caller has -
+    /// RepositoryCorrection.Apply passes Repository.CanonicalPath - and Canonicalise writes a
+    /// backslash on every platform on purpose, so on Linux the argument arriving here is one
+    /// filename with no separators in it. Asking only with the raw path exercised a spelling nothing
+    /// in the product ever sends, which is how the locator stayed green on Linux while no linked
+    /// worktree was ever corrected there.
+    /// </remarks>
+    public void ALinkedWorktreeResolvesToItsRepository_ByPathAndByIdentity()
     {
         var root = NewDirectory();
         var linked = root + "-linked";
@@ -48,6 +59,11 @@ public sealed class TheFileSystemRepositoryLocatorTests
             Assert.Equal(
                 new RepositoryIdentity(root, "x").CanonicalPath,
                 new RepositoryIdentity(resolved!, "x").CanonicalPath);
+
+            // The same worktree, asked for the way the product asks. Red on Linux without the
+            // conversion at the boundary; it cannot redden on Windows, where an identity and a path
+            // are the same string - which is the whole reason this went unseen for two commits.
+            Assert.Equal(resolved, locator.RepositoryFor(new RepositoryIdentity(linked, "x").CanonicalPath));
         }
         finally
         {

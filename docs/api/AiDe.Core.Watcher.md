@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Watcher: 162 types, 317 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Watcher: 162 types, 318 members, 64% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Watcher`
 
-**162 public types · 317 public members · 64% documented.**
+**162 public types · 318 public members · 64% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -2912,6 +2912,7 @@ there would merge two genuinely distinct repositories — which is the exact col
 | `string CanonicalPath { get; init; }` | **(gap)** |
 | `string DisplayName { get; init; }` | **(gap)** |
 | `string Canonicalise(string path)` | Two spellings of one path become one string; two paths stay two. |
+| `string ToFileSystemPath(string? path)` | The inverse boundary: an identity respelled as a path THIS machine can open. |
 
 ### `string Canonicalise(string path)`
 
@@ -2920,6 +2921,37 @@ Two spellings of one path become one string; two paths stay two.
 **Remarks.** Public because `WorkspaceKey` keys the same directories and two implementations of
 one canonicalisation is the shape that drifts apart — a repository grouping one way in the
 fleet map and another on the leaderboard would be invisible until the cohorts disagreed.
+
+### `string ToFileSystemPath(string? path)`
+
+The inverse boundary: an identity respelled as a path THIS machine can open.
+
+**Remarks.** **Every filesystem call that starts from an identity goes through here.**
+`Canonicalise` writes a BACKSLASH on every platform on purpose, which is right for
+an identity and wrong for a path: on Linux the result is one filename with no separators in
+it, so `File.Exists` and `Directory.Exists` answer "no" about a file that could not
+exist, and the caller reports that absence as a fact about the world.
+
+
+
+
+
+**A named function, because the rule had already been learned and written down.**
+INV-0005 converted at the verifier's boundary and left the rule as prose in three comments,
+which is a memoir rather than a control. The correction's boundary, one call further out, kept
+handing `CanonicalPath` straight to the filesystem, so no linked worktree was ever
+corrected on Linux; the miss was invisible because "unknown" is also the honest answer when
+the registrant's path is simply not ours. DC-115's generalisation, at a second site.
+
+
+
+
+
+**Deliberately not an exact inverse.** A POSIX filename may contain a backslash, and
+this turns it into a separator. The ambiguity is created by `Canonicalise` and
+cannot be undone here: a directory whose name contains a backslash is unreachable through an
+identity, on any platform. Naming the limit is the point, because the alternative is a caller
+that believes the round trip is total.
 
 ## `WorkspaceKey`
 

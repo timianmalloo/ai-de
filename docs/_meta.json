@@ -1,12 +1,12 @@
 {
   "generated": "2026-09-10",
-  "documented_sha": "55f1879910507e62ac4fae9691e72e5d38c30365",
+  "documented_sha": "60ae4a9cda5af3c4e0141386691953da3f42c1cd",
   "bundle_pages": 27,
   "api": {
     "files_scanned": 238,
-    "public_symbols": 2234,
-    "documented": 1547,
-    "coverage_pct": 69.2
+    "public_symbols": 2235,
+    "documented": 1548,
+    "coverage_pct": 69.3
   },
   "diagram_families": [
     "component",
