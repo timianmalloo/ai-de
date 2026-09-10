@@ -1,0 +1,16 @@
+{"agent": "f0-session-object", "at": 1789066709.0961773, "code": null, "kind": "allowed", "path": ".github/workflows/build.yml", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066709.1075363, "code": null, "kind": "allowed", "path": "docs/api/AiDe.Core.Sessions.md", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066709.1075363, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Sessions/SessionConfig.cs", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066709.1075363, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Sessions/SessionConfigStore.cs", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066709.1075363, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Sessions/SessionId.cs", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066709.1131966, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Sessions/SessionPaths.cs", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066709.1147437, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/SessionConfigStoreTests.cs", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066709.1147437, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/SessionEventEnvelopeTests.cs", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066709.1147437, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/SessionIdTests.cs", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066709.1147437, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Sessions/SessionPathContractTests.cs", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066709.1147437, "code": null, "kind": "allowed", "path": "tools/verify-r14b2-session-naming.py", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066774.8861525, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066774.8861525, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066774.8881586, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066774.8901649, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "f0-session-object", "wi": ""}
+{"agent": "f0-session-object", "at": 1789066774.8901649, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "f0-session-object", "wi": ""}
