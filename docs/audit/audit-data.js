@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T00:42:58Z",
+  "generated": "2026-09-10T00:47:08Z",
   "audit": [
     {
       "actor": null,
@@ -10409,6 +10409,43 @@ window.AUDIT_DATA = {
       ],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M24CGK4KWV9P8F62YMTR8Z6B",
+      "shortname": "lane-rename-ruling-15",
+      "datetime": "2026-09-10T00:47:03Z",
+      "session": "lane-rename",
+      "prompt": "Execute Ruling 15 -- the A3 naming repair: rename GovernedSessionSource -> GovernedLaneSource and GovernedSession -> GovernedLane throughout, add the boundary doc-comment, and write the spec-errata entry.",
+      "summary": "Executed Ruling 15 (A3 naming repair). Found and escalated a real blocker: GovernedLane already existed as an unrelated composite in the same file/namespace -- a literal rename would not compile. Owner ruled (15a): GovernedSession -> GovernedEpisode instead, GovernedLaneSource stands. Renamed both types + file + consumer (GovernedRunHost.cs:114) + 4 test files (+ renamed test file); added the R14 boundary doc-comment on GovernedEpisode.SessionId; filed the spec errata note quoting v1.0 lines 260/336/376 verbatim, linked from the provenance README; regenerated docs-index, audit-data, API docs, doc viewer, site figures. Tests: 2289 before and after (1890 Core + 399 App), identical. Build: 0 warnings. Full verify-*.py + marker-lint gate set run bare (caught and corrected a DC-113 pipe-masked exit code on the first pass): all green except verify-derived-views, which reports docs/audit/audit-data.js stale for a pre-existing, worktree-name-dependent reason unrelated to this rename (recorded as a finding, not fixed -- out of this change order's scope).",
+      "kind": "skill",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/pp-lane-rename-ruling-15.md",
+        "docs/notes/addendum-a-ruling-15a-governed-episode.md",
+        "docs/notes/conductor-spec-errata-lane-rename.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Rename the two types that use \"session\" for a lane (GovernedSessionSource, GovernedSession), per Addendum A3's naming rule, before more code lands.",
+      "done_when": "GovernedSessionSource -> GovernedLaneSource and GovernedSession -> GovernedLane throughout, including the consumer; boundary doc-comment exists; spec-errata entry written; build clean zero warnings; full gate set green; test count unchanged.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-10T00:34:05Z",
+      "duration_seconds": 778.0,
+      "git": {
+        "sha": "87722d3ead9d68794ad67a64940f0349454dc07f",
+        "short": "87722d3ea",
+        "branch": "chore/lane-rename",
+        "pushed": null
+      }
     }
   ],
   "changes": [
