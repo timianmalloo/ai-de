@@ -8,3 +8,8 @@
 {"agent": "conductor-phase2", "at": 1788999298.4261975, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-phase2", "wi": ""}
 {"agent": "conductor-phase2", "at": 1788999298.4261975, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-phase2", "wi": ""}
 {"agent": "conductor-phase2", "at": 1788999298.4261975, "code": null, "kind": "allowed", "path": "docs/audit/index.html", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999493.3845048, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999493.3845048, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999493.3845048, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999493.3845048, "code": null, "kind": "allowed", "path": "site/index.html", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999493.400592, "code": null, "kind": "allowed", "path": "site/model.html", "session": "conductor-phase2", "wi": ""}

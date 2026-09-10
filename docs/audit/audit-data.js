@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-09T22:48:20Z",
+  "generated": "2026-09-10T00:20:45Z",
   "audit": [
     {
       "actor": null,
@@ -10236,6 +10236,39 @@ window.AUDIT_DATA = {
       "done_when": "All four done-when clauses evidenced; Proof Pack committed with populated residuals; loomkeeper episode closed; Owner counter-signature recorded with its conditions",
       "tier": "T2",
       "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M24B0ERPJYMCAR1BS49N7J4P",
+      "shortname": "addendum-a-ratified",
+      "datetime": "2026-09-10T00:20:45Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "CHANGE ORDER - Addendum A: The Session Experience. Amend the goal of the run in flight. Process it through the same authority chain as everything else: Owner > approved plan > you > agents. Ingest, reconcile against reality, amend the goal block, convene the Owner; the Owner's ratification is the admission of this scope change.",
+      "summary": "RATIFIED WITH THREE CUTS. The reconciliation changed the answer the change order expected: it anticipated A3's storage/naming repair as a SERIAL SPINE and asked me to verify rather than assume; verifying showed no .aide/sessions path exists anywhere in src/, AiDe.Core/Sessions/ does not exist, and no run-log store or projection was ever built - so the path rename costs ZERO and the spine is two renames plus a naming rule, hours not a phase. OWNER CUTS: (i) the Phase-1 canvas ships Console and Terminal ONLY, because a tab with nothing behind it is dead UI; (ii) the mention picker sources files and graph nodes only; (iii) R14 is a PATH CONTRACT, not a store - RunLogStore stays Phase 3 and Console renders the in-process stream. CONDITIONS: modes and picker sources must be data-driven registrations not a hard-coded strip; CodeMirror 6 needs the Spike Protocol; REACT IS REFUSED (one composer is one implementer, and A5's premise that the surface 'is already WebView2 + React' is FALSE on main - no package.json names React or CodeMirror, so R15 carries a new dependency rather than a reuse); Terminal MODE existing is not a terminal-hosting violation, a terminal CONSTRUCTED during the exit run is. RULING 15: rename GovernedSessionSource/GovernedSession to GovernedLaneSource/GovernedLane now including the consumer, Watcher callee migrates opportunistically, and GovernedLane must NOT grow an interface (Ruling 7 untouched). RULING 16: the Agent Plane E18 close STANDS - rewriting it to Superseded would make the audit trail say Phase 1 was never Completed when its four clauses were - so it gains ONE HEADER LINE; Phase 1 re-opens under amended exit evidence with the front door as a second delivery under Phase 1, NOT an invented container (Ruling 14 undisturbed, its trigger now fired). RULING 17: Phase 2 N0 continues unchanged, Phase 2 code nodes wait behind the front-door close because ConductorHost and the session document rewire the same composition root and the coupling test fails. RULING 18: the session document kind is 'session-document'; the Watcher's 'sessions' kind stays because it is a persisted restorableKinds string and renaming it is a saved-layout migration. THE OWNER CORRECTED MY RECONCILIATION: I wrote 'no public consumers outside the namespace' and GovernedRunHost.cs:114 constructs it. One consumer, still cheap, but the claim was false and is corrected in place rather than quietly edited.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [
+        "docs/specs/conductor/ai-de-spec-addendum-a-session-experience.html",
+        "docs/notes/addendum-a-reconciliation.md",
+        "docs/notes/addendum-a-ratification.md"
+      ],
+      "tags": [
+        "conductor",
+        "addendum-a",
+        "scope-change",
+        "ratification"
+      ],
+      "outcome": "success",
+      "goal": "Admit Addendum A as a scope change through the authority chain: ingested with provenance, reconciled against what was actually built, and ratified by the Owner before anything re-plans",
+      "done_when": "Addendum committed with checksum and supersession recorded; evidence-cited reconciliation produced; amended CT19 block ratified or cut by the Owner; ruling recorded as a decision note plus audit entry",
+      "tier": "T2",
+      "fan_out": 1,
       "signals": {
         "verification_path": true,
         "verification_executed": true,

@@ -54,3 +54,11 @@
 {"agent": "conductor-main", "at": 1788994101.7739346, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788994101.7739346, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788994101.775941, "code": null, "kind": "allowed", "path": "docs/notes/conductor-phase1-e18-close.md", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788999387.1742067, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788999387.1742067, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-phase2-docs.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788999387.1742067, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-phase2.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788999387.178226, "code": null, "kind": "allowed", "path": ".agents/log/conductor-phase2.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788999387.178226, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788999387.178226, "code": null, "kind": "allowed", "path": "docs/notes/addendum-a-reconciliation.md", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788999387.178226, "code": null, "kind": "allowed", "path": "docs/specs/conductor/README.md", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788999387.178226, "code": null, "kind": "allowed", "path": "docs/specs/conductor/ai-de-spec-addendum-a-session-experience.html", "session": "conductor-main", "wi": ""}

@@ -50,8 +50,13 @@ But the underlying API it calls is itself session-named (`IngestHost.OpenEpisode
 **session** id; `agent_session_dim` is the table). A3 also says the Watcher's vocabulary
 migrates **opportunistically, no big-bang rename**. So renaming the caller while the callee
 stays session-named may trade one confusion for another. **This is for the Owner**, not for
-me — and it is cheap either way: two types, one file, no public consumers outside the
-namespace.
+me — and it is cheap either way: two types, one file, one consumer.
+
+> **Corrected by the Owner, 2026-09-09.** This note originally said *"no public consumers
+> outside the namespace."* **That was wrong.** `src/AiDe.App/Conductor/GovernedRunHost.cs:114`
+> constructs `GovernedSessionSource`. One consumer — still cheap, but the claim was false and
+> is corrected here rather than quietly edited. A reconciliation that overstates how contained
+> a rename is, is the same failure shape as a gate that reports green without running.
 
 ## A live collision the addendum names and the code already has
 

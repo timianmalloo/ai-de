@@ -2444,6 +2444,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "97234ae560a8663d0d4a2e2510affa12b9f60a61399ff50dafbfe12052a496c1"
     },
     {
+      "id": "note-addendum-a-ratification",
+      "path": "docs/notes/addendum-a-ratification.md",
+      "title": "Decision note — Addendum A ratified with cuts; Rulings 15–18",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Addendum A ratified as a scope change, with three cuts: the Phase-1 canvas ships Console and Terminal only, the mention picker sources files and graph nodes only, and R14 is a path contract rather than a store. React is refused; CodeMirror needs a spike. Phase 1 re-opens under amended exit evidence while its Agent Plane close stands.",
+      "tags": [
+        "conductor",
+        "addendum-a",
+        "ratification",
+        "scope-change",
+        "session",
+        "codemirror",
+        "react"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-a-reconciliation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-conductor-phase1-e18-close",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "dd8c8707a4b52fbac08c4573037088fc1ed7dca1bc3dd35eaf8571ccfc3faf8c"
+    },
+    {
       "id": "note-addendum-a-reconciliation",
       "path": "docs/notes/addendum-a-reconciliation.md",
       "title": "Reconciliation — Addendum A against the work already delivered",
@@ -2477,7 +2514,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "538a4f856e031b6f8f413ac6eacb972b1f5b54bc7c873d305faa2ff3ec8cd045"
+      "sourceSha256": "1ea8db8b7fd101a19b0bf55e4dcd90ea6c18a22efe9fe1e4294439aab54c4b86"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -2862,7 +2899,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "6c736cfe04ed662f09e4dc42db999289faa26e8416fb7cf04b0a131b4b7afa37"
+      "sourceSha256": "eb8d3bb3560848b57886f6ef4ff31ef1e6630d3834d38ddf49ca03dbe6518ec6"
     },
     {
       "id": "note-conductor-phase1-plan-approval",
@@ -11752,5 +11789,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "0c7b44680d3cd966c7733c219bd3f6b4d1f6570e15b29ca43d2aea543cdc4d42"
+  "graphSha256": "bad7efbab9fa0d42026c66993abe3692604da167567fe73d1605d426299249e7"
 };

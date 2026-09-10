@@ -20,6 +20,11 @@ summary: >-
 
 # E18 close — Conductor Phase 1
 
+> **Phase exit evidence amended by Addendum A on 2026-09-09; phase exit now requires the
+> front-door delivery close.** This close stands unaltered as the signed close of the **Agent
+> Plane** delivery — its four clauses were met, on evidence the Owner opened. Rewriting it to
+> `Superseded` would make the audit trail say Phase 1 was never `Completed` when it was.
+
 **Outcome: `Completed`.** Counter-signed by the Owner agent, 2026-09-09, on evidence it opened
 itself (`result.json`, the pre-run oracle note, the DC-115 register entry, the R4-core diff).
 
