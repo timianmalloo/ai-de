@@ -140,6 +140,23 @@ FAMILIES = [
         # than superseded — and a deleted refusal is a control that stopped firing.
         "contiguous": True,
     },
+    {
+        # FOUND BY THIS SCRIPT'S undeclared-family check, on the template spine's first full gate
+        # run — the same shape as AP- one slice later, and declared the day the family was born
+        # rather than the day two sessions both reach for TS-0015.
+        #
+        # The allocator is the constant list, not the usage: docs/api/AiDe.Core.Sessions.md is a
+        # DERIVED view carrying the same codes, and the gate's own report named it as the file the
+        # ids were "mostly in" — which is exactly the trap the AP- note describes.
+        "prefix": "TS",
+        "path": "src/AiDe.Core/Sessions/TemplateSchema.cs",
+        "kind": "heading",
+        "pattern": r'^\s*public const string \w+ = "(TS-\d+)";',
+        "what": "template-schema/1 load refusals",
+        # Contiguous for AP-'s reason: a load refusal is never re-issued, so a hole would mean a
+        # refusal was deleted, and a template that used to fail load would now pass it.
+        "contiguous": True,
+    },
 ]
 
 # A token that looks like a monotonic id: a short prefix, a dash, a zero-padded number.
