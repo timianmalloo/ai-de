@@ -1252,6 +1252,116 @@ window.DOCS_INDEX = {
       "sourceSha256": "7fad0ce772d6ce8324a7e76017d589227c838949bbda86ac6b792cf1d5891d55"
     },
     {
+      "id": "adr-0027-acp-lane-separate-shape",
+      "path": "docs/adr/0027-acp-lane-separate-shape.md",
+      "title": "ADR-0027 — The ACP lane is a separate component shape; ITerminalSession stays frozen",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Spec §10 reads as if the dispatch seam generalizes to lanes behind one interface, but ITerminalSession.Output must never be persisted while ACP run events must always be persisted — an opposite contract, not merely a different shape. AgentPlane builds the ACP lane on its own types and leaves ITerminalSession untouched; the two share only the run-event envelope.",
+      "tags": [
+        "architecture",
+        "agent-plane",
+        "acp",
+        "terminal",
+        "privacy",
+        "dc-096"
+      ],
+      "links": [
+        {
+          "to": "architecture-agent-plane",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-acp-lane-separate-shape",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0007-agent-session-adapter",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "83eecb46fea1f30892bc95d417adc9a9bb3bbef7906a0ea09054a2307f2b659c"
+    },
+    {
+      "id": "adr-0028-mode-cohort-not-partition",
+      "path": "docs/adr/0028-mode-cohort-not-partition.md",
+      "title": "ADR-0028 — mode is a cohort attribute, never a ScoreSegment partition axis",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "R4 forbids leaderboard cells splitting by mode, but the two ingest doors already defaulted to different task classes, so the same work would split anyway under a different column name - and the governed door's default was the incomparable one. Phase 1 adds mode as a nullable, expand-only cohort column beside ScoreSegment, never inside it, and requires an explicit caller-chosen taskClass at both doors.",
+      "tags": [
+        "architecture",
+        "agent-plane",
+        "watcher",
+        "leaderboard",
+        "scoring",
+        "cohort",
+        "dm-data-modelling"
+      ],
+      "links": [
+        {
+          "to": "architecture-agent-plane",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-mode-cohort-not-partition",
+          "rel": "implements"
+        },
+        {
+          "to": "adr-0023-watcher-observation-projection",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "4ad5dc7706afdc81db98466ffad1a09ed4df6f2a246ae5ddd9f05660b6d9092c"
+    },
+    {
+      "id": "adr-0029-latency-slo-recorded-not-asserted",
+      "path": "docs/adr/0029-latency-slo-recorded-not-asserted.md",
+      "title": "ADR-0029 — R1's 250 ms is a recorded SLO plus a deterministic ordinal, never a CI duration assertion",
+      "type": "adr",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-02-28",
+      "reviewSuggested": [],
+      "summary": "Spec R1 requires run events within 250 ms of receipt, but this repo's fail-closed verify-perf-assertions.py gate refuses any test asserting a measured duration is under a constant - the control for DC-107, where exactly that shape of assertion broke deterministically on a slower CI runner while the code was correct. Phase 1 asserts a deterministic ordinal, emits and records the latency on the normal path, and evaluates the 250 ms figure as an operator SLO at the exit run with the host named.",
+      "tags": [
+        "architecture",
+        "agent-plane",
+        "acp",
+        "performance",
+        "instrumentation",
+        "dc-107",
+        "testing-strategy"
+      ],
+      "links": [
+        {
+          "to": "architecture-agent-plane",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-latency-slo-not-assertion",
+          "rel": "implements"
+        },
+        {
+          "to": "note-conductor-n7-refactor-oracle",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "eefecec58ed69dc4369f697987ca8250fa4bc568a191519045db1ff0b4b0c620"
+    },
+    {
       "id": "api-aide-app",
       "path": "docs/api/AiDe.App.md",
       "title": "API: AiDe.App",
@@ -1686,7 +1796,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Watcher: 162 types, 316 members, 64% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Watcher: 162 types, 317 members, 64% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1699,7 +1809,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "d67377ecfc50f6a1bf5a6ee1d9ebadc1a3ab82ebfb420a10e46156c8e0695c88"
+      "sourceSha256": "2d8dae3d6f9ecb4ebb475fac6c5056231fb27676ff9e6e88a499c0436461b4d3"
     },
     {
       "id": "api-aide-core-workbench",
@@ -1866,6 +1976,100 @@ window.DOCS_INDEX = {
         }
       ],
       "sourceSha256": "f406eb168e57a38893b5e4f552b0513bb4a715e4de280094f21ffb316e3c3cf8"
+    },
+    {
+      "id": "architecture-agent-plane",
+      "path": "docs/architecture/agent-plane.md",
+      "title": "AgentPlane — Architecture",
+      "type": "architecture",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-09",
+      "reviewSuggested": [],
+      "summary": "AgentPlane is the governed half of the Conductor: it spawns an ACP-speaking coding engine into a provisioned worktree, holds the bidirectional protocol session, maps its wire traffic onto one run-event envelope, enforces a fail-closed spend and lease boundary, and closes the episode into the existing Watcher's unchanged scorer as a second, distinguishable cohort. Phase 1 only: claude-code, one launch path, zero terminal hosting, one governed run proven end to end.",
+      "tags": [
+        "conductor",
+        "agent-plane",
+        "acp",
+        "architecture",
+        "phase-1",
+        "watcher"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "implements"
+        },
+        {
+          "to": "architecture",
+          "rel": "refines"
+        },
+        {
+          "to": "plan-conductor-programme",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-conductor-agent-plane",
+          "rel": "tested-by"
+        },
+        {
+          "to": "adr-0027-acp-lane-separate-shape",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0028-mode-cohort-not-partition",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0029-latency-slo-recorded-not-asserted",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0007-agent-session-adapter",
+          "rel": "relates-to"
+        },
+        {
+          "to": "adr-0023-watcher-observation-projection",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-acp-lane-separate-shape",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-episode-source-seam",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-r4-core-phase1-scope",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-mode-cohort-not-partition",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-latency-slo-not-assertion",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-observed-auth-label-correspondence",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-tos-invariant-observed-auth",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [
+        {
+          "kind": "flowchart",
+          "title": "4. Components and boundaries",
+          "mermaid": "flowchart TB\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef plane fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef watcher fill:#1A1F26,stroke:#2A313B,color:#E4E9EF\n  classDef frozen fill:#0D1014,stroke:#D8A650,stroke-dasharray:4 3,color:#D8A650\n\n  subgraph app[\"AiDe.App / Conductor — the one composition root\"]\n    ConductorEntry[\"ConductorEntry<br/>headless launcher: run file → result file\"]\n    GovernedRunHost[\"GovernedRunHost.RunAsync<br/>catalog → process → handshake →<br/>observed auth → authorize → worktree →<br/>episode → prompt → seams → close → score\"]\n  end\n\n  subgraph plane[\"AiDe.Core/AgentPlane — new\"]\n    EngineCatalog[\"EngineCatalog<br/>3 data rows, 1 launch path, 3 named refusals\"]\n    ProviderRegistry[\"ProviderRegistry<br/>accounts, observed health, ObservedAuthLabel\"]\n    GoalBlock[\"GoalBlock / SpawnContract<br/>6-field goal + fail-closed auth gate\"]\n    AcpEngineProcess[\"AcpEngineProcess<br/>child spawn, env inspection, tree reap\"]\n    AcpPeer[\"AcpPeer<br/>NDJSON framing, correlation, backpressure\"]\n    AcpLaneClient[\"AcpLaneClient<br/>handshake · session · prompt · permission\"]\n    AcpRunEventMapper[\"AcpRunEventMapper<br/>ACP frame → RunEvent, one mapper\"]\n    WorktreeProvisioner[\"WorktreeProvisioner<br/>namespaced branch, coord install inside it\"]\n    GovernedSessionSource[\"GovernedSessionSource<br/>opens/closes the episode\"]\n    LeaseAndSeams[\"Lease / LeaseMonitor<br/>out-of-lease edit → seam → forces Blocked\"]\n    LaneCohort[\"LaneMode / LaneScoring<br/>stamps the mode cohort, requires taskClass\"]\n    TerminalHostingLedger[\"TerminalHostingLedger<br/>counts terminal.start; oracle for == 0\"]\n    RunTriage[\"RunTriage<br/>Stage-0: skip plan/council for T0/T1\"]\n  end\n\n  subgraph watcher[\"AiDe.Core/Watcher — existing, unchanged semantics\"]\n    IngestHost[\"IngestHost<br/>OpenEpisode / DeclareArtifacts / CloseEpisode\"]\n    Registrar[\"ITrustedRegistrar\"]\n    ClosedScoring[\"ClosedEpisodeScoring\"]\n    ScoringService[\"ScoringService / WeaveScorer<br/>R4-core: byte-unchanged\"]\n    Store[\"SqliteWatcherObservationStore<br/>v6: + mode TEXT NULL, expand-only\"]\n  end\n\n  subgraph frozen[\"AiDe.Core/Terminal — frozen for Phase 1\"]\n    ITerminalSession[\"ITerminalSession<br/>Output never persisted\"]\n    ConPty[\"ConPtyTerminalSession<br/>emits terminal.start on aide.terminal.runtime\"]\n  end\n\n  Adapter[\"claude-agent-acp adapter<br/>node process, wraps Claude Code Agent SDK\"]\n  Repo[(\"Repository + worktrees\")]\n\n  ConductorEntry --> GovernedRunHost\n  GovernedRunHost --> EngineCatalog\n  GovernedRunHost --> ProviderRegistry\n  GovernedRunHost --> AcpEngineProcess\n  AcpEngineProcess --> AcpPeer\n  AcpPeer --> AcpLaneClient\n  GovernedRunHost --> AcpLaneClient\n  GovernedRunHost --> GoalBlock\n  GovernedRunHost --> WorktreeProvisioner\n  GovernedRunHost --> GovernedSessionSource\n  GovernedRunHost --> TerminalHostingLedger\n  GovernedRunHost --> LaneCohort\n  AcpLaneClient --> AcpRunEventMapper\n  AcpRunEventMapper --> LeaseAndSeams\n  GovernedSessionSource --> IngestHost\n  IngestHost --> Registrar\n  LaneCohort --> ClosedScoring\n  ClosedScoring --> ScoringService\n  LaneCohort -.writes mode.-> Store\n  ScoringService --> Store\n\n  AcpEngineProcess -.spawns.-> Adapter\n  AcpLaneClient -.stdio ACP.-> Adapter\n  WorktreeProvisioner -.git worktree add.-> Repo\n  TerminalHostingLedger -.listens, never calls.-> ConPty\n\n  class app,ConductorEntry,GovernedRunHost app\n  class plane,EngineCatalog,ProviderRegistry,GoalBlock,AcpEngineProcess,AcpPeer,AcpLaneClient,AcpRunEventMapper,WorktreeProvisioner,GovernedSessionSource,LeaseAndSeams,LaneCohort,TerminalHostingLedger,RunTriage plane\n  class watcher,IngestHost,Registrar,ClosedScoring,ScoringService,Store watcher\n  class frozen,ITerminalSession,ConPty frozen\n  class Adapter,Repo ext"
+        }
+      ],
+      "sourceSha256": "0aefdbcb950e0dd3fd2a3e90b259dbb02ed0b86139e4b792bed1cf24ac8ddf85"
     },
     {
       "id": "architecture-loomkeeper",
@@ -3026,6 +3230,39 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "298403503f40f940c45953096e643b6c7e4ed02fb37be09cdaf441b107d7a1d1"
+    },
+    {
+      "id": "note-dc-115-evidence-in-a-lanes-own-checkout",
+      "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md",
+      "title": "DC-115 — verifying a lane's evidence in the checkout it committed it in",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "2",
+      "reviewBy": "2027-03-09",
+      "reviewSuggested": [],
+      "summary": "A governed lane in a linked worktree scored Not Scored for a Proof Pack it had committed on its own branch, because the verifier read the canonical repository path — the parent checkout, on another branch. The control verifies across the session's checkouts, admitting the lane's tree only when git's own .git pointer confirms it belongs to the bound repository. Records which of the three candidates was taken, why the other two were not, and what is still uncontrolled.",
+      "tags": [
+        "conductor",
+        "watcher",
+        "scoring",
+        "proof-pack",
+        "worktree",
+        "dc-115",
+        "phase-2"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-programme",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bdf356fe8e627146ca59bca7a953e7b5e5b854ce088b34e89a758ff0707086e5"
     },
     {
       "id": "note-terminal-customization-persistence",
@@ -4800,7 +5037,39 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "2b87223b986d6987d1748e8e00b23f57d178456e792e6dd3c6165007ed278d09"
+      "sourceSha256": "ea346ccce045b8be8122c06d7b4a935837c5c350ff2bd00b8d050d1bbca9f0fb"
+    },
+    {
+      "id": "design-session-profiler",
+      "path": "docs/design/session-profiler.md",
+      "title": "Design — /session-profiler",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-09",
+      "reviewSuggested": [],
+      "summary": "The measurement design behind /session-profiler: read each harness's own on-disk session store (never reason about behavior it did not record), classify drift/tangent/ceremony per flagged turn against the transcript, and converge on a findings table (with severity and confidence) plus a fixes table (each row naming the pack surface and the control that fails on recurrence). This node did not exist in this repo before the first /session-profiler run (docs/profiles/sp-0001/); it is created here so that run's own frontmatter links resolve.",
+      "tags": [
+        "session-profiler",
+        "telemetry",
+        "performance",
+        "efficiency",
+        "adherence",
+        "ai-forward-pack"
+      ],
+      "links": [
+        {
+          "to": "profile-sp-0001",
+          "rel": "documents"
+        },
+        {
+          "to": "profile-conductor-phase1",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "95668313ceefe316d4bcbcc80ccecdeb57283d38a01ba0128c1fec1a879e3460"
     },
     {
       "id": "diagram-class",
@@ -5921,6 +6190,72 @@ window.DOCS_INDEX = {
       "sourceSha256": "861afc9d4143c581d7a03d000c35735c6d4b18ea0ea589cd5d301b74c75eb88f"
     },
     {
+      "id": "profile-conductor-phase1",
+      "path": "docs/profiles/conductor-phase1.md",
+      "title": "Session profile — Conductor Phase 1",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-09",
+      "reviewSuggested": [],
+      "summary": "A /session-profiler pass scoped to Conductor Phase 1, joining the audit log's per-node measurements (the only Phase-1-specific ground truth) against the harness-level telemetry in profile-sp-0001. Three of eight plan nodes carry a measured duration; the other five, and every piece of orchestration overhead around them, read \"not recorded.\" 35.6% of the Phase-1 wall-clock window is inside a measured node; 64.4% is not.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "conductor",
+        "phase-1",
+        "efficiency",
+        "adherence"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        },
+        {
+          "to": "profile-sp-0001",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-conductor-programme",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-phase1-e18-close",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "39053468f493b5cd9ffe0f48ceac5f5121e18cf0f16df6a54b3bdbe41467690a"
+    },
+    {
+      "id": "profile-sp-0001",
+      "path": "docs/profiles/sp-0001/profile.md",
+      "title": "Session profile sp-0001 - ai-de",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2026-12-08",
+      "reviewSuggested": [],
+      "summary": "Measured pass over 18 session(s) in ai-de (all sessions); 98 finding(s), top: SP-01, SP-06, SP-09.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "efficiency",
+        "adherence"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "e7e9efde10072578ca62a776d034b4eedd7f1173516a82aec73bb1e5fe25294c"
+    },
+    {
       "id": "proof-pack-phase-1-walking-skeleton",
       "path": "docs/design/phase-1-proof-pack.md",
       "title": "Phase 1 walking skeleton — Proof Pack",
@@ -6411,6 +6746,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "551a8eb68d6bf1d12d9640452f094c1e33f19933de8caa3f519975b09fff423b"
+    },
+    {
+      "id": "session-profiles",
+      "path": "docs/profiles/PROFILES.md",
+      "title": "Session profiles",
+      "type": "doc",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "",
+      "reviewBy": "2027-03-05",
+      "reviewSuggested": [],
+      "summary": "Index of /session-profiler runs - each row is one measured pass over the harness telemetry, mined by /dream as findings.",
+      "tags": [
+        "profile",
+        "session-profiler",
+        "index"
+      ],
+      "links": [
+        {
+          "to": "design-session-profiler",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2328a42e46a3328963e096d359764aac63418da8b7c7ded01167224ad5b9265e"
     },
     {
       "id": "spike-dpi-and-ganged-resize",
@@ -11570,7 +11930,7 @@ window.DOCS_INDEX = {
     {
       "id": "surface-audit-index",
       "path": "docs/audit/index.html",
-      "title": "ai-de — Audit & Change Log",
+      "title": "ai-de-feature-conductor-host — Audit & Change Log",
       "kind": "audit",
       "description": "Browse the committed audit and change timeline.",
       "artifactId": "audit-log"
@@ -11709,5 +12069,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c68d3cc2decbc32490a2989072a0076ee07fb0f258196a260416e3f8b7a29328"
+  "graphSha256": "780161e2b24bcea8f75e689f4942b30f35f371a480fc6844179dec5e69618093"
 };
