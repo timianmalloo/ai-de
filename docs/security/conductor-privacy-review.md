@@ -45,7 +45,12 @@ subject, and the reader of the compiled view are one person.** Confirmed by the 
 2026-09-10: *"and yes its a single-operator desktop."*
 
 > **VOID TRIGGER.** This basis is **void** for any multi-user, shared-workspace or unattended
-> deployment, **which returns to the human.** It is also void the moment any text can reach the
+> deployment, **which returns to the human.** It is **also void if the operator relocates to, or
+> operates from, a jurisdiction other than the declared US** — because rows 1 and 4 each
+> discharge themselves with *"not load-bearing for a US-declared operator"*, and row 4 records
+> **no DPF and no consumer region commitment**, so **two rows change meaning at once and nothing
+> observes the declaration changing.** (Privacy recorded this as a gap in **its own** narrowing
+> first — the condition it wrote covered multi-user only.) It is also void the moment any text can reach the
 > prompt that the human did not personally read in the compiled view — conductor-drafted replies,
 > mention or template expansion, graph-query results, or any assist. (The second half is Ruling 44's
 > trigger, restated here because the two share one assumption.)
@@ -68,14 +73,14 @@ rows resting on an undated page are marked as such.
 | # | Field | Value | Source · date |
 | --- | --- | --- | --- |
 | 1 | **Purpose / basis** | User-directed composition and dispatch of prompts to an agent, by the operator, for their own repository work. **Basis: the informed acceptance of the operator, who is also the data subject** (2026-09-10). Under the parent review's own classification this is `ExternalProcessing`, now permitted for the Conductor by this record. **EEA legal-basis mapping is Flagged** — the Privacy Policy §10 table lists *Consent* and *Legitimate interests* against "improve the Services … including model training", and the column mapping could not be cleanly extracted. Not load-bearing for a US-declared operator. | Privacy Policy §10 · **2026-07-08** |
-| 2 | **Permitted data classes** | Prompt text the operator typed or pasted; goal-block field values; and — **only when `AttachEnabled` is true (C21, default false)** — the contents of files the operator individually picked, bounded by C14 (≤32 KiB/file, ≤128 KiB/send, ≤5 files) and filtered by C14(e)(iv)'s categorical refusal set. **Refused:** anything the page supplied, any path the page named, and every C14(e)(iv) class. |  |
+| 2 | **Permitted data classes** | **Three classes leave this machine, not two.** (i) **Prompt text** the operator typed or pasted, and goal-block field values. (ii) **Attachment contents** — only when `AttachEnabled` is true (**C21, default false**), bounded by C14 (≤32 KiB/file, ≤128 KiB/send, ≤5 files) and filtered by C14(e)(iv)'s refusal set. (iii) **Repository content the AGENT itself reads and forwards during a run** — `GovernedRunHost.Decide` auto-allows every non-edit call, so a run reads and sends arbitrary worktree files with **no C14 cap, no per-file affirmation, and no operator pick.** Class (iii) is **unbounded by C14** and is covered by the same basis — the operator authorized *their own repository work*, and an agent reading repository files **is** that function. It is named here because a record describing only the bounded path, while an unbounded one runs beside it, **will be read as "this is everything that leaves." It is not.** **Refused:** anything the page supplied, any path the page named, every C14(e)(iv) class. | plan §F4 `:428` |
 | 3 | **Processor / subprocessor role** | **Anthropic is a CONTROLLER, not a processor, for consumer tiers.** *"If you live in the EEA, UK or Switzerland …, the data controller … is Anthropic Ireland, Limited. If you live outside …, the data controller … is Anthropic PBC."* The Privacy Policy explicitly *"does not apply to content that we process on behalf of customers of our business offerings"*, and the DPA *"is incorporated into … the Anthropic Commercial Terms of Service"* — **no consumer DPA exists.** | Privacy Policy §9, §1 · **2026-07-08**; DPA (undated) |
 | 4 | **Residency / transfer mechanism** | *"your personal data is transferred to our servers in the **US**, or to **other countries outside the EEA and the UK**"* — **no named region set, and no consumer region commitment.** Residency controls (`inference_geo`, workspace geo) are **Claude API / Console only**; consumer Free/Pro/Max is out of scope. Transfer: **adequacy decisions and EU/UK/Swiss Standard Contractual Clauses**, plus statutory derogations. **EU-US Data Privacy Framework: NOT PUBLISHED as a mechanism** — the string appears **0 times** in both the Privacy Policy and the DPA. | Privacy Policy §5 · **2026-07-08**; data-residency doc (undated) |
 | 5 | **User jurisdiction** | **US — declared by the operator, 2026-09-10.** *Not inferred.* See "Why nothing reads the locale" below. | Operator |
 | 6 | **Training posture** | Contract language is **opt-out**: *"We may use your Inputs and Outputs to train and improve Anthropic AI models, **unless you opt out through your account settings**."* **Claude Code does not differ** — training applies *"including when you use Claude Code from these accounts"* for Free/Pro/Max. **Opt-out does not stop** training use for conversations flagged in safety review, or for materials submitted as feedback. | Privacy Policy §2 · **2026-07-08**; Consumer Terms · **2025-10-08**; Claude Code data-usage (**undated**) |
 | 6a | **The account's actual toggle state** | **OPEN — see "The one open field".** The **default state for a new signup is NOT PUBLISHED**; Anthropic states only that users *"select your preference in the signup process."* | — |
-| 7 | **Retention** | **Training ON:** *"we may retain your data in a de-identified format for **up to 5 years** in our model training pipelines."* **Training OFF:** *"Users who don't allow data use for model improvement: **30-day retention period**"* (stated for Claude Code, consumer plans). **Trust & safety:** if flagged, inputs and outputs **up to 2 years**, classification scores **up to 7 years**. **Feedback:** thumbs-up/down conversations **5 years**; Claude Code `/feedback`, `/bug`, `/share` transcripts **5 years**. **Legal hold** overrides all of the above. | Retention article · **2026-07-01**; Claude Code data-usage (**undated**) |
-| 8 | **Deletion / rights path** | Deleting a conversation removes it *"from your chat history **immediately**"* and *"from our back-end storage systems **within 30 days**."* Turning training off stops future use of previous and new chats; **data already inside in-progress training runs or trained models remains.** Rights requests by contacting Anthropic; the policy states rights *"are limited"* and may be declined with a lawful reason. | Retention article · **2026-07-01**; Privacy Policy §4/§7 · **2026-07-08** |
+| 7 | **Retention** | **LOCAL, and verified on this machine rather than cited from an undated doc:** plaintext `.jsonl` transcripts under `~/.claude/projects/<workspace-slug>/`, **one per session AND one per subagent** — a **fan-out**, not a single file — retained **30 days** by default (`cleanupPeriodDays`). **Provider-side — training ON:** *"we may retain your data in a de-identified format for **up to 5 years** in our model training pipelines."* **Training OFF:** *"Users who don't allow data use for model improvement: **30-day retention period**"* (stated for Claude Code, consumer plans). **Trust & safety:** if flagged, inputs and outputs **up to 2 years**, classification scores **up to 7 years**. **Feedback:** thumbs-up/down conversations **5 years**; Claude Code `/feedback`, `/bug`, `/share` transcripts **5 years**. **Legal hold** overrides all of the above. | Retention article · **2026-07-01**; Claude Code data-usage (**undated**) |
+| 8 | **Deletion / rights path** | **The local copy is outside the product's deletion reach.** The `~/.claude/projects/` transcripts hold every prompt and every attachment byte in cleartext and are not governed by `.aide/`, by this repository's `.gitignore`, or by anything AI-DE controls. Dispositioned as the parent review's *"incomplete result for repository-owned or external copies"* (`ai-native-ide-privacy-review.md:75-77`) — **a named incompleteness rather than an unnamed one.** **And row 3's consequence belongs here, where a reader looks:** because Anthropic is a **controller**, the operator **cannot impose processing instructions and holds no contractual erasure right** — only a data-subject request the policy says *"are limited"* and may be declined. **Provider-side:** deleting a conversation removes it *"from your chat history **immediately**"* and *"from our back-end storage systems **within 30 days**."* Turning training off stops future use of previous and new chats; **data already inside in-progress training runs or trained models remains.** Rights requests by contacting Anthropic; the policy states rights *"are limited"* and may be declined with a lawful reason. | Retention article · **2026-07-01**; Privacy Policy §4/§7 · **2026-07-08** |
 | 9 | **Repository-policy authorization** | **Granted by the operator, 2026-09-10**, verbatim: *"For me personally all that is fine, we may want to have an 'opt-in' choice in the tool (in a settings) so that a case where that may not be ok we can restrict."* The opt-in is built as **C21**. | Operator |
 
 ### Explicitly not published — recorded as such, which is how this rule is meant to work
@@ -88,12 +93,33 @@ silently plausible instead of explicitly unknown is the failure mode.**
 
 | Not published, as of 2026-09-10 | Consequence — what cannot be promised |
 | --- | --- |
-| The **default state** of the model-improvement toggle for a new consumer signup | We cannot state the posture from the tier alone. **Resolved by observing the account** — see below. |
 | Any **processing-region commitment** for consumer tiers | We cannot promise where processing occurs beyond *"US, or other countries outside the EEA and the UK."* |
 | A **named list of processing countries** for consumer traffic | The subprocessor list is behind an authenticated Trust Center. |
 | **EU-US DPF certification status** | Absent from Anthropic's own documents; not confirmed against the Commerce list. Not load-bearing for a US-declared operator. |
 | A **consumer DPA / processor terms** | None exists. Anthropic is a **controller**, so the operator is not a controller-using-a-processor and cannot impose processing instructions. |
 | **Maximum retention for undeleted claude.ai chats with training off** | The two primary sources use "30 days" differently — the Claude Code doc as a retention period, the consumer retention article only as the back-end window **after deletion**. **Do not read row 7 as "chats are deleted after 30 days."** |
+
+### Not yet observed — knowable, with an owner and a date
+
+**R4: this table is distinct from the one above and the distinction is the control.** The table
+above is *"not published — unknowable to us"*. This one is *"not yet observed — knowable, one
+named action, one named owner, one target date"*. The disposition rule was written for facts we
+**cannot** establish; applying it to a fact that is **one settings screen away** converts the
+standing rule's default move (**check it**) into **mark it**, which is only legitimate when
+checking is unavailable or disproportionate. Here it costs a minute.
+**An observable unknown hiding inside a rule written for unobservable ones** is the defect, and
+splitting the tables is the control.
+
+| Not yet observed | Action | Owner | Target |
+| --- | --- | --- | --- |
+| The account's **model-improvement setting** (row 6a) | Open `claude.ai/settings/data-privacy-controls`, read it, record the value and date | **The operator** | Before `status` moves to `accepted` |
+
+> **This record may NOT be marked `status: accepted` while the table above is non-empty.**
+> **It does not block F4's send seam** — Privacy confirmed that reading explicitly, and for a
+> reason worth stating: *the human authorized while **on notice** that retention and training
+> posture were unknown — genuine informed acceptance of an unknown, not an acceptance that
+> assumed the favourable branch.* The authorization survives either branch for the operator's
+> own data.
 
 ## The one open field, and it is the operator's to close
 
@@ -109,8 +135,15 @@ Until it is recorded, **the honest posture is the contract's**: training **may**
 and this record should say so with the observation date.
 
 **This does not block the Conductor.** The basis, authorization, purpose and data classes are
-recorded; row 6a determines *which* published retention figure applies, not *whether* the egress is
-permitted.
+recorded; row 6a determines *which* published retention figure applies, not *whether* the egress
+is permitted. **But do not read "which figure" as a footnote:** ON means training plus **up to
+5 years de-identified**; OFF means **30 days**. That is the single most consequential fact in
+this document for the operator.
+
+> **And if it resolves to ON, the third-party narrowing hardens.** A colleague's commit email
+> inside an attached file being **used to train a model** is a different proposition from it
+> being deleted in 30 days. The narrowing above currently states a limit with **no consequence**;
+> this is the consequence, and it is contingent on an unobserved setting.
 
 ## Why nothing in the product reads the machine locale
 
