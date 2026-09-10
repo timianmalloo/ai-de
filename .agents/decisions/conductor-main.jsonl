@@ -116,3 +116,7 @@
 {"agent": "conductor-main", "at": 1789065133.6639025, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1789065133.6639025, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1789065133.6639025, "code": null, "kind": "allowed", "path": "docs/plans/conductor-front-door.md", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789065264.8550458, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789065264.8550458, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789065264.8685372, "code": null, "kind": "allowed", "path": "docs/plans/conductor-front-door.md", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789065264.8700905, "code": null, "kind": "allowed", "path": "docs/reviews/front-door-council.md", "session": "conductor-main", "wi": ""}

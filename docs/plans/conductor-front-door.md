@@ -2,7 +2,7 @@
 id: plan-conductor-front-door
 title: "Execution graph — Phase 1, Session front door (R13–R16, R18–R19)"
 type: doc
-status: in-review
+status: accepted
 owner: "@timianmalloo"
 phase: "1"
 tags: [execution-graph, conductor, addendum-a, addendum-b, session, composer, templates]
@@ -26,8 +26,36 @@ summary: >-
 **Rulings 19–31**, the Test Architect's **10 Blockers**, the Simplifier's **7 Majors**, and
 Security's **C1–C8**.
 
-**Still not approved.** Ruling 16 requires this slice's own plan-approval ruling, and Ruling 31
-requires the collision re-check against the now-filed Rulings 19–25 to report first.
+**APPROVED — Ruling 37**, 2026-09-10, at width 3, with F2 promoted to opus and six conditions.
+
+## The head-join rule (Ruling 37 condition 1)
+
+Width 3 holds **on the code**: `src/**/Sessions/` does not exist, `AiDe.Core.csproj` carries no
+`Compile Include` (SDK globbing, so new files never touch it — only FT's `PackageReference` does),
+test projects glob likewise, and FT consumes nothing F0 emits.
+
+**But "no shared authored file" is false at the JOIN**, and that is what this plan was missing.
+F0's R14 b2 lint and F1's C5 **both add a step to `build.yml`**; all three nodes **append
+`docs/audit/audit-log.jsonl`**; all three **regenerate the derived views**. These are *join-time
+textual collisions, not a serialising edge* — so F0, F1 and FT stay parallel and the join is
+handled once:
+
+**The head join is one conductor-owned merge commit.** Keep **both** `build.yml` steps ·
+merge the audit log with `tools/merge-append-only-log.py` and **record its "0 dropped" line** ·
+regenerate derived views · run the **full gate set bare** on the merged tree · `dotnet build` is
+the detector for any `AiDe.Core.Sessions` type-name collision.
+**F2 does not dispatch until this passes.**
+
+## Further conditions of approval
+
+- **Every spawn records §9.3 routing** — `{mode, standing_cited?, constraint_bound?,
+  alternatives_rejected[]}`. That record *is* the allocation, not a note in a plan.
+- **Security's two unplanned items are clauses:** any committed bundle (F1 spike, F4 production) is
+  built with `--legal-comments=eof`, and **`THIRD-PARTY-NOTICES.md` gains a CodeMirror section** —
+  it exists today with **zero** CodeMirror mentions. And **F4 opens with a Security convening on the
+  composer's page→host message vocabulary, before the send seam is written**, verdict attached here.
+- **115 is a circuit breaker.** If it fires the node **stops and returns to the Owner with actuals**
+  — it is not extended in-lane.
 
 ## What Revision 1 got wrong
 
@@ -64,7 +92,7 @@ Recorded, because the corrections are the most reusable part of this document.
 | **F0** | Session object + path contract (R14) | T1 | sonnet | ~1400 s |
 | **F1** | Web host + vendored bundle + its gate (C1–C8) | T2 | **opus** | ~2400 s |
 | **FT** | Template spine — `template-schema/1`, validator, compiler, catalog, registry, frontmatter parser (R18) | T2 | **opus** | ~2700 s |
-| **F2** | Sheet + File menu + session document + canvas modes + split (R13, R16) | T1 | sonnet | ~3300 s |
+| **F2** | Sheet + File menu + session document + canvas modes + split (R13, R16) | T2 | **opus** | ~3300 s |
 | **F4** | Composer: form engine, goal-block re-base, shapes (R15, R19) | T2 | **opus** | ~2400 s |
 | **F5** | Exit evidence + Proof Pack | T2 | **opus** | ~2400 s |
 

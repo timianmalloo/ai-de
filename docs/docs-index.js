@@ -6316,7 +6316,7 @@ window.DOCS_INDEX = {
       "path": "docs/plans/conductor-front-door.md",
       "title": "Execution graph — Phase 1, Session front door (R13–R16, R18–R19)",
       "type": "doc",
-      "status": "in-review",
+      "status": "accepted",
       "owner": "@timianmalloo",
       "phase": "1",
       "reviewBy": "2026-12-10",
@@ -6358,7 +6358,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3c6105802a50649aa02cc2d85883911686e5e63825bc63fb721a642f15b8eb38"
+      "sourceSha256": "a666c24b7c9d23c6e023854bf0b7d9c0eae1f3914d62178a8d3aa0adf290a3a1"
     },
     {
       "id": "plan-conductor-programme",
@@ -12471,5 +12471,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "20007b7f5da6f039a1b982c6f8592dd52c7f3aa9353649eca2c0e0879f3f610b"
+  "graphSha256": "686dd3d48319eee01c7de2f51550bf34c5c8f58665382ab0ff2abcec23027050"
 };
