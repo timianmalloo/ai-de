@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T01:06:38Z",
+  "generated": "2026-09-10T17:09:08Z",
   "audit": [
     {
       "actor": null,
@@ -10478,6 +10478,34 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M264PTY4Z7FC6VM08XNZJ40S",
+      "shortname": "cleanup-worktrees-and-processes",
+      "datetime": "2026-09-10T17:09:08Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "it seems like there are still hanging processes or work trees? clean up where you can before proceeding / what i am seeing are a bunch of terminal host processes",
+      "summary": "WORKTREES: coord worktree cleanup reported all four as clean/merged/unheld, then removed three. The fourth (spike/codemirror) failed on a locked handle; git no longer tracks it (worktree list shows only main, prune finds nothing) but the DIRECTORY REMAINS ON DISK - reported, not forced, per WT8's rule that anything not safely removable is reported. Its holders were traced and killed one by one (two stale bash agent shells, one leftover pwsh) and the lock outlived all of them - a filesystem handle, most likely node_modules' several thousand files still being released or scanned. DC-112 RE-VERIFIED AFTER REMOVAL, which is the failure this morning's repair existed to prevent: the merge drivers and the pre-commit hook still name the durable clone, and the gates still run. Had the repair not been made, deleting those trees would have broken every merge of ten declared paths AND every commit in the repository. PROCESSES - THE HEADLINE IS A CORRECTION: the operator reported 'a bunch of terminal host processes'. conhost.exe IS the terminal host (ConPTY creates one per pseudo-console), so the report was accurate, but tracing PARENTAGE showed almost all of them belong to the OPERATOR'S OWN applications - codex.exe, ollama.exe, WindowsTerminal.exe, ArmouryCrate, PresentMonService, cmd.exe. Killing those would have taken out their running tools. EXACTLY ONE was a genuine orphan (parent dead, 16.5h old, consistent with the N4/spike window) and only that one was stopped. SEPARATELY, AND NOT FROM THIS WORK: 198 orphaned node.exe processes all running higgsfield-mcp/src/server.js, ~11 GB of working set, spawned across a 12-hour span. An MCP server leak in the environment - one process per spawn, never reaped - not an ACP adapter leak from the conductor runs. Stopped, ~11 GB reclaimed. NOT ASSERTED, because I could not verify it: N4's report claimed zero orphaned adapter processes 'checked Win32_Process for claude-agent-acp'. The adapter runs AS node.exe, so a filter on process NAME could never match it while a filter on COMMANDLINE would. Whether N4 filtered on name or command line is not determinable from its report, so whether that check was capable of failing is UNRESOLVED and is recorded as such rather than claimed either way.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "cleanup",
+        "worktree",
+        "process-leak",
+        "conductor"
+      ],
+      "outcome": "partial",
+      "goal": "Clean up the worktrees and orphaned processes this run left behind, without touching anything that belongs to the operator",
+      "done_when": "Merged worktrees removed via the fail-safe path; genuinely orphaned processes stopped; anything ambiguous or held reported rather than forced; the operator's own processes left alone",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      }
     }
   ],
   "changes": [

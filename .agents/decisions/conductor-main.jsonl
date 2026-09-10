@@ -88,3 +88,6 @@
 {"agent": "conductor-main", "at": 1789002392.047382, "code": null, "kind": "allowed", "path": ".agents/decisions/lane-rename.jsonl", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1789002392.047382, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1789002392.047382, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789002401.1161177, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789002401.1173177, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789002401.1183174, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
