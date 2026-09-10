@@ -22,3 +22,13 @@
 {"agent": "lane-rename", "at": 1789001203.212589, "code": null, "kind": "allowed", "path": "docs/proof/pp-lane-rename-ruling-15.md", "session": "lane-rename", "wi": ""}
 {"agent": "lane-rename", "at": 1789001203.212589, "code": null, "kind": "allowed", "path": "site/index.html", "session": "lane-rename", "wi": ""}
 {"agent": "lane-rename", "at": 1789001203.216897, "code": null, "kind": "allowed", "path": "site/model.html", "session": "lane-rename", "wi": ""}
+{"agent": "lane-rename", "at": 1789001238.948357, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "lane-rename", "wi": ""}
+{"agent": "lane-rename", "at": 1789001238.948357, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "lane-rename", "wi": ""}
+{"agent": "lane-rename", "at": 1789001238.948357, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "lane-rename", "wi": ""}
+{"agent": "lane-rename", "at": 1789001238.9531713, "code": null, "kind": "allowed", "path": "site/index.html", "session": "lane-rename", "wi": ""}
+{"agent": "lane-rename", "at": 1789002193.9792142, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "lane-rename", "wi": ""}
+{"agent": "lane-rename", "at": 1789002193.9792142, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "lane-rename", "wi": ""}
+{"agent": "lane-rename", "at": 1789002193.9792142, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "lane-rename", "wi": ""}
+{"agent": "lane-rename", "at": 1789002193.9859552, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "lane-rename", "wi": ""}
+{"agent": "lane-rename", "at": 1789002193.9859552, "code": null, "kind": "allowed", "path": "site/index.html", "session": "lane-rename", "wi": ""}
+{"agent": "lane-rename", "at": 1789002193.9874997, "code": null, "kind": "allowed", "path": "tools/verify-derived-views.py", "session": "lane-rename", "wi": ""}
