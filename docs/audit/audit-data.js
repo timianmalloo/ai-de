@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T22:21:13Z",
+  "generated": "2026-09-10T22:38:12Z",
   "audit": [
     {
       "actor": null,
@@ -10932,6 +10932,38 @@ window.AUDIT_DATA = {
       "tier": "T2",
       "signals": {
         "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M26QHBS17PA2BWHS8DP5CSYF",
+      "shortname": "F2 and FX2 merged; main green on both platforms",
+      "datetime": "2026-09-10T22:38:11Z",
+      "session": "conductor-front-door-join",
+      "prompt": "Merge F2 and FX2, set floors, verify CI.",
+      "summary": "F2 AND FX2 MERGED; main VERIFIED GREEN ON BOTH PLATFORMS at a794360.\n\nCI ARTIFACTS, not log lines: Build 34537105858 conclusion success, gh run watch --exit-status 0. Linux AiDe.Core.Tests.portable.trx 1889 executed / 1889 passed / 0 failed. Windows AiDe.App.Tests.trx 456/456/0 and AiDe.Core.Tests.nonportable.trx 152/152/0. pages and main status also success. This is DC-119's standard applied to itself: the claim names BOTH platforms and cites the artifact rather than a summary line.\n\nFLOORS SET FROM FOUR MEASURED RUNS on the merged tree: App 456, Core 2041, portable 1889, nonportable 152. All three Core runs were executed, so 1889 + 152 = 2041 holds by OBSERVATION rather than arithmetic. Every floor raised, none lowered; --update never run. Full local gate set bare: 40 of 40 green including every self-test.\n\nRULINGS DISCHARGED: 41 (the two Addendum A section 10 types moved to AiDe.Core/Presentation/Sessions/ under section 10's names -- the placement \"conflict\" was a false dichotomy, since the lint's only test is \"/Sessions/\" in path) and 42 (the lease DELETED from the sheet, not softened).\n\nTHE MOVE NEEDED ONE REAL CUT to be more than nominal: SessionDocumentViewModel defaulted its modes from CanvasModeCatalog, whose rows carry Func<..., FrameworkElement>, and that single line WAS the view model reaching into a view. The compiler is now the control -- AiDe.Core is net10.0 with no UseWPF, so a WPF reference in Presentation does not build.\n\nTHE RACE CLAIM IS SPLIT AND LABELLED. Snapshot reads: VERIFIED deterministically -- Rows returned the live List<T>, whose enumerator checks its version on every step, so enumerate/append/step fails single-threaded with no interleaving to force. Red 10/10 before, green 10/10 after, and ConsoleSurface.Render IS that foreach. Torn concurrent writes: NOT RECORDED -- 10/10 red without the lock (expected 1000, actual 983) is a RATE, not a proof; forcing it needs a rendezvous inside the critical section existing only for its own test, which was refused. Both labels are in the code so the next reader inherits the distinction rather than a confident sentence. The cited-controls gate also caught the node overreaching here, on a failure mode it had not observed.\n\nFINDINGS CARRIED FORWARD:\n  1. THREE LIVE SITES of the containment-boundary class, one a DECLARED SECURITY BOUNDARY: FixtureExtractor.cs:98 guards \"a junction or symlink that escapes the fixture root must not be extracted (P1-FS)\" with an unconditionally case-folded compare. Benign on the shipped Windows desktop; wrong wherever Core runs on POSIX, which includes the portable CI half. Node FX3 dispatched for all three plus the class gate.\n  2. THE GATE'S DESIGN IS SETTLED ON EVIDENCE. A FileSystemPath type distinction was REJECTED: roughly a week, a permanent .Value escape hatch where the next defect would live, and it would not have caught either defect it was proposed for, because both operate on strings that genuinely ARE filesystem paths. The bug is the comparison rule, not the type. Instead a narrow deterministic gate over exactly 4 sites against 561 total StringComparison literals -- near-zero false positives, which is what keeps a gate switched on (DC-104).\n  3. A HOLE IN THE CI MATRIX: the Windows build job runs Core with --filter Platform=Windows only, so the 1,889 portable tests never execute on Windows in CI at all. Observed directly -- on one red-first push the Windows job was GREEN while Linux was red, for a defect that reproduces on Windows. Recorded under DC-119, deliberately NOT acted on: closing it roughly doubles Core CI time on the pricier runner, which is a CE-series coverage-versus-cost decision the SRE owns. Recorded so the choice is made rather than defaulted.\n  4. verify-defect-register.py returned OK on a file that still contained CONFLICT MARKERS; verify-no-conflict-markers.py is what caught them. A gate that parses past a conflict marker and reports the artifact healthy is only safe because a second gate does not.\n\nNEXT: the Security convening on the composer's page-to-host message vocabulary, which the plan requires BEFORE F4's send seam is written -- ordered by Security's own earlier review (\"it needs its own convening at F4\"). F4 does not start until its conditions are in the plan.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "tools/expected-test-counts.json",
+        "docs/notes/front-door-rulings-41-42.md"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "f2",
+        "merge",
+        "ci",
+        "dc-119"
+      ],
+      "outcome": "success",
+      "goal": "Merge F2 and FX2, set the merged floors, and get main verified green on BOTH platforms",
+      "done_when": "Four floors measured on the merged tree, 40 of 40 local gates green, and CI Build/pages/main-status all success with the Linux and Windows trx counters read from the artifacts",
+      "tier": "T2",
+      "signals": {
         "verification_executed": true,
         "acceptance_met": true
       }

@@ -4822,6 +4822,16 @@ for both or split.*
   wrapper's exit code. **(b)** `verify-test-run.py` should **name the failing tests** it counts, so
   a CI log is self-sufficient. (b) is the cheaper and more durable of the two, because it removes a
   human step rather than adding one.
+- **A hole in the CI matrix itself, found while fixing the instance:** the Windows `build` job runs
+  Core with `--filter Platform=Windows` **only**, so the **1,889 portable tests never execute on
+  Windows in CI at all.** Portable code is verified on Linux by CI and on Windows only by whoever
+  happens to run it locally — which is precisely the evidence this class says not to rely on. So
+  the two halves compose into a real gap: **a Windows-only regression in portable code has no CI
+  check today.** Observed directly: on one red-first push the Windows `build` job was **green**
+  while Linux was red, for a defect that reproduces on Windows.
+  **Not yet acted on, and deliberately so** — closing it means running ~1,889 more tests per push
+  on the more expensive runner, which is a coverage-versus-cost decision the CE-series governs and
+  the SRE owns. Recorded here so the choice is made rather than defaulted.
 - **Relationship to DC-117:** DC-117 is the same family one axis over — there the invisible variable
   was the **host** (console vs console-less), here it is the **operating system**. Both are *the
   environment a test ran in is not recorded in the claim that it passed.*
