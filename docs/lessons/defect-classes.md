@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 64 · partially-controlled 48 · uncontrolled 9
+**Status counts:** controlled 64 · partially-controlled 48 · uncontrolled 10
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -4944,6 +4944,54 @@ for both or split.*
 - **Status:** `uncontrolled` — briefs are written fresh each time and nothing checks their exclusion
   lists against the artifact registry. The one thing working here is the standing instruction to
   report anything in a brief that looks wrong, which is what surfaced it
+
+
+### DC-122 — A comment declares a security property the code does not have, and is then cited as evidence of that property
+
+- **Shape:** a defensive check carries a comment stating what it protects against — *"a junction or
+  symlink that escapes the root must not be extracted"* — naming a threat and often a control id.
+  The comment is written in good faith by someone who believed it. **Nothing ever measures it.**
+  Thereafter the comment *is* the evidence: reviewers cite it, briefs repeat it, and the register
+  records the line as a control. The code may do something adjacent and useful while **not doing the
+  thing the sentence claims**, and no test catches that, because the test was written against the
+  same belief.
+- **Signature:** a security claim in a comment with **no test naming the same threat**; a control id
+  (`P1-FS`, a CWE, an ADR) cited in prose but nowhere in an assertion; and — the tell that separates
+  this from ordinary staleness — **the comment was never true**, so there is no commit where it
+  regressed and no bisect will find one.
+- **Instance (front-door slice, 2026-09-10):** `FixtureExtractor.cs:98` carried *"a junction or
+  symlink that escapes the fixture root must not be extracted (P1-FS)."* **Measured on .NET
+  10.0.11:** `Directory.EnumerateFiles` **traverses** a junction, and `Path.GetFullPath` does **not**
+  resolve one — so the check **returned `True` for a file whose bytes live outside the root.** The
+  line does lexical containment on an unresolved path, which is a real check; it is simply not the
+  one the sentence describes. A second defect surfaced in the same measurement: a `RootPath` ending
+  in a separator produces a **double** separator, so **every** file reports as escaping.
+- **How far the false claim travelled before anyone ran it:** a Privacy review cited the comment
+  while ruling on an unrelated matter; the conductor repeated it to a node as *"a declared security
+  boundary"* and called it the finding it cared most about; and **the node measured it and found the
+  declaration false.** Three readers, each reasonably trusting the one before, and **the first person
+  to execute it was the fourth.**
+- **Why it survives, and why it is worse than a stale comment:** a stale comment was once true and
+  its drift is discoverable by history. This one **never was**, so the only way to find it is to run
+  the thing it describes. And because it **names a threat**, it *actively suppresses* the question —
+  a reader who wonders whether junctions are handled finds a sentence saying yes.
+- **Relationship to DC-116 and DC-118.** DC-116 says never assert the shape of our own code from
+  memory. This is one hop further out: the claim was **not** from memory — it was **read from the
+  repository**, which is precisely what DC-116 prescribes as the remedy. **A comment is not evidence
+  about behaviour; it is evidence about what someone believed.** DC-118's mechanism appears too: the
+  sentence's scope ("junctions and symlinks") is wider than the code's ("lexical prefix"), and
+  nothing checked the width.
+- **Control:** a security claim in a comment is a **test obligation**, not documentation. Where a
+  comment names a threat or cites a control id, **either a test names the same threat, or the
+  comment is rewritten to say what the line actually does.** The cheap narrow form, available today:
+  when a reviewer cites a comment as evidence of a security property, that citation is **Inferred**,
+  never Verified, until someone executes it — this register's own confidence vocabulary already
+  carries the distinction and it was not applied. *The generalisation:* **in a codebase whose
+  evidence standard is "open the file", comments are the one artifact where opening the file is not
+  enough.**
+- **Status:** `uncontrolled` — the instance is corrected (the comment now states what the line does)
+  and the two measured defects are recorded as their own next step, but nothing fails when a comment
+  claims a property no test asserts
 
 
 ---
