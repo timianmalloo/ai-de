@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-DE Conductor — Addendum A: The Session Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#10141d; --panel:#1b2130; --raised:#222a3c; --line:#2c3548;
+    --ink:#e6e9f2; --muted:#8a93a8; --dim:#5c6579;
+    --gold:#e3b34b; --teal:#46c0ad; --violet:#9b8cff; --rose:#ef7f9f; --sky:#5ba8f0; --green:#57b97c;
+    --sans:'IBM Plex Sans',system-ui,'Segoe UI',sans-serif; --mono:'IBM Plex Mono',Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14.5px;line-height:1.62}
+  .wrap{max-width:960px;margin:0 auto;padding:48px 26px 120px}
+  h1{font-size:28px;font-weight:600}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .tag{font-size:12px;border:1px solid var(--line);background:var(--raised);border-radius:6px;padding:2px 10px;color:var(--muted)}
+  .tag b{color:var(--ink);font-weight:500}
+  p.lede{color:var(--muted);margin-top:16px;max-width:76ch}
+  h2{font-size:20px;font-weight:600;margin:52px 0 6px}
+  h2 .n{color:var(--gold);font-family:var(--mono);font-size:15px;margin-right:10px}
+  h3{font-size:15.5px;font-weight:600;margin:26px 0 6px}
+  p{margin:10px 0;max-width:78ch}
+  p.note{color:var(--muted);font-size:13.5px;border-left:3px solid var(--line);padding-left:14px}
+  p.decision{color:var(--ink);font-size:13.5px;border-left:3px solid var(--gold);padding-left:14px;background:#1c1810;border-radius:0 6px 6px 0;padding-top:8px;padding-bottom:8px;max-width:74ch}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:14px 0}
+  th{color:var(--dim);font-weight:500;text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);font-size:12px}
+  td{padding:8px 11px;border-bottom:1px solid var(--line);color:var(--muted);vertical-align:top}
+  td b{color:var(--ink);font-weight:500}
+  code{font-family:var(--mono);font-size:12.5px;color:var(--teal);background:var(--raised);border-radius:4px;padding:1px 5px}
+  pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 17px;overflow-x:auto;margin:14px 0;color:#c9d0e0}
+  ul.spec{margin:10px 0 10px 2px;padding-left:20px}
+  ul.spec li{margin:6px 0;color:var(--muted);max-width:76ch}
+  ul.spec li b{color:var(--ink);font-weight:500}
+  .req{border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:12px 16px;margin:10px 0}
+  .req .id{font-family:var(--mono);font-size:12px;color:var(--gold);margin-right:8px}
+  .req .t{font-weight:600}
+  .req p{font-size:13.5px;color:var(--muted);margin:6px 0 4px}
+  .req ul{margin:6px 0 2px 2px;padding-left:18px;font-size:13px;color:var(--muted)}
+  .req ul li{margin:3px 0}
+  .req ul li::marker{color:var(--green)}
+  .pill{font-size:11px;border-radius:4px;padding:1px 7px;border:1px solid var(--line);font-family:var(--mono);margin-left:8px}
+  .p0{color:var(--rose);border-color:#57303e}.p1{color:var(--gold);border-color:#4a3d1e}
+  /* wireframes */
+  .wire{border:1px solid var(--line);border-radius:10px;background:var(--panel);margin:16px 0;overflow:hidden}
+  .wire .bar{padding:8px 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px;display:flex;gap:10px;align-items:center}
+  .wire .bar b{color:var(--ink)}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:2px 9px;font-size:11.5px;color:var(--muted)}
+  .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .sheet{padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .field{border:1px solid var(--line);border-radius:8px;background:var(--raised);padding:10px 13px}
+  .field .k{font-size:11.5px;color:var(--dim);margin-bottom:5px}
+  .field .v{font-size:13px}
+  .toggle{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin:4px 0}
+  .sw{width:26px;height:14px;border-radius:8px;background:var(--raised);border:1px solid var(--line);position:relative}
+  .sw.on{background:#20362f;border-color:#2f5a4c}
+  .sw i{position:absolute;top:1px;left:1px;width:10px;height:10px;border-radius:50%;background:var(--dim)}
+  .sw.on i{left:13px;background:var(--teal)}
+  .btn{background:var(--gold);color:#1b1608;font-weight:600;border-radius:7px;padding:5px 14px;font-size:12.5px;display:inline-block}
+  .btn.quiet{background:var(--raised);color:var(--muted);font-weight:500;border:1px solid var(--line)}
+  .modes{display:flex;gap:0;border-bottom:1px solid var(--line)}
+  .mode-tab{padding:8px 16px;font-size:12.5px;color:var(--dim);border-right:1px solid var(--line)}
+  .mode-tab.on{color:var(--ink);background:var(--raised);box-shadow:inset 0 -2px 0 var(--gold)}
+  .artgrid{display:grid;grid-template-columns:230px 1fr;min-height:230px}
+  .artlist{border-right:1px solid var(--line);padding:8px}
+  .art{display:flex;gap:8px;align-items:center;padding:7px 9px;border-radius:7px;font-size:12.5px;color:var(--muted)}
+  .art.on{background:var(--raised);color:var(--ink)}
+  .art .ic{font-family:var(--mono);font-size:10px;border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--dim)}
+  .artview{padding:14px 18px;font-size:13px;color:var(--muted)}
+  .artview h4{color:var(--ink);font-size:15px;margin-bottom:6px}
+  .small{font-size:12.5px;color:var(--dim)}
+  hr{border:none;border-top:1px solid var(--line);margin:40px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Addendum A — The Session Experience</h1>
+<div class="meta">
+  <span class="tag">amends <b>spec v1.0</b></span>
+  <span class="tag">date <b>2026-09-09</b></span>
+  <span class="tag">status <b>normative; supersedes v1.0 where they conflict</b></span>
+</div>
+<p class="lede">Spec v1.0 specified the planes — engines, conductor, coordination, scoring, routing — and left the <b>front door</b> unspecified: how a person starts, what object they are inside, which backends serve them, how they write, and how they read. This addendum specifies that experience: <b>File → New Session</b> into a workspace-bound, two-pane, multi-modal surface with a rich composer on the left and a multi-mode output canvas on the right. It also repairs a vocabulary collision v1.0 created around the word "session".</p>
+
+<h2><span class="n">A1</span>Gap analysis against current main</h2>
+<table>
+  <tr><th>What exists on main today</th><th>What it teaches / what's missing</th></tr>
+  <tr><td><code>PromptDraftSurface</code> (US-ED5–ED8): staged draft, never sent by editing, one explicit <b>Transfer</b> to a ready <em>terminal</em> session, body persists across restart</td><td>The staging semantics are exactly right and are <b>lifted into the composer</b> (A5). The delivery target is the old paradigm: transfer-to-terminal becomes send-to-conductor; transfer-to-terminal survives as the observed-lane path.</td></tr>
+  <tr><td><code>ShellModeController</code> (ADR-0017): Workbench/Explorer body swap; retain-never-rebuild invariant proven against a live terminal</td><td>Sessions must obey the same invariant: opening/leaving a session view never disposes lanes or the surface. Sessions are <b>dock documents inside the Workbench</b>, not a third shell mode (A4.4) — ADR-0017 stands.</td></tr>
+  <tr><td><code>MainMenuBuilder</code> + <code>CommandPalette</code>: command registration, Recent workspaces</td><td>The entry point plugs in here: <b>File → New Session</b> (Ctrl+N), New Session from palette, Recent sessions beside Recent workspaces.</td></tr>
+  <tr><td>Workspace-first shell; Watcher "sessions" panes; <code>SessionRowPresenter</code>; terminal-sessions design doc</td><td>"Session" is taken, and v1.0 made it worse by naming the run log <code>.aide/sessions/&lt;run-id&gt;.jsonl</code>. A3 renames the objects once, now, before more code lands.</td></tr>
+  <tr><td>No composer richer than a TextBox; no artifact rendering anywhere; output = ANSI in terminals or watcher panes</td><td>A5 and A6 specify both. This is the core of what v1.0 missed.</td></tr>
+</table>
+<p class="note">Assessment honesty: this analysis is against pushed <code>main</code> (pack rev 63). Today's local conductor work isn't visible from here; where it has already diverged from this addendum, the addendum wins and the diff is a migration note, not a fault.</p>
+
+<h2><span class="n">A2</span>The experience, end to end</h2>
+<ul class="spec">
+  <li><b>File → New Session</b> (Ctrl+N). If no workspace is active, the workspace chooser interposes (recent list + browse + create); a session cannot exist unbound.</li>
+  <li>The <b>New Session sheet</b> (A4) collects: name (default: date-slug, renameable later), backends (ACP engines with account/health, MCP servers), routing mode, autonomy, and default policy. One click on sensible defaults — the sheet is one screen, not a wizard.</li>
+  <li>The session opens as a <b>document in the Workbench</b>: composer pane left, output canvas right, in the paired-zone layout from the mockups. The layout is a preset, not a new window type; docking, zones, and persistence behave like every other surface.</li>
+  <li>The person writes in the <b>composer</b> (A5): rich editing, @-mentions that become context-recipe chips, a goal-block mode for T2+ work, staged drafts with explicit send.</li>
+  <li>Output renders in the <b>canvas</b> (A6): default is the merged console across conductor, agents, and sub-agents (the Performance stream with the lane rail); artifacts produced by any lane collect into an artifact list and open in rendered/preview/source/diff modes, Claude-app style.</li>
+  <li>A session accumulates <b>blocks</b> over days; reopening a session restores the surface; restart-from-block and resume behave per spec §7.3.</li>
+</ul>
+
+<h2><span class="n">A3</span>Object model and naming repair</h2>
+<table>
+  <tr><th>Object</th><th>Definition</th><th>Storage</th></tr>
+  <tr><td><b>Workspace</b></td><td>Repos + graph + store (unchanged)</td><td>existing</td></tr>
+  <tr><td><b>Session</b></td><td><b>The user-facing container.</b> Named, workspace-bound, holds an ordered series of blocks and their runs, plus session-scoped config: backends, routing mode, autonomy, policy. Created by File → New Session; listed in Recent sessions; a workspace has many.</td><td><code>.aide/sessions/&lt;session-id&gt;/session.yaml</code></td></tr>
+  <tr><td><b>Block</b></td><td>One prompt/goal submission and everything it caused (unchanged from §7.3)</td><td>events in the run log</td></tr>
+  <tr><td><b>Run</b></td><td>One conductor execution serving one block (rename: v1.0's log moves)</td><td><code>.aide/sessions/&lt;session-id&gt;/runs/&lt;run-id&gt;.jsonl</code></td></tr>
+  <tr><td><b>Lane</b></td><td>One agent's participation in a run — ACP-governed or terminal-observed</td><td>events + episode</td></tr>
+  <tr><td><b>Terminal session</b></td><td>Always written with the qualifier from now on; a terminal session bound to a run is an <em>observed lane</em></td><td>existing</td></tr>
+  <tr><td><b>Artifact</b></td><td>A durable output registered to a session: file created/edited, report, plan, diagram, projection (A6.2)</td><td>artifact index per session</td></tr>
+</table>
+<p class="decision">Naming rule, effective immediately: bare "session" in code, docs, and UI means the user-facing container above. The Watcher's existing session vocabulary migrates to "lane"/"terminal session" opportunistically (no big-bang rename; new code complies, touched code migrates). The markdown projection moves with the log: <code>docs/sessions/&lt;session-id&gt;.md</code> covers the whole session with per-run sections.</p>
+
+<h2><span class="n">A4</span>Entry point and the New Session sheet</h2>
+<h3>A4.1 Commands</h3>
+<ul class="spec">
+  <li><b>File → New Session</b> (Ctrl+N) — the primary verb of the application; first item in the File menu.</li>
+  <li><b>File → Open Session</b> / <b>Recent sessions</b> (sibling to Recent workspaces; entries carry workspace context and switch it on open, with the same prompt-if-dirty behavior as workspace switch).</li>
+  <li>Palette: "New Session", "Open Session…", "New Session in workspace…".</li>
+  <li>A terminal-first path remains: <b>File → New Terminal Session</b> creates today's terminal session untouched — adopting the CLI experience stays one menu item away (spec invariant, preserved verbatim).</li>
+</ul>
+<h3>A4.2 Workspace binding</h3>
+<p>Active workspace → sheet opens bound to it (switchable inline). No workspace → chooser first. Never a session without a workspace: backends, graph tools, coordination, and scoring all key on it.</p>
+<h3>A4.3 The sheet</h3>
+<div class="wire">
+  <div class="bar"><b>New Session</b><span>workspace: commerce</span><span style="margin-left:auto" class="chip">defaults from workspace policy</span></div>
+  <div class="sheet">
+    <div class="field"><div class="k">Name</div><div class="v">2026-09-09 payments extraction</div></div>
+    <div class="field"><div class="k">Routing mode · autonomy</div><div class="v">Pinned per role · standard confirmations</div></div>
+    <div class="field"><div class="k">Agent backends (ACP)</div>
+      <div class="toggle"><span class="sw on"><i></i></span>claude-code · max-personal <span class="chip"><span class="dot" style="background:var(--green)"></span>ready</span></div>
+      <div class="toggle"><span class="sw on"><i></i></span>codex · chatgpt-personal <span class="chip"><span class="dot" style="background:var(--green)"></span>ready</span></div>
+      <div class="toggle"><span class="sw"><i></i></span>copilot · enterprise-org <span class="chip"><span class="dot" style="background:var(--gold)"></span>needs login</span></div>
+      <div class="toggle"><span class="sw"><i></i></span>grok-build · supergrok <span class="chip">observed lane</span></div>
+    </div>
+    <div class="field"><div class="k">Context backends (MCP)</div>
+      <div class="toggle"><span class="sw on"><i></i></span>ai-de workspace graph (always on)</div>
+      <div class="toggle"><span class="sw on"><i></i></span>github</div>
+      <div class="toggle"><span class="sw"><i></i></span>azure devops</div>
+    </div>
+  </div>
+  <div style="padding:0 16px 16px;display:flex;gap:10px"><span class="btn">Create session</span><span class="btn quiet">Cancel</span></div>
+</div>
+<ul class="spec">
+  <li><b>Agent backends</b> list comes from the EngineCatalog filtered by provider registry state; each row shows account and live health (<code>ready</code> / <code>needs-login</code> / <code>quota-degraded</code>). Toggling a <code>needs-login</code> engine offers the engine-native login flow inline. Disabled engines are simply not offered to the router for this session.</li>
+  <li><b>Context backends</b> list comes from the MCP registry (extending <code>McpConfigWriter</code>'s knowledge): the workspace graph server is pinned on; others toggle per session and are injected into every governed lane at session-create time.</li>
+  <li>The sheet writes <code>session.yaml</code>; everything on it is editable later from the session header (changes apply to <em>new</em> runs, never retroactively — recorded as a session event).</li>
+</ul>
+<h3>A4.4 Placement in the shell</h3>
+<p>A session is a <b>dock document</b> rendered by <code>SurfaceContentFactory</code> into the paired-zone layout preset (composer zone + canvas zone, splitter between). ADR-0017's retain-never-rebuild invariant applies: unparenting the session document (mode switch, tab switch) never disposes the WebView2 surface or any lane. Multiple sessions may be open as sibling documents; exactly one is active for keyboard focus.</p>
+
+<h2><span class="n">A5</span>The composer (left pane)</h2>
+<ul class="spec">
+  <li><b>Editor.</b> Rich text in the Claude-app sense: markdown-native editing (live bold/italic/code/lists/fences), multi-line by default, monospace fences with syntax color, paste-as-fence for code, image/file paste-to-attach. Implementation: a web editor inside the session surface (the surface is already WebView2 + React per spec §3) — CodeMirror 6 is the recommended base (markdown mode + decorations for chips); Monaco is the fallback if fence editing dominates. Not a WPF RichTextBox — the rendering stack for the canvas is web; keep one text stack.</li>
+  <li><b>Context mentions.</b> <code>@</code> opens a picker over graph nodes, files, artifacts, and prior blocks; a selected mention becomes a <b>chip</b> in the text and a line in the block's context recipe (pinned path @ HEAD, graph query, block ref). Chips are the visible recipe — what you see in the composer is what the conductor gets.</li>
+  <li><b>Slash commands.</b> <code>/</code> surfaces pack skills and session verbs (<code>/optimize-graph</code>, <code>/prepare-for-coordination</code>, <code>/restart-from</code>, <code>/resume</code>); selecting one scaffolds its block.</li>
+  <li><b>Two submission shapes.</b> <b>Message</b> (free prose → T0/T1 triage path) and <b>Goal block</b> (structured CT19 editor with the six fields; Tier picker gates ceremony). The composer offers "promote to goal block", and the conductor may answer a message with a drafted goal block for the person to accept — round-tripping into the same editor.</li>
+  <li><b>Staging semantics lifted from <code>PromptDraftSurface</code>:</b> a draft is never sent by editing; send is one explicit action (Ctrl+Enter); drafts persist across restart per session; unsent draft state is visibly staged. The old Transfer-to-terminal remains available on the same draft via the target selector — composer drafts can feed observed lanes too, one-way, exactly as US-ED6/ED7 specified.</li>
+  <li><b>Below the editor:</b> the block outline (the Score) — prior blocks with recipes, decisions, and per-block actions (restart from here, branch, open run).</li>
+</ul>
+
+<h2><span class="n">A6</span>The output canvas (right pane)</h2>
+<h3>A6.1 Modes</h3>
+<div class="wire">
+  <div class="modes"><span class="mode-tab on">Console</span><span class="mode-tab">Artifacts</span><span class="mode-tab">Profiler</span><span class="mode-tab">Board</span><span class="mode-tab">Terminal</span></div>
+  <div class="artview"><h4>Console — the default</h4>The merged, structured stream across conductor, agents, and sub-agents: the Performance surface from the mockups, unchanged — lane rail, tree filter, tool calls, edits, permissions, reasoning. Everything in mockups v2 frame 1 and 2 renders here.</div>
+</div>
+<table>
+  <tr><th>Mode</th><th>Content</th><th>Notes</th></tr>
+  <tr><td><b>Console</b> (default)</td><td>Merged event stream, lane rail, agent tree filter, permission cards</td><td>Exactly mockups v2 frames 1–2; per-lane filtering is this mode's drill-down</td></tr>
+  <tr><td><b>Artifacts</b></td><td>Artifact list + viewer (A6.2)</td><td>The Claude-style artifact experience</td></tr>
+  <tr><td><b>Profiler</b></td><td>Spec §8 cards for this session's active run</td><td>Same pane, session-scoped</td></tr>
+  <tr><td><b>Board</b></td><td>Coordination board (leases, seams, decisions) for the active run</td><td>Mockups v2 frame 2's board</td></tr>
+  <tr><td><b>Terminal</b></td><td>Observed lanes' live terminals for this session</td><td>Existing <code>TerminalSurface</code>, embedded; the CLI experience, in place</td></tr>
+</table>
+<p class="note">Mode is per-canvas, switchable instantly, and split-able: the canvas zone can split to show Console beside Artifacts. New events pulse the Console tab when it isn't visible; a permission request raises the queue overlay regardless of mode — approvals are never hostage to the selected tab.</p>
+<h3>A6.2 Artifacts</h3>
+<div class="wire">
+  <div class="modes"><span class="mode-tab">Console</span><span class="mode-tab on">Artifacts</span><span class="mode-tab">Profiler</span><span class="mode-tab">Board</span><span class="mode-tab">Terminal</span></div>
+  <div class="artgrid">
+    <div class="artlist">
+      <div class="art on"><span class="ic">md</span>extraction plan<span style="margin-left:auto" class="ic">b2</span></div>
+      <div class="art"><span class="ic">cs</span>PaymentAggregate.cs<span style="margin-left:auto" class="ic">edit</span></div>
+      <div class="art"><span class="ic">html</span>coordination report</div>
+      <div class="art"><span class="ic">mmd</span>payments context map</div>
+      <div class="art"><span class="ic">diff</span>converge merge b2</div>
+    </div>
+    <div class="artview">
+      <div style="display:flex;gap:8px;margin-bottom:10px"><span class="chip">Rendered</span><span class="chip" style="opacity:.55">Preview</span><span class="chip" style="opacity:.55">Source</span><span class="chip" style="opacity:.55">Diff</span><span style="margin-left:auto" class="chip">pin · open in editor · reveal</span></div>
+      <h4>Extraction plan — track 1</h4>
+      Rendered markdown of the plan artifact, produced by the conductor in block b2; provenance footer names the lane, run, and commit.
+    </div>
+  </div>
+</div>
+<ul class="spec">
+  <li><b>Registration.</b> Artifacts enter the session index from run events: every <code>file.edit</code>/create by a lane, every conductor <code>report</code>, plans, projections, and diagrams. Inline artifact cards appear in the Console at the moment of production; opening a card jumps to the Artifacts viewer.</li>
+  <li><b>Viewers per type.</b> <b>Rendered</b>: markdown via the canvas's renderer (graph-flavored: mentions link back to nodes). <b>Preview</b>: HTML in a sandboxed iframe (no network beyond the virtual host; scripts allowed for self-contained pages — the pack's own report HTML must render). Mermaid/diagram sources render drawn. <b>Source</b>: syntax-highlighted read-only editor (same CodeMirror stack as the composer). <b>Diff</b>: side-by-side for lane edits and converge merges. Mode availability follows type; the toolbar shows only what applies.</li>
+  <li><b>Truth discipline.</b> The viewer shows the artifact <em>at its producing commit</em> by default with a one-click "view at HEAD"; stale-vs-current is always explicit. Artifacts are files in the workspace — the index holds paths + provenance, never copies.</li>
+  <li><b>Actions.</b> Pin (session header), open in external editor, reveal in Explorer surface, copy path, and — for plans and reports — "send to composer" as a mention.</li>
+</ul>
+
+<h2><span class="n">A7</span>Requirements (extend spec §11)</h2>
+
+<div class="req"><span class="id">R13</span><span class="t">File → New Session flow</span><span class="pill p0">P0</span>
+<p>Entry point, workspace binding, and the sheet.</p>
+<ul>
+  <li>Ctrl+N with an active workspace opens the sheet pre-bound; with none, the workspace chooser interposes and cancel aborts cleanly.</li>
+  <li>The sheet lists agent backends from the catalog with live per-account health; toggling a needs-login engine offers the engine-native login without leaving the sheet.</li>
+  <li>Create writes <code>session.yaml</code>, opens the session document in the paired-zone preset, and registers it in Recent sessions; reopening restores composer draft, mode, and layout.</li>
+  <li>File → New Terminal Session still produces today's terminal session, unchanged.</li>
+</ul></div>
+
+<div class="req"><span class="id">R14</span><span class="t">Session object and naming repair</span><span class="pill p0">P0</span>
+<p>A3's model in code and on disk.</p>
+<ul>
+  <li>Run logs live at <code>.aide/sessions/&lt;session-id&gt;/runs/&lt;run-id&gt;.jsonl</code>; the session projection covers all runs; spec §7.1 paths are superseded.</li>
+  <li>New code uses "session" only for the container; a lint/doc note marks the terminal-session qualifier rule.</li>
+  <li>Backend toggles apply to new runs only and emit a session event when changed.</li>
+</ul></div>
+
+<div class="req"><span class="id">R15</span><span class="t">Composer</span><span class="pill p0">P0</span>
+<p>Rich editing with staged send.</p>
+<ul>
+  <li>Markdown-live editing with fenced code (highlighted), paste-to-fence, and attach; @-mention picker over files, graph nodes, artifacts, and blocks; each mention materializes a recipe line visible as a chip.</li>
+  <li>Message and Goal-block submission shapes; promote-to-goal-block round-trips; a T2 goal block missing a CT19 field cannot send (field-level error).</li>
+  <li>US-ED5/ED6/ED7 semantics hold: never sent by editing; one explicit send; draft persists across restart; the same draft can transfer one-way to a ready observed lane.</li>
+</ul></div>
+
+<div class="req"><span class="id">R16</span><span class="t">Output canvas modes</span><span class="pill p0">P0</span>
+<p>Console default; modes switchable and splittable.</p>
+<ul>
+  <li>Console renders the merged stream with lane rail and tree filtering (mockups v2 fidelity); default on session open.</li>
+  <li>Mode switch is instant and lossless (retain-never-rebuild); canvas zone splits to two modes side by side.</li>
+  <li>A permission request surfaces within one event cycle regardless of active mode.</li>
+</ul></div>
+
+<div class="req"><span class="id">R17</span><span class="t">Artifacts</span><span class="pill p1">P1</span>
+<p>Registry + multi-mode viewer.</p>
+<ul>
+  <li>Lane edits, conductor reports, plans, and diagrams auto-register with provenance (lane, run, block, commit); inline cards appear in Console at production time.</li>
+  <li>Rendered / Preview (sandboxed) / Source / Diff modes per type; producing-commit vs HEAD is explicit; the pack's generated HTML reports render in Preview.</li>
+  <li>Pin, open-external, reveal-in-Explorer, and send-to-composer actions work.</li>
+</ul></div>
+
+<p class="note"><b>Phasing update:</b> R13–R16 join Phase 1 — they are the front door of the "single-lane Conductor Surface" already scheduled there, and Phase 1's exit evidence now reads: <em>a real governed run started from File → New Session, composed in the rich composer, streamed in Console mode, scored end-to-end, with zero terminal hosting</em>. R17 joins Phase 3 beside the Profiler (the artifact index rides the same session store). If today's local work built the surface without the entry flow, the migration is additive: wrap what exists in the session document, add the sheet in front of it.</p>
+
+<h2><span class="n">A8</span>Amendments to spec v1.0 (delta list)</h2>
+<ul class="spec">
+  <li><b>§3 diagram:</b> Conductor Surface gains the session document framing and canvas modes; Sessions store path structure per A3.</li>
+  <li><b>§7.1:</b> storage paths superseded by A3's table; projection scope is the session.</li>
+  <li><b>§7.2:</b> new event kinds: <code>session.open</code>, <code>session.config</code>, <code>artifact.registered</code>, <code>draft.transferred</code>.</li>
+  <li><b>§10 module table:</b> <code>AiDe.Core/Sessions/</code> gains <code>SessionStore</code>, <code>SessionConfig</code>, <code>ArtifactIndex</code>; <code>Presentation</code> gains <code>SessionDocumentViewModel</code>, <code>NewSessionSheetViewModel</code>, <code>ArtifactViewerViewModel</code>; <code>AiDe.App/Workbench</code> gains the session document surface via <code>SurfaceContentFactory</code> and the File-menu command; <code>PromptDraftViewModel</code>'s transfer rules are absorbed by the composer (the class may remain for the standalone draft surface).</li>
+  <li><b>§11:</b> R13–R17 added; R7's profiler pane is reachable as a canvas mode.</li>
+  <li><b>§12:</b> Phase 1 and 3 scope and exit evidence updated per A7's note.</li>
+</ul>
+
+<hr>
+<p class="small">Companion to spec v1.0 and mockups v2. Sources read at HEAD of main, 2026-09-09. Where local unpushed work differs, treat the difference as a migration item against this addendum.</p>
+
+</div>
+</body>
+</html>

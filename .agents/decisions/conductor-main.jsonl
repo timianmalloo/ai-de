@@ -48,3 +48,9 @@
 {"agent": "conductor-main", "at": 1788993784.4382482, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788993784.4382482, "code": null, "kind": "allowed", "path": "docs/audit/index.html", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1788993784.4424284, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788994101.7688944, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788994101.7719283, "code": null, "kind": "allowed", "path": ".agents/log/18fe7a5a-c1b6-434e-8033-3f0c4e841f24.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788994101.7719283, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788994101.7739346, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788994101.7739346, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1788994101.775941, "code": null, "kind": "allowed", "path": "docs/notes/conductor-phase1-e18-close.md", "session": "conductor-main", "wi": ""}

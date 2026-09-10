@@ -2444,6 +2444,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "97234ae560a8663d0d4a2e2510affa12b9f60a61399ff50dafbfe12052a496c1"
     },
     {
+      "id": "note-addendum-a-reconciliation",
+      "path": "docs/notes/addendum-a-reconciliation.md",
+      "title": "Reconciliation — Addendum A against the work already delivered",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Evidence-cited diff of Addendum A against Phase 1 as delivered. The A3 migration exposure is far smaller than anticipated - no run-log store was ever built, so the path rename costs nothing. Two new type names violate the naming rule and are cheap to fix now. The deferral of the Conductor Surface turns out to have avoided the rework the addendum would otherwise have caused.",
+      "tags": [
+        "conductor",
+        "addendum-a",
+        "reconciliation",
+        "migration",
+        "naming",
+        "session"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "refines"
+        },
+        {
+          "to": "note-conductor-phase1-e18-close",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-conductor-programme",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "538a4f856e031b6f8f413ac6eacb972b1f5b54bc7c873d305faa2ff3ec8cd045"
+    },
+    {
       "id": "note-ai-native-ide-architecture-review-depth",
       "path": "docs/notes/ai-native-ide-architecture-review-depth.md",
       "title": "Decision note — AI-native IDE architecture review depth",
@@ -11180,7 +11216,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "a62cb4f4d99b5cde621c2e595d2d30bfe0ea3261942a76336a87c3cb42aade31"
+      "sourceSha256": "35035d0bb72128cee32d8d3a6ba348e56debae97bb3b582c8dc8e281d7c2b589"
     },
     {
       "id": "spec-editor-surfaces",
@@ -11591,6 +11627,13 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-activity-rail"
     },
     {
+      "id": "surface-specs-conductor-ai-de-spec-addendum-a-session-experience",
+      "path": "docs/specs/conductor/ai-de-spec-addendum-a-session-experience.html",
+      "title": "AI-DE Conductor — Addendum A: The Session Experience",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-specs-conductor-ai-de-conductor-spec-v1",
       "path": "docs/specs/conductor/ai-de-conductor-spec-v1.html",
       "title": "AI-DE Conductor — Specification v1.0",
@@ -11709,5 +11752,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "c68d3cc2decbc32490a2989072a0076ee07fb0f258196a260416e3f8b7a29328"
+  "graphSha256": "0c7b44680d3cd966c7733c219bd3f6b4d1f6570e15b29ca43d2aea543cdc4d42"
 };

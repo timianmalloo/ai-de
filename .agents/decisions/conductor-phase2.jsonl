@@ -1,0 +1,10 @@
+{"agent": "conductor-phase2", "at": 1788999254.5051265, "code": null, "kind": "allowed", "path": "docs/api/AiDe.Core.Watcher.md", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999254.5051265, "code": null, "kind": "allowed", "path": "docs/lessons/defect-classes.md", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999254.5051265, "code": null, "kind": "allowed", "path": "docs/notes/dc-115-evidence-in-a-lanes-own-checkout.md", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999254.5090296, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Watcher/ClosedEpisodeScoring.cs", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999254.5094852, "code": null, "kind": "allowed", "path": "src/AiDe.Core/Watcher/ProofPackVerifier.cs", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999254.5112314, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Watcher/AGovernedLaneIsCreditedForItsOwnBranchTests.cs", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999254.5112314, "code": null, "kind": "allowed", "path": "tests/AiDe.Core.Tests/Watcher/ProofPackVerifierAcrossCheckoutsTests.cs", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999298.4261975, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999298.4261975, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-phase2", "wi": ""}
+{"agent": "conductor-phase2", "at": 1788999298.4261975, "code": null, "kind": "allowed", "path": "docs/audit/index.html", "session": "conductor-phase2", "wi": ""}

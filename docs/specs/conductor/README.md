@@ -22,6 +22,7 @@ Provenance for the two source artifacts in this directory.
 | --- | --- | --- | --- |
 | `ai-de-conductor-spec-v1.html` | Specification v1.0-draft, dated 2026-09-09 | **Authoritative.** Supersedes the proposal and the mockups wherever they conflict. | `8aac1ce1375c619438278329c0cae8c0f34681088bc98bc70fde7329d0172a49` |
 | `ai-de-conductor-mockups-v2.html` | UX intent (Score/Performance, coordination board, Agent Profiler, routing) | Subordinate to the spec. | `72e0fec4aa98d70aba1dfc9d5f9dd0bffdfb326309f97d8b7d26169fce0ff29b` |
+| `ai-de-spec-addendum-a-session-experience.html` | **Addendum A — The Session Experience**, dated 2026-09-09 | **Normative. SUPERSEDES v1.0 where they conflict.** Adds R13–R16 to Phase 1, R17 to Phase 3, repairs the "session" vocabulary collision (A3), and rewrites Phase 1's exit evidence. | `f23fe61168e395bbddae8e63c47e18b46875a5c90a21322fe36f258940f3361c` |
 
 Ingested 2026-09-09 from the operator's `Downloads` directory, unmodified. The
 spec's own provenance line records its sources as `timianmalloo/ai-de`,
@@ -35,6 +36,8 @@ Decisions locked by the spec before this programme starts:
 - **Antigravity is deferred** to a later spike; it enters as an observed lane when it lands (N3).
 - **No change to the Weave schema** — `weave/1` dimensions, weights, floors and the leaderboard partition are pinned (N6).
 - **No replacement of the AI-Forward Pack** — AI-DE mechanizes its discipline and must not fork its semantics (N7).
+
+**Reading order:** Addendum A wins over v1.0; v1.0 wins over the mockups; all three win over any prompt summarising them. The reconciliation of Addendum A against work already delivered is `note-addendum-a-reconciliation`.
 
 Phasing (§12) is the delivery contract. Phase 1 ships the Agent Plane
 (R1, R2, R4-core); later phases proceed only on an explicit ruling.
