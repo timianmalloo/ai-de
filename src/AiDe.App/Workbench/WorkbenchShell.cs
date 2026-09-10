@@ -2578,8 +2578,14 @@ public sealed class WorkbenchShell : IDisposable
             {
                 // Reported, never silent. A server the agent cannot discover is the defect this
                 // whole line of work started from, and its absence must not be one more silence.
+                //
+                // Reason ONLY. The detail may quote the file — a parse failure names the property it
+                // choked on, and that property is a third party's — so it goes to the log below
+                // rather than to the live region and the accessibility tree.
                 Announcer.Announce($"MCP tools are not configured: {reason}");
             }
+
+            WorkbenchDiagnostics.McpConfig(mcp.Outcome.ToString(), mcp.Path, mcp.Detail);
         }
 
         // Only when there is a real root to have resolved it from. With no workspace,
