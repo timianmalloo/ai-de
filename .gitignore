@@ -527,6 +527,13 @@ docs/.smart-env/
 # Per-session agent worktrees — machine-local state, never part of the repository
 .claude/worktrees/
 
+# Workbench prompt-draft sidecar (WorkbenchShell.BindPromptDrafts / PromptDraftStore) — plaintext
+# JSON written under the workspace root, workspace-local runtime state with nothing inside it that
+# must travel with the repo. Ignored as a plain directory rather than split-and-negated: contrast
+# `.agents/` below, whose committed contract logs forced the `!`-reinclusion form. This one has no
+# committed contents, so the bare form is correct and the simpler choice.
+.aide/
+
 # AI-Forward Pack (INSTALL 2) proposed a blanket `spikes/` here. REMOVED 2026-09-09: it
 # silently regressed the override recorded ~29 lines above ("spikes/ is NOT ignored in this
 # repo... Test Architect gate, 2026-08-26"), and git's last-match rule made the regression
