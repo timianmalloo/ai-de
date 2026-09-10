@@ -104,7 +104,7 @@ public sealed class GovernedAndObservedShareOneCellTests : IDisposable
     /// <summary>The governed door: register, open from the block, close, score, stamp.</summary>
     private static string RunGovernedLane(WatcherHost host, TimeProvider time)
     {
-        var session = new GovernedSessionSource(host.Ingest).Open(Lane(), Block());
+        var session = new GovernedLaneSource(host.Ingest).Open(Lane(), Block());
         session.Close(EpisodeOutcome.Completed);
         LaneScoring.ScoreGoverned(host.Store, time, session.EpisodeId, CallerChosenClass);
         return session.EpisodeId;

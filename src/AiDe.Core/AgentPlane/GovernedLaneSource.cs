@@ -31,7 +31,8 @@ public sealed record LaneIdentity(
     string? Model = null);
 
 /// <summary>
-/// Opens governed episodes on the live ingest path — spec §6.2's <c>GovernedSessionSource</c>.
+/// Opens governed episodes on the live ingest path — spec §6.2's <c>GovernedSessionSource</c>,
+/// renamed <c>GovernedLaneSource</c> by Ruling 15 (A3): see <c>note-conductor-spec-errata-lane-rename</c>.
 /// </summary>
 /// <remarks>
 /// <para><b>No new seam.</b> Registration, episode open, artifact declaration and close all go
@@ -48,11 +49,11 @@ public sealed record LaneIdentity(
 /// that was a precondition of the spawn. The capability never leaves this object, so the lane cannot
 /// forge an open, a close or an outcome.</para>
 /// </remarks>
-public sealed class GovernedSessionSource
+public sealed class GovernedLaneSource
 {
     private readonly IngestHost _host;
 
-    public GovernedSessionSource(IngestHost host)
+    public GovernedLaneSource(IngestHost host)
     {
         ArgumentNullException.ThrowIfNull(host);
         _host = host;
@@ -73,7 +74,7 @@ public sealed class GovernedSessionSource
     /// <exception cref="AgentPlaneException">
     /// <see cref="AgentPlaneErrorCodes.GoalBlockIncomplete"/>, naming every missing field.
     /// </exception>
-    public GovernedSession Open(LaneIdentity identity, GoalBlock block)
+    public GovernedEpisode Open(LaneIdentity identity, GoalBlock block)
     {
         ArgumentNullException.ThrowIfNull(identity);
 
@@ -102,7 +103,7 @@ public sealed class GovernedSessionSource
             new DoneCondition(attributes[CoordContract.EpisodeAttributes.DoneWhen]!),
             attributes[CoordContract.EpisodeAttributes.NotInScope]);
 
-        return new GovernedSession(_host, session, episode.EpisodeId, attributes);
+        return new GovernedEpisode(_host, session, episode.EpisodeId, attributes);
     }
 
     private static Dictionary<string, string?> Registration(LaneIdentity identity)
@@ -134,12 +135,17 @@ public sealed class GovernedSessionSource
 }
 
 /// <summary>One open governed episode, and the only object that can close it.</summary>
-public sealed class GovernedSession
+/// <remarks>
+/// Renamed from <c>GovernedSession</c> by Ruling 15 (A3) / Ruling 15a — the target
+/// <c>GovernedLane</c> is not available (see <see cref="GovernedLane"/> below, an unrelated
+/// pre-existing composite of the same name); see <c>note-addendum-a-ruling-15a-governed-episode</c>.
+/// </remarks>
+public sealed class GovernedEpisode
 {
     private readonly IngestHost _host;
     private readonly RegisteredSession _session;
 
-    internal GovernedSession(
+    internal GovernedEpisode(
         IngestHost host, RegisteredSession session, string episodeId, IReadOnlyDictionary<string, string?> openAttributes)
     {
         _host = host;
@@ -148,7 +154,17 @@ public sealed class GovernedSession
         OpenAttributes = openAttributes;
     }
 
-    /// <summary>The watcher session this lane registered as.</summary>
+    /// <summary>
+    /// The watcher session this lane registered as.
+    /// </summary>
+    /// <remarks>
+    /// <b>Boundary note (Ruling 15 / A3).</b> This "session" is <see cref="IngestHost"/>'s sense of
+    /// the word, not this type's: a registered identity carrying a <c>SessionCapability</c>, verified
+    /// by <c>ITrustedRegistrar</c>, that <see cref="IngestHost.OpenEpisode"/> binds an episode to
+    /// (backed by the <c>agent_session_dim</c> table). It is the Watcher's lane-identity vocabulary
+    /// and migrates to "lane" only opportunistically — A3 forbids a big-bang rename, so it stays
+    /// session-named here even though this type is now <see cref="GovernedEpisode"/>.
+    /// </remarks>
     public string SessionId => _session.SessionId;
 
     /// <summary>The episode the goal block opened.</summary>
@@ -189,7 +205,7 @@ public sealed record LaneTeardown(EpisodeOutcome Outcome, WorktreeDisposition? W
 /// </remarks>
 public sealed class GovernedLane
 {
-    private readonly GovernedSession _session;
+    private readonly GovernedEpisode _session;
     private readonly WorktreeProvisioner _provisioner;
     private readonly ProvisionedWorktree? _worktree;
     private readonly LeaseMonitor? _seams;
@@ -203,7 +219,7 @@ public sealed class GovernedLane
     /// empty <see cref="Lease"/> is refused rather than read as either extreme.
     /// </param>
     public GovernedLane(
-        GovernedSession session,
+        GovernedEpisode session,
         WorktreeProvisioner provisioner,
         ProvisionedWorktree? worktree,
         LeaseMonitor? seams = null)

@@ -62,7 +62,13 @@ have anything behind them yet:**
 
 ## Ruling 15 — the two type renames happen now
 
-`GovernedSessionSource` → **`GovernedLaneSource`**, `GovernedSession` → **`GovernedLane`**,
+**Amended by Ruling 15a** (`note-addendum-a-ruling-15a-governed-episode`): `GovernedSession`'s
+target is `GovernedEpisode`, not `GovernedLane` — `GovernedLane` was already the name of the
+pre-existing episode+worktree composite in the same file/namespace, unseen when this ruling was
+written. `GovernedLaneSource` below is unaffected.
+
+`GovernedSessionSource` → **`GovernedLaneSource`**, `GovernedSession` → ~~**`GovernedLane`**~~
+**`GovernedEpisode`** (see amendment above),
 **including the consumer** at `GovernedRunHost.cs:114`. The Watcher-side callee
 (`IngestHost.OpenEpisode`, `agent_session_dim`) stays session-named until touched.
 

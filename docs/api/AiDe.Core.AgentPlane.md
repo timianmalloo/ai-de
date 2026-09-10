@@ -720,7 +720,7 @@ gets a refusal instead of a lane that bills and ranks against the wrong account.
 
 ## `LaneIdentity`
 
-*record* — `GovernedSessionSource.cs`
+*record* — `GovernedLaneSource.cs`
 
 Who a governed lane is, in the terms the watcher's registration already speaks.
 
@@ -730,11 +730,12 @@ governed lane the lane *is* that surface. It also buys the behaviour a lane want
 ingest host adopts an existing session for a known terminal id and bumps its generation, so a
 respawned lane continues its own history instead of minting a second session.
 
-## `GovernedSessionSource`
+## `GovernedLaneSource`
 
-*class* — `GovernedSessionSource.cs`
+*class* — `GovernedLaneSource.cs`
 
-Opens governed episodes on the live ingest path — spec §6.2's `GovernedSessionSource`.
+Opens governed episodes on the live ingest path — spec §6.2's `GovernedSessionSource`,
+renamed `GovernedLaneSource` by Ruling 15 (A3): see `note-conductor-spec-errata-lane-rename`.
 
 **Remarks.** **No new seam.** Registration, episode open, artifact declaration and close all go
 through `IngestHost` and are capability-verified by `ITrustedRegistrar`, exactly
@@ -756,10 +757,10 @@ forge an open, a close or an outcome.
 
 | Member | Summary |
 |---|---|
-| `GovernedSessionSource(IngestHost host)` | **(gap)** |
-| `GovernedSession Open(LaneIdentity identity, GoalBlock block)` | Registers the lane's session and opens its episode from the goal block. |
+| `GovernedLaneSource(IngestHost host)` | **(gap)** |
+| `GovernedEpisode Open(LaneIdentity identity, GoalBlock block)` | Registers the lane's session and opens its episode from the goal block. |
 
-### `GovernedSession Open(LaneIdentity identity, GoalBlock block)`
+### `GovernedEpisode Open(LaneIdentity identity, GoalBlock block)`
 
 Registers the lane's session and opens its episode from the goal block.
 
@@ -777,11 +778,15 @@ as a lane that never did anything.
 normalized or re-encoded on the way through — the episode is what the agent is later scored
 against, and a helpful transformation here would score it against a goal nobody wrote.
 
-## `GovernedSession`
+## `GovernedEpisode`
 
-*class* — `GovernedSessionSource.cs`
+*class* — `GovernedLaneSource.cs`
 
 One open governed episode, and the only object that can close it.
+
+**Remarks.** Renamed from `GovernedSession` by Ruling 15 (A3) / Ruling 15a — the target
+`GovernedLane` is not available (see `GovernedLane` below, an unrelated
+pre-existing composite of the same name); see `note-addendum-a-ruling-15a-governed-episode`.
 
 | Member | Summary |
 |---|---|
@@ -790,6 +795,17 @@ One open governed episode, and the only object that can close it.
 | `IReadOnlyDictionary<string, string?> OpenAttributes { get; }` | The attributes the episode opened with, exactly as sent. |
 | `int DeclareArtifacts(IReadOnlyList<string> paths)` | Records the evidence paths this lane names. Declared, never verified here. |
 | `WorkEpisode Close(EpisodeOutcome outcome)` | Closes the episode with its outcome. The declaration is not a quality judgement. |
+
+### `string SessionId`
+
+The watcher session this lane registered as.
+
+**Remarks.** **Boundary note (Ruling 15 / A3).** This "session" is `IngestHost`'s sense of
+the word, not this type's: a registered identity carrying a `SessionCapability`, verified
+by `ITrustedRegistrar`, that `OpenEpisode` binds an episode to
+(backed by the `agent_session_dim` table). It is the Watcher's lane-identity vocabulary
+and migrates to "lane" only opportunistically — A3 forbids a big-bang rename, so it stays
+session-named here even though this type is now `GovernedEpisode`.
 
 ### `IReadOnlyDictionary<string, string?> OpenAttributes { get; }`
 
@@ -800,13 +816,13 @@ implementation can see is one only the implementation can be wrong about.
 
 ## `LaneTeardown`
 
-*record* — `GovernedSessionSource.cs`
+*record* — `GovernedLaneSource.cs`
 
 What a lane teardown did: to the episode, and to the tree.
 
 ## `GovernedLane`
 
-*class* — `GovernedSessionSource.cs`
+*class* — `GovernedLaneSource.cs`
 
 One governed lane's episode and worktree, torn down together.
 

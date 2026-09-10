@@ -114,14 +114,15 @@ data table or a swappable process wrapper behind a narrow seam.
    (`src/AiDe.App/Workbench/TerminalSurface.cs:39`), so widening buys nothing at the one call site
    that exists. **Ruled in `note-conductor-acp-lane-separate-shape`**; formalized in
    `adr-0027-acp-lane-separate-shape`.
-2. **Invent an `IEpisodeSource` interface so `GovernedSessionSource` and `AuditLogEpisodeSource`
+2. **Invent an `IEpisodeSource` interface so `GovernedLaneSource` and `AuditLogEpisodeSource`
    share one shape**, reading spec §6.2's "implements the same source seam as `AuditLogEpisodeSource`"
    literally. *Rejected* — no such seam exists to implement: `AuditLogEpisodeSource` is a `public
    static class`, a batch importer with no interface, called only from `WatcherHost`. An interface
    over one static batch reader and one live streaming source would have exactly two implementers of
    genuinely different shapes — the standing Simplifier objection — and is deferred until a
    **third** implementer (`BenchImportSource`) exists. **Ruled in
-   `note-conductor-episode-source-seam`**; `GovernedSessionSource` instead enters through the live
+   `note-conductor-episode-source-seam`**; `GovernedLaneSource` (renamed from `GovernedSessionSource`
+   by Ruling 15/A3) instead enters through the live
    `IngestHost.OpenEpisode` / `DeclareEpisodeArtifacts` / `CloseEpisode` path under a
    `ITrustedRegistrar` capability — the same path `InjectedContractIngest` already uses, so the
    watcher's existing sweep (`ClosedEpisodeScoring`) needs no new source type to score it.
@@ -160,7 +161,7 @@ flowchart TB
     AcpLaneClient["AcpLaneClient<br/>handshake · session · prompt · permission"]
     AcpRunEventMapper["AcpRunEventMapper<br/>ACP frame → RunEvent, one mapper"]
     WorktreeProvisioner["WorktreeProvisioner<br/>namespaced branch, coord install inside it"]
-    GovernedSessionSource["GovernedSessionSource<br/>opens/closes the episode"]
+    GovernedSessionSource["GovernedLaneSource<br/>opens/closes the episode"]
     LeaseAndSeams["Lease / LeaseMonitor<br/>out-of-lease edit → seam → forces Blocked"]
     LaneCohort["LaneMode / LaneScoring<br/>stamps the mode cohort, requires taskClass"]
     TerminalHostingLedger["TerminalHostingLedger<br/>counts terminal.start; oracle for == 0"]
@@ -228,7 +229,7 @@ flowchart TB
 | `AcpLaneClient` | What the ACP messages *mean*: handshake, session, prompt, permission answer (defaults to reject). | Separate from `AcpPeer` on purpose — protocol semantics testable with no process, framing testable with no handshake. |
 | `AcpRunEventMapper` | The **one** mapper from ACP wire frames to `RunEvent` (spec §7.2's one envelope). Recognition is a table (four kinds with a Phase-1 producer); everything else is namespaced `acp.*` and carried whole in `Ext`, never dropped. | `Seq` and `Ts` are stamped here, never read from the wire — an ACP frame carries neither. |
 | `WorktreeProvisioner` | Provisions a namespaced-branch worktree, runs `coord install` **inside** it; releases fail-safe (parks anything not provably safe, never deletes). | `IProcessRunner` seam exists so "which directory did this run in" is assertable without a real repository on disk. |
-| `GovernedSessionSource` | Opens/declares/closes the episode over the **live** `IngestHost` path under an `ITrustedRegistrar` capability — no new interface (§3.2). | The episode's open attributes are byte-for-byte the goal block; an incomplete block opens nothing. |
+| `GovernedLaneSource` (renamed from `GovernedSessionSource`, Ruling 15/A3) | Opens/declares/closes the episode over the **live** `IngestHost` path under an `ITrustedRegistrar` capability — no new interface (§3.2). | The episode's open attributes are byte-for-byte the goal block; an incomplete block opens nothing. |
 | `Lease` / `LeaseMonitor` | The lane's exclusive write scope (glob patterns, case-sensitive, repository-relative); an edit outside it raises a **seam** (a ledger entry, not a `RunEvent` — minting one here would need a second `Seq` writer). | An empty lease is refused, not read as "covers nothing" or "covers everything." An open seam at close **forces** `Blocked`. |
 | `LaneMode` / `LaneScoring` | Stamps which door an episode came through (`Governed` / `Observed`) as a **cohort attribute**; requires `taskClass` explicitly, no default. | Neither underlying scoring path (`ClosedEpisodeScoring`, `AuditLogEpisodeSource` import) changes; `mode` is never a `ScoreSegment` member. |
 | `TerminalHostingLedger` | Counts `terminal.start` activities on `aide.terminal.runtime` while open — the positive oracle for "zero terminal hosting." | Listens to an activity `ConPtyTerminalSession` already emits unconditionally; `src/AiDe.Core/Terminal/` gains no line for it. |

@@ -6,7 +6,8 @@ using AiDe.Core.Watcher;
 namespace AiDe.Core.Tests.AgentPlane;
 
 /// <summary>
-/// <c>GovernedSessionSource</c> — spec §6.1/§6.2 and R2. A governed lane's episode is opened by the
+/// <c>GovernedLaneSource</c> (renamed from <c>GovernedSessionSource</c> by Ruling 15/A3) — spec
+/// §6.1/§6.2 and R2. A governed lane's episode is opened by the
 /// runtime at spawn, with attributes taken verbatim from the goal block, over the same live ingest
 /// path every other episode uses.
 /// </summary>
@@ -27,7 +28,7 @@ namespace AiDe.Core.Tests.AgentPlane;
 /// <para><b>The agent cannot forge these</b> (§6.1): the capability lives in the source, and the lane
 /// never sees it.</para>
 /// </remarks>
-public sealed class GovernedSessionSourceTests
+public sealed class GovernedLaneSourceTests
 {
     private const double At = 1_700_000_000d;
 
@@ -49,13 +50,13 @@ public sealed class GovernedSessionSourceTests
         Harness: "claude-code",
         Model: "sonnet");
 
-    private static (GovernedSessionSource Source, InMemoryWatcherObservationStore Store, TimeProvider Time) New()
+    private static (GovernedLaneSource Source, InMemoryWatcherObservationStore Store, TimeProvider Time) New()
     {
         var store = new InMemoryWatcherObservationStore();
         var time = new FixedTimeProvider(DateTimeOffset.UnixEpoch.AddSeconds(At));
         var n = 0;
         var registrar = new TrustedRegistrar(store, new SequentialCapabilityFactory(), new FakeMonotonicClock(), () => $"session-{++n}");
-        return (new GovernedSessionSource(new IngestHost(store, registrar, time)), store, time);
+        return (new GovernedLaneSource(new IngestHost(store, registrar, time)), store, time);
     }
 
     private static void AssertSameBytes(string expected, string? actual, string what)

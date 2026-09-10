@@ -66,7 +66,7 @@ public sealed class ATierZeroRunSkipsPlanAndCouncilTests
         var store = new InMemoryWatcherObservationStore();
         var registrar = new TrustedRegistrar(
             store, new SequentialCapabilityFactory(), new FakeMonotonicClock(), () => "session-1");
-        var session = new GovernedSessionSource(new IngestHost(store, registrar, TimeProvider.System))
+        var session = new GovernedLaneSource(new IngestHost(store, registrar, TimeProvider.System))
             .Open(Lane(), spawn.Goal);
 
         // Zero council lanes: the work lane is the only session anything registered.

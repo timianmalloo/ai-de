@@ -283,14 +283,14 @@ public sealed class LeasesRaiseSeamsTests
 
     private static WorktreeProvisioner Provisioner() => new(new AlwaysSucceedsRunner());
 
-    private static (GovernedSessionSource Source, InMemoryWatcherObservationStore Store, TimeProvider Time) Governed()
+    private static (GovernedLaneSource Source, InMemoryWatcherObservationStore Store, TimeProvider Time) Governed()
     {
         var store = new InMemoryWatcherObservationStore();
         var time = new FixedTimeProvider(DateTimeOffset.UnixEpoch.AddSeconds(1_700_000_000));
         var n = 0;
         var registrar = new TrustedRegistrar(
             store, new SequentialCapabilityFactory(), new FakeMonotonicClock(), () => $"session-{++n}");
-        return (new GovernedSessionSource(new IngestHost(store, registrar, time)), store, time);
+        return (new GovernedLaneSource(new IngestHost(store, registrar, time)), store, time);
     }
 
     private sealed class AlwaysSucceedsRunner : IProcessRunner

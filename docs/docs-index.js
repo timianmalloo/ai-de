@@ -1509,7 +1509,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "b920c4cf6c67af2d0c2337b83a0fa7db851ff697e1920ffe2ac338b9987fe9cc"
+      "sourceSha256": "dbc304cc71cb10bf1a876b863a5a9c7f83e50fc071b1acfa402ceaf37c297d23"
     },
     {
       "id": "api-aide-core-dispatch",
@@ -2066,10 +2066,10 @@ window.DOCS_INDEX = {
         {
           "kind": "flowchart",
           "title": "4. Components and boundaries",
-          "mermaid": "flowchart TB\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef plane fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef watcher fill:#1A1F26,stroke:#2A313B,color:#E4E9EF\n  classDef frozen fill:#0D1014,stroke:#D8A650,stroke-dasharray:4 3,color:#D8A650\n\n  subgraph app[\"AiDe.App / Conductor — the one composition root\"]\n    ConductorEntry[\"ConductorEntry<br/>headless launcher: run file → result file\"]\n    GovernedRunHost[\"GovernedRunHost.RunAsync<br/>catalog → process → handshake →<br/>observed auth → authorize → worktree →<br/>episode → prompt → seams → close → score\"]\n  end\n\n  subgraph plane[\"AiDe.Core/AgentPlane — new\"]\n    EngineCatalog[\"EngineCatalog<br/>3 data rows, 1 launch path, 3 named refusals\"]\n    ProviderRegistry[\"ProviderRegistry<br/>accounts, observed health, ObservedAuthLabel\"]\n    GoalBlock[\"GoalBlock / SpawnContract<br/>6-field goal + fail-closed auth gate\"]\n    AcpEngineProcess[\"AcpEngineProcess<br/>child spawn, env inspection, tree reap\"]\n    AcpPeer[\"AcpPeer<br/>NDJSON framing, correlation, backpressure\"]\n    AcpLaneClient[\"AcpLaneClient<br/>handshake · session · prompt · permission\"]\n    AcpRunEventMapper[\"AcpRunEventMapper<br/>ACP frame → RunEvent, one mapper\"]\n    WorktreeProvisioner[\"WorktreeProvisioner<br/>namespaced branch, coord install inside it\"]\n    GovernedSessionSource[\"GovernedSessionSource<br/>opens/closes the episode\"]\n    LeaseAndSeams[\"Lease / LeaseMonitor<br/>out-of-lease edit → seam → forces Blocked\"]\n    LaneCohort[\"LaneMode / LaneScoring<br/>stamps the mode cohort, requires taskClass\"]\n    TerminalHostingLedger[\"TerminalHostingLedger<br/>counts terminal.start; oracle for == 0\"]\n    RunTriage[\"RunTriage<br/>Stage-0: skip plan/council for T0/T1\"]\n  end\n\n  subgraph watcher[\"AiDe.Core/Watcher — existing, unchanged semantics\"]\n    IngestHost[\"IngestHost<br/>OpenEpisode / DeclareArtifacts / CloseEpisode\"]\n    Registrar[\"ITrustedRegistrar\"]\n    ClosedScoring[\"ClosedEpisodeScoring\"]\n    ScoringService[\"ScoringService / WeaveScorer<br/>R4-core: byte-unchanged\"]\n    Store[\"SqliteWatcherObservationStore<br/>v6: + mode TEXT NULL, expand-only\"]\n  end\n\n  subgraph frozen[\"AiDe.Core/Terminal — frozen for Phase 1\"]\n    ITerminalSession[\"ITerminalSession<br/>Output never persisted\"]\n    ConPty[\"ConPtyTerminalSession<br/>emits terminal.start on aide.terminal.runtime\"]\n  end\n\n  Adapter[\"claude-agent-acp adapter<br/>node process, wraps Claude Code Agent SDK\"]\n  Repo[(\"Repository + worktrees\")]\n\n  ConductorEntry --> GovernedRunHost\n  GovernedRunHost --> EngineCatalog\n  GovernedRunHost --> ProviderRegistry\n  GovernedRunHost --> AcpEngineProcess\n  AcpEngineProcess --> AcpPeer\n  AcpPeer --> AcpLaneClient\n  GovernedRunHost --> AcpLaneClient\n  GovernedRunHost --> GoalBlock\n  GovernedRunHost --> WorktreeProvisioner\n  GovernedRunHost --> GovernedSessionSource\n  GovernedRunHost --> TerminalHostingLedger\n  GovernedRunHost --> LaneCohort\n  AcpLaneClient --> AcpRunEventMapper\n  AcpRunEventMapper --> LeaseAndSeams\n  GovernedSessionSource --> IngestHost\n  IngestHost --> Registrar\n  LaneCohort --> ClosedScoring\n  ClosedScoring --> ScoringService\n  LaneCohort -.writes mode.-> Store\n  ScoringService --> Store\n\n  AcpEngineProcess -.spawns.-> Adapter\n  AcpLaneClient -.stdio ACP.-> Adapter\n  WorktreeProvisioner -.git worktree add.-> Repo\n  TerminalHostingLedger -.listens, never calls.-> ConPty\n\n  class app,ConductorEntry,GovernedRunHost app\n  class plane,EngineCatalog,ProviderRegistry,GoalBlock,AcpEngineProcess,AcpPeer,AcpLaneClient,AcpRunEventMapper,WorktreeProvisioner,GovernedSessionSource,LeaseAndSeams,LaneCohort,TerminalHostingLedger,RunTriage plane\n  class watcher,IngestHost,Registrar,ClosedScoring,ScoringService,Store watcher\n  class frozen,ITerminalSession,ConPty frozen\n  class Adapter,Repo ext"
+          "mermaid": "flowchart TB\n  classDef ext fill:#0D1014,stroke:#98A3B2,stroke-dasharray:4 3,color:#98A3B2\n  classDef app fill:#1A1F26,stroke:#5B9DD9,color:#E4E9EF\n  classDef plane fill:#1A1F26,stroke:#5FB98F,color:#E4E9EF\n  classDef watcher fill:#1A1F26,stroke:#2A313B,color:#E4E9EF\n  classDef frozen fill:#0D1014,stroke:#D8A650,stroke-dasharray:4 3,color:#D8A650\n\n  subgraph app[\"AiDe.App / Conductor — the one composition root\"]\n    ConductorEntry[\"ConductorEntry<br/>headless launcher: run file → result file\"]\n    GovernedRunHost[\"GovernedRunHost.RunAsync<br/>catalog → process → handshake →<br/>observed auth → authorize → worktree →<br/>episode → prompt → seams → close → score\"]\n  end\n\n  subgraph plane[\"AiDe.Core/AgentPlane — new\"]\n    EngineCatalog[\"EngineCatalog<br/>3 data rows, 1 launch path, 3 named refusals\"]\n    ProviderRegistry[\"ProviderRegistry<br/>accounts, observed health, ObservedAuthLabel\"]\n    GoalBlock[\"GoalBlock / SpawnContract<br/>6-field goal + fail-closed auth gate\"]\n    AcpEngineProcess[\"AcpEngineProcess<br/>child spawn, env inspection, tree reap\"]\n    AcpPeer[\"AcpPeer<br/>NDJSON framing, correlation, backpressure\"]\n    AcpLaneClient[\"AcpLaneClient<br/>handshake · session · prompt · permission\"]\n    AcpRunEventMapper[\"AcpRunEventMapper<br/>ACP frame → RunEvent, one mapper\"]\n    WorktreeProvisioner[\"WorktreeProvisioner<br/>namespaced branch, coord install inside it\"]\n    GovernedSessionSource[\"GovernedLaneSource<br/>opens/closes the episode\"]\n    LeaseAndSeams[\"Lease / LeaseMonitor<br/>out-of-lease edit → seam → forces Blocked\"]\n    LaneCohort[\"LaneMode / LaneScoring<br/>stamps the mode cohort, requires taskClass\"]\n    TerminalHostingLedger[\"TerminalHostingLedger<br/>counts terminal.start; oracle for == 0\"]\n    RunTriage[\"RunTriage<br/>Stage-0: skip plan/council for T0/T1\"]\n  end\n\n  subgraph watcher[\"AiDe.Core/Watcher — existing, unchanged semantics\"]\n    IngestHost[\"IngestHost<br/>OpenEpisode / DeclareArtifacts / CloseEpisode\"]\n    Registrar[\"ITrustedRegistrar\"]\n    ClosedScoring[\"ClosedEpisodeScoring\"]\n    ScoringService[\"ScoringService / WeaveScorer<br/>R4-core: byte-unchanged\"]\n    Store[\"SqliteWatcherObservationStore<br/>v6: + mode TEXT NULL, expand-only\"]\n  end\n\n  subgraph frozen[\"AiDe.Core/Terminal — frozen for Phase 1\"]\n    ITerminalSession[\"ITerminalSession<br/>Output never persisted\"]\n    ConPty[\"ConPtyTerminalSession<br/>emits terminal.start on aide.terminal.runtime\"]\n  end\n\n  Adapter[\"claude-agent-acp adapter<br/>node process, wraps Claude Code Agent SDK\"]\n  Repo[(\"Repository + worktrees\")]\n\n  ConductorEntry --> GovernedRunHost\n  GovernedRunHost --> EngineCatalog\n  GovernedRunHost --> ProviderRegistry\n  GovernedRunHost --> AcpEngineProcess\n  AcpEngineProcess --> AcpPeer\n  AcpPeer --> AcpLaneClient\n  GovernedRunHost --> AcpLaneClient\n  GovernedRunHost --> GoalBlock\n  GovernedRunHost --> WorktreeProvisioner\n  GovernedRunHost --> GovernedSessionSource\n  GovernedRunHost --> TerminalHostingLedger\n  GovernedRunHost --> LaneCohort\n  AcpLaneClient --> AcpRunEventMapper\n  AcpRunEventMapper --> LeaseAndSeams\n  GovernedSessionSource --> IngestHost\n  IngestHost --> Registrar\n  LaneCohort --> ClosedScoring\n  ClosedScoring --> ScoringService\n  LaneCohort -.writes mode.-> Store\n  ScoringService --> Store\n\n  AcpEngineProcess -.spawns.-> Adapter\n  AcpLaneClient -.stdio ACP.-> Adapter\n  WorktreeProvisioner -.git worktree add.-> Repo\n  TerminalHostingLedger -.listens, never calls.-> ConPty\n\n  class app,ConductorEntry,GovernedRunHost app\n  class plane,EngineCatalog,ProviderRegistry,GoalBlock,AcpEngineProcess,AcpPeer,AcpLaneClient,AcpRunEventMapper,WorktreeProvisioner,GovernedSessionSource,LeaseAndSeams,LaneCohort,TerminalHostingLedger,RunTriage plane\n  class watcher,IngestHost,Registrar,ClosedScoring,ScoringService,Store watcher\n  class frozen,ITerminalSession,ConPty frozen\n  class Adapter,Repo ext"
         }
       ],
-      "sourceSha256": "0aefdbcb950e0dd3fd2a3e90b259dbb02ed0b86139e4b792bed1cf24ac8ddf85"
+      "sourceSha256": "5e73ae8369785d9e626504c07a3bc0ac30a85456315fef7f71ec6a7079f026ae"
     },
     {
       "id": "architecture-loomkeeper",
@@ -2682,7 +2682,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "dd8c8707a4b52fbac08c4573037088fc1ed7dca1bc3dd35eaf8571ccfc3faf8c"
+      "sourceSha256": "1761951cad79a4571763ed62babe2f994fb1cbc1eb2d8119a5df2d9a0b4a50ed"
     },
     {
       "id": "note-addendum-a-reconciliation",
@@ -2719,6 +2719,41 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1ea8db8b7fd101a19b0bf55e4dcd90ea6c18a22efe9fe1e4294439aab54c4b86"
+    },
+    {
+      "id": "note-addendum-a-ruling-15a-governed-episode",
+      "path": "docs/notes/addendum-a-ruling-15a-governed-episode.md",
+      "title": "Decision note — Ruling 15a: GovernedSession → GovernedEpisode (GovernedLane was already taken)",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Ruling 15 ordered GovernedSession -> GovernedLane, but src/AiDe.Core/AgentPlane/ GovernedSessionSource.cs already has an unrelated concrete class named GovernedLane (the episode+worktree teardown composite) in the same namespace and file - a straight rename would not compile (CS0101). Amended: GovernedSession -> GovernedEpisode instead; the composite keeps the name GovernedLane untouched.",
+      "tags": [
+        "conductor",
+        "addendum-a",
+        "ruling-15",
+        "naming",
+        "agent-plane"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-a-ratification",
+          "rel": "refines"
+        },
+        {
+          "to": "note-addendum-a-reconciliation",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5eb051331e34c8c9d5a905fd23bd014aea8305d55252f88c7257045d851cbc77"
     },
     {
       "id": "note-ai-native-ide-architecture-review-depth",
@@ -3171,6 +3206,47 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "1bd178fc1b3ab1758d876b7042a7ad085fd161ca50d642c445d1671a93f8bd6c"
+    },
+    {
+      "id": "note-conductor-spec-errata-lane-rename",
+      "path": "docs/notes/conductor-spec-errata-lane-rename.md",
+      "title": "Spec erratum — v1.0 §6.2/§10/§11 name GovernedSessionSource; superseded by Ruling 15/15a",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Spec v1.0 names GovernedSessionSource in three places (§6.2, §10, §11). Addendum A3 / Ruling 15 (amended by Ruling 15a) supersedes the name: GovernedSessionSource -> GovernedLaneSource, and the type it returned, GovernedSession, -> GovernedEpisode. The spec HTML stays byte-frozen; this note is the correction, per the errata policy.",
+      "tags": [
+        "conductor",
+        "spec",
+        "errata",
+        "addendum-a",
+        "ruling-15",
+        "naming",
+        "agent-plane"
+      ],
+      "links": [
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-a-ratification",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-a-ruling-15a-governed-episode",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-policy",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "efcb369b898af50829d622f6cebe0acfbed35c046d0253ffdc5714f2b9e89535"
     },
     {
       "id": "note-conductor-spec-errata-policy",
@@ -11610,10 +11686,18 @@ window.DOCS_INDEX = {
         {
           "to": "architecture",
           "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-policy",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-conductor-spec-errata-lane-rename",
+          "rel": "relates-to"
         }
       ],
       "diagrams": [],
-      "sourceSha256": "35035d0bb72128cee32d8d3a6ba348e56debae97bb3b582c8dc8e281d7c2b589"
+      "sourceSha256": "2578ab82138b240b64d06c6a62c021ae3c413bcd7e2dc3a853b704a5252eccff"
     },
     {
       "id": "spec-editor-surfaces",
@@ -12149,5 +12233,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "58fa21c4d77a457f76bdc359af6d5064ee15fa7a54aee1214ef758a1b5406537"
+  "graphSha256": "186dbdbf794d31b52354331880e92e61c139f7fd1848f9746741eaade5c3d992"
 };
