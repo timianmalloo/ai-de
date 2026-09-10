@@ -41,10 +41,9 @@ Optionally a plan id or path, a track subset, and a mode. No input: the newest p
 ```
 coord worktree new --branch <work-name> --session <track-id>   # named for the WORK, not the session (WT5)
 # then, INSIDE the new tree:
-coord install                                                  # .git/config is per-clone. Every tree.
-coord doctor
+coord doctor                                                   # read the inherited state back
 ```
-The `coord install` step inside each tree is not optional and is the one people skip: `.git/config` is never committed, so a fresh worktree has the drivers *declared* and *unregistered*, and its first merge conflicts by hand in exactly the generated files the registry was supposed to handle.
+**Never install from inside a worktree** — `coord install` refuses there, and the refusal is the point. A linked worktree shares `.git/config` *and* `.git/hooks` with its parent, so it already carries the drivers and the pre-commit floor; an install there does not add a registration, it **overwrites the repository's** with a path inside a tree that WT8 cleanup will delete. The install belongs in the **primary checkout, once per clone**. `coord doctor` in the new tree confirms the inherited registration, and reports `COORD-DRIVER-PATH-FOREIGN` if some earlier session already repointed it.
 
 **Stage 3 — Dispatch with a contract, never a topic.** Every delegation carries, explicitly (GO7, class CTX-F):
 - **the exact goal and its done-when** — the track's plan row, verbatim;
@@ -76,7 +75,7 @@ A budget with no convergence condition is a timer, not a contract. **A budget fi
 - [ ] A plan existed and parsed; if not, `/prepare-for-coordination` was run first and its plan is the one executed.
 - [ ] `coord doctor` was run **before** dispatch and the layer was clean.
 - [ ] Harness delegation capability was qualified per dimension; nothing unverified was used as though enforced.
-- [ ] Every track ran in **its own worktree**, with `coord install` run **inside that tree**.
+- [ ] Every track ran in **its own worktree**; the layer was installed **once, in the primary checkout**, and `coord doctor` in each tree confirmed the inherited registration.
 - [ ] Every delegation carried goal, done-when, owned paths, tier, fan-out cap, budget, convergence condition, exit evidence and not-in-scope.
 - [ ] Every returned exit evidence was **verified**, not accepted.
 - [ ] Seam requests were used for cross-track needs; no file was authored by two tracks.

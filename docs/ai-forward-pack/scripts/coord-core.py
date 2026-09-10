@@ -566,7 +566,12 @@ def _build_parser():
                     help="cleanup: actually delete. Off by default - deletion is irreversible")
     met = sub.add_parser("metrics", help="the four measures this layer exists to move")
     met.add_argument("--json", action="store_true")
-    sub.add_parser("install", help="write the pre-commit hook; print the settings entry")
+    inst = sub.add_parser("install",
+                          help="write the pre-commit hook; print the settings entry")
+    inst.add_argument("--force", action="store_true",
+                      help="install from a linked worktree anyway. It overwrites the "
+                           "repository's shared registration with a path that dies with "
+                           "this tree - the recorded exception, never the default")
 
     # --- Phase 3 ---
     cls = sub.add_parser("class", help="what class is this artifact?")
@@ -628,6 +633,7 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 from coord_ids import new_id, resolve_prefix          # noqa: E402  (path set above)
+from repo_identity import canonical_project             # noqa: E402  (path set above)
 
 
 # --- register merges: the half that unique ids do NOT solve ------------------
@@ -866,26 +872,11 @@ def regen_command(root, path):
 def _canonical_project(repo):
     """The project name, derived from git -- never `basename(cwd)` (PACK-P).
 
-    Run from a worktree, `basename` stamps the WORKTREE folder into a committed generated
-    file. The remote is the canonical answer; the primary worktree is the fallback.
+    Delegates to `repo_identity.canonical_project`. This carried its own copy of the same
+    resolution ladder; two correct copies of one quantity is DM7/ONE-A, and copies only
+    diverge later, when one of them is edited. One implementation, five callers.
     """
-    url, _err = _git(repo, "config", "--get", "remote.origin.url")
-    name = (url or "").strip().rstrip("/")
-    if name:
-        name = name.rsplit("/", 1)[-1]
-        if name.endswith(".git"):
-            name = name[:-4]
-        if name:
-            return name
-    out, _err = _git(repo, "worktree", "list", "--porcelain")
-    for line in (out or "").splitlines():
-        if line.startswith("worktree "):
-            tail = line[len("worktree "):].strip().replace("\\", "/").rstrip("/")
-            base = tail.rsplit("/", 1)[-1]
-            if base:
-                return base
-    base = str(repo).replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
-    return base or "repo"
+    return canonical_project(str(repo))
 
 
 def pack_defaults(repo):
@@ -1088,8 +1079,10 @@ def cmd_classify_init(root, repo, candidates=None, force=False, timeout=180):
         return 3
     print("")
     print("Next: `coord install` declares the drivers in .gitattributes and writes the")
-    print("pre-commit floor. .git/config is per-clone, so every fresh clone and every new")
-    print("worktree needs `coord install` again - `coord doctor` is how you find out.")
+    print("pre-commit floor. Run it ONCE PER CLONE, in the primary checkout: .git/config")
+    print("and .git/hooks are shared by every worktree, so a worktree inherits the")
+    print("registration and an install inside one overwrites it. `coord doctor` reads the")
+    print("state back - including whether the registered path outlives the tree.")
     return 0
 
 
@@ -1896,6 +1889,9 @@ def cmd_worktree(root, repo, action, cwd, now, session=None, agent=None,
                                 "at": now, "worktree": _worktree_key(target)})
         print("worktree ready\n  branch    {}\n  path      {}\n  next      cd {}"
               .format(name, target, target))
+        print("  install   NOT needed here: this tree shares .git/config and .git/hooks"
+              "\n            with the primary, so it already carries the drivers and the"
+              "\n            pre-commit floor. Installing here would OVERWRITE them.")
         if session:
             print("  session   {} registered there".format(session))
         return 0
@@ -2101,7 +2097,37 @@ def cmd_metrics(root, repo, as_json):
     return 0
 
 
-def cmd_install(repo, root):
+INSTALL_IN_WORKTREE = """COORD-INSTALL-IN-WORKTREE  refusing to install from a linked worktree.
+
+A git worktree SHARES `.git/config` and `.git/hooks` with its parent -- there is no
+per-worktree config unless `extensions.worktreeConfig` is set, and it is off by default.
+"Per-clone" is true; "therefore per-worktree" does not follow. So an install here does not
+ADD a registration: it OVERWRITES the repository's one registration, and the pre-commit
+floor with it, using a path inside THIS tree.
+
+The tree is temporary and WT8 cleanup deletes it. Every later merge of the paths
+.gitattributes declares would then invoke a script that is not there -- and there is no
+signature before that moment, because the path resolves and names a byte-identical script.
+
+  remedy    the primary checkout already carries the registration this tree inherits, so
+            there is nothing to do here. If it does not, install THERE:
+              cd {primary}
+              coord install
+  measured  2026-09-09: an install inside a worktree repointed both merge.coord-*.driver
+            and the shared pre-commit hook at that tree's copy of the script.
+  override  --force, for the recorded exception. It writes a path that dies with this tree.
+"""
+
+
+def cmd_install(repo, root, force=False):
+    # The instruction this refusal replaces lived in nine pack surfaces and was wrong in
+    # every one of them. A control at the "make it impossible" rung, because the harm is
+    # invisible until the tree is gone and `doctor` called the drivers effective throughout.
+    if not force and session_tree_kind(repo, os.getcwd()) == "worktree":
+        # None is NOT "worktree": an unresolved tree is not evidence of a violation (R4).
+        print(INSTALL_IN_WORKTREE.format(primary=_safe(str(repo), 300)))
+        return 2
+
     hooks, err = _git(repo, "rev-parse", "--git-path", "hooks")
     if err:
         print("COORD-NOT-CHECKED-GIT  {}".format(_safe(err, 200)))
@@ -2157,6 +2183,11 @@ def _install_merge_driver(repo, root):
     .git/config is per-clone and NEVER committed, which is why `coord doctor` exists and
     why the value is READ BACK here rather than assumed -- the recorded CTRL-E instance was
     a `git config` that failed while the script reported success.
+
+    Per-clone is NOT per-worktree. A linked worktree shares this exact file with its parent
+    (git writes a per-worktree config only under `extensions.worktreeConfig`, off by
+    default), so there is one registration per REPOSITORY and `cmd_install` refuses to
+    write it from a tree that will not outlive it.
     """
     try:
         entries = load_registry(root)
@@ -2308,7 +2339,11 @@ def driver_status(repo):
     `git check-attr` reports the DECLARATION whether or not a driver exists, and
     `git config` reports the registration without knowing what it covers. Only comparing
     the two finds the gap -- and .git/config is per-clone and never committed, so a fresh
-    clone or a new worktree is exactly where the gap appears.
+    CLONE is exactly where the gap appears. A worktree is not: it shares the parent's
+    config and inherits the registration.
+
+    This answers "is a driver registered", which is not the same question as "will its
+    path still be there next month" -- see driver_path_status.
     """
     declared, err = _git(repo, "check-attr", "--all", "--", ".")
     names = set()
@@ -2331,6 +2366,91 @@ def driver_status(repo):
             "missing": missing, "covered_paths": covered,
             # R4: a scan of zero tracked files has not established "none declared".
             "files_scanned": len((attrs or "").splitlines())}
+
+
+# The driver command is `"<python>" "<script>" merge-<class> %A %O %B %P`. Read the script
+# back out of it rather than re-deriving it: what matters is the path git will actually run.
+_DRIVER_SCRIPT = re.compile(r'"([^"]*coord-core\.py)"|(\S*coord-core\.py)')
+
+
+def driver_path_status(repo):
+    """Will the registered driver path OUTLIVE the tree that wrote it? (measured defect)
+
+    `driver_status` asks whether a driver is declared and registered. Both were true in the
+    consuming repo that found this, throughout -- and the registration pointed inside a
+    temporary worktree, because the pack told every agent to run `coord install` in one.
+    A worktree SHARES .git/config, so that install did not add a registration, it replaced
+    the repository's. WT8 cleanup then deletes the tree, and every declared path merges by
+    invoking a script that is not there.
+
+    There is no signature while the tree exists: the path resolves and names a byte-identical
+    script. So the question `doctor` has to ask is not "is a driver registered" but "where
+    does it point, and does that place outlive this merge". The primary checkout is the
+    answer, because it is the only tree the repository cannot lose.
+
+    The hazard is narrow and worth stating precisely: a path inside a LINKED WORKTREE,
+    which WT8 cleanup deletes. A path merely outside the repository is a different and
+    legitimate shape -- a global or out-of-tree install of the scripts -- and reporting it
+    would be a false positive, so this does not.
+
+    Returns one row per registered `merge.coord-*.driver`:
+      ok | missing | foreign | unreadable | unchecked
+    `unchecked` is a real answer and never collapses to `ok` (R4).
+    """
+    out, _err = _git(repo, "config", "--get-regexp", r"^merge\.coord-.*\.driver")
+    rows = []
+    if not (out or "").strip():
+        return rows
+    records, err = worktree_inventory(repo)
+    linked, checked = [], True
+    if err or not records:
+        checked = False                     # R4: unresolved is not evidence of health
+    else:
+        for record in records[1:]:          # records[0] is the primary checkout
+            try:
+                linked.append(Path(record["path"]).resolve())
+            except (OSError, KeyError):
+                checked = False
+    for line in out.splitlines():
+        key, _sp, command = line.partition(" ")
+        parts = key.split(".", 2)
+        name = parts[1] if len(parts) >= 3 else key
+        match = _DRIVER_SCRIPT.search(command)
+        if not match:
+            rows.append({"name": name, "path": command.strip(), "verdict": "unreadable",
+                         "detail": "no coord-core.py path in the registered command"})
+            continue
+        raw = match.group(1) or match.group(2)
+        try:
+            resolved = Path(raw).resolve()
+            exists = resolved.exists()
+        except OSError:
+            rows.append({"name": name, "path": raw, "verdict": "unchecked",
+                         "detail": "the path could not be resolved on this filesystem"})
+            continue
+        if not exists:
+            rows.append({"name": name, "path": raw, "verdict": "missing",
+                         "detail": "no file there - every declared path now merges by"
+                                   " invoking a script that is not present"})
+            continue
+        if not checked:
+            rows.append({"name": name, "path": raw, "verdict": "unchecked",
+                         "detail": "this repository's worktrees could not be enumerated"})
+            continue
+        doomed = next((tree for tree in linked
+                       if resolved == tree or tree in resolved.parents), None)
+        rows.append({"name": name, "path": raw,
+                     "verdict": "foreign" if doomed else "ok",
+                     "detail": "" if not doomed else
+                     "inside the linked worktree {} - that tree is temporary, and cleanup"
+                     " takes the driver with it".format(doomed)})
+    return rows
+
+
+_DRIVER_PATH_CODES = {"missing": "COORD-DRIVER-PATH-MISSING",
+                      "foreign": "COORD-DRIVER-PATH-FOREIGN",
+                      "unreadable": "COORD-DRIVER-PATH-UNREADABLE",
+                      "unchecked": "COORD-NOT-CHECKED-DRIVER-PATH"}
 
 
 def cmd_doctor(root, repo):
@@ -2356,8 +2476,8 @@ def cmd_doctor(root, repo):
             status["covered_paths"], ", ".join(status["missing"])))
         print("  registered  no - `git config merge.<name>.driver` is unset in this clone")
         print("  effect      those files will conflict normally instead of regenerating")
-        print("  remedy      run `coord install` in this clone; .git/config is per-clone"
-              " and never committed")
+        print("  remedy      run `coord install` in the PRIMARY checkout of this clone;"
+              " .git/config is per-clone and never committed (a worktree shares it)")
         problems += 1
     elif status["declared"]:
         print("merge driver     effective - {} declared, {} registered".format(
@@ -2371,6 +2491,18 @@ def cmd_doctor(root, repo):
     else:
         print("merge driver     none declared ({} tracked file(s) scanned)".format(
             status["files_scanned"]))
+
+    for row in driver_path_status(repo):
+        if row["verdict"] == "ok":
+            continue
+        print("driver path      {}  [{}]".format(row["verdict"].upper(),
+                                                 _DRIVER_PATH_CODES[row["verdict"]]))
+        print("  driver      merge.{}.driver".format(row["name"]))
+        print("  points at   {}".format(_safe(row["path"], 300)))
+        print("  because     {}".format(row["detail"]))
+        print("  remedy      re-run `coord install` in the PRIMARY checkout, the only"
+              " tree this repository cannot lose")
+        problems += 1
 
     owed = regen_owed(root)
     if owed:
@@ -2522,7 +2654,7 @@ def main(argv=None):
         return cmd_guard(repo, args.fix)
 
     if args.cmd == "install":
-        return cmd_install(repo, root)
+        return cmd_install(repo, root, force=args.force)
 
     if args.cmd == "classify":
         return cmd_classify_init(root, repo, force=args.force, timeout=args.timeout)

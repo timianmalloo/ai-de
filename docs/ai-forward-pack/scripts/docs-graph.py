@@ -995,7 +995,16 @@ def project_identity(root, explicit=None):
                 return str(index["project"])
         except (OSError, UnicodeError, ValueError):
             pass
-    return os.path.basename(os.path.abspath(os.path.join(root, "..")))
+    # Never basename(cwd): from a linked worktree that bakes the WORKTREE name into the
+    # index, and the index is then read back as the answer above -- self-perpetuating (PACK-P).
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    try:
+        from repo_identity import canonical_project
+    except ImportError:
+        return os.path.basename(os.path.abspath(os.path.join(root, "..")))
+    return canonical_project(os.path.join(root, ".."))
 
 
 def project_root_id(entries):

@@ -575,7 +575,21 @@ def find_template():
 
 
 def project_name(root):
-    return os.path.basename(os.path.abspath(os.path.join(root, "..")))
+    """The repo's canonical name -- never the worktree folder it ran in (class PACK-P).
+
+    A SOFT import, for the same reason as the allocator: this script ships to repositories
+    whose installed pack may predate repo_identity.py, and an audit render must not crash
+    there. The legacy basename survives only on that path, and `test_repo_identity.py` pins
+    the supported path so the fallback cannot quietly become the normal one.
+    """
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    try:
+        from repo_identity import canonical_project
+    except ImportError:
+        return os.path.basename(os.path.abspath(os.path.join(root, "..")))
+    return canonical_project(os.path.join(root, ".."))
 
 
 def render(root, project=None):

@@ -83,6 +83,8 @@ python3 docs/ai-forward-pack/scripts/audit-log.py start --session "<id>"
 
 This persists the stamp keyed by session; the closing `append` (AL5) then records `started_at` and `duration_seconds` **automatically** — there is no flag to remember and no variable to thread through, which is what makes the measurement *default-on* rather than opt-in. An explicit `--started <ISO>` overrides it when a caller genuinely knows better.
 
+**One marker measures one run.** The `append` that reads the stamp also **consumes** it, so a second `append` under the same session id records no duration until the next `start`. That is the point of *"as part of its grounding step"* — **one `start` per run, not one per session** — and one session legitimately holds many runs, each re-marking at its own grounding. A session that shows a single duration across many entries did not hit a limit; the later runs skipped AL4a. The consumption is deliberate and is the thing preventing a stale stamp from attaching a plausible **wrong** duration to an unrelated entry (IO8: degrade to absent, never to a wrong number).
+
 **Why this is mandatory rather than nice-to-have:** the log recorded a single `datetime` and no duration for its first 750 entries, so *not one* measured elapsed time existed and a later analysis had to **model** run cost instead of reading it. You cannot backfill a measurement nobody took. Degradation is deliberate and safe — an absent, unparseable, or clock-skewed start yields **no duration**, never a wrong one (IO8).
 
 **AL5 — Append an audit entry as the last action.** Every skill, as part of its **last action** (alongside the Discoverability Mandate, V10), **MUST** append an audit-log entry recording the run:

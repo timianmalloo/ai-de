@@ -428,15 +428,16 @@ def repo_identity(path):
 
 def repo_label(path):
     """A canonical, worktree-independent name for a repo (class PACK-P: a generated artifact
-    must never stamp the worktree folder name): the origin owner/name when there is one, else
-    the basename of the PRIMARY checkout from `git worktree list`, else the basename."""
-    ident = repo_identity(path)
-    if ident["slug"]:
-        return ident["slug"].split("/")[-1]
-    first = git(["worktree", "list", "--porcelain"], path).splitlines()
-    if first and first[0].startswith("worktree "):
-        return os.path.basename(first[0][len("worktree "):].strip())
-    return os.path.basename(os.path.abspath(path))
+    must never stamp the worktree folder name).
+
+    Delegates to `repo_identity.canonical_project` -- this was the third correct copy of one
+    resolution ladder, and copies only diverge later (DM7/ONE-A).
+    """
+    _here = os.path.dirname(os.path.abspath(__file__))
+    if _here not in sys.path:
+        sys.path.insert(0, _here)
+    from repo_identity import canonical_project
+    return canonical_project(path)
 
 
 def claude_slug(path):
