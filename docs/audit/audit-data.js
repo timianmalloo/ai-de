@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T18:10:48Z",
+  "generated": "2026-09-10T18:59:04Z",
   "audit": [
     {
       "actor": null,
@@ -10610,6 +10610,42 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "verification_executed": true,
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M26AZMDETZHCG7CJ1PBSFR6E",
+      "shortname": "f0-session-object",
+      "datetime": "2026-09-10T18:58:47Z",
+      "session": "f0-session-object",
+      "prompt": "Execute node F0 of docs/plans/conductor-front-door.md: land the Session object and its on-disk path contract (Addendum A3) in src/AiDe.Core/Sessions/, TDD red-first, full gate set green, in the worktree C:\\Projects\\ai-de-feature-session-object on branch feature/session-object.",
+      "summary": "SessionConfig/SessionId/SessionPaths/SessionConfigStore/SessionEvent landed in the new src/AiDe.Core/Sessions/ namespace: session.json (not .yaml, Ruling 23), the reserved-and-unused runs/<run-id>.jsonl path, backend toggles that apply to new runs only and emit an append-only session.open/session.config event, and session.open/session.config proven to ride RunEvent's open Kind string with no schema change. Added tools/verify-r14b2-session-naming.py (--self-test) wired into build.yml as its own step. 23 new tests (4 files), all TDD red-first with an observed compile-red plus two deliberate assertion-level mutations (session.json->.yaml; append->overwrite on session-events.jsonl), both reverted after observing red. dotnet build -c Release: 0 warnings. Full gate set run bare: all green except two pre-existing, pre-F0 failures unrelated to this slice (verify-derived-views — fixed by this entry's own regeneration pass; the goal-state gate vs origin/main, which is stale by ~467 historical audit entries predating this session and is not F0's to repair).",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "claude-opus-5-1m",
+      "artifacts": [],
+      "tags": [
+        "conductor",
+        "addendum-a",
+        "session",
+        "F0"
+      ],
+      "outcome": "success",
+      "goal": "Land the Session object and its on-disk path contract - the user-facing container Addendum A3 defines.",
+      "done_when": "every F0 clause (session.json path; reserved run-log path unused; backend toggles apply to new runs only and emit a session event; session.open/session.config ride RunEvent's open kind with no schema change; R14 b2 naming lint wired into build.yml) passes as a test; dotnet build -c Release clean with zero warnings; dotnet test green; the full gate set green run bare.",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "2178e3d74276190e6f7b3b01473192fc784db7d7",
+        "short": "2178e3d74",
+        "branch": "feature/session-object",
+        "pushed": null
       }
     }
   ],

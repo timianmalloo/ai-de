@@ -1,2 +1,3 @@
+docs/_site/index.html
 docs/audit/audit-data.js
 docs/docs-index.js

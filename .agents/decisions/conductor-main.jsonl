@@ -126,3 +126,10 @@
 {"agent": "conductor-main", "at": 1789065667.3768127, "code": null, "kind": "allowed", "path": ".agents/log/web-host.jsonl", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1789065667.3768127, "code": null, "kind": "allowed", "path": "docs/docs-index.js", "session": "conductor-main", "wi": ""}
 {"agent": "conductor-main", "at": 1789065667.3768127, "code": null, "kind": "allowed", "path": "docs/plans/conductor-front-door.md", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789067148.5020282, "code": null, "kind": "allowed", "path": ".agents/decisions/conductor-main.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789067148.5020282, "code": null, "kind": "allowed", "path": ".agents/decisions/f0-session-object.jsonl", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789067148.5020282, "code": null, "kind": "allowed", "path": "docs/_meta.json", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789067148.5020282, "code": null, "kind": "allowed", "path": "docs/_site/index.html", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789067148.5020282, "code": null, "kind": "allowed", "path": "site/collaboration.html", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789067148.5020282, "code": null, "kind": "allowed", "path": "site/index.html", "session": "conductor-main", "wi": ""}
+{"agent": "conductor-main", "at": 1789067148.5020282, "code": null, "kind": "allowed", "path": "site/model.html", "session": "conductor-main", "wi": ""}
