@@ -6204,6 +6204,47 @@ window.DOCS_INDEX = {
       "sourceSha256": "1e69075fe508c573e0487e1a1ae1973dbedc4331d09eecd65d4981e8cac3a590"
     },
     {
+      "id": "plan-conductor-front-door",
+      "path": "docs/plans/conductor-front-door.md",
+      "title": "Execution graph — Phase 1, Session front door (R13–R16)",
+      "type": "doc",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "The second Phase-1 delivery: Addendum A's front door, as six mostly serial nodes. Carries the CodeMirror spike result and the one decision it left open - how the web surface is hosted - plus the E7 surface list, red-first tests per acceptance bullet, and a budget derived from Phase 1's three measured node durations.",
+      "tags": [
+        "execution-graph",
+        "conductor",
+        "addendum-a",
+        "session",
+        "composer",
+        "canvas",
+        "front-door"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-a-ratification",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-addendum-a-reconciliation",
+          "rel": "depends-on"
+        },
+        {
+          "to": "plan-conductor-programme",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "617097bbde7ba77e90604cc9054bc8ff483abebab86d80ae548c9ffa579dcb8f"
+    },
+    {
       "id": "plan-conductor-programme",
       "path": "docs/plans/conductor-programme.md",
       "title": "Execution graph — AI-DE Conductor programme, Phase 1 expanded",
@@ -12273,5 +12314,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "931f0a4014e6219482002a275ea41ef6ff7a7bd1d4e0452e9c865e9504e900f2"
+  "graphSha256": "86fd630d48db90bd08a2754c24263a5804b7ae3d55df96b0adfc41547cdb5949"
 };

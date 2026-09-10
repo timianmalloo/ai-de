@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T17:09:08Z",
+  "generated": "2026-09-10T17:49:52Z",
   "audit": [
     {
       "actor": null,
@@ -10506,6 +10506,35 @@ window.AUDIT_DATA = {
         "verification_path": true,
         "verification_executed": true
       }
+    },
+    {
+      "id": "al-01M2671DQ6M613NWDDCMT22F79",
+      "shortname": "cleanup-correction-phantom-tabs",
+      "datetime": "2026-09-10T17:49:52Z",
+      "session": "18fe7a5a-c1b6-434e-8033-3f0c4e841f24",
+      "prompt": "i still see multiple ai-de terminal hosts that look like phantom hosts because you only have the main session and two sub-agents going ... so i dont think you actually cleaned up the stale terminal hosts",
+      "summary": "MY EARLIER CLEANUP CLAIM WAS WRONG, and the operator was right to push. I reported the terminal-host question resolved after tracing conhost.exe parentage; the operator's screenshot named the actual thing - AiDe.Core.TerminalHost.exe from worktree paths I had deleted. MEASURED PROPERLY THIS TIME, twice: Win32_Process sees NO AiDe.Core.TerminalHost.exe at all, and exactly one process on the machine references 'ai-de' in its executable path or command line (my own shell). So there is no process leak. WHAT THE OPERATOR IS SEEING: I enumerated visible top-level windows via EnumWindows and resolved each to its owning PID. All ten ai-de-titled windows belong to ONE process - WindowsTerminal.exe PID 11772. They are TABS, not processes. Nine still display the last title of AiDe.Core.TerminalHost.exe runs from ai-de-feature-conductor-agent-plane, ai-de-chore-lane-rename and ai-de-feature-conductor-host - worktrees that no longer exist. The processes exited; Windows Terminal retained the tabs. The operator's word 'phantom' was exactly right. WHY I MISSED IT: my scan matched on process NAME and enumerated running processes, so a dead process with a surviving tab button was invisible to every query I ran. That is the same shape as DC-113 and DC-116 - I measured the thing I could see rather than the thing that was reported. WHAT I DELIBERATELY DID NOT DO: PID 11772 also owns the tab titled 'AI-DE Conductor specification phase 1 implementation' - the operator's own Claude Code session. Killing it to clear nine stale tabs would have closed the session running this work. Its live children are 3 wta.exe + 3 OpenConsole.exe (Windows Terminal's own infrastructure) and one 23-hour-old powershell.exe; none is an ai-de process. Closing the stale tabs is a UI action in the operator's terminal, not something to force from outside, and I am reporting it rather than reaching for it. STANDING FINDING for the ConPTY conformance tests: AiDe.Core.TerminalHost.exe is launched as a console app, so with Windows Terminal as the default terminal application each run adopts a tab that survives the process. Every full test run leaves visual debris the test suite never cleans, which is why nine accumulated across a day of runs.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "claude-opus-5",
+      "artifacts": [],
+      "tags": [
+        "cleanup",
+        "correction",
+        "process-leak",
+        "conpty"
+      ],
+      "outcome": "success",
+      "goal": "Correct my own cleanup claim: identify what the operator is actually seeing rather than what I assumed I had cleaned",
+      "done_when": "The nine ai-de terminal-host windows are resolved to their real owner and their true process state, my earlier claim is corrected on the record, and no action is taken that would disrupt the operator's own session",
+      "tier": "T1",
+      "fan_out": 0,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true
+      },
+      "supersedes": "al-01M264PTY4Z7FC6VM08XNZJ40S"
     }
   ],
   "changes": [
