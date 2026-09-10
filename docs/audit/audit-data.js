@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T23:03:22Z",
+  "generated": "2026-09-10T23:08:13Z",
   "audit": [
     {
       "actor": null,
@@ -10966,6 +10966,41 @@ window.AUDIT_DATA = {
       "signals": {
         "verification_executed": true,
         "acceptance_met": true
+      }
+    },
+    {
+      "id": "al-01M26RCFENQHARS9HH0AC45RG6",
+      "shortname": "FX3: three containment boundaries fixed, and the gate that stops a fourth",
+      "datetime": "2026-09-10T22:53:00Z",
+      "session": "fx3-containment-boundaries",
+      "prompt": "Node FX3 — three live sites of a class already fixed twice, one of them a declared security boundary, plus the gate that stops a fourth.\n\nPart 1 — fix the three live separator-terminated containment sites in AiDe.Core (FixtureExtractor.cs:98, KnowledgeExtractor.cs:484, ProjectionService.cs:1216), all of which fold case unconditionally. Open each and establish what it actually does before changing it; if any is not the shape described, stop and report. On the security one (FixtureExtractor), be precise about exposure: say what an attacker-controlled archive could actually do on POSIX and whether any production caller reaches it. Use the idiom that already exists (ProofPackVerifier's platform-conditional comparison); do not invent a second spelling; if the right move is to lift it into a shared helper, say so and do it once. Red-first for each of the three; CI is the oracle for the POSIX-only halves; where a defect cannot be shown on Windows, assert the platform's own answer rather than skipping.\n\nPart 2 — build the narrow deterministic gate (tools/verify-containment-comparisons.py, stdlib only) recommended by the sibling node: refuse a hardcoded StringComparison literal at a separator-terminated containment check, require a named platform-conditional helper. Do not re-litigate the rejected FileSystemPath type distinction. Requirements: a --self-test planting each failure mode; repo root via git rev-parse --show-toplevel with the self-test run from a non-root directory; scan scope stated in the docstring (root, recursion, token set, allowlist) with a named allowlist constant; observe it failing before it passes; wire into build.yml's gates job bare plus a paired --self-test step.\n\nConstraints: TreatWarningsAsErrors, floors App 456 / Core 2041 (portable 1889 + non-portable 152), no --update, App tests via PowerShell only (DC-117), regenerate-derived before pushing. Push the branch only.",
+      "summary": "THREE CONTAINMENT SITES FIXED AND ONE GATE BUILT, on fix/containment-boundaries.\n\nALL THREE SITES MATCHED THE BRIEF'S DESCRIPTION and were verified by reading before editing. Fixed by LIFTING the rule, not copying it: ProofPackVerifier had consolidated it behind a PRIVATE member and RepositoryCorrection spelled the same ternary out one file away, under a comment already reading \"one rule, not a second idiom\". Copying a private member into three more files is the defect, not the fix. The rule is now the public AiDe.Core.PathComparison.ForThisFileSystem and both prior spellings are deleted; exactly one platform-conditional path comparison remains in src/.\n\nTHE GATE WAS OBSERVED FAILING IN CI ON LINUX BEFORE IT PASSED. Run 34538367468 (deliberately pushed un-fixed): the `Containment-comparison gate` step exit 1, naming exactly FixtureExtractor.cs:98, KnowledgeExtractor.cs:484 and ProjectionService.cs:1216 -- 3 findings against the 66 StartsWith calls carrying a StringComparison literal in src/, zero false positives; the paired `Containment-comparison gate -- self-test` step passed in the same run. Its --self-test plants FIVE failure modes (inline shape, one-hop indirect shape, an approval resolving to nothing, an approval that is not platform-conditional, an empty corpus) and asserts a clean tree passes, run as a SUBPROCESS from a NON-ROOT directory so that git rev-parse --show-toplevel is itself exercised.\n\nTHE INDIRECTION HALF WAS LOAD-BEARING AND THE BRIEF UNDERSTATED IT. The brief described the shape as x.StartsWith(<root-ish> + separator, <comparison>), which is syntactically true of only ONE of the three sites: KnowledgeExtractor and ProjectionService both build the separator-terminated root into a LOCAL one statement above the comparison. An inline-only matcher would have found one site and reported the other two clean -- DC-006 in the shape that matters here.\n\nSECURITY EXPOSURE ON FixtureExtractor, STATED HONESTLY: NO PRODUCTION CALLER REACHES IT. The only production WorkspaceCore.Open caller (AiDe.Daemon/Program.cs:177) passes WorkspaceExtractors.Default(), where FixtureExtractor sits in the composite's FALLBACK slot -- reached only by a scope id carrying none of the seven routed prefixes, and discovery (CSharpScopeDiscovery) emits only those seven. The `extractor ?? new FixtureExtractor()` default in WorkspaceCore.Open is never taken in production either. Beyond reachability, the case fold at that site is not OBSERVABLE at all: root is Path.GetFullPath(RootPath) and every path EnumerateFiles yields is that same string with segments appended, so the prefix test is true by construction whatever comparison it is given. There is also no archive extraction anywhere in this class -- it reads *.facts and *.md off disk -- so the brief's \"attacker-controlled archive\" framing does not apply to it.\n\nTWO FURTHER DEFECTS MEASURED AT THAT SITE, both reported, neither fixed (each a separate change): (1) its comment claimed \"a junction or symlink that escapes the fixture root must not be extracted (P1-FS)\". MEASURED on .NET 10.0.11: Directory.EnumerateFiles TRAVERSES a junction and Path.GetFullPath does NOT resolve one, so the containment test returns true and the escaped file IS read. The comment now states what the line does rather than what it was hoped to do. (2) a RootPath ending in a separator makes `root + separator` a DOUBLE separator, and then EVERY file reports as escaping the scope root.\n\nLOCAL VERIFICATION on Windows before this commit: solution builds clean under TreatWarningsAsErrors; AiDe.Core.Tests 2045/2045 passed (floor 2041), AiDe.App.Tests 456/456 passed (floor 456, run via the PowerShell console host per DC-117). Four new portable tests. verify-test-run.py --update was NEVER run. The confirming both-platform CI run is the push that carries this commit.",
+      "kind": "skill",
+      "skill": null,
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "tools/verify-containment-comparisons.py",
+        "src/AiDe.Core/PathComparison.cs",
+        "tests/AiDe.Core.Tests/ContainmentBoundariesFoldCaseOnlyWhereTheFileSystemDoesTests.cs"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "Fix the three live separator-terminated containment sites in AiDe.Core and add the deterministic gate that refuses a fourth.",
+      "done_when": "Each of the three sites verified against the brief then fixed with one shared platform-conditional rule; red-first observed for each; tools/verify-containment-comparisons.py with --self-test wired into the gates job and observed failing on the un-fixed shape; CI green on both platforms; counts reported.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "cdbe7449774046c8b257d60a4f743d24accc31be",
+        "short": "cdbe74497",
+        "branch": "fix/containment-boundaries",
+        "pushed": false
       }
     }
   ],
