@@ -1,6 +1,6 @@
 using AiDe.Core.AgentPlane;
 
-namespace AiDe.App.Workbench.Sessions;
+namespace AiDe.Core.Presentation.Sessions;
 
 /// <summary>
 /// Where a lane's <c>permission.request</c> becomes visible to the operator, and the recorded

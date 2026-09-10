@@ -1,8 +1,11 @@
 using System.Reflection;
+using System.Windows;
+using System.Windows.Controls;
 using AiDe.App.Conductor;
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Sessions;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -30,7 +33,7 @@ public sealed class TheNewSessionSheetTests : IDisposable
         new ProviderRow("openai", ProviderAuth.Subscription, [new ProviderAccount("chatgpt-personal", AccountHealth.QuotaDegraded)]),
     ]);
 
-    private NewSessionSheetModel Sheet(ProviderRegistry? registry = null, Func<string, bool>? login = null, Func<ProviderRegistry>? reprobe = null) =>
+    private NewSessionSheetViewModel Sheet(ProviderRegistry? registry = null, Func<string, bool>? login = null, Func<ProviderRegistry>? reprobe = null) =>
         new(_root, _root, registry ?? Registry(), Now, login, reprobe);
 
     // ── binding (R13 b1) ──────────────────────────────────────────────────────────────────
@@ -40,14 +43,14 @@ public sealed class TheNewSessionSheetTests : IDisposable
     {
         // A2: a session cannot exist unbound. Unreachable rather than refused — there is no path
         // through this type that reaches SessionConfigStore.Create without a workspace.
-        Assert.Throws<ArgumentException>(() => new NewSessionSheetModel("", _root, Registry(), Now));
-        Assert.Throws<ArgumentException>(() => new NewSessionSheetModel(_root, "", Registry(), Now));
+        Assert.Throws<ArgumentException>(() => new NewSessionSheetViewModel("", _root, Registry(), Now));
+        Assert.Throws<ArgumentException>(() => new NewSessionSheetViewModel(_root, "", Registry(), Now));
     }
 
     [Fact]
     public void WithAnActiveWorkspaceTheSheetOpensPreBound()
     {
-        NewSessionSheetModel? shown = null;
+        NewSessionSheetViewModel? shown = null;
 
         var flow = new NewSessionFlow(
             activeWorkspaceRoot: () => _root,
@@ -208,17 +211,74 @@ public sealed class TheNewSessionSheetTests : IDisposable
     }
 
     [Fact]
-    public void TheLeaseIsDerivedAndDisplayed()
+    public void NoLeaseLeavesTheSheet()
     {
+        // RULING 42. A lease belongs to the goal block (§14.3), and a lease derived here could only
+        // cover everything — which GovernedRunRequest would then have accepted as a real one. The
+        // failure is not a weak display: it is a seam control that never fires, arriving downstream
+        // looking like a working one. So the value is ABSENT, not defaulted and not nullable, and
+        // the first node wiring sheet-to-run has nothing to pick up.
         var sheet = Sheet();
+        sheet.TaskClass = "feature";
 
-        Assert.NotNull(sheet.Lease);
-        Assert.True(sheet.Lease.Covers("src/Payments/PaymentAggregate.cs"));
-        Assert.Contains(Path.GetFileName(_root), sheet.LeaseDisplay, StringComparison.Ordinal);
-        Assert.Contains("goal block", sheet.LeaseDisplay, StringComparison.OrdinalIgnoreCase);
+        var created = sheet.Create(Now);
 
-        // Derived, not typed: there is no setter for it on the sheet.
-        Assert.Null(typeof(NewSessionSheetModel).GetProperty(nameof(NewSessionSheetModel.Lease))!.SetMethod);
+        Assert.DoesNotContain(
+            typeof(NewSessionResult).GetProperties(),
+            p => p.Name.Contains("Lease", StringComparison.OrdinalIgnoreCase)
+                || p.PropertyType == typeof(Lease));
+
+        Assert.DoesNotContain(
+            typeof(NewSessionSheetViewModel).GetMembers(BindingFlags.Public | BindingFlags.Instance),
+            m => m.Name.Equals("Lease", StringComparison.Ordinal));
+
+        // The sheet still SAYS something about the lease — the absence itself, which is the true
+        // statement — and it is a sentence rather than a Lease.
+        Assert.Equal("not derivable until a goal block exists", NewSessionSheetViewModel.LeaseDisplay);
+        Assert.IsType<string>(NewSessionSheetViewModel.LeaseDisplay);
+
+        // And the check is looking at something: the result really does carry its other two fields.
+        Assert.Equal("feature", created.TaskClass);
+        Assert.NotNull(created.Config);
+    }
+
+    [Fact]
+    public void TheSheetRendersThatSentence() => Sta.Run(() =>
+    {
+        // What the OPERATOR reads, not what the model holds. The dialog's body is built without its
+        // window precisely so this is assertable — ShowDialog blocks, so a test that had to open the
+        // window could only ever check the model again.
+        var sheet = Sheet();
+        var body = NewSessionSheetDialog.Build(sheet, announce: null, onCreate: () => { });
+
+        var rendered = Blocks(body).Select(b => b.Text).ToList();
+
+        Assert.Contains("Lease", rendered);
+        Assert.Contains("not derivable until a goal block exists", rendered);
+        Assert.DoesNotContain(rendered, line => line.Contains("the whole of", StringComparison.Ordinal));
+    });
+
+    /// <summary>
+    /// Every <see cref="TextBlock"/> in a built tree.
+    /// </summary>
+    /// <remarks>
+    /// Walks the LOGICAL tree, not the visual one: the sheet's body is built and never shown, so it
+    /// has no visual tree to walk and a <c>VisualTreeHelper</c> sweep would find nothing and pass.
+    /// </remarks>
+    private static IEnumerable<TextBlock> Blocks(DependencyObject root)
+    {
+        if (root is TextBlock block)
+        {
+            yield return block;
+        }
+
+        foreach (var child in LogicalTreeHelper.GetChildren(root).OfType<DependencyObject>())
+        {
+            foreach (var found in Blocks(child))
+            {
+                yield return found;
+            }
+        }
     }
 
     [Fact]
@@ -227,7 +287,7 @@ public sealed class TheNewSessionSheetTests : IDisposable
         // Ruling 19 cut routing mode, autonomy, default policy and per-session MCP because
         // GovernedRunRequest takes none of them — a field for any would collect a value the run
         // cannot consume.
-        var members = typeof(NewSessionSheetModel)
+        var members = typeof(NewSessionSheetViewModel)
             .GetMembers(BindingFlags.Public | BindingFlags.Instance)
             .Select(m => m.Name)
             .ToList();

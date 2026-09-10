@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Workbench.Sessions;
 
@@ -56,7 +57,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
 
     /// <param name="model">The document's state. Console is already its active mode on open.</param>
     /// <param name="store">Where mode and splitter positions are persisted, or null to keep none.</param>
-    public SessionDocumentSurface(SessionDocumentModel model, SessionDocumentStore? store = null)
+    public SessionDocumentSurface(SessionDocumentViewModel model, SessionDocumentStore? store = null)
     {
         ArgumentNullException.ThrowIfNull(model);
 
@@ -90,7 +91,7 @@ public sealed class SessionDocumentSurface : ContentControl, IDisposable
     public const string Kind = "session-document";
 
     /// <summary>This document's state.</summary>
-    public SessionDocumentModel Model { get; }
+    public SessionDocumentViewModel Model { get; }
 
     /// <summary>The layout surface id.</summary>
     public string SurfaceId { get; }

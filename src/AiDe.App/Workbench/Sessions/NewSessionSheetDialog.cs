@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Workbench.Sessions;
 
@@ -9,7 +10,7 @@ namespace AiDe.App.Workbench.Sessions;
 /// </summary>
 /// <remarks>
 /// <para><b>The rules are not here.</b> Every refusal, every derivation and the whole backend list
-/// live on <see cref="NewSessionSheetModel"/>, which is testable without a window; this renders it
+/// live on <see cref="NewSessionSheetViewModel"/>, which is testable without a window; this renders it
 /// and reflects it. A dialog that decided anything would be a second place a session can be created
 /// wrongly.</para>
 ///
@@ -24,9 +25,43 @@ namespace AiDe.App.Workbench.Sessions;
 public static class NewSessionSheetDialog
 {
     /// <summary>Shows the sheet modally. Returns whether the operator pressed Create.</summary>
-    public static bool Show(NewSessionSheetModel sheet, Window? owner, Action<string>? announce = null)
+    public static bool Show(NewSessionSheetViewModel sheet, Window? owner, Action<string>? announce = null)
     {
         ArgumentNullException.ThrowIfNull(sheet);
+
+        var window = new Window
+        {
+            Title = "New session",
+            Width = 520,
+            SizeToContent = SizeToContent.Height,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            WindowStyle = WindowStyle.ToolWindow,
+            ResizeMode = ResizeMode.NoResize,
+            ShowInTaskbar = false,
+            Owner = owner,
+        };
+        window.SetResourceReference(Window.BackgroundProperty, "SurfaceRaisedBrush");
+        window.Content = Build(sheet, announce, () => window.DialogResult = true);
+
+        return window.ShowDialog() == true;
+    }
+
+    /// <summary>
+    /// Builds the sheet's body, with no window around it.
+    /// </summary>
+    /// <remarks>
+    /// Separated from <see cref="Show"/> so what the sheet <b>renders</b> can be asserted:
+    /// <c>ShowDialog</c> blocks, so a test that had to open the window could only ever check the
+    /// model. What the operator actually reads — the lease sentence in particular (Ruling 42) — is a
+    /// property of this tree, and <c>TheSheetSaysTheLeaseIsNotDerivableUntilAGoalBlockExists</c>
+    /// reads it here.
+    /// </remarks>
+    /// <param name="onCreate">What Create does; the window supplies its own dialog result.</param>
+    internal static FrameworkElement Build(
+        NewSessionSheetViewModel sheet, Action<string>? announce, Action onCreate)
+    {
+        ArgumentNullException.ThrowIfNull(sheet);
+        ArgumentNullException.ThrowIfNull(onCreate);
 
         var name = new TextBox { Text = sheet.Name, Padding = new Thickness(8, 6, 8, 6) };
         AutomationProperties.SetName(name, "Session name");
@@ -48,19 +83,6 @@ public static class NewSessionSheetDialog
             MinWidth = 90,
             Margin = new Thickness(8, 0, 0, 0),
         };
-
-        var window = new Window
-        {
-            Title = "New session",
-            Width = 520,
-            SizeToContent = SizeToContent.Height,
-            WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            WindowStyle = WindowStyle.ToolWindow,
-            ResizeMode = ResizeMode.NoResize,
-            ShowInTaskbar = false,
-            Owner = owner,
-        };
-        window.SetResourceReference(Window.BackgroundProperty, "SurfaceRaisedBrush");
 
         void Reflect()
         {
@@ -130,7 +152,7 @@ public static class NewSessionSheetDialog
 
         name.TextChanged += (_, _) => Reflect();
         taskClass.TextChanged += (_, _) => Reflect();
-        create.Click += (_, _) => window.DialogResult = true;
+        create.Click += (_, _) => onCreate();
 
         var buttons = new StackPanel
         {
@@ -146,19 +168,19 @@ public static class NewSessionSheetDialog
         body.Children.Add(name);
         body.Children.Add(Label("Task class — required, and never defaulted"));
         body.Children.Add(taskClass);
-        body.Children.Add(Label("Lease (derived)"));
-        body.Children.Add(Muted(sheet.LeaseDisplay));
+        // Ruling 42: a sentence, never a Lease. There is nothing at sheet time to derive one from,
+        // and a derived "everything" would have travelled out of the sheet into a run.
+        body.Children.Add(Label("Lease"));
+        body.Children.Add(Muted(NewSessionSheetViewModel.LeaseDisplay));
         body.Children.Add(Label("Agent backends"));
         body.Children.Add(backends);
         body.Children.Add(blocked);
         body.Children.Add(buttons);
 
-        window.Content = body;
-
         RenderBackends();
         Reflect();
 
-        return window.ShowDialog() == true;
+        return body;
     }
 
     private static TextBlock Label(string text)

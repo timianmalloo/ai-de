@@ -2,6 +2,7 @@ using System.Text.Json.Nodes;
 using System.Threading.Channels;
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.AgentPlane;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 

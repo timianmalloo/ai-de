@@ -1,4 +1,5 @@
 using AiDe.Core.AgentPlane;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Workbench.Sessions;
 
@@ -27,7 +28,7 @@ public sealed class NewSessionFlow
 {
     private readonly Func<string?> _activeWorkspaceRoot;
     private readonly Func<string?>? _chooseWorkspace;
-    private readonly Func<NewSessionSheetModel, bool> _showSheet;
+    private readonly Func<NewSessionSheetViewModel, bool> _showSheet;
     private readonly Func<ProviderRegistry> _registry;
     private readonly Func<string, string> _workspaceId;
     private readonly Action<NewSessionResult>? _opened;
@@ -50,7 +51,7 @@ public sealed class NewSessionFlow
     public NewSessionFlow(
         Func<string?> activeWorkspaceRoot,
         Func<string?>? chooseWorkspace,
-        Func<NewSessionSheetModel, bool> showSheet,
+        Func<NewSessionSheetViewModel, bool> showSheet,
         Func<ProviderRegistry> registry,
         Func<string, string> workspaceId,
         Action<NewSessionResult>? opened = null,
@@ -71,7 +72,7 @@ public sealed class NewSessionFlow
     }
 
     /// <summary>The sheet the last <see cref="Start"/> built, or null when none was reached.</summary>
-    public NewSessionSheetModel? LastSheet { get; private set; }
+    public NewSessionSheetViewModel? LastSheet { get; private set; }
 
     /// <summary>Runs the flow once.</summary>
     public NewSessionOutcome Start()
@@ -98,7 +99,7 @@ public sealed class NewSessionFlow
             }
         }
 
-        var sheet = new NewSessionSheetModel(root, _workspaceId(root), _registry(), _time.GetUtcNow());
+        var sheet = new NewSessionSheetViewModel(root, _workspaceId(root), _registry(), _time.GetUtcNow());
         LastSheet = sheet;
 
         if (!_showSheet(sheet))

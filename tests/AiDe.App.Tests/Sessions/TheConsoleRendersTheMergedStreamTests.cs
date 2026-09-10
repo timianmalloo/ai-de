@@ -1,4 +1,5 @@
 using AiDe.App.Workbench.Sessions;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -19,8 +20,8 @@ public sealed class TheConsoleRendersTheMergedStreamTests
     [Fact]
     public async Task ATwoLaneStreamRendersWithRailAttributionOnEveryLine()
     {
-        var model = new SessionDocumentModel(
-            "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath());
+        var model = new SessionDocumentViewModel(
+            "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath(), [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
 
         using var first = new RealLane("run-merged", "lane-a");
         using var second = new RealLane("run-merged", "lane-b");
@@ -55,8 +56,8 @@ public sealed class TheConsoleRendersTheMergedStreamTests
     [Fact]
     public async Task AFilterCanExcludeAWholeLane_AndOneKindWithinALane()
     {
-        var model = new SessionDocumentModel(
-            "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath());
+        var model = new SessionDocumentViewModel(
+            "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath(), [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
 
         using var first = new RealLane("run-filter", "lane-a");
         using var second = new RealLane("run-filter", "lane-b");
@@ -112,8 +113,8 @@ public sealed class TheConsoleRendersTheMergedStreamTests
     {
         // "Fails if: opening lands on Terminal." The default is the catalog's first row, so there is
         // no second definition of it to drift.
-        var model = new SessionDocumentModel(
-            "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath());
+        var model = new SessionDocumentViewModel(
+            "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath(), [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
 
         Assert.Equal(CanvasModeCatalog.ConsoleModeId, model.ActiveModeId);
         Assert.Equal(CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.All[0].ModeId);

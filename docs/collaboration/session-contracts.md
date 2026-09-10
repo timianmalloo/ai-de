@@ -90,6 +90,21 @@ other session may not read it — reading is how contracts stay honest.
 | `src/AiDe.App/Workbench/DiagnosticsSurface.cs` | Renders the index summary and its disclosures — a Core projection end to end |
 | `src/AiDe.App/Workbench/NodeReaderView.cs` | Reads `DescribeAsync`/`NodeContentAsync` directly — see the split below |
 | `src/AiDe.App/Workbench/CodeViewerView.cs` | The render half of the `NodeContentAsync` contract (ADR-0025 code-viewer-renderer) — see the split below |
+| `src/AiDe.Core/Presentation/Sessions/**` | The session front door's view models and the pure state they hold (Addendum A §10) — see the placement rule below |
+
+**Where an Addendum A §10 Presentation type lives, so nobody re-derives it (Ruling 41).**
+A §10 Presentation type whose name contains "session" goes in **`src/AiDe.Core/Presentation/Sessions/`**.
+Both constraints are satisfied there and neither has to bend: §10 says the type belongs to
+Presentation, and `verify-r14b2-session-naming.py`'s only test is whether the path contains a
+`Sessions/` segment (`:59`, `:138`) — which that path does. **This is not a new arrangement.** Core
+already holds view models whose surface is in App: `WatcherSessionsPaneViewModel` in
+`Core/Presentation/` renders through `SurfaceContentFactory` in App. The split across projects *is*
+the convention, not an exception to it.
+
+The line between the halves is mechanical: **anything a `net10.0` project can compile.** A type that
+needs `FrameworkElement`, a `Dispatcher` or a `Window` is a surface and stays in
+`src/AiDe.App/Workbench/Sessions/`. The compiler is the control — `AiDe.Core.csproj` is `net10.0`
+with no `UseWPF`, so a WPF reference in Presentation does not build.
 
 **The reader and viewer are split, and the rule is written down rather than inferred.** Core owns
 them on one day's evidence about one defect class — what content *arrives*. Their other half is

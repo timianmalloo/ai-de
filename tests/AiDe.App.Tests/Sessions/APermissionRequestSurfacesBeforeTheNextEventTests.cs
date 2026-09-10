@@ -1,4 +1,5 @@
 using AiDe.App.Workbench.Sessions;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -37,11 +38,8 @@ public sealed class APermissionRequestSurfacesBeforeTheNextEventTests
     [InlineData(CanvasModeCatalog.TerminalModeId)]
     public async Task ThePermissionIsObservableBeforeTheQueueDequeuesTheNextEvent(string activeMode)
     {
-        var model = new SessionDocumentModel(
-            "20260910T120000Z-deadbeef",
-            "Front door",
-            Path.GetTempPath(),
-            availableModes: [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
+        var model = new SessionDocumentViewModel(
+            "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath(), [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
 
         model.SetActiveMode(activeMode);
 
@@ -77,8 +75,8 @@ public sealed class APermissionRequestSurfacesBeforeTheNextEventTests
     {
         // The "not recorded" half: absent reads as -1, which no real ordinal can be, rather than 0 —
         // which would read as "raised before the first event".
-        var model = new SessionDocumentModel(
-            "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath());
+        var model = new SessionDocumentViewModel(
+            "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath(), [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
 
         using var lane = new RealLane("run-quiet", "lane-1");
         using var feed = new SessionLane("lane-1", "claude-code", lane.Events, model);

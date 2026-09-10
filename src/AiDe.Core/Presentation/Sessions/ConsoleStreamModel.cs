@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 using AiDe.Core.AgentPlane;
 
-namespace AiDe.App.Workbench.Sessions;
+namespace AiDe.Core.Presentation.Sessions;
 
 /// <summary>
 /// One line of the merged Console stream, carrying the lane it came from (R16 b1's "lane rail":
@@ -55,11 +55,29 @@ public sealed class ConsoleStreamModel
     /// <summary>
     /// Guards every read and write. <b>A merged stream is written by more than one lane by
     /// definition</b> — that is what "merged" means — and each lane drains its own queue on its own
-    /// thread, so an unsynchronised <see cref="List{T}"/> here is not a theoretical race: two lanes
-    /// appending at once corrupt it or throw, intermittently, which reads as a flaky test rather
-    /// than as the defect it is (DC-078). Reads return snapshots for the same reason: a view
-    /// enumerating while a lane appends would throw mid-render.
+    /// thread.
     /// </summary>
+    /// <remarks>
+    /// <para><b>The evidence for the two halves of this is not equal, and the weaker half is
+    /// labelled rather than rounded up.</b></para>
+    ///
+    /// <para><b>Snapshot reads: verified, deterministically.</b> <see cref="Rows"/> used to hand
+    /// back the live list, so a consumer enumerating it while a lane appended threw — and
+    /// <c>ConsoleSurface.Render</c> is exactly such a <c>foreach</c>. That needs no interleaving to
+    /// reproduce, because a <see cref="List{T}"/> enumerator checks its version on every step:
+    /// <c>AReaderIsNeverEnumeratingAListALaneCanStillAppendTo</c> was observed red <b>10 of 10</b>
+    /// runs against the pre-fix shape, with <c>InvalidOperationException: Collection was
+    /// modified</c>, and green 10 of 10 after.</para>
+    ///
+    /// <para><b>Torn concurrent writes: NOT RECORDED.</b> That two <c>Add</c> calls cannot
+    /// interleave destructively is <i>not</i> proven here and is not claimed to be.
+    /// <c>ConcurrentLanesNeverLoseARow</c> is a <b>measurement</b>: without the lock it failed 10 of
+    /// 10 runs (one observed loss, 983 of 1000 rows) and with it passed 10 of 10 — a rate, not a
+    /// certainty, and a lock verified by an intermittent no longer appearing is absence of evidence.
+    /// <b>What would confirm it:</b> an injectable rendezvous inside this locked region, or a
+    /// runtime that enumerates thread interleavings. The first would mean shipping a seam that
+    /// exists only for its own test, so it was refused; the second does not exist here.</para>
+    /// </remarks>
     private readonly Lock _gate = new();
 
     /// <summary>Every row that ever arrived, in receipt order.</summary>

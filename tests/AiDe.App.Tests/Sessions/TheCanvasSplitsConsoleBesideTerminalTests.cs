@@ -1,4 +1,5 @@
 using AiDe.App.Workbench.Sessions;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -15,11 +16,11 @@ namespace AiDe.App.Tests.Sessions;
 /// </remarks>
 public sealed class TheCanvasSplitsConsoleBesideTerminalTests
 {
-    private static SessionDocumentModel Model() => new(
+    private static SessionDocumentViewModel Model() => new(
         "20260910T120000Z-deadbeef",
         "Front door",
         Path.GetTempPath(),
-        availableModes: [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
+        [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
 
     [Fact]
     public void ConsoleSplitsBesideTerminal_AndBothHalvesAreLive() => Sta.Run(() =>
@@ -122,7 +123,7 @@ public sealed class TheCanvasSplitsConsoleBesideTerminalTests
 
     private static AiDe.Core.AgentPlane.RunEvent PermissionEvent(string title) => new(
         "run-1", "lane-1", null, 1, DateTimeOffset.UtcNow,
-        SessionDocumentModel.PermissionRequestKind, null,
+        SessionDocumentViewModel.PermissionRequestKind, null,
         new System.Text.Json.Nodes.JsonObject { ["title"] = title },
         []);
 

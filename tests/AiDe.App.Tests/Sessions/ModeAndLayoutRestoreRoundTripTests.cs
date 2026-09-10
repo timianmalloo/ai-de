@@ -1,5 +1,6 @@
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Sessions;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -107,7 +108,7 @@ public sealed class ModeAndLayoutRestoreRoundTripTests : IDisposable
         Assert.Null(store.Load());
     }
 
-    private SessionDocumentModel NewModel() => new(
+    private SessionDocumentViewModel NewModel() => new(
         _sessionId, "Front door", _root,
-        availableModes: [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
+        [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
 }

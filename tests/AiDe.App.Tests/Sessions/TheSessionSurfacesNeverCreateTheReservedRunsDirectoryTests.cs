@@ -1,5 +1,6 @@
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Sessions;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -124,9 +125,9 @@ public sealed class TheSessionSurfacesNeverCreateTheReservedRunsDirectoryTests :
         return sessionId;
     }
 
-    private SessionDocumentModel Model(string sessionId) => new(
+    private SessionDocumentViewModel Model(string sessionId) => new(
         sessionId, SessionName, _root,
-        availableModes: [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
+        [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
 
     /// <summary>
     /// The shared assertion: the exercised surface left the reserved run-log path empty.

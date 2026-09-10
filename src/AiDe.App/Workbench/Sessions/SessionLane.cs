@@ -1,5 +1,6 @@
 using System.Threading.Channels;
 using AiDe.Core.AgentPlane;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Workbench.Sessions;
 
@@ -26,7 +27,7 @@ namespace AiDe.App.Workbench.Sessions;
 public sealed class SessionLane : IDisposable
 {
     private readonly ChannelReader<ObservedRunEvent> _events;
-    private readonly SessionDocumentModel _document;
+    private readonly SessionDocumentViewModel _document;
     private readonly Action<Action> _marshal;
     private readonly CancellationTokenSource _stopping = new();
     private long _delivered;
@@ -44,7 +45,7 @@ public sealed class SessionLane : IDisposable
         string laneId,
         string displayName,
         ChannelReader<ObservedRunEvent> events,
-        SessionDocumentModel document,
+        SessionDocumentViewModel document,
         Action<Action>? marshal = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(laneId);

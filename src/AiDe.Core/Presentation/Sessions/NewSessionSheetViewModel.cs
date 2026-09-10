@@ -2,7 +2,7 @@ using System.Globalization;
 using AiDe.Core.AgentPlane;
 using AiDe.Core.Sessions;
 
-namespace AiDe.App.Workbench.Sessions;
+namespace AiDe.Core.Presentation.Sessions;
 
 /// <summary>
 /// One agent-backend row on the New Session sheet: a catalogued engine, the provider it
@@ -45,17 +45,23 @@ public sealed record AgentBackendRow(string EngineId, string ProviderId, Provide
         }}";
 }
 
-/// <summary>What the sheet produced: the session it created, and the two fields a run also needs.</summary>
+/// <summary>What the sheet produced: the session it created, and the one field a run also needs.</summary>
+/// <remarks>
+/// <b>It deliberately carries NO lease (Ruling 42).</b> A lease belongs to the goal block
+/// (spec §14.3's <c>lease.exclusive</c>), and nothing at sheet time can narrow one — so the only
+/// lease this type could hand on is one covering everything, which
+/// <c>AiDe.Core.AgentPlane.Lease</c>'s own remarks refuse: it never seams, and therefore "looks like
+/// it is working". Absent rather than defaulted, so no downstream node can pick one up: the node
+/// that wires the sheet to a run has to get the lease from the block or not build the request.
+/// </remarks>
 /// <param name="Config">The session container, as written to <c>session.json</c>.</param>
 /// <param name="TaskClass">The operator's task class. Required — see the sheet's remarks.</param>
-/// <param name="Lease">The derived lease, as displayed on the sheet.</param>
 /// <param name="RoutableBackends">
 /// The enabled backends the router may bind, with <c>needs-login</c> engines already excluded.
 /// </param>
 public sealed record NewSessionResult(
     SessionConfig Config,
     string TaskClass,
-    Lease Lease,
     IReadOnlyList<string> RoutableBackends);
 
 /// <summary>
@@ -80,7 +86,7 @@ public sealed record NewSessionResult(
 /// for any of them would collect a value the run cannot consume. Ruling 26 (iii) additionally cuts
 /// the "Start from template" row, which would create a back-edge from the composer to this sheet.</para>
 /// </remarks>
-public sealed class NewSessionSheetModel
+public sealed class NewSessionSheetViewModel
 {
     /// <summary>The one engine whose native login flow this phase can actually launch (Ruling 20).</summary>
     public const string SignInEngineId = "claude-code";
@@ -101,7 +107,7 @@ public sealed class NewSessionSheetModel
     /// no way to launch one, which <see cref="SignIn"/> reports rather than pretending.
     /// </param>
     /// <param name="reprobe">Re-reads provider health after a login. Null means health is not re-read.</param>
-    public NewSessionSheetModel(
+    public NewSessionSheetViewModel(
         string workspaceRoot,
         string workspaceId,
         ProviderRegistry registry,
@@ -185,23 +191,23 @@ public sealed class NewSessionSheetModel
     ];
 
     /// <summary>
-    /// The lease a lane started from this session runs under, derived rather than typed (Ruling 19).
+    /// What the sheet says about the lease. <b>A sentence, never a <c>Lease</c></b> (Ruling 42).
     /// </summary>
     /// <remarks>
-    /// simplify: the session's lease is its whole bound workspace. Ceiling: a lane started from the
-    /// sheet alone raises no seam anywhere inside the workspace, so the seam control only begins
-    /// discriminating once a block narrows it. Upgrade trigger: R15's composer carries
-    /// <c>lease.exclusive</c> on the goal block (spec §14.3), at which point the block's lease
-    /// replaces this one and this derivation becomes the value shown before a block exists.
-    /// It is derived rather than offered as a field because A4.3's sheet is one screen and there is
-    /// nothing at sheet time to narrow it against — the goal block is where scope is stated.
+    /// <para>R19 asks the sheet to show the lease, and at sheet time there is nothing to derive one
+    /// from: a lease is the goal block's <c>lease.exclusive</c> (spec §14.3), and the block belongs
+    /// to the composer. The honest display is therefore the absence itself.</para>
+    ///
+    /// <para><b>Why not derive "the whole workspace" and mark it <c>simplify:</c>.</b> That was this
+    /// node's first implementation, and it is worse than a weak display rather than equivalent to
+    /// one: the value travelled out of the sheet on <see cref="NewSessionResult"/>, and
+    /// <c>GovernedRunRequest</c> <i>requires</i> a <c>Lease</c> — so the first node wiring sheet to
+    /// run would have handed the exit run a lease covering everything, which
+    /// <c>AiDe.Core.AgentPlane.Lease</c>'s own remarks refuse: it never seams, and therefore "looks
+    /// like it is working". A <c>simplify:</c> whose stated ceiling is "the seam control does not
+    /// discriminate" is not a bounded shortcut; it is a disabled control wearing one's clothes.</para>
     /// </remarks>
-    public Lease Lease { get; } = new(["**"]);
-
-    /// <summary>The lease as the sheet shows it, naming what narrows it.</summary>
-    public string LeaseDisplay =>
-        $"the whole of {System.IO.Path.GetFileName(WorkspaceRoot.TrimEnd('\\', '/'))} "
-        + "— a goal block narrows it";
+    public const string LeaseDisplay = "not derivable until a goal block exists";
 
     /// <summary>Whether <see cref="Create"/> would succeed.</summary>
     public bool CanCreate => BlockedReason is null;
@@ -314,7 +320,7 @@ public sealed class NewSessionSheetModel
         var store = new SessionConfigStore(WorkspaceRoot, SessionId.New(now));
         var config = store.Create(Name.Trim(), WorkspaceId, EnabledBackends, now);
 
-        return new NewSessionResult(config, TaskClass!.Trim(), Lease, RoutableBackends);
+        return new NewSessionResult(config, TaskClass!.Trim(), RoutableBackends);
     }
 
     /// <summary>The registry the sheet last read, so a re-probe is observable from outside.</summary>

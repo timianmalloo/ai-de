@@ -1,5 +1,6 @@
 using System.Windows.Controls;
 using AiDe.App.Workbench.Sessions;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -200,9 +201,9 @@ public sealed class ModeSwitchRetainsTheSurfaceAndTheLaneTests
         return observed;
     }
 
-    private static SessionDocumentModel NewModel() => new(
+    private static SessionDocumentViewModel NewModel() => new(
         "20260910T120000Z-deadbeef",
         "Front door",
         Path.GetTempPath(),
-        availableModes: [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
+        [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
 }

@@ -2801,8 +2801,13 @@ public sealed class WorkbenchShell : IDisposable
 
         if (!_sessionDocuments.ContainsKey(surfaceId))
         {
-            var store = new Sessions.SessionDocumentStore(root, config.SessionId);
-            var model = new Sessions.SessionDocumentModel(config.SessionId, config.Name, root);
+            var store = new AiDe.Core.Presentation.Sessions.SessionDocumentStore(root, config.SessionId);
+
+            // The catalog's ids, passed in. The view model is Presentation and knows nothing about
+            // what a mode renders (Ruling 41), so the App is where the two meet.
+            var model = new AiDe.Core.Presentation.Sessions.SessionDocumentViewModel(
+                config.SessionId, config.Name, root,
+                [.. Sessions.CanvasModeCatalog.All.Select(mode => mode.ModeId)]);
 
             // A reopened session restores the mode and both splitter positions it was left in
             // (R13 b3). A session opened for the first time has no envelope, and the model's own

@@ -1,4 +1,4 @@
-namespace AiDe.App.Workbench.Sessions;
+namespace AiDe.Core.Presentation.Sessions;
 
 /// <summary>
 /// The paired-zone preset a session document opens in (A2, A4.4): composer zone and canvas zone,

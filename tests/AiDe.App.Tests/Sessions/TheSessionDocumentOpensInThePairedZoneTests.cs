@@ -1,5 +1,6 @@
 using AiDe.App.Workbench;
 using AiDe.App.Workbench.Sessions;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -21,11 +22,11 @@ namespace AiDe.App.Tests.Sessions;
 /// </remarks>
 public sealed class TheSessionDocumentOpensInThePairedZoneTests
 {
-    private static SessionDocumentModel Model() => new(
+    private static SessionDocumentViewModel Model() => new(
         "20260910T120000Z-deadbeef",
         "Front door",
         Path.GetTempPath(),
-        availableModes: [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
+        [CanvasModeCatalog.ConsoleModeId, CanvasModeCatalog.TerminalModeId]);
 
     [Fact]
     public void TheComposerAndCanvasZonesOpenInTheSpecifiedSplit() => Sta.Run(() =>

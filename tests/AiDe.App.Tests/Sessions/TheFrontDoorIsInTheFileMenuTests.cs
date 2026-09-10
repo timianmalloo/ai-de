@@ -4,6 +4,7 @@ using AiDe.App.Workbench;
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Sessions;
 using AiDe.Core.Workbench;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -134,7 +135,7 @@ public sealed class TheFrontDoorIsInTheFileMenuTests : IDisposable
         var workspace = Path.Combine(_state, "workspace");
         Directory.CreateDirectory(workspace);
 
-        var sheet = new NewSessionSheetModel(
+        var sheet = new NewSessionSheetViewModel(
             workspace, workspace, new AiDe.Core.AgentPlane.ProviderRegistry([]), DateTimeOffset.UtcNow)
         {
             TaskClass = "feature",

@@ -1,6 +1,7 @@
 using AiDe.App.Workbench;
 using AiDe.App.Workbench.Sessions;
 using AiDe.Core.Workbench;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Tests.Sessions;
 
@@ -52,8 +53,11 @@ public sealed class ACanvasModeIsAddedByAddingARowTests
 
             Sta.Run(() =>
             {
-                var model = new SessionDocumentModel(
-                    "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath());
+                // The catalog's OWN rows, so the throwaway registration is what puts the third
+                // mode in front of the document.
+                var model = new SessionDocumentViewModel(
+                    "20260910T120000Z-deadbeef", "Front door", Path.GetTempPath(),
+                    CanvasModeCatalog.All.Select(m => m.ModeId).ToList());
 
                 using var document = new SessionDocumentSurface(model);
 

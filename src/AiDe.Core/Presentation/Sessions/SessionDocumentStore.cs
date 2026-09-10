@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using AiDe.Core.Sessions;
 
-namespace AiDe.App.Workbench.Sessions;
+namespace AiDe.Core.Presentation.Sessions;
 
 /// <summary>
 /// What a session document restores to (R13 b3): which canvas mode was active, whether the canvas

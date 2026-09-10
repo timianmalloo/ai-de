@@ -1,4 +1,5 @@
 using System.Windows;
+using AiDe.Core.Presentation.Sessions;
 
 namespace AiDe.App.Workbench.Sessions;
 

@@ -1,6 +1,6 @@
 using AiDe.Core.AgentPlane;
 
-namespace AiDe.App.Workbench.Sessions;
+namespace AiDe.Core.Presentation.Sessions;
 
 /// <summary>
 /// One session document's state, with no view attached: which canvas mode is active, whether the
@@ -17,7 +17,7 @@ namespace AiDe.App.Workbench.Sessions;
 /// caller can dequeue the next event. That ordering is what R16 b3 asserts, on the recorded
 /// ordinals rather than on a clock (DC-107).</para>
 /// </remarks>
-public sealed class SessionDocumentModel
+public sealed class SessionDocumentViewModel
 {
     /// <summary>The run-event kind a lane asks for permission with — <c>AcpRunEventMapper</c>'s row.</summary>
     public const string PermissionRequestKind = "permission.request";
@@ -32,25 +32,33 @@ public sealed class SessionDocumentModel
     /// <param name="workspaceRoot">The workspace it is bound to. A session cannot exist unbound (R13).</param>
     /// <param name="preset">The paired-zone preset it opens in.</param>
     /// <param name="availableModes">
-    /// The canvas mode ids on offer, in catalog order. Defaults to <see cref="CanvasModeCatalog.All"/>;
-    /// passed in so a test can pose a mode set without mutating a process-wide list.
+    /// The canvas mode ids on offer, <b>in catalog order</b>: the first is the mode a session opens
+    /// on, which R16 b1 requires to be Console.
     /// </param>
-    public SessionDocumentModel(
+    /// <remarks>
+    /// <b><paramref name="availableModes"/> is required, and that is what keeps this type in
+    /// Presentation.</b> It used to default from <c>CanvasModeCatalog</c>, whose rows carry a
+    /// <c>Func&lt;…, FrameworkElement&gt;</c> — a WPF type — so the default was the one line binding
+    /// a view model to a view. The App passes the catalog's ids; nothing here knows what a mode
+    /// renders.
+    /// </remarks>
+    public SessionDocumentViewModel(
         string sessionId,
         string title,
         string workspaceRoot,
-        SessionZonePreset? preset = null,
-        IReadOnlyList<string>? availableModes = null)
+        IReadOnlyList<string> availableModes,
+        SessionZonePreset? preset = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sessionId);
         ArgumentException.ThrowIfNullOrWhiteSpace(workspaceRoot);
+        ArgumentNullException.ThrowIfNull(availableModes);
 
         SessionId = sessionId;
         Title = string.IsNullOrWhiteSpace(title) ? sessionId : title;
         WorkspaceRoot = workspaceRoot;
         Preset = preset ?? SessionZonePreset.PairedZone;
 
-        _availableModes = [.. availableModes ?? [.. CanvasModeCatalog.All.Select(m => m.ModeId)]];
+        _availableModes = [.. availableModes];
 
         if (_availableModes.Count == 0)
         {
