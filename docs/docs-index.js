@@ -10580,6 +10580,46 @@ window.DOCS_INDEX = {
       "sourceSha256": "5ceb5507a5710e579bc6160c03077fb806b8cd01f8cc25aa3adf1bde84b80807"
     },
     {
+      "id": "proof-lane-rename-ruling-15",
+      "path": "docs/proof/pp-lane-rename-ruling-15.md",
+      "title": "Proof Pack — Ruling 15/15a: GovernedSessionSource/GovernedSession rename",
+      "type": "proof-pack",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "Evidence that the A3 naming repair (GovernedSessionSource -> GovernedLaneSource, GovernedSession -> GovernedEpisode per Ruling 15a) is a pure rename: identical test counts before/after, clean zero-warning build, and the full verify-*.py + marker-lint gate set with exit codes.",
+      "tags": [
+        "conductor",
+        "addendum-a",
+        "ruling-15",
+        "naming",
+        "agent-plane",
+        "proof"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-a-ratification",
+          "rel": "tested-by"
+        },
+        {
+          "to": "note-addendum-a-ruling-15a-governed-episode",
+          "rel": "tested-by"
+        },
+        {
+          "to": "note-conductor-spec-errata-lane-rename",
+          "rel": "relates-to"
+        },
+        {
+          "to": "architecture-agent-plane",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "bbd84d853610c99acba5a8104724b4a2e1d5ddd7680c660140c168dc2f67c452"
+    },
+    {
       "id": "proof-terminal-cursor-render-crash",
       "path": "docs/proof/terminal-cursor-render-crash.md",
       "title": "Proof Pack - Terminal cursor render crash fix (DC-061)",
@@ -12233,5 +12273,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "186dbdbf794d31b52354331880e92e61c139f7fd1848f9746741eaade5c3d992"
+  "graphSha256": "6336f2f04bb2582869346468ddeff6b9ccafab6f1c35b8dc764c05d02865a6aa"
 };
