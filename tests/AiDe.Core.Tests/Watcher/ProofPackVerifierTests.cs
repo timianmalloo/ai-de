@@ -244,6 +244,31 @@ public sealed class ProofPackVerifierTests : IDisposable
             ProofPackVerifier.Verify(_repository, "docs/proof/a\0b.md"));
     }
 
+    [Fact]
+    public void AnUpperCasedProofDirectoryIsEvidenceONLYWhereTheFILESYSTEMSaysItIsTheSameFile()
+    {
+        // THE POSIX HALF OF TheProofDirectoryMatchIgnoresCase, and the reason that test carries
+        // [Trait("Platform", "Windows")] while this one does not.
+        //
+        // Case-folding the directory match is CORRECT on Windows - DOCS\PROOF\ep-1.md and
+        // docs\proof\ep-1.md are one file there, so rejecting the agent's spelling would be a claim
+        // about its typing rather than about its work. On Linux they are two different files, and
+        // folding admits a path the rest of the system would never write: the verdict Verified then
+        // means something slightly different from what every reader takes it to mean.
+        //
+        // NOT SKIPPED ON WINDOWS. There is a true and different assertion to make on each platform,
+        // so this asserts the platform's own answer rather than printing a reason and proving
+        // nothing. It can only REDDEN on Linux; the Windows branch is a characterisation that pins
+        // the Windows answer against a fix that over-corrects both platforms at once.
+        GivenProofPack("DOCS/PROOF/ep-1.md");
+
+        var onThisFilesystem = OperatingSystem.IsWindows()
+            ? ProofPackVerdict.Verified
+            : ProofPackVerdict.NotFound;
+
+        Assert.Equal(onThisFilesystem, ProofPackVerifier.Verify(_repository, "DOCS/PROOF/ep-1.md"));
+    }
+
     private static string NewDirectory()
     {
         var path = Path.Combine(Path.GetTempPath(), "aide-proof-" + Guid.NewGuid().ToString("N")[..8]);

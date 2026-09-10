@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 47 · uncontrolled 9
+**Status counts:** controlled 64 · partially-controlled 48 · uncontrolled 9
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -4162,12 +4162,40 @@ for both or split.*
   gate that found it was simply running the suite somewhere new. Fixed by deriving the .NET root from
   the runtime the process is already executing on, with `DOTNET_ROOT` ahead of it and an empty
   `ProgramFiles` no longer able to yield a relative probe.
+- **Two more product-side instances, both in path COMPARISON (2026-09-10, node FX2).**
+  `FileSystemRepositoryLocator` cut the worktree pointer at
+  `gitDir.IndexOf(marker, StringComparison.OrdinalIgnoreCase)` — two host-dependent primitives in one
+  expression. `IndexOf` takes the **first** match, so the common `~/worktrees/<project>` convention
+  put a second `worktrees` segment in front of the one git writes and the repository resolved two
+  levels too high; that half is wrong on Windows as well, and reddened there. `OrdinalIgnoreCase`
+  is the POSIX half: on Linux it resolved `/repo/.GIT/WORKTREES/x`, a path git could not have
+  written. Separately, `ProofPackVerifier` matched the evidence directory with `OrdinalIgnoreCase`
+  at `:189` while `IsInside` at `:221` already asked the platform — **one file holding both
+  answers** — so on Linux `DOCS/PROOF/x.md` was admissible as a Proof Pack path. The exposure is
+  small and worth saying so: the verifier has no production caller on this branch. The class is not
+  small — a verifier that accepts a spelling nothing in the system would ever WRITE makes `Verified`
+  mean something other than what its readers take it to mean.
+
+  **This is the third repair of this shape at one call site at a time** (INV-0005, then
+  `RepositoryIdentity.ToFileSystemPath`, now these two). `WatcherIdentity.cs:99-102` states the rule
+  — *"THIS IS NOT A FILESYSTEM PATH"* — in prose, and prose is what the next boundary gets written
+  against (CI6). The recommended control is a **`PathSemanticsGate`**: a Roslyn-free source scan,
+  in the `gates` job beside the other Python controls, refusing a hardcoded `StringComparison.Ordinal`
+  or `OrdinalIgnoreCase` on any expression whose name says path (`*Path`, `*Dir*`, `*Root`, `gitDir`,
+  `relative`, `full`, `marker`) unless it comes from a named platform-conditional helper. Estimated
+  half a day including `--self-test`. It is a lint, not a type — the type distinction
+  (`RepositoryIdentity` vs a `FileSystemPath` struct) is the stronger control and roughly a week,
+  because every boundary in `Watcher/` would have to be re-typed at once.
+
 - **The generalisation:** *a reproducibility check is only as portable as its generator's least
   portable primitive* — and the cheapest way to find those primitives is to run the check somewhere
   other than where the artifact was made. Prefer explicit, value-typed keys (`key=lambda p: p.name`)
   over relying on a library type's comparison semantics, which are allowed to differ by platform.
-- **Status:** `controlled` — the two known primitives are fixed and the gate now runs on a different
-  OS from the one that generates the artifacts, which is what makes the class self-reporting
+- **Status:** `partially-controlled` — the GENERATOR half is controlled: `verify-derived-views` runs
+  on Linux while the artifacts are made on Windows, so a host-dependent generator cannot survive a
+  push. The PRODUCT half is not. Four product-side instances now, each caught only because a test
+  that could see it happened to exist, and nothing fails when the next path comparison picks one
+  platform's rules. The control that would close it is named in the instance above and is not built
 
 ### DC-109 — A helper creates a FOREGROUND thread, so a hung body outlives the run and the process cannot exit
 

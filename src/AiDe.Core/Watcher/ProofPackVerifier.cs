@@ -186,7 +186,13 @@ public static class ProofPackVerifier
             // to live under a directory called docs/proof does not make every file in it evidence.
             var relative = full[root.Length..].TrimStart('\\', '/').Replace('\\', '/');
 
-            if (!relative.StartsWith(ProofDirectory, StringComparison.OrdinalIgnoreCase))
+            // THE SAME RULE AS CONTAINMENT, and it was not. This read OrdinalIgnoreCase on every
+            // platform while IsInside two members below already asked the platform - so the file
+            // disagreed with itself, and on Linux "DOCS/PROOF/x.md" was admitted as a Proof Pack
+            // path. That is not tidiness: this method decides Verified / NotFound / Unverifiable,
+            // so a verifier that accepts a spelling nothing in the system would ever WRITE makes
+            // "Verified" mean something slightly different from what every reader takes it to mean.
+            if (!relative.StartsWith(ProofDirectory, PathComparison))
             {
                 return ProofPackVerdict.NotFound;
             }
@@ -212,20 +218,30 @@ public static class ProofPackVerifier
     /// <c>C:\repos\app-other</c> is inside <c>C:\repos\app</c> — a neighbouring repository admitted
     /// as this one's evidence, which is the containment failure that matters most here.</para>
     ///
-    /// <para>Case-insensitive only on Windows, matching <c>RepositoryIdentity.Canonicalise</c>: POSIX
-    /// paths are case-sensitive and folding there would admit a genuinely different directory.</para>
+    /// <para>The case rule is <see cref="PathComparison"/>'s, shared with the directory match rather
+    /// than spelled out twice here.</para>
     /// </remarks>
     private static bool IsInside(string root, string candidate)
     {
-        var comparison = OperatingSystem.IsWindows()
-            ? StringComparison.OrdinalIgnoreCase
-            : StringComparison.Ordinal;
-
-        if (string.Equals(root, candidate, comparison))
+        if (string.Equals(root, candidate, PathComparison))
         {
             return false;
         }
 
-        return candidate.StartsWith(root + Path.DirectorySeparatorChar, comparison);
+        return candidate.StartsWith(root + Path.DirectorySeparatorChar, PathComparison);
     }
+
+    /// <summary>How two paths compare on the machine this is running on.</summary>
+    /// <remarks>
+    /// <para>Named once and used by BOTH path comparisons in this file, because they are one rule.
+    /// It was written inline in <see cref="IsInside"/> and as a hardcoded
+    /// <c>OrdinalIgnoreCase</c> in the directory match, which is how one member ended up POSIX-correct
+    /// and the other did not.</para>
+    ///
+    /// <para>Case-insensitive only on Windows, matching <c>RepositoryIdentity.Canonicalise</c>: POSIX
+    /// paths are case-sensitive, and folding there admits a genuinely different file.</para>
+    /// </remarks>
+    private static StringComparison PathComparison => OperatingSystem.IsWindows()
+        ? StringComparison.OrdinalIgnoreCase
+        : StringComparison.Ordinal;
 }
