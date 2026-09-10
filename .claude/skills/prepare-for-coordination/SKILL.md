@@ -37,14 +37,14 @@ python3 docs/ai-forward-pack/scripts/coord-core.py classify init
 python3 docs/ai-forward-pack/scripts/coord-core.py install
 python3 docs/ai-forward-pack/scripts/coord-core.py doctor      # read the state back (E14)
 ```
-`classify init` writes `.agents/artifacts.yml` from what this repo has, **running every regenerate command before writing it**. A refusal is the control working, not a failure: a *wrong* regenerate command resolves every merge silently and leaves the artifact permanently stale while reporting as handled. Then extend it by hand with this repo's own generated and append-only artifacts, **under the same rule — run the command first**. A `derived` entry needs a regenerate command; a `register` entry is append-only and union-merges; everything else stays `authored`, and you do not enumerate it. `install` is **per clone**: `.git/config` is never committed, so **every worktree this plan creates needs `coord install` run inside it**, and the plan must say so.
+`classify init` writes `.agents/artifacts.yml` from what this repo has, **running every regenerate command before writing it**. A refusal is the control working, not a failure: a *wrong* regenerate command resolves every merge silently and leaves the artifact permanently stale while reporting as handled. Then extend it by hand with this repo's own generated and append-only artifacts, **under the same rule — run the command first**. A `derived` entry needs a regenerate command; a `register` entry is append-only and union-merges; everything else stays `authored`, and you do not enumerate it. `install` is **per clone, in the primary checkout** — and *per clone is not per worktree*. A linked worktree shares `.git/config` and `.git/hooks` with its parent, so every tree this plan creates **inherits** the registration; running `coord install` inside one overwrites the repository's with a path that dies with the tree, and is refused. The plan says **install once, then `coord doctor` in each tree** to read the inherited state back.
 
 **Stage 2 — Read the intent, end to end.** Build the **surface list** (E7) the work must reach: store → model → service → projection/wire → client type → UI → compute reader. Name the bounded contexts and the aggregates. This is the material the track boundaries are cut from — a track that splits an aggregate will generate seam requests forever.
 
 **Stage 3 — Classify the contention (EVIDENCE).** For every artifact the work will touch, record its class and *why it is that class*. Then:
 - `derived` and `register` → **no coordination needed**. Say so explicitly; this is the finding.
 - `authored` → the only real contention. **One owner per file.**
-Any file two tracks would both author is either a missing seam or a wrong boundary. Fix the boundary; do not schedule around it.
+Any file two tracks would both author is either a missing seam or a wrong boundary. Fix the boundary; do not schedule around it. One owner is not the whole check: for every shared surface, list each **other** track's guard over it and show it **jointly satisfiable** with what the owner may write, and require every scan-shaped guard to state its **root, recursion, token set and allowlist** — widening reddens at the join, narrowing stays green (GO14a).
 
 **Stage 4 — Build the DAG (INTERROGATE).** Real dependencies only — delete incidental ordering. Apply **GO5 independence**: no data edge, **no decision edge**, no shared exclusive resource; all three, or the tracks are not independent. Apply the **coupling test**: tightly-coupled work is cheaper and more reliable in one coherent session. **Every edge points one way** — the downstream side rebases and the upstream side never has to ask. A cycle is a boundary error, not a scheduling problem.
 
@@ -105,13 +105,14 @@ Close with the status table (Completed / Remaining / Best next action).
 - [ ] `coord doctor` was **run** and its output is in the plan — the layer's state is measured, not assumed.
 - [ ] `.agents/artifacts.yml` exists, every `derived` command was executed before it was written, and `coord doctor` reads back clean.
 - [ ] Every artifact the work touches carries a class and a reason; `derived`/`register` are explicitly marked *no coordination needed*.
+- [ ] Every shared surface carries each other track's guard over it, shown **jointly satisfiable** with what its owner may write, and every scan-shaped guard states its root, recursion, token set and allowlist (GO14a).
 - [ ] Every dependency edge points one way; no cycles; incidental ordering deleted.
 - [ ] The serial spine is named, with the reason each item fails GO5.
 - [ ] Every track has an owner, owned authored paths, a tier, a fan-out cap, a budget and **exit evidence** — the Test Architect's veto is cleared by a reviewer, not the author.
 - [ ] The 15× multiplier is stated and each track's justification names isolation, machine time, context hygiene, or genuine independence.
 - [ ] Struck tracks are listed with reasons.
 - [ ] Harness capability is recorded per track as enforced / observed-only / unsupported, from what was verified here.
-- [ ] The plan says that **every worktree needs `coord install` run inside it**.
+- [ ] The plan says the layer is installed **once, in the primary checkout**, and that each worktree **inherits** it — never that a worktree needs one of its own.
 - [ ] Both `.md` and `.html` are written and carry the same content; the md follows the schema above.
 - [ ] Status table emitted.
 

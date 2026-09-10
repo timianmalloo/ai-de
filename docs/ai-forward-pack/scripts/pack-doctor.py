@@ -254,8 +254,11 @@ def check_coordination(root):
     Three states, three verdicts:
       no script         the check does not apply
       no/broken registry FAIL - every path is `authored`, nothing is ever regenerated
-      declared-not-registered WARN - .git/config is per-clone, so a fresh clone or a new
-                            worktree lands here every time
+      declared-not-registered WARN - .git/config is per-clone and never committed, so a
+                            fresh CLONE lands here. A worktree does NOT: it shares the
+                            parent's config and inherits the registration, which is why
+                            the remedy names the primary checkout and `coord install`
+                            refuses to run from a linked tree.
     """
     name = "coordination"
     script = os.path.join(root, "docs", "ai-forward-pack", "scripts", "coord-core.py")
@@ -321,7 +324,8 @@ def check_coordination(root):
                            "{0} pattern(s) registered; .gitattributes declares {1} which "
                            "this clone does not register".format(entries, ", ".join(missing)),
                            "python docs/ai-forward-pack/scripts/coord-core.py install  "
-                           "(.git/config is per-clone: every clone and worktree needs it)")
+                           "(run it once per CLONE, in the primary checkout - worktrees "
+                           "share that .git/config and inherit the registration)")
 
     return _result(name, PASS, "{0} pattern(s) classified{1}".format(
         entries, "; drivers registered" if declared else "; no driver declared yet"))

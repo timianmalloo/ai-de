@@ -103,6 +103,8 @@ This is not theoretical. In this fleet, **five parallel model calls with no cap 
 
 **GO14 — Every verification node declares its oracle.** A gate must state *what input would make it fail*. A check that cannot fail proves nothing: this fleet shipped a test that "stayed green with contributions zeroed because a 5 percent return makes the median rise on its own" (evidence base C3) — a node that passed while proving nothing. Oracle-less verification is Coverage Theater in graph form.
 
+**GO14a — Transcription is a width-changing step; check the width at every hop.** A ruling becomes a plan clause and a clause becomes a guard, and **nothing checks that the scope survived the hop**. The two directions fail differently: a clause written **wider** than its ruling goes **red at the join** and announces itself; a guard written **narrower** than the clause above it stays **green while the promise it documents is violated**. So **(a)** for every surface a plan names as **shared** between nodes, list each node's fail-clause over it and show them **jointly satisfiable** — an unscoped clause (no *“in this node”* / *“on this path”*) over a declared shared surface is a defect in the plan whether or not it happens to collide; and **(b)** every **scan-shaped guard** — any check that enumerates files and matches tokens — **MUST** state its **scanned root**, whether it **recurses**, its **token set** and its **allowlist** in its doc comment, and the clause it discharges **MUST** carry the same qualifier. The mismatch is **mechanically checkable**: one sentence read against one enumeration call. Give the guard a **named allowlist constant** so a later node that legitimately needs the token adds an entry **citing its ruling** — *a guard that must be deleted to make progress is one people delete.* *Measured in a pack repo, both directions inside an hour:* a clause wider than its ruling became a **repo-wide** scan of a **shared** project file for a token a sibling node was authorised to add (green in both worktrees, red at the join, matching the sibling's explanatory *comment* rather than its code); and a guard whose doc comment quoted its clause verbatim — *“anything writes a run log **anywhere**”* — scanned one directory, non-recursively, for one token (class **DC-118**). Separate worktrees never hold each other's change, so (a) is not evaluable before the join: plan-time reading is the earliest detection, not a test run.
+
 ---
 
 ## 6. Bounds, revision, and learning
@@ -141,6 +143,8 @@ This is not theoretical. In this fleet, **five parallel model calls with no cap 
 - [ ] **Every triggered rigor floor is present as an immovable node**; gates pulled as early as their inputs allow (GO12).
 - [ ] Collapse/promote applied deliberately; **no collapse across a gate** (GO13).
 - [ ] Every verification node **declares its oracle** (GO14).
+- [ ] **Per declared shared surface**, each node's fail-clause over it is listed and shown **jointly satisfiable**; none is unscoped (GO14a).
+- [ ] Every **scan-shaped guard** states its **root, recursion, token set and allowlist**, and the clause it discharges carries the **same qualifier** (GO14a).
 - [ ] Budget stated with a **graceful degradation path that never drops a gate** (GO15).
 - [ ] Planning **skipped** where the work was smaller than the plan (GO16).
 - [ ] **Re-plan checkpoints** named where a result could change the shape (GO17).
