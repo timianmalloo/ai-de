@@ -115,14 +115,11 @@ public sealed class FileSystemRepositoryLocator : IRepositoryLocator
             //
             // AND THE PLATFORM'S OWN CASE RULE. OrdinalIgnoreCase on every platform resolved
             // "/repo/.GIT/WORKTREES/x" on Linux, where it is a DIFFERENT path that git could not
-            // have written - a guess wearing a repository path. This is the same ternary
-            // ProofPackVerifier uses at its containment boundary; one rule, not a second idiom.
-            var comparison = OperatingSystem.IsWindows()
-                ? StringComparison.OrdinalIgnoreCase
-                : StringComparison.Ordinal;
-
+            // have written - a guess wearing a repository path. This comment already said "one
+            // rule, not a second idiom" while spelling the ternary out a second time; it now reads
+            // the shared member, which is the only spelling left in the assembly.
             var marker = separator + WorktreesSegment + separator;
-            var cut = gitDir.LastIndexOf(marker, comparison);
+            var cut = gitDir.LastIndexOf(marker, PathComparison.ForThisFileSystem);
             if (cut < 0)
             {
                 return null;

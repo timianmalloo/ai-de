@@ -481,7 +481,10 @@ public sealed class KnowledgeExtractor : IExtractor
         var bounded = resolutionRoot.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
             + Path.DirectorySeparatorChar;
 
-        return full.StartsWith(bounded, StringComparison.OrdinalIgnoreCase) ? full : null;
+        // The platform's own case rule, not a hardcoded fold: on POSIX `<root>/DOCS` is a
+        // DIFFERENT directory from `<root>/docs`, and folding here resolves a knowledge edge to a
+        // document outside the root this reader was bounded to. See PathComparison.
+        return full.StartsWith(bounded, PathComparison.ForThisFileSystem) ? full : null;
     }
 
     private static EvidenceAssertion Fact(

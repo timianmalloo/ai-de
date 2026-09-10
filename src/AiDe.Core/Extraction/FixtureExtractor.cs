@@ -92,10 +92,27 @@ public sealed class FixtureExtractor(string extractorVersion = "1.0.0") : IExtra
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // Containment is checked against the resolved path, not the supplied one: a junction or
-            // symlink that escapes the fixture root must not be extracted (P1-FS).
+            // Containment against the LEXICAL full path, and this boundary is narrower than the
+            // comment that used to sit here claimed. That comment said "a junction or symlink that
+            // escapes the fixture root must not be extracted (P1-FS)". MEASURED on .NET 10.0.11:
+            // Directory.EnumerateFiles DOES traverse a junction, and Path.GetFullPath does NOT
+            // resolve one - it normalises text. So a junction inside the root yields a path still
+            // spelled under the root, this test passes, and the file is read from wherever the
+            // junction points. Refusing a reparse point means resolving link targets and is a
+            // separate change; describing a boundary as stronger than it is helps nobody.
+            //
+            // What this DOES refuse is a path whose TEXT leaves the root - and today nothing
+            // produces one, because every path the enumerator yields is `root` with segments
+            // appended. It is a guard against a future caller, not an active filter. (The one way
+            // it fires today is wrong: a RootPath ending in a separator makes `root + separator` a
+            // DOUBLE separator, and then EVERY file reports as escaping. Also measured; also a
+            // separate change.)
+            //
+            // The comparison itself is the platform's own, never a hardcoded fold - see
+            // PathComparison, and tools/verify-containment-comparisons.py, which refuses the
+            // hardcoded shape this line carried through three repairs of the same defect.
             var resolved = Path.GetFullPath(file);
-            if (!resolved.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+            if (!resolved.StartsWith(root + Path.DirectorySeparatorChar, PathComparison.ForThisFileSystem))
             {
                 diagnostics.Add(new ExtractionDiagnostic(ExtractionErrorCodes.PathContainment, file, "escapes the scope root"));
                 continue;
