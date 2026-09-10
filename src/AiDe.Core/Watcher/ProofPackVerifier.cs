@@ -65,11 +65,75 @@ public static class ProofPackVerifier
     public const string ProofDirectory = "docs/proof/";
 
     /// <summary>
-    /// The verdict for one declared path, relative to the repository the session is bound to.
+    /// The verdict for one declared path across every checkout the session could have committed it
+    /// in, and the method a caller holding a <c>SessionBinding</c> wants (DC-115).
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why more than one root.</b> A repository has several working trees, and the one a
+    /// lane commits its evidence in is its own linked worktree, on its own branch. Reading only the
+    /// canonical repository path answers about the PARENT checkout — a different tree, on a
+    /// different branch, which simply does not contain the file. That produced <c>Not Scored — no
+    /// minimum verification path</c> for evidence that existed and was named: a false statement
+    /// about the agent where the true statement was about where somebody looked.</para>
+    ///
+    /// <para><b>Verified wins, and the fold is therefore order-independent.</b> A verdict per root,
+    /// combined so that <c>Verified</c> beats <c>NotFound</c> beats <c>Unverifiable</c>: finding it
+    /// anywhere is finding it, "we looked in a real checkout and it is not there" outranks "we could
+    /// not look", and an empty or wholly unreachable set stays <c>Unverifiable</c> rather than
+    /// becoming an absence nobody observed. Nothing depends on which root is passed first, so a
+    /// caller cannot get this wrong by ordering it wrong.</para>
+    ///
+    /// <para><b>Containment is unchanged, and per root.</b> Each candidate is checked whole against
+    /// one root — the declared path must land inside THAT root's tree and under its
+    /// <c>docs/proof/</c>. Several roots is several complete checks, never a widened one: a path
+    /// escaping every root is still <c>NotFound</c>, and neighbouring-directory admission is still
+    /// refused by the separator-terminated prefix test. <b>Which roots are legitimate is the
+    /// caller's decision, not this method's</b> — see <see cref="ClosedEpisodeScoring"/>, which
+    /// admits a second checkout only when the filesystem confirms it belongs to the bound
+    /// repository.</para>
+    /// </remarks>
+    /// <param name="checkouts">
+    /// The working trees to look in. Null and blank entries are tolerated and answer
+    /// <c>Unverifiable</c> on their own, so a caller need not filter an absent worktree out.
+    /// </param>
+    /// <param name="declaredPath">The path exactly as the agent sent it, unmodified by the ingest.</param>
+    public static ProofPackVerdict VerifyInCheckouts(IReadOnlyList<string?> checkouts, string? declaredPath)
+    {
+        ArgumentNullException.ThrowIfNull(checkouts);
+
+        // Unverifiable is the honest start: nothing has been looked at yet.
+        var best = ProofPackVerdict.Unverifiable;
+
+        foreach (var checkout in checkouts)
+        {
+            var verdict = Verify(checkout, declaredPath);
+
+            if (verdict is ProofPackVerdict.Verified)
+            {
+                return ProofPackVerdict.Verified;
+            }
+
+            if (verdict is ProofPackVerdict.NotFound)
+            {
+                best = ProofPackVerdict.NotFound;
+            }
+        }
+
+        return best;
+    }
+
+    /// <summary>
+    /// The verdict for one declared path, relative to ONE working tree.
     /// </summary>
     /// <param name="repositoryRoot">
-    /// The session's repository — the corrected one, so a worktree-registered agent is checked
-    /// against the repository its evidence is actually committed in.
+    /// <para>The working tree to look in — a directory on this machine, not an identity.</para>
+    ///
+    /// <para><b>The canonical repository path is not sufficient on its own</b>, and the comment here
+    /// used to say that it was: <i>"the corrected one, so a worktree-registered agent is checked
+    /// against the repository its evidence is actually committed in"</i>. That holds only for a
+    /// worktree sharing the parent's branch, and is false for every lane on its own — which is
+    /// DC-115. It survived because a reasoned-through comment reads as though somebody had checked.
+    /// A caller holding a session should use <see cref="VerifyInCheckouts"/>.</para>
     /// </param>
     /// <param name="declaredPath">The path exactly as the agent sent it, unmodified by the ingest.</param>
     public static ProofPackVerdict Verify(string? repositoryRoot, string? declaredPath)
