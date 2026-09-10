@@ -407,6 +407,30 @@ block verbatim in `ext`. Phase 3's standings work will want that array, and it i
 committed corpus.
 | **4 — Reach** | grok-build observed parity, routing-quality review, Antigravity spike (R11, R12) | N5 cohorts; resolves Ruling 7's deferred convergence | decision |
 
+## Conductor findings carried forward
+
+**GO5 was applied to authored files only, and that was not enough — twice.**
+
+Phase 2's node N0 was split into two halves and declared independent because their *authored*
+files do not overlap (`src/`+`tests/` versus `docs/`). Both were then put in **one worktree**.
+Two consequences, both measured, neither costly this time:
+
+1. **`docs/api/` is derived FROM `src/`**, so the docs half's outputs depended on the other
+   half's in-flight source changes. `verify-derived-views` went red, and the docs agent
+   correctly **reported it rather than regenerating over a peer's uncommitted work** — which is
+   spec §6.5's rule (*derived artifacts regenerate once, after the last authored change*).
+2. **One working tree, two agents.** The other half had to stage **path-explicitly** to avoid
+   committing its peer's work, and that peer's commit landed mid-run and changed what its gates
+   measured. Its own words: *"that is the WT1 shape the discipline exists to prevent."*
+
+**The rule GO5 needs, stated for the next plan:** independence requires no shared **authored**
+file, no shared **derived** surface, *and* no shared **working tree**. The artifact-class
+registry exists precisely because derived-depends-on-source — checking authored overlap while
+ignoring the class registry is checking the half that was already obvious.
+
+*Nothing was lost, and the system caught it — but it was caught by two agents behaving well,
+not by the plan being right.*
+
 ## Planned vs actual
 
 *(Completed at close per GO18.)*

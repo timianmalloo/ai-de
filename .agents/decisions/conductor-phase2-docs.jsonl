@@ -9,3 +9,7 @@
 {"agent": "conductor-phase2-docs", "at": 1788999137.741669, "code": null, "kind": "allowed", "path": "docs/profiles/conductor-phase1.md", "session": "conductor-phase2-docs", "wi": ""}
 {"agent": "conductor-phase2-docs", "at": 1788999137.741669, "code": null, "kind": "allowed", "path": "docs/profiles/sp-0001/profile.json", "session": "conductor-phase2-docs", "wi": ""}
 {"agent": "conductor-phase2-docs", "at": 1788999137.741669, "code": null, "kind": "allowed", "path": "docs/profiles/sp-0001/profile.md", "session": "conductor-phase2-docs", "wi": ""}
+{"agent": "conductor-phase2-docs", "at": 1789000205.0574255, "code": null, "kind": "allowed", "path": "docs/ai-forward-pack/scripts/audit-log.py", "session": "conductor-phase2-docs", "wi": ""}
+{"agent": "conductor-phase2-docs", "at": 1789000205.0574255, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "conductor-phase2-docs", "wi": ""}
+{"agent": "conductor-phase2-docs", "at": 1789000205.0574255, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "conductor-phase2-docs", "wi": ""}
+{"agent": "conductor-phase2-docs", "at": 1789000205.0642943, "code": null, "kind": "allowed", "path": "tools/verify-audit-capture.py", "session": "conductor-phase2-docs", "wi": ""}
