@@ -10,17 +10,66 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core: 2 types, 14 members, 56% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core: 3 types, 15 members, 61% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core`
 
-**2 public types · 14 public members · 56% documented.**
+**3 public types · 15 public members · 61% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
 > gap rather than given invented text. The extractor is a lexical reader, not a compiler:
 > it does not resolve generics, partial classes across files, or conditional compilation.
+
+## `PathComparison`
+
+*class* — `PathComparison.cs`
+
+How two filesystem paths compare on the machine this is running on.
+
+**Remarks.** **One rule, named once, because spelling it inline is how it keeps going wrong.** The
+same defect has now been fixed four times — INV-0005, `RepositoryIdentity.ToFileSystemPath`,
+`RepositoryCorrection`/`ProofPackVerifier`, and the three containment
+checks in `Extraction/` and `Projections/` — and every instance was the same line
+written from memory at a new call site. `WatcherIdentity` states the rule in prose
+(*"THIS IS NOT A FILESYSTEM PATH"*) and prose is a memoir, so this is the member every
+path comparison consults and `tools/verify-containment-comparisons.py` is the gate that
+refuses a fifth hand-written copy.
+
+
+
+
+
+**Case-insensitive ONLY on Windows.** POSIX paths are case-sensitive:
+`/repo/Secrets` and `/repo/secrets` are two different directories, and folding the
+case there admits a path the rest of the system would never write. On Windows they are one
+directory, so folding is what the filesystem itself does and refusing it would be a claim about
+the caller's typing rather than about the file.
+
+
+
+
+
+**Not a `FileSystemPath` type.** That distinction was considered and rejected:
+the defects it was proposed for all operate on strings that genuinely ARE filesystem paths, so
+a wrapper type would not have caught any of them, and it would leave a permanent `.Value`
+escape hatch for the next one to live in. The bug is the comparison rule, so the fix is a
+comparison rule.
+
+| Member | Summary |
+|---|---|
+| `StringComparison ForThisFileSystem` | The `StringComparison` that matches this machine's filesystem: ordinal everywhere, and case-insensitive additionally on Windows. |
+
+### `StringComparison ForThisFileSystem`
+
+The `StringComparison` that matches this machine's filesystem: ordinal
+everywhere, and case-insensitive additionally on Windows.
+
+**Remarks.** A property rather than a `static readonly` field so it is evaluated per call rather
+than at type-initialisation. Nothing in this process changes operating system mid-run, but a
+cached platform answer is the shape that survives into a context where it is wrong, and the
+ternary costs nothing next to the string comparison it qualifies.
 
 ## `WorkspaceCore`
 

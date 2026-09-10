@@ -192,7 +192,7 @@ public static class ProofPackVerifier
             // path. That is not tidiness: this method decides Verified / NotFound / Unverifiable,
             // so a verifier that accepts a spelling nothing in the system would ever WRITE makes
             // "Verified" mean something slightly different from what every reader takes it to mean.
-            if (!relative.StartsWith(ProofDirectory, PathComparison))
+            if (!relative.StartsWith(ProofDirectory, PathComparison.ForThisFileSystem))
             {
                 return ProofPackVerdict.NotFound;
             }
@@ -218,30 +218,20 @@ public static class ProofPackVerifier
     /// <c>C:\repos\app-other</c> is inside <c>C:\repos\app</c> — a neighbouring repository admitted
     /// as this one's evidence, which is the containment failure that matters most here.</para>
     ///
-    /// <para>The case rule is <see cref="PathComparison"/>'s, shared with the directory match rather
-    /// than spelled out twice here.</para>
+    /// <para>The case rule is <see cref="AiDe.Core.PathComparison.ForThisFileSystem"/>'s - the one
+    /// platform-conditional rule every containment boundary in this assembly consults. It was
+    /// written inline here and as a hardcoded <c>OrdinalIgnoreCase</c> in the directory match,
+    /// which is how one member ended up POSIX-correct and the other did not; it is now a shared
+    /// member because three further sites were carrying their own copy of the wrong half.</para>
     /// </remarks>
     private static bool IsInside(string root, string candidate)
     {
-        if (string.Equals(root, candidate, PathComparison))
+        if (string.Equals(root, candidate, PathComparison.ForThisFileSystem))
         {
             return false;
         }
 
-        return candidate.StartsWith(root + Path.DirectorySeparatorChar, PathComparison);
+        return candidate.StartsWith(root + Path.DirectorySeparatorChar, PathComparison.ForThisFileSystem);
     }
 
-    /// <summary>How two paths compare on the machine this is running on.</summary>
-    /// <remarks>
-    /// <para>Named once and used by BOTH path comparisons in this file, because they are one rule.
-    /// It was written inline in <see cref="IsInside"/> and as a hardcoded
-    /// <c>OrdinalIgnoreCase</c> in the directory match, which is how one member ended up POSIX-correct
-    /// and the other did not.</para>
-    ///
-    /// <para>Case-insensitive only on Windows, matching <c>RepositoryIdentity.Canonicalise</c>: POSIX
-    /// paths are case-sensitive, and folding there admits a genuinely different file.</para>
-    /// </remarks>
-    private static StringComparison PathComparison => OperatingSystem.IsWindows()
-        ? StringComparison.OrdinalIgnoreCase
-        : StringComparison.Ordinal;
 }

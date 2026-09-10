@@ -79,7 +79,15 @@ public sealed class ScopeFingerprints
     // `List<T>` stop being classified as runtime types — extraction still succeeds and quietly
     // returns fewer facts. The root is now taken from the runtime the process is already running on,
     // with DOTNET_ROOT and the usual install locations behind it (INV-0005).
-    public const string ExtractorGeneration = "2026-09-06.1";
+    // 2026-09-10.1 — REAL OUTPUT CHANGE on POSIX. Two extractors carried a separator-terminated
+    // containment check that folded case unconditionally, so on Linux and macOS a knowledge link
+    // spelled `../DOCS/x.md` inside a root of `docs` resolved to a DIFFERENT directory's document
+    // and the edge was emitted anyway. Both now use `PathComparison.ForThisFileSystem`, so those
+    // links stop resolving where the filesystem says they were never the same file — fewer, and
+    // truer, knowledge edges. Windows output is unchanged, and the bump is taken on both anyway:
+    // this gate cannot tell one platform's behaviour change from the other's, and neither can a
+    // workspace that was indexed on one and opened on the other.
+    public const string ExtractorGeneration = "2026-09-10.1";
 
     private const string FileName = "scope-fingerprints.json";
 

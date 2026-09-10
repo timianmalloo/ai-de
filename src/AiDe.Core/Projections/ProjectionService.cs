@@ -1213,7 +1213,11 @@ public sealed class ProjectionService(WorkspaceStore store, string? workspaceRoo
                 ? root
                 : root + Path.DirectorySeparatorChar;
 
-            return candidate.StartsWith(rooted, StringComparison.OrdinalIgnoreCase) && File.Exists(candidate)
+            // The platform's own case rule, not a hardcoded fold. On POSIX a scope location of
+            // `..` plus an artifact path spelled with the workspace's name in another case lands
+            // OUTSIDE the workspace, and folding admits it - the separator-terminated prefix test
+            // above defeated by the comparison beside it. See PathComparison.
+            return candidate.StartsWith(rooted, PathComparison.ForThisFileSystem) && File.Exists(candidate)
                 ? candidate
                 : null;
         }

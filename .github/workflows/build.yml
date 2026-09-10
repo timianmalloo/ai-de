@@ -351,6 +351,43 @@ jobs:
         if: ${{ !cancelled() }}
         run: python tools/verify-r14b2-session-naming.py
 
+      # `x.StartsWith(root + separator, StringComparison.OrdinalIgnoreCase)` is this repository's
+      # containment boundary, and the unconditional case fold in it is right on Windows and wrong
+      # everywhere else — including the portable half of THIS workflow. The class has been repaired
+      # three times, one call site each time (INV-0005, RepositoryIdentity.ToFileSystemPath,
+      # RepositoryCorrection/ProofPackVerifier), while three more sites carried it untouched;
+      # WatcherIdentity states the rule in prose and prose is a memoir (CI6).
+      #
+      # NARROW ON PURPOSE. Exactly 4 sites in src/ match the separator-terminated shape, out of 66
+      # StartsWith calls carrying a StringComparison literal — near-zero false positives, which is
+      # what keeps a gate switched on (DC-104). Widening to any path-named receiver reaches 23
+      # sites, some of whose Ordinal comparisons are correct, and would need a waiver mechanism.
+      # That ratchet is deliberately not taken yet.
+      - name: Containment-comparison gate — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-containment-comparisons.py --self-test
+
+      - name: Containment-comparison gate
+        if: ${{ !cancelled() }}
+        run: python tools/verify-containment-comparisons.py
+
+      # A Privacy Blocker closed on main, and the gate that proves it was NOT wired into this job -
+      # `grep -c verify-aide-gitignore .github/workflows/build.yml` returned 0. `<workspaceRoot>/.aide/`
+      # holds prompt-drafts.json: typed prompt text, plaintext, no expiry, and until that fix no
+      # .gitignore matched it - one `git add -A` from permanent. A control that runs only when
+      # somebody remembers to run it is DC-114's shape, a control that exists and is unreachable, so
+      # it is wired here rather than left to habit.
+      #
+      # Added from THIS node because this node already had build.yml open; two nodes editing one file
+      # is a conflict nobody needed.
+      - name: .aide sidecar stays ignored
+        if: ${{ !cancelled() }}
+        run: python tools/verify-aide-gitignore.py
+
+      - name: .aide sidecar gate - self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-aide-gitignore.py --self-test
+
   # ---------------------------------------------------------------------------------------------
   # THE PORTABLE 94% OF THE CORE SUITE, ON LINUX AT 1x.
   #

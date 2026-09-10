@@ -4704,7 +4704,11 @@ for both or split.*
   written into the briefs, but nothing fails when the shape recurs; a re-run under the wrong host
   still hangs silently
 
-### DC-118 — A ruling-level collision check passes while the FAIL-CLAUSES derived from those rulings contradict on a declared shared surface
+### DC-118 — Transcription is a width-changing step, and nothing checks the width: a ruling becomes a clause, a clause becomes a guard, and the scope silently moves
+
+> **Heading widened 2026-09-10, and the reason is this class applied to its own entry.** It first read *"a ruling-level collision check passes while the FAIL-CLAUSES derived from those rulings contradict on a declared shared surface"* — which is the **first instance**, not the class. The entry then grew a second instance in the opposite direction and a third in a gate, all sharing one mechanism, while the heading still named only the first. **A heading narrower than its own content is the same defect the class describes.**
+>
+> **Citation convention, because the conductor got this wrong repeatedly.** Cite **DC-118** for the mechanism — a scope that moved across a transcription hop. Cite **DC-118 control half (b)** (added by Ruling 38) for the specific requirement that *a scan-shaped guard must state its root, recursion, token set and allowlist*. The conductor cited plain "DC-118" for half (b) in several briefs; a reviewing node caught it and supplied the correct provenance.
 
 - **Shape:** two decisions are individually correct and do not conflict *as decisions* — one even
   carves its scope explicitly out of the other. Each is then transcribed into a plan as a node's
