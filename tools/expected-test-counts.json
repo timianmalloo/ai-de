@@ -1,9 +1,9 @@
 {
   "_comment": "Minimum tests that must EXECUTE per project. The control for defect class DC-012: a crashed test host reports success with a smaller count, and nothing else notices. Raise these with `python tools/verify-test-run.py --update` when you add tests; never lower one to make a run pass. Keys with a suffix are HALVES of a project run on one OS; `splits` says which halves must account for which whole, and verify-test-run checks that sum on every invocation, on both operating systems. AiDe.Core.Tests.nonportable is [Trait(\"Platform\",\"Windows\")] only - kernel32, powershell.exe, the net10.0-windows daemon, and tests that assert Windows path semantics on purpose. There is no quarantine category: every test that merely failed on Linux was diagnosed and fixed (INV-0005).",
   "minimumExecuted": {
-    "AiDe.App.Tests": 400,
-    "AiDe.Core.Tests": 2037,
-    "AiDe.Core.Tests.portable": 1885,
+    "AiDe.App.Tests": 456,
+    "AiDe.Core.Tests": 2041,
+    "AiDe.Core.Tests.portable": 1889,
     "AiDe.Core.Tests.nonportable": 152
   },
   "splits": {
@@ -12,5 +12,5 @@
       "AiDe.Core.Tests.nonportable"
     ]
   },
-  "_baselineBump": "2026-09-10, front-door HEAD-JOIN of F0 || F1 || FT plus seam FS1 (Rulings 36, 38). AiDe.App.Tests 399 -> 400 (F1's vendored-asset gate test); AiDe.Core.Tests 2014 -> 2037, portable 1862 -> 1885, nonportable unchanged at 152. MEASURED ON THE MERGED TREE, not apportioned and not carried over from the branch runs: --filter Platform!=Windows gave 1885 and --filter Platform=Windows gave 152, and 1885 + 152 = 2037, so the split invariant holds by observation. The rise is F0's 23 portable session-object cases; FT's 124 and F1's 1 were already baselined in their own nodes. verify-test-run.py --update was NEVER run to produce these numbers: --update skips the split invariant (:193) and returns 0 unconditionally (:269), so it cannot be the gate that sets the gate. CHECK mode is the standing gate; this bump is a separate recorded act, counter-signed by the runs quoted above. This RAISES every floor it touches; none was lowered."
+  "_baselineBump": "2026-09-10, front-door F2 (the front door: sheet, File menu, session document, canvas modes) plus FX2 (two POSIX path-semantics defects). AiDe.App.Tests 400 -> 456 (F2's 56 surface, sheet, menu, canvas-mode, retain-oracle, permission-ordinal, run-log-reservation, lease and race tests); AiDe.Core.Tests 2037 -> 2041, portable 1885 -> 1889 (FX2's four path tests), nonportable unchanged at 152. MEASURED ON THE MERGED TREE, all four keys, not apportioned and not carried over from branch runs: --filter Platform!=Windows gave 1889, --filter Platform=Windows gave 152, the whole Core run gave 2041, and 1889 + 152 = 2041, so the split invariant holds by OBSERVATION rather than by arithmetic. App was run from the PowerShell console host (DC-117: it hangs under a console-less host and produces no result file at all). verify-test-run.py --update was NEVER run: it skips the split invariant (:193) and returns 0 unconditionally (:269), so it cannot be the thing that sets the gate. CHECK mode is the standing gate; this bump is a separate recorded act, counter-signed by the four runs quoted above. Every floor raised; none lowered."
 }

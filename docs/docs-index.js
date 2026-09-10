@@ -1446,7 +1446,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.App.Workbench: 80 types, 325 members, 69% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.App.Workbench: 81 types, 324 members, 69% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1459,7 +1459,32 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "abf9ddf6be1a7971a6085061f379b4e6e1d15a892f95fbffb4b1ddecf7f08c0a"
+      "sourceSha256": "2d863e8d82937e7c932313f811c98fb56b79df037467aa66ede48e090ab036b0"
+    },
+    {
+      "id": "api-aide-app-workbench-sessions",
+      "path": "docs/api/AiDe.App.Workbench.Sessions.md",
+      "title": "API: AiDe.App.Workbench.Sessions",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.App.Workbench.Sessions: 12 types, 54 members, 92% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "fbafadabf07a1e5bbc13100799e04b776be255b287c9f2058767b0a0981dc0e6"
     },
     {
       "id": "api-aide-core",
@@ -1685,6 +1710,31 @@ window.DOCS_INDEX = {
       ],
       "diagrams": [],
       "sourceSha256": "7000558540508ecc26119ac8c9242f689e0dd0614b2564a132dff92adb0f45aa"
+    },
+    {
+      "id": "api-aide-core-presentation-sessions",
+      "path": "docs/api/AiDe.Core.Presentation.Sessions.md",
+      "title": "API: AiDe.Core.Presentation.Sessions",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Presentation.Sessions: 12 types, 70 members, 98% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "eb450364757f7ee6590c65a3d855c94b090831346eec8cca08da5011d7ef958c"
     },
     {
       "id": "api-aide-core-projections",
@@ -3661,6 +3711,48 @@ window.DOCS_INDEX = {
       "sourceSha256": "d26789684f6dc9d229f4e05352992992cf60e0c2f26880a52dcac230d7933fbe"
     },
     {
+      "id": "note-front-door-rulings-41-42",
+      "path": "docs/notes/front-door-rulings-41-42.md",
+      "title": "Decision note — Rulings 41 and 42: session ViewModel placement, and the lease the sheet must not carry",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "F2 flagged two items rather than burying them. Both rulings went against the implementation, and the second went further than F2's own proposed alternative. Ruling 41 dissolves an apparent conflict between Addendum A §10 and F0's naming lint as a false dichotomy. Ruling 42 cuts the lease from the sheet entirely, because an all-covering lease carried out of the sheet is a disabled seam control, not a bounded shortcut.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "ruling",
+        "f2",
+        "addendum-a",
+        "lease",
+        "placement",
+        "dc-118"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-front-door-council-rulings",
+          "rel": "relates-to"
+        },
+        {
+          "to": "note-addendum-a-ratification",
+          "rel": "depends-on"
+        },
+        {
+          "to": "note-front-door-ruling-38",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ec29989c27a3533acd1581ec2c01c6383977f73660c6d1abc0347f4c20f538b7"
+    },
+    {
       "id": "note-terminal-customization-persistence",
       "path": "docs/notes/terminal-customization-persistence.md",
       "title": "Decision — terminal customization persistence & busy-close",
@@ -5433,7 +5525,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "9cd0dcddeb5b5515c978740462729b2a765faa351ff59b0f5606c51f03f67e6e"
+      "sourceSha256": "14725d91017b40019e37160624c2966865f01296fd0bebade65e397d2cf3603f"
     },
     {
       "id": "design-session-profiler",
@@ -6497,7 +6589,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "51c967b451eb5854a3eedc71cb5e68c43a0b20b198de2fc6d8bdcd4ab14eb92c"
+      "sourceSha256": "a6630148fd8fcf1edefa8a6014ac32c3dec299362bed0fa778213112a18fdc0c"
     },
     {
       "id": "plan-conductor-programme",
@@ -7224,7 +7316,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "551a8eb68d6bf1d12d9640452f094c1e33f19933de8caa3f519975b09fff423b"
+      "sourceSha256": "d09ed1d7d7fda53bebeeb46824db841ecb7d3cda65cdbd026b69416a8a5797cc"
     },
     {
       "id": "session-profiles",
@@ -12610,5 +12702,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "b1c0d48c9ba9636455ab000f83e7e8427382b45c83a64ab0896ac5537522c02f"
+  "graphSha256": "5cfe7488daad51b50fd28244cc646b1b8441e9298ac7f0ed0066307b6c620325"
 };

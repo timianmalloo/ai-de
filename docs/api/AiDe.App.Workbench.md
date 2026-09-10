@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 80 types, 325 members, 69% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 81 types, 324 members, 69% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**80 public types · 325 public members · 69% documented.**
+**81 public types · 324 public members · 69% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1052,10 +1052,12 @@ Builds the content for one surface.
 content are independent of where it is docked (US-9). This factory is the single place that
 mapping lives, so adding a surface kind never means touching the layout model.
 
-| Member | Summary |
-|---|---|
-| `IReadOnlyList<string> KnownKinds { get; } = ["view", "inspector", "terminal", "canvas", "contexts", "joins", "sessions", "board", "leaderboard", "ledger", "daydreams", "prompt", "classdiagram", "sequence", "search", "codeviewer", "diagnostics"]` | Surface kinds this factory can build. An unknown kind still gets an honest pane. |
-| `FrameworkElement Create(Surface surface)` | **(gap)** |
+## `SurfaceKind`
+
+*record* — `SurfaceContentFactory.cs`
+
+One surface kind, as a row of data: what it answers to, how it is built, and whether its
+content owns a child window.
 
 ## `TerminalColorScheme`
 
@@ -1757,6 +1759,7 @@ is indistinguishable from a broken key.
 | `string? FocusedSurfaceId { get; set; }` | The surface within the focused stack, when one is selected. |
 | `bool IsResizing` | **(gap)** |
 | `Func<Task<string>>? WorkspaceRefresh { get; set; }` | Asks the workspace to re-index itself. Set when a workspace attaches; null before that. |
+| `Func<string>? NewSessionRequested { get; set; }` | Runs `File → New Session` and returns what to announce. Set by the shell; null before that, which the command reports rather than doing nothing. |
 | `event Action? WorkspaceDataChanged` | Raised after a command that CHANGED what the store holds has finished. |
 | `CanvasFocusRouter? CanvasFocus { get; set; }` | Routes focus across the canvas boundary. Set when a graph canvas surface attaches. |
 | `bool Execute(string commandId)` | Runs a catalog command by id. Returns false when the id is unknown. |
@@ -1791,6 +1794,15 @@ Asks the workspace to re-index itself. Set when a workspace attaches; null befor
 
 **Remarks.** A delegate rather than a workspace handle: the controller's job is layout and command
 dispatch, and giving it something it could read evidence from would invite exactly that.
+
+### `Func<string>? NewSessionRequested { get; set; }`
+
+Runs `File → New Session` and returns what to announce. Set by the shell; null before
+that, which the command reports rather than doing nothing.
+
+**Remarks.** Synchronous, unlike `WorkspaceRefresh`: the flow is a modal sheet on the UI
+thread, and a Task here would only describe the wait for a dialog the user is already looking
+at.
 
 ### `event Action? WorkspaceDataChanged`
 

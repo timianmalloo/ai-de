@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T21:55:21Z",
+  "generated": "2026-09-10T22:21:13Z",
   "audit": [
     {
       "actor": null,
@@ -10902,6 +10902,39 @@ window.AUDIT_DATA = {
       "goal": "Establish whether the repo-wide cleanup lost or orphaned any work",
       "done_when": "Every on-disk ai-de-* directory is either registered by git or assessed and reported",
       "tier": "T2"
+    },
+    {
+      "id": "al-01M26N71G5P9MEHQAAN94WJGJ8",
+      "shortname": "F2 — the front door: sheet, File menu, session document, canvas modes",
+      "datetime": "2026-09-10T21:57:36Z",
+      "session": "front-door-f2",
+      "prompt": "Node F2 — the front door: New Session sheet, File menu, session document, canvas modes (R13, R16), carrying Test-Architect Blockers 7 and 8.",
+      "summary": "NODE F2 COMPLETE — the front door (R13, R16): New Session sheet, File menu, session document, canvas modes. Two commits on feature/front-door-f2, not yet merged pending two Owner rulings.\n\nEVERY `Fails if:` IN THE PLAN'S F2 SECTION IS DISCHARGED, with a named test per clause. No clause unmet.\n\nBLOCKER 7 (ADR-0017 retain-never-rebuild, with an oracle that can detect disposal) — satisfied with a REAL lane: production AcpPeer + AcpRunEventMapper + AcpEventQueue over a pushed stdout, i.e. the four objects GovernedRunHost composes, not a stub. Dispose counting via SessionDisposalLedger, an ActivityListener started BEFORE teardown, on TerminalHostingLedger's \"counts the attempt, not the success\" idiom. Exercise: 3 settled events then 21 in flight from a background producer while the document performs BOTH a mode switch (Console->Terminal->Console, real TerminalSurface) and a tab switch (unparent/re-parent). Five oracles green: Assert.Same on surface, Assert.Same on lane, dispose total == 0, no event-ordinal gaps, and Rows.Count == 24 (DC-016 -- proof the exercise carried traffic). COMPANION FALSIFIER OBSERVED RED on all four retain oracles when pointed at the rebuild path, and that redness is now permanent in the suite via Record.Exception assertions.\n\nBLOCKER 8 (\"within one event cycle\" is undefined) — expressed as an ORDINAL, never a duration. RaisedAtOrdinal (the event's Seq) and DispatchedWhenRaised (dispatch count sampled at the raise; NotRaised = -1, never 0, so absent is distinguishable from first). Parameterised over active mode. RED-FIRST OBSERVED against a first implementation that raised only while Console was active: the terminal-mode Theory case failed with \"no permission surfaced in terminal mode\" while console passed. verify-perf-assertions.py exit 0 -- no CLOCK matcher tripped.\n\nRULING 22 (a mode is a row, not a switch arm): SurfaceContentFactory's 17-arm switch expression and its hand-maintained KnownKinds array became ONE descriptor list with KnownKinds derived from it. Proven by registering a throwaway third mode, asserting the document offers it AND builds and activates it, asserting neither the factory nor the catalog source contains the id, then disposing the registration and asserting it is gone.\n\nRULING 38 item 2: three App-layer assertions, one per surface, each creating a real session then asserting SessionPaths.RunsDirectory does not exist AND no directory named \"runs\" exists anywhere under .aide -- covering the hard-coded literal a token scan cannot see.\n\nCOUNTS: AiDe.App.Tests 453/453 (four consecutive clean full runs, PowerShell console host per DC-117); Core unchanged at 2037/2037, portable 1885 + nonportable 152. --update never run. App floor rises 400 -> 453 on merge; Core must be RE-MEASURED on the merged tree because a sibling node added Core tests after F2's base.\n\nFOUR DEFECTS F2 FOUND BY RUNNING THE SURFACE RATHER THAN READING ITS DIFF, all fixed in commit 2: Ctrl+N was printed in the menu but never bound; the canvas was splittable only through the model with no on-screen control; a splitter drag never reached the model, so a user's arrangement was correct on screen and absent from the saved envelope; and THE MERGED STREAM WAS NOT THREAD-SAFE -- two lanes appending into one List from two drain threads, which is inherent to a merged stream. It surfaced as a SINGLE INTERMITTENT FAILURE in one full-suite run, the DC-078 shape where the reflex is a re-run. ConsoleStreamModel now guards every read and write and returns snapshots with Changed raised outside the lock; SessionDocumentModel.Dispatch takes one lock around the whole event cycle, which also converts Blocker 8's ordinal claim from a race into an assertion.\n\nFINDINGS RAISED, NOT FIXED:\n  1. verify-surface-ownership.py iterates src/AiDe.App/Workbench NON-RECURSIVELY, so F2's three new *Surface.cs files sit outside its scan. DC-118's shape in a third gate. F2 assigned them by hand in session-contracts.md section 2 and recorded the gap rather than widening a shared control unilaterally.\n  2. R13 b2 cannot list backends in the running app: providers.yaml has NO reader anywhere in the repo. ProviderRegistry's own remarks say parsing it is \"the caller's job\" and that caller does not exist. The sheet renders an honest empty state. Ruling 35 refuses a third hand-rolled reader, so the parser is not F2's to write.\n  3. Addendum A section 10 places the ViewModels in AiDe.Core/Presentation/, which F0's verify-r14b2-session-naming.py forbids (any new \"session\"-named type under src/ needs a Sessions/ path segment). F2 used src/AiDe.App/Workbench/Sessions/ and FLAGGED the deviation. Put to the Owner.\n  4. The lease derivation is the clause F2 was least comfortable with and it said so: Ruling 19 says \"Lease is derived and displayed\", but at sheet time nothing exists to narrow against -- the lease belongs to the goal block (spec 14.3), which is F4's. Built as [\"**\"] under a simplify: marker, with F2 volunteering that \"not derivable until a goal block exists\" would be a better statement. Lease's own remarks warn an all-covering lease \"looks like it is working\". Put to the Owner.\n\nCONDUCTOR ERROR, RECORDED: F2 wrote no audit entry because the conductor's brief listed docs/audit/* among output not to commit -- written to prevent derived-file conflicts, without carving out the append-only log. That collides with the standing Audit Mandate. This entry is the conductor recording the episode on the node's behalf; future briefs will carve out the log explicitly.\n\nNOTHING IN THE BRIEF TURNED OUT FALSE -- the first brief of this slice for which that is true. F2 confirmed every cited repo fact in-session, including that verify-test-run.py --update skips the split invariant and returns 0 unconditionally.",
+      "kind": "skill",
+      "skill": "implement",
+      "tool": null,
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "docs/plans/conductor-front-door.md"
+      ],
+      "tags": [
+        "conductor",
+        "front-door",
+        "f2",
+        "r13",
+        "r16",
+        "blocker-7",
+        "blocker-8"
+      ],
+      "outcome": "success",
+      "goal": "Build the front door: New Session sheet, File menu entry, session document and canvas modes (R13, R16)",
+      "done_when": "Every Fails-if in the plan's F2 section discharged by a named test; Blockers 7 and 8 with observed red-first falsifiers; App and Core suites green",
+      "tier": "T2",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true
+      }
     }
   ],
   "changes": [
