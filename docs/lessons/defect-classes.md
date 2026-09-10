@@ -28,7 +28,7 @@ does not create a new entry. Read this at grounding (CI5) for the area you are w
 4. A control is not a control until it has been **observed failing** on the un-fixed code.
 5. If the class would help any project — not just this one — raise it upstream via `/extendaibundle` (CI8).
 
-**Status counts:** controlled 65 · partially-controlled 47 · uncontrolled 7
+**Status counts:** controlled 65 · partially-controlled 47 · uncontrolled 8
 *(Not typed by hand — `python tools/verify-defect-register.py` fails when this line disagrees with the entries, and `--fix-counts` rewrites it.)*
 
 **Recurrences since last review:** 5.
@@ -4791,6 +4791,52 @@ for both or split.*
 - **Status:** `uncontrolled` — the instance is being repaired and the class is stated, but nothing
   fails when the shape recurs, and the next Windows-only "all green" will read exactly as
   convincing as this one did
+
+
+### DC-120 — A node runs a repo-wide destructive command while sibling nodes are live, and a node is unprotected until its first commit
+
+- **Shape:** a fan-out gives each node its own worktree, which is the containment boundary. One node
+  then invokes a tool that **adjudicates the whole repository** rather than its own tree — a
+  cleanup, a prune, a reset — because that is the tool's default scope and the node's intent was
+  narrower than the command it typed. The blast radius is every sibling's worktree, and the sibling
+  most exposed is the one that has **not yet committed**: a fresh worktree is *clean, merged and
+  unheld*, which is exactly the predicate a fail-safe cleanup uses to decide a tree is removable.
+  **The safest-looking tree is the one that gets deleted.**
+- **Signature:** a node reporting *"my worktree disappeared between two tool calls"*; a cleanup
+  summary whose count exceeds what it actually removed; a directory left on disk that
+  `git worktree list` no longer mentions.
+- **Instance (front-door slice, 2026-09-10):** an installing node ran `coord worktree cleanup
+  --remove` intending to remove one proof tree. The command is repo-wide. It adjudicated all
+  worktrees while **three sibling nodes were live**, removed two, and reported *"removed 4 of 4"*.
+  One live node's worktree **was** deleted between two of its tool calls — it recreated the tree on
+  the surviving branch and lost nothing, but only because its branch existed. Verified afterwards:
+  the two trees actually removed had branch tips already merged to `main`, and every tree with
+  uncommitted work was correctly KEPT. **No work was lost — the fail-safe held and the count lied.**
+- **Two distinct failures, and the second is the quiet one:**
+  1. **Scope** — the enforced scope was wider than the intent that reached it. The node itself
+     identified this as a **GO14a** instance *in the tool that implements the discipline GO14a
+     governs*.
+  2. **Reporting** — the count was derived from **intent** (`attempted − failed`) rather than from
+     reading the inventory back. An irreversible action reporting its intent as its result is worse
+     than under-reporting: the recovery nobody performs is the one nobody knows is needed.
+- **A third mechanism found while checking for damage:** `git` **de-registers a worktree before it
+  deletes the directory**. A failed delete therefore leaves a directory on disk that git will never
+  mention again — no `worktree` command can find it, and no cleanup can ever reach it. **This
+  repository has one**: `C:/projects/ai-de-spike-codemirror`, 7.0 MB, no `.git` file, a snapshot
+  taken ~17 minutes before the lane rename landed. Assessed file-by-file: its only two "unique"
+  files are the **pre-rename** `GovernedSessionSource.cs`/`Tests`, superseded by
+  `GovernedLaneSource`. **Reported, not removed** — WT1 makes deletion opt-in, and with no `.git`
+  the *"carries no commit that exists nowhere else"* test cannot be run at all.
+- **Control:** two halves, both cheap. **(a) A fan-out contract clause the conductor writes into
+  every brief:** a node may run destructive commands **scoped to its own tree only**; anything
+  repo-wide is the coordinator's, because a node cannot see its siblings. This is GO7's *failure
+  containment* made concrete rather than assumed. **(b) Commit early** — a node's first commit is
+  what makes its work survivable, and a brief should say so rather than leaving the node to discover
+  it. Upstream (`ai-forward` rev 69) has since added `--path` scoping, a measured count read back
+  from the inventory, and a distinct `ORPHANED` outcome; ai-de picks those up with that pack update.
+- **Status:** `uncontrolled` — the analysis is complete and upstream has fixed the tool, but in this
+  repository nothing yet stops a node typing a repo-wide destructive command, and the briefs that
+  would carry clause (a) are written fresh each time
 
 
 ---
