@@ -140,7 +140,8 @@ public sealed class SessionPathContractTests
     /// <summary>
     /// Fails if: the session-config path takes a YAML dependency. Ruling 23's subject is session
     /// config, not the project as a whole — Ruling 35 explicitly carves YamlDotNet out, scoped to
-    /// the template loader (<c>TemplateFrontmatterReader.cs</c> / <c>TemplateSchema.cs</c>), so a
+    /// the template loader (<c>TemplateFrontmatterReader.cs</c>; scoping proven by
+    /// <c>TemplateFrontmatterParserTests.TheDependencyIsScopedToTheTemplateLoader</c>), so a
     /// repo-wide <c>AiDe.Core.csproj</c> scan is falsified by that loader's own explanatory comment
     /// on the dependency, not by an actual violation of Ruling 23. Ruling 36 narrows this guard to
     /// what Ruling 23 actually governs: <see cref="SessionConfig"/> and
