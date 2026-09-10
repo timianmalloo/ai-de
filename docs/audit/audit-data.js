@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de",
-  "generated": "2026-09-10T17:49:52Z",
+  "project": "ai-de-spike-codemirror-trim",
+  "generated": "2026-09-10T18:04:19Z",
   "audit": [
     {
       "actor": null,
@@ -10535,6 +10535,49 @@ window.AUDIT_DATA = {
         "verification_executed": true
       },
       "supersedes": "al-01M264PTY4Z7FC6VM08XNZJ40S"
+    },
+    {
+      "id": "al-01M267VWN7NXPQ3NCSWVMYKRFM",
+      "shortname": "cm-trim: drop language-data",
+      "datetime": "2026-09-10T18:04:19Z",
+      "session": "cm-trim",
+      "prompt": "Execute the measurement Ruling 24 requires before the CodeMirror hosting option can be finalised: replace @codemirror/language-data with a hand-picked codeLanguages list, re-measure package count/disk size/import-map entries, reverify the composer+source-viewer in jsdom and real Chromium, build and hash the vendored ESM bundle (option c), and report whether the new numbers change which hosting option is cheapest.",
+      "summary": "Cut @codemirror/language-data, replaced with a hand-picked codeLanguages array (C#, JSON, Markdown) in lib.mjs. Production packages 52->26 (-50%), disk size 11MB->7.5MB (-32%), generated import-map entries 51->24. Reverified composer (chip widget, markdown edit, kept-language JSON fence highlighted) and read-only source viewer in headless jsdom and real Chromium (browser-dump.html); confirmed an unlisted-language (JS) fence now renders unhighlighted, not broken. Built vendored ESM bundle via npx esbuild@0.28.2 --bundle --format=esm --minify, 508337 bytes, SHA-256 ee3d19a44a330c43d03889ace6424732a5314073c96a36c39e83a2e1ee340981, committed with the hash alongside; smoke-tested standalone with no import map. Answered plainly: trim narrows the import-map manifest but does not remove the mandatory WebView2 host-change cost or the manifest-fragility class (a transitive package still needed a hand-added entry this run), so it does not by itself flip which hosting option is cheapest.",
+      "kind": "script",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "spikes/codemirror-composer/README.md",
+        "spikes/codemirror-composer/lib.mjs",
+        "spikes/codemirror-composer/package.json",
+        "spikes/codemirror-composer/browser-dump.html",
+        "spikes/codemirror-composer/vendor/codemirror-composer.bundle.mjs",
+        "spikes/codemirror-composer/vendor/codemirror-composer.bundle.mjs.sha256"
+      ],
+      "tags": [
+        "codemirror",
+        "ruling-24",
+        "dependency-trim"
+      ],
+      "outcome": "success",
+      "goal": "Execute Ruling 24's measurement: cut @codemirror/language-data from the composer spike, re-measure package count/size/import-map, prove the composer+source-viewer still work, and build the vendored ESM bundle option (c).",
+      "done_when": "New before/after numbers recorded in README, both proof paths (jsdom + real Chromium) re-executed and captured, vendored bundle built from the committed lockfile with a recorded command and SHA-256, and the hosting-option question answered plainly.",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "started_at": "2026-09-10T17:55:43Z",
+      "duration_seconds": 516.0,
+      "git": {
+        "sha": "1e03de95e0781cb1eb13d3d173ab70b3e6cb27e6",
+        "short": "1e03de95e",
+        "branch": "spike/codemirror-trim",
+        "pushed": null
+      }
     }
   ],
   "changes": [
