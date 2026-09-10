@@ -5,10 +5,25 @@ namespace AiDe.Core.Sessions;
 /// </summary>
 /// <remarks>
 /// <para><b><c>session.json</c>, not <c>.yaml</c> (Ruling 23, recorded as an A3 erratum).</b> A3's
-/// prose named <c>session.yaml</c>; no YAML parser exists in any <c>.csproj</c> in this repository,
-/// <c>System.Text.Json</c> is already used in 38 files, and the sibling run-log path is
-/// <c>.jsonl</c>. Introducing a YAML dependency for this one file would be the only YAML reader in
-/// the product for a format with no reader anywhere else.</para>
+/// prose named <c>session.yaml</c>; at the time of Ruling 23, no YAML parser existed in any
+/// <c>.csproj</c> in this repository, <c>System.Text.Json</c> was already used in 38 files, and the
+/// sibling run-log path is <c>.jsonl</c>. Choosing YAML for this one file would have made it the
+/// only YAML reader in the product for a format with no reader anywhere else — that was the actual
+/// reasoning, and it still holds for THIS path today: <see cref="SessionFile"/> reads and writes
+/// <c>System.Text.Json</c> only, via <c>SessionConfigStore</c>.</para>
+///
+/// <para><b>Update (Ruling 35 / Ruling 36): a YAML-reading package now exists in this project.</b>
+/// <c>AiDe.Core.csproj</c> takes a YAML library, scoped to the template loader
+/// (<see cref="TemplateFrontmatterReader"/> / <c>TemplateSchema.cs</c>) for template
+/// frontmatter — an unrelated format, an unrelated path. This does not reopen Ruling 23: Ruling 36
+/// confirmed the two rulings do not conflict, because Ruling 23's subject was always the
+/// session-config path specifically, never a claim that the *project* would forever contain no
+/// YAML parser. Nothing under this type takes a YAML dependency; see
+/// <c>SessionPathContractTests.SessionConfigSource_ContainsNoYamlToken</c>, which asserts that
+/// directly against source rather than repeating a repo-wide claim in prose. (Deliberately not
+/// naming the package here by its literal token:
+/// <c>TemplateFrontmatterParserTests.TheDependencyIsScopedToTheTemplateLoader</c> asserts that
+/// exactly one file in <c>src/</c> contains it, and this paragraph would otherwise be a second.)</para>
 ///
 /// <para><b><c>runs/&lt;run-id&gt;.jsonl</c> is RESERVED, not built.</b> <c>RunLogStore</c> is Phase
 /// 3. This type only computes the path so the contract is fixed now and the directory shape never
