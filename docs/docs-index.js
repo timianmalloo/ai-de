@@ -1712,6 +1712,31 @@ window.DOCS_INDEX = {
       "sourceSha256": "931922b7daf24b6592406a843d77a6399488e3959ad3ae2ed1c3d24637223c11"
     },
     {
+      "id": "api-aide-core-sessions",
+      "path": "docs/api/AiDe.Core.Sessions.md",
+      "title": "API: AiDe.Core.Sessions",
+      "type": "api",
+      "status": "current",
+      "owner": "@timianmalloo",
+      "phase": "0",
+      "reviewBy": "2027-09-02",
+      "reviewSuggested": [],
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 6 types, 20 members, 77% carrying a summary doc comment.",
+      "tags": [
+        "api",
+        "reference",
+        "generated"
+      ],
+      "links": [
+        {
+          "to": "architecture",
+          "rel": "documents"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "88e5bc5be5788e263f1655ca9124c08aee847cc8f459cb03fee07579b7d802eb"
+    },
+    {
       "id": "api-aide-core-store",
       "path": "docs/api/AiDe.Core.Store.md",
       "title": "API: AiDe.Core.Store",
@@ -12471,5 +12496,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "20007b7f5da6f039a1b982c6f8592dd52c7f3aa9353649eca2c0e0879f3f610b"
+  "graphSha256": "2b1177c60b66e4031c92657784cc9e9e7f31e8da586e54b379d9fe538ca868dc"
 };
