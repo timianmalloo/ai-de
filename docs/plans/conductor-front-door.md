@@ -614,6 +614,151 @@ and workspace-deletion purge oracle (Data & Persistence Architect) · the full `
 disclosure panel (Phase 2 — F4 needs only the provider + account line inside C14(e)(iii)) ·
 worktree-lifetime retention of agent-written attachment content.
 
+#### C21 — attach is operator-enabled, off by default, and host-owned
+
+**Ruled by Privacy after the human asked for an opt-in.** It gates **`attach`** — not egress, not
+send, not paste — **default off**, and it lands in **F4**.
+
+**Why not the other gates, and the reason is the plan's own argument turned on itself.** Gating *all
+model egress* or *the composer's send* both disable the product's core function, and both are
+dishonest in a specific way: **claude-code is a separate process the operator launches from a
+terminal anyway**, so switching off AI-DE's send does not stop the egress — **it routes around it.**
+That is C14(e)'s own test: *"a privacy control whose route-around is worse than the thing it prevents
+is not a control."* Gating *outside-workspace only* is coherent but carries the **repo-damaging**
+route-around already recorded here, and is separately gated by C14(e)(iii).
+
+**`attach` is the honest line because it is the only path in F4 that puts bytes into the prompt the
+operator did not type.** The plan already drew it: *"`paste-to-fence` is the minimizing path and
+`attach` is the maximal one."* C21 follows the existing line rather than inventing a new one.
+
+**The literal reading of "opt-in" holds, and choosing the right gate dissolves the usual objection.**
+*"The product does nothing until a setting is found"* is true of an egress gate and **false** of an
+attach gate: free-form send, goal blocks, templates and `paste-to-fence` all work with attach off
+(F4's own S1 guard says free-form works with no template anywhere in the path). The cost to this
+operator is one toggle. Against that, **the failure modes are asymmetric and one is irreversible** —
+*"once sent, nothing is retractable"* — and **off-by-default is safe for the deployment that never
+opens the settings, while on-by-default is safe only for the one that does.**
+
+**No Settings surface is needed, and Ruling 27 does not reach this.** `SessionConfig.cs:20-25` is a
+persisted, immutable, per-session record; `SessionConfigStore` writes `session.json` and an
+**append-only** `session-events.jsonl`; `SessionEventKinds.Config = "session.config"` (`:40`) already
+exists; and `EnabledBackends` is **already** an operator-facing toggle persisted there. This is a
+**new field on an existing record with an existing event kind.** Ruling 27 refused *"an
+assist-provider concept, gate, or Settings surface"* because R21 had **no consumer**, and both its
+stated reasons are consumer arguments. Neither reaches a field whose consumer is built in the same
+node.
+
+**And the constraint that would otherwise cut it, answered in advance.** `SessionConfig.cs:17-18`
+says *"never in scope here: routing mode, autonomy, default policy, per-session MCP."* A future
+reader will cut C21 citing *"default policy."* The distinction, written down so they do not:
+**those are governance dials on the run — what the agent may do — which refusal (c) also bans. C21
+is a composer-input control — what content the operator may transclude into their own prompt.**
+Different object, opposite direction.
+
+- **C21 — a persisted `AttachEnabled` field on `SessionConfig`, defaulting `false` at
+  `SessionConfigStore.Create`, toggled through the store like `EnabledBackends` (**new runs only**).**
+  - **(a)** *Fails if:* `AttachEnabled` is false and any attach path produces an attachment, **or
+    reads a single byte of a picked file**. **Oracle:** red-first — with the toggle false, drop a
+    file, use the file dialog, and multi-select N files; assert zero attachments, the draft
+    **byte-unchanged**, and a **file-reader counter at 0**; then flip to true and assert the same
+    gestures attach. *A gate that blocks the insert but still reads the file has already done the
+    thing.*
+  - **(b) The affordance stays visible and disabled, naming the setting.** *Fails if:* the attach
+    control is absent when `AttachEnabled` is false, or its disabled reason does not name the
+    setting that governs it. *An absent affordance is indistinguishable from an unbuilt feature.*
+  - **(c) "Off" is distinguishable from "never asked" by the existing event log, and no new
+    provenance field is added.** `AttachEnabled: false` with **no** `session.config` event naming it
+    is the shipped default; **with** one, an operator decided. *Fails if:* a `source`, `decidedAt` or
+    equivalent provenance field is added to `SessionConfig` — **the append-only log is already the
+    record, and two definitions of one fact is a defect signature.** **Oracle:** toggle twice; assert
+    `session-events.jsonl` carries both `session.config` events with earlier lines **byte-unchanged**,
+    and that a never-toggled session's log carries none.
+  - **(d) A blocked attach records a COUNT ONLY.** *Fails if:* a blocked-attach signal in **any**
+    channel carries the file's path, basename, extension, size or hash. **Oracle:** attempt a blocked
+    attach of a file at a canary path with a canary basename; grep every written channel — `.aide/`,
+    `docs/audit/**`, `.agents/log/**`, telemetry — for both; **zero hits**; falsifier — the same
+    probe with the canary deliberately written asserts the grep **finds** it. *The setting exists to
+    stop that content being recorded; **a control that logs what it refused is the breach it
+    prevents, wearing a compliance hat.***
+  - **(e) The setting is host-owned and unreachable from the page.** *Fails if:* any page→host `kind`
+    reads or writes it, or it appears in the vocabulary. **The asymmetry, stated so neither half is
+    cut later:** refusal (c) bans a composer toggle that **loosens** governance; C21 is a host-side
+    setting that only **restricts**. **A control that can be loosened from the surface it governs is
+    not a control.** C21 does not license a loosening dial, and refusal (c) does not license cutting
+    C21.
+  - **(f) Honest limit, stated in the plan rather than discovered later.** `SessionConfig` is
+    **per-session** and operator-writable, so **C21 is a default with a safe initial state, not an
+    enforceable policy.** A deployment that must *prevent* attach needs a **non-session-overridable
+    layer — Phase 2**, named here as the upgrade trigger. *Fails if:* C21 is described anywhere as
+    **restricting** or **preventing** attach for a deployment.
+
+**Refused outright — (i):** any page→host message that reads or writes `AttachEnabled`, in any
+spelling, and any page-side representation of it that the host trusts. **The page may be *told* the
+state to render (b)'s disabled affordance; it may never *report* it.**
+
+**Audit trail — one addition, and one binding.** The committed channel's per-send record gains
+`"attach_enabled": false` beside the `attachments` object: with attach off, `count: 0` is
+indistinguishable from *"the operator chose not to attach"*, and **the boolean makes the record
+self-describing — "could not" versus "chose not"**. Non-identifying, so permanent retention is fine
+on the argument the counts already carry. And **C21(d)'s blocked-attach counter is bound by the same
+MUST-NOT list**, in the committed channel and in Channel B alike: **a count, never a name.**
+
+**C14(e)(i)–(vi) are unchanged, all six.** Single-operator *strengthens* (iii)'s rationale — the
+person affirming is the data subject — and changes no clause.
+
+#### Residency needs no code in Phase 1, and locale must not supply it
+
+Privacy corrected the conductor's own pushback as **understating it**. For **processing residency**,
+machine locale is not a weak proxy — it is a **category error**. Gate 4's field is *"residency /
+transfer mechanism"*: a property of **Anthropic's infrastructure** plus the legal instrument for the
+cross-border hop, and **no measurement on this machine can observe either**. Deriving it from locale
+would write a **fabricated** value into a record whose rule is *"unknown fields fail closed"* — and
+**a fabricated value does not fail closed, it passes.** That is the worst available outcome, worse
+than the empty field.
+
+For **user jurisdiction**, locale is weaker still: a language/format preference, not a location, and
+`en-US` is the default install everywhere. Timezone and OS region are better hints and both are
+wrong for a traveller and user-changeable. And there is an irony worth naming: **auto-deriving
+jurisdiction means the product infers the operator's location from device signals — itself a
+collection decision. A declared field asks; an inferred one profiles.**
+
+**Both fields live in a document. Nothing at runtime reads them.** *"The cheapest privacy control is
+not collecting it — do not read locale, do not store jurisdiction, write the value in the record and
+stop. Any code that reads locale for this purpose is over-collection with no consumer."*
+*Fails if:* any Phase-1 code reads machine locale, timezone or OS region for a residency or
+jurisdiction purpose.
+
+#### The basis, and what the record must narrow
+
+**An informed operator acceptance is a sufficient basis for the operator's own data**, for a
+single-operator local tool where the authorizer is also the data subject and the reader of every
+byte. **It is not sufficient as an artifact:** gate 4 is a record with eight fields and the human
+filled **two** — `repository-policy authorization` (completely; the human outranks the Owner) and
+`purpose/basis` **for this deployment**. *An authorization is an input to the record, not a
+substitute for it. **Risk-small is not basis-written.***
+
+**A scope narrowing the record must state explicitly rather than imply blanket coverage:** the
+operator's authorization covers **their own data and repository content they control**. It does
+**not** extend to **a third party's personal data inside an attached file** — a colleague's commit
+email, a customer fixture, an issue export. **Single-operator shortens the consent chain for the
+operator's data; it does nothing for data about someone who is not in the room.** No new control is
+needed — C14(e)(iii)'s pre-read affirmation, C15's no-late-binding, and the human's read of the
+compiled view are the compensating controls and are adequate at this scale.
+
+**A scope condition with a void trigger, in Ruling 44's shape:** *"this basis is written for a
+single-operator desktop deployment where the authorizer, the data subject and the reader of the
+compiled view are one person; it is **VOID** for any multi-user, shared-workspace or unattended
+deployment, which returns to the human."*
+
+**Disposition rule for the researcher's unknowns, so "not published" does not deadlock the product.**
+*"Unknown fails closed" cannot mean "blocked forever" — that makes the rule unusable against any
+provider who does not publish.* It means the field records **"not published by the provider as of
+\<date\>, checked at \<URL\>"**, the **consequence** is named (what we cannot promise the operator),
+and the **acceptance is recorded as the human's** with the residual stated. That converts
+*unknown-therefore-blocked* into *known-unknown-accepted-by-the-authorizer* — the difference between
+a guess and an assumption written down before the work. **A field that is silently plausible instead
+of explicitly unknown is the failure mode.**
+
 ## F5 — exit evidence and Proof Pack
 
 **The oracle is committed BEFORE the run and its SHA cited in the Proof Pack** — seven points

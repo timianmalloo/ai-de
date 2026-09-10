@@ -6627,7 +6627,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "3a3af5571c529eb8cb7cfafb6217bfd982f50965ce8b082ccb65b116fdd22eef"
+      "sourceSha256": "c8ad899b276f9ed6ed10fd229842a76037e939d2d6f645bd51e823760858908e"
     },
     {
       "id": "plan-conductor-programme",
@@ -11004,6 +11004,43 @@ window.DOCS_INDEX = {
       "sourceSha256": "32b4814e4d2bd7463961ca3f0822adde409eddbe18b8fa45b47ff68df81968ba"
     },
     {
+      "id": "privacy-review-conductor",
+      "path": "docs/security/conductor-privacy-review.md",
+      "title": "AI-DE Conductor — privacy review and provider record",
+      "type": "privacy-review",
+      "status": "in-review",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-09",
+      "reviewSuggested": [],
+      "summary": "The provider record and supersession the parent review requires before ExternalProcessing may be enabled. Written after Privacy tripped its hard veto on the front-door slice and the human answered the three questions no agent could. Eight fields, each a cited value or an explicit dated \"not published\"; one field is deliberately left OPEN pending an observation only the operator can make.",
+      "tags": [
+        "privacy",
+        "conductor",
+        "external-processing",
+        "provider-record",
+        "egress",
+        "anthropic",
+        "basis"
+      ],
+      "links": [
+        {
+          "to": "privacy-review-ai-native-ide",
+          "rel": "refines"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "documents"
+        },
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "0ce973c1919c8312dc7ceeb9b6d596e3796d518b954039e9a4704b733dc6c402"
+    },
+    {
       "id": "proof-conductor-agent-plane",
       "path": "docs/proof/conductor-agent-plane.md",
       "title": "Proof Pack — Conductor agent plane, Phase 1 (N0–N7)",
@@ -12740,5 +12777,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "6b69f7246264b9fc26a2e37b37f8f973cef1ab0e7683dcf4de775eeac61dcf2a"
+  "graphSha256": "3d1bae6d3c92dc8528b123823bb1ccc3e5828ec43bb60d995cbfba8dd92941dd"
 };
