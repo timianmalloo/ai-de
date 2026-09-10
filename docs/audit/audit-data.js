@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-10T23:03:22Z",
+  "generated": "2026-09-10T23:15:41Z",
   "audit": [
     {
       "actor": null,
@@ -10967,6 +10967,32 @@ window.AUDIT_DATA = {
         "verification_executed": true,
         "acceptance_met": true
       }
+    },
+    {
+      "id": "al-01M26SNK3SZVE0CB48VDQNVQA4",
+      "shortname": "Human ruling on Privacy Blocker 1 — authorization, residency, single-operator",
+      "datetime": "2026-09-10T23:15:27Z",
+      "session": "conductor-front-door-join",
+      "prompt": "1: For me personally all that is fine, we may want to have an \"opt-in\" choice in the tool (in a settings) so that a case where that may not be ok we can restrict\n2: FOr me residency is US ... but again it should probably be just the locale of the machine indicating residency\nand yes its a single-operator desktop",
+      "summary": "HUMAN RULING ON PRIVACY BLOCKER 1 -- captured verbatim, because this is the authoritative input to a compliance record and a paraphrase would not be defensible.\n\nThe conductor asked three questions after Privacy tripped its hard veto (CLEARS-THE-VETO: no; basis absent). The human answered:\n\n  Q1 -- Anthropic's retention and training posture for the Max subscription tier.\n  A1 -- \"For me personally all that is fine, we may want to have an 'opt-in' choice in the tool (in a settings) so that a case where that may not be ok we can restrict\"\n\n  Q2 -- Residency.\n  A2 -- \"FOr me residency is US ... but again it should probably be just the locale of the machine indicating residency\"\n\n  Q3 -- Is this a single-operator desktop app whose only user is the person doing the reading?\n  A3 -- \"and yes its a single-operator desktop\"\n\nWHAT EACH ANSWER DOES:\n\nA1 gives AUTHORIZATION, which is a real field in the provider record. It does NOT give the retention or training FACTS -- accepting terms is not the same as stating them, and the record's own rule is that unknown fields fail closed. A domain-researcher is establishing those from primary sources with URLs and stated effective dates, instructed that \"not published\" is a usable answer and an inference is not.\n\nA1 also adds a NEW REQUIREMENT: a settings opt-in so deployments where this is not acceptable can restrict it. Treated as a scope addition, not a clarification, and put to Privacy for shape, default state and phase -- because the human's own phrasing (\"a case where that may NOT be ok\") describes a context that is NOT this one, so the toggle's default has to be right for a situation nobody in this session can see.\n\nA2 -- the conductor PUSHED BACK before writing it into a record, because the suggestion conflates two different fields. PROCESSING RESIDENCY is where Anthropic processes and stores; it is a property of the provider's infrastructure and the machine's locale says nothing about it. USER JURISDICTION is where the user is, which decides which law applies, and locale is a weak proxy even there -- an en-US machine operated from Berlin is a GDPR subject and still reports en-US. Deriving residency from locale would put a confident wrong value in the one field whose governing rule is that unknowns fail closed. Proposed instead: processing residency from the provider's published terms; jurisdiction recorded as DECLARED, defaulting to machine locale as a HINT and never as the recorded value, changeable in the same settings surface. Put to Privacy to confirm or overrule.\n\nA3 CONFIRMS AN ASSUMPTION THAT WAS ALREADY LOAD-BEARING ON A DIFFERENT RULING. Ruling 44 accepted F4's Phase-1 security posture -- non-edit calls auto-allowed, permission banner Dismiss-only -- as an Owner residual rather than a floor trip, and named its own assumption: \"Inferred that this is a single-operator desktop app whose only user is the one doing the reading -- if that assumption is wrong, this is a Security floor question and goes to the human.\" It is now Verified rather than Inferred, so Ruling 44 stands, and the containment argument has an actual human who is simultaneously operator, data subject, reader and authorizer.\n\nSTILL OPEN: Blocker 1's provider record itself. Five of its seven fields are writable from the repo plus A1 and A3; two are external facts pending the researcher. Privacy has been asked whether an operator's informed acceptance satisfies the basis for a single-operator local tool, or whether something more is owed.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": "timianmalloo (human)",
+      "artifacts": [
+        "docs/plans/conductor-front-door.md"
+      ],
+      "tags": [
+        "conductor",
+        "privacy",
+        "human-floor",
+        "basis",
+        "f4"
+      ],
+      "outcome": "partial",
+      "goal": "Obtain the human's ruling on the Privacy hard-floor trip so F4's send seam can unblock",
+      "done_when": "Provider record and conductor supersession written into docs/security/ with every field either cited or explicitly not-published",
+      "tier": "T2"
     }
   ],
   "changes": [
