@@ -1,0 +1,13 @@
+{"agent": "cm-trim", "at": 1789063438.9211912, "code": null, "kind": "allowed", "path": "spikes/codemirror-composer/README.md", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063438.9211912, "code": null, "kind": "allowed", "path": "spikes/codemirror-composer/browser-dump.html", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063438.9241698, "code": null, "kind": "allowed", "path": "spikes/codemirror-composer/browser-test.html", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063438.9256752, "code": null, "kind": "allowed", "path": "spikes/codemirror-composer/importmap.json", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063438.92721, "code": null, "kind": "allowed", "path": "spikes/codemirror-composer/lib.mjs", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063438.92721, "code": null, "kind": "allowed", "path": "spikes/codemirror-composer/package-lock.json", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063438.92721, "code": null, "kind": "allowed", "path": "spikes/codemirror-composer/package.json", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063438.9315789, "code": null, "kind": "allowed", "path": "spikes/codemirror-composer/test.mjs", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063438.9315789, "code": null, "kind": "allowed", "path": "spikes/codemirror-composer/vendor/codemirror-composer.bundle.mjs", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063438.9331188, "code": null, "kind": "allowed", "path": "spikes/codemirror-composer/vendor/codemirror-composer.bundle.mjs.sha256", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063469.7159867, "code": null, "kind": "allowed", "path": "docs/audit/audit-data.js", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063469.7179928, "code": null, "kind": "allowed", "path": "docs/audit/audit-log.jsonl", "session": "cm-trim", "wi": ""}
+{"agent": "cm-trim", "at": 1789063469.7199988, "code": null, "kind": "allowed", "path": "docs/audit/index.html", "session": "cm-trim", "wi": ""}

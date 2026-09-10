@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
-  "project": "ai-de-spike-codemirror-trim",
-  "generated": "2026-09-10T18:04:19Z",
+  "project": "ai-de",
+  "generated": "2026-09-10T18:05:47Z",
   "audit": [
     {
       "actor": null,

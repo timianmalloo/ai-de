@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-DE Conductor — Addendum B: Prompt Templates</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#10141d; --panel:#1b2130; --raised:#222a3c; --line:#2c3548;
+    --ink:#e6e9f2; --muted:#8a93a8; --dim:#5c6579;
+    --gold:#e3b34b; --teal:#46c0ad; --violet:#9b8cff; --rose:#ef7f9f; --sky:#5ba8f0; --green:#57b97c;
+    --sans:'IBM Plex Sans',system-ui,'Segoe UI',sans-serif; --mono:'IBM Plex Mono',Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14.5px;line-height:1.62}
+  .wrap{max-width:960px;margin:0 auto;padding:48px 26px 120px}
+  h1{font-size:28px;font-weight:600}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .tag{font-size:12px;border:1px solid var(--line);background:var(--raised);border-radius:6px;padding:2px 10px;color:var(--muted)}
+  .tag b{color:var(--ink);font-weight:500}
+  p.lede{color:var(--muted);margin-top:16px;max-width:76ch}
+  h2{font-size:20px;font-weight:600;margin:52px 0 6px}
+  h2 .n{color:var(--gold);font-family:var(--mono);font-size:15px;margin-right:10px}
+  h3{font-size:15.5px;font-weight:600;margin:26px 0 6px}
+  p{margin:10px 0;max-width:78ch}
+  p.note{color:var(--muted);font-size:13.5px;border-left:3px solid var(--line);padding-left:14px}
+  p.decision{color:var(--ink);font-size:13.5px;border-left:3px solid var(--gold);padding-left:14px;background:#1c1810;border-radius:0 6px 6px 0;padding-top:8px;padding-bottom:8px;max-width:74ch}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:14px 0}
+  th{color:var(--dim);font-weight:500;text-align:left;padding:8px 11px;border-bottom:1px solid var(--line);font-size:12px}
+  td{padding:8px 11px;border-bottom:1px solid var(--line);color:var(--muted);vertical-align:top}
+  td b{color:var(--ink);font-weight:500}
+  code{font-family:var(--mono);font-size:12.5px;color:var(--teal);background:var(--raised);border-radius:4px;padding:1px 5px}
+  pre{font-family:var(--mono);font-size:12.5px;line-height:1.55;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:14px 17px;overflow-x:auto;margin:14px 0;color:#c9d0e0}
+  pre .c{color:var(--dim)} pre .k{color:var(--gold)} pre .s{color:var(--teal)}
+  ul.spec{margin:10px 0 10px 2px;padding-left:20px}
+  ul.spec li{margin:6px 0;color:var(--muted);max-width:76ch}
+  ul.spec li b{color:var(--ink);font-weight:500}
+  .req{border:1px solid var(--line);border-radius:9px;background:var(--panel);padding:12px 16px;margin:10px 0}
+  .req .id{font-family:var(--mono);font-size:12px;color:var(--gold);margin-right:8px}
+  .req .t{font-weight:600}
+  .req p{font-size:13.5px;color:var(--muted);margin:6px 0 4px}
+  .req ul{margin:6px 0 2px 2px;padding-left:18px;font-size:13px;color:var(--muted)}
+  .req ul li{margin:3px 0}
+  .req ul li::marker{color:var(--green)}
+  .pill{font-size:11px;border-radius:4px;padding:1px 7px;border:1px solid var(--line);font-family:var(--mono);margin-left:8px}
+  .p0{color:var(--rose);border-color:#57303e}.p1{color:var(--gold);border-color:#4a3d1e}.p2{color:var(--sky);border-color:#28405c}
+  .wire{border:1px solid var(--line);border-radius:10px;background:var(--panel);margin:16px 0;overflow:hidden}
+  .wire .bar{padding:8px 14px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px;display:flex;gap:10px;align-items:center}
+  .wire .bar b{color:var(--ink)}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:2px 9px;font-size:11.5px;color:var(--muted)}
+  .chip.on{background:#20362f;border-color:#2f5a4c;color:var(--teal)}
+  .chip.tmpl{color:var(--violet);border-color:#3b3560}
+  .body{padding:14px 16px}
+  .field{border:1px solid var(--line);border-radius:8px;background:var(--raised);padding:9px 12px;margin:8px 0}
+  .field .k{font-size:11.5px;color:var(--dim);margin-bottom:4px;display:flex;gap:8px;align-items:baseline}
+  .field .k .must{color:var(--rose);font-size:10px}
+  .field .v{font-size:13px}
+  .field .v .m{color:var(--teal);font-family:var(--mono);font-size:12px}
+  .btn{background:var(--gold);color:#1b1608;font-weight:600;border-radius:7px;padding:5px 14px;font-size:12.5px;display:inline-block}
+  .btn.quiet{background:var(--raised);color:var(--muted);font-weight:500;border:1px solid var(--line)}
+  .small{font-size:12.5px;color:var(--dim)}
+  hr{border:none;border-top:1px solid var(--line);margin:40px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Addendum B — Prompt Templates</h1>
+<div class="meta">
+  <span class="tag">amends <b>spec v1.0 + Addendum A</b></span>
+  <span class="tag">date <b>2026-09-10</b></span>
+  <span class="tag">status <b>normative</b></span>
+</div>
+<p class="lede">Sessions become conversations of n prompts, and each prompt can be free-form or structured. This addendum specifies a <b>template system</b> for the composer: a versioned, <b>extensible</b> catalog of prompt templates tuned for high-reasoning models — each carrying <b>when-to-use</b> and <b>why-it-exists</b> guidance surfaced at pick time — three entry scenarios (blank, catalog-first, apply-template-to-free-form), per-block switching between shapes, and the <b>assist provider</b> — the configured model account (Claude default, Microsoft enterprise, or OpenAI) that powers template transformation and drafting help inside the tool itself.</p>
+
+<h2><span class="n">B1</span>Design principles (why templates, for these models)</h2>
+<ul class="spec">
+  <li><b>Goals over scripts.</b> High-reasoning models (Fable/Opus-class and peers) perform best when handed an objective, a rubric, and a boundary — not a step list. Templates encode <em>ends + latitude</em>: goal, done-when, constraints-as-invariants, evidence standard, budget, authority order.</li>
+  <li><b>Structure is for the reader too.</b> The Owner and conductor consume prompts; a ruling request with options-costs-recommendation is answerable in one pass, prose ramble is not. Templates tune the Owner/conductor conversation, not just the human's typing.</li>
+  <li><b>Templates are artifacts.</b> Versioned files, pack-distributed, projected deterministically to prompt text — the same doctrine as diagrams and session projections. Never a UI-only construct.</li>
+  <li><b>Free-form is never punished.</b> Scenario 1 (this-chat-style prose) is a first-class shape forever; templates are an offer, and the apply-template transform makes structure reachable <em>after</em> thinking out loud.</li>
+</ul>
+
+<h2><span class="n">B2</span>The three scenarios</h2>
+<table>
+  <tr><th>#</th><th>Scenario</th><th>Flow</th></tr>
+  <tr><td><b>S1</b></td><td><b>Blank, free-form</b></td><td>New Session with no template. Composer opens in Free-form shape; the person writes and sends exactly as in a chat. The conductor's Stage-0 triage handles tiering. Nothing about A5 changes.</td></tr>
+  <tr><td><b>S2</b></td><td><b>Catalog-first</b></td><td>The person picks a template (from the New Session sheet's optional "start from template", the composer's shape control, or <code>/template</code>). The editor becomes the template's structured form: typed fields, required markers, inline guidance, mention chips inside fields. Send is gated on validation.</td></tr>
+  <tr><td><b>S3</b></td><td><b>Apply template</b></td><td>The person writes free-form, then chooses <b>Apply template</b> (specific template, or "suggest one"). The <b>assist provider</b> maps the prose into the template's fields — exactly the "turn this into the right prompt" move from a chat with a strong model — and presents the filled form for review. Unmapped prose lands in the template's context field; missing required fields are flagged, never invented. The original draft is retained; "back to free form" restores it.</td></tr>
+</table>
+<p class="decision">Per-block freedom: within one session, every block independently chooses its shape. S1 → S2 → S3 → S1 across successive prompts is normal use, not an edge case. Shape is recorded per block and visible as a badge in the Score outline.</p>
+
+<h2><span class="n">B3</span>The template model</h2>
+<h3>B3.1 File format</h3>
+<p>A template is one markdown file with typed frontmatter and a body containing slots. Deterministic compile: <code>template(version) + values → prompt text</code>; the block's context recipe records <code>template_id + version + values + assist provenance</code>, so restart re-renders per spec §7.3 (against the current template version by default, with a diff shown; pinnable).</p>
+<pre><span class="c"># ruling-request.template.md (excerpt)</span>
+---
+id: ruling-request        version: 3        intent: decision
+audience: owner           tier_default: T0
+when_to_use: "A judgment call is blocking progress and the options are known."
+why: "Rulings that can be answered in one pass need options, costs, and a
+      recommendation up front; a prose request makes the Owner reconstruct
+      the decision before making it."
+fields:
+  - { name: question,        type: text,    required: true,
+      hint: "One decidable question. If two, file two." }
+  - { name: options,         type: list,    required: true, min: 2,
+      hint: "Each with cost/consequence. Include do-nothing when honest." }
+  - { name: recommendation,  type: text,    required: true }
+  - { name: evidence,        type: mentions, required: false }
+  - { name: decides_by,      type: text,    required: false,
+      hint: "What makes this urgent, if anything." }
+---
+A ruling is requested. Authority: your decision counts as the user's (CT20).
+Question: {{question}}
+Options and costs:
+{{#options}}- {{.}}{{/options}}
+Recommendation and reasoning: {{recommendation}}
+Evidence: {{evidence}}
+Record your ruling with rationale; it will be filed as a decision note and audit entry.</pre>
+<h3>B3.2 Catalog sources and precedence</h3>
+<table>
+  <tr><th>Source</th><th>Location</th><th>Lifecycle</th></tr>
+  <tr><td><b>Built-in</b></td><td>shipped with AI-DE</td><td>read-only; the B4 catalog</td></tr>
+  <tr><td><b>Pack</b></td><td><code>docs/ai-forward-pack</code> templates, arriving via <code>/updatepack</code></td><td>read-only in repo; pack revision governs version</td></tr>
+  <tr><td><b>Workspace</b></td><td><code>.aide/templates/</code></td><td>editable, committed, shared with the repo</td></tr>
+  <tr><td><b>Personal</b></td><td><code>~/.aide/templates/</code></td><td>editable, private</td></tr>
+</table>
+<p>Same-id precedence: personal &gt; workspace &gt; pack &gt; built-in (an override is visibly badged). The catalog view lives as a canvas mode extension: browse by intent, preview compiled output with sample values, Source view via the shared editor stack; save-as-copy from any read-only source into workspace/personal.</p>
+
+<h2><span class="n">B4</span>The catalog (v1, built-in)</h2>
+<table>
+  <tr><th>Template</th><th>Intent · audience</th><th>Core fields</th><th>When to use (picker tooltip)</th><th>Why it exists (tooltip detail)</th></tr>
+  <tr><td><b>goal-block</b></td><td>execute · conductor</td><td>goal, done_when, not_in_scope, tier, fan_out_cap, budget</td><td>You know the outcome you want and can name what done means.</td><td>Ends-plus-latitude beats step lists for reasoning models; CT19 makes every run measurable and scoreable. (Addendum A's "Goal block shape" is hereby re-based as this template — one mechanism, not two.)</td></tr>
+  <tr><td><b>launch</b></td><td>initiative · conductor</td><td>goal block + roles/authority, setup sequence, standing constraints, phase gate</td><td>Starting a new initiative or multi-phase effort from a cold start.</td><td>First prompts set authority order, setup sequence, and gates; improvising those mid-run is where big efforts go sideways. Derived from this project's launch prompt.</td></tr>
+  <tr><td><b>change-order</b></td><td>amend a run · conductor</td><td>what changed, intake steps, amended goal block, re-plan scope, added constraints</td><td>A run is in flight and its goal, scope, or constraints must change.</td><td>Scope drift is the default failure mode; an amendment needs reconciliation against reality and re-ratification, not a side note in chat. CT22 guard baked in.</td></tr>
+  <tr><td><b>ruling-request</b></td><td>decision · owner</td><td>question, options+costs, recommendation, evidence, decides-by</td><td>A judgment call is blocking progress and the options are known.</td><td>Options-costs-recommendation lets the Owner rule in one pass; auto-applied whenever the conductor convenes the Owner (§B6).</td></tr>
+  <tr><td><b>investigation</b></td><td>answer, don't author · agent</td><td>question, evidence standard, disconfirm step, report shape, no-edit constraint</td><td>You need an answer or analysis, and nothing should be modified.</td><td>Separating inquiry from authorship keeps evidence honest, lanes cheap, and read-only policy enforceable.</td></tr>
+  <tr><td><b>design-decision</b></td><td>produce an ADR · conductor/agent</td><td>problem, forces, options, council/vetoes, output contract</td><td>Choosing between approaches with lasting consequences.</td><td>Decisions without recorded forces and options get relitigated; the ADR shape (plus council vetoes) prevents it and lands as a decision node.</td></tr>
+  <tr><td><b>review</b></td><td>adversarial critique · agent</td><td>artifact, rubric, severity classes, veto semantics</td><td>An artifact exists and needs adversarial critique before it ships or merges.</td><td>Rubric, severity classes, and veto semantics turn opinion into gate evidence; the persona roster plugs into the audience field.</td></tr>
+  <tr><td><b>debug</b></td><td>fix a defect · agent</td><td>symptom, repro-first, isolation plan, characterization-test-before-fix, done-when</td><td>Behavior diverges from expectation and the cause is unknown.</td><td>Repro-first and characterization-before-fix prevent fix-shaped guesses and regression roulette.</td></tr>
+  <tr><td><b>benchmark</b></td><td>comparable runs · conductor</td><td>frozen goal block, fixtures, cohort declaration, no-peeking constraints</td><td>Comparing models, engines, or prompt shapes on the same task.</td><td>Comparisons are meaningless without frozen goals, fixtures, and declared cohorts; feeds bench import (spec §8.4).</td></tr>
+  <tr><td><b>converge</b></td><td>merge tracks · conductor</td><td>order, gates, regeneration, open-seam rule</td><td>Parallel tracks are done and must come together.</td><td>The merge is the deliverable; order, gates, and regeneration must be explicit or converge degrades into conflict triage. Spec §6.5 as a prompt.</td></tr>
+  <tr><td><b>resume</b></td><td>rebuild context · conductor</td><td>source session/blocks, recipe re-resolution rules, context budget</td><td>Continuing earlier work in a fresh context or a new session.</td><td>Decisions-not-transcript rebuilds cheap, current context; replaying transcript bloats and goes stale. Spec §7.3's verb, promptable.</td></tr>
+  <tr><td><b>retro</b></td><td>profile a run · agent</td><td>telemetry scope, findings/fixes table shape, feed-forward target</td><td>A run closed and you want its lessons in the next plan.</td><td>Telemetry-grounded findings feed forward; vibes don't. Wraps /session-profiler.</td></tr>
+</table>
+<p class="note">Common spine across all twelve: an <b>objective</b> (goal/question), <b>done-when or output contract</b>, <b>constraints as invariants</b>, <b>authority/source-of-truth order</b>, <b>evidence standard</b>, and <b>budget/stop semantics</b>. Template authors get this spine as the scaffold for new templates — and <code>when_to_use</code> and <code>why</code> are <b>required metadata</b> on every template, catalog-wide: a template that cannot say when to pick it and why it earns its place does not load.</p>
+
+<h2><span class="n">B5</span>The assist provider</h2>
+<h3>B5.1 Requirement and configuration</h3>
+<p class="decision">AI-DE requires at least one configured account from: <b>Anthropic (Claude)</b> — default, <b>Microsoft enterprise (Copilot)</b>, or <b>OpenAI (ChatGPT)</b>. First-run onboarding gates New Session on one of the three reaching <code>ready</code>; the chosen one becomes the <b>assist provider</b>. Configured in Settings → Providers (and visible on the New Session sheet); one assist provider is active at a time; switching is a settings change, recorded as a session event when it happens mid-session.</p>
+<pre><span class="c"># providers.yaml addition</span>
+assist:
+  provider: anthropic          <span class="c"># anthropic (default) | microsoft | openai</span>
+  account: max-personal
+  <span class="c"># resolves to a one-shot governed call through the subscription engine:</span>
+  <span class="c"># anthropic → claude-code · microsoft → copilot · openai → codex</span></pre>
+<h3>B5.2 What assist does — and is not</h3>
+<ul class="spec">
+  <li><b>Actions:</b> apply-template (S3), suggest-template (rank 2–3 candidates for a draft, with one-line why), promote-to-goal-block (Addendum A's action, now assist-powered and re-based on the goal-block template), field-level help ("draft done-when from this goal").</li>
+  <li><b>Mechanics:</b> a one-shot call through the assist provider's subscription engine (the same plane as lanes — no separate API path; the §4.2 invariant holds). No worktree, no episode ceremony: assist calls are <em>not runs</em>. They are evented (<code>assist.request</code>/<code>assist.result</code> with cost) so the profiler can attribute their spend to the session.</li>
+  <li><b>Discipline:</b> assist maps and rephrases; it never invents required-field content — a field it cannot ground in the draft is left empty and flagged. The transform shows provenance (which prose fed which field) so review is a glance, not a re-read. The person's original draft is always retained and restorable.</li>
+</ul>
+
+<h2><span class="n">B6</span>Composer and session evolution (amends A5)</h2>
+<div class="wire">
+  <div class="bar"><b>Composer</b><span class="chip on">Free-form</span><span class="chip">Template…</span><span style="margin-left:auto" class="chip">Apply template</span><span class="chip">assist: claude</span></div>
+  <div class="body" style="color:var(--muted);font-size:13px">we've built the session surface but i think the goal block editor should also validate budgets against the workspace default and warn when a T0 prompt carries a fan-out… can you make that happen without breaking the existing sheet</div>
+</div>
+<div class="wire">
+  <div class="bar"><b>Composer</b><span class="chip">Free-form</span><span class="chip tmpl">change-order v2</span><span style="margin-left:auto" class="chip">back to free form</span><span class="chip">view compiled</span></div>
+  <div class="body">
+    <div class="field"><div class="k">What changed <span class="must">required</span></div><div class="v">Goal-block editor gains budget validation against workspace defaults and a T0-with-fan-out warning.</div></div>
+    <div class="field"><div class="k">Amended done-when <span class="must">required</span></div><div class="v">Validation fires in the sheet and composer; existing sheet behavior unchanged; tests cover both warnings. <span class="m">@spec §A5</span></div></div>
+    <div class="field"><div class="k">Not in scope</div><div class="v" style="color:var(--dim)">empty — flagged: assist found nothing to ground this in; author it or send will warn</div></div>
+    <div style="display:flex;gap:8px;margin-top:10px"><span class="btn">Send (Ctrl+Enter)</span><span class="btn quiet">provenance</span></div>
+  </div>
+</div>
+<ul class="spec">
+  <li><b>Shape control</b> in the composer header: Free-form | Template picker (searchable, grouped by intent, recents first). Per block; switching shapes preserves content (template→free-form yields the compiled text for editing; free-form→template goes through apply-template).</li>
+  <li><b>Choosing is guided.</b> Hovering (or focusing) any template in the picker shows its card: <b>when to use</b> as the headline tooltip, <b>why it exists</b> as the detail line, plus the field list at a glance — the person decides from the guidance, not from the template's name. Suggest-template grounds its one-line rationale in the same <code>when_to_use</code> text, so the assist's reasoning and the human's tooltip are the same words.</li>
+  <li><b>Template form rendering:</b> typed fields from frontmatter (text, long-text, list, mentions, enum, budget), required markers, hints inline, mention chips work inside fields, validation gates send with field-level errors — the CT19 gating from A5/R15 is now the general case, since goal-block is a template.</li>
+  <li><b>View compiled</b> toggle shows exactly the text the conductor will receive. No hidden prompt assembly.</li>
+  <li><b>Staging semantics unchanged:</b> US-ED5/ED6/ED7 hold for every shape — never sent by editing, one explicit send, drafts persist (per shape, per block), one-way transfer to observed lanes still available (the compiled text is what transfers).</li>
+  <li><b>Score outline:</b> each block shows its shape badge (<code>free-form</code> or template id@version); restart-from-block reopens the original shape with its values.</li>
+  <li><b>Conductor round-trips:</b> the conductor may answer a free-form message with a <em>drafted template</em> (a filled change-order, a goal block) — it arrives as a reviewable form in the composer, exactly like an assist result. The <b>ruling-request</b> template is auto-applied to every Owner convening, whichever side drafts it.</li>
+  <li><b>New Session sheet</b> gains one optional row: "Start from template" (S2 entry) — default blank (S1). The sheet also surfaces the assist provider with its health.</li>
+</ul>
+
+<h2><span class="n">B7</span>Extensibility and authoring</h2>
+<p>The catalog is designed to grow. New templates are a file drop, not a release: anything valid under the pinned schema loads from any source in B3.2. The contract that makes growth safe:</p>
+<ul class="spec">
+  <li><b>Pinned schema.</b> The frontmatter contract is <code>template-schema/1</code> (id, version, intent, audience, <code>when_to_use</code>, <code>why</code>, fields with types/required/hints, body slots). Evolution is additive within schema 1 — unknown fields are preserved, never rejected; a breaking change means <code>template-schema/2</code> with side-by-side load support, the same discipline as <code>loomkeeper/1</code> and <code>weave/1</code>.</li>
+  <li><b>Load-time validation.</b> A template that fails validation (missing when/why, unknown field type, bad slot reference, id collision within a source) does not load; the catalog view lists it with its errors instead of silently dropping it.</li>
+  <li><b>Three authoring paths.</b> (1) <b>Save-as-copy</b> from any read-only template into workspace/personal (B3.2). (2) <b>New template</b> (<code>/new-template</code> and a catalog-view action): scaffolds the B4 common spine with empty when/why that must be authored before first save. (3) <b>Create template from prompt</b> — the inverse of apply-template: point the assist at a free-form prompt that worked (this run's launch prompt, a good investigation ask) and it drafts a template — fields inferred, the prompt's specifics demoted to sample values, when/why drafted for review. Provenance is retained; the draft is a proposal, never auto-saved.</li>
+  <li><b>Promotion path.</b> Personal → workspace (commit alongside the code it serves) → pack (contribution to ai-forward, arriving everywhere via <code>/updatepack</code>). Templates follow the same artifact discipline as skills: born local, promoted on merit, versioned centrally once shared.</li>
+  <li><b>Anti-sprawl guard.</b> On save, the catalog compares the new template's <code>when_to_use</code> against existing entries (assist-scored similarity); a near-duplicate prompts "extend that one instead?" — offered, not enforced. A catalog whose tooltips all sound alike has stopped helping people choose.</li>
+</ul>
+
+<h2><span class="n">B8</span>Requirements (extend spec §11)</h2>
+
+<div class="req"><span class="id">R18</span><span class="t">Template engine and catalog</span><span class="pill p0">P0</span>
+<p>Files, sources, precedence, compile.</p>
+<ul>
+  <li>Templates load from built-in, pack, workspace, and personal sources with documented precedence; an override is visibly badged; the twelve B4 templates ship built-in with their when-to-use and why-it-exists text.</li>
+  <li><code>when_to_use</code> and <code>why</code> are required by <code>template-schema/1</code>; a template missing either fails load with a visible catalog error; the picker renders when-to-use as the tooltip headline and why as its detail.</li>
+  <li>Compile is deterministic: same template version + values → byte-identical prompt text; the block recipe records template_id, version, values, and assist provenance.</li>
+  <li>Goal-block is re-based as template <code>goal-block</code> with zero behavior change to A5/R15 gating (regression-tested).</li>
+</ul></div>
+
+<div class="req"><span class="id">R19</span><span class="t">Composer shapes and per-block switching</span><span class="pill p0">P0</span>
+<p>S1 and S2, and movement between them.</p>
+<ul>
+  <li>Blank session opens Free-form; sending prose works with no template anywhere in the path (S1 regression guard).</li>
+  <li>Template picker renders any catalog template as a validated form; a required-field gap blocks send with a field-level error; view-compiled shows the exact outgoing text.</li>
+  <li>Shape switches preserve content in both directions; each block's shape and values persist and restore; shape badges render in the Score outline.</li>
+</ul></div>
+
+<div class="req"><span class="id">R20</span><span class="t">Apply template (S3)</span><span class="pill p1">P1</span>
+<p>The assist transform.</p>
+<ul>
+  <li>Apply-template on a free-form draft produces a filled form with per-field provenance; ungrounded required fields are left empty and flagged, never fabricated.</li>
+  <li>Suggest-template returns ranked candidates with a one-line rationale each, grounded in the candidate's <code>when_to_use</code> text; the original draft is retained and restorable throughout.</li>
+  <li>Assist calls route through the configured provider's subscription engine, emit <code>assist.*</code> events with cost, and appear in the session's spend.</li>
+</ul></div>
+
+<div class="req"><span class="id">R21</span><span class="t">Assist provider configuration</span><span class="pill p0">P0</span>
+<p>The account gate and the default.</p>
+<ul>
+  <li>First-run onboarding requires one ready account among anthropic / microsoft / openai before New Session enables; anthropic is the pre-selected default.</li>
+  <li>Settings → Providers selects the assist provider; the New Session sheet displays it with live health; a mid-session switch emits a session event and applies to subsequent assist calls only.</li>
+  <li>No assist path exists outside the subscription engines (spec §4.2 invariant verified by test).</li>
+</ul></div>
+
+<div class="req"><span class="id">R22</span><span class="t">Template lifecycle in sessions</span><span class="pill p1">P1</span>
+<p>Restart, versioning, catalog view.</p>
+<ul>
+  <li>Restart-from-block re-renders against the current template version with a visible diff when it changed; pinning to the recorded version is one click.</li>
+  <li>The catalog canvas view browses by intent, previews compiled output with sample values, shows Source via the shared editor, and save-as-copy promotes read-only templates into workspace/personal.</li>
+  <li><code>/updatepack</code> refreshing pack templates surfaces as a catalog change notice, not a silent swap.</li>
+</ul></div>
+
+<div class="req"><span class="id">R23</span><span class="t">Template cohort on the board</span><span class="pill p2">P2</span>
+<p>Close the loop.</p>
+<ul>
+  <li>Episodes born from a templated block carry template_id@version as a cohort attribute; the leaderboard's cohort lenses can slice by it — which prompt shapes produce better Weave outcomes becomes a query, same loop as model routing.</li>
+</ul></div>
+
+<div class="req"><span class="id">R24</span><span class="t">Template authoring and schema</span><span class="pill p1">P1</span>
+<p>The catalog grows safely.</p>
+<ul>
+  <li><code>template-schema/1</code> is pinned and documented; unknown frontmatter fields are preserved; a schema-invalid template surfaces in the catalog view with its errors rather than silently dropping.</li>
+  <li><code>/new-template</code> scaffolds the common spine and blocks first save until when-to-use and why are authored; save-as-copy promotes any read-only template into workspace/personal.</li>
+  <li>Create-template-from-prompt drafts a schema-valid template from a free-form prompt (fields inferred, specifics demoted to sample values, when/why drafted) as a reviewable proposal with provenance — never auto-saved.</li>
+  <li>Near-duplicate detection on save compares <code>when_to_use</code> against the catalog and offers (not enforces) extending the existing template.</li>
+</ul></div>
+
+<p class="note"><b>Phasing:</b> R18, R19, R21 join Phase 1 (the composer is being built there; goal-block-as-template must land before more shapes accrete, and the account gate is front-door work). R20, R22, and R24 join Phase 3 beside artifacts and sessions-store depth. R23 joins Phase 4 with the scoring lenses.</p>
+
+<h2><span class="n">B9</span>Amendments to prior documents (delta list)</h2>
+<ul class="spec">
+  <li><b>Addendum A §A5:</b> "two submission shapes" becomes "Free-form + templated, goal-block being template <code>goal-block</code>"; promote-to-goal-block is assist-powered; the shape control and Apply-template affordance join the composer header.</li>
+  <li><b>Addendum A §A4.3:</b> New Session sheet gains the optional Start-from-template row and the assist-provider indicator.</li>
+  <li><b>Addendum A §A6.1:</b> canvas gains the Templates catalog view (browse/preview/source), reachable from the composer's picker.</li>
+  <li><b>Spec §7.2:</b> new event kinds <code>assist.request</code>, <code>assist.result</code>, <code>template.applied</code>, <code>template.created</code>, <code>session.assist_provider_changed</code>.</li>
+  <li><b>Spec §10:</b> <code>AiDe.Core/Sessions/</code> gains <code>TemplateCatalog</code>, <code>TemplateCompiler</code>, <code>TemplateSchemaValidator</code>, <code>AssistService</code>; <code>Presentation</code> gains <code>TemplateFormViewModel</code>, <code>TemplateCatalogViewModel</code>; providers.yaml gains the <code>assist</code> node (§B5.1).</li>
+  <li><b>Pinned contracts registry:</b> <code>template-schema/1</code> joins <code>loomkeeper/1</code> and <code>weave/1</code> — same additive-evolution discipline, same documentation home.</li>
+  <li><b>Spec §11/§12:</b> R18–R24 added and phased per B8's note.</li>
+  <li><b>Launch/change-order prompts:</b> both are now instances of catalog templates (<code>launch</code>, <code>change-order</code>) — future runs start from the catalog, not from pasted files.</li>
+</ul>
+
+<hr>
+<p class="small">Companion to spec v1.0, Addendum A, and mockups v2. The B4 catalog's launch and change-order templates are derived from the two prompts authored in this project's design sessions.</p>
+
+</div>
+</body>
+</html>

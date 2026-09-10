@@ -2756,6 +2756,42 @@ window.DOCS_INDEX = {
       "sourceSha256": "5eb051331e34c8c9d5a905fd23bd014aea8305d55252f88c7257045d851cbc77"
     },
     {
+      "id": "note-addendum-b-reconciliation",
+      "path": "docs/notes/addendum-b-reconciliation.md",
+      "title": "Reconciliation — Addendum B against the front-door work in flight",
+      "type": "decision-note",
+      "status": "accepted",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2026-12-10",
+      "reviewSuggested": [],
+      "summary": "Addendum B arrived before the mistake it exists to prevent. No goal-block editor exists, no composer exists, and the front-door plan is still blocked in council review - so the re-base is additive rather than a migration. GoalBlock.cs already has the exact shape a template form engine consumes.",
+      "tags": [
+        "conductor",
+        "addendum-b",
+        "templates",
+        "reconciliation",
+        "composer",
+        "assist"
+      ],
+      "links": [
+        {
+          "to": "note-addendum-a-ratification",
+          "rel": "relates-to"
+        },
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "relates-to"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "ec9241e2678513842acfd782cdde7304799225f77c8cab9d307f89bb6ebb1799"
+    },
+    {
       "id": "note-ai-native-ide-architecture-review-depth",
       "path": "docs/notes/ai-native-ide-architecture-review-depth.md",
       "title": "Decision note — AI-native IDE architecture review depth",
@@ -12196,6 +12232,13 @@ window.DOCS_INDEX = {
       "description": "Open an interactive knowledge artifact."
     },
     {
+      "id": "surface-specs-conductor-ai-de-spec-addendum-b-prompt-templates",
+      "path": "docs/specs/conductor/ai-de-spec-addendum-b-prompt-templates.html",
+      "title": "AI-DE Conductor — Addendum B: Prompt Templates",
+      "kind": "knowledge-tool",
+      "description": "Open an interactive knowledge artifact."
+    },
+    {
       "id": "surface-specs-conductor-ai-de-conductor-spec-v1",
       "path": "docs/specs/conductor/ai-de-conductor-spec-v1.html",
       "title": "AI-DE Conductor — Specification v1.0",
@@ -12314,5 +12357,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "86fd630d48db90bd08a2754c24263a5804b7ae3d55df96b0adfc41547cdb5949"
+  "graphSha256": "6415617ce07b9fdb63baa919b3aa732ab9c00f88b5caa0dd55ade8c74a9696d8"
 };
