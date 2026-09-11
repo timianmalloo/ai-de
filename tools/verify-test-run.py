@@ -132,8 +132,13 @@ def run_tests(projects: list[Path], filter_expr: str | None = None, key: str | N
         # /nodeReuse:true so the next build can reuse them, and they linger for fifteen minutes
         # afterwards whether or not there is a next build. When the driver is killed rather than
         # allowed to exit -- a cancelled CI job, a closed terminal, an agent session that ends --
-        # the workers survive it and nothing is left that names them. Sixteen such orphans were
-        # counted on this machine: live `dotnet` processes whose parents were gone.
+        # the workers survive it and nothing is left that names them. COUNTS, with their
+        # provenance: the investigation that opened this node found SIXTEEN such orphans; TWO were
+        # still standing when the fix was written, both `/nodeReuse:true`, both children of a
+        # process id that no longer existed. The MECHANISM is verified. ATTRIBUTION of any one
+        # orphan to any one command is INFERRED and cannot be recovered afterwards -- a worker's
+        # command line is `/nodemode:1 /nodeReuse:true` and names no project, no repository and no
+        # worktree, so there is nothing in it to attribute by.
         #
         # Set in the ENVIRONMENT and not on the command line: this gate's argv is read by other
         # things, and an extra flag there is a change to a contract. MSBUILDDISABLENODEREUSE is
