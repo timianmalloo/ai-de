@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.App.Workbench: 81 types, 328 members, 70% carrying a summary doc comment.
+  Extracted public surface of AiDe.App.Workbench: 81 types, 329 members, 70% carrying a summary doc comment.
 ---
 
 # API: `AiDe.App.Workbench`
 
-**81 public types · 328 public members · 70% documented.**
+**81 public types · 329 public members · 70% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -1816,6 +1816,7 @@ is indistinguishable from a broken key.
 | `bool IsResizing` | **(gap)** |
 | `Func<Task<string>>? WorkspaceRefresh { get; set; }` | Asks the workspace to re-index itself. Set when a workspace attaches; null before that. |
 | `Func<string>? NewSessionRequested { get; set; }` | Runs `File → New Session` and returns what to announce. Set by the shell; null before that, which the command reports rather than doing nothing. |
+| `Func<string>? ExplorerToggleRequested { get; set; }` | Swaps the shell's primary view mode and returns what to announce. Set by the window; null before that, which the command reports rather than doing nothing. |
 | `event Action? WorkspaceDataChanged` | Raised after a command that CHANGED what the store holds has finished. |
 | `CanvasFocusRouter? CanvasFocus { get; set; }` | Routes focus across the canvas boundary. Set when a graph canvas surface attaches. |
 | `bool Execute(string commandId)` | Runs a catalog command by id. Returns false when the id is unknown. |
@@ -1859,6 +1860,15 @@ that, which the command reports rather than doing nothing.
 **Remarks.** Synchronous, unlike `WorkspaceRefresh`: the flow is a modal sheet on the UI
 thread, and a Task here would only describe the wait for a dialog the user is already looking
 at.
+
+### `Func<string>? ExplorerToggleRequested { get; set; }`
+
+Swaps the shell's primary view mode and returns what to announce. Set by the window; null
+before that, which the command reports rather than doing nothing.
+
+**Remarks.** A delegate for the same reason as `NewSessionRequested`: the mode swap owns a
+`ContentControl` in the window's tree, and a controller that could reach it would be a
+second place the shell's mode can change.
 
 ### `event Action? WorkspaceDataChanged`
 

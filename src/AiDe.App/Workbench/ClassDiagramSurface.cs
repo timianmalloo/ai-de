@@ -125,7 +125,7 @@ public sealed class ClassDiagramSurface : ContentControl
 
         _search = new TextBox { Margin = new Thickness(0, 6, 0, 0), Padding = new Thickness(6, 3, 6, 3) };
         AutomationProperties.SetName(_search, "Filter types by name");
-        _search.SetResourceReference(BackgroundProperty, "SunkenBrush");
+        _search.SetResourceReference(BackgroundProperty, "SurfaceSunkenBrush");
         _search.SetResourceReference(ForegroundProperty, "TextBrush");
         _search.TextChanged += (_, _) => Render(ClassHierarchyModel.Filter(_full, _search.Text));
         DockPanel.SetDock(_search, Dock.Top);
@@ -785,7 +785,7 @@ public sealed class ClassDiagramSurface : ContentControl
             CornerRadius = new CornerRadius(4),
             BorderThickness = new Thickness(1),
         };
-        box.SetResourceReference(BackgroundProperty, "RaisedBrush");
+        box.SetResourceReference(BackgroundProperty, "SurfaceRaisedBrush");
         box.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
         AutomationProperties.SetName(box, (type.IsInterface ? "interface " : "class ") + type.Label);
         return box;
@@ -954,7 +954,7 @@ public sealed class ClassDiagramSurface : ContentControl
             BorderThickness = new Thickness(1),
             Padding = new Thickness(2),
         };
-        card.SetResourceReference(BackgroundProperty, "RaisedBrush");
+        card.SetResourceReference(BackgroundProperty, "SurfaceRaisedBrush");
         card.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
         AutomationProperties.SetName(card, (type.IsInterface ? "interface " : "class ") + type.Label);
         return card;

@@ -67,6 +67,43 @@ public sealed class SurfaceContentFactory(
     /// </remarks>
     public static IReadOnlyList<SurfaceKind> Kinds { get; } =
     [
+        // ────────────────────────────────────────────────────────────────────────────────
+        // FINDING, NOT A FIX. THESE TWO ROWS BUILD THE SAME THING, AND THE OBVIOUS REPAIR IS
+        // THE WRONG ONE. Read this before deleting either.
+        //
+        // "view" and "inspector" both resolve to Evidence(s); the builder takes no discriminator
+        // and neither does the view model, so Explore, Provenance and Domain issue the identical
+        // FindAsync("") and render through the identical template. The three lists have been
+        // measured byte-identical. The strings "explore", "provenance" and "domain" appear nowhere
+        // in this assembly - they are captions in the default layout, and a caption is not a job.
+        //
+        // The operator asked for the duplicates to be removed: "maybe just explore is needed and we
+        // get rid of domain and provenance". THAT IS BACKWARDS, and acting on it destroys
+        // capability:
+        //   - Provenance is specified as the DETAIL half of a master-detail screen
+        //     (phase-1-walking-skeleton). EvidencePaneViewModel.SelectAsync builds exactly the four
+        //     specified sections and has one caller, bound to nothing in this shell. The specified
+        //     master-detail was split into two sibling TABS IN ONE STACK - which cannot be
+        //     master-detail, since only one tab is visible - and then the selection wire was
+        //     dropped, leaving two copies of the master.
+        //   - Domain is specified in US-2 and that surface EXISTS, as kind "classdiagram", openable
+        //     by command. The tab captioned Domain is wired to "view".
+        //   - Explore is the one that is genuinely redundant: it duplicates the Explorer rail mode,
+        //     which is flagged in session-contracts.md and still open.
+        // They are not redundant by design. They are redundant by decay.
+        //
+        // WHY THIS NODE DID NOT REPAIR IT. Re-pointing Domain and moving Provenance to the empty
+        // Right zone are changes to the DEFAULT LAYOUT and its migration chain, which is the
+        // zone/tree machinery another session is repairing for the pane-swap defect (INV-0006) -
+        // and a zone recommendation validated against a shell that mislabels zones has been
+        // validated against the wrong thing. Restoring Provenance as a selection-bound inspector
+        // additionally needs a selection channel BETWEEN two panes, which is a design decision
+        // (which list drives which inspector?) and not a rendering change.
+        //
+        // THE CONTROL THAT IS OWED: a test that two surface kinds render different content. None
+        // exists, and one written today would be red - correctly. It lands with the repair, not
+        // before it, because a green test here would have to assert the duplicate.
+        // ────────────────────────────────────────────────────────────────────────────────
         new("view", static (f, s) => f.Evidence(s)),
         new("inspector", static (f, s) => f.Evidence(s)),
         new("terminal", static (_, s) => Terminal(s), Windowed: true),

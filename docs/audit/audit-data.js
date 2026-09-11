@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T16:22:17Z",
+  "generated": "2026-09-11T16:25:13Z",
   "audit": [
     {
       "actor": null,
@@ -11327,6 +11327,69 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
+      "actor": null,
+      "artifacts": [
+        "docs/mockups/session-front-door.html",
+        "docs/reviews/ui-operator-feedback.md",
+        "DESIGN.md"
+      ],
+      "datetime": "2026-09-11T13:37:53Z",
+      "duration_seconds": 1341.0,
+      "id": "al-01M28B0R807NPKC605J54T6S09",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Node U1 - /ui-design stages 1-3 on real operator feedback (7 items in C:\\Users\\malla\\Downloads\\UI housekeeping). DESIGN ONLY: write DESIGN.md and docs/mockups/, do NOT write src/. T2. Bounded loop: variant = rubric findings at severity >= major, strictly decreasing; floor = zero majors; cap = 3 passes. Deliverable is the ranked plan. Mid-task correction: Ruling 45 makes the canvas Console-only; design a one-mode-now-N-later strip.",
+      "session": "ui-elevation-node-u1",
+      "shortname": "ui-design-session-front-door",
+      "skill": "ui-design",
+      "started_at": "2026-09-11T13:15:32Z",
+      "summary": "Elevate review of the session front door. Six of seven feedback items are unimplemented spec or measured defect, not taste. Item 4's systemic cause named at the token level: only 6 implicit WPF styles exist, none for a text or input control, so 18 base types fall back to platform light defaults - 11 measured failing pairs, worst 1.15:1, plus the inverse at 1.22:1 caused by a previous partial fix. Composer: CodeMirror is vendored and navigated to but Configure has zero callers and host.init/editor.ready deadlock, so it never initializes. Task class is a free-text box for a cohort key where a typo costs more than a default. Explore/Provenance/Domain are one class instantiated three times, and the operator's proposed fix keeps the wrong one. Rail: 3 of 4 icons inert, the 4th is the only door to Explorer mode. Console-only mode strip designed per Ruling 45. Rubric variant 5 majors -> 0 in 2 passes; cap did not fire. Nine false claims in the brief reported.",
+      "tags": [],
+      "tool": null
+    },
+    {
+      "actor": "Claude Opus 5 (1M context)",
+      "artifacts": [
+        "src/AiDe.App/App.xaml",
+        "tests/AiDe.App.Tests/ContrastFloorTests.cs",
+        "tests/AiDe.App.Tests/ThemeProbe.cs",
+        "tests/AiDe.App.Tests/Sessions/TheTaskClassIsChosenNotTypedTests.cs",
+        "tests/AiDe.Core.Tests/TheEvidencePaneDoesNotInventConfidenceTests.cs",
+        "src/AiDe.Core/Presentation/Sessions/TaskClassVocabulary.cs",
+        "src/AiDe.App/Workbench/DarkCaption.cs"
+      ],
+      "datetime": "2026-09-11T14:26:35Z",
+      "done_when": "Each ranked item is built, deferred or refused with a reason; the eleven measured pairings are re-measured after item 1 rather than asserted; the maximized proposal is built and marked awaiting ratification; the IA finding is produced with nothing deleted; test floors met; gates run with --gate on the craft gate; branch pushed.",
+      "git": {
+        "branch": "feature/ui-implementation",
+        "pushed": null,
+        "sha": "0a63a731d863d0636bbcf215c4540311b988eae7",
+        "short": "0a63a731d"
+      },
+      "goal": "Implement U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern, on feature/ui-implementation, without altering tab placement or move behaviour.",
+      "id": "al-01M28DSXJFATYK40B3T5ZBAWAF",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "feat(theme): implicit defaults for the base control set, measured\n\nItem 1 of the ranked plan in docs/reviews/ui-operator-feedback.md, plus\nitems 4 and 5.\n\nThe shell themed its CONTAINERS and left its LEAVES to WPF, whose default\nis a light theme. Six implicit styles existed, none for a text or input\ncontrol; eighteen base types fell back to the platform and twenty-eight\ninstantiations did. App.xaml now carries an implicit default for every\ntype TC1 names, each setting INK AND GROUND TOGETHER - the partial\npairing is what turned dark-on-dark into light-on-white at 1.22:1.\n\n- The palette tokens move above the templates, because a StaticResource\n  cannot reference a brush declared below it.\n- DisabledTextBrush (#7C8896) is now a token, not a literal repeated three\n  times, and disabled is that pairing rather than Opacity 0.5 - which\n  measured 2.73:1 against a 3:1 floor (A4).\n- The focus ring is its own 2px outline. The old trigger recoloured a\n  border whose thickness every rail button sets to zero, so it rendered\n  nothing while a comment claimed otherwise (A1/AR4).\n- CheckBox and RadioButton are retemplated: the platform bullet paints its\n  glyph in a fixed near-black, so on a dark ground the two states\n  composite to nearly the same image.\n- SunkenBrush/RaisedBrush were referenced from six sites and declared\n  nowhere. A missing key is a silent no-op (TC3); the six now name the\n  keys that exist.\n- AvalonDock's chrome keeps a transparent button pairing in its own\n  resource scope, which is nearer in the tree than Application.Resources.\n\nControls, not prose (CI6):\n- ContrastFloorTests re-measures all eleven pairings from real controls in\n  a real shown window under the real App.xaml, and writes the table.\n- A theory over the eighteen TC1 types fails when one has no implicit\n  default, or sets only one of ink and ground.\n- A rendered-pixel test fails when a checked box is not visibly different\n  from an unchecked one.\n- TokenDisciplineTests fails when any named resource key is undeclared.\n\nMeasured after the change: pairs 1-10 clear their floors (13.57-15.62:1\nfor text, 5.28:1 for the disabled glyph). Pair 11 is DESIGN.md's declared\nborder deviation and is reported, not asserted.\n\nNo layout, geometry, template binding or command is changed by any of\nthis, so tab placement and drag behaviour are untouched.\n\nCo-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_01PXGs6quw67gGZao37P7xSC",
+      "session": "session_01PXGs6quw67gGZao37P7xSC",
+      "shortname": "node-u2-ui-implementation",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Node U2 — built U1's ranked plan for the theme, contrast, icon, surface-content and sheet concern.\n\nBUILT. Item 1: implicit TargetType defaults in App.xaml for the eighteen base control types TC1\nnames, each setting ink and ground together. Item 4: the rail focus ring is its own 2px outline\n(the old trigger recoloured a border every rail button sets to zero width). Item 5: the six\nreferences to the undeclared SunkenBrush/RaisedBrush keys now name the keys that exist, and a\ncheck fails when any named key is undeclared. Item 3: the task class is a bounded picker with\nRQ2-RQ5 copy and nothing preselected. Item 6: the pane no longer hard-codes Verified. Item 8: three\ndisabled rail placeholders deleted, New Session added as the accent primary, Explorer given a\ncatalog command. Item 10: MaxSearchResultsCeiling, and a capped read renders as a lower bound.\nItem 11: both dialogs opt their caption into DWM dark mode through one factory. A4: disabled is a\ntoken pairing, not Opacity 0.5 at 2.73:1.\n\nMEASURED, NOT ASSERTED. ContrastFloorTests instantiates real controls in a real shown window under\nthe real App.xaml and computes every pairing. Pairs 1-10 clear (13.57-15.62:1 text, 5.28:1 the\ndisabled glyph); pair 11 is DESIGN.md's declared border deviation at 1.39:1, reported and not\nasserted. A rendered-pixel test proves a checked box differs visibly from an unchecked one.\n\nPROPOSED, AWAITING RATIFICATION. Creating a session maximizes its document's stack — the maximized\ndock state DESIGN.md already defines — because the requested full-window view conflicts with A4.4\nand ADR-0017.\n\nDEFERRED WITH REASONS. Item 2 and the composer half of 5/6 belong to node F4b. Item 7 renders in\nSessionDocumentSurface.cs, which F4b holds. Items 12 and 16 depend on item 2. Item 9 is a finding\nleft where the deletion would be made: the operator's own fix is backwards, and nothing was\ndeleted. Items 13 and 15 are product decisions or cross reserved files. RQ6 is not built because\nthe operator's last answer is persisted nowhere.\n\nFALSE IN MY BRIEF. Item 1 clears 8 of 11 measured pairs, not 7 — pair 8 is a ListBox ground and the\nimplicit ListBox style clears it. The palette needed one addition (a disabled ink token) for A4,\nwhich the brief's \"no behaviour change, one file\" framing did not anticipate. The craft gate with\n--gate exits 0 over docs/mockups with 66 Majors and 38 Minors present, so --gate is no more\ndiscriminating than a bare run unless a Blocker is mapped.",
+      "tags": [
+        "ui",
+        "contrast",
+        "theme"
+      ],
+      "tier": "T2",
+      "tool": null
+    },
+    {
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "src/AiDe.App/Conductor/RunEventRelay.cs",
@@ -11364,27 +11427,6 @@ window.AUDIT_DATA = {
       "tags": [],
       "tier": "T2",
       "tool": "claude-code"
-    },
-    {
-      "actor": null,
-      "artifacts": [
-        "docs/mockups/session-front-door.html",
-        "docs/reviews/ui-operator-feedback.md",
-        "DESIGN.md"
-      ],
-      "datetime": "2026-09-11T13:37:53Z",
-      "duration_seconds": 1341.0,
-      "id": "al-01M28B0R807NPKC605J54T6S09",
-      "kind": "skill",
-      "outcome": "success",
-      "prompt": "Node U1 - /ui-design stages 1-3 on real operator feedback (7 items in C:\\Users\\malla\\Downloads\\UI housekeeping). DESIGN ONLY: write DESIGN.md and docs/mockups/, do NOT write src/. T2. Bounded loop: variant = rubric findings at severity >= major, strictly decreasing; floor = zero majors; cap = 3 passes. Deliverable is the ranked plan. Mid-task correction: Ruling 45 makes the canvas Console-only; design a one-mode-now-N-later strip.",
-      "session": "ui-elevation-node-u1",
-      "shortname": "ui-design-session-front-door",
-      "skill": "ui-design",
-      "started_at": "2026-09-11T13:15:32Z",
-      "summary": "Elevate review of the session front door. Six of seven feedback items are unimplemented spec or measured defect, not taste. Item 4's systemic cause named at the token level: only 6 implicit WPF styles exist, none for a text or input control, so 18 base types fall back to platform light defaults - 11 measured failing pairs, worst 1.15:1, plus the inverse at 1.22:1 caused by a previous partial fix. Composer: CodeMirror is vendored and navigated to but Configure has zero callers and host.init/editor.ready deadlock, so it never initializes. Task class is a free-text box for a cohort key where a typo costs more than a default. Explore/Provenance/Domain are one class instantiated three times, and the operator's proposed fix keeps the wrong one. Rail: 3 of 4 icons inert, the 4th is the only door to Explorer mode. Console-only mode strip designed per Ruling 45. Rubric variant 5 majors -> 0 in 2 passes; cap did not fire. Nine false claims in the brief reported.",
-      "tags": [],
-      "tool": null
     },
     {
       "actor": "Claude Opus 5 (1M context)",
@@ -11496,15 +11538,6 @@ window.AUDIT_DATA = {
       "tool": null
     },
     {
-      "id": "al-01M28GFKJVH9PRE8FVNWRWAZ27",
-      "shortname": "F6 — the provider file reads, and the composer handshake was three defects",
-      "datetime": "2026-09-11T15:13:23Z",
-      "session": "conductor-front-door-f6",
-      "prompt": "Node F6 — provider configuration. Ruled into existence by Ruling 47. The front-door slice does not close until this lands and the exit run re-runs from the UI. T2, opus.\n\n## Worktree (WT1 — first action, commit early)\ngit -C C:/projects/ai-de worktree add C:/projects/ai-de-feature-provider-config -b feature/provider-config main\n\nLive nodes: U2 owns theme/contrast/icons/surface-content in src/AiDe.App/Workbench/ and is actively in the sheet (it has just landed a task-class picker). C2 owns the layout/drag concern there. F5 holds docs/proof/. Coordinate by concern: yours is provider configuration and the composer handshake.\n\n## Why you exist\nMainWindow.xaml.cs:138-142 says it in the tree: \"No provider registry is configured yet… §14.2's providers.yaml has no reader in this repository… the sheet is handed an empty registry and a governed run is what needs a backend.\" :151 hands the sheet new ProviderRegistry([]).\n\nFour of ComposerSendContext's seven run-side fields — AdapterInstallRoot, Model, AccountLabel, Providers — plus both of AttachmentGate's label arguments have no source anywhere in src/. So §F5 clause 2 is unsatisfiable and the slice cannot close.\n\nAnd the headless path is not an answer: ConductorEntry.Read (:126-130) takes those values from a hand-authored per-run JSON file (spikes/conductor-exit-run/run.json:4-7, 21-29). The Owner's line: \"'source them the way ConductorEntry does' means 'read them from a JSON file the operator wrote' — option (C) is (A) with the file in the wrong place.\"\n\n## Scope — ADMITTED\n1. A JSON reader for ~/.aide/providers.json — §14.2's providers: map transcribed to JSON via System.Text.Json, plus adapterInstallRoot and a per-engine model, both marked in the code as extending §14.2.\n2. One construction site of ProviderRegistry in the shell, handed to both the sheet (MainWindow.xaml.cs:151) and the composer's ComposerSendContext.\n3. ComposerSurface.Configure's first caller in src/.\n4. AttachmentGate's providerName/accountLabel from the same binding as the send context — no second source.\n5. The composer handshake fix — it is on your path.\n\nCUT, do not build: per-workspace overrides (.aide/workspace.*) · the routing: / best_fit / metered / acp: facets · any Settings UI for editing providers (Ruling 27 territory — the file is hand-edited, as the spec says) · any health prober.\n\nFROZEN: ConductorEntry.cs byte-unchanged · governedRunRequestSites == 2 · SpawnContractTests.cs byte-unchanged.\n\n## The handshake, and two corrections to what I was told\nI briefed the previous node that PushInit()'s callers were Configure and MarkReady. The Owner verified otherwise — confirm it yourself:\n- PushInit()'s two callers are ChooseTemplate (ComposerSurface.cs:214) and MarkReady (:277). Configure (:154-182) calls RenderCompiledView and never PushInit.\n- ComposerSurface.Configure does have zero callers in src/ — but WorkbenchShell.cs:1532 is PromptDraftSurface.Configure, a different type. Do not be misled by a grep.\n- The deadlock is worse than \"a cycle\". InitialiseAsync (:497-518) only navigates; nothing pushes a first host.init; and the page posts editor.ready only inside its host.init branch (composer.mjs:208-219).\n- The ping-pong is latent, not live. Whoever adds the first push gets ready → MarkReady → PushInit(value = string.Empty, :478) → second ready → dropped (router :232) — and the second render rebuilds the form with empty values.\n\nComposerVocabulary.cs:22 already states the contract, and the page violates it: EditorReady = \"The page finished mounting. The host may flush queued host-to-page pushes.\" The page is wrong, not the host. So condition (d): the page posts editor.ready on mount, unprompted.\n\ncomposer.mjs is under the F4 bundle hash gate (C18). Editing it re-fires verify-vendored-assets and the manifest↔notices cross-check. Plan for that; do not discover it.\n\n## Conditions — verbatim from Ruling 47\n- (a) No run-side value reaches GovernedRunRequest from a code default. model and accountLabel come from the file or an operator selection. An ambiguous binding — a provider row with more than one account and no selection — is a field-level refusal naming the field. That is the DC-110 posture: a defaulted value ranks in the wrong cohort and is indistinguishable from a chosen one afterwards.\n- (b) A missing file yields the existing \"no agent backend is configured\" state. A malformed file yields a visible error naming file and field — never a silently empty registry. \"Refused, never defaulted\" (ProviderRegistry.cs:80-88).\n- (c) A health value read from the file is presented as recorded-by-the-operator, the posture ObservedAuthLabel already takes (ProviderRegistry.cs:40-47), and the Proof Pack names it as a residual — not \"live.\"\n- (d) The handshake follows the vocabulary contract. Oracle, red-first: exactly one host.init per mount after Configure, and field values survive it.\n- (e) The .yaml → JSON erratum is filed as an Addendum entry per the Ruling 23 precedent, and the three in-tree remarks naming providers.yaml are corrected — ProviderRegistry.cs:51, :87, MainWindow.xaml.cs:138-139. A comment naming a file that does not exist is a wrong claim in the tree. The spec HTML is NOT edited.\n- (f) Red-first, and your E7 surface list assigns every EDGE to this node: file → reader → registry → sheet → EnabledBackends → ComposerSendContext → Send → GovernedRunRequest → GovernedRunHost. That is DC-130's control — the class registered because adjacent nodes each built one end of a seam no clause assigned, which is exactly what put you here.\n\n## Constraints\nTreatWarningsAsErrors=true. Floors App 495, Core 2206 — report counts; do not run --update or edit tools/expected-test-counts.json. Other nodes are raising App concurrently; report what you measure.\n\nDo not run AiDe.App.Tests under the Bash tool (DC-117 — hangs, no result file). PowerShell, build Debug first or probe tests fail on a missing binary.\n\nReading CI: gh run view <id> --json conclusion. Do not trust gh run watch --exit-status — measured exiting 0 after HTTP 403: API rate limit exceeded.\n\nHeredocs: the Bash tool collapses \\\\ to \\ and executes backticks. Write scripts and commit messages to a file; do not inline them.\n\n## Report\n- The reader, and the file format you settled on, with the §14.2 extensions marked.\n- (a)'s ambiguous-binding refusal, observed — not described.\n- The handshake oracle, red-first, and what the bundle gate did when you touched composer.mjs.\n- The erratum, and the three corrected remarks.\n- Your edge list — every arrow owned.\n- Counts, gates, CI conclusion.\n- Anything in this brief that turned out to be false. The Owner found two in the version I wrote before this one.\n\nPush the branch only.",
-      "summary": "Ruling 47 landed. A JSON reader for ~/.aide/providers.json (ProviderConfiguration, AP-0021) transcribes §14.2's providers: map and adds three fields marked in code as extending it — adapterInstallRoot, engines.<id>.model, engines.<id>.account — plus a REQUIRED per-account health, because this phase builds no prober and a defaulted `ready` is indistinguishable afterwards from an observed one. §14.2's own engine/acp/metered/routing are accepted and never read; every other key is refused by name, since `acounts` ignored is a provider with no accounts, which renders as the missing-file state. Missing file -> null; malformed -> refused naming file and field, BEFORE the sheet opens.\n\nBind() resolves (engine, model, account) or refuses naming the field. Observed rather than described: \"provider 'anthropic' carries 2 accounts and engine 'claude-code' names none: max-personal, max-work. Add \\\"account\\\" to the engine's entry in <path>/providers.json - an ambiguous binding is refused rather than resolved by reading order.\" MainWindow is the ONE ProviderRegistry construction site and hands the same instance to the sheet and to the composer's run binding; ComposerSurface.Configure now has its first caller in src/; the AttachmentGate's providerName/accountLabel come from that same LaneBinding, no second lookup.\n\nTHREE handshake defects where the brief named one, all measured in a real WebView2 against the shipped surface and page, red first (exit 12, ThePageNeverMounted) then green (host.init count=1 in BOTH orders, seeded field value surviving): (1) the page posted editor.ready only from inside its own host.init branch - now on mount, unprompted, as ComposerVocabulary already said; (2) the page could not post ANY first message because every envelope needs the host-minted instance and it learned that from host.init - now injected at document creation, and the probe measured the injection readable under script-src 'self'; (3) CoreWebView2WebMessageReceivedEventArgs.AdditionalObjects reads NULL for a plain postMessage, so the unguarded foreach NREd inside a multicast event invocation, aborting the handler list at a COM boundary that swallowed it - every page-to-host message had been silently unreceived, with no exception, no crash and no counted drop. Registered as DC-132 and swept: one occurrence in src/, repaired; the probe now prints the measurement every run and a test asserts it.\n\nErratum filed (docs/notes/conductor-spec-errata-providers-json.md) quoting spec lines 209 and 472-473 verbatim, linked from the spec README; four in-tree remarks corrected (the three named plus EngineCatalog.cs:4, swept with the class). Spec HTML byte-unchanged. ConductorEntry.cs and SpawnContractTests.cs byte-unchanged; governedRunRequestSites == 2.\n\nMEASURED on this tree after rebasing onto main d96e6312: Core 2234 executed (floor 2210) = portable 2080 + non-portable 154, and 2080 + 154 = 2234 by observation; App 517 executed (floor 504), run from the PowerShell console host per DC-117. Build clean, 0 warnings under TreatWarningsAsErrors. verify-test-run.py --update was NEVER run and expected-test-counts.json was not edited.\n\nTwo claims in the brief were false: verify-vendored-assets.py walks src/AiDe.App/Web/vendor/ only, so composer.mjs is NOT under the bundle hash gate (it exits 0, unchanged); and the floors quoted (App 495, Core 2206) were stale by the time the node started - main had moved to 504/2210.",
-      "kind": "skill",
-      "skill": "implement",
-      "tool": "Claude Code",
       "actor": "Claude Opus 5 (1M context)",
       "artifacts": [
         "docs/proof/front-door-provider-config.md",
@@ -11514,29 +11547,38 @@ window.AUDIT_DATA = {
         "tests/AiDe.App.Tests/Composer/TheRunBindingComesFromTheProviderFileTests.cs",
         "docs/lessons/defect-classes.md"
       ],
+      "datetime": "2026-09-11T15:13:23Z",
+      "done_when": "Conditions (a)-(f) each satisfied with observed evidence; App and Core counts reported; gates green; branch feature/provider-config pushed.",
+      "fan_out": 0,
+      "git": {
+        "branch": "feature/provider-config",
+        "pushed": null,
+        "sha": "b4c0cc1a5a886f0d643149b661373db334386a7f",
+        "short": "b4c0cc1a5"
+      },
+      "goal": "Land Ruling 47: a JSON reader for ~/.aide/providers.json that sources every run-side field of ComposerSendContext and AttachmentGate from the file, one registry construction site feeding both the sheet and the composer, and the host.init/editor.ready handshake fixed.",
+      "id": "al-01M28GFKJVH9PRE8FVNWRWAZ27",
+      "kind": "skill",
+      "outcome": "success",
+      "prompt": "Node F6 — provider configuration. Ruled into existence by Ruling 47. The front-door slice does not close until this lands and the exit run re-runs from the UI. T2, opus.\n\n## Worktree (WT1 — first action, commit early)\ngit -C C:/projects/ai-de worktree add C:/projects/ai-de-feature-provider-config -b feature/provider-config main\n\nLive nodes: U2 owns theme/contrast/icons/surface-content in src/AiDe.App/Workbench/ and is actively in the sheet (it has just landed a task-class picker). C2 owns the layout/drag concern there. F5 holds docs/proof/. Coordinate by concern: yours is provider configuration and the composer handshake.\n\n## Why you exist\nMainWindow.xaml.cs:138-142 says it in the tree: \"No provider registry is configured yet… §14.2's providers.yaml has no reader in this repository… the sheet is handed an empty registry and a governed run is what needs a backend.\" :151 hands the sheet new ProviderRegistry([]).\n\nFour of ComposerSendContext's seven run-side fields — AdapterInstallRoot, Model, AccountLabel, Providers — plus both of AttachmentGate's label arguments have no source anywhere in src/. So §F5 clause 2 is unsatisfiable and the slice cannot close.\n\nAnd the headless path is not an answer: ConductorEntry.Read (:126-130) takes those values from a hand-authored per-run JSON file (spikes/conductor-exit-run/run.json:4-7, 21-29). The Owner's line: \"'source them the way ConductorEntry does' means 'read them from a JSON file the operator wrote' — option (C) is (A) with the file in the wrong place.\"\n\n## Scope — ADMITTED\n1. A JSON reader for ~/.aide/providers.json — §14.2's providers: map transcribed to JSON via System.Text.Json, plus adapterInstallRoot and a per-engine model, both marked in the code as extending §14.2.\n2. One construction site of ProviderRegistry in the shell, handed to both the sheet (MainWindow.xaml.cs:151) and the composer's ComposerSendContext.\n3. ComposerSurface.Configure's first caller in src/.\n4. AttachmentGate's providerName/accountLabel from the same binding as the send context — no second source.\n5. The composer handshake fix — it is on your path.\n\nCUT, do not build: per-workspace overrides (.aide/workspace.*) · the routing: / best_fit / metered / acp: facets · any Settings UI for editing providers (Ruling 27 territory — the file is hand-edited, as the spec says) · any health prober.\n\nFROZEN: ConductorEntry.cs byte-unchanged · governedRunRequestSites == 2 · SpawnContractTests.cs byte-unchanged.\n\n## The handshake, and two corrections to what I was told\nI briefed the previous node that PushInit()'s callers were Configure and MarkReady. The Owner verified otherwise — confirm it yourself:\n- PushInit()'s two callers are ChooseTemplate (ComposerSurface.cs:214) and MarkReady (:277). Configure (:154-182) calls RenderCompiledView and never PushInit.\n- ComposerSurface.Configure does have zero callers in src/ — but WorkbenchShell.cs:1532 is PromptDraftSurface.Configure, a different type. Do not be misled by a grep.\n- The deadlock is worse than \"a cycle\". InitialiseAsync (:497-518) only navigates; nothing pushes a first host.init; and the page posts editor.ready only inside its host.init branch (composer.mjs:208-219).\n- The ping-pong is latent, not live. Whoever adds the first push gets ready → MarkReady → PushInit(value = string.Empty, :478) → second ready → dropped (router :232) — and the second render rebuilds the form with empty values.\n\nComposerVocabulary.cs:22 already states the contract, and the page violates it: EditorReady = \"The page finished mounting. The host may flush queued host-to-page pushes.\" The page is wrong, not the host. So condition (d): the page posts editor.ready on mount, unprompted.\n\ncomposer.mjs is under the F4 bundle hash gate (C18). Editing it re-fires verify-vendored-assets and the manifest↔notices cross-check. Plan for that; do not discover it.\n\n## Conditions — verbatim from Ruling 47\n- (a) No run-side value reaches GovernedRunRequest from a code default. model and accountLabel come from the file or an operator selection. An ambiguous binding — a provider row with more than one account and no selection — is a field-level refusal naming the field. That is the DC-110 posture: a defaulted value ranks in the wrong cohort and is indistinguishable from a chosen one afterwards.\n- (b) A missing file yields the existing \"no agent backend is configured\" state. A malformed file yields a visible error naming file and field — never a silently empty registry. \"Refused, never defaulted\" (ProviderRegistry.cs:80-88).\n- (c) A health value read from the file is presented as recorded-by-the-operator, the posture ObservedAuthLabel already takes (ProviderRegistry.cs:40-47), and the Proof Pack names it as a residual — not \"live.\"\n- (d) The handshake follows the vocabulary contract. Oracle, red-first: exactly one host.init per mount after Configure, and field values survive it.\n- (e) The .yaml → JSON erratum is filed as an Addendum entry per the Ruling 23 precedent, and the three in-tree remarks naming providers.yaml are corrected — ProviderRegistry.cs:51, :87, MainWindow.xaml.cs:138-139. A comment naming a file that does not exist is a wrong claim in the tree. The spec HTML is NOT edited.\n- (f) Red-first, and your E7 surface list assigns every EDGE to this node: file → reader → registry → sheet → EnabledBackends → ComposerSendContext → Send → GovernedRunRequest → GovernedRunHost. That is DC-130's control — the class registered because adjacent nodes each built one end of a seam no clause assigned, which is exactly what put you here.\n\n## Constraints\nTreatWarningsAsErrors=true. Floors App 495, Core 2206 — report counts; do not run --update or edit tools/expected-test-counts.json. Other nodes are raising App concurrently; report what you measure.\n\nDo not run AiDe.App.Tests under the Bash tool (DC-117 — hangs, no result file). PowerShell, build Debug first or probe tests fail on a missing binary.\n\nReading CI: gh run view <id> --json conclusion. Do not trust gh run watch --exit-status — measured exiting 0 after HTTP 403: API rate limit exceeded.\n\nHeredocs: the Bash tool collapses \\\\ to \\ and executes backticks. Write scripts and commit messages to a file; do not inline them.\n\n## Report\n- The reader, and the file format you settled on, with the §14.2 extensions marked.\n- (a)'s ambiguous-binding refusal, observed — not described.\n- The handshake oracle, red-first, and what the bundle gate did when you touched composer.mjs.\n- The erratum, and the three corrected remarks.\n- Your edge list — every arrow owned.\n- Counts, gates, CI conclusion.\n- Anything in this brief that turned out to be false. The Owner found two in the version I wrote before this one.\n\nPush the branch only.",
+      "session": "conductor-front-door-f6",
+      "shortname": "F6 — the provider file reads, and the composer handshake was three defects",
+      "signals": {
+        "acceptance_met": true,
+        "regression": false,
+        "verification_executed": true,
+        "verification_path": true
+      },
+      "skill": "implement",
+      "summary": "Ruling 47 landed. A JSON reader for ~/.aide/providers.json (ProviderConfiguration, AP-0021) transcribes §14.2's providers: map and adds three fields marked in code as extending it — adapterInstallRoot, engines.<id>.model, engines.<id>.account — plus a REQUIRED per-account health, because this phase builds no prober and a defaulted `ready` is indistinguishable afterwards from an observed one. §14.2's own engine/acp/metered/routing are accepted and never read; every other key is refused by name, since `acounts` ignored is a provider with no accounts, which renders as the missing-file state. Missing file -> null; malformed -> refused naming file and field, BEFORE the sheet opens.\n\nBind() resolves (engine, model, account) or refuses naming the field. Observed rather than described: \"provider 'anthropic' carries 2 accounts and engine 'claude-code' names none: max-personal, max-work. Add \\\"account\\\" to the engine's entry in <path>/providers.json - an ambiguous binding is refused rather than resolved by reading order.\" MainWindow is the ONE ProviderRegistry construction site and hands the same instance to the sheet and to the composer's run binding; ComposerSurface.Configure now has its first caller in src/; the AttachmentGate's providerName/accountLabel come from that same LaneBinding, no second lookup.\n\nTHREE handshake defects where the brief named one, all measured in a real WebView2 against the shipped surface and page, red first (exit 12, ThePageNeverMounted) then green (host.init count=1 in BOTH orders, seeded field value surviving): (1) the page posted editor.ready only from inside its own host.init branch - now on mount, unprompted, as ComposerVocabulary already said; (2) the page could not post ANY first message because every envelope needs the host-minted instance and it learned that from host.init - now injected at document creation, and the probe measured the injection readable under script-src 'self'; (3) CoreWebView2WebMessageReceivedEventArgs.AdditionalObjects reads NULL for a plain postMessage, so the unguarded foreach NREd inside a multicast event invocation, aborting the handler list at a COM boundary that swallowed it - every page-to-host message had been silently unreceived, with no exception, no crash and no counted drop. Registered as DC-132 and swept: one occurrence in src/, repaired; the probe now prints the measurement every run and a test asserts it.\n\nErratum filed (docs/notes/conductor-spec-errata-providers-json.md) quoting spec lines 209 and 472-473 verbatim, linked from the spec README; four in-tree remarks corrected (the three named plus EngineCatalog.cs:4, swept with the class). Spec HTML byte-unchanged. ConductorEntry.cs and SpawnContractTests.cs byte-unchanged; governedRunRequestSites == 2.\n\nMEASURED on this tree after rebasing onto main d96e6312: Core 2234 executed (floor 2210) = portable 2080 + non-portable 154, and 2080 + 154 = 2234 by observation; App 517 executed (floor 504), run from the PowerShell console host per DC-117. Build clean, 0 warnings under TreatWarningsAsErrors. verify-test-run.py --update was NEVER run and expected-test-counts.json was not edited.\n\nTwo claims in the brief were false: verify-vendored-assets.py walks src/AiDe.App/Web/vendor/ only, so composer.mjs is NOT under the bundle hash gate (it exits 0, unchanged); and the floors quoted (App 495, Core 2206) were stale by the time the node started - main had moved to 504/2210.",
       "tags": [
         "conductor",
         "front-door",
         "providers",
         "composer"
       ],
-      "outcome": "success",
-      "goal": "Land Ruling 47: a JSON reader for ~/.aide/providers.json that sources every run-side field of ComposerSendContext and AttachmentGate from the file, one registry construction site feeding both the sheet and the composer, and the host.init/editor.ready handshake fixed.",
-      "done_when": "Conditions (a)-(f) each satisfied with observed evidence; App and Core counts reported; gates green; branch feature/provider-config pushed.",
       "tier": "T2",
-      "fan_out": 0,
-      "signals": {
-        "verification_path": true,
-        "verification_executed": true,
-        "acceptance_met": true,
-        "regression": false
-      },
-      "git": {
-        "sha": "b4c0cc1a5a886f0d643149b661373db334386a7f",
-        "short": "b4c0cc1a5",
-        "branch": "feature/provider-config",
-        "pushed": null
-      }
+      "tool": "Claude Code"
     },
     {
       "actor": "Claude Opus 5 (1M context)",

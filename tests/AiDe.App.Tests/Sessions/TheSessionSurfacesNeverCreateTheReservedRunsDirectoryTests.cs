@@ -24,8 +24,18 @@ namespace AiDe.App.Tests.Sessions;
 /// <para><b>Each case asserts the session directory DOES exist first.</b> Without that, all three
 /// would pass over a workspace where nothing was written at all (DC-016).</para>
 /// </remarks>
+/// <remarks>
+/// <b>Registers the Terminal row Ruling 45 cut from <c>BuiltIn</c>.</b> The mechanism under test
+/// here needs a SECOND canvas mode to exist at all; which modes the product ships is a different
+/// question, and Ruling 45 answered it by cutting a row whose content Phase 1 cannot bind. Every
+/// assertion below is unchanged — the proof survives the cut rather than being weakened by it, which
+/// is also Ruling 22's clause re-proven against a test-registered mode.
+/// </remarks>
+[Collection(CanvasModes.Name)]
 public sealed class TheSessionSurfacesNeverCreateTheReservedRunsDirectoryTests : IDisposable
 {
+    private readonly TerminalModeForTests _terminal = new();
+
     private readonly string _root = Path.Combine(
         Path.GetTempPath(), "aide-f2-runlog-" + Guid.NewGuid().ToString("N"));
 
@@ -36,6 +46,8 @@ public sealed class TheSessionSurfacesNeverCreateTheReservedRunsDirectoryTests :
 
     public void Dispose()
     {
+        _terminal.Dispose();
+
         try { Directory.Delete(_root, recursive: true); } catch (IOException) { }
     }
 

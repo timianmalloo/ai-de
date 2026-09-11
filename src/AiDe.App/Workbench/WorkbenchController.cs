@@ -47,6 +47,17 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
     public Func<string>? NewSessionRequested { get; set; }
 
     /// <summary>
+    /// Swaps the shell's primary view mode and returns what to announce. Set by the window; null
+    /// before that, which the command reports rather than doing nothing.
+    /// </summary>
+    /// <remarks>
+    /// A delegate for the same reason as <see cref="NewSessionRequested"/>: the mode swap owns a
+    /// <c>ContentControl</c> in the window's tree, and a controller that could reach it would be a
+    /// second place the shell's mode can change.
+    /// </remarks>
+    public Func<string>? ExplorerToggleRequested { get; set; }
+
+    /// <summary>
     /// Raised after a command that CHANGED what the store holds has finished.
     /// </summary>
     /// <remarks>
@@ -113,6 +124,9 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
 
             case "session.new":
                 return NewSession();
+
+            case "shell.toggleExplorer":
+                return ToggleExplorer();
 
             // One case for every harness, matched by the id the profile itself spells
             // (AgentReadinessProfile.CommandIdFor), so adding a harness never needs a case here.
@@ -585,6 +599,16 @@ public sealed class WorkbenchController(ILayoutService service, IWorkbenchAnnoun
         announcer.Announce(NewSessionRequested is null
             ? "Creating a session is not available in this build."
             : NewSessionRequested());
+
+        return true;
+    }
+
+    /// <summary>Swaps the shell between the workbench and Explorer (ADR-0017 primary-view-mode).</summary>
+    private bool ToggleExplorer()
+    {
+        announcer.Announce(ExplorerToggleRequested is null
+            ? "Explorer mode is not available in this build."
+            : ExplorerToggleRequested());
 
         return true;
     }

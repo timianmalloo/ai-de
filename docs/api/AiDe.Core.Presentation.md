@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Presentation: 32 types, 83 members, 64% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Presentation: 32 types, 84 members, 65% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Presentation`
 
-**32 public types · 83 public members · 64% documented.**
+**32 public types · 84 public members · 65% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -222,7 +222,26 @@ operator (WCAG 2.2 AA, "not colour alone").
 | Member | Summary |
 |---|---|
 | `ConfidenceBadge For(VerificationStatus status)` | **(gap)** |
+| `ConfidenceBadge NotRecorded { get; } =` | The badge for a row whose confidence was never established. |
 | `string AccessibleName` | What a screen reader announces. Never just the colour name. |
+
+### `ConfidenceBadge NotRecorded { get; } =`
+
+The badge for a row whose confidence was never established.
+
+**Remarks.** **Not a `VerificationStatus`, deliberately.** The three statuses are
+claims the extractor made about an assertion. "The projection this row came from does not
+carry one" is a different kind of fact, and folding it into `Unverified` would state an
+extractor's finding that no extractor made.
+
+
+
+
+
+DESIGN.md's status language names this state: question glyph, the words *Not
+recorded*, `{colors.unverified}` — *"evidence is absent or untrustworthy"*. The
+design language's own third principle is that absence is a state and never renders as a
+clean success.
 
 ## `EvidenceRow`
 
