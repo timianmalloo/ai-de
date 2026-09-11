@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T21:49:00Z",
+  "generated": "2026-09-11T22:03:10Z",
   "audit": [
     {
       "actor": null,
@@ -12333,6 +12333,53 @@ window.AUDIT_DATA = {
       "git": {
         "sha": "dbc201d6aec1db09d76b4418fa6d0956bbc05ddb",
         "short": "dbc201d6a",
+        "branch": "conductor/addendum-c",
+        "pushed": null
+      }
+    },
+    {
+      "id": "al-01M297VC0HTFJP761D9BVE9Z72",
+      "shortname": "Operator decisions: (1) keep the auto-allow of Bash(git push:*) in .clau…",
+      "datetime": "2026-09-11T22:01:45Z",
+      "session": "prompt-log",
+      "prompt": "Operator decisions: (1) keep the auto-allow of Bash(git push:*) in .claude/settings.json - yes; (2) conversation-composer looks great; (3) New Session sheet: budgets should be max (i.e. limited by my subscription) by default, and then optionally I can enforce a cap - I do not know what I intend to spend, often (look at this session); it is unreasonable for long-running work to set a budget proactively unless cost-capping; with a subscription that has a cap I do not need to cap. Also I do not need to choose a task class - the basic should be free-form upon open, and then I can change it.",
+      "summary": "prompt logged for reuse",
+      "kind": "prompt",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [],
+      "tags": [],
+      "outcome": "success"
+    },
+    {
+      "id": "al-01M297XY963XPWF3J1HTD7RB22",
+      "shortname": "ruling-72-budget-taskclass-autoallow",
+      "datetime": "2026-09-11T22:03:09Z",
+      "session": "conductor-addendum-c",
+      "prompt": "Operator: keep the git push auto-allow; conversation-composer looks great; budget defaults to the subscription bound with an optional cap; task class free-form on open, changeable per prompt.",
+      "summary": "Ruling 72 filed by the conductor on the operator's verbatim words (nothing to weigh): budget an optional cap defaulting to subscription-bounded; task class free-form by default, per prompt, no Send refusal (supersedes Ruling 70's refusal clause); settings.json auto-allow kept, Ruling 71's pin the only lane control. A1 and D2 messaged.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/notes/addendum-c-council-rulings.md"
+      ],
+      "tags": [],
+      "outcome": "success",
+      "goal": "File the operator's three decisions as Ruling 72 and amend Addenda C and D",
+      "done_when": "Ruling 72 in the note; C's sheet criterion and D's budget/task-class rows amended; gates green",
+      "tier": "T1",
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": true,
+        "regression": false
+      },
+      "git": {
+        "sha": "a3f760a3a07270ffb65332e80bafca2e70ef8866",
+        "short": "a3f760a3a",
         "branch": "conductor/addendum-c",
         "pushed": null
       }

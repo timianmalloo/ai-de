@@ -7258,7 +7258,7 @@ window.DOCS_INDEX = {
     {
       "id": "note-addendum-c-council-rulings",
       "path": "docs/notes/addendum-c-council-rulings.md",
-      "title": "Decision note — Rulings 50–71: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
+      "title": "Decision note — Rulings 50–72: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed",
       "type": "doc",
       "status": "accepted",
       "owner": "@timianmalloo",
@@ -7315,7 +7315,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "f189761fb40d65dac56910d36a26629211512902d9370aa8f9414b688cab2600"
+      "sourceSha256": "0b0df1bde64c74d20f620c14b6c62257f775830184831e18d5e3caa33fcc2a44"
     },
     {
       "id": "note-addendum-c-current-state-inventory",
@@ -13568,7 +13568,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  A[Session document open: one editor, structure collapsed, compiled collapsed] -->|type prose| B{Draft settles: objective derivable?}\n  A -->|shape control: pick a template — B:181 kept| T[Template fields render as the derived structure, prefilled from the text where possible]\n  T --> E\n  B -->|no| C[Structure stays one collapsed line; a T2 send will mark Goal and Done when]\n  C -->|type more| B\n  C --> E\n  B -->|yes| D[Derived structure expands beneath the editor: Goal · Done when · Not in scope, marked derived]\n  D -->|edit a line inline| D\n  D --> E{@path mention present?}\n  E -->|no| F[Write-scope line: elicitation text; Send → refusal names @path and offers the picker — Ruling 42 intact]\n  F -->|add a mention| E\n  E -->|yes| G[Write-scope line: 'src/…/** — from your mention']\n  G -->|open Compiled disclosure| H[Exactly the outgoing text; no diff, no summary; editor does not shrink]\n  H --> G\n  G -->|Send Ctrl+Enter| I{T2 and a content field empty?}\n  I -->|yes| J[Inline marks on every gap at once; one-line reason each; nothing sent]\n  J -->|fix| D\n  I -->|no| K[Sent: compiled prompt carries the session's tier · fan-out · budget in the CT19 block]\n  K --> K2[Reply streams in the Console canvas; the block joins the Score outline]\n  K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]\n  K3 --> D\n  K2 -->|operator writes the next message| A\n  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]\n  L -->|re-validate the current draft| B"
         }
       ],
-      "sourceSha256": "e4c8c7557d31bc3c54ec4798d476ca88b6a32132ffd9bf5d02bed4331e6de7fd"
+      "sourceSha256": "ee460f1d27c41d64af57b57d3b58619133f58bb6c301a5486402a17471abcb8c"
     },
     {
       "id": "spec-addendum-d-compile-step",
@@ -13653,7 +13653,7 @@ window.DOCS_INDEX = {
           "mermaid": "flowchart TD\n  U[aide session purge id] --> V{id is one segment of the session-id grammar, resolved under .aide/sessions/?}\n  V -->|no| X[refused before any file is touched]\n  V -->|yes| W[confirmation: name · id · workspace root · resolved file path · envelope count · newest at]\n  W -->|decline| Y[nothing deleted]\n  W -->|confirm or --yes| Z[envelope-events.jsonl deleted; session.json and session-events.jsonl survive]\n  Z --> Q[session document reopens: history purged; Proof Pack citations resolve as purged]"
         }
       ],
-      "sourceSha256": "a502bd6f1f7a244d83b4ecf97470d8fe801afce1164442d664b3adba708d07df"
+      "sourceSha256": "88f892bd6ddc9ed16e2f307d54350909bd06e27232846fbd872e2343572a6f9d"
     },
     {
       "id": "spec-agentic-watcher-substrate",
@@ -14474,5 +14474,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "21e3edbaae64db518f962b3e05eee7ccbd8a08eea9e6528d8ec9843373e95997"
+  "graphSha256": "174f46834dc10f9eee93d9f2d3c94dd4176c1c4b05c3713204a59f7751a6182d"
 };
