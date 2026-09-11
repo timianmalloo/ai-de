@@ -1,6 +1,6 @@
 ---
 id: note-addendum-c-council-rulings
-title: "Decision note — Rulings 50–62: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
+title: "Decision note — Rulings 50–63: Addendum C's vocabulary, phasing, ADR-0017, the graph substrate, the 80% case, page one, and the operator's composer verdicts filed"
 type: doc
 status: accepted
 owner: "@timianmalloo"
@@ -26,7 +26,7 @@ summary: >-
   spec written without them would get wrong.
 ---
 
-# Decision note — Rulings 50–62
+# Decision note — Rulings 50–63
 
 ## Provenance
 
@@ -504,3 +504,42 @@ All seven are Verified except where marked: Ruling 56's tier reading is an Owner
 the product session (**the operator was asked the tier question directly; an answer files over
 56**); Ruling 57's S-8 is an Owner extension of verdict (3); Ruling 59's "joins renders" is the
 inventory's claim.
+
+---
+
+## Ruling 63 — filed over Ruling 56's tier clause: tier is not a session setting; it is a decoration the compile step attaches to the compiled prompt, and the compile step is the operator's to specify
+
+**RULING:** Tier is removed from session settings. It is attached to the compiled prompt by the
+**compile step** — the post-processing of the typed prompt — shown to the operator as a derived
+decoration and confirmed at send. Fan-out ceiling and budget stay session settings (Ruling 56).
+**How tier is derived is open**: the operator has said the compile step has not been thought through
+explicitly and will do so; nothing in Addendum C, its design, or its architecture may fix the
+derivation before that.
+
+**BECAUSE:** The operator's own words, logged today (session `conductor-addendum-c`, two entries):
+*"shouldn't tier be decided by the compilation of the prompt? A key aspect and benefit of being able
+to type a prompt and then post-process it would be to decorate it with things like tier."* — and
+*"that makes me realize we haven't really thought through the compile step explicitly — maybe I need
+to do that."* Ruling 56's CONDITIONS said an operator answer files over it; this is that answer. It
+is also more consistent with the spec's own shape rule (US-C13: a send with empty derived structure
+is a Message shape — the compile step already decides the *shape*; the tier is the same kind of
+decision) than a session-scoped value was.
+
+**CONFIDENCE:** Verified (the operator's words). **Inferred:** the reconciliation with CT19's
+tier→cap function — the session's fan-out value is a *ceiling* and the compiled tier's cap applies
+within it — is the conductor's reading and is labelled so in the spec (S-1); the operator confirms
+or corrects it when the compile step is specified.
+
+**SCOPE EFFECT:** Ruling 56 stands for fan-out ceiling and budget; its tier clause is superseded.
+Spec amended: §A6 session settings, S-1, US-C13's session-values criterion, §B2, Flow 6 node L. D1
+designs tier as a derived decoration on the compiled-prompt disclosure with a *not derived yet*
+state and no header field; it does not design the derivation. A1 must leave a **seam** for the
+compile step (typed prompt → compiled prompt + decorations: shape, tier, lease, template) and must
+not fix its internals. The compile step is a **named open item for the operator**, carried in the
+plan's re-plan checkpoints.
+
+**CONDITIONS:** Revisit when the compile step is specified; if it makes tier operator-typed after
+all, S-1 and US-C13 revert to a per-prompt field (never to a session setting).
+
+**RECORD AS:** Ruling 63 — tier is a compile-step decoration, not a session setting; derivation open,
+the operator's to specify; fan-out ceiling and budget remain session settings.

@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 
 namespace AiDe.App.Workbench;
@@ -40,6 +41,13 @@ public static class SurfaceChrome
         };
         card.SetResourceReference(Border.BackgroundProperty, "SurfaceRaisedBrush");
         card.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
+
+        // THE CONTAINER PAIRS INK WITH GROUND (INV-0008). The card paints the raised ground, so the
+        // card states the ink that goes on it; a surface's text that names no ink of its own
+        // inherits this rather than whatever the docking theme's pane control carries (#000000 —
+        // the "Compiled view" / lease / status lines the operator photographed, at 1.27:1). Text
+        // that sets its own token (muted, verified) still wins: local beats inherited.
+        card.SetResourceReference(TextElement.ForegroundProperty, "TextBrush");
         return card;
     }
 }

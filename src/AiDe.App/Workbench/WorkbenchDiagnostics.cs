@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
+using System.Windows;
 using AiDe.Core.Workbench;
 
 namespace AiDe.App.Workbench;
@@ -185,6 +187,122 @@ public static class WorkbenchDiagnostics
             outcome,
             path,
             detail,
+        });
+    }
+
+    /// <summary>
+    /// Records that the shell started, naming the binary it is: the informational version and the
+    /// commit inside it, the build configuration, the docking theme, the DPI and the window.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>Why this exists (INV-0008).</b> Three Release builds from three commits were on one
+    /// machine; the operator photographed one and nothing tied the screenshot to a commit. A fixed
+    /// instance re-entered as a recurrence and the investigation re-derived the mechanism before it
+    /// could read the version off the binary. The binary always carried its commit
+    /// (<c>AssemblyInformationalVersion</c> = <c>1.0.0+&lt;sha&gt;</c>); the shell never said it.
+    /// A UI report now starts from this line, and is attributed before it is triaged.</para>
+    /// <para><b>On the normal path, no flag.</b> Emitted once from the main window's <c>Loaded</c>,
+    /// after the window has a size and a DPI — the two facts a contrast or layout report needs and
+    /// a screenshot cannot state.</para>
+    /// <para>A build without a source revision records <c>commit</c> as null. It never invents one.</para>
+    /// </remarks>
+    public static void AppStart(string theme, DpiScale dpi, double width, double height, string windowState)
+    {
+        var assembly = typeof(WorkbenchDiagnostics).Assembly;
+        var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        var configuration = assembly.GetCustomAttribute<AssemblyConfigurationAttribute>()?.Configuration;
+
+        using var activity = Source.StartActivity("app.start");
+        activity?.SetTag("service.version", version);
+        activity?.SetTag("vcs.revision", CommitOf(version));
+        activity?.SetTag("app.theme", theme);
+
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "app.start",
+            version,
+            commit = CommitOf(version),
+            configuration,
+            theme,
+            dpi = new { scaleX = dpi.DpiScaleX, scaleY = dpi.DpiScaleY, pixelsPerInchX = dpi.PixelsPerInchX, pixelsPerInchY = dpi.PixelsPerInchY },
+            window = new { width, height, state = windowState },
+        });
+    }
+
+    /// <summary>The 40-hex source revision an informational version carries after its <c>+</c>, or null.</summary>
+    internal static string? CommitOf(string? informationalVersion)
+    {
+        var plus = informationalVersion?.LastIndexOf('+') ?? -1;
+        if (informationalVersion is null || plus < 0) return null;
+
+        var revision = informationalVersion[(plus + 1)..];
+        return revision.Length == 40 && revision.All(c => c is (>= '0' and <= '9') or (>= 'a' and <= 'f')) ? revision : null;
+    }
+
+    /// <summary>
+    /// Records the composer's rendered bounds: the editor host, the read-only compiled view, and the
+    /// composer they share — at first layout and whenever either part moves past the surface's
+    /// threshold.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>A value that could not be read is <c>null</c>, never 0</b> (DC-137). An element not
+    /// yet arranged reports 0px, and 0px is also the defect — so the writer sends <c>null</c> for a
+    /// part whose arrange is not valid, and a reader can tell "not laid out" from "laid out at
+    /// nothing". <paramref name="visible"/> and <paramref name="loaded"/> separate a hidden pane's
+    /// honest 0 from a starved one.</para>
+    /// </remarks>
+    public static void ComposerLayout(
+        string surfaceId,
+        double? composerWidth, double? composerHeight,
+        double? editorWidth, double? editorHeight,
+        double? compiledWidth, double? compiledHeight,
+        bool visible, bool loaded, long inputs)
+    {
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "composer.layout",
+            surface = surfaceId,
+            composer = new { width = composerWidth, height = composerHeight },
+            editor = new { width = editorWidth, height = editorHeight },
+            compiled = new { width = compiledWidth, height = compiledHeight },
+            visible,
+            loaded,
+            inputs,
+        });
+    }
+
+    /// <summary>
+    /// Records one transition of a web surface's host↔page handshake, with the surface's counts as
+    /// they stood at that moment.
+    /// </summary>
+    /// <remarks>
+    /// <para><b>The transitions</b> — from the host: <c>initialising</c>, <c>re-attached</c>,
+    /// <c>init-failed</c>; from the composer: <c>navigation-started</c>, <c>configured</c>,
+    /// <c>page-ready</c>, <c>init-pushed</c>, <c>input-received</c> (once per pushed init, at the
+    /// first accepted <c>draft.changed</c>), <c>message-dropped</c> (once per kind and reason per
+    /// navigation), <c>disposed</c>. Counts are lifetime totals as they stood at the transition;
+    /// a count the caller does not measure is <c>null</c>, never invented. No character of the
+    /// draft is ever recorded.</para>
+    /// </remarks>
+    public static void WebSurfaceHandshake(
+        string surfaceId, string transition,
+        int? navigations = null, long? inputs = null, long? drops = null, string? detail = null,
+        string? errorCode = null, string? exceptionType = null)
+    {
+        Write(new
+        {
+            ts = DateTimeOffset.UtcNow.ToString("O"),
+            evt = "web-surface.handshake",
+            surface = surfaceId,
+            transition,
+            navigations,
+            inputs,
+            drops,
+            detail,
+            errorCode,
+            exceptionType,
         });
     }
 

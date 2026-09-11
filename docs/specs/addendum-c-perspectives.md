@@ -163,7 +163,7 @@ number at filing — this document cites none until one exists, which is what
 
 | # | Superseded clause (verbatim, with its line) | What supersedes it | Proposed ruling (to file) |
 | --- | --- | --- | --- |
-| S-1 | Addendum A `:234` (R15 b2): *"a T2 goal block missing a CT19 field cannot send (field-level error)."* — as it applies to **fan-out cap, budget and tier** | Fan-out cap and budget are **session settings with defaults** (set in the New Session sheet and editable in session settings), never mandatory per-prompt fields; a goal block **inherits** them. **Tier is included by inference** — the operator wrote *"budget, cap etc."* and tier is this document's reading of "etc." **[Inferred]**; Ruling 56 rules it: tier is a session setting (an Owner extension of CT19 to the product session; the operator was asked directly and an answer files over it). No per-prompt override: the settings are *"intrinsic to the session settings"* (verdict 2), and a second place to set one quantity is derive-don't-store's defect (the Simplifier's finding). The gate on **goal / done-when / not-in-scope** stands (all three refused inline — NB-1 superseded B `:176`'s *warn*), but those are **derived and prefilled** from the conversation and confirmed by the send itself (US-C13), not typed into mandatory boxes. | **Ruling 56** (PR-A filed) — session-level settings |
+| S-1 | Addendum A `:234` (R15 b2): *"a T2 goal block missing a CT19 field cannot send (field-level error)."* — as it applies to **fan-out cap, budget and tier** | Fan-out cap and budget are **session settings with defaults** (set in the New Session sheet and editable in session settings), never mandatory per-prompt fields; a goal block **inherits** them. **Tier is NOT a session setting** — the operator answered directly (Ruling 63, filed over Ruling 56's tier clause): *"tier [should] be decided by the compilation of the prompt … post-process it [to] decorate it with things like tier."* The compile step's design is open and the operator's; until it is specified, the fan-out value in session settings is a **ceiling** and the effective cap is the compiled tier's cap within it (CT19: 0 at T0, 2 at T1, the GO7 cap at T2) **[Inferred — the conductor's reconciliation, not the operator's word]**. No per-prompt override: the settings are *"intrinsic to the session settings"* (verdict 2), and a second place to set one quantity is derive-don't-store's defect (the Simplifier's finding). The gate on **goal / done-when / not-in-scope** stands (all three refused inline — NB-1 superseded B `:176`'s *warn*), but those are **derived and prefilled** from the conversation and confirmed by the send itself (US-C13), not typed into mandatory boxes. | **Ruling 56** (PR-A filed) — session-level settings |
 | S-2 | Addendum B `:135` (B4 goal-block row): fields *"goal, done_when, not_in_scope, tier, fan_out_cap, budget"* | The template's *content* fields are goal, done_when, not_in_scope; **tier, fan_out_cap, budget move to the session's settings** and the compiled prompt carries the session's values (so the conductor receives the same CT19 block, sourced differently). | Ruling 56 |
 | S-3 | Addendum B `:183` (B6): *"Template form rendering: typed fields from frontmatter … required markers, hints inline, mention chips work inside fields, validation gates send with field-level errors — the CT19 gating from A5/R15 is now the general case, since goal-block is a template."* | The composer's primary surface is a **conversation** — one prompt editor; a template's structure is rendered **as derived, prefilled structure inline** (a collapsible outline the operator confirms or edits), not a form of boxes above a render. Field-level validation survives as inline marks on that outline. | **Ruling 57** (PR-B filed) — the composer is a conversation |
 | S-4 | Addendum B `:209` (R18 b4): *"Goal-block is re-based as template goal-block with zero behavior change to A5/R15 gating (regression-tested)."* | "Zero behavior change" no longer holds for the three session-setting fields (S-1/S-2); the regression tests re-scope to the content fields. | Ruling 56 |
@@ -372,7 +372,7 @@ no keys, no types, no tables.
 | **Slot** | The persisted arrangement of one perspective, in the layout envelope. One per perspective. | Value object |
 | **Entry verb** | A command that starts work — `session.new`, `terminal.new`, and the derived "New `<Harness>` session" rows — visible in every perspective under File and routed to Coding. | Value object |
 | **Previous perspective** | One slot holding the perspective that was active before the current one; initialised to Coding at start. Read by Escape-from-Explore and by the return from a drill-to-node; nothing else. | Value object |
-| **Session settings** | The session-scoped values Addendum A §A3 already names (backends, routing, autonomy, policy) **plus tier, fan-out cap and budget** (S-1/S-2) — set at the sheet from workspace defaults, editable for the session, inherited by every goal block. | Value object on the Session (Addendum A's aggregate) |
+| **Session settings** | The session-scoped values Addendum A §A3 already names (backends, routing, autonomy, policy) **plus the fan-out ceiling and budget** (S-1/S-2, Ruling 56 as amended by Ruling 63) — set at the sheet from workspace defaults, editable for the session, inherited by every goal block. **Tier is not a session setting**: it is a decoration the **compile step** attaches to the compiled prompt (Ruling 63); how it is derived is **open until the compile step is specified** — the operator is specifying it. | Value object on the Session (Addendum A's aggregate) |
 | **Derived structure** | The goal block's *Goal · Done when · Not in scope* as the composer derives and prefills them from the conversation text, shown inline for confirmation or edit. | Value object |
 | **Canvas mode**, **Primary view mode** | As on page one. | existing |
 
@@ -748,11 +748,14 @@ superseded on page one] [Ruling 42 intact]`
   draft with Goal, Done-when **and Not-in-scope** filled and **no tier, fan-out or budget typed anywhere** sends, and
   the compiled block carries the session's tier — today it fails with *"'tier' is required"*
   (`ComposerSurface.cs:725-735` marks all six `Required: true` **[Verified — reviewer-read]**).
-- **Given** the session's tier, fan-out cap and budget are session settings (S-1/S-2), **When** the
-  operator composes, **Then** none of the three is asked per prompt; the derived structure shows
-  them as **inherited** (a muted line *"T2 · fan-out 3 · budget from session"* that links to the
-  session-settings affordance — **no per-prompt override**, verdict 2); **And** the compiled prompt
-  carries the session's values in the CT19 block
+- **Given** the session's fan-out ceiling and budget are session settings (S-1/S-2) and **tier is
+  attached by the compile step** (Ruling 63; derivation open), **When** the operator composes,
+  **Then** none of the three is typed per prompt; the derived structure shows the two session values
+  as **inherited** (a muted line *"fan-out ≤ 3 · budget from session"* that links to the
+  session-settings affordance — **no per-prompt override**, verdict 2) and shows the tier as a
+  **derived decoration on the compiled prompt** (*"T1 — derived"*, or *"tier: not derived yet"*)
+  that the operator sees and confirms at send; **And** the compiled prompt carries the compiled
+  tier and the session's values in the CT19 block
   the conductor already expects (*falsifier:* a mandatory Budget field in the composer; a compiled
   prompt missing the tier). **Oracle — headless** on the compiled text and the session settings
   model. The "T0 with fan-out" warning — **a requirement this addendum owns**; Addendum B `:169-176`
@@ -975,8 +978,8 @@ session document (Addendum A §A6.1 — the merged stream, R16), and the sequenc
 message's draft. The thread is therefore the session document as a whole — composer (now) beside
 canvas (before) — which is the `Layout:StreamingThread` §C1 names; nothing new is invented for it.
 
-Session settings (tier, fan-out cap, budget, backends, routing, autonomy, policy) live in the **New
-Session sheet** (prefilled from workspace defaults) and in a **session settings** affordance on the
+Session settings (fan-out ceiling, budget, backends, routing, autonomy, policy — **not tier**, Ruling 63)
+live in the **New Session sheet** (prefilled from workspace defaults) and in a **session settings** affordance on the
 session document's header — not in the composer.
 
 **Labels that feed the glossary** (the repository has no glossary file yet — a finding, §R):
@@ -1171,7 +1174,7 @@ flowchart TD
   K2 -->|conductor answers with a drafted template — S-8| K3[Next message's draft: the reply's text with its derived structure inline]
   K3 --> D
   K2 -->|operator writes the next message| A
-  A -->|session settings on the header| L[Edit tier / fan-out / budget for the session; T0-with-fan-out warning here]
+  A -->|session settings on the header| L[Edit fan-out ceiling / budget for the session; tier is compiled, not set here]
   L -->|re-validate the current draft| B
 ```
 

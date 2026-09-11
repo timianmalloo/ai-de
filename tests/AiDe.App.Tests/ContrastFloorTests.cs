@@ -323,6 +323,28 @@ public sealed class ContrastFloorTests(ITestOutputHelper output)
 
             var properties = style!.Setters.OfType<Setter>().Select(s => s.Property.Name).ToHashSet(StringComparer.Ordinal);
 
+            // LEAF TEXT INHERITS ITS INK (INV-0008). TextBlock and Label are the glyphs every
+            // container's state pairing reaches by inheritance; an implicit Foreground on them
+            // outranks that inheritance and rendered twelve accent tabs at 2.37:1 and two disabled
+            // buttons in their enabled ink. For these two the pairing this theory demands is the
+            // ROOT's: the Window style states the ink, the leaf states only that it has no ground.
+            if (typeName is "TextBlock" or "Label")
+            {
+                Assert.True(!properties.Contains("Foreground") && properties.Contains("Background"),
+                    $"{typeName}'s default style sets "
+                    + string.Join(", ", properties.OrderBy(p => p, StringComparer.Ordinal))
+                    + " — a leaf text type must not state its own ink: the container pairs ink with "
+                    + "ground and the leaf inherits it (INV-0008). TokenDisciplineTests names the line.");
+
+                var root = theme[typeof(Window)] as Style;
+                var rootInk = root?.Setters.OfType<Setter>().Any(s => s.Property.Name == "Foreground") == true;
+
+                Assert.True(rootInk,
+                    "the Window style no longer states the root ink, so a leaf that inherits it inherits "
+                    + "the platform's ControlText instead (TC1) — the leaf rule above depends on this.");
+                return;
+            }
+
             Assert.True(properties.Contains("Foreground") && properties.Contains("Background"),
                 $"{typeName}'s default style sets "
                 + string.Join(", ", properties.OrderBy(p => p, StringComparer.Ordinal))
