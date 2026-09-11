@@ -64,6 +64,11 @@ Each row is one §F5 clause. **Residual** names a measurement or an explicit unc
 every row — never "none", which is the shape this clause exists to refuse: *"populated" is satisfied
 by "none" in every cell*.
 
+**Clauses 1, 4, 7 and 8 are discharged. Clauses 2, 3, 5, 6 and 9 read `RUN-PENDING` and stay there**
+— not because the run was skipped, but because the shipped product cannot send from the front door at
+this commit. The structural reason, with every observation that establishes it, is in *The exit run
+did not happen* below. Read that before quoting any `RUN-PENDING` cell as merely "not yet done".
+
 | # | Clause | Evidence | Oracle (why it can fail) | Red observed | Confidence | Residual |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | **Started from `File → New Session`, machine-checkably** — `session.open` carries an `origin` set only on the `Ctrl+N` / `MainMenuBuilder` path | `TheSessionOriginIsSetOnlyOnTheCommandPathTests` (3 cases) + the exit run's own `session-events.jsonl` | The **companion**: a session constructed directly reads `direct`. A field that is always the same value distinguishes nothing | **Yes**, both halves — see *Falsifiers observed red* | Verified | **Named uncovered input:** the scan bounds the front-door value to two files in `src/`; it cannot see a *third* production path that reaches `SessionConfigStore.Create` and simply leaves `origin` at its default. That path would read `direct` and be indistinguishable from a test — the guard is over *claiming* the front door, not over *reaching* the store |
@@ -186,6 +191,67 @@ available to whoever fills this section in.
 **The class stays `partially-controlled` either way**, and its three open residues are named in
 clause 9's Residual cell.
 
+## The exit run did not happen, and the reason is a second instance of the same class
+
+**Five clauses stay `RUN-PENDING` — 2, 3, 5, 6 and 9 — because the shipped product still cannot send
+from the front door.** Not "was not exercised": *cannot*. The finding is structural and total, and
+every part of it is an observation of the tree at this commit rather than an inference from a plan.
+
+**What was checked, and how.**
+
+| Observation | How it was taken | Result |
+| --- | --- | --- |
+| `ComposerSurface.Send()` refuses with no context | read `ComposerSurface.cs:222-229` | first statement is `if (_context is null) { _status.Text = "the composer is not wired to a session yet"; return null; }` |
+| `_context` is set only by `ComposerSurface.Configure` | read `ComposerSurface.cs:154-181` | one assignment, `_context = context`, at `:166` |
+| Nothing in `src/` calls `Configure` on a composer | `grep -rnE "Composer\s*\.\s*Configure\|\.Configure\s*\(" src` | one hit, `WorkbenchShell.cs:1552`, and it is `draft.Configure(` on `PromptDraftSurface` — a different type |
+| Nothing in `src/` constructs a `ComposerSendContext` | `grep -rn "ComposerSendContext" src` | **five** hits, and none is a construction: the record's declaration (`ComposerSendGate.cs:23`), a `<see cref>` in its own doc comment (`:47`), a parameter (`:118`), a field (`ComposerSurface.cs:53`), a parameter (`:156`). `grep -rn "new ComposerSendContext" src` returns **zero** |
+| The only construction anywhere is a test | `grep -rn "new ComposerSendContext" tests` | `ASendLaunchesAGovernedRunTests.cs:79` |
+| The front door reaches the document but not the composer | read `MainWindow.xaml.cs:144-165` → `WorkbenchShell.cs:2909-2945` | `OpenSessionDocument` builds the model, the store and the `SessionDocumentSurface`, and never touches `document.Composer` |
+
+**A type whose only construction in the entire repository is inside a test cannot be supplied at
+runtime.** That is what makes this conclusive from structure alone, with no run needed to confirm it:
+the absence is total rather than conditional.
+
+**Why this is DC-130 again rather than a missing feature.** The signature the register names is *a
+constructed value returned to a discarding caller*. `MainWindow.xaml.cs:160` is
+`Shell.Announcer.Announce(Shell.OpenSessionDocument(created.Config))` — and `created` is a
+`NewSessionResult(Config, TaskClass, RoutableBackends)`. **`TaskClass` and `RoutableBackends` are
+constructed by the sheet and dropped on that line.** `TaskClass` is the field the sheet refuses to
+default, because a defaulted class ranks in the wrong cohort (DC-110, Ruling 19) — so the one value
+the composer's send context most needs is built, validated, and discarded one call before the
+composer would read it. F4b closed the seam *below* this one (request → run); the seam *above* it
+(session config + task class → composer send context) is still unowned. **Both nodes are green
+against every clause they were given.**
+
+`OpenSessionDocument`'s own doc-comment records the conflict without resolving it — *"the result's
+task class and lease belong to a run — passing them here would force the reopen path to invent
+both"* — which is DC-130's other tell verbatim: **one of the nodes writes the conflict down in a
+code comment and no clause resolves it.**
+
+**Why this node did not simply wire it.** Two reasons, and the second is the stronger.
+
+1. **It is not this node's edge.** Filling it requires deciding where a reopened session's task class
+   comes from, which the comment above shows was a deliberate deferral, not an oversight. That is a
+   conductor or Owner ruling about the slice's decomposition, not an evidence node's call.
+2. **A harness-wired run would have passed this pack's own oracle, and that is the worst available
+   outcome.** A driver *can* call `Composer.Configure(...)` itself and then press `Send()`; the run
+   would be real, the episode would score, and the oracle would read `composerSendCount == 1` and
+   `launchedBy == src/AiDe.App/Workbench/Sessions/SessionDocumentSurface.cs` — **both true, and both
+   green.** The product would still not have a working front door. That is DC-127 exactly — *the
+   fixture agreed with me* — manufactured deliberately, in the pack whose job is to refuse it.
+   `GovernedRunHost`'s own remarks already refuse a hand-assembled harness as exit evidence, and the
+   send context is precisely the wiring that would have been hand-assembled.
+
+**The oracle cannot see this, and clause 0 is why it was not widened.** Clauses 2 and 5 between them
+say *the request was built in the composer* and *the run launched from product code*. Neither asks
+**who wired the composer**, so neither can separate "the product supplied the send context" from "a
+harness did". The fix is a source scan of the shape
+`AGovernedRunReachesTheConsoleTests.TheProductItselfConstructsASessionLane` already uses. It was
+**not added**: clause 0 compares this file's bytes against `1374401d`, so widening the oracle after
+the run would redden clause 0 — the control working against its own author, which is what it is for.
+The gap is recorded as a residual instead, and it is the same class one level in: *an edge between
+two clauses that no clause owns.*
+
 ## Residual
 
 Assembled from `docs/notes/front-door-residuals-carried.md`, which was written **as the slice
@@ -240,7 +306,9 @@ cell comes to read "none". Every entry states its **kind**: **measured** (a numb
 | **A seam between two adjacent nodes that no clause assigned** | named | **Ruling 46's class.** `ComposerSurface.Send()` built a `GovernedRunRequest` and returned it to a discarding caller; `ConductorEntry.cs:80` was the only call to `GovernedRunHost.RunAsync` in the product; and `AcpEventQueue`'s channel is `SingleReader = true`, so no `SessionLane` could drain what the host drains. F4 built one end, F2 built the other, and **F2 wrote the conflict down in `SessionLane.cs:12-16` while no clause resolved it.** This is a *plan* defect, not a code one: adjacent nodes each built one end of a seam nobody owned. The control is a slice-level **E7 surface list with every edge assigned to a node**, failing plan review when an edge is unowned — named here, and **not built by this node**. |
 | **Clause 5's ledger is built by the node that does not grade it** | named | The composition-root ledger was drafted here and **handed to F4b** under Ruling 46's own principle applied one level down: *the node that builds the counter must not be the node whose Proof Pack the counter proves.* Recorded because the reasoning is the reusable part, and because the hand-off is the kind of thing that looks like lost work in a log unless it says why. |
 | **The F5 gate's bare run is not wired into CI yet** | named | `verify-project-coverage` is right that a gate no workflow invokes is not a control, and wiring the bare run before the exit run existed made CI red for the honest reason that the gate's subject did not exist — observed on run `34606518579`, job `gates`, step *Front-door exit evidence (F5)*. Only the **self-test** is wired now, which is a real invocation doing real work (it reddens on every clause it claims to check) and satisfies the coverage gate without wiring a control ahead of the thing it controls. **The bare run is added in the same commit that lands `spikes/conductor-front-door-exit-run/exit-evidence.json`** — named here so it is a step rather than something to be remembered. Until then the nine clauses are checked by running the gate locally, which is exactly the weakness the coverage gate names. |
-| **The exit run is one run** | named | Every run-dependent row above rests on a single live execution on one host with one engine, one account and one task class. Nothing here is a distribution, a rate, or a claim about a second machine. The re-runnable half is the test suite; this pack's live half is a record, in the same sense the ACP frame corpus is. |
+| **The composer's send context has no producer in the product — DC-130's second instance in this slice** | measured | `grep -rn "ComposerSendContext" src` returns **five** hits and **zero constructions** — a declaration, a doc-comment cref, two parameters and a field. The only `new ComposerSendContext` in the repository is `ASendLaunchesAGovernedRunTests.cs:79`. So `ComposerSurface._context` is null in every shipped path, `Send()` returns null with *"the composer is not wired to a session yet"*, and **clauses 2, 3, 5, 6 and 9 are unsatisfiable** — five of nine, the same arithmetic the first instance produced. The discarded value is `NewSessionResult.TaskClass` at `MainWindow.xaml.cs:160`, the one field the sheet refuses to default (DC-110). **This node did not wire it:** the edge is unowned, and deciding where a *reopened* session's task class comes from is a ruling, not an evidence node's call. |
+| **The oracle cannot distinguish a product-wired composer from a harness-wired one** | named | Clause 2 asserts the request was built in the composer; clause 5 asserts the launch site is under `src/`. **Neither asks who supplied the send context**, so a driver that calls `Composer.Configure(...)` itself and then presses `Send()` reads green on both while the product still cannot send — DC-127's shape, reachable through this pack's own gate. The closure is a source scan of the form `TheProductItselfConstructsASessionLane` already uses. **Not added, deliberately:** clause 0 compares this file's bytes against `1374401d`, so widening the oracle after the fact reddens clause 0. The control refused its own author, which is the behaviour it was committed early to have. |
+| **The exit run did not happen** | named | Every `RUN-PENDING` row above is pending for the structural reason recorded in *The exit run did not happen* — not because a run was attempted and failed, and not because one was skipped for cost. No live subscription turn was spent, no lane tree was provisioned, and no episode was scored by this node. **The `front-door-preflight` class recorded earlier remains the only live run this node caused**, and it is tagged `not-exit-evidence` in its own store. When the run does happen it will still be **one** run — one host, one engine, one account, one task class, no distribution and no rate — and the re-runnable half will still be the test suite. |
 
 ### One process residual, recorded because it shaped everything above
 
@@ -257,15 +325,34 @@ That is a **procedural** control with no mechanical backing, and it belongs here
 
 ## Counts and gates
 
-| | |
-| --- | --- |
-| `AiDe.App.Tests` | `RUN-PENDING` (floor 495) |
-| `AiDe.Core.Tests` | `RUN-PENDING` (floor 2206) |
-| `AiDe.Core.Tests` portable | `RUN-PENDING` (floor 2052) |
-| `AiDe.Core.Tests` non-portable | `RUN-PENDING` (floor 154) |
-| Full gate set, bare | `RUN-PENDING` |
-| CI conclusion | `RUN-PENDING` |
+Measured on the merged tree (`main` at `39bcf288` merged into `feature/exit-evidence`), Debug, this
+machine. The floors are the ones `tools/expected-test-counts.json` carries **after** F4b's bump — the
+figures this table used to name (495 / 2206 / 2052) were the pre-F4b floors and were stale.
+
+| | Executed | Floor | Over |
+| --- | --- | --- | --- |
+| `AiDe.App.Tests` | **512** | 512 | 0 |
+| `AiDe.Core.Tests` | **2214** | 2210 | +4 |
+| `AiDe.Core.Tests` portable | **2060** | 2056 | +4 |
+| `AiDe.Core.Tests` non-portable | **154** | 154 | 0 |
+| Full gate set, bare | **29 of 30 green**; the thirtieth is this slice's own oracle, refusing for the reason below | — | — |
+| Build | **0 warnings, 0 errors** | — | — |
+
+`2060 + 154 = 2214` **by observation**, not by arithmetic on the baseline: each half was run under its
+own `--filter` and `--key`, and the whole project was run separately, so the sum is three
+measurements that agree rather than one measurement and a subtraction.
+
+The `+4` is this node's own `TheSessionOriginIsSetOnlyOnTheCommandPathTests` (4 cases), landed in
+`bc6d6a4b` for clause 1. It is the whole of the excess over the floor.
 
 **Baselines were not raised by this node.** `tools/expected-test-counts.json` is untouched and
 `verify-test-run.py --update` was not run: a node raising its own floor is grading its own work, and
 the bump is the conductor's separate recorded act.
+
+**The one gate that is red, and why that is the correct reading.**
+`tools/verify-front-door-exit-evidence.py` run bare reports *"the exit-evidence record was not found
+at `spikes/conductor-front-door-exit-run/exit-evidence.json`"* and exits 1. That is the oracle doing
+the job it was committed early to do: refuse when the run did not happen. Its `--self-test` — the
+form CI invokes — exits 0 with *"the oracle reddens on every clause it claims to check"*. **A gate
+that refuses an absent subject is not a broken gate**, and the distinction is why only the self-test
+is wired (`aa058e20`).

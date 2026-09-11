@@ -1,7 +1,7 @@
 // Derived from docs/audit/*.jsonl by scripts/audit-log.py — DO NOT hand-edit (the JSONL logs are the source of truth; see audit-and-change-log.md).
 window.AUDIT_DATA = {
   "project": "ai-de",
-  "generated": "2026-09-11T15:09:47Z",
+  "generated": "2026-09-11T15:24:16Z",
   "audit": [
     {
       "actor": null,
@@ -11537,6 +11537,45 @@ window.AUDIT_DATA = {
       ],
       "tier": "T1",
       "tool": null
+    },
+    {
+      "id": "al-01M28H3BREVHK9EA4YVVJ6JDMD",
+      "shortname": "F5 exit evidence: blocked by DC-130's second instance, with the counts and gates measured",
+      "datetime": "2026-09-11T15:24:10Z",
+      "session": "conductor-front-door-f5-exit-evidence",
+      "prompt": "You are node F5 of the AI-DE Conductor front-door slice, resuming. Merge main (never rebase), run the\nfrozen oracle at 1374401d against a real governed run through the App shell - composed in the\ncomposer, streamed in Console mode, scored episode - report all nine clauses plus clause 0 with their\nevidence, terminalHostConstructions == 0 with its falsifier, write the Proof Pack with no Residual\ncell reading \"none\", report the counts, gates green, push and read CI back with\n`gh run view --json conclusion`. Treat every claim in this brief as Inferred unless labelled\nVerified, and report back which of them were false.",
+      "summary": "THE EXIT RUN DID NOT HAPPEN, AND THE REASON IS STRUCTURAL. The shipped product cannot send from the\nfront door at this commit, so clauses 2, 3, 5, 6 and 9 are unsatisfiable - five of nine, the same\narithmetic DC-130's first instance produced.\n\nMEASURED, not inferred. `grep -rn \"ComposerSendContext\" src` returns five hits and ZERO\nconstructions: a declaration, a doc-comment cref, two parameters, a field. The only\n`new ComposerSendContext` in the repository is in a test (ASendLaunchesAGovernedRunTests.cs:79).\nComposerSurface.Send() opens with `if (_context is null) { ... return null; }` at :224, and `_context`\nis assigned only in Configure at :166, which nothing under src/ calls. A type whose only construction\nin the repository is inside a test cannot be supplied at runtime.\n\nDC-130's SECOND INSTANCE IN THIS SLICE, with its signature verbatim: a constructed value returned to\na discarding caller. MainWindow.xaml.cs:160 passes only `created.Config` from a\nNewSessionResult(Config, TaskClass, RoutableBackends) - dropping TaskClass, the one field the sheet\nrefuses to default because a defaulted class ranks in the wrong cohort (DC-110). F4b closed the seam\nbelow (request -> run); the seam above (session config + task class -> composer send context) is\nstill unowned. Both nodes green against every clause they were given. OpenSessionDocument's own\ndoc-comment records the conflict without resolving it - DC-130's other tell.\n\nWHY THIS NODE DID NOT WIRE IT. A driver CAN call Composer.Configure() itself and press Send(); the\nrun would be real, the episode would score, and the oracle would read composerSendCount == 1 and\nlaunchedBy under src/ - both true, both green, product still broken. That is DC-127 manufactured\ndeliberately inside the pack whose job is to refuse it. And the edge is a decomposition ruling\n(where a reopened session's task class comes from), not an evidence node's call.\n\nTHE ORACLE'S OWN BLIND SPOT, recorded rather than patched. Clauses 2 and 5 never ask WHO wired the\ncomposer, so they cannot separate a product-wired send from a harness-wired one. The closure is a\nsource scan of the form TheProductItselfConstructsASessionLane already uses. NOT ADDED: clause 0\ncompares the oracle's bytes against 1374401d, so widening it after the fact reddens clause 0. The\ncontrol refused its own author, which is the behaviour it was committed early to have.\n\nWHAT IS DISCHARGED. Clause 0 holds: 1374401d is an ancestor of this branch, is NOT reachable from\nmain, and the oracle's bytes are byte-identical to that commit after the merge. Clauses 1, 4, 7, 8\nare discharged. The oracle's --self-test exits 0: \"the oracle reddens on every clause it claims to\ncheck\". Bare, it exits 1 because its subject does not exist - a gate refusing an absent subject is\nnot a broken gate, which is why only the self-test is wired in CI.\n\nCOUNTS, measured on the merged tree, --update NEVER run. App 512 (floor 512, +0). Core 2214 (floor\n2210, +4). Core portable 2060 (floor 2056, +4). Core non-portable 154 (floor 154, +0).\n2060 + 154 = 2214 by three separate observations that agree. The +4 is this node's own four origin\ntests from bc6d6a4b. Build 0 warnings 0 errors. 29 of 30 gates green.\n\nDURATION IS NOT RECORDED rather than estimated: no `audit-log.py start` marker was set at grounding\nfor this run, and a modeled duration would be a plausible wrong number (IO12).\n\nFOUR CONDUCTOR CLAIMS REFUTED, listed in the node's report; the load-bearing one is \"There is now an\nexit run for your oracle to observe\" - F4b made the seam real, not the path.",
+      "kind": "manual",
+      "skill": null,
+      "tool": null,
+      "actor": null,
+      "artifacts": [
+        "docs/proof/conductor-front-door.md",
+        "tools/verify-front-door-exit-evidence.py",
+        "tools/expected-test-counts.json"
+      ],
+      "tags": [
+        "f5",
+        "dc-130",
+        "blocked"
+      ],
+      "outcome": "blocked",
+      "goal": "Run the frozen oracle against a real governed run through the App shell and close F5's Proof Pack.",
+      "done_when": "Clauses 0-9 reported with evidence; terminalHostConstructions == 0 with its falsifier; no Residual cell reading 'none'; counts reported; gates green; pushed; CI read back with gh run view --json conclusion.",
+      "tier": "T2",
+      "fan_out": 3,
+      "signals": {
+        "verification_path": true,
+        "verification_executed": true,
+        "acceptance_met": false,
+        "regression": false
+      },
+      "git": {
+        "sha": "b7f41d1c4ac9f2f8f61a88ff55e63d7cb9593aa0",
+        "short": "b7f41d1c4",
+        "branch": "feature/exit-evidence",
+        "pushed": false
+      }
     }
   ],
   "changes": [
