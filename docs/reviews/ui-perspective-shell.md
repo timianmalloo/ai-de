@@ -145,11 +145,11 @@ deliberate DX17 density and are the exemption list of `tools/verify-ui-craft-flo
 | Property | Contract | Measured (default state, structure expanded) |
 |---|---|---|
 | Chrome above the editor's first line | 28px | 28px |
-| Editor share of the composer zone | ≥ 45 % | met — read live by the page's audit (the value depends on the viewer's width; the audit shows it) |
-| Editor height | ≥ 130px | met (the same audit) |
-| Rows rendered beneath the editor | 4 collapsed / 7 expanded | 7 expanded |
-| Bordered text fields other than the editor | 0 | 0 |
-| Type sizes in the composer | ≤ 3 | 3 (13 · 12 · 11) |
+| Editor share of the composer zone | ≥ 45 % | **not observed in this run** — the page computes it on load and reports MET / NOT MET in its verdict strip; no browser was opened here (screenshots stay out of the main context, CTX-E); P-12 is the oracle |
+| Editor height | ≥ 130px | not observed (same) — `min-height:130px` is the CSS floor |
+| Rows rendered beneath the editor | 4 collapsed / 7 expanded | 7 expanded (counted from the markup) |
+| Bordered text fields other than the editor | 0 | 0 (counted from the markup) |
+| Type sizes in the composer | ≤ 3 | 3 (13 · 12 · 11, from the stylesheet) |
 | Per-prompt settings fields | 0 | 0 (the sheet's audit counts tier fields: 0) |
 
 **[Inferred]** The 580px figure is the startup Center height derived from the shell's rows
