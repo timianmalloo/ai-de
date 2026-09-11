@@ -5840,3 +5840,29 @@ Source: `ai-forward` `learnings/fleet-classes.jsonl`. Re-run `/apply-learnings` 
   strikes. **Registered so the next ruling that says "pre-existing and tested" has to name which.**
 - **Status:** `uncontrolled` — the instance is fixed, the ratio is measured and recorded, and the
   next slice decomposed the same way would cite the same coverage again.
+
+### DC-136 — A merge resolved as "regenerate, then stage everything" leaves markers in a file that is patched in place, not regenerated
+- **Shape:** the documented resolution for the two recurring conflicts is *union the append-only
+  log, regenerate the derived views* — one command, then `git add -A`. That command regenerates
+  the files the registry calls `derived`; it **patches** `site/*.html` in place
+  (`verify-site-figures.py --update` rewrites counts, never the file). A conflict in a
+  figure-patched file therefore survives the resolution with its `<<<<<<<` intact, the staged
+  tree carries it, and the resolver's own completion line reads *"every derived view is current
+  and every gate is green"* — which was true of the derived views and false of the tree.
+- **Signature:** a merge commit that touches `site/*.html`; `verify-no-conflict-markers.py` red
+  in CI on a `main` push while the local resolution reported green; identical sides
+  (whitespace / end-of-line only), so the conflict was never *about* anything.
+- **Instance (conductor-addendum-c, 2026-09-11):** merge `f5c0f740` of `conductor/addendum-c`
+  into `main` — `site/index.html:59-63,142-146` and `site/model.html:465-469`, both sides
+  byte-identical after trim. Resolved by `regenerate-derived.py` + `git add -A docs site`; the
+  conductor ran `verify-derived-views` and `verify-stranded-audit` after the merge and **not**
+  `verify-no-conflict-markers`; CI reddened on the push and was not read back (E14: an exit code
+  is not a result — read the state). Found by node S1's gate run on `feature/addendum-c`.
+- **Sweep:** `git log --merges -- site/` shows this is the third merge in two days that touched
+  `site/*.html`; the two earlier ones resolved cleanly because only one side had changed. The
+  class was latent, not new.
+- **Control:** `tools/regenerate-derived.py` `CHECKS` now runs `verify-no-conflict-markers.py`
+  first — the one command every resolution already runs fails on a marker anywhere in the tree.
+  Observed red with a scratch marker (exit 1), green after (`main`, this commit).
+- **Status:** `controlled` — the instance is fixed and the control is in the resolution path,
+  not in a step the resolver has to remember.
