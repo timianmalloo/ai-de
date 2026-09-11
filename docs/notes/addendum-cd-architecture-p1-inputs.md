@@ -43,7 +43,8 @@ differ.*
 | `PerspectiveSet` (3 rows; routing order) + `perspective.*` catalog rows | `AiDe.Core/Workbench/Perspectives.cs`, `WorkbenchCommands.cs` | C-1 | C# developer (Core) | Patterns Expert | ADR-0030 |
 | `SurfaceKind.Perspectives` + `Instances` columns | `AiDe.App/Workbench/SurfaceContentFactory.cs` | C-1 | C# developer (App) | Test Architect (the non-empty-set build test) | ADR-0030 |
 | `PerspectiveMenu.For` (menu · palette · rail · title derivation) | `AiDe.App/Workbench/MainMenuBuilder.cs` successor + `CommandPalette.cs` | C-1 | C# developer (App) | UX & Accessibility (PS-M1–M4; the mutation test) | ADR-0030 |
-| `PerspectiveShell` presenter (three bodies; previous slot; command routing; entry-verb transaction) | `AiDe.App/Workbench/ShellModeController.cs` → renamed | C-1 | Tech Lead + C# developer | Test Architect (US-C2 identity; P-4) | ADR-0017 amended, ADR-0031 |
+| `PerspectiveShell` presenter (three bodies; previous slot; command routing; entry-verb transaction; INV-0009's `DocumentOpening` seam generalised — a dock document opened while a full-window body is on screen switches to the admitting host) | `AiDe.App/Workbench/ShellModeController.cs` → renamed | C-1 | Tech Lead + C# developer | Test Architect (US-C2 identity; P-4; `ANewSessionCreatedWhileExplorerIsTheBodyIsShown` stays green) | ADR-0017 amended (clause 4), ADR-0031 |
+| `SessionComposerBinder.Bind(shell, config, providers, workspace, affirmation)` — the one binding site for New / Reopen / restore (Ruling 47); `ComposerSendContext.TaskClass` populated from `default_task_class` here; `NewSessionFlow` opens the chooser's workspace before `opened` (INV-0009's second class) | `AiDe.App/Workbench/Sessions/` (from INV-0009 F3/F4 on `fix/session-document-render`) | C-0 / C-3 | C# developer (App) | Security (one registry/send-context/attachment-gate site) | ADR-0031, ADR-0033 rule 4, INV-0009 |
 | `DockHost` unit (extracted from `WorkbenchShell`; composed ×2) | `AiDe.App/Workbench/WorkbenchShell.cs` (extraction) | C-1 | Tech Lead (the extraction), C# developer | Simplifier (no member moves that host B cannot take); DC-135 ratio watch | ADR-0031 |
 | `ZoneBackedLayoutService` admitted-kind enforcement + `RestoreResult` drop report | `AiDe.Core/Workbench/ZoneBackedLayoutService.cs` | C-1 | C# developer (Core) | Data & Persistence (the invariant at every mutation) | ADR-0031, ADR-0032 |
 | `ZoneLayoutStore` per host file; reported refusal; `.pre-perspectives.bak` | `AiDe.Core/Workbench/ZoneLayoutStore.cs`, `AiDe.App/Workbench/LayoutPersistence.cs` | C-1 | C# developer (Core) | **Data & Persistence (veto)** — the golden rollback round-trip | ADR-0032 |
@@ -98,11 +99,14 @@ closes the chain.
 
 ## 4. The ordered gates
 
-1. **C-0 prerequisites (not landed at `a3f760a3` / `757af057`) — probe all three with `git log`
-   before C-0 starts:** Ruling 66's lease-source fix on `main` (red-first; two argument changes;
-   `LeaseDerivation` unchanged); Ruling 71's typed `session/new` tools argument on
-   `feature/exit-evidence` — as the **sealed two-value `SessionTools`** with the exact-key-set wire
-   test (ADR-0035); INV-0006 merged (Ruling 55 CONDITIONS).
+1. **C-0 prerequisites — probe each with `git log` before C-0 starts:** Ruling 66's lease-source
+   fix (**landed on `main` at `00e0e520`**); Ruling 71's `LaneSessionOptions` on
+   `feature/exit-evidence` (`246b38a3`; **not on `main`** — merge that branch first; the compile uses
+   the named static instance and the exact-key-set wire test, ADR-0035); INV-0006 merged (Ruling 55
+   CONDITIONS); INV-0009's fix on `fix/session-document-render` (the `DocumentOpening` seam — INV-0009's
+   first class; the chooser opens the workspace then creates — its second; the two ids are allocated
+   on `investigate/session-document-render` and cited by name until it merges; `SessionComposerBinder` as the one binding
+   site) — C-1's `PerspectiveShell` routing generalises that seam, so it lands first.
 2. **Spike (done):** `spikes/second-dock-host-unparent` PASS; `spikes/compile-session-tool-pin` PASS
    (source). Re-run on an AvalonDock or adapter bump.
 3. **Advisory:** `agentic-advisory` selectable only when `docs/proof/compile-pin-spike.json` exists

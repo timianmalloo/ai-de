@@ -37,9 +37,11 @@ summary: >-
   the gate (D&P and Security hard vetoes)
 - **Context spec/architecture:** `spec-addendum-d-compile-step` page one, §A6 (the domain model the
   D&P Architect passed — architected to, not re-modelled), §A7–§A12, US-D1–D3, US-D7, US-D12;
-  Rulings 63–70; the operator's decisions of 2026-09-11 relayed by the conductor (audit
-  `al-01M297VC0HTFJP761D9BVE9Z72`; being filed by the Owner) **[Verified — the audit entry is
-  committed on `main` and its words match the quotations below; merged into this branch at close]**
+  Rulings 63–70; **Ruling 72** (the operator's decisions of 2026-09-11 — budget subscription-bounded
+  by default with an optional cap; task class `free-form` by default, per prompt, no Send refusal;
+  the `git push` auto-allow stays; audit `al-01M297VC0HTFJP761D9BVE9Z72`) **[Verified — filed on
+  `main` at `1aadde84` and merged into this branch; the ruling leaves "the exact representation of
+  subscription-bounded" to this record with a falsifying test]**
 
 ## Context
 
@@ -129,9 +131,10 @@ We will:
    `Compilation/Projection.cs`, and one `LeaseDerivation.Patterns(` display call, in
    `ComposerSurface.cs`, each with the `source_text` symbol as its argument** (qualified names — a
    bare `Derive(` collides with `DeterministicSignalsDeriver.Derive(`; the argument is checked at
-   both sites, which is the F-2 class). (Ruling 66's interim fix on `main` — `ComposerSendGate.cs:164` and
-   `ComposerSurface.cs:449` passing the editor's text — is slice C-0; D-1 then moves the one call
-   into `Project()`.) `GovernedRunRequest`, `SpawnContract.Validate/Authorize`, `LeaseDerivation`
+   both sites, which is the F-2 class). (Ruling 66's fix **landed on `main` at `00e0e520`** —
+   `ComposerSendGate.cs:169` and `ComposerSurface.cs:452` now pass `draft.SourceText`, with
+   `TheLeaseDerivesFromTheEditorsSourceTextTests` **[Verified — merged into this branch]**; D-1
+   moves the one `Derive(` call into `Project()`.) `GovernedRunRequest`, `SpawnContract.Validate/Authorize`, `LeaseDerivation`
    (bar the additive `HasMention`) and `TemplateCompiler` are **unchanged in signature** (US-D12's
    reflection assertion).
 3. **Budget is an optional cap; its absence is a declared value on the unchanged contract.** The
@@ -151,7 +154,8 @@ We will:
    and **the sentinel never reaches the sent bytes as a number**: `RenderGoalBlock`
    (`ComposerCompiler.cs:83-99`, the prompt the engine reads) renders the case as *"budget: bounded by
    the subscription (no cap declared)"*, Prepare's inherited line as *"budget: bounded by your
-   subscription"*, and a cap as *"budget cap 250 requests / 600k tokens"*; a **C16-shaped cap**
+   subscription — not measured here"* (Ruling 72 condition 1: the subscription's own limit is not
+   readable by the product), and a cap as *"budget cap 250 requests / 600k tokens"*; a **C16-shaped cap**
    asserts that every `.Requests` / `.Tokens` read on a `RunBudget` in `src/` is in exactly
    `["ComposerCompiler.cs", "ConductorEntry.cs", "GoalBlock.cs", "Projection.cs"]`, that the
    **render** sites (`ComposerCompiler.cs`, `Projection.cs`) are guarded by `IsSubscriptionBounded`,
@@ -187,16 +191,22 @@ We will:
    70); `Project().TaskClass = Current(task_class)`; `GovernedRunRequest.TaskClass` stays required
    and non-null. The Send refusal Ruling 70's text named (*"choose a task class for this prompt"*)
    is **not built** — overruled by the later operator decision. "Use as default" stays a separate
-   explicit act (Ruling 70 condition 3). **This amends ADR-0028, and says so:** ADR-0028's rule is
-   *explicitness* — an explicit caller-chosen class at both doors, no door default — and
-   `free-form` is, structurally, a default at the composer door (the D&P Architect's finding at this
-   gate; DC-110's shape). The operator's decision overrides it for this door with two conditions
+   explicit act (Ruling 70 condition 3). **ADR-0028 is read per Ruling 72, and the reading is
+   recorded on it:** Ruling 72 leaves ADR-0028's partition rule unchanged — *"a `free-form` class is
+   a legitimate cohort key: it is the operator's stated default, not a value the door invented
+   (DC-110)"* — while the D&P Architect's finding at this gate stands as a structural fact:
+   `free-form` is a default at the composer door, which ADR-0028's *explicitness* wording (an
+   explicit caller-chosen class at both doors) did not foresee. The reconciliation is an amendment
+   *pointer* on ADR-0028: an operator-declared default is explicit, and the door keeps two conditions
    that keep the cohort honest: (i) the default is the operator's, visible on the sheet and the
    session header, and its **provenance is recorded per episode as an expand-only cohort attribute
    `task_class_source ∈ {session-default, operator}` beside `ScoreSegment`, never inside it** (the
    `mode` column's own pattern, ADR-0028), so the board can tell a chosen `free-form` from a
    defaulted one; (ii) `free-form` is a comparable class, so a defaulted episode ranks (unlike
-   `Unclassified`) — recorded as the decision, not hidden. ADR-0028 carries an amendment pointer.
+   `Unclassified`) — recorded as the decision, not hidden. ADR-0028 carries the amendment pointer.
+   Ruling 72's condition (1) is a rendering rule this record adopts: when the subscription's own
+   limit is not readable by the product, the absent budget reads *"bounded by your subscription —
+   not measured here"*, never a plausible number.
    The cohort attribute is, deliberately, a **second home** for the envelope's
    `task_class.source`: the envelope is purgeable work data and scores are not, so the cohort must
    carry its own provenance (the Simplifier's finding, accepted in writing under the D&P

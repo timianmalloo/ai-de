@@ -112,26 +112,33 @@ We will:
    originating call (the AI Systems Engineer's finding). It **never** provisions a worktree, opens an
    episode (`GovernedLaneSource`), constructs a `GovernedRunRequest`, runs `LeaseMonitor`, or
    scores.
-2. **Pin the session through Ruling 71's typed tools argument — a sealed two-value type.**
-   `AcpLaneClient.NewSessionAsync` gains (on `feature/exit-evidence`; reused here, not
-   re-implemented) a typed argument that serialises to `_meta.claudeCode.options.{…}`. It is a
-   **sealed record with exactly two constructible values and no free-form members**:
-   `SessionTools.None` (the compile) and `SessionTools.Lane` (`disallowedTools: ["Bash"]`, Ruling
-   71) — because every widening vector lives in the same `_meta` (`settingSources` spread after,
-   `:5962-5964`; `systemPrompt` `:5840`; `env` `:5942`; `extraArgs` → arbitrary CLI flags
-   `:6004-6006`; `mcpServers` merged `:5995-6001`; `settings` `:5921`), and a typed argument with a
-   free-form member is a hole a later passthrough fills without failing a test. The wire test
-   asserts the **exact key set** of `_meta` and of `_meta.claudeCode.options`, not only the pinned
-   keys. `SessionTools.None` carries: **`tools: []`** (primary — the adapter prefers the array,
-   `acp-agent.js:5880-5884`); **the belt is the programmatic settings deny, not
-   `disableBuiltInTools`** — `_meta.claudeCode.options.settings = { permissions: { defaultMode:
-   "default", deny: [Bash, Edit, Write, MultiEdit, NotebookEdit, WebFetch, WebSearch, Task, Agent,
-   Skill] }, disableAllMcpJsonServers: true }` (a deny rule wins regardless of `tools`, and the MCP
-   key closes a repository `.mcp.json` structurally, which `tools: []` does not; **the key names and
-   precedence are Inferred** — P-D5 runs with and without the belt so its effect is measured, never
-   assumed; the tool names are **one constant, `DeniedToolNames`, referenced by both `deny` and
-   `disallowedTools`** — hand-listing them twice rots on the next SDK tool; and the **removal rule
-   is recorded**: if P-D5 without the belt is also zero, the belt is deleted at D-2); `_meta.disableBuiltInTools: true` is **dropped as dead code** (`tools ??
+2. **Pin the session through Ruling 71's typed tools argument — `LaneSessionOptions`, as
+   delivered.** `AcpLaneClient.NewSessionAsync` gained, on `feature/exit-evidence` at `246b38a3`
+   (**[Verified — read on the branch; not yet on `main`]**), the typed record
+   `LaneSessionOptions(IReadOnlyList<string>? Tools, IReadOnlyList<string>? DisallowedTools)` whose
+   `ToMeta()` serialises **exactly the two members the adapter spreads** into
+   `_meta.claudeCode.options` and nothing else — the F5 node's own reason (`docs/notes/lane-pin-spike.md`
+   on that branch: *"a wider record would be a wider reach"*), which is the Security Architect's
+   condition at this gate in the delivered form: every widening vector lives in the same `_meta`
+   (`settingSources` spread after, `:5962-5964`; `systemPrompt` `:5840`; `env` `:5942`; `extraArgs`
+   → arbitrary CLI flags `:6004-6006`; `mcpServers` merged `:5995-6001`; `settings` `:5921`), and a
+   record with a free-form member is a hole a later passthrough fills without failing a test. The
+   compile passes **two named static instances**, not ad-hoc lists — `LaneSessionOptions.Compile
+   = (Tools: [], DisallowedTools: DeniedToolNames)` and `LaneSessionOptions.Lane = (Tools: null,
+   DisallowedTools: ["Bash"])` (Ruling 71) — and the wire test asserts the **exact key set** of
+   `_meta` and of `_meta.claudeCode.options` (`{tools, disallowedTools}` for the compile;
+   `{disallowedTools}` for the lane), not only the pinned keys. **`tools: []` is the primary pin**
+   (the adapter prefers the array, `acp-agent.js:5880-5884`; the SDK's `tools` accepts `[]` =
+   disable all built-ins, `sdk.d.ts:1497-1505` per the lane-pin note). **The belt** — a
+   programmatic settings deny, `_meta.claudeCode.options.settings = { permissions: { defaultMode:
+   "default", deny: DeniedToolNames }, disableAllMcpJsonServers: true }` (a deny rule wins regardless
+   of `tools`, and the MCP key closes a repository `.mcp.json` structurally, which `tools: []` does
+   not) — **is not in the delivered record and is admitted only by P-D5**: the spike runs with and
+   without it; if `tools: []` alone yields zero `tool_call` frames with a repository `.mcp.json`
+   present, the belt is never built (the record stays two members); if it does not, the belt is
+   added as a third member with its key names (Inferred today) observed on the wire, and the
+   exact-key-set test grows by one key. The tool names are **one constant, `DeniedToolNames`**,
+   referenced wherever they appear (hand-listing them twice rots on the next SDK tool); `_meta.disableBuiltInTools: true` is **dropped as dead code** (`tools ??
    (disableBuiltInTools …)` at `:5883-5884` never evaluates its right-hand side when `tools` is
    present — the Security Architect's finding); **`disallowedTools`** naming the write tools
    (braces); **`mcpServers: []`**; plus the reject-by-kind handler. The lane path is otherwise
@@ -263,19 +270,20 @@ operator's "I did not ask for that compile" constraint is met fully only by `mec
   data** and belongs on the `EngineCatalog` row, verified in `ResolveLaunch`/`Start` for both roots
   — the lane relies on the same CLI-enforced pin and today never verifies it; whether a lane
   *refuses* on a triple mismatch is Security's call at `/design-slice`. Ruling 71's typed argument
-  has **not landed** on
-  `feature/exit-evidence` at `757af057` (`AcpLaneClient.cs:152-189` still sends `{cwd, mcpServers:
-  []}`) **[Verified]** — P1 orders that delivery before the compile host; the P-D5 wire spike is the
-  first gate of ADR-0036 and has not run (no model call was made here).
+  **has landed on `feature/exit-evidence`** (`246b38a3` `LaneSessionOptions`; `135e05e1` records the
+  outgoing `session/new` frame on the normal path) and is **not yet on `main`** **[Verified — read
+  on the branch]** — P1 orders that branch's merge before the compile host (C-0); the P-D5 wire
+  spike is the first gate of ADR-0036 and has not run (no model call was made here).
 
 ## Falsifying tests
 
 1. **Wire (headless, fake peer):** `session/new` from `CompileCallHost` carries **exactly** the key
-   set `{cwd, mcpServers: [], _meta: {claudeCode: {options: {tools: [], disallowedTools: [...],
-   settings: {...}}}}}` and nothing else (no `disableBuiltInTools`, no `settingSources`, no
-   `extraArgs`, no `env`, no `systemPrompt`); the lane's `session/new` carries `disallowedTools:
-   ["Bash"]` and no `tools` member; `SessionTools` has exactly two constructible values (a
-   reflection assertion); the child `ProcessStartInfo` has no `CLAUDE_CODE_EXECUTABLE`; the adapter
+   set `{cwd, mcpServers: [], _meta: {claudeCode: {options: {tools: [], disallowedTools: [...]}}}}`
+   and nothing else (no `disableBuiltInTools`, no `settingSources`, no `extraArgs`, no `env`, no
+   `systemPrompt`; `settings` only if P-D5 admits the belt); the lane's `session/new` carries
+   `disallowedTools: ["Bash"]` and no `tools` member; `LaneSessionOptions` has exactly the two
+   members (a reflection assertion) and the compile uses the named static instance; the child
+   `ProcessStartInfo` has no `CLAUDE_CODE_EXECUTABLE`; the adapter
    sha, SDK version and CLI binary sha match the pinned triple, and a one-byte-different
    `acp-agent.js` in a fixture install root yields `unavailable` with **no** `session/new` (US-D8).
 2. **P-D5 (runtime, the gate):** adapter 0.75.1, a fixture repository allowing `Bash(*)` and `Edit`

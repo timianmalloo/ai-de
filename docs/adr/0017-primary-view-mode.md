@@ -137,7 +137,8 @@ a **body-content swap** of the docking-host region — distinct from a dock pane
 ## Amendment — 2026-09-11 (Ruling 52; `/define-architecture` of Addenda C and D)
 
 Ruling 52 (`note-addendum-c-council-rulings`) **retains** this decision and its load-bearing
-invariant and **amends** it in four clauses. The original text above is left intact; the amendment
+invariant and **amends** it in four clauses; a fifth (clause 4, from INV-0009) was added at the
+Addenda C/D architecture gate. The original text above is left intact; the amendment
 is read over it.
 
 1. **The closed set is the Perspective set.** The primary-view-mode value's closed set becomes
@@ -153,7 +154,29 @@ is read over it.
    holds: a host-bodied mode is the same seam with a different body.
 3. **Explore stays the full-window `ExplorerSurface`** and does not become docked panes (Ruling 52d,
    Ruling 53: one graph substrate, two surfaces).
-4. **Layout persistence gains one slot per host perspective** — the ADR-0013 amendment this record
+4. **A mode that unparents the docking host must say what a docking command does while it is the
+   body — switch back, or refuse with a reason; never a silent model update.** INV-0009
+   (`docs/investigations/INV-0009-a-session-document-opened-into-a-body-that-is-not-on-screen.md`,
+   on `investigate/session-document-render`; its first defect class, registered there) reproduced it red: with Explore as the body,
+   every `AddSurface` + `Render` command in `WorkbenchShell` (`:268-364`, `:1574`, `:2909`) opened a
+   document into the layout model, configured it, and announced success from the model while
+   nothing could render — the operator pressed File → New Session in Explore and saw nothing. The
+   rule this record now carries: **a catalog command that opens a dock document is covered by one
+   shell seam** (INV-0009 F1: `WorkbenchShell.DocumentOpening` — a `Func<bool> EnsureWorkbenchBody`
+   invoked at the top of every such command), which **switches the body to the host that admits the
+   kind, document first, then the switch, and folds *"Left Explore."* into the announcement**;
+   retain-never-rebuild is kept (the switch is a view change). Under Addendum C that seam **is**
+   `PerspectiveShell`'s routed kind-open (ADR-0030 `Resolve`; ADR-0031 rule 2's entry-verb rule) —
+   the fix on `fix/session-document-render` is its walking skeleton, not a second mechanism.
+   **Falsifying test:** `ANewSessionCreatedWhileExplorerIsTheBodyIsShown` (red today, exit 30 through
+   `dotnet test`) and its sibling `LeavingExplorerShowsTheSessionCreatedInsideIt`; a `ShellModeController`
+   unit test asserts one `shell.mode` diagnostic line per `Set` (INV-0009 F5). Two adjacent findings
+   the same investigation verified are carried by ADR-0031 and the P1 note: **its second class** (a session
+   created through the chooser with no workspace open — the operator ruled the chooser opens the
+   workspace, then creates) and the reopen path's binder (`SessionComposerBinder.Bind(shell,
+   config, providers, workspace, affirmation)` as the **one** construction site shared by New,
+   Reopen and restore — still one registry / send-context / attachment-gate site, Ruling 47).
+5. **Layout persistence gains one slot per host perspective** — the ADR-0013 amendment this record
    already named, now decided as ADR-0032 (one zone-envelope file per host; expand-only; an envelope
    carrying a kind its perspective no longer admits migrates by **drop-with-report**, never a
    crash and never silently). The Explore slot this ADR named for the split ratio and last node is

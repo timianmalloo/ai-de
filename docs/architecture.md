@@ -603,7 +603,8 @@ implementation (Phase 2 for terminal/visual; `P1-EXT` establishes the extractor 
 `spec-addendum-c-perspectives` and `spec-addendum-d-compile-step` (node A1 of
 `plan-addendum-c-modes`, session `addendum-c-chain`). Rulings 50–71 (`note-addendum-c-council-rulings`)
 are binding inputs; two operator decisions of 2026-09-11 relayed by the conductor (audit
-`al-01M297VC0HTFJP761D9BVE9Z72`, being filed by the Owner) are folded in and labelled. Every
+`al-01M297VC0HTFJP761D9BVE9Z72`, filed as **Ruling 72** on `main` at `1aadde84` and merged into
+this branch) are folded in and labelled. Every
 load-bearing claim carries **[Verified]**, **[Inferred]** or **[Flagged]**; a citation is not a
 promotion.*
 
@@ -850,8 +851,9 @@ The workspace fact store (ADR-0002) is untouched: none of the above is repositor
 | A second AvalonDock host under the ADR-0017 presenter | Unparenting a `DockingManager` holding a live `WebView2` (and a raw `HwndHost`) hides and re-shows it without destroying the native window; `CoreWebView2` identity, one initialisation, page state and scroll survive A→B→A→B ×3 and B→Explore→B; `Loaded` is per attach | `spikes/second-dock-host-unparent` — 2026-09-11, exit 0, all checks PASS | **Verified** (this cycle shape; floats are the airspace spike's) |
 | Adapter `session/new` `_meta` contract (0.75.1, sha `c22424c2…`) | `_meta.claudeCode.options.tools` primary, `disableBuiltInTools` a dead shorthand beside it, `disallowedTools` concatenated, `settingSources` from the cwd, `_meta` spread after it, permission mode from settings, a leading `/` executes as a CLI command | `spikes/compile-session-tool-pin` — 2026-09-11, 8/8 adapter-side facts hold (source read; **no model call**) | **Verified in source; Flagged on the wire** until P-D5 — except "bypass before `canUseTool`", which is the adapter's *comment* about CLI behaviour: **Inferred**, Flagged until P-D5 |
 | The Claude Code CLI binary the SDK launches (the pin's **enforcement** point) | `tools: []` honoured by the CLI; launched at `CLAUDE_CODE_EXECUTABLE ?? claudeCliPath()` (`acp-agent.js:6003`) with AI-DE's environment inherited | Not read; the pin is a **triple** (adapter sha · SDK version · CLI binary sha) and `CLAUDE_CODE_EXECUTABLE` is stripped from the child (ADR-0035) | **Flagged** until P-D5 records the triple |
-| Ruling 71's typed tools argument on `AcpLaneClient.NewSessionAsync` | Reused by the compile with `tools: []` | Not landed on `feature/exit-evidence` at `757af057` (`AcpLaneClient.cs:152-189` unchanged) | **Flagged** — P1 sequences it before the compile host |
-| Ruling 66's lease-source fix | `ComposerSendGate.cs:164` and `ComposerSurface.cs:449` pass the editor's text | Not on `main` at `a3f760a3` (`Derive(compiled.Text)` still) | **Flagged** — P1's first Addendum D node |
+| Ruling 71's typed tools argument on `AcpLaneClient.NewSessionAsync` (`LaneSessionOptions`) | Reused by the compile as the static instance `(Tools: [], DisallowedTools: DeniedToolNames)`; exactly the two members the adapter spreads | Landed on `feature/exit-evidence` (`246b38a3`, `135e05e1`; `docs/notes/lane-pin-spike.md` there); not on `main` | **Verified on the branch; Flagged on `main`** — C-0 merges it before the compile host |
+| Ruling 66's lease-source fix | `ComposerSendGate.cs:169` and `ComposerSurface.cs:452` pass `draft.SourceText` | On `main` at `00e0e520` with `TheLeaseDerivesFromTheEditorsSourceTextTests`; merged here | **Verified** |
+| INV-0009's `DocumentOpening` seam (its first class) and `SessionComposerBinder` (the one binding site) | A dock document opened while a full-window body is on screen switches the body to the admitting host, document first; New/Reopen/restore bind through one site | On `investigate/session-document-render` (the red reproduction; `ANewSessionCreatedWhileExplorerIsTheBodyIsShown` exit 30); the fix on `fix/session-document-render` | **Verified red; the fix Flagged until it lands** — C-1 builds on it |
 
 ### C/D.10 Cross-cutting concerns
 
@@ -919,7 +921,7 @@ Verified-in-source); P-D5 is the first runtime gate.
 
 | Slice | Proves end to end | Real | Mocked / stubbed seam | Human validation | E2E checks | Unblocks |
 |---|---|---|---|---|---|---|
-| **C-0 — prerequisites** | Ruling 66's lease-source fix; Ruling 71's typed `session/new` tools argument (from `feature/exit-evidence`); INV-0006 merged | the two argument changes; the `NewSessionAsync` record | — | none (headless) | red-first: an attached body with `@src/` adds no pattern; the lane's `session/new` carries `disallowedTools: ["Bash"]` | every later slice |
+| **C-0 — prerequisites** | Ruling 66's lease-source fix (landed on `main`); Ruling 71's `LaneSessionOptions` (on `feature/exit-evidence` — merge it); INV-0006 merged; INV-0009's fix (`fix/session-document-render`: the `DocumentOpening` seam, the chooser-opens-then-creates rule, `SessionComposerBinder`) | the `NewSessionAsync` record; the shell seam; the binder | — | press File → New Session while in Explore and see the document (the INV-0009 red turned green) | red-first: the lane's `session/new` carries `disallowedTools: ["Bash"]`; `ANewSessionCreatedWhileExplorerIsTheBodyIsShown`; `AReopenedSessionIsShownAndItsComposerIsBound` | every later slice |
 | **C-1 — the perspective mechanism (walking skeleton)** | The rail's three destinations swap three retained bodies; the derived menu and palette follow the allow-list; one slot per host; the drop-with-report restore | `PerspectiveSet`, the kind-row columns, `PerspectiveMenu.For`, `PerspectiveShell`, `DockHost` extracted and composed twice, `ZoneLayoutStore` per host, host B with the §B4 default | host B's surfaces are today's (no `view`/`inspector` selection wire yet); Explore unchanged | switch with a terminal live and a run streaming; restore today's saved layout and read the report; press `Ctrl+3` with focus inside the Explore body's WebView2 page, then inside the terminal (P-7, re-targeted: the terminal is WPF-drawn; the WebView2 pages are the real `HwndHost`s) | US-C1–C4, C7–C10, C12 headless + P-1, P-2, P-3, P-4, P-8, P-9 | C-2, C-3 |
 | **C-2 — the Coding default and the Evidence pair** | The Coding host opens with §B4's layout; `view`/`inspector` render master and detail in Architecture | `WorkbenchLayout.Default()` per perspective; the selection-source seam | — | open a fresh workspace; select an evidence row and read its provenance | US-C6, US-C8 headless + P-6 | D-1 (the composer) |
 | **C-3 — the composer as a conversation** | One editor, no boxes, no compiled text at rest; empty editable structure lines; the write-scope line; the refusal that names `@path` | Addendum C's composer regions; the Prepare regions as WPF controls; session settings with defaults (ceiling, `budget_cap: none`, compile mode, `free-form`) — F-6's home | the deriver (D-5 → D's compile); the census's WebView2 half (*not measured*) | type the US-C13 fixture; send at defaults with one gesture; read the inherited line (*bounded by your subscription*) | US-C13, US-C5 headless + P-11 (WPF half), P-12, P-13; the census-pending rows in `ContrastFloorTests` | D-1 |
@@ -981,8 +983,10 @@ disclosure; the census rows) → compute reader (`Project()`'s three named call 
 | The adapter honours `_meta.claudeCode.options.{tools, disallowedTools}` and passes them to the SDK | Verified (source) | `spikes/compile-session-tool-pin`, 8/8 |
 | `tools: []` yields zero tool calls on the wire with a repository `.mcp.json` | Flagged | P-D5 not run |
 | The spec's quoted adapter comment (*"canUseTool is not guaranteed…"*) | Corrected | not in 0.75.1; the mechanism is at `:5274-5279`, `:5856` |
-| Ruling 71's typed tools argument exists | Flagged | not on `feature/exit-evidence` at `757af057` |
-| Ruling 66's fix is on `main` | Flagged | `ComposerSendGate.cs:164` still `Derive(compiled.Text)` at `a3f760a3` |
+| Ruling 71's typed tools argument exists (`LaneSessionOptions`) | Verified on the branch; not on `main` | `feature/exit-evidence` `246b38a3`; `AcpLaneClient.cs` there |
+| Ruling 66's fix is on `main` | Verified | `00e0e520`; `ComposerSendGate.cs:169` passes `draft.SourceText` |
+| Ruling 72 is filed | Verified | `note-addendum-c-council-rulings` §Ruling 72, `main` `1aadde84` |
+| INV-0009's first-class reproduction (a dock document opened into a body not on screen) | Verified (red) | `ANewSessionCreatedWhileExplorerIsTheBodyIsShown`, exit 30 (the investigation's run) |
 | `free-form` is a comparable `ScoreSegment` class | Verified | `Leaderboard.cs:36, 55-70` — only `Unclassified` is incomparable |
 | `RunBudget.SubscriptionBounded` passes `Validate` | Verified (by reading `Validate`) | `GoalBlock.cs:146-157` refuses only null and non-positive |
 | `SpawnContract.Authorize` cannot be reused for a compile as-is | Verified | `GoalBlock.cs:207` calls `RequireGoalBlock` → `Validate`; an R0 compile has no block — hence `AuthorizeBinding` (ADR-0035) |
@@ -1005,9 +1009,11 @@ disclosure; the census rows) → compute reader (`Project()`'s three named call 
 - **A single-author corpus** for the first 100 envelopes; floors fixed in advance, judged on a
   holdout, labelled.
 - **The envelope file's growth** beyond 10 MiB is unmeasured (D-D5's trigger).
-- **The ruling being filed** for the two operator decisions of 2026-09-11 is cited here by audit
-  id; when the Owner numbers it, ADR-0033 and this section gain the number (a citation edit, not a
-  decision).
+- **INV-0009's fix is on a branch** (`fix/session-document-render`; its two defect classes are
+  registered on `investigate/session-document-render` and are cited here by name until that branch
+  merges); until it merges, a document
+  opened while Explore is the body is announced and not shown — C-1 builds on the seam, so P1 orders
+  that merge into C-0.
 
 ### C/D.16 Gate record — Addenda C and D
 

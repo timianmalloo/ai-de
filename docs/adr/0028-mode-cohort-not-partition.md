@@ -99,11 +99,14 @@ that a governed and an observed episode carrying the **same** caller-chosen task
 
 ## Amendment pointer — 2026-09-11 (ADR-0033 rule 4)
 
-The decision above stands. ADR-0033 records, as an **amendment of this record's explicitness
-rule**, the operator's decision of 2026-09-11 that the composer door carries an operator-set
-default task class `free-form` (`TaskClasses.FreeForm`, declared beside `ScoreSegment.Unclassified`),
-changeable per prompt (Ruling 70). Structurally that is a door default — the shape this record
-forbids — so ADR-0033 binds it with two conditions: the provenance is recorded per episode as an
+The decision above stands — Ruling 72 says so in terms (*"ADR-0028 unchanged"*): the partition
+rule is untouched. What this pointer records is a **reading of the explicitness clause**: Ruling 72
+makes the composer door carry an operator-declared default task class `free-form`
+(`TaskClasses.FreeForm`, declared beside `ScoreSegment.Unclassified`), changeable per prompt (Ruling
+70). Structurally that is a door default — the shape the explicitness wording did not foresee (the
+D&P Architect's finding at the Addenda C/D gate) — and Ruling 72 reads it as explicit because it is
+the operator's stated default, not one the door invented. ADR-0033 binds it with two conditions:
+the provenance is recorded per episode as an
 **expand-only cohort attribute `task_class_source ∈ {session-default, operator}` beside
 `ScoreSegment`, never inside it** (this record's own `mode` column pattern), and `free-form` is a
 comparable class, so a defaulted episode ranks (recorded, not hidden). The two ingest doors this

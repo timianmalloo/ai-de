@@ -89,7 +89,19 @@ We will:
    the router stays in the presenter with this bound — active/previous, the three bodies,
    `Execute(id)` = resolve the host then delegate to `WorkbenchController.Execute`, the three
    perspective commands, the entry-verb rule — and **a `switch` on any other command id inside the
-   presenter is the falsifier**.
+   presenter is the falsifier**. **INV-0009's first class is this rule's first red:** a dock document
+   opened while Explore is the body must switch the body to the admitting host, document first —
+   the `DocumentOpening` seam the fix adds on `WorkbenchShell` is the walking skeleton of this
+   routing (ADR-0017 amendment clause 4), and `ANewSessionCreatedWhileExplorerIsTheBodyIsShown` is
+   the test that stays green through the C-1 extraction. Two adjacent INV-0009 findings the slice
+   carries: **INV-0009's second class** — a session created through the workspace chooser with no workspace open is
+   bound to a workspace the window has not opened; the operator ruled *the chooser opens the
+   workspace, then creates* (`NewSessionFlow` runs `OpenWorkspaceAtAsync(root)` before `opened`),
+   never a refusal; and **the reopen path's binder** — `BindComposer` leaves `MainWindow` for
+   `Workbench.Sessions.SessionComposerBinder.Bind(shell, config, providers, workspace,
+   affirmation)`, the **one** construction site New, Reopen and restore share (still one registry /
+   send-context / attachment-gate site — Ruling 47), which is also where `ComposerSendContext.
+   TaskClass` is populated from the session's `default_task_class` (ADR-0033 rule 4).
 3. **The allow-list is enforced by each host's layout service at open, restore and every mutation**
    (the Perspective Layout aggregate's invariant): `ZoneBackedLayoutService` gains the admitted-kind
    set as a constructor argument and refuses an inadmissible surface with a reported result — the
