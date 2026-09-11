@@ -379,6 +379,20 @@ jobs:
       # what keeps a gate switched on (DC-104). Widening to any path-named receiver reaches 23
       # sites, some of whose Ordinal comparisons are correct, and would need a waiver mechanism.
       # That ratchet is deliberately not taken yet.
+      # F5 (docs/plans/conductor-front-door.md): the nine clauses of the front-door exit evidence,
+      # over the recorded exit run. It is a gate rather than a one-off script for the reason CI6
+      # gives - a lesson recorded as prose is a memoir - and because clause 0 is the only check in
+      # this repository that reads its OWN commit: it compares the oracle's bytes at the cited sha
+      # against the bytes now running, so an oracle quietly widened after the run reddens here
+      # rather than passing. The self-test proves it can fail on every clause it claims to check.
+      - name: Front-door exit evidence (F5) — self-test
+        if: ${{ !cancelled() }}
+        run: python tools/verify-front-door-exit-evidence.py --self-test
+
+      - name: Front-door exit evidence (F5)
+        if: ${{ !cancelled() }}
+        run: python tools/verify-front-door-exit-evidence.py
+
       - name: Containment-comparison gate — self-test
         if: ${{ !cancelled() }}
         run: python tools/verify-containment-comparisons.py --self-test

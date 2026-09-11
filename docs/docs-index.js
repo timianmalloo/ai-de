@@ -1784,7 +1784,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "eb450364757f7ee6590c65a3d855c94b090831346eec8cca08da5011d7ef958c"
+      "sourceSha256": "6101eeb9d63c2083d088936e3c4a17512c83753cecccaa051322cc5acc4b075e"
     },
     {
       "id": "api-aide-core-projections",
@@ -1821,7 +1821,7 @@ window.DOCS_INDEX = {
       "phase": "0",
       "reviewBy": "2027-09-02",
       "reviewSuggested": [],
-      "summary": "Extracted public surface of AiDe.Core.Sessions: 22 types, 58 members, 88% carrying a summary doc comment.",
+      "summary": "Extracted public surface of AiDe.Core.Sessions: 23 types, 60 members, 88% carrying a summary doc comment.",
       "tags": [
         "api",
         "reference",
@@ -1834,7 +1834,7 @@ window.DOCS_INDEX = {
         }
       ],
       "diagrams": [],
-      "sourceSha256": "83a0b4068daefef096ee3acff1e727c8211e6e7811a92a8faa735d3f2fbf9dda"
+      "sourceSha256": "47965206f3ab3c12e5bd39207b324efd81f1d761e904f700360210ad640823a2"
     },
     {
       "id": "api-aide-core-store",
@@ -11163,6 +11163,53 @@ window.DOCS_INDEX = {
       "sourceSha256": "5ceb5507a5710e579bc6160c03077fb806b8cd01f8cc25aa3adf1bde84b80807"
     },
     {
+      "id": "proof-conductor-front-door",
+      "path": "docs/proof/conductor-front-door.md",
+      "title": "Proof Pack — Conductor front door, Phase 1 (F0–F5)",
+      "type": "proof-pack",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "1",
+      "reviewBy": "2027-03-11",
+      "reviewSuggested": [],
+      "summary": "Exit evidence for the Phase-1 front-door slice: a session created from File → New Session with a machine-checkable origin, a prompt composed in the rich composer, a governed run launched through the one composition root and streamed in Console mode, scored into a comparable cell, with zero terminal hosting asserted as a counter that is shown going to one. Nine clauses, each against an oracle committed before the run, with the two qualifications the slice carries rather than discovers.",
+      "tags": [
+        "conductor",
+        "front-door",
+        "session",
+        "composer",
+        "template",
+        "proof-pack",
+        "phase-1",
+        "exit-evidence",
+        "f5"
+      ],
+      "links": [
+        {
+          "to": "plan-conductor-front-door",
+          "rel": "tested-by"
+        },
+        {
+          "to": "spec-conductor",
+          "rel": "tested-by"
+        },
+        {
+          "to": "note-front-door-residuals",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0029-latency-slo-recorded-not-asserted",
+          "rel": "depends-on"
+        },
+        {
+          "to": "proof-conductor-agent-plane",
+          "rel": "relates-to"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "2ee3b3b8c2b638a19b9fb3bf07e78148ed9903b8d2ac3c1755f44673a1a6026b"
+    },
+    {
       "id": "proof-lane-rename-ruling-15",
       "path": "docs/proof/pp-lane-rename-ruling-15.md",
       "title": "Proof Pack — Ruling 15/15a: GovernedSessionSource/GovernedSession rename",
@@ -12863,5 +12910,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "ff9b79988c806ac4186416d92ea394db7360cd91aee4ef9a029f0711f0ec07f8"
+  "graphSha256": "19c940ccb81b3f77c8d022fcf0f69fe042b8c89f66dfde04e2b999ac392aedd5"
 };

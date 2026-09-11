@@ -10,12 +10,12 @@ links:
   - { to: architecture, rel: documents }
 review-by: 2027-09-02
 summary: >-
-  Extracted public surface of AiDe.Core.Sessions: 22 types, 58 members, 88% carrying a summary doc comment.
+  Extracted public surface of AiDe.Core.Sessions: 23 types, 60 members, 88% carrying a summary doc comment.
 ---
 
 # API: `AiDe.Core.Sessions`
 
-**22 public types · 58 public members · 88% documented.**
+**23 public types · 60 public members · 88% documented.**
 
 > Extracted from the source by `tools/api-reference.py`. Prose here is the code's own
 > `///` comment, never written for the reference; a member with no comment is listed as a
@@ -101,6 +101,43 @@ that do not apply. Clause 4's obligation — that the future run-event stream ac
 `RunEvent` in `SessionEventEnvelopeTests`, not by round-tripping this
 type through it.
 
+## `SessionOrigins`
+
+*class* — `SessionConfig.cs`
+
+How a session came to exist, as the `session.open` body records it (F5 clause 1).
+
+**Remarks.** **On the event, never on `SessionConfig`.** Origin is a fact about one
+moment — the creation — not a property of the container, and the append-only log is already the
+record of what happened. Putting it on the record too would be two definitions of one fact, which
+is the defect signature DM's "derive don't store" names.
+
+
+
+
+
+**`Direct` is the default because the claim is about the OTHER value.**
+"Started from File → New Session" is only checkable if something that did not start there reads
+differently. A field that is always `MainMenuNewSession` would satisfy the sentence
+and prove nothing — the exact "asserted-about" shape N7 was blocked for. So
+`Create` defaults to `Direct` and exactly one caller
+in `src/` passes `MainMenuNewSession`.
+
+| Member | Summary |
+|---|---|
+| `string MainMenuNewSession = "main-menu.new-session"` | The `File → New Session` command path — `Ctrl+N` and the `MainMenuBuilder` entry, both of which resolve to `WorkbenchCommandCatalog`'s `session.new`. |
+| `string Direct = "direct"` | Anything that created a session without going through that command. |
+
+### `string MainMenuNewSession = "main-menu.new-session"`
+
+The `File → New Session` command path — `Ctrl+N` and the `MainMenuBuilder`
+entry, both of which resolve to `WorkbenchCommandCatalog`'s `session.new`.
+
+**Remarks.** **Passed at exactly one site in `src/`**, `NewSessionSheetViewModel.Create` —
+the sheet that command opens, and the only production caller of
+`Create`. `TheSessionOriginIsSetOnlyOnTheCommandPathTests`
+is the scan that holds that to one site.
+
 ## `SessionConfigStore`
 
 *class* — `SessionConfigStore.cs`
@@ -133,6 +170,16 @@ plain `System.Text.Json`, tolerant JSONL reads.
 | `SessionConfig SetEnabledBackends(IReadOnlyList<string> enabledBackends, DateTimeOffset now)` | Applies a backend toggle for new runs and emits `session.config`. Never mutates a `SessionConfig` a caller already holds — see the remarks on this type. |
 | `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)` | Applies the attach toggle for new runs and emits `session.config` (C21). |
 | `IReadOnlyList<SessionEvent> ReadEvents()` | Every event this session has ever emitted, in append order. |
+
+### `SessionConfig Create(`
+
+Creates the session: writes `session.json` and emits `session.open`.
+
+- **`name`** — The operator-facing name.
+- **`workspaceId`** — The workspace this session is bound to.
+- **`enabledBackends`** — The agent backends enabled for it.
+- **`now`** — Stamps the config and the event.
+- **`origin`** — How this session came to exist — see `SessionOrigins`. **Defaulted to `Direct` deliberately:** F5 clause 1's claim is that the front door is distinguishable from every other way of reaching this method, and that is only checkable if something which did not come through it reads differently. The default is what makes the other value evidence.
 
 ### `SessionConfig SetAttachEnabled(bool attachEnabled, DateTimeOffset now)`
 

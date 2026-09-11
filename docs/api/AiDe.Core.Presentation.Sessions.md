@@ -248,6 +248,15 @@ the two fields a run also needs.
 
 **Throws `InvalidOperationException`.** `CanCreate` is false. The message is `BlockedReason` — a refusal that does not say why is a dead button.
 
+**Remarks.** **This is the one site in `src/` that names `MainMenuNewSession`**
+(F5 clause 1). This sheet is constructed at exactly one production site —
+`NewSessionFlow` — which is itself constructed at exactly one — `MainWindow.NewSession`,
+the handler wired to `WorkbenchController.NewSessionRequested` and reached only through
+the `session.new` command that `Ctrl+N` and `MainMenuBuilder`'s File entry both
+resolve to. Anything else that creates a session goes through
+`Create` directly and its `session.open` reads
+`Direct`.
+
 ### `bool HealthWasReprobed`
 
 The registry the sheet last read, so a re-probe is observable from outside.
