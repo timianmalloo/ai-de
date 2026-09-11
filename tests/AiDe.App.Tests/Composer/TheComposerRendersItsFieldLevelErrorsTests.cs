@@ -149,6 +149,15 @@ public sealed class TheComposerRendersItsFieldLevelErrorsTests
                 Assert.NotNull(surface.Send());
 
                 Assert.Equal(0, surface.ClipboardReads);
+
+                // And the committed-channel record this send would write is counts plus one boolean —
+                // asserted HERE, at the surface, because that is where a real send produces it. With
+                // attach off, `count: 0` alone is indistinguishable from "the operator chose not to";
+                // the boolean is the difference between "could not" and "chose not".
+                var record = surface.CommittedRecord();
+                Assert.False(record["attach_enabled"]!.GetValue<bool>());
+                Assert.Equal(0, record["attachments"]!["count"]!.GetValue<int>());
+                Assert.DoesNotContain("@src/Payments", record.ToJsonString(), StringComparison.Ordinal);
             }
             finally
             {
