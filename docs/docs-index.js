@@ -7762,6 +7762,44 @@ window.DOCS_INDEX = {
       "sourceSha256": "99a6c7f2d3ca7e12e5c0d8902df3508280fda1e3ce975c545d37922ff083a7dc"
     },
     {
+      "id": "inv-0006-workbench-pane-swap-on-native-tab-drag",
+      "path": "docs/investigations/INV-0006-workbench-pane-swap-on-native-tab-drag.md",
+      "title": "Moving one tab swaps both panes: the workbench has no drag-completed hook",
+      "type": "investigation",
+      "status": "draft",
+      "owner": "@timianmalloo",
+      "phase": "facelift",
+      "reviewBy": "2026-12-01",
+      "reviewSuggested": [],
+      "summary": "Dragging a tab in the workbench mutates AvalonDock's tree and nothing else — the zone model, which is the source of truth, is never told. Nothing subscribes to a drag-completed event; the only reconcile runs from four unrelated commands (new terminal, new agent terminal, new prompt draft, open reference document). So the view drifts from the model for minutes, and when one of those four commands finally fires, `TryMapByPosition` re-derives each zone's identity by MAJORITY CONTENT OVERLAP and `ZonesToTree.ToTree` re-renders in the fixed order Left | Center | Right. When the drift is large enough that a zone's majority has moved column, the two zone LABELS exchange and every pane changes side at once — the \"all tabs swapped from right to left\" the operator saw. Reproduced headlessly against the operator's own recorded model and screenshots. The gesture is the library's; the drift, the majority-vote reconcile and the total absence of telemetry are ours, and so is the remedy.",
+      "tags": [
+        "workbench",
+        "docking",
+        "avalondock",
+        "layout",
+        "zones",
+        "drag",
+        "reconcile",
+        "observability"
+      ],
+      "links": [
+        {
+          "to": "adr-0012-docking-shell-library",
+          "rel": "depends-on"
+        },
+        {
+          "to": "adr-0021-named-dock-zones",
+          "rel": "refines"
+        },
+        {
+          "to": "inv-terminal-crash-and-pane-moves",
+          "rel": "refines"
+        }
+      ],
+      "diagrams": [],
+      "sourceSha256": "5e4e9b0574b04e6efdca7248ddfe9b10c6a439ffa1087d8c571e67d5db7c191c"
+    },
+    {
       "id": "inv-knowledge-chip-reads-zero-again",
       "path": "docs/investigations/knowledge-chip-reads-zero-again.md",
       "title": "The Knowledge category chip reads 0 again — the App ignores the IsKnowledge flag",
@@ -12900,5 +12938,5 @@ window.DOCS_INDEX = {
       "artifactId": "mockup-uml-erm-surfaces"
     }
   ],
-  "graphSha256": "5ba9ae92496f2501addc5adbedb3b35a5c454ec5d38b971c068a1314480052c8"
+  "graphSha256": "79d2ca1cab65646df773d1eda5f1f6b39670cc4995a0f477d33857b5cf0a86ae"
 };
