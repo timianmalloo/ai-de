@@ -423,8 +423,23 @@
             <Setter Property="SelectionBrush" Value="{StaticResource AccentBrush}" />
         </Style>
 
-        <!--  The app's button, by default. AvalonDock's own chrome is exempted in its own resource
-              scope (DockRoundedTabs), which is nearer in the tree and therefore wins.  -->
+        <!--
+            THE APP'S BUTTON, BY DEFAULT - AND WITH NO EXEMPTION FOR THE DOCKING HOST.
+
+            The first draft of this carried one: an implicit Button style merged into
+            DockingManager.Resources, so AvalonDock's icon chrome would keep a transparent ground
+            while the app kept its pill. The reasoning was right - that dictionary IS nearer in the
+            element tree - and the conclusion was wrong, because every surface in this product is a
+            document INSIDE that manager, so "the dock's own chrome" is not a scope that dictionary
+            can express. Measured: a Button placed in a pane resolved to #00FFFFFF instead of the
+            raised ground, which would have stripped the chrome from Send, Attach file, Sign in and
+            every control in every surface to protect a close icon.
+
+            The measurement also retired the concern. The one chrome Button a document pane renders
+            is DocumentCloseButton, and DockRoundedTabs.xaml styles it EXPLICITLY inside the tab
+            template, so the implicit default never reaches it. DockChromeButtonScopeTests holds
+            both halves: the assertion, and the chrome reading it prints rather than asserts.
+        -->
         <Style TargetType="Button">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
             <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />

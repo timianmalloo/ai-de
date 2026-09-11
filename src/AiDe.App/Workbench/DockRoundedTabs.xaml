@@ -426,29 +426,4 @@
     </Setter.Value>
   </Setter>
 </Style>
-
-  <!--
-    THE DOCK CHROME'S OWN BUTTON PAIRING.
-
-    App.xaml now carries an implicit Button default so that a control added tomorrow is themed
-    without anyone remembering to theme it (TC1). AvalonDock's chrome is the one place where that
-    default is the wrong answer: its caption buttons, its pane menus and its overflow arrows are
-    ICON buttons sitting on chrome the VS2013 dark theme already painted, so the app's raised pill
-    would put a grey rectangle behind each of them.
-
-    This dictionary is merged into the DockingManager's OWN resources, which is nearer in the
-    element tree than Application.Resources, so it wins for everything inside the docking host and
-    for nothing outside it. Ink and ground are both stated (TC2): the ground is the chrome's, and
-    saying so is what makes it a pairing rather than an omission.
-
-    This is a scoping decision, not a layout one. It changes no template, no geometry and no
-    command binding, so nothing about tab placement or a drag depends on it.
-  -->
-  <Style TargetType="Button" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-    <Setter Property="Background" Value="Transparent" />
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="BorderThickness" Value="0" />
-    <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
-  </Style>
-
 </ResourceDictionary>
