@@ -296,7 +296,7 @@ forced a stub (HYG-A).
   > **top-level peer** (`:162`); and the spec's own signature is
   > `spawn_agent(role, engine, model, account, goal_block, lease, policy)` - **lease beside
   > `goal_block`, not inside it.** As written the clause collided with this same section's
-  > requirement that `SpawnContractTests.cs`'s four tests stay **byte-unchanged**, since
+  > requirement that `SpawnContractTests.cs` stays **byte-unchanged**, since
   > `TheSpecNamesExactlySixFields` asserts that list by name.
   > **The oracle is C17's, not a string match.** `Assert.False(request.Lease.Covers("/no-lease-covers-this"))`
   > - which **no spelling of "everything"** (`**`, `**/*`, `**/**`) can pass, unlike a comparison
@@ -317,7 +317,15 @@ forced a stub (HYG-A).
 - **The goal-block re-base is one mechanism** (Ruling 26b): the send gate calls
   `SpawnContract.Validate`; a test asserts the generic form engine's required-field errors and
   `SpawnContract.Validate` name **the same field set for every input**; **`SpawnContractTests.cs`'s
-  four tests stay byte-unchanged**. *Fails if:* a second definition of goal-block validity exists.
+  file stays byte-unchanged**. *Fails if:* a second definition of goal-block validity exists.
+  > **Count corrected after F4 measured it.** Ruling 26(b) said *"`SpawnContractTests.cs`'s
+  > **four** tests stay byte-unchanged"* and this plan repeated it twice. The file carries
+  > **17** `[Fact]`/`[Theory]` attributes across **17** methods. The **requirement** was always
+  > satisfiable and is satisfied — F4's `git diff` against `main` for that file is empty — but
+  > the number was decorative and wrong, and it propagated from a ruling into a plan into a
+  > brief without anyone opening the file. The Test Architect's original review had already
+  > said the real shape is *richer* than the Theories it quoted. **The clause now names the
+  > file, not a count**, because a count is a fact that can rot while the requirement cannot.
 - **`fan_out_cap` and `budget` hints must not read as enforced** (Ruling 26c) — `GoalBlock.cs`'s
   remark carries through: **validated, not enforced**, in Phase 1.
 - Template picker renders any catalog template as a **validated form**; a required-field gap
@@ -340,6 +348,12 @@ forced a stub (HYG-A).
   `EditorView` with the composer's extension set; **`text`, `list`, `enum`, `budget` are native HTML
   controls with no CodeMirror instance.** *Fails if:* a per-field editor is created for the four
   native types.
+  > **The inventory spans TWO vocabularies, and F4 recorded that rather than silently picking
+  > one.** `template-schema/1` defines exactly **three** field types — `Text`, `List`,
+  > `Mentions`. **`long-text`, `enum` and `budget` are goal-block shapes, not template field
+  > types.** So reading Ruling 33 as a list of template field types is a misreading, and the
+  > ruling is a statement about **widgets** across both vocabularies. Recorded in
+  > `ComposerFieldWidget.cs` at the point of use, where the next reader meets it.
 - **The production bundle is built once here** and hash-pinned, after that inventory, with its
   recorded command and SHA-256 (Ruling 33).
 - **US-ED5/ED6/ED7, with observables** (Test Architect Major): a **`sendCount` on the send seam** —
@@ -403,7 +417,15 @@ that the page is the page.
 - **C9 — Origin-bound routing, testable headlessly.** `ComposerMessageRouter.Route(sourceUri, json, filePaths)` is a pure function; the handler passes `e.Source` and `e.AdditionalObjects` and does nothing else. *Fails if:* the router acts on a message whose `sourceUri` is not exactly the composer page's URL, or whose `instance` is not live. **Oracle:** red-first table over `{https://example.invalid/, file:///C:/x.html, about:blank, https://aide.assets.invalid.evil.test/, https://aide.assets.invalid/other.html}` × every kind, asserting every effect counter stays 0 and drops == inputs.
 - **C10 — The control can reach exactly one document.** `NavigationStarting`, `FrameNavigationStarting`, `NewWindowRequested` and `LaunchingExternalUriScheme` all cancel anything off-origin. *Fails if:* the control's document can be changed. **Oracle:** a probe that sets `location.href`, calls `window.open`, appends an off-origin `<iframe>`, and drops a file — asserting `Source` unchanged, no new window, frame cancelled, `sendCount == 0`. **Load-bearing for C9:** the origin check is only sound *because* frame navigation is cancelled.
 - **C11 — The send verb is host-owned.** Send is a WPF control plus a host-side `AcceleratorKeyPressed` handler for Ctrl+Enter setting `Handled = true`. *Fails if:* **any** `postMessage` from the page, of any shape, increments `sendCount`. **Oracle:** red-first — post every kind, plus `send`, `send.requested`, `run.start`, plus 100 generated unknown kinds; assert `sendCount == 0`; then the Send button gives exactly 1 and the accelerator exactly 1.
-- **C12 — CSP and settings floor.** The page carries `default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'`, and its inline module moves to an external `.mjs`. On the control: `AreDevToolsEnabled=false`, `AreHostObjectsAllowed=false`, `AreDefaultContextMenusEnabled=false`. *Fails if:* the shipped page lacks the meta, or any of the three settings is left at its default. **Oracle:** a byte assertion over the shipped page, plus a probe asserting `fetch('https://example.invalid')` rejects, `chrome.webview.hostObjects === undefined`, **and that the editor still renders under the CSP** — `style-src 'unsafe-inline'` is **Inferred** to be required by CodeMirror's style-mod, so *the probe settles it rather than Security's say-so*.
+- **C12 — CSP and settings floor.** The page carries `default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'`, and its inline module moves to an external `.mjs`. On the control: `AreDevToolsEnabled=false`, `AreHostObjectsAllowed=false`, `AreDefaultContextMenusEnabled=false`. *Fails if:* the shipped page lacks the meta, or any of the three settings is left at its default. **Oracle:** a byte assertion over the shipped page, plus a probe asserting `fetch('https://example.invalid')` rejects, **that a host object cannot be RESOLVED** (see the correction below), **and that the editor still renders under the CSP** — `style-src 'unsafe-inline'` was **Inferred** to be required by CodeMirror's style-mod, and **the probe settled it by measurement**: the editor renders under `style-src 'self' 'unsafe-inline'`.
+  > **C12's oracle as written is factually wrong, and F4 measured it.** The clause said assert
+  > `chrome.webview.hostObjects === undefined`. **It reads `function` whether or not host
+  > objects are allowed** — the accessor is part of the WebView2 script API, **not a
+  > capability**. An oracle asserting `undefined` would therefore fail against a correctly
+  > configured host, and *passing it would have required weakening the setting*. F4 asserted what
+  > the clause **means** — that a host object cannot be **resolved** — and read
+  > `AreHostObjectsAllowed=false` back **host-side** separately. **The condition stands; its
+  > oracle is replaced.**
 - **C13 — No path crosses the bridge as a string.** A filesystem path enters the host only as `CoreWebView2File.Path` from `AdditionalObjects`, or from a host-owned `OpenFileDialog`. *Fails if:* any host code reads a path out of a page message body. **Oracle:** the router given an `attach.offered` carrying a `path` member and an empty `AdditionalObjects` produces zero attachments and one refusal; plus a grep control asserting the message record type declares no `Path`/`Uri`/`File`/`Content` member.
 - **C14 — Attachments are bounded, visible, and literal.** **≤32 KiB per file, ≤128 KiB and ≤5 files per send** (**Ruling 43** — each a **named constant** with its own red-first test); UTF-8-decodable text only (binary refused, never base64'd in); inserted into the draft as a **visible fenced block** whose header names the source file **and its byte count** — *"the byte count is what makes the human's read informed"*; a file outside the session's workspace root **labelled as such** in that header. Over-cap is a **refusal naming the file and its size**, never truncation. **Ruling 43's confidence is Inferred and the gap is named rather than hidden:** the only Phase-1 control is a human reading the compiled text, so the cap must bound **what a human can actually read**, not what a file can hold — 32 KiB is ~800 lines, and this repository's larger files (`GovernedRunHost.cs`, `GoalBlock.cs`) are ~300 lines / ~14 KB, so real files fit, while 64 KiB is ~1,600 lines, **scrolled past rather than read**. *No measurement exists of how much compiled text an operator reads before skimming.* **Condition:** the `metrics` kind records **per-send attachment count and bytes on the normal path**, so these numbers are revisited on data at Phase 2 rather than re-argued. No config knob — nobody asked for one. *Fails if:* a size or count cap is exceeded · an attachment is held as a reference rather than inserted as text · an attachment is **re-read at send time** · a non-UTF-8 file is accepted · an outside-workspace file is inserted without the label. **Oracle:** one red-first test per clause.
 - **C15 — No late binding anywhere in the send path.** Nothing is resolved after the compiled view last rendered — no mention expansion, no template expansion, no file read, no graph query, no network call. *Fails if:* the send path performs any such resolution. **Oracle:** counters on the file reader and `GraphSource` assert **0** between "compiled view rendered" and "prompt handed to the run host"; and a send with the workspace root **renamed** produces byte-identical prompt text. **This is what makes the existing *"compiled output and sent text differ by a byte"* clause mean what it says** — otherwise the human approved `@src/Foo.cs`, the agent received its contents, and the byte check stayed green because both sides held the unresolved text.
